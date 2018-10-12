@@ -1,0 +1,79 @@
+﻿
+#divTableOfContents {
+    box-sizing: border-box;
+    margin-top: 33px;
+    padding-left: 145px;
+    padding-right: 145px;
+}
+
+.pageTitle {
+    font-size: 33px;
+    font-family: 'Georgia';
+    font-weight: bold;
+    font-style: italic;
+    text-align: center;
+    padding-bottom: 2px;
+    cursor: pointer;
+}
+
+.divChapter {
+    display: flex;
+    cursor: pointer;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.chapterName {
+    float: left;
+    font-family: 'Georgia';
+    font-size: 22px;
+    font-weight: bold;
+    padding-right: 6px;
+    white-space: nowrap;
+}
+
+.dots {
+    float: left;
+    border-bottom: dotted 5px #214c87;
+    width: 100%;
+}
+
+.divCaret {
+    padding-left: 6px;
+    float: right;
+}
+
+    .divCaret img {
+        margin-bottom: -20px;
+        height: 15px;
+    }
+
+.divSections {
+    display: none;
+    padding-left: 100px;
+}
+
+.divSection {
+    font-family: 'Georgia';
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    cursor: pointer;
+}
+
+.divSubsections {
+    padding-left: 50px;
+}
+
+.divSubSection {
+    font-family: 'Georgia';
+    font-size: 18px;
+    margin-bottom: 4px;
+    cursor: pointer;
+}
+#divEdit {
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+    margin-top: 50px;
+}

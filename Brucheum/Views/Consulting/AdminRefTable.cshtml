@@ -1,0 +1,187 @@
+﻿
+@{
+    ViewBag.Title = "Ref Editor";
+}
+
+<link href="~/Styles/ThreeColumnPage.css" rel="stylesheet" />
+
+<style>
+    #leftColumn {
+        border-right: 2px solid orange;
+        margin-right: 6px;
+    }
+    .roundendButton {
+        display: inline-block;
+        width: 88px;
+        margin-top: 7px;
+        margin-left: 68px;
+    }
+
+    #refList {
+        border: solid 2px purple;
+        border-radius: 4px;
+        margin-top: 60px;
+        padding-top: 4px;
+        min-height: 200px;
+    }
+        #refList li {
+            list-style: none;
+            padding: 8px;
+            cursor: pointer;
+            margin-bottom: 4px;
+            background-color: #c3cecf;
+        }
+    #divLoadingGif {
+        display: none;
+        position: relative;
+        top: 10px;
+        left: 20px;
+    }
+    #divLoadingGif img {
+        height: 30px;
+    }
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+        put tag tool here
+    </div>
+    <div id="middleColumn">
+        <div class="pageTitle" id="divPageTitle">Ref Editor</div>
+        <div id="divRefEdit">
+            <div class="addEditArea">
+                <div>
+                    <span>Category:</span>
+                    <div class="inline"><input class="roundedInput" id="txtDescription" /></div>
+                </div>
+            </div>
+            <div id="divStatusMessage"></div>
+            <div id="divButtons">
+                <div class="roundendButton" id="btnSave">Add</div>
+                <div class="roundendButton" id="btnNew">New</div>
+            </div>
+            <div id="refList">
+                <div id="divLoadingGif">
+                    <img src="~/Images/loader.gif" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="rightColumn">
+        put adds here
+    </div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+    var ref = new Object();
+
+    $(document).ready(function () {
+        $('#btnNew').hide();
+        getRefs("CAT");
+        ref.RefType = "CAT";
+    });
+
+    function getRefs(refType) {
+        try {
+            $('#divLoadingGif').show();
+            $.ajax({
+                url: service + "/api/Ref/get/?refType="+refType,
+                type: "get",
+                dataType: "Json",
+                success: function (result) {
+                    $('#divLoadingGif').hide();
+                    $('#refList').html("");
+                    $.each(result, function () {
+                        $('#refList').append("<li Id='" + this.RefCode + "' data='" + this.RefDescription + "'>" + this.RefDescription + "</li>");
+                    });
+                    
+                    $('li').click(function () {
+                        ref.RefCode = $(this).attr('Id');
+                        $('#txtDescription').val($(this).attr('data'));
+                        $('#btnSave').text("Update");
+                        $('#btnNew').show();
+                    });
+                },
+                error: function (xhr, textStatus, error) {
+                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                }
+            });
+        } catch (e) {
+            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+        }
+    }
+
+    $('#btnSave').click(function () {
+        if ($('#btnSave').text() === "Add")
+            post();
+        else
+            put();
+    });
+
+    $('#btnNew').click(function () {
+        ref.RefCode = null;
+        $('#txtDescription').val("");
+        $('#btnSave').text("Add");
+        $('#btnNew').hide();
+    });
+
+    function post() {
+        try {
+            ref.RefDescription = $('#txtDescription').val();
+            //alert("ref.RefDescription : " + ref.RefDescription);
+            $.ajax({
+                url: service + "/api/Ref/Put",
+                type: "post",
+                dataType: "Json",
+                data: ref,
+                success: function (result) {
+                    if (result.Success === "ok") {
+                        $('#txtDescription').val("");
+                        $('#btnSave').text("Add");
+                        displayStatusMessage("alert-success", "Saved");
+                        getRefs("CAT");
+                    }
+                    else
+                        displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
+                },
+                error: function (xhr, textStatus, error) {
+                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                }
+            });
+        }
+        catch (e) {
+            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+        }
+    }
+      
+    function put() {
+        try {
+            ref.RefDescription = $('#txtDescription').val();
+                $.ajax({
+                    url: service + "/api/Ref/Put",
+                    type: "PUT",
+                    data: ref,
+                    success: function (result) {
+                        if (result.Success === "ok") {
+                            displayStatusMessage("alert-success", "Saved");
+                            getRefs("CAT");
+                        }
+                        else
+                            displayStatusMessage("alert-danger", "server ERROR: " + result.Success);
+                    },
+                    error: function (xhr, textStatus, error) {
+                        displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                        alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    }
+                });
+        }
+        catch (e) {
+            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+        }
+    }
+
+</script>
+<script src="~/Scripts/ResizeThreeColumnPage.js"></script>

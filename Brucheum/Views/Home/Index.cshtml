@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "Welcome";
+}
+<link href="~/Styles/ThreeColumnPage.css" rel="stylesheet" />
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+    </div>
+    <div id="middleColumn">
+        @Html.Partial("_ArticleList");
+    </div>
+    <div id="rightColumn">
+        <div id="divb">
+            @Html.Partial("_BookPannel")
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/ResizeThreeColumnPage.js"></script>

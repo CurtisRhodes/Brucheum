@@ -1,0 +1,278 @@
+﻿@{
+    ViewBag.Title = "Article Edit";
+}
+
+<link href="~/Styles/articleEdit.css" rel="stylesheet" />
+<link href="~/Styles/ThreeColumnPage.css" rel="stylesheet" />
+<script src="~/Scripts/ImageTools.js"></script>
+
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+
+<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.css" rel="stylesheet">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.js"></script>
+
+<!-- include codemirror (codemirror.css, codemirror.js, xml.js, formatting.js) -->
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.css">
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/theme/monokai.css">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/mode/xml/xml.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/2.36.0/formatting.js"></script>
+
+<div class="threeColumnArray">
+    <div id="leftColumn"></div>
+    <div id="middleColumn">
+        <div class="editArticleContainer">
+            <table>
+                <tr>
+                    <td class="tbLabel">Title:</td>
+                    <td colspan="3" class="tbInput"><input class="roundedInput streach" id="txtTitle" />
+                    <td rowspan="6"><img id="bImage" /></td>
+                </tr>
+                <tr>
+                    <td class="tbLabel">Category:</td>
+                    <td colspan="3" class="tbInput">@Html.DropDownList("ddCategory", new SelectList(ViewBag.Categories, "Key", "Value"), new { @class = "roundedInput streach" })</td>
+                </tr>
+                <tr>
+                    <td class="tbLabel">Image:</td>
+                    <td colspan="3" class="tbInput"><input id="uplImage" type="file" class="imageUpload streach" /></td>
+                </tr>
+                <tr>
+                    <td class="tbLabel">Byline:</td>
+                    <td><input class="roundedInput" id="txtByline" /></td>
+                    <td class="tbLabel">Created:</td>
+                    <td class="tbInput"><input class="roundedInput" id="txtCreated" /></td>
+                </tr>
+                <tr>
+                    <td class="tbLabel">Meta Tag:</td>
+                    <td><input class="roundedInput" id="txtMetaTag" /></td>
+                    <td colspan="2"><div id="divTagContainer"></div></td>
+                </tr>
+                <tr>
+                    <td class="tbLabel">Summary:</td>
+                    <td colspan="3" class="tbInput"><textarea id="txbSummary" class="roundedInput streach"></textarea></td>
+                </tr>
+
+            </table>
+        </div>
+        <div id="summernote"></div>
+
+        @*<div id="divQuilleditor"></div>*@
+        <div id="divStatusMessage"></div>
+
+        <div id="divButtons">
+            <button id="btnSave" class="roundendButton">Save</button>
+            <button id="btnView" class="roundendButton">View</button>
+            <button id="btnDelete" class="roundendButton">Delete</button>
+        </div>
+        <input id="hiddenId" type="hidden" />
+        <input id="hiddenImageName" type="hidden" />
+    </div>
+    <div id="rightColumn"></div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+    var articleId = '@ViewBag.Id';
+    var article = new Object();
+    var metaTags = new Array();
+
+    //var quill = new Quill('#divQuilleditor', { theme: 'snow' });
+    //var quill = new Quill('#divQuilleditor', { theme: 'snow', modules: { toolbar: '#full-toolbar' } 	});
+
+    $(document).ready(function () {
+        if (articleId !== "") {
+            get();
+        }
+        $('#btnDelete').hide();
+
+        $('#summernote').summernote({
+            height: 222,
+            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            toolbar: [
+                ['codeview'],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontname', 'fontsize']],
+                ['insert', ['picture', 'link', 'video', 'table', 'hr']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height']]
+            ]
+        });
+    });
+
+    function bind(article) {
+        $('#hiddenId').val(article.Id );
+        $('#txtTitle').val(article.Title);
+        $('#ddCategory').val(article.Category);
+        $('#txbSummary').val(article.Summary);
+        $('#hiddenImageName').val(article.ImageName);
+        $('#txtByline').val(article.Byline);
+        $('#txtCreated').val(article.DateCreated);
+        $('#summernote').summernote('code', article.Contents);
+    }
+
+    function beautify(stankyString) {
+        return stankyString.replace(/&lt;/g, "<")
+            .replace(/&gt;/g, ">")
+            .replace(/&quot;/g, "\"")
+            .replace(/&#39;/g, "'")
+            .replace(/&nbsp;/g, " ");
+    }
+
+    function unBind() {
+        article.Id = $('#hiddenId').val();
+        article.Title = $('#txtTitle').val();
+        article.Category = $('#ddCategory option:selected').text();
+        article.Summary = $('#txbSummary').val();
+        article.ImageName = $('#hiddenImageName').val();
+        article.Byline = $('#txtByline').val();
+        article.DateCreated = $('#txtCreated').val();
+        article.Contents = beautify($('#summernote').summernote('code'));
+        //article.Contents = quill.root.innerHTML;  //quill.getContents(0, quill.getLength()).innerHtml;
+        article.Tags = metaTags;
+    }
+
+    function put(view) {
+        try {
+            unBind();
+            $.ajax({
+                url: service + "/api/Article",
+                type: "put",
+                async: "false",
+                dataType: "json",
+                data: article,
+                success: function (success) {
+                    if (success === "ok")
+                        if (view === "View")
+                            window.location = "Article?Id=" + $('#hiddenId').val();
+                        else
+                            displayStatusMessage("alert-success", "updated");
+                    else
+                        displayStatusMessage("alert-danger", success);
+                },
+                error: function (xhr, textStatus, error) {
+                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    alert("ArticleEdit PUT   status: " + textStatus + "  text: " + xhr.statusText + " error: " + error);
+                }
+            });
+        } catch (e) {
+            displayStatusMessage("alert-danger", "ERROR" + e);
+        }
+    }
+
+    function post(view) {
+        try {
+            unBind();
+            if (article.Title === "") {
+                displayStatusMessage("alert-warning", "Title Required");
+                return;
+            }
+            $.ajax({
+                url: service + "/api/Article",
+                type: "post",
+                dataType: "Json",
+                data: article,
+                success: function (result) {
+                    $('#hiddenId').val(result);
+                    if (view === "View") {
+                        window.location = "Article?Id=" + $('#hiddenId').val();
+                        alert("result: " + result);
+                    }
+                    else {
+                        alert("result: " + result);
+                        displayStatusMessage("alert-success", "Saved");
+                        $('#btnSave').text("Update");
+                    }
+                },
+                error: function (xhr, textStatus, error) {
+                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                }
+            });
+        } catch (e) {
+
+            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+        }
+    }
+
+    function get() {
+        $.ajax({
+            url: service + "/api/Article?id=" + articleId,
+            type: "get",
+            dataType: "json",
+            success: function (response) {
+                bind(response);
+                if (response.ImageName !== "") {
+                    var image = getImage(service, response.ImageName);
+                    $('#bImage').attr("src", "data:image/gif;base64," + image);
+                }
+                $('#btnSave').text("Update");
+                if (response.Tags != "") {
+                    metaTags = response.Tags;
+
+                    for (var tag in metaTags) {
+                        $("#divTagContainer").append("<div class='divTagItem'>" + metaTags[tag] + "</div>");
+                    };
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+            }
+        });
+    }
+
+    $('#txtMetaTag').blur(function () {
+        metaTags.push($('#txtMetaTag').val());
+        $('#divTagContainer').append("<div class='divTagItem'>" + $('#txtMetaTag').val() + "</div>");;
+        $('#txtMetaTag').val("");
+    });
+
+    $('#uplImage').change(function () {
+        var localImageName = $('#uplImage').val();
+        var serverImageName = postImage(service, localImageName);
+        $('#hiddenImageName').val(serverImageName);
+        var bytes = getImage(service, serverImageName);
+        $('#bImage').attr("src", "data:image/gif;base64," + bytes);
+    });
+
+    $('#btnSave').click(function () {
+        if ($('#btnSave').text() === "Save")
+            post();
+        else
+            put();
+    });
+
+    $('#btnDelete').click(function () {
+        if (confirm("Delete " + $('#Title').val() + "?")) {
+            try {
+                $.ajax({
+                    url: webApiURL + "?Id=" + $('#hiddenId').val(),
+                    type: "delete",
+                    success: function (list, textstatus, xhr) {
+                        displayStatusMessage("alert-success", "entry deleted");
+                        window.location = "ArticleList";
+                    },
+                    error: function (xhr, textStatus, error) {
+                        displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                        alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    }
+                });
+            } catch (e) {
+                displayStatusMessage("alert-danger", "tERROR" + e);
+            }
+        }
+    });
+
+    $('#btnView').click(function () {
+        if ($('#btnSave').text() === "Save")
+            post("View");
+        else
+            put("View");
+    });
+
+</script>
+
+<script src="~/Scripts/ResizeThreeColumnPage.js"></script>

@@ -1,0 +1,130 @@
+﻿<script src="~/Scripts/GlobalFunctions.js"></script>
+<link href="~/Styles/articleList.css" rel="stylesheet" />
+<script src="~/Scripts/ImageTools.js"></script>
+
+<div id="divArticleList">
+    <div id="listHeader"></div>
+    <div id="divStatusMessage"></div>
+    <div id="articleList">
+        <div id="loadingGif">
+            <img src="~/Images/loader.gif" />  @*"~/Images/ingranaggi3.gif"*@
+        </div>
+    </div>
+    <div id="divMoreButton" class="roundendButton">More</div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+    var filterType= '@ViewBag.FilterType';
+    var filter= '@ViewBag.Filter';
+    var previousFilter = '@ViewBag.Filter';
+    var loggedIn = '@Session["UserName"]';
+
+    var page = 1;
+    var pageLen = 5;
+    var articleCount;
+
+
+    $(document).ready(function () {
+        $("#rightColumn").append("<div id='adminMsg'><a href='/Article/ArticleEdit'>add new</a></div>");
+        getArticleList();
+
+    });
+    $('#divMoreButton').click(function () {
+        page++;
+        getArticleList("more");
+    });
+
+    function getArticleList(more) {
+        try {
+            $('#loadingGif').show();
+
+            if (filter !== "") {
+                if (more === undefined) {
+                    $('#articleList').html('');
+                }
+            }
+
+            if (filterType === "")
+                $('#listHeader').html("Latest Articles");
+            else
+                $('#listHeader').html(filter);
+
+            $.ajax({
+                url: service + "/api/Article?pageLen=" + pageLen + "&page=" + page + "&filterType=" + filterType + "&filter=" + filter,
+                type: "get",
+                timeout: 90210,  //  nine seconds
+                success: function (list) {
+                    $('#loadingGif').hide();
+
+                    articleCount = 0;
+                    list.forEach(formatArticleJog);
+
+                    if (articleCount < pageLen)
+                        $('#divMoreButton').hide();
+                    else
+                        $('#divMoreButton').show();
+
+                    //if (loggedIn !== "") {
+                    //    $('#adminMsg').show();
+                    //}
+
+                    $('#divBookPannel').css("visibility", "visible");
+                    $('#middleColumn').height($('#articleList').height() + 115);
+                    resizePage();
+
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    $('#loadingGif').hide();
+                    if (textstatus === "timeout") {
+                        displayStatusMessage("alert-danger", "Server Timeout");
+                        alert("Sorry. Server timeout. \n This webside is down.     ");
+                    }
+                    else {
+                        displayStatusMessage("alert-danger", "status: " + textstatus + "   text: [" + textstatus + "]   error: " + message);
+                        alert("getArticleList ERROR: [" + xmlhttprequest.status + "]  textstatus: [" + xmlhttprequest.textstatus + "]   message: " + message);
+                    }
+                }
+            });
+        } catch (e) {
+            displayStatusMessage("alert-danger", "tERROR" + e);
+            alert("getArticleList catch: " + e);
+        }
+    }
+
+    function formatArticleJog(article) {
+        try {
+
+            //if (article.Title.startsWith("ERROR")) {
+            //    $('#articleList').append("<div class='divArticle'><div id='divArticleDetail'>" + article.Title + "</div></div>");
+            //    return;
+            //}
+
+            var title = article.Title.split(' ').join('_');
+            var articleHref = "/Article/Article?Id=" + article.Id + "&title=" + title;
+            var imgSrc = "<img>";
+            if (article.ImageName !== "") {
+                imgSrc = '<img src="data:image/gif; base64,' + getImage(service, article.ImageName) + '">';
+            };
+            $('#articleList').append(`
+                <div class='divArticle'><div id='divImg'><a href="`+ articleHref + `">` + imgSrc + `</a></div>
+                    <div id='divArticleDetail'>
+                        <div id='divTopRow'>
+                            <div id='divCategory'><a href=/Article/ArticleList?filterType=Category&filter=`+ encodeURI(article.Category) + `>` + article.Category + `</a></div>
+                            <div id='divArticleTitle'><a href="`+ articleHref + `">` + article.Title + `</div>
+                            <div id='divLastUpdated'>`+ article.DateCreated + `</div>
+                        </div>
+                        <a href="`+ articleHref + `"><div id='divArticleSummary'>` + article.Summary + `</div></a>
+                        <div id='divBottomRow'>
+                            <div id='divByline'>By: <a href=/Article/ArticleList?filterType=Byline&filter=`+ article.Byline + `>` + article.Byline + `</a></div>
+                            <div id='divArticleEdit'><a href=/Article/ArticleEdit?Id=` + article.Id + `'>edit</a></div>
+                        </div>
+                    </div>
+                </div>`);
+            articleCount++;
+        } catch (e) {
+            alert("formatArticleJog error: " + e);
+        }
+    }
+</script>
+

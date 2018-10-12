@@ -1,0 +1,125 @@
+﻿
+
+<link href="~/Styles/modalDialog.css" rel="stylesheet" />
+
+
+<<style>
+    #divPopupContainer {
+        position: absolute;
+        top: 8%;
+        left: 35%;
+        box-sizing: content-box;
+        color: #242729;
+        /*width: 280px;*/
+        padding: 30px;
+        /*border: 1px solid #e4e6e8;*/
+        background: #fff;
+        z-index: 999;
+        min-width: 500px;
+    }
+    li {
+        cursor: pointer;
+        text-decoration: underline;
+        margin-bottom: 4px;
+    }
+    .dialogHeader {
+        color: purple;
+        font-style: oblique;
+    }
+    #divBookTitle {
+        text-align: center;
+        font-size: 24px;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+    #editTable li {
+        text-decoration: underline;
+        color: purple;
+        cursor: pointer;
+        padding: 4px;
+    }
+</style>
+
+ <div id="divPopupContainer">
+     <div id="divStatusMessage"></div>
+     <div class="dialogHeader">
+         <div id="divBookTitle">@ViewBag.Title</div>
+         <span>Choose a Section to edit</span>
+         <div id="btnClose" class="divCloseButton">
+             <img height="19" src="~/Images/powerOffRed01.png" />
+         </div>
+     </div>
+     <div style="clear:both"></div>
+
+     <div id="divEditTree"></div>
+ </div>
+
+<script>
+    var service = '@ViewBag.Service';
+
+    $(document).ready(function () {
+        loadEditTable();
+     });
+    $('#btnClose').click(function () {
+        clearModal();
+     });
+        
+    $('#divBookTitle').click(function () {
+        window.location.href = "Write?bookTitle=" + '@ViewBag.Title' + "&chapterId=null&sectionId=null&subSectionId=null";
+        clearModal();
+    });
+
+    function loadEditTable() {
+        try {
+            $.ajax({
+                url: service + "/api/Book/Get?BookTitle=" + '@ViewBag.Title',
+                type: "get",
+                success: function (response) {
+                    try {
+                        var json = JSON.parse(response);
+                        var content = "<div id='editTable'><ul>";
+                        $.each(json.Book.Chapter, function (idx, chapter) {
+                            content += "<li chapter='" + chapter.Id + "'>" + chapter.Title + "</li><ul>";
+                            //alert("content: " + content);
+                            if (chapter.Section !== undefined) {
+                                $.each(chapter.Section, function (idx, section) {
+                                    if (section.Title !== undefined) {
+                                        content += "<li chapter='" + chapter.Id + "' section='" + section.Id + "'>" + section.Title + "</li><ul>";
+                                        if (section.SubSection !== undefined) {
+                                            $.each(section.SubSection, function (idx, subSection) {
+                                                if (subSection.Title !== undefined) {
+                                                    content += "<li chapter='" + chapter.Id + "' section='" + section.Id + "' subsection='" + subSection.Id + "'>" + subSection.Title + "</li>";
+                                                    //alert("subsection: " + content);
+                                                }
+                                            })
+                                        }
+                                        content += "</ul>";
+                                    }
+                                });
+                                content += "</ul>";
+                            }
+                        });
+                        content += "</ul></div>";
+
+                        $("#showEditTreeTree").html(content);
+
+                        $("li").click(function () {
+                            window.location.href = "Write?bookTitle=" + '@ViewBag.Title' + "&chapterId=" + $(this).attr("chapter") + "&sectionId=" + $(this).attr("section") + "&subSectionId=" + $(this).attr("subSection");
+                        });
+
+                    } catch (e) {
+                        alert("getEditTable catch: " + e);
+                    }
+                },
+                error: function (xhr, textStatus, error) {
+                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                }
+            });
+        }
+        catch (e) {
+            alert("nice try: " + e);
+        }
+    }
+
+</script>

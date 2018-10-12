@@ -1,0 +1,138 @@
+﻿<link href="~/Styles/modalDialog.css" rel="stylesheet" />
+<script src="~/Scripts/GlobalFunctions.js"></script>
+
+<style>
+    #userProfileDialog {
+        position: absolute;
+        top: 28%;
+        left: 43%;
+        box-sizing: content-box;
+        color: #242729;
+        width: 280px;
+        padding: 30px;
+        border: 1px solid #e4e6e8;
+        background: #fff;
+        z-index: 20;
+    }
+    #divButtonRow {
+        margin-top: 4px;
+    }
+</style>
+
+<div id="userProfileDialog">
+    <div id="divStatusMessage"></div>
+    <div class="dialogHeader">
+        <div id="btnClose" class="divCloseButton">
+            <img height="19" src="~/Images/closeBtn02.png" />
+        </div>
+    </div>
+    <div style="clear:both"></div>
+    <label>User Name</label><br>
+    <input id="txtUserName" type="text" class="roundedInput" placeholder="your go by name"><br>
+    @*<label>Password</label><br>
+        <input id="clearPassword" type="password" class="roundedInput" autocomplete="off" placeholder="********"><br>*@
+    <label>Email</label><br>
+    <input id="txtEmail" type="email" class="roundedInput" placeholder="you@example.org"><br>
+    <label>FirstName</label><br>
+    <input id="txtFirstName" type="text" class="roundedInput"><br>
+    <label>Last Name</label><br>
+    <input id="txtLastName" type="text" class="roundedInput"><br>
+    <label>Phone Number</label><br>
+    <input id="txtPhone" type="tel" class="roundedInput"><br>
+    <label>Pin</label><br>
+    <input id="txtPin" type="text" class="roundedInput" placeholder="you may use this in place of your password"><br>
+    <div id="divButtonRow">
+        <button class="roundendButton" style="float:left" id="btnUpdate">Update</button>
+        <button class="roundendButton" style="float:left" id="btnCancel">Cancel</button>
+    </div>
+
+</div>
+
+    <script>
+    var service = '@ViewBag.Service';
+    var userProfile = new Object();
+        userProfile.UserId = '@ViewBag.UserId';
+
+    $(document).ready(function () {
+        get();
+    });
+
+    $('#btnUpdate').click(function () {
+        put();
+    });
+
+    $('#btnClose, #btnCancel').click(function () {
+        clearModal();
+    });
+
+    function bind(response) {
+        $('#txtUserName').val(response.UserName);
+        $('#txtEmail').val(response.Email);
+        $('#txtFirstName').val(response.FirstName);
+        $('#txtLastName').val(response.LastName);
+        $('#txtPhone').val(response.PhoneNumber);
+        $('#txtPin').val(response.Pin);
+    }
+
+    function unBind() {
+        userProfile.UserName = $('#txtUserName').val();
+        userProfile.Email = $('#txtEmail').val();
+        userProfile.FirstName = $('#txtFirstName').val();
+        userProfile.LastName = $('#txtLastName').val();
+        userProfile.PhoneNumber= $('#txtPhone').val();
+        userProfile.Pin = $('#txtPin').val();
+    }
+
+    function put() {
+        try {
+            unBind();
+            $.ajax({
+                url: service + "/api/Login/",
+                type: "PUT",
+                dataType: "json",
+                data: userProfile,
+                success: function (success) {
+                    if (success === "ok") {
+                        SetBrucheumCookie(userProfile.UserName, userProfile.UserId, "unknown");
+                        displayStatusMessage("alert-success", "Updates Saved");
+                    }
+                    else {
+                        alert("put: " + success);
+                    }
+                },
+                error: function (xhr, textStatus, error) {
+                    displayStatusMessage("alert-danger", "status: " + textStatus + " text: " + xhr.statusText + " error: " + error);
+                    alert("_ProfilePopup put: " + textStatus + " text: " + xhr.statusText + " error: " + error);
+                }
+             });
+        } catch (e) {
+            displayStatusMessage("alert-danger", "ERROR" + e);
+        }
+    }
+
+    function get() {
+        try {
+            $.ajax({
+                url: service + "/api/Login/",  //"Add or Get User"
+                type: "POST",
+                data: userProfile,
+                dataType: "json",
+                success: function (response) {
+                    if (response.success === "ok") {
+                        bind(response);
+                    }
+                    else {
+                        alert("api ERROR: " + response.success);
+                    }
+                },
+                error: function (xhr) {
+                    //displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("get error: " + xhr.statusText);
+                }
+            });
+        } catch (e) {
+            //displayStatusMessage("alert-danger", "ERROR" + e);
+            alert("catch error: " + e);
+        }
+    }
+    </script>

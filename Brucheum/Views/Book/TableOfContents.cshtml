@@ -1,0 +1,128 @@
+﻿<link href="~/Styles/ThreeColumnPage.css" rel="stylesheet" />
+<link href="~/Styles/tableofContents.css" rel="stylesheet" />
+<script src="~/Scripts/ResizeThreeColumnPage.js"></script>
+
+<div class="threeColumnArray">
+    <div id="leftColumn"></div>
+    <div id="middleColumn">
+        <div class="pageTitle" id="divBookTitle">@ViewBag.Title</div>
+        <div id="divTableOfContents"></div>
+        <div id="modalContainer" class="modalVail">
+            <div id="modalContent"></div>
+        </div>
+    </div>
+    <div id="rightColumn">
+        <div id="divEdit">edit</div>
+    </div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+
+    $(document).ready(function () {
+        getTableOfContents();
+        resizePage();
+     });
+
+    $("#divBookTitle").click(function () {
+        var url = '@Url.Action("Read", "Book", new { bookTitle = "REPLACEME" , startingPoint = 0})';
+        window.location.href = url.replace('REPLACEME', '@ViewBag.Title');
+    });
+
+    $('#divEdit').click(function () {
+        $.ajax({
+            type: "get",
+            url: "/Book/EditTreePopup?bookTitle=" + '@ViewBag.Title',
+            datatype: "json",
+            success: function (data) {
+                $('#modalContent').html(data);
+                $('#modalContainer').show();
+            },
+            error: function (xhr, textStatus, error) {
+                displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+            }
+         });
+     });
+
+    function getTableOfContents() {
+        try {
+            $.ajax({
+                url: service + "/api/Book/Get?BookTitle=" + '@ViewBag.Title',
+                type: "get",
+                //dataType: "json",
+                success: function (response) {
+
+                    var json = JSON.parse(response);
+
+                    var content = "";
+                    try {
+                        $.each(json.Book.Chapter, function (idx, objChapter) {
+                            content += `<div class='divChapter' Id='` + objChapter.Id + `'>
+                            <div class='chapterName'>` + objChapter.Title + `</div>
+                            <div class='dots'></div>
+                            <div class='divCaret'><img src='/Images/downCaret.png'></div>`;
+                            content += "</div>";  // chapter
+                            content += "<div class='divSections'>";
+
+                            $.each(objChapter.Section, function (idx, objSection) {
+                                if (objSection.Title !== undefined) {
+                                    content += "<div class='divSection' Id='" + objSection.Id + "'>" + objSection.Title + "</div>";
+                                    content += "<div class='divSubsections'>";
+                                    if (objSection.SubSection !== undefined) {
+                                        $.each(objSection.SubSection, function (idx, objSubSection) {
+                                            if (objSubSection.Title !== undefined) {
+                                                content += "<div class='divSubSection' Id='" + objSubSection.Id + "'>" + objSubSection.Title + "</div>";
+                                            }
+                                        });
+                                    }
+                                    content += "</div>";  //  divSubsections
+                                }
+                            });
+                            content += "</div>";  // divSections
+                        });
+                        $("#divTableOfContents").html(content);
+
+                        resizePage();
+
+                        $('.divChapter').click(function () {
+                            //$('.divSections').hide();
+                            //alert("children : " + $(this).children(2).attr("src"));
+                            if ($(this).children(0).children(0).attr("src") === "../../Images/upCaret.png") {
+                                $(this).children(0).children(0).attr("src", "../../Images/downCaret.png");
+                            }
+                            else {
+                                $(this).next().show();
+                                //alert("next: " + $(this).next());
+                                $('.divChapter').children(0).children(0).attr("src", "../../Images/downCaret.png");
+                                $(this).children(0).children(0).attr("src", "../../Images/upCaret.png");
+                            }
+                        });
+
+                        $('.divSection').click(function () {
+                            alert("section: " + $(this).attr("Id"));
+                        });
+                        $('.divSubSection').click(function () {
+                            alert("subsection: "+$(this).attr("Id"));
+                        });
+                        $('.divChapter').dblclick(function () {
+                            alert("chapter: " + $(this).attr("Id"));
+                        });
+
+                    } catch (e) {
+                        alert("catch: " + e);
+                    }
+                },
+                error: function (xhr, textStatus, error) {
+                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                }
+            });
+        }
+        catch (e) {
+            alert("nice try: " + e);
+        }
+    }
+
+</script>
+

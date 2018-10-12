@@ -1,0 +1,283 @@
+﻿@{
+    ViewBag.Title = "The Blond Jew";
+}
+<link href="~/Styles/ThreeColumnPage.css" rel="stylesheet" />
+<script src="~/Scripts/ResizeThreeColumnPage.js"></script>
+<style>
+
+    .threeColumnArray {
+        margin-top: 50px;
+    }
+
+    #divContentArea {
+        width: 100%;
+        display: none;
+        box-sizing: border-box;
+    }
+
+    #divContentChapter {
+        font-size: 23px;
+        font-family: 'Georgia';
+        text-align: center;
+        padding-bottom: 2px;
+    }
+
+    #divContentSection {
+        font-size: 23px;
+        font-family: 'Georgia';
+        padding-left: 5%;
+        padding-bottom: 7px;
+    }
+
+    #divContentBody {
+        font-family: 'Times New Roman';
+        font-size: 17px;
+        text-align: justify;
+    }
+
+    #bookTop {
+        width: 100%;
+        margin-bottom: -3px;
+    }
+
+    .streach {
+        width: 100%;
+    }
+
+    #bookContent, #bookBottom {
+        display: flex;
+    }
+
+        #bookTop div, #bookContent div, #bookBottom div {
+            float: left;
+        }
+
+    #bookLeftimg, #bookMiddleimg, #bookRightimg {
+        height: 100%;
+    }
+
+    #bookRight img {
+        width: 96px;
+    }
+
+    #bookLeftContent, #bookRightContent {
+        background-color: rgb(251,241,206);
+        padding: 4px;
+    }
+
+    #divEdit {
+        text-decoration: underline;
+        color: blue;
+        cursor: pointer;
+        margin-top: 50px;
+    }
+
+    #editTable li {
+        text-decoration: underline;
+        color: purple;
+        cursor: pointer;
+        padding: 4px;
+    }
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn"></div>
+    <div id="middleColumn">
+        <div class="bookTitle" id="divBookTitle">The Blond Jew</div>
+        <div id="divTableOfContents"></div>
+        <div id="divContentArea">
+            <div id="bookTop"><img class="streach" src="~/Images/Book/book-top.jpg" /></div>
+            <div id="bookContent">
+                <div id="bookLeft"><img id="bookLeftimg" src="~/Images/Book/book-left.jpg" /></div>
+                <div id="bookLeftContent"></div>
+                <div id="bookMiddle"><img id="bookMiddleimg" src="~/Images/Book/book-innerspine.jpg" /></div>
+                <div id="bookRightContent"></div>
+                <div id="bookRight"><img id="bookRightimg" src="~/Images/Book/book-right.jpg" /></div>
+            </div>
+            <div id="bookBottom">
+                <div><img src="~/Images/Book/book-cornerbleft.jpg" /></div>
+                <div><img id="bookBottomLeft" src="~/Images/Book/book-bottomleftmid.jpg" height="58" /></div>
+                <div><img src="~/Images/Book/book-innerspinebottom.jpg" /></div>
+                <div><img id="bookBottomRight" src="~/Images/Book/book-bottomrightmid.jpg" height="60" /></div>
+                <div><img id="goBack" class="clickable" src="~/Images/Book/book-cornerbright.jpg" /></div>
+            </div>
+        </div>
+        <div id="modalContainer" class="modalVail">
+            <div id="modalContent"></div>
+        </div>
+    </div>
+    <div id="rightColumn">
+        <div id="divEdit">edit</div>
+    </div>
+</div>
+
+
+<script>
+    var service = '@ViewBag.Service';
+
+    $(document).ready(function () {
+        getTableOfContents();
+        $("#divTableOfContents").show();
+        resizePage();
+     });
+
+    $(window).resize(function () {
+        adjustBottomBorder();
+     });
+
+    function adjustBottomBorder() {
+        var leftPageWidth = $('#bookLeftContent').width() - 34;
+        $('#bookBottomLeft').width(leftPageWidth);
+        $('#bookBottomRight').width(leftPageWidth);
+    }
+
+    $("#divBookTitle").click(function () {
+        $("#divTableOfContents").toggle();
+        $("#divContentArea").toggle();
+
+        if ($("#divContentArea").is(":visible")) {
+            loadSection();
+            $('#divEdit').hide();
+        }
+        else {
+            $('#divEdit').show();
+        }
+        resizePage();
+        adjustBottomBorder();
+     });
+
+    $('#divEdit').click(function () {
+        $.ajax({
+            type: "get",
+            url: "/Book/EditTreePopup",
+            datatype: "json",
+            success: function (data) {
+                $('#modalContent').html(data);
+                $('#modalContainer').show();
+            },
+            error: function (xhr, textStatus, error) {
+                displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                alert("editTreePopup: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+            }
+         });
+     });
+
+    function loadSection() {
+        $('#divContentChapter').text('CHAPTER')
+        $('#divContentSection').text('Section')
+        $('#divContentSubSection').text('subSection')
+
+        $("#bookLeftContent").text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut fringilla massa venenatis, vehicula nulla non, consectetur nisl. Vestibulum egestas elementum eros et lobortis. Ut lobortis justo eu mauris facilisis mollis." +
+            "Vestibulum porttitor metus in urna blandit semper.Aliquam in fringilla dui, nec imperdiet dolor.Sed id velit ut nibh blandit fermentum.Nullam mauris elit, tincidunt vitae erat non, sagittis suscipit neque.Integer fermentum lacinia" +
+            "lectus.Fusce eu metus enim." +
+            "Etiam ut scelerisque lectus.Cras bibendum iaculis felis ac sagittis.Suspendisse potenti.Maecenas tincidunt eros vel sollicitudin auctor.Maecenas finibus, mi ac ultrices laoreet, lectus lacus auctor eros, in interdum purus diam sed" +
+            "felis.Sed ultricies justo quis felis lobortis semper.Morbi maximus consequat pharetra.Duis dictum augue sit amet enim vestibulum ullamcorper. " +
+            "Aliquam vitae convallis felis.Aliquam condimentum eros vitae leo consequat condimentum.Nam auctor vehicula mi ut commodo.Maecenas egestas lorem dolor, non fringilla justo sollicitudin vitae.Phasellus at augue id leo pellentesque" +
+            "scelerisque ut in urna.In tortor mauris, dapibus vel vulputate at, porta at urna.Quisque nulla eros, fermentum eget aliquet in, placerat sed ipsum.Ut vel congue libero, vel luctus quam.Nulla porttitor, nisi ac bibendum dapibus, erat" +
+            "nunc rhoncus eros, a porta nulla erat quis eros.Fusce ac pretium turpis.Ut justo tortor, rhoncus gravida nulla sit amet, dictum posuere ligula. " +
+            "Phasellus dapibus venenatis pretium.Sed sagittis et purus vel maximus.Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.Praesent condimentum odio vitae purus interdum finibus.Nam id luctus lorem, " +
+            "sit amet bibendum eros.Nullam sit amet sapien nec tellus pulvinar pretium vel ut purus.Donec bibendum malesuada est, eu suscipit nibh condimentum in. " +
+            "Ut a blandit felis.Nam tincidunt nisl vitae tellus consequat pharetra.Maecenas id ultricies arcu.In aliquet sapien non metus tristique, at gravida erat elementum.Duis eget accumsan turpis.Morbi dapibus neque dolor, pulvinar " +
+            "Etiam ut scelerisque lectus.Cras bibendum iaculis felis ac sagittis.Suspendisse potenti.Maecenas tincidunt eros vel sollicitudin auctor.Maecenas finibus, mi ac ultrices laoreet, lectus lacus auctor eros, in interdum purus diam sed" +
+            "felis.Sed ultricies justo quis felis lobortis semper.Morbi maximus consequat pharetra.Duis dictum augue sit amet enim vestibulum ullamcorper. " +
+            "Aliquam vitae convallis felis.Aliquam condimentum eros vitae leo consequat condimentum.Nam auctor vehicula mi ut commodo.Maecenas egestas lorem dolor, non fringilla justo sollicitudin vitae.Phasellus at augue id leo pellentesque" +
+            "scelerisque ut in urna.In tortor mauris, dapibus vel vulputate at, porta at urna.Quisque nulla eros, fermentum eget aliquet in, placerat sed ipsum.Ut vel congue libero, vel luctus quam.Nulla porttitor, nisi ac bibendum dapibus, erat" +
+            "nunc rhoncus eros, a porta nulla erat quis eros.Fusce ac pretium turpis.Ut justo tortor, rhoncus gravida nulla sit amet, dictum posuere ligula. " +
+            "Phasellus dapibus venenatis pretium.Sed sagittis et purus vel maximus.Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.Praesent condimentum odio vitae purus interdum finibus.Nam id luctus lorem, " +
+            "sit amet bibendum eros.Nullam sit amet sapien nec tellus pulvinar pretium vel ut purus.Donec bibendum malesuada est, eu suscipit nibh condimentum in. " +
+            "Ut a blandit felis.Nam tincidunt nisl vitae tellus consequat pharetra.Maecenas id ultricies arcu.In aliquet sapien non metus tristique, at gravida erat elementum.Duis eget accumsan turpis.Morbi dapibus neque dolor, pulvinar " +
+            "sodales lacus vestibulum sed.In consectetur diam sed feugiat auctor.In id ipsum eu nunc vulputate porta vel commodo neque.Nunc suscipit, purus quis egestas finibus, risus erat feugiat turpis, at porttitor lectus purus sit ");
+
+        $("#bookRightContent").text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut fringilla massa venenatis, vehicula nulla non, consectetur nisl. Vestibulum egestas elementum eros et lobortis. Ut lobortis justo eu mauris facilisis mollis." +
+            "Vestibulum porttitor metus in urna blandit semper.Aliquam in fringilla dui, nec imperdiet dolor.Sed id velit ut nibh blandit fermentum.Nullam mauris elit, tincidunt vitae erat non, sagittis suscipit neque.Integer fermentum lacinia" +
+            "lectus.Fusce eu metus enim." +
+            "Etiam ut scelerisque lectus.Cras bibendum iaculis felis ac sagittis.Suspendisse potenti.Maecenas tincidunt eros vel sollicitudin auctor.Maecenas finibus, mi ac ultrices laoreet, lectus lacus auctor eros, in interdum purus diam sed" +
+            "felis.Sed ultricies justo quis felis lobortis semper.Morbi maximus consequat pharetra.Duis dictum augue sit amet enim vestibulum ullamcorper. " +
+            "Aliquam vitae convallis felis.Aliquam condimentum eros vitae leo consequat condimentum.Nam auctor vehicula mi ut commodo.Maecenas egestas lorem dolor, non fringilla justo sollicitudin vitae.Phasellus at augue id leo pellentesque" +
+            "Etiam ut scelerisque lectus.Cras bibendum iaculis felis ac sagittis.Suspendisse potenti.Maecenas tincidunt eros vel sollicitudin auctor.Maecenas finibus, mi ac ultrices laoreet, lectus lacus auctor eros, in interdum purus diam sed" +
+            "felis.Sed ultricies justo quis felis lobortis semper.Morbi maximus consequat pharetra.Duis dictum augue sit amet enim vestibulum ullamcorper. " +
+            "Aliquam vitae convallis felis.Aliquam condimentum eros vitae leo consequat condimentum.Nam auctor vehicula mi ut commodo.Maecenas egestas lorem dolor, non fringilla justo sollicitudin vitae.Phasellus at augue id leo pellentesque" +
+            "scelerisque ut in urna.In tortor mauris, dapibus vel vulputate at, porta at urna.Quisque nulla eros, fermentum eget aliquet in, placerat sed ipsum.Ut vel congue libero, vel luctus quam.Nulla porttitor, nisi ac bibendum dapibus, erat" +
+            "nunc rhoncus eros, a porta nulla erat quis eros.Fusce ac pretium turpis.Ut justo tortor, rhoncus gravida nulla sit amet, dictum posuere ligula. " +
+            "Phasellus dapibus venenatis pretium.Sed sagittis et purus vel maximus.Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.Praesent condimentum odio vitae purus interdum finibus.Nam id luctus lorem, " +
+            "sit amet bibendum eros.Nullam sit amet sapien nec tellus pulvinar pretium vel ut purus.Donec bibendum malesuada est, eu suscipit nibh condimentum in. " +
+            "Ut a blandit felis.Nam tincidunt nisl vitae tellus consequat pharetra.Maecenas id ultricies arcu.In aliquet sapien non metus tristique, at gravida erat elementum.Duis eget accumsan turpis.Morbi dapibus neque dolor, pulvinar " +
+            "scelerisque ut in urna.In tortor mauris, dapibus vel vulputate at, porta at urna.Quisque nulla eros, fermentum eget aliquet in, placerat sed ipsum.Ut vel congue libero, vel luctus quam.Nulla porttitor, nisi ac bibendum dapibus, erat" +
+            "nunc rhoncus eros, a porta nulla erat quis eros.Fusce ac pretium turpis.Ut justo tortor, rhoncus gravida nulla sit amet, dictum posuere ligula. " +
+            "Phasellus dapibus venenatis pretium.Sed sagittis et purus vel maximus.Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.Praesent condimentum odio vitae purus interdum finibus.Nam id luctus lorem, " +
+            "sit amet bibendum eros.Nullam sit amet sapien nec tellus pulvinar pretium vel ut purus.Donec bibendum malesuada est, eu suscipit nibh condimentum in. " +
+            "Ut a blandit felis.Nam tincidunt nisl vitae tellus consequat pharetra.Maecenas id ultricies arcu.In aliquet sapien non metus tristique, at gravida erat elementum.Duis eget accumsan turpis.Morbi dapibus neque dolor, pulvinar " +
+            "sodales lacus vestibulum sed.In consectetur diam sed feugiat auctor.In id ipsum eu nunc vulputate porta vel commodo neque.Nunc suscipit, purus quis egestas finibus, risus erat feugiat turpis, at porttitor lectus purus sit ");
+
+        $('#divContentNavigation').text('next->')
+    }
+
+    function getTableOfContents() {
+        try {
+            $.ajax({
+                url: service + "/api/Book/Get?Book=T",
+                type: "get",
+                //dataType: "json",
+                success: function (response) {
+                    var json = JSON.parse(response);
+                    var content = "";
+                    try {
+                        $.each(json.Book.Chapter, function (idx, objChapter) {
+                            content += `<div class='chapter' id='" + obj.Order + "'>
+                                            <div class='chapterName'>` + objChapter.Title + `</div>
+                                            <div class='dots'></div>
+                                            <div class='divCaret'><img src='/Images/downCaret.png'></div></div>
+                                            <div class='chapterSections' id='subSection` + objChapter.Order + `'>`;
+                            $.each(objChapter.Section, function (idx, objSection) {
+                                content += "<div class='divSection'>" + objSection.Title + "</div>";
+                                content += "<div class='divSubsections'>";
+                                $.each(objSection.SubSection, function (idx, objSubSection) {
+                                    content += "<div class='divSubSection'>" + objSubSection.Title + "</div>";
+                                });
+                                content += "</div>";  //  divSubsections
+                            });
+                            content += "</div>";  // chaptersections
+                        });
+                        $("#divTableOfContents").html(content);
+
+                        resizePage();
+
+                        $('.chapter').click(function () {
+                            $('.chapterSections').hide();
+                            //alert("children : " + $(this).children(2).attr("src"));
+                            if ($(this).children(0).children(0).attr("src") === "../../Images/upCaret.png") {
+                                $(this).children(0).children(0).attr("src", "../../Images/downCaret.png");
+                            }
+                            else {
+                                $(this).next().show();
+                                $('.chapter').children(0).children(0).attr("src", "../../Images/downCaret.png");
+                                $(this).children(0).children(0).attr("src", "../../Images/upCaret.png");
+                            }
+                        });
+
+                        $('.divSection').click(function () {
+                            alert($(this).text());
+                        });
+
+                    } catch (e) {
+                        alert("catch: " + e);
+                    }
+                },
+                error: function (xhr, textStatus, error) {
+                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                }
+            });
+        }
+        catch (e) {
+            alert("nice try: " + e);
+        }
+    }
+
+    function constructTheDocument() {
+        // wow I'm just so proud of myself
+
+    }
+
+
+</script>

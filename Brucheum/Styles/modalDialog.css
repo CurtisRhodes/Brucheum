@@ -1,0 +1,15 @@
+﻿
+.dialogHeader {
+    text-align: center;
+    padding-bottom: 8px;
+}
+
+    .dialogHeader span {
+        font-family: 'Lucida Calligraphy';
+        font-size: 18px;
+    }
+
+.divCloseButton {
+    float: right;
+    cursor: pointer;
+}

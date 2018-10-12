@@ -1,0 +1,142 @@
+﻿body {
+    background-color: #e4e4e4;
+    font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif;
+    box-sizing: border-box;
+}
+
+#leftColumn {
+    min-width: 20%;
+}
+
+#middleColumn {
+    min-width: 20%;
+    max-width: 70%;
+}
+
+#articleList {
+    box-sizing: border-box;
+}
+
+    #articleList::-webkit-scrollbar {
+        display: none;
+    }
+
+#listHeader {
+    text-align: center;
+    font-size: 26px;
+    padding: 8px;
+}
+
+#divMoreButton {
+    box-sizing: border-box;
+    display: none;
+    margin-bottom: 17px;
+}
+
+.divArticle {
+    background-color: #eee;
+    box-sizing: border-box;
+    margin-bottom: 17px;
+    /*box-shadow: rgba(0,0,0,4) 10px, 10px inset;*/
+    /*border: 2px solid #666;
+    border-radius: 5px;*/
+    z-index: 0;
+    /*width: 100%;*/
+}
+
+#adminMsg {
+    /*display: none;*/
+    padding-left: 6px;
+    margin-top: 45px;
+}
+
+.divArticle {
+    display: flex;
+    background-color: #fff;
+    box-shadow: 3px 2px rgba(128, 128, 128, 0.40);
+}
+
+    .divArticle #divImg {
+        float: left;
+    }
+
+        .divArticle #divImg img {
+            height: 150px;
+            width: 190px;
+        }
+
+#divArticleDetail {
+    display: inline-block;
+    float: left;
+    /*margin-left: 197px;*/
+    height: 150px;
+    width: 100%;
+}
+
+    #divArticleDetail a {
+        text-decoration: none;
+        color: #555;
+    }
+#divTopRow {
+    display: flex;
+    width: 100%;
+}
+
+#divCategory {
+    white-space: nowrap;
+    font-family: Arial, sans-serif;
+    text-decoration: underline;
+    float: left;
+    padding-left: 5px;
+}
+#divArticleTitle {
+    float: left;
+    width: 100%;
+    text-align: center;
+    font-size: 30px;
+    white-space: nowrap;
+    overflow : hidden;
+}
+#divLastUpdated {
+    white-space: nowrap;
+    float: right;
+    padding-right: 5px;
+}
+#divArticleSummary {
+    display: inline-block;
+    font-size: 15px;
+    height: 81px;
+    overflow: hidden;
+    padding: 5px;
+    margin-bottom: 5px;
+    /*width: 100%;*/
+}
+#divBookPannel {
+    visibility: hidden;
+}
+
+#divByline {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    float: left;
+    padding-left: 5px;
+}
+    #divByline a {
+        text-decoration: underline;
+    }
+
+#divArticleEdit {
+    float: right;
+    padding-right: 5px;
+}
+
+    #divArticleEdit a {
+        text-decoration: underline;
+        color: #0094ff;
+    }
+
+#loadingGif {
+    position: relative;
+    top: 150px;
+    left: 450px;
+    display: none;
+}

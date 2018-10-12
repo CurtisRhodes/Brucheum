@@ -1,0 +1,50 @@
+﻿<link href="~/Styles/modalDialog.css" rel="stylesheet" />
+<script src="~/Scripts/GlobalFunctions.js"></script>
+<style>
+    #logoutDialog {
+        position: absolute;
+        top: 80px;
+        right: 80px;
+        color: #242729;
+        padding: 8px;
+        border: 1px solid #e4e6e8;
+        background: #fff;
+        z-index: 20;
+    }
+</style>
+
+<div id="logoutDialog">
+    <div class="dialogHeader">
+        <div id="btnClose" class="divCloseButton">
+            <img height="19" src="~/Images/closeBtn02.png" />
+        </div>
+    </div>
+    <div style="clear:both"></div>
+
+    <button id="btnUpdateUserInfo" class="roundendButton">Update user info</button>
+    <br />
+    <button id="btnLogout" class="roundendButton">Log Out</button> 
+</div>
+
+<script>
+    $('#btnUpdateUserInfo').click(function () {
+        $.ajax({
+            type: "get",
+            url: "/Login/UpdateUserProfile",
+            datatype: "json",
+            success: function (data) {
+                clearModal();
+            },
+            error: function (xhr, textStatus, error) {
+                displayStatusMessage("alert-danger", "status: " + textStatus + " text: " + xhr.statusText + " error: " + error);
+                alert("btnUpdateUserInfo: " + textStatus + " text: " + xhr.statusText + " error: " + error);
+            }
+        });
+    });
+
+
+    $('#btnClose').click(function () {
+        clearModal();
+    });
+
+</script> 

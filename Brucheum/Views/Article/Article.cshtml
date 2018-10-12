@@ -1,0 +1,311 @@
+﻿@model Brucheum.ArticleModel
+
+<link href="~/Styles/ThreeColumnPage.css" rel="stylesheet" />
+<script src="~/Scripts/ImageTools.js"></script>
+<link href="~/Styles/article.css" rel="stylesheet" />
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+        <div id="shareToFacebook">
+            <button id="btnStatic" class="roundendButton">staticify</button>
+        </div>
+    </div>
+    <div id="middleColumn">
+        @if (Model.Id != null)
+        {
+            <div id="divStatusMessage"></div>
+            <div id="pollybox">
+                <div id="divTopLine">
+                    @Model.LastUpdated
+                    <div class="floatDivEdit">
+                        @Model.Category
+                    </div>
+                </div>
+
+                <div id="divTitle">@Model.Title</div>
+
+                <div id="divByline">
+                    by: @Model.Byline
+                    <div class="floatDivEdit">
+                        <a href="ArticleEdit?Id=@Model.Id">edit</a>
+                    </div>
+                </div>
+            </div>
+            <div id="divImage"><img id="articleImage" /></div>
+            <div id="divSummary">@Model.Summary</div>
+            <div id="divContent"></div>
+            <div id="divCommentsButton" class="roundendButton">comments</div>
+            <div id="divCommentsSection"></div>
+        }
+        else
+        {
+            <div style="padding:200px">No Artice Found</div>
+        }
+    </div>
+    <div id="rightColumn">
+        <div id="divTagList"></div>
+    </div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+    var tags = '@ViewBag.MetaTags';
+    var articleId = '@Model.Id'
+    var imageName = '@Model.ImageName';
+    var content = '@ViewBag.Contents';
+    var title = '@Model.Title';
+   
+    $(document).ready(function () {
+        try {
+            if (imageName !== "") {               
+                $("#articleImage").attr("src", "data:image/gif;base64," + getImage(service, imageName));
+            }
+            content = beautify(content);
+            $('#divContent').html(content);
+
+            //stickCommentsButton();
+        }
+        catch (e) {
+            alert("$(document).ready ERROR: " + e);
+        }
+    });
+
+    function stickCommentsButton() {
+        resizePage();
+        var x = $('#divContent').position();
+        var contentBottom = $('#divContent').position().top + $('#divContent').height();
+        var pageBottom = $('.threeColumnArray').position().top + $('.threeColumnArray').height();
+
+        if (pageBottom > contentBottom) {
+            //alert("pageBottom: " + pageBottom + "  contentBottom: " + contentBottom);
+            $('#divCommentsButton').css("position", "absolute").css("bottom", 0);
+            $('#divCommentsSection').css("position", "absolute").css("top", pageBottom);
+        }
+    }
+
+    $('#btnStatic').click(function () { saveAsStaticFile(); })
+    function saveAsStaticFile() {
+        if (imageName === "") {
+            displayStatusMessage("alert-warning", "insuficent data. Image required");
+            return;
+        }
+        $('head').append('<meta name="Title" content="' + title + '" property="og:title">');
+        $('head').append('<meta name="Description" content="' + beautify(summary.substr(0, 300)));  //'" property="og:description"><br/>'
+        $('head').append('<meta name="Keywords" content="' + beautify(tags.split(",").toString()) + '"><br/>');
+        $('head').append('<meta property="og:type" content="website"><br/>');
+
+        //$('head').append("<meta property='og:image' content='http://curtisrhodes.com/home/get_image?w=" + imageName + "'>");
+        $('head').append("<meta property='og:image' content='data:image/gif;base64," + getImage(service, imageName) + "'>");
+
+
+
+        var pageName = "http://curtisrhodes.com/static_pages/" + title.replace(/ /g, "_") + ".html";
+        //var pageName = "http://curtisrhodes.com/static_pages/" + title.replace(" ", "_") + ".html";
+
+        //alert("pageName: " + pageName);
+
+        $('head').append('<br/><meta property="og:url" content="' + pageName + '">');
+
+        $('#shareToFacebook').html('<div class="fb-share-button" data-href="' + pageName + '" data-layout="button" data-size="large" data-mobile-iframe="false">' +
+            '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + pageName + '&src=sdkpreparse">Share on Facebook</a></div>');
+
+        var html = $('html').html();
+
+
+        try {
+            $.ajax({
+                type: "POST",
+                url: "/api//File",
+                processData: false,  // Important!
+                contentType: false,
+                async: false,
+                cache: false,
+                data: html,
+                success: function (success) {
+                    if (success === "ok") {
+                        $('#btnStatic').val("permalink");
+                        $('#shareToFacebook').html('<button id="btnPermalink" class="roundendButton">permalink</button>');
+                        
+                        $('#btnPermalink').click(function () {
+                            window.location.href = "http://curtisrhodes.com/static_pages/" + title.replace(/ /g, "_") + ".html";
+
+                        })
+
+                    }
+                    else
+                        alert("saveAs: " + success);
+                },
+                error: function (xhr) {
+                    alert("saveAs error: " + xhr.statusText);
+                }
+            });
+        } catch (e) {
+            alert("saveAs catch: " + e);
+        }
+    }
+
+    $('#btnTest').click(function () {
+        location.href = "/Home/get_image?w=" + imageName;
+    });
+
+    $('#divCommentsButton').click(function () {
+
+        $.ajax({
+            type: "get",
+            url: "/Home/CommentSection?articleId=" + articleId,
+            datatype: "json",
+            success: function (data) {
+                //alert("success: " + data);
+                $('#divCommentsSection').html(data);
+
+                $(function () {
+                    alert("aloow");
+                    if (userId === undefined)
+                        $('#divLoginWarning').show();
+                    else
+                        $('#divKnownUser').show();
+
+                    getComments();
+                    resizePage();
+                });
+
+                $('#spLogin').click(function () {
+                    $.ajax({
+                        type: "get",
+                        url: "/Login/LoginPopup",
+                        datatype: "json",
+                        success: function (data) {
+                            $('#modalContent').html(data);
+                            $('#modalContainer').show();
+                        },
+                        error: function (xhr) {
+                            alert("RegisterPopup error: " + xhr.statusText);
+                        }
+                    });
+                });
+
+                $('#spRegister').click(function () {
+                    $.ajax({
+                        type: "get",
+                        url: "/Login/RegisterPopup",
+                        datatype: "json",
+                        success: function (data) {
+                            $('#modalContent').html(data);
+                            $('#modalContainer').show();
+                        },
+                        error: function (xhr) {
+                            alert("RegisterPopup error: " + xhr.statusText);
+                        }
+                    });
+                });
+
+                $('#btnSubmit').click(function () {
+
+                    alert("allo");
+                    try {
+                        // bind
+                        var comment = new Object();
+                        comment.CommentTitle = $('#txtTitle').val();
+                        comment.CommentText = $('#textAreaComment').val();
+                        comment.CommentId = $('#hiddenId').val();
+                        comment.UserId = userId;
+                        comment.ArticleId = articleId;
+
+                        if (this.val() === "Submit") {
+                            $.ajax({
+                                url: service + "//api//Comments//Post",
+                                type: "post",
+                                dataType: "Json",
+                                data: comment,
+                                success: function (success) {
+                                    if (!success.startsWith("ERROR")) {
+                                        $('#hiddenId').val(success);
+                                        $('#btnSubmit').val("Update");
+                                    }
+                                    else {
+                                        displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
+                                    }
+                                    alert(success);
+                                },
+                                error: function (xhr, textStatus, error) {
+                                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                                    alert("Comments    status: " + textStatus + "text: " + xhr.statusMessage + "   error: " + error);
+                                }
+                            });
+                        }
+                        else {
+                            $.ajax({
+                                url: service + "/api/Comments/Put",
+                                type: verb,
+                                dataType: "Json",
+                                data: comment,
+                                success: function (success) {
+                                    if (!success.startsWith("ERROR")) {
+                                        $('#hiddenId').val(success);
+                                        $('#btnSubmit').val("Update");
+                                    }
+                                    else {
+                                        displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
+                                    }
+                                    alert(success);
+                                },
+                                error: function (xhr, textStatus, error) {
+                                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                                    alert("Comments    status: " + textStatus + "text: " + xhr.statusMessage + "   error: " + error);
+                                }
+                            });
+                        }
+                    }
+                    catch (e) {
+                        alert("api/Comment/Post catch: " + e);
+                        //displayStatusMessage("alert-danger", "catch ERROR: " + e);
+                    }
+                });
+                $('#btnCancel').click(function () {
+                    $('#divCommentsSection').hide();
+                });
+
+            },
+            error: function (xhr) {
+                alert("showComments error: " + xhr.statusText);
+            }
+        });
+    });
+
+    function getComments() {
+        try {
+            //$('#divLoadingGif').show();
+            $.ajax({
+                url: service + "/api/Comments/get/?articleId=" + articleId,
+                type: "get",
+                dataType: "Json",
+                success: function (result) {
+                    $('#divLoadingGif').hide();
+                    $('#refList').html("");
+                    $.each(result, function (idx, comment) {
+
+                        $('#commentHistory').append("<div class='commnetItem'>" + comment.CommentText + "</div>");
+                    });
+                },
+                error: function (xhr, textStatus, error) {
+                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                }
+            });
+        } catch (e) {
+            alert("getComments: " + e);
+            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+        }
+    }
+
+
+
+
+    $('#btnSpinnerTest').click(function () {
+        $(this).append("<img src='/Images/loader.gif' class='tinyLoader' >");
+    });
+    $('#btnSpinnerTest').dblclick(function () {
+        $(this).html("Add");
+    });
+</script>
+<script src="~/Scripts/ResizeThreeColumnPage.js"></script>

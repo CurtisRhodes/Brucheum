@@ -1,0 +1,87 @@
+﻿
+.defaultShell {
+    box-sizing: border-box;
+    padding-top: 24px;
+    padding-left: 15px;
+}
+.inline {
+    display: inline-block;
+    width: 100%;
+}
+.addEditArea {
+    box-sizing: border-box;
+    margin-left: 20px;
+    border-left: .5px solid #222;
+    padding-left: 40px;
+    width: 100%;
+}
+.imageRow {
+    padding: 4px;
+}
+    .imageRow div {
+        margin-left: 11px;
+        border: 7px ridge #ddd;
+        border-radius: 7px;
+    }
+#bImage {
+    margin: 2px;
+    width: 500px;
+    height:600px;
+    border: 1px solid #ad7349;
+}
+
+.addEditArea td {
+    height: 41px;
+}
+.imageUpload {
+    width: 100%;
+    height: 32px;
+}
+#txbSummary {
+    width: 749px;
+    height: 55px;
+    border-radius: 4px;
+}
+#txbContent {
+    margin-top: 8px;
+    width: 810px;
+    height: 300px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+.bsText {
+    width: 100%;
+    height: 32px;
+    padding: 3px 6px;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+.bsButton {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0px;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.4285;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}

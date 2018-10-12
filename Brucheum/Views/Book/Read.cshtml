@@ -1,0 +1,372 @@
+﻿
+<link href="~/Styles/ThreeColumnPage.css" rel="stylesheet" />
+<script src="~/Scripts/ResizeThreeColumnPage.js"></script>
+
+<style>
+    body {
+        font-family: 'Georgia';
+        box-sizing: border-box;
+    }
+
+    #rightColumn {
+        min-width: 10%;
+    }
+
+    #divContentArea {
+        width: 100%;
+    }
+
+    #divChapter {
+        clear: left !important;
+    }
+
+    #bookLeftContent, #bookRightContent {
+        clear: left !important;
+        background-color: rgb(251,241,206);
+        font-family: 'Times New Roman';
+        font-size: 17px;
+        text-align: justify;
+        padding: 4px;
+    }
+
+    #bookLeftContent {
+        margin-left: 31px;
+    }
+
+    .chapterTitle {
+        clear: left !important;
+        font-size: 33px;
+        text-align: center;
+        font-family: 'Georgia';
+        text-align: center;
+        padding-bottom: 2px;
+        width: 100%;
+    }
+
+    .sectionTitle {
+        clear: left !important;
+        font-size: 22px;
+        margin-left: 44px;
+        padding: 6px;
+    }
+
+    .subSectionTitle {
+        font-family: Arial;
+        font-size: 22px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        padding-left: 20px;
+    }
+
+    .divContents {
+        font-size: 18px;
+        font-family: 'Times New Roman';
+        text-align: justify;
+    }
+
+    #showEditTree {
+        text-decoration: underline;
+        color: blue;
+        cursor: pointer;
+        margin-top: 50px;
+    }
+
+    #PaupaStyle {
+        display: none;
+    }
+
+        #PaupaStyle #bookTop {
+            width: 100%;
+            margin-bottom: -3px;
+        }
+
+        #PaupaStyle #bookContent, #PaupaStyle #bookBottom {
+            display: flex;
+        }
+
+        #PaupaStyle #bookTop, #PaupaStyle #bookContent, #PaupaStyle #bookBottom {
+            float: left;
+        }
+
+        #bookLeftimg, #bookMiddleSpine, #bookRightimg {
+            height: 100%;
+        }
+
+        #bookRightimg {
+            width: 96px;
+        }
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn"></div>
+    <div id="middleColumn">
+        <div class="pageTitle">@ViewBag.Title</div>
+        <div id="divStatusMessage"></div>
+        <div id="divContentArea">
+            <div id="PaupaStyle">
+                <div id="bookTop"><img class="streach" src="~/Images/Book/PaupaBook/book-top.jpg" /></div>
+                <div id="bookContent">
+                    <div><img id="bookLeftimg" src="~/Images/Book/PaupaBook/book-left.jpg" /></div>
+                    <div id="bookLeftContent"></div>
+                    <div><img id="bookMiddleSpine" src="~/Images/Book/PaupaBook/book-innerspine.jpg" /></div>
+                    <div id="bookRightContent"></div>
+                    <div><img id="bookRightimg" src="~/Images/Book/PaupaBook/book-right.jpg" /></div>
+                </div>
+                <div id="bookBottom">
+                    <div id="bookBottomLeftCorner"><img src="~/Images/Book/PaupaBook/book-cornerbleft.jpg" /></div>
+                    <div><img id="bookBottomLeft" src="~/Images/Book/PaupaBook/book-bottomleftmid.jpg" height="58" /></div>
+                    <div id="BookBottomInnerspine"><img src="~/Images/Book/PaupaBook/book-innerspinebottom.jpg" /></div>
+                    <div><img id="bookBottomRight" src="~/Images/Book/PaupaBook/book-bottomrightmid.jpg" height="60" /></div>
+                    <div id="bookBottomRightCorner"><img class="clickable" src="~/Images/Book/PaupaBook/book-cornerbright.jpg" /></div>
+                </div>
+            </div>
+            <div id="divDefaultStyle"></div>
+        </div>
+        <div id="modalContainer" class="modalVail">
+            <div id="modalContent"></div>
+        </div>
+
+    </div>
+    <div id="rightColumn">
+        <div id="showEditTree">edit</div>
+    </div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+    var selectedBook = '@ViewBag.Title';
+    var currentPage = 1;
+    var pageSize = 3000;
+    var pages = new Array;
+    var sections = new Array;
+
+    $(document).ready(function () {
+
+        if (selectedBook === "The Blond Jew") 
+            constructChapters();        
+        else
+            constructSingleDocument();
+    });
+
+    function showPage() {
+        var ppg = pages[currentPage - 1];
+
+        //alert("page: " + ppg.length + " left: " + ppg.substring(0, pageSize).length + "  right: " + ppg.substring(pageSize).length);
+
+        if (ppg.length < (pageSize / 2)) {
+            $('#bookLeftContent').html(ppg);
+            $('#bookRightContent').html("");
+        }
+        else {
+            var half = ppg.length / 2;
+            var halfPage = ppg.substring(half);
+            var extra = halfPage.indexOf(" ");
+
+            $('#bookLeftContent').html(ppg.substring(0, half + extra));
+            $('#bookRightContent').html(ppg.substring(half + extra));
+        }
+
+        adjustBookSize();
+    };
+
+    function adjustBookSize() {
+        var minHeigth = $('.threeColumnArray').height() + $('#bookBottom').height();
+        $('.threeColumnArray').height(minHeigth);
+
+        var contentWidth = ($('#middleColumn').width() / 2) - 122;
+        $('#bookLeftContent').css("min-width", contentWidth);
+        $('#bookRightContent').css("min-width", contentWidth);
+        $('#bookBottomLeft').width(contentWidth);
+        $('#bookBottomRight').width(contentWidth * .93);
+        resizePage();
+    }
+
+    $(window).resize(function () {
+        //alert("window resize");
+        adjustBookSize()
+        adjustWordCount()
+    });
+
+    function adjustWordCount() {
+        var pageHeight = $('#bookLeftContent').height();
+        var lineHeight = 5;
+        var avgWordsperLine = 10;
+        var testpageSize = (pageHeight / lineHeight) * avgWordsperLine;
+        alert("adjustWordCount :" + testpageSize);
+    }
+    
+    $("#bookBottomLeftCorner").click(function () {
+        if (currentPage > 1) {
+            currentPage--;
+            showPage();
+        }
+    });
+
+    $("#bookBottomRightCorner").click(function () {
+        if (currentPage < pages.length) {
+            currentPage++;
+            showPage();
+        }
+    });
+
+    $('#showEditTree').click(function () {
+        $.ajax({
+            type: "get",
+            url: "/Book/EditTreePopup?bookTitle=" + selectedBook,
+            datatype: "json",
+            success: function (data) {
+                $('#modalContent').html(data);
+                $('#modalContainer').show();
+            },
+            error: function (xhr, textStatus, error) {
+                displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+            }
+        });
+    });
+
+    function constructSingleDocument() {
+        try {
+            $.ajax({
+                url: service + "/api/Book/GetEntireBook?BookTitle=" + selectedBook,  // + "&isXML=true",
+                type: "get",
+                success: function (response) {
+                    var json = JSON.parse(response);
+                    var content = "";
+                    try {
+                        $.each(json.Book.Chapter, function (idx, objChapter) {
+                            content += "<div class='divChapter' Id='" + objChapter.Id + "'>";
+                            content += "<div class='chapterTitle'>" + objChapter.Title + "</div>";
+                            if (objChapter.Contents !== undefined)
+                                content += "<div class='divContents'>" + objChapter.Contents + "</div>";
+                            $.each(objChapter.Section, function (idx, objSection) {
+                                content += "<div class='divSections'>";
+                                if (objSection.Title !== undefined) {
+                                    content += "<div class='sectionTitle' Id='" + objSection.Id + "'>" + objSection.Title + "</div>";
+                                    if (objSection.Contents !== undefined)
+                                        content += "<div class='divContents'>" + objSection.Contents + "</div>";
+                                    content += "<div class='divSubsections'>";
+                                    if (objSection.SubSection !== undefined) {
+                                        $.each(objSection.SubSection, function (idx, objSubSection) {
+                                            if (objSubSection.Title !== undefined) {
+                                                content += "<div class='subSectionTitle' Id='" + objSubSection.Id + "'>" + objSubSection.Title + "</div>";
+                                                if (objSection.Contents !== undefined)
+                                                    content += "<div class='divContents'>" + objSubSection.Contents + "</div>";
+                                            }
+                                        });
+                                    }
+                                    content += "</div>";  //  divSubsections
+                                }
+                                content += "</div>";  // sections
+                            });
+                            content += "</div>";  // chapter
+                        });
+
+                        $("#divDefaultStyle").html(content);
+
+                    } catch (e) {
+                        alert("catch: " + e);
+                    }
+                },
+                error: function (xhr, textStatus, error) {
+                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                }
+            });
+        }
+        catch (e) {
+            alert("nice try: " + e);
+        }
+    }
+
+    function constructChapters() {
+        try {
+            $.ajax({
+                url: service + "/api/Book/GetEntireBook?BookTitle=" + selectedBook,  // + "&isXML=true",
+                type: "get",
+                success: function (response) {
+
+                    var json = JSON.parse(response);
+
+                    try {
+                        $.each(json.Book.Chapter, function (idx, objChapter) {
+                            var section = "<div class='divChapter' Id='" + objChapter.Id + "'>";
+                            section += "<div class='chapterTitle'>" + objChapter.Title + "</div>";
+                            if (objChapter.Contents !== undefined)
+                                section += "<div class='divContents'>" + beautify(objChapter.Contents) + "</div>";
+                            section += "</div>";  // chapter
+                            $.each(objChapter.Section, function (idx, objSection) {
+                                if (objSection.Title !== undefined) {
+                                    section += "<div class='sectionTitle' Id='" + objSection.Id + "'>" + objSection.Title + "</div>";
+                                    if (objSection.Contents !== undefined)
+                                        section += "<div class='divContents'>" + beautify(objSection.Contents) + "</div>";
+                                    section += "<div class='divSubsections'>";
+                                    if (objSection.SubSection !== undefined) {
+                                        $.each(objSection.SubSection, function (idx, objSubSection) {
+                                            if (objSubSection.Title !== undefined) {
+                                                section += "<div class='subSectionTitle' Id='" + objSubSection.Id + "'>" + objSubSection.Title + "</div>";
+                                                if (objSection.Contents !== undefined)
+                                                    section += "<div class='divContents'>" + beautify(objSubSection.Contents) + "</div>";
+                                            }
+                                        });
+                                    }
+                                    section += "</div>";
+                                }
+                                sections.push(section);
+                                section = "";
+                            });
+                        });
+                    } catch (e) {
+                        alert("catch: " + e);
+                    }
+
+
+                    //alert("sections.length: " + sections.length);
+                    var i = 0;
+                    $.each(sections, function (idx, section) {
+                        i++;
+                        if (section.length < pageSize) {
+                            if (section.length > 0)
+                                pages.push(section);
+                            else
+                                alert("section.length:0  section: " + i + "  section: " + section);
+                        }
+                        else {
+                            var amountPaged = 0;
+                            while (amountPaged < section.length) {
+                                i++;
+                                var xxpage = section.substring(amountPaged);
+                                var xxend = xxpage.indexOf(" ") - 2;
+                                var npage = section.substring(amountPaged, amountPaged + pageSize + xxend);
+                                //alert("last 50 of content.substring(amountPaged (" + amountPaged + "), pageSize(" + pageSize + ") + xxend(" + xxend + ")): " + npage.substring(npage.length - 50));
+
+                                if (npage.length > 0)
+                                    pages.push(npage);
+                                else
+                                    alert("section.length:0  section: " + i + "  section: " + section);
+
+                                amountPaged += pageSize + xxend;
+                                //alert("Long section page: " + npage);
+                            }
+                        }
+                    });
+                   // alert("i: " + i);
+
+
+                    $('#PaupaStyle').show();
+                    showPage();
+
+                },
+                error: function (xhr, textStatus, error) {
+                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                }
+            });
+        }
+        catch (e) {
+            alert("nice try: " + e);
+        }
+    }
+
+
+</script>

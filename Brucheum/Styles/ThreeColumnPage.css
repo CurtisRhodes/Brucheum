@@ -1,0 +1,23 @@
+﻿
+.threeColumnArray {
+    display: flex;
+    box-sizing: border-box;
+    margin-top: 44px;
+    width: 100%;
+}
+
+    .threeColumnArray #leftColumn {
+        float: left;
+        min-width: 7%;
+    }
+
+    .threeColumnArray #middleColumn {
+        float: left;
+        width: 100%;
+    }
+
+    .threeColumnArray #rightColumn {
+        float: left;
+        min-width: 7%;
+    }
+

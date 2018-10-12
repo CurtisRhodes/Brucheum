@@ -1,0 +1,52 @@
+﻿
+
+<style>
+    #divBookPannel {
+        box-sizing: border-box; 
+        margin-left: 18px;
+        margin-top: 60px;
+        width: 144px;
+        background-color: #aaa;
+        /*border: solid 2px purple;*/
+    }
+    #divPannelHeader {
+        font-family: Tahoma;
+        font-size: 14px;
+        padding-top: 6px;
+        text-align: center;
+    }
+    .bookImage {
+        width: 130px;
+        height: 140px;
+        padding: 6px;
+        cursor: pointer;
+    }
+    
+</style>
+
+<div id="divBookPannel">
+    <div id="divPannelHeader">
+        Check out my books
+    </div>
+    <div class="divBookImage" book="The Blond Jew">
+        <img class="bookImage" src="~/Images/Book/TheBlondJew.jpg" />
+    </div>
+    <div class="divBookImage" book="Time Squared">
+        <img class="bookImage" src="~/Images/Book/TimeSquared.jpg" />
+    </div>
+    <div class="divBookImage" book="Ready; Fire; Aim">
+        <img class="bookImage" src="~/Images/Book/ReadyFireAim.jpg" />
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#rightColumn').css("min-width", $('#divBookPannel').width() + 50);
+        resizePage();
+    });
+
+    $('.divBookImage').click(function () {
+        var url = '@Url.Action("TableOfContents", "Book", new { bookTitle = "REPLACEME" })';
+        window.location.href = url.replace('REPLACEME', $(this).attr("book"));
+    });
+</script>

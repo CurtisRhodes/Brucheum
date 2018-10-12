@@ -1,0 +1,97 @@
+﻿/*.threeColumnArray {
+    border: solid thin red;
+}*/
+
+/*#divCommentsButton {
+    position: absolute;
+    bottom: 0px;
+}
+divCommentsSection {
+    position: absolute;
+    bottom: 0px;
+}*/
+
+#rightColumn {
+    min-width: 10%;
+}
+
+#pollybox {
+    box-sizing: border-box;
+    margin-top: 4px;
+    background-color: #cec8ab; /*#74bac3; #86bdc4; #b4b4b4;*/
+}
+
+#divTopLine {
+    padding-top: 5px;
+    padding-left: 12px;
+}
+
+#divTitle {
+    text-align: center;
+    font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif;
+    font-size: 40px;
+}
+#divSummary {
+    font-style: italic;
+    color: #7a2424;
+    font-weight:500;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+#divByline {
+    width: 100%;
+    font-family: Chap, Arial, sans-serif;
+    font-size: 15px;
+    padding-left: 12px;
+    padding-bottom: 5px;
+}
+
+.floatDivEdit {
+    text-decoration: underline;
+    float: right;
+    padding-right: 23px;
+    text-align: right;
+}
+
+#divImage {
+    width: 100%;
+    text-align: center;
+    padding: 6px;
+    border: solid thin #f7f7f7;
+}
+
+#articleImage {
+    height: 300px;
+    max-width: 100%;
+}
+
+#divContent {
+    clear: both;
+    font-family: MillerText, Georgia,serif;
+    font-size: 16px;
+    padding-bottom: 6px;
+}
+
+.tinyLoader {
+    height: 15px;
+    margin-left: -18px;
+    background-color: #fff;
+}
+
+#shareToFacebook {
+    margin-top: 111px;
+}
+
+.fb-share-button {
+    background: #3b5998;
+    border-radius: 3px;
+    font-weight: 500;
+    padding: 5px 8px;
+    display: inline-block;
+    position: static;
+}
+
+    .fb-share-button a {
+        color: #fff;
+        text-decoration: none;
+    }

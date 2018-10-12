@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2046
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{FB6F1EBC-A311-4F30-BC34-A9D4DD6B3D2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brucheum", "Brucheum\Brucheum.csproj", "{95E4B384-F097-40B9-A281-2FFAC07C88CE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FB6F1EBC-A311-4F30-BC34-A9D4DD6B3D2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB6F1EBC-A311-4F30-BC34-A9D4DD6B3D2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB6F1EBC-A311-4F30-BC34-A9D4DD6B3D2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB6F1EBC-A311-4F30-BC34-A9D4DD6B3D2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95E4B384-F097-40B9-A281-2FFAC07C88CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95E4B384-F097-40B9-A281-2FFAC07C88CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95E4B384-F097-40B9-A281-2FFAC07C88CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95E4B384-F097-40B9-A281-2FFAC07C88CE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {88937F10-AE38-46BB-8E0D-3B044FA94FA1}
+	EndGlobalSection
+EndGlobal

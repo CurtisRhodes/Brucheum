@@ -1,0 +1,302 @@
+﻿@{
+    ViewBag.Title = "Write " + @ViewBag.BookTitle;
+}
+
+<link href="~/Styles/ThreeColumnPage.css" rel="stylesheet" />
+<link href="~/Styles/bookEdit.css" rel="stylesheet" />
+
+@*<link href="//cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">*@
+<link href="~/Styles/quill.snow.css" rel="stylesheet" />
+<script src="//cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<style>
+    #middleColumn {
+        background-color: #eae1ae;
+    }
+
+    #divQuillContainer {
+        background-color: #fff;
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    #divEdit {
+        margin-top: 10px;
+        margin-left: 10px;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    h2 {
+        padding-left: 6px;
+    }
+
+    .ql-editor {
+        z-index: 0;
+    }
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+    </div>
+    <div id="middleColumn">
+        <div class="pageTitle" id="divPageTitle">Edit @ViewBag.BookTitle</div>
+        <div class="addEditArea">
+            <span>Chapter:</span><div><input class="roundedInput" id="txtChapter" /></div>
+            <span>Order:</span><div><input class="roundedInput" id="txtOrder" /></div><br />
+            <span>Section:</span><div><input class="roundedInput" id="txtSection" /></div><br />
+            <span>Subsection:</span><div><input class="roundedInput" id="txtSubSection" /></div><br />
+        </div>
+        <div id="divQuillContainer">
+            <div id="divQuilleditor"></div>
+        </div>
+        <div id="divStatusMessage"></div>
+        <div id="divButtons">
+            <button class="roundendButton" id="btnSave">Save</button>
+            <button class="roundendButton" id="btnNew">New Chapter</button>
+            <button class="roundendButton" id="btnNewSection">New Section</button>
+            <button class="roundendButton" id="btnNewSubSection">New SubSection</button>
+        </div>
+    </div>
+    <div id="rightColumn">
+        <div id="divEdit">change section</div>
+    </div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+    var article = new Object();
+    article.BookTitle = '@ViewBag.BookTitle';
+    var quill = new Quill('#divQuilleditor', { theme: 'snow'  });
+
+    $(document).ready(function () {
+
+        if ('@ViewBag.chapterId' !== "") {
+            getChapter();
+        }
+        resizeEditor();
+        $('#btnNew').hide();
+        $('#btnNewSection').hide();
+        $('#btnNewSubSection').hide();
+     });
+
+    $(window).resize(function () {
+        resizeEditor();
+     });
+
+    function resizeEditor() {
+        var p = $('#txtSubSection').position().top + 154;
+        $('#divQuilleditor').height($(window).height() - p);
+
+        var w = $('.addEditArea').width();
+
+        $('#txtChapter').width(w - 300);
+        $('#txtSection').width(w - 200);
+        $('#txtSubSection').width(w - 200);
+        resizePage();
+    }
+
+    function bind() {
+        $('#txtChapter').val(article.ChapterTitle);
+        $('#txtOrder').val(article.ChapterOrder);
+        $('#txtSection').val(article.SectionTitle);
+        $('#txtSubSection').val(article.SubSectionTitle);
+        //quill.root.innerHTML = article.Contents;
+        $('.ql-editor').html(article.Contents);
+    }
+
+    function unBind() {
+        article.Id = $('#hiddenId').val();
+        article.ChapterTitle = $('#txtChapter').val();
+        article.ChapterOrder = $('#txtOrder').val();
+        article.SectionTitle = $('#txtSection').val();
+        article.SubSectionTitle = $('#txtSubSection').val();
+        article.Contents = $('.ql-editor').html(); // quill.root.innerHTML;
+    }
+
+
+    function getChapter() {
+        try {
+            var queryString = "?bookTitle=" + '@ViewBag.BookTitle' + "&chapterId=" + '@ViewBag.chapterId' + "&sectionId=" + '@ViewBag.sectionId' + "&subSectionId=" + '@ViewBag.subSectionId';
+            $.ajax({
+                url: service + "/api/Book/" + queryString,
+                type: "get",
+                dataType: "json",
+                success: function (response) {
+                    if (response.success === "ok") {
+                        article = response;
+                        bind();
+                        $('#btnSave').text("Update");
+                    }
+                    else {
+                        displayStatusMessage("alert-danger", response.success);
+                        alert("request.responseText: " + response.success);
+
+                    }
+                },
+                error: function (request, status, error) {
+                    displayStatusMessage("alert-danger", request.responseText);
+                    alert("request.responseText: " + request.responseText);
+                }
+            });
+        } catch (e) {
+            alert("e: " + e);
+        }
+    }
+
+    function post() {
+        try {
+            unBind();
+            $.ajax({
+                url: service + "/api/Book",
+                type: "post",
+                dataType: "Json",
+                data: article,
+                success: function (result) {
+                    if (result.success === "ok") {
+                        article.ChapterId = result.ChapterId;
+                        article.SectionId = result.SectionId;
+                        article.SubSectionId = result.SubSectionId;
+                        $('#btnSave').text("Update");
+                        $('#btnNew').show();
+                        $('#btnNewSection').show();
+                        $('#btnNewSubSection').show();
+                        displayStatusMessage("alert-success", "Saved");
+                    }
+                    else {
+                        displayStatusMessage("alert-danger", "server ERROR: " + result.success);
+                        alert("server ERROR: " + result.success);
+                    }
+                },
+                error: function (xhr, textStatus, error) {
+                    displayStatusMessage("alert-danger", "xhr ERROR: " + + textStatus + " : " + error);
+                    alert("xhr ERROR: " + textStatus + " : " + error);
+                }
+             });
+        } catch (e) {
+            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            alert("catch ERROR: " + e);
+        }
+    }
+
+    function put() {
+        try {
+            unBind();
+            $.ajax({
+                url: service + "/api/Book",
+                type: "put",
+                dataType: "json",
+                data: article,
+                success: function (result) {
+                    if (result.success === "ok") {
+                        article.SubSectionId = result.SubSectionId;
+                        article.SectionId = result.SectionId;
+                        displayStatusMessage("alert-success", "Saved");
+                        $('#btnSave').text("Update");
+                        $('#btnNew').show();
+                        $('#btnNewSection').show();
+                        $('#btnNewSubSection').show();
+                    }
+                    else {
+                        displayStatusMessage("alert-danger", result.success);
+                    }
+                },
+                error: function (xhr, textStatus, error) {
+                    displayStatusMessage("alert-danger", "ERROR" + xhr.statusText);
+                }
+            });
+        } catch (e) {
+            displayStatusMessage("alert-danger", "ERROR" + e);
+        }
+    }
+
+    $('#btnNew').click(function () {
+        article.ChapterOrder = "";
+        article.ChapterId = "";
+        article.ChapterTitle = "";
+        article.SectionId = "";
+        article.SectionTitle = "";
+        article.SubSectionId = "";
+        article.SubSectionTitle = "";
+        article.Contents = "  ";
+        bind();
+        $('#btnSave').text("Save");
+        $('#btnNew').hide();
+        $('#btnNewSection').hide();
+        $('#btnNewSubSection').hide();
+     });
+
+    $('#btnNewSection').click(function () {
+        article.SectionId = "";
+        article.SubSectionId = "";
+        article.SubSectionTitle = "";
+        article.SectionTitle = "";
+        article.Contents = "  ";
+        $('#btnSave').text("Add Section");
+        $('#btnNew').hide();
+        $('#btnNewSection').hide();
+        $('#btnNewSubSection').hide();
+        bind();
+     });
+
+    $('#btnNewSubSection').click(function () {
+        article.SubSectionId = "";
+        article.SubSectionTitle = "";
+        article.Contents = "";
+        $('#btnSave').text("Add Sub Section");
+        $('#btnNew').hide();
+        $('#btnNewSection').hide();
+        $('#btnNewSubSection').hide();
+        bind();
+     });
+
+    $('#divEdit').click(function () {
+        $.ajax({
+            type: "get",
+            url: "/Book/EditTreePopup?bookTitle=" + '@ViewBag.BookTitle',
+            datatype: "json",
+            success: function (data) {
+                $('#modalContent').html(data);
+                $('.ql-editor p').hide();
+                $('#modalContainer').show();
+            },
+            error: function (xhr, textStatus, error) {
+                displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+            }
+        });
+     });
+
+    $('#btnSave').click(function () {
+        if ($('#btnSave').text() === "Save")
+            post();
+        else
+            put();
+     });
+
+    $('#btnDelete').click(function () {
+        if (confirm("Delete " + $('#Title').val() + "?")) {
+            try {
+                $.ajax({
+                    url: webApiURL + "?Id=" + $('#hiddenId').val(),
+                    type: "delete",
+                    success: function (list, textstatus, xhr) {
+                        displayStatusMessage("alert-success", "entry deleted");
+                        window.location = "ArticleList";
+                    },
+                    error: function (xhr, textStatus, error) {
+                        alert("Error: " + xhr.statusText);
+                        displayStatusMessage("alert-danger", "ERROR" + xhr.statusText);
+                    }
+                 });
+            } catch (e) {
+                displayStatusMessage("alert-danger", "tERROR" + e);
+            }
+        }
+     });
+
+</script>
+
+<script src="~/Scripts/ResizeThreeColumnPage.js"></script>

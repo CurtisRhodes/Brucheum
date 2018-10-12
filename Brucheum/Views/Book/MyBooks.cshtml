@@ -1,0 +1,67 @@
+﻿
+@{
+    ViewBag.Title = "My Books";
+}
+<link href="~/Styles/ThreeColumnPage.css" rel="stylesheet" />
+<style>
+    #middleColumn {
+        font-size: 24px;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+    }
+    #divMyBooks {
+        display: flex;
+        margin-bottom: 45px;
+    }
+    .divBook {
+        float: left;
+        margin-right: 70px;
+    }
+    .bookImage {
+        height: 235px;
+        width: 210px;
+        box-shadow: 5px 4px rgba(128, 128, 128, 0.40);
+        cursor: pointer;
+    }
+    .divLibrayPages {
+        text-decoration: underline;
+        cursor: pointer;
+        margin-bottom: 45px;
+    }
+
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+    </div>
+    <div id="middleColumn">
+        <div class="pageTitle" id="divBooksWriting">Books I am writing</div>
+        <div id="divMyBooks">
+            <div class="divBook" book="The Blond Jew">
+                <img class="bookImage" src="~/Images/Book/TheBlondJew.jpg" />
+            </div>
+            <div class="divBook" book="Time Squared">
+                <img class="bookImage" src="~/Images/Book/TimeSquared.jpg" />
+            </div>
+            <div class="divBook" book="Ready; Fire; Aim">
+                <img class="bookImage" src="~/Images/Book/ReadyFireAim.jpg" />
+            </div>
+        </div>
+        <div class="divLibrayPages" id="divBooksRead">Books I have Read</div>
+        <div class="divLibrayPages" id="divBooksIOwn">Book I Own</div>
+    </div>
+    <div id="rightColumn">
+    </div>
+</div>
+
+<script>    
+    $('.divBook').click(function () {
+        var url = '@Url.Action("TableOfContents", "Book", new { bookTitle = "REPLACEME" })';
+        window.location.href = url.replace('REPLACEME', $(this).attr("book"));
+    });
+</script>
+<script src="~/Scripts/ResizeThreeColumnPage.js"></script>
+
+
+
+
+

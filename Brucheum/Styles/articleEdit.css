@@ -1,0 +1,46 @@
+﻿
+#middleColumn {
+    margin-top: 30px;
+}
+
+.tbLabel {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.tbInput {
+    width: 100%;
+}
+
+#bImage {
+    height: 300px;
+    padding-left: 5px;
+}
+.imageUpload {
+    height: 32px;
+}
+#txbSummary {
+    height: 99px;
+}
+
+#divQuilleditor {
+    margin-top: 8px;
+    height: 300px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.divTagItem {
+    /*box-sizing: content-box;*/
+    float: left;
+    border-radius: 4px;
+    background-color: #86bfef;
+    padding: 3px;
+    margin-right: 3px;
+    margin-top: 4px;
+    cursor: pointer;
+}
+
+#divButtons {
+    margin-bottom: 17px;
+}
+

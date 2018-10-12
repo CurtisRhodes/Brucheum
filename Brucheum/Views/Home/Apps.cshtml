@@ -1,0 +1,164 @@
+﻿
+@{
+    ViewBag.Title = "Apps";
+}
+<link href="~/Styles/ThreeColumnPage.css" rel="stylesheet" />
+<style>
+    #middleColumn {
+        font-size: 24px;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+    }
+
+    #titleHeader {
+        margin-top: 30px;
+        margin-bottom: 30px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .appsContainer {
+        display: flex;
+        margin-bottom: 45px;
+    }
+
+    .appItem {
+        float: left;
+        margin-right: 70px;
+    }
+
+    .appImage {
+        height: 235px;
+        width: 210px;
+        box-shadow: 5px 4px rgba(128, 128, 128, 0.40);
+        cursor: pointer;
+    }
+
+    .divLibrayPages {
+        text-decoration: underline;
+        cursor: pointer;
+        margin-bottom: 45px;
+    }
+    .appName {
+        width: 100%;
+        text-align:center;
+        cursor: pointer;
+    }
+    #leftCol {
+        vertical-align: middle;
+        height: 100%;
+        width: 50%;
+    }
+    #appsContainer {
+        display: flex;
+    }
+    .appDescription {
+        display: none;
+    }
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+    </div>
+    <div id="middleColumn">
+        <div id="titleHeader">Apps I am Building</div>
+        <div id="appsContainer">
+            <div class="containerColumn">
+                <div class="containerRow">
+                    <div class="appItem" app="2aT">
+                        <img class="appImage" src="~/Images/App/2aT001.png" />
+                        <div class="appName">To A Tee</div>
+                    </div>
+                    <div class="appItem" app="GetaGig">
+                        <img class="appImage" src="~/Images/App/GetaJob.png" />
+                        <div class="appName">Get A Gig</div>
+                    </div>
+                    <div class="appItem" app="bOObs">
+                        <img class="appImage" src="~/Images/App/redballon.png" />
+                        <div class="appName">bOObs Rater</div>
+                    </div>
+                </div>
+                <div class="containerRow">
+                    <div class="appItem" app="LodgeSecretary">
+                        <img class="appImage" src="~/Images/App/LodgeSecretary.jpg" />
+                        <div class="appName">Lodge Secretary</div>
+                    </div>
+                    <div class="appItem" app="Flitter">
+                        <img class="appImage" src="~/Images/App/happyMan.gif" />
+                        <div class="appName">Flitter</div>
+                    </div>
+                </div>
+            </div>
+            <div id="leftCol" class="containerColumn">
+                <div class="appDescription" id="2aT">
+                    Professional Business App
+                    <p>
+                        This is an update of an app out there still which I wrote almost twenty years ago.
+                        It's for Single Family New Construction Plumbing Contracting, a very specific niche,
+                        but it could be used for other things.
+                    </p>
+                </div>
+                <div class="appDescription" id="GetaGig">
+                    Job Inverview Calendar
+                    <p>
+                        Getting a new gig is something I have had to do many times. First you update your resume then you send it out which means
+                        putting it out on a couple of job boards. Then you get a bunch of calls
+                    </p>
+                </div>
+                <div class="appDescription" id="bOObs">
+                    Look. We all have our secrets. You and I are not the only ones who look at porn 
+                </div>
+                <div class="appDescription" id="LodgeSecretary">
+                    <p>
+                        I quit the Masons but I was a Master Mason. I thought about doing good. The Masons should be a LIBERAL orginization. At least they
+                        should be pro union. But I live in Texas and everyone in my lodge was a hardcore redneck conservative republican. I don't need to tell
+                        you how angrily partisan everything has become these days. When it came my time to become master of the lodge things got pretty ugly.
+                    </p>
+                    <p>
+                        Texas Masons in particular have a proud history of promoting PUBLIC education. Marilu Lammar, one of the heros of the Alamo and one of the
+                        first governors of the state was essentially the inventor of the concept of public education. The earliest Texas lodges were two story buildings
+                        with the meeting room on the top floor. On the ground floor the Masons who hire a school teacher who would run a one room school house for all the
+                        children of the local community. But my fellow Masons, competeing to be the most throughrly conservative didn't think much of public education and
+                        resented the taxes.
+                    </p>
+                    <p>
+                        Anyway I built this app even though no one has ever used it.
+                    </p>
+                </div>
+                <div class="appDescription" id="Flitter">
+                    This is an app I've been fiddling with for a long time. It started out as tree based OneNote like app for keeping notes but with ability
+                    to link to the note more than one place; store it under multiple topics or subjects. And this OneNote implementation can nest 
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="rightColumn">
+    </div>
+</div>
+
+<script>
+    $('.appItem').mouseover(function () {
+        var whichApp = $(this).attr("app");
+        $('.appDescription').hide();
+        $("#" + whichApp).show();
+    });
+
+    $('.appItem').click(function () {
+        var whichApp = $(this).attr("app");
+        switch (whichApp) {
+            case "Flitter":
+                break;
+            case "GetaGig":
+                break;
+            case "LodgeSecretary":
+                window.open("http://lodgeSecretary.net", "_blank");
+                break;
+
+        }
+
+
+
+        @*var url = '@Url.Action("TableOfContents", "Book", new { bookTitle = "REPLACEME" })';
+        window.location.href = url.replace('REPLACEME', $(this).attr("book"));*@
+    });
+</script>
+<script src="~/Scripts/ResizeThreeColumnPage.js"></script>

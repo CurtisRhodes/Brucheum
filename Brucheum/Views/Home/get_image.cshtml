@@ -1,0 +1,24 @@
+﻿@{
+    Layout = null;
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+
+<script src="~/Scripts/ImageTools.js"></script>
+
+<img id="articleImage" />
+
+<script>
+
+    var service = '@ViewBag.Service';
+    var imageName = '@ViewBag.imageId';
+
+    $(document).ready(function () {
+
+        $("#articleImage").attr("src", "data:image/gif;base64," + getImage(service, imageName));
+
+
+    });
+
+</script>
+

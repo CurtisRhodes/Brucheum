@@ -1,0 +1,83 @@
+﻿
+@{
+    ViewBag.Title = "ConsultingHome";
+    Layout = "~/Views/Consulting/_ProfessionalLayout.cshtml";
+}
+
+<link href="~/Styles/ThreeColumnPage.css" rel="stylesheet" />
+
+<style>
+    .floatingContent {
+        position: absolute;
+        top: 50px;
+        border: solid thin pink;
+    }
+
+    #FullCenterImage {
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    #divWelcomeMessage {
+        position: absolute;
+        left: 205px;
+        top: 105px;
+        color: white;
+        /*border: solid thin yellow;*/
+    }
+
+    #divHeaderRow {
+        font-family: Algerian;
+        font-size: 40px;
+    }
+
+    #divWelcomeMessage p {
+        font-size: 18px;
+    }
+    #divWelcomeMessage a {
+        color: #d1c998;
+    }
+    #leftColumn, #rightColumn {
+        padding: 0;
+        background-color: #222730; /* #273235; #486167;*/
+    }
+
+    #leftColumn {
+        width: 30px;
+    }
+</style>
+
+<<div class="threeColumnArray tanBackground">
+    <div id="leftColumn" class="tanBlueMenu">
+    </div>
+    <div id="middleColumn">
+        <div id="divWelcomeMessage">
+            <div id="divHeaderRow">Welcome to Intelligent Design Software</div>
+            <p>This web site demonstrates the work of an experienced if socially autistic web applications developer</p>
+            <p>Check out the scection describing the <a href="#">skills used to build this site</a></p>
+            <p>Read some of my <a href="#">articles on computer programming</a></p>
+            <p>See <a href="#">My resume</a> with over thirty years experience. (yes I am old)</p>
+            <p>If you might be interested in having me do some work for you</p>
+            <p>(remote only) (direct hire only) please <a href="mailto:curtishrhodes@hotmail.com">contact me</a> </p>
+        </div>
+        <img alt="" id="FullCenterImage" src="~/Images/Consulting/globlic.jpg" />
+    </div>
+    <div id="rightColumn">
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(window).resize();
+        $('#divWelcomeMessage').position().left = $('#middleColumn').position().left + 100;;
+        $('#divWelcomeMessage').position().top = $('#middleColumn').position().top + 100;
+    });
+
+    $(window).resize(function () {
+            $('FullCenterImage').height($('#middleColumn').height());
+                //$(window).height() - $('#bheader').height());
+    });
+</script>
+<script src="~/Scripts/ResizeThreeColumnPage.js"></script>
+

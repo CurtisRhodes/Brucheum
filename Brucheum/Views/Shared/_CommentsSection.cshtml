@@ -1,0 +1,206 @@
+﻿<style>
+    #divCommentsBody {
+        border: 2px solid #000;
+        padding: 4px;
+        margin-bottom: 6px;
+    }
+
+    #divKnownUser {
+        display: none;
+        border: solid thin #ebe9e9;
+        padding: 6px;
+    }
+
+    #divLoginWarning {
+        display: none;
+        border: solid thin red;
+        padding: 6px;
+        text-align: center;
+    }
+
+        #divLoginWarning span {
+            color: #2e7fd8;
+            text-decoration: underline;
+        }
+
+    #commentEntry {
+        border: solid thin #5c5151;
+        margin: 4px;
+        width: 100%;
+    }
+
+    #textAreaComment {
+        background-color: #ebe9e9;
+        width: 96%;
+        min-height: 200px;
+        padding: 4px;
+        margin-bottom: 6px;
+    }
+
+    .crud {
+        font-size: 18px;
+    }
+
+        .crud input {
+            display: inline-block;
+            width: 80%;
+            margin: 4px;
+        }
+
+    #commentHistory {
+    }
+</style>
+
+<div id="divCommentsBody">
+    <div id="divLoginWarning">You must <span id="spRegister" class="clickable">Register</span> or <span id="spLogin" class="clickable">Login</span> to comment</div>
+    <div id="divKnownUser">hello</div>
+    <div id="commentEntry">
+        <div class="crud">
+            <span>Title: </span><input class="roundedInput" id="txtTitle" /><img id="btnCancel" src="~/Images/powerOffRed01.png" height="30" />
+            <textarea id="textAreaComment"></textarea>
+        </div>
+        <div id="divButtons">
+            <button id="btnSubmit" class="roundendButton">Submit</button>
+        </div>
+    </div>
+    <input id="hiddenId" type="hidden" />
+    <div id="commentHistory"></div>
+</div>
+
+<script>
+        var service = '@ViewBag.Service';
+        var articleId = '@ViewBag.ArticleId'
+        var userId = '@ViewBag.UserId'
+        $(function () {
+            alert("aloow");
+            if (userId === undefined)
+                $('#divLoginWarning').show();
+            else
+                $('#divKnownUser').show();
+
+            getComments();
+            resizePage();
+        });
+        $(document).ready(function () {
+            alert("ready");
+        });
+
+        function getComments() {
+            try {
+                //$('#divLoadingGif').show();
+                $.ajax({
+                    url: service + "/api/Comments/get/?articleId=" + articleId,
+                    type: "get",
+                    dataType: "Json",
+                    success: function (result) {
+                        $('#divLoadingGif').hide();
+                        $('#refList').html("");
+                        $.each(result, function (idx, comment) {
+
+                            $('#commentHistory').append("<div class='commnetItem'>" + comment.CommentText + "</div>");
+                        });
+                    },
+                    error: function (xhr, textStatus, error) {
+                        displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                        alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    }
+                });
+            } catch (e) {
+                alert("getComments: " + e);
+                displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            }
+        }
+
+        $('#spLogin').click(function () {
+            $.ajax({
+                type: "get",
+                url: "/Login/LoginPopup",
+                datatype: "json",
+                success: function (data) {
+                    $('#modalContent').html(data);
+                    $('#modalContainer').show();
+                },
+                error: function (xhr) {
+                    alert("RegisterPopup error: " + xhr.statusText);
+                }
+            });
+        });
+
+        $('#spRegister').click(function () {
+            $.ajax({
+                type: "get",
+                url: "/Login/RegisterPopup",
+                datatype: "json",
+                success: function (data) {
+                    $('#modalContent').html(data);
+                    $('#modalContainer').show();
+                },
+                error: function (xhr) {
+                    alert("RegisterPopup error: " + xhr.statusText);
+                }
+            });
+        });
+
+    $('#btnSubmit').click(function () {
+        try {
+            // bind
+            var comment = new Object();
+            comment.CommentTitle = $('#txtTitle').val();
+            comment.CommentText = $('#textAreaComment').val();
+            comment.CommentId = $('#hiddenId').val();
+            comment.UserId = userId;
+            comment.ArticleId = articleId;
+            alert(this.val());
+            var verb = "post";
+            if (this.val() === "Submit") {
+                $.ajax({
+                    url: service + "/api/Comments/Post",
+                    type: verb,
+                    dataType: "Json",
+                    data: comment,
+                    success: function (success) {
+                        if (!success.startsWith("ERROR")) {
+                            $('#hiddenId').val(success);
+                            $('#btnSubmit').val("Update");
+                        }
+                        else {
+                            displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
+                        }
+                        alert(success);
+                    },
+                    error: function (xhr, textStatus, error) {
+                        displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                        alert("Comments    status: " + textStatus + "text: " + xhr.statusMessage + "   error: " + error);
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    url: service + "/api/Comments/Put",
+                    type: verb,
+                    dataType: "Json",
+                    data: comment,
+                    success: function (success) {
+                        if (!success.startsWith("ERROR")) {
+                            $('#hiddenId').val(success);
+                            $('#btnSubmit').val("Update");
+                        }
+                        else {
+                            displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
+                        }
+                        alert(success);
+                    },
+                    error: function (xhr, textStatus, error) {
+                        displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                        alert("Comments    status: " + textStatus + "text: " + xhr.statusMessage + "   error: " + error);
+                    }
+                });
+            }
+        }
+        catch (e) {
+            alert("api/Comment/Post catch: " + e);
+            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+        }
+    }
+</script>
+<script src="~/Scripts/ResizeThreeColumnPage.js"></script>
