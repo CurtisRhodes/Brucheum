@@ -34,8 +34,28 @@
             <div id="divImage"><img id="articleImage" /></div>
             <div id="divSummary">@Model.Summary</div>
             <div id="divContent"></div>
+            <div id="divStatusMessage"></div>
+
             <div id="divCommentsButton" class="roundendButton">comments</div>
-            <div id="divCommentsSection"></div>
+
+            <div id="divCommentsSection">
+                <div id="divCommentsBody">
+                    <div id="divLoginWarning">You must <span id="spRegister" class="clickable">Register</span> or <span id="spLogin" class="clickable">Login</span> to comment</div>
+                    <div id="divKnownUser"></div>
+                    <div id="commentEntry">
+                        <div class="crud">
+                            <span>Title: </span><input class="roundedInput" id="txtTitle" />
+                            <img id="imgPowerOffRed" src="~/Images/powerOffRed01.png" />
+                            <textarea id="textAreaComment"></textarea>
+                        </div>
+                        <div id="divButtons">
+                            <button id="btnSubmitComment" class="roundendButton">Submit</button>
+                        </div>
+                    </div>
+                    <div id="commentHistory"></div>
+                </div>
+            </div>
+            <input id="hiddenId" type="hidden" />
         }
         else
         {
@@ -53,8 +73,11 @@
     var articleId = '@Model.Id'
     var imageName = '@Model.ImageName';
     var content = '@ViewBag.Contents';
+    var summary = '@ViewBag.Summary';
     var title = '@Model.Title';
-   
+    var userId = '@ViewBag.UserId';
+    var userName = '@ViewBag.UserName';
+    
     $(document).ready(function () {
         try {
             if (imageName !== "") {               
@@ -97,13 +120,7 @@
         //$('head').append("<meta property='og:image' content='http://curtisrhodes.com/home/get_image?w=" + imageName + "'>");
         $('head').append("<meta property='og:image' content='data:image/gif;base64," + getImage(service, imageName) + "'>");
 
-
-
-        var pageName = "http://curtisrhodes.com/static_pages/" + title.replace(/ /g, "_") + ".html";
-        //var pageName = "http://curtisrhodes.com/static_pages/" + title.replace(" ", "_") + ".html";
-
-        //alert("pageName: " + pageName);
-
+        var pageName = service + "/static_pages/" + title.replace(/ /g, "_") + ".html";
         $('head').append('<br/><meta property="og:url" content="' + pageName + '">');
 
         $('#shareToFacebook').html('<div class="fb-share-button" data-href="' + pageName + '" data-layout="button" data-size="large" data-mobile-iframe="false">' +
@@ -111,12 +128,11 @@
 
         var html = $('html').html();
 
-
         try {
             $.ajax({
                 type: "POST",
-                url: "/api//File",
-                processData: false,  // Important!
+                url: "/api//File",  //  local api (static pages not stored in service)
+                processData: false, 
                 contentType: false,
                 async: false,
                 cache: false,
@@ -127,7 +143,7 @@
                         $('#shareToFacebook').html('<button id="btnPermalink" class="roundendButton">permalink</button>');
                         
                         $('#btnPermalink').click(function () {
-                            window.location.href = "http://curtisrhodes.com/static_pages/" + title.replace(/ /g, "_") + ".html";
+                            window.location.href = "/static_pages/" + title.replace(/ /g, "_") + ".html", "target='_blank'";
 
                         })
 
@@ -139,137 +155,73 @@
                     alert("saveAs error: " + xhr.statusText);
                 }
             });
-        } catch (e) {
+        }
+        catch (e) {
             alert("saveAs catch: " + e);
         }
     }
 
-    $('#btnTest').click(function () {
-        location.href = "/Home/get_image?w=" + imageName;
+    // Show Comments
+    $('#divCommentsButton').click(function () {
+        $('#divCommentsSection').toggle();
+        if ($('#divCommentsSection').is(':visible')) {
+            getComments();
+
+            if (userId === undefined)
+                $('#divLoginWarning').show();
+            else {
+                $('#divKnownUser').html("Hello " + userName);
+                $('#divKnownUser').show();
+            }
+        }
     });
 
-    $('#divCommentsButton').click(function () {
-
+    $('#spLogin').click(function () {
         $.ajax({
             type: "get",
-            url: "/Home/CommentSection?articleId=" + articleId,
+            url: "/Login/LoginPopup",
             datatype: "json",
             success: function (data) {
-                //alert("success: " + data);
-                $('#divCommentsSection').html(data);
-
-                $(function () {
-                    alert("aloow");
-                    if (userId === undefined)
-                        $('#divLoginWarning').show();
-                    else
-                        $('#divKnownUser').show();
-
-                    getComments();
-                    resizePage();
-                });
-
-                $('#spLogin').click(function () {
-                    $.ajax({
-                        type: "get",
-                        url: "/Login/LoginPopup",
-                        datatype: "json",
-                        success: function (data) {
-                            $('#modalContent').html(data);
-                            $('#modalContainer').show();
-                        },
-                        error: function (xhr) {
-                            alert("RegisterPopup error: " + xhr.statusText);
-                        }
-                    });
-                });
-
-                $('#spRegister').click(function () {
-                    $.ajax({
-                        type: "get",
-                        url: "/Login/RegisterPopup",
-                        datatype: "json",
-                        success: function (data) {
-                            $('#modalContent').html(data);
-                            $('#modalContainer').show();
-                        },
-                        error: function (xhr) {
-                            alert("RegisterPopup error: " + xhr.statusText);
-                        }
-                    });
-                });
-
-                $('#btnSubmit').click(function () {
-
-                    alert("allo");
-                    try {
-                        // bind
-                        var comment = new Object();
-                        comment.CommentTitle = $('#txtTitle').val();
-                        comment.CommentText = $('#textAreaComment').val();
-                        comment.CommentId = $('#hiddenId').val();
-                        comment.UserId = userId;
-                        comment.ArticleId = articleId;
-
-                        if (this.val() === "Submit") {
-                            $.ajax({
-                                url: service + "//api//Comments//Post",
-                                type: "post",
-                                dataType: "Json",
-                                data: comment,
-                                success: function (success) {
-                                    if (!success.startsWith("ERROR")) {
-                                        $('#hiddenId').val(success);
-                                        $('#btnSubmit').val("Update");
-                                    }
-                                    else {
-                                        displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
-                                    }
-                                    alert(success);
-                                },
-                                error: function (xhr, textStatus, error) {
-                                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                                    alert("Comments    status: " + textStatus + "text: " + xhr.statusMessage + "   error: " + error);
-                                }
-                            });
-                        }
-                        else {
-                            $.ajax({
-                                url: service + "/api/Comments/Put",
-                                type: verb,
-                                dataType: "Json",
-                                data: comment,
-                                success: function (success) {
-                                    if (!success.startsWith("ERROR")) {
-                                        $('#hiddenId').val(success);
-                                        $('#btnSubmit').val("Update");
-                                    }
-                                    else {
-                                        displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
-                                    }
-                                    alert(success);
-                                },
-                                error: function (xhr, textStatus, error) {
-                                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                                    alert("Comments    status: " + textStatus + "text: " + xhr.statusMessage + "   error: " + error);
-                                }
-                            });
-                        }
-                    }
-                    catch (e) {
-                        alert("api/Comment/Post catch: " + e);
-                        //displayStatusMessage("alert-danger", "catch ERROR: " + e);
-                    }
-                });
-                $('#btnCancel').click(function () {
-                    $('#divCommentsSection').hide();
-                });
-
+                $('#modalContent').html(data);
+                $('#modalContainer').show();
             },
             error: function (xhr) {
-                alert("showComments error: " + xhr.statusText);
+                alert("RegisterPopup error: " + xhr.statusText);
             }
         });
+    });
+
+    $('#spRegister').click(function () {
+        $.ajax({
+            type: "get",
+            url: "/Login/RegisterPopup",
+            datatype: "json",
+            success: function (data) {
+                $('#modalContent').html(data);
+                $('#modalContainer').show();
+            },
+            error: function (xhr) {
+                alert("RegisterPopup error: " + xhr.statusText);
+            }
+        });
+    });
+
+    $('#btnSubmitComment').click(function () {
+        var comment = new Object();
+        comment.CommentTitle = $('#txtTitle').val();
+        comment.CommentText = $('#textAreaComment').val();
+        comment.CommentId = $('#hiddenId').val();
+        comment.UserId = userId;
+        comment.ArticleId = articleId;
+
+        //if (comment.CommentTitle === "")
+
+        //comment.CommentText =
+
+        if ($('#btnSubmitComment').text() === "Submit")
+            SaveComment(comment);
+        else
+            UpdateComment(comment);
     });
 
     function getComments() {
@@ -280,12 +232,22 @@
                 type: "get",
                 dataType: "Json",
                 success: function (result) {
-                    $('#divLoadingGif').hide();
-                    $('#refList').html("");
-                    $.each(result, function (idx, comment) {
-
-                        $('#commentHistory').append("<div class='commnetItem'>" + comment.CommentText + "</div>");
-                    });
+                    if (result.length !== 0) {
+                        $('#commentHistory').html("");
+                        $.each(result, function (idx, comment) {
+                            $('#commentHistory').append("<div class='cHistoryRow'>" +
+                                "<div class='cHistoryCol'>" + comment.CreateDate.substr(0, comment.CreateDate.indexOf("T")) + "</div>" +
+                                "<div class='cHistoryCol'>" + comment.UserName + "</div>" +
+                                "<div class='cHistoryCol'>" + comment.CommentTitle + "</div>" +
+                                "<div class='cHistoryCol'>" + comment.CommentText + "</div>" +
+                                "</div>");
+                        });
+                        //alert("result.Count :" + result.length + "  " + result.length !== 0);
+                    }
+                    var wH = $('#middleColumn').height(); // - $('#middleColumn').height();
+                    $('#middleColumn').height(wH + $('#divCommentsSection').height());
+                    //alert("wH: " + wH + "  now:" + $('#middleColumn').height());
+                    resizePage();
                 },
                 error: function (xhr, textStatus, error) {
                     displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
@@ -298,9 +260,62 @@
         }
     }
 
+    function SaveComment(comment) {
+        $.ajax({
+            url: service + "//api//Comments//Post",
+            type: "post",
+            dataType: "Json",
+            data: comment,
+            success: function (success) {
+                if (!success.startsWith("ERROR")) {
+                    $('#hiddenId').val(success);
+                    $('#btnSubmitComment').text("Update");
+                    getComments();
+                }
+                else {
+                    displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
+                    alert(success);
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                alert("Comments Post   status: " + textStatus + "text: " + xhr.statusMessage + "   error: " + error);
+            }
+        });
+    }
+        
+    function UpdateComment(comment) {
+        $.ajax({
+            url: service + "/api/Comments/Put",
+            type: "put",
+            dataType: "Json",
+            data: comment,
+            success: function (success) {
+                if (!success.startsWith("ERROR")) {
+                    //$('#hiddenId').val(success);
+                    //$('#btnSubmit').val("Update");
+                    getComments();
+                }
+                else {
+                    displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                alert("Comments    status: " + textStatus + "text: " + xhr.statusMessage + "   error: " + error);
+            }
+        });
+    };
 
+    $('#imgPowerOffRed').click(function () {
+        $('#divCommentsSection').hide();
+    });
 
+    ///////////////////////////////////////////////////
 
+    $('#btnTest').click(function () {
+        location.href = "/Home/get_image?w=" + imageName;
+    });
     $('#btnSpinnerTest').click(function () {
         $(this).append("<img src='/Images/loader.gif' class='tinyLoader' >");
     });

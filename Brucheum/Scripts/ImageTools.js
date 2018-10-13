@@ -2,31 +2,32 @@
 function postImage(service, fileName) {
 	try {
 		fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
-		var image = $('#uplImage')[0].files[0];
+        var image = $('#uplImage')[0].files[0];
+        //var data = "{'imageName':'" + fileName + "'image':'" + image + "'}";
 		var serverImageName;
 		if (image !== null) {
 			//alert("url: " + service + "/api/Images");
-			$.ajax({
-				url: service + "/api/Images",
-				type: "POST",
-				enctype: 'multipart/form-data',
-				processData: false,  // Important!
-				contentType: false,
-				async: false,
-				cache: false,
-				data: image,
-				success: function (data) {
-					//displayStatusMessage("alert-success", data + " Image Uploaded");
-					//$('#bImage').attr("src", URL.createObjectURL(image));
-					//$('#hiddenImageName').val(data);
-					//alert("data: " + data);
-					serverImageName = data;
-				},
-				error: function (xhr, textStatus, error) {
-					displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-					alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-				}
-			});
+            $.ajax({
+                url: service + "/api/Images?fileName=" + fileName,
+                type: "POST",
+                enctype: 'multipart/form-data',
+                processData: false,  // Important!
+                contentType: false,
+                async: false,
+                cache: false,
+                data: image,
+                success: function (data) {
+                    //displayStatusMessage("alert-success", data + " Image Uploaded");
+                    //$('#bImage').attr("src", URL.createObjectURL(image));
+                    //$('#hiddenImageName').val(data);
+                    //alert("data: " + data);
+                    serverImageName = data;
+                },
+                error: function (xhr, textStatus, error) {
+                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                }
+            });
 
 		}
 		else {
@@ -40,11 +41,11 @@ function postImage(service, fileName) {
 	}
 }
 
-function getImage(service, imageName) {
+function getImage(service, fileName) {
 	var bytes;
 	try {
 		$.ajax({
-			url: service + "/api/Images?id=" + imageName,
+            url: service + "/api/Images?fileName=" + fileName,
 			type: "get",
 			async: false,
 			processData: false,  // Important!

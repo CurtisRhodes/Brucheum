@@ -11,7 +11,7 @@ $('#middleColumn').resize(function () {
 	resizePage();
 });
 
-function resizePage() {
+function resizePage(debug) {
 	var winW = $(window).width();
 	var lcW = $('#leftColumn').width();
 	var rcW = $('#rightColumn').width();
@@ -36,5 +36,10 @@ function resizePage() {
 	//else {
 	//	alert("rz 3col: " + $('.threeColumnArray').height() + "  mcH: " + mcH);
 	//}
+
+    if (debug !== undefined) {
+        alert(debug);
+    }
+
 }
 

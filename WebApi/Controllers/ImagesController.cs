@@ -14,11 +14,11 @@ namespace Service1.Controllers
 
         // POST: api/Image
         [HttpPost]
-        public string Post()
+        public string Post() 
         {
             string fileName = GetRandomString()+ ".jpg";
-            var fullPathImageFileName = Path.Combine(imagesPath, fileName);
 
+            var fullPathImageFileName = Path.Combine(imagesPath, fileName);
             Byte[] byteArray = Request.Content.ReadAsByteArrayAsync().Result;
             File.WriteAllBytes(fullPathImageFileName, byteArray);
 
@@ -27,10 +27,9 @@ namespace Service1.Controllers
 
         //GET api/Image/filename
        [HttpGet]
-        public byte[] Get(string id)
+        public byte[] Get(string fileName)
         {
-            //var z = Path.Combine(imagesPath, id);
-            var image = File.OpenRead(Path.Combine(imagesPath, id));
+            var image = File.OpenRead(Path.Combine(imagesPath, fileName));
             using (MemoryStream ms = new MemoryStream())
             {
                 image.CopyTo(ms);

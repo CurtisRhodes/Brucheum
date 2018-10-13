@@ -24,56 +24,51 @@ namespace Brucheum
             return View();
         }
 
-        public ActionResult Article(string Id, string title)
+        public ActionResult Article(string Id)
         {
-            //string filePath = System.Web.HttpContext.Current.Server.MapPath("~/Static_Pages");
-            ////string filePath = "Static_Pages";
-            //string htmlFileName = Path.Combine(filePath, title + ".html");
-            //if (System.IO.File.Exists(htmlFileName))
-            //{
-            //    //return RedirectToRoute("Start");
-            //    //return RedirectToAction("HtmlPage", new { page = title + ".html" });    //   File(htmlFileName, "text/html");
-            //    return Redirect(htmlFileName);
-            //}
-            //else
+            ArticleModel article = new ArticleModel();
+            if (Id != null)
             {
-                ArticleModel article = new ArticleModel();
-                if (Id != null)
+                var client = new HttpClient();
+                client.BaseAddress = new Uri(apiService);
+                using (var response = client.GetAsync("api/Article?Id=" + Id).Result)
                 {
-                    var client = new HttpClient();
-                    client.BaseAddress = new Uri(apiService);
-                    using (var response = client.GetAsync("api/Article?Id=" + Id).Result)
+                    if (response.IsSuccessStatusCode)
                     {
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var json = response.Content.ReadAsStringAsync().Result;
-                            var jo = JObject.Parse(json);
-                            article = jo.ToObject<ArticleModel>();
+                        var json = response.Content.ReadAsStringAsync().Result;
+                        var jo = JObject.Parse(json);
+                        article = jo.ToObject<ArticleModel>();
 
-                            if (article.Tags != null)
+                        if (article.Tags != null)
+                        {
+                            int len = article.Tags.Length;
+                            if (len > 0)
                             {
-                                int len = article.Tags.Length;
-                                if (len > 0)
+                                StringBuilder tagString = new StringBuilder();
+                                for (int i = 0; i < len; i++)
                                 {
-                                    StringBuilder tagString = new StringBuilder();
-                                    for (int i = 0; i < len; i++)
-                                    {
-                                        tagString.Append(article.Tags[i]);
-                                        if (i != (len - 1))
-                                            tagString.Append(",");
-                                    }
-                                    ViewBag.MetaTags = tagString;
+                                    tagString.Append(article.Tags[i]);
+                                    if (i != (len - 1))
+                                        tagString.Append(",");
                                 }
+                                ViewBag.MetaTags = tagString;
                             }
-                            ViewBag.Title = article.Title;
-                            ViewBag.Contents = article.Contents.Replace("\n", " ");
                         }
+                        ViewBag.Title = article.Title;
+                        ViewBag.Contents = article.Contents.Replace("\n", " ");
+                        ViewBag.Summary = article.Summary.Replace("\n", " ");
                     }
                 }
-                ViewBag.Service = apiService;
-                return View(article);
             }
+            ViewBag.Service = apiService;
+            ViewBag.UserId = Session["UserId"];
+            ViewBag.UserName = Session["UserName"];
+
+
+
+            return View(article);
         }
+
         public ActionResult HtmlPage(string page)
         {
             string filePath = System.Web.HttpContext.Current.Server.MapPath("~/Static_Pages");

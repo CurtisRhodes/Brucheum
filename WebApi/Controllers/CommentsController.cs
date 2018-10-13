@@ -12,12 +12,33 @@ namespace Service1.Controllers
     public class CommentsController : ApiController
     {
         // GET: api/Comments
-        public IEnumerable<Comment> Get(Guid articleId)
+        public IQueryable<CommentsModel> Get(Guid articleId)
         {
-            using (GoDaddyContext db = new GoDaddyContext())
+            IQueryable<CommentsModel> results = Enumerable.Empty<CommentsModel>().AsQueryable();
+            try
             {
-               return db.Comments.Where(c => c.ArticleId == articleId).ToArray();
+                //string ARTICLEID = articleId.ToString().ToUpper();
+                using (GoDaddyContext db = new GoDaddyContext())
+                {
+                    results = (from comments in db.Comments
+                               join users in db.UserLogins on comments.UserId equals users.UserId
+                               where comments.ArticleId.ToString() == articleId.ToString().ToUpper()
+                               orderby comments.CreateDate ascending
+                               select new CommentsModel
+                               {
+                                   UserName = users.UserName,
+                                   CreateDate = comments.CreateDate,
+                                   CommentTitle = comments.CommentTitle,
+                                   CommentText = comments.CommentText
+                               }).ToList().AsQueryable();
+                }
+
             }
+            catch (Exception ex)
+            {
+                results = results.Concat(new[] { new CommentsModel() { Success = ex.Message } });
+            }
+            return results;
         }
 
         [HttpPost]
@@ -29,7 +50,7 @@ namespace Service1.Controllers
                 using (GoDaddyContext db = new GoDaddyContext())
                 {
                     newComment.CreateDate = DateTime.Now;
-                    //newComment.CommentId = Guid.NewGuid();
+                    newComment.CommentId = Guid.NewGuid();
                     db.Comments.Add(newComment);
                     db.SaveChanges();
                     success = newComment.CommentId.ToString();

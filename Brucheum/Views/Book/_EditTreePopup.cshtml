@@ -80,6 +80,7 @@
                         var content = "<div id='editTable'><ul>";
                         $.each(json.Book.Chapter, function (idx, chapter) {
                             content += "<li chapter='" + chapter.Id + "'>" + chapter.Title + "</li><ul>";
+
                             //alert("content: " + content);
                             if (chapter.Section !== undefined) {
                                 $.each(chapter.Section, function (idx, section) {
@@ -96,12 +97,13 @@
                                         content += "</ul>";
                                     }
                                 });
-                                content += "</ul>";
                             }
+                            content += "</ul>";
                         });
-                        content += "</ul></div>";
+                        content += "</div>";
+                        //alert("content: " + content);
 
-                        $("#showEditTreeTree").html(content);
+                        $("#divEditTree").html(content);
 
                         $("li").click(function () {
                             window.location.href = "Write?bookTitle=" + '@ViewBag.Title' + "&chapterId=" + $(this).attr("chapter") + "&sectionId=" + $(this).attr("section") + "&subSectionId=" + $(this).attr("subSection");

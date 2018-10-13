@@ -11,9 +11,12 @@
     width: 100%;
 }
 
-#bImage {
-    height: 300px;
-    padding-left: 5px;
+#imgArticleJog {
+    min-height: 290px;
+    min-width: 300px;
+    height: 290px;
+    border: solid thin #000;
+    margin-left: 5px;
 }
 .imageUpload {
     height: 32px;

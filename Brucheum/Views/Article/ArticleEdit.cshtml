@@ -27,7 +27,7 @@
                 <tr>
                     <td class="tbLabel">Title:</td>
                     <td colspan="3" class="tbInput"><input class="roundedInput streach" id="txtTitle" />
-                    <td rowspan="6"><img id="bImage" /></td>
+                    <td rowspan="6"><div id="divImageContainer"><img id="imgArticleJog" /></div></td>
                 </tr>
                 <tr>
                     <td class="tbLabel">Category:</td>
@@ -84,8 +84,10 @@
         if (articleId !== "") {
             get();
         }
+        else {
+            $('#txtCreated').val(formatDate(new Date()));
+        }
         $('#btnDelete').hide();
-
         $('#summernote').summernote({
             height: 222,
             codemirror: { mode: "htmlmixed", theme: "monokai" },
@@ -181,7 +183,7 @@
                         alert("result: " + result);
                     }
                     else {
-                        alert("result: " + result);
+                      //  alert("result: " + result);
                         displayStatusMessage("alert-success", "Saved");
                         $('#btnSave').text("Update");
                     }
@@ -205,8 +207,10 @@
             success: function (response) {
                 bind(response);
                 if (response.ImageName !== "") {
-                    var image = getImage(service, response.ImageName);
-                    $('#bImage').attr("src", "data:image/gif;base64," + image);
+                    //var image = getImage(service, response.ImageName);
+                    //$('#bImage').attr("src", "data:image/gif;base64," + image);
+                    //$('#imgArticleJog').attr("src", response.ImageName);
+                    $('#imgArticleJog').attr("src", service + "/App_Data/Images/" + response.ImageName);
                 }
                 $('#btnSave').text("Update");
                 if (response.Tags != "") {
@@ -225,17 +229,20 @@
     }
 
     $('#txtMetaTag').blur(function () {
-        metaTags.push($('#txtMetaTag').val());
-        $('#divTagContainer').append("<div class='divTagItem'>" + $('#txtMetaTag').val() + "</div>");;
-        $('#txtMetaTag').val("");
+        if ($('#txtMetaTag').val() !== "") {
+            metaTags.push($('#txtMetaTag').val());
+            $('#divTagContainer').append("<div class='divTagItem'>" + $('#txtMetaTag').val() + "</div>");;
+            $('#txtMetaTag').val("");
+        }
     });
 
     $('#uplImage').change(function () {
         var localImageName = $('#uplImage').val();
         var serverImageName = postImage(service, localImageName);
         $('#hiddenImageName').val(serverImageName);
-        var bytes = getImage(service, serverImageName);
-        $('#bImage').attr("src", "data:image/gif;base64," + bytes);
+        $('#imgArticleJog').attr("src", service + "/App_Data/Images/" + serverImageName);
+        //var bytes = getImage(service, serverImageName);
+        //$('#bImage').attr("src", "data:image/gif;base64," + bytes);
     });
 
     $('#btnSave').click(function () {

@@ -77,6 +77,17 @@ namespace Service1
         public string success { get; set; }
     }
 
+    public class CommentsModel
+    {
+        public string UserName { get; set; }
+        public DateTime CreateDate { get; set; }
+        public string CommentTitle { get; set; }
+        public string CommentText { get; set; }
+        public string Success { get; set; }
+    };
+
+}
+
     //[Serializable]
     //public class BookSchema
     //{
@@ -85,5 +96,5 @@ namespace Service1
     //    public string Section { get; set; }
     //    public string SubSection { get; set; }
     //}
-}
+
 

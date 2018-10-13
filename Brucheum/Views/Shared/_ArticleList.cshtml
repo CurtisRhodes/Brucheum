@@ -26,10 +26,9 @@
 
 
     $(document).ready(function () {
-        $("#rightColumn").append("<div id='adminMsg'><a href='/Article/ArticleEdit'>add new</a></div>");
         getArticleList();
-
     });
+
     $('#divMoreButton').click(function () {
         page++;
         getArticleList("more");
@@ -65,6 +64,9 @@
                     else
                         $('#divMoreButton').show();
 
+                    $("#rightColumn").append("<div id='adminMsg'><a href='/Article/ArticleEdit'>add new</a></div>");
+
+
                     //if (loggedIn !== "") {
                     //    $('#adminMsg').show();
                     //}
@@ -94,20 +96,16 @@
 
     function formatArticleJog(article) {
         try {
-
-            //if (article.Title.startsWith("ERROR")) {
-            //    $('#articleList').append("<div class='divArticle'><div id='divArticleDetail'>" + article.Title + "</div></div>");
-            //    return;
-            //}
-
             var title = article.Title.split(' ').join('_');
-            var articleHref = "/Article/Article?Id=" + article.Id + "&title=" + title;
+            var articleHref = "/Article/Article?Id=" + article.Id;
             var imgSrc = "<img>";
             if (article.ImageName !== "") {
-                imgSrc = '<img src="data:image/gif; base64,' + getImage(service, article.ImageName) + '">';
+
+                imgSrc = service + "/App_Data/Images/" + article.ImageName;
+                //imgSrc = '<img src="data:image/gif; base64,' + getImage(service, article.ImageName) + '">';
             };
             $('#articleList').append(`
-                <div class='divArticle'><div id='divImg'><a href="`+ articleHref + `">` + imgSrc + `</a></div>
+                <div class='divArticle'><div id='divImg'><a href="`+ articleHref + `"><img src=` + imgSrc + `></a></div>
                     <div id='divArticleDetail'>
                         <div id='divTopRow'>
                             <div id='divCategory'><a href=/Article/ArticleList?filterType=Category&filter=`+ encodeURI(article.Category) + `>` + article.Category + `</a></div>
