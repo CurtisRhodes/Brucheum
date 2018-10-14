@@ -249,9 +249,8 @@
                     //alert("wH: " + wH + "  now:" + $('#middleColumn').height());
                     resizePage();
                 },
-                error: function (xhr, textStatus, error) {
-                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                error: function (xhr) {
+                    alert("saveAs error: " + xhr.statusText);
                 }
             });
         } catch (e) {
@@ -277,9 +276,8 @@
                     alert(success);
                 }
             },
-            error: function (xhr, textStatus, error) {
-                displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                alert("Comments Post   status: " + textStatus + "text: " + xhr.statusMessage + "   error: " + error);
+            error: function (xhr) {
+                alert("save Comment error: " + xhr.statusText);
             }
         });
     }
@@ -300,9 +298,8 @@
                     displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
                 }
             },
-            error: function (xhr, textStatus, error) {
-                displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                alert("Comments    status: " + textStatus + "text: " + xhr.statusMessage + "   error: " + error);
+            error: function (xhr) {
+                alert("Update Comments error: " + xhr.statusText);
             }
         });
     };

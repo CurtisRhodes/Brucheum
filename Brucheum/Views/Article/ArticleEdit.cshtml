@@ -154,9 +154,9 @@
                     else
                         displayStatusMessage("alert-danger", success);
                 },
-                error: function (xhr, textStatus, error) {
-                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                    alert("ArticleEdit PUT   status: " + textStatus + "  text: " + xhr.statusText + " error: " + error);
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("ArticleEdit PUT error: " + xhr.statusText);
                 }
             });
         } catch (e) {
@@ -188,9 +188,9 @@
                         $('#btnSave').text("Update");
                     }
                 },
-                error: function (xhr, textStatus, error) {
-                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("ArticleEdit Post error: " + xhr.statusText);
                 }
             });
         } catch (e) {
@@ -250,27 +250,6 @@
             post();
         else
             put();
-    });
-
-    $('#btnDelete').click(function () {
-        if (confirm("Delete " + $('#Title').val() + "?")) {
-            try {
-                $.ajax({
-                    url: webApiURL + "?Id=" + $('#hiddenId').val(),
-                    type: "delete",
-                    success: function (list, textstatus, xhr) {
-                        displayStatusMessage("alert-success", "entry deleted");
-                        window.location = "ArticleList";
-                    },
-                    error: function (xhr, textStatus, error) {
-                        displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                        alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                    }
-                });
-            } catch (e) {
-                displayStatusMessage("alert-danger", "tERROR" + e);
-            }
-        }
     });
 
     $('#btnView').click(function () {

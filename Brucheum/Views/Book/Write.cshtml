@@ -170,9 +170,9 @@
                         alert("server ERROR: " + result.success);
                     }
                 },
-                error: function (xhr, textStatus, error) {
-                    displayStatusMessage("alert-danger", "xhr ERROR: " + + textStatus + " : " + error);
-                    alert("xhr ERROR: " + textStatus + " : " + error);
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("Post book error: " + xhr.statusText);
                 }
              });
         } catch (e) {
@@ -203,8 +203,9 @@
                         displayStatusMessage("alert-danger", result.success);
                     }
                 },
-                error: function (xhr, textStatus, error) {
-                    displayStatusMessage("alert-danger", "ERROR" + xhr.statusText);
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("Write PUT error: " + xhr.statusText);
                 }
             });
         } catch (e) {
@@ -286,9 +287,9 @@
                         displayStatusMessage("alert-success", "entry deleted");
                         window.location = "ArticleList";
                     },
-                    error: function (xhr, textStatus, error) {
-                        alert("Error: " + xhr.statusText);
-                        displayStatusMessage("alert-danger", "ERROR" + xhr.statusText);
+                    error: function (xhr) {
+                        displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                        alert("delete write error: " + xhr.statusText);
                     }
                  });
             } catch (e) {

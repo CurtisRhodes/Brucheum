@@ -100,9 +100,9 @@
                         alert("put: " + success);
                     }
                 },
-                error: function (xhr, textStatus, error) {
-                    displayStatusMessage("alert-danger", "status: " + textStatus + " text: " + xhr.statusText + " error: " + error);
-                    alert("_ProfilePopup put: " + textStatus + " text: " + xhr.statusText + " error: " + error);
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("ajax error: " + xhr.statusText);
                 }
              });
         } catch (e) {

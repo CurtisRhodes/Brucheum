@@ -1,0 +1,54 @@
+﻿
+@{
+    ViewBag.Title = "Viewer";
+}
+
+<div class="threeColumnArray">
+    <div id="leftColumn"></div>
+    <div id="middleColumn">
+        <div id="imageContainer"></div>
+    </div>
+    <div id="rightColumn"></div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+    var folder = '@ViewBag.Folder';
+    var startFile = '@ViewBag.StartFile';
+
+
+    $(document).ready(function () {
+        var galleryTitle = folder.substr(folder.lastIndexOf("/") + 1);
+        //$('#divGalleryName').html(galleryTitle);
+
+        $('#imageContainer').html("<img src='" + service + "/App_Data/Danni/" + folder + "/" + startFile + "'>");
+
+        //var mWidth = $('#middleColumn').width();
+        //$('#imageContainer').width(mWidth);
+    });
+
+
+    function GetPageCount() {
+        var pgKnt;
+        $.ajax({
+            type: "get",
+            url: service + "/api/directory/ImageCount?folder=" + folder,
+            async: false,
+            success: function (data) {
+                pgKnt = data;
+            },
+            error: function (xhr) {
+                alert("GetGalleryPage error: " + xhr.statusText);
+            }
+        });
+        return pgKnt;
+    }
+
+    $('.divPage').click(function () {
+        page = $('.divPage').attr("page");
+        GetImagePage();
+    });
+
+</script>
+
+

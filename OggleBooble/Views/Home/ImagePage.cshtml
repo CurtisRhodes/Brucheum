@@ -1,0 +1,109 @@
+﻿
+<style>
+    #divGalleryName {
+        margin-top: 40px;
+        font-size: 24px;
+        font-weight: 700;
+    }
+    #imageContainer {
+        border: solid thin black;
+        min-height: 200px;
+        display: flex;
+        flex-wrap: wrap;
+        overflow-y: scroll;
+    }
+    .thumbImage {
+        height: 200px;
+        padding: 2px;
+    }
+
+    #pageContainer {
+        display: flex;
+        padding-top: 3px;
+    }
+
+    .divPage {
+        float: left;
+        padding: 3px;
+        border: solid thin black;
+        margin-right: 6px;
+        cursor: pointer;
+        background-color: #fef;
+    }
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn"></div>
+    <div id="middleColumn">
+        <div id="divGalleryName">Gallery</div>
+        <div id="imageContainer"></div>
+        <div style="clear:both"></div>
+        <div id="pageContainer"></div>
+    </div>
+    <div id="rightColumn"></div>
+</div>
+
+
+<script>
+    var service = '@ViewBag.Service';
+    var folder = '@ViewBag.Folder';
+    var page = 0;
+    $(document).ready(function () {
+        $('#divGalleryName').html(folder.substr(folder.lastIndexOf("/") + 1));
+
+        // set width
+        $('#imageContainer').width($('#middleColumn').width());
+
+        // set heigth
+        $('#imageContainer').height($('#middleColumn').height() - 115);
+        $('#imageContainer').css("min-height", $('#middleColumn').height() - 115);
+
+        SetPageTabs();
+
+        GetImages();
+    });
+
+    $(window).resize(function () {
+        $('#imageContainer').width($('#middleColumn').width());
+        $('#imageContainer').height($('#middleColumn').height() - 115);
+    });
+
+
+    function GetImages() {
+        $.ajax({
+            type: "get",
+            url: service + "/api/directory/ImagePage?folder=" + folder + "&thisService=" + service + "&page=" + page,
+            datatype: "json",
+            success: function (data) {
+                $('#imageContainer').html(data);
+            },
+            error: function (xhr) {
+                alert("GetGalleryPage error: " + xhr.statusText);
+            }
+        });
+    }
+
+    function SetPageTabs() {
+        var pgKnt;
+        $.ajax({
+            type: "get",
+            url: service + "/api/directory/ImageCount?folder=" + folder,
+            async: false,
+            success: function (pageCount) {
+                for (i = 1; i <= pageCount + 1; i++) {
+                    $('#pageContainer').append("<div class='divPage' page=" + i + " >Page " + i + "</div>");
+                };
+
+                $('.divPage').click(function () {
+                    page = $(this).attr("page") - 1;
+                    GetImages();
+                });
+            },
+            error: function (xhr) {
+                alert("GetGalleryPage error: " + xhr.statusText);
+            }
+        });
+    }
+
+
+</script>

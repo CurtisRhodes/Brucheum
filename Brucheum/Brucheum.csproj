@@ -329,7 +329,7 @@
     <Content Include="Views\Home\get_image.cshtml" />
     <Content Include="Static_Pages\web.config" />
     <Content Include="Views\Home\Apps.cshtml" />
-    <Content Include="Views\Shared\_CommentsSection.cshtml" />
+    <Content Include="Views\Home\DirTreeTest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

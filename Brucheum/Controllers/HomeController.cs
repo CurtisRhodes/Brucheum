@@ -16,12 +16,10 @@ namespace Brucheum
             //return RedirectToRoute("Start");
         }
 
-        public ActionResult CommentSection(string articleId)
-        {            
-            ViewBag.ArticleId = articleId;
+        public ActionResult DirTreeTest(string articleId)
+        {
             ViewBag.Service = apiService;
-            ViewBag.UserId = Session["UserId"];
-            return PartialView("_CommentsSection");
+            return View();
         }
         public ActionResult Journal()
         {

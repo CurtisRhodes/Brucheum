@@ -23,9 +23,8 @@ function postImage(service, fileName) {
                     //alert("data: " + data);
                     serverImageName = data;
                 },
-                error: function (xhr, textStatus, error) {
-                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                error: function (xhr) {
+                    alert("PostTimage error: " + xhr.statusText);
                 }
             });
 

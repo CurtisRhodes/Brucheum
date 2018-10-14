@@ -48,6 +48,7 @@
     </div>
     <div id="middleColumn">
         <div class="pageTitle" id="divPageTitle">Ref Editor</div>
+        <div id="divStatusMessage"></div>
         <div id="divRefEdit">
             <div class="addEditArea">
                 <div>
@@ -103,9 +104,9 @@
                         $('#btnNew').show();
                     });
                 },
-                error: function (xhr, textStatus, error) {
-                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("GetRefs error: " + xhr.statusText);
                 }
             });
         } catch (e) {
@@ -146,9 +147,9 @@
                     else
                         displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
                 },
-                error: function (xhr, textStatus, error) {
-                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("Admin Refs Post error: " + xhr.statusText);
                 }
             });
         }
@@ -172,9 +173,9 @@
                         else
                             displayStatusMessage("alert-danger", "server ERROR: " + result.Success);
                     },
-                    error: function (xhr, textStatus, error) {
-                        displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                        alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    error: function (xhr) {
+                        displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                        alert("Admin Refs PUT error: " + xhr.statusText);
                     }
                 });
         }

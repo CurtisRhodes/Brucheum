@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brucheum", "Brucheum\Bruche
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LodgeSecretary", "LodgeSecretary\LodgeSecretary.csproj", "{30A99DAB-DF64-4F58-A539-453C67ACD9BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OggleBooble", "OggleBooble\OggleBooble.csproj", "{2A2A29AD-0486-4304-A5E6-41A2D2896066}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{30A99DAB-DF64-4F58-A539-453C67ACD9BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30A99DAB-DF64-4F58-A539-453C67ACD9BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30A99DAB-DF64-4F58-A539-453C67ACD9BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A2A29AD-0486-4304-A5E6-41A2D2896066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A2A29AD-0486-4304-A5E6-41A2D2896066}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A2A29AD-0486-4304-A5E6-41A2D2896066}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A2A29AD-0486-4304-A5E6-41A2D2896066}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,21 +5,22 @@
 <link href="~/Styles/JournalEditor.css" rel="stylesheet" />
 
 <h2>Journal</h2>
+<div id="divStatusMessage"></div>
+<div>
+    <button id="btnShowEditor">Add New Entry</button>
+</div>
+<div id="divBlogList"> </div>
+
+<div id="divEditor">
+    <div>Title: <input id="Title" title="put title here" /></div>
+    <textarea id="Content" cols="164" rows="20"></textarea>
     <div>
-        <button id="btnShowEditor">Add New Entry</button>
+        <button id="btnSave">xxx</button>
+        <button id="btnDelete">Delete</button>
+        <button id="btnCancel">Cancel</button>
     </div>
-    <div id="divBlogList"> </div>
-    
-    <div id="divEditor">
-        <div>Title: <input id="Title" title="put title here" /></div>
-        <textarea id="Content" cols="164" rows="20"></textarea>
-        <div>
-            <button id="btnSave">xxx</button>
-            <button id="btnDelete">Delete</button>
-            <button id="btnCancel">Cancel</button>
-        </div>
-        <input id="hiddenId" type="hidden" />
-    </div>
+    <input id="hiddenId" type="hidden" />
+</div>
 <script>
     var service = '@ViewBag.Service';
 
@@ -42,9 +43,9 @@
                 success: function () {
                     displayStatusMessage("alert-success", "Saved");
                 },
-                error: function (xhr, textStatus, error) {
-                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("ajax error: " + xhr.statusText);
                 }
             });
         } catch (e) {
@@ -68,9 +69,9 @@
                     displayStatusMessage("alert-success", "Saved");
                     $('#btnSave').text("Update");
                 },
-                error: function (xhr, textStatus, error) {
-                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("ajax error: " + xhr.statusText);
                 }
              });
         } catch (e) {
@@ -94,9 +95,9 @@
                         getEntry($(this).attr('Id'));
                      });
                 },
-                error: function (xhr, textStatus, error) {
-                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("ajax error: " + xhr.statusText);
                 }
              });
         } catch (e) {
@@ -142,9 +143,9 @@
                         displayStatusMessage("alert-success", "entry deleted");
                         ToggleBlogEdit();
                     },
-                    error: function (xhr, textStatus, error) {
-                        displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                        alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                    error: function (xhr) {
+                        displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                        alert("ajax error: " + xhr.statusText);
                     }
                  });
             } catch (e) {

@@ -21,6 +21,9 @@ namespace Service1
         public virtual DbSet<Hit> Hits { get; set; }
         public virtual DbSet<Visitor> Visitors { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
+        public virtual DbSet<ImageFile> ImageFiles { get; set; }
+        public virtual DbSet<ImageFolder> ImageFolders { get; set; }
+
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -169,5 +172,56 @@ namespace Service1
         [Column(TypeName = "ntext")]
         [Required]
         public string CommentText { get; set; }
+    }
+
+    [Table("website.ImageFile")]
+    public partial class ImageFile
+    {
+        [Key]
+        public Guid ImageId { get; set; }
+
+        [Required]
+        [StringLength(200)]
+        public string ImageName { get; set; }
+
+        public int? FolderId { get; set; }
+
+        public string FolderName { get; set; }
+
+        public long? Size { get; set; }
+
+        public int VotesUp { get; set; }
+
+        public int VotesDown { get; set; }
+
+        public virtual ImageFolder ImageFolder { get; set; }
+    }
+
+    [Table("website.ImageFolder")]
+    public partial class ImageFolder
+    {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public ImageFolder()
+        {
+            ImageFiles = new HashSet<ImageFile>();
+        }
+
+        [Key]
+        public int FolderId { get; set; }
+
+        public int? ParentFolderId { get; set; }
+
+        public string RelativePath { get; set; }
+
+        [Required]
+        [StringLength(200)]
+        public string FolderName { get; set; }
+
+        public int? Files { get; set; }
+
+        public long? Size { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ImageFile> ImageFiles { get; set; }
     }
 }

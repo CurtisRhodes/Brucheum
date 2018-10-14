@@ -6,6 +6,7 @@
     <div id="leftColumn"></div>
     <div id="middleColumn">
         <div class="pageTitle" id="divBookTitle">@ViewBag.Title</div>
+        <div id="divStatusMessage"></div>
         <div id="divTableOfContents"></div>
         <div id="modalContainer" class="modalVail">
             <div id="modalContent"></div>
@@ -113,9 +114,9 @@
                         alert("catch: " + e);
                     }
                 },
-                error: function (xhr, textStatus, error) {
-                    displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
-                    alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("get table of contents error: " + xhr.statusText);
                 }
             });
         }

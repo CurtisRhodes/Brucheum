@@ -268,9 +268,9 @@
                             //displayStatusMessage("alert-success", "Saved");
                             //alert("Logged into your app and Facebook.")
                         },
-                        error: function (xhr, textStatus, error) {
-                            displayStatusMessage("alert-danger", "status: " + textStatus + " text: " + xhr.statusText + " error: " + error);
-                            alert("GetFacebookUser: " + textStatus + " text: " + xhr.statusText + " error: " + error);
+                        error: function (xhr) {
+                            displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                            alert("ajax error: " + xhr.statusText);
                         }
                     });
                 } else {

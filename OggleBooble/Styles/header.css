@@ -1,0 +1,52 @@
+﻿
+#bContent {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+#bheader {
+    box-sizing: border-box;
+    font-family: Arial;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 4px;
+    background-color: #fef;
+    border-top: #40767d 3px solid;
+    border-bottom: #decd6f 3px solid
+}
+    #bheader #tdBannerTitle {
+        font-family: 'Lucida Calligraphy';
+        font-size: 18px;
+    }
+    #bheader .bannerImage {
+        /*align: "middle";*/
+        width: 80px;
+        height: 40px;
+        cursor: pointer;
+    }
+    #bheader table {
+        width: 100%;
+    }
+    #bheader .menuTab {
+        font-size: 14px;
+        float: left;
+        list-style: none;
+        cursor: pointer;
+    }
+        #bheader .menuTab a {
+            text-decoration: none;
+            color: black;
+            padding-top: 10px;
+            padding-bottom: 5px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+            #bheader .menuTab a:hover {
+                text-decoration: underline;
+                background-color: #b7b174;
+            }
+
+    #bheader #blogin {
+        float: left;
+    }
