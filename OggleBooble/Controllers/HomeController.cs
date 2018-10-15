@@ -17,6 +17,8 @@ namespace OggleBooble
         }
         public ActionResult ImagePage(string folder)
         {
+            if (folder == null)
+                return View("Index");
             ViewBag.Title = folder.Substring(folder.LastIndexOf("/") + 1);
             ViewBag.Service = apiService;
             ViewBag.Folder = folder;
@@ -24,6 +26,8 @@ namespace OggleBooble
         }
         public ActionResult Gallery(string folder)
         {
+            if (folder == null)
+                return View("Index");
             ViewBag.Title = folder.Substring(folder.LastIndexOf("/") + 1);
             ViewBag.Service = apiService;
             ViewBag.Folder = folder;
@@ -31,7 +35,8 @@ namespace OggleBooble
         }
         public ActionResult Viewer(string folder, string startFile)
         {
-            ViewBag.Title = folder.Substring(folder.LastIndexOf("/") + 1);
+            if (folder == null)
+                return View("Index");
             ViewBag.Service = apiService;
             ViewBag.Folder = folder;
             ViewBag.StartFile = startFile;
@@ -39,6 +44,8 @@ namespace OggleBooble
         }
         public ActionResult Transitions(string folder)
         {
+            if (folder == null)
+                return View("Index");
             ViewBag.Title = folder.Substring(folder.LastIndexOf("/") + 1);
             ViewBag.Service = apiService;
             ViewBag.Folder = folder;

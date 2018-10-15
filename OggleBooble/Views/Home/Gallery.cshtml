@@ -31,7 +31,7 @@
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
-        <div id="divGalleryName">Gallery</div>
+        <div id="divBreadCrumbs"></div>
         <div id="imageContainer"></div>
     </div>
     <div id="rightColumn"></div>
@@ -43,16 +43,14 @@
     var folder = '@ViewBag.Folder';
     
     $(document).ready(function () {
-        //width: 100 %;
         var mWidth = $('#middleColumn').width();
         $('#imageContainer').width(mWidth);
-        var galleryTitle = folder.substr(folder.lastIndexOf("/") + 1);
-        //alert("galleryTitle: " + galleryTitle)
-        $('#divGalleryName').html(galleryTitle);
-        
+
+        //var galleryTitle = folder.substr(folder.lastIndexOf("/") + 1);
+        showBreadCrumbs(folder);
+
         GetGalleryPage();
     });
-
 
     function GetGalleryPage() {
         $.ajax({

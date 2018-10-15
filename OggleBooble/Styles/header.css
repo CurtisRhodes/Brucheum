@@ -16,8 +16,9 @@
     border-bottom: #decd6f 3px solid
 }
     #bheader #tdBannerTitle {
-        font-family: 'Lucida Calligraphy';
-        font-size: 18px;
+        font-family: 'Comic Sans MS';  /*'Lucida Calligraphy';*/
+        font-size: 21px;
+        color: red;
     }
     #bheader .bannerImage {
         /*align: "middle";*/

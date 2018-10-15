@@ -1,10 +1,5 @@
 ﻿
 <style>
-    #divGalleryName {
-        margin-top: 40px;
-        font-size: 24px;
-        font-weight: 700;
-    }
     #imageContainer {
         border: solid thin black;
         min-height: 200px;
@@ -35,7 +30,7 @@
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
-        <div id="divGalleryName">Gallery</div>
+        <div id="divBreadCrumbs"></div>
         <div id="imageContainer"></div>
         <div style="clear:both"></div>
         <div id="pageContainer"></div>
@@ -48,8 +43,11 @@
     var service = '@ViewBag.Service';
     var folder = '@ViewBag.Folder';
     var page = 0;
+
     $(document).ready(function () {
         $('#divGalleryName').html(folder.substr(folder.lastIndexOf("/") + 1));
+
+        showBreadCrumbs(folder);
 
         // set width
         $('#imageContainer').width($('#middleColumn').width());
@@ -67,7 +65,6 @@
         $('#imageContainer').width($('#middleColumn').width());
         $('#imageContainer').height($('#middleColumn').height() - 115);
     });
-
 
     function GetImages() {
         $.ajax({

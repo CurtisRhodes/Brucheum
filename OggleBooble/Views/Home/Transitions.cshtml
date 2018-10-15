@@ -1,0 +1,30 @@
+﻿
+<div class="threeColumnArray">
+    <div id="leftColumn"></div>
+    <div id="middleColumn">
+        <div id="imageContainer"></div>
+    </div>
+    <div id="rightColumn"></div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+    var folder = '@ViewBag.Folder';
+    var startFile = '@ViewBag.StartFile';
+
+
+    $(document).ready(function () {
+
+        $('#imageContainer').html("<img src='" + service + "/App_Data/Danni/" + folder + "/" + startFile + "'>");
+
+        LoadTabStrip();
+    });
+
+    function LoadTabStrip() {
+
+
+    }
+
+</script>
+
+

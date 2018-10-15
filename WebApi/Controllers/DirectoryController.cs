@@ -99,6 +99,37 @@ namespace Service1.Controllers
             db.SaveChanges();
         }
 
+
+        private string GetSubDirs(DirectoryInfo childDir, string folder, string thisService)
+        {
+            var sb = new StringBuilder();
+            string defaultImage;
+
+            if (childDir.GetFiles().Length > 0)
+            {
+                defaultImage = thisService + "/App_Data/Danni/" + folder + "/" + childDir.GetFiles("*.jpg")[0].Name;
+
+                sb.Append("<div class='galleryfolder'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name +
+                    "'><img class='galleryImage' src='" + defaultImage + "' alt='check out " + childDir.Name +
+                    " gallery' /></a><div class='galleryLabel'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name + "'>" + childDir.Name + "</a></div></div>");
+            }
+            if (childDir.GetDirectories().Length > 0)
+            {
+                foreach (DirectoryInfo subdir in childDir.GetDirectories())
+                {
+                    if (subdir.Name != "thumbnails")
+                    {
+                        string danni = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/" + folder + "/" + subdir.Name);
+                        DirectoryInfo deepDir = new DirectoryInfo(danni);
+                        //sb.Append(GetSubDirs(deepDir, folder + "/" + childDir.Name + "/" + subdir.Name, thisService));
+                        sb.Append(GetSubDirs(deepDir, folder + "/" + subdir.Name, thisService));
+                    }
+                }
+            }
+
+            return sb.ToString();
+        }
+
         [HttpGet]
         public string GalleryPage(string folder, string thisService)
         {
@@ -113,13 +144,47 @@ namespace Service1.Controllers
                 DirectoryInfo[] folders = di.GetDirectories();
                 foreach (DirectoryInfo childDir in folders)
                 {
-                    //s = folder.Replace(" ", "%20") + "/" + childDir.Name.Replace(" ", "%20");
-                    defaultImage = thisService+ "/App_Data/Danni/"+ folder + "/" + childDir.Name + "/" + childDir.GetFiles("*.jpg")[0].Name;
-
-                    sb.Append("<div class='galleryfolder'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name +
-                        "'><img class='galleryImage' src='" + defaultImage + "' alt='check out " + childDir.Name +
-                        " gallery' /></a><div class='galleryLabel'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name + "'>" + childDir.Name + "</a></div></div>");
+                    if ((childDir.GetFiles().Length > 0) && (childDir.GetFiles("*.jpg").Length > 0))
+                    {
+                        defaultImage = thisService + "/App_Data/Danni/" + folder + "/" + childDir.Name + "/" + childDir.GetFiles("*.jpg")[0].Name;
+                        sb.Append("<div class='galleryfolder'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name +
+                            "'><img class='galleryImage' src='" + defaultImage + "' alt='check out " + childDir.Name +
+                            " gallery' /></a><div class='galleryLabel'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name + "'>" + childDir.Name + "</a></div></div>");
+                    }
+                    else
+                    {
+                        if ((childDir.GetDirectories()[0].GetFiles().Length > 0) && (childDir.GetDirectories()[0].GetFiles("*.jpg")[0].Length > 0))
+                        {
+                            defaultImage = thisService + "/App_Data/Danni/" + folder + "/" + childDir.Name + "/" +
+                                childDir.GetDirectories()[0].Name + "/" + childDir.GetDirectories()[0].GetFiles("*.jpg")[0].Name;
+                        }
+                        else if ((childDir.GetDirectories()[0].GetDirectories()[0].GetFiles().Length > 0)
+                            && (childDir.GetDirectories()[0].GetDirectories()[0].GetFiles("*.jpg")[0].Length > 0))
+                        {
+                            defaultImage = thisService + "/App_Data/Danni/" + folder + "/" +
+                                childDir.GetDirectories()[0].GetDirectories()[0].Name + "/" + childDir.GetDirectories()[0].GetDirectories()[0].GetFiles("*.jpg")[0].Name;
+                        }
+                        else
+                        {
+                            defaultImage = thisService + "/App_Data/Danni/danni.jpg";
+                        }
+                        sb.Append("<div class='galleryfolder'><a href='/Home/Gallery?folder=" + folder + "/" + childDir.Name +
+                            "'><img class='galleryImage' src='" + defaultImage + "' alt='check out " + childDir.Name +
+                            " gallery' /></a><div class='galleryLabel'><a href='/Home/gallery?folder=" + folder + "/" + childDir.Name + "'>" + childDir.Name + "</a></div></div>");
+                    }
                 }
+                //if (childDir.GetDirectories().Length > 0)
+                //{
+                //    foreach (DirectoryInfo subdir in childDir.GetDirectories())
+                //    {
+                //        if (subdir.Name != "thumbnails")
+                //        {
+                //            string doubleDanni = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/" + folder + "/" + childDir.Name + "/" + subdir.Name);
+                //            DirectoryInfo deepDir = new DirectoryInfo(doubleDanni);
+                //            sb.Append(GetSubDirs(deepDir, folder + "/" + childDir.Name + "/" + subdir.Name, thisService));
+                //        }
+                //    }
+                //}
             }
             catch (Exception ex)
             {
@@ -187,6 +252,30 @@ namespace Service1.Controllers
             return len;
         }
 
+        [HttpGet]
+        public string[] GetTabStripImages(string folder, string thisService, string startImage)
+        {
+            var images = new List<string>();
+            try
+            {
+                string danni = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/" + folder);
+                FileInfo[] files = new DirectoryInfo(danni).GetFiles();
+                for (int i = 0; i < files.Count(); i++)
+                {
+                    if (files[i].Name != "thumbs.db")
+                    {
+                        //$('#tabStripContentArea').append("<div class='tabImage'>" + imageArray[i] + "</div>");
+                        images.Add("<img idx='" + i + "' src='" + thisService + "/App_Data/Danni/" + folder + "/" + files[i].Name + "'>");
+                        //images.Add(thisService + "/App_Data/Danni/" + folder + "/" + file.Name);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                images.Add(ex.Message);
+            }
+            return images.ToArray();
+        }
 
 
         // POST: api/Directory

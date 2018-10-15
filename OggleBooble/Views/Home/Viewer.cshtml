@@ -1,12 +1,88 @@
 ﻿
-@{
-    ViewBag.Title = "Viewer";
-}
+<style>
+    middleColumn {
+        box-sizing: border-box;
+    }
+    #breadcrumb {
+        margin-top: 50px;
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    #imageContainer {
+        border: solid thin black;
+        display: flex;
+        margin-bottom: 4px;
+        text-align: center;
+    }
+    #imageContainer div{
+        float: left;
+    }
+    #mainImage {
+        cursor: zoom-in;        
+    }
+    #nextImage img, #prevImage img {
+        width: 200px;
+        height: 200px;
+        opacity: 0.25;
+        border: solid thin black;
+        cursor: pointer;
+    }
+
+    #tabStrip {
+        clear: both;
+        border: solid thin black;
+        display: flex;
+        flex-wrap: nowrap;
+        margin-bottom: 4px;
+    }
+    .tabImage {
+        float:left;
+    }
+    .tabImage img {
+        height: 100px;
+        width: 100px;
+        margin-right: 4px;
+        cursor: pointer;
+    }
+    #tabStripLeftArrow {
+        float: left;
+    }
+        #tabStripLeftArrow img {
+            height: 100px;
+            width: 20px;
+            margin-right: 4px;
+        }
+    #tabStripContentArea {
+        float: left;
+        text-wrap: none;
+        overflow: hidden;
+    }
+    #tabStripRightArrow {
+        float: right;
+    }
+        #tabStripRightArrow img {
+            height: 100px;
+            width: 20px;
+        }
+</style>
 
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
-        <div id="imageContainer"></div>
+        <div id="divBreadCrumbs"></div>
+        <div id="imageContainer">
+            <div id="prevImage"></div>
+            <div id="mainImage"></div>
+            <div id="nextImage"></div>
+        </div>
+        <div style="clear:both"></div>
+        <div id="tabStrip">
+            <div id="tabStripLeftArrow"><img src="~/Images/leftArrow.png" /></div>
+            <div id="tabStripContentArea"></div>
+            <div id="tabStripRightArrow"><img src="~/Images/rightArrow.png" /></div>
+        </div>
+        <div style="clear:both"></div>
     </div>
     <div id="rightColumn"></div>
 </div>
@@ -16,39 +92,127 @@
     var folder = '@ViewBag.Folder';
     var startFile = '@ViewBag.StartFile';
 
+    var imageArray = new Array();
+    var imageTabIndex = 0;
+    var imageTabMax = 18;
+    var imageCurrentIndex = 0;
 
     $(document).ready(function () {
-        var galleryTitle = folder.substr(folder.lastIndexOf("/") + 1);
-        //$('#divGalleryName').html(galleryTitle);
-
-        $('#imageContainer').html("<img src='" + service + "/App_Data/Danni/" + folder + "/" + startFile + "'>");
-
-        //var mWidth = $('#middleColumn').width();
-        //$('#imageContainer').width(mWidth);
+        showBreadCrumbs(folder);
+        GetTabStripImageArray();
     });
 
+    $(window).resize(function () {
+        // set heigth of main image
+        var mHeight = $('#middleColumn').height() - 180;
+        $('#nextImage').css("margin-top", (mHeight - 200) / 2);
+        $('#mainImage img').height(mHeight);
+        $('#prevImage').css("margin-top", (mHeight - 200) / 2);
+        // ceter in imageContainer
+        var icw = ($('#imageContainer').width() / 2) - ($('#mainImage').width() / 2);
+        $('#imageContainer').css("padding-left", icw);
+        // set width of tabstrip
+        $('#tabStrip').width($('#middleColumn').width());
 
-    function GetPageCount() {
-        var pgKnt;
-        $.ajax({
-            type: "get",
-            url: service + "/api/directory/ImageCount?folder=" + folder,
-            async: false,
-            success: function (data) {
-                pgKnt = data;
-            },
-            error: function (xhr) {
-                alert("GetGalleryPage error: " + xhr.statusText);
-            }
-        });
-        return pgKnt;
+        // tab images = 104
+        imageTabMax = Math.floor($('#tabStrip').width() / 104);
+        ScrollTabStrip("resize");
+        //alert("imageTabMax: " + imageTabMax);
+        //alert("$(window).resize")
+    });
+
+    function ShowImage(currentImageIndex) {
+        if (currentImageIndex > 0) 
+            $('#prevImage').html(imageArray[Number(currentImageIndex) - 1]);
+        $('#mainImage').html(imageArray[currentImageIndex]);
+        if (currentImageIndex < imageArray.length) 
+            $('#nextImage').html(imageArray[Number(currentImageIndex) + 1]);
+        else 
+            alert("currentImageIndex: " + currentImageIndex + "  < imageArray.length: " + imageArray.length);
+        $(window).resize();
     }
 
-    $('.divPage').click(function () {
-        page = $('.divPage').attr("page");
-        GetImagePage();
-    });
+    function ScrollTabStrip(direction) {
+        try {
+            if (direction === "forward")
+                imageTabIndex += imageTabMax;
+            if (direction === "backward")
+                imageTabIndex -= (imageTabMax * 2);
+            if (imageTabIndex < 0)
+                imageTabIndex = 0;
+            if (imageTabIndex >= imageArray.length)
+                imageTabIndex = imageArray.length - imageTabMax;
 
+            $('#tabStripContentArea').html("");
+            for (i = imageTabIndex; i < imageTabIndex + imageTabMax; i++) {
+                if ((i >= 0) && (i < imageArray.length)) {
+                    $('#tabStripContentArea').append("<div class='tabImage'>" + imageArray[i] + "</div>");
+                }
+            }
+            $('.tabImage img').click(function () {
+                ShowImage($(this).attr("idx"));
+            });
+        } catch (e) { alert("ERROR ScrollTabStrip: " + e); }
+    }
+
+    function GetTabStripImageArray() {
+        try {
+            $.ajax({
+                type: "get",
+                url: service + "/api/directory/GetTabStripImages?folder=" + folder + "&thisService=" + service + "&startImage=" + startFile,
+                success: function (response) {
+                    try {
+                        imageArray = response;
+                        $.each(imageArray, function (idx, item) {
+                            if (item.indexOf(startFile) > 0) {
+                                imageCurrentIndex = parseInt(item.substr(item.indexOf("idx=") + 5, 2).replace("'", ""));
+                                return false;
+                            }
+                        });
+
+                        ShowImage(Number(imageCurrentIndex));
+
+                        ScrollTabStrip("forward");
+                    }
+                    catch (e) { alert("GetTabStripImageArray ERROR: " + e) }
+                },
+                error: function (xhr) { alert("GetTabStripImageArray error: " + xhr.statusText); }
+            });
+        } catch (e) { alert("GetTabStripImageArray ERROR2: " + e) }
+    }
+
+    $('#tabStripLeftArrow').click(function () {
+        ScrollTabStrip("backward");
+    })
+    $('#tabStripRightArrow').click(function () {
+        ScrollTabStrip("forward");
+    })
+
+    $('#prevImage').click(function () {
+        if (Number(imageCurrentIndex) > 0) {
+            imageCurrentIndex = Number(imageCurrentIndex) - 1;
+            ShowImage(imageCurrentIndex);
+        }
+    });
+    $('#mainImage').click(function () {
+        alert("$(this).css(cursor): " + $(this).css("cursor"));
+        if ($(this).css("cursor") == "zoom-in") {
+            originalMainImageSize = $(this).css("height");
+            $(this).css("cursor", "zoom-out");
+            $(this).css("height", "100%");
+        }
+        else {
+            $(this).css("height", originalMainImageSize);
+            $(this).css("cursor", "zoom-in");
+        }
+        $(window).resize();
+    });
+    $('#nextImage').click(function () {
+        if (Number(imageCurrentIndex) < imageArray.length)
+            imageCurrentIndex = Number(imageCurrentIndex) + 1;
+            ShowImage(imageCurrentIndex);
+    });
+    
 </script>
 
 

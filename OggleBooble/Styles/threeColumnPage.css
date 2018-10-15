@@ -12,6 +12,7 @@
     }
 
     .threeColumnArray #middleColumn {
+        margin-top: 46px;
         float: left;
         width: 100%;
     }

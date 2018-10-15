@@ -153,6 +153,7 @@
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\Global.js" />
     <Content Include="Scripts\ResizeThreeColumnPage.js" />
     <Content Include="Styles\default.css" />
     <Content Include="Images\babes.jpg" />
@@ -208,6 +209,7 @@
     <Content Include="Views\Home\Gallery.cshtml" />
     <Content Include="Views\Home\ImagePage.cshtml" />
     <Content Include="Views\Home\Viewer.cshtml" />
+    <Content Include="Views\Home\Transitions.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
