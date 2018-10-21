@@ -60,7 +60,7 @@ namespace Service1.Controllers
         public void ProcessDir(GoDaddyContext db, DirectoryInfo dir, int parent)
         {
             var folderId = AddDirToDb(db, dir, parent);
-            AddFilesToDb(db, dir,folderId);
+            AddFilesToDb(db, dir, folderId);
             DirectoryInfo[] dirs = dir.GetDirectories();
             foreach (DirectoryInfo subDir in dirs)
             {
@@ -75,7 +75,7 @@ namespace Service1.Controllers
             var row = new ImageFolder()
             {
                 FolderName = di.Name,
-                RelativePath = di.FullName,                 
+                RelativePath = di.FullName,
                 ParentFolderId = parent
             };
             db.ImageFolders.Add(row);
@@ -213,6 +213,21 @@ namespace Service1.Controllers
                 int start = page * imagesPerPage;
 
                 DirectoryInfo di = new DirectoryInfo(danni);
+                DirectoryInfo[] subDirs = di.GetDirectories();
+                if (subDirs.Length > 0)
+                {
+                    foreach (DirectoryInfo childDir in subDirs)
+                    {
+                        if ((childDir.GetFiles().Length > 0) && (childDir.GetFiles("*.jpg").Length > 0))
+                        {
+                            var defaultImage = thisService + "/App_Data/Danni/" + folder + "/" + childDir.Name + "/" + childDir.GetFiles("*.jpg")[0].Name;
+                            sb.Append("<div class='divImage'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name +
+                                "'><img class='thumbImage' src='" + defaultImage + "' alt='check out " + childDir.Name +
+                                " gallery' /></a><div class='galleryLabel'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name + "'>" + childDir.Name + "</a></div></div>");
+                        }
+                    }
+
+                }
                 FileInfo[] files = di.GetFiles();
                 int max = files.Length;
                 foreach (FileInfo file in files)
@@ -221,10 +236,11 @@ namespace Service1.Controllers
                     if (count > start)
                     {
                         imageFile = thisService + "/App_Data/Danni/" + folder + "/" + file.Name;
-                        sb.Append("<div class='divImage'><a href='/Home/Viewer?folder=" + folder + "&startFile=" + file.Name + 
+                        sb.Append("<div class='divImage'><a href='/Home/Viewer?folder=" + folder + "&startFile=" + file.Name +
                             "'><img class='thumbImage' src='" + imageFile + "'</a></div>");
                     }
-                    if (count >= (start + imagesPerPage)) {
+                    if (count >= (start + imagesPerPage))
+                    {
                         break;
                     }
                 }
@@ -253,7 +269,7 @@ namespace Service1.Controllers
         }
 
         [HttpGet]
-        public string[] GetTabStripImages(string folder, string thisService, string startImage)
+        public string[] TabStrip(string folder, string thisService, string startImage)
         {
             var images = new List<string>();
             try
@@ -291,6 +307,21 @@ namespace Service1.Controllers
         // DELETE: api/Directory/5
         public void Delete(int id)
         {
+        }
+    }
+
+    [EnableCors("*", "*", "*")]
+    public class TranstionController : ApiController
+    {
+        [HttpGet]
+        public string[] LoadPicArray()
+        {
+            string danni = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/boobs/transitions");
+            FileInfo[] files = new DirectoryInfo(danni).GetFiles();
+            List<string> images = new List<string>();
+            foreach (FileInfo img in files)
+                images.Add(img.Name);
+            return images.ToArray();
         }
     }
 }

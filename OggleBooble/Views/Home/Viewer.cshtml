@@ -8,7 +8,6 @@
         font-size: 24px;
         font-weight: 700;
     }
-
     #imageContainer {
         border: solid thin black;
         display: flex;
@@ -19,7 +18,7 @@
         float: left;
     }
     #mainImage {
-        cursor: zoom-in;        
+        cursor: pointer; 
     }
     #nextImage img, #prevImage img {
         width: 200px;
@@ -39,12 +38,17 @@
     .tabImage {
         float:left;
     }
-    .tabImage img {
-        height: 100px;
-        width: 100px;
-        margin-right: 4px;
-        cursor: pointer;
+    .tabImageSelected {
+        float: left;
+        border:solid thin red;
+
     }
+        .tabImage img, .tabImageSelected img {
+            height: 100px;
+            width: 100px;
+            margin-right: 4px;
+            cursor: pointer;
+        }
     #tabStripLeftArrow {
         float: left;
     }
@@ -93,9 +97,9 @@
     var startFile = '@ViewBag.StartFile';
 
     var imageArray = new Array();
-    var imageTabIndex = 0;
     var imageTabMax = 18;
     var imageCurrentIndex = 0;
+    var tabStartPos = 0;
 
     $(document).ready(function () {
         showBreadCrumbs(folder);
@@ -116,7 +120,6 @@
 
         // tab images = 104
         imageTabMax = Math.floor($('#tabStrip').width() / 104);
-        ScrollTabStrip("resize");
         //alert("imageTabMax: " + imageTabMax);
         //alert("$(window).resize")
     });
@@ -134,27 +137,50 @@
 
     function ScrollTabStrip(direction) {
         try {
-            if (direction === "forward")
-                imageTabIndex += imageTabMax;
-            if (direction === "backward")
-                imageTabIndex -= (imageTabMax * 2);
-            if (imageTabIndex < 0)
-                imageTabIndex = 0;
-            if (imageTabIndex >= imageArray.length)
-                imageTabIndex = imageArray.length - imageTabMax;
+
+            if (direction === "forward") {
+                if ((imageCurrentIndex + imageTabMax) > imageArray.length)
+                    tabStartPos = imageArray.length - imageTabMax;
+                else
+                    tabStartPos += imageTabMax;
+            }
+            if (direction === "backward") {
+                if ((imageCurrentIndex - (imageTabMax * 2)) < 0)
+                    tabStartPos = 0;
+                else
+                    tabStartPos -= (imageTabMax * 2);
+            }
+            if (direction === "ensureVisible") {
+                if ((imageCurrentIndex <= tabStartPos) || (imageCurrentIndex > (tabStartPos + imageTabMax)))
+                    tabStartPos = imageCurrentIndex;
+            }
+
 
             $('#tabStripContentArea').html("");
-            for (i = imageTabIndex; i < imageTabIndex + imageTabMax; i++) {
-                if ((i >= 0) && (i < imageArray.length)) {
-                    $('#tabStripContentArea').append("<div class='tabImage'>" + imageArray[i] + "</div>");
+            for (i = tabStartPos; i < (tabStartPos + imageTabMax); i++) {
+                if (i < imageArray.length) {
+                    if (imageArray[i] != "Thumbs.db") {
+                        if (i == imageCurrentIndex)
+                            $('#tabStripContentArea').append("<div class='tabImageSelected'>" + imageArray[i] + "</div>");
+                        else
+                            $('#tabStripContentArea').append("<div class='tabImage'>" + imageArray[i] + "</div>");
+                    }
                 }
             }
-            $('.tabImage img').click(function () {
-                ShowImage($(this).attr("idx"));
-            });
-        } catch (e) { alert("ERROR ScrollTabStrip: " + e); }
-    }
 
+
+            // this click fuction must be placed here after the tab elements are created
+            $('.tabImage img').click(function () {
+                $("#tabStripContentArea div [class='tabImageSelected']").removeClass("tabImageSelected").addClass("tabImage");
+                $(this).removeClass("tabImage").addClass("tabImageSelected")
+                imageCurrentIndex = Number($(this).attr("idx"));
+
+                ShowImage(imageCurrentIndex);
+            });
+        }
+         catch (e) { alert("ERROR ScrollTabStrip: " + e); }
+    };
+  
     function GetTabStripImageArray() {
         try {
             $.ajax({
@@ -169,10 +195,11 @@
                                 return false;
                             }
                         });
+                        $(window).resize();
+                        ScrollTabStrip("ensureVisible");
 
                         ShowImage(Number(imageCurrentIndex));
 
-                        ScrollTabStrip("forward");
                     }
                     catch (e) { alert("GetTabStripImageArray ERROR: " + e) }
                 },
@@ -189,30 +216,34 @@
     })
 
     $('#prevImage').click(function () {
-        if (Number(imageCurrentIndex) > 0) {
+        if (Number(imageCurrentIndex) > 0)
             imageCurrentIndex = Number(imageCurrentIndex) - 1;
-            ShowImage(imageCurrentIndex);
-        }
+        ShowImage(imageCurrentIndex);
+        ScrollTabStrip("ensureVisible");
     });
     $('#mainImage').click(function () {
-        alert("$(this).css(cursor): " + $(this).css("cursor"));
-        if ($(this).css("cursor") == "zoom-in") {
-            originalMainImageSize = $(this).css("height");
-            $(this).css("cursor", "zoom-out");
-            $(this).css("height", "100%");
-        }
-        else {
-            $(this).css("height", originalMainImageSize);
-            $(this).css("cursor", "zoom-in");
-        }
-        $(window).resize();
+        MoveNext();
+        //if ($(this).css("cursor") == "zoom-in") {
+        //    alert("$(this).css(cursor): " + $(this).css("cursor"));
+        //    originalMainImageSize = $(this).css("height");
+        //    $(this).css("cursor", "zoom-out");
+        //    $(this).css("height", "100%");
+        //}
+        //else {
+        //    $(this).css("height", originalMainImageSize);
+        //    $(this).css("cursor", "zoom-in");
+        //}
+        //$(window).resize();
     });
     $('#nextImage').click(function () {
+        MoveNext();
+    });
+    function MoveNext() {
         if (Number(imageCurrentIndex) < imageArray.length)
             imageCurrentIndex = Number(imageCurrentIndex) + 1;
-            ShowImage(imageCurrentIndex);
-    });
-    
+        ShowImage(imageCurrentIndex);
+        ScrollTabStrip("ensureVisible");
+    }
 </script>
 
 

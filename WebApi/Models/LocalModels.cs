@@ -36,19 +36,19 @@ namespace Service1
         public string success { get; set; }
     }
 
-    public class UserLoginModel
+    public class UserLoginResponse
     {
         public Guid UserId { get; set; }
-        public string Email { get; set; }
         public string UserName { get; set; }
-        public string PasswordHash { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string PhoneNumber { get; set; }
-        public short? Pin { get; set; }
-        public string FaceBookId { get; set; }
-        public DateTime? CreateDate { get; set; }
-        public DateTime? LastModified { get; set; }
+        //public string Email { get; set; }
+        //public string PasswordHash { get; set; }
+        //public string FirstName { get; set; }
+        //public string LastName { get; set; }
+        //public string PhoneNumber { get; set; }
+        //public short? Pin { get; set; }
+        //public string FaceBookId { get; set; }
+        //public DateTime? CreateDate { get; set; }
+        //public DateTime? LastModified { get; set; }
         public string success { get; set; }
     }
 

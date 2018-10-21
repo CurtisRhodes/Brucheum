@@ -20,12 +20,17 @@
         font-size: 21px;
         color: red;
     }
-    #bheader .bannerImage {
-        /*align: "middle";*/
-        width: 80px;
-        height: 40px;
-        cursor: pointer;
-    }
+#tdBannerSubTitle {
+    font-style: italic;
+    font-size:larger;
+    color: #a14aa8;
+}
+#bheader .bannerImage {
+    /*align: "middle";*/
+    width: 80px;
+    height: 40px;
+    cursor: pointer;
+}
     #bheader table {
         width: 100%;
     }

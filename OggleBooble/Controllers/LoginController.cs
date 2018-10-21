@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Brucheum
+namespace OggleBooble.Controllers
 {
     public class LoginController : Controller
     {
@@ -18,11 +16,10 @@ namespace Brucheum
 
         public ActionResult RegisterPopup()
         {
-            ViewBag.UserId = Session["UserId"];
             ViewBag.Service = apiService;
             return PartialView("_RegisterPopup");
         }
-        
+
         public ActionResult ProfilePopup()
         {
             ViewBag.UserId = Session["UserId"];
@@ -32,7 +29,7 @@ namespace Brucheum
         }
 
         [HttpGet]
-        public string SetCookie(string userName, string userId, string useCookie)
+        public string SetoggleBoobleCookie(string userName, string userId, string useCookie)
         {
             string success = "oh no";
             try
@@ -40,18 +37,19 @@ namespace Brucheum
                 Session["UserName"] = userName;
                 Session["UserId"] = userId;
 
-                HttpCookie brucheumCookie = Request.Cookies["Brucheum"];
-                if (brucheumCookie == null)
+                HttpCookie oggleBoobleCookie = Request.Cookies["OggleBooble"];
+                if (oggleBoobleCookie == null)
                 {
-                    brucheumCookie = new HttpCookie("Brucheum");
+                    oggleBoobleCookie = new HttpCookie("OggleBooble");
                 }
-                brucheumCookie.Name = "Brucheum";
-                brucheumCookie.Values["UserName"] = userName;
-                brucheumCookie.Values["UserId"] = userId;
-                brucheumCookie.Values["UseCookie"] = useCookie;
-                brucheumCookie.Expires = DateTime.Now.AddMonths(1);
+                oggleBoobleCookie.Name = "OggleBooble";
+                oggleBoobleCookie.Values["UserName"] = userName;
+                oggleBoobleCookie.Values["UserId"] = userId;
+                oggleBoobleCookie.Values["UseCookie"] = useCookie;
+                oggleBoobleCookie.Expires = DateTime.Now.AddMonths(1);
 
-                Response.Cookies.Add(brucheumCookie);
+                Response.Cookies.Add(oggleBoobleCookie);
+
                 success = "ok";
             }
             catch (Exception ex)
@@ -67,28 +65,21 @@ namespace Brucheum
             var success = "on no";
             Session["UserName"] = null;
             Session["UserId"] = null;
-            HttpCookie brucheumCookie = Request.Cookies["Brucheum"];
-            if (brucheumCookie == null)
+            HttpCookie oggleBoobleCookie = Request.Cookies["OggleBooble"];
+            if (oggleBoobleCookie == null)
             {
-                 success = "no cookie found";
+                success = "no cookie found";
             }
             else
             {
-                brucheumCookie["UserName"] = "";
-                brucheumCookie["UserId"] = "";
-                brucheumCookie["UseCookie"] = "false";
-                brucheumCookie.Expires = DateTime.Now.AddDays(-1);
-                Response.Cookies.Add(brucheumCookie);
+                oggleBoobleCookie["UserName"] = "";
+                oggleBoobleCookie["UserId"] = "";
+                oggleBoobleCookie["UseCookie"] = "false";
+                oggleBoobleCookie.Expires = DateTime.Now.AddDays(-1);
+                Response.Cookies.Add(oggleBoobleCookie);
                 success = "ok";
             }
             return success;
         }
     }
-    public class FaceBookUser
-    {
-        public string FaceBookId { get; set; }
-        public string Name { get; set; }
-    }
-
 }
-

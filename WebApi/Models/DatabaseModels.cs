@@ -119,38 +119,41 @@ namespace Service1
     [Table("website.Visitor")]
     public partial class Visitor
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Visitor()
-        {
-            Hits = new HashSet<Hit>();
-        }
-
         [Key]
-        [StringLength(300)]
+        [Column(Order = 0)]
+        [StringLength(50)]
         public string IPAddress { get; set; }
 
-        [StringLength(200)]
-        public string SomethingNice { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        [StringLength(50)]
+        public string App { get; set; }
 
-        [StringLength(200)]
-        public string MoreIfo { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Hit> Hits { get; set; }
+        public DateTime? VisitDate { get; set; }
     }
 
     [Table("website.Hit")]
     public partial class Hit
     {
-        [Key]
         public int Id { get; set; }
 
-        [StringLength(300)]
+        [Required]
+        [StringLength(50)]
+        public string App { get; set; }
+
+        [StringLength(50)]
         public string IPAddress { get; set; }
 
-        public DateTime? BeginVisit { get; set; }
+        [StringLength(300)]
+        public string PageName { get; set; }
 
-        public DateTime? EndVisit { get; set; }
+        [StringLength(300)]
+        public string Details { get; set; }
+
+        public DateTime? BeginView { get; set; }
+
+        [StringLength(200)]
+        public string ViewDuration { get; set; }
 
         public virtual Visitor Visitor { get; set; }
     }

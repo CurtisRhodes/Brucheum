@@ -12,19 +12,6 @@ namespace Service1.Controllers
     [EnableCors("*", "*", "*")]
     public class LoginController : ApiController
     {
-        public static string HashSHA256(string value)
-        {
-            var sha1 = System.Security.Cryptography.SHA256.Create();
-            var inputBytes = System.Text.Encoding.ASCII.GetBytes(value);
-            var hash = sha1.ComputeHash(inputBytes);
-
-            var sb = new System.Text.StringBuilder();
-            for (var i = 0; i < hash.Length; i++)
-            {
-                sb.Append(hash[i].ToString("X2"));
-            }
-            return sb.ToString();
-        }
 
         [HttpGet]
         public string Login(string userName, string password)
@@ -54,6 +41,118 @@ namespace Service1.Controllers
             }
             return userId;
         }
+
+        [HttpGet]
+        public JsonResult<UserLogin> GetUser(string userId)
+        {
+            var user = new UserLogin();
+            try
+            {
+                using (GoDaddyContext db = new GoDaddyContext())
+                {
+                    var registeredUser = db.UserLogins.Where(l => (l.UserId.ToString() == userId)).FirstOrDefault();
+                    if (registeredUser != null)
+                    {
+                        user.UserName = registeredUser.UserName;
+                        user.FirstName = registeredUser.FirstName;
+                        user.LastName = registeredUser.LastName;
+                        user.Email = registeredUser.Email;
+                        user.PhoneNumber = registeredUser.PhoneNumber;
+                        user.Pin = registeredUser.Pin;
+                    }
+                    //user.success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                user.UserName = "ERROR: " + ex.Message;
+            }
+            return Json(user);
+        }
+
+        [HttpPut]
+        public string UpdateUser(UserLogin login)
+        {
+            string success = "on no";
+            try
+            {
+                using (GoDaddyContext db = new GoDaddyContext())
+                {
+                    var user = db.UserLogins.Where(l => l.UserId == login.UserId).FirstOrDefault();
+                    if (user != null)
+                    {
+                        user.UserName = login.UserName;
+                        user.LastModified= DateTime.Now;
+                        user.Email = login.Email;
+                        user.FirstName = login.FirstName;
+                        user.LastName = login.LastName;
+                        user.PhoneNumber = login.PhoneNumber;
+                        user.Pin = login.Pin;
+
+                        db.SaveChanges();
+                        success = "ok";
+                    }
+                    else
+                        success = "User Not Found";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = ex.Message;
+            }
+            return success;
+        }
+
+        [HttpPost]
+        public JsonResult<UserLoginResponse> Register(UserLogin login)
+        {
+            var rtn = new UserLoginResponse() { success = "ERROR: ono" };
+            try
+            {
+                using (GoDaddyContext db = new GoDaddyContext())
+                {
+                    var newUser = new UserLogin();
+                    newUser.UserId = Guid.NewGuid();
+                    newUser.UserName = login.UserName;
+                    newUser.PasswordHash = HashSHA256(login.PasswordHash);
+                    newUser.CreateDate = DateTime.Now;
+                    newUser.Email = login.Email;
+                    newUser.FirstName = login.FirstName;
+                    newUser.LastName = login.LastName;
+                    newUser.PhoneNumber = login.PhoneNumber;
+                    newUser.Pin = login.Pin;
+
+                    db.UserLogins.Add(newUser);
+                    db.SaveChanges();
+                    rtn.UserId = newUser.UserId;
+                    rtn.UserName = newUser.UserName;
+                    rtn.success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                rtn.success= "ERROR: " + ex.Message;
+            }
+            return Json(rtn); 
+        }
+
+
+        private static string HashSHA256(string value)
+        {
+            var sha1 = System.Security.Cryptography.SHA256.Create();
+            var inputBytes = System.Text.Encoding.ASCII.GetBytes(value);
+            var hash = sha1.ComputeHash(inputBytes);
+
+            var sb = new System.Text.StringBuilder();
+            for (var i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("X2"));
+            }
+            return sb.ToString();
+        }
+
+
+
 
         [HttpGet]
         public string GetFacebookUserId(string name, string facebookId)
@@ -86,90 +185,6 @@ namespace Service1.Controllers
             }
             return response;
         }
-
-
-        [HttpPost]
-        public JsonResult<UserLoginModel> AddorGetUser(UserLoginModel upUser)
-        {
-            upUser.success = "on no";
-            try
-            {
-                using (GoDaddyContext db = new GoDaddyContext())
-                {
-
-                    var registeredUser = db.UserLogins.Where(l => (l.UserId == upUser.UserId)).FirstOrDefault();
-                    if (registeredUser == null)
-                    {
-                          //{ 00000000 - 0000 - 0000 - 0000 - 000000000000}
-
-
-                        var login = new UserLogin();
-                        login.UserId = Guid.NewGuid();
-                        login.UserName = upUser.UserName;
-                        login.PasswordHash = HashSHA256(upUser.PasswordHash);
-                        login.CreateDate = DateTime.Now;
-                        login.PhoneNumber = upUser.PhoneNumber;
-                        login.Email = upUser.Email;
-                        login.FirstName = upUser.FirstName;
-                        login.LastName = upUser.PhoneNumber;
-                        login.FaceBookId = upUser.FaceBookId;
-
-                        db.UserLogins.Add(login);
-                        db.SaveChanges();
-                        upUser.UserId = login.UserId;
-                    }
-                    else
-                    {
-                        upUser.UserName = registeredUser.UserName;
-                        upUser.FirstName = registeredUser.FirstName;
-                        upUser.LastName = registeredUser.LastName;
-                        upUser.Email = registeredUser.Email;
-                        upUser.PhoneNumber = registeredUser.PhoneNumber;
-                        upUser.Pin = registeredUser.Pin;
-                    }
-                    upUser.success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                upUser.success = "ERROR: " + ex.Message;
-            }
-            return Json(upUser);
-        }
-
-        [HttpPut]
-        public string UpdateUser(UserLoginModel login)
-        {
-            string success = "on no";
-            try
-            {
-                using (GoDaddyContext db = new GoDaddyContext())
-                {
-                    var user = db.UserLogins.Where(l => l.UserId == login.UserId).FirstOrDefault();
-                    if (user != null)
-                    {
-                        user.UserName = login.UserName;
-                        user.LastModified= DateTime.Now;
-                        user.Email = login.Email;
-                        user.FirstName = login.FirstName;
-                        user.LastName = login.LastName;
-                        user.PhoneNumber = login.PhoneNumber;
-                        user.Pin = login.Pin;
-
-                        db.SaveChanges();
-                        success = "ok";
-                    }
-                    else
-                        success = "User Not Found";
-                }
-            }
-            catch (Exception ex)
-            {
-                success = ex.Message;
-            }
-            return success;
-        }
-
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿@model Brucheum.ArticleModel
+@using System.Net.Http;
 
 <link href="~/Styles/ThreeColumnPage.css" rel="stylesheet" />
 <script src="~/Scripts/ImageTools.js"></script>
@@ -77,10 +78,10 @@
     var title = '@Model.Title';
     var userId = '@ViewBag.UserId';
     var userName = '@ViewBag.UserName';
-    
+
     $(document).ready(function () {
         try {
-            if (imageName !== "") {               
+            if (imageName !== "") {
                 $("#articleImage").attr("src", "data:image/gif;base64," + getImage(service, imageName));
             }
             content = beautify(content);
@@ -132,7 +133,7 @@
             $.ajax({
                 type: "POST",
                 url: "/api//File",  //  local api (static pages not stored in service)
-                processData: false, 
+                processData: false,
                 contentType: false,
                 async: false,
                 cache: false,
@@ -141,7 +142,7 @@
                     if (success === "ok") {
                         $('#btnStatic').val("permalink");
                         $('#shareToFacebook').html('<button id="btnPermalink" class="roundendButton">permalink</button>');
-                        
+
                         $('#btnPermalink').click(function () {
                             window.location.href = "/static_pages/" + title.replace(/ /g, "_") + ".html", "target='_blank'";
 
@@ -281,7 +282,7 @@
             }
         });
     }
-        
+
     function UpdateComment(comment) {
         $.ajax({
             url: service + "/api/Comments/Put",
@@ -307,6 +308,13 @@
     $('#imgPowerOffRed').click(function () {
         $('#divCommentsSection').hide();
     });
+
+    $(window).unload(function () {
+        //$(this)
+        alert("page move");
+    });
+
+
 
     ///////////////////////////////////////////////////
 

@@ -1,5 +1,5 @@
-﻿<script src="~/Scripts/GlobalFunctions.js"></script>
-<link href="~/Styles/modalDialog.css" rel="stylesheet" />
+﻿<link href="~/Styles/modalDialog.css" rel="stylesheet" />
+<script src="~/Scripts/Global.js"></script>
 
 <style>
     #registerUserDialog {
@@ -31,7 +31,7 @@
 <div id="registerUserDialog">
 
     <div class="dialogHeader">
-        Sign up for <span>The Brucheum</span>
+        Sign in to <span>OggleBooble</span>
         <div id="btnClose" class="divCloseButton">
             <img height="19" src="~/Images/powerOffRed01.png" />
         </div>
@@ -51,7 +51,7 @@
     <div id="divShowDetails">
         Extra Details
         <div class="divCloseButton">
-            <img id="upDownCaret" class="carets" src="~/Images/downCaret.png" />
+            <img id="upDownCaret" height="19" src="~/Images/downCaret.png" />
         </div>
     </div>
     <div id="divExtraDetails">
@@ -67,25 +67,24 @@
         <input id="txtPin" type="text" class="roundedInput" placeholder="you may use this in place of your password"><br>
     </div>
     <button class="roundendButton" style="float:right" id="btnRegister">Submit</button>
-</div>
+</div> 
 
 <script>
     var service = '@ViewBag.Service';
     var user = new Object();
 
-    //$(document).ready(function () {    });
-
+//    $(document).ready(function () { });
+ 
     $('#divShowDetails').click(function () {
         $('#divExtraDetails').toggle();
-        if ($('#upDownCaret').attr("src") == "/Images/downCaret.png") 
+        if ($('#upDownCaret').attr("src") == "/Images/downCaret.png")
             $('#upDownCaret').attr("src", "/Images/upCaret.png");
-        else 
+        else
             $('#upDownCaret').attr("src", "/Images/downCaret.png");
     });
 
     $('#btnRegister').click(function () {
-        if (validate())
-        {
+        if (validate()) {
             try {
                 unBind();
                 $.ajax({
@@ -95,23 +94,24 @@
                     datatype: "json",
                     success: function (response) {
                         if (response.success === "ok") {
-                            var ischecked = $('#ckRememberMe').prop('checked').toString();
-                            //SetBrucheumCookie(response.UserName, response.UserId, "false");
+                            //alert("Log In Success!");
+                            clearModal();
+                            //var userId = response.UserId;
                             $.ajax({
                                 type: "get",
-                                url: "/Login/SetCookie?userName=" + response.UserName + "&userId=" + response.UserId + "&useCookie=" + ischecked,
+                                url: "/Login/SetOggleBoobleCookie?userName=" + userName + "&userId=" + userId + "&useCookie=true",
                                 datatype: "json",
                                 success: function (success) {
                                     if (success === "ok")
                                         //$("#divlogin").load(location.href + " #divlogin");
                                         location.reload(true);
                                         //clearModal();
-                                    else
-                                        alert("SetCookie error: " + success);
+                                     else
+                                        alert("SetOggleBoobleCookie error: " + success);
                                 },
                                 error: function (xhr) {
                                     displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                                    alert("SetCookie  error: " + xhr.statusText);
+                                    alert("SetBrucheumCookie  error: " + xhr.statusText);
                                 }
                             });
                         }
@@ -127,7 +127,7 @@
             } catch (e) {
                 alert("Login Post error: " + e);
             }
-        }    
+        }
     });
 
     function validate() {
@@ -172,3 +172,4 @@
     });
 
 </script>
+

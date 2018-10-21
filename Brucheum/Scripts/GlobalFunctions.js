@@ -33,29 +33,6 @@ function beautify(stankyString) {
 		.replace(/\n/g, "");
 }
 
-function SetBrucheumCookie(userName, userId, useCookie) {
-	try {
-		//alert("SetBrucheumCookie userName: " + userName + "userId: " + userId + "useCookie: " + useCookie);
-		$.ajax({
-			type: "get",
-			url: "/Login/SetBrucheumCookie?userName=" + userName + "&userId=" + userId + "&useCookie=" + useCookie,
-			datatype: "json",
-			success: function (success) {
-				if (success === "ok")
-					$("#divlogin").load(location.href + " #divlogin");
-				else
-					alert("SetBrucheumCookie error: " + success);
-			},
-			error: function (xhr) {
-				displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-				alert("SetBrucheumCookie  error: " + xhr.statusText);
-			}
-		});
-	} catch (e) {
-		alert("SetBrucheumCookie  catch: " + e);
-	}
-}
-
 function formatDate(date) {
     var hours = date.getHours();
     var minutes = date.getMinutes();

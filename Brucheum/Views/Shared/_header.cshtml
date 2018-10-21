@@ -16,7 +16,6 @@
                     <li class="menuTab"><a href="~/Article/ArticleList?filterType=Category&filter=conspiracy">Conspiracy Theories</a></li>
                     <li class="menuTab"><a href="~/Book/MyBooks">Books</a></li>
                     <li class="menuTab"><a href="~/Home/Apps">Apps</a></li>
-                    <li class="menuTab"><a href="~/Home/DirTreeTest">DirTree Test</a></li>
                     <li class="menuTab"><a href="~/Consulting/ConsultingHome">Intelligent Design</a></li>
                 </ul>
             </td>
@@ -25,13 +24,13 @@
                     <ul>
                         @if ((Session["UserName"] != null) && (!String.IsNullOrEmpty(@Session["UserName"].ToString())))
                         {
-                            <li id="tabProfile" class="menuTab"><a href="#">Hello @Session["UserName"]</a></li>
+                            <li id="tabProfile" title="modify profile" class="menuTab"><a href="#">Hello @Session["UserName"]</a></li>
                             <li id="tabLogout" class="menuTab"><a href="#">Log Out</a></li>
                         }
                         else
                         {
-                            <li id="tabLogIn" class="menuTab"><a href="#">Log In</a></li>
                             <li id="tabRegister" class="menuTab"><a href="#">Register</a></li>
+                            <li id="tabLogIn" class="menuTab"><a href="#">Log In</a></li>
                         }
                     </ul>
                 </div>
@@ -104,6 +103,7 @@
             url: "/Login/DeleteCookie",
             success: function (success) {
                 if (success === "ok")
+                    //$("#divlogin").load(location.href + " #divlogin");
                     location.reload(true);
                 else
                     alert("LogOUT: " + success);

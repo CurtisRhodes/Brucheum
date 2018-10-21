@@ -1,5 +1,4 @@
 ﻿<link href="~/Styles/modalDialog.css" rel="stylesheet" />
-<script src="~/Scripts/GlobalFunctions.js"></script>
 
 <style>
     #userProfileDialog {
@@ -23,7 +22,7 @@
 <div id="userProfileDialog">
     <div id="divStatusMessage"></div>
     <div class="dialogHeader">
-        Modify Profile for <span>The Brucheum</span>
+        Modify Profile for <span>OggleBooble</span>
         <div id="btnClose" class="divCloseButton">
             <img height="19" src="~/Images/powerOffRed01.png" />
         </div>
@@ -79,7 +78,7 @@
         userProfile.Email = $('#txtEmail').val();
         userProfile.FirstName = $('#txtFirstName').val();
         userProfile.LastName = $('#txtLastName').val();
-        userProfile.PhoneNumber = $('#txtPhone').val();
+        userProfile.PhoneNumber= $('#txtPhone').val();
         userProfile.Pin = $('#txtPin').val();
     }
 
@@ -96,18 +95,18 @@
                         clearModal();
                     }
                     else {
-                        alert("UpdateProfile: " + success);
+                        alert("put: " + success);
                     }
                 },
                 error: function (xhr) {
                     displayStatusMessage("alert-danger", "error: " + xhr.statusText);
                     alert("ajax error: " + xhr.statusText);
                 }
-            });
+             });
         } catch (e) {
             displayStatusMessage("alert-danger", "ERROR" + e);
             alert("ajax catch error: " + xhr.statusText);
-        }
+      }
     }
 
     function GetUser() {
@@ -128,7 +127,7 @@
                     //displayStatusMessage("alert-danger", "error: " + xhr.statusText);
                     alert("get error: " + xhr.statusText);
                     Console.Write("Update Profile error: " + xhr.statusText);
-                }
+             }
             });
         } catch (e) {
             //displayStatusMessage("alert-danger", "ERROR" + e);

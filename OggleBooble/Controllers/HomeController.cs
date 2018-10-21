@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Net.Http;
-using System.Web;
+﻿using System.Configuration;
 using System.Web.Mvc;
 
 namespace OggleBooble
@@ -42,13 +37,15 @@ namespace OggleBooble
             ViewBag.StartFile = startFile;
             return View();
         }
-        public ActionResult Transitions(string folder)
+
+        public ActionResult Transitions()
         {
-            if (folder == null)
-                return View("Index");
-            ViewBag.Title = folder.Substring(folder.LastIndexOf("/") + 1);
             ViewBag.Service = apiService;
-            ViewBag.Folder = folder;
+            return View();
+        }
+        public ActionResult BoobsRanker()
+        {
+            ViewBag.Service = apiService;
             return View();
         }
 
