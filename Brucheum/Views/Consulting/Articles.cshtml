@@ -1,13 +1,18 @@
 ﻿
+@{
+    ViewBag.Title = "Articles";
+    Layout = "~/Views/Consulting/_ProfessionalLayout.cshtml";
+}
+
 <div class="threeColumnArray">
     <div id="leftColumn">
     </div>
     <div id="middleColumn">
-        @Html.Partial("_ArticleList");
+        <h2>Articles</h2>
     </div>
     <div id="rightColumn">
-        <div id="divb">
-            @Html.Partial("_BookPannel")
-        </div>
     </div>
 </div>
+
+
+

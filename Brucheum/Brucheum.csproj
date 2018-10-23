@@ -210,6 +210,7 @@
     <Content Include="Images\Book\PaupaBook\book-top.jpg" />
     <Content Include="Images\Book\PaupaBook\book-topLeft.jpg" />
     <Content Include="Images\Book\PaupaBook\book-topRight.jpg" />
+    <Content Include="Images\brain02.ico" />
     <Content Include="Images\Brucheum.ico" />
     <Content Include="Images\caveStairs.jpg" />
     <Content Include="Images\closeBtn02.png" />
@@ -222,6 +223,7 @@
     <Content Include="Images\loader.gif" />
     <Content Include="Images\powerOffRed01.png" />
     <Content Include="Images\Book\ReadyFireAim.jpg" />
+    <Content Include="Images\intel01.jpg" />
     <Content Include="Images\TanBlue\BlondJewBlue.png" />
     <Content Include="Images\TanBlue\BlondJewTan.png" />
     <Content Include="Images\TanBlue\BrucheumBlue.png" />
@@ -246,6 +248,7 @@
     <Content Include="Scripts\ImageTools.js" />
     <Content Include="Scripts\jquery.codeview.min.js" />
     <Content Include="Scripts\ResizeThreeColumnPage.js" />
+    <Content Include="Scripts\summernote.js" />
     <Content Include="Styles\articleEdit.css" />
     <Content Include="Styles\article.css" />
     <Content Include="Styles\articleList.css" />
@@ -253,14 +256,14 @@
     <Content Include="Styles\bookEdit.css" />
     <Content Include="Styles\codemirror.css" />
     <Content Include="Styles\default.css" />
-    <Content Include="Styles\footer.css" />
-    <Content Include="Styles\header.css" />
+    <Content Include="Styles\bFooter.css" />
+    <Content Include="Styles\bHeader.css" />
+    <Content Include="Styles\idHeader.css" />
     <Content Include="Styles\JournalEditor.css" />
     <Content Include="Styles\jquery.codeview.css" />
     <Content Include="Styles\modalDialog.css" />
     <Content Include="Styles\summernote.css" />
     <Content Include="Styles\tableofContents.css" />
-    <Content Include="Styles\ThreeColumnPage.css" />
     <Content Include="Images\Consulting\bluegradient1.PNG" />
     <Content Include="Images\Consulting\globlic.jpg" />
     <Content Include="Images\Consulting\menu_repeater.gif" />
@@ -284,8 +287,8 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Shared\_header.cshtml" />
-    <Content Include="Views\Shared\_footer.cshtml" />
+    <Content Include="Views\Shared\_bHeader.cshtml" />
+    <Content Include="Views\Shared\_bFooter.cshtml" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\curtisrhodes.com.pubxml" />
     <None Include="Readme.md" />
@@ -310,13 +313,21 @@
     <Content Include="Views\Book\BooksRead.cshtml" />
     <Content Include="Views\Book\Read.cshtml" />
     <Content Include="Styles\quill.snow.css" />
-    <Content Include="Views\Shared\_ArticleList.cshtml" />
     <Content Include="Views\Home\TanBlueMenu.cshtml" />
     <Content Include="Views\Article\ArticleList.cshtml" />
     <Content Include="Views\Home\get_image.cshtml" />
     <Content Include="Static_Pages\web.config" />
     <Content Include="Views\Home\Apps.cshtml" />
     <Content Include="Views\Home\DirTreeTest.cshtml" />
+    <Content Include="Views\Consulting\MyResume.cshtml" />
+    <Content Include="Views\Consulting\About.cshtml" />
+    <Content Include="Views\Consulting\Approach.cshtml" />
+    <Content Include="Views\Consulting\Portfolio.cshtml" />
+    <Content Include="Views\Consulting\Code.cshtml" />
+    <Content Include="Views\Consulting\Articles.cshtml" />
+    <Content Include="Views\Consulting\Contact.cshtml" />
+    <Content Include="Views\Consulting\_IdHeader.cshtml" />
+    <Content Include="Views\Consulting\_IdFooter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

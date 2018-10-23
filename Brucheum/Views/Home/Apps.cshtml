@@ -2,7 +2,6 @@
 @{
     ViewBag.Title = "Apps";
 }
-<link href="~/Styles/ThreeColumnPage.css" rel="stylesheet" />
 <style>
     #middleColumn {
         font-size: 24px;
@@ -57,8 +56,7 @@
 </style>
 
 <div class="threeColumnArray">
-    <div id="leftColumn">
-    </div>
+    <div id="leftColumn"></div>
     <div id="middleColumn">
         <div id="titleHeader">Apps I am Building</div>
         <div id="appsContainer">
@@ -131,8 +129,7 @@
             </div>
         </div>
     </div>
-    <div id="rightColumn">
-    </div>
+    <div id="rightColumn"></div>
 </div>
 
 <script>
@@ -152,13 +149,11 @@
             case "LodgeSecretary":
                 window.open("http://lodgeSecretary.net", "_blank");
                 break;
+            case "bOObs":
+                window.open("http://OggleBooble.com", "_blank");
+                break;
 
         }
-
-
-
-        @*var url = '@Url.Action("TableOfContents", "Book", new { bookTitle = "REPLACEME" })';
-        window.location.href = url.replace('REPLACEME', $(this).attr("book"));*@
     });
 </script>
-<script src="~/Scripts/ResizeThreeColumnPage.js"></script>
+

@@ -1,7 +1,6 @@
 ﻿@model Brucheum.ArticleModel
 @using System.Net.Http;
 
-<link href="~/Styles/ThreeColumnPage.css" rel="stylesheet" />
 <script src="~/Scripts/ImageTools.js"></script>
 <link href="~/Styles/article.css" rel="stylesheet" />
 
@@ -17,17 +16,16 @@
             <div id="divStatusMessage"></div>
             <div id="pollybox">
                 <div id="divTopLine">
-                    @Model.LastUpdated
-                    <div class="floatDivEdit">
+                    @Model.DateCreated
+                    <div class="floatRightDiv">
                         @Model.Category
                     </div>
                 </div>
-
                 <div id="divTitle">@Model.Title</div>
 
                 <div id="divByline">
                     by: @Model.Byline
-                    <div class="floatDivEdit">
+                    <div class="floatRightDivEdit">
                         <a href="ArticleEdit?Id=@Model.Id">edit</a>
                     </div>
                 </div>
@@ -87,7 +85,7 @@
             content = beautify(content);
             $('#divContent').html(content);
 
-            //stickCommentsButton();
+            stickCommentsButton();
         }
         catch (e) {
             alert("$(document).ready ERROR: " + e);
@@ -95,17 +93,21 @@
     });
 
     function stickCommentsButton() {
-        resizePage();
         var x = $('#divContent').position();
         var contentBottom = $('#divContent').position().top + $('#divContent').height();
-        var pageBottom = $('.threeColumnArray').position().top + $('.threeColumnArray').height();
+        var pageBottom = $('.threeColumnArray').height();
 
-        if (pageBottom > contentBottom) {
+        if (pageBottom < contentBottom) {
             //alert("pageBottom: " + pageBottom + "  contentBottom: " + contentBottom);
             $('#divCommentsButton').css("position", "absolute").css("bottom", 0);
-            $('#divCommentsSection').css("position", "absolute").css("top", pageBottom);
+            $('#divCommentsButton').width($('#middleColumn').width());
+            $('#divCommentsSection').css("position", "absolute").css("top", $('#divCommentsButton').position().top + 50);
+            $('#divCommentsSection').width($('#middleColumn').width());
         }
     }
+    //$(window).resize(function () {
+    //    stickCommentsButton();
+    //});
 
     $('#btnStatic').click(function () { saveAsStaticFile(); })
     function saveAsStaticFile() {
@@ -164,16 +166,26 @@
 
     // Show Comments
     $('#divCommentsButton').click(function () {
-        $('#divCommentsSection').toggle();
-        if ($('#divCommentsSection').is(':visible')) {
-            getComments();
+        //$('#divCommentsSection').toggle();
+        if ($('#divCommentsSection').css("display") == "none") {
+            //$('#divCommentsSection').css("position", "absolute")
+            //    .css("top", $('#divCommentsButton').position().top() + 50)
+            //    .css("width", $('#divCommentsButton').width());
 
-            if (userId === undefined)
+            if (userId == "") {
                 $('#divLoginWarning').show();
+                $('#divKnownUser').show();
+            }
             else {
                 $('#divKnownUser').html("Hello " + userName);
                 $('#divKnownUser').show();
+                $('#divLoginWarning').hide();
             }
+            $('#divCommentsSection').show()  //.css("visibility", "visible");
+            getCommentHistory();
+        }
+        else {
+            $('#divCommentsSection').hide();  //.css("visibility", "hidden");
         }
     });
 
@@ -215,17 +227,13 @@
         comment.UserId = userId;
         comment.ArticleId = articleId;
 
-        //if (comment.CommentTitle === "")
-
-        //comment.CommentText =
-
         if ($('#btnSubmitComment').text() === "Submit")
             SaveComment(comment);
         else
             UpdateComment(comment);
     });
 
-    function getComments() {
+    function getCommentHistory() {
         try {
             //$('#divLoadingGif').show();
             $.ajax({
@@ -243,11 +251,10 @@
                                 "<div class='cHistoryCol'>" + comment.CommentText + "</div>" +
                                 "</div>");
                         });
-                        //alert("result.Count :" + result.length + "  " + result.length !== 0);
                     }
-                    var wH = $('#middleColumn').height(); // - $('#middleColumn').height();
-                    $('#middleColumn').height(wH + $('#divCommentsSection').height());
-                    //alert("wH: " + wH + "  now:" + $('#middleColumn').height());
+
+                    var tcH = $('.threeColumnArray').height();
+                    $('.threeColumnArray').height(tcH + $('#divCommentsSection').height());
                     resizePage();
                 },
                 error: function (xhr) {
@@ -328,4 +335,3 @@
         $(this).html("Add");
     });
 </script>
-<script src="~/Scripts/ResizeThreeColumnPage.js"></script>

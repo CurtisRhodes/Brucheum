@@ -57,8 +57,7 @@ namespace Brucheum
         }
         protected void Application_Error()
         {
-            //Session["LastError"] = Server.GetLastError().Message;
-            //Server.Transfer("/Error.cshtml");
+            Session["LastError"] = Server.GetLastError().Message;
         }
 
 

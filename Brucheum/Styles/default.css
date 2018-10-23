@@ -1,11 +1,90 @@
 ﻿
 body {
+    margin: 0;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 14px;
-}
-.RenderBody {
-    padding-top: 26px;
     box-sizing: border-box;
+    background-color: #e4e4e4;
+}
+.Header {
+    position: fixed;
+    top: 0;
+    height: 72px;
+    z-index: 10;
+}
+.body-content {
+    margin-top: 72px;
+}
+
+.threeColumnArray {
+    width: 100%;
+    display: flex;
+}
+    .threeColumnArray #leftColumn {
+        float: left;
+        min-width: 7%;
+    }
+    .threeColumnArray #middleColumn {
+        float: left;
+        width: 100%;
+    }
+    .threeColumnArray #rightColumn {
+        float: right;
+        min-width: 7%;
+    }
+.pageTitle {
+    margin-top: 15px;
+    padding-bottom: 15px;
+    font-size: 32px;
+    font-weight: bold;
+    font-style: italic;
+    text-align: center;
+}
+
+
+
+.headerBody {
+    float: left;
+}
+#divHeaderContents {
+ }
+.menuTabContainer {
+    clear: both;
+    padding-left: 124px;
+    line-height: 1;
+}
+.loginTab {
+    float: right;
+}
+.menuTab {
+    font-size: 14px;
+    float: left;
+    cursor: pointer;
+}
+.menuTab a {
+    color: black;
+    text-decoration: none;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.floatLeft {
+    float: left;
+}
+
+.noFloat {
+    clear: both;
+}
+
+.headerBannerTitle {
+    padding-left: 66px;
+    padding-top: 4px;
+    font-family: 'Lucida Calligraphy';
+    font-size: 33px;
+    padding-bottom: 7px;
+    line-height: 1;
 }
 #modalContainer {
     z-index: 6; /* Sit on top */
@@ -15,15 +94,7 @@ divStatusMessage {
     margin-bottom: 3px;
     padding: 4px;
 }
-.pageTitle {
-    margin-top: 32px;
-    width: 100%;
-    font-size: 32px;
-    font-weight: bold;
-    font-style: italic;
-    text-align: center;
-    padding-bottom: 2px;
-}
+
 .modalVail {
     display: none; /*Hidden by default */
     position: fixed; /* Stay in place */
@@ -97,11 +168,6 @@ label {
     -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
     -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
     transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-}
-
-.rowButton {
-    box-sizing: border-box;
-    margin-bottom: 17px;
 }
 
 .alert-success {

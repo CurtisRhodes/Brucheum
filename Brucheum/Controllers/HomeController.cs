@@ -11,9 +11,7 @@ namespace Brucheum
         private string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
         public ActionResult Index()
         {
-            ViewBag.Service = apiService;
-            return View();
-            //return RedirectToRoute("Start");
+            return RedirectToRoutePermanent("Start");
         }
 
         public ActionResult DirTreeTest(string articleId)

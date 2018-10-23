@@ -1,0 +1,153 @@
+﻿
+@{
+    ViewBag.Title = "MyResume";
+    Layout = "~/Views/Consulting/_ProfessionalLayout.cshtml";
+}
+
+<style>
+    #leftColumn {
+        border-right: 2px solid orange;
+    }
+
+    .vertMenu {
+        margin-top: 88px;
+    }
+
+    .vertResMenuTab {
+        border-radius: 4px;
+        margin-left: 8px;
+        margin-right: 8px;
+        font-size: 14px;
+        list-style: none;
+        cursor: pointer;
+        margin-bottom: 26px;
+        color: black;
+        padding: 10px;
+        color: #fff;
+        background-color: #07c;
+        width: 150px;
+        text-wrap: none;
+    }
+
+    #adminOptionContainer {
+        margin-left: 56px;
+        margin-top: 56px;
+    }
+
+    .adminOption {
+        display: none;
+    }
+
+    .adminOptionTitle {
+        font-size: 24px;
+        text-align: center;
+        margin: 4px;
+    }
+
+    #articleClassesEdit {
+        width: 500px;
+        border: solid 2px purple;
+        border-radius: 4px;
+        margin-left: 56px;
+        margin-top: 56px;
+    }
+
+    #articleClassList {
+        border: solid 2px orange;
+        border-radius: 4px;
+        margin: 3px;
+        overflow-y: scroll;
+        max-height: 60%;
+    }
+
+    #articleClassesEdit li {
+        list-style: none;
+        padding: 8px;
+        cursor: pointer;
+        margin-bottom: 4px;
+        background-color: #c3cecf;
+    }
+
+    #btnSaveAddArticleClassification, #btnNewAddArticleClassification {
+        width: 40px;
+        margin: 6px;
+        display: inline-block;
+    }
+
+    .roundedInput {
+        display: inline-block;
+        width: 400px;
+    }
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+        <div class="vertMenu">
+            <div class="vertResMenuTab" id="tabShowResume">Show Resume</div>
+            <div class="vertResMenuTab" id="tabAddSection">Add Resume Section</div>
+            <div class="vertResMenuTab" id="tabAddJob">Add Job</div>
+            <div class="vertResMenuTab" id="tabAddSkill">Add Skill</div>
+        </div>
+    </div>
+    <div id="middleColumn">
+        <div id="divStatusMessage"></div>
+        <div id="adminOptionContainer">
+
+            <div class="adminOption" id="divShowResume">
+                <div class="adminOptionTitle">My Resume</div>
+                <div>
+                    
+                </div>
+            </div>
+
+            <div class="adminOption" id="divAddSection">
+                <div class="adminOptionTitle">Add Jobs</div>
+            </div>
+
+            <div class="adminOption" id="divAddJob">
+                <div class="adminOptionTitle">Add Jobs</div>
+            </div>
+
+            <div class="adminOption" id="divAddSkill">
+                <div class="adminOptionTitle">Assign Roles</div>
+            </div>
+        </div>
+    </div>
+    <div id="rightColumn">
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.vertResMenuTab').mouseover(function () {
+            $(this).css("background-color", "orange");
+            $(this).css("text-decoration", "underline");
+        });
+        $('.vertResMenuTab').mouseout(function () {
+            $(this).css("background-color", "#07c"); 
+            $(this).css("text-decoration", "none");
+        });
+    });
+
+    $("#tabShowResume").click(function () {
+        window.open("https://docs.google.com/document/d/1DCJYyh7JVnXWtTNQw8bpcXpAxgzV0PjEFmtwjbnZ9Yc/edit?usp=sharing", "_blank");
+    })
+
+    //$("#tabShowResume").click(function () {
+    //    $('.adminOption').hide();
+    //    $('#divShowResume').show();
+    //})
+    $("#tabAddSection").click(function () {
+        $('.adminOption').hide();
+        $('#divAddSection').show();
+    })  
+    $("#tabAddJob").click(function () {
+        $('.adminOption').hide();
+        $('#divAddJob').show();
+    })
+    $("#tabAddSkill").click(function () {
+        $('.adminOption').hide();
+        $('#divAddSkill').show();
+    })
+
+</script>

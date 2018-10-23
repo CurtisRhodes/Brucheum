@@ -1,17 +1,17 @@
-﻿body {
+﻿.threeColumnArray {
     background-color: #e4e4e4;
     font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif;
     box-sizing: border-box;
 }
 
-#leftColumn {
+/*#leftColumn {
     min-width: 20%;
 }
 
 #middleColumn {
     min-width: 20%;
     max-width: 70%;
-}
+}*/
 
 #articleList {
     box-sizing: border-box;

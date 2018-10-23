@@ -1,0 +1,111 @@
+﻿<link href="~/Styles/bHeader.css" rel="stylesheet" />
+<div id="bheader" class="Header">
+    <div class="floatLeft">
+        <a href="~/Home/Index"><img src="~/images/house.gif" class="bannerImage" /></a>
+    </div>
+    <div class="headerBody">
+        <div class="headerBannerTitle">
+            The Brucheum
+        </div>
+        <div class="menuTabContainer">
+            <div class="menuTab"><a href="~/Article/ArticleList">Latest Articles</a></div>
+            <div class="menuTab"><a href="~/Article/ArticleList?filterType=Category&filter=political rant">Political Rants</a></div>
+            <div class="menuTab"><a href="~/Article/ArticleList?filterType=Category&filter=conspiracy">Conspiracy Theories</a></div>
+            <div class="menuTab"><a href="~/Book/MyBooks">Books</a></div>
+            <div class="menuTab"><a href="~/Home/Apps">Apps</a></div>
+            <div class="menuTab"><a href="~/Consulting/ConsultingHome">Intelligent Design</a></div>
+        </div>
+        <div class="loginTab">
+            @if ((Session["UserName"] != null) && (!String.IsNullOrEmpty(@Session["UserName"].ToString())))
+            {
+                <div class="menuTab" id="tabProfile" title="modify profile">
+                    <a href="#">Hello @Session["UserName"]</a>
+                </div>
+                <div class="menuTab" id="tabLogout"><a href="#">Log Out</a></div>
+            }
+            else
+            {
+                <div class="menuTab" id="tabRegister"><a href="#">Register</a></div>
+                <div class="menuTab" id="tabLogIn"><a href="#">Log In</a></div>
+            }
+        </div>
+    </div>
+    <div class="noFloat"></div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $('.headerBody').width($('.Header').width() - $('#bannerImage').width() - 200);
+    });
+    $(window).resize(function () {
+        $('.headerBody').width($('.Header').width() - $('#bannerImage').width() - 200);
+    });
+
+    $('#tabRegister').click(function () {
+        $.ajax({
+            type: "get",
+            url: "/Login/RegisterPopup",
+            datatype: "json",
+            success: function (data) {
+                $('#modalContent').html(data);
+                $('#modalContainer').show();
+            },
+            error: function (xhr) {
+                alert("RegisterPopup error: " + xhr.statusText);
+            }
+        });
+    });
+
+    $('#tabLogIn').click(function () {
+        $.ajax({
+            type: "get",
+            url: "/Login/LoginPopup",
+            datatype: "json",
+            success: function (data) {
+                $('#modalContent').html(data);
+                $('#modalContainer').show();
+            },
+            error: function (xhr) {
+                alert("LoginPopup error: " + xhr.statusText);
+            }
+        });
+    });
+
+    $('#tabProfile').click(function () {
+        try {
+            $.ajax({
+                type: "get",
+                url: "/Login/ProfilePopup",
+                datatype: "json",
+                success: function (data) {
+                    $('#modalContent').html(data);
+                    $('#modalContainer').show();
+                },
+                error: function (xhr) {
+                    alert("ProfilePopup error: " + xhr.statusText);
+                }
+            });
+        } catch (e) {
+            alert("tabProfile catch: " + e);
+        }
+    });
+
+    $('#tabLogout').click(function () {
+        $.ajax({
+            type: "get",
+            url: "/Login/DeleteCookie",
+            success: function (success) {
+                if (success === "ok")
+                    //$("#divlogin").load(location.href + " #divlogin");
+                    location.reload(true);
+                else
+                    alert("LogOUT: " + success);
+            },
+            error: function (xhr) {
+                displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                alert("tabLogout error: " + xhr.statusText);
+            }
+        });
+    });
+</script>

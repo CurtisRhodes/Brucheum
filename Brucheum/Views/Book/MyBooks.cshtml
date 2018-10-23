@@ -2,15 +2,13 @@
 @{
     ViewBag.Title = "My Books";
 }
-<link href="~/Styles/ThreeColumnPage.css" rel="stylesheet" />
 <style>
-    #middleColumn {
-        font-size: 24px;
-        font-family: Georgia, 'Times New Roman', Times, serif;
-    }
     #divMyBooks {
+        margin-top: 55px;
+        width: 100%;
         display: flex;
-        margin-bottom: 45px;
+        justify-content: center;
+        margin-bottom: 95px;
     }
     .divBook {
         float: left;
@@ -23,11 +21,13 @@
         cursor: pointer;
     }
     .divLibrayPages {
+        font-size: 24px;
+        font-family: Georgia, 'Times New Roman', Times, serif;
         text-decoration: underline;
         cursor: pointer;
+        margin-left: 200px;
         margin-bottom: 45px;
     }
-
 </style>
 
 <div class="threeColumnArray">
@@ -59,7 +59,7 @@
         window.location.href = url.replace('REPLACEME', $(this).attr("book"));
     });
 </script>
-<script src="~/Scripts/ResizeThreeColumnPage.js"></script>
+
 
 
 
