@@ -1,0 +1,55 @@
+﻿
+@{
+    ViewBag.Title = "EmailTest";
+}
+
+<style>
+    #messageArea{
+        width:80%;
+        height:300px;
+        border: solid thick purple;
+    }
+    #btnGo {
+        margin-left: 200px;
+        margin-top: 8px;
+        padding: 6px 20px;
+        background-color: #6dcccc;
+        border: solid thin #ddd;
+        border-radius: 8px;
+        display:none;
+    }
+</style>
+
+<h2>Email Test</h2>
+<div id="messageArea"></div>
+<button id="btnGo">Go</button>
+
+<script>
+    $(document).ready(function () {
+
+        $("#btnGo").show();
+    })
+
+    $("#btnGo").click(function () {
+        try {
+            $('#messageArea').html("...");
+            $.ajax({
+                url: "/api/HitCounter/EmailTest",
+                type: "get",
+                dataType: "json",
+
+                success: function (response) {
+                    $('#messageArea').html(response);
+
+                },
+                error: function (request, status, error) {
+                    $('#messageArea').html("Error: " + status);
+
+                }
+            });
+        } catch (e) {
+            $('#messageArea').html("catch: " + e);
+        }
+    });
+
+</script>

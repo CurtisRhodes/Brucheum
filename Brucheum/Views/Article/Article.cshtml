@@ -94,7 +94,7 @@
 
     function stickCommentsButton() {
         var x = $('#divContent').position();
-        var contentBottom = $('#divContent').position().top + $('#divContent').height();
+        var contentBottom = $('#divContent').position().top + $('#divContent').height() + $('.Header').height();
         var pageBottom = $('.threeColumnArray').height();
 
         if (pageBottom < contentBottom) {
@@ -105,9 +105,9 @@
             $('#divCommentsSection').width($('#middleColumn').width());
         }
     }
-    //$(window).resize(function () {
-    //    stickCommentsButton();
-    //});
+    $(window).resize(function () {
+        stickCommentsButton();
+    });
 
     $('#btnStatic').click(function () { saveAsStaticFile(); })
     function saveAsStaticFile() {

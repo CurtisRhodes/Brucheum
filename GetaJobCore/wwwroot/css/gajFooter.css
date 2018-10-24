@@ -1,0 +1,35 @@
+﻿@import url('bFooter.css');
+#footer {
+    box-sizing: border-box;
+    font-family: Arial;
+    background-color: #000;
+    color: #eee;
+}
+
+.footerCol {
+    padding-top:8px;
+    float: left;
+    min-width: 200px;
+}
+
+.footerCol div {
+    padding: 8px;
+    text-align: center;
+}
+    .footerCol div a {
+        text-decoration: none;
+        color: #fff;
+    }
+#footerFooter {
+    clear: both;
+    background-color: #212121;
+    padding-bottom: 2px;
+}
+#footerMessage {
+    padding-left: 12px;
+}
+#copyright {
+    display: inline-block;
+    width: 90%;
+    text-align:right;
+}

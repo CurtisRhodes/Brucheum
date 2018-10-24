@@ -165,5 +165,33 @@ namespace Service1.Controllers
             return success;
         }
 
+        [HttpGet]
+        public string EmailTest()
+        {
+            string success = "onno";
+            try
+            {
+                SmtpClient smtp = new SmtpClient("smtpout.secureserver.net");
+
+                MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "Curtishrhodes@hotmail.com");
+                mailMessage.Subject = "SendMail Test";
+                mailMessage.Body = "someday we will be able to know when someone just visited your site";
+
+                smtp.Send(mailMessage);
+                success = "ok";
+            }
+            catch (Exception e)
+            {
+                success = "ERROR: " + e.Message;
+                if (e.InnerException != null)
+                {
+                    success += " :" + e.InnerException.Message;
+                    if (e.InnerException.InnerException != null)
+                        success += " :" + e.InnerException.InnerException.Message;
+                }
+            }
+            return success;
+        }
+
     }
 }

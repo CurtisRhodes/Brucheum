@@ -181,6 +181,7 @@
     <Compile Include="Controllers\CommentsController.cs" />
     <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
+    <Compile Include="Controllers\GetaJobController.cs" />
     <Compile Include="Controllers\HitCounterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImagesController.cs" />
@@ -190,8 +191,39 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\DatabaseModels.cs" />
+    <Compile Include="Models\GetaJob.cs" />
+    <Compile Include="Models\Job.cs">
+      <DependentUpon>Model2.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\JobSkill.cs">
+      <DependentUpon>Model2.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\JournalEntry.cs" />
     <Compile Include="Models\LocalModels.cs" />
+    <Compile Include="Models\Model2.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model2.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Model2.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model2.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Model2.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model2.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Resume.cs">
+      <DependentUpon>Model2.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ResumeJob.cs">
+      <DependentUpon>Model2.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Skill.cs">
+      <DependentUpon>Model2.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -204,11 +236,28 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="App_Data\Journal.xml" />
+    <Content Include="Models\Model2.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Model2.edmx</DependentUpon>
+      <LastGenOutput>Model2.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\Model2.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Model2.edmx</DependentUpon>
+      <LastGenOutput>Model2.cs</LastGenOutput>
+    </Content>
     <Content Include="Styles\addEdit.css" />
     <Content Include="Styles\bootstrap.min.css" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="App_Data\web.config" />
+    <EntityDeploy Include="Models\Model2.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Model2.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\Model2.edmx.diagram">
+      <DependentUpon>Model2.edmx</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\API.curtisrhodes.com - Web Deploy.pubxml" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Styles\JournalEditor.css" />
@@ -230,12 +279,16 @@
     <Content Include="Views\Home\ImageTest.cshtml" />
     <Content Include="Views\Home\JournalTest.cshtml" />
     <Content Include="Views\Home\ArticleTest.cshtml" />
+    <Content Include="Views\Home\EmailTest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\StaticFiles\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

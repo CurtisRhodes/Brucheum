@@ -1,0 +1,168 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<style>
+    #leftColumn {
+        border-right: 2px solid #486167;
+    }
+
+    .vertMenu {
+        margin-top: 88px;
+        margin-right: 25px;
+    }
+
+    .vertResMenuTab {
+        border-radius: 4px;
+        font-size: 14px;
+        list-style: none;
+        cursor: pointer;
+        margin-bottom: 26px;
+        color: black;
+        padding: 10px;
+        color: #fff;
+        background-color: #569ca5;
+        width: 150px;
+        text-wrap: none;
+    }
+
+    #adminOptionContainer {
+        margin-left: 56px;
+        margin-top: 56px;
+    }
+
+    .adminOption {
+        display: none;
+    }
+
+    .adminOptionTitle {
+        font-size: 24px;
+        text-align: center;
+        margin: 4px;
+    }
+
+    #btnSaveAddArticleClassification, #btnNewAddArticleClassification {
+        width: 40px;
+        margin: 6px;
+        display: inline-block;
+    }
+
+    .roundedInput {
+        display: inline-block;
+        width: 600px;
+    }
+    .roundendButton {
+        width: 123px;
+        display: inline-block;
+    }
+    .gagLabel {
+        display: inline-block;
+        color: #569ca5;
+        width: 144px;
+    }
+    textarea {
+        width: 600px;
+        height: 150px;
+        padding: 3px 6px;
+    }
+    #divButtons {
+    margin-top:24px;
+    margin-left: 385px;
+    }
+    #optionContainer {
+        display: compact; 
+        border: solid 3px #569ca5;
+        padding: 8px;
+    }
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+        <div class="vertMenu">
+            <div class="vertResMenuTab" id="tabShowResume">Show Resume</div>
+            <div class="vertResMenuTab" id="tabAddSection">Add Resume Section</div>
+            <div class="vertResMenuTab" id="tabAddJob">Add Job</div>
+            <div class="vertResMenuTab" id="tabAddSkill">Add Skill</div>
+        </div>
+    </div>
+    <div id="middleColumn">
+        <div id="divStatusMessage"></div>
+        <div id="adminOptionContainer">
+
+            <div class="adminOption" id="divShowResume">
+                <div id="optionContainer">
+                    @*
+            <div class="adminOptionTitle">My Resume</div>
+
+                    public int ResumeId { get; set; }
+                    public Guid? PersonId { get; set; }
+                    public string AddressHeader { get; set; }
+                    public string JobTitle { get; set; }
+                    public string SkillsSummary { get; set; }
+                    public string Education { get; set; }
+                    public string Personal { get; set; }
+                    *@
+
+                    <div><div class="gagLabel">Resume Name:</div><input class="roundedInput" id="txtResumeName" /></div>
+                    <div><div class="gagLabel">Address Header:</div><textarea rows="8" id="txtAddressHeader"></textarea></div>
+                    <div><div class="gagLabel">Job Title:</div><input class="roundedInput" id="txtJobTitle" /></div>
+                    <div><div class="gagLabel">Skills Summary:</div><textarea id="txtSkillsSummary"></textarea></div>
+                    <div><div class="gagLabel">Education:</div><textarea id="txtEducation"></textarea></div>
+                    <div><div class="gagLabel">Personal:</div><input class="roundedInput" id="txtPersonal" /></div>
+                    <div id="divButtons">
+                        <div class="roundendButton" id="btnAddResume">Add</div>
+                        <div class="roundendButton" id="btnUpdateResume">Update</div>
+                    </div>
+                </div>
+            </div>
+            <div class="adminOption" id="divAddSection">
+                <div class="adminOptionTitle">Add Jobs</div>
+            </div>
+
+            <div class="adminOption" id="divAddJob">
+                <div class="adminOptionTitle">Add Jobs</div>
+            </div>
+
+            <div class="adminOption" id="divAddSkill">
+                <div class="adminOptionTitle">Assign Roles</div>
+            </div>
+        </div>
+    </div>
+    <div id="rightColumn">
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.vertResMenuTab').mouseover(function () {
+            $(this).css("background-color", "#486167");
+            $(this).css("text-decoration", "underline");
+        });
+        $('.vertResMenuTab').mouseout(function () {
+            $(this).css("background-color", "#569ca5");
+            $(this).css("text-decoration", "none");
+        });
+    });
+
+
+
+
+    $("#tabShowResume").click(function () {
+        $('.adminOption').hide();
+        $('#divShowResume').show();
+    })
+    $("#tabAddSection").click(function () {
+        $('.adminOption').hide();
+        $('#divAddSection').show();
+    })
+    $("#tabAddJob").click(function () {
+        $('.adminOption').hide();
+        $('#divAddJob').show();
+    })
+    $("#tabAddSkill").click(function () {
+        $('.adminOption').hide();
+        $('#divAddSkill').show();
+    })
+
+</script>

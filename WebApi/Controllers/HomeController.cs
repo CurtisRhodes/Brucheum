@@ -22,6 +22,11 @@ namespace Service1.Controllers
             return View();
         }
 
+        public ActionResult EmailTest()
+        {
+            return View();
+        }
+
         public ActionResult ArticleTest(string Id)
         {
             ViewBag.Id = Id;
