@@ -27,7 +27,7 @@ namespace Brucheum
                         // WE HAVE A NEW VISITOR
                         response = client.GetAsync(apiService + "/api/HitCounter/AddVisitor?ipAddress=" + ipAddress + "&app=Brucheum&userId=duh").Result;
                         success = response.Content.ReadAsStringAsync().Result;
-                        if (!success.StartsWith("ERROR"))
+                        if (success.StartsWith("ERROR"))
                         {
                             Console.Write(success);
                         }

@@ -149,7 +149,9 @@ namespace Service1.Controllers
             string success = "onno";
             try
             {
-                SmtpClient smtp = new SmtpClient("smtpout.secureserver.net");
+                SmtpClient smtp = new SmtpClient("relay-hosting.secureserver.net", 25);
+
+                //SmtpClient smtp = new SmtpClient("smtpout.secureserver.net");
 
                 MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "Curtishrhodes@hotmail.com");
                 mailMessage.Subject = "HOLY SHIT someone just visited your site";
@@ -171,7 +173,9 @@ namespace Service1.Controllers
             string success = "onno";
             try
             {
-                SmtpClient smtp = new SmtpClient("smtpout.secureserver.net");
+                SmtpClient smtp = new SmtpClient();
+                smtp.Host = "relay-hosting.secureserver.net";
+                smtp.Port = 25;
 
                 MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "Curtishrhodes@hotmail.com");
                 mailMessage.Subject = "SendMail Test";
