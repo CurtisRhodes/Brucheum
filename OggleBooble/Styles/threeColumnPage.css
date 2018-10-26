@@ -2,7 +2,7 @@
 .threeColumnArray {
     display: flex;
     box-sizing: border-box;
-    margin-top: 44px;
+    margin-top: 110px;
     width: 100%;
 }
 
@@ -12,7 +12,6 @@
     }
 
     .threeColumnArray #middleColumn {
-        margin-top: 46px;
         float: left;
         width: 100%;
     }
@@ -21,4 +20,3 @@
         float: left;
         min-width: 7%;
     }
-

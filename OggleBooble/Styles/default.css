@@ -1,17 +1,21 @@
 ﻿body {
     font-family: Verdana;
+    box-sizing: border-box;
 }
-divBreadCrumbs {
+.divBreadCrumbs {
     margin-bottom: 4px;
 }
-
 .activeBreadCrumb {
     cursor: pointer;
 }
-
+#breadcrumb {
+    font-size: 24px;
+    font-weight: 700;
+}
 .inactiveBreadCrumb {
     font-weight: bold;
 }
+
 .roundendButton {
     text-align: center;
     background: #07c;
