@@ -6,7 +6,9 @@
 
     .dialogHeader span {
         font-family: 'Lucida Calligraphy';
-        font-size: 18px;
+        color: #69387e;
+        font-size: 22px;
+        font-style: italic;
     }
 
 .divCloseButton {

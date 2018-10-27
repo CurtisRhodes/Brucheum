@@ -16,10 +16,13 @@
             <div class="menuTab"><a href="~/Consulting/ConsultingHome">Intelligent Design</a></div>
         </div>
         <div class="loginTab">
-            @if ((Session["UserName"] != null) && (!String.IsNullOrEmpty(@Session["UserName"].ToString())))
+            @*@if ((Session["UserName"] != null) && (!String.IsNullOrEmpty(@Session["UserName"].ToString())))*@
+
+            @using Microsoft.AspNet.Identity
+            @if (Request.IsAuthenticated)
             {
                 <div class="menuTab" id="tabProfile" title="modify profile">
-                    <a href="#">Hello @Session["UserName"]</a>
+                    <a href="#">Hello @User.Identity.GetUserName() </a>
                 </div>
                 <div class="menuTab" id="tabLogout"><a href="#">Log Out</a></div>
             }
@@ -27,6 +30,9 @@
             {
                 <div class="menuTab" id="tabRegister"><a href="#">Register</a></div>
                 <div class="menuTab" id="tabLogIn"><a href="#">Log In</a></div>
+
+                @*<div class="menuTab">@Html.ActionLink("Register", "Register", "Login", routeValues: new { area = "" }, htmlAttributes: new { id = "registerLink" })</div>
+                <div class="menuTab">@Html.ActionLink("Log in", "Login", "Register", routeValues: new { area = "" }, htmlAttributes: new { id = "loginLink" })</div>*@
             }
         </div>
     </div>

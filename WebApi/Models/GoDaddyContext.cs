@@ -15,7 +15,7 @@ namespace Service1
 
         public virtual DbSet<Ref> Refs { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
-        public virtual DbSet<Role> Roles { get; set; }
+//        public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<UserLogin> UserLogins { get; set; }
         public virtual DbSet<Hit> Hits { get; set; }
@@ -78,14 +78,14 @@ namespace Service1
         public DateTime? LastModified { get; set; }
     }
 
-    [Table("website.Role")]
-    public partial class Role
-    {
-        public int RoleId { get; set; }
+    //[Table("website.Role")]
+    //public partial class Role
+    //{
+    //    public int RoleId { get; set; }
 
-        [StringLength(300)]
-        public string RoleName { get; set; }
-    }
+    //    [StringLength(300)]
+    //    public string RoleName { get; set; }
+    //}
 
     [Table("website.UserRole")]
     public partial class UserRole

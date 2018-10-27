@@ -9,10 +9,11 @@ using System.Web.Http.Results;
 
 namespace Service1.Controllers
 {
+  
+
     [EnableCors("*", "*", "*")]
     public class LoginController : ApiController
     {
-
         [HttpGet]
         public string Login(string userName, string password)
         {
@@ -82,7 +83,7 @@ namespace Service1.Controllers
                     if (user != null)
                     {
                         user.UserName = login.UserName;
-                        user.LastModified= DateTime.Now;
+                        user.LastModified = DateTime.Now;
                         user.Email = login.Email;
                         user.FirstName = login.FirstName;
                         user.LastName = login.LastName;
@@ -131,9 +132,9 @@ namespace Service1.Controllers
             }
             catch (Exception ex)
             {
-                rtn.success= "ERROR: " + ex.Message;
+                rtn.success = "ERROR: " + ex.Message;
             }
-            return Json(rtn); 
+            return Json(rtn);
         }
 
 
@@ -150,9 +151,6 @@ namespace Service1.Controllers
             }
             return sb.ToString();
         }
-
-
-
 
         [HttpGet]
         public string GetFacebookUserId(string name, string facebookId)
@@ -185,7 +183,36 @@ namespace Service1.Controllers
             }
             return response;
         }
+    }
+
+    [EnableCors("*", "*", "*")]
+    public class UserRoleController : ApiController
+    {
+        [HttpPost]
+        public string AddUserRole(AspNetUserRole userRoleModelContainingUserName)
+        {
+            string success = "";
+            try
+            {
+                using (MSsecurityContext db = new MSsecurityContext())
+                {
+                    //foreach(AspNetUserRole netUserRole in userRoleModelsContainingUserName)
+                    string roleId = db.AspNetRoles.Where(r => r.Name == userRoleModelContainingUserName.RoleId).First().Id;
+
+                    var newUserRole = new AspNetUserRole();
+                    newUserRole.RoleId = roleId;
+                    newUserRole.UserId = userRoleModelContainingUserName.UserId;
+                    db.AspNetUserRoles.Add(newUserRole);
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = ex.Message;
+            }
+            return success;
+        }
 
     }
 }
- 

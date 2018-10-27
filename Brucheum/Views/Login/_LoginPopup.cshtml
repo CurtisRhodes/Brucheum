@@ -20,6 +20,22 @@
 <script src="~/Scripts/GlobalFunctions.js"></script>
 
 <style>
+    #loginDialog {
+        position: absolute;
+        top: 28%;
+        left: 43%;
+        box-sizing: content-box;
+        color: #242729;
+        width: 280px;
+        padding: 3px 30px 3px 30px;
+        border: 1px solid #e4e6e8;
+        box-shadow: rgba(0,0,0,4) 10px, initial);
+        background: #fff;
+        z-index: 999;
+        border-radius: 4px;
+        box-shadow: 10px 10px rgba(95, 12, 12, 0.5);
+    }
+
     .or-container {
         text-align: center;
         margin-bottom: 10px;
@@ -88,29 +104,6 @@
         font-size: 12px;
     }
 
-    #loginDialog {
-        position: absolute;
-        top: 28%;
-        left: 43%;
-        box-sizing: content-box;
-        color: #242729;
-        width: 280px;
-        padding: 3px 30px 3px 30px;
-        border: 1px solid #e4e6e8;
-        box-shadow: rgba(0,0,0,4) 10px, initial);
-        background: #fff;
-        z-index: 999;
-    }
-
-    .dialogHeader span {
-        color: #460755;
-        font-style: italic;
-    }
-</style>
-<style>
-    /*#btnRegister {
-        margin-right: 6px;
-    }*/
     .roundendButton {
         float: left;
         margin-right: 5px;
@@ -126,20 +119,22 @@
     </div>
     <div style="clear:both"></div>
     <div>
-        <label>User Name</label><br>
+        <div id="errSummary" class="validationError"></div>
         <div id="errUserName" class="validationError">Required</div>
+        <label>User Name</label><br>
         <input id="txtUserName" type="text" class="roundedInput"><br>
+
         <div id="errPassword" class="validationError">Required</div>
         <label>Password</label><br>
         <input id="clearPassword" type="password" class="roundedInput" autocomplete="off" placeholder="********"><br>
         <br />
         <br />
+
         <button class="roundendButton" id="btnLogin">Log in</button>
         <a id="forgot-pw" href="/users/account-recovery">forgot?</a>
         <div id="divRememberMe">
             <input id="ckRememberMe" type="checkbox" checked="checked" />Remember Me ?  (<span>uses a cookie</span>)
         </div>
-        <br />
         <br />
         <button class="roundendButton" id="btnTransferToRegister">Register</button>
         <button class="roundendButton" id="btnCancel">Cancel</button>
@@ -176,7 +171,87 @@
     var service = '@ViewBag.Service';
 //    $(document).ready(function () { });
 
+    $('#btnLogin').click(function () {
+        Login();
+    });
+
+    function Login() {
+        try {
+            if (validate()) {
+                var loginVM = new Object();
+                loginVM.UserName = $('#txtUserName').val();
+                loginVM.Email = $('#txtEmail').val();
+                loginVM.Password = $('#clearPassword').val();
+                loginVM.ConfirmPassword = $('#txtConfirmPassword').val();
+                loginVM.Hometown = 'Allendale';
+                loginVM.RememberMe = $('#ckRememberMe').prop('checked');
+                
+                $.ajax({
+                    type: "POST",
+                    url: "/Login/Login",
+                    data: loginVM,
+                    success: function (success) {
+                        if (success === "ok") {
+                            //$("#divlogin").load(location.href + " #divlogin");
+                            location.reload(true);
+                            //clearModal();
+                        }
+                        else {
+                            $('#errSummary').html(success);
+                            $('#errSummary').show();
+                        }
+
+
+
+                        //if (response.startsWith("ERROR")) {
+                        //    displayStatusMessage("alert-danger", response);
+                        //    alert("response: " + response);
+                        //}
+                        //else {
+                        //    if ((response === "User Name not recognized") || (response === "Password Incorrect")) {
+                        //        //displayStatusMessage("alert-danger", response);
+                        //        $('#errPassword').text(response);
+                        //        $('#errPassword').show();
+                        //    }
+                        //    else {
+                        //        var ischecked = $('#ckRememberMe').prop('checked').toString();
+                        //        //SetBrucheumCookie($('#txtUserName').val(), response, ischecked);
+                        //        $.ajax({
+                        //            type: "get",
+                        //            url: "/Login/SetCookie?userName=" + $('#txtUserName').val() + "&userId=" + response + "&useCookie=" + ischecked,
+                        //            datatype: "json",
+                        //            success: function (success) {
+                        //                if (success === "ok")
+                        //                    //$("#divlogin").load(location.href + " #divlogin");
+                        //                    location.reload(true);
+                        //                else
+                        //                    alert("SetCookie error: " + success);
+                        //            },
+                        //            error: function (xhr) {
+                        //                displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                        //                alert("SetCookie  error: " + xhr.statusText);
+                        //            }
+                        //        });
+                        //        //clearModal();
+                        //    }
+                        //}
+                    },
+                    error: function (xhr) {
+                        displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                        alert("_LoginPopup get error: " + xhr.statusText);
+                    }
+                });
+            }
+        }
+        catch (e) {
+            $('#errSummary').html(e);
+            $('#errSummary').show();
+        }
+    }
+
     function validate() {
+        $('#errSummary').hide();
+
         if ($('#txtUserName').val() === "") {
             $('#errUserName').show();
             return false;
@@ -196,58 +271,6 @@
         $('#errPassword').hide();
         return true;
     };
-
-    $('#btnLogin').click(function () {
-        try {
-            if (validate()) {
-                $.ajax({
-                    type: "GET",
-                    url: service + "/api/Login/Login?userName=" + $('#txtUserName').val() + "&password=" + $('#clearPassword').val(),
-                    success: function (response) {
-                        if (response.startsWith("ERROR")) {
-                            displayStatusMessage("alert-danger", response);
-                            alert("response: " + response);
-                        }
-                        else {
-                            if ((response === "User Name not recognized") || (response === "Password Incorrect")) {
-                                //displayStatusMessage("alert-danger", response);
-                                $('#errPassword').text(response);
-                                $('#errPassword').show();
-                            }
-                            else {
-                                var ischecked = $('#ckRememberMe').prop('checked').toString();
-                                //SetBrucheumCookie($('#txtUserName').val(), response, ischecked);
-                                $.ajax({
-                                    type: "get",
-                                    url: "/Login/SetCookie?userName=" + $('#txtUserName').val() + "&userId=" + response + "&useCookie=" + ischecked,
-                                    datatype: "json",
-                                    success: function (success) {
-                                        if (success === "ok")
-                                            //$("#divlogin").load(location.href + " #divlogin");
-                                            location.reload(true);
-                                        else
-                                            alert("SetCookie error: " + success);
-                                    },
-                                    error: function (xhr) {
-                                        displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                                        alert("SetCookie  error: " + xhr.statusText);
-                                    }
-                                });
-                                //clearModal();
-                            }
-                        }
-                    },
-                    error: function (xhr) {
-                        displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                        alert("_LoginPopup get error: " + xhr.statusText);
-                    }
-                });
-            }
-        }
-        catch (e) {
-            alert("Login Post error: " + e);
-        }
-    });
 
     $('#btnTransferToRegister').click(function () {
         $.ajax({

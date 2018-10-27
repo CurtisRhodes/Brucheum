@@ -1,9 +1,6 @@
-﻿using Service1.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Results;
@@ -38,19 +35,17 @@ namespace Service1.Controllers
         {
             try
             {
-                if (refModel.RefDescription.Length > 3)
+                using (GoDaddyContext db = new GoDaddyContext())
                 {
-                    using (GoDaddyContext db = new GoDaddyContext())
-                    {
-                        Ref @ref = new Ref();
-                        @ref.RefType = "CAT";
-                        @ref.RefCode = GetRefCode(refModel.RefDescription);
-                        @ref.RefDescription = refModel.RefDescription;
-                        db.Refs.Add(@ref);
-                        db.SaveChanges();
-                        refModel.RefCode = @ref.RefCode;
-                        refModel.Success = "ok";
-                    }
+                    Ref @ref = new Ref();
+                    @ref.RefType = refModel.RefType;
+                    @ref.RefCode = GetUniqueRefCode(refModel.RefDescription);
+                    @ref.RefDescription = refModel.RefDescription;
+
+                    db.Refs.Add(@ref);
+                    db.SaveChanges();
+                    refModel.RefCode = @ref.RefCode;
+                    refModel.Success = "ok";
                 }
             }
             catch (Exception ex)
@@ -84,7 +79,7 @@ namespace Service1.Controllers
         }
 
         /// helper apps
-        private string GetRefCode(string refDescription)
+        private string GetUniqueRefCode(string refDescription)
         {
             var refCode = refDescription.Substring(0, 3).ToUpper();
             ///todo: test for existing. go into newkey loop
@@ -99,7 +94,6 @@ namespace Service1.Controllers
             public string Success { get; set; }
         }
     }
-
 
     [EnableCors("*", "*", "*")]
     public class CategoryController : ApiController
@@ -157,8 +151,6 @@ namespace Service1.Controllers
                 {
                      catlist = db.Categories.Select(c=>c.CategoryName).ToList();
                 }
-
-
             }
             catch (Exception ex)
             {
