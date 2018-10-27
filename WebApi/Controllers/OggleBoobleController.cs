@@ -7,8 +7,9 @@ using System.Net.Http;
 using System.Text;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using WebApi.Models;
 
-namespace Service1.Controllers
+namespace WebApi
 {
     [EnableCors("*", "*", "*")]
     public class DirectoryController : ApiController

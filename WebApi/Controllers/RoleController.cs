@@ -5,8 +5,9 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using WebApi.Models;
 
-namespace Service1.Controllers
+namespace WebApi
 {
     [EnableCors("*", "*", "*")]
     public class RoleController : ApiController
@@ -17,7 +18,7 @@ namespace Service1.Controllers
             string success = "";
             try
             {
-                using (MSsecurityContext db = new MSsecurityContext())
+                using (GoDaddyContext db = new GoDaddyContext())
                 {
                     var newRole = new AspNetRole();
                     newRole.Id = Guid.NewGuid().ToString();
@@ -40,7 +41,7 @@ namespace Service1.Controllers
             var roles = new List<AspNetRole>();
             try
             {
-                using (MSsecurityContext db = new MSsecurityContext())
+                using (GoDaddyContext db = new GoDaddyContext())
                 {
                     roles = (from row in db.AspNetRoles select row).ToList();
                 }

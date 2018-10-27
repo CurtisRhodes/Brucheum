@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Service1.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,38 +7,15 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Web.Http;
-using System.Web.Http.Cors;
 using System.Web.Http.Results;
 using System.Xml;
 using System.Xml.Linq;
-using System.Xml.Serialization;
+using WebApi.Models;
 
-namespace Service1.Controllers
+namespace WebApi.Controllers
 {
-    [EnableCors("*", "*", "*")]
     public class BookController : ApiController
     {
-        //[HttpGet]
-        //public string[] GetChapters(string bookTitle, string breakIntoChapters)
-        //{
-        //    IList<string> chapters = new List<string>();
-        //    try
-        //    {
-        //        var xDocument = XDocument.Load(GetXmlFile(bookTitle));
-
-        //        var builder = new StringBuilder();
-        //        foreach (XElement chapter in xDocument.Elements("Chapter"))
-        //        {
-        //            string title = chapter.Element("Chapter").Attribute("@Title").Value;
-
-        //            JsonSerializer.Create().Serialize(new CleanXmlAttributesJsonWriter(new StringWriter(builder)), chapter);
-        //            chapters.Add(builder.ToString().Replace("cdata-section", "Contents"));
-        //        }
-        //    }
-        //    catch (Exception e) { chapters.Add(e.Message); }
-        //    return chapters.ToArray();
-        //}
-
         [HttpGet]
         public string GetEntireBook(string bookTitle)
         {
@@ -55,7 +30,7 @@ namespace Service1.Controllers
 
                 strXml = strXml.Replace("cdata-section", "Contents");
 
-                 return strXml;
+                return strXml;
             }
             catch (Exception e) { return e.Message; }
         }
@@ -260,8 +235,6 @@ namespace Service1.Controllers
                 base.WritePropertyName(name);
             }
         }
+
     }
 }
-
-
-

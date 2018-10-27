@@ -6,10 +6,11 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Results;
+using WebApi.Models;
 
-namespace Service1.Controllers
+namespace WebApi
 {
-  
+
 
     [EnableCors("*", "*", "*")]
     public class LoginController : ApiController
@@ -23,17 +24,17 @@ namespace Service1.Controllers
                 using (GoDaddyContext db = new GoDaddyContext())
                 {
                     password = HashSHA256(password);
-                    var registeredUser = db.UserLogins.Where(l => (l.UserName == userName) && (l.PasswordHash == password)).FirstOrDefault();
+                    var registeredUser = db.SiteUsers.Where(l => (l.DisplayName == userName) && (l.PasswordHash == password)).FirstOrDefault();
                     if (registeredUser == null)
                     {
-                        registeredUser = db.UserLogins.Where(l => (l.UserName == userName)).FirstOrDefault();
+                        registeredUser = db.SiteUsers.Where(l => (l.DisplayName == userName)).FirstOrDefault();
                         if (registeredUser == null)
                             userId = "User Name not recognized";
                         else
                             userId = "Password Incorrect";
                     }
                     else
-                        userId = registeredUser.UserId.ToString();
+                        userId = registeredUser.Email.ToString();
                 }
             }
             catch (Exception e)
@@ -44,57 +45,57 @@ namespace Service1.Controllers
         }
 
         [HttpGet]
-        public JsonResult<UserLogin> GetUser(string userId)
+        public JsonResult<SiteUser> GetUser(string userId)
         {
-            var user = new UserLogin();
+            var user = new SiteUser();
             try
             {
                 using (GoDaddyContext db = new GoDaddyContext())
                 {
-                    var registeredUser = db.UserLogins.Where(l => (l.UserId.ToString() == userId)).FirstOrDefault();
-                    if (registeredUser != null)
-                    {
-                        user.UserName = registeredUser.UserName;
-                        user.FirstName = registeredUser.FirstName;
-                        user.LastName = registeredUser.LastName;
-                        user.Email = registeredUser.Email;
-                        user.PhoneNumber = registeredUser.PhoneNumber;
-                        user.Pin = registeredUser.Pin;
-                    }
+                    //var registeredUser = db.UserLogins.Where(l => (l.UserId.ToString() == userId)).FirstOrDefault();
+                    //if (registeredUser != null)
+                    //{
+                    //    user.DisplayName = registeredUser.UserName;
+                    //    user.FirstName = registeredUser.FirstName;
+                    //    user.LastName = registeredUser.LastName;
+                    //    user.Email = registeredUser.Email;
+                    //    user.PhoneNumber = registeredUser.PhoneNumber;
+                    //    user.Pin = registeredUser.Pin;
+                    //}
                     //user.success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                user.UserName = "ERROR: " + ex.Message;
+                user.DisplayName = "ERROR: " + ex.Message;
             }
             return Json(user);
         }
 
         [HttpPut]
-        public string UpdateUser(UserLogin login)
+        public string UpdateUser(SiteUser login)
         {
             string success = "on no";
             try
             {
                 using (GoDaddyContext db = new GoDaddyContext())
                 {
-                    var user = db.UserLogins.Where(l => l.UserId == login.UserId).FirstOrDefault();
-                    if (user != null)
-                    {
-                        user.UserName = login.UserName;
-                        user.LastModified = DateTime.Now;
-                        user.Email = login.Email;
-                        user.FirstName = login.FirstName;
-                        user.LastName = login.LastName;
-                        user.PhoneNumber = login.PhoneNumber;
-                        user.Pin = login.Pin;
+                    //var user = db.UserLogins.Where(l => l.UserId == login.UserId).FirstOrDefault();
+                    //if (user != null)
+                    //{
+                    //    user.UserName = login.UserName;
+                    //    user.LastModified = DateTime.Now;
+                    //    user.Email = login.Email;
+                    //    user.FirstName = login.FirstName;
+                    //    user.LastName = login.LastName;
+                    //    user.PhoneNumber = login.PhoneNumber;
+                    //    user.Pin = login.Pin;
 
-                        db.SaveChanges();
-                        success = "ok";
-                    }
-                    else
-                        success = "User Not Found";
+                    //    db.SaveChanges();
+                    //    success = "ok";
+                    //}
+                    //else
+                    //    success = "User Not Found";
                 }
             }
             catch (Exception ex)
@@ -105,28 +106,28 @@ namespace Service1.Controllers
         }
 
         [HttpPost]
-        public JsonResult<UserLoginResponse> Register(UserLogin login)
+        public JsonResult<UserLoginResponse> Register(SiteUser login)
         {
             var rtn = new UserLoginResponse() { success = "ERROR: ono" };
             try
             {
                 using (GoDaddyContext db = new GoDaddyContext())
                 {
-                    var newUser = new UserLogin();
-                    newUser.UserId = Guid.NewGuid();
-                    newUser.UserName = login.UserName;
-                    newUser.PasswordHash = HashSHA256(login.PasswordHash);
-                    newUser.CreateDate = DateTime.Now;
-                    newUser.Email = login.Email;
-                    newUser.FirstName = login.FirstName;
-                    newUser.LastName = login.LastName;
-                    newUser.PhoneNumber = login.PhoneNumber;
-                    newUser.Pin = login.Pin;
+                    //var newUser = new UserLogin();
+                    //newUser.UserId = Guid.NewGuid();
+                    //newUser.UserName = login.UserName;
+                    //newUser.PasswordHash = HashSHA256(login.PasswordHash);
+                    //newUser.CreateDate = DateTime.Now;
+                    //newUser.Email = login.Email;
+                    //newUser.FirstName = login.FirstName;
+                    //newUser.LastName = login.LastName;
+                    //newUser.PhoneNumber = login.PhoneNumber;
+                    //newUser.Pin = login.Pin;
 
-                    db.UserLogins.Add(newUser);
-                    db.SaveChanges();
-                    rtn.UserId = newUser.UserId;
-                    rtn.UserName = newUser.UserName;
+                    //db.UserLogins.Add(newUser);
+                    //db.SaveChanges();
+                    //rtn.UserId = newUser.UserId;
+                    //rtn.UserName = newUser.UserName;
                     rtn.success = "ok";
                 }
             }
@@ -160,21 +161,21 @@ namespace Service1.Controllers
             {
                 using (GoDaddyContext db = new GoDaddyContext())
                 {
-                    var userLogin = db.UserLogins.Where(l => l.FirstName == facebookId).FirstOrDefault();
+                    //var userLogin = db.UserLogins.Where(l => l.FirstName == facebookId).FirstOrDefault();
 
-                    if (userLogin == null)
-                    {
-                        var login = new UserLogin();
-                        login.UserId = Guid.NewGuid();
-                        login.UserName = name;
-                        login.CreateDate = DateTime.Now;
-                        login.FaceBookId = facebookId;
-                        db.UserLogins.Add(login);
-                        db.SaveChanges();
-                        response = login.UserId.ToString();
-                    }
-                    else
-                        response = userLogin.UserId.ToString();
+                    //if (userLogin == null)
+                    //{
+                    //    var login = new UserLogin();
+                    //    login.UserId = Guid.NewGuid();
+                    //    login.UserName = name;
+                    //    login.CreateDate = DateTime.Now;
+                    //    login.FaceBookId = facebookId;
+                    //    db.UserLogins.Add(login);
+                    //    db.SaveChanges();
+                    //    response = login.UserId.ToString();
+                    //}
+                    //else
+                    //    response = userLogin.UserId.ToString();
                 }
             }
             catch (Exception ex)
@@ -188,31 +189,31 @@ namespace Service1.Controllers
     [EnableCors("*", "*", "*")]
     public class UserRoleController : ApiController
     {
-        [HttpPost]
-        public string AddUserRole(AspNetUserRole userRoleModelContainingUserName)
-        {
-            string success = "";
-            try
-            {
-                using (MSsecurityContext db = new MSsecurityContext())
-                {
-                    //foreach(AspNetUserRole netUserRole in userRoleModelsContainingUserName)
-                    string roleId = db.AspNetRoles.Where(r => r.Name == userRoleModelContainingUserName.RoleId).First().Id;
+        //[HttpPost]
+        //public string AddUserRole(AspNetUserRole userRoleModelContainingUserName)
+        //{
+        //    string success = "";
+        //    try
+        //    {
+        //        using (GoDaddyContext db = new GoDaddyContext())
+        //        {
+        //            //foreach(AspNetUserRole netUserRole in userRoleModelsContainingUserName)
+        //            string roleId = db.AspNetRoles.Where(r => r.Name == userRoleModelContainingUserName.RoleId).First().Id;
 
-                    var newUserRole = new AspNetUserRole();
-                    newUserRole.RoleId = roleId;
-                    newUserRole.UserId = userRoleModelContainingUserName.UserId;
-                    db.AspNetUserRoles.Add(newUserRole);
-                    db.SaveChanges();
-                    success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                success = ex.Message;
-            }
-            return success;
-        }
+        //            var newUserRole = new AspNetUserRole();
+        //            newUserRole.RoleId = roleId;
+        //            newUserRole.UserId = userRoleModelContainingUserName.UserId;
+        //            db.AspNetUserRoles.Add(newUserRole);
+        //            db.SaveChanges();
+        //            success = "ok";
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        success = ex.Message;
+        //    }
+        //    return success;
+        //}
 
     }
 }

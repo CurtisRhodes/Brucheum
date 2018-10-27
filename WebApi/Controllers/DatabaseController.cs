@@ -4,8 +4,9 @@ using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Results;
+using WebApi.Models;
 
-namespace Service1.Controllers
+namespace WebApi
 {
     [EnableCors("*", "*", "*")]
     public class RefController : ApiController

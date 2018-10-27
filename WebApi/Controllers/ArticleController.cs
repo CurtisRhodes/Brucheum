@@ -1,13 +1,13 @@
-﻿using Service1.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Results;
 using System.Xml;
+using WebApi.Models;
 
-namespace Service1.Controllers
+namespace WebApi
 {
     [EnableCors("*", "*", "*")]
     public class ArticleController : ApiController

@@ -5,8 +5,9 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using WebApi.Models;
 
-namespace Service1.Controllers
+namespace WebApi
 {
     [EnableCors("*", "*", "*")]
     public class CommentsController : ApiController
@@ -21,7 +22,7 @@ namespace Service1.Controllers
                 using (GoDaddyContext db = new GoDaddyContext())
                 {
                     results = (from comments in db.Comments
-                               join users in db.UserLogins on comments.UserId equals users.UserId
+                               join users in db.AspNetUsers on comments.UserId.ToString() equals users.Id
                                where comments.ArticleId.ToString() == articleId.ToString().ToUpper()
                                orderby comments.CreateDate ascending
                                select new CommentsModel

@@ -325,11 +325,14 @@
     function AddRole() {
         try {
             var name = $('#txtRoleName').val();
-            //alert("role :" + name);
+
+            //alert(" url: :" + service + "/api/role");
+
+
             $.ajax({
                 type: "POST",
-                url: service + "/api/Role/",
-                //dataType: "Json",
+                url: service + "/api/role",
+                dataType: "Json",
                 data: name,
                 success: function (result) {
                     alert("result :" + result);

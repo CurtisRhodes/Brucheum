@@ -342,4 +342,9 @@ This "unterminated string error' exemplifies the kind of bug that costs hours an
       <Tag>Occom's Razor</Tag>
     </Tags>
   </Article>
+  <Article Id="da3ba261-001b-4b4c-844b-09f423b5694d" Title="another wasted day" Category=" computer programming " ByLine="me" ImageName="QhDlaDejRKQ9.jpg" DateCreated="10/27/2018 1:09:17 PM" LastUpdated="10/27/2018 1:09:17 PM">
+    <Summary>Damn it</Summary>
+    <Contents><![CDATA[<p>What's going on</p>]]></Contents>
+    <Tags />
+  </Article>
 </Articles>

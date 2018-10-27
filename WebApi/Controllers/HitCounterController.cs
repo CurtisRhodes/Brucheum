@@ -6,8 +6,9 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Web.Http;
+using WebApi.Models;
 
-namespace Service1.Controllers
+namespace WebApi
 {
     [System.Web.Http.Cors.EnableCors("*", "*", "*")]
     public class HitCounterController : ApiController
