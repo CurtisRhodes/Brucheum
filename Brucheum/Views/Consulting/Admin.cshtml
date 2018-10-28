@@ -78,8 +78,9 @@
     }
 
         .itemsList li {
+            color: #330533;
             list-style: none;
-            padding: 8px;
+            padding:  8px 0 8px 77px;
             cursor: pointer;
             margin-bottom: 4px;
             background-color: #c3cecf;
@@ -94,6 +95,9 @@
         top: 100px;
         left: 100px;
         display: none;
+    }
+    #divStatusMessage {
+        margin-top:12px;
     }
 </style>
 
@@ -153,7 +157,7 @@
 
 <script>
     var service = '@ViewBag.Service';
-    var objArticleClass = new Object();
+    var objClassification = new Object();
     var objRole = new Object();
 
     $(document).ready(function () { });
@@ -162,7 +166,7 @@
     $("#optArticleClass").click(function () {
         $('.adminOption').hide();
         $('#tabArticleClass').show();
-        $('#btnAticleClassToggle').hide();
+        $('#btnArticleClassToggle').hide();
         if ($('#divArticleClassList').html() === "")
             GetArticleClasses();
     })
@@ -175,7 +179,7 @@
     });
 
     $('#btnArticleClassToggle').click(function () {
-        objArticleClass.RefCode = null;
+        objClassification.RefCode = null;
         $('#txtArticleClassDescription').val("");
         $('#btnAddEditArticleClass').text("Add");
         $('#btnNArticleClassToggle').hide();
@@ -185,25 +189,25 @@
         try {
             $('#ArticleClassLoading').show();
             $.ajax({
-                url: service + "/api/Ref/Get?refType='CAT'",
+                url: service + "/api/Ref/Get?refType=CAT",
                 type: "get",
                 dataType: "Json",
                 success: function (result) {
                     $('#divArticleClassList').html("");
                     $.each(result, function () {
-                        $('#divArticleClassList').append("<li Id='" + this.RefCode + "' data='" + this.RefDescription + "'>" + this.RefDescription + "</li>");
+                        $('#divArticleClassList').append("<li Id='" + this.RefCode + "'>"  + this.RefDescription + "</li>")
                     });
 
-                    $('li').click(function () {
-                        objArticleClass.RefCode = $(this).attr('Id');
-                        $('#txtDescription').val($(this).attr('data'));
+                    $('#divArticleClassList li').click(function () {
+                        objClassification.RefCode = $(this).attr('Id');
+                        $('#txtArticleClassDescription').val($(this).html());
                         $('#btnAddEditArticleClass').text("Update");
-                        $('#btnAticleClassToggle').show();
+                        $('#btnArticleClassToggle').show();
                     });
                     $('#ArticleClassLoading').hide();
                 },
                 error: function (xhr) {
-                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    //displayStatusMessage("alert-danger", "error: " + xhr.statusText);
                     alert("GetArticleClasses error: " + xhr.statusText);
                 }
             });
@@ -214,14 +218,13 @@
 
     function AddArticleClassification() {
         try {
-            objArticleClass.RefDescription = $('#txtArticleClassDescription').val();
-            objArticleClass.RefType = "CAT";
-            //alert("objArticleClass.RefDescription : " + objArticleClass.RefDescription);
+            objClassification.RefDescription = $('#txtArticleClassDescription').val();
+            objClassification.RefType = "CAT";
             $.ajax({
                 type: "POST",
-                url: service + "/api/Ref/AddRole",
+                url: service + "/api/Ref/",
                 dataType: "Json",
-                data: objArticleClass,
+                data: objClassification,
                 success: function (result) {
                     if (result.Success === "ok") {
                         $('#txtDescription').val("");
@@ -245,18 +248,18 @@
 
     function UpdateArticleClassification() {
         try {
-            objArticleClass.RefDescription = $('#txtDescription').val();
-            objArticleClass.RefType = "CAT";
+            objClassification.RefDescription = $('#txtArticleClassDescription').val();
+            objClassification.RefType = "CAT";
                 $.ajax({
                     type: "PUT",
                     url: service + "/api/Ref/Put",
-                    data: objArticleClass,
-                    success: function (result) {
-                        if (result.Success === "ok") {
+                    data: objClassification,
+                    success: function (success) {
+                        if (success === "ok") {
                             displayStatusMessage("alert-success", "Saved");
                             GetArticleClasses();                        }
                         else
-                            displayStatusMessage("alert-danger", "server ERROR: " + result.Success);
+                            displayStatusMessage("alert-danger", "server ERROR: " + success);
                     },
                     error: function (xhr) {
                         displayStatusMessage("alert-danger", "error: " + xhr.statusText);
@@ -287,7 +290,7 @@
     });
 
     $('#btnRoleToggle').click(function () {
-        objArticleClassRefCode = null;
+        objClassificationRefCode = null;
         $('#txtDescription').val("");
         $('#btnAddUpdateRole').text("Add");
         $(this).hide();
@@ -295,55 +298,73 @@
 
     function getRoles() {
         try {
-            $('#divLoadingGif').show();
+           // $('#divLoadingGif').show();
             $.ajax({
                 type: "GET",
-                url: service + "/api/Role/Get",
+                dataType: "Json",
+                url: service + "/api/Role",
                 success: function (result) {
                     $('#divRoleList').html("");
                     $.each(result, function () {
                         $('#divRoleList').append("<li Id='" + this.Id + "'>" + this.Name + "</li>");
                     });
+                    $('#divRoleList li').click(function () {
+                        objRole.Id = $(this).attr('Id');
 
-                    $('li').click(function () {
-                        objArticleClass.RefCode = $(this).attr('Id');
-                        $('#txtRoleName').val($(this).attr('data'));
+                        alert("objRole.Id: " + objRole.Id)
+
+                        $('#txtRoleName').val($(this).html());
                         $('#btnAddUpdateRole').text("Update");
                         $('#btnRoleToggle').show();
                     });
                 },
-                error: function (xhr) {
-                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                    alert("Get Roles error: " + xhr.statusText);
-                }
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                    }
+                    alert("error: " + jqXHR.status + " :" + exception);
+
+                    //$('#post').html(msg);
+                },
             });
         } catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            //displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            alert("catch: " + e);
         }
     }
 
     function AddRole() {
         try {
-            var name = $('#txtRoleName').val();
-
-            //alert(" url: :" + service + "/api/role");
-
-
+            objRole.Name = $('#txtRoleName').val();
             $.ajax({
                 type: "POST",
-                url: service + "/api/role",
+                url: service + "api/role/",
                 dataType: "Json",
-                data: name,
-                success: function (result) {
-                    alert("result :" + result);
-                    if (result.Success === "ok") {
+                data: objRole,
+                success: function (success) {
+                    if (success == "ok") {
                         $('#txtRoleName').val("");
                         $('#btnAddUpdateRole').text("Add");
                         displayStatusMessage("alert-success", "Saved");
                         getRoles();
                     }
-                    else
+                    else {
+                        alert("result :" + result + "   :" + result.Success);
                         displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
+                    }
                 },
                 error: function (xhr) {
                     displayStatusMessage("alert-danger", "error: " + xhr.statusText);
@@ -358,22 +379,22 @@
 
     function UpdateRole() {
         try {
-            objArticleClass.RefDescription = $('#txtDescription').val();
+            objRole.Name = $('#txtRoleName').val();
             $.ajax({
-                url: service + "/api/Ref/Put",
+                url: service + "/api/role",
                 type: "PUT",
-                data: ref,
-                success: function (result) {
-                    if (result.Success === "ok") {
+                data: objRole,
+                success: function (success) {
+                    if (success === "ok") {
                         displayStatusMessage("alert-success", "Saved");
-                        getRefs("CAT");
+                        getRoles();
                     }
                     else
-                        displayStatusMessage("alert-danger", "server ERROR: " + result.Success);
+                        displayStatusMessage("alert-danger", "server ERROR: " + success);
                 },
                 error: function (xhr) {
                     displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                    alert("Admin Refs PUT error: " + xhr.statusText);
+                    //alert("Admin Refs PUT error: " + xhr.statusText);
                 }
             });
         }
@@ -387,11 +408,13 @@
         $('.adminOption').hide();
         $('#tabAuthorAvatar').show();
     })
+
     // my famous Ref Editor
     $("#optRefEditor").click(function () {
         $('.adminOption').hide();
         $('#tabRefEditor').show();
     })
+
     // person / role grid
     $("#optAssignRoles").click(function () {
         $('.adminOption').hide();

@@ -12,18 +12,15 @@ namespace WebApi
     public class RefController : ApiController
     {
         [HttpGet]
-        public IList<RefModel> Get(string refType)
+        public IList<Ref> Get(string refType)
         {
+            //var list = new List<RefModel>();
             try
             {
                 using (GoDaddyContext db = new GoDaddyContext())
                 {
-                    List<RefModel> list = (from refss in db.Refs
-                                      where refss.RefType == refType
-                                      select new RefModel() { RefType = refType, RefCode = refss.RefCode, RefDescription = refss.RefDescription }).ToList();
-                    return list;
+                    return db.Refs.Where(r => r.RefType == refType).OrderBy(r => r.RefDescription).ToList();
                 }
-
             }
             catch (Exception ex)
             {
@@ -57,11 +54,9 @@ namespace WebApi
         }
 
         [HttpPut]
-        public JsonResult<RefModel> Put(RefModel refModel)
+        public string Put(RefModel refModel)
         {
-            //HTTP405: BAD METHOD -The HTTP verb used is not supported.
-            //(XHR)OPTIONS - http://localhost:40395//api/Ref/Put
-
+            string success = "ono";
             try
             {
                 using (GoDaddyContext db = new GoDaddyContext())
@@ -69,14 +64,11 @@ namespace WebApi
                     Ref @ref = db.Refs.Where(r => r.RefCode == refModel.RefCode).First();
                     @ref.RefDescription = refModel.RefDescription;
                     db.SaveChanges();
-                    refModel.Success = "ok";
+                    success = "ok";
                 }
             }
-            catch (Exception ex)
-            {
-                refModel.Success = ex.Message;
-            }
-            return Json(refModel);
+            catch (Exception ex) { success = ex.Message; }
+            return success;
         }
 
         /// helper apps
@@ -85,14 +77,6 @@ namespace WebApi
             var refCode = refDescription.Substring(0, 3).ToUpper();
             ///todo: test for existing. go into newkey loop
             return refCode;
-        }
-
-        public class RefModel
-        {
-            public string RefType { get; set; }
-            public string RefCode { get; set; }
-            public string RefDescription { get; set; }
-            public string Success { get; set; }
         }
     }
 
@@ -129,7 +113,7 @@ namespace WebApi
             {
                 using (GoDaddyContext db = new GoDaddyContext())
                 {
-                    Category category = db.Categories.Where(c=>c.CategoryName==oldCategoryName).First();
+                    Category category = db.Categories.Where(c => c.CategoryName == oldCategoryName).First();
                     category.CategoryName = newCategoryName;
                     db.SaveChanges();
                     success = "ok";
@@ -150,7 +134,7 @@ namespace WebApi
             {
                 using (GoDaddyContext db = new GoDaddyContext())
                 {
-                     catlist = db.Categories.Select(c=>c.CategoryName).ToList();
+                    catlist = db.Categories.Select(c => c.CategoryName).ToList();
                 }
             }
             catch (Exception ex)
@@ -160,4 +144,77 @@ namespace WebApi
             return catlist.ToArray();
         }
     }
+
+    [EnableCors("*", "*", "*")]
+    public class RoleController : ApiController
+    {
+        [HttpPost]
+        public string AddRole(RoleModel roleModel)
+        {
+            string success = "";
+            try
+            {
+                using (GoDaddyContext db = new GoDaddyContext())
+                {
+                    var newRole = new AspNetRole();
+                    newRole.Id = Guid.NewGuid().ToString();
+                    newRole.Name = roleModel.Name;
+                    db.AspNetRoles.Add(newRole);
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = ex.Message;
+            }
+            return success;
+        }
+
+        [HttpGet]
+        public IList<RoleModel> Get()
+        {   // finally a day later I figured out that because the generated model AspNetRole has foreign key notations which were causing this to fail
+            var list = new List<RoleModel>();
+            try
+            {
+                using (GoDaddyContext db = new GoDaddyContext())
+                {
+                    var roles = db.AspNetRoles.ToList();
+                    foreach (AspNetRole r in roles)
+                    {
+                        list.Add(new RoleModel() { Name = r.Name, Id = r.Id });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                list.Add(new RoleModel() { Name = ex.Message });
+                //throw new Exception(ex.Message, ex.InnerException);
+            }
+            return list;
+        }
+
+        [HttpPut]
+        public string Put(RoleModel roleModel)
+        {
+            string success = "ono";
+            try
+            {
+                using (GoDaddyContext db = new GoDaddyContext())
+                {
+                    AspNetRole @role = db.AspNetRoles.Where(r => r.Id == roleModel.Id).First();
+                    @role.Name = roleModel.Name;
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = ex.Message; }
+            return success;
+        }
+
+    }
+
 }
+
+
+

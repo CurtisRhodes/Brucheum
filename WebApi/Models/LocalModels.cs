@@ -5,6 +5,13 @@ using System.Web;
 
 namespace WebApi.Models
 {
+    public class RoleModel
+    {
+        public string Name { get; set; }
+        public string Id { get; set; }
+        public string Success { get; set; }
+    }
+
     public class ArticleModel
     {
         public string Id { get; set; }
@@ -57,7 +64,7 @@ namespace WebApi.Models
         public string RefType { get; set; }
         public string RefCode { get; set; }
         public string RefDescription { get; set; }
-        public string success { get; set; }
+        public string Success { get; set; }
     }
 
     public class VisitorModel
