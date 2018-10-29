@@ -14,10 +14,9 @@ namespace WebApi
         [HttpGet]
         public IList<Ref> Get(string refType)
         {
-            //var list = new List<RefModel>();
             try
             {
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     return db.Refs.Where(r => r.RefType == refType).OrderBy(r => r.RefDescription).ToList();
                 }
@@ -33,7 +32,7 @@ namespace WebApi
         {
             try
             {
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     Ref @ref = new Ref();
                     @ref.RefType = refModel.RefType;
@@ -59,7 +58,7 @@ namespace WebApi
             string success = "ono";
             try
             {
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     Ref @ref = db.Refs.Where(r => r.RefCode == refModel.RefCode).First();
                     @ref.RefDescription = refModel.RefDescription;
@@ -81,71 +80,6 @@ namespace WebApi
     }
 
     [EnableCors("*", "*", "*")]
-    public class CategoryController : ApiController
-    {
-        [HttpPost]
-        public string Post(string newCategory)
-        {
-            string success = "oh no";
-            try
-            {
-                using (GoDaddyContext db = new GoDaddyContext())
-                {
-                    Category category = new Category();
-                    category.CategoryName = newCategory;
-                    db.Categories.Add(category);
-                    db.SaveChanges();
-                    success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                success = "ERROR: " + ex.Message;
-            }
-            return success;
-        }
-
-        [HttpPut]
-        public string Put(string oldCategoryName, string newCategoryName)
-        {
-            string success = "oh no";
-            try
-            {
-                using (GoDaddyContext db = new GoDaddyContext())
-                {
-                    Category category = db.Categories.Where(c => c.CategoryName == oldCategoryName).First();
-                    category.CategoryName = newCategoryName;
-                    db.SaveChanges();
-                    success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                success = "ERROR: " + ex.Message;
-            }
-            return success;
-        }
-
-        [HttpGet]
-        public string[] Get()
-        {
-            var catlist = new List<string>();
-            try
-            {
-                using (GoDaddyContext db = new GoDaddyContext())
-                {
-                    catlist = db.Categories.Select(c => c.CategoryName).ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                catlist.Add(ex.Message);
-            }
-            return catlist.ToArray();
-        }
-    }
-
-    [EnableCors("*", "*", "*")]
     public class RoleController : ApiController
     {
         [HttpPost]
@@ -154,7 +88,7 @@ namespace WebApi
             string success = "";
             try
             {
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     var newRole = new AspNetRole();
                     newRole.Id = Guid.NewGuid().ToString();
@@ -177,7 +111,7 @@ namespace WebApi
             var list = new List<RoleModel>();
             try
             {
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     var roles = db.AspNetRoles.ToList();
                     foreach (AspNetRole r in roles)
@@ -200,7 +134,7 @@ namespace WebApi
             string success = "ono";
             try
             {
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     AspNetRole @role = db.AspNetRoles.Where(r => r.Id == roleModel.Id).First();
                     @role.Name = roleModel.Name;

@@ -10,8 +10,6 @@ using WebApi.Models;
 
 namespace WebApi
 {
-
-
     [EnableCors("*", "*", "*")]
     public class LoginController : ApiController
     {
@@ -21,10 +19,11 @@ namespace WebApi
             string userId = "ERROR: unknown";
             try
             {
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     password = HashSHA256(password);
-                    var registeredUser = db.SiteUsers.Where(l => (l.DisplayName == userName) && (l.PasswordHash == password)).FirstOrDefault();
+                    //var registeredUser = db.SiteUsers.Where(l => (l.DisplayName == userName) && (l.PasswordHash == password)).FirstOrDefault();
+                    var registeredUser = db.SiteUsers.Where(l => (l.DisplayName == userName) && (l.UserId == password)).FirstOrDefault();
                     if (registeredUser == null)
                     {
                         registeredUser = db.SiteUsers.Where(l => (l.DisplayName == userName)).FirstOrDefault();
@@ -50,7 +49,7 @@ namespace WebApi
             var user = new SiteUser();
             try
             {
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     //var registeredUser = db.UserLogins.Where(l => (l.UserId.ToString() == userId)).FirstOrDefault();
                     //if (registeredUser != null)
@@ -78,7 +77,7 @@ namespace WebApi
             string success = "on no";
             try
             {
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     //var user = db.UserLogins.Where(l => l.UserId == login.UserId).FirstOrDefault();
                     //if (user != null)
@@ -111,7 +110,7 @@ namespace WebApi
             var rtn = new UserLoginResponse() { success = "ERROR: ono" };
             try
             {
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     //var newUser = new UserLogin();
                     //newUser.UserId = Guid.NewGuid();
@@ -159,7 +158,7 @@ namespace WebApi
             string response = "ERROR: unknown";
             try
             {
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     //var userLogin = db.UserLogins.Where(l => l.FirstName == facebookId).FirstOrDefault();
 
@@ -187,8 +186,31 @@ namespace WebApi
     }
 
     [EnableCors("*", "*", "*")]
-    public class UserRoleController : ApiController
+    public class UserController : ApiController
     {
+        [HttpGet]
+        public IList<UserModel> Get()
+        {
+            var list = new List<UserModel>();
+            try
+            {
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    var users = db.SiteUsers.ToList();
+                    foreach (SiteUser siteUser in users)
+                    {
+                        list.Add(new UserModel() { Name = siteUser.DisplayName, Id = siteUser.PkId.ToString() });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                list.Add(new UserModel() { Name = ex.Message });
+                //throw new Exception(ex.Message, ex.InnerException);
+            }
+            return list;
+        }
+
         //[HttpPost]
         //public string AddUserRole(AspNetUserRole userRoleModelContainingUserName)
         //{
@@ -214,6 +236,57 @@ namespace WebApi
         //    }
         //    return success;
         //}
+
+    }
+
+    [EnableCors("*", "*", "*")]
+    public class UserRoleController : ApiController
+    {
+        [HttpGet]
+        public IList<RoleModel> Get()
+        {   // finally a day later I figured out that because the generated model AspNetRole has foreign key notations which were causing this to fail
+            var list = new List<RoleModel>();
+            try
+            {
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    var roles = db.AspNetRoles.ToList();
+                    foreach (AspNetRole r in roles)
+                    {
+                        list.Add(new RoleModel() { Name = r.Name, Id = r.Id });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                list.Add(new RoleModel() { Name = ex.Message });
+                //throw new Exception(ex.Message, ex.InnerException);
+            }
+            return list;
+        }
+
+        [HttpPost]
+        public string AddUserRole(AspNetUserRole userRole)
+        {
+            string success = "";
+            try
+            {
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    var newUserRole = new AspNetUserRole();
+                    newUserRole.RoleId =  userRole.RoleId;
+                    newUserRole.UserId = userRole.UserId;
+                    db.AspNetUserRoles.Add(newUserRole);
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = ex.Message;
+            }
+            return success;
+        }
 
     }
 }

@@ -267,6 +267,10 @@
     <Content Include="Images\Brucheum.ico" />
     <Content Include="Images\caveStairs.jpg" />
     <Content Include="Images\closeBtn02.png" />
+    <Content Include="Images\Consulting\dblleft.jpg" />
+    <Content Include="Images\Consulting\dblright.jpg" />
+    <Content Include="Images\Consulting\sglleft.jpg" />
+    <Content Include="Images\Consulting\sglright.jpg" />
     <Content Include="Images\down.jpg" />
     <Content Include="Images\downCaret.png" />
     <Content Include="Images\App\GetaJob.png" />

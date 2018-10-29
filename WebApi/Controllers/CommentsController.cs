@@ -19,7 +19,7 @@ namespace WebApi
             try
             {
                 //string ARTICLEID = articleId.ToString().ToUpper();
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     results = (from comments in db.Comments
                                join users in db.AspNetUsers on comments.UserId.ToString() equals users.Id
@@ -48,10 +48,9 @@ namespace WebApi
             string success = "ERROR: oh no";
             try
             {
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     newComment.CreateDate = DateTime.Now;
-                    newComment.CommentId = Guid.NewGuid();
                     db.Comments.Add(newComment);
                     db.SaveChanges();
                     success = newComment.CommentId.ToString();
@@ -70,7 +69,7 @@ namespace WebApi
             string success = "oh no";
             try
             {
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     Comment comment = db.Comments.Where(c => c.CommentId == updateComment.CommentId).First();
                     comment.CommentText = updateComment.CommentText;

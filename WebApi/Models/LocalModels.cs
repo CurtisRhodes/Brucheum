@@ -11,6 +11,12 @@ namespace WebApi.Models
         public string Id { get; set; }
         public string Success { get; set; }
     }
+    public class UserModel
+    {
+        public string Name { get; set; }
+        public string Id { get; set; }
+        public string Success { get; set; }
+    }
 
     public class ArticleModel
     {

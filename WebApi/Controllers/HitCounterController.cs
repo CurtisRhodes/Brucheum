@@ -19,7 +19,7 @@ namespace WebApi
             bool exists = false;
             try
             {
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     VisitorModel visitor = (from visitors in db.Visitors
                                             where visitors.IPAddress == ipAddress && visitors.App == app
@@ -39,7 +39,7 @@ namespace WebApi
             try
             {
                 //var ipAddress = System.Text.Encoding.UTF32.GetString(bytes);
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     success = SendEmail(app, ipAddress);
                     if (success == "ok")
@@ -47,7 +47,7 @@ namespace WebApi
                         Visitor visitor = new Visitor();
                         visitor.App = app;
                         visitor.IPAddress = ipAddress;
-                        visitor.VisitDate = DateTime.Now;
+                        visitor.CreateDate = DateTime.Now;
                         db.Visitors.Add(visitor);
                         db.SaveChanges();
                     }
@@ -86,7 +86,7 @@ namespace WebApi
             try
             {
                 //var ipAddress = System.Text.Encoding.UTF32.GetString(bytes);
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
                     Hit hit = new Hit();
                     hit.IPAddress = ipAddress;
@@ -97,7 +97,7 @@ namespace WebApi
                     db.Hits.Add(hit);
                     db.SaveChanges();
 
-                    success = hit.Id.ToString();
+                    success = hit.HitId.ToString();
                 }
             }
             catch (DbEntityValidationException ve)
@@ -123,16 +123,16 @@ namespace WebApi
             return success;
         }
 
-        [HttpGet]
+        [HttpGet] 
         public string EndVisit(int hitId)
         {
             var success = "on no";
             try
             {
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (WebSiteContext db = new WebSiteContext())
                 {
-                    Hit hit = db.Hits.Where(h => h.Id == hitId).First();
-                    hit.ViewDuration = (DateTime.Now - hit.BeginView).Value.TotalSeconds.ToString();
+                    Hit hit = db.Hits.Where(h => h.HitId == hitId).First();
+                    hit.ViewDuration = (DateTime.Now - hit.BeginView).TotalSeconds.ToString();
                     db.SaveChanges();
                     success = "ok";
                 }

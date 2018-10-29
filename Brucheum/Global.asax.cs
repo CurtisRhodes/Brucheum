@@ -114,14 +114,14 @@ namespace Brucheum
 
         protected void Session_Start()
         {
-            if (Request.Cookies["Brucheum"] != null)
-            {
-                if (Request.Cookies["Brucheum"].Values["UseCookie"] != "false")
-                {
-                    Session.Add("UserName", Request.Cookies["Brucheum"].Values["UserName"]);
-                    Session.Add("UserId", Request.Cookies["Brucheum"].Values["UserId"]);
-                }
-            }
+            //if (Request.Cookies["Brucheum"] != null)
+            //{
+            //    if (Request.Cookies["Brucheum"].Values["UseCookie"] != "false")
+            //    {
+            //        Session.Add("UserName", Request.Cookies["Brucheum"].Values["UserName"]);
+            //        Session.Add("UserId", Request.Cookies["Brucheum"].Values["UserId"]);
+            //    }
+            //}
             Session.Add("HitId", 0);
             Session["HitId"] = HitCounter.SessionStartHit();
         }

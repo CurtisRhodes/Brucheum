@@ -1,28 +1,67 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using System.Security.Claims;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+//using System.Web.Http.Owin;
+using Microsoft.Owin.Security.OAuth;
+using Newtonsoft.Json.Serialization;
+using System.Web.Optimization;
 
 namespace OggleBooble
 {
     public class MvcApplication : HttpApplication
     {
+        public class BundleConfig
+        {
+            // For more information on bundling, visit https://go.microsoft.com/fwlink/?LinkId=301862
+            public static void RegisterBundles(BundleCollection bundles)
+            {
+                bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
+                    "~/Scripts/jquery-{version}.js"));
+
+                bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
+                    "~/Scripts/jquery.unobtrusive*",
+                    "~/Scripts/jquery.validate*"));
+
+                bundles.Add(new ScriptBundle("~/bundles/knockout").Include(
+                    "~/Scripts/knockout-{version}.js",
+                    "~/Scripts/knockout.validation.js"));
+
+                bundles.Add(new ScriptBundle("~/bundles/app").Include(
+                    "~/Scripts/sammy-{version}.js",
+                    "~/Scripts/app/common.js",
+                    "~/Scripts/app/app.datamodel.js",
+                    "~/Scripts/app/app.viewmodel.js",
+                    "~/Scripts/app/home.viewmodel.js",
+                    "~/Scripts/app/_run.js"));
+
+                // Use the development version of Modernizr to develop with and learn from. Then, when you're
+                // ready for production, use the build tool at https://modernizr.com to pick only the tests you need.
+                bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
+                    "~/Scripts/modernizr-*"));
+
+                //bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
+                //    "~/Scripts/bootstrap.js"));
+
+                //bundles.Add(new StyleBundle("~/Content/css").Include(
+                //     "~/Content/bootstrap.css",
+                //     "~/Content/Site.css"));
+            }
+        }
+
         protected void Application_Start()
         {
-            //GlobalConfiguration.Configuration.MapHttpAttributeRoutes();
-            //GlobalFilterCollection.Add(new HandleErrorAttribute());
-            //Configuration.MapHttpAttributeRoutes();
+            AreaRegistration.RegisterAllAreas();
+
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            // Web API configuration and services
+            // Configure Web API to use only bearer token authentication.
+            GlobalConfiguration.Configure(WebApiConfig.Register);
 
             RouteTable.Routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
@@ -31,137 +70,49 @@ namespace OggleBooble
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
-            //GlobalConfiguration.Configuration.EnsureInitialized();
+            GlobalConfiguration.Configuration.EnsureInitialized();
         }
-        protected void Session_Start()
+
+        public static class WebApiConfig
         {
-            if (Request.Cookies["OggleBooble"] != null)
+            public static void Register(HttpConfiguration config)
             {
-                if (Request.Cookies["OggleBooble"].Values["UseCookie"] != "false")
-                {
-                    Session.Add("UserName", Request.Cookies["OggleBooble"].Values["UserName"]);
-                    Session.Add("UserId", Request.Cookies["OggleBooble"].Values["UserId"]);
-                }
+                // Web API configuration and services
+                // Configure Web API to use only bearer token authentication.
+                config.SuppressDefaultHostAuthentication();
+                config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+
+                // Use camel case for JSON data.
+                config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+
+                // Web API routes
+                config.MapHttpAttributeRoutes();
+
+                config.Routes.MapHttpRoute(
+                    name: "DefaultApi",
+                    routeTemplate: "api/{controller}/{id}",
+                    defaults: new { id = RouteParameter.Optional }
+                );
             }
-            else
-            {
-                //if ((Request.Cookies != null) && (Request.Cookies.Count > 0))
-                //{
-                //    Session.Add("UserName", Request.Cookies[0].Values["UserName"]);
-                //    Session.Add("UserId", Request.Cookies[0].Values["UserId"]);
-                //}
-                //else
-                {
-                    Session.Add("UserName", "No Cookies Found");
-                    Session.Add("UserId", "No Cookies Found");
-                }
-            }
-            Session.Add("HitId", 0);
-            Session["HitId"] = SessionStartHit("Session_Start", Session["UserId"].ToString());
         }
 
         protected void Application_BeginRequest() //– fired when a request for the web application comes in.
         {
-            PageHit(Request.CurrentExecutionFilePath, Request.QueryString.ToString());
+            HitCounter.PageHit(Request.CurrentExecutionFilePath, Request.QueryString.ToString());
         }
 
-        private string SessionStartHit(string session, string userId)
+        protected void Session_Start()
         {
-            var hitId = "onNo";
-            try
-            {
-                string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
-                using (HttpClient client = new HttpClient())
-                {
-                    string ipAddress = GetIPAddress();  ///Request.UserHostAddress;
-                    HttpResponseMessage response = client.GetAsync(apiService + "/api/HitCounter/Verifiy?ipAddress=" + ipAddress + "&app=OggleBooble").Result;
-                    string exists = response.Content.ReadAsStringAsync().Result;
-                    if (exists == "false")
-                    {
-                        // WE HAVE A NEW VISITOR
-                        response = client.GetAsync(apiService + "/api/HitCounter/AddVisitor?ipAddress=" + ipAddress + "&app=OggleBooble&userId=" + userId).Result;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                hitId = ex.Message;
-            }
-            return hitId; ;
+            Session.Add("HitId", 0);
+            Session["HitId"] = HitCounter.SessionStartHit();
         }
 
-        private bool IsBeingLogged(string page)
+        protected void Application_Error()
         {
-            bool allow = false;
-            switch (page)
-            {
-                case "/":
-                case "/Login/SetOggleBoobleCookie":
-                    allow = false;
-                    break;
-                case "/Home/Index":
-                case "/Home/transitions":
-                case "/Home/Transitions":
-                case "/Home/Gallery":
-                case "/Home/ImagePage":
-                case "/Home/Viewer":
-                case "/Login/LoginPopup":
-                case "/Login/LogoutPopup":
-                case "/Login/ProfilePopup":
-                case "/Login/RegisterPopup":
-                    allow = true;
-                    break;
-                default:
-                    Console.Write("Page Nothandled" + page);
-                    break;
-            }
-            return allow;
+            Session["LastError"] = Server.GetLastError();
+            //HttpContext.Current.ClearError();
+            //Response.Redirect("~/Home/Error", false);
+            Response.Redirect("~/Error", false);
         }
-
-        private void PageHit(string page, string details)
-        {
-            string ipAddress = GetIPAddress();
-            //if (ipAddress != "68.203.92.166")
-            { // my development machine
-                if (IsBeingLogged(page))
-                {
-                    using (HttpClient client = new HttpClient())
-                    {
-                        try
-                        {//AddPageHit(string ipAddress, string app, string page, string details)
-                            string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
-                            HttpResponseMessage response = client.GetAsync(
-                                apiService + "/api/HitCounter/AddPageHit?ipAddress=" + ipAddress + "&app=OggleBooble&page=" + page + "&details=" + details).Result;
-                            //string exists = response.Content.ReadAsStringAsync().Result;
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.Write(ex.Message);
-                            throw;
-                        }
-                    }
-                }
-            }
-        }
-
-        private string GetIPAddress()
-        {
-            String address = "";
-            WebRequest request = WebRequest.Create("http://checkip.dyndns.org/");
-            using (WebResponse response = request.GetResponse())
-            {
-                using (StreamReader stream = new StreamReader(response.GetResponseStream()))
-                {
-                    address = stream.ReadToEnd();
-                }
-                int first = address.IndexOf("Address: ") + 9;
-                int last = address.LastIndexOf("</body>");
-                address = address.Substring(first, last - first);
-
-                return address;
-            }
-        }
-
-
     }
 }

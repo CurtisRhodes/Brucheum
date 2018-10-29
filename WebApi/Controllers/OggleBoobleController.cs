@@ -18,14 +18,14 @@ namespace WebApi
         int imagesPerPage = 30;
 
         [HttpGet]
-        public string get()
+        public string Get()
         {
             string success = "ono";
             cancel = false;
             try
             {
                 string danni = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni");
-                using (GoDaddyContext db = new GoDaddyContext())
+                using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     DirectoryInfo rootDI = new DirectoryInfo(danni);
                     DirectoryInfo[] dirs = rootDI.GetDirectories();
@@ -58,7 +58,7 @@ namespace WebApi
             cancel = true;
         }
 
-        public void ProcessDir(GoDaddyContext db, DirectoryInfo dir, int parent)
+        public void ProcessDir(OggleBoobleContext db, DirectoryInfo dir, int parent)
         {
             var folderId = AddDirToDb(db, dir, parent);
             AddFilesToDb(db, dir, folderId);
@@ -71,7 +71,7 @@ namespace WebApi
             }
         }
 
-        private int AddDirToDb(GoDaddyContext db, DirectoryInfo di, int parent)
+        private int AddDirToDb(OggleBoobleContext db, DirectoryInfo di, int parent)
         {
             var row = new ImageFolder()
             {
@@ -84,7 +84,7 @@ namespace WebApi
             return row.FolderId;
         }
 
-        private void AddFilesToDb(GoDaddyContext db, DirectoryInfo di, int folderId)
+        private void AddFilesToDb(OggleBoobleContext db, DirectoryInfo di, int folderId)
         {
             FileInfo[] files = di.GetFiles();
             foreach (FileInfo file in files)

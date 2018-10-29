@@ -28,18 +28,19 @@
             </td>
             <td>
                 <div id="divlogin">
-                    <ul>
-                        @if ((Session["UserName"] != null) && (!String.IsNullOrEmpty(@Session["UserName"].ToString())) && (@Session["UserName"].ToString() != "No Cookies Found"))
-                        {
-                            <li id="tabProfile" title="modify profile" class="menuTab"><a href="#">Hello @Session["UserName"]</a></li>
-                            <li id="tabLogout" class="menuTab"><a href="#">Log Out</a></li>
-                        }
-                        else
-                        {
-                            <li id="tabLogIn" class="menuTab"><a href="#">Log In</a></li>
-                            <li id="tabRegister" class="menuTab"><a href="#">Register</a></li>
-                        }
-                    </ul>
+                    @using Microsoft.AspNet.Identity
+                    @if (Request.IsAuthenticated)
+                    {
+                        <div class="menuTab" id="tabProfile" title="modify profile">
+                            <a href="#">Hello @User.Identity.GetUserName() </a>
+                        </div>
+                        <div class="menuTab" id="tabLogout"><a href="#">Log Out</a></div>
+                    }
+                    else
+                    {
+                        <div class="menuTab" id="tabRegister"><a href="#">Register</a></div>
+                        <div class="menuTab" id="tabLogIn"><a href="#">Log In</a></div>
+                    }
                 </div>
             </td>
         </tr>
