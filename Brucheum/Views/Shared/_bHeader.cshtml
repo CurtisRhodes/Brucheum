@@ -24,7 +24,7 @@
                 <div class="menuTab" id="tabProfile" title="modify profile">
                     <a href="#">Hello @User.Identity.GetUserName() </a>
                 </div>
-                <div class="menuTab" id="tabLogout"><a href="#">Log Out</a></div>
+                <div class="menuTab" id="tabLogout"><a href="javascript:sessionStorage.removeItem('accessToken');$('#logoutForm').submit();">Log Out</a></div>
             }
             else
             {
@@ -51,7 +51,7 @@
     $('#tabRegister').click(function () {
         $.ajax({
             type: "get",
-            url: "/Login/RegisterPopup",
+            url: "/Login/Register",
             datatype: "json",
             success: function (data) {
                 $('#modalContent').html(data);
@@ -99,8 +99,8 @@
 
     $('#tabLogout').click(function () {
         $.ajax({
-            type: "get",
-            url: "/Login/DeleteCookie",
+            type: "POST",
+            url: "/Login/Logout",
             success: function (success) {
                 if (success === "ok")
                     //$("#divlogin").load(location.href + " #divlogin");

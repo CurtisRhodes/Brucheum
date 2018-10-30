@@ -169,6 +169,7 @@
 
 <script>
     var service = '@ViewBag.Service';
+    var loginVM = new Object();
 //    $(document).ready(function () { });
 
     $('#btnLogin').click(function () {
@@ -178,7 +179,6 @@
     function Login() {
         try {
             if (validate()) {
-                var loginVM = new Object();
                 loginVM.UserName = $('#txtUserName').val();
                 loginVM.Email = $('#txtEmail').val();
                 loginVM.Password = $('#clearPassword').val();
@@ -190,51 +190,14 @@
                     type: "POST",
                     url: "/Login/Login",
                     data: loginVM,
-                    success: function (success) {
-                        if (success === "ok") {
-                            //$("#divlogin").load(location.href + " #divlogin");
-                            location.reload(true);
-                            //clearModal();
+                    success: function (responseLoginVM) {
+                        if ((responseLoginVM.success == "ok") || (responseLoginVM.success == "Unspecified failure")) {
+                            updateSiteUser(responseLoginVM);
                         }
                         else {
                             $('#errSummary').html(success);
                             $('#errSummary').show();
                         }
-
-
-
-                        //if (response.startsWith("ERROR")) {
-                        //    displayStatusMessage("alert-danger", response);
-                        //    alert("response: " + response);
-                        //}
-                        //else {
-                        //    if ((response === "User Name not recognized") || (response === "Password Incorrect")) {
-                        //        //displayStatusMessage("alert-danger", response);
-                        //        $('#errPassword').text(response);
-                        //        $('#errPassword').show();
-                        //    }
-                        //    else {
-                        //        var ischecked = $('#ckRememberMe').prop('checked').toString();
-                        //        //SetBrucheumCookie($('#txtUserName').val(), response, ischecked);
-                        //        $.ajax({
-                        //            type: "get",
-                        //            url: "/Login/SetCookie?userName=" + $('#txtUserName').val() + "&userId=" + response + "&useCookie=" + ischecked,
-                        //            datatype: "json",
-                        //            success: function (success) {
-                        //                if (success === "ok")
-                        //                    //$("#divlogin").load(location.href + " #divlogin");
-                        //                    location.reload(true);
-                        //                else
-                        //                    alert("SetCookie error: " + success);
-                        //            },
-                        //            error: function (xhr) {
-                        //                displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                        //                alert("SetCookie  error: " + xhr.statusText);
-                        //            }
-                        //        });
-                        //        //clearModal();
-                        //    }
-                        //}
                     },
                     error: function (xhr) {
                         displayStatusMessage("alert-danger", "error: " + xhr.statusText);
@@ -271,6 +234,30 @@
         $('#errPassword').hide();
         return true;
     };
+
+    function updateSiteUser(responseLoginVM) {
+        $.ajax({
+            type: "PUT",
+            url: service + "api/SiteUser",
+            datatype: "json",
+            data: responseLoginVM,
+            success: function (success) {
+                if (success === "ok")
+                    //$("#divlogin").load(location.href + " #divlogin");
+                    location.reload(true);
+                else {
+                    $('#errSummary').html(success);
+                    $('#errSummary').show();
+                }
+            },
+            error: function (xhr) {
+                displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                alert("SetCookie  error: " + xhr.statusText);
+            }
+        });
+        location.reload(true);
+    }
+
 
     $('#btnTransferToRegister').click(function () {
         $.ajax({

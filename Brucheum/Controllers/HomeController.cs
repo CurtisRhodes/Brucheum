@@ -46,21 +46,23 @@ namespace Brucheum
     {
         public ViewResult Index()
         {
-            Exception x = HttpContext.Server.GetLastError();
-            Exception ex = (Exception)Session["LastError"];
-            string errorMessage = ex.Message;
-            if (ex.InnerException != null)
+            string stackTrace = "";
+            string errorMessage = "unknown Error";
+            if (HttpContext.Session != null)
             {
-                errorMessage += "<br/>" + ex.InnerException.Message;
-                if (ex.InnerException.InnerException != null)
-                    errorMessage += "<br/>" + ex.InnerException.InnerException.Message; ;
+                Exception ex = (Exception)Session["LastError"];
+                errorMessage = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    errorMessage += "<br/>" + ex.InnerException.Message;
+                    if (ex.InnerException.InnerException != null)
+                        errorMessage += "<br/>" + ex.InnerException.InnerException.Message; ;
+                }
+                stackTrace = ex.StackTrace.Replace("\r\n", "<br/>");
             }
-            //var text = ex.StackTrace.Replace("\r\n", "<br/>");
-
-            ViewBag.StackTrace = ex.StackTrace.Replace("\r\n","");
+            ViewBag.StackTrace = stackTrace;
             ViewBag.ErrorMessage = errorMessage;
             return View();
         }
     }
-
 }

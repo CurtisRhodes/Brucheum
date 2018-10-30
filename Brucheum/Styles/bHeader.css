@@ -5,10 +5,9 @@
     border-bottom: #decd6f 3px solid 
 }
     #bheader .bannerImage {
-        width: 130px;
-        height: 69px;
-        margin-top: 2px;
-        margin-left: 4px;
+        padding: 5px;
+        width: 120px;
+        height: 59px;
         cursor: pointer;
     }
     #bheader .menuTab a:hover {
