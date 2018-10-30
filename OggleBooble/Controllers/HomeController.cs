@@ -57,17 +57,21 @@ namespace OggleBooble
         {
             Exception x = HttpContext.Server.GetLastError();
             Exception ex = (Exception)Session["LastError"];
-            string errorMessage = ex.Message;
-            if (ex.InnerException != null)
+            string errorMessage = "unknown error";
+            string stackTrace = "";
+            if (ex != null)
             {
-                errorMessage += "<br/>" + ex.InnerException.Message;
-                if (ex.InnerException.InnerException != null)
-                    errorMessage += "<br/>" + ex.InnerException.InnerException.Message; ;
+                errorMessage = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    errorMessage += "<br/>" + ex.InnerException.Message;
+                    if (ex.InnerException.InnerException != null)
+                        errorMessage += "<br/>" + ex.InnerException.InnerException.Message; ;
+                }
+                stackTrace = ex.StackTrace.Replace("\r\n", "");
             }
-            //var text = ex.StackTrace.Replace("\r\n", "<br/>");
-
-            ViewBag.StackTrace = ex.StackTrace.Replace("\r\n", "");
             ViewBag.ErrorMessage = errorMessage;
+            ViewBag.StackTrace = stackTrace;
             return View();
         }
     }

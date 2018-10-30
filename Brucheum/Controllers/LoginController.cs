@@ -56,28 +56,80 @@ namespace Brucheum
                 _userManager = value;
             }
         }
+        private IAuthenticationManager AuthenticationManager
+        {
+            get
+            {
+                return HttpContext.GetOwinContext().Authentication;
+            }
+        }
 
         public ActionResult LoginPopup()
         {
             ViewBag.Service = apiService;
             return PartialView("_LoginPopup");
         }
-
-        public ActionResult RegisterPopup()
+        [HttpPost]
+        [AllowAnonymous]
+        public LoginModel Login(LoginModel loginVM)
         {
-            ViewBag.UserId = Session["UserId"];
-            ViewBag.Service = apiService;
-            return PartialView("_RegisterPopup");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    SignInStatus result = SignInManager.PasswordSignInAsync(loginVM.UserName, loginVM.Password, loginVM.RememberMe, shouldLockout: false).Result;
+                    if (result == SignInStatus.Success)
+                    {
+                        loginVM.success = "ok";
+                        loginVM.IPAddress = Helpers.GetIPAddress();
+                        Helpers.SendEmail("HOLY SHIT: somebody Logged In to The Brucheum", "Ip: " + loginVM.IPAddress + " visited: The Brucheum");
+                    }
+                    else
+                    {
+                        switch (result)
+                        {
+                            case SignInStatus.LockedOut:
+                                //return View("Lockout");
+                                loginVM.success = "Locked Out";
+                                break;
+                            case SignInStatus.RequiresVerification:
+                                //return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                                loginVM.success = "This account has been locked out, please try again later.";
+                                break;
+                            case SignInStatus.Failure:
+                                loginVM.success = "Unspecified failure";
+                                break;
+                            default:
+                                //ModelState.AddModelError("", "Invalid login attempt.");
+                                loginVM.success = result.ToString();
+                                //return View(model);
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    var modelStateErrors = this.ModelState.Keys.SelectMany(key => this.ModelState[key].Errors);
+                    foreach (ModelError e in modelStateErrors)
+                    {
+                        loginVM.success += " :" + e.ErrorMessage;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                loginVM.success = ex.Message;
+            }
+            return loginVM;
         }
 
         public ActionResult Register()
         {
-            return View("_RegisterPopup");
+            return PartialView("_RegisterPopup");
+            //return View("_RegisterPopup");
         }
-
         [HttpPost]
         [AllowAnonymous]
-        //[ValidateAntiForgeryToken]
         public string Register(RegisterModel regVM)
         {
             string success = "";
@@ -123,61 +175,19 @@ namespace Brucheum
             }
             return success;  // View(model);
         }
-
+        
         [HttpPost]
-        [AllowAnonymous]
-        //[ValidateAntiForgeryToken]
-        public string Login(LoginModel loginVM)
+        public string Logout()
         {
             string success = "";
             try
             {
-                if (ModelState.IsValid)
-                {
-                    SignInStatus result = SignInManager.PasswordSignInAsync(loginVM.UserName, loginVM.Password, loginVM.RememberMe, shouldLockout: false).Result;
-                    if (result == SignInStatus.Success)
-                    {
-                        success = "ok";
-                    }
-                    else
-                    {
-                        switch (result)
-                        {
-                            case SignInStatus.LockedOut:
-                                //return View("Lockout");
-                                success = "Locked Out";
-                                break;
-                            case SignInStatus.RequiresVerification:
-                                //return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                                success = "This account has been locked out, please try again later.";
-                                break;
-                            case SignInStatus.Failure:
-                                success = "Unspecified failure";
-                                break;
-                            default:
-                                //ModelState.AddModelError("", "Invalid login attempt.");
-                                success = "Invalid login attempt.";
-                                //return View(model);
-                                break;
-                        }
-                    }
-                }
-                else
-                {
-                    var modelStateErrors = this.ModelState.Keys.SelectMany(key => this.ModelState[key].Errors);
-                    foreach (ModelError e in modelStateErrors)
-                    {
-                        success += " :" + e.ErrorMessage;
-                    }
-                }
+                AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                success = "ok";
             }
-            catch (Exception ex)
-            {
-                success = ex.Message;
-            }
+            catch (Exception ex) { success = ex.Message; }
             return success;
         }
-
 
         public ActionResult ProfilePopup()
         {
@@ -188,7 +198,7 @@ namespace Brucheum
         }
 
         [HttpGet]
-        public string SetCookie(string userName, string userId, string useCookie)
+        public string xxSetCookie(string userName, string userId, string useCookie)
         {
 
             //var user = new ApplicationUserManager();
@@ -221,7 +231,7 @@ namespace Brucheum
         }
 
         [HttpGet]
-        public string DeleteCookie()
+        public string xxDeleteCookie()
         {
             var success = "on no";
             Session["UserName"] = null;
@@ -243,8 +253,6 @@ namespace Brucheum
             return success;
         }
 
-
-
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
@@ -252,7 +260,6 @@ namespace Brucheum
                 ModelState.AddModelError("", error);
             }
         }
-
 
     }
     public class FaceBookUser

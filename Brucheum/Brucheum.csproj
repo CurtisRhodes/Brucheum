@@ -231,7 +231,7 @@
     <Compile Include="Controllers\ArticleController.cs" />
     <Compile Include="Controllers\BookController.cs" />
     <Compile Include="Controllers\FileController.cs" />
-    <Compile Include="Controllers\HitCounter.cs" />
+    <Compile Include="Controllers\Helpers.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ConsultingController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -281,6 +281,7 @@
     <Content Include="Images\powerOffRed01.png" />
     <Content Include="Images\Book\ReadyFireAim.jpg" />
     <Content Include="Images\intel01.jpg" />
+    <Content Include="Images\RenStimpy8.jpg" />
     <Content Include="Images\TanBlue\BlondJewBlue.png" />
     <Content Include="Images\TanBlue\BlondJewTan.png" />
     <Content Include="Images\TanBlue\BrucheumBlue.png" />

@@ -15,6 +15,7 @@ namespace Brucheum
 {
     public class MvcApplication : HttpApplication
     {
+        private bool sessionHasStarted = false;
         public class BundleConfig
         {
             // For more information on bundling, visit https://go.microsoft.com/fwlink/?LinkId=301862
@@ -108,31 +109,25 @@ namespace Brucheum
 
         protected void Application_BeginRequest() //– fired when a request for the web application comes in.
         {
-            //NameValueCollection qparams = Request.QueryString;
-           HitCounter.PageHit(Request.CurrentExecutionFilePath, Request.QueryString.ToString());
+            if (HttpContext.Current.Session != null)
+            {
+                Helpers.PageHit(Request.CurrentExecutionFilePath, Request.QueryString.ToString());
+            }
         }
 
         protected void Session_Start()
         {
-            //if (Request.Cookies["Brucheum"] != null)
-            //{
-            //    if (Request.Cookies["Brucheum"].Values["UseCookie"] != "false")
-            //    {
-            //        Session.Add("UserName", Request.Cookies["Brucheum"].Values["UserName"]);
-            //        Session.Add("UserId", Request.Cookies["Brucheum"].Values["UserId"]);
-            //    }
-            //}
-            Session.Add("HitId", 0);
-            Session["HitId"] = HitCounter.SessionStartHit();
+            sessionHasStarted = true;
+            Helpers.SessionStart();
         }
         protected void Application_Error()
         {
-            Session["LastError"] = Server.GetLastError();
-            //HttpContext.Current.ClearError();
-            //Response.Redirect("~/Home/Error", false);
-            Response.Redirect("~/Error", false);
+            if (HttpContext.Current.Session != null)
+            {
+                Session["LastError"] = Server.GetLastError();
+                Response.Redirect("~/Error", false);
+            }
         }
-
     }
 
 
