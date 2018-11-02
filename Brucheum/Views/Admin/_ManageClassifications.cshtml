@@ -1,0 +1,117 @@
+﻿
+<div class="adminOptionTitle">Article Classifications</div>
+<label>Category:</label>
+<input class="roundedInput" id="txtArticleClassDescription" />
+<div id="divRoleButtons">
+    <div class="roundendButton" id="btnAddEditArticleClass">Add</div>
+    <div class="roundendButton" id="btnArticleClassToggle">New</div>
+</div>
+<img id="ArticleClassLoading" src="~/Images/loader.gif" height="40" />
+<div class="itemsList" id="divArticleClassList"></div>
+
+<script>
+
+    $('#btnAddEditArticleClass').click(function () {
+        if ($(this).text() === "Add")
+            AddArticleClassification();
+        else
+            UpdateArticleClassification();
+    });
+
+    $('#btnArticleClassToggle').click(function () {
+        objClassification.RefCode = null;
+        $('#txtArticleClassDescription').val("");
+        $('#btnAddEditArticleClass').text("Add");
+        $('#btnNArticleClassToggle').hide();
+    });
+
+    function GetArticleClasses() {
+        try {
+            $('#ArticleClassLoading').show();
+            $.ajax({
+                url: service + "/api/Ref/Get?refType=CAT",
+                type: "get",
+                dataType: "Json",
+                success: function (result) {
+                    $('#divArticleClassList').html("");
+                    $.each(result, function () {
+                        $('#divArticleClassList').append("<li Id='" + this.RefCode + "'>" + this.RefDescription + "</li>")
+                    });
+
+                    $('#divArticleClassList li').click(function () {
+                        objClassification.RefCode = $(this).attr('Id');
+                        $('#txtArticleClassDescription').val($(this).html());
+                        $('#btnAddEditArticleClass').text("Update");
+                        $('#btnArticleClassToggle').show();
+                    });
+                    $('#ArticleClassLoading').hide();
+                },
+                error: function (xhr) {
+                    //displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("GetArticleClasses error: " + xhr.statusText);
+                }
+            });
+        } catch (e) {
+            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+        }
+    }
+
+    function AddArticleClassification() {
+        try {
+            objClassification.RefDescription = $('#txtArticleClassDescription').val();
+            objClassification.RefType = "CAT";
+            $.ajax({
+                type: "POST",
+                url: service + "/api/Ref/",
+                dataType: "Json",
+                data: objClassification,
+                success: function (result) {
+                    if (result.Success === "ok") {
+                        $('#txtDescription').val("");
+                        $('#btnAddEditArticleClass').text("Add");
+                        displayStatusMessage("alert-success", "Saved");
+                        GetArticleClasses();
+                    }
+                    else
+                        displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
+                },
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("Admin Refs Post error: " + xhr.statusText);
+                }
+            });
+        }
+        catch (e) {
+            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+        }
+    }
+
+    function UpdateArticleClassification() {
+        try {
+            objClassification.RefDescription = $('#txtArticleClassDescription').val();
+            objClassification.RefType = "CAT";
+            $.ajax({
+                type: "PUT",
+                url: service + "/api/Ref/Put",
+                data: objClassification,
+                success: function (success) {
+                    if (success === "ok") {
+                        displayStatusMessage("alert-success", "Saved");
+                        GetArticleClasses();
+                    }
+                    else
+                        displayStatusMessage("alert-danger", "server ERROR: " + success);
+                },
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("Admin Refs PUT error: " + xhr.statusText);
+                }
+            });
+        }
+        catch (e) {
+            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+        }
+    }
+
+</script>
+

@@ -1,13 +1,59 @@
-﻿
+﻿@{
+    ViewBag.Title = "Welcome";
+}
+<style>
+    .threeColumnArray {
+        background-color: #eeddbb;
+    }
+    .vMenu {
+        padding-top: 63px;
+        padding-left: 33px;
+    }
+    .tabvMenuItem {
+        padding: 13px;
+    }
+        .tabvMenuItem img {
+            width: 166px;
+            height: 66px;
+            cursor: pointer;
+        }
+    .fullScreen {
+         width:100%;
+         height: 800px;
+    }
+
+</style>
 <div class="threeColumnArray">
     <div id="leftColumn">
-    </div>
-    <div id="middleColumn">
-        @Html.Partial("_ArticleList");
-    </div>
-    <div id="rightColumn">
-        <div id="divb">
-            @Html.Partial("_BookPannel")
+        <div id="tanBlue" class="vMenu">
+            <div id="itemIntelDesgn" class="tabvMenuItem">
+                <img src="~/Images/TanBlue/IntelligentDesignTan.png" onmouseover="this.src='/Images/TanBlue/IntelligentDesignBlue.png'" onmouseout="this.src='/Images/TanBlue/IntelligentDesignTan.png'" />
+            </div>
+            <div id="itemArticles" class="tabvMenuItem">
+                <img src="~/Images/TanBlue/BlondJewTan.png" onmouseover="this.src='/Images/TanBlue/BlondJewBlue.png'" onmouseout="this.src='/Images/TanBlue/BlondJewTan.png'" />
+            </div>
+            <div id="itemBooks" class="tabvMenuItem">
+                <img src="~/Images/TanBlue/BrucheumTan.png" onmouseover="this.src='/Images/TanBlue/BrucheumBlue.png'" onmouseout="this.src='/Images/TanBlue/BrucheumTan.png'" />
+            </div>
+            <div id="itemFlitter" class="tabvMenuItem">
+                <img src="~/Images/TanBlue/FlitterTan.png" onmouseover="this.src='/Images/TanBlue/FlitterBlue.png'" onmouseout="this.src='/Images/TanBlue/FlitterTan.png'" />
+            </div>
+            <div id="itemGetaJob" class="tabvMenuItem">
+                <img src="~/Images/TanBlue/GetaJobTan.png" onmouseover="this.src='/Images/TanBlue/GetaJobBlue.png'" onmouseout="this.src='/Images/TanBlue/GetaJobTan.png'" />
+            </div>
+            <div id="itemOggle" class="tabvMenuItem">
+                <img src="~/Images/TanBlue/OggleBoogleTan.png" onmouseover="this.src='/Images/TanBlue/OggleBoogleBlue.png'" onmouseout="this.src='/Images/TanBlue/OggleBoogleTan.png'" />
+            </div>
+            <div id="item2aT" class="tabvMenuItem">
+                <img src="~/Images/TanBlue/ToATeeTan.png" onmouseover="this.src='/Images/TanBlue/ToATeeBlue.png'" onmouseout="this.src='/Images/TanBlue/ToATeeTan.png'" />
+            </div>
         </div>
     </div>
+    <div id="middleColumn">
+        <img class="fullScreen" src="~/Images/caveStairs.jpg" />
+    </div>
+    <div id="rightColumn">
+    </div>
 </div>
+
+

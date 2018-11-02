@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
-  <Import Project="..\packages\Microsoft.Net.Compilers.2.6.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.6.1\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,7 +8,7 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{95E4B384-F097-40B9-A281-2FFAC07C88CE}</ProjectGuid>
+    <ProjectGuid>{B1281210-87B4-485B-B161-2DF8EF5A4EDC}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -46,56 +45,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.2\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.2\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.2\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.2.1.1\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Identity.Core">
-      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.identity.core\2.1.1\lib\netstandard2.0\Microsoft.Extensions.Identity.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.4.0.0\lib\net451\Microsoft.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.0.0\lib\net451\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Security.3.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Cookies, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.3.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.OAuth, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.3.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
-    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
       <Private>True</Private>
@@ -106,17 +60,11 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Net.Http.Formatting, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.6\lib\net45\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Runtime, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
     <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
       <Private>True</Private>
@@ -143,14 +91,8 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Web.Http, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.Http">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.6\lib\net45\System.Web.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http.Owin, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.6\lib\net45\System.Web.Http.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http.WebHost, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.6\lib\net45\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
@@ -164,6 +106,8 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
     </Reference>
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -192,6 +136,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -202,6 +149,57 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.2\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.2\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.2\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin">
+      <HintPath>..\packages\Microsoft.Owin.4.0.0\lib\net451\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.0.0\lib\net451\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security">
+      <HintPath>..\packages\Microsoft.Owin.Security.4.0.0\lib\net451\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies">
+      <HintPath>..\packages\Microsoft.Owin.Security.Facebook.4.0.0\lib\net451\Microsoft.Owin.Security.Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.4.0.0\lib\net451\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Google">
+      <HintPath>..\packages\Microsoft.Owin.Security.Google.4.0.0\lib\net451\Microsoft.Owin.Security.Google.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Twitter">
+      <HintPath>..\packages\Microsoft.Owin.Security.Twitter.4.0.0\lib\net451\Microsoft.Owin.Security.Twitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.MicrosoftAccount">
+      <HintPath>..\packages\Microsoft.Owin.Security.MicrosoftAccount.4.0.0\lib\net451\Microsoft.Owin.Security.MicrosoftAccount.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.4.0.0\lib\net451\Microsoft.Owin.Security.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.DiagnosticSource">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.4.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.TelemetryCorrelation">
+      <HintPath>..\packages\Microsoft.AspNet.TelemetryCorrelation.1.0.0\lib\net45\Microsoft.AspNet.TelemetryCorrelation.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.ApplicationInsights">
       <HintPath>..\packages\Microsoft.ApplicationInsights.2.5.1\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
     </Reference>
@@ -224,69 +222,89 @@
       <HintPath>..\packages\Microsoft.ApplicationInsights.Web.2.5.1\lib\net45\Microsoft.AI.Web.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
-      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\IdentityConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ArticleController.cs" />
     <Compile Include="Controllers\BookController.cs" />
-    <Compile Include="Controllers\FileController.cs" />
+    <Compile Include="Controllers\ConsultingController.cs" />
+    <Compile Include="Controllers\ApiController.cs" />
     <Compile Include="Controllers\Helpers.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\ConsultingController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
-    <Compile Include="Controllers\MeController.cs" />
+    <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\LocalModels.cs" />
+    <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="OwinStartup.cs" />
+    <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
-    <Content Include="Images\App\2aT001.png" />
-    <Content Include="Images\App\happyMan.gif" />
-    <Content Include="Images\App\LodgeSecretary.jpg" />
-    <Content Include="Images\App\redballon.png" />
-    <Content Include="Images\Book\PaupaBook\book-bottomleftmid.jpg" />
-    <Content Include="Images\Book\PaupaBook\book-bottomrightmid.jpg" />
-    <Content Include="Images\Book\PaupaBook\book-cornerbleft.jpg" />
-    <Content Include="Images\Book\PaupaBook\book-cornerbright.jpg" />
-    <Content Include="Images\Book\PaupaBook\book-cornertopleft2.jpg" />
-    <Content Include="Images\Book\PaupaBook\book-cornertopright2.jpg" />
-    <Content Include="Images\Book\PaupaBook\book-innerspine.jpg" />
-    <Content Include="Images\Book\PaupaBook\book-innerspinebottom.jpg" />
-    <Content Include="Images\Book\PaupaBook\book-innerspinetop.jpg" />
-    <Content Include="Images\Book\PaupaBook\book-left.jpg" />
-    <Content Include="Images\Book\PaupaBook\book-right.jpg" />
-    <Content Include="Images\Book\PaupaBook\book-top.jpg" />
-    <Content Include="Images\Book\PaupaBook\book-topLeft.jpg" />
-    <Content Include="Images\Book\PaupaBook\book-topRight.jpg" />
+    <Content Include="Global.asax" />
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Apps\2aT001.png" />
+    <Content Include="Images\Apps\GetaJob.png" />
+    <Content Include="Images\Apps\happyMan.gif" />
+    <Content Include="Images\Apps\LodgeSecretary.jpg" />
+    <Content Include="Images\Apps\redballon.png" />
+    <Content Include="Images\Books\PaupaBook\book-bottomleftmid.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-bottomrightmid.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-cornerbleft.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-cornerbright.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-cornertopleft2.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-cornertopright2.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-innerspine.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-innerspinebottom.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-innerspinetop.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-left.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-right.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-top.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-topLeft.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-topRight.jpg" />
+    <Content Include="Images\Books\ReadyFireAim.jpg" />
+    <Content Include="Images\Books\TheBlondJew.jpg" />
+    <Content Include="Images\Books\TimeSquared.jpg" />
     <Content Include="Images\brain02.ico" />
     <Content Include="Images\Brucheum.ico" />
     <Content Include="Images\caveStairs.jpg" />
     <Content Include="Images\closeBtn02.png" />
     <Content Include="Images\Consulting\dblleft.jpg" />
     <Content Include="Images\Consulting\dblright.jpg" />
+    <Content Include="Images\Consulting\globlic.jpg" />
     <Content Include="Images\Consulting\sglleft.jpg" />
     <Content Include="Images\Consulting\sglright.jpg" />
     <Content Include="Images\down.jpg" />
     <Content Include="Images\downCaret.png" />
-    <Content Include="Images\App\GetaJob.png" />
+    <Content Include="Images\GetaJobBnr.png" />
     <Content Include="Images\house.gif" />
     <Content Include="Images\ingranaggi3.gif" />
+    <Content Include="Images\intel01.jpg" />
     <Content Include="Images\left.jpg" />
     <Content Include="Images\loader.gif" />
     <Content Include="Images\powerOffRed01.png" />
-    <Content Include="Images\Book\ReadyFireAim.jpg" />
-    <Content Include="Images\intel01.jpg" />
     <Content Include="Images\RenStimpy8.jpg" />
+    <Content Include="Images\ResumeBuilder.PNG" />
+    <Content Include="Images\scrnShot Transform01.PNG" />
+    <Content Include="Images\scrnShot Transform02.PNG" />
     <Content Include="Images\TanBlue\BlondJewBlue.png" />
     <Content Include="Images\TanBlue\BlondJewTan.png" />
     <Content Include="Images\TanBlue\BrucheumBlue.png" />
     <Content Include="Images\TanBlue\BrucheumTan.png" />
-    <Content Include="Images\TanBlue\FlitterManBlue.png" />
+    <Content Include="Images\TanBlue\FlitterBlue.png" />
     <Content Include="Images\TanBlue\FlitterTan.png" />
     <Content Include="Images\TanBlue\GetaJobBlue.png" />
     <Content Include="Images\TanBlue\GetaJobTan.png" />
@@ -296,42 +314,31 @@
     <Content Include="Images\TanBlue\OggleBoogleTan.png" />
     <Content Include="Images\TanBlue\ToATeeBlue.png" />
     <Content Include="Images\TanBlue\ToATeeTan.png" />
-    <Content Include="Images\Book\TheBlondJew.jpg" />
-    <Content Include="Images\Book\TimeSquared.jpg" />
     <Content Include="Images\up.jpg" />
     <Content Include="Images\upCaret.png" />
-    <Content Include="Scripts\codemirror.js" />
-    <Content Include="Scripts\codemirrorFormatting.js" />
-    <Content Include="Scripts\codemirrorXml.js" />
-    <Content Include="Scripts\facebook.js" />
     <Content Include="Scripts\GlobalFunctions.js" />
     <Content Include="Scripts\ImageTools.js" />
-    <Content Include="Scripts\jquery.codeview.min.js" />
     <Content Include="Scripts\ResizeThreeColumnPage.js" />
-    <Content Include="Scripts\summernote.js" />
-    <Content Include="Styles\articleEdit.css" />
     <Content Include="Styles\article.css" />
+    <Content Include="Styles\articleEdit.css" />
     <Content Include="Styles\articleList.css" />
-    <Content Include="Global.asax" />
-    <Content Include="Styles\bookEdit.css" />
-    <Content Include="Styles\codemirror.css" />
-    <Content Include="Styles\default.css" />
     <Content Include="Styles\bFooter.css" />
     <Content Include="Styles\bHeader.css" />
+    <Content Include="Styles\boogers.css" />
+    <Content Include="Styles\bookEdit.css" />
+    <Content Include="Styles\bootstrap.css" />
+    <Content Include="Styles\codemirror.css" />
+    <Content Include="Styles\default.css" />
     <Content Include="Styles\idHeader.css" />
     <Content Include="Styles\JournalEditor.css" />
     <Content Include="Styles\jquery.codeview.css" />
     <Content Include="Styles\modalDialog.css" />
     <Content Include="Styles\monokai.css" />
+    <Content Include="Styles\quill.snow.css" />
     <Content Include="Styles\summernote.css" />
     <Content Include="Styles\tableofContents.css" />
-    <Content Include="Images\Consulting\bluegradient1.PNG" />
-    <Content Include="Images\Consulting\globlic.jpg" />
-    <Content Include="Images\Consulting\menu_repeater.gif" />
-    <Content Include="Images\Consulting\secretClick.png" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="Styles\VertMenu.css" />
+    <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -340,58 +347,77 @@
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
+    <Content Include="Views\Account\ConfirmEmail.cshtml" />
+    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
+    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
+    <Content Include="Views\Account\ForgotPassword.cshtml" />
+    <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Account\ResetPassword.cshtml" />
+    <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\SendCode.cshtml" />
+    <Content Include="Views\Account\VerifyCode.cshtml" />
+    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
+    <Content Include="Views\Manage\ChangePassword.cshtml" />
+    <Content Include="Views\Manage\Index.cshtml" />
+    <Content Include="Views\Manage\ManageLogins.cshtml" />
+    <Content Include="Views\Manage\SetPassword.cshtml" />
+    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
+    <Content Include="Views\Shared\Lockout.cshtml" />
+    <Content Include="Views\Shared\_LoginPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Shared\_bHeader.cshtml" />
-    <Content Include="Views\Shared\_bFooter.cshtml" />
     <None Include="packages.config" />
-    <None Include="Properties\PublishProfiles\curtisrhodes.com.pubxml" />
-    <None Include="Readme.md" />
-    <Content Include="Views\Consulting\ConsultingHome.cshtml" />
-    <Content Include="Views\Consulting\_ProfessionalLayout.cshtml" />
-    <Content Include="Views\Home\Journal.cshtml" />
-    <Content Include="Views\Article\ArticleEdit.cshtml" />
+    <Content Include="Views\Shared\_bFooter.cshtml" />
+    <Content Include="Views\Shared\_bHeader.cshtml" />
+    <Content Include="Views\Shared\_BookPannel.cshtml" />
     <Content Include="Views\Article\Article.cshtml" />
+    <Content Include="Views\Article\ArticleEdit.cshtml" />
+    <Content Include="Views\Article\ArticleList.cshtml" />
+    <Content Include="Views\Book\BooksRead.cshtml" />
     <Content Include="Views\Book\Index.cshtml" />
     <Content Include="Views\Book\MyBooks.cshtml" />
-    <Content Include="Views\Book\TheBlondJew.cshtml" />
+    <Content Include="Views\Book\Read.cshtml" />
+    <Content Include="Views\Book\TableOfContents.cshtml" />
+    <Content Include="Views\Book\Write.cshtml" />
+    <Content Include="Views\Book\_EditTreePopup.cshtml" />
+    <Content Include="Views\Consulting\About.cshtml" />
+    <Content Include="Views\Consulting\Admin.cshtml" />
+    <Content Include="Views\Consulting\Approach.cshtml" />
+    <Content Include="Views\Consulting\Articles.cshtml" />
+    <Content Include="Views\Consulting\Code.cshtml" />
+    <Content Include="Views\Consulting\ConsultingHome.cshtml" />
+    <Content Include="Views\Consulting\Contact.cshtml" />
+    <Content Include="Views\Consulting\MyResume.cshtml" />
+    <Content Include="Views\Consulting\Portfolio.cshtml" />
+    <Content Include="Views\Consulting\_IdFooter.cshtml" />
+    <Content Include="Views\Consulting\_IdHeader.cshtml" />
+    <Content Include="Views\Consulting\_ProfessionalLayout.cshtml" />
     <Content Include="Views\Login\_LoginPopup.cshtml" />
     <Content Include="Views\Login\_LogoutPopup.cshtml" />
     <Content Include="Views\Login\_ProfilePopup.cshtml" />
     <Content Include="Views\Login\_RegisterPopup.cshtml" />
-    <Content Include="Views\Book\Write.cshtml" />
-    <Content Include="Views\Consulting\Admin.cshtml" />
-    <Content Include="Views\Book\_EditTreePopup.cshtml" />
-    <Content Include="Views\Shared\_BookPannel.cshtml" />
-    <Content Include="Views\Book\TimeSquared.cshtml" />
-    <Content Include="Views\Book\TableOfContents.cshtml" />
-    <Content Include="Views\Book\BooksRead.cshtml" />
-    <Content Include="Views\Book\Read.cshtml" />
-    <Content Include="Styles\quill.snow.css" />
-    <Content Include="Views\Home\TanBlueMenu.cshtml" />
-    <Content Include="Views\Article\ArticleList.cshtml" />
-    <Content Include="Views\Home\get_image.cshtml" />
-    <Content Include="Static_Pages\web.config" />
     <Content Include="Views\Home\Apps.cshtml" />
     <Content Include="Views\Home\DirTreeTest.cshtml" />
-    <Content Include="Views\Consulting\MyResume.cshtml" />
-    <Content Include="Views\Consulting\About.cshtml" />
-    <Content Include="Views\Consulting\Approach.cshtml" />
-    <Content Include="Views\Consulting\Portfolio.cshtml" />
-    <Content Include="Views\Consulting\Code.cshtml" />
-    <Content Include="Views\Consulting\Articles.cshtml" />
-    <Content Include="Views\Consulting\Contact.cshtml" />
-    <Content Include="Views\Consulting\_IdHeader.cshtml" />
-    <Content Include="Views\Consulting\_IdFooter.cshtml" />
-    <Content Include="Views\Error\Index.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <Content Include="Views\Home\get_image.cshtml" />
+    <Content Include="Views\Home\Journal.cshtml" />
+    <Content Include="Views\Home\TanBlueMenu.cshtml" />
+    <None Include="Properties\PublishProfiles\GoDaddyProfile.pubxml" />
+    <Content Include="Views\Shared\_Comments.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Shared\_CommentsSection.cshtml" />
+    <Content Include="Styles\VerticalMenu.less" />
+    <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Admin\_ManageRoles.cshtml" />
+    <Content Include="Views\Admin\_ManageClassifications.cshtml" />
+    <Content Include="Views\Admin\_ManageUserRoles.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -412,7 +438,7 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>57430</DevelopmentServerPort>
+          <DevelopmentServerPort>62409</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:57430/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
@@ -428,13 +454,7 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.6.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.6.1\build\Microsoft.Net.Compilers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
-  </Target>
-  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
-  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
-    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
-    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

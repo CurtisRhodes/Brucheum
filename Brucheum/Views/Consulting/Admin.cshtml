@@ -1,178 +1,19 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Admin";
     Layout = "~/Views/Consulting/_ProfessionalLayout.cshtml";
 }
+
+<link href="~/Styles/VertMenu.css" rel="stylesheet" />
 <style>
     #leftColumn {
-        border-right: 2px solid orange;
-    }
-
-    .vertMenu {
-        margin-top: 88px;
-    }
-
-    .vertMenuTab {
-        border-radius: 4px;
-        margin-left: 4px;
-        margin-right: 8px;
-        font-size: 14px;
-        list-style: none;
-        cursor: pointer;
-        margin-bottom: 26px;
-        white-space: nowrap;
-    }
-
-        .vertMenuTab a {
-            text-decoration: none;
-            color: black;
-            padding-top: 10px;
-            padding-bottom: 5px;
-            padding-left: 20px;
-            padding-right: 20px;
-            color: #fff;
-            background-color: #07c;
-            text-wrap: none;
-        }
-
-            .vertMenuTab a:hover {
-                text-decoration: underline;
-                background-color: orange;
-            }
-
-    .adminOptionTitle {
-        font-size: 24px;
-        text-align: center;
-        margin: 4px;
-    }
-
-    #adminOptionContainer {
-        margin-left: 56px;
-        margin-top: 56px;
-    }
-
-    .adminOption {
-        background-color: #aaa;
-        display: none;
-        width: 500px;
-        border: solid 2px purple;
-        border-radius: 4px;
-    }
-    .roundendButton {
-        width: 33px;
-        display: inline-block;
-    }
-
-    #divRoleButtons {
-        margin-top: 8px;
-        margin-left: 68px;
-        margin-bottom: 8px;
-    }
-
-    .itemsList {
-        border: solid 2px orange;
-        border-radius: 4px;
-        margin: 3px;
-        overflow-y: scroll;
-        height: 450px;
-    }
-
-        .itemsList li {
-            color: #330533;
-            list-style: none;
-            padding:  8px 0 8px 77px;
-            cursor: pointer;
-            margin-bottom: 4px;
-            background-color: #c3cecf;
-        }
-
-    .roundedInput {
-        display: inline-block;
-        width: 400px;
-    }
-    #ArticleClassLoading {
-        position: relative;
-        top: 100px;
-        left: 100px;
-        display: none;
-    }
-    #divStatusMessage {
-        margin-top:12px;
+        border-right: solid 1px orange;
     }
 </style>
-<style>
-    .selectedUerContainer {
-        display: flex;
-    }
-    .ddSelect {
-        float: left;
-        height: 28px;
-        margin-left: 6px;
-        padding: 3px 6px;
-        color: #555;
-        background-color: #ddd;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-    .ddOption {
-        padding: 4px 3px;
-    }
-    #divSelectedUser {
-        float: left;
-        height: 21px;
-        margin-left: 6px;
-        padding: 3px 6px;
-        color: #555;
-        background-color: #ddd;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        width: 200px;
-    }
 
-    .chooseBoxContainer {
-        margin-top: 4px;
-        border: solid 4px orange;
-        display: flex;
-    }
-    .chooseBox {
-        float: left;
-        height: 222px;
-        margin: 0;
-    }
-    #divChooseAvailable, #divChooseSelected {
-        width: 80%
-    }
-    #divChooseButtons {
-        background-color: white;
-        text-align: center;
-        padding-top: 10px;
-    }
-    .chooseBtn {
-        height: 24px;
-        margin-top: 12px;
-        cursor: pointer;
-    }
-
-    .listBoxItem {
-        color: black;
-        background-color: #888;
-        font-size: 16px;
-        margin-left: 8px;
-        padding: 4px;
-        margin-top: 2px;
-        cursor: pointer;
-        width: 90%
-    }
-    .highlightItem {
-        color: red;
-        background-color: aqua;
-    }
-
-</style>
 <div class="threeColumnArray">
     <div id="leftColumn">
         <div class="vertMenu">
-            <div class="vertMenuTab" id="optArticleClass" ><a>Article Classifications</a></div>
+            <div class="vertMenuTab" id="optArticleClass"><a>Article Classifications</a></div>
             <div class="vertMenuTab" id="optAuthorAvatars"><a>    Author Avatars     </a></div>
             <div class="vertMenuTab" id="optRefEditor">    <a>    Ref Editor         </a></div>
             <div class="vertMenuTab" id="optAddRoles">     <a>    Add Roles          </a></div>
@@ -234,12 +75,7 @@
         </div>
     </div>
     <div id="rightColumn">
-        @using Microsoft.AspNet.Identity
-        @if (Request.IsAuthenticated)
-        {
-        <div>Hello @User.Identity.GetUserName()</div>
-        }
-        </div>
+    </div>
 </div>
 
 <script>
@@ -359,7 +195,9 @@
         }
     }
 
-    // Roles 
+
+
+    // Roles
     $("#optAddRoles").click(function () {
         $('.adminOption').hide();
         $('#tabAddRoles').show();
@@ -384,16 +222,23 @@
 
     function getRoles() {
         try {
-           // $('#divLoadingGif').show();
+            //url: service+ "/api/Role",
             $.ajax({
                 type: "GET",
                 dataType: "Json",
-                url: service + "/api/Role",
+                url: "/Admin/GetRoles",
                 success: function (result) {
+
+                    alert("result :" + result);
+
                     $('#divRoleList').html("<ul>");
+
                     $.each(result, function () {
+                        alert("this.Value: " + this.Name);
+
                         $('#divRoleList').append("<li Id='" + this.Id + "'>" + this.Name + "</li>");
                     });
+
                     $('#divRoleList').append("</ul>");
 
                     $('#divRoleList li').click(function () {
@@ -404,25 +249,26 @@
                     });
                 },
                 error: function (jqXHR, exception) {
-                    alert("error: " + getErrorInfo(jqXHR, exception));
+                    alert("/api/GetRoles error: " + getErrorInfo(jqXHR, exception));
                 },
             });
         } catch (e) {
             //displayStatusMessage("alert-danger", "catch ERROR: " + e);
-            alert("catch: " + e);
+            alert("/api/GetRoles catch: " + e);
         }
     }
 
     function addRole() {
         try {
             objRole.Name = $('#txtRoleName').val();
+           // alert("objRole.Name: " + objRole.Name);
             $.ajax({
                 type: "POST",
-                url: service + "api/role/",
+                url: "/Admin/AddRole?roleName=" + $('#txtRoleName').val(),
                 dataType: "Json",
-                data: objRole,
-                success: function (success) {
-                    if (success == "ok") {
+                //data: objRole,
+                success: function (result) {
+                    if (result.Success == "OK") {
                         $('#txtRoleName').val("");
                         $('#btnAddUpdateRole').text("Add");
                         displayStatusMessage("alert-success", "Saved");
@@ -435,12 +281,12 @@
                 },
                 error: function (xhr) {
                     displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                    alert("Admin Refs Post: " + xhr.statusText);
+                    alert("/Manage/AddRole: " + xhr.statusText);
                 }
             });
         }
         catch (e) {
-            alert("Admin Refs Post catch: " + e);
+            alert("/Manage/AddRole catch: " + e);
         }
     }
 
@@ -469,6 +315,24 @@
             displayStatusMessage("alert-danger", "catch ERROR: " + e);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // author Avatars
     $("#optAuthorAvatars").click(function () {

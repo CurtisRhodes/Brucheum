@@ -5,17 +5,10 @@ using System.Web;
 
 namespace WebApi.Models
 {
-    public class RoleModel
+    public class KeyValuePair
     {
-        public string Name { get; set; }
-        public string Id { get; set; }
-        public string Success { get; set; }
-    }
-    public class UserModel
-    {
-        public string Name { get; set; }
-        public string Id { get; set; }
-        public string Success { get; set; }
+        public string Key { get; set; }
+        public string Value { get; set; }
     }
 
     public class ArticleModel
@@ -49,36 +42,12 @@ namespace WebApi.Models
         public string success { get; set; }
     }
 
-    public class UserLoginResponse
-    {
-        public Guid UserId { get; set; }
-        public string UserName { get; set; }
-        //public string Email { get; set; }
-        //public string PasswordHash { get; set; }
-        //public string FirstName { get; set; }
-        //public string LastName { get; set; }
-        //public string PhoneNumber { get; set; }
-        //public short? Pin { get; set; }
-        //public string FaceBookId { get; set; }
-        //public DateTime? CreateDate { get; set; }
-        //public DateTime? LastModified { get; set; }
-        public string success { get; set; }
-    }
-
     public class RefModel
     {
         public string RefType { get; set; }
         public string RefCode { get; set; }
         public string RefDescription { get; set; }
         public string Success { get; set; }
-    }
-
-    public class VisitorModel
-    {
-        public string IPAddress { get; set; }
-        public string SomethingNice { get; set; }
-        public string MoreIfo { get; set; }
-        public string success { get; set; }
     }
 
     public class FacebookUserModel
@@ -90,6 +59,7 @@ namespace WebApi.Models
         public string success { get; set; }
     }
 
+    // to join with user to get user Name
     public class CommentsModel
     {
         public string UserName { get; set; }
@@ -100,14 +70,3 @@ namespace WebApi.Models
     };
 
 }
-
-    //[Serializable]
-    //public class BookSchema
-    //{
-    //    public string Book { get; set; }
-    //    public string Chapter { get; set; }
-    //    public string Section { get; set; }
-    //    public string SubSection { get; set; }
-    //}
-
-

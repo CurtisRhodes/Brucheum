@@ -1,4 +1,5 @@
-﻿<link href="~/Styles/idHeader.css" rel="stylesheet" />
+﻿@using Microsoft.AspNet.Identity
+<link href="~/Styles/idHeader.css" rel="stylesheet" />
 <div id="idheader" class="Header">
     <div class="floatLeft">
         <a href="~/Consulting/ConsultingHome"><img src="~/images/intel01.jpg" class="bannerImage" /></a>
@@ -18,21 +19,23 @@
             <div class="menuTab"><a href="~/Consulting/Admin">Admin</a></div>
         </div>
         <div class="loginTab">
-            @if ((Session["UserName"] != null) && (!String.IsNullOrEmpty(@Session["UserName"].ToString())))
-            {
-                <div class="menuTab" id="tabProfile" title="modify profile">
-                    <a href="#">Hello @Session["UserName"]</a>
-                </div>
-                <div class="menuTab" id="tabLogout"><a href="#">Log Out</a></div>
-            }
-            else
-            {
-                <div class="menuTab" id="tabRegister"><a href="#">Register</a></div>
-                <div class="menuTab" id="tabLogIn"><a href="#">Log In</a></div>
-            }
+            <div class="loginTab">
+                @if (Request.IsAuthenticated)
+                {
+                    <div class="menuTab" id="tabProfile" title="modify profile">
+                        @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+                    </div>
+                    <div class="menuTab" id="tabLogout"><a href="javascript:sessionStorage.removeItem('accessToken');$('#logoutForm').submit();">Log Out</a></div>
+                }
+                else
+                {
+                    <div class="menuTab" id="tabRegister"><a href="#">Register</a></div>
+                    <div class="menuTab" id="tabLogIn"><a href="#">Log In</a></div>
+                }
+            </div>
         </div>
     </div>
-<div class="noFloat"></div>
+    <div class="noFloat"></div>
 </div>
 
 <script>
@@ -47,7 +50,7 @@
     $('#tabRegister').click(function () {
         $.ajax({
             type: "get",
-            url: "/Login/RegisterPopup",
+            url: "/Login/Register",
             datatype: "json",
             success: function (data) {
                 $('#modalContent').html(data);
@@ -62,7 +65,7 @@
     $('#tabLogIn').click(function () {
         $.ajax({
             type: "get",
-            url: "/Login/LoginPopup",
+            url: "/Login/Login",
             datatype: "json",
             success: function (data) {
                 $('#modalContent').html(data);
@@ -96,7 +99,7 @@
     $('#tabLogout').click(function () {
         $.ajax({
             type: "get",
-            url: "/Login/DeleteCookie",
+            url: "/Login/Logout",
             success: function (success) {
                 if (success === "ok")
                     //$("#divlogin").load(location.href + " #divlogin");

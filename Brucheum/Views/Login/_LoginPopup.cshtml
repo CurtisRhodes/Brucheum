@@ -179,24 +179,31 @@
     function Login() {
         try {
             if (validate()) {
+                $('#btnLogin').html("wait");
                 loginVM.UserName = $('#txtUserName').val();
-                loginVM.Email = $('#txtEmail').val();
                 loginVM.Password = $('#clearPassword').val();
                 loginVM.ConfirmPassword = $('#txtConfirmPassword').val();
-                loginVM.Hometown = 'Allendale';
                 loginVM.RememberMe = $('#ckRememberMe').prop('checked');
                 
                 $.ajax({
-                    type: "POST",
+                    type: "post",
                     url: "/Login/Login",
                     data: loginVM,
+                    datatype: "Json",
                     success: function (responseLoginVM) {
-                        if ((responseLoginVM.success == "ok") || (responseLoginVM.success == "Unspecified failure")) {
-                            updateSiteUser(responseLoginVM);
-                        }
-                        else {
-                            $('#errSummary').html(success);
-                            $('#errSummary').show();
+                        switch (responseLoginVM.success) {
+                            case "ok":
+                                //clearModal();
+                                location.reload(true);
+                                //updateUser(responseLoginVM);
+                                break;
+                            //case "Login Fail":
+                            //    verifyLogin(responseLoginVM)
+                            //    break;
+                            default:
+                                $('#errSummary').html(responseLoginVM.success);
+                                $('#errSummary').show();
+                                $('#btnLogin').html("Log in");
                         }
                     },
                     error: function (xhr) {
@@ -235,44 +242,55 @@
         return true;
     };
 
-    function updateSiteUser(responseLoginVM) {
+    function verifyLogin(responseLoginVM) {
+        //alert("responseLoginVM.UserName:" + responseLoginVM.UserName)
+        $('#btnLogin').html("Log in");
+
+        $.ajax({
+            type: "get",
+            url: service + "/api/User/VerifyLogin?userName=" + responseLoginVM.UserName + "&password=" + responseLoginVM.Password,
+            datatype: "json",
+            success: function (success) {
+               // alert("updatesiteuser: " + success);
+                    $('#errSummary').html(success);
+                    $('#errSummary').show();
+            },
+            error: function (xhr) {
+                displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                alert("verifyLogin error: " + xhr.statusText);
+            }
+        });
+    }
+
+    function updateUser(responseLoginVM) {
+        responseLoginVM.Email = $('#txtEmail').val();
+        responseLoginVM.Hometown = 'Allendale';
         $.ajax({
             type: "PUT",
-            url: service + "api/SiteUser",
+            url: service + "api/User",
             datatype: "json",
             data: responseLoginVM,
             success: function (success) {
-                if (success === "ok")
+                //alert("updatesiteuser: " + success);
+                if (success === "ok") {
                     //$("#divlogin").load(location.href + " #divlogin");
+                    clearModal();
                     location.reload(true);
+                }
                 else {
                     $('#errSummary').html(success);
                     $('#errSummary').show();
                 }
             },
             error: function (xhr) {
-                displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                alert("SetCookie  error: " + xhr.statusText);
+                $('#errSummary').html(xhr.statusText);
+                $('#errSummary').show();
+
+                //displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                //alert("updateSiteUser error: " + xhr.statusText);
             }
         });
-        location.reload(true);
     }
-
-
-    $('#btnTransferToRegister').click(function () {
-        $.ajax({
-            type: "get",
-            url: "/Login/RegisterPopup",
-            datatype: "json",
-            success: function (data) {
-                $('#modalContent').html(data);
-                $('#modalContainer').show();
-            },
-            error: function () {
-                alert("RegisterModal failed");
-            }
-        });
-    });
 
     function checkFaceBookLoginState() {
         FB.getLoginStatus(function (response) {
@@ -312,6 +330,22 @@
             clearModal();
         });
     }
+
+    $('#btnTransferToRegister').click(function () {
+        $.ajax({
+            type: "get",
+            url: "/Login/Register",
+            datatype: "json",
+            success: function (data) {
+                clearModal();
+                $('#modalContent').html(data);
+                $('#modalContainer').show();
+            },
+            error: function () {
+                alert("RegisterModal failed");
+            }
+        });
+    });
 
     $('#btnClose, #btnCancel').click(function () {
         clearModal();

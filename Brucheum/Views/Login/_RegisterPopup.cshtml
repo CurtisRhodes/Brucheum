@@ -56,9 +56,9 @@
         <label>user name</label><br>
         <input id="txtUserName" type="text" class="roundedInput" placeholder="your go by name"><br>
 
-        <div id="errEmail" class="validationError">Required</div>
+        @*<div id="errEmail" class="validationError">Required</div>
         <label>Email</label><br />
-        <input id="txtEmail" type="email" class="roundedInput" placeholder="you@example.org"><br>
+        <input id="txtEmail" type="email" class="roundedInput" placeholder="you@example.org"><br>*@
 
         <div id="errPassword" class="validationError">Required</div>
         <label>password</label><br>
@@ -68,9 +68,9 @@
         <label>retype password</label><br>
         <input id="txtConfirmPassword" type="password" class="roundedInput" autocomplete="off" placeholder="********"><br>
 
-        <div id="divRememberMe">
+        @*<div id="divRememberMe">
             <input id="ckRememberMe" type="checkbox" checked="checked" />Remember Me ?  (<span>uses a cookie</span>)
-        </div>
+        </div>*@
 
         <div id="divShowDetails">
             Extra Details
@@ -97,8 +97,10 @@
 </div>
 
 <script>
-    var service = '@ViewBag.Service';
-    //$(document).ready(function () {    });
+    //var service = '@ViewBag.Service';
+    $(document).ready(function () {
+        $('#txtUserName').focus();
+    });
 
     $('#btnRegister').click(function () {
         Register();
@@ -108,11 +110,11 @@
         if (validate()) {
             var regVM = new Object();
             regVM.UserName = $('#txtUserName').val();
-            regVM.Email = $('#txtEmail').val();
+           // regVM.Email = $('#txtEmail').val();
             regVM.Password = $('#txtPassword').val();
             regVM.ConfirmPassword = $('#txtConfirmPassword').val();
-            regVM.Hometown = 'Allendale';
-            regVM.RememberMe = $('#ckRememberMe').prop('checked');
+          //  regVM.Hometown = 'Allendale';
+         //   regVM.RememberMe = $('#ckRememberMe').prop('checked');
 
             $.ajax({
                 type: "POST",

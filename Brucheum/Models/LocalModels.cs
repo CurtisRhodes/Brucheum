@@ -7,6 +7,12 @@ using System.Web;
 
 namespace Brucheum
 {
+    public class RoleModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
+
     public class ArticleModel
     {
         public string Id { get; set; }
@@ -36,7 +42,6 @@ namespace Brucheum
         public string success { get; set; }
     }
 
-    [Serializable]
     public class RefModel
     {
         public string RefType { get; set; }
@@ -54,15 +59,15 @@ namespace Brucheum
         public string Success { get; set; }
     }
 
-    public class RegisterModel
+    public class RegisterValidationModel
     {
         [Required]
         [Display(Name = "Go By Name")]
         public string UserName { get; set; }
 
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
+        //[Required]
+        //[EmailAddress]
+        //[Display(Name = "Email")]
         public string Email { get; set; }
 
         [Required]
@@ -78,20 +83,15 @@ namespace Brucheum
 
         [Display(Name = "Hometown")]
         public string Hometown { get; set; }
+        public string IPAddress { get; set; }
 
         public bool RememberMe { get; set; }
     }
 
     public class LoginModel
     {
-        [Required]
-        [DataType(DataType.Password)]
-        [Display(Name = "Password")]
         public string Password { get; set; }
-
-        [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
-
         public Guid UserId { get; set; }
         public string IPAddress { get; set; }
         public string Email { get; set; }

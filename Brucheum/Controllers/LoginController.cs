@@ -5,11 +5,14 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
-//using System.Web.Http;
+//using System.Web.Http.Results;
+//using System.Web.Mvc.Html..Results;
 using Microsoft.AspNet.Identity.Owin;
 using System.Security.Claims;
 using Microsoft.Owin.Security;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Net.Http;
+using Brucheum.Models;
 
 namespace Brucheum
 {
@@ -64,25 +67,27 @@ namespace Brucheum
             }
         }
 
-        public ActionResult LoginPopup()
+        public ActionResult Login()
         {
             ViewBag.Service = apiService;
             return PartialView("_LoginPopup");
         }
         [HttpPost]
         [AllowAnonymous]
-        public LoginModel Login(LoginModel loginVM)
+        public JsonResult Login(LoginViewModel loginVM)
         {
+            var rtnLoginVm = new LoginViewModel() { success = "slipped through" };
             try
             {
                 if (ModelState.IsValid)
                 {
+                    rtnLoginVm.UserName = loginVM.UserName;
                     SignInStatus result = SignInManager.PasswordSignInAsync(loginVM.UserName, loginVM.Password, loginVM.RememberMe, shouldLockout: false).Result;
                     if (result == SignInStatus.Success)
                     {
-                        loginVM.success = "ok";
-                        loginVM.IPAddress = Helpers.GetIPAddress();
-                        Helpers.SendEmail("HOLY SHIT: somebody Logged In to The Brucheum", "Ip: " + loginVM.IPAddress + " visited: The Brucheum");
+                        rtnLoginVm.success = "ok";
+                        rtnLoginVm.IPAddress = Helpers.GetIPAddress();
+                        Helpers.SendEmail("SWEET: " + rtnLoginVm.UserName + " just logged In to The Brucheum", "Ip: " + loginVM.IPAddress + " visited: The Brucheum");
                     }
                     else
                     {
@@ -90,18 +95,19 @@ namespace Brucheum
                         {
                             case SignInStatus.LockedOut:
                                 //return View("Lockout");
-                                loginVM.success = "Locked Out";
+                                rtnLoginVm.success = "Locked Out";
                                 break;
                             case SignInStatus.RequiresVerification:
                                 //return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                                loginVM.success = "This account has been locked out, please try again later.";
+                                rtnLoginVm.success = "This account has been locked out, please try again later.";
                                 break;
                             case SignInStatus.Failure:
-                                loginVM.success = "Unspecified failure";
+                                rtnLoginVm.Password = loginVM.Password;
+                                rtnLoginVm.success = "Login Fail";
                                 break;
                             default:
                                 //ModelState.AddModelError("", "Invalid login attempt.");
-                                loginVM.success = result.ToString();
+                                rtnLoginVm.success = result.ToString();
                                 //return View(model);
                                 break;
                         }
@@ -112,53 +118,48 @@ namespace Brucheum
                     var modelStateErrors = this.ModelState.Keys.SelectMany(key => this.ModelState[key].Errors);
                     foreach (ModelError e in modelStateErrors)
                     {
-                        loginVM.success += " :" + e.ErrorMessage;
+                        rtnLoginVm.success += " :" + e.ErrorMessage;
                     }
                 }
             }
             catch (Exception ex)
             {
-                loginVM.success = ex.Message;
+                rtnLoginVm.success = Helpers.ErrorDetails(ex);
             }
-            return loginVM;
+            return Json(rtnLoginVm);
         }
+
 
         public ActionResult Register()
         {
             return PartialView("_RegisterPopup");
-            //return View("_RegisterPopup");
         }
         [HttpPost]
         [AllowAnonymous]
-        public string Register(RegisterModel regVM)
+        public JsonResult Register(RegisterViewModel regVM)
         {
             string success = "";
             try
             {
                 if (ModelState.IsValid)
                 {
-                    ApplicationUser appUser = new ApplicationUser { UserName = regVM.UserName, Email = regVM.Email };  //  , Hometown = model.Hometown 
-
-                    //UserManager.AccessFailed;
-                    //UserManager.AddLogin
-                    //UserManager.Create(user, password);
-
+                    regVM.IPAddress = Helpers.GetIPAddress();
+                    //regVM.Hometown = "HoHoKus";
+                    ApplicationUser appUser = new ApplicationUser { UserName = regVM.UserName, IPAddress = regVM.IPAddress };
+                    //ApplicationUser appUser = new ApplicationUser { UserName = regVM.UserName, IPAddress = regVM.IPAddress };
                     var result = UserManager.CreateAsync(appUser, regVM.Password).Result;
                     if (result.Succeeded)
                     {
-                        Task ss = SignInManager.SignInAsync(appUser, isPersistent: regVM.RememberMe, rememberBrowser: regVM.RememberMe);
-
-                        success = "ok";
+                        Helpers.SendEmail("EXCELLENT: " + regVM.UserName + " just REGISTED In to The Brucheum", "Ip: " + regVM.IPAddress + " registered in for Brucheum");
+                        success = LoginRegisteredUser(regVM.UserName, regVM.Password);
                     }
-                    if (success != "ok")
+                    else
                     {
                         foreach (string e in result.Errors)
                         {
                             success += " :" + e;
-                            //ModelState.AddModelError("", error);
                         }
                     }
-                    //AddErrors(result);
                 }
                 else
                 {
@@ -171,9 +172,24 @@ namespace Brucheum
             }
             catch (Exception ex)
             {
-                success = ex.Message;
+                success = Helpers.ErrorDetails(ex);
             }
-            return success;  // View(model);
+            return Json(success);
+        }
+
+        private string LoginRegisteredUser(string userName, string password)
+        {
+            string success = "";
+            try
+            {
+                SignInStatus ssresult = SignInManager.PasswordSignInAsync(userName, password, false, shouldLockout: false).Result;
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
         }
         
         [HttpPost]
@@ -324,19 +340,6 @@ namespace Brucheum
             throw new NotImplementedException();
         }
     }
-    class MyUserUser : IUser    {
-        string IUser<string>.Id => throw new NotImplementedException();
-
-        string IUser<string>.UserName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    }
-    class MyUserManager : UserManager<ApplicationUser>
-    {
-        public MyUserManager(IUserStore<ApplicationUser> store)
-            : base(store) {
-        }    
-    }
-    public class MyApplicationDbContext : IdentityDbContext<ApplicationUser>
-    { }
 }
 
 

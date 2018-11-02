@@ -14,6 +14,8 @@
             <div class="menuTab"><a href="~/Book/MyBooks">Books</a></div>
             <div class="menuTab"><a href="~/Home/Apps">Apps</a></div>
             <div class="menuTab"><a href="~/Consulting/ConsultingHome">Intelligent Design</a></div>
+            <div class="menuTab"><a href="~/Admin">Admin</a></div>
+
         </div>
         <div class="loginTab">
             @*@if ((Session["UserName"] != null) && (!String.IsNullOrEmpty(@Session["UserName"].ToString())))*@
@@ -22,7 +24,8 @@
             @if (Request.IsAuthenticated)
             {
                 <div class="menuTab" id="tabProfile" title="modify profile">
-                    <a href="#">Hello @User.Identity.GetUserName() </a>
+                    @*<a href="#">Hello @User.Identity.GetUserName() </a>*@
+                    @Html.ActionLink("Hello " + User.Identity.GetUserName(), "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
                 </div>
                 <div class="menuTab" id="tabLogout"><a href="javascript:sessionStorage.removeItem('accessToken');$('#logoutForm').submit();">Log Out</a></div>
             }
@@ -32,7 +35,7 @@
                 <div class="menuTab" id="tabLogIn"><a href="#">Log In</a></div>
 
                 @*<div class="menuTab">@Html.ActionLink("Register", "Register", "Login", routeValues: new { area = "" }, htmlAttributes: new { id = "registerLink" })</div>
-                <div class="menuTab">@Html.ActionLink("Log in", "Login", "Register", routeValues: new { area = "" }, htmlAttributes: new { id = "loginLink" })</div>*@
+            <div class="menuTab">@Html.ActionLink("Log in", "Login", "Register", routeValues: new { area = "" }, htmlAttributes: new { id = "loginLink" })</div>*@
             }
         </div>
     </div>
@@ -66,7 +69,7 @@
     $('#tabLogIn').click(function () {
         $.ajax({
             type: "get",
-            url: "/Login/LoginPopup",
+            url: "/Login/Login",
             datatype: "json",
             success: function (data) {
                 $('#modalContent').html(data);

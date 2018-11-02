@@ -1,0 +1,136 @@
+﻿
+
+<div class="adminOptionTitle">Add Edit Roles</div>
+<label>Role:</label>
+<input class="roundedInput" id="txtRoleName" />
+<div id="divRoleButtons">
+    <div class="roundendButton" id="btnAddUpdateRole">Add</div>
+    <div class="roundendButton" id="btnRoleToggle">New</div>
+</div>
+<div class="itemsList" id="divRoleList"></div>
+
+
+<script>
+
+    $('#btnAddUpdateRole').click(function () {
+        if ($(this).text() === "Add")
+            addRole();
+        else
+            updateRole();
+    });
+
+    $('#btnRoleToggle').click(function () {
+        objClassificationRefCode = null;
+        $('#txtDescription').val("");
+        $('#btnAddUpdateRole').text("Add");
+        $(this).hide();
+    });
+
+    function getRoles() {
+        try {
+            // $('#divLoadingGif').show();
+            //url: service+ "/api/Role",
+            $.ajax({
+                type: "GET",
+                dataType: "Json",
+                url: "/Admin/GetRoles",
+                success: function (result) {
+
+                    result = result.split("|");
+
+                    $('#divRoleList').html("<ul>");
+                    $.each(result, function (idx, obj) {
+                        obj = obj.split(",");
+                        $('#divRoleList').append("<li ='" + obj[0] + "'>" + obj[1] + "</li>");
+                    });
+                    $('#divRoleList').append("</ul>");
+
+                    $('#divRoleList li').click(function () {
+                        objRole.Id = $(this).attr('Id');
+                        $('#txtRoleName').val($(this).html());
+                        $('#btnAddUpdateRole').text("Update");
+                        $('#btnRoleToggle').show();
+                    });
+                },
+                error: function (jqXHR, exception) {
+                    alert("GetRoles error: " + getErrorInfo(jqXHR, exception));
+                },
+            });
+        } catch (e) {
+            //displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            alert("GetRoles catch: " + e);
+        }
+    }
+
+    function addRole() {
+        try {
+            objRole.Name = $('#txtRoleName').val();
+            // alert("objRole.Name: " + objRole.Name);
+
+            $.ajax({
+                type: "POST",
+                url: "/Admin/AddRole?roleName=" + $('#txtRoleName').val(),
+                dataType: "Json",
+                //data: objRole,
+                success: function (result) {
+                    if (result.Success == "OK") {
+                        $('#txtRoleName').val("");
+                        $('#btnAddUpdateRole').text("Add");
+                        displayStatusMessage("alert-success", "Saved");
+                        getRoles();
+                    }
+                    else {
+                        alert("result :" + result + "   :" + result.Success);
+                        displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
+                    }
+                },
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("/Manage/AddRole: " + xhr.statusText);
+                }
+            });
+        }
+        catch (e) {
+            alert("/Manage/AddRole catch: " + e);
+        }
+    }
+
+    function updateRole() {
+        try {
+            objRole.Name = $('#txtRoleName').val();
+            $.ajax({
+                url: service + "/api/role",
+                type: "PUT",
+                data: objRole,
+                success: function (success) {
+                    if (success === "ok") {
+                        displayStatusMessage("alert-success", "Saved");
+                        getRoles();
+                    }
+                    else
+                        displayStatusMessage("alert-danger", "server ERROR: " + success);
+                },
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    //alert("Admin Refs PUT error: " + xhr.statusText);
+                }
+            });
+        }
+        catch (e) {
+            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+        }
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+

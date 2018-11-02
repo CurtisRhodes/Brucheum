@@ -113,7 +113,7 @@
     function GetUser() {
         try {
             $.ajax({
-                url: service + "/api/Login/GetUser/?userId=" + userId,
+                url: service + "/api/User/GetUser/?userId=" + userId,
                 type: "get",
                 dataType: "json",
                 success: function (response) {

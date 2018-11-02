@@ -1,0 +1,104 @@
+﻿@{
+    ViewBag.Title = "Admin";
+}
+
+<link href="~/Styles/VertMenu.css" rel="stylesheet" />
+<style>
+    #leftColumn {
+        border-right: solid 1px orange;
+    }
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+        <div class="vertMenu">
+            <div class="vertMenuTab" id="optArticleClass"><a>Article Classifications</a></div>
+            <div class="vertMenuTab" id="optAuthorAvatars"><a>    Author Avatars     </a></div>
+            <div class="vertMenuTab" id="optRefEditor">    <a>    Ref Editor         </a></div>
+            <div class="vertMenuTab" id="optAddRoles">     <a>    Add Roles          </a></div>
+            <div class="vertMenuTab" id="optAssignRoles">  <a>    Assign Roles       </a></div>
+        </div>
+    </div>
+    <div id="middleColumn">
+        <div id="divStatusMessage"></div>
+        <div id="adminOptionContainer">
+
+            <div id="tabArticleClass" class="adminOption">
+                @Html.Partial("_ManageClassifications")
+            </div>
+
+            <div id="tabAuthorAvatar" class="adminOption">
+                <div class="adminOptionTitle">Author Avatars</div>
+            </div>
+
+            <div id="tabRefEditor" class="adminOption">
+                <div class="adminOptionTitle">Ref Editor</div>
+            </div>
+
+            <div id="tabAddRoles" class="adminOption">
+                @Html.Partial("_ManageRoles")
+            </div>
+
+            <div id="tabAssignRoles" class="adminOption">
+                @Html.Partial("_ManageUserRoles")
+            </div>
+
+        </div>
+    </div>
+    <div id="rightColumn">
+        @using Microsoft.AspNet.Identity
+        @if (Request.IsAuthenticated)
+        {
+            <div>Hello @User.Identity.GetUserName()</div>
+        }
+    </div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+    var objClassification = new Object();
+    var objRole = new Object();
+
+    $(document).ready(function () { });
+
+    // article Classifications
+    $("#optArticleClass").click(function () {
+        $('.adminOption').hide();
+        $('#tabArticleClass').show();
+        $('#btnArticleClassToggle').hide();
+        if ($('#divArticleClassList').html() === "")
+            GetArticleClasses();
+    })
+
+    // Roles
+    $("#optAddRoles").click(function () {
+        $('.adminOption').hide();
+        $('#tabAddRoles').show();
+        $('#btnRoleToggle').hide();
+        if ($('#divRoleList').html() === "")
+            getRoles();
+    })
+       
+    // author Avatars
+    $("#optAuthorAvatars").click(function () {
+        $('.adminOption').hide();
+        $('#tabAuthorAvatar').show();
+    })
+
+    // my famous Ref Editor
+    $("#optRefEditor").click(function () {
+        $('.adminOption').hide();
+        $('#tabRefEditor').show();
+    })
+
+    // person / role grid
+    $("#optAssignRoles").click(function () {
+        $('.adminOption').hide();
+        $('#tabAssignRoles').show();
+        if ($('#ddUsers').html() == "")
+            getChooseBoxUsers();
+        if ($('#ddUsers').html() == "")
+            getChooseBoxRoles();
+    });
+
+</script>

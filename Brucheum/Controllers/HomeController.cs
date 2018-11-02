@@ -11,7 +11,8 @@ namespace Brucheum
         private string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
         public ActionResult Index()
         {
-            return RedirectToRoutePermanent("Start");
+            return View();
+            //return RedirectToRoutePermanent("Start");
         }
 
         public ActionResult DirTreeTest(string articleId)
@@ -29,7 +30,7 @@ namespace Brucheum
             return View();
         }
         public ActionResult get_image(string w)
-        {            
+        {
             ViewBag.Service = apiService;
             ViewBag.imageId = w;
             //return PartialView("get_image");
@@ -44,14 +45,21 @@ namespace Brucheum
 
     public class ErrorController : Controller
     {
+        public ViewResult AppError(string msg, string st)
+        {
+            ViewBag.StackTrace = st;
+            ViewBag.ErrorMessage = msg;
+            return View();
+        }
+
         public ViewResult Index()
         {
             string stackTrace = "";
             string errorMessage = "unknown Error";
-            if (HttpContext.Session != null)
+            //if (HttpContext.Session != null)
             {
-                Exception ex = (Exception)Session["LastError"];
-                errorMessage = ex.Message;
+                //Exception ex = (Exception)Session["LastError"];
+                var ex = Server.GetLastError();
                 if (ex.InnerException != null)
                 {
                     errorMessage += "<br/>" + ex.InnerException.Message;

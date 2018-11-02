@@ -57,10 +57,5 @@ namespace Brucheum
         {
             return View();
         }
-        public ActionResult Admin() 
-        {
-            ViewBag.Service = apiService;
-            return View();
-        }
     }
 }

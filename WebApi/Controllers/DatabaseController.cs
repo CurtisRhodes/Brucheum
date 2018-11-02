@@ -93,19 +93,21 @@ namespace WebApi
                 //string ARTICLEID = articleId.ToString().ToUpper();
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    results = (from comments in db.Comments
-                               join users in db.AspNetUsers on comments.UserId.ToString() equals users.Id
-                               where comments.ArticleId.ToString() == articleId.ToString().ToUpper()
-                               orderby comments.CreateDate ascending
-                               select new CommentsModel
-                               {
-                                   UserName = users.UserName,
-                                   CreateDate = comments.CreateDate,
-                                   CommentTitle = comments.CommentTitle,
-                                   CommentText = comments.CommentText
-                               }).ToList().AsQueryable();
+                    using (AspNetContext dbn = new AspNetContext())
+                    {
+                        results = (from comments in db.Comments
+                                   join users in dbn.AspNetUsers on comments.UserId.ToString() equals users.Id
+                                   where comments.ArticleId.ToString() == articleId.ToString().ToUpper()
+                                   orderby comments.CreateDate ascending
+                                   select new CommentsModel
+                                   {
+                                       UserName = users.UserName,
+                                       CreateDate = comments.CreateDate,
+                                       CommentTitle = comments.CommentTitle,
+                                       CommentText = comments.CommentText
+                                   }).ToList().AsQueryable();
+                    }
                 }
-
             }
             catch (Exception ex)
             {
@@ -159,97 +161,64 @@ namespace WebApi
         }
     }
 
-    [System.Web.Http.Cors.EnableCors("*", "*", "*")]
+    [EnableCors("*", "*", "*")]
     public class HitCounterController : ApiController
     {
         [HttpGet]
-        public bool Verify(string ipAddress, string app)
+        public string LogVisit(string ipAddress, string app)
         {
-            bool exists = false;
+            string rtn = "";
             try
             {
+                string emailSuccess = "";
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    VisitorModel visitor = (from visitors in db.Visitors
-                                            where visitors.IPAddress == ipAddress && visitors.App == app
-                                            select new VisitorModel() { IPAddress = visitors.IPAddress }).FirstOrDefault();
-                    if (visitor != null)
-                        exists = true;
-                    else
+                    Visitor existing = db.Visitors.Where(v => v.IPAddress == ipAddress && v.App == app).FirstOrDefault();
+
+                    // ERROR: The entity or complex type 'WebApi.Visitor' cannot be constructed in a LINQ to Entities query.
+                    // Visitor aVisitor = (from visitors in db.Visitors
+                    //                        where visitors.IPAddress == ipAddress && visitors.App == app
+                    //                        select new Visitor() { IPAddress = visitors.IPAddress }).FirstOrDefault();
+                    if (existing == null)
                     {
                         // WE HAVE A NEW VISITOR
-                        AddVisitor(ipAddress, app);
-                        SendEmail("CONGRATULATIONS: someone just visited your site", "ip: " + ipAddress + " visited: The Brucheum");
+                        Visitor visitor = new Visitor();
+                        visitor.App = app;
+                        visitor.IPAddress = ipAddress;
+                        visitor.CreateDate = DateTime.Now;
+
+                        db.Visitors.Add(visitor);
+                        db.SaveChanges();
+                        emailSuccess = Helpers.SendEmail("CONGRATULATIONS: someone just visited your site", "ip: " + ipAddress + " visited: " + app);
+                        if (emailSuccess != "ok")
+                            rtn = "true but " + emailSuccess;
                     }
-                }
-            }
-            catch (Exception ex) { throw new Exception(ex.Message, ex.InnerException); }
-            return exists;
-        }
-
-        //[HttpGet]
-        private string AddVisitor(string ipAddress, string app)
-        {
-            string success = "ohno";
-            try
-            {
-                //var ipAddress = System.Text.Encoding.UTF32.GetString(bytes);
-                using (WebSiteContext db = new WebSiteContext())
-                {
-                    Visitor visitor = new Visitor();
-                    visitor.App = app;
-                    visitor.IPAddress = ipAddress;
-                    visitor.CreateDate = DateTime.Now;
-                    db.Visitors.Add(visitor);
-
-                    SiteUser siteUser = new SiteUser();
-                    siteUser.DisplayName = "unknown user";
-                    siteUser.IPAddress = ipAddress;
-                    db.SiteUsers.Add(siteUser);
-
-                    db.SaveChanges();
-                    success = "ok";
-                }
-            }
-            catch (DbEntityValidationException ve)
-            {
-                success = "ERROR: ";
-                foreach (DbEntityValidationResult e in ve.EntityValidationErrors)
-                {
-                    foreach (var eve in ve.EntityValidationErrors)
+                    else
                     {
-                        //Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                        success += string.Format("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                        foreach (var dbe in eve.ValidationErrors)
+                        rtn = "true";
+                        // add  Vist
+                        Visit visit = new Visit();
+                        visit.IPAddress = ipAddress;
+                        visit.App = app;
+                        visit.VisitDate = DateTime.Now;
+
+                        db.Visits.Add(visit);
+                        db.SaveChanges();
+
+                        if (ipAddress != "50.62.160.105")  // could be something at Godaddy
                         {
-                            //Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"", dbe.PropertyName, dbe.ErrorMessage);
-                            success += string.Format("- Property: \"{0}\", Error: \"{1}\"", dbe.PropertyName, dbe.ErrorMessage);
+                            emailSuccess = Helpers.SendEmail("Site Visit", "ip: " + ipAddress + " visited: " + app);
+                            if (emailSuccess != "ok")
+                                rtn = "true but " + emailSuccess;
                         }
                     }
                 }
             }
-            //catch (System.Data.SqlClient.SqlErrorCollection. eee)
-            //{ }
-            catch (Exception ex)
-            {
-                success = "ERROR: " + ex.Message;
+            catch (Exception ex) {
+
+                rtn = Helpers.ErrorDetails(ex);
             }
-            return success;
-        }
-        private string SendEmail(string subjectLine, string message)
-        {
-            string success = "";
-            try
-            {
-                SmtpClient smtp = new SmtpClient("relay-hosting.secureserver.net", 25);
-                MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "Curtishrhodes@hotmail.com");
-                mailMessage.Subject = subjectLine;
-                mailMessage.Body = message;
-                smtp.Send(mailMessage);
-                success = "ok";
-            }
-            catch (Exception ex) { success = ex.Message; }
-            return success;
+            return rtn;
         }
 
         [HttpGet]
@@ -270,29 +239,11 @@ namespace WebApi
                     db.Hits.Add(hit);
                     db.SaveChanges();
 
-                    success = hit.HitId.ToString();
+                    success = Helpers.SendEmail("Page Hit", "ip: " + ipAddress + " visited: " + app + " :" + details);
+                    //success = hit.HitId.ToString();
                 }
             }
-            catch (DbEntityValidationException ve)
-            {
-                foreach (DbEntityValidationResult e in ve.EntityValidationErrors)
-                {
-                    foreach (var eve in ve.EntityValidationErrors)
-                    {
-                        //Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                        success += string.Format("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                        foreach (var dbe in eve.ValidationErrors)
-                        {
-                            //Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"", dbe.PropertyName, dbe.ErrorMessage);
-                            success += string.Format("- Property: \"{0}\", Error: \"{1}\"", dbe.PropertyName, dbe.ErrorMessage);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                success = "ERROR: " + ex.Message;
-            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
 
@@ -316,6 +267,61 @@ namespace WebApi
             }
             return success;
         }
+    }
+
+    public class Helpers
+    {
+        public static string ErrorDetails(Exception ex)
+        {
+            var exceptionType = ex.GetBaseException();
+            string msg = "ERROR: " + ex.Message;
+            while (ex.InnerException != null)
+            {
+                ex = ex.InnerException;
+                msg = ex.Message;
+
+            }
+            //if(ex.GetBaseException)
+            //msg + 
+            //catch (DbEntityValidationException ve)
+            //{
+            //    success = "ERROR: ";
+            //    foreach (DbEntityValidationResult e in ve.EntityValidationErrors)
+            //    {
+            //        foreach (var eve in ve.EntityValidationErrors)
+            //        {
+            //            //Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
+            //            success += string.Format("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
+            //            foreach (var dbe in eve.ValidationErrors)
+            //            {
+            //                //Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"", dbe.PropertyName, dbe.ErrorMessage);
+            //                success += string.Format("- Property: \"{0}\", Error: \"{1}\"", dbe.PropertyName, dbe.ErrorMessage);
+            //            }
+            //        }
+            //    }
+            //}
+            ////catch (System.Data.SqlClient.SqlErrorCollection. eee)
+            //{ }
+
+            return msg;
+        }
+
+        public static string SendEmail(string subjectLine, string message)
+        {
+            string success = "";
+            try
+            {
+                SmtpClient smtp = new SmtpClient("relay-hosting.secureserver.net", 25);
+                MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "Curtishrhodes@hotmail.com");
+                mailMessage.Subject = subjectLine;
+                mailMessage.Body = message;
+                smtp.Send(mailMessage);
+                success = "ok";
+            }
+            catch (Exception ex) { success = ex.Message; }
+            return success;
+        }
+
     }
 }
 

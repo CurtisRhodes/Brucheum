@@ -194,11 +194,13 @@
     <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\EmailController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\WebsiteController.cs" />
+    <Compile Include="Controllers\ImagesController.cs" />
+    <Compile Include="Controllers\AspNetController.cs" />
     <Compile Include="Controllers\OggleBoobleController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AspNetContext.cs" />
     <Compile Include="Models\LocalModels.cs" />
     <Compile Include="Models\OggleBoobleContext.cs" />
     <Compile Include="Models\WebSiteContext.cs" />
