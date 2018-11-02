@@ -115,5 +115,17 @@ namespace Brucheum
                 return address;
             }
         }
+
+        public static string ErrorDetails(Exception ex)
+        {
+            var exceptionType = ex.GetBaseException();
+            string msg = "ERROR: " + ex.Message;
+            while (ex.InnerException != null)
+            {
+                ex = ex.InnerException;
+                msg = ex.Message;
+            }
+            return msg;
+        }
     }
 }

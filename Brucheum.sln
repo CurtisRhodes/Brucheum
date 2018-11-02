@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OggleBooble", "OggleBooble\OggleBooble.csproj", "{2A2A29AD-0486-4304-A5E6-41A2D2896066}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brucheum", "Brucheum\Brucheum.csproj", "{B1281210-87B4-485B-B161-2DF8EF5A4EDC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{A3E37359-E55B-43EE-BCC4-39857F900173}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OggleBooble", "OggleBooble\OggleBooble.csproj", "{2A2A29AD-0486-4304-A5E6-41A2D2896066}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +15,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2A2A29AD-0486-4304-A5E6-41A2D2896066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A2A29AD-0486-4304-A5E6-41A2D2896066}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A2A29AD-0486-4304-A5E6-41A2D2896066}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A2A29AD-0486-4304-A5E6-41A2D2896066}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B1281210-87B4-485B-B161-2DF8EF5A4EDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B1281210-87B4-485B-B161-2DF8EF5A4EDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1281210-87B4-485B-B161-2DF8EF5A4EDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -23,10 +27,6 @@ Global
 		{A3E37359-E55B-43EE-BCC4-39857F900173}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3E37359-E55B-43EE-BCC4-39857F900173}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3E37359-E55B-43EE-BCC4-39857F900173}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2A2A29AD-0486-4304-A5E6-41A2D2896066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2A2A29AD-0486-4304-A5E6-41A2D2896066}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2A2A29AD-0486-4304-A5E6-41A2D2896066}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2A2A29AD-0486-4304-A5E6-41A2D2896066}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
