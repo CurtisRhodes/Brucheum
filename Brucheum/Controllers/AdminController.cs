@@ -35,8 +35,7 @@ namespace Brucheum.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
-        public JsonResult GetRoles()
+        public JsonResult GetAllRoles()
         {
             string roles = "";  //Dictionary<string,string>();
             using (var context = new ApplicationDbContext())
@@ -57,19 +56,49 @@ namespace Brucheum.Controllers
             return Json(roles,JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPost]
-        public string AddRole(string roleName)
+        public JsonResult AddRole(string roleName)
         {
-            string success = "";
+            var roleModel = new RoleModel();
             try
             {
-                success = RoleManager.AddRole(roleName);
+                roleModel = RoleManager.AddRole(roleName);
             }
-            catch (Exception ex)
+            catch (Exception ex) { roleModel.success = Helpers.ErrorDetails(ex); }
+            return Json(roleModel, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetUsers()
+        {
+            string users = "";  //Dictionary<string,string>();
+            using (var context = new ApplicationDbContext())
             {
-                success = ex.Message;
+                System.Data.Entity.IDbSet<ApplicationUser> dbUsers = context.Users;
+                foreach (ApplicationUser user in dbUsers)
+                {
+                    users += user.Id + "," + user.UserName + "|";
+                }
+                users = users.Substring(0, users.Length - 1);
             }
-            return success;
+            return Json(users, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetUserRoles(string userId)
+        {
+            //List<string> roles = RoleManager.GetRoles(userId).ToList();
+            //foreach (string roleName in roles)
+            //{
+            //}
+            return Json(RoleManager.GetRoles(userId), JsonRequestBehavior.AllowGet);
+        }
+
+        public string AddUserRole(string userId, string roleName)
+        {
+            return RoleManager.AddUserRole(userId, roleName);
+        }
+
+        public string RemoveUserRole(string userId, string roleName)
+        {
+            return RoleManager.RemoveUserRole(userId, roleName);
         }
     }
 }

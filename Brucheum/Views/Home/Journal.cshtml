@@ -49,7 +49,7 @@
                 }
             });
         } catch (e) {
-            displayStatusMessage("alert-danger", "ERROR" + e);
+            displayStatusMessage("alert-danger", "ERROR"  + catchErrorDetails(e));
         }
     }
 
@@ -75,7 +75,7 @@
                 }
              });
         } catch (e) {
-            displayStatusMessage("alert-danger", "ERROR" + e);
+            displayStatusMessage("alert-danger", "ERROR"  + catchErrorDetails(e));
         }
     }
 
@@ -101,7 +101,7 @@
                 }
              });
         } catch (e) {
-            displayStatusMessage("alert-danger", "tERROR" + e);
+            displayStatusMessage("alert-danger", "tERROR"  + catchErrorDetails(e));
         }
     }
 
@@ -149,7 +149,7 @@
                     }
                  });
             } catch (e) {
-                displayStatusMessage("alert-danger", "tERROR" + e);
+                displayStatusMessage("alert-danger", "tERROR"  + catchErrorDetails(e));
             }
         }
      });

@@ -160,7 +160,7 @@
                 }
             });
         } catch (e) {
-            displayStatusMessage("alert-danger", "ERROR" + e);
+            displayStatusMessage("alert-danger", "ERROR"  + catchErrorDetails(e));
         }
     }
 
@@ -195,7 +195,7 @@
             });
         } catch (e) {
 
-            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            displayStatusMessage("alert-danger", "catch ERROR: "  + catchErrorDetails(e));
         }
     }
 

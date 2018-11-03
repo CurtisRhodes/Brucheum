@@ -135,7 +135,7 @@
                 }
             });
         } catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            displayStatusMessage("alert-danger", "catch ERROR: "  + catchErrorDetails(e));
         }
     }
 
@@ -165,7 +165,7 @@
             });
         }
         catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            displayStatusMessage("alert-danger", "catch ERROR: "  + catchErrorDetails(e));
         }
     }
 
@@ -191,7 +191,7 @@
                 });
         }
         catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            displayStatusMessage("alert-danger", "catch ERROR: "  + catchErrorDetails(e));
         }
     }
 
@@ -249,12 +249,12 @@
                     });
                 },
                 error: function (jqXHR, exception) {
-                    alert("/api/GetRoles error: " + getErrorInfo(jqXHR, exception));
+                    alert("/api/GetRoles error: " + getXHRErrorDetails(jqXHR, exception));
                 },
             });
         } catch (e) {
-            //displayStatusMessage("alert-danger", "catch ERROR: " + e);
-            alert("/api/GetRoles catch: " + e);
+            //displayStatusMessage("alert-danger", "catch ERROR: "  + catchErrorDetails(e));
+            alert("/api/GetRoles catch: " + catchErrorDetails(e));
         }
     }
 
@@ -286,7 +286,7 @@
             });
         }
         catch (e) {
-            alert("/Manage/AddRole catch: " + e);
+            alert("/Manage/AddRole catch: " + catchErrorDetails(e));
         }
     }
 
@@ -312,7 +312,7 @@
             });
         }
         catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            displayStatusMessage("alert-danger", "catch ERROR: " + catchErrorDetails(e));
         }
     }
 
@@ -418,12 +418,12 @@
                     });
                 },
                 error: function (jqXHR, exception) {
-                    alert("error: " + getErrorInfo(jqXHR, exception));
+                    alert("error: " + getXHRErrorDetails(jqXHR, exception));
                 },
             });
         } catch (e) {
-            //displayStatusMessage("alert-danger", "catch ERROR: " + e);
-            alert("catch: " + e);
+            //displayStatusMessage("alert-danger", "catch ERROR: "  + catchErrorDetails(e));
+            alert("catch: " + catchErrorDetails(e));
         }
     }
     function getAssignedRoles(userId) {
@@ -450,16 +450,17 @@
                     });
                 },
                 error: function (jqXHR, exception) {
-                    alert("error: " + getErrorInfo(jqXHR, exception));
+                    alert("error: " + getXHRErrorDetails(jqXHR, exception));
                 },
             });
         } catch (e) {
-            //displayStatusMessage("alert-danger", "catch ERROR: " + e);
-            alert("catch: " + e);
+            //displayStatusMessage("alert-danger", "catch ERROR: "  + catchErrorDetails(e));
+            alert("catch: " + catchErrorDetails(e));
         }
 
 
     }
+
     function addUserRole(selectedRoleId, selectedUser) {
         try {
             var objUserRole = new Object();
@@ -481,12 +482,12 @@
                 },
                 error: function (xhr) {
                     displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                    alert("Admin Refs Post error: " + xhr.statusText);
+                    alert("Admin Refs Post error: " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         }
         catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            displayStatusMessage("alert-danger", "catch ERROR: " + catchErrorDetails(e));
         }
     }
 </script>

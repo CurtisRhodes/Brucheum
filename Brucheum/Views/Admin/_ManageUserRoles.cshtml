@@ -16,6 +16,8 @@
 
     .ddOption {
         padding: 4px 3px;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 17px;
     }
 
     #divSelectedUser {
@@ -116,6 +118,7 @@
                     if (selectedRoleId != "") {
                         $("#" + selectedRoleId).remove();
                         $('#divChooseAvailable').append("<div class='listBoxItem' Id='" + selectedRoleId + "'>" + selectedRoleName + "</div>");
+                        RemoveUserRole(selectedRoleId, selectedUser)
                         selectedRoleId = "", selectedRoleName = "";
                     }
                     break;
@@ -137,45 +140,55 @@
         }
     });
 
-    function getChooseBoxUsers() {
+    function loadUsersDD() {
         try {
             $.ajax({
                 type: "GET",
                 dataType: "Json",
-                url: service + "/api/User",
+                url: "/Admin/GetUsers",
                 success: function (result) {
-                    $('#ddUsers').html("");
-                    $.each(result, function () {
-                        $('#ddUsers').append("<option class='ddOption' value='" + this.Id + "'>" + this.Name + "</li>");
+                    result = result.split("|");
+
+                    $('#ddUsers').html("<option class= 'ddOption' value ='0'>-- select a user --</option >");
+                    $.each(result, function (idx, obj) {
+                        obj = obj.split(",");
+                        $('#ddUsers').append("<option class='ddOption' value='" + obj[0] + "'>" + obj[1] + "</option>");
                     });
 
                     $('#ddUsers').change(function () {
                         selectedUser = $('#ddUsers option:selected').attr("value")
                         $('#divSelectedUser').html($('#ddUsers option:selected').text())
-                        getAssignedRoles($('#ddUsers option:selected').val());
+                        getUserRoles($('#ddUsers option:selected').val());
                     });
+
                 },
                 error: function (jqXHR, exception) {
-                    alert("error: " + getErrorInfo(jqXHR, exception));
+                    alert("error: " + getXHRErrorDetails(jqXHR, exception));
                 },
             });
         } catch (e) {
-            //displayStatusMessage("alert-danger", "catch ERROR: " + e);
-            alert("catch: " + e);
+            //displayStatusMessage("alert-danger", "catch ERROR: " +catchErrorDetails(e));
+            alert("catch: " + catchErrorDetails(e));
         }
     }
-    function getAssignedRoles(userId) {
-    }
-    function getChooseBoxRoles() {
+    
+    function getUserRoles(userId) {
         try {
             // $('#divLoadingGif').show();
             $.ajax({
                 type: "GET",
                 dataType: "Json",
-                url: service + "/api/Role",
+                url: "/Admin/GetUserRoles?userId=" + userId,
                 success: function (result) {
+                    //alert("result: " + result);
+
+                    $('#divChooseSelected').html("");
                     $.each(result, function () {
-                        $('#divChooseAvailable').append("<div class='listBoxItem' Id='" + this.Id + "'>" + this.Name + "</div>");
+                        $('#divChooseSelected').append("<div class='listBoxItem' >" + this + "</div>");
+
+
+
+                        //$('#divChooseAvailable').remove("<div class='listBoxItem' >" + this + "</div>");
                     });
 
                     $('.listBoxItem').click(function () {
@@ -188,46 +201,103 @@
                     });
                 },
                 error: function (jqXHR, exception) {
-                    alert("error: " + getErrorInfo(jqXHR, exception));
+                    alert("error: " + getXHRErrorDetails(jqXHR, exception));
                 },
             });
         } catch (e) {
-            //displayStatusMessage("alert-danger", "catch ERROR: " + e);
-            alert("catch: " + e);
+            //displayStatusMessage("alert-danger", "catch ERROR: " +catchErrorDetails(e));
+            alert("catch: " + catchErrorDetails(e));
         }
-
-
     }
+
+    function getAllRoles() {
+        try {
+            // $('#divLoadingGif').show();
+            $.ajax({
+                type: "GET",
+                dataType: "Json",
+                url: "/Admin/GetAllRoles",
+                success: function (result) {
+
+                    result = result.split("|");
+
+                    $.each(result, function (idx, obj) {
+                        obj = obj.split(",");
+                        $('#divChooseAvailable').append("<div class='listBoxItem'  Id='" + obj[0] + "'>" + obj[1] + "</div>");
+                    });
+
+                    $('.listBoxItem').click(function () {
+                        if (selectedRoleId != "") {
+                            $("#" + selectedRoleId).removeClass("highlightItem");
+                        }
+                        $(this).addClass("highlightItem");
+                        selectedRoleId = $(this).attr("Id");
+                        selectedRoleName = $(this).text();
+                    });
+                },
+                error: function (jqXHR, exception) {
+                    alert("error: " + getXHRErrorDetails(jqXHR, exception));
+                },
+            });
+        } catch (e) {
+            //displayStatusMessage("alert-danger", "catch ERROR: " +catchErrorDetails(e));
+            alert("catch: " + catchErrorDetails(e));
+        }
+    }
+
     function addUserRole(selectedRoleId, selectedUser) {
         try {
             var objUserRole = new Object();
             objUserRole.RoleId = selectedRoleId;
             objUserRole.UserId = selectedUser;
-
+            //alert("selectedUser: " + selectedUser + " selectedRoleName: " + selectedRoleName);
             $.ajax({
-                type: "POST",
-                url: service + "/api/UserRole",
+                type: "Get",
+                url: "/Admin/AddUserRole?userId=" + selectedUser + "&roleName=" + selectedRoleName,
                 dataType: "Json",
-                data: objClassification,
-                success: function (result) {
-                    if (result.Success === "ok") {
-                        displayStatusMessage("alert-success", "Saved");
-                        GetArticleClasses();
+                //data: objClassification,
+                success: function (success) {
+                    if (success === "ok") {
+                        displayStatusMessage("alert-success", "Role [" + selectedRoleName + "] added");
                     }
                     else
-                        displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
+                        displayStatusMessage("alert-danger", "ERROR: " + success);
                 },
                 error: function (xhr) {
                     displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                    alert("Admin Refs Post error: " + xhr.statusText);
+                    alert("addUserRole error: " + xhr.statusText);
                 }
             });
         }
         catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            displayStatusMessage("alert-danger", "catch ERROR: " + catchErrorDetails(e));
         }
     }
 
+    function RemoveUserRole(selectedRoleId, selectedUser) {
+        try {
+            $.ajax({
+                type: "Get",
+                url: "/Admin/RemoveUserRole?userId=" + selectedUser + "&roleName=" + selectedRoleName,
+                dataType: "Json",
+                //data: objClassification,
+                success: function (success) {
+                    if (success === "ok") {
+                        displayStatusMessage("alert-success", "Role [" + selectedRoleName + "] Removed");
+                    }
+                    else
+                        displayStatusMessage("alert-danger", "ERROR: " + success);
+                },
+                error: function (xhr) {
+                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    alert("addUserRole error: " + xhr.statusText);
+                }
+            });
+        }
+        catch (e) {
+            displayStatusMessage("alert-danger", "catch ERROR: " + catchErrorDetails(e));
+        }
+    }
 </script>
 
 

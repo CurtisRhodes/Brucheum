@@ -389,7 +389,6 @@
     <Content Include="Views\Book\Write.cshtml" />
     <Content Include="Views\Book\_EditTreePopup.cshtml" />
     <Content Include="Views\Consulting\About.cshtml" />
-    <Content Include="Views\Consulting\Admin.cshtml" />
     <Content Include="Views\Consulting\Approach.cshtml" />
     <Content Include="Views\Consulting\Articles.cshtml" />
     <Content Include="Views\Consulting\Code.cshtml" />

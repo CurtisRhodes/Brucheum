@@ -2,7 +2,7 @@
 <div class="adminOptionTitle">Article Classifications</div>
 <label>Category:</label>
 <input class="roundedInput" id="txtArticleClassDescription" />
-<div id="divRoleButtons">
+<div class="buttonsContainer">
     <div class="roundendButton" id="btnAddEditArticleClass">Add</div>
     <div class="roundendButton" id="btnArticleClassToggle">New</div>
 </div>
@@ -52,7 +52,7 @@
                 }
             });
         } catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            displayStatusMessage("alert-danger", "catch ERROR: " +catchErrorDetails(e));
         }
     }
 
@@ -82,7 +82,7 @@
             });
         }
         catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            displayStatusMessage("alert-danger", "catch ERROR: " +catchErrorDetails(e));
         }
     }
 
@@ -109,7 +109,7 @@
             });
         }
         catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            displayStatusMessage("alert-danger", "catch ERROR: " +catchErrorDetails(e));
         }
     }
 

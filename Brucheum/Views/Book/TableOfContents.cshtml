@@ -109,7 +109,7 @@
                         });
 
                     } catch (e) {
-                        alert("catch: " + e);
+                        alert("catch: "  + catchErrorDetails(e));
                     }
                 },
                 error: function (xhr) {
@@ -119,7 +119,7 @@
             });
         }
         catch (e) {
-            alert("nice try: " + e);
+            alert("nice try: "  + catchErrorDetails(e));
         }
     }
 

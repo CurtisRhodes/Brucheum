@@ -103,8 +103,8 @@
                 }
             });
         } catch (e) {
-            displayStatusMessage("alert-danger", "tERROR" + e);
-            alert("getArticleList catch: " + e);
+            displayStatusMessage("alert-danger", "tERROR" + catchErrorDetails(e));
+            alert("getArticleList catch: " + catchErrorDetails(e));
         }
     }
 
@@ -135,7 +135,7 @@
                 </div>`);
             articleCount++;
         } catch (e) {
-            alert("formatArticleJog error: " + e);
+            alert("formatArticleJog error: " + catchErrorDetails(e));
         }
     }
 </script>

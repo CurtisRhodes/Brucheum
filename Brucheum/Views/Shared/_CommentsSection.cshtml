@@ -106,8 +106,8 @@
                     }
                 });
             } catch (e) {
-                alert("getComments: " + e);
-                displayStatusMessage("alert-danger", "catch ERROR: " + e);
+                alert("getComments: "  + catchErrorDetails(e));
+                displayStatusMessage("alert-danger", "catch ERROR: "  + catchErrorDetails(e));
             }
         }
 
@@ -198,8 +198,8 @@
             }
         }
         catch (e) {
-            alert("api/Comment/Post catch: " + e);
-            displayStatusMessage("alert-danger", "catch ERROR: " + e);
+            alert("api/Comment/Post catch: "  + catchErrorDetails(e));
+            displayStatusMessage("alert-danger", "catch ERROR: "  + catchErrorDetails(e));
         }
     }
 </script>

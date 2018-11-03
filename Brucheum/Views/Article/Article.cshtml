@@ -73,7 +73,7 @@
                 //stickCommentsButton();
             }
             catch (e) {
-                alert("$(document).ready ERROR: " + e);
+                alert("$(document).ready ERROR: " + catchErrorDetails(e));
             }
         });
 
@@ -163,7 +163,7 @@
                 });
             }
             catch (e) {
-                alert("saveAs catch: " + e);
+                alert("saveAs catch: " + catchErrorDetails(e));
             }
         }
 

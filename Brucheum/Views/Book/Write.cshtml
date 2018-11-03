@@ -141,7 +141,7 @@
                 }
             });
         } catch (e) {
-            alert("e: " + e);
+            alert("e: "  + catchErrorDetails(e));
         }
     }
 
@@ -175,8 +175,8 @@
                 }
              });
         } catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " + e);
-            alert("catch ERROR: " + e);
+            displayStatusMessage("alert-danger", "catch ERROR: "  + catchErrorDetails(e));
+            alert("catch ERROR: "  + catchErrorDetails(e));
         }
     }
 
@@ -208,7 +208,7 @@
                 }
             });
         } catch (e) {
-            displayStatusMessage("alert-danger", "ERROR" + e);
+            displayStatusMessage("alert-danger", "ERROR"  + catchErrorDetails(e));
         }
     }
 
@@ -292,7 +292,7 @@
                     }
                  });
             } catch (e) {
-                displayStatusMessage("alert-danger", "tERROR" + e);
+                displayStatusMessage("alert-danger", "tERROR"  + catchErrorDetails(e));
             }
         }
      });

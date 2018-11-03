@@ -105,7 +105,7 @@
                 }
             });
         } catch (e) {
-            displayStatusMessage("alert-danger", "ERROR" + e);
+            displayStatusMessage("alert-danger", "ERROR"  + catchErrorDetails(e));
             alert("ajax catch error: " + xhr.statusText);
         }
     }
@@ -131,8 +131,8 @@
                 }
             });
         } catch (e) {
-            //displayStatusMessage("alert-danger", "ERROR" + e);
-            alert("catch error: " + e);
+            //displayStatusMessage("alert-danger", "ERROR"  + catchErrorDetails(e));
+            alert("catch error: " + catchErrorDetails(e));
         }
     }
 </script>

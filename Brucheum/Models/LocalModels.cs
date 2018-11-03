@@ -11,6 +11,7 @@ namespace Brucheum
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public string success { get; set; }
     }
 
     public class ArticleModel

@@ -110,7 +110,7 @@
                         });
 
                     } catch (e) {
-                        alert("getEditTable catch: " + e);
+                        alert("getEditTable catch: " + catchErrorDetails(e));
                     }
                 },
                 error: function (xhr) {
@@ -120,7 +120,7 @@
             });
         }
         catch (e) {
-            alert("nice try: " + e);
+            alert("nice try: " + catchErrorDetails(e));
         }
     }
 

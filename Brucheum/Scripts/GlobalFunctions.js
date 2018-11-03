@@ -44,13 +44,25 @@ function formatDate(date) {
     return date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear(); // + "  " + strTime;
 }
 
-function getErrorInfo(jqXHR, exception) {
+function getCatchErroDetails(ex)
+{
+    var msg = "ERROR: " + ex.Message;
+    while (ex.InnerException !== null) {
+        ex = ex.InnerException;
+        msg = ex.Message;
+    }
+    alert("g: " + msg);
+    return msg;
+}
+
+
+function getXHRErrorDetails(jqXHR, exception) {
     var msg = '';
     if (jqXHR.status === 0) {
         msg = 'Not connect.\n Verify Network.';
-    } else if (jqXHR.status == 404) {
+    } else if (jqXHR.status === 404) {
         msg = 'Requested page not found. [404]';
-    } else if (jqXHR.status == 500) {
+    } else if (jqXHR.status === 500) {
         msg = 'Internal Server Error [500].';
     } else if (exception === 'parsererror') {
         msg = 'Requested JSON parse failed.';
