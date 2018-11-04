@@ -44,12 +44,6 @@
     /*width: 100%;*/
 }
 
-#adminMsg {
-    /*display: none;*/
-    padding-left: 6px;
-    margin-top: 45px;
-}
-
 .divArticle {
     display: flex;
     background-color: #fff;
@@ -133,6 +127,20 @@
         text-decoration: underline;
         color: #0094ff;
     }
+
+
+#divHrefAddNew {
+    margin-top: 66px;
+    margin-left: 31px;
+    margin-bottom: -44px;
+}
+#hrefAddNew {
+    text-decoration: none;
+    padding: 3px 5px;
+    border-radius: 3px;
+    background-color: #74bac3;
+    color: #000;
+}
 
 #loadingGif {
     position: relative;

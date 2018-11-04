@@ -44,7 +44,7 @@ function formatDate(date) {
     return date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear(); // + "  " + strTime;
 }
 
-function getCatchErroDetails(ex)
+function catchErrorDetails(ex)
 {
     var msg = "ERROR: " + ex.Message;
     while (ex.InnerException !== null) {

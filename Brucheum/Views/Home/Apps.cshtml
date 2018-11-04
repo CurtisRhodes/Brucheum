@@ -70,13 +70,13 @@
                         <img class="appImage" src="~/Images/Apps/GetaJob.png" />
                         <div class="appName">Get A Gig</div>
                     </div>
-                    <div class="appItem" app="bOObs">
+                    <div class="appItem" app="bOObs" onclick="window.open('https://OggleBooble.com', '_blank')">
                         <img class="appImage" src="~/Images/Apps/redballon.png" />
                         <div class="appName">bOObs Rater</div>
                     </div>
                 </div>
                 <div class="containerRow">
-                    <div class="appItem" app="LodgeSecretary">
+                    <div class="appItem" app="LodgeSecretary"onclick="window.open('https://lodgeSecretary.net', '_blank')">
                         <img class="appImage" src="~/Images/Apps/LodgeSecretary.jpg" />
                         <div class="appName">Lodge Secretary</div>
                     </div>
@@ -139,21 +139,21 @@
         $("#" + whichApp).show();
     });
 
-    $('.appItem').click(function () {
-        var whichApp = $(this).attr("app");
-        switch (whichApp) {
-            case "Flitter":
-                break;
-            case "GetaGig":
-                break;
-            case "LodgeSecretary":
-                window.open("http://lodgeSecretary.net", "_blank");
-                break;
-            case "bOObs":
-                window.open("http://OggleBooble.com", "_blank");
-                break;
+    //$('.appItem').click(function () {
+    //    var whichApp = $(this).attr("app");
+    //    switch (whichApp) {
+    //        case "Flitter":
+    //            break;
+    //        case "GetaGig":
+    //            break;
+    //        case "LodgeSecretary":
+    //            window.open("http://lodgeSecretary.net", "_blank");
+    //            break;
+    //        case "bOObs":
+    //            window.open("http://OggleBooble.com", "_blank");
+    //            break;
 
-        }
-    });
+    //    }
+    //});
 </script>
 

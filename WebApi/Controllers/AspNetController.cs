@@ -196,6 +196,24 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class RoleController : ApiController
     {
+        //select id from asp.AspNetRoles where Name = 'Admin'
+        [HttpGet]
+        public string GetRoleId(string roleName)
+        {
+            string roleId = "";
+            try
+            {
+                using (AspNetContext db = new AspNetContext())
+                {
+                    roleId = db.AspNetRoles.Where(r => r.Name == roleName).Select(r => r.Id).FirstOrDefault();
+                }
+            }
+            catch (Exception ex) { roleId = "Error: " + Helpers.ErrorDetails(ex);  }
+            return roleId;
+        }
+
+
+
         [HttpPost]
         public string AddRole(string roleName)
         {

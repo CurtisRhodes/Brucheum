@@ -14,22 +14,32 @@
     }
         .tabvMenuItem img {
             width: 166px;
-            height: 66px;
+            height: 62px;
             cursor: pointer;
         }
-    .fullScreen {
-         width:100%;
-         height: 800px;
+
+    #middleColumn {
+        background-image: url("/Images/caveStairsWide.jpg");
+        background-repeat: no-repeat;
+        background-size: contain;
     }
+    #corousel01 {
+        margin-top: 9%;
+        margin-left: 15%;
+        height: 52%;
+        width: 66%;
+        background-color: rgba(164, 168, 169, 0.75);
+    }
+    
 
 </style>
 <div class="threeColumnArray">
     <div id="leftColumn">
         <div id="tanBlue" class="vMenu">
-            <div id="itemIntelDesgn" class="tabvMenuItem">
+            <div id="itemIntelDesgn" class="tabvMenuItem" onclick="window.location.href='/Consulting/'">
                 <img src="~/Images/TanBlue/IntelligentDesignTan.png" onmouseover="this.src='/Images/TanBlue/IntelligentDesignBlue.png'" onmouseout="this.src='/Images/TanBlue/IntelligentDesignTan.png'" />
             </div>
-            <div id="itemArticles" class="tabvMenuItem">
+            <div id="itemBlondJew" class="tabvMenuItem" onclick="window.location.href='/Book/TableOfContents?bookTitle=The Blond Jew'">
                 <img src="~/Images/TanBlue/BlondJewTan.png" onmouseover="this.src='/Images/TanBlue/BlondJewBlue.png'" onmouseout="this.src='/Images/TanBlue/BlondJewTan.png'" />
             </div>
             <div id="itemBooks" class="tabvMenuItem">
@@ -41,7 +51,7 @@
             <div id="itemGetaJob" class="tabvMenuItem">
                 <img src="~/Images/TanBlue/GetaJobTan.png" onmouseover="this.src='/Images/TanBlue/GetaJobBlue.png'" onmouseout="this.src='/Images/TanBlue/GetaJobTan.png'" />
             </div>
-            <div id="itemOggle" class="tabvMenuItem">
+            <div id="itemOggle" class="tabvMenuItem" onclick="window.open('https://OggleBooble.com', '_blank')">
                 <img src="~/Images/TanBlue/OggleBoogleTan.png" onmouseover="this.src='/Images/TanBlue/OggleBoogleBlue.png'" onmouseout="this.src='/Images/TanBlue/OggleBoogleTan.png'" />
             </div>
             <div id="item2aT" class="tabvMenuItem">
@@ -50,10 +60,22 @@
         </div>
     </div>
     <div id="middleColumn">
-        <img class="fullScreen" src="~/Images/caveStairs.jpg" />
+
+        <div id="corousel01" class="caroselContainer">
+        </div>
+
     </div>
     <div id="rightColumn">
     </div>
 </div>
 
+<script>
+
+    $(document).ready(function () {
+        //resizePage();
+        $('#bannerTitle').html("Curtis Rhodes.com");
+    });
+
+
+</script>
 

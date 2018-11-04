@@ -90,7 +90,7 @@
 
     $(document).ready(function () {
         @if (Request.IsAuthenticated) {
-            @:$('#divKnownUser').html("Hello " + @User.Identity.GetUserName());
+            @:$('#divKnownUser').html("Hello " + '@User.Identity.GetUserName()');
             @:$('#divKnownUser').show();
             @:$('#divLoginWarning').hide();
     }

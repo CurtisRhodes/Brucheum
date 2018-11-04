@@ -1,4 +1,10 @@
-﻿<div class="adminOptionTitle">Add Edit Roles</div>
+﻿<style>
+    label {
+    margin: 5px;
+    }
+</style>
+
+<div class="adminOptionTitle">Add Edit Roles</div>
 <div>
     <label>Role:</label>
     <input class="roundedInput" id="txtRoleName" />
@@ -18,7 +24,6 @@
 
     $('#btnRoleToggle').click(function () {
         objClassificationRefCode = null;
-        $('#txtDescription').val("");
         $('#btnAddUpdateRole').text("Add");
         $(this).hide();
     });
@@ -30,11 +35,9 @@
             $.ajax({
                 type: "GET",
                 dataType: "Json",
-                url: "/Admin/GetRoles",
+                url: "/Admin/GetAllRoles",
                 success: function (result) {
-
                     result = result.split("|");
-
                     $('#divRoleList').html("<ul>");
                     $.each(result, function (idx, obj) {
                         obj = obj.split(",");

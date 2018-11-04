@@ -9,18 +9,12 @@
 //using Microsoft.AspNet.Identity.EntityFramework;
 //using Microsoft.AspNet.Identity;
 
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Validation;
+using System.IO;
 using System.Linq;
-using System.Net.Mail;
+using System.Text;
 using System.Web.Http;
-using System.Web.Http.Results;
-
-
-
 
 namespace Brucheum
 {
@@ -30,17 +24,23 @@ namespace Brucheum
         [HttpPost]
         public string Post()
         {
-            string success = "oh no";
+            string success = "";
             try
             {
-        
-                
+                string filePath = System.Web.HttpContext.Current.Server.MapPath("~/Static_Pages");
+                string html = Request.Content.ReadAsStringAsync().Result;
+                string fileName = html.Substring(html.IndexOf("divTitle") + 10, 500);
+                fileName = filePath + "/" + fileName.Substring(0, fileName.IndexOf("</div>")).Replace(" ", "_") + ".html";
+
+                using (var staticFile = File.Open(fileName, FileMode.OpenOrCreate))
+                {
+                    Byte[] byteArray = Encoding.ASCII.GetBytes(html);
+                    staticFile.Write(byteArray, 0, byteArray.Length);
+                }
+                //File.WriteAllBytes(fileName, byteArray);                
                 success = "ok";
             }
-            catch (Exception e)
-            {
-                success = e.Message;
-            }
+            catch (Exception e) { success = Helpers.ErrorDetails(e); }
             return success;
         }
 
@@ -49,17 +49,15 @@ namespace Brucheum
         //{
         //    string success = "Not Found";
         //    //string title = xdoc.SelectSingleNode("//Article[@Id='" + Id + "']").Attributes["Title"].InnerText.Replace(" ", "_") + ".html";
-
         //    string htmlFileName = Path.Combine(filePath, title + ".html");
         //    if (File.Exists(filePath))
         //        success = htmlFileName;
-
         //    return success;
         //}
     }
 
-    public class RoleController : ApiController
-    {
+    //public class RoleController : ApiController
+    //{
         //private ApplicationRoleManager _roleManager;
         //public ApplicationRoleManager RoleManager
         //{
@@ -73,23 +71,23 @@ namespace Brucheum
         //    }
         //}
 
-        [HttpGet]
-        public IList<RoleModel> Get()
-        {
-            IList<RoleModel> roles = new List<RoleModel>();
-            using (var context = new ApplicationDbContext())
-            {
-                //var roles = RoleManager.GetRoles();
-                var roleStore = new RoleStore<IdentityRole>(context);
-                var storeManager = new RoleManager<IdentityRole>(roleStore);
-                IQueryable<IdentityRole> idRoles = storeManager.Roles;
-                foreach (IdentityRole role in idRoles)
-                {
-                    roles.Add(new RoleModel() { Id = role.Id, Name = role.Name });
-                }
-            }
-            return roles;
-        }
+        //[HttpGet]
+        //public IList<RoleModel> Get()
+        //{
+        //    IList<RoleModel> roles = new List<RoleModel>();
+        //    using (var context = new ApplicationDbContext())
+        //    {
+        //        //var roles = RoleManager.GetRoles();
+        //        var roleStore = new RoleStore<IdentityRole>(context);
+        //        var storeManager = new RoleManager<IdentityRole>(roleStore);
+        //        IQueryable<IdentityRole> idRoles = storeManager.Roles;
+        //        foreach (IdentityRole role in idRoles)
+        //        {
+        //            roles.Add(new RoleModel() { Id = role.Id, Name = role.Name });
+        //        }
+        //    }
+        //    return roles;
+        //}
 
         //[HttpPost]
         //public string AddRole(string roleName)
@@ -113,13 +111,10 @@ namespace Brucheum
         //    {
         //        var roleStore = new RoleStore<IdentityRole>(context);
         //        var roleManager = new RoleManager<IdentityRole>(roleStore);
-
         //        roles = (from r in roleManager.Roles select r.Name).ToList();
         //    }
-
         //    return View(roles.ToList());
         //}
-
-    }
+    //}
 
 }

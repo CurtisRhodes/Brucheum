@@ -32,6 +32,7 @@ body {
         float: right;
         min-width: 7%;
     }
+
 .pageTitle {
     margin-top: 15px;
     padding-bottom: 15px;
@@ -48,26 +49,8 @@ body {
 }
 #divHeaderContents {
  }
-.menuTabContainer {
-    clear: both;
-    padding-left: 124px;
-    line-height: 1;
-}
 .loginTab {
     float: right;
-}
-.menuTab {
-    font-size: 14px;
-    float: left;
-    cursor: pointer;
-}
-.menuTab a {
-    color: black;
-    text-decoration: none;
-    padding-top: 10px;
-    padding-bottom: 5px;
-    padding-left: 20px;
-    padding-right: 20px;
 }
 
 .floatLeft {
@@ -78,14 +61,6 @@ body {
     clear: both;
 }
 
-.headerBannerTitle {
-    padding-left: 66px;
-    padding-top: 4px;
-    font-family: 'Lucida Calligraphy';
-    font-size: 33px;
-    padding-bottom: 7px;
-    line-height: 1;
-}
 #modalContainer {
     z-index: 6; /* Sit on top */
 }

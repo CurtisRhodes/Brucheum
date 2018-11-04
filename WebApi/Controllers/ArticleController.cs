@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Results;
@@ -227,4 +229,33 @@ namespace WebApi
         {
         }
     }
+
+    [EnableCors("*", "*", "*")]
+    public class StaticFilesController : ApiController
+    {
+        // Write Static Pages 
+        [HttpPost]
+        public string Post()
+        {
+            string success = "";
+            try
+            {
+                string filePath = System.Web.HttpContext.Current.Server.MapPath("~/Static_Pages");
+                string html = Request.Content.ReadAsStringAsync().Result;
+                string fileName = html.Substring(html.IndexOf("divTitle") + 10, 500);
+                fileName = filePath + "/" + fileName.Substring(0, fileName.IndexOf("</div>")).Replace(" ", "_") + ".html";
+
+                using (var staticFile = File.Open(fileName, FileMode.OpenOrCreate))
+                {
+                    Byte[] byteArray = Encoding.ASCII.GetBytes(html);
+                    staticFile.Write(byteArray, 0, byteArray.Length);
+                }
+                //File.WriteAllBytes(fileName, byteArray);                
+                success = "ok";
+            }
+            catch (Exception e) { success = Helpers.ErrorDetails(e); }
+            return success;
+        }
+    }
+
 }

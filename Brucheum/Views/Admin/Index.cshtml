@@ -17,11 +17,11 @@
 <div class="threeColumnArray">
     <div id="leftColumn">
         <div class="vertMenu">
-            <div class="vertMenuTab" id="optArticleClass"><a>Article Classifications</a></div>
-            <div class="vertMenuTab" id="optAuthorAvatars"><a>    Author Avatars     </a></div>
-            <div class="vertMenuTab" id="optRefEditor">    <a>    Ref Editor         </a></div>
-            <div class="vertMenuTab" id="optAddRoles">     <a>    Add Roles          </a></div>
-            <div class="vertMenuTab" id="optAssignRoles">  <a>    Assign Roles       </a></div>
+            <div class="vertMenuTab" id="optArticleClass"> Article Classifications</div>
+            <div class="vertMenuTab" id="optAuthorAvatars">Author Avatars</div>
+            <div class="vertMenuTab" id="optRefEditor">Ref Editor</div>
+            <div class="vertMenuTab" id="optAddRoles">Add Roles</div>
+            <div class="vertMenuTab" id="optAssignRoles">Assign Roles</div>
         </div>
     </div>
     <div id="middleColumn">
@@ -50,13 +50,7 @@
 
         </div>
     </div>
-    <div id="rightColumn">
-        @using Microsoft.AspNet.Identity
-        @if (Request.IsAuthenticated)
-        {
-            <div>Hello @User.Identity.GetUserName()</div>
-        }
-    </div>
+    <div id="rightColumn"></div>
 </div>
 
 <script>
@@ -64,7 +58,14 @@
     var objClassification = new Object();
     var objRole = new Object();
 
-    $(document).ready(function () { });
+    $(document).ready(function () {
+        $('.vertMenuTab').mouseout(function () {
+            $(this).css('background-color', '#74bac3').css('color', '#000');
+        });
+        $('.vertMenuTab').mouseover(function () {
+            $(this).css('background-color', '#4163aa').css('color', '#e4e4e4');
+        });
+    });
 
     // article Classifications
     $("#optArticleClass").click(function () {
@@ -100,9 +101,7 @@
     $("#optAssignRoles").click(function () {
         $('.adminOption').hide();
         $('#tabAssignRoles').show();
-        if ($('#ddUsers').html() == "")
-            loadUsersDD();
-        getAllRoles();
+        setInititalState();
     });
 
 </script>

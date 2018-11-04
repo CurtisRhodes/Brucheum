@@ -64,6 +64,7 @@ namespace Brucheum
             ViewBag.Service = apiService;
             ViewBag.UserId = Session["UserId"];
             ViewBag.UserName = Session["UserName"];
+            ViewBag.FilePath = System.Web.HttpContext.Current.Server.MapPath("~/Static_Pages");
 
 
 

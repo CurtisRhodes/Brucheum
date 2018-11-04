@@ -55,7 +55,7 @@ namespace Brucheum
                 if (IsBeingLogged(page))
                 {
                     using (HttpClient client = new HttpClient())
-                    {
+                     {
                         try
                         {
                             //AddPageHit(string ipAddress, string app, string page, string details)

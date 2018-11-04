@@ -4,32 +4,17 @@
 }
 
 .vertMenuTab {
-    border-radius: 4px;
-    margin-left: 4px;
-    margin-right: 8px;
     font-size: 14px;
-    list-style: none;
     cursor: pointer;
-    margin-bottom: 26px;
+    text-align: center;
+    margin: 14px 6px;
+    padding: 8px 20px;
+    border-radius: 4px;
     white-space: nowrap;
+    text-wrap: none;
+    color: #000;
+    background-color: #74bac3;
 }
-
-    .vertMenuTab a {
-        text-decoration: none;
-        color: black;
-        padding-top: 10px;
-        padding-bottom: 5px;
-        padding-left: 20px;
-        padding-right: 20px;
-        color: #fff;
-        background-color: #07c;
-        text-wrap: none;
-    }
-
-        .vertMenuTab a:hover {
-            text-decoration: underline;
-            background-color: orange;
-        }
 
 .adminOptionTitle {
     font-size: 24px;
@@ -46,7 +31,7 @@
     background-color: #aaa;
     display: none;
     width: 500px;
-    border: solid 2px purple;
+    border: solid 2px #74bac3;
     border-radius: 4px;
 }
 
@@ -62,7 +47,7 @@
 }
 
 .itemsList {
-    border: solid 2px orange;
+    border: solid 2px purple;
     border-radius: 4px;
     margin: 3px;
     overflow-y: scroll;

@@ -20,7 +20,7 @@
         font-size: 17px;
     }
 
-    #divSelectedUser {
+    .divOpitonSelected {
         float: left;
         height: 21px;
         margin-left: 6px;
@@ -34,7 +34,7 @@
 
     .chooseBoxContainer {
         margin-top: 4px;
-        border: solid 4px orange;
+        border: solid 4px Purple;
         display: flex;
     }
 
@@ -81,7 +81,7 @@
 <div class="adminOptionTitle">Assign Roles</div>
 <div class="selectedUerContainer">
     <div><select id="ddUsers" class="ddSelect"></select></div>
-    <div id="divSelectedUser" class="inline"></div>
+    <div id="divSelectedUser" class="inline divOpitonSelected"></div>
 </div>
 <div id="divRolesChoose" class="chooseBoxContainer">
     <div id="divChooseAvailable" class="chooseBox"></div>
@@ -95,19 +95,29 @@
 </div>
 
 <script>
-    var selectedUser = "", selectedRoleId = "", selectedRoleName = "";
+    var selectedUserId = "", selectedRoleId = "", selectedRoleName = "";
+
+    function setInititalState() {
+        $('#divChooseSelected').html("");
+        loadUsersDD();
+        getAllRoles();
+        $('#divSelectedUser').html("");
+    }
+
+
     $(".chooseBtn").click(function () {
-        if (selectedUser == "") {
+        if (selectedUserId == "") {
             alert("Please select a User.");
         }
         else {
             switch ($(this).attr("Id")) {
                 case "imgAdd":
                     if (selectedRoleId != "") {
-                        $("#" + selectedRoleId).remove();
-                        $('#divChooseSelected').append("<div class='listBoxItem' Id='" + selectedRoleId + "'>" + selectedRoleName + "</div>");
-                        addUserRole(selectedRoleId, selectedUser);
+                        //$("#" + selectedRoleId).remove();
+                        //$('#divChooseSelected').append("<div class='listBoxItem' Id='" + selectedRoleId + "'>" + selectedRoleName + "</div>");
+                        addUserRole(selectedUserId, selectedRoleName);
                         selectedRoleId = "", selectedRoleName = "";
+                        //getUserRoles(selectedUserId)
                     }
                     break;
                 case "imgAddAll":
@@ -118,7 +128,7 @@
                     if (selectedRoleId != "") {
                         $("#" + selectedRoleId).remove();
                         $('#divChooseAvailable').append("<div class='listBoxItem' Id='" + selectedRoleId + "'>" + selectedRoleName + "</div>");
-                        RemoveUserRole(selectedRoleId, selectedUser)
+                        RemoveUserRole(selectedUserId, selectedRoleName);
                         selectedRoleId = "", selectedRoleName = "";
                     }
                     break;
@@ -129,14 +139,6 @@
                 default:
                     alert("$(this).Id :" + $(this).attr("Id"))
             }
-            $('.listBoxItem').click(function () {
-                if (selectedRoleId != "") {
-                    $("#" + selectedRoleId).removeClass("highlightItem");
-                }
-                $(this).addClass("highlightItem");
-                selectedRoleId = $(this).attr("Id");
-                selectedRoleName = $(this).text();
-            });
         }
     });
 
@@ -156,7 +158,8 @@
                     });
 
                     $('#ddUsers').change(function () {
-                        selectedUser = $('#ddUsers option:selected').attr("value")
+                        getAllRoles();
+                        selectedUserId = $('#ddUsers option:selected').attr("value")
                         $('#divSelectedUser').html($('#ddUsers option:selected').text())
                         getUserRoles($('#ddUsers option:selected').val());
                     });
@@ -179,16 +182,16 @@
                 type: "GET",
                 dataType: "Json",
                 url: "/Admin/GetUserRoles?userId=" + userId,
-                success: function (result) {
-                    //alert("result: " + result);
-
+                success: function (roleNames) {
                     $('#divChooseSelected').html("");
-                    $.each(result, function () {
-                        $('#divChooseSelected').append("<div class='listBoxItem' >" + this + "</div>");
+                    $.each(roleNames, function (idx, roleName) {
+                        // thanks to hereswhatidid.com/2011/02/using-jquery-to-find-elements-that-contain-a-specific-text-string/
+                        var pickedRoleId = $("#divChooseAvailable div:contains(" + roleName + ")").filter(function () {
+                            return $(this).html() == roleName;
+                        }).attr('Id');
 
-
-
-                        //$('#divChooseAvailable').remove("<div class='listBoxItem' >" + this + "</div>");
+                        $('div').remove("#" + pickedRoleId);
+                        $('#divChooseSelected').append("<div class='listBoxItem'  Id='" + pickedRoleId + "'>" + roleName + "</div>");
                     });
 
                     $('.listBoxItem').click(function () {
@@ -218,9 +221,8 @@
                 dataType: "Json",
                 url: "/Admin/GetAllRoles",
                 success: function (result) {
-
                     result = result.split("|");
-
+                    $('#divChooseAvailable').html("");
                     $.each(result, function (idx, obj) {
                         obj = obj.split(",");
                         $('#divChooseAvailable').append("<div class='listBoxItem'  Id='" + obj[0] + "'>" + obj[1] + "</div>");
@@ -245,52 +247,50 @@
         }
     }
 
-    function addUserRole(selectedRoleId, selectedUser) {
+    function addUserRole(userId, roleName) {
         try {
-            var objUserRole = new Object();
-            objUserRole.RoleId = selectedRoleId;
-            objUserRole.UserId = selectedUser;
-            //alert("selectedUser: " + selectedUser + " selectedRoleName: " + selectedRoleName);
             $.ajax({
                 type: "Get",
-                url: "/Admin/AddUserRole?userId=" + selectedUser + "&roleName=" + selectedRoleName,
+                url: "/Admin/AddUserRole?userId=" + userId + "&roleName=" + roleName,
                 dataType: "Json",
-                //data: objClassification,
                 success: function (success) {
-                    if (success === "ok") {
-                        displayStatusMessage("alert-success", "Role [" + selectedRoleName + "] added");
+                    if (success.toUpperCase() == "OK") {
+                        displayStatusMessage("alert-success", "Role [" + roleName + "] added");
                     }
-                    else
+                    else {
                         displayStatusMessage("alert-danger", "ERROR: " + success);
+                        alert("addUserRole success not ok: " + success);
+                    }
                 },
                 error: function (xhr) {
                     displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                    alert("addUserRole error: " + xhr.statusText);
+                    alert("addUserRole xhr error: " + xhr.statusText);
                 }
             });
         }
         catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " + catchErrorDetails(e));
+            //displayStatusMessage("alert-danger", "catch ERROR: " + catchErrorDetails(e));
+            alert("addUserRole error: " + catchErrorDetails(e));
         }
     }
 
-    function RemoveUserRole(selectedRoleId, selectedUser) {
+    function RemoveUserRole(userId, roleName) {
         try {
             $.ajax({
                 type: "Get",
-                url: "/Admin/RemoveUserRole?userId=" + selectedUser + "&roleName=" + selectedRoleName,
+                url: "/Admin/RemoveUserRole?userId=" + userId + "&roleName=" + roleName,
                 dataType: "Json",
                 //data: objClassification,
                 success: function (success) {
-                    if (success === "ok") {
-                        displayStatusMessage("alert-success", "Role [" + selectedRoleName + "] Removed");
+                    if (success.toUpperCase() == "OK") {
+                        displayStatusMessage("alert-success", "Role [" + roleName + "] Removed");
                     }
                     else
                         displayStatusMessage("alert-danger", "ERROR: " + success);
                 },
                 error: function (xhr) {
                     displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                    alert("addUserRole error: " + xhr.statusText);
+                    alert("remove error: " + xhr.statusText);
                 }
             });
         }

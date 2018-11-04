@@ -4,6 +4,7 @@ using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 
@@ -13,7 +14,6 @@ namespace Brucheum.Controllers
     {
         private string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
         private ApplicationRoleManager _roleManager;
-
         public ApplicationRoleManager RoleManager
         {
             get
@@ -27,14 +27,12 @@ namespace Brucheum.Controllers
             }
         }
 
-        // GET: Admin
         public ActionResult Index()
         {
             ViewBag.Service = apiService;
             return View();
         }
 
-        [HttpGet]
         public JsonResult GetAllRoles()
         {
             string roles = "";  //Dictionary<string,string>();
@@ -84,21 +82,17 @@ namespace Brucheum.Controllers
 
         public JsonResult GetUserRoles(string userId)
         {
-            //List<string> roles = RoleManager.GetRoles(userId).ToList();
-            //foreach (string roleName in roles)
-            //{
-            //}
             return Json(RoleManager.GetRoles(userId), JsonRequestBehavior.AllowGet);
         }
 
-        public string AddUserRole(string userId, string roleName)
+        public JsonResult AddUserRole(string userId, string roleName)
         {
-            return RoleManager.AddUserRole(userId, roleName);
+            return Json(RoleManager.AddUserRole(userId, roleName), JsonRequestBehavior.AllowGet);
         }
 
-        public string RemoveUserRole(string userId, string roleName)
+        public JsonResult RemoveUserRole(string userId, string roleName)
         {
-            return RoleManager.RemoveUserRole(userId, roleName);
+            return Json(RoleManager.RemoveUserRole(userId, roleName), JsonRequestBehavior.AllowGet);
         }
     }
 }

@@ -8,7 +8,7 @@
     <div class="threeColumnArray">
         <div id="leftColumn">
             <div id="shareToFacebook">
-                <button id="btnStatic" class="roundendButton">staticify</button>
+                <button id="btnStaticify" class="roundendButton">staticify</button>
             </div>
         </div>
         <div id="middleColumn">
@@ -61,6 +61,7 @@
         var title = '@Model.Title';
         var userId = '@ViewBag.UserId';
         var userName = '@ViewBag.UserName';
+        var filePath = '@ViewBag.FilePath';
 
         $(document).ready(function () {
             try {
@@ -91,33 +92,25 @@
             }
             }
 
-        //$(window).resize(function () {
-        //    stickCommentsButton();
-        //});
-
         // Show Comments
         $('#divCommentsButton').click(function () {
             //$('#divCommentsSection').toggle();
             if ($('#divCommentsSection').css("display") == "none") {
                 $('#divCommentsSection').show();
-
-                //setTimeout(function () {
-                //    var nh = $(".#middleColumn").height() + $(".#divCommentsBody").height();
-                //    $(".#middleColumn").height(nh);
-                //    resizePage();
-                //}, 500);
             }
             else {
                 $('#divCommentsSection').hide();
             }
         });
 
-        $('#btnStatic').click(function () { saveAsStaticFile(); })
+        $('#btnStaticify').click(function () { saveAsStaticFile(); })
         function saveAsStaticFile() {
             if (imageName === "") {
                 displayStatusMessage("alert-warning", "insuficent data. Image required");
                 return;
             }
+
+
             $('head').append('<meta name="Title" content="' + title + '" property="og:title">');
             $('head').append('<meta name="Description" content="' + beautify(summary.substr(0, 300)));  //'" property="og:description"><br/>'
             $('head').append('<meta name="Keywords" content="' + beautify(tags.split(",").toString()) + '"><br/>');
@@ -132,38 +125,40 @@
             $('#shareToFacebook').html('<div class="fb-share-button" data-href="' + pageName + '" data-layout="button" data-size="large" data-mobile-iframe="false">' +
                 '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + pageName + '&src=sdkpreparse">Share on Facebook</a></div>');
 
-            var html = $('html').html();
-
+            //var html = $('html').html();
+            var data = new Object();
+            data.html = $('html').html();
+            data.filePath = filePath;
             try {
                 $.ajax({
                     type: "POST",
-                    url: "/api//File",  //  local api (static pages not stored in service)
+                    url: service + "/api/StaticFiles/",
                     processData: false,
                     contentType: false,
                     async: false,
                     cache: false,
-                    data: html,
+                    data: data,
                     success: function (success) {
                         if (success === "ok") {
-                            $('#btnStatic').val("permalink");
+                            $('#btnStaticify').val("permalink");
+                            alert("wwww")
                             $('#shareToFacebook').html('<button id="btnPermalink" class="roundendButton">permalink</button>');
 
                             $('#btnPermalink').click(function () {
                                 window.location.href = "/static_pages/" + title.replace(/ /g, "_") + ".html", "target='_blank'";
-
                             })
 
                         }
                         else
-                            alert("saveAs: " + success);
+                            alert("/api//File returned: " + success);
                     },
-                    error: function (xhr) {
-                        alert("saveAs error: " + xhr.statusText);
+                    error: function (jqXHR, exception) {
+                        alert("/api//File error: " + getXHRErrorDetails(jqXHR, exception));
                     }
                 });
             }
             catch (e) {
-                alert("saveAs catch: " + catchErrorDetails(e));
+                alert("/api//File catch: " + catchErrorDetails(e));
             }
         }
 

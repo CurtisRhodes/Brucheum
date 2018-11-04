@@ -21,7 +21,13 @@
         </div>
     </div>
     <div id="rightColumn">
-        <div id="divb">
+        @if (User.IsInRole("Article Editor"))
+        {
+            <div id="divHrefAddNew">
+                <a id="hrefAddNew" href='/Article/ArticleEdit'>add new article</a>
+            </div>
+        }
+        <div id="divbookPanel">
             @Html.Partial("_BookPannel")
         </div>
     </div>
@@ -78,7 +84,7 @@
                     else
                         $('#divMoreButton').show();
 
-                    $("#rightColumn").append("<div id='adminMsg'><a href='/Article/ArticleEdit'>add new</a></div>");
+                    //$("#rightColumn").append("<div id='adminMsg'><a href='/Article/ArticleEdit'>add new</a></div>");
 
 
                     //if (loggedIn !== "") {
@@ -129,7 +135,10 @@
                         <a href="`+ articleHref + `"><div id='divArticleSummary'>` + article.Summary + `</div></a>
                         <div id='divBottomRow'>
                             <div id='divByline'>By: <a href=/Article/ArticleList?filterType=Byline&filter=`+ article.Byline + `>` + article.Byline + `</a></div>
-                            <div id='divArticleEdit'><a href=/Article/ArticleEdit?Id=` + article.Id + `'>edit</a></div>
+                            @if (User.IsInRole("Article Editor"))
+                            {
+                                @:<div id='divArticleEdit'><a href=/Article/ArticleEdit?Id=` + article.Id + `'>edit</a></div>
+                            }
                         </div>
                     </div>
                 </div>`);
