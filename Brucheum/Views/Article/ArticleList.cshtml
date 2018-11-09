@@ -99,18 +99,18 @@
                 error: function (xmlhttprequest, textstatus, message) {
                     $('#loadingGif').hide();
                     if (textstatus === "timeout") {
-                        displayStatusMessage("alert-danger", "Server Timeout");
+                        displayStatusMessage("severityError", "Server Timeout");
                         alert("Sorry. Server timeout. \n This webside is down.     ");
                     }
                     else {
-                        displayStatusMessage("alert-danger", "status: " + textstatus + "   text: [" + textstatus + "]   error: " + message);
+                        displayStatusMessage("severityError", "status: " + textstatus + "   text: [" + textstatus + "]   error: " + message);
                         alert("getArticleList ERROR: [" + xmlhttprequest.status + "]  textstatus: [" + xmlhttprequest.textstatus + "]   message: " + message);
                     }
                 }
             });
         } catch (e) {
-            displayStatusMessage("alert-danger", "tERROR" + catchErrorDetails(e));
-            alert("getArticleList catch: " + catchErrorDetails(e));
+            displayStatusMessage("severityError", "tERROR" + e);
+            alert("getArticleList catch: " + e);
         }
     }
 
@@ -137,14 +137,14 @@
                             <div id='divByline'>By: <a href=/Article/ArticleList?filterType=Byline&filter=`+ article.Byline + `>` + article.Byline + `</a></div>
                             @if (User.IsInRole("Article Editor"))
                             {
-                                @:<div id='divArticleEdit'><a href=/Article/ArticleEdit?Id=` + article.Id + `'>edit</a></div>
+                                @:<div id='divArticleEdit'><a href=/Article/ArticleEdit?Id=` + article.Id + `>edit</a></div>
                             }
                         </div>
                     </div>
                 </div>`);
             articleCount++;
         } catch (e) {
-            alert("formatArticleJog error: " + catchErrorDetails(e));
+            alert("formatArticleJog error: " + e);
         }
     }
 </script>

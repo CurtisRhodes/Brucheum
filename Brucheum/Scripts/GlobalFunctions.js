@@ -4,7 +4,7 @@
 	$('#divStatusMessage').html(message);
 	$('#divStatusMessage').show();
 
-	if (severity === "alert-success") {
+    if (severity === "severityOk") {
 		setTimeout(function () { $('#divStatusMessage').hide("slow"); }, 2500);
 	}
 	else {
@@ -25,6 +25,8 @@ function PublicAlert(message) {
 }
 
 function beautify(stankyString) {
+    if (stankyString === undefined)
+        return stankyString;
 	return stankyString.replace(/&lt;/g, "<")
 		.replace(/&gt;/g, ">")
 		.replace(/&quot;/g, "\"")
@@ -43,18 +45,6 @@ function formatDate(date) {
     //var strTime = hours + ':' + minutes + ' ' + ampm;
     return date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear(); // + "  " + strTime;
 }
-
-function catchErrorDetails(ex)
-{
-    var msg = "ERROR: " + ex.Message;
-    while (ex.InnerException !== null) {
-        ex = ex.InnerException;
-        msg = ex.Message;
-    }
-    alert("g: " + msg);
-    return msg;
-}
-
 
 function getXHRErrorDetails(jqXHR, exception) {
     var msg = '';

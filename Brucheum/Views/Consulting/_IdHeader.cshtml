@@ -92,7 +92,7 @@
                 }
             });
         } catch (e) {
-            alert("tabProfile catch: "  + catchErrorDetails(e));
+            alert("tabProfile catch: "  + e);
         }
     });
 
@@ -108,7 +108,7 @@
                     alert("LogOUT: " + success);
             },
             error: function (xhr) {
-                displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                displayStatusMessage("severityError", "error: " + xhr.statusText);
                 alert("tabLogout error: " + xhr.statusText);
             }
         });

@@ -4,10 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Mail;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace Brucheum
 {
@@ -47,7 +44,7 @@ namespace Brucheum
             return success;
         }
 
-        public static void PageHit(string page, string details)
+        public static async Task<string> PageHit(string page, string details)
         {
             string ipAddress = GetIPAddress();
             //if (ipAddress != "68.203.92.166")
@@ -60,7 +57,8 @@ namespace Brucheum
                         {
                             //AddPageHit(string ipAddress, string app, string page, string details)
                             string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
-                            HttpResponseMessage response = client.GetAsync(apiService + "/api/HitCounter/AddPageHit?ipAddress=" + ipAddress + "&app=Brucheum&page=" + page + "&details=" + details).Result;
+                            HttpResponseMessage response = await client.GetAsync(apiService +
+                                "/api/HitCounter/AddPageHit?ipAddress=" + ipAddress + "&app=Brucheum&page=" + page + "&details=" + details);
                             string success = response.Content.ReadAsStringAsync().Result;
                         }
                         catch (Exception ex)
@@ -71,6 +69,7 @@ namespace Brucheum
                     }
                 }
             }
+            return "Whatever";
         }
 
         private static bool IsBeingLogged(string page)
@@ -79,6 +78,9 @@ namespace Brucheum
             switch (page)
             {
                 case "/":
+                case "/Admin":
+                case "/Admin/GetUsers":
+                case "/Admin/GetAllRoles":
                     allow = false;
                     break;
                 case "/Book/MyBooks":

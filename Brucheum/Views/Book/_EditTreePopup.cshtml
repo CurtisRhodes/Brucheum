@@ -110,17 +110,17 @@
                         });
 
                     } catch (e) {
-                        alert("getEditTable catch: " + catchErrorDetails(e));
+                        alert("getEditTable catch: " + e);
                     }
                 },
                 error: function (xhr) {
-                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    displayStatusMessage("severityError", "error: " + xhr.statusText);
                     alert("load edit table PUT error: " + xhr.statusText);
                 }
             });
         }
         catch (e) {
-            alert("nice try: " + catchErrorDetails(e));
+            alert("nice try: " + e);
         }
     }
 

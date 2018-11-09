@@ -100,12 +100,12 @@
                     }
                 },
                 error: function (xhr) {
-                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    displayStatusMessage("severityError", "error: " + xhr.statusText);
                     alert("ajax error: " + xhr.statusText);
                 }
             });
         } catch (e) {
-            displayStatusMessage("alert-danger", "ERROR"  + catchErrorDetails(e));
+            displayStatusMessage("severityError", "ERROR"  + e);
             alert("ajax catch error: " + xhr.statusText);
         }
     }
@@ -125,14 +125,14 @@
                     }
                 },
                 error: function (xhr) {
-                    //displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    //displayStatusMessage("severityError", "error: " + xhr.statusText);
                     alert("get error: " + xhr.statusText);
                     Console.Write("Update Profile error: " + xhr.statusText);
                 }
             });
         } catch (e) {
-            //displayStatusMessage("alert-danger", "ERROR"  + catchErrorDetails(e));
-            alert("catch error: " + catchErrorDetails(e));
+            //displayStatusMessage("severityError", "ERROR"  + e);
+            alert("catch error: " + e);
         }
     }
 </script>

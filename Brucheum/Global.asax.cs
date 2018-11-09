@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -12,31 +14,39 @@ namespace Brucheum
     {
         protected void Application_Start()
         {
-            AreaRegistration.RegisterAllAreas();
-            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);
-            BundleConfig.RegisterBundles(BundleTable.Bundles);
-        }
-        protected void Application_BeginRequest() //– fired when a request for the web application comes in.
-        {
-            Helpers.PageHit(Request.CurrentExecutionFilePath, Request.QueryString.ToString());
+
+            RouteTable.Routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+            RouteTable.Routes.MapRoute(
+                name: "Default",
+                url: "{controller}/{action}/{id}",
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+            );
+
         }
 
-        protected void Session_Start()
+        protected async Task<JsonResult> Application_BeginRequest() //– fired when a request for the web application comes in.
         {
-            Helpers.SessionStart();
+            await Helpers.PageHit(Request.CurrentExecutionFilePath, Request.QueryString.ToString());
+            return null;
         }
 
-        //protected void Application_Error()
-        //{
-        //    var msg = Helpers.ErrorDetails(Server.GetLastError());
-        //    var st = Server.GetLastError().StackTrace.Replace("\r\n", "<br/>");
-        //    Response.Redirect("~/Error/AppError?msg=" + msg + "&st=" + st, false);
-        //    //if (HttpContext.Current.Session != null)
-        //    //{
-        //    //    //Session.Add("LastError", Server.GetLastError());
-        //    //    Response.Redirect("~/Error/Index?ex="+ Server.GetLastError(), false);
-        //    //}
-        //}
+        protected async Task<JsonResult> Session_Start()
+        {
+            await Helpers.SessionStart();
+            return null;
+        }
+
+        protected void Application_Error()
+        {
+            var msg = Helpers.ErrorDetails(Server.GetLastError());
+            var st = Server.GetLastError().StackTrace.Replace("\r\n", "<br/>");
+            Response.Redirect("~/Error/Index?msg=" + msg + "&st=" + st, false);
+            //if (HttpContext.Current.Session != null)
+            //{
+            //    //Session.Add("LastError", Server.GetLastError());
+            //    Response.Redirect("~/Error/Index?ex="+ Server.GetLastError(), false);
+            //}
+        }
     }
 }

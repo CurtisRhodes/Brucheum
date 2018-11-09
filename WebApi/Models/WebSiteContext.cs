@@ -96,10 +96,11 @@ namespace WebApi
         [StringLength(500)]
         public string CommentTitle { get; set; }
 
-        [Column(TypeName = "ntext")]
         public string CommentText { get; set; }
 
         public DateTime CreateDate { get; set; }
+
+        public string UserName { get; set; }
 
         public int CommentId { get; set; }
 

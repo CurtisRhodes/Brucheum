@@ -2,7 +2,7 @@
 <div class="adminOptionTitle">Article Classifications</div>
 <div>
     <label>Category:</label>
-    <input class="roundedInput" id="txtArticleClassDescription" />
+    <input class="adminInput" id="txtArticleClassDescription" />
     <div class="roundendButton" id="btnAddEditArticleClass">Add</div>
     <div class="roundendButton" id="btnArticleClassToggle">New</div>
 </div>
@@ -10,6 +10,7 @@
 <div class="itemsList" id="divArticleClassList"></div>
 
 <script>
+    var objClassification = new Object();
 
     $('#btnAddEditArticleClass').click(function () {
         if ($(this).text() === "Add")
@@ -47,12 +48,12 @@
                     $('#ArticleClassLoading').hide();
                 },
                 error: function (xhr) {
-                    //displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    //displayStatusMessage("severityError", "error: " + xhr.statusText);
                     alert("GetArticleClasses error: " + xhr.statusText);
                 }
             });
         } catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " +catchErrorDetails(e));
+            displayStatusMessage("severityError", "catch ERROR: " +e);
         }
     }
 
@@ -69,20 +70,20 @@
                     if (result.Success === "ok") {
                         $('#txtDescription').val("");
                         $('#btnAddEditArticleClass').text("Add");
-                        displayStatusMessage("alert-success", "Saved");
+                        displayStatusMessage("severityOk", "Saved");
                         GetArticleClasses();
                     }
                     else
-                        displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
+                        displayStatusMessage("severityError", "xhr ERROR: " + result.Success);
                 },
                 error: function (xhr) {
-                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    displayStatusMessage("severityError", "error: " + xhr.statusText);
                     alert("Admin Refs Post error: " + xhr.statusText);
                 }
             });
         }
         catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " +catchErrorDetails(e));
+            displayStatusMessage("severityError", "catch ERROR: " +e);
         }
     }
 
@@ -96,20 +97,20 @@
                 data: objClassification,
                 success: function (success) {
                     if (success === "ok") {
-                        displayStatusMessage("alert-success", "Saved");
+                        displayStatusMessage("severityOk", "Saved");
                         GetArticleClasses();
                     }
                     else
-                        displayStatusMessage("alert-danger", "server ERROR: " + success);
+                        displayStatusMessage("severityError", "server ERROR: " + success);
                 },
                 error: function (xhr) {
-                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    displayStatusMessage("severityError", "error: " + xhr.statusText);
                     alert("Admin Refs PUT error: " + xhr.statusText);
                 }
             });
         }
         catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " +catchErrorDetails(e));
+            displayStatusMessage("severityError", "catch ERROR: " +e);
         }
     }
 

@@ -11,7 +11,7 @@ using WebApi.Models;
 namespace WebApi
 {
     [EnableCors("*", "*", "*")]
-    public class UserController : ApiController
+    public class xUserController : ApiController
     {
 
         [HttpGet]
@@ -194,7 +194,7 @@ namespace WebApi
     //}
 
     [EnableCors("*", "*", "*")]
-    public class RoleController : ApiController
+    public class xRoleController : ApiController
     {
         //select id from asp.AspNetRoles where Name = 'Admin'
         [HttpGet]
@@ -276,7 +276,7 @@ namespace WebApi
     }
 
     [EnableCors("*", "*", "*")]
-    public class UserRoleController : ApiController
+    public class xUserRoleController : ApiController
     {
         [HttpPost]
         public string AddUserRole(AspNetUserRole userRole)

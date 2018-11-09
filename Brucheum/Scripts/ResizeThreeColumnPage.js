@@ -23,9 +23,6 @@ function resizePage() {
     var winH = $(window).height();
     var mcH = $('#middleColumn').height();
     var hdrH = $('.Header').height();
-    var tcH = $('.threeColumnArray').height();
-
-    $('#footerMessage').html("");
 
     if (mcH + hdrH  < winH) {
         $('#middleColumn').height(winH - hdrH);

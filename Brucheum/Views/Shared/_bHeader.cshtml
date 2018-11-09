@@ -1,4 +1,5 @@
-﻿<link href="~/Styles/bHeader.css" rel="stylesheet" />
+﻿@using Microsoft.AspNet.Identity
+<link href="~/Styles/bHeader.css" rel="stylesheet" />
 <div id="bheader" class="Header">
     <div class="floatLeft">
         <a href="~/Home/Index"><img src="~/images/house.gif" class="bannerImage" /></a>
@@ -23,7 +24,6 @@
         <div class="loginTab">
             @*@if ((Session["UserName"] != null) && (!String.IsNullOrEmpty(@Session["UserName"].ToString())))*@
 
-            @using Microsoft.AspNet.Identity
             @if (Request.IsAuthenticated)
             {
                 <div class="menuTab" id="tabProfile" title="modify profile">
@@ -103,7 +103,7 @@
                 }
             });
         } catch (e) {
-            alert("tabProfile catch: " + catchErrorDetails(e));
+            alert("tabProfile catch: " + e);
         }
     });
 
@@ -119,7 +119,7 @@
                     alert("LogOUT: " + success);
             },
             error: function (xhr) {
-                displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                displayStatusMessage("severityError", "error: " + xhr.statusText);
                 alert("tabLogout error: " + xhr.statusText);
             }
         });

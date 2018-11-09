@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 
 namespace Brucheum
 {
@@ -30,6 +31,7 @@ namespace Brucheum
             ArticleModel article = new ArticleModel();
             if (Id != null)
             {
+                article.Id = Id;
                 var client = new HttpClient();
                 client.BaseAddress = new Uri(apiService);
                 using (var response = client.GetAsync("api/Article?Id=" + Id).Result)
@@ -62,11 +64,9 @@ namespace Brucheum
                 }
             }
             ViewBag.Service = apiService;
-            ViewBag.UserId = Session["UserId"];
-            ViewBag.UserName = Session["UserName"];
-            ViewBag.FilePath = System.Web.HttpContext.Current.Server.MapPath("~/Static_Pages");
-
-
+            ViewBag.UserId = User.Identity.GetUserId();  //   Session["UserId"];
+            ViewBag.UserName = User.Identity.GetUserName();  //    Session["UserName"];
+            //ViewBag.FilePath = System.Web.HttpContext.Current.Server.MapPath("~/Static_Pages");
 
             return View(article);
         }
@@ -82,30 +82,60 @@ namespace Brucheum
         public ActionResult ArticleEdit(string Id)
         {
             ViewBag.Service = apiService;
-            ViewBag.Id = Id;
-            ViewBag.Categories = GetArticleCategories();
+            ViewBag.ArticleId = Id;
+            //ViewBag.Categories = GetArticleCategories();
             return View();
         }
 
-        private Dictionary<string, string> GetArticleCategories()
+        //private JsonResult GetArticleCategories() //  Dictionary<string, string>
+        //{
+        //    var articleCategories = new Dictionary<string, string>();
+        //    HttpClient client = new HttpClient();
+        //    client.BaseAddress = new Uri(apiService);
+        //    //HttpContent content = new StringContent(ToString());
+
+
+        //    using (var response = client.GetAsync("api/ref?refType=CAT").Result)
+        //    {
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            string scat = response.Content.ReadAsStringAsync().Result;
+        //            scat = scat.Replace("[", "").Replace("]", "").Replace('"', ' ');  // I don't like this
+        //            foreach (string cat in cats)
+        //            {
+        //                articleCategories.Add(cat[0], cat[1]);
+        //            }
+        //        }
+        //    }
+        //    return articleCategories;
+        //}
+
+        public class HtmlModel {
+            public string html { get; set; }
+        }
+
+        [HttpPost]
+        public JsonResult CreateStaticFile(HtmlModel model)
         {
-            var articleCategories = new Dictionary<string, string>();
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(apiService);
-            using (var response = client.GetAsync("api/Category").Result)
+            string success = "";
+            try
             {
-                if (response.IsSuccessStatusCode)
+                string filePath = Server.MapPath("~/Static_Pages");
+                string html = model.html;
+                //string html = Request.     .RequestContext.HttpContext.CurrentHandler.   .Content.ReadAsStringAsync().Result;
+                string fileName = html.Substring(html.IndexOf("divTitle") + 10, 500);
+                fileName = filePath + "/" + fileName.Substring(0, fileName.IndexOf("</div>")).Replace(" ", "_") + ".html";
+
+                using (var staticFile = System.IO.File.Open(fileName, FileMode.OpenOrCreate))
                 {
-                    string scat = response.Content.ReadAsStringAsync().Result;
-                    scat = scat.Replace("[", "").Replace("]", "").Replace('"', ' ');  // I don't like this
-                    string[] cats = scat.Split(',');
-                    foreach (string cat in cats)
-                    {
-                        articleCategories.Add(cat, cat);
-                    }
+                    Byte[] byteArray = Encoding.ASCII.GetBytes(html);
+                    staticFile.Write(byteArray, 0, byteArray.Length);
                 }
+                //File.WriteAllBytes(fileName, byteArray);                
+                success = "ok";
             }
-            return articleCategories;
+            catch (Exception e) { success = Helpers.ErrorDetails(e); }
+            return Json(success, JsonRequestBehavior.AllowGet);
         }
     }
 }

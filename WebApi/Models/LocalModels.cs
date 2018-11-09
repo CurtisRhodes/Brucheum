@@ -62,11 +62,14 @@ namespace WebApi.Models
     // to join with user to get user Name
     public class CommentsModel
     {
-        public string UserName { get; set; }
-        public DateTime CreateDate { get; set; }
         public string CommentTitle { get; set; }
         public string CommentText { get; set; }
-        public string Success { get; set; }
+        public int CommentId { get; set; }
+        public string UserId { get; set; }
+        public string UserName { get; set; }
+        public string ArticleId { get; set; }
+        public string success { get; set; }
+        public string CreateDate { get; set; }
     };
 
 }

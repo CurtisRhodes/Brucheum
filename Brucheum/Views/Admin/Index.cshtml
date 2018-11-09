@@ -1,53 +1,38 @@
 ﻿@{
     ViewBag.Title = "Admin";
 }
-
-<link href="~/Styles/VertMenu.css" rel="stylesheet" />
+<link href="~/Styles/admin.css" rel="stylesheet" />
 <style>
-    #leftColumn {
-        border-right: solid 1px orange;
-    }
-    #divStatusMessage {
-    margin-top: 22px;
-    height:22px;
-    margin-left: 13px;
-    }
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn">
         <div class="vertMenu">
-            <div class="vertMenuTab" id="optArticleClass"> Article Classifications</div>
-            <div class="vertMenuTab" id="optAuthorAvatars">Author Avatars</div>
-            <div class="vertMenuTab" id="optRefEditor">Ref Editor</div>
             <div class="vertMenuTab" id="optAddRoles">Add Roles</div>
             <div class="vertMenuTab" id="optAssignRoles">Assign Roles</div>
+            <div class="vertMenuTab" id="optRefEditor">Ref Editor</div>
+            <div class="vertMenuTab" id="optArticleClass"> Article Classifications</div>
+            <div class="vertMenuTab" id="optShowSiteStats">Show Site Stats</div>
         </div>
     </div>
     <div id="middleColumn">
         <div id="divStatusMessage"></div>
-        <div id="adminOptionContainer">
-
-            <div id="tabArticleClass" class="adminOption">
-                @Html.Partial("_ManageClassifications")
-            </div>
-
-            <div id="tabAuthorAvatar" class="adminOption">
-                <div class="adminOptionTitle">Author Avatars</div>
-            </div>
-
-            <div id="tabRefEditor" class="adminOption">
-                <div class="adminOptionTitle">Ref Editor</div>
-            </div>
-
+        <div class="adminOptionContainer">
             <div id="tabAddRoles" class="adminOption">
                 @Html.Partial("_ManageRoles")
             </div>
-
             <div id="tabAssignRoles" class="adminOption">
                 @Html.Partial("_ManageUserRoles")
             </div>
-
+            <div id="tabRefEditor" class="adminOption">
+                @Html.Partial("_ManageRefs")
+            </div>
+            <div id="tabArticleClass" class="adminOption">
+                @Html.Partial("_ManageClassifications")
+            </div>
+            <div id="tabShowSiteStats" class="adminOption">
+                <div class="adminOptionTitle">Site Stats</div>
+            </div>
         </div>
     </div>
     <div id="rightColumn"></div>
@@ -55,8 +40,6 @@
 
 <script>
     var service = '@ViewBag.Service';
-    var objClassification = new Object();
-    var objRole = new Object();
 
     $(document).ready(function () {
         $('.vertMenuTab').mouseout(function () {
@@ -67,6 +50,15 @@
         });
     });
 
+    // Roles
+    $("#optAddRoles").click(function () {
+        $('.adminOption').hide();
+        $('#tabAddRoles').show();
+        $('#btnRoleToggle').hide();
+        if ($('#divRoleList').html() === "")
+            getRoles();
+    })
+
     // article Classifications
     $("#optArticleClass").click(function () {
         $('.adminOption').hide();
@@ -76,25 +68,18 @@
             GetArticleClasses();
     })
 
-    // Roles
-    $("#optAddRoles").click(function () {
-        $('.adminOption').hide();
-        $('#tabAddRoles').show();
-        $('#btnRoleToggle').hide();
-        if ($('#divRoleList').html() === "")
-            getRoles();
-    })
        
     // author Avatars
-    $("#optAuthorAvatars").click(function () {
+    $("#optShowSiteStats").click(function () {
         $('.adminOption').hide();
-        $('#tabAuthorAvatar').show();
+        $('#tabShowSiteStats').show();
     })
 
     // my famous Ref Editor
     $("#optRefEditor").click(function () {
         $('.adminOption').hide();
         $('#tabRefEditor').show();
+        setRefsInititalState()
     })
 
     // person / role grid

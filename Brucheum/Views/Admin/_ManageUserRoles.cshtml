@@ -1,91 +1,12 @@
-﻿<style>
-    .selectedUerContainer {
-        display: flex;
-    }
-
-    .ddSelect {
-        float: left;
-        height: 28px;
-        margin-left: 6px;
-        padding: 3px 6px;
-        color: #555;
-        background-color: #ddd;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-
-    .ddOption {
-        padding: 4px 3px;
-        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-        font-size: 17px;
-    }
-
-    .divOpitonSelected {
-        float: left;
-        height: 21px;
-        margin-left: 6px;
-        padding: 3px 6px;
-        color: #555;
-        background-color: #ddd;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        width: 200px;
-    }
-
-    .chooseBoxContainer {
-        margin-top: 4px;
-        border: solid 4px Purple;
-        display: flex;
-    }
-
-    .chooseBox {
-        float: left;
-        height: 222px;
-        margin: 0;
-    }
-
-    #divChooseAvailable, #divChooseSelected {
-        width: 80%
-    }
-
-    #divChooseButtons {
-        background-color: white;
-        text-align: center;
-        padding-top: 10px;
-    }
-
-    .chooseBtn {
-        height: 24px;
-        margin-top: 12px;
-        cursor: pointer;
-    }
-
-    .listBoxItem {
-        color: black;
-        background-color: #888;
-        font-size: 16px;
-        margin-left: 8px;
-        padding: 4px;
-        margin-top: 2px;
-        cursor: pointer;
-        width: 90%
-    }
-
-    .highlightItem {
-        color: red;
-        background-color: aqua;
-    }
-</style>
-
-
+﻿
 <div class="adminOptionTitle">Assign Roles</div>
 <div class="selectedUerContainer">
     <div><select id="ddUsers" class="ddSelect"></select></div>
-    <div id="divSelectedUser" class="inline divOpitonSelected"></div>
+    <div id="divSelectedUser" class="inline adminInput"></div>
 </div>
 <div id="divRolesChoose" class="chooseBoxContainer">
     <div id="divChooseAvailable" class="chooseBox"></div>
-    <div id="divChooseButtons" class="chooseBox">
+    <div id="divChooseButtons" class="chooseBtnsContainer">
         <div><img id="imgAdd" class="chooseBtn" src="~/Images/Consulting/sglright.jpg" /></div>
         <div><img id="imgAddAll" class="chooseBtn" src="~/Images/Consulting/dblright.jpg" /></div>
         <div><img id="imgRemove" class="chooseBtn" src="~/Images/Consulting/sglleft.jpg" /></div>
@@ -170,8 +91,8 @@
                 },
             });
         } catch (e) {
-            //displayStatusMessage("alert-danger", "catch ERROR: " +catchErrorDetails(e));
-            alert("catch: " + catchErrorDetails(e));
+            //displayStatusMessage("severityError", "catch ERROR: " +e);
+            alert("catch: " + e);
         }
     }
     
@@ -208,8 +129,8 @@
                 },
             });
         } catch (e) {
-            //displayStatusMessage("alert-danger", "catch ERROR: " +catchErrorDetails(e));
-            alert("catch: " + catchErrorDetails(e));
+            //displayStatusMessage("severityError", "catch ERROR: " +e);
+            alert("catch: " + e);
         }
     }
 
@@ -242,8 +163,8 @@
                 },
             });
         } catch (e) {
-            //displayStatusMessage("alert-danger", "catch ERROR: " +catchErrorDetails(e));
-            alert("catch: " + catchErrorDetails(e));
+            //displayStatusMessage("severityError", "catch ERROR: " +e);
+            alert("catch: " + e);
         }
     }
 
@@ -255,22 +176,22 @@
                 dataType: "Json",
                 success: function (success) {
                     if (success.toUpperCase() == "OK") {
-                        displayStatusMessage("alert-success", "Role [" + roleName + "] added");
+                        displayStatusMessage("severityOk", "Role [" + roleName + "] added");
                     }
                     else {
-                        displayStatusMessage("alert-danger", "ERROR: " + success);
+                        displayStatusMessage("severityError", "ERROR: " + success);
                         alert("addUserRole success not ok: " + success);
                     }
                 },
                 error: function (xhr) {
-                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    displayStatusMessage("severityError", "error: " + xhr.statusText);
                     alert("addUserRole xhr error: " + xhr.statusText);
                 }
             });
         }
         catch (e) {
-            //displayStatusMessage("alert-danger", "catch ERROR: " + catchErrorDetails(e));
-            alert("addUserRole error: " + catchErrorDetails(e));
+            //displayStatusMessage("severityError", "catch ERROR: " + e);
+            alert("addUserRole error: " + e);
         }
     }
 
@@ -283,19 +204,19 @@
                 //data: objClassification,
                 success: function (success) {
                     if (success.toUpperCase() == "OK") {
-                        displayStatusMessage("alert-success", "Role [" + roleName + "] Removed");
+                        displayStatusMessage("severityOk", "Role [" + roleName + "] Removed");
                     }
                     else
-                        displayStatusMessage("alert-danger", "ERROR: " + success);
+                        displayStatusMessage("severityError", "ERROR: " + success);
                 },
                 error: function (xhr) {
-                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    displayStatusMessage("severityError", "error: " + xhr.statusText);
                     alert("remove error: " + xhr.statusText);
                 }
             });
         }
         catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " + catchErrorDetails(e));
+            displayStatusMessage("severityError", "catch ERROR: " + e);
         }
     }
 </script>

@@ -1,18 +1,20 @@
-﻿<style>
+﻿@using Microsoft.AspNet.Identity
+
+<style>
     #divCommentsBody {
         border: 2px solid #000;
-        padding: 4px;
+        background-color: #fff;
         margin-bottom: 6px;
+        font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif;
     }
 
     #divKnownUser {
-        display: none;
         border: solid thin #ebe9e9;
         padding: 6px;
+        background-color: #b5d2e4;
     }
 
     #divLoginWarning {
-        display: none;
         border: solid thin red;
         padding: 6px;
         text-align: center;
@@ -24,7 +26,7 @@
         }
 
     #commentEntry {
-        border: solid thin #5c5151;
+        /*border: solid thin #5c5151;*/
         margin: 4px;
         width: 100%;
     }
@@ -37,170 +39,243 @@
         margin-bottom: 6px;
     }
 
-    .crud {
-        font-size: 18px;
+    #btnCancel {
+        margin-top: 33px;
+        margin-left: 14px;
+        height: 30px;
     }
 
-        .crud input {
-            display: inline-block;
-            width: 80%;
-            margin: 4px;
+    .commentTitleRow {
+        font-size: 18px;
+    }
+    .commentWelcomeRow {
+        font-size: 18px;
+        width: 100%;
+        padding-left: 33px;
+    }
+
+    input {
+        display: inline-block;
+        width: 88%;
+        background-color: #ebe9e9;
+        margin: 4px 1px;
+    }
+
+
+    .commentHistoryItem {
+        display: flex;
+        background-color: #ebe9e9;
+        width: 95%;
+    }
+        .commentHistoryItem div {
+            float: left;
+            padding: 4px;
+            border-bottom:dotted 1px #5c5151;
         }
 
-    #commentHistory {
+    #commentHistoryDate {
+        width: 101px;
+    }
+
+    #commentHistoryUserName {
+        width: 100px;
+        color: #732b92;
+    }
+    #commentHistoryUserTitle {
+        width: 200px;
+        overflow: hidden;
+    }
+    #commentHistoryUserText {
+        width: 78%;
+        background-color: #b8bf77;
+        overflow: hidden;
     }
 </style>
 
 <div id="divCommentsBody">
-    <div id="divLoginWarning">You must <span id="spRegister" class="clickable">Register</span> or <span id="spLogin" class="clickable">Login</span> to comment</div>
-    <div id="divKnownUser">hello</div>
+    @if (Request.IsAuthenticated)
+    {
+        <div id="divKnownUser" class="commentWelcomeRow" >hello @User.Identity.GetUserName()</div>
+    }
+    else
+    {
+        <div id="divLoginWarning" class="commentWelcomeRow"> You must <span id="spRegister" class="clickable">Register</span> or <span id="spLogin" class="clickable">Login</span> to comment</div>
+    }
+
     <div id="commentEntry">
-        <div class="crud">
-            <span>Title: </span><input class="roundedInput" id="txtTitle" /><img id="btnCancel" src="~/Images/powerOffRed01.png" height="30" />
+        <div class="commentTitleRow">
+            <span>Title: </span><input class="roundedInput" id="txtTitle" /><img id="btnCancel" src="~/Images/powerOffRed01.png" />
             <textarea id="textAreaComment"></textarea>
         </div>
         <div id="divButtons">
             <button id="btnSubmit" class="roundendButton">Submit</button>
+            <button id="btnNew" class="roundendButton">New</button>
         </div>
     </div>
-    <input id="hiddenId" type="hidden" />
-    <div id="commentHistory"></div>
+    <input id="hiddenCommentId" type="hidden" />
+    <div id="commentHistory">
+    </div>
 </div>
 
 <script>
-        var service = '@ViewBag.Service';
-        var articleId = '@ViewBag.ArticleId'
-        var userId = '@ViewBag.UserId'
-        $(function () {
-            alert("aloow");
-            if (userId === undefined)
-                $('#divLoginWarning').show();
-            else
-                $('#divKnownUser').show();
+    var comment = new Object();
+    $(document).ready(function () {
+        $('#btnNew').hide();
+    });
 
-            getComments();
-            resizePage();
-        });
-        $(document).ready(function () {
-            alert("ready");
-        });
-
-        function getComments() {
-            try {
-                //$('#divLoadingGif').show();
-                $.ajax({
-                    url: service + "/api/Comments/get/?articleId=" + articleId,
-                    type: "get",
-                    dataType: "Json",
-                    success: function (result) {
-                        $('#divLoadingGif').hide();
-                        $('#refList').html("");
-                        $.each(result, function (idx, comment) {
-
-                            $('#commentHistory').append("<div class='commnetItem'>" + comment.CommentText + "</div>");
-                        });
-                    },
-                    error: function (xhr) {
-                        displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                        alert("ajax error: " + xhr.statusText);
-                    }
-                });
-            } catch (e) {
-                alert("getComments: "  + catchErrorDetails(e));
-                displayStatusMessage("alert-danger", "catch ERROR: "  + catchErrorDetails(e));
+    $('#spLogin').click(function () {
+        $.ajax({
+            type: "get",
+            url: "/Login/LoginPopup",
+            datatype: "json",
+            success: function (data) {
+                $('#modalContent').html(data);
+                $('#modalContainer').show();
+            },
+            error: function (xhr) {
+                alert("RegisterPopup error: " + xhr.statusText);
             }
-        }
-
-        $('#spLogin').click(function () {
-            $.ajax({
-                type: "get",
-                url: "/Login/LoginPopup",
-                datatype: "json",
-                success: function (data) {
-                    $('#modalContent').html(data);
-                    $('#modalContainer').show();
-                },
-                error: function (xhr) {
-                    alert("RegisterPopup error: " + xhr.statusText);
-                }
-            });
         });
+    });
 
-        $('#spRegister').click(function () {
-            $.ajax({
-                type: "get",
-                url: "/Login/RegisterPopup",
-                datatype: "json",
-                success: function (data) {
-                    $('#modalContent').html(data);
-                    $('#modalContainer').show();
-                },
-                error: function (xhr) {
-                    alert("RegisterPopup error: " + xhr.statusText);
-                }
-            });
+    $('#spRegister').click(function () {
+        $.ajax({
+            type: "get",
+            url: "/Login/RegisterPopup",
+            datatype: "json",
+            success: function (data) {
+                $('#modalContent').html(data);
+                $('#modalContainer').show();
+            },
+            error: function (xhr) {
+                alert("RegisterPopup error: " + xhr.statusText);
+            }
         });
+    });
 
     $('#btnSubmit').click(function () {
-        try {
-            // bind
-            var comment = new Object();
-            comment.CommentTitle = $('#txtTitle').val();
-            comment.CommentText = $('#textAreaComment').val();
-            comment.CommentId = $('#hiddenId').val();
-            comment.UserId = userId;
-            comment.ArticleId = articleId;
-            alert(this.val());
-            var verb = "post";
-            if (this.val() === "Submit") {
-                $.ajax({
-                    url: service + "/api/Comments/Post",
-                    type: verb,
-                    dataType: "Json",
-                    data: comment,
-                    success: function (success) {
-                        if (!success.startsWith("ERROR")) {
-                            $('#hiddenId').val(success);
-                            $('#btnSubmit').val("Update");
-                        }
-                        else {
-                            displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
-                        }
-                        alert(success);
-                    },
-                    error: function (xhr) {
-                        displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                        alert("ajax error: " + xhr.statusText);
-                    }
-                });
-            }
-            else {
-                $.ajax({
-                    url: service + "/api/Comments/Put",
-                    type: verb,
-                    dataType: "Json",
-                    data: comment,
-                    success: function (success) {
-                        if (!success.startsWith("ERROR")) {
-                            $('#hiddenId').val(success);
-                            $('#btnSubmit').val("Update");
-                        }
-                        else {
-                            displayStatusMessage("alert-danger", "xhr ERROR: " + result.Success);
-                        }
-                        alert(success);
-                    },
-                    error: function (xhr, textStatus, error) {
-                        displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                        alert("ajax error: " + xhr.statusText);
-                    }
-                });
-            }
+        if ($('#btnSubmit').html() == "Submit") {
+            postComment();
         }
-        catch (e) {
-            alert("api/Comment/Post catch: "  + catchErrorDetails(e));
-            displayStatusMessage("alert-danger", "catch ERROR: "  + catchErrorDetails(e));
+        else {
+            updateComment()
         }
+    });
+
+    $('#btnNew').click(function () {
+        $('#btnNew').hide();
+        $('#btnSubmit').val("Update");
+    })
+
+    function unBind() {
+        comment.CommentTitle = $('#txtTitle').val();
+        comment.CommentText = $('#textAreaComment').val();
+        comment.UserName = userName;
+        comment.UserId = userId;
+        comment.ArticleId = articleId;
     }
+
+    function getComments() {
+        try {
+            //$('#divLoadingGif').show();
+            $.ajax({
+                url: service + "/api/Comments/get/?articleId=" + articleId,
+                type: "get",
+                dataType: "Json",
+                success: function (results) {
+                    $('#divLoadingGif').hide();
+                    $('#commentHistory').html("");
+                    $.each(results, function (idx, comment) {
+
+                        var commentItem = "<div id='" + comment.ArticleId + "' class='commentHistoryItem'>";
+                        commentItem += "<div id='commentHistoryDate'>" + comment.CreateDate + "</div>";
+                        commentItem += "<div id='commentHistoryUserName'>" + comment.UserName + "</div>";
+                        commentItem += "<div id='commentHistoryUserTitle'>" + comment.CommentTitle + "</div>";
+                        //alert("comment.CommentText.Length: " + comment.CommentText.length);
+                        if (comment.CommentText.length > 200)
+                            comment.CommentText = comment.CommentText.substring(0, 200) + "..."; 
+                        commentItem += "<div id='commentHistoryUserText'>" + comment.CommentText + "</div></div>";
+                        //alert("comment: " + commentItem);
+                        $('#commentHistory').append(commentItem); 
+                    });
+
+                    var hdr = $('.Header').height();
+                    var mch = $('#middleColumn').height()
+                    var ccH = $('#divCommentsBody').height();
+                    var tcH = $('.threeColumnArray').height();
+                    if (tcH < (hdr + mch + ccH)) {
+                        $('.threeColumnArray').height(tcH + ccH);
+                        $('#footerMessage').html("(CCH)");
+                    }
+                    resizePage();
+                },
+                error: function (jqXHR, exception) {
+                    alert("/api//get comments error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("getComments: " + e);
+            displayStatusMessage("severityError", "catch ERROR: " + e);
+        }
+    };
+
+    function postComment() {
+        unBind();
+        comment.CommentId = 0;
+        $.ajax({
+            url: service + "/api/Comments/",
+            type: "POST",
+            dataType: "Json",
+            data: comment,
+            success: function (response) {
+                if (response.success == "ok") {
+                    //alert("response.CommentId: " + response.CommentId)
+
+                    $('#hiddenCommentId').val(response.CommentId);
+                    $('#btnSubmit').html("Update");
+                    $('#btnNew').show();
+
+                    displayStatusMessage("severityOk", "comment posted");
+                    getComments();
+
+                }
+                else {
+                    alert("POST ajax return error: " + response.success);
+                    //displayStatusMessage("severityError", "xhr ERROR: " + Success);
+                }
+            },
+            error: function (xhr) {
+                //displayStatusMessage("severityError", "error: " + xhr.statusText);
+                alert("post error: " + xhr.statusText);
+            }
+        });
+    }
+
+    function updateComment() {
+        unBind();
+        comment.CommentId = $('#hiddenCommentId').val();
+
+        $.ajax({
+            url: service + "/api/Comments/Put",
+            type: "PUT",
+            dataType: "Json",
+            data: comment,
+            success: function (success) {
+                if (success == "ok") {
+                    displayStatusMessage("severityOk", "comment edited");
+                    //$('#btnSubmit').val("Update");
+                    getComments();
+                }
+                else {
+                    alert("PUT ajax return error: " + success);
+                    //displayStatusMessage("severityError", "xhr ERROR: " + success);
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                //displayStatusMessage("severityError", "error: " + xhr.statusText);
+                alert("PUT ajax error: " + xhr.statusText);
+            }
+        });
+    }
+
 </script>
-<script src="~/Scripts/ResizeThreeColumnPage.js"></script>

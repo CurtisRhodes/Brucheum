@@ -217,7 +217,7 @@
                 $('#modalContainer').show();
             },
             error: function (xhr, textStatus, error) {
-                displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                displayStatusMessage("severityError", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
                 alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
             }
         });
@@ -263,17 +263,17 @@
                         $("#divDefaultStyle").html(content);
 
                     } catch (e) {
-                        alert("catch: " + catchErrorDetails(e));
+                        alert("catch: " + e);
                     }
                 },
                 error: function (xhr) {
-                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    displayStatusMessage("severityError", "error: " + xhr.statusText);
                     alert("construct single document error: " + xhr.statusText);
                 }
             });
         }
         catch (e) {
-            alert("nice try: " + catchErrorDetails(e));
+            alert("nice try: " + e);
         }
     }
 
@@ -315,7 +315,7 @@
                             });
                         });
                     } catch (e) {
-                        alert("catch: " + catchErrorDetails(e));
+                        alert("catch: " + e);
                     }
 
 
@@ -356,13 +356,13 @@
 
                 },
                 error: function (xhr) {
-                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    displayStatusMessage("severityError", "error: " + xhr.statusText);
                     alert("Construct Chapters error: " + xhr.statusText);
                 }
             });
         }
         catch (e) {
-            alert("nice try: " + catchErrorDetails(e));
+            alert("nice try: " + e);
         }
     }
 

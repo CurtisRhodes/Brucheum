@@ -14,19 +14,25 @@ namespace WebApi
     public class RefController : ApiController
     {
         [HttpGet]
-        public IList<Ref> Get(string refType)
+        public JsonResult<List<RefModel>> Get(string refType)
         {
+            var refs = new List<RefModel>();
             try
             {
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    return db.Refs.Where(r => r.RefType == refType).OrderBy(r => r.RefDescription).ToList();
+                    IList<Ref> dbrefs = db.Refs.Where(r => r.RefType == refType).OrderBy(r => r.RefDescription).ToList();
+                    foreach (Ref r in dbrefs)
+                    {
+                        refs.Add(new RefModel() { RefCode = r.RefCode, RefDescription = r.RefDescription });
+                    }
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message, ex.InnerException);
+                refs.Add(new RefModel() { RefCode = "ERR", RefType = "ERR", RefDescription = Helpers.ErrorDetails(ex) });
             }
+            return Json(refs);
         }
 
         [HttpPost]
@@ -38,7 +44,7 @@ namespace WebApi
                 {
                     Ref @ref = new Ref();
                     @ref.RefType = refModel.RefType;
-                    @ref.RefCode = GetUniqueRefCode(refModel.RefDescription);
+                    @ref.RefCode = GetUniqueRefCode(refModel.RefDescription, db);
                     @ref.RefDescription = refModel.RefDescription;
 
                     db.Refs.Add(@ref);
@@ -55,9 +61,9 @@ namespace WebApi
         }
 
         [HttpPut]
-        public string Put(RefModel refModel)
+        public JsonResult<string> Put(RefModel refModel)
         {
-            string success = "ono";
+            string success = "";
             try
             {
                 using (WebSiteContext db = new WebSiteContext())
@@ -69,14 +75,31 @@ namespace WebApi
                 }
             }
             catch (Exception ex) { success = ex.Message; }
-            return success;
+            return Json(success);
         }
 
         /// helper apps
-        private string GetUniqueRefCode(string refDescription)
+        private string GetUniqueRefCode(string refDescription,WebSiteContext db)
         {
+            if (refDescription.Length < 3)
+                refDescription = refDescription.PadRight(3, 'A');
+
             var refCode = refDescription.Substring(0, 3).ToUpper();
-            ///todo: test for existing. go into newkey loop
+            Ref exists = new Ref();
+            while (exists != null)
+            {
+                exists = db.Refs.Where(r => r.RefCode == refCode).FirstOrDefault();
+                if (exists != null)
+                {
+                    char nextLastChar = refCode.Last();
+                    if (nextLastChar == ' ') { nextLastChar = 'A'; }
+                    if (nextLastChar == 'Z')
+                        nextLastChar = 'A';
+                    else
+                        nextLastChar = (char)(((int)nextLastChar) + 1);
+                    refCode = refCode.Substring(0, 2) + nextLastChar;
+                }
+            }
             return refCode;
         }
     }
@@ -85,77 +108,104 @@ namespace WebApi
     public class CommentsController : ApiController
     {
         // GET: api/Comments
-        public IQueryable<CommentsModel> Get(Guid articleId)
+        public IList<CommentsModel> Get(string articleId)
         {
-            IQueryable<CommentsModel> results = Enumerable.Empty<CommentsModel>().AsQueryable();
+            var results = new List<CommentsModel>();
             try
             {
-                //string ARTICLEID = articleId.ToString().ToUpper();
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    using (AspNetContext dbn = new AspNetContext())
+                    List<Comment> comments = db.Comments.Where(c => c.ArticleId == articleId).ToList();
+                    foreach (Comment c in comments)
                     {
-                        results = (from comments in db.Comments
-                                   join users in dbn.AspNetUsers on comments.UserId.ToString() equals users.Id
-                                   where comments.ArticleId.ToString() == articleId.ToString().ToUpper()
-                                   orderby comments.CreateDate ascending
-                                   select new CommentsModel
-                                   {
-                                       UserName = users.UserName,
-                                       CreateDate = comments.CreateDate,
-                                       CommentTitle = comments.CommentTitle,
-                                       CommentText = comments.CommentText
-                                   }).ToList().AsQueryable();
+                        results.Add(new CommentsModel()
+                        {
+                            UserName = c.UserName,
+                            UserId = c.UserId,
+                            CommentId = c.CommentId,
+                            CommentTitle = c.CommentTitle,
+                            CommentText = c.CommentText,
+                            CreateDate = c.CreateDate.ToShortDateString()
+                        });
                     }
+
+                    //results = (from comments in db.Comments
+                    //           join users in dbn.AspNetUsers on comments.UserId.ToString() equals users.Id
+                    //           where comments.ArticleId.ToString() == articleId.ToString().ToUpper()
+                    //           orderby comments.CreateDate ascending
+                    //           select new CommentsModel
+                    //           {
+                    //               UserName = users.UserName,
+                    //               UserId = users.Id,
+                    //               CreateDate = comments.CreateDate,
+                    //               CommentTitle = comments.CommentTitle,
+                    //               CommentText = comments.CommentText
+                    //           }).ToList().AsQueryable();
+
                 }
             }
             catch (Exception ex)
             {
-                results = results.Concat(new[] { new CommentsModel() { Success = ex.Message } });
+                results.Add(new CommentsModel() { CommentText = Helpers.ErrorDetails(ex) });
+                //results = results.Concat(new[] { new CommentsModel() { success = Helpers.ErrorDetails(ex) } });
             }
-            return results;
+            return results; //Json(results, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public string Post(Comment newComment)
+        public CommentsModel Post(CommentsModel newComment)
         {
-            string success = "ERROR: oh no";
             try
             {
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    newComment.CreateDate = DateTime.Now;
-                    db.Comments.Add(newComment);
+                    var comment = new Comment();
+                    comment.CreateDate = DateTime.Now;
+                    comment.ArticleId = newComment.ArticleId;
+                    comment.CommentText = newComment.CommentText;
+                    comment.CommentTitle = newComment.CommentTitle;
+                    comment.UserId = newComment.UserId;
+                    comment.UserName = newComment.UserName;
+                    db.Comments.Add(comment);
                     db.SaveChanges();
-                    success = newComment.CommentId.ToString();
+
+                    Helpers.SendEmail("Somebody Actually Made A comment " + comment.CommentTitle, comment.UserName + " said: " + comment.CommentText);
+                    newComment.CommentId = comment.CommentId;
+                    newComment.CreateDate = comment.CreateDate.ToShortDateString();
+                    newComment.success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                success = "ERROR: " + ex.Message;
+                newComment.success = "ERROR: " + Helpers.ErrorDetails(ex);
             }
-            return success;
+            return newComment;
         }
 
         [HttpPut]
         public string Put(Comment updateComment)
         {
-            string success = "oh no";
+            string success = "";
             try
             {
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    Comment comment = db.Comments.Where(c => c.CommentId == updateComment.CommentId).First();
-                    comment.CommentText = updateComment.CommentText;
-                    comment.CommentTitle = updateComment.CommentTitle;
+                    Comment comment = db.Comments.Where(c => c.CommentId == updateComment.CommentId).FirstOrDefault();
+                    if (comment != null)
+                    {
+                        comment.CommentText = updateComment.CommentText;
+                        comment.CommentTitle = updateComment.CommentTitle;
 
-                    db.SaveChanges();
-                    success = comment.CommentId.ToString();
+                        db.SaveChanges();
+                        success = "ok";
+                    }
+                    else
+                        success = "comment not found";
                 }
             }
             catch (Exception ex)
             {
-                success = "ERROR: " + ex.Message;
+                success = "ERROR: " + Helpers.ErrorDetails(ex);
             }
             return success;
         }

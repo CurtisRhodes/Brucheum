@@ -1,19 +1,17 @@
 ﻿<style>
-    label {
-    margin: 5px;
-    }
 </style>
 
 <div class="adminOptionTitle">Add Edit Roles</div>
 <div>
     <label>Role:</label>
-    <input class="roundedInput" id="txtRoleName" />
+    <input class="adminInput" id="txtRoleName" />
         <div class="roundendButton" id="btnAddUpdateRole">Add</div>
         <div class="roundendButton" id="btnRoleToggle">New</div>
 </div>
 <div class="itemsList" id="divRoleList"></div>
 
 <script>
+    var objRole = new Object();
 
     $('#btnAddUpdateRole').click(function () {
         if ($(this).text() === "Add")
@@ -30,6 +28,7 @@
 
     function getRoles() {
         try {
+           // alert("getRoles")
             // $('#divLoadingGif').show();
             //url: service+ "/api/Role",
             $.ajax({
@@ -37,6 +36,9 @@
                 dataType: "Json",
                 url: "/Admin/GetAllRoles",
                 success: function (result) {
+
+                    //alert("result: " + result);
+
                     result = result.split("|");
                     $('#divRoleList').html("<ul>");
                     $.each(result, function (idx, obj) {
@@ -57,8 +59,8 @@
                 },
             });
         } catch (e) {
-            //displayStatusMessage("alert-danger", "catch ERROR: " +catchErrorDetails(e));
-            alert("GetRoles catch: " +catchErrorDetails(e));
+            //displayStatusMessage("severityError", "catch ERROR: " +e);
+            alert("GetRoles catch: " +e);
         }
     }
 
@@ -75,24 +77,24 @@
                         $('#btnAddUpdateRole').text("Add");
                         $('#btnAddUpdateRole').text("Add");
 
-                        displayStatusMessage("alert-success", "Saved");
+                        displayStatusMessage("severityOk", "Saved");
                         getRoles();
                         $('#btnRoleToggle').hide();
 
                     }
                     else {
                         alert("success :" + success);
-                        //displayStatusMessage("alert-danger", "xhr ERROR: " + success);
+                        //displayStatusMessage("severityError", "xhr ERROR: " + success);
                     }
                 },
                 error: function (jqXHR, exception) {
-                    //displayStatusMessage("alert-danger", "AddRole error: " + getXHRErrorDetails(jqXHR, exception));
+                    //displayStatusMessage("severityError", "AddRole error: " + getXHRErrorDetails(jqXHR, exception));
                     alert("AddRole error: " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         }
         catch (e) {
-            alert("/Manage/AddRole catch: " +catchErrorDetails(e));
+            alert("/Manage/AddRole catch: " +e);
         }
     }
 
@@ -105,20 +107,20 @@
                 data: objRole,
                 success: function (success) {
                     if (success === "ok") {
-                        displayStatusMessage("alert-success", "Saved");
+                        displayStatusMessage("severityOk", "Saved");
                         getRoles();
                     }
                     else
-                        displayStatusMessage("alert-danger", "server ERROR: " + success);
+                        displayStatusMessage("severityError", "server ERROR: " + success);
                 },
                 error: function (xhr) {
-                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    displayStatusMessage("severityError", "error: " + xhr.statusText);
                     //alert("Admin Refs PUT error: " + xhr.statusText);
                 }
             });
         }
         catch (e) {
-            displayStatusMessage("alert-danger", "catch ERROR: " +catchErrorDetails(e));
+            displayStatusMessage("severityError", "catch ERROR: " +e);
         }
     }
 

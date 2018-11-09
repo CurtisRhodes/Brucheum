@@ -43,13 +43,13 @@
                 },
                 error: function (xhr) {
                     $('#loadingGif').hide();
-                    //displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    //displayStatusMessage("severityError", "error: " + xhr.statusText);
                     alert("Load Db error: " + xhr.responseText);
                 }
             });
         } catch (e) {
             $('#loadingGif').hide();
-            alert("Load Db catch: "  + catchErrorDetails(e));
+            alert("Load Db catch: "  + e);
         }
     })
     

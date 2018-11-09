@@ -129,6 +129,20 @@ namespace WebApi
             return Json(article);
         }
 
+        [HttpGet]
+        public JsonResult<ArticleModel> Get()
+        {
+            var article = new ArticleModel();
+            try
+            {
+            }
+            catch (Exception ex)
+            {
+                article.Title = "ERROR: " + ex.Message;
+            }
+            return Json(article);
+        }
+
         [HttpPost]
         public string Post(ArticleModel model)
         {
@@ -182,40 +196,44 @@ namespace WebApi
             {
                 XmlDocument xdoc = new XmlDocument();
                 xdoc.Load(fileName);
-                XmlNode xmlNode = null;
-                xmlNode = xdoc.SelectSingleNode("//Article[@Id='" + model.Id + "']");
-                xmlNode.Attributes["Title"].Value = model.Title;
-                xmlNode.Attributes["LastUpdated"].Value = DateTime.Now.ToString();
-                xmlNode.Attributes["Category"].Value = model.Category;
-                xmlNode.Attributes["ByLine"].Value = model.Byline;
-                xmlNode.Attributes["ImageName"].Value = model.ImageName;
-                xmlNode.Attributes["DateCreated"].Value = model.DateCreated;
-                xmlNode.ChildNodes[0].InnerText = model.Summary;
-                XmlCDataSection cdata = xdoc.CreateCDataSection(model.Contents);
-                xmlNode.ChildNodes[1].RemoveAll();
-                xmlNode.ChildNodes[1].AppendChild(cdata);
-
-                if (model.Tags != null)
+                XmlNode xmlNode = xdoc.SelectSingleNode("//Article[@Id='" + model.Id + "']");
+                if (xmlNode != null)
                 {
-                    if (xmlNode.ChildNodes.Count < 3)
-                    {
-                        XmlElement tags = xdoc.CreateElement("Tags");
-                        xmlNode.AppendChild(tags);
-                    }
+                    xmlNode.Attributes["Title"].Value = model.Title;
+                    xmlNode.Attributes["LastUpdated"].Value = DateTime.Now.ToString();
+                    xmlNode.Attributes["Category"].Value = model.Category;
+                    xmlNode.Attributes["ByLine"].Value = model.Byline;
+                    xmlNode.Attributes["ImageName"].Value = model.ImageName;
+                    xmlNode.Attributes["DateCreated"].Value = model.DateCreated;
+                    xmlNode.ChildNodes[0].InnerText = model.Summary;
+                    XmlCDataSection cdata = xdoc.CreateCDataSection(model.Contents);
+                    xmlNode.ChildNodes[1].RemoveAll();
+                    xmlNode.ChildNodes[1].AppendChild(cdata);
 
-                    xmlNode.ChildNodes[2].RemoveAll();
-                    foreach (string metTag in model.Tags)
+                    if (model.Tags != null)
                     {
-                        if (metTag != null)
+                        if (xmlNode.ChildNodes.Count < 3)
                         {
-                            XmlElement tag = xdoc.CreateElement("Tag");
-                            tag.InnerText = metTag;
-                            xmlNode.ChildNodes[2].AppendChild(tag);
+                            XmlElement tags = xdoc.CreateElement("Tags");
+                            xmlNode.AppendChild(tags);
+                        }
+
+                        xmlNode.ChildNodes[2].RemoveAll();
+                        foreach (string metTag in model.Tags)
+                        {
+                            if (metTag != null)
+                            {
+                                XmlElement tag = xdoc.CreateElement("Tag");
+                                tag.InnerText = metTag;
+                                xmlNode.ChildNodes[2].AppendChild(tag);
+                            }
                         }
                     }
+                    xdoc.Save(fileName);
+                    success = "ok";
                 }
-                xdoc.Save(fileName);
-                success = "ok";
+                else
+                    success = "article not found";
             }
             catch (Exception e)
             {

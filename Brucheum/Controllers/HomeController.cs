@@ -11,6 +11,7 @@ namespace Brucheum
         private string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
         public ActionResult Index()
         {
+            ViewBag.Service = apiService;
             return View();
             //return RedirectToRoutePermanent("Start");
         }
@@ -65,8 +66,9 @@ namespace Brucheum
                     errorMessage += "<br/>" + ex.InnerException.Message;
                     if (ex.InnerException.InnerException != null)
                         errorMessage += "<br/>" + ex.InnerException.InnerException.Message; ;
+
+                    stackTrace = ex.StackTrace.Replace("\r\n", "<br/>");
                 }
-                stackTrace = ex.StackTrace.Replace("\r\n", "<br/>");
             }
             ViewBag.StackTrace = stackTrace;
             ViewBag.ErrorMessage = errorMessage;

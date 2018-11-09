@@ -1,125 +1,157 @@
 ﻿
-    @model Brucheum.ArticleModel
-    @using System.Net.Http;
+@model Brucheum.ArticleModel
 
-    <script src="~/Scripts/ImageTools.js"></script>
-    <link href="~/Styles/article.css" rel="stylesheet" />
+<!-- Load Facebook SDK for JavaScript -->
+<div id="fb-root"></div>
+<script>
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+</script>
 
-    <div class="threeColumnArray">
-        <div id="leftColumn">
+<script src="~/Scripts/ImageTools.js"></script>
+<link href="~/Styles/article.css" rel="stylesheet" />
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+        @if (User.IsInRole("Article Editor"))
+        {
             <div id="shareToFacebook">
                 <button id="btnStaticify" class="roundendButton">staticify</button>
             </div>
-        </div>
-        <div id="middleColumn">
-            @if (Model.Id != null)
-            {
-                <div id="divStatusMessage"></div>
-                <div id="pollybox">
-                    <div id="divTopLine">
-                        @Model.DateCreated
-                        <div class="floatRightDiv">
-                            @Model.Category
-                        </div>
-                    </div>
-                    <div id="divTitle">@Model.Title</div>
+        }
+    </div>
+    <div id="middleColumn">
 
-                    <div id="divByline">
-                        by: @Model.Byline
+        @if (Model.Id != null)
+        {
+            <div id="divStatusMessage"></div>
+            <div id="pollybox">
+                <div id="divTopLine">
+                    @Model.DateCreated
+                    <div class="floatRightDiv">
+                        @Model.Category
+                    </div>
+                </div>
+                <div id="divTitle">@Model.Title</div>
+
+                <div id="divByline">
+                    by: @Model.Byline
+                    @if (User.IsInRole("Article Editor"))
+                    {
                         <div class="floatRightDivEdit">
                             <a href="ArticleEdit?Id=@Model.Id">edit</a>
                         </div>
-                    </div>
+                    }
                 </div>
-                <div id="divImage"><img id="articleImage" /></div>
-                <div id="divSummary">@Model.Summary</div>
-                <div id="divContent"></div>
-                <div id="divCommentsButton" class="roundendButton">comments</div>
-                <div id="divCommentsSection">
-                    @TempData["service"] = (string)@ViewBag.Service;
-                    @Html.Partial("_Comments")
-                </div>
-            }
-            else
-            {
-                <div style="padding:200px">No Artice Found</div>
-            }
-            <input id="hiddenId" type="hidden" />
-        </div>
-        <div id="rightColumn">
-            <div id="divTagList"></div>
-        </div>
+            </div>
+            <div id="divImage"><img id="articleImage" /></div>
+            <div id="divSummary">@Model.Summary</div>
+            <div id="divContent"></div>
+            <div id="divStatusMessage"></div>
+            <div id="divCommentsButton" class="roundendButton">comments</div>
+            <div id="divCommentsSection">
+                @Html.Partial("_CommentsSection");
+            </div>
+        }
+        else
+        {
+            <div style="padding:200px">No Artice Found</div>
+        }
+        <input id="hiddenId" type="hidden" />
     </div>
+    <div id="rightColumn">
+        <div id="divTagList"></div>
+    </div>
+</div>
 
-    <script>
-        var service = '@ViewBag.Service';
-        var tags = '@ViewBag.MetaTags';
-        var articleId = '@Model.Id'
-        var imageName = '@Model.ImageName';
-        var content = '@ViewBag.Contents';
-        var summary = '@ViewBag.Summary';
-        var title = '@Model.Title';
-        var userId = '@ViewBag.UserId';
-        var userName = '@ViewBag.UserName';
-        var filePath = '@ViewBag.FilePath';
+<script>
+    var service = '@ViewBag.Service';
+    var tags = '@ViewBag.MetaTags';
+    var articleId = '@Model.Id'
+    var imageName = '@Model.ImageName';
+    var content = '@ViewBag.Contents';
+    var summary = '@ViewBag.Summary';
+    var title = '@Model.Title';
+    var userId = '@ViewBag.UserId';
+    var userName = '@ViewBag.UserName';
+    var filePath = '@ViewBag.FilePath';
 
-        $(document).ready(function () {
-            try {
-                if (imageName !== "") {
-                    $('#articleImage').attr("src", service + "/App_Data/Images/" + imageName);
-                }
-                content = beautify(content);
-                $('#divContent').html(content);
-
-                //stickCommentsButton();
+    $(document).ready(function () {
+        try {
+            if (imageName !== "") {
+                $('#articleImage').attr("src", service + "/App_Data/Images/" + imageName);
             }
-            catch (e) {
-                alert("$(document).ready ERROR: " + catchErrorDetails(e));
-            }
-        });
+            content = beautify(content);
+            $('#divContent').html(content);
+            //stickCommentsButton();
 
-        function stickCommentsButton() {
-            var x = $('#divContent').position();
-            var contentBottom = $('#divContent').position().top + $('#divContent').height() + $('.Header').height();
-            var pageBottom = $('.threeColumnArray').height();
+            var hdr = $('.Header').height();
+            var mch = $('#middleColumn').height()
+            var cch = $('#divCommentsBody').height()
+            $('#middleColumn').height(hdr + mch + cch);
+            resizePage();
+        }
+        catch (e) {
+            alert("$(document).ready ERROR: " + e);
+        }
+    });
 
-            if (pageBottom < contentBottom) {
-                //alert("pageBottom: " + pageBottom + "  contentBottom: " + contentBottom);
-                $('#divCommentsButton').css("position", "absolute").css("bottom", 0);
-                $('#divCommentsButton').width($('#middleColumn').width());
-                $('#divCommentsSection').css("position", "absolute").css("top", $('#divCommentsButton').position().top + 50);
-                $('#divCommentsSection').width($('#middleColumn').width());
-            }
-            }
+    function stickCommentsButton() {
+        var x = $('#divContent').position();
+        var contentBottom = $('#divContent').position().top + $('#divContent').height() + $('.Header').height();
+        var pageBottom = $('.threeColumnArray').height();
+
+        if (pageBottom < contentBottom) {
+            //alert("pageBottom: " + pageBottom + "  contentBottom: " + contentBottom);
+            $('#divCommentsButton').css("position", "absolute").css("bottom", 0);
+            $('#divCommentsButton').width($('#middleColumn').width());
+            $('#divCommentsSection').css("position", "absolute").css("top", $('#divCommentsButton').position().top + 50);
+            $('#divCommentsSection').width($('#middleColumn').width());
+        }
+    }
 
         // Show Comments
-        $('#divCommentsButton').click(function () {
-            //$('#divCommentsSection').toggle();
-            if ($('#divCommentsSection').css("display") == "none") {
-                $('#divCommentsSection').show();
-            }
-            else {
-                $('#divCommentsSection').hide();
-            }
-        });
+    $('#divCommentsButton').click(function () {
+        //$('#divCommentsSection').toggle();
+        if ($('#divCommentsSection').css("display") == "none") {
+            $('#divCommentsSection').show();
 
-        $('#btnStaticify').click(function () { saveAsStaticFile(); })
-        function saveAsStaticFile() {
+            getComments();
+            var mch = $('#middleColumn').height()
+            var cch = $('#divCommentsBody').height()
+            $('#middleColumn').height(mch + cch);
+            resizePage();
+
+        }
+        else {
+            $('#divCommentsSection').hide();
+        }
+    });
+
+    $('#btnStaticify').click(function () {
+        saveAsStaticFile();
+    });
+
+    function saveAsStaticFile() {
             if (imageName === "") {
-                displayStatusMessage("alert-warning", "insuficent data. Image required");
+                displayStatusMessage("severityWarning", "insuficent data. Image required");
                 return;
             }
-
-
             $('head').append('<meta name="Title" content="' + title + '" property="og:title">');
-            $('head').append('<meta name="Description" content="' + beautify(summary.substr(0, 300)));  //'" property="og:description"><br/>'
-            $('head').append('<meta name="Keywords" content="' + beautify(tags.split(",").toString()) + '"><br/>');
-            $('head').append('<meta property="og:type" content="website"><br/>');
+            //$('head').append('<meta property="og:description" content="' + beautify(summary.substr(0, 300)) + '" />');
+            $('head').append('<meta name="Keywords" content="' + beautify(tags.split(",").toString()) + '>');
+            $('head').append('<meta property="og:type" content="website">');
 
-            //$('head').append("<meta property='og:image' content='http://curtisrhodes.com/home/get_image?w=" + imageName + "'>");
-            $('head').append("<meta property='og:image' content='data:image/gif;base64," + getImage(service, imageName) + "'>");
+            $('head').append("<meta property='og:image' content='https://api.curtisrhodes.com/app_data/images/" + imageName + "'>");
+            //$('head').append("<meta property='og:image' content='https://curtisrhodes.com/app_data/images/" + imageName + "'>");
+            //$('head').append("<meta property='og:image' content='data:image/gif;base64," + getImage(service, imageName) + "'>");
 
-            var pageName = service + "/static_pages/" + title.replace(/ /g, "_") + ".html";
+            var pageName = "https://Curtisrhodes.com/static_pages/" + title.replace(/ /g, "_") + ".html";
             $('head').append('<br/><meta property="og:url" content="' + pageName + '">');
 
             $('#shareToFacebook').html('<div class="fb-share-button" data-href="' + pageName + '" data-layout="button" data-size="large" data-mobile-iframe="false">' +
@@ -127,21 +159,18 @@
 
             //var html = $('html').html();
             var data = new Object();
-            data.html = $('html').html();
-            data.filePath = filePath;
+            data.html = "<!DOCTYPE html>" + $('html').html();
             try {
                 $.ajax({
                     type: "POST",
-                    url: service + "/api/StaticFiles/",
-                    processData: false,
-                    contentType: false,
-                    async: false,
-                    cache: false,
-                    data: data,
+                    url: "CreateStaticFile",
+
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
                     success: function (success) {
                         if (success === "ok") {
                             $('#btnStaticify').val("permalink");
-                            alert("wwww")
                             $('#shareToFacebook').html('<button id="btnPermalink" class="roundendButton">permalink</button>');
 
                             $('#btnPermalink').click(function () {
@@ -158,14 +187,15 @@
                 });
             }
             catch (e) {
-                alert("/api//File catch: " + catchErrorDetails(e));
+                //alert("/api//File catch: " + e);
+                alert("/api//File catch: " + e);
             }
-        }
+    };
 
-        $(window).unload(function () {
-            //$(this)
-            alert("page move");
-        });
+    $(window).unload(function () {
+        //$(this)
+        alert("page move");
+    });
 
     ///////////////////////////////////////////////////
 
@@ -178,4 +208,4 @@
     $('#btnSpinnerTest').dblclick(function () {
         $(this).html("Add");
     });
-    </script>
+</script>

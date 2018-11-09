@@ -41,15 +41,15 @@
                 dataType: "json",
                 data: blogEntry,
                 success: function () {
-                    displayStatusMessage("alert-success", "Saved");
+                    displayStatusMessage("severityOk", "Saved");
                 },
                 error: function (xhr) {
-                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    displayStatusMessage("severityError", "error: " + xhr.statusText);
                     alert("ajax error: " + xhr.statusText);
                 }
             });
         } catch (e) {
-            displayStatusMessage("alert-danger", "ERROR"  + catchErrorDetails(e));
+            displayStatusMessage("severityError", "ERROR"  + e);
         }
     }
 
@@ -66,16 +66,16 @@
                 data: JournalEntry,
                 success: function (result) {
                     $('#hiddenId').val(result);
-                    displayStatusMessage("alert-success", "Saved");
+                    displayStatusMessage("severityOk", "Saved");
                     $('#btnSave').text("Update");
                 },
                 error: function (xhr) {
-                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    displayStatusMessage("severityError", "error: " + xhr.statusText);
                     alert("ajax error: " + xhr.statusText);
                 }
              });
         } catch (e) {
-            displayStatusMessage("alert-danger", "ERROR"  + catchErrorDetails(e));
+            displayStatusMessage("severityError", "ERROR"  + e);
         }
     }
 
@@ -96,12 +96,12 @@
                      });
                 },
                 error: function (xhr) {
-                    displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                    displayStatusMessage("severityError", "error: " + xhr.statusText);
                     alert("ajax error: " + xhr.statusText);
                 }
              });
         } catch (e) {
-            displayStatusMessage("alert-danger", "tERROR"  + catchErrorDetails(e));
+            displayStatusMessage("severityError", "tERROR"  + e);
         }
     }
 
@@ -119,7 +119,7 @@
                 $('#btnDelete').show();
             },
             error: function (xhr, textStatus, error) {
-                displayStatusMessage("alert-danger", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                displayStatusMessage("severityError", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
                 alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
             }
          });
@@ -140,16 +140,16 @@
                     url: service + "/api/Journal/?Id=" + $('#hiddenId').val(),
                     type: "delete",
                     success: function (list, textstatus, xhr) {
-                        displayStatusMessage("alert-success", "entry deleted");
+                        displayStatusMessage("severityOk", "entry deleted");
                         ToggleBlogEdit();
                     },
                     error: function (xhr) {
-                        displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                        displayStatusMessage("severityError", "error: " + xhr.statusText);
                         alert("ajax error: " + xhr.statusText);
                     }
                  });
             } catch (e) {
-                displayStatusMessage("alert-danger", "tERROR"  + catchErrorDetails(e));
+                displayStatusMessage("severityError", "tERROR"  + e);
             }
         }
      });

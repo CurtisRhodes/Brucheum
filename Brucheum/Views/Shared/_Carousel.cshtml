@@ -1,0 +1,121 @@
+﻿@*
+    ready fire aim
+    get a few items from Articles
+    put the title on top of the image
+    load them into an arry
+
+    build the div with arrows and dots
+
+    <div id="carousel01" class="carouselContainer"></div>
+
+*@
+
+<style>
+    .carouselItemTitle {
+        color: #fff;
+        position: relative;
+        font-size: 22px;
+        top: -58px;
+        left: 33px;
+    }
+    .carouselItemTitleBlack {
+        color: #000;
+    }
+    .carouselItemCategory {
+        color: #fff;
+        position: relative;
+        font-size: 18px;
+        top: -499px;
+    }
+    .carouselItemCategoryBlack {
+        color: #000;
+    }
+    .carouselItemImage {
+        margin-top: 1px;
+        height: 431px;
+        width: 1020px;
+        cursor: pointer;
+    }
+</style>
+
+
+<div id="carousel" class="carousel">
+    <div id="articleJog"></div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+    var numArticles = 15;
+    var rotationSpeed = 5400;
+    var carouselItems = new Array();
+    var imageNum = 0;
+
+    $(document).ready(function () { })
+
+    function rotate() {
+        $('#articleJog').html(carouselItems[imageNum]);
+        imageNum++;
+        var shellHeight = $('.carouselContainer').height();
+        var shellWidth = $('.carouselContainer').width();
+        $('.carouselItemImage').height(shellHeight - 2);
+        $('.carouselItemImage').width(shellWidth - 2);
+        $('.carouselItemCategory').css('left', shellWidth - ($('.carouselItemCategory').html().length * 2));
+        
+        setInterval(function showNextImage() {
+            $('#articleJog').html(carouselItems[imageNum]);
+
+            var shellHeight = $('.carouselContainer').height();
+            var shellWidth = $('.carouselContainer').width();
+            $('.carouselItemImage').height(shellHeight - 2);
+            $('.carouselItemImage').width(shellWidth - 2);
+            //alert("shellWidth: " + shellWidth + "sc: " + $('.carouselItemCategory').html().length);
+            $('.carouselItemCategory').css('left', shellWidth - ($('.carouselItemCategory').html().length * 2));
+
+            $('#articleJog').click(function () {
+                window.location.href = "/Article/Article?Id=" + $('.carouselItem').attr('Id');
+            })
+
+            imageNum++;
+            if (imageNum >= numArticles) {
+                imageNum = 0;
+            }
+        }, rotationSpeed);
+    }
+
+    function startCarousel() {
+        $.ajax({
+            type: "GET",
+            url: service + "/api/Article?pageLen=" + numArticles + "&page=0&filterType=none&filter=none",
+            //datatype: "json",
+            success: function (articles) {
+                articles.forEach(loadArray);
+                rotate();
+            },
+            error: function (xhr) {
+                alert("updateSiteUser error: " + xhr.statusText);
+            }
+        });
+    };
+
+    function loadArray(article) {
+        try {
+            //var title = article.Title.split(' ').join('_');
+            if (article.ImageName !== "") {
+                imgSrc = service + "/App_Data/Images/" + article.ImageName;
+            };
+            //alert("article.Title :" + article.Title);
+            carouselItems.push(`
+                <div class='carouselItem' id='`+ article.Id + `' >
+                    <img class='carouselItemImage' src=` + imgSrc + `>
+                    <div class='carouselItemTitle'>` + article.Title + `
+                    <div class='carouselItemTitleBlack'>` + article.Title + `</div></div>
+                    <div class='carouselItemCategory'>` + article.Category + `
+                    <div class='carouselItemCategoryBlack'>` + article.Category + `</div></div>
+                </div>`);
+ 
+        } catch (e) {
+            alert("formatArticleJog error: " + e);
+        }
+    }
+
+</script>
