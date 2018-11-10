@@ -39,8 +39,8 @@ namespace Brucheum
 
         protected void Application_Error()
         {
-            var msg = Helpers.ErrorDetails(Server.GetLastError());
-            var st = Server.GetLastError().StackTrace.Replace("\r\n", "<br/>");
+            var msg = Helpers.ErrorDetails(Server.GetLastError()).Replace(Environment.NewLine, "<br/>");
+            var st = Server.GetLastError().StackTrace.Replace(Environment.NewLine, "<br/>");  //   "/\r?\n/g", "<br />");   //("/[\r\n]/g", "<br />");  //.Replace("\r\n", "<br/>").Replace("\;
             Response.Redirect("~/Error/Index?msg=" + msg + "&st=" + st, false);
             //if (HttpContext.Current.Session != null)
             //{

@@ -46,14 +46,21 @@ namespace Brucheum
 
     public class ErrorController : Controller
     {
-        public ViewResult AppError(string msg, string st)
+        public ActionResult Index(string msg, string st)
         {
-            ViewBag.StackTrace = st;
-            ViewBag.ErrorMessage = msg;
+            if (st != null)
+                ViewBag.StackTrace = st.Replace("\r\n", "<br/>");
+            if (msg != null)
+                ViewBag.ErrorMessage = msg;
             return View();
         }
 
-        public ViewResult Index()
+        public ActionResult NotFound(string aspxerrorpath)
+        {
+            ViewBag.ErrorPath = aspxerrorpath;
+            return View();
+        }
+        public ActionResult AppError()
         {
             string stackTrace = "";
             string errorMessage = "unknown Error";
@@ -74,5 +81,6 @@ namespace Brucheum
             ViewBag.ErrorMessage = errorMessage;
             return View();
         }
+
     }
 }

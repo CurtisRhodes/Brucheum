@@ -11,6 +11,21 @@ namespace WebApi.Models
         public string Value { get; set; }
     }
 
+    public class LostJobModel
+    {
+        public string JobId { get; set; }
+        public string JobTitle { get; set; }
+        public string Employer { get; set; }
+        public string JobLocation { get; set; }
+        public string StartMonth { get; set; }
+        public string StartYear { get; set; }
+        public string FiredMonth { get; set; }
+        public string FiredYear { get; set; }
+        public string Summary { get; set; }
+        public string ReasonForLeaving { get; set; }
+        public string SecretNarative { get; set; }
+    }
+
     public class ArticleModel
     {
         public string Id { get; set; }

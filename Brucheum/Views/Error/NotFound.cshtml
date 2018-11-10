@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewBag.Title = "404 File Not Found";
+}
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+    </div>
+    <div id="middleColumn">
+        <h2 id="errorMessage"></h2>
+        <img src="~/Images/RenStimpy8.jpg" />
+        <div id="divStackTrace"></div>
+    </div>
+    <div id="rightColumn">
+    </div>
+</div>
+
+<script>
+    var aspxerrorpath = '@ViewBag.ErrorPath'
+
+    $(document).ready(function () {
+        $('#errorMessage').html("OOPS:   <span>404 File Not Found</span>");
+        $('#divStackTrace').html(aspxerrorpath);
+        resizePage();
+    });
+</script>

@@ -237,6 +237,7 @@
     <Compile Include="Controllers\ArticleController.cs" />
     <Compile Include="Controllers\BookController.cs" />
     <Compile Include="Controllers\ConsultingController.cs" />
+    <Compile Include="Controllers\GetaJobController.cs" />
     <Compile Include="Controllers\Helpers.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -290,12 +291,14 @@
     <Content Include="Images\Consulting\sglright.jpg" />
     <Content Include="Images\down.jpg" />
     <Content Include="Images\downCaret.png" />
+    <Content Include="Images\GetaJob.ico" />
     <Content Include="Images\GetaJobBnr.png" />
     <Content Include="Images\house.gif" />
     <Content Include="Images\ingranaggi3.gif" />
     <Content Include="Images\intel01.jpg" />
     <Content Include="Images\left.jpg" />
     <Content Include="Images\loader.gif" />
+    <Content Include="Images\powerOnOffSilver.png" />
     <Content Include="Images\powerOffRed01.png" />
     <Content Include="Images\RenStimpy8.jpg" />
     <Content Include="Images\ResumeBuilder.PNG" />
@@ -317,6 +320,7 @@
     <Content Include="Images\TanBlue\ToATeeTan.png" />
     <Content Include="Images\up.jpg" />
     <Content Include="Images\upCaret.png" />
+    <Content Include="Images\wordDoc.jpg" />
     <Content Include="Scripts\GlobalFunctions.js" />
     <Content Include="Scripts\ImageTools.js" />
     <Content Include="Scripts\ResizeThreeColumnPage.js" />
@@ -324,7 +328,7 @@
     <Content Include="Styles\articleEdit.css" />
     <Content Include="Styles\articleList.css" />
     <Content Include="Styles\bFooter.css" />
-    <Content Include="Styles\bHeader.css" />
+    <Content Include="Styles\fixedHeader.css" />
     <Content Include="Styles\boogers.css" />
     <Content Include="Styles\bookEdit.css" />
     <Content Include="Styles\bootstrap.css" />
@@ -422,6 +426,14 @@
     <Content Include="Views\Shared\_Editor.cshtml" />
     <Content Include="Views\Admin\_ManageRefs.cshtml" />
     <Content Include="Views\Shared\_Carousel.cshtml" />
+    <Content Include="Curtis Rhodes Resume 2017.doc" />
+    <Content Include="Views\Error\Index.cshtml" />
+    <Content Include="Views\Error\NotFound.cshtml" />
+    <Content Include="Views\GetaJob\ResumeAdmin.cshtml" />
+    <Content Include="Views\GetaJob\Index.cshtml" />
+    <Content Include="Views\GetaJob\_GetaJobFooter.cshtml" />
+    <Content Include="Views\GetaJob\_GetaJobLayout.cshtml" />
+    <Content Include="Views\GetaJob\_AddEditJobs.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

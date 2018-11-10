@@ -1,0 +1,338 @@
+﻿@*/*CRUD control style*/*@
+<style>
+    /*CRUD control style*/
+    .crudContainer {
+        margin-right: 66px;
+        display: inline-block;
+        background-color: #fff;
+        border: solid 1.5px #bbb;
+        border-radius: 5px;
+    }
+
+    .crudArea {
+        padding: 11px;
+    }
+
+    .crudRow {
+        white-space: nowrap;
+    }
+
+    .crudContainerTitle {
+        text-align: center;
+        background-color: #74bac3;
+        font-size: 25px;
+        padding: 8px;
+    }
+
+    .closeIcon {
+        float: right;
+        cursor: pointer;
+        margin-top: 2px;
+    }
+
+    .crudTextArea {
+        /*
+            display: contents;
+            width: 680px;
+        */
+        margin-bottom: 8px;
+        margin-top: 4px;
+        margin-right: 11px;
+        color: #555;
+        background-color: #ddd;
+        border-radius: 5px;
+        width: 554px;
+        height: 350px;
+    }
+
+    .wide {
+        width: 474px;
+    }
+
+    .attrName {
+        display: inline-block;
+        min-width: 70px;
+    }
+    /*default overrides*/
+    .roundedInput {
+        margin-bottom: 4px;
+        margin-right: 11px;
+        display: inline-block;
+    }
+
+    .btnNew {
+        display: none;
+    }
+
+    .inline {
+        display: inline-block;
+    }
+</style>
+
+<style>
+    .dualContainers {
+        display: flex;
+    }
+
+    .jobList {
+        min-height: 606px;
+        min-width: 574px;
+        padding: 8px;
+        margin: 11px;
+        color: #555;
+        background-color: #ddd;
+        border-radius: 5px;
+    }
+</style>
+
+<div class="dualContainers">
+    <div class="floatLeft">
+        <div id="addaJob" class="crudContainer">
+            <div id="divStatusMessage"></div>
+            <div id="crudContainerTitle" class="crudContainerTitle">
+                Add A Lost Job
+                @*<div id="closeIcon" class="closeIcon" onclick="$('#addaJob').hide()"><img src="~/Images/powerOnOffSilver.png" height="24" /></div>*@
+            </div>
+            <div class="crudArea">
+                <div id="errSummary" class="validationError"></div>
+                <div class="crudRow">
+                    <div class="attrName">Start</div>
+                    <div class="attrName">Month</div>
+                    <div class="inline">
+                        <div id="errStartMonth" class="validationError">Required</div>
+                        <input id="txtStartMonth" class="roundedInput" />
+                    </div>
+                    <div class="attrName">Year</div>
+                    <div class="inline">
+                        <div id="errStartYear" class="validationError">Required</div>
+                        <input id="txtStartYear" class="roundedInput" />
+                    </div>
+                </div>
+                <div class="crudRow">
+                    <div class="attrName">Ended</div>
+                    <div class="attrName">Month</div>
+                    <div class="inline">
+                        <div id="errFiredMonth" class="validationError">Required</div>
+                        <input id="txtFiredMonth" class="roundedInput" />
+                    </div>
+                    <div class="attrName">Year</div>
+                    <div class="inline">
+                        <div id="errFiredYear" class="validationError">Required</div>
+                        <input id="txtFiredYear" class="roundedInput" />
+                    </div>
+                </div>
+                <div class="crudRow">
+                    <div class="attrName">Job Title</div>
+                    <div id="errJobTitle" class="validationError">Required</div>
+                    <input id="txtJobTitle" class="roundedInput wide" />
+                </div>
+                <div class="crudRow">
+                    <div class="attrName">Company</div>
+                    <div id="errCompany" class="validationError">Required</div>
+                    <input id="txtCompany" class="roundedInput wide" />
+                </div>
+                <div class="crudRow">
+                    <div class="attrName">Location</div>
+                    <div id="errLocation" class="validationError">Required</div>
+                    <input id="txtLocation" class="roundedInput wide" />
+                </div>
+                <div>
+                    <div class="attrName">Summary</div>
+                </div>
+                <div class="crudRow">
+                    <textarea id="txtSummary" class="crudTextArea"></textarea>
+                </div>
+                <div>
+                    <button id="jobAddEdit" class="roundendButton" onclick="addaJob()">Save</button>
+                    <button id="btnNew" class="roundendButton btnNew" onclick="btnNewToggle()">New</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="floatLeft">
+        <div id="jobListContainer" class="crudContainer">
+            <div id="JobListTitle" class="crudContainerTitle">Job List</div>
+            <div id="jobList" class="jobList"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service'
+    var jobModel = new Object;
+
+    function bind() {
+        jobModel.StartMonth = $('#txtStartMonth').val();
+        jobModel.StartYear = $('#txtStartYear').val();
+        jobModel.FiredMonth = $('#txtFiredMonth').val();
+        jobModel.FiredYear = $('#txtFiredYear').val();
+        jobModel.JobTitle = $('#txtJobTitle').val();
+        jobModel.JobLocation = $('#txtLocation').val();
+        jobModel.Employer = $('#txtCompany').val();
+        jobModel.Summary = $('#txtSummary').val();
+    }
+
+    function addaJob() {
+        if (validate()) {
+            bind();
+            if ($('#jobAddEdit').html() == "Save") {
+                $.ajax({
+                    type: "POST",
+                    url: service + "/api/Job",
+                    data: jobModel,
+                    success: function (success) {
+                        if (!success.startsWith("ERROR")) {
+                            $('#jobAddEdit').html("Edit");
+                            $('#btnNew').show();
+                            jobModel.JobId = success;
+                            displayStatusMessage("severityOk", "Job Added");
+                            getJobs();
+                        }
+                        else {
+                            alert("addaJob: " + success)
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                        alert("addaJob post error: " + getXHRErrorDetails(jqXHR, exception));
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    type: "PUT",
+                    url: service + "/api/Job",
+                    data: jobModel,
+                    success: function (success) {
+                        if (success == "ok") {
+                            $('#jobAddEdit').val("Edit");
+                            displayStatusMessage("severityOk", "Job Edited");
+                        }
+                        else {
+                            alert("Edit aJob: " + success)
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                        alert("addaJob put error: " + getXHRErrorDetails(jqXHR, exception));
+                    }
+                });
+            }
+        }
+    }
+
+    function btnNewToggle() {
+        $('#jobAddEdit').html("Save");
+        $('#btnNew').hide();
+        // clear
+        jobModel.JobId = "";
+        $('#txtStartMonth').val("");
+        $('#txtStartYear').val("");
+        $('#txtFiredMonth').val("");
+        $('#txtFiredYear').val("");
+        $('#txtJobTitle').val("");
+        $('#txtLocation').val("");
+        $('#txtCompany').val("");
+        $('#txtSummary').val("");
+    }
+
+    function validate() {
+        $('#errSummary').hide();
+
+        if ($('#txtStartMonth').val() === "") {
+            $('#errStartMonth').show();
+            return false;
+        }
+        $('#errStartMonth').hide();
+
+        if ($('#txtStartYear').val() === "") {
+            $('#errStartYear').show();
+            return false;
+        }
+        $('#errStartYear').hide();
+
+        if ($('#txtFiredMonth').val() === "") {
+            $('#errFiredMonth').show();
+            return false;
+        }
+        $('#errFiredMonth').hide();
+
+        if ($('#txtFiredYear').val() === "") {
+            $('#errFiredYear').show();
+            return false;
+        }
+        $('#errFiredYear').hide();
+
+        //    <div id="err" class="validationError">Required</div>
+        if ($('#txtJobTitle').val() === "") {
+            $('#errJobTitle').show();
+            return false;
+        }
+        $('#errJobTitle').hide();
+
+        if ($('#txtCompany').val() === "") {
+            $('#errCompany').show();
+            return false;
+        }
+        $('#errCompany').hide();
+
+        if ($('#txtLocation').val() === "") {
+            $('#errLocation').show();
+            return false;
+        }
+        $('#errLocation').hide();
+
+        //if ($('#txt').val() === "") {
+        //    $('#err').show();
+        //    return false;
+        //}
+        //$('#err').hide();
+
+        return true;
+    };
+
+    function getJobs() {
+        try {
+        $.ajax({
+            type: "GET",
+            url: service + "/api/Job",
+            success: function (response) {
+                if (true) {
+                    $('#jobList').html("<table>");
+
+                    $.each(response, function (idx, obj) {
+                        $('#jobList').append("<tr id=" + obj.JobId + "><td>" + obj.StartMonth + "</td><td>" + obj.StartYear + "</td><td>" +
+                            obj.Employer + "</td><td>" + obj.JobLocation + "</td></tr>");
+                    })
+                    $('#jobList').append("</table>");
+
+                    $('#jobList tr').click(function () {
+                        alert("this.id" + $(this).attr("id"));
+                        // load editor
+
+                    });
+
+                    //public string JobTitle { get; set; }
+                    //public string Employer { get; set; }
+                    //public string JobLocation { get; set; }
+                    //public string StartMonth { get; set; }
+                    //public string StartYear { get; set; }
+                    //public string FiredMonth { get; set; }
+                    //public string FiredYear { get; set; }
+                    //public string Summary { get; set; }
+                    //public string ReasonForLeaving { get; set; }
+                    //public string SecretNarative { get; set; }
+                }
+                else {
+                    alert("getjobs: " + success)
+                }
+            },
+            error: function (jqXHR, exception) {
+                alert("addaJob post error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+        } catch (e) {
+            alert("get jobs CATCH: " + e)
+        }
+    }
+</script>
+
+

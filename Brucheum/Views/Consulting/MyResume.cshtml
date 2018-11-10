@@ -1,6 +1,165 @@
 ﻿
 @{
-    ViewBag.Title = "MyResume";
+    ViewBag.Title = "My Resume";
     Layout = "~/Views/Consulting/_ProfessionalLayout.cshtml";
 }
+
+@*
+    -- ready fire aim
+    create tables or use xml?
+    rersume sections
+        addess header
+        skills section
+
+    put in the editor
+    add a close icon and a cancel button
+*@
+
+<style>
+    .center {
+        text-align: center;
+    }
+    .resumeContainer {
+        background-color: #bbb489;
+        color: #000;
+    }
+    li {
+        text-align: left;
+    }
+    h1 {
+        padding-top: 12px;
+        margin: 4px;
+    }
+    h2 {
+        margin: 4px;
+    }
+    h3 {
+        font-size: 20px;
+        margin-bottom: 3px;
+    }
+    h4 {
+        margin: 5px;
+        font-size: 18px;
+    }
+    .skillsList {
+        display: inline-block;
+        text-align: left;
+    }
+    h5 {
+        margin: 3px;
+        font-size: 16px;
+    }
+    h6 {
+        margin: 3px;
+        font-size: 14px;
+    }
+    p {
+        margin: 3px 33px;
+        text-align: justify;
+        font-family: serif;
+        font-weight: bold;
+    }
+    .collapseable {
+        display: none;
+        cursor: pointer;
+    }
+
+    /*right column*/
+    .adminButton {
+        margin-top: 100px;
+        margin-left: 17px;
+        padding: 3px;
+        display: inline-block;
+        background-color: #555;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    .resumeDocContainer {
+        padding: 20px;
+    }
+    .resumeDoc {
+        height: 45px;
+    }
+
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+    </div>
+    <div id="middleColumn">
+        <div id="resumeContainer" class="resumeContainer">
+            <div id="resumeAddressHeader" class="center">
+                <h1>Curtis H. Rhodes</h1>
+                <h4><a href="mailto:curtishrhodes@hotmail.com">mailto:curtishrhodes@hotmail.com</a></h4>
+                <h4>home: (972) 247-2404</h4>
+                <h4>cell: (214) 927-1787</h4>
+                <h2>C# .Net Application Developer</h2>
+            </div>
+            <div id="resumeSkillSection" class="center">
+                <h3>SKILLS SUMMARY</h3>
+                <div class="skillsList">
+                    <h6>15+ years C# Asp.Net, MVC</h6>
+                    <h6>10+ years JavaScript, JQuery, CSS</h6>
+                    <h6>5+  years Angular, React, Typescript</h6>
+                    <h6>7+ WebApi Web Services </h6>
+                    <h6>20+ years SQL Server, Oracle</h6>
+                    <h6>10+ years Entity Framework</h6>
+                </div>
+            </div>
+            <div id="resumeLostJobs">
+                <h3 class="center">PROFESSIONAL EXPERIENCE</h3>
+                <h4 class="center clickable" onclick="$('#clipperSub').toggle()">10 years Clipper dBase III Firefox</h4>
+                <div id="clipperSub" class="collapseable">
+                    <p>
+                        I started out in the days of floppy disks and 640k. In my late twenties I moved to Texas got married got a job in oilpatch making rediculous money. When the drilling boom of the 80's collapsed
+                        my wife sent me back to school to be a teacher like her and all out friends. I took an elective class in the new field of computer programming on a lark. My professor at Corpus Christi State saw
+                        that I was his best student and started giving me somem extra assignments. Turns out he was running a consulting firm on the side building an app for a local refinery. He was a retired full bird
+                        conerlor in the Air Force and he bacame my mentor. I went to work for him and I have been doing computer application development ever since.
+                    </p>
+                </div>
+                <h4 class="center clickable" onclick="$('#vb6Sub').toggle()">5 years VB6</h4>
+                <div id="vb6Sub" class="collapseable">
+                    <p>
+                        In it's day VB6 was the cutting edge. With an editor call an Integrated Development Envrionment (IDE) {stolen by Microsoft from Delpi} with an F5 button for compile and run, it was whole new wold.
+                        I built user-controls and layed them out on the design surface. I built beautiful apps like no one had seen before. Every month at our user confrence small vendors would come in and present new framework
+                        libraries, charting tools, print layout tools, styling tools like date pickers and grids. I had a whole library of custom user controls.
+                    </p>
+                </div>
+                <h4 class="center clickable" onclick="$('#dotNetSub').toggle()">15 years .Net</h4>
+                <div id="dotNetSub" class="collapseable">
+                    <p>
+                        Asp.Net came out in the year 2000. I remember becasue I started using it that year at a job downtown at TXU. I had already been a developer for many years but they would ask me how many years I had with dot.Net?
+                        The product had just come out. It tried to use a design surface like VB6. It used FrontPage extensions from an earlier ASP incarnation. The web is an very different animal than a compiled .exe app which is what VB6
+                        produced. The web was never designed for serious business application development by the way. Microsoft felt they made no money client side so they built a system that did all the work server side, get it: Active SERVER Pages
+                        is what ASP stands for. The web page was constantly posting back to the sever every time the user did something on a tag marked "runat='server'" which could include an input textbox or a select dropdown 
+                        as well as a usercontrol. This was back in the days of dial up and twisted pair connections. If the user was in Chicago and the server was somewhere offshore this really wasn't the system for you. It was mostly intended for 
+                        inhouse 'intra-net projects that used Windows security. A lot has changed. It was Framework3 that introduced javascript intellisence. By now Microsoft has fully embraced the client side with Typescript and all the client
+                        side frameworks like Angular and React. I've been along for the ride ever since. Other than an ilbegotten forey into Silverlight I haven't done any real compiled app development since I worked on a compiled WPF program at
+                        Dell back in 2005.
+                    </p>
+                </div>
+                <div id="job1" class="jobContainer">
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="rightColumn">
+        @*<div id="addJob" class="adminButton" onclick="$('#addaJob').toggle()">add job</div>*@
+
+        <div class="adminButton" onclick="window.location.href='/GetaJob/ResumeAdmin'">manage</div>
+
+        <div class="resumeDocContainer">
+            <a href="~/Curtis Rhodes Resume 2017.doc" )>
+                <img id="prntResume" class="resumeDoc" title="download print copy" onclick="" src="~/Images/wordDoc.jpg" />
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+
+</script>
+
 

@@ -1,11 +1,13 @@
 ﻿@using Microsoft.AspNet.Identity
 <link href="~/Styles/bHeader.css" rel="stylesheet" />
-<div id="bheader" class="Header">
-    <div class="floatLeft">
+<link href="~/Styles/fixedHeader.css" rel="stylesheet" />
+
+<div id="bheader" class="standardHeader">
+    <div class="bannerImageContainer">
         <a href="~/Home/Index"><img src="~/images/house.gif" class="bannerImage" /></a>
     </div>
-    <div class="headerBody">
-        <div id="bannerTitle" class="headerBannerTitle">
+    <div class="headerBodyContainer">
+        <div id="bannerTitle" class="headerTitle">
             Curtis Rhodes.com
         </div>
         <div class="menuTabContainer">
@@ -20,29 +22,29 @@
                 <div class="menuTab"><a href="~/Admin">Admin</a></div>
             }
 
-        </div>
-        <div class="loginTab">
-            @*@if ((Session["UserName"] != null) && (!String.IsNullOrEmpty(@Session["UserName"].ToString())))*@
+            <div class="loginTab">
+                @*@if ((Session["UserName"] != null) && (!String.IsNullOrEmpty(@Session["UserName"].ToString())))*@
 
-            @if (Request.IsAuthenticated)
-            {
-                <div class="menuTab" id="tabProfile" title="modify profile">
-                    <a href="#">Hello @User.Identity.GetUserName() </a>
-                </div>
-                <div class="menuTab" id="tabLogout"><a href="javascript:sessionStorage.removeItem('accessToken');$('#logoutForm').submit();">Log Out</a></div>
-            }
-            else
-            {
-                <div class="menuTab" id="tabRegister"><a href="#">Register</a></div>
-                <div class="menuTab" id="tabLogIn"><a href="#">Log In</a></div>
+                @if (Request.IsAuthenticated)
+                {
+                    <div class="menuTab" id="tabProfile" title="modify profile">
+                        <a href="#">Hello @User.Identity.GetUserName() </a>
+                    </div>
+                    <div class="menuTab" id="tabLogout"><a href="javascript:sessionStorage.removeItem('accessToken');$('#logoutForm').submit();">Log Out</a></div>
+                }
+                else
+                {
+                    <div class="menuTab" id="tabRegister"><a href="#">Register</a></div>
+                    <div class="menuTab" id="tabLogIn"><a href="#">Log In</a></div>
 
-                @*
+                    @*
                     <div class="menuTab">@Html.ActionLink("Register", "Register", "Login", routeValues: new { area = "" }, htmlAttributes: new { id = "registerLink" })</div>
                     <div class="menuTab">@Html.ActionLink("Log in", "Login", "Register", routeValues: new { area = "" }, htmlAttributes: new { id = "loginLink" })</div>
                     @Html.ActionLink("Hello " + User.Identity.GetUserName(), "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
 
-                *@
-            }
+                    *@
+                }
+            </div>
         </div>
     </div>
     <div class="noFloat"></div>

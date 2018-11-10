@@ -13,7 +13,7 @@ body {
     z-index: 10;
 }
 .body-content {
-    margin-top: 72px;
+    margin-top: 94px;
 }
 
 .threeColumnArray {
@@ -44,14 +44,6 @@ body {
 
 
 
-.headerBody {
-    float: left;
-}
-#divHeaderContents {
- }
-.loginTab {
-    float: right;
-}
 
 .floatLeft {
     float: left;
@@ -64,12 +56,13 @@ body {
 #modalContainer {
     z-index: 6; /* Sit on top */
 }
-divStatusMessage {
+#divStatusMessage {
+    margin-top: 10px;
+    font-size: 18px;
     display: none;
     margin-bottom: 3px;
     padding: 4px;
 }
-
 .modalVail {
     display: none; /*Hidden by default */
     position: fixed; /* Stay in place */
@@ -90,8 +83,8 @@ label {
 
 .roundendButton {
     text-align: center;
-    background: #07c;
-    color: #fff;
+    background: #74bac3;
+    color: #000;
     border-radius: 4px;
     padding: 8px 20px;
     cursor: pointer;
@@ -116,6 +109,7 @@ label {
     background-color: #c64e4e;
 }
 .validationError {
+    display: inline-block;
     display: none;
     color: red;
     font-style: italic;

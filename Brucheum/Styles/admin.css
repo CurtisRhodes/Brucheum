@@ -4,11 +4,6 @@
 .vertMenu {
     margin-top: 88px;
 }
-#divStatusMessage {
-    margin-top: 22px;
-    height: 22px;
-    margin-left: 13px;
-}
 
 .selectedUerContainer {
     display: flex;
@@ -123,17 +118,19 @@
 }
 
 .adminOption {
-    background-color: #aaa;
     display: none;
-    width: 500px;
-    border: solid 2px #74bac3;
-    border-radius: 4px;
+    /*
+        background-color: #aaa;
+        width: 500px;
+        border: solid 2px #74bac3;
+        border-radius: 4px;
+    */
 }
 
-.roundendButton {
+/*.roundendButton {
     width: 33px;
     display: inline-block;
-}
+}*/
 
 .itemsList {
     border: solid 2px purple;

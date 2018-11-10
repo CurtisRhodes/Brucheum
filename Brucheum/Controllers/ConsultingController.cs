@@ -6,17 +6,6 @@ using System.Web.Mvc;
 
 namespace Brucheum
 {
-
-
-    //<li class="menuTab"><a asp-page="~/ConsultingAbout/">Who We Are</a></li>
-    //<li class="menuTab"><a asp-page="~/Consulting/Approach">Our Approach</a></li>
-    //<li class="menuTab"><a asp-pag="~/Consulting/Portfolio">Portfolio</a></li>
-    //<li class="menuTab"><a asp-page="~/Consulting/Code">Sample Code</a></li>
-    //<li class="menuTab"><a asp-pag="~/Consulting/Artilces">Artilces</a></li>
-    //<li class="menuTab"><a asp-pag="~/Consulting/Contact">Contact Us</a></li>
-    //<li class="menuTab"><a asp-pag="~/Consulting/MyResume">My Resume</a></li>
-    //<li class="menuTab"><a asp-pag="~/Consulting/AdminRefTable">Admin</a></li>
-
     public class ConsultingController : Controller
     {
         private string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
@@ -27,6 +16,11 @@ namespace Brucheum
         }
         public ActionResult ConsultingHome()
         {
+            return View();
+        }
+        public ActionResult MyResume()
+        {
+            ViewBag.Service = apiService;
             return View();
         }
         public ActionResult About()
@@ -50,10 +44,6 @@ namespace Brucheum
             return View();
         }
         public ActionResult Contact()
-        {
-            return View();
-        }
-        public ActionResult MyResume()
         {
             return View();
         }

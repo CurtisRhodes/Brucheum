@@ -193,6 +193,7 @@
     <Compile Include="Controllers\BookController.cs" />
     <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\EmailController.cs" />
+    <Compile Include="Controllers\GetaJobController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImagesController.cs" />
     <Compile Include="Controllers\xAspNetController.cs" />
@@ -201,6 +202,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AspNetContext.cs" />
+    <Compile Include="Models\GetaJobContext.cs" />
     <Compile Include="Models\LocalModels.cs" />
     <Compile Include="Models\OggleBoobleContext.cs" />
     <Compile Include="Models\WebSiteContext.cs" />
