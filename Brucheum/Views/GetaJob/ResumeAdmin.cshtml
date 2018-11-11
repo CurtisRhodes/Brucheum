@@ -3,21 +3,24 @@
     ViewBag.Title = "ResumeAdmin";
     Layout = "~/Views/GetaJob/_GetaJobLayout.cshtml";
 }
-
 <link href="~/Styles/admin.css" rel="stylesheet" />
+
+
 <style>
     .adminOptionContainer {
         width: 1000px;
     }
 </style>
+
+
 <div class="threeColumnArray">
     <div id="leftColumn">
         <div class="vertMenu">
             <div class="vertMenuTab" id="optAddJobs">Add Jobs</div>
             <div class="vertMenuTab" id="optAddSkills">Add Skills</div>
-            <div class="vertMenuTab" id="optRefEditor">Resume Section</div>
-            <div class="vertMenuTab" id="optArticleClass">Skill Categories</div>
-            <div class="vertMenuTab" id="optShowSiteStats">Job Skills</div>
+            <div class="vertMenuTab" id="optResume">Build Resume</div>
+            @*<div class="vertMenuTab" id="optArticleClass">Skill Categories</div>
+            <div class="vertMenuTab" id="optShowSiteStats">Job Skills</div>*@
         </div>
     </div>
     <div id="middleColumn">
@@ -27,13 +30,9 @@
                 @Html.Partial("_AddEditJobs")
             </div>
             <div id="tabAddSkills" class="adminOption">
+                @Html.Partial("_AddEditSkills")
             </div>
-            <div id="tabRefEditor" class="adminOption">
-            </div>
-            <div id="tabArticleClass" class="adminOption">
-            </div>
-            <div id="tabShowSiteStats" class="adminOption">
-                <div class="adminOptionTitle">Site Stats</div>
+            <div id="tabResume" class="adminOption">
             </div>
         </div>
     </div>
@@ -52,7 +51,7 @@
         });
     });
 
-    // Roles
+    // Jobs
     $("#optAddJobs").click(function () {
         $('.adminOption').hide();
         $('#tabAddJobs').show();
@@ -61,35 +60,22 @@
             getJobs();
     })
 
-    // article Classifications
-    $("#optArticleClass").click(function () {
+    // skills
+    $("#optAddSkills").click(function () {
         $('.adminOption').hide();
-        $('#tabArticleClass').show();
+        $('#tabAddSkills').show();
         $('#btnArticleClassToggle').hide();
-        if ($('#divArticleClassList').html() === "")
-            GetArticleClasses();
+        if ($('#ddSkillCats').html() === "") {
+            loadSkillCatsDD();
+            getSkills();
+        }
+    })
+    // resume builder
+    $("#optResume").click(function () {
+        $('.adminOption').hide();
+        $('#tabSResume').show();
     })
 
-
-    // author Avatars
-    $("#optShowSiteStats").click(function () {
-        $('.adminOption').hide();
-        $('#tabShowSiteStats').show();
-    })
-
-    // my famous Ref Editor
-    $("#optRefEditor").click(function () {
-        $('.adminOption').hide();
-        $('#tabRefEditor').show();
-        setRefsInititalState()
-    })
-
-    // person / role grid
-    $("#optAssignRoles").click(function () {
-        $('.adminOption').hide();
-        $('#tabAssignRoles').show();
-        setInititalState();
-    });
 
 </script>
 

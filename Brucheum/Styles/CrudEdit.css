@@ -1,0 +1,42 @@
+﻿/*CRUD control style*/
+.crudContainer {
+    margin-right: 66px;
+    display: inline-block;
+    background-color: #fff;
+    border: solid 1.5px #bbb;
+    border-radius: 5px;
+}
+
+.crudArea {
+    padding: 11px;
+}
+
+.crudRow {
+    white-space: nowrap;
+}
+
+.crudContainerTitle {
+    text-align: center;
+    background-color: #74bac3;
+    font-size: 25px;
+    padding: 8px;
+}
+
+.closeIcon {
+    float: right;
+    cursor: pointer;
+    margin-top: 2px;
+}
+
+.crudList {
+    min-height: 606px;
+    min-width: 574px;
+    padding: 8px;
+    margin: 11px;
+    color: #555;
+    background-color: #ddd;
+    border-radius: 5px;
+}
+.btnNew {
+    display: none;
+}

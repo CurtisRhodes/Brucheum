@@ -6,7 +6,7 @@ $(window).resize(function () {
     $('.headerBody').width($('.Header').width() - $('#bannerImage').width() - 200);
 });
 
-$('#tabRegister').click(function () {
+$('.tabRegister').click(function () {
     $.ajax({
         type: "get",
         url: "/Login/Register",
@@ -21,19 +21,25 @@ $('#tabRegister').click(function () {
     });
 });
 
-$('#tabLogIn').click(function () {
-    $.ajax({
-        type: "get",
-        url: "/Login/Login",
-        datatype: "json",
-        success: function (data) {
-            $('#modalContent').html(data);
-            $('#modalContainer').show();
-        },
-        error: function (xhr) {
-            alert("LoginPopup error: " + xhr.statusText);
-        }
-    });
+$('.tabLogIn').click(function () {
+    alert("tabLogIn");
+    try {
+        $.ajax({
+            type: "get",
+            url: "/Login/Login",
+            datatype: "json",
+            success: function (data) {
+                $('#modalContent').html(data);
+                $('#modalContainer').show();
+            },
+            error: function (xhr) {
+                alert("LoginPopup error: " + xhr.statusText);
+            }
+        });
+
+    } catch (e) {
+        alert("tabLogIn :" + e);
+    }
 });
 
 $('#tabProfile').click(function () {

@@ -28,7 +28,6 @@
     </style>
 </head>
 <body>
-    <script src="~/Scripts/HeaderLogin.js"></script>
 
     <div id="idheader" class="standardHeader">
         <div class="bannerImageContainer">
@@ -57,8 +56,8 @@
                         }
                         else
                         {
-                            <div class="menuTab" id="tabRegister"><a href="#">Register</a></div>
-                            <div class="menuTab" id="tabLogIn"><a href="#">Log In</a></div>
+                            <div class="menuTab tabRegister"><a href="#">Register</a></div>
+                            <div class="menuTab tabLogIn"><a href="#">Log In</a></div>
                         }
                     </div>
                 </div>
@@ -67,12 +66,12 @@
         <div class="noFloat"></div>
     </div>
 
-
     <div class="body-content">
         @RenderBody()
     </div>
     @Html.Partial("_IdFooter")
     @RenderSection("scripts", required: false)
+    <script src="~/Scripts/HeaderLogin.js"></script>
     <script>resizePage();</script>
 </body>
 </html>

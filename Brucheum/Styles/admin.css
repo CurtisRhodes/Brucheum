@@ -88,6 +88,20 @@
     background-color: aqua;
 }
 
+.dualContainers {
+    display: flex;
+}
+
+.loadingGif {
+    position: relative;
+    top: 150px;
+    left: 150px;
+    display: none;
+}
+
+    .loadingGif img {
+        height: 45px;
+    }
 
 
 

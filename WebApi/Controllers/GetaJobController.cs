@@ -102,7 +102,6 @@ namespace WebApi
         [HttpPut]
         public string Put(Job editedJob)
         {
-            var xx = editedJob.Summary;
             string success = "";
             try
             {
@@ -135,24 +134,46 @@ namespace WebApi
     }
 
     [EnableCors("*", "*", "*")]
-    public class SkillsController : ApiController
+    public class SkillController : ApiController
     {
         [HttpGet]
-        public Skill Get(int skillId)
+        public SkillModel Get(int skillId)
         {
-            using (GetaJobContext db = new GetaJobContext())
+            var skill = new SkillModel();
+            try
             {
-                return db.Skills.Where(s => s.Id == skillId).FirstOrDefault();
+                using (GetaJobContext db = new GetaJobContext())
+                {
+                    var dbSkill = db.Skills.Where(s => s.Id == skillId).FirstOrDefault();
+                    if (dbSkill != null)
+                    {
+                        skill.Id = skillId.ToString();
+                        skill.SkillName = dbSkill.SkillName;
+                        skill.SkillCategory = dbSkill.SkillCategory;
+                    }
+                }
             }
+            catch (Exception ex) { skill.Id = "ERROR: " + Helpers.ErrorDetails(ex); }
+            return skill;
         }
 
         [HttpGet]
-        public List<Skill> Get()
+        public List<SkillModel> Get()
         {
-            using (GetaJobContext db = new GetaJobContext())
+            var skills = new List<SkillModel>();
+            try
             {
-                return db.Skills.ToList();
+                using (GetaJobContext db = new GetaJobContext())
+                {
+                    var dbSkills = db.Skills;
+                    foreach (Skill _skill in dbSkills)
+                    {
+                        skills.Add(new SkillModel() { Id = _skill.Id.ToString(), SkillName = _skill.SkillName, SkillCategory = _skill.SkillCategory });
+                    }
+                }
             }
+            catch (Exception ex) { skills.Add(new SkillModel() { Id = Helpers.ErrorDetails(ex) }); }
+            return skills;
         }
 
         [HttpPost]
@@ -199,9 +220,10 @@ namespace WebApi
                     {
                         skill.SkillName = editedSkill.SkillName;
                         skill.SkillCategory = editedSkill.SkillCategory;
+
+                        db.SaveChanges();
+                        success = "ok";
                     }
-                    db.SaveChanges();
-                    success = "ok";
                 }
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }

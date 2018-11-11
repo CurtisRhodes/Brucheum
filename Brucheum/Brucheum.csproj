@@ -334,17 +334,13 @@
     <Content Include="Styles\articleEdit.css" />
     <Content Include="Styles\articleList.css" />
     <Content Include="Styles\bFooter.css" />
+    <Content Include="Styles\CrudEdit.css" />
     <Content Include="Styles\editor\bootstrap.css" />
     <Content Include="Styles\editor\codeMirror.css" />
     <Content Include="Styles\fixedHeader.css" />
-    <Content Include="Styles\boogers.css" />
     <Content Include="Styles\bookEdit.css" />
-    <Content Include="Styles\bootstrap.css" />
-    <Content Include="Styles\codemirror.css" />
     <Content Include="Styles\default.css" />
-    <Content Include="Styles\idHeader.css" />
     <Content Include="Styles\JournalEditor.css" />
-    <Content Include="Styles\jquery.codeview.css" />
     <Content Include="Styles\modalDialog.css" />
     <Content Include="Styles\editor\monokai.css" />
     <Content Include="Styles\editor\quill.snow.css" />
@@ -440,6 +436,8 @@
     <Content Include="Views\GetaJob\_GetaJobFooter.cshtml" />
     <Content Include="Views\GetaJob\_GetaJobLayout.cshtml" />
     <Content Include="Views\GetaJob\_AddEditJobs.cshtml" />
+    <Content Include="Views\GetaJob\_AddEditSkills.cshtml" />
+    <Content Include="Views\GetaJob\_ResumeBuilder.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

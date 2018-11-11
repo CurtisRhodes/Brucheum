@@ -10,6 +10,12 @@ namespace WebApi.Models
         public string Key { get; set; }
         public string Value { get; set; }
     }
+    public class SkillModel
+    {
+        public string Id { get; set; }
+        public string SkillName { get; set; }
+        public string SkillCategory { get; set; }
+    }
 
     public class LostJobModel
     {
