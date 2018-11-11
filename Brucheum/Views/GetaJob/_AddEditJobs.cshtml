@@ -8,7 +8,6 @@
         border: solid 1.5px #bbb;
         border-radius: 5px;
     }
-
     .crudArea {
         padding: 11px;
     }
@@ -30,7 +29,9 @@
         margin-top: 2px;
     }
 
-    .crudTextArea {
+
+    /*summernote*/
+    .editorContainer {
         /*
             display: contents;
             width: 680px;
@@ -43,6 +44,12 @@
         border-radius: 5px;
         width: 554px;
         height: 350px;
+        word-wrap: normal;
+    }
+    .note-editable {
+        width: 554px;
+        height: 350px;
+        word-wrap: normal;
     }
 
     .wide {
@@ -73,7 +80,6 @@
     .dualContainers {
         display: flex;
     }
-
     .jobList {
         min-height: 606px;
         min-width: 574px;
@@ -83,6 +89,33 @@
         background-color: #ddd;
         border-radius: 5px;
     }
+    .loadingGif {
+        position: relative;
+        top: 150px;
+        left: 150px;
+        display: none;
+    }
+    .loadingGif img {
+        height: 45px;
+    }
+
+    .joblistTable {
+        width: 100%;
+        /*border-spacing: 1px 150px;*/
+    }
+    .jobListTableRow {
+        /*
+            background-color: #74bac3;
+            border: solid thin red;
+        */
+        height: 44px;
+        cursor: pointer;
+    }
+        .jobListTableRow td {
+            margin-top: 18px;
+            /*background-color: #74bac3;*/
+        }
+
 </style>
 
 <div class="dualContainers">
@@ -139,8 +172,10 @@
                 <div>
                     <div class="attrName">Summary</div>
                 </div>
-                <div class="crudRow">
-                    <textarea id="txtSummary" class="crudTextArea"></textarea>
+                <div class="editorContainer">
+                    <div>@Html.Partial("_Editor") </div>
+
+                    @*<textarea id="txtSummary" class="crudTextArea"></textarea>*@
                 </div>
                 <div>
                     <button id="jobAddEdit" class="roundendButton" onclick="addaJob()">Save</button>
@@ -152,16 +187,49 @@
     <div class="floatLeft">
         <div id="jobListContainer" class="crudContainer">
             <div id="JobListTitle" class="crudContainerTitle">Job List</div>
+            <div id="loadingGif" class="loadingGif">
+                <img src="~/Images/loader.gif" />  @*"~/Images/ingranaggi3.gif"*@
+            </div>
             <div id="jobList" class="jobList"></div>
         </div>
     </div>
+
 </div>
 
 <script>
     var service = '@ViewBag.Service'
     var jobModel = new Object;
+    $(document).ready(function () {
+        $('#summernote').summernote({
+            height: 350,
+            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            toolbar: [
+                ['codeview'],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                //['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontname', 'fontsize']],
+                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
+                ['color', ['color']]
+                //['para', ['ul', 'ol', 'paragraph']],
+                //['height', ['height']]
+            ]
+        });
+    });
 
-    function bind() {
+    function bind(editJobModel) {
+        jobModel.Id = editJobModel.Id;
+        $('#txtStartMonth').val(editJobModel.StartMonth);
+        $('#txtStartYear').val(editJobModel.StartYear);
+        $('#txtFiredMonth').val(editJobModel.FiredMonth);
+        $('#txtFiredYear').val(editJobModel.FiredYear);
+        $('#txtJobTitle').val(editJobModel.JobTitle);
+        $('#txtLocation').val(editJobModel.JobLocation);
+        $('#txtCompany').val(editJobModel.Employer);
+        $('#summernote').summernote('code', editJobModel.Summary);
+        //alert("bind jobModel.Summary: " + jobModel.Summary)
+    }
+
+    function unbind() {
         jobModel.StartMonth = $('#txtStartMonth').val();
         jobModel.StartYear = $('#txtStartYear').val();
         jobModel.FiredMonth = $('#txtFiredMonth').val();
@@ -169,12 +237,14 @@
         jobModel.JobTitle = $('#txtJobTitle').val();
         jobModel.JobLocation = $('#txtLocation').val();
         jobModel.Employer = $('#txtCompany').val();
-        jobModel.Summary = $('#txtSummary').val();
+        jobModel.Summary = $('#summernote').summernote('code');
+        //jobModel.Summary = beautify($('#summernote').summernote('code'));
+        //alert("unbind jobModel.Summary: " + jobModel.Summary)
     }
 
     function addaJob() {
         if (validate()) {
-            bind();
+            unbind();
             if ($('#jobAddEdit').html() == "Save") {
                 $.ajax({
                     type: "POST",
@@ -291,23 +361,26 @@
 
     function getJobs() {
         try {
+            $('#loadingGif').show();
+
         $.ajax({
             type: "GET",
             url: service + "/api/Job",
             success: function (response) {
                 if (true) {
-                    $('#jobList').html("<table>");
-
+                    var sstring = "<table style='border-spacing: 5px 100px' class='joblistTable'><tbody>";
                     $.each(response, function (idx, obj) {
-                        $('#jobList').append("<tr id=" + obj.JobId + "><td>" + obj.StartMonth + "</td><td>" + obj.StartYear + "</td><td>" +
-                            obj.Employer + "</td><td>" + obj.JobLocation + "</td></tr>");
+                        sstring += "<tr class='jobListTableRow' id=" + obj.Id + "><td>" + obj.StartMonth + "</td><td>" + obj.StartYear + "</td><td>" +
+                            obj.Employer + "</td><td>" + obj.JobLocation + "</td></tr>";
                     })
-                    $('#jobList').append("</table>");
+                    sstring += "</tbody></table>";
+                    $('#jobList').html(sstring);
+
+                    $('#loadingGif').hide();
 
                     $('#jobList tr').click(function () {
-                        alert("this.id" + $(this).attr("id"));
-                        // load editor
-
+                        //alert("this.id" + $(this).attr("id"));
+                        loadEditor($(this).attr("id"));
                     });
 
                     //public string JobTitle { get; set; }
@@ -333,6 +406,27 @@
             alert("get jobs CATCH: " + e)
         }
     }
+
+    function loadEditor(Id) {
+        $.ajax({
+            type: "GET",
+            url: service + "/api/Job?jobId=" + Id,
+            success: function (response) {
+                if (!response.Id.startsWith("ERROR")) {
+                    bind(response);
+                    $('#jobAddEdit').html("Edit");
+                    $('#btnNew').show();
+                }
+                else {
+                    alert("getjobs: " + response.Id )
+                }
+            },
+            error: function (jqXHR, exception) {
+                alert("addaJob post error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
 </script>
 
 

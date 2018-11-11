@@ -321,13 +321,21 @@
     <Content Include="Images\up.jpg" />
     <Content Include="Images\upCaret.png" />
     <Content Include="Images\wordDoc.jpg" />
+    <Content Include="Scripts\Editor\bootstrap.js" />
+    <Content Include="Scripts\Editor\codemirror.js" />
+    <Content Include="Scripts\Editor\formatting.js" />
+    <Content Include="Scripts\Editor\summernote.js" />
+    <Content Include="Scripts\Editor\xml.js" />
     <Content Include="Scripts\GlobalFunctions.js" />
+    <Content Include="Scripts\HeaderLogin.js" />
     <Content Include="Scripts\ImageTools.js" />
     <Content Include="Scripts\ResizeThreeColumnPage.js" />
     <Content Include="Styles\article.css" />
     <Content Include="Styles\articleEdit.css" />
     <Content Include="Styles\articleList.css" />
     <Content Include="Styles\bFooter.css" />
+    <Content Include="Styles\editor\bootstrap.css" />
+    <Content Include="Styles\editor\codeMirror.css" />
     <Content Include="Styles\fixedHeader.css" />
     <Content Include="Styles\boogers.css" />
     <Content Include="Styles\bookEdit.css" />
@@ -338,9 +346,9 @@
     <Content Include="Styles\JournalEditor.css" />
     <Content Include="Styles\jquery.codeview.css" />
     <Content Include="Styles\modalDialog.css" />
-    <Content Include="Styles\monokai.css" />
-    <Content Include="Styles\quill.snow.css" />
-    <Content Include="Styles\summernote.css" />
+    <Content Include="Styles\editor\monokai.css" />
+    <Content Include="Styles\editor\quill.snow.css" />
+    <Content Include="Styles\editor\summernote.css" />
     <Content Include="Styles\tableofContents.css" />
     <Content Include="Styles\admin.css" />
     <Content Include="Web.config">
@@ -383,7 +391,6 @@
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Views\Shared\_bFooter.cshtml" />
-    <Content Include="Views\Shared\_bHeader.cshtml" />
     <Content Include="Views\Shared\_BookPannel.cshtml" />
     <Content Include="Views\Article\Article.cshtml" />
     <Content Include="Views\Article\ArticleEdit.cshtml" />
@@ -404,7 +411,6 @@
     <Content Include="Views\Consulting\MyResume.cshtml" />
     <Content Include="Views\Consulting\Portfolio.cshtml" />
     <Content Include="Views\Consulting\_IdFooter.cshtml" />
-    <Content Include="Views\Consulting\_IdHeader.cshtml" />
     <Content Include="Views\Consulting\_ProfessionalLayout.cshtml" />
     <Content Include="Views\Login\_LoginPopup.cshtml" />
     <Content Include="Views\Login\_LogoutPopup.cshtml" />

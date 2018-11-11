@@ -1,16 +1,64 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNet.Identity
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - The Brucheum</title>
     <link href="~/Styles/default.css" rel="stylesheet" />
+    <link href="~/Styles/fixedHeader.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
     <script src="~/Scripts/GlobalFunctions.js"></script>
     <script src="~/Scripts/ResizeThreeColumnPage.js"></script>
 </head>
 <body>
-    @Html.Partial("_bHeader")
+    <div id="bheader" class="standardHeader">
+        <div class="bannerImageContainer">
+            <a href="~/Home/Index"><img src="~/images/house.gif" class="bannerImage" /></a>
+        </div>
+        <div class="headerBodyContainer">
+            <div id="bannerTitle" class="headerTitle">
+                Curtis Rhodes.com
+            </div>
+            <div class="menuTabContainer">
+                <div class="menuTab"><a href="~/Article/ArticleList">Latest Articles</a></div>
+                <div class="menuTab"><a href="~/Article/ArticleList?filterType=Category&filter=political rant">Political Rants</a></div>
+                <div class="menuTab"><a href="~/Article/ArticleList?filterType=Category&filter=conspiracy">Conspiracy Theories</a></div>
+                <div class="menuTab"><a href="~/Book/MyBooks">Books</a></div>
+                <div class="menuTab"><a href="~/Home/Apps">Apps</a></div>
+                <div class="menuTab"><a href="~/Consulting/ConsultingHome">Intelligent Design</a></div>
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="menuTab"><a href="~/Admin">Admin</a></div>
+                }
+
+                <div class="loginTab">
+                    @*@if ((Session["UserName"] != null) && (!String.IsNullOrEmpty(@Session["UserName"].ToString())))*@
+
+                    @if (Request.IsAuthenticated)
+                    {
+                        <div class="menuTab" id="tabProfile" title="modify profile">
+                            <a href="#">Hello @User.Identity.GetUserName() </a>
+                        </div>
+                        <div class="menuTab" id="tabLogout"><a href="javascript:sessionStorage.removeItem('accessToken');$('#logoutForm').submit();">Log Out</a></div>
+                    }
+                    else
+                    {
+                        <div class="menuTab" id="tabRegister"><a href="#">Register</a></div>
+                        <div class="menuTab" id="tabLogIn"><a href="#">Log In</a></div>
+
+                        @*
+                            <div class="menuTab">@Html.ActionLink("Register", "Register", "Login", routeValues: new { area = "" }, htmlAttributes: new { id = "registerLink" })</div>
+                            <div class="menuTab">@Html.ActionLink("Log in", "Login", "Register", routeValues: new { area = "" }, htmlAttributes: new { id = "loginLink" })</div>
+                            @Html.ActionLink("Hello " + User.Identity.GetUserName(), "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+
+                        *@
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="noFloat"></div>
+    </div>
     <div class="body-content">
         @RenderBody()
     </div>
@@ -19,6 +67,7 @@
         <div id="modalContent"></div>
     </div>
     @RenderSection("scripts", required: false)
+    <script src="~/Scripts/HeaderLogin.js"></script>
     <script>resizePage();</script>
 </body>
 </html>

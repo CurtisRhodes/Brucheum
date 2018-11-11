@@ -14,12 +14,32 @@ namespace WebApi
     public class JobController : ApiController
     {
         [HttpGet]
-        public Job Get(int jobId)
+        public LostJobModel Get(int jobId)
         {
-            using (GetaJobContext db = new GetaJobContext())
+            var lostJob = new LostJobModel();
+            try
             {
-                return db.Jobs.Where(j => j.Id == jobId).FirstOrDefault();
+                using (GetaJobContext db = new GetaJobContext())
+                {
+                    var dbJob = db.Jobs.Where(j => j.Id == jobId).FirstOrDefault();
+                    if (dbJob != null)
+                    {
+                        lostJob.Id = jobId.ToString();
+                        lostJob.Employer = dbJob.Employer;
+                        lostJob.JobLocation = dbJob.JobLocation;
+                        lostJob.StartMonth = dbJob.StartMonth;
+                        lostJob.StartYear = dbJob.StartYear;
+                        lostJob.FiredMonth = dbJob.FiredMonth;
+                        lostJob.FiredYear = dbJob.FiredYear;
+                        lostJob.JobTitle = dbJob.JobTitle;
+                        lostJob.Summary = dbJob.Summary;
+                        lostJob.SecretNarative = dbJob.SecretNarative;
+                        lostJob.ReasonForLeaving = dbJob.ReasonForLeaving;
+                    }
+                }
             }
+            catch (Exception ex) { lostJob.Id = "ERROR: "+ Helpers.ErrorDetails(ex); }
+            return lostJob;
         }
 
         [HttpGet]
@@ -33,7 +53,7 @@ namespace WebApi
                 {
                     lostJobs.Add(new LostJobModel()
                     {
-                        JobId = lostjob.Id.ToString(),
+                        Id = lostjob.Id.ToString(),
                         JobTitle = lostjob.JobTitle,
                         Employer = lostjob.Employer,
                         StartMonth=lostjob.StartMonth,
@@ -82,6 +102,7 @@ namespace WebApi
         [HttpPut]
         public string Put(Job editedJob)
         {
+            var xx = editedJob.Summary;
             string success = "";
             try
             {
@@ -102,9 +123,10 @@ namespace WebApi
                         job.Summary = editedJob.Summary;
                         job.ReasonForLeaving = editedJob.ReasonForLeaving;
                         job.SecretNarative = editedJob.SecretNarative;
+
+                        db.SaveChanges();
+                        success = "ok";
                     }
-                    db.SaveChanges();
-                    success = "ok";
                 }
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }

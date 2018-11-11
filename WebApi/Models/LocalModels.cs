@@ -13,7 +13,7 @@ namespace WebApi.Models
 
     public class LostJobModel
     {
-        public string JobId { get; set; }
+        public string Id { get; set; }
         public string JobTitle { get; set; }
         public string Employer { get; set; }
         public string JobLocation { get; set; }
