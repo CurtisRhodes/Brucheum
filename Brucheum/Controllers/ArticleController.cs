@@ -63,6 +63,7 @@ namespace Brucheum
                     }
                 }
             }
+            ViewBag.IpAddress = Helpers.GetIPAddress();
             ViewBag.Service = apiService;
             ViewBag.UserId = User.Identity.GetUserId();  //   Session["UserId"];
             ViewBag.UserName = User.Identity.GetUserName();  //    Session["UserName"];

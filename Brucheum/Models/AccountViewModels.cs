@@ -46,27 +46,21 @@ namespace Brucheum.Models
         public string Email { get; set; }
     }
 
-    public class LoginViewModel
-    {        
-        public string UserName { get; set; }
-        public string IPAddress { get; set; }
-        public string success { get; set; }
 
-        [Display(Name = "Email")]
+    public class ProfileViewModel
+    {
+        public string UserName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string PhoneNumber { get; set; }
         [EmailAddress]
+        [StringLength(100, ErrorMessage = "Invalid Email", MinimumLength = 4)]
         public string Email { get; set; }
 
-        [Required]
-        [DataType(DataType.Password)]
-        [Display(Name = "Password")]
-        public string Password { get; set; }
-
-        [Display(Name = "Remember me?")]
-        public bool RememberMe { get; set; }
     }
 
-    public class RegisterViewModel
-    {
+    public class LoginViewModel
+    {        
         public string UserName { get; set; }
         public string IPAddress { get; set; }
 
@@ -79,6 +73,17 @@ namespace Brucheum.Models
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
+
+        [Display(Name = "Remember me?")]
+        public bool RememberMe { get; set; }
+        public string success { get; set; }
+    }
+
+    public class RegisterViewModel : LoginViewModel
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string PhoneNumber { get; set; }
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]

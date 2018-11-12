@@ -39,6 +39,9 @@
         margin-top:8px;
         margin-left: 200px;
     }
+    .roundedInput {
+        width: 266px;
+    }
 </style>
 
 <div id="registerUserDialog">
@@ -56,9 +59,7 @@
         <label>user name</label><br>
         <input id="txtUserName" type="text" class="roundedInput" placeholder="your go by name"><br>
 
-        @*<div id="errEmail" class="validationError">Required</div>
-        <label>Email</label><br />
-        <input id="txtEmail" type="email" class="roundedInput" placeholder="you@example.org"><br>*@
+        @*<div id="errEmail" class="validationError">Required</div>*@
 
         <div id="errPassword" class="validationError">Required</div>
         <label>password</label><br>
@@ -68,9 +69,9 @@
         <label>retype password</label><br>
         <input id="txtConfirmPassword" type="password" class="roundedInput" autocomplete="off" placeholder="********"><br>
 
-        @*<div id="divRememberMe">
+        <div id="divRememberMe">
             <input id="ckRememberMe" type="checkbox" checked="checked" />Remember Me ?  (<span>uses a cookie</span>)
-        </div>*@
+        </div>
 
         <div id="divShowDetails">
             Extra Details
@@ -80,14 +81,16 @@
         </div>
 
         <div id="divExtraDetails">
+            <label>Email</label><br />
+            <input id="txtEmail" type="email" class="roundedInput" placeholder="you@example.org"><br>
             <label>FirstName</label><br />
             <input id="txtFirstName" type="text" class="roundedInput"><br>
             <label>Last Name</label><br />
             <input id="txtLastName" type="text" class="roundedInput"><br>
             <label>Phone Number</label><br />
             <input id="txtPhone" type="tel" class="roundedInput"><br>
-            <label>Pin </label><br />
-            <input id="txtPin" type="text" class="roundedInput" placeholder="you may use this to login"><br>
+            @*<label>Pin </label><br />
+            <input id="txtPin" type="text" class="roundedInput" placeholder="you may use this to login"><br>*@
         </div>
 
         <button class="roundendButton" id="btnRegister">Register</button>
@@ -97,47 +100,46 @@
 </div>
 
 <script>
-    //var service = '@ViewBag.Service';
-    $(document).ready(function () {
-        $('#txtUserName').focus();
-    });
 
     $('#btnRegister').click(function () {
-        Register();
-    });
+        if ($('#btnRegister').html() == "Register") {
+            if (validate()) {
+                $('#btnRegister').html("wait");
 
-    function Register() {
-        if (validate()) {
-            var regVM = new Object();
-            regVM.UserName = $('#txtUserName').val();
-           // regVM.Email = $('#txtEmail').val();
-            regVM.Password = $('#txtPassword').val();
-            regVM.ConfirmPassword = $('#txtConfirmPassword').val();
-          //  regVM.Hometown = 'Allendale';
-         //   regVM.RememberMe = $('#ckRememberMe').prop('checked');
+                var regVM = new Object();
+                regVM.UserName = $('#txtUserName').val();
+                regVM.Password = $('#txtPassword').val();
+                regVM.ConfirmPassword = $('#txtConfirmPassword').val();
+                regVM.Email = $('#txtEmail').val();
+                regVM.FirstName = $('#txtFirstName').val();
+                regVM.LastName = $('#txtLastName').val();
+                regVM.Phone = $('#txtPhone').val();
+                regVM.RememberMe = $('#ckRememberMe').prop('checked');
 
-            $.ajax({
-                type: "POST",
-                url: "/Login/Register",
-                datatype: "json",
-                data: regVM,
-                success: function (success) {
-                    if (success === "ok")
-                        //$("#divlogin").load(location.href + " #divlogin");
-                        location.reload(true);
-                        //clearModal();
-                    else {
-                        $('#errSummary').html(success);
-                        $('#errSummary').show();
+                $.ajax({
+                    type: "POST",
+                    url: "/Login/RegisterAndLogin",
+                    data: regVM,
+                    datatype: "json",
+                    success: function (success) {
+                        if (success === "ok") {
+                            location.reload(true);
+                            sendEmailFromJS("CONGRATULATIONS: " + regVM.UserName + " just Registered onto The Brucheum", "someday it will be someone other than you");
+                        }
+                        else {
+                            $('#errSummary').html(success);
+                            $('#errSummary').show();
+                            $('#btnRegister').html("Register");
+                        }
+                    },
+                    error: function (xhr) {
+                        displayStatusMessage("severityError", "error: " + xhr.statusText);
+                        alert("Register  error: " + xhr.statusText);
                     }
-                },
-                error: function (xhr) {
-                    displayStatusMessage("severityError", "error: " + xhr.statusText);
-                    alert("Register  error: " + xhr.statusText);
-                }
-            });
+                });
+            }
         }
-    }
+    });
     
     function validate() {
         

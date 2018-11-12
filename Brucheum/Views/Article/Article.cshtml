@@ -80,6 +80,7 @@
     var userId = '@ViewBag.UserId';
     var userName = '@ViewBag.UserName';
     var filePath = '@ViewBag.FilePath';
+    var ipAddress = '@ViewBag.IpAddress';
 
     $(document).ready(function () {
         try {
@@ -88,6 +89,10 @@
             }
             content = beautify(content);
             $('#divContent').html(content);
+
+            logPageHit(service, userName, ipAddress, "ViewArticle", title);
+
+
             //stickCommentsButton();
 
             var hdr = $('.Header').height();

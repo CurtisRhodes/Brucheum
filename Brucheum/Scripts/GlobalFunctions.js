@@ -1,4 +1,29 @@
-﻿function displayStatusMessage(severity, message) {
+﻿
+
+function logPageHit(service, userName, ipAddress, page, details) {
+    
+    $.ajax({
+        type: "GET",
+        url: service + "/api/HitCounter/AddPageHit?ipAddress=" + ipAddress + "&app=Brucheum&page=" + page + "&details=" + details,
+        success: function (success) {
+            if (!success.startsWith("ERROR"))
+            {
+                sendEmailFromJS("Page Hit", userName + " visited " + page + " " + details);
+                //displayStatusMessage("severityOK", "email sent");
+            }
+            else
+                alert("Page Hit Fail: " + success);
+        },
+        error: function (xhr) {
+            //displayStatusMessage("severityError", "error: " + xhr.statusText);
+            alert("Page Hit XHR error: " + xhr.statusText);
+        }
+    });
+
+}
+
+
+function displayStatusMessage(severity, message) {
 	$('#divStatusMessage').removeClass();
 	$('#divStatusMessage').addClass(severity);
 	$('#divStatusMessage').html(message);
@@ -16,13 +41,40 @@
 function clearModal() {
 	$('#modalContainer').hide();
 	$('#modalContent').html();
-	$('.ql-editor p').show();
 }
 
-function PublicAlert(message) {
+function showCustomMessage(message) {
 //var messHtml="
-
+    alert(message);
 }
+
+function sendEmailFromJS(msg, body) {
+    //alert("sendEmailFromJS");
+    var success = "";
+    var sendObj = new Object();
+    sendObj.Subject = msg;
+    sendObj.Body = body;
+    $.ajax({
+        type: "POST",
+        url: "https://api.curtisrhodes.com/Api/Email/Send",
+        data: sendObj,
+        async: false,
+        success: function (emailSuccess) {
+            success = emailSuccess;
+            if (success === "ok") {
+                //alert("Email says: " + sendObj.Subject);
+                displayStatusMessage("severityOk", "email sent");
+            }
+            else
+                alert("Email Fail: " + success);
+        },
+        error: function (xhr) {
+            //displayStatusMessage("severityError", "error: " + xhr.statusText);
+            alert("sendEmailFromJS error: " + xhr.statusText);
+            success = xhr.statusText;
+        }
+    });
+};
 
 function beautify(stankyString) {
     if (stankyString === undefined)

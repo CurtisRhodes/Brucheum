@@ -43,44 +43,4 @@ namespace Brucheum
             return View();
         }
     }
-
-    public class ErrorController : Controller
-    {
-        public ActionResult Index(string msg, string st)
-        {
-            if (st != null)
-                ViewBag.StackTrace = st.Replace("\r\n", "<br/>");
-            if (msg != null)
-                ViewBag.ErrorMessage = msg;
-            return View();
-        }
-
-        public ActionResult NotFound(string aspxerrorpath)
-        {
-            ViewBag.ErrorPath = aspxerrorpath;
-            return View();
-        }
-        public ActionResult AppError()
-        {
-            string stackTrace = "";
-            string errorMessage = "unknown Error";
-            //if (HttpContext.Session != null)
-            {
-                //Exception ex = (Exception)Session["LastError"];
-                var ex = Server.GetLastError();
-                if (ex.InnerException != null)
-                {
-                    errorMessage += "<br/>" + ex.InnerException.Message;
-                    if (ex.InnerException.InnerException != null)
-                        errorMessage += "<br/>" + ex.InnerException.InnerException.Message; ;
-
-                    stackTrace = ex.StackTrace.Replace("\r\n", "<br/>");
-                }
-            }
-            ViewBag.StackTrace = stackTrace;
-            ViewBag.ErrorMessage = errorMessage;
-            return View();
-        }
-
-    }
 }

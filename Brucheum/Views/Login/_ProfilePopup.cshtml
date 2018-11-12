@@ -1,5 +1,6 @@
 ﻿<link href="~/Styles/modalDialog.css" rel="stylesheet" />
 <script src="~/Scripts/GlobalFunctions.js"></script>
+<link href="~/Styles/default.css" rel="stylesheet" />
 
 <style>
     #userProfileDialog {
@@ -29,10 +30,11 @@
         </div>
     </div>
     <div style="clear:both"></div>
+    <div id="errSummary" class="validationError"></div>
     <label>User Name</label><br>
-    <input id="txtUserName" type="text" class="roundedInput" placeholder="your go by name"><br>
+    <input id="txtUserName" type="text" value="@User.Identity.Name" class="roundedInput" placeholder="your go by name"><br>
     <label>Email</label><br>
-    <input id="txtEmail" type="email" class="roundedInput" placeholder="you@example.org"><br>
+    <input id="txtEmail" type="email" class="roundedInput" value="" placeholder="you@example.org"><br>
     <label>FirstName</label><br>
     <input id="txtFirstName" type="text" class="roundedInput"><br>
     <label>Last Name</label><br>
@@ -48,91 +50,76 @@
 </div>
 
 <script>
-    var service = '@ViewBag.Service';
+    var _FirstName = '@ViewBag.FirstName';
+    var _LastName = '@ViewBag.LastName';
+    var _PhoneNumber = '@ViewBag.PhoneNumber';
+    var _UserName = '@ViewBag.UserName';
+    var _Email = '@ViewBag.Email';
     var userProfile = new Object();
-    var userId = '@ViewBag.UserId';
 
     $(document).ready(function () {
-        GetUser();
+
+        //alert("response.UserName: " + response.UserName);
+        //alert("appUser: " + appUser);
+
+
+        //bind(appUser);
+        $('#txtUserName').val(_UserName);
+        $('#txtEmail').val(_Email);
+        $('#txtFirstName').val(_FirstName);
+        $('#txtLastName').val(_LastName);
+        $('#txtPhone').val(_PhoneNumber);
+
+        $('#txtUserName').focus();
     });
 
     $('#btnUpdate').click(function () {
-        UpdateProfile();
+        try {
+            if ($('#btnUpdate').html() == "Update") {
+                $('#btnUpdate').html("Wait");
+
+                //unBind();
+                //userProfile.UserId = userId;
+                userProfile.UserName = $('#txtUserName').val();
+                userProfile.Email = $('#txtEmail').val();
+                userProfile.FirstName = $('#txtFirstName').val();
+                userProfile.LastName = $('#txtLastName').val();
+                userProfile.PhoneNumber = $('#txtPhone').val();
+                //userProfile.Pin = $('#txtPin').val();
+
+                $.ajax({
+                    type: "PUT",
+                    url: "/Login/UpdateProfile",
+                    //dataType: "json",
+                    data: userProfile,
+                    success: function (success) {
+                        if (success === "ok") {
+                            $('#errSummary').hide();
+                            $('#btnUpdate').html("Update");
+
+                            //alert("calling email");
+                            sendEmailFromJS(userProfile.UserName + " just updated their profile onThe Brucheum", "someday it will be someone other than you");
+                            //clearModal();
+                        }
+                        else {
+                            $('#errSummary').html(success);
+                            $('#errSummary').show();
+                            $('#btnUpdate').html("Update");
+                        }
+                    },
+                    error: function (xhr) {
+                        displayStatusMessage("severityError", "error: " + xhr.statusText);
+                        alert("ajax error: " + xhr.statusText);
+                    }
+                });
+            }
+        } catch (e) {
+            displayStatusMessage("severityError", "ERROR" + e);
+            alert("ajax catch error: " + xhr.statusText);
+        }
     });
 
     $('#btnClose, #btnCancel').click(function () {
         clearModal();
     });
-
-    function bind(response) {
-        $('#txtUserName').val(response.UserName);
-        $('#txtEmail').val(response.Email);
-        $('#txtFirstName').val(response.FirstName);
-        $('#txtLastName').val(response.LastName);
-        $('#txtPhone').val(response.PhoneNumber);
-        $('#txtPin').val(response.Pin);
-    }
-
-    function unBind() {
-        userProfile.UserId = userId;
-        userProfile.UserName = $('#txtUserName').val();
-        userProfile.Email = $('#txtEmail').val();
-        userProfile.FirstName = $('#txtFirstName').val();
-        userProfile.LastName = $('#txtLastName').val();
-        userProfile.PhoneNumber = $('#txtPhone').val();
-        userProfile.Pin = $('#txtPin').val();
-    }
-
-    function UpdateProfile() {
-        try {
-            unBind();
-            $.ajax({
-                url: service + "/api/Login/",
-                type: "PUT",
-                dataType: "json",
-                data: userProfile,
-                success: function (success) {
-                    if (success === "ok") {
-                        clearModal();
-                    }
-                    else {
-                        alert("UpdateProfile: " + success);
-                    }
-                },
-                error: function (xhr) {
-                    displayStatusMessage("severityError", "error: " + xhr.statusText);
-                    alert("ajax error: " + xhr.statusText);
-                }
-            });
-        } catch (e) {
-            displayStatusMessage("severityError", "ERROR"  + e);
-            alert("ajax catch error: " + xhr.statusText);
-        }
-    }
-
-    function GetUser() {
-        try {
-            $.ajax({
-                url: service + "/api/User/GetUser/?userId=" + userId,
-                type: "get",
-                dataType: "json",
-                success: function (response) {
-                    if (!response.UserName.startsWith("ERROR")) {
-                        bind(response);
-                    }
-                    else {
-                        alert("api ERROR: " + response.success);
-                    }
-                },
-                error: function (xhr) {
-                    //displayStatusMessage("severityError", "error: " + xhr.statusText);
-                    alert("get error: " + xhr.statusText);
-                    Console.Write("Update Profile error: " + xhr.statusText);
-                }
-            });
-        } catch (e) {
-            //displayStatusMessage("severityError", "ERROR"  + e);
-            alert("catch error: " + e);
-        }
-    }
 </script>

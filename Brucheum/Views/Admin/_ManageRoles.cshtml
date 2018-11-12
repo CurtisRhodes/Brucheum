@@ -1,15 +1,15 @@
 ﻿<style>
 </style>
-
-<div class="adminOptionTitle">Add Edit Roles</div>
-<div>
-    <label>Role:</label>
-    <input class="adminInput" id="txtRoleName" />
+<div class="adminContainer">
+    <div class="adminOptionTitle">Add Edit Roles</div>
+    <div>
+        <label>Role:</label>
+        <input class="adminInput" id="txtRoleName" />
         <div class="roundendButton" id="btnAddUpdateRole">Add</div>
         <div class="roundendButton" id="btnRoleToggle">New</div>
+    </div>
+    <div class="itemsList" id="divRoleList"></div>
 </div>
-<div class="itemsList" id="divRoleList"></div>
-
 <script>
     var objRole = new Object();
 
@@ -68,19 +68,16 @@
         try {
             $.ajax({
                 type: "GET",
-                url: "/Admin/AddRole?roleName=" + $('#txtRoleName').val(),
-                dataType: "Json",
-                //data: objRole,
+                url: "/Admin/AddRole?roleName=" + $('#txtRoleName').val(), 
+                //dataType: "Json",
+                //data: ,
                 success: function (success) {
-                    if (success.toUpperCase() == "OK") {
+                    if (success== "ok") {
                         $('#txtRoleName').val("");
                         $('#btnAddUpdateRole').text("Add");
-                        $('#btnAddUpdateRole').text("Add");
-
                         displayStatusMessage("severityOk", "Saved");
                         getRoles();
                         $('#btnRoleToggle').hide();
-
                     }
                     else {
                         alert("success :" + success);
@@ -125,15 +122,3 @@
     }
 
 </script>
-
-
-
-
-
-
-
-
-
-
-
-

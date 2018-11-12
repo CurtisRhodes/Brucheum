@@ -2,7 +2,21 @@
     ViewBag.Title = "Admin";
 }
 <link href="~/Styles/admin.css" rel="stylesheet" />
+
 <style>
+    .adminContainer {
+        width: 455px;
+        margin-left: 33px;
+        border:solid 1px purple;
+        border-radius: 4px;
+    }
+    .roundendButton {
+        width: 111px;
+        display: inline-block;
+    }
+    .adminOptionTitle {
+        background-color: #74bac3;
+    }
 </style>
 
 <div class="threeColumnArray">
@@ -86,7 +100,7 @@
     $("#optAssignRoles").click(function () {
         $('.adminOption').hide();
         $('#tabAssignRoles').show();
-        setInititalState();
+        setUserRolesInititalState();
     });
 
 </script>

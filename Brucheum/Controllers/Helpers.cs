@@ -13,33 +13,51 @@ namespace Brucheum
         private static readonly string ipAddress = GetIPAddress();
         private static readonly string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
 
-        public static async Task<HttpResponseMessage> SessionStart()
+        public static async Task<string> SessionStart()
         {
-            using (HttpClient client = new HttpClient())
-            {
-                HttpResponseMessage response = await client.GetAsync(apiService + "/api/HitCounter/Verify?ipAddress=" + ipAddress + "&app=Brucheum", HttpCompletionOption.ResponseContentRead);
-                //string exists = await response.Content.ReadAsStringAsync();
-                //if (exists == "false")
-                //{
-                //    // WE HAVE A NEW VISITOR
-                //    var AddVisitorResponseMessage = await client.GetAsync(apiService + "/api/HitCounter/AddVisitor?ipAddress=" + ipAddress + "&app=Brucheum&userId=duh", HttpCompletionOption.ResponseContentRead);
-                //    string success = await response.Content.ReadAsStringAsync();
-                //    await SendEmail("CONGRATULATIONS: someone just visited your site", "ip: " + ipAddress + " visited: The Brucheum");
-                //}
-                return response;
-            }
-        }
+            ThrowError("email not working");
 
-        public static async Task<string> SendEmail(string subjectLine, string message)
-        {
             string success = "";
-            using (HttpClient client = new HttpClient())
+            try
             {
-                var responseMessage = await client.GetAsync(apiService + "/api/Email/SendEmail?subjectLine=" + subjectLine + "&message=" + message, HttpCompletionOption.ResponseContentRead);
-                if (responseMessage.IsSuccessStatusCode)
-                    success = "ok";
-                else
-                    success = responseMessage.ReasonPhrase;
+                using (HttpClient client = new HttpClient())
+                {
+
+                    // , HttpCompletionOption.ResponseContentRead
+                    //HttpResponseMessage response = await client.GetAsync(apiService + "/api/HitCounter/LogVisit?ipAddress=" + ipAddress + "&app=Brucheum");
+
+                    //string content = await response.Content.ReadAsStringAsync();
+
+                    //var scode = response.IsSuccessStatusCode;
+                    //var rp = response.ReasonPhrase;
+                    //HttpContent xx = response.Content;
+                    //string bbb = xx.ReadAsStringAsync().Result;
+
+
+                    //if (response.IsSuccessStatusCode)
+                    //{
+                    //    var x = response.ReasonPhrase;
+                    //}
+
+
+                    ////success = await response.Content.ReadAsStringAsync();
+                    //if (success != "ok")
+                    //{
+                    //    ThrowError(success);
+                    //}
+
+                    //if (exists == "false")
+                    //{
+                    //    // WE HAVE A NEW VISITOR
+                    //    var AddVisitorResponseMessage = await client.GetAsync(apiService + "/api/HitCounter/AddVisitor?ipAddress=" + ipAddress + "&app=Brucheum&userId=duh", HttpCompletionOption.ResponseContentRead);
+                    //    string success = await response.Content.ReadAsStringAsync();
+                    //    await SendEmail("CONGRATULATIONS: someone just visited your site", "ip: " + ipAddress + " visited: The Brucheum");
+                    //}
+                }
+            }
+            catch (Exception ex)
+            {
+                ThrowError(ErrorDetails(ex));
             }
             return success;
         }
@@ -59,17 +77,24 @@ namespace Brucheum
                             string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
                             HttpResponseMessage response = await client.GetAsync(apiService +
                                 "/api/HitCounter/AddPageHit?ipAddress=" + ipAddress + "&app=Brucheum&page=" + page + "&details=" + details);
-                            string success = response.Content.ReadAsStringAsync().Result;
+                            string success = await response.Content.ReadAsStringAsync();
+                            if (success != "ok") {
+                                ThrowError(success);
+                            }
                         }
                         catch (Exception ex)
                         {
-                            Console.Write(ex.Message);
-                            throw;
+                            ThrowError(ErrorDetails(ex));
                         }
                     }
                 }
             }
             return "Whatever";
+        }
+
+        public static void ThrowError(string errMessage )
+        {
+            new LoginController().ShowCustomMessage(errMessage);
         }
 
         private static bool IsBeingLogged(string page)

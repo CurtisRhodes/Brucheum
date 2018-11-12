@@ -54,15 +54,17 @@ namespace Brucheum.Controllers
             return Json(roles,JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult AddRole(string roleName)
+        public string AddRole(string roleName)
         {
+            string success = "";
             var roleModel = new RoleModel();
             try
             {
                 roleModel = RoleManager.AddRole(roleName);
+                success = roleModel.success;
             }
             catch (Exception ex) { roleModel.success = Helpers.ErrorDetails(ex); }
-            return Json(roleModel, JsonRequestBehavior.AllowGet);
+            return success;  //Json(roleModel, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult GetUsers()

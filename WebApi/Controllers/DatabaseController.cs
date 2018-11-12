@@ -169,10 +169,15 @@ namespace WebApi
                     db.Comments.Add(comment);
                     db.SaveChanges();
 
-                    Helpers.SendEmail("Somebody Actually Made A comment " + comment.CommentTitle, comment.UserName + " said: " + comment.CommentText);
                     newComment.CommentId = comment.CommentId;
                     newComment.CreateDate = comment.CreateDate.ToShortDateString();
                     newComment.success = "ok";
+
+                    newComment.success = new EmailController().Send(new EmailMessage()
+                    {
+                        Subject = "Somebody Actually Made A comment",
+                        Body = comment.UserName + " said: " + comment.CommentText
+                    });
                 }
             }
             catch (Exception ex)
@@ -217,10 +222,9 @@ namespace WebApi
         [HttpGet]
         public string LogVisit(string ipAddress, string app)
         {
-            string rtn = "";
+            string success = "";
             try
             {
-                string emailSuccess = "";
                 using (WebSiteContext db = new WebSiteContext())
                 {
                     Visitor existing = db.Visitors.Where(v => v.IPAddress == ipAddress && v.App == app).FirstOrDefault();
@@ -239,13 +243,20 @@ namespace WebApi
 
                         db.Visitors.Add(visitor);
                         db.SaveChanges();
-                        emailSuccess = Helpers.SendEmail("CONGRATULATIONS: someone just visited your site", "ip: " + ipAddress + " visited: " + app);
-                        if (emailSuccess != "ok")
-                            rtn = "true but " + emailSuccess;
+
+                        success = new EmailController().Send(new EmailMessage()
+                        {
+                            Subject = "CONGRATULATIONS: someone just visited your site",
+                            Body = "ip: " + ipAddress + " visited: " + app
+                        });
+                        ////emailSuccess = Helpers.SendEmail("CONGRATULATIONS: someone just visited your site", "ip: " + ipAddress + " visited: " + app);
+                        //if (emailSuccess != "ok")
+                        //    success = "true but " + emailSuccess;
+                        //else
+                        //    success = "ok";
                     }
                     else
                     {
-                        rtn = "true";
                         // add  Vist
                         Visit visit = new Visit();
                         visit.IPAddress = ipAddress;
@@ -257,18 +268,17 @@ namespace WebApi
 
                         if (ipAddress != "50.62.160.105")  // could be something at Godaddy
                         {
-                            emailSuccess = Helpers.SendEmail("Site Visit", "ip: " + ipAddress + " visited: " + app);
-                            if (emailSuccess != "ok")
-                                rtn = "true but " + emailSuccess;
+                            success = new EmailController().Send(new EmailMessage()
+                            {
+                                Subject = "Site Visit",
+                                Body = "ip: " + ipAddress + " visited: " + app
+                            });
                         }
                     }
                 }
             }
-            catch (Exception ex) {
-
-                rtn = Helpers.ErrorDetails(ex);
-            }
-            return rtn;
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
         }
 
         [HttpGet]
@@ -289,8 +299,7 @@ namespace WebApi
                     db.Hits.Add(hit);
                     db.SaveChanges();
 
-                    success = Helpers.SendEmail("Page Hit", "ip: " + ipAddress + " visited: " + app + " :" + details);
-                    //success = hit.HitId.ToString();
+                    success = hit.HitId.ToString();
                 }
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
@@ -356,21 +365,21 @@ namespace WebApi
             return msg;
         }
 
-        public static string SendEmail(string subjectLine, string message)
-        {
-            string success = "";
-            try
-            {
-                SmtpClient smtp = new SmtpClient("relay-hosting.secureserver.net", 25);
-                MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "Curtishrhodes@hotmail.com");
-                mailMessage.Subject = subjectLine;
-                mailMessage.Body = message;
-                smtp.Send(mailMessage);
-                success = "ok";
-            }
-            catch (Exception ex) { success = ex.Message; }
-            return success;
-        }
+        //public static string SendEmail(string subjectLine, string message)
+        //{
+        //    string success = "";
+        //    try
+        //    {
+        //        SmtpClient smtp = new SmtpClient("relay-hosting.secureserver.net", 25);
+        //        MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "Curtishrhodes@hotmail.com");
+        //        mailMessage.Subject = subjectLine;
+        //        mailMessage.Body = message;
+        //        smtp.Send(mailMessage);
+        //        success = "ok";
+        //    }
+        //    catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+        //    return success;
+        //}
 
     }
 }

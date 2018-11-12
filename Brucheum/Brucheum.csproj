@@ -237,6 +237,7 @@
     <Compile Include="Controllers\ArticleController.cs" />
     <Compile Include="Controllers\BookController.cs" />
     <Compile Include="Controllers\ConsultingController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\GetaJobController.cs" />
     <Compile Include="Controllers\Helpers.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -321,11 +322,12 @@
     <Content Include="Images\up.jpg" />
     <Content Include="Images\upCaret.png" />
     <Content Include="Images\wordDoc.jpg" />
-    <Content Include="Scripts\Editor\bootstrap.js" />
-    <Content Include="Scripts\Editor\codemirror.js" />
-    <Content Include="Scripts\Editor\formatting.js" />
-    <Content Include="Scripts\Editor\summernote.js" />
-    <Content Include="Scripts\Editor\xml.js" />
+    <Content Include="Scripts\3rd Party\jquery.min.js" />
+    <Content Include="Scripts\3rd Party\Editor\bootstrap.js" />
+    <Content Include="Scripts\3rd Party\Editor\codemirror.js" />
+    <Content Include="Scripts\3rd Party\Editor\formatting.js" />
+    <Content Include="Scripts\3rd Party\Editor\summernote.js" />
+    <Content Include="Scripts\3rd Party\Editor\xml.js" />
     <Content Include="Scripts\GlobalFunctions.js" />
     <Content Include="Scripts\HeaderLogin.js" />
     <Content Include="Scripts\ImageTools.js" />
@@ -347,6 +349,7 @@
     <Content Include="Styles\editor\summernote.css" />
     <Content Include="Styles\tableofContents.css" />
     <Content Include="Styles\admin.css" />
+    <Content Include="Views\Login\LoginPopup.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -438,6 +441,8 @@
     <Content Include="Views\GetaJob\_AddEditJobs.cshtml" />
     <Content Include="Views\GetaJob\_AddEditSkills.cshtml" />
     <Content Include="Views\GetaJob\_ResumeBuilder.cshtml" />
+    <Content Include="Views\Error\ErrorwMessages.cshtml" />
+    <Content Include="Views\Error\ErrorwException.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

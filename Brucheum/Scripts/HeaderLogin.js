@@ -1,12 +1,14 @@
 ﻿
-$(document).ready(function () {
-    $('.headerBody').width($('.Header').width() - $('#bannerImage').width() - 200);
-});
-$(window).resize(function () {
-    $('.headerBody').width($('.Header').width() - $('#bannerImage').width() - 200);
-});
+//$(document).ready(function () {
+//    $('.headerBody').width($('.Header').width() - $('#bannerImage').width() - 200);
+//});
+//$(window).resize(function () {
+//    $('.headerBody').width($('.Header').width() - $('#bannerImage').width() - 200);
+//});
 
-$('.tabRegister').click(function () {
+
+function callRegisterPopup() {
+    //$('.tabRegister').click(function () {
     $.ajax({
         type: "get",
         url: "/Login/Register",
@@ -19,14 +21,14 @@ $('.tabRegister').click(function () {
             alert("RegisterPopup error: " + xhr.statusText);
         }
     });
-});
-
-$('.tabLogIn').click(function () {
-    alert("tabLogIn");
+}
+function callLoginPopup() {
+    //$('.tabLogIn').click(function () {
+    //alert("tabLogIn");
     try {
         $.ajax({
-            type: "get",
-            url: "/Login/Login",
+            type: "POST",
+            url: "/Login/LoginPopup",
             datatype: "json",
             success: function (data) {
                 $('#modalContent').html(data);
@@ -36,13 +38,12 @@ $('.tabLogIn').click(function () {
                 alert("LoginPopup error: " + xhr.statusText);
             }
         });
-
     } catch (e) {
         alert("tabLogIn :" + e);
     }
-});
-
-$('#tabProfile').click(function () {
+}
+function callProfilePopup() {
+    //$('#tabProfile').click(function () {
     try {
         $.ajax({
             type: "get",
@@ -59,22 +60,23 @@ $('#tabProfile').click(function () {
     } catch (e) {
         alert("tabProfile catch: " + e);
     }
-});
-
-$('#tabLogout').click(function () {
-    $.ajax({
-        type: "get",
-        url: "/Login/Logout",
-        success: function (success) {
-            if (success === "ok")
-                //$("#divlogin").load(location.href + " #divlogin");
-                location.reload(true);
-            else
-                alert("LogOUT: " + success);
-        },
-        error: function (xhr) {
-            displayStatusMessage("severityError", "error: " + xhr.statusText);
-            alert("tabLogout error: " + xhr.statusText);
-        }
-    });
-});
+}
+function callLogout() {
+    try {
+        $.ajax({
+            type: "get",
+            url: "/login/Logout",
+            success: function (success) {
+                if (success === "ok")
+                    location.reload(true);
+                else
+                    alert("callLogout: " + success);
+            },
+            error: function (xhr) {
+                alert("callLogout XHR error: " + xhr.statusText);
+            }
+        });
+    } catch (e) {
+        alert("callLogout catch: " + e);
+    }
+}

@@ -25,28 +25,28 @@ namespace Brucheum
 
         }
 
-        protected async Task<JsonResult> Application_BeginRequest() //– fired when a request for the web application comes in.
+        protected void Application_BeginRequest() //– fired when a request for the web application comes in.
         {
-            await Helpers.PageHit(Request.CurrentExecutionFilePath, Request.QueryString.ToString());
-            return null;
+            //Helpers.PageHit(Request.CurrentExecutionFilePath, Request.QueryString.ToString());
         }
 
-        protected async Task<JsonResult> Session_Start()
+        protected void Session_Start()
         {
-            await Helpers.SessionStart();
-            return null;
+            //Helpers.SessionStart();
         }
 
         protected void Application_Error()
         {
-            var msg = Helpers.ErrorDetails(Server.GetLastError()).Replace(Environment.NewLine, "<br/>");
-            var st = Server.GetLastError().StackTrace.Replace(Environment.NewLine, "<br/>");  //   "/\r?\n/g", "<br />");   //("/[\r\n]/g", "<br />");  //.Replace("\r\n", "<br/>").Replace("\;
-            Response.Redirect("~/Error/Index?msg=" + msg + "&st=" + st, false);
-            //if (HttpContext.Current.Session != null)
-            //{
-            //    //Session.Add("LastError", Server.GetLastError());
-            //    Response.Redirect("~/Error/Index?ex="+ Server.GetLastError(), false);
-            //}
+            if (HttpContext.Current.Session != null)
+            {
+                var msg = Helpers.ErrorDetails(Server.GetLastError()).Replace(Environment.NewLine, "<br/>");
+                var st = Server.GetLastError().StackTrace.Replace(Environment.NewLine, "<br/>");
+                Response.Redirect("~/Error/ErrorwMessages?msg=" + msg + "&st=" + st, false);
+            }
+            else
+            {
+                Response.Redirect("~/Error/", false);
+            }
         }
     }
 }

@@ -7,18 +7,19 @@
     <title>@ViewBag.Title - CurtisRhodes.com</title>
     <link rel="shortcut icon" src="~/Images/brain02.ico" type="image/x-icon" />
     <link href="~/Styles/default.css" rel="stylesheet" />
-    <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/3rd Party/jquery.min.js"></script>
     <script src="~/Scripts/GlobalFunctions.js"></script>
-    <script src="~/Scripts/ResizeThreeColumnPage.js"></script>
     <link href="~/Styles/fixedHeader.css" rel="stylesheet" />
     <style>
         body {
             background-color: #222730; /* #273235; #486167;*/
             color: #fff;
         }
+
         .headerTitle {
             color: #333;
         }
+
         .bannerImage {
         }
 
@@ -38,29 +39,23 @@
                 Intelligent Design Software
             </div>
             <div class="menuTabContainer">
-                <div class="menuTab"><a href="~/Consulting/About/">Who We Are</a></div>
-                <div class="menuTab"><a href="~/Consulting/Approach">Our Approach</a></div>
-                <div class="menuTab"><a href="~/Consulting/Portfolio">Portfolio</a></div>
-                <div class="menuTab"><a href="~/Consulting/Code">Sample Code</a></div>
-                <div class="menuTab"><a href="~/Consulting/Articles">Articles</a></div>
-                <div class="menuTab"><a href="~/Consulting/Contact">Contact Us</a></div>
-                <div class="menuTab"><a href="~/Consulting/MyResume">My Resume</a></div>
-                <div class="loginTab">
-                    <div class="loginTab">
-                        @if (Request.IsAuthenticated)
-                        {
-                            <div class="menuTab" id="tabProfile" title="modify profile">
-                                @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
-                            </div>
-                            <div class="menuTab" id="tabLogout"><a href="javascript:sessionStorage.removeItem('accessToken');$('#logoutForm').submit();">Log Out</a></div>
-                        }
-                        else
-                        {
-                            <div class="menuTab tabRegister"><a href="#">Register</a></div>
-                            <div class="menuTab tabLogIn"><a href="#">Log In</a></div>
-                        }
-                    </div>
-                </div>
+                <div class="menuTab floatLeft"><a href="~/Consulting/About/">Who We Are</a></div>
+                <div class="menuTab floatLeft"><a href="~/Consulting/Approach">Our Approach</a></div>
+                <div class="menuTab floatLeft"><a href="~/Consulting/Portfolio">Portfolio</a></div>
+                <div class="menuTab floatLeft"><a href="~/Consulting/Code">Sample Code</a></div>
+                <div class="menuTab floatLeft"><a href="~/Consulting/Articles">Articles</a></div>
+                <div class="menuTab floatLeft"><a href="~/Consulting/Contact">Contact Us</a></div>
+                <div class="menuTab floatLeft"><a href="~/Consulting/MyResume">My Resume</a></div>
+                @if (Request.IsAuthenticated)
+                {
+                    <div class="menuTab floatRight"><a href="javascript:callLogout()">Log Out</a></div>
+                    <div class="menuTab floatRight" title="modify profile"><a href="javascript:callProfilePopup()">Hello  @User.Identity.GetUserName()</a></div>
+                }
+                else
+                {
+                    <div class="menuTab floatRight"><a href="javascript:callRegisterPopup()">Register</a></div>
+                    <div class="menuTab floatRight"><a href="javascript:callLoginPopup()">Log In</a></div>
+                }
             </div>
         </div>
         <div class="noFloat"></div>
@@ -71,7 +66,7 @@
     </div>
     @Html.Partial("_IdFooter")
     @RenderSection("scripts", required: false)
-    <script src="~/Scripts/HeaderLogin.js"></script>
+    <script src="~/Scripts/ResizeThreeColumnPage.js"></script>
     <script>resizePage();</script>
 </body>
 </html>
