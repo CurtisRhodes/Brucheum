@@ -13,6 +13,7 @@ using Microsoft.Owin.Security;
 using Brucheum.Models;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
+using Microsoft.Owin.Security.Facebook;
 
 [assembly: OwinStartupAttribute(typeof(Brucheum.Startup))]
 namespace Brucheum
@@ -71,9 +72,13 @@ namespace Brucheum
             //   consumerKey: "",
             //   consumerSecret: "");
 
-            app.UseFacebookAuthentication(
-               appId: "264735744158135",
-               appSecret: "7477c4de7b375fad97591d8c4b5c7325");
+
+            FacebookAuthenticationOptions facebookAuthenticationOptions   = new FacebookAuthenticationOptions();
+            facebookAuthenticationOptions.AppId = System.Configuration.ConfigurationManager.AppSettings["apiService"];
+            facebookAuthenticationOptions.AppSecret = System.Configuration.ConfigurationManager.AppSettings["fbAppSecret"];
+            facebookAuthenticationOptions.Provider = new FacebookAuthenticationProvider();
+
+            app.UseFacebookAuthentication(facebookAuthenticationOptions);
 
             //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             //{
@@ -161,7 +166,7 @@ namespace Brucheum
                 IdentityResult addCalimResult = this.AddClaim(userId, claim);
                 if (addCalimResult.Succeeded)
                 {
-                    var result = this.AddToRole(userId, roleName);
+                    IdentityResult result = this.AddToRole(userId, roleName);
                     if (result.Succeeded)
                         success = "ok";
                     else

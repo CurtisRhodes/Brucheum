@@ -41,6 +41,7 @@ namespace Brucheum
         }
         public ActionResult Articles()
         {
+            ViewBag.Service = apiService;
             return View();
         }
         public ActionResult Contact()

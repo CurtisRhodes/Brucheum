@@ -27,6 +27,7 @@ namespace Brucheum.Controllers
             }
         }
 
+
         public ActionResult Index()
         {
             ViewBag.Service = apiService;
@@ -35,7 +36,7 @@ namespace Brucheum.Controllers
 
         public JsonResult GetAllRoles()
         {
-            string roles = "";  //Dictionary<string,string>();
+            var roles = new List<RoleModel>();  //Dictionary<string,string>();
             using (var context = new ApplicationDbContext())
             {
                 //var roles = RoleManager.GetRoles();
@@ -44,14 +45,10 @@ namespace Brucheum.Controllers
                 IQueryable<IdentityRole> idRoles = storeManager.Roles;
                 foreach (IdentityRole role in idRoles)
                 {
-                    //roles += "['id':'" + role.Id + "','Name':'" + role.Name + "']|";
-                    roles += role.Id + "," + role.Name + "|";
-                    //roles += "Id:"+ role.Id + ",Name:" + role.Name + "|";
+                    roles.Add(new RoleModel() { Id = role.Id, Name = role.Name });
                 }
-                roles = roles.Substring(0, roles.Length - 1);
-                //roles += "]}";
             }
-            return Json(roles,JsonRequestBehavior.AllowGet);
+            return Json(roles, JsonRequestBehavior.AllowGet);
         }
 
         public string AddRole(string roleName)
@@ -84,17 +81,48 @@ namespace Brucheum.Controllers
 
         public JsonResult GetUserRoles(string userId)
         {
-            return Json(RoleManager.GetRoles(userId), JsonRequestBehavior.AllowGet);
+            List<string> userRoleNames = RoleManager.GetRoles(userId).ToList();
+            return Json(userRoleNames, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult AddUserRole(string userId, string roleName)
+        public string AddUserRole(string userId, string roleName)
         {
-            return Json(RoleManager.AddUserRole(userId, roleName), JsonRequestBehavior.AllowGet);
+            string success = RoleManager.AddUserRole(userId, roleName);
+            return success;   //Json(success, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult RemoveUserRole(string userId, string roleName)
         {
             return Json(RoleManager.RemoveUserRole(userId, roleName), JsonRequestBehavior.AllowGet);
         }
+
+        [HttpPut]
+        public string UpdateRole(RoleModel roleModel)
+        {
+            string success = "";
+            using (var context = new ApplicationDbContext())
+            {
+                var roleStore = new RoleStore<IdentityRole>(context);
+                var storeManager = new RoleManager<IdentityRole>(roleStore);
+                IdentityRole thisRole = roleStore.Roles.Where(r => r.Id == roleModel.Id).FirstOrDefault();
+                if (thisRole != null)
+                {
+                    thisRole.Name = roleModel.Name;
+                    IdentityResult result = storeManager.Update(thisRole);
+                    if(result.Succeeded)
+                    success = "ok";
+                    else
+                    {
+                        success = "ERROR";
+                        foreach (string error in result.Errors)
+                        {
+                            success += " :" + error;
+                        }
+                    }
+                }
+            }
+            return success;
+        }
+
     }
 }

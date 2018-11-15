@@ -10,6 +10,21 @@ namespace WebApi.Models
         public string Key { get; set; }
         public string Value { get; set; }
     }
+    public class DbArticelModel
+    {
+        public int ArticleId { get; set; }
+        public string ArticleTitle { get; set; }
+        public string ArticleType { get; set; }
+        public string ArticleText { get; set; }
+        public DateTime CreateDate { get; set; }
+    }
+    public class SectionModel
+    {
+        public int Id { get; set; }
+        public string SectionName { get; set; }
+        public string SectionTitle { get; set; }
+        public string SectionContents { get; set; }
+    }
     public class SkillModel
     {
         public string Id { get; set; }

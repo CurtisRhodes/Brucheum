@@ -34,6 +34,19 @@
 
 </style>
 
+<style>
+    .btnSpinner {
+        margin-top: 66px;
+    }
+    .btnSpinnerImage {
+        position: absolute;
+        margin-left: 20px;
+        height: 20px;
+        display: none;
+    }
+
+</style>
+
 <div class="threeColumnArray">
     <div id="leftColumn">
         <div id="tanBlue" class="vMenu">
@@ -52,8 +65,8 @@
             <div id="itemGetaJob" class="tabvMenuItem" onclick="window.location.href='/GetaJob/'">
                 <img src="~/Images/TanBlue/GetaJobTan.png" onmouseover="this.src='/Images/TanBlue/GetaJobBlue.png'" onmouseout="this.src='/Images/TanBlue/GetaJobTan.png'" />
             </div>
-            <div id="itemOggle" class="tabvMenuItem" onclick="window.open('https://OggleBooble.com', '_blank')">
-                <img src="~/Images/TanBlue/OggleBoogleTan.png" onmouseover="this.src='/Images/TanBlue/OggleBoogleBlue.png'" onmouseout="this.src='/Images/TanBlue/OggleBoogleTan.png'" />
+            <div id="itemOggle" class="tabvMenuItem" onclick="window.open('/Book/TableOfContents?bookTitle=Time Squared', '_blank')">
+                <img src="~/Images/TanBlue/TimeSquaredTan.png" onmouseover="this.src='/Images/TanBlue/TimeSquaredBlue.png'" onmouseout="this.src='/Images/TanBlue/TimeSquaredTan.png'" />
             </div>
             <div id="item2aT" class="tabvMenuItem">
                 <img src="~/Images/TanBlue/ToATeeTan.png" onmouseover="this.src='/Images/TanBlue/ToATeeBlue.png'" onmouseout="this.src='/Images/TanBlue/ToATeeTan.png'" />
@@ -66,6 +79,13 @@
         </div>
     </div>
     <div id="rightColumn">
+
+        @*<button class="btnSpinner roundendButton" onclick="clickTest()">
+            <img id="btnSpinnerImage" class="btnSpinnerImage" src="~/Images/loader.gif" />
+            Now What
+        </button>*@
+
+
     </div>
 </div>
 
@@ -77,7 +97,6 @@
         startCarousel();
 
     });
-
 
 </script>
 

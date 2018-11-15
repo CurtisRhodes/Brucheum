@@ -2,49 +2,17 @@
 <link href="~/Styles/modalDialog.css" rel="stylesheet" />
 
 <style>
-    #registerUserDialog {
-        position: absolute;
-        top: 90px;
-        left: 40%;
-        box-sizing: content-box;
-        color: #242729;
-        width: 280px;
-        padding: 3px 30px 3px 30px;
-        border: 1px solid #e4e6e8;
-        background: #fff;
-        z-index: 20;
-        border: solid thin #777;
-        border-radius: 4px;
-        box-shadow: 10px 10px rgba(95, 12, 12, 0.5);
-    }
-    #divShowDetails {
-        cursor: pointer;
-        margin-top: 10px;
-    }
-    #divRememberMe {
-        margin-top: 4px;
-    }
-    .carets {
-        height: 10px;
-        width: 15px;
-    }
-    #divExtraDetails {
-        margin-top: 4px;
-        display: none;
-    }
-    .labelStyle {
-        color: purple;
-    }
     .roundendButton {
-        margin-top:8px;
+        margin-top: 8px;
         margin-left: 200px;
     }
+
     .roundedInput {
         width: 266px;
     }
 </style>
 
-<div id="registerUserDialog">
+<div id="registerUserDialog" class="modalDialog">
 
     <div class="dialogHeader">
         Sign up for <span>The Brucheum</span>
@@ -145,7 +113,13 @@
         
         $('#errSummary').hide();
 
+
         if ($('#txtUserName').val() === "") {
+            $('#errUserName').show();
+            return false;
+        }
+        if ($('#txtUserName').val().indexOf(" ") > 0) {
+            $('#errUserName').html("Sorry, Username cannot contain spaces");
             $('#errUserName').show();
             return false;
         }

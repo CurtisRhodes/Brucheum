@@ -1,49 +1,44 @@
 ﻿<style>
+    .roundendButton {
+        width: 50px;
+    }
 </style>
 <div class="adminContainer">
     <div class="adminOptionTitle">Add Edit Roles</div>
     <div>
         <label>Role:</label>
         <input class="adminInput" id="txtRoleName" />
-        <div class="roundendButton" id="btnAddUpdateRole">Add</div>
-        <div class="roundendButton" id="btnRoleToggle">New</div>
+        <div id="btnAddUpdateRole" class="roundendButton" onclick="addUpdateRole()">Add</div>
+        <div id="btnRoleToggle" class="roundendButton" onclick="toggleAddButton()">New</div>
     </div>
     <div class="itemsList" id="divRoleList"></div>
 </div>
 <script>
     var objRole = new Object();
 
-    $('#btnAddUpdateRole').click(function () {
-        if ($(this).text() === "Add")
+    function addUpdateRole() {
+        if ($('#btnAddUpdateRole').html() === "Add")
             addRole();
         else
             updateRole();
-    });
+    };
 
-    $('#btnRoleToggle').click(function () {
+    function toggleAddButton() {
         objClassificationRefCode = null;
         $('#btnAddUpdateRole').text("Add");
         $(this).hide();
-    });
+    };
 
-    function getRoles() {
+    function getAllRoles() {
         try {
-           // alert("getRoles")
-            // $('#divLoadingGif').show();
-            //url: service+ "/api/Role",
             $.ajax({
                 type: "GET",
                 dataType: "Json",
                 url: "/Admin/GetAllRoles",
                 success: function (result) {
-
-                    //alert("result: " + result);
-
-                    result = result.split("|");
                     $('#divRoleList').html("<ul>");
                     $.each(result, function (idx, obj) {
-                        obj = obj.split(",");
-                        $('#divRoleList').append("<li ='" + obj[0] + "'>" + obj[1] + "</li>");
+                        $('#divRoleList').append("<li Id='" + obj.Id + "'>" + obj.Name + "</li>");
                     });
                     $('#divRoleList').append("</ul>");
 
@@ -55,12 +50,12 @@
                     });
                 },
                 error: function (jqXHR, exception) {
-                    alert("GetRoles error: " + getXHRErrorDetails(jqXHR, exception));
+                    alert("getAllRoles error: " + getXHRErrorDetails(jqXHR, exception));
                 },
             });
         } catch (e) {
             //displayStatusMessage("severityError", "catch ERROR: " +e);
-            alert("GetRoles catch: " +e);
+            alert("getAllRoles catch: " +e);
         }
     }
 
@@ -76,7 +71,7 @@
                         $('#txtRoleName').val("");
                         $('#btnAddUpdateRole').text("Add");
                         displayStatusMessage("severityOk", "Saved");
-                        getRoles();
+                        getAllRoles();
                         $('#btnRoleToggle').hide();
                     }
                     else {
@@ -99,13 +94,16 @@
         try {
             objRole.Name = $('#txtRoleName').val();
             $.ajax({
-                url: service + "/api/role",
+                url: "/Admin/UpdateRole",
                 type: "PUT",
                 data: objRole,
                 success: function (success) {
                     if (success === "ok") {
-                        displayStatusMessage("severityOk", "Saved");
-                        getRoles();
+                        $('#txtRoleName').val("");
+                        $('#btnAddUpdateRole').text("Add");
+                        displayStatusMessage("severityOk", "Updated");
+                        getAllRoles();
+                        $('#btnRoleToggle').hide();
                     }
                     else
                         displayStatusMessage("severityError", "server ERROR: " + success);

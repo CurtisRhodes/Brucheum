@@ -6,26 +6,27 @@
         <div id="divSelectedUser" class="inline adminInput"></div>
     </div>
     <div id="divRolesChoose" class="chooseBoxContainer">
-        <div id="divChooseAvailable" class="chooseBox"></div>
+
+        <div id="divChooseAvailable" class="chooseBox"></div> 
+
         <div id="divChooseButtons" class="chooseBtnsContainer">
             <div><img id="imgAdd" class="chooseBtn" src="~/Images/Consulting/sglright.jpg" /></div>
             <div><img id="imgAddAll" class="chooseBtn" src="~/Images/Consulting/dblright.jpg" /></div>
             <div><img id="imgRemove" class="chooseBtn" src="~/Images/Consulting/sglleft.jpg" /></div>
             <div><img id="imgRemoveAll" class="chooseBtn" src="~/Images/Consulting/dblleft.jpg" /></div>
         </div>
-        <div id="divChooseSelected" class="chooseBox"></div>
+        <div id="divChooseAssigned" class="chooseBox"></div>
     </div>
 </div>
     <script>
         var selectedUserId = "", selectedRoleId = "", selectedRoleName = "";
 
         function setUserRolesInititalState() {
-            $('#divChooseSelected').html("");
-            loadUsersDD();
-            getAllRoles();
+            $('#divChooseAssigned').html("");
             $('#divSelectedUser').html("");
+            loadAllRolesIntoChooseAvailable();
+            loadUsersDD();
         }
-
 
         $(".chooseBtn").click(function () {
             if (selectedUserId == "") {
@@ -36,14 +37,14 @@
                     case "imgAdd":
                         if (selectedRoleId != "") {
                             //$("#" + selectedRoleId).remove();
-                            //$('#divChooseSelected').append("<div class='listBoxItem' Id='" + selectedRoleId + "'>" + selectedRoleName + "</div>");
+                            //$('#divChooseAssigned').append("<div class='listBoxItem' Id='" + selectedRoleId + "'>" + selectedRoleName + "</div>");
                             addUserRole(selectedUserId, selectedRoleName);
                             selectedRoleId = "", selectedRoleName = "";
-                            //getUserRoles(selectedUserId)
+                             //getUserRoles(selectedUserId)
                         }
                         break;
                     case "imgAddAll":
-                        $('#divChooseSelected').append($('#divChooseAvailable').html());
+                        $('#divChooseAssigned').append($('#divChooseAvailable').html());
                         $('#divChooseAvailable').html("");
                         break;
                     case "imgRemove":
@@ -55,8 +56,8 @@
                         }
                         break;
                     case "imgRemoveAll":
-                        $('#divChooseAvailable').append($('#divChooseSelected').html());
-                        $('#divChooseSelected').html("");
+                        $('#divChooseAvailable').append($('#divChooseAssigned').html());
+                        $('#divChooseAssigned').html("");
                         break;
                     default:
                         alert("$(this).Id :" + $(this).attr("Id"))
@@ -79,11 +80,12 @@
                             $('#ddUsers').append("<option class='ddOption' value='" + obj[0] + "'>" + obj[1] + "</option>");
                         });
 
+                        // 
                         $('#ddUsers').change(function () {
-                            getAllRoles();
+                            loadAllRolesIntoChooseAvailable();
                             selectedUserId = $('#ddUsers option:selected').attr("value")
                             $('#divSelectedUser').html($('#ddUsers option:selected').text())
-                            getUserRoles($('#ddUsers option:selected').val());
+                            getRolesAssignerToUser($('#ddUsers option:selected').val());
                         });
 
                     },
@@ -97,7 +99,8 @@
             }
         }
 
-        function getUserRoles(userId) {
+        //var selectedUsersRoles = new Array();
+        function getRolesAssignerToUser(userId) {
             try {
                 // $('#divLoadingGif').show();
                 $.ajax({
@@ -105,25 +108,46 @@
                     dataType: "Json",
                     url: "/Admin/GetUserRoles?userId=" + userId,
                     success: function (roleNames) {
-                        $('#divChooseSelected').html("");
+                        $('#divChooseAssigned').html("");  
+                        //selectedUsersRoles = []; //selectedUsersRoles.clear();
                         $.each(roleNames, function (idx, roleName) {
+                            //selectedUsersRoles.push(roleName);
+
+
                             // thanks to hereswhatidid.com/2011/02/using-jquery-to-find-elements-that-contain-a-specific-text-string/
                             var pickedRoleId = $("#divChooseAvailable div:contains(" + roleName + ")").filter(function () {
                                 return $(this).html() == roleName;
                             }).attr('Id');
-
                             $('div').remove("#" + pickedRoleId);
-                            $('#divChooseSelected').append("<div class='listBoxItem'  Id='" + pickedRoleId + "'>" + roleName + "</div>");
+
+
+                            $('#divChooseAssigned').append("<div class='assignedListBoxItem'  Id='" + pickedRoleId + "'>" + roleName + "</div>");
                         });
 
-                        $('.listBoxItem').click(function () {
+                        // this will happen on any item in divChooseAssigned
+                        $('.assignedListBoxItem').click(function () {
                             if (selectedRoleId != "") {
-                                $("#" + selectedRoleId).removeClass("highlightItem");
+                                if (selectedRoleId == $(this).attr("Id")) {
+                                   // alert("divChooseAssigned uncheck  selected roleId: " + selectedRoleId + "  this: " + $(this).attr("Id"));
+                                    $(this).removeClass("highlightItem");
+                                    selectedRoleId = "";
+                                }
+                                else {
+                                   // alert("item click change selected")
+                                    $("#" + selectedRoleId).removeClass("highlightItem");
+                                    $(this).addClass("highlightItem");
+                                    selectedRoleId = $(this).attr("Id");
+                                    selectedRoleName = $(this).text();
+                                }
                             }
-                            $(this).addClass("highlightItem");
-                            selectedRoleId = $(this).attr("Id");
-                            selectedRoleName = $(this).text();
+                            else {
+                              //  alert("this haapned");
+                                $(this).addClass("highlightItem");
+                                selectedRoleId = $(this).attr("Id");
+                                selectedRoleName = $(this).text();
+                            }
                         });
+
                     },
                     error: function (jqXHR, exception) {
                         alert("error: " + getXHRErrorDetails(jqXHR, exception));
@@ -135,7 +159,7 @@
             }
         }
 
-        function getAllRoles() {
+        function loadAllRolesIntoChooseAvailable() {
             try {
                 // $('#divLoadingGif').show();
                 $.ajax({
@@ -143,21 +167,34 @@
                     dataType: "Json",
                     url: "/Admin/GetAllRoles",
                     success: function (result) {
-                        result = result.split("|");
                         $('#divChooseAvailable').html("");
                         $.each(result, function (idx, obj) {
-                            obj = obj.split(",");
-                            $('#divChooseAvailable').append("<div class='listBoxItem'  Id='" + obj[0] + "'>" + obj[1] + "</div>");
+                            $('#divChooseAvailable').append("<div class='availableListBoxItem'  Id='" + obj.Id + "'>" + obj.Name + "</div>");
                         });
 
-                        $('.listBoxItem').click(function () {
+                        // this will happen on any item in divChooseAvailable
+                        $('.availableListBoxItem').click(function () {
+                            //alert("divChoose AVAILABLE initial click selected roleId: " + selectedRoleId + "  this: " + $(this).attr("Id"));
                             if (selectedRoleId != "") {
-                                $("#" + selectedRoleId).removeClass("highlightItem");
+                                if (selectedRoleId === $(this).attr("Id")) {
+                                    //alert("divChoose AVAILABLE uncheck  selected roleId: " + selectedRoleId + "  this: " + $(this).attr("Id"));
+                                    $(this).removeClass("highlightItem");
+                                    selectedRoleId = "";
+                                }
+                                else {
+                                    $("#" + selectedRoleId).removeClass("highlightItem");
+                                    $(this).addClass("highlightItem");
+                                    selectedRoleId = $(this).attr("Id");
+                                    selectedRoleName = $(this).text();
+                                }
                             }
-                            $(this).addClass("highlightItem");
-                            selectedRoleId = $(this).attr("Id");
-                            selectedRoleName = $(this).text();
+                            else {
+                                $(this).addClass("highlightItem");
+                                selectedRoleId = $(this).attr("Id");
+                                selectedRoleName = $(this).text();
+                            }
                         });
+
                     },
                     error: function (jqXHR, exception) {
                         alert("error: " + getXHRErrorDetails(jqXHR, exception));
@@ -174,10 +211,10 @@
                 $.ajax({
                     type: "Get",
                     url: "/Admin/AddUserRole?userId=" + userId + "&roleName=" + roleName,
-                    dataType: "Json",
+                    //dataType: "Json",
                     success: function (success) {
-                        if (success.toUpperCase() == "OK") {
-                            displayStatusMessage("severityOk", "Role [" + roleName + "] added");
+                        if (success == "ok") {
+                            displayStatusMessage("severityOk", "User Role [" + roleName + "] added");
                         }
                         else {
                             displayStatusMessage("severityError", "ERROR: " + success);

@@ -1,4 +1,17 @@
-﻿#leftColumn {
+﻿.adminOptionTitle {
+    font-size: 24px;
+    text-align: center;
+    padding: 4px;
+    margin-bottom: 3px;
+}
+
+.adminOptionContainer {
+    margin-left: 56px;
+    margin-top: 56px;
+    margin-bottom: 20px;
+}
+
+#leftColumn {
     border-right: solid 1px orange;
 }
 .vertMenu {
@@ -71,10 +84,9 @@
     margin-bottom: 8px;
 }*/
 
-
-.listBoxItem {
+.availableListBoxItem, .assignedListBoxItem {
     color: black;
-    background-color: #888;
+    background-color: #a2a2a2;
     font-size: 16px;
     margin-left: 8px;
     padding: 4px;
@@ -84,14 +96,9 @@
 }
 
 .highlightItem {
-    color: red;
-    background-color: aqua;
+    //color: red;
+    background-color: #74bac3;
 }
-
-.dualContainers {
-    display: flex;
-}
-
 .loadingGif {
     position: relative;
     top: 150px;
@@ -120,16 +127,6 @@
     background-color: #74bac3;
 }
 
-.adminOptionTitle {
-    font-size: 24px;
-    text-align: center;
-    margin: 4px;
-}
-
-.adminOptionContainer {
-    margin-left: 56px;
-    margin-top: 56px;
-}
 
 .adminOption {
     display: none;

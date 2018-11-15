@@ -9,6 +9,8 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Brucheum.Models;
 using System.Security.Claims;
+using Microsoft.Owin.Security.Facebook;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Brucheum
 {
@@ -19,9 +21,7 @@ namespace Brucheum
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
-        public LoginController()
-        {
-        }
+        public LoginController()        {        }
         public LoginController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
@@ -62,7 +62,7 @@ namespace Brucheum
             }
         }
         #endregion
-
+        
         // register ------------------------------------------------------------
         public ActionResult Register()
         {
@@ -207,7 +207,31 @@ namespace Brucheum
             return success;
         }
 
+        // facebook  -------------------------------------------------------------
+        [HttpPost]
+        public ActionResult FacebookLogin(FacebookViewModel facebookViewModel)
+            //FacebookViewModel UserName Email FacebookId
+        {
+            string success = "";
+            try
+            {
+                ExternalLoginInfo loginInfo = AuthenticationManager.GetExternalLoginInfo();
 
+                loginInfo.Email = facebookViewModel.Email;
+                loginInfo.DefaultUserName = facebookViewModel.UserName;
+                //loginInfo.ExternalIdentity
+                //loginInfo.Login.ProviderKey
+                loginInfo.Login.LoginProvider = "Facebook";
+
+                SignInStatus signInStatus = SignInManager.ExternalSignIn(loginInfo, true);
+                success = "fbk " + signInStatus.ToString();
+            }
+            catch (Exception ex)
+            {
+                success = "try " + Helpers.ErrorDetails(ex);
+            }
+            return Json(success);
+        }
 
 
         // helpers   -------------------------------------------------------------
@@ -251,20 +275,6 @@ namespace Brucheum
             return Json(success);
         }
 
-        [HttpPost]
-        public ActionResult FacebookLogin(string faceBookId, string email, string name)
-        {
-            string success = "";
-            try
-            {
-
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return Json(success);
-        }
 
 
         public ActionResult ShowCustomMessage(string errMessage)

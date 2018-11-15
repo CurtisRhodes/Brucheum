@@ -17,6 +17,7 @@ namespace WebApi
         public virtual DbSet<Ref> Refs { get; set; }
         public virtual DbSet<Visit> Visits { get; set; }
         public virtual DbSet<Visitor> Visitors { get; set; }
+        public virtual DbSet<Article> Articles { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -92,6 +93,9 @@ namespace WebApi
     [Table("website.Comment")]
     public partial class Comment
     {
+        [Key]
+        public int CommentId { get; set; }
+
         [Required]
         [StringLength(500)]
         public string CommentTitle { get; set; }
@@ -101,8 +105,6 @@ namespace WebApi
         public DateTime CreateDate { get; set; }
 
         public string UserName { get; set; }
-
-        public int CommentId { get; set; }
 
         [StringLength(128)]
         public string UserId { get; set; }
@@ -128,6 +130,24 @@ namespace WebApi
         [Required]
         [StringLength(250)]
         public string RefDescription { get; set; }
+    }
+
+    [Table("website.Article")]
+    public partial class Article
+    {
+        [Key]
+        public int ArticleId { get; set; }
+
+        [Required]
+        [StringLength(500)]
+        public string ArticleTitle { get; set; }
+
+        [StringLength(3)]
+        public string ArticleType { get; set; }
+
+        public string ArticleText { get; set; }
+
+        public DateTime CreateDate { get; set; }
     }
 
 }

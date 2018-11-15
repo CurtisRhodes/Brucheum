@@ -3,16 +3,276 @@
     ViewBag.Title = "Articles";
     Layout = "~/Views/Consulting/_ProfessionalLayout.cshtml";
 }
+<link href="~/Styles/default.css" rel="stylesheet" />
+<link href="~/Styles/CrudEdit.css" rel="stylesheet" />
+<link href="~/Styles/admin.css" rel="stylesheet" />
+
+<style>
+    /*summernote*/
+    .editorContainer {
+        display: inline-flex;
+        color: #555;
+        background-color: #ddd;
+        border-radius: 5px;
+        z-index: 0;
+    }
+
+    .note-editable {
+        width: 554px;
+    }
+
+    .wide {
+        width: 474px;
+    }
+
+    .attrName {
+        display: inline-block;
+        min-width: 70px;
+    }
+    /*default overrides*/
+    .roundedInput {
+        margin-bottom: 4px;
+        margin-right: 11px;
+        display: inline-block;
+    }
+
+
+    .inline {
+        display: inline-block;
+    }
+</style>
 
 <div class="threeColumnArray">
-    <div id="leftColumn">
-    </div>
+    <div id="leftColumn"></div>
     <div id="middleColumn">
-        <h2>Articles</h2>
+        <div id="divStatusMessage"></div>
+        <div class="flexContainer">
+            <div class="crudArea, floatLeft">
+                <div class="crudContainer">
+                    <div id="crudContainerTitle" class="crudContainerTitle">Add/Edit An Article</div>
+                    <div id="errSummary" class="validationError"></div>
+                    <div class="crudRow">
+                        <div class="attrName">Article Title</div>
+                        <div id="errArticleTitle" class="validationError">Required</div>
+                        <input id="txtArticleTitle" class="roundedInput wide" />
+                    </div>
+                    <div class="editorContainer">
+                        <div>@Html.Partial("_Editor") </div>
+                    </div>
+                    <div>
+                        <button id="btnArticleAddEdit" class="roundendButton" onclick="addEditArticle()">Add</button>
+                        <button id="btnArticleNew" class="roundendButton crudBtnNew" onclick="btnArticleNewToggle()">New</button>
+                    </div>
+                </div>
+            </div>
+            <div class="crudArea, floatLeft">
+                <div class="crudContainer">
+                    <div id="articleListContainer" class="crudContainerTitle">Article List</div>
+                    <div class="crudArea">
+                        <div id="loadingGif" class="loadingGif">
+                            <img src="~/Images/loader.gif" />  @*"~/Images/ingranaggi3.gif"*@
+                        </div>
+                        <div id="articledbList" class="crudList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="rightColumn">
-    </div>
+    <div id="rightColumn"></div>
 </div>
+
+
+
+<script>
+    /// Get List
+    function getArticleList() {
+        try {
+            $('#loadingGif').show();
+            //only call me if you have an offer
+            // remember my conditions
+            // remember the terms. Work from home only unless travel paid for //by those
+            //alert("getArticleList()")
+
+            $.ajax({
+                type: "GET",
+                url: service + "/api/DbArticle",
+                success: function (response) {
+                    $('#articledbList').html("");
+                    //alert("getArticleList(): " + response);
+                    if (true) {
+                        $.each(response, function (idx, obj) {
+                            //alert(":" + obj.ArticleId);
+                            $('#articledbList').append("<div class='crudListItem' id='" + obj.ArticleId + "'>" + obj.ArticleType + " | " + obj.ArticleTitle + "</div>");
+                        })
+                        $('#loadingGif').hide();
+                        $('.crudListItem').click(function () {
+                            //alert("this.id: " + $(this).attr("id"));
+                            loadArticlesEditor($(this).attr("id"));
+                        });
+                    }
+                    else {
+                        alert("getArticleList: " + success)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    alert("addEditArticle XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("get Articles CATCH: " + e)
+        }
+    }
+
+    // Get(articleId)
+    function loadArticlesEditor(Id) {
+        //alert("loadArticlesEditor(Id): " + Id);
+        $.ajax({
+            type: "GET",
+            url: service + "/api/DbArticle?articleId=" + Id,
+            success: function (response) {
+                if (!response.ArticleTitle.startsWith("ERROR")) {
+                    //alert("bindArticles: " + response.ArticleTitle);
+                    bindArticle(response);
+                    $('#btnArticleAddEdit').html("Update");
+                    $('#btnArticleNew').show();
+                }
+                else {
+                    alert("getArticles ERROR: " + response.ArticleTitle)
+                }
+            },
+            error: function (jqXHR, exception) {
+                alert("loadArticlesEditor post error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+</script>
+
+<script>
+    /// editor
+    var service = '@ViewBag.Service'
+    var articleModel = new Object;
+
+    $(document).ready(function () {
+
+        getArticleList()
+
+        $('#summernote').summernote({
+            height: 455,
+            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            toolbar: [
+                ['codeview'],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                //['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontname', 'fontsize']],
+                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
+                ['color', ['color']]
+                ['para', ['ul', 'ol', 'paragraph']],
+                //['height', ['height']]
+            ]
+        });
+
+        $('#footerMessage').append("  service: " + service);
+
+    });
+
+    function addEditArticle() {
+        unbindArticle();
+        if (true) {//(validate()) {
+            if ($('#btnArticleAddEdit').html() == "Add") {
+                insertArticle();
+            }
+            else {
+                updateArticle();
+            }
+        }
+    }
+
+    function bindArticle(editArticleModel) {
+        //alert("editArticleModel.ArticleTitle: " + editArticleModel.ArticleTitle);
+        articleModel.ArticleId = editArticleModel.ArticleId;
+        $('#txtArticleTitle').val(editArticleModel.ArticleTitle);
+        $('#summernote').summernote('code', editArticleModel.ArticleText);
+    }
+
+    function unbindArticle() {
+        articleModel.ArticleTitle = $('#txtArticleTitle').val();
+        articleModel.ArticleText = $('#summernote').summernote('code');
+    }
+
+    // Post
+    function insertArticle() {
+        $.ajax({
+            type: "POST",
+            url: service + "/api/DbArticle",
+            data: articleModel,
+            dataType: 'Json',
+            success: function (response) {
+                if (!response.startsWith("ERROR")) {
+                    articleModel.ArticleId = response;
+                    $('#btnArticleAddEdit').html("Update");
+                    $('#btnArticleNew').show();
+                    getArticleList();
+                    displayStatusMessage("severityOk", "article added");
+                }
+                else {
+                    alert("addEditArticle: " + response)
+                }
+            },
+            error: function (jqXHR, exception) {
+                if (ex == "This shouldn't haapen") {
+                    alert("This shouldn't haapen");
+                }
+                alert("addEditArticle post error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
+    // Put
+    function updateArticle() {
+        $.ajax({
+            type: "PUT",
+            url: service + "/api/DbArticle",
+            data: articleModel,
+            success: function (success) {
+                if (success == "ok") {
+                    $('#btnArticleAddEdit').html("Update");
+                    $('#btnArticleNew').show();
+                    getArticleList();
+                    displayStatusMessage("severityOk", "article Edited");
+                }
+                else {
+                    alert("Edit aArticle: " + success)
+                }
+            },
+            error: function (jqXHR, exception) {
+                alert("addEditArticle put error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
+    function btnArticleNewToggle() {
+
+        $('#btnArticleAddEdit').html("Add");
+        $('#btnArticleNew').hide();
+        articleModel.ArticleId = "";
+        $('#txtArticleTitle').val("");
+        $('#txtArticleType').val("");
+        $('#summernote').summernote('code', "");
+    }
+
+    function validate() {
+        $('#errSummary').hide();
+
+        if ($('#txtArticleTitle').val() === "") {
+            $('#errArticleTitle').show();
+            return false;
+        }
+        $('#errArticleTitle').hide();
+
+        return true;
+    };
+
+</script>
 
 
 

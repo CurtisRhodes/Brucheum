@@ -4,12 +4,13 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - CurtisRhodes.com</title>
+    <title>@ViewBag.Title - Intelligent Design Software</title>
     <link rel="shortcut icon" src="~/Images/brain02.ico" type="image/x-icon" />
     <link href="~/Styles/default.css" rel="stylesheet" />
     <script src="~/Scripts/3rd Party/jquery.min.js"></script>
     <script src="~/Scripts/GlobalFunctions.js"></script>
     <link href="~/Styles/fixedHeader.css" rel="stylesheet" />
+    <script src="~/Scripts/ResizeThreeColumnPage.js"></script>
     <style>
         body {
             background-color: #222730; /* #273235; #486167;*/
@@ -46,6 +47,7 @@
                 <div class="menuTab floatLeft"><a href="~/Consulting/Articles">Articles</a></div>
                 <div class="menuTab floatLeft"><a href="~/Consulting/Contact">Contact Us</a></div>
                 <div class="menuTab floatLeft"><a href="~/Consulting/MyResume">My Resume</a></div>
+
                 @if (Request.IsAuthenticated)
                 {
                     <div class="menuTab floatRight"><a href="javascript:callLogout()">Log Out</a></div>
@@ -65,9 +67,12 @@
         @RenderBody()
     </div>
     @Html.Partial("_IdFooter")
+    <div id="modalContainer" class="modalVail">
+        <div id="modalContent"></div>
+    </div>
     @RenderSection("scripts", required: false)
-    <script src="~/Scripts/ResizeThreeColumnPage.js"></script>
     <script>resizePage();</script>
+    <script src="~/Scripts/HeaderLogin.js"></script>
 </body>
 </html>
 

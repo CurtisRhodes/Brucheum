@@ -1,16 +1,7 @@
 ﻿
 <link href="~/Styles/CrudEdit.css" rel="stylesheet" />
-<style>
-    .listItem {
-        padding: 4px;
 
-    
-    }
-
-
-</style>
-
-<div class="dualContainers">
+<div class="flexContainer">
     <div class="floatLeft">
         <div id="addaJob" class="crudContainer">
             <div id="divStatusMessage"></div>
@@ -32,7 +23,7 @@
                 </div>
                 <div>
                     <button id="btnSkillAddEdit" class="roundendButton" onclick="addEditSkill()">Save</button>
-                    <button id="btnSkillNew" class="roundendButton btnNew" onclick="btnSkillNewToggle()">New</button>
+                    <button id="btnSkillNew" class="roundendButton crudBtnNew" onclick="btnSkillNewToggle()">New</button>
                 </div>
             </div>
         </div>
@@ -55,7 +46,7 @@
     function bindSkill(editSkillModel) {
         skillModel.Id = editJobModel.Id;
         $('#txtSkillName').val(editSkillModel.SkillName);
-        $('##ddSkillCats').val(editSkillModel.SkillCategory);
+        $('#ddSkillCats').val(editSkillModel.SkillCategory);
     }
 
     function unbindSkill() {
@@ -141,7 +132,7 @@
                 if (true) {
                     $('#skillList').html("");
                     $.each(response, function (idx, obj) {
-                        $('#skillList').append("<div class='listItem' >" + obj.SkillName + "</div>");
+                        $('#skillList').append("<div class='crudListItem' >" + obj.SkillName + "</div>");
                     })
 
                     $('#loadingGif').hide();

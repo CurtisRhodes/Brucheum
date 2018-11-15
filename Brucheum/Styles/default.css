@@ -42,17 +42,6 @@ body {
     text-align: center;
 }
 
-
-
-
-.floatLeft {
-    float: left;
-}
-
-.noFloat {
-    clear: both;
-}
-
 #modalContainer {
     z-index: 6; /* Sit on top */
 }
@@ -74,7 +63,6 @@ body {
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
-
 label {
     font-weight: bold;
     font-size: smaller;
@@ -120,4 +108,27 @@ label {
 .streach {
     width: 100%;
     margin-right: 35px;
+}
+.spinnerImage {
+    position: absolute;
+    margin-left: 10px;
+    height: 20px;
+    /*display: none;*/
+}
+.floatLeft {
+    float: left;
+}
+
+.noFloat {
+    clear: both;
+}
+.floatRight {
+    float: right;
+}
+
+.noFloat {
+    clear: both;
+}
+.flexContainer {
+    display: flex;
 }

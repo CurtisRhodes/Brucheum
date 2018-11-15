@@ -23,7 +23,6 @@ function callRegisterPopup() {
     });
 }
 function callLoginPopup() {
-    //$('.tabLogIn').click(function () {
     //alert("tabLogIn");
     try {
         $.ajax({

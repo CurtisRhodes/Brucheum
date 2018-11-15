@@ -231,4 +231,113 @@ namespace WebApi
         }
     }
 
+    [EnableCors("*", "*", "*")]
+    public class SectionController : ApiController
+    {
+        [HttpGet]
+        public SectionModel Get(int SectionId)
+        {
+            var Section = new SectionModel();
+            try
+            {
+                using (GetaJobContext db = new GetaJobContext())
+                {
+                    var dbSection = db.ResumeSections.Where(s => s.Id == SectionId).FirstOrDefault();
+                    if (dbSection != null)
+                    {
+                        Section.Id = SectionId;
+                        Section.SectionName = dbSection.SectionName;
+                        Section.SectionTitle = dbSection.SectionTitle;
+                        Section.SectionContents = dbSection.SectionContents;
+                    }
+                }
+            }
+            catch (Exception ex) { Section.SectionName = "ERROR: " + Helpers.ErrorDetails(ex); }
+            return Section;
+        }
+
+        [HttpGet]
+        public List<SectionModel> Get()
+        {
+            var Sections = new List<SectionModel>();
+            try
+            {
+                using (GetaJobContext db = new GetaJobContext())
+                {
+                    var dbSections = db.ResumeSections;
+                    foreach (ResumeSection _Section in dbSections)
+                    {
+                        Sections.Add(new SectionModel() {
+                            Id = _Section.Id,
+                            SectionName = _Section.SectionName,
+                            SectionTitle = _Section.SectionTitle,
+                            SectionContents=_Section.SectionContents
+                        });
+                    }
+                }
+            }
+            catch (Exception ex) { Sections.Add(new SectionModel() {  SectionTitle = Helpers.ErrorDetails(ex) }); }
+            return Sections;
+        }
+
+        [HttpPost]
+        public string Post(SectionModel newSection)
+        {
+            string success = "ERROR: ";
+            try
+            {
+                using (GetaJobContext db = new GetaJobContext())
+                {
+                    ResumeSection resumeSection = new ResumeSection();
+                    resumeSection.SectionTitle = newSection.SectionTitle;
+                    resumeSection.SectionName = newSection.SectionName;
+                    resumeSection.SectionContents = newSection.SectionContents;
+                    db.ResumeSections.Add(resumeSection);
+                    db.SaveChanges();
+                    success = newSection.Id.ToString();
+                }
+            }
+            catch (DbEntityValidationException e)
+            {
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    success += string.Format("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        success += string.Format("- Property: \"{0}\", Error: \"{1}\"",
+                            ve.PropertyName, ve.ErrorMessage);
+                    }
+                }
+            }
+            catch (Exception ex) { success = "ERROR: " + Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        [HttpPut]
+        public string Put(SectionModel editedSection)
+        {
+            string success = "";
+            try
+            {
+                using (GetaJobContext db = new GetaJobContext())
+                {
+                    var Section = db.ResumeSections.Where(j => j.Id == editedSection.Id).FirstOrDefault();
+                    if (Section == null)
+                        success = "record not found";
+                    else
+                    {
+                        Section.SectionName = editedSection.SectionName;
+                        Section.SectionTitle = editedSection.SectionTitle;
+                        Section.SectionContents = editedSection.SectionContents;
+
+                        db.SaveChanges();
+                        success = "ok";
+                    }
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+    }
+
 }

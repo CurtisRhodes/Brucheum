@@ -39,11 +39,11 @@ namespace Brucheum.Models
         public bool RememberMe { get; set; }
     }
 
-    public class ForgotViewModel
+    public class FacebookViewModel
     {
-        [Required]
-        [Display(Name = "Email")]
+        public string UserName { get; set; }
         public string Email { get; set; }
+        public string FacebookId { get; set; }
     }
 
 

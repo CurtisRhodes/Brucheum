@@ -328,6 +328,104 @@ namespace WebApi
         }
     }
 
+    [EnableCors("*", "*", "*")]
+    public class DbArticleController : ApiController
+    {
+        [HttpGet]
+        public IList<DbArticelModel> Get()
+        {
+            var dbArticles = new List<DbArticelModel>();
+            try
+            {
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    List<Article> articles = db.Articles.ToList();
+                    foreach(Article article in articles)
+                    {
+                        dbArticles.Add(new DbArticelModel()
+                        {
+                            ArticleId = article.ArticleId,
+                            ArticleTitle = article.ArticleTitle,
+                            ArticleType = article.ArticleType,
+                            ArticleText = article.ArticleText
+                        });
+                    }
+                }
+            }
+            catch (Exception ex) { dbArticles.Add(new DbArticelModel() { ArticleTitle = Helpers.ErrorDetails(ex) }); }
+            return dbArticles;
+        }
+
+        [HttpGet]
+        public DbArticelModel Get(int articleId)
+        {
+            DbArticelModel dbArticle = new DbArticelModel();
+            try
+            {
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    Article article = db.Articles.Where(a => a.ArticleId == articleId).FirstOrDefault();
+                    if (article != null)
+                    {
+                        dbArticle.ArticleId = article.ArticleId;
+                        dbArticle.ArticleTitle = article.ArticleTitle;
+                        article.ArticleType = article.ArticleType;
+                        dbArticle.ArticleText = article.ArticleText;
+                    }
+                }
+            }
+            catch (Exception ex) { dbArticle.ArticleTitle = Helpers.ErrorDetails(ex); }
+            return dbArticle;
+        }
+
+        [HttpPost]
+        public string Post(DbArticelModel newArticle)
+        {
+            var success = "";
+            try
+            {
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    Article article = new Article();
+                    article.ArticleTitle = newArticle.ArticleTitle;
+                    article.ArticleType = newArticle.ArticleType;
+                    article.ArticleText = newArticle.ArticleText;
+                    article.CreateDate = DateTime.Now;
+                    db.Articles.Add(article);
+                    db.SaveChanges();
+                    success = article.ArticleId.ToString();
+                }
+            }
+            catch (Exception ex) { success = "ERROR: " + Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        [HttpPut]
+        public string Put(DbArticelModel editArticle)
+        {
+            var success = "";
+            try
+            {
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    Article article = db.Articles.Where(a => a.ArticleId == editArticle.ArticleId).FirstOrDefault();
+                    if (article == null)
+                        success = "article not found";
+                    else
+                    {
+                        article.ArticleTitle = editArticle.ArticleTitle;
+                        article.ArticleType = editArticle.ArticleType;
+                        article.ArticleText = editArticle.ArticleText;
+                        db.SaveChanges();
+                        success = "ok";
+                    }
+                }
+            }
+            catch (Exception ex) { success = "ERROR: " + Helpers.ErrorDetails(ex); }
+            return success;
+        }
+    }
+
     public class Helpers
     {
         public static string ErrorDetails(Exception ex)

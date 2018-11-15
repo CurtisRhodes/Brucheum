@@ -58,7 +58,11 @@
         @RenderBody()
     </div>
     @Html.Partial("_GetaJobFooter")
+    <div id="modalContainer" class="modalVail">
+        <div id="modalContent"></div>
+    </div>
     @RenderSection("scripts", required: false)
     <script>resizePage();</script>
+    <script src="~/Scripts/HeaderLogin.js"></script>
 </body>
 </html>
