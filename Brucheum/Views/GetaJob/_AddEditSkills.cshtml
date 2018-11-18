@@ -1,50 +1,51 @@
 ﻿
-<link href="~/Styles/CrudEdit.css" rel="stylesheet" />
+<style>
+    #addEditSkillContainer {
+        width: 700px;
+    }
+    #txtSkillName {
+        width: 301px;
+    }
+</style>
 
-<div class="flexContainer">
-    <div class="floatLeft">
-        <div id="addaJob" class="crudContainer">
-            <div id="divStatusMessage"></div>
-            <div id="crudContainerTitle" class="crudContainerTitle">
-                Add Edit Skills
-                @*<div id="closeIcon" class="closeIcon" onclick="$('#addaJob').hide()"><img src="~/Images/powerOnOffSilver.png" height="24" /></div>*@
-            </div>
-            <div class="crudArea">
-                <div id="errSummary" class="validationError"></div>
-                <div class="crudRow">
-                    <div class="attrName">Skill</div>
-                    <div id="errSkillName" class="validationError">Required</div>
-                    <input id="txtSkillName" class="roundedInput" />
-                </div>
-                <div class="crudRow">
-                    <div class="attrName">Category</div>
-                    <div id="errSkillName" class="validationError">Required</div>
-                    <div><select id="ddSkillCats" class="ddSelect"></select></div>
-                </div>
-                <div>
-                    <button id="btnSkillAddEdit" class="roundendButton" onclick="addEditSkill()">Save</button>
-                    <button id="btnSkillNew" class="roundendButton crudBtnNew" onclick="btnSkillNewToggle()">New</button>
-                </div>
-            </div>
+<div id="addEditSkillContainer" class="crudContainer">
+    <div id="divStatusMessage"></div>
+    <div id="crudContainerTitle" class="crudContainerTitle">
+        Add Edit Job Skills
+        @*<div id="closeIcon" class="closeIcon" onclick="$('#addaJob').hide()"><img src="~/Images/powerOnOffSilver.png" height="24" /></div>*@
+    </div>
+    <div class="crudArea">
+        <div id="errSummary" class="validationError"></div>
+        <div class="crudRow">
+            <div id="errSkillName" class="validationError">Required</div>
+            <div class="crudLabel">Skill</div>
+            <input id="txtSkillName" class="roundedInput" />
+            <div class="crudLabel">Category</div>
+            <select id="ddSkillCats" class="roundedInput"></select>
+        </div>
+        <div>
+            <button id="btnSkillAddEdit" class="roundendButton" onclick="addEditSkill()">Save</button>
+            <button id="btnSkillNew" class="roundendButton crudBtnNew" onclick="btnSkillNewToggle()">New</button>
         </div>
     </div>
-    <div class="floatLeft">
-        <div id="jobListContainer" class="crudContainer">
-            <div id="JobListTitle" class="crudContainerTitle">Skills List</div>
-            <div id="loadingGif" class="loadingGif">
-                <img src="~/Images/loader.gif" />  @*"~/Images/ingranaggi3.gif"*@
-            </div>
-            <div id="skillList" class="crudList"></div>
-        </div>
-    </div>
+    <div id="loadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+    <div id="skillList" class="crudList"></div>
 </div>
 
 <script>
     var service = '@ViewBag.Service'
     var skillModel = new Object;
 
+    function gajSkillsInititalize() {
+        $('#btnSkillNew').hide();
+        if ($('#ddSkillCats').html() === "") {
+            loadSkillCatsDD();
+            loadSkillsList();
+        }
+    }
+
     function bindSkill(editSkillModel) {
-        skillModel.Id = editJobModel.Id;
+        skillModel.Id = editSkillModel.Id;
         $('#txtSkillName').val(editSkillModel.SkillName);
         $('#ddSkillCats').val(editSkillModel.SkillCategory);
     }
@@ -58,47 +59,56 @@
         if (validate()) {
             unbindSkill();
             if ($('#btnSkillAddEdit').html() == "Save") {
-                $.ajax({
-                    type: "POST",
-                    url: service + "/api/Skill",
-                    data: skillModel,
-                    success: function (success) {
-                        if (!success.startsWith("ERROR")) {
-                            $('#btnSkillAddEdit').html("Edit");
-                            $('#btnSkillNew').show();
-                            skillModel.Id = success;
-                            displayStatusMessage("severityOk", "Job Added");
-                            getSkills();
-                        }
-                        else {
-                            alert("addEditSkill: " + success)
-                        }
-                    },
-                    error: function (jqXHR, exception) {
-                        alert("addaJob post error: " + getXHRErrorDetails(jqXHR, exception));
-                    }
-                });
+                insertSkill()
             }
             else {
-                $.ajax({
-                    type: "PUT",
-                    url: service + "/api/skill/",
-                    data: skillModel,
-                    success: function (success) {
-                        if (success == "ok") {
-                            $('#btnSkillAddEdit').val("Edit");
-                            displayStatusMessage("severityOk", "Skill Edited");
-                        }
-                        else {
-                            alert("Edit Skill: " + success)
-                        }
-                    },
-                    error: function (jqXHR, exception) {
-                        alert("addaJob put error: " + getXHRErrorDetails(jqXHR, exception));
-                    }
-                });
+                updateSkill()
             }
         }
+    }
+
+    function insertSkill() {
+        $.ajax({
+            type: "POST",
+            url: service + "/api/Skill",
+            data: skillModel,
+            success: function (success) {
+                if (!success.startsWith("ERROR")) {
+                    $('#btnSkillAddEdit').html("Edit");
+                    $('#btnSkillNew').show();
+                    skillModel.Id = success;
+                    displayStatusMessage("severityOk", "Job Added");
+                    loadSkillsList();
+                }
+                else {
+                    alert("addEditSkill: " + success)
+                }
+            },
+            error: function (jqXHR, exception) {
+                alert("addaJob post error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
+    function updateSkill() {
+        $.ajax({
+            type: "PUT",
+            url: service + "/api/skill/",
+            data: skillModel,
+            success: function (success) {
+                if (success == "ok") {
+                    $('#btnSkillAddEdit').val("Edit");
+                    displayStatusMessage("severityOk", "Skill Edited");
+                    loadSkillsList();
+                }
+                else {
+                    alert("Edit Skill: " + success)
+                }
+            },
+            error: function (jqXHR, exception) {
+                alert("addaJob put error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
     }
 
     function btnSkillNewToggle() {
@@ -121,35 +131,34 @@
         return true;
     };
 
-    function getSkills() {
+    function loadSkillsList() {
         try {
             $('#loadingGif').show();
+            $.ajax({
+                type: "GET",
+                url: service + "/api/Skill",
+                success: function (response) {
+                    if (true) {
+                        $('#skillList').html("");
+                        $.each(response, function (idx, obj) {
+                            $('#skillList').append("<div class='crudListItem' CatId=" + obj.SkillCategory + " id=" + obj.Id + " >" + obj.SkillCategoryDescription + " | " + obj.SkillName + "</div>");
+                        })
 
-        $.ajax({
-            type: "GET",
-            url: service + "/api/Skill",
-            success: function (response) {
-                if (true) {
-                    $('#skillList').html("");
-                    $.each(response, function (idx, obj) {
-                        $('#skillList').append("<div class='crudListItem' >" + obj.SkillName + "</div>");
-                    })
+                        $('#loadingGif').hide();
 
-                    $('#loadingGif').hide();
-
-                    $('#jobList tr').click(function () {
-                        //alert("this.id" + $(this).attr("id"));
-                        loadSkillsEditor($(this).attr("id"));
-                    });
+                        $('.crudListItem').click(function () {
+                            //alert("this.id" + $(this).attr("Id"));
+                            loadSkillsEditor($(this).attr("id"));
+                        });
+                    }
+                    else {
+                        alert("getjobs: " + success)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    alert("addaJob post error: " + getXHRErrorDetails(jqXHR, exception));
                 }
-                else {
-                    alert("getjobs: " + success)
-                }
-            },
-            error: function (jqXHR, exception) {
-                alert("addaJob post error: " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
+            });
         } catch (e) {
             alert("get jobs CATCH: " + e)
         }
@@ -160,7 +169,7 @@
             type: "GET",
             url: service + "/api/Skill?skillId=" + Id,
             success: function (response) {
-                if (!response.Id.startsWith("ERROR")) {
+                if (!response.SkillName.startsWith("ERROR")) {
                     bindSkill(response);
                     $('#btnSkillAddEdit').html("Edit");
                     $('#btnSkillNew').show();
@@ -179,10 +188,12 @@
         try {
             $.ajax({
                 type: "GET",
-                dataType: "Json",
-                url: service + "/api/Ref/Get?refType=SKL",
+                //dataType: "Json",
+                url: service + "/api/GAJRef/Get?refType=SKL",
                 success: function (result) {
-                    $('#ddSkillCats').html("<option class= 'ddOption' value ='0'>-- select a ref type --</option >");
+
+
+                    $('#ddSkillCats').html("<option class= 'ddOption' value ='0'>-- select a job skill category --</option >");
                     $.each(result, function (idx, obj) {
                         $('#ddSkillCats').append("<option class='ddOption' value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
                     });

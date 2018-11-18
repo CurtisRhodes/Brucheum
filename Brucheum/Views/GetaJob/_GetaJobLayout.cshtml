@@ -38,12 +38,12 @@
         <div class="headerBodyContainer">
             <div class="headerTitle">Get a Gig</div>
             <div class="menuTabContainer">
-                <div class="menuTab floatLeft"><a href="~/GetaJob/ResumeAdmin/">Resume</a></div>
-                <div class="menuTab floatLeft"><a href="~/Consulting/Approach">Job Search</a></div>
+                <div class="menuTab floatLeft"><a href="~/GetaJob/GetaJobAdmin/">Admin</a></div>
+                <div class="menuTab floatLeft"><a href="~/GetaJob/Approach">Job Search</a></div>
                 @if (Request.IsAuthenticated)
                 {
-                    <div class="menuTab floatRight"><a href="javascript:callLogout()">Log Out</a></div>
-                    <div class="menuTab floatRight" title="modify profile"><a href="javascript:callProfilePopup()">Hello  @User.Identity.GetUserName()</a></div>
+                    <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
+                    <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
                 }
                 else
                 {
@@ -54,7 +54,18 @@
         </div>
         <div class="noFloat"></div>
     </div>
+    <div id="customMessage" class="customMessageBox">
+        <div class="customMessageTitleBar">
+            <div id="customMessageTitle" class="customMessageTitleText"> </div>
+            <div id="customMessagebtnClose" class="customMessageCloseButton" onclick="javascript:$('#customMessage').hide();">
+                <img height="19" src="~/Images/powerOffRed01.png" />
+            </div>
+        </div>
+        <div id="customMessageText" class="alegro"></div>
+    </div>
+
     <div class="body-content">
+
         @RenderBody()
     </div>
     @Html.Partial("_GetaJobFooter")
@@ -63,6 +74,5 @@
     </div>
     @RenderSection("scripts", required: false)
     <script>resizePage();</script>
-    <script src="~/Scripts/HeaderLogin.js"></script>
 </body>
 </html>

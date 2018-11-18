@@ -111,7 +111,7 @@ namespace Brucheum
                 case "/Book/MyBooks":
                 case "/Article/Article":
                 case "/Book/TableOfContents":
-                case "/Consulting/ConsultingHome":
+                case "/IntelDsgn/IntelDsgnHome":
                 case "/Book/Read":
                 case "/Login/DeleteCookie":
                 case "/Article/ArticleEdit":

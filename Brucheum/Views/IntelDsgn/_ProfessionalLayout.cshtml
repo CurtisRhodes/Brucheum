@@ -33,25 +33,28 @@
 
     <div id="idheader" class="standardHeader">
         <div class="bannerImageContainer">
-            <a href="~/Consulting/ConsultingHome"><img src="~/images/intel01.jpg" class="bannerImage" /></a>
+            <a href="~/IntelDsgn/Index"><img src="~/images/intel01.jpg" class="bannerImage" /></a>
         </div>
         <div class="headerBodyContainer">
-            <div class="headerTitle">
-                Intelligent Design Software
-            </div>
+            <div class="headerTitle">Intelligent Design Software</div>
+
             <div class="menuTabContainer">
-                <div class="menuTab floatLeft"><a href="~/Consulting/About/">Who We Are</a></div>
-                <div class="menuTab floatLeft"><a href="~/Consulting/Approach">Our Approach</a></div>
-                <div class="menuTab floatLeft"><a href="~/Consulting/Portfolio">Portfolio</a></div>
-                <div class="menuTab floatLeft"><a href="~/Consulting/Code">Sample Code</a></div>
-                <div class="menuTab floatLeft"><a href="~/Consulting/Articles">Articles</a></div>
-                <div class="menuTab floatLeft"><a href="~/Consulting/Contact">Contact Us</a></div>
-                <div class="menuTab floatLeft"><a href="~/Consulting/MyResume">My Resume</a></div>
+                <div class="menuTab floatLeft"><a href="~/IntelDsgn/About/">Who We Are</a></div>
+                <div class="menuTab floatLeft"><a href="~/IntelDsgn/Index?a=2">Our Approach</a></div>
+                <div class="menuTab floatLeft"><a href="~/IntelDsgn/Portfolio">Portfolio</a></div>
+                <div class="menuTab floatLeft"><a href="~/IntelDsgn/Code">Sample Code</a></div>
+                <div class="menuTab floatLeft"><a href="~/IntelDsgn/Articles">Articles</a></div>
+                <div class="menuTab floatLeft"><a href="~/IntelDsgn/Index?a=3">Contact Us</a></div>
+                <div class="menuTab floatLeft"><a href="~/IntelDsgn/MyResume">My Resume</a></div>
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="menuTab floatLeft"><a href="~/Admin">Admin</a></div>
+                }
 
                 @if (Request.IsAuthenticated)
                 {
-                    <div class="menuTab floatRight"><a href="javascript:callLogout()">Log Out</a></div>
-                    <div class="menuTab floatRight" title="modify profile"><a href="javascript:callProfilePopup()">Hello  @User.Identity.GetUserName()</a></div>
+                    <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
+                    <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
                 }
                 else
                 {
@@ -72,7 +75,6 @@
     </div>
     @RenderSection("scripts", required: false)
     <script>resizePage();</script>
-    <script src="~/Scripts/HeaderLogin.js"></script>
 </body>
 </html>
 

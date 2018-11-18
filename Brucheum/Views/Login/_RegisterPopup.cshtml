@@ -1,7 +1,8 @@
-﻿<script src="~/Scripts/GlobalFunctions.js"></script>
-<link href="~/Styles/modalDialog.css" rel="stylesheet" />
+﻿<link href="~/Styles/modalDialog.css" rel="stylesheet" />
+<link href="~/Styles/default.css" rel="stylesheet" />
+<script src="~/Scripts/GlobalFunctions.js"></script>
 
-<style>
+@*<style>
     .roundendButton {
         margin-top: 8px;
         margin-left: 200px;
@@ -10,18 +11,17 @@
     .roundedInput {
         width: 266px;
     }
-</style>
+</style>*@
 
 <div id="registerUserDialog" class="modalDialog">
-
+    <div id="divStatusMessage"></div>
     <div class="dialogHeader">
         Sign up for <span>The Brucheum</span>
-        <div id="btnClose" class="divCloseButton">
+        <div id="btnClose" class="dialogCloseButton">
             <img height="19" src="~/Images/powerOffRed01.png" />
         </div>
     </div>
-    <div style="clear:both"></div>
-    <div>
+    <div class="dialogBody">
         <div id="errSummary" class="validationError"></div>
         <div id="errUserName" class="validationError">Required</div>
         <label>user name</label><br>
@@ -58,7 +58,7 @@
             <label>Phone Number</label><br />
             <input id="txtPhone" type="tel" class="roundedInput"><br>
             @*<label>Pin </label><br />
-            <input id="txtPin" type="text" class="roundedInput" placeholder="you may use this to login"><br>*@
+                <input id="txtPin" type="text" class="roundedInput" placeholder="you may use this to login"><br>*@
         </div>
 
         <button class="roundendButton" id="btnRegister">Register</button>
@@ -108,9 +108,9 @@
             }
         }
     });
-    
+
     function validate() {
-        
+
         $('#errSummary').hide();
 
 

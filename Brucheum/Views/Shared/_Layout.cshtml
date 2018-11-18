@@ -20,33 +20,48 @@
             <div id="bannerTitle" class="headerTitle">
                 Curtis Rhodes.com
             </div>
-            <div class="menuTabContainer">
-                <div class="menuTab floatLeft"><a href="~/Article/ArticleList">Latest Articles</a></div>
-                <div class="menuTab floatLeft"><a href="~/Article/ArticleList?filterType=Category&filter=political rant">Political Rants</a></div>
-                <div class="menuTab floatLeft"><a href="~/Article/ArticleList?filterType=Category&filter=conspiracy">Conspiracy Theories</a></div>
-                <div class="menuTab floatLeft"><a href="~/Book/MyBooks">Books</a></div>
-                <div class="menuTab floatLeft"><a href="~/Home/Apps">Apps</a></div>
-                <div class="menuTab floatLeft"><a href="~/Consulting/ConsultingHome">Intelligent Design</a></div>
+            
+            <div id="menuContainer" class="menuTabContainer">
+                <div id="replaceableMenuItems">
+                    <div class="menuTab floatLeft"><a href="~/Article/ArticleList">Latest Articles</a></div>
+                    <div class="menuTab floatLeft"><a href="~/Article/ArticleList?filterType=Category&filter=political rant">Political Rants</a></div>
+                    <div class="menuTab floatLeft"><a href="~/Article/ArticleList?filterType=Category&filter=conspiracy">Conspiracy Theories</a></div>
+                    <div class="menuTab floatLeft"><a href="~/Book/MyBooks">Books</a></div>
+                    <div class="menuTab floatLeft"><a href="~/Home/Apps">Apps</a></div>
+                    <div class="menuTab floatLeft"><a href="~/IntelDsgn/Index">Intelligent Design</a></div>
+                </div>
                 @if (User.IsInRole("Admin"))
                 {
                     <div class="menuTab floatLeft"><a href="~/Admin">Admin</a></div>
                 }
                 @if (Request.IsAuthenticated)
                 {
-                    <div class="menuTab floatRight"><a href="javascript:callLogout()">Log Out</a></div>
-                    <div class="menuTab floatRight" title="modify profile"><a href="javascript:callProfilePopup()">Hello  @User.Identity.GetUserName()</a></div>
+                    <div  class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
+                    <div  class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
                 }
                 else
                 {
-                    <div class="menuTab floatRight"><a href="javascript:callRegisterPopup()">Register</a></div>
-                    <div class="menuTab floatRight"><a href="javascript:callLoginPopup()">Log In</a></div>
+                    <div class="menuTab floatRight"><a href="javascript:registerPlease()">Register</a></div>
+                    <div id="btnLayLogin" class="menuTab floatRight">
+                        <a href="javascript:loginPlease()">Log In</a>
+                        <img id="btnHeaderLoginSpinner" class="spinnerImage" src="~/Images/loader.gif" />
+                    </div>
                 }
-
             </div>
         </div>
         <div class="noFloat"></div>
     </div>
     <div class="body-content">
+        <div id="customMessage" class="customMessageBox">
+            <div class="customMessageTitleBar">
+                <div id="customMessageTitle" class="customMessageTitleText"> </div>
+                <div id="customMessagebtnClose" class="customMessageCloseButton" onclick="javascript:$('#customMessage').hide();">
+                    <img height="19" src="~/Images/powerOffRed01.png" />
+                </div>
+            </div>
+            <div id="customMessageText" class="alegro"></div>
+        </div>
+
         @RenderBody()
     </div>
     @Html.Partial("_bFooter")
@@ -55,6 +70,5 @@
     </div>
     @RenderSection("scripts", required: false)
     <script>resizePage();</script>
-    <script src="~/Scripts/HeaderLogin.js"></script>
 </body>
 </html>

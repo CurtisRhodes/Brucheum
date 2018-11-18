@@ -1,36 +1,41 @@
-﻿
-.dialogHeader {
-    text-align: center;
-    padding-bottom: 8px;
+﻿.modalDialog {
+    position: absolute;
+    top: 22%;
+    left: 40%;
+    box-sizing: content-box;
+    color: #242729;
+    min-width: 300px;
+    border: 1px solid #e4e6e8;
+    background: #fff;
+    z-index: 20;
+    border: solid thin #777;
+    border-radius: 6px;
+    box-shadow: 10px 10px rgba(95, 12, 12, 0.5);
+
 }
 
+.dialogHeader {
+    text-align: center;
+    padding: 6px;
+    background-color: #74bac3;
+}
     .dialogHeader span {
         font-family: 'Lucida Calligraphy';
         color: #69387e;
         font-size: 22px;
         font-style: italic;
     }
+.dialogBody {
+    padding: 3px 30px 3px 30px;
+}
 
-.divCloseButton {
+.dialogCloseButton {
     float: right;
+    margin-top: 6px;
+    margin-right: 4px;
     cursor: pointer;
 }
 
-.modalDialog {
-    position: absolute;
-    top: 90px;
-    left: 40%;
-    box-sizing: content-box;
-    color: #242729;
-    width: 280px;
-    padding: 3px 30px 3px 30px;
-    border: 1px solid #e4e6e8;
-    background: #fff;
-    z-index: 20;
-    border: solid thin #777;
-    border-radius: 4px;
-    box-shadow: 10px 10px rgba(95, 12, 12, 0.5);
-}
 
 #divShowDetails {
     cursor: pointer;

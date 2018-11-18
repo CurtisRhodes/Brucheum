@@ -203,8 +203,9 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AspNetContext.cs" />
-    <Compile Include="Models\GetaJobContext.cs" />
+    <Compile Include="Models\GetaJobModels.cs" />
     <Compile Include="Models\LocalModels.cs" />
+    <Compile Include="Models\GetaJobContext.cs" />
     <Compile Include="Models\OggleBoobleContext.cs" />
     <Compile Include="Models\WebSiteContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

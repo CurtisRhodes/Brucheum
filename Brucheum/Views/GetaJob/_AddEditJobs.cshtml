@@ -1,7 +1,4 @@
 ﻿
-<link href="~/Styles/CrudEdit.css" rel="stylesheet" />
-
-
 <style>
     /*summernote*/
     .editorContainer {
@@ -25,24 +22,12 @@
         width: 474px;
     }
 
-    .attrName {
-        display: inline-block;
-        min-width: 70px;
-    }
     /*default overrides*/
     .roundedInput {
         margin-bottom: 4px;
         margin-right: 11px;
         display: inline-block;
     }
-
-
-    .inline {
-        display: inline-block;
-    }
-</style>
-
-<style>
 
     .joblistTable {
         width: 100%;
@@ -74,21 +59,17 @@
             <div class="crudArea">
                 <div id="errSummary" class="validationError"></div>
                 <div class="crudRow">
-                    <div class="attrName">Start</div>
-                    <div class="attrName">Month</div>
-                    <div class="inline">
-                        <div id="errStartMonth" class="validationError">Required</div>
-                        <input id="txtStartMonth" class="roundedInput" />
-                    </div>
-                    <div class="inline">Year </div>
-                    <div class="inline">
-                        <div id="errStartYear" class="validationError">Required</div>
-                        <input id="txtStartYear" class="roundedInput" />
-                    </div>
+                    <div id="errStartMonth" class="validationError">Required</div>
+                    <div class="crudLabel">Start</div>
+                    <div class="crudLabel">Month</div>
+                    <input id="txtStartMonth" class="roundedInput inline" />
+                    <div class="crudLabel">Year </div>
+                    <div id="errStartYear" class="validationError">Required</div>
+                    <input id="txtStartYear" class="roundedInput inline" />
                 </div>
                 <div class="crudRow">
-                    <div class="attrName">Ended</div>
-                    <div class="attrName">Month</div>
+                    <div class="crudLabel">Ended</div>
+                    <div class="crudLabel">Month</div>
                     <div class="inline">
                         <div id="errFiredMonth" class="validationError">Required</div>
                         <input id="txtFiredMonth" class="roundedInput" />
@@ -100,22 +81,22 @@
                     </div>
                 </div>
                 <div class="crudRow">
-                    <div class="attrName">Job Title</div>
+                    <div class="crudLabel">Job Title</div>
                     <div id="errJobTitle" class="validationError">Required</div>
                     <input id="txtJobTitle" class="roundedInput wide" />
                 </div>
                 <div class="crudRow">
-                    <div class="attrName">Company</div>
+                    <div class="crudLabel">Company</div>
                     <div id="errCompany" class="validationError">Required</div>
                     <input id="txtCompany" class="roundedInput wide" />
                 </div>
                 <div class="crudRow">
-                    <div class="attrName">Location</div>
+                    <div class="crudLabel">Location</div>
                     <div id="errLocation" class="validationError">Required</div>
                     <input id="txtLocation" class="roundedInput wide" />
                 </div>
                 <div>
-                    <div class="attrName">Summary</div>
+                    <div class="crudLabel">Summary</div>
                 </div>
                 <div class="editorContainer">
                     <div>@Html.Partial("_Editor") </div>
@@ -132,20 +113,18 @@
     <div class="floatLeft">
         <div id="jobListContainer" class="crudContainer">
             <div id="JobListTitle" class="crudContainerTitle">Job List</div>
-            <div id="loadingGif" class="loadingGif">
-                <img src="~/Images/loader.gif" />  @*"~/Images/ingranaggi3.gif"*@
-            </div>
+            <div id="loadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
             <div id="jobList" class="crudList"></div>
         </div>
     </div>
-
 </div>
 
 <script>
     var service = '@ViewBag.Service'
     var jobModel = new Object;
+
     $(document).ready(function () {
-        $('#summernote').summernote({
+        $('.summernote').summernote({
             height: 250,
             codemirror: { mode: "htmlmixed", theme: "monokai" },
             toolbar: [
@@ -344,7 +323,7 @@
             type: "GET",
             url: service + "/api/Job?jobId=" + Id,
             success: function (response) {
-                if (!response.Id.startsWith("ERROR")) {
+                if (!response.Summary.startsWith("ERROR")) {
                     bindJobs(response);
                     $('#btnJobAddEdit').html("Edit");
                     $('#btnJobNew').show();

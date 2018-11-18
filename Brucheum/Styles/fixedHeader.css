@@ -6,6 +6,7 @@
     border-top: #40767d 3px solid;
     border-bottom: #decd6f 3px solid;
     display: flex;
+    z-index: 1000;
 }
 .bannerImageContainer {
     float: left;

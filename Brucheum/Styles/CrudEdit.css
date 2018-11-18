@@ -1,7 +1,7 @@
 ﻿/*CRUD control style*/
 .crudContainer {
-    padding: 6px;
-    margin: 56px 20px; 
+    margin-top: 16px;
+    margin-left: 30px;
     background-color: #fff;
     border: solid 1.5px #bbb;
     border-radius: 5px;
@@ -10,11 +10,14 @@
 .crudArea {
     padding: 11px;
     border: solid 1.4px #a010c3;
-
 }
-
+.crudLabel {
+    display: inline-block;
+    min-width: 65px;
+    vertical-align: middle;
+}
 .crudRow {
-    margin: 10px 4px;
+    margin-top: 10px;
     white-space: nowrap;
 }
 
@@ -53,3 +56,14 @@
 .crudBtnNew {
     display: none;
 }
+.crudDropDown {
+    height: 28px;
+    margin-left: 6px;
+    margin-bottom: 3px;
+    padding: 3px 6px;
+    color: #555;
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+

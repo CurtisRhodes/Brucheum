@@ -339,17 +339,17 @@ namespace WebApi
             {
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    List<Article> articles = db.Articles.ToList();
-                    foreach(Article article in articles)
-                    {
-                        dbArticles.Add(new DbArticelModel()
-                        {
-                            ArticleId = article.ArticleId,
-                            ArticleTitle = article.ArticleTitle,
-                            ArticleType = article.ArticleType,
-                            ArticleText = article.ArticleText
-                        });
-                    }
+                    dbArticles = (from articles in db.Articles
+                                  join crefs in db.Refs on articles.ArticleType equals crefs.RefCode into sr
+                                  from xrefs in sr.DefaultIfEmpty()
+                                  select new DbArticelModel
+                                  {
+                                      ArticleId = articles.ArticleId,
+                                      ArticleTitle = articles.ArticleTitle,
+                                      ArticleType = articles.ArticleType,
+                                      ArticleText = articles.ArticleText,
+                                      ArticleTypeDescription = xrefs.RefDescription == null ? "" : xrefs.RefDescription
+                                  }).ToList();
                 }
             }
             catch (Exception ex) { dbArticles.Add(new DbArticelModel() { ArticleTitle = Helpers.ErrorDetails(ex) }); }
@@ -374,8 +374,37 @@ namespace WebApi
                     }
                 }
             }
-            catch (Exception ex) { dbArticle.ArticleTitle = Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { dbArticle.ArticleTitle = "ERROR: " + Helpers.ErrorDetails(ex); }
             return dbArticle;
+        }
+
+        [HttpGet]
+        public string[] Get(string articleType)
+        {
+            //DbArticelModel dbArticle = new DbArticelModel();
+            var dbArticles = new string[1];
+            try
+            {
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    Article[] articles = db.Articles.Where(a => a.ArticleType == articleType).ToArray();
+                    dbArticles = new string[articles.Length];
+
+                    for (int i = 0; i < articles.Length; i++)
+                    {
+                        dbArticles[i] = articles[i].ArticleText;
+                        //dbArticle.ArticleId = article.ArticleId;
+                        //dbArticle.ArticleTitle = article.ArticleTitle;
+                        //article.ArticleType = article.ArticleType;
+                        //dbArticle.ArticleText = article.ArticleText;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                dbArticles[0] = ex.Message; ;
+            }
+            return dbArticles;
         }
 
         [HttpPost]

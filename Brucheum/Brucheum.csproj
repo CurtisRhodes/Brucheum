@@ -236,7 +236,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ArticleController.cs" />
     <Compile Include="Controllers\BookController.cs" />
-    <Compile Include="Controllers\ConsultingController.cs" />
+    <Compile Include="Controllers\IntelDsgnController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\GetaJobController.cs" />
     <Compile Include="Controllers\Helpers.cs" />
@@ -285,11 +285,11 @@
     <Content Include="Images\caveStairs.jpg" />
     <Content Include="Images\caveStairsWide.jpg" />
     <Content Include="Images\closeBtn02.png" />
-    <Content Include="Images\Consulting\dblleft.jpg" />
-    <Content Include="Images\Consulting\dblright.jpg" />
-    <Content Include="Images\Consulting\globlic.jpg" />
-    <Content Include="Images\Consulting\sglleft.jpg" />
-    <Content Include="Images\Consulting\sglright.jpg" />
+    <Content Include="Images\IntelDsgn\dblleft.jpg" />
+    <Content Include="Images\IntelDsgn\dblright.jpg" />
+    <Content Include="Images\IntelDsgn\globlic.jpg" />
+    <Content Include="Images\IntelDsgn\sglleft.jpg" />
+    <Content Include="Images\IntelDsgn\sglright.jpg" />
     <Content Include="Images\down.jpg" />
     <Content Include="Images\downCaret.png" />
     <Content Include="Images\GetaJob.ico" />
@@ -338,7 +338,7 @@
     <Content Include="Styles\articleEdit.css" />
     <Content Include="Styles\articleList.css" />
     <Content Include="Styles\bFooter.css" />
-    <Content Include="Styles\CrudEdit.css" />
+    <Content Include="Styles\crudEdit.css" />
     <Content Include="Styles\editor\bootstrap.css" />
     <Content Include="Styles\editor\codeMirror.css" />
     <Content Include="Styles\fixedHeader.css" />
@@ -351,7 +351,6 @@
     <Content Include="Styles\editor\summernote.css" />
     <Content Include="Styles\tableofContents.css" />
     <Content Include="Styles\admin.css" />
-    <Content Include="Views\Login\LoginPopup.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -403,16 +402,16 @@
     <Content Include="Views\Book\TableOfContents.cshtml" />
     <Content Include="Views\Book\Write.cshtml" />
     <Content Include="Views\Book\_EditTreePopup.cshtml" />
-    <Content Include="Views\Consulting\About.cshtml" />
-    <Content Include="Views\Consulting\Approach.cshtml" />
-    <Content Include="Views\Consulting\Articles.cshtml" />
-    <Content Include="Views\Consulting\Code.cshtml" />
-    <Content Include="Views\Consulting\ConsultingHome.cshtml" />
-    <Content Include="Views\Consulting\Contact.cshtml" />
-    <Content Include="Views\Consulting\MyResume.cshtml" />
-    <Content Include="Views\Consulting\Portfolio.cshtml" />
-    <Content Include="Views\Consulting\_IdFooter.cshtml" />
-    <Content Include="Views\Consulting\_ProfessionalLayout.cshtml" />
+    <Content Include="Views\IntelDsgn\About.cshtml" />
+    <Content Include="Views\IntelDsgn\Approach.cshtml" />
+    <Content Include="Views\IntelDsgn\Articles.cshtml" />
+    <Content Include="Views\IntelDsgn\Code.cshtml" />
+    <Content Include="Views\IntelDsgn\Index.cshtml" />
+    <Content Include="Views\IntelDsgn\Contact.cshtml" />
+    <Content Include="Views\IntelDsgn\MyResume.cshtml" />
+    <Content Include="Views\IntelDsgn\Portfolio.cshtml" />
+    <Content Include="Views\IntelDsgn\_IdFooter.cshtml" />
+    <Content Include="Views\IntelDsgn\_ProfessionalLayout.cshtml" />
     <Content Include="Views\Login\_LoginPopup.cshtml" />
     <Content Include="Views\Login\_LogoutPopup.cshtml" />
     <Content Include="Views\Login\_ProfilePopup.cshtml" />
@@ -436,16 +435,19 @@
     <Content Include="Curtis Rhodes Resume 2017.doc" />
     <Content Include="Views\Error\Index.cshtml" />
     <Content Include="Views\Error\NotFound.cshtml" />
-    <Content Include="Views\GetaJob\ResumeAdmin.cshtml" />
+    <Content Include="Views\GetaJob\GetaJobAdmin.cshtml" />
     <Content Include="Views\GetaJob\Index.cshtml" />
     <Content Include="Views\GetaJob\_GetaJobFooter.cshtml" />
     <Content Include="Views\GetaJob\_GetaJobLayout.cshtml" />
     <Content Include="Views\GetaJob\_AddEditJobs.cshtml" />
     <Content Include="Views\GetaJob\_AddEditSkills.cshtml" />
-    <Content Include="Views\GetaJob\_ResumeBuilder.cshtml" />
+    <Content Include="Views\GetaJob\_AddEditResume.cshtml" />
     <Content Include="Views\Error\ErrorwMessages.cshtml" />
     <Content Include="Views\Error\ErrorwException.cshtml" />
-    <Content Include="Views\GetaJob\_AddEditJobSearch.cshtml" />
+    <Content Include="Views\GetaJob\_AddEditSections.cshtml" />
+    <Content Include="Views\Admin\_ManageArticles.cshtml" />
+    <Content Include="Views\GetaJob\_AddEditRefs.cshtml" />
+    <Content Include="Views\GetaJob\JobSearch.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -490,11 +492,8 @@
   </Target>
   <Target Name="AfterBuild">
   </Target> -->
-
   <!-- <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v12.0\WebApplications\Microsoft.WebApplication.targets" />
   <Target Name="BeforeBuild">
       <TransformXml Source="Web.Base.config" Transform="Web.$(Configuration).config" Destination="Web.config" />
   </Target>      -->
-
-
 </Project>

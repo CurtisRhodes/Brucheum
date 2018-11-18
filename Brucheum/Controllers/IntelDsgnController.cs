@@ -6,16 +6,14 @@ using System.Web.Mvc;
 
 namespace Brucheum
 {
-    public class ConsultingController : Controller
+    public class IntelDsgnController : Controller
     {
         private string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
 
-        public ActionResult Index()
+        public ActionResult Index(string a)
         {
-            return RedirectToAction("ConsultingHome");
-        }
-        public ActionResult ConsultingHome()
-        {
+            ViewBag.Service = apiService;
+            ViewBag.ArticleId = a;
             return View();
         }
         public ActionResult MyResume()
@@ -37,7 +35,7 @@ namespace Brucheum
         }
         public ActionResult Code()
         {
-            return View();
+            return View(); 
         }
         public ActionResult Articles()
         {

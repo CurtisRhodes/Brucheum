@@ -1,0 +1,86 @@
+﻿
+@{
+    ViewBag.Title = "Articles";
+    Layout = "~/Views/IntelDsgn/_ProfessionalLayout.cshtml";
+}
+<link href="~/Styles/default.css" rel="stylesheet" />
+<link href="~/Styles/CrudEdit.css" rel="stylesheet" />
+<link href="~/Styles/admin.css" rel="stylesheet" />
+
+<style>
+    #divArticleContainer {    
+        margin-top: 55px;
+        width: 444px;
+    }
+    .intelDsgnListItem {
+        min-height: 150px;
+        min-width: 150px;
+        float: left;
+        display: inline-block;
+    }
+
+</style>
+
+
+<div class="threeColumnArray">
+    <div id="leftColumn"></div>
+    <div id="middleColumn">
+        <div id="divStatusMessage"></div>
+        <div id="divArticleContainer"></div>
+
+
+    </div>
+    <div id="rightColumn"></div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+
+    $(document).ready(function () {
+        getArticleList();
+
+        $('#footerMessage').append("  service: " + service);
+
+    });
+
+
+    /// Get List
+    function getArticleList() {
+        try {
+            $('#loadingGif').show();
+            //only call me if you have an offer
+            // remember my conditions
+            // remember the terms. Work from home only unless travel paid for //by those
+            //alert("getArticleList()")
+
+            $.ajax({
+                type: "GET",
+                url: service + "/api/DbArticle",
+                success: function (response) {
+                    $('#divArticleContainer').html("");
+                    if (true) {
+                        $.each(response, function (idx, obj) {
+                            //alert("ArticleTypeDescription:" + obj.ArticleTypeDescription);
+                            $('#divArticleContainer').append("<div class='crudListItem intelDsgnListItem' id='" + obj.ArticleId + "'>" + obj.ArticleTypeDescription + " | " + obj.ArticleTitle + "</div>");
+                        })
+                        $('#loadingGif').hide();
+                        $('.crudListItem').click(function () {
+                            alert("this.id: " + $(this).attr("id"));
+                            //loadArticlesEditor($(this).attr("id"));
+                        });
+                    }
+                    else {
+                        alert("getArticleList: " + success)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    alert("addEditArticle XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("get Articles CATCH: " + e)
+        }
+    }
+
+</script>
+

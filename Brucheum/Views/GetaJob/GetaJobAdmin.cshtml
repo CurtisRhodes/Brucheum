@@ -4,25 +4,27 @@
     Layout = "~/Views/GetaJob/_GetaJobLayout.cshtml";
 }
 <link href="~/Styles/admin.css" rel="stylesheet" />
+<link href="~/Styles/crudEdit.css" rel="stylesheet" />
 
 <style>
-    .adminOptionContainer {
+    /*.adminOptionContainer {
         width: 1000px;
-    }
+    }*/
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn">
         <div class="vertMenu">
-            <div class="vertMenuTab" id="optAddJobs">Add Jobs</div>
-            <div class="vertMenuTab" id="optAddSkills">Add Skills</div>
-            <div class="vertMenuTab" id="optResume">Build Resume</div>
-            @*<div class="vertMenuTab" id="optArticleClass">Skill Categories</div>
-            <div class="vertMenuTab" id="optShowSiteStats">Job Skills</div>*@
+            <div class="vertMenuTab" id="optResume">Add/Edit Resume</div>
+            <div class="vertMenuTab" id="optAddJobs">Add/Edit Jobs</div>
+            <div class="vertMenuTab" id="optAddSkills">Add/Edit Job Skills</div>
+            <div class="vertMenuTab" id="optSections">Add/Edit Resume Sections</div>
+            <div class="vertMenuTab" id="optRefEditor">Add/Edit Refs</div>
         </div>
     </div>
     <div id="middleColumn">
         <div id="divStatusMessage"></div>
+
         <div class="adminOptionContainer">
             <div id="tabAddJobs" class="adminOption">
                 @Html.Partial("_AddEditJobs")
@@ -31,6 +33,13 @@
                 @Html.Partial("_AddEditSkills")
             </div>
             <div id="tabResume" class="adminOption">
+                @Html.Partial("_AddEditResume")
+            </div>
+            <div id="tabGajRefs" class="adminOption">
+                @Html.Partial("_AddEditRefs")
+            </div>
+            <div id="tabSections" class="adminOption">
+                @Html.Partial("_AddEditSections")
             </div>
         </div>
     </div>
@@ -38,9 +47,17 @@
 </div>
 
 <script>
+    var isAuthenticated = '@User.Identity.IsAuthenticated';
     var service = '@ViewBag.Service';
 
     $(document).ready(function () {
+
+        if (!isAuthenticated) {
+            var msg = "You must <span class='clickable' onclick='registerPlease()'>Register</span> or <span onclick='loginPlease()' class='clickable'>Login</span> to use this feature</div>";
+            showCustomMessage("User data kept private", msg);
+        }
+
+
         $('.vertMenuTab').mouseout(function () {
             $(this).css('background-color', '#74bac3').css('color', '#000');
         });
@@ -48,6 +65,9 @@
             $(this).css('background-color', '#4163aa').css('color', '#e4e4e4');
         });
     });
+
+
+
 
     // Jobs
     $("#optAddJobs").click(function () {
@@ -62,16 +82,26 @@
     $("#optAddSkills").click(function () {
         $('.adminOption').hide();
         $('#tabAddSkills').show();
-        $('#btnArticleClassToggle').hide();
-        if ($('#ddSkillCats').html() === "") {
-            loadSkillCatsDD();
-            getSkills();
-        }
+        gajSkillsInititalize()
     })
+
+    // my famous Ref Editor
+    $("#optRefEditor").click(function () {
+        $('.adminOption').hide();
+        $('#tabGajRefs').show();
+        gajRefsInititalize()
+    })
+
     // resume builder
     $("#optResume").click(function () {
         $('.adminOption').hide();
-        $('#tabSResume').show();
+        $('#tabResume').show();
+    })
+    // resume sections
+    $("#optSections").click(function () {
+        $('.adminOption').hide();
+        $('#tabSections').show();
+        AddEditSectionsInitialize();
     })
 
 

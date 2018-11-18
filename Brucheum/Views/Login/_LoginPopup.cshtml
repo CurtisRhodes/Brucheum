@@ -1,8 +1,9 @@
 ﻿<link href="~/Styles/modalDialog.css" rel="stylesheet" />
+<link href="~/Styles/default.css" rel="stylesheet" />
 <script src="~/Scripts/GlobalFunctions.js"></script>
 
-@*<script>
-
+@*
+    <script>
         (function (d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0];
             if (d.getElementById(id)) return;
@@ -10,8 +11,8 @@
             js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.2&appId=264735744158135&autoLogAppEvents=1';
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
-
-    </script>*@
+    </script>
+*@
 
 <script>
     window.fbAsyncInit = function () {
@@ -50,6 +51,7 @@
     .iconFacebook {
         color: #fff;
     }
+
     .forgot {
         margin: 15px 0;
         font-size: 13px;
@@ -58,21 +60,11 @@
     text-decoration: none;*/
     }
 
-    .clickable {
-        margin-top: 5px;
-        text-decoration: underline;
-        display: inline-block;
-        text-align:initial;
-        margin-left: 8px;
-    }
-
-    .roundendButton {
-
-    }
     .ckRemember {
         font-size: 13px;
         margin: 15px 0;
     }
+
     .externalLogin {
         text-align: center;
         box-sizing: border-box;
@@ -85,16 +77,16 @@
         margin-bottom: 16px;
     }
 </style>
+
 <div id="loginDialog" class="modalDialog">
     <div id="divStatusMessage"></div>
     <div class="dialogHeader">
         Log In to <span>The Brucheum</span>
-        <div id="btnClose" class="divCloseButton">
+        <div id="btnClose" class="dialogCloseButton">
             <img height="19" src="~/Images/powerOffRed01.png" />
         </div>
     </div>
-    <div style="clear:both"></div>
-    <div>
+    <div class="dialogBody">
         <div id="errSummary" class="validationError"></div>
         <div id="errUserName" class="validationError">Required</div>
         <label>User Name</label><br>
@@ -103,19 +95,19 @@
         <div id="errPassword" class="validationError">Required</div>
         <label>Password</label><br>
         <input id="clearPassword" type="password" class="roundedInput" autocomplete="off" placeholder="********"><br>
-        <div class="forgot" >
+        <div class="forgot">
             <a id="forgot-pw" href="/users/account-recovery">forgot password ?</a>
         </div>
-        <button id="btnLogin" class="roundendButton" onclick="postLogin()">
+        <button id="btnLoginPopupLogin" class="roundendButton" onclick="postLogin()">
             <img id="btnLoginSpinnerImage" class="spinnerImage" src="~/Images/loader.gif" />
             Log in
         </button>
-        <div class="ckRemember" >
+        <div class="ckRemember">
             <input id="ckRememberMe" type="checkbox" checked="checked" />  Remember Me ?  (<span>uses a cookie</span>)
         </div>
         <div>
-            <div class="clickable" onclick="transferToRegisterPopup()">Register</div>
-            <div id="btnCancel" class="clickable">Cancel</div>
+            <div class="clickable inline" onclick="transferToRegisterPopup()">Register</div>
+            <div id="btnCancel" class="clickable inline">Cancel</div>
         </div>
     </div>
     <div style="clear:both"></div>
@@ -161,13 +153,13 @@
 
     var loggingIn = false;
     function postLogin() {
+        $('#btnLoginSpinnerImage').show();
         if (!loggingIn) {
             try {
                 if (validate()) {
                     loggingIn = true;
-                    $('#btnLogin').html("   ");
-                    $('#btnLoginSpinnerImage').show();
-                    
+
+                    //$('#btnLoginPopupLogin').html("   ");
                     //$('.spinnerImage').show();
 
 
@@ -190,7 +182,7 @@
                             else {
                                 $('#errSummary').html(success);
                                 $('#errSummary').show();
-                                $('#btnLogin').html("Log in");
+                                $('#btnLoginPopupLogin').html("Log in");
                                 loggingIn = false;
                             }
                         },
@@ -262,7 +254,7 @@
                                 }
                             },
                             error: function (xhr) {
-                                $('#errSummary').html("xhr "+ xhr.statusText);
+                                $('#errSummary').html("xhr " + xhr.statusText);
                                 $('#errSummary').show();
 
                                 //displayStatusMessage("severityError", "error: " + xhr.statusText);

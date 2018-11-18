@@ -1,0 +1,176 @@
+﻿
+
+<style>
+    #addEditRefsContainer {
+        width: 522px;
+    }
+
+    .roundendButton {
+        width: 120px;
+        display: inline-block;
+    }
+</style>
+
+<div id="addEditRefsContainer" class="crudContainer">
+    <div id="crudContainerTitle" class="crudContainerTitle">Add/Edit Refs</div>
+    <div class="crudArea">
+        <div class="crudRow">
+            <div class="crudLabel">Ref Type:</div>
+            <select id="ddRefs" class="roundedInput"></select>
+            <div class="crudLabel">Ref Name:</div>
+            <input id="txtRefName" class="roundedInput" />
+        </div>
+        <div>
+            <div class="roundendButton" id="btnAddUpdateRef">Add</div>
+            <div class="roundendButton" id="btnRefToggle">New</div>
+        </div>
+    </div>
+    <div class="itemsList" id="divRefList"></div>
+</div>
+
+<script>
+    var refModel = new Object();
+    var selectedRefType;
+
+    function gajRefsInititalize() {
+        selectedRefType = "";
+        $('#btnRefToggle').hide();
+        $('#txtRefName').prop('readonly', true);
+        if ($('#divRefList').html() == "")
+            loadRefTypesDD();
+    }
+
+    $('#btnAddUpdateRef').click(function () {
+        if ($(this).text() === "Add")
+            addRef();
+        else
+            updateRef();
+    });
+
+    $('#btnRefToggle').click(function () {
+        $('#btnAddUpdateRef').text("Add");
+        $(this).hide();
+    });
+
+    function loadRefTypesDD() {
+        try {
+            $.ajax({
+                type: "GET",
+                dataType: "Json",
+                url: service + "/api/GAJRef/Get?refType=000",
+                success: function (result) {
+                    $('#ddRefs').html("<option class= 'ddOption' value ='0'>-- select a ref type --</option >");
+                    $.each(result, function (idx, obj) {
+                        $('#ddRefs').append("<option class='ddOption' value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
+                    });
+
+                    $('#ddRefs').change(function () {
+                        selectedRefType = $('#ddRefs option:selected').attr("value")
+                        getRefs($('#ddRefs option:selected').val());
+                    });
+
+                },
+                error: function (jqXHR, exception) {
+                    alert("loadRefTypesDD xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                },
+            });
+        } catch (e) {
+            //displayStatusMessage("severityError", "catch ERROR: " + e);
+            alert("loadRefTypesDD catch: " + e);
+        }
+    }
+
+    function getRefs(refType) {
+        try {
+            $.ajax({
+                type: "GET",
+                dataType: "Json",
+                url: service + "/api/GAJRef/Get?refType=" + refType,
+                success: function (result) {
+                    $('#divRefList').html("<ul>");
+                    $.each(result, function (idx, obj) {
+                        $('#divRefList').append("<li  id='" + obj.RefCode + "'>" + obj.RefDescription + "</li>");
+                    });
+                    $('#divRefList').append("</ul>");
+                    $('#txtRefName').prop('readonly', false);
+
+                    $('#divRefList li').click(function () {
+                        refModel.RefCode = $(this).attr('id');
+                        $('#txtRefName').val($(this).html());
+                        $('#btnAddUpdateRef').text("Update");
+                        $('#btnRefToggle').show();
+                    });
+                },
+                error: function (jqXHR, exception) {
+                    alert("GetRefs error: " + getXHRErrorDetails(jqXHR, exception));
+                },
+            });
+        } catch (e) {
+            //displayStatusMessage("severityError", "catch ERROR: " +e);
+            alert("GetRefs catch: " + e);
+        }
+    }
+
+    function addRef() {
+        refModel.refType = selectedRefType;
+        refModel.refDescription = $('#txtRefName').val();
+        try {
+            $.ajax({
+                type: "POST",
+                url: service + "/api/GAJRef",
+                dataType: "Json",
+                data: refModel,
+                success: function (result) {
+                    if (result.Success.toUpperCase() == "OK") {
+                        displayStatusMessage("severityOk", $('#txtRefName').val() + " Added");
+                        $('#txtRefName').val("");
+                        $('#btnAddUpdateRef').text("Add");
+                        $('#btnRefToggle').hide();
+                        getRefs(selectedRefType);
+                    }
+                    else {
+                        alert("Post ref error :" + result.Success);
+                        //displayStatusMessage("severityError", "xhr ERROR: " + success);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    //displayStatusMessage("severityError", "AddRole error: " + getXHRErrorDetails(jqXHR, exception));
+                    alert("Post ref xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
+        catch (e) {
+            alert("Post ref catch: " + e);
+        }
+    }
+
+    function updateRef() {
+        try {
+            refModel.refDescription = $('#txtRefName').val();
+            $.ajax({
+                type: "PUT",
+                url: service + "/api/GAJRef",
+                data: refModel,
+                success: function (success) {
+                    if (success === "ok") {
+                        displayStatusMessage("severityOk", $('#txtRefName').val() + "Updated");
+                        $('#txtRefName').val("");
+                        $('#btnAddUpdateRef').text("Add");
+                        $('#btnRefToggle').hide();
+                        getRefs(selectedRefType);
+                    }
+                    else
+                        displayStatusMessage("severityError", "server ERROR: " + success);
+                },
+                error: function (xhr) {
+                    displayStatusMessage("severityError", "error: " + xhr.statusText);
+                    //alert("Admin Refs PUT error: " + xhr.statusText);
+                }
+            });
+        }
+        catch (e) {
+            displayStatusMessage("severityError", "catch ERROR: " + e);
+        }
+    }
+
+</script>

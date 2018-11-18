@@ -1,0 +1,283 @@
+﻿<style>
+    /*summernote*/
+    .editorContainer {
+        display: inline-flex;
+        color: #555;
+        background-color: #ddd;
+        border-radius: 5px;
+        z-index: 0;
+        width: 100%;
+    }
+        .editorContainer > div:first-child {
+            width: 100%;
+        }
+    .wide {
+        width: 470px;
+    }
+
+    /*default overrides*/
+    .roundedInput {
+        margin-bottom: 4px;
+        margin-right: 11px;
+        display: inline-block;
+    }
+    #articleCrudContainer {
+        width: 800px;
+    }
+
+</style>
+
+<div id="articleCrudArea" class="crudArea, floatLeft">
+    <div class="flexContainer">
+
+        <div class="floatLeft">
+            <div class="crudContainer">
+                <div id="articleCrudContainer" class="crudContainerTitle">Add/Edit An Article</div>
+                <div id="errSummary" class="validationError"></div>
+                <div class="crudRow">
+                    <div class="crudLabel">Article Title</div>
+                    <div id="errArticleTitle" class="validationError">Required</div>
+                    <input id="txtArticleTitle" class="roundedInput wide" />
+                    <div class="crudLabel">Category</div>
+                    <select id="ddArticleCategory" class="ddOption"></select>
+                </div>
+                <div class="editorContainer">
+                    <div>@Html.Partial("_Editor") </div>
+                </div>
+                <div>
+                    <button id="btnArticleAddEdit" class="roundendButton" onclick="addEditArticle()">Add</button>
+                    <button id="btnArticleNew" class="roundendButton crudBtnNew" onclick="btnArticleNewToggle()">New</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="floatLeft">
+            <div class="crudContainer">
+                <div class="crudContainerTitle">Article List</div>
+                <div class="crudArea">
+                    <div id="loadingGif" class="loadingGif">
+                        <img src="~/Images/loader.gif" />  @*"~/Images/ingranaggi3.gif"*@
+                    </div>
+                    <div id="articledbList" class="crudList"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    /// editor
+    var articleModel = new Object;
+    var selectedRefCat;
+
+    $(document).ready(function () {
+
+        $('#summernote').summernote({
+            height: 455,
+            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            toolbar: [
+                ['codeview'],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                //['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontname', 'fontsize']],
+                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
+                ['color', ['color']]
+                ['para', ['ul', 'ol', 'paragraph']],
+                //['height', ['height']]
+            ]
+        });
+
+        $('#footerMessage').append("  service: " + service);
+
+    });
+
+    function addEditArticle() {
+        unbindArticle();
+        if (true) {//(validate()) {
+            if ($('#btnArticleAddEdit').html() == "Add") {
+                insertArticle();
+            }
+            else {
+                updateArticle();
+            }
+        }
+    }
+
+    function bindArticle(editArticleModel) {
+        articleModel.ArticleId = editArticleModel.ArticleId;
+        $('#ddArticleCategory').val(selectedRefCat);
+        //alert("selectedRefCat: " + selectedRefCat);
+        $('#txtArticleTitle').val(editArticleModel.ArticleTitle);
+        $('#summernote').summernote('code', editArticleModel.ArticleText);
+    }
+
+    function unbindArticle() {
+        articleModel.ArticleTitle = $('#txtArticleTitle').val();
+        articleModel.ArticleType = selectedRefCat;
+        articleModel.ArticleText = $('#summernote').summernote('code');
+    }
+
+    // Post
+    function insertArticle() {
+        $.ajax({
+            type: "POST",
+            url: service + "/api/DbArticle",
+            data: articleModel,
+            dataType: 'Json',
+            success: function (response) {
+                if (!response.startsWith("ERROR")) {
+                    articleModel.ArticleId = response;
+                    $('#btnArticleAddEdit').html("Update");
+                    $('#btnArticleNew').show();
+                    getArticleList();
+                    displayStatusMessage("severityOk", "article added");
+                }
+                else {
+                    alert("addEditArticle: " + response)
+                }
+            },
+            error: function (jqXHR, exception) {
+                if (ex == "This shouldn't haapen") {
+                    alert("This shouldn't haapen");
+                }
+                alert("addEditArticle post error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
+    // Put
+    function updateArticle() {
+        $.ajax({
+            type: "PUT",
+            url: service + "/api/DbArticle",
+            data: articleModel,
+            success: function (success) {
+                if (success == "ok") {
+                    $('#btnArticleAddEdit').html("Update");
+                    $('#btnArticleNew').show();
+                    getArticleList();
+                    displayStatusMessage("severityOk", "article Edited");
+                }
+                else {
+                    alert("Edit aArticle: " + success)
+                }
+            },
+            error: function (jqXHR, exception) {
+                alert("addEditArticle put error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
+    function btnArticleNewToggle() {
+
+        $('#btnArticleAddEdit').html("Add");
+        $('#btnArticleNew').hide();
+        articleModel.ArticleId = "";
+        $('#txtArticleTitle').val("");
+        $('#txtArticleType').val("");
+        $('#summernote').summernote('code', "");
+    }
+
+    function validate() {
+        $('#errSummary').hide();
+
+        if ($('#txtArticleTitle').val() === "") {
+            $('#errArticleTitle').show();
+            return false;
+        }
+        $('#errArticleTitle').hide();
+
+        return true;
+    };
+
+    function loadArticleCats() {
+        try {
+            $.ajax({
+                type: "GET",
+                dataType: "Json",
+                url: service + "/api/Ref/Get?refType=CAT",
+                success: function (result) {
+                    $('#ddArticleCategory').html("<option class= 'ddOption' value ='0'>-- select article Category --</option >");
+                    $.each(result, function (idx, obj) {
+                        $('#ddArticleCategory').append("<option class='ddOption' value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
+                    });
+
+                    $('#ddArticleCategory').change(function () {
+                        selectedRefCat = $('#ddArticleCategory option:selected').attr("value")
+                    });
+                },
+                error: function (jqXHR, exception) {
+                    alert("loadRefTypesDD xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                },
+            });
+        } catch (e) {
+            //displayStatusMessage("severityError", "catch ERROR: " + e);
+            alert("loadRefTypesDD catch: " + e);
+        }
+    }
+
+    /// Get List
+    function getArticleList() {
+        try {
+            $('#loadingGif').show();
+            //only call me if you have an offer
+            // remember my conditions
+            // remember the terms. Work from home only unless travel paid for //by those
+            //alert("getArticleList()")
+
+            $.ajax({
+                type: "GET",
+                url: service + "/api/DbArticle",
+                success: function (response) {
+                    $('#articledbList').html("");
+                    //alert("getArticleList(): " + response);
+                    if (true) {
+                        $.each(response, function (idx, obj) {
+                       //     alert("ArticleTypeDescription:" + obj.ArticleTypeDescription);
+                            $('#articledbList').append("<div class='crudListItem' refCat=" + obj.ArticleType + "  id='" + obj.ArticleId + "'>" +
+                                obj.ArticleTypeDescription + " | " + obj.ArticleTitle + "</div>");
+                        })
+                        $('#loadingGif').hide();
+                        $('.crudListItem').click(function () {
+                            selectedRefCat = $(this).attr("refCat");
+                            //alert("this.id: " + $(this).attr("id"));
+                            loadArticlesEditor($(this).attr("id"));
+                        });
+                    }
+                    else {
+                        alert("getArticleList: " + success)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    alert("addEditArticle XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("get Articles CATCH: " + e)
+        }
+    }
+
+    // Get(articleId)
+    function loadArticlesEditor(Id) {
+       // alert("loadArticlesEditor(Id): " + Id);
+        $.ajax({
+            type: "GET",
+            url: service + "/api/DbArticle?articleId=" + Id,
+            success: function (response) {
+                if (!response.ArticleTitle.startsWith("ERROR")) {
+                   // alert("bindArticles: " + response.ArticleTitle);
+                    bindArticle(response);
+                    $('#btnArticleAddEdit').html("Update");
+                    $('#btnArticleNew').show();
+                }
+                else {
+                    alert("getArticles ERROR: " + response.ArticleTitle)
+                }
+            },
+            error: function (jqXHR, exception) {
+                alert("loadArticlesEditor post error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+</script>

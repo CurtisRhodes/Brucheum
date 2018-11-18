@@ -17,34 +17,7 @@ namespace WebApi.Models
         public string ArticleType { get; set; }
         public string ArticleText { get; set; }
         public DateTime CreateDate { get; set; }
-    }
-    public class SectionModel
-    {
-        public int Id { get; set; }
-        public string SectionName { get; set; }
-        public string SectionTitle { get; set; }
-        public string SectionContents { get; set; }
-    }
-    public class SkillModel
-    {
-        public string Id { get; set; }
-        public string SkillName { get; set; }
-        public string SkillCategory { get; set; }
-    }
-
-    public class LostJobModel
-    {
-        public string Id { get; set; }
-        public string JobTitle { get; set; }
-        public string Employer { get; set; }
-        public string JobLocation { get; set; }
-        public string StartMonth { get; set; }
-        public string StartYear { get; set; }
-        public string FiredMonth { get; set; }
-        public string FiredYear { get; set; }
-        public string Summary { get; set; }
-        public string ReasonForLeaving { get; set; }
-        public string SecretNarative { get; set; }
+        public string ArticleTypeDescription { get; set; }
     }
 
     public class ArticleModel

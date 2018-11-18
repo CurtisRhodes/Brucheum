@@ -1,15 +1,23 @@
 ﻿<style>
-    .roundendButton {
-        width: 50px;
+    .editRolebtn {
+        width: 55px;
+        padding: 8px 4px;
     }
+    #divRoleCrudContainer {
+        width: 444px;
+    }
+    #txtRoleName {
+        width: 225px;
+    }
+
 </style>
-<div class="adminContainer">
+<div id="divRoleCrudContainer" class="crudContainer">
     <div class="adminOptionTitle">Add Edit Roles</div>
     <div>
         <label>Role:</label>
-        <input class="adminInput" id="txtRoleName" />
-        <div id="btnAddUpdateRole" class="roundendButton" onclick="addUpdateRole()">Add</div>
-        <div id="btnRoleToggle" class="roundendButton" onclick="toggleAddButton()">New</div>
+        <input class="roundedInput" id="txtRoleName" />
+        <div id="btnAddUpdateRole" class="roundendButton editRolebtn" onclick="addUpdateRole()">Add</div>
+        <div id="btnRoleToggle" class="roundendButton editRolebtn" onclick="toggleAddButton()">New</div>
     </div>
     <div class="itemsList" id="divRoleList"></div>
 </div>

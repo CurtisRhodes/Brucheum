@@ -11,72 +11,223 @@ namespace WebApi
     {
         public GetaJobContext() : base("name=GoDaddy") { }
 
-        public virtual DbSet<Job> Jobs { get; set; }
-        public virtual DbSet<Job_Skill> Job_Skill { get; set; }
+        public virtual DbSet<Agent> Agents { get; set; }
+        public virtual DbSet<JobSearch> JobSearches { get; set; }
+        public virtual DbSet<JobSkill> JobSkills { get; set; }
+        public virtual DbSet<Listing> Listings { get; set; }
+        public virtual DbSet<ListingRequirement> ListingRequirements { get; set; }
+        public virtual DbSet<LostJob> LostJobs { get; set; }
         public virtual DbSet<Resume> Resumes { get; set; }
-        public virtual DbSet<ResumeSection> ResumeSections { get; set; }
+        public virtual DbSet<ResumeElement> ResumeElements { get; set; }
+        public virtual DbSet<SearchActivity> SearchActivities { get; set; }
+        public virtual DbSet<Section> Sections { get; set; }
         public virtual DbSet<Skill> Skills { get; set; }
-        public virtual DbSet<Resume_ResumeSection> Resume_ResumeSection { get; set; }
+        public virtual DbSet<gajRef> Refs { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Job>()
-                .HasMany(e => e.Job_Skill)
-                .WithRequired(e => e.Job)
+            modelBuilder.Entity<Listing>()
+                .Property(e => e.JobTitle)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Listing>()
+                .Property(e => e.Comments)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Listing>()
+                .Property(e => e.Rate)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Listing>()
+                .Property(e => e.Distance)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Listing>()
+                .HasMany(e => e.ListingRequirements)
+                .WithOptional(e => e.Listing)
+                .HasForeignKey(e => e.JobListingId);
+
+            modelBuilder.Entity<Listing>()
+                .HasMany(e => e.SearchActivities)
+                .WithOptional(e => e.Listing)
+                .HasForeignKey(e => e.JobListingId);
+
+            modelBuilder.Entity<LostJob>()
+                .HasMany(e => e.JobSkills)
+                .WithRequired(e => e.LostJob)
+                .HasForeignKey(e => e.JobId)
                 .WillCascadeOnDelete(false);
 
-            //modelBuilder.Entity<Resume>()
-            //    .HasMany(e => e.ResumeSections)
-            //    .WithMany(e => e.Resumes)
-            //    .Map(m => m.ToTable("Resume_ResumeSection", "job").MapLeftKey("ResumeId").MapRightKey("SectionId"));
+            modelBuilder.Entity<Resume>()
+                .HasMany(e => e.ResumeElements)
+                .WithRequired(e => e.Resume)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<SearchActivity>()
+                .Property(e => e.Comments)
+                .IsUnicode(false);
 
             modelBuilder.Entity<Skill>()
                 .Property(e => e.SkillCategory)
                 .IsFixedLength();
 
             modelBuilder.Entity<Skill>()
-                .HasMany(e => e.Job_Skill)
+                .HasMany(e => e.JobSkills)
                 .WithRequired(e => e.Skill)
                 .WillCascadeOnDelete(false);
 
-            //System.Data.Entity.ModelConfiguration.ModelValidationException
-            //  HResult = 0x80131500
-            //  Message=One or more validation errors were detected during model generation:
-
-            //ResumeResumeSection: Name: The EntitySet 'ResumeResumeSection' with schema 'job' and table 'Resume_ResumeSection' was already defined.Each EntitySet must refer to a unique schema and table.
-
-            // Source=EntityFramework
-            // StackTrace:
-
-            //  at System.Data.Entity.Core.Metadata.Edm.EdmModel.Validate()
-            //  at System.Data.Entity.DbModelBuilder.Build(DbProviderManifest providerManifest, DbProviderInfo providerInfo)
-            //  at System.Data.Entity.DbModelBuilder.Build(DbConnection providerConnection)
-            //  at System.Data.Entity.Internal.LazyInternalContext.CreateModel(LazyInternalContext internalContext)
-            //  at System.Data.Entity.Internal.RetryLazy`2.GetValue(TInput input)
-            //  at System.Data.Entity.Internal.LazyInternalContext.InitializeContext()
-            //  at System.Data.Entity.Internal.InternalContext.Initialize()
-            //  at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
-            //  at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
-            //  at System.Data.Entity.Internal.Linq.InternalSet`1.GetEnumerator()
-            //  at System.Data.Entity.Infrastructure.DbQuery`1.System.Collections.Generic.IEnumerable<TResult>.GetEnumerator()
-            //  at WebApi.JobController.Get() in F:\Devl\WebApi\Controllers\GetaJobController.cs:line 32
-
-            //  at System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<>c__DisplayClass6_1.<GetExecutor>b__3(Object instance, Object[] methodParameters)
-            //  at System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.Execute(Object instance, Object[] arguments)
-            //  at System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ExecuteAsync(HttpControllerContext controllerContext, IDictionary`2 arguments, CancellationToken cancellationToken)
+            modelBuilder.Entity<Skill>()
+                .HasMany(e => e.ListingRequirements)
+                .WithOptional(e => e.Skill)
+                .HasForeignKey(e => e.JobSkillId);
         }
     }
 
-    [Table("job.Job")]
-    public partial class Job
+    [Table("gaj.Agent")]
+    public partial class Agent
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Job()
+        public Agent()
         {
-            Job_Skill = new HashSet<Job_Skill>();
+            Listings = new HashSet<Listing>();
+        }
+
+        public int AgentId { get; set; }
+
+        public Guid? PersonId { get; set; }
+
+        public Guid? CompanyId { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Listing> Listings { get; set; }
+    }
+    [Table("gaj.JobSearch")]
+    public partial class JobSearch
+    {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public JobSearch()
+        {
+            Listings = new HashSet<Listing>();
+        }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int Id { get; set; }
+
+        [StringLength(128)]
+        public string PersonId { get; set; }
+
+        public DateTime? Initiated { get; set; }
+
+        public DateTime? Abandoned { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Listing> Listings { get; set; }
+    }
+    [Table("gaj.JobSkill")]
+    public partial class JobSkill
+    {
+        [Key]
+        [Column(Order = 0)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int JobId { get; set; }
+
+        [Key]
+        [Column(Order = 1)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int SkillId { get; set; }
+
+        public string Narrative { get; set; }
+
+        public virtual LostJob LostJob { get; set; }
+
+        public virtual Skill Skill { get; set; }
+    }
+    [Table("gaj.Listing")]
+    public partial class Listing
+    {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Listing()
+        {
+            ListingRequirements = new HashSet<ListingRequirement>();
+            SearchActivities = new HashSet<SearchActivity>();
         }
 
         public int Id { get; set; }
+
+        public int? JobSearchId { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? PostedDate { get; set; }
+
+        [StringLength(250)]
+        public string JobTitle { get; set; }
+
+        public int? AgentId { get; set; }
+
+        public Guid? TargetCompanyId { get; set; }
+
+        [Column(TypeName = "text")]
+        public string Comments { get; set; }
+
+        public byte? ListingStatus { get; set; }
+
+        [StringLength(50)]
+        public string Rate { get; set; }
+
+        public byte? EmploymentType { get; set; }
+
+        [StringLength(150)]
+        public string Distance { get; set; }
+
+        public byte? ListingSource { get; set; }
+
+        public byte? Desirability { get; set; }
+
+        public byte? Fit { get; set; }
+
+        public virtual Agent Agent { get; set; }
+
+        public virtual JobSearch JobSearch { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ListingRequirement> ListingRequirements { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SearchActivity> SearchActivities { get; set; }
+    }
+    [Table("gaj.ListingRequirement")]
+    public partial class ListingRequirement
+    {
+        [Key]
+        public int JobListingRequirementId { get; set; }
+
+        public int? JobListingId { get; set; }
+
+        public int? JobSkillId { get; set; }
+
+        public byte? RequirementImportance { get; set; }
+
+        public byte? SkillLevelRequired { get; set; }
+
+        public virtual Listing Listing { get; set; }
+
+        public virtual Skill Skill { get; set; }
+    }
+    [Table("gaj.LostJob")]
+    public partial class LostJob
+    {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public LostJob()
+        {
+            JobSkills = new HashSet<JobSkill>();
+        }
+
+        public Guid ElementId { get; set; }
+
+        public int Id { get; set; }
+
+        [StringLength(128)]
+        public string PersonId { get; set; }
 
         [Required]
         [StringLength(300)]
@@ -113,36 +264,15 @@ namespace WebApi
         public string SecretNarative { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Job_Skill> Job_Skill { get; set; }
+        public virtual ICollection<JobSkill> JobSkills { get; set; }
     }
-
-    [Table("job.Job_Skill")]
-    public partial class Job_Skill
-    {
-        [Key]
-        [Column(Order = 0)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int JobId { get; set; }
-
-        [Key]
-        [Column(Order = 1)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int SkillId { get; set; }
-
-        public string Narrative { get; set; }
-
-        public virtual Job Job { get; set; }
-
-        public virtual Skill Skill { get; set; }
-    }
-
-    [Table("job.Resume")]
+    [Table("gaj.Resume")]
     public partial class Resume
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Resume()
         {
-            ResumeSections = new HashSet<ResumeSection>();
+            ResumeElements = new HashSet<ResumeElement>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -151,42 +281,80 @@ namespace WebApi
         [StringLength(128)]
         public string PersonId { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ResumeSection> ResumeSections { get; set; }
-    }
+        [StringLength(300)]
+        public string ResumeName { get; set; }
 
-    [Table("job.ResumeSection")]
-    public partial class ResumeSection
+        public DateTime? Created { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ResumeElement> ResumeElements { get; set; }
+    }
+    [Table("gaj.ResumeElement")]
+    public partial class ResumeElement
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ResumeSection()
-        {
-            Resumes = new HashSet<Resume>();
-        }
+        [Key]
+        [Column(Order = 0)]
+        public Guid ElementId { get; set; }
+
+        [Key]
+        [Column(Order = 1)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int ResumeId { get; set; }
+
+        public string ElementType { get; set; }
+
+        public int SortOrder { get; set; }
+
+        public virtual Resume Resume { get; set; }
+    }
+    [Table("gaj.SearchActivity")]
+    public partial class SearchActivity
+    {
+        [Key]
+        public int JobSearchActivityId { get; set; }
+
+        public int? JobListingId { get; set; }
+
+        public byte? ActivityType { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime ActivityDate { get; set; }
+
+        public byte? ActivityStatus { get; set; }
+
+        [StringLength(600)]
+        public string Comments { get; set; }
+
+        public virtual Listing Listing { get; set; }
+    }
+    [Table("gaj.Section")]
+    public partial class Section
+    {
+        public Guid ElementId { get; set; }
 
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(500)]
-        public string SectionName { get; set; }
+        [StringLength(128)]
+        public string PersonId { get; set; }
+
+        //[Required]
+        //[StringLength(3)]
+        //public string SectionType { get; set; }
 
         [Required]
         [StringLength(500)]
         public string SectionTitle { get; set; }
 
         public string SectionContents { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Resume> Resumes { get; set; }
     }
-
-    [Table("job.Skill")]
+    [Table("gaj.Skill")]
     public partial class Skill
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Skill()
         {
-            Job_Skill = new HashSet<Job_Skill>();
+            JobSkills = new HashSet<JobSkill>();
+            ListingRequirements = new HashSet<ListingRequirement>();
         }
 
         public int Id { get; set; }
@@ -197,21 +365,26 @@ namespace WebApi
         [StringLength(3)]
         public string SkillCategory { get; set; }
 
+        public string GenericNarrative { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Job_Skill> Job_Skill { get; set; }
+        public virtual ICollection<JobSkill> JobSkills { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ListingRequirement> ListingRequirements { get; set; }
     }
-
-    [Table("job.Resume_ResumeSection")]
-    public partial class Resume_ResumeSection
+    [Table("gaj.Ref")]
+    public partial class gajRef
     {
-        [Key]
-        [Column(Order = 0)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int ResumeId { get; set; }
+        [StringLength(3)]
+        public string RefType { get; set; }
 
         [Key]
-        [Column(Order = 1)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int SectionId { get; set; }
+        [StringLength(3)]
+        public string RefCode { get; set; }
+
+        [Required]
+        [StringLength(250)]
+        public string RefDescription { get; set; }
     }
 }

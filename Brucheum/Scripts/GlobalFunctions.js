@@ -22,7 +22,6 @@ function logPageHit(service, userName, ipAddress, page, details) {
 
 }
 
-
 function displayStatusMessage(severity, message) {
 	$('#divStatusMessage').removeClass();
 	$('#divStatusMessage').addClass(severity);
@@ -38,18 +37,89 @@ function displayStatusMessage(severity, message) {
 	}
 }
 
+function showCustomMessage(title, message) {
+    $('#customMessage').show();
+    $('#customMessageTitle').html(title);
+    $('#customMessageText').html(message);
+}
+
 function clearModal() {
 	$('#modalContainer').hide();
 	$('#modalContent').html();
 }
 
-function showCustomMessage(message) {
-//var messHtml="
-    alert(message);
+function loginPlease() {
+    var loff = $('#btnLayLogin').offset().left;
+    $('#btnHeaderLoginSpinner').css("left", loff + 30);
+    $('#btnHeaderLoginSpinner').show();
+    $.ajax({
+        type: "get",
+        url: "/Login/LoginPopup",
+        datatype: "json",
+        success: function (data) {
+            $('#modalContent').html(data);
+            $('#modalContainer').show();
+            $('#btnHeaderLoginSpinner').hide();
+        },
+        error: function (xhr) {
+            alert("RegisterPopup error: " + xhr.statusText);
+        }
+    });
+}
+function registerPlease() {
+    $.ajax({
+        type: "get",
+        url: "/Login/Register",
+        datatype: "json",
+        success: function (data) {
+            $('#modalContent').html(data);
+            $('#modalContainer').show();
+        },
+        error: function (xhr) {
+            alert("RegisterPopup error: " + xhr.statusText);
+        }
+    });
+}
+function profilePease() {
+    try {
+        $.ajax({
+            type: "get",
+            url: "/Login/ProfilePopup",
+            datatype: "json",
+            success: function (data) {
+                $('#modalContent').html(data);
+                $('#modalContainer').show();
+            },
+            error: function (xhr) {
+                alert("ProfilePopup error: " + xhr.statusText);
+            }
+        });
+    } catch (e) {
+        alert("tabProfile catch: " + e);
+    }
+}
+function logoutPlease() {
+    try {
+        $.ajax({
+            type: "get",
+            url: "/login/Logout",
+            success: function (success) {
+                if (success === "ok")
+                    location.reload(true);
+                else
+                    alert("callLogout: " + success);
+            },
+            error: function (xhr) {
+                alert("callLogout XHR error: " + xhr.statusText);
+            }
+        });
+    } catch (e) {
+        alert("callLogout catch: " + e);
+    }
 }
 
 function sendEmailFromJS(msg, body) {
-    //alert("sendEmailFromJS");
+    alert("sendEmailFromJS");
     var success = "";
     var sendObj = new Object();
     sendObj.Subject = msg;
@@ -62,7 +132,7 @@ function sendEmailFromJS(msg, body) {
         success: function (emailSuccess) {
             success = emailSuccess;
             if (success === "ok") {
-                //alert("Email says: " + sendObj.Subject);
+                alert("Email says: " + sendObj.Subject);
                 displayStatusMessage("severityOk", "email sent");
             }
             else

@@ -1,4 +1,6 @@
-﻿
+﻿.body-content {
+    margin-top: 94px;
+}
 body {
     margin: 0;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -11,9 +13,6 @@ body {
     top: 0;
     height: 72px;
     z-index: 10;
-}
-.body-content {
-    margin-top: 94px;
 }
 
 .threeColumnArray {
@@ -41,6 +40,16 @@ body {
     font-style: italic;
     text-align: center;
 }
+.loadingGif {
+    position: relative;
+    top: 150px;
+    left: 150px;
+    display: none;
+}
+    .loadingGif img {
+        height: 45px;
+    }
+
 
 #modalContainer {
     z-index: 6; /* Sit on top */
@@ -63,21 +72,55 @@ body {
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
+
+.customMessageBox {
+    position: absolute;
+    top: 300px;
+    left: 600px;
+    min-height: 200px;
+    border: solid 2px purple;
+    display: none;
+}
+
+.alegro {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 21px;
+    padding: 10px;
+}
+
+.customMessageTitleBar {
+    background-color: yellow;
+    color: black;
+    width: 100%;
+    display: inline-flex;
+}
+
+.customMessageTitleText {
+    font-size: 21px;
+    padding: 4px;
+    text-align: center;
+    width: 92%;
+}
+
+.customMessageCloseButton {
+    cursor: pointer;
+    margin-top: 6px;
+}
+
+
 label {
     font-weight: bold;
     font-size: smaller;
     margin: 5px;
 }
-
 .roundendButton {
     text-align: center;
     background: #74bac3;
     color: #000;
-    border-radius: 4px;
+    border-radius: 6px;
     padding: 8px 20px;
     cursor: pointer;
 }
-
 .roundedInput {
     /*height: 32px;*/
     padding: 8px 6px;
@@ -103,31 +146,37 @@ label {
     font-style: italic;
 }
 .clickable {
-    cursor: pointer; 
+    cursor: pointer;
+    text-decoration: underline;
 }
+/*.clickable {
+    margin-top: 5px;
+    text-decoration: underline;
+    display: inline-block;
+    text-align: initial;
+    margin-left: 8px;
+}*/
 .streach {
     width: 100%;
     margin-right: 35px;
 }
 .spinnerImage {
     position: absolute;
-    margin-left: 10px;
+    /*margin-left: 10px;*/
     height: 20px;
-    /*display: none;*/
+    display: none;
 }
 .floatLeft {
     float: left;
 }
-
 .noFloat {
     clear: both;
 }
 .floatRight {
     float: right;
 }
-
-.noFloat {
-    clear: both;
+.inline {
+    display: inline-block;
 }
 .flexContainer {
     display: flex;

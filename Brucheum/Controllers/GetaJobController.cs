@@ -14,7 +14,12 @@ namespace Brucheum.Controllers
         {
             return View();
         }
-        public ActionResult ResumeAdmin()
+        public ActionResult GetaJobAdmin()
+        {
+            ViewBag.Service = apiService;
+            return View();
+        }
+        public ActionResult JobSearch()
         {
             ViewBag.Service = apiService;
             return View();

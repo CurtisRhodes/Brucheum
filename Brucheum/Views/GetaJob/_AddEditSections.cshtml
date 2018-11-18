@@ -1,0 +1,245 @@
+﻿@using Microsoft.AspNet.Identity;
+<style>
+    #addEditResumeSection {
+        width: 800px;
+    }
+
+    #txtSectionTitle {
+        width: 516px;
+    }
+
+    .editorContainer {
+        /*
+            display: contents;
+            width: 680px;
+        */
+        display: inline-flex;
+        margin-bottom: 8px;
+        margin-top: 4px;
+        margin-right: 11px;
+        color: #555;
+        background-color: #ddd;
+        border-radius: 5px;
+    }
+
+    .note-editable {
+        width: 770px;
+    }
+</style>
+
+<div class="flexContainer">
+    <div class="floatLeft">
+        <div id="addEditResumeSection" class="crudContainer">
+            <div id="crudContainerTitle" class="crudContainerTitle">Add/Edit Resume Sections</div>
+
+            <div class="crudArea">
+                <div id="errSummary" class="validationError"></div>
+                <div class="crudRow">
+                    <div class="crudLabel">Section Title</div>
+                    <input id="txtSectionTitle" class="roundedInput" />
+                </div>
+                <div id="thisSucks" class="editorContainer">
+                    @Html.Partial("_Editor")
+                </div>
+                <div>
+                    <button id="btnSectionAddEdit" class="roundendButton" onclick="addEditSection()">Save</button>
+                    <button id="btnSectionNew" class="roundendButton crudBtnNew" onclick="btnSectionNewToggle()">New</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="floatLeft">
+        <div id="sectionListContainer" class="crudContainer">
+            <div class="crudContainerTitle">Sections</div>
+            <div id="addEditSectionLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+            <div id="divSectionList" class="crudList"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+    var addEditSectionUserId = '@User.Identity.GetUserId()';
+    var sectionModel = new Object;
+
+    $(document).ready(function () {
+        $('#thisSucks').summernote({
+            height: 428,
+            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            toolbar: [
+                ['codeview'],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                //['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontname', 'fontsize']],
+                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
+                ['color', ['color']]
+                //['para', ['ul', 'ol', 'paragraph']],
+                //['height', ['height']]
+            ]
+        });
+    });
+
+    function AddEditSectionsInitialize() {
+        $('#btnSectionNew').hide();
+        if ($('#divSectionList').html() == "")
+            loadSectionsList();
+    }
+
+    function addEditSection() {
+        if (validate()) {
+            unbindSection();
+            if ($('#btnSectionAddEdit').html() == "Save") {
+                insertSection();
+            }
+            else {
+                updateSection()
+            }
+        }
+    }
+
+    function bindSection(addEditSection) {
+        sectionModel.Id = addEditSection.Id;
+        //sectionModel.PersonId = addEditSection.PersonId;
+        $('#txtSectionTitle').val(addEditSection.SectionTitle);
+        $('#thisSucks').summernote('code', addEditSection.SectionContents);
+        //alert("editSkillModel.SectionTitle:" + addEditSection.SectionTitle)
+    }
+
+    function unbindSection() {
+        sectionModel.SectionTitle = $('#txtSectionTitle').val();
+        sectionModel.PersonId = addEditSectionUserId;
+        sectionModel.SectionContents = $('#thisSucks').summernote('code');
+    }
+
+    function insertSection() {
+
+        //alert("sectionModel.SectionContents : " + sectionModel.SectionContents);
+
+        try {
+            $.ajax({
+                type: "POST",
+                url: service + "/api/Section",
+                //dataType: 'string',
+                data: sectionModel,
+                success: function (success) {
+                    if (!success.startsWith("ERROR")) {
+                        $('#btnSkillAddEdit').html("Edit");
+                        $('#btnSkillNew').show();
+                        sectionModel.Id = success;
+                        displayStatusMessage("severityOk", "section added");
+                        loadSectionsList();
+                    }
+                    else {
+                        alert("insertSection: " + success)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    alert("insertSection post error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("insertSection catch: " + e)
+        }
+    }
+
+    function updateSection() {
+        $.ajax({
+            type: "PUT",
+            url: service + "/api/Section/",
+            data: sectionModel,
+            success: function (success) {
+                if (success == "ok") {
+                    $('#btnSkillAddEdit').val("Edit");
+                    displayStatusMessage("severityOk", "Skill Edited");
+                    loadSectionsList();
+                }
+                else {
+                    alert("updateSection: " + success)
+                }
+            },
+            error: function (jqXHR, exception) {
+                alert("addaJob put error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
+    function btnSectionNewToggle() {
+        $('#btnSectionAddEdit').html("Save");
+        $('#btnSectionNew').hide();
+        sectionModel.Id = "";
+        $('#txtSectionTitle').val("");
+        $('#thisSucks').summernote('code', "");
+    }
+
+    function validate() {
+        $('#errSummary').hide();
+
+        if ($('#txtSectionTitle').val() === "") {
+            $('#errSummary').html("section title required").show();
+            return false;
+        }
+        $('#errSkillName').hide();
+
+        return true;
+    };
+
+    function loadSectionsList() {
+        try {
+            $('#addEditSectionLoadingGif').show();
+            $.ajax({
+                type: "GET",
+                url: service + "/api/Section/Get?personId=" + addEditSectionUserId,
+                success: function (response) {
+                    if (true) {
+                        $('#divSectionList').html("");
+                        $.each(response, function (idx, obj) {
+                            //$('#divSectionList').append("<div class='crudListItem' >" + obj.SectionTypeDescription + " | " + obj.SectionTitle + "</div>");
+                            $('#divSectionList').append("<div id=" + obj.Id + " class='crudListItem myStupidListItem'>" + obj.SectionTitle + "</div>");
+                        })
+                        $('#addEditSectionLoadingGif').hide();
+                        $('.myStupidListItem').click(function () {
+                            //alert("this.id" + $(this).attr("id"));
+                            loadSectionEditor($(this).attr("id"));
+                        });
+                    }
+                    else {
+                        alert("getjobs: " + success)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    alert("addaJob post error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("get jobs CATCH: " + e)
+        }
+    }
+
+    function loadSectionEditor(Id) {
+        try {
+            $.ajax({
+                type: "GET",
+                url: service + "/api/Section?sectionId=" + Id,
+                success: function (response) {
+                    if (!response.SectionTitle.startsWith("ERROR")) {
+                        bindSection(response);
+                        $('#btnSectionAddEdit').html("Edit");
+                        $('#btnSectionNew').show();
+                    }
+                    else {
+                        alert("loadSectionEditor: " + response.Id)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    alert("loadSectionEditor xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("loadSectionEditor CATCH: " + response.Id)
+
+        }
+    }
+</script>
+
+
+

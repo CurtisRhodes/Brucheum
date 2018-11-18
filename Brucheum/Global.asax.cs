@@ -28,6 +28,13 @@ namespace Brucheum
         protected void Application_BeginRequest() //– fired when a request for the web application comes in.
         {
             //Helpers.PageHit(Request.CurrentExecutionFilePath, Request.QueryString.ToString());
+#if !DEBUG
+            if (!Request.IsSecureConnection)
+            {
+                string path = string.Format("https{0}", Request.Url.AbsoluteUri.Substring(4));
+                Response.Redirect(path);
+            }        
+#endif
         }
 
         protected void Session_Start()

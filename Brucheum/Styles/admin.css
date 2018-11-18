@@ -7,7 +7,7 @@
 
 .adminOptionContainer {
     margin-left: 56px;
-    margin-top: 56px;
+    margin-top: 5px;
     margin-bottom: 20px;
 }
 
@@ -22,17 +22,6 @@
     display: flex;
 }
 
-.ddSelect {
-    float: left;
-    height: 28px;
-    margin-left: 6px;
-    margin-bottom: 3px;
-    padding: 3px 6px;
-    color: #555;
-    background-color: #ddd;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
 
 .ddOption {
     padding: 4px 3px;
@@ -99,17 +88,6 @@
     //color: red;
     background-color: #74bac3;
 }
-.loadingGif {
-    position: relative;
-    top: 150px;
-    left: 150px;
-    display: none;
-}
-
-    .loadingGif img {
-        height: 45px;
-    }
-
 
 
 
