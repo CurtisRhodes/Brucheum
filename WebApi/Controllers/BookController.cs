@@ -38,11 +38,11 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public JsonResult<BookModel> Get(string bookTitle, string chapterId, string sectionId, string subSectionId)
+        public JsonResult<XmlBookModel> Get(string bookTitle, string chapterId, string sectionId, string subSectionId)
         {
             if (sectionId == "undefined") sectionId = null;
             if (subSectionId == "undefined") subSectionId = null;
-            var bookModel = new BookModel() { BookTitle = bookTitle, ChapterId = chapterId, SectionId = sectionId, SubSectionId = subSectionId };
+            var bookModel = new XmlBookModel() { BookTitle = bookTitle, ChapterId = chapterId, SectionId = sectionId, SubSectionId = subSectionId };
             try
             {
                 if (chapterId != null)
@@ -78,7 +78,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public JsonResult<BookModel> Post(BookModel model)
+        public JsonResult<XmlBookModel> Post(XmlBookModel model)
         {
             model.success = "oh no";
             try
@@ -118,7 +118,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPut]
-        public JsonResult<BookModel> Put(BookModel model)
+        public JsonResult<XmlBookModel> Put(XmlBookModel model)
         {
             try
             {
@@ -165,7 +165,7 @@ namespace WebApi.Controllers
         }
 
         // helper functions
-        private XmlNode CreateSection(XmlDocument xdoc, BookModel model)
+        private XmlNode CreateSection(XmlDocument xdoc, XmlBookModel model)
         {
             XmlNode section = xdoc.CreateElement("Section");
             var Id = xdoc.CreateAttribute("Id");
@@ -186,7 +186,7 @@ namespace WebApi.Controllers
             return section;
         }
 
-        private XmlNode CreateSubSection(XmlDocument xdoc, BookModel model)
+        private XmlNode CreateSubSection(XmlDocument xdoc, XmlBookModel model)
         {
             var subSection = xdoc.CreateElement("SubSection");
             var Id = xdoc.CreateAttribute("Id");

@@ -47,8 +47,11 @@
                 }
                 else
                 {
-                    <div class="menuTab floatRight"><a href="javascript:callRegisterPopup()">Register</a></div>
-                    <div class="menuTab floatRight"><a href="javascript:callLoginPopup()">Log In</a></div>
+                    <div class="menuTab floatRight"><a href="javascript:registerPlease()">Register</a></div>
+                    <div id="btnLayLogin" class="menuTab floatRight">
+                        <a href="javascript:loginPlease()">Log In</a>
+                        <img id="btnHeaderLoginSpinner" class="spinnerImage" src="~/Images/loader.gif" />
+                    </div>
                 }
             </div>
         </div>

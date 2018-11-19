@@ -1,19 +1,9 @@
 ﻿
-#divTableOfContents {
+.toCcontainer {
     box-sizing: border-box;
     margin-top: 33px;
     padding-left: 145px;
     padding-right: 145px;
-}
-
-.pageTitle {
-    font-size: 33px;
-    font-family: 'Georgia';
-    font-weight: bold;
-    font-style: italic;
-    text-align: center;
-    padding-bottom: 2px;
-    cursor: pointer;
 }
 
 .divChapter {
@@ -48,8 +38,8 @@
         height: 15px;
     }
 
-.divSections {
-    display: none;
+.tocSectionContainer {
+    
     padding-left: 100px;
 }
 

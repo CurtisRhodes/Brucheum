@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<style>
+    #divMyBooks {
+        margin-top: 55px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 95px;
+    }
+
+    .divBook {
+        float: left;
+        margin-right: 70px;
+    }
+
+    .bookImage {
+        height: 235px;
+        width: 210px;
+        box-shadow: 5px 4px rgba(128, 128, 128, 0.40);
+        cursor: pointer;
+    }
+
+    .divLibrayPages {
+        font-size: 24px;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+        text-decoration: underline;
+        cursor: pointer;
+        margin-left: 200px;
+        margin-bottom: 45px;
+    }
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+    </div>
+    <div id="middleColumn">
+        <div class="pageTitle" id="divBooksWriting">Books I am writing</div>
+        <div id="divMyBooks">
+            <div class="divBook" book="The Blond Jew" onclick="window.location.href='/BookDb/ToC?book=1'">
+                <img class="bookImage" src="~/Images/Books/TheBlondJew.jpg" />
+            </div>
+            <div class="divBook" book="Time Squared" onclick="window.location.href='/BookDb/ToC?book=2'">
+                <img class="bookImage" src="~/Images/Books/TimeSquared.jpg" />
+            </div>
+            <div class="divBook" book="Ready; Fire; Aim" onclick="window.location.href='/BookDb/ToC?book=3'">
+                <img class="bookImage" src="~/Images/Books/ReadyFireAim.jpg" />
+            </div>
+        </div>
+        <div class="divLibrayPages" id="divBooksRead">Books I have Read</div>
+        <div class="divLibrayPages" id="divBooksIOwn">Book I Own</div>
+    </div>
+    <div id="rightColumn">
+    </div>
+</div>
+

@@ -1,25 +1,11 @@
 ﻿
 <style>
     /*summernote*/
-    .editorContainer {
-        /*
-            display: contents;
-            width: 680px;
-        */
-        display: inline-flex;
-        margin-bottom: 8px;
-        margin-top: 4px;
-        margin-right: 11px;
-        color: #555;
-        background-color: #ddd;
-        border-radius: 5px;
+    #txtCompany {
+        width: 350px;
     }
-    .note-editable {
-        width: 554px;
-    }
-
-    .wide {
-        width: 474px;
+    #txtLocation {
+        width: 600px;
     }
 
     /*default overrides*/
@@ -30,7 +16,7 @@
     }
 
     .joblistTable {
-        width: 100%;
+        /*width: 100%;*/
         /*border-spacing: 1px 150px;*/
     }
     .jobListTableRow {
@@ -45,60 +31,56 @@
             margin-top: 18px;
             /*background-color: #74bac3;*/
         }
-
+    .dateSize {
+        width: 50px;
+    }
+    .valignMiddle {
+        vertical-align: middle;
+    }
 </style>
 
 <div class="flexContainer">
     <div class="floatLeft">
         <div id="addEditJob" class="crudContainer">
             <div id="divStatusMessage"></div>
-            <div id="crudContainerTitle" class="crudContainerTitle">
-                Add A Lost Job
-                @*<div id="closeIcon" class="closeIcon" onclick="$('#addEditJob').hide()"><img src="~/Images/powerOnOffSilver.png" height="24" /></div>*@
-            </div>
+            <div id="crudContainerTitle" class="crudContainerTitle">Add A Lost Job</div>
             <div class="crudArea">
                 <div id="errSummary" class="validationError"></div>
                 <div class="crudRow">
-                    <div id="errStartMonth" class="validationError">Required</div>
-                    <div class="crudLabel">Start</div>
-                    <div class="crudLabel">Month</div>
-                    <input id="txtStartMonth" class="roundedInput inline" />
-                    <div class="crudLabel">Year </div>
                     <div id="errStartYear" class="validationError">Required</div>
-                    <input id="txtStartYear" class="roundedInput inline" />
+                    <div id="errStartMonth" class="validationError">Required</div>
+                    <div class="crudRowLabel">Start</div>
+                    <div class="inline alignMiddle">Month</div>
+                    <input id="txtStartMonth" class="roundedInput inline dateSize" />
+                    <div class="inline valignMiddle">Year</div>
+                    <input id="txtStartYear" class="roundedInput inline dateSize" />
+                    <div class="crudRowLabel">Ended</div>
+                    <div class="inline valignMiddle">Month</div>
+                    <div id="errFiredMonth" class="validationError">Required</div>
+                    <input id="txtFiredMonth" class="roundedInput inline dateSize" />
+                    <div class="inline valignMiddle">Year</div>
+                    <div id="errFiredYear" class="validationError">Required</div>
+                    <input id="txtFiredYear" class="roundedInput inline dateSize" />
                 </div>
                 <div class="crudRow">
-                    <div class="crudLabel">Ended</div>
-                    <div class="crudLabel">Month</div>
-                    <div class="inline">
-                        <div id="errFiredMonth" class="validationError">Required</div>
-                        <input id="txtFiredMonth" class="roundedInput" />
-                    </div>
-                    <div class="inline">Year </div>
-                    <div class="inline">
-                        <div id="errFiredYear" class="validationError">Required</div>
-                        <input id="txtFiredYear" class="roundedInput" />
-                    </div>
-                </div>
-                <div class="crudRow">
-                    <div class="crudLabel">Job Title</div>
-                    <div id="errJobTitle" class="validationError">Required</div>
-                    <input id="txtJobTitle" class="roundedInput wide" />
-                </div>
-                <div class="crudRow">
-                    <div class="crudLabel">Company</div>
+                    <div class="crudRowLabel">Company</div>
                     <div id="errCompany" class="validationError">Required</div>
-                    <input id="txtCompany" class="roundedInput wide" />
+                    <input id="txtCompany" class="roundedInput" />
+                    <div class="crudRowLabel">Job Title</div>
+                    <div id="errJobTitle" class="validationError">Required</div>
+                    <input id="txtJobTitle" class="roundedInput" />
                 </div>
                 <div class="crudRow">
-                    <div class="crudLabel">Location</div>
+                </div>
+                <div class="crudRow">
+                    <div class="crudRowLabel">Location</div>
                     <div id="errLocation" class="validationError">Required</div>
-                    <input id="txtLocation" class="roundedInput wide" />
+                    <input id="txtLocation" class="roundedInput" />
                 </div>
                 <div>
-                    <div class="crudLabel">Summary</div>
+                    <div class="crudRowLabel">Summary</div>
                 </div>
-                <div class="editorContainer">
+                <div id="jobSummaryEditor" class="editorContainer">
                     <div>@Html.Partial("_Editor") </div>
 
                     @*<textarea id="txtSummary" class="crudTextArea"></textarea>*@
@@ -124,7 +106,7 @@
     var jobModel = new Object;
 
     $(document).ready(function () {
-        $('.summernote').summernote({
+        $('#jobSummaryEditor').summernote({
             height: 250,
             codemirror: { mode: "htmlmixed", theme: "monokai" },
             toolbar: [
@@ -149,7 +131,7 @@
         $('#txtJobTitle').val(editJobModel.JobTitle);
         $('#txtLocation').val(editJobModel.JobLocation);
         $('#txtCompany').val(editJobModel.Employer);
-        $('#summernote').summernote('code', editJobModel.Summary);
+        $('#jobSummaryEditor').summernote('code', editJobModel.Summary);
         //alert("bindJobs jobModel.Summary: " + jobModel.Summary)
     }
 
@@ -161,7 +143,7 @@
         jobModel.JobTitle = $('#txtJobTitle').val();
         jobModel.JobLocation = $('#txtLocation').val();
         jobModel.Employer = $('#txtCompany').val();
-        jobModel.Summary = $('#summernote').summernote('code');
+        jobModel.Summary = $('#jobSummaryEditor').summernote('code');
         //jobModel.Summary = beautify($('#summernote').summernote('code'));
         //alert("unbindJobs jobModel.Summary: " + jobModel.Summary)
     }

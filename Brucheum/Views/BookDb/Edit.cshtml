@@ -1,0 +1,326 @@
+﻿<link href="~/Styles/crudEdit.css" rel="stylesheet" />
+
+<style>
+    .crudContainer {
+        width: 48%;
+    }
+    #txtChapterOrder {
+        width: 50px;
+    }
+    #txtChapterTitle {
+        width: 70%;
+    }
+    #chapterList {
+        height: 47%;
+        overflow-y: auto;
+        margin-top: 4px;
+    }
+    #klude123 {
+        height: 100%;
+    }
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn"></div>
+    <div id="middleColumn">
+        <div id="bookTitle" class="pageTitle"></div>
+        <div id="divStatusMessage"></div>
+        <div class="flexContainer">
+            <div id="editBook" class="crudContainer floatLeft">
+                <div class="crudContainerTitle">Edit Book</div>
+                <div id="bookCrudArea" class="crudArea">
+                    <div id="errSummary" class="validationError"></div>
+                    <div class="crudRow">
+                    </div>
+                    <div>
+                        <div class="crudRowLabel">Preface</div>
+                    </div>
+                    <div id="prefaceEditor" class="editorContainer">
+                        @Html.Partial("_Editor")
+                    </div>
+                    <div>
+                        <div>
+                            <div class="crudRowLabel">Introduction</div>
+                        </div>
+                        <div id="introEditor" class="editorContainer">
+                            @Html.Partial("_Editor")
+                        </div>
+                        <div>
+                            <button id="btnBookUpdate" class="roundendButton" onclick="updateBook()">Update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="crudContainer floatLeft">
+                <div class="crudContainerTitle">Chapters</div>
+                <div id="chaptersCrudArea" class="crudArea">
+                    <div id="errSummary" class="validationError"></div>
+                    <div class="crudRow">
+                        <div class="crudRowLabel">Number</div>
+                        <input id="txtChapterOrder" class="roundedInput" />
+                        <div class="crudRowLabel">Chapter Title</div>
+                        <input id="txtChapterTitle" class="roundedInput" />
+                    </div>
+                    <div>
+                        <div class="crudRowLabel">Chapter Preface</div>
+                    </div>
+                    <div id="chapterPrefaceEditor" class="editorContainer">
+                        @Html.Partial("_Editor")
+                    </div>
+                    <div>
+                        <button id="btnAddUpdate" class="roundendButton" onclick="mediateAddUpdateBtn()">Add</button>
+                        <button id="btnNewCancel" class="roundendButton" onclick="mediateNewCancelbtn()">Cancel</button>
+                        <button id="btnContinue" class="roundendButton" onclick="javascript:redirectToSectionEdit()">Write Some</button>
+                    </div>
+                    <div id="chapterList" class="crudList">
+                        chapter list
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="rightColumn"></div>
+</div>
+
+<script>
+    var bookId = '@ViewBag.BookId';
+    var service = '@ViewBag.Service';
+    var bookModel = {};
+    var chapterModel = {};
+
+    $(document).ready(function () {
+        setUpSummerNoteEditors();
+        getdbBook();
+        getChapters();
+        $('#chaptersCrudArea').height($('#bookCrudArea').height());
+        $("#btnContinue").hide();
+    })
+
+    function setUpSummerNoteEditors() {
+        $('#prefaceEditor').summernote({
+            height: 200,
+            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            toolbar: [
+                ['codeview'],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                //['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontname', 'fontsize']],
+                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
+                ['color', ['color']]
+                //['para', ['ul', 'ol', 'paragraph']],
+                //['height', ['height']]
+            ]
+        });
+        $('#introEditor').summernote({
+            height: 200,
+            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            toolbar: [
+                ['codeview'],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                //['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontname', 'fontsize']],
+                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
+                ['color', ['color']]
+                //['para', ['ul', 'ol', 'paragraph']],
+                //['height', ['height']]
+            ]
+        });
+        $('#chapterPrefaceEditor').summernote({
+            height: 150,
+            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            toolbar: [
+                ['codeview'],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                //['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontname', 'fontsize']],
+                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
+                ['color', ['color']]
+                //['para', ['ul', 'ol', 'paragraph']],
+                //['height', ['height']]
+            ]
+        });
+    }
+
+    function getdbBook() {
+        try {
+            $.ajax({
+                type: "get",
+                url: service + "/api/BookDb/?bookId=" + bookId,
+                success: function (book) {
+                    if (book.success === "ok") {
+                        $('#bookTitle').html(book.BookTitle);
+                        bookModel.BookTitle = book.BookTitle;
+                        bookModel.Id = bookId;
+                        $('#introEditor').summernote('code', book.Introduction );
+                        $('#prefaceEditor').summernote('code', book.Preface);
+                    }
+                    else
+                        alert("getBook: " + book.success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("getBook XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("getBook CATCH: " + e);
+        }
+    }
+
+    function mediateAddUpdateBtn() {
+        if ($('#btnAddUpdate').html() == "Add")
+            addChapter()
+        else
+            updateChapter()
+    }
+
+    function mediateNewCancelbtn() {
+        // clear
+        chapterModel.Id = null;
+        $('#chapterPrefaceEditor').summernote('code',"");
+        $('#txtChapterTitle').val("");
+        $('#txtChapterOrder').val("");
+
+        if ($('#btnNewCancel').html() == "Cancel") {
+            $('#btnAddUpdate').html("Add");
+        }
+        else {  //   btnNewCancel == "new"
+            $('#btnAddUpdate').html("Add");
+            $('#btnNewCancel').html("Cancel");
+        }
+    }
+
+    function updateBook() {
+        try {
+            //bindBoook();
+            bookModel.Introduction = $('#introEditor').summernote('code');
+            bookModel.Preface = $('#prefaceEditor').summernote('code');
+            $.ajax({
+                type: "Put",
+                url: service + "/api/BookDb/?bookId=" + bookId,
+                data: bookModel,
+                success: function (success) {
+                    if (success === "ok") {
+                        displayStatusMessage("severityOk", bookModel.BookTitle + " updated");
+                    }
+                    else
+                        alert("updateBook: " + success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("updateBook XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("updateBook CATCH: " + e);
+        }
+    }
+
+    function addChapter() {
+        chapterModel.Book = bookId;
+        chapterModel.ChapterTitle = $('#txtChapterTitle').val();
+        chapterModel.ChapterOrder = $('#txtChapterOrder').val();
+        chapterModel.Preface = $('#chapterPrefaceEditor').summernote('code');
+        try {
+            $.ajax({
+                type: "Post",
+                url: service + "/api/Chapter",
+                data: chapterModel,
+                success: function (chapterId) {
+                    chapterModel.Id = chapterId;
+                    displayStatusMessage("severityOk", chapterModel.ChapterTitle + " Added");
+                    $('#btnAddUpdate').html("Update");
+                    $('#btnNewCancel').html("New Chapter");
+                    $("#btnContinue").show();
+                    getChapters();
+                },
+                error: function (jqXHR, exception) {
+                    alert("updateBook XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("updateBook CATCH: " + e);
+        }
+    }
+
+    function updateChapter() {
+        try {
+            chapterModel.ChapterTitle = $('#txtChapterTitle').val();
+            chapterModel.ChapterOrder = $('#txtChapterOrder').val();
+            chapterModel.Preface = $('#chapterPrefaceEditor').summernote('code');
+            $.ajax({
+                type: "Put",
+                url: service + "/api/Chapter",
+                data: chapterModel,
+                success: function (success) {
+                    if (success === "ok") {
+                        displayStatusMessage("severityOk", chapterModel.ChapterTitle + " updated");
+                        getChapters();
+                    }
+                    else
+                        alert("updateChapter: " + success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("updateBook XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("updateBook CATCH: " + e);
+        }
+    }
+
+    function getChapters() {
+        try {
+            $.ajax({
+                type: "get",
+                url: service + "/api/Chapter/?bookId=" + bookId,
+                success: function (chapters) {
+                    $('#chapterList').html("");
+                    $('#btnChapterUpdate').hide();
+                    $.each(chapters, function (idx, obj) {
+                        $('#chapterList').append("<div id=" + obj.Id + " class='crudListItem' >" + obj.ChapterOrder + " | " + obj.ChapterTitle + "</div>");
+                    })
+                    $('.crudListItem').click(function () {
+                        loadChapter($(this).attr('id'));
+                        $('#btnAddUpdate').html("Update");
+                        $('#btnNewCancel').html("New");
+                    })
+                },
+                error: function (jqXHR, exception) {
+                    alert("getBook XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("getBook CATCH: " + e);
+        }
+    }
+
+    function loadChapter(chapterId) {
+        try {
+            $.ajax({
+                type: "PATCH",
+                url: service + "/api/Chapter/?chapterId=" + chapterId,
+                success: function (chapter) {
+                    chapterModel.Id = chapterId;
+                    $('#txtChapterTitle').val(chapter.ChapterTitle);
+                    $('#txtChapterOrder').val(chapter.ChapterOrder);
+                    $('#chapterPrefaceEditor').summernote('code', chapter.Preface);
+
+                    $("#btnAddUpdate").html("Update")
+                    $('#btnNewCancel').html("New Chapter");
+                    $("#btnContinue").show();
+
+                },
+                error: function (jqXHR, exception) {
+                    alert("loadChapter XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("loadChapter CATCH: " + e);
+        }
+    }
+
+    function redirectToSectionEdit() {
+        window.location.href = "/BookDb/Write?chapter=" + chapterModel.Id;
+    }
+
+</script>
+

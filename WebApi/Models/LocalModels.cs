@@ -35,7 +35,7 @@ namespace WebApi.Models
         public string SortDate { get; set; }
     }
 
-    public class BookModel
+    public class XmlBookModel
     {
         public string BookTitle { get; set; }
         public string ChapterId { get; set; }

@@ -1,29 +1,18 @@
 ﻿<style>
-    /*summernote*/
-    .editorContainer {
-        display: inline-flex;
-        color: #555;
-        background-color: #ddd;
-        border-radius: 5px;
-        z-index: 0;
-        width: 100%;
-    }
-        .editorContainer > div:first-child {
-            width: 100%;
-        }
-    .wide {
-        width: 470px;
-    }
-
     /*default overrides*/
-    .roundedInput {
-        margin-bottom: 4px;
-        margin-right: 11px;
-        display: inline-block;
+    .roundendButton {
+        margin-bottom: 14px;
+        margin-left: 11px;
     }
     #articleCrudContainer {
-        width: 800px;
     }
+    #txtArticleTitle {
+        width: 45%;
+        margin-bottom: 6px;
+    }
+    /*#ddArticleCategory {
+        width: 25%;
+    }*/
 
 </style>
 
@@ -35,13 +24,13 @@
                 <div id="articleCrudContainer" class="crudContainerTitle">Add/Edit An Article</div>
                 <div id="errSummary" class="validationError"></div>
                 <div class="crudRow">
-                    <div class="crudLabel">Article Title</div>
+                    <div class="crudRowLabel">Article Title</div>
                     <div id="errArticleTitle" class="validationError">Required</div>
                     <input id="txtArticleTitle" class="roundedInput wide" />
-                    <div class="crudLabel">Category</div>
+                    <div class="crudRowLabel">Category</div>
                     <select id="ddArticleCategory" class="ddOption"></select>
                 </div>
-                <div class="editorContainer">
+                <div id="atricleEditor" class="editorContainer">
                     <div>@Html.Partial("_Editor") </div>
                 </div>
                 <div>
@@ -73,7 +62,9 @@
 
     $(document).ready(function () {
 
-        $('#summernote').summernote({
+        $('#btnArticleNew').hide();
+
+        $('#atricleEditor').summernote({
             height: 455,
             codemirror: { mode: "htmlmixed", theme: "monokai" },
             toolbar: [
@@ -107,15 +98,14 @@
     function bindArticle(editArticleModel) {
         articleModel.ArticleId = editArticleModel.ArticleId;
         $('#ddArticleCategory').val(selectedRefCat);
-        //alert("selectedRefCat: " + selectedRefCat);
         $('#txtArticleTitle').val(editArticleModel.ArticleTitle);
-        $('#summernote').summernote('code', editArticleModel.ArticleText);
+        $('#atricleEditor').summernote('code', editArticleModel.ArticleText);
     }
 
     function unbindArticle() {
         articleModel.ArticleTitle = $('#txtArticleTitle').val();
         articleModel.ArticleType = selectedRefCat;
-        articleModel.ArticleText = $('#summernote').summernote('code');
+        articleModel.ArticleText = $('#atricleEditor').summernote('code');
     }
 
     // Post

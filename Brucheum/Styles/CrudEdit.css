@@ -6,12 +6,33 @@
     border: solid 1.5px #bbb;
     border-radius: 5px;
 }
+/*summernote*/
+.editorContainer {
+    display: inline-flex;
+    color: #555;
+    background-color: #ddd;
+    border-radius: 5px;
+    z-index: 0;
+    width: 100%;
+}
+
+/*.editorContainer > div:first-child {
+    width: 100%;
+}*/
+
+/*.note-editable {
+    width: 554px;
+}*/
+
+.note-editable {
+    width: 770px;
+}
 
 .crudArea {
     padding: 11px;
     border: solid 1.4px #a010c3;
 }
-.crudLabel {
+.crudRowLabel {
     display: inline-block;
     min-width: 65px;
     vertical-align: middle;
@@ -36,8 +57,8 @@
 }
 
 .crudList {
-    min-height: 606px;
-    min-width: 574px;
+    /*min-height: 606px;
+    min-width: 574px;*/
     padding: 8px;
     margin: 2px 11px;
     color: #555;
@@ -53,9 +74,6 @@
     border-radius: 5px;
 }
 
-.crudBtnNew {
-    display: none;
-}
 .crudDropDown {
     height: 28px;
     margin-left: 6px;

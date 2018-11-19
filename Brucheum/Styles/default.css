@@ -33,13 +33,16 @@ body {
     }
 
 .pageTitle {
-    margin-top: 15px;
-    padding-bottom: 15px;
-    font-size: 32px;
+    font-size: 33px;
+    font-family: 'Georgia';
     font-weight: bold;
     font-style: italic;
     text-align: center;
+    padding-bottom: 2px;
+    cursor: pointer;
 }
+
+
 .loadingGif {
     position: relative;
     top: 150px;
@@ -131,7 +134,7 @@ label {
 }
 
 .severityOk {
-    background-color: #44c147;
+    background-color: rgba(88, 139, 108, 0.75);
 }
 .severityWarning {
     background-color: #e6de3b;

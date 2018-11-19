@@ -236,6 +236,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ArticleController.cs" />
     <Compile Include="Controllers\BookController.cs" />
+    <Compile Include="Controllers\BookDbController.cs" />
     <Compile Include="Controllers\IntelDsgnController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\GetaJobController.cs" />
@@ -448,6 +449,10 @@
     <Content Include="Views\Admin\_ManageArticles.cshtml" />
     <Content Include="Views\GetaJob\_AddEditRefs.cshtml" />
     <Content Include="Views\GetaJob\JobSearch.cshtml" />
+    <Content Include="Views\BookDb\Index.cshtml" />
+    <Content Include="Views\BookDb\ToC.cshtml" />
+    <Content Include="Views\BookDb\Edit.cshtml" />
+    <Content Include="Views\BookDb\Write.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
