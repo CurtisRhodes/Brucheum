@@ -134,6 +134,7 @@ namespace WebApi
                     chapter.ChapterOrder = dbChapter.ChapterOrder.Value;
                     chapter.Preface = dbChapter.Preface;
                     chapter.BookTitle = dbChapter.Book1.BookTitle;
+                    chapter.BookId = dbChapter.Book1.Id;
                     chapter.success="ok";
                 }
             }        
@@ -227,18 +228,28 @@ namespace WebApi
         public IList<BookSectionModel> Get(int chapterId)
         {
             var sections = new List<BookSectionModel>();
+            BookSectionModel section = null;
             using (var db = new BookDbContext())
             {
                 var dbSections = db.Sections.Where(s => s.Chapter == chapterId).ToList();
                 foreach (BookSection dbSection in dbSections)
                 {
-                    sections.Add(new BookSectionModel()
+                    section = new BookSectionModel();
+                    section.Id = dbSection.Id;
+                    section.SectionTitle = dbSection.SectionTitle;
+                    section.SectionOrder = dbSection.SectionOrder.Value;
+                    section.SectionContents = dbSection.SectionContents;
+                    foreach (SubSection dbSubSection in dbSection.SubSections)
                     {
-                        Id = dbSection.Id,
-                        SectionTitle = dbSection.SectionTitle,
-                        SectionOrder = dbSection.SectionOrder.Value,
-                        SectionContents = dbSection.SectionContents
-                    });
+                        section.SubSections.Add(new SubSectionModel()
+                        {
+                            Id = dbSubSection.Id,
+                            SubSectionContents = dbSubSection.SubSectionContents,
+                            SubSectionTitle = dbSubSection.SubSectionTitle,
+                            SubSectionOrder = dbSubSection.SubSectionOrder.Value
+                        });
+                    }
+                    sections.Add(section);
                 }
             }
             return sections;
@@ -287,6 +298,27 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class SubSectionController : ApiController
     {
+        [HttpPatch]
+        public SubSectionModel Patch(int subSectionId)
+        {
+            var subSection = new SubSectionModel();
+            using (var db = new BookDbContext())
+            {
+                var dbSubSection = db.SubSections.Where(s => s.Id == subSectionId).FirstOrDefault();
+                if (dbSubSection != null)
+                {
+                    subSection.Id = dbSubSection.Id;
+                    subSection.SubSectionTitle = dbSubSection.SubSectionTitle;
+                    subSection.SubSectionOrder = dbSubSection.SubSectionOrder.Value;
+                    subSection.SubSectionContents = dbSubSection.SubSectionContents;
+                    subSection.SectionTitle = dbSubSection.Section1.SectionTitle;
+                    subSection.SectionOrder = dbSubSection.Section1.SectionOrder.Value;
+                    subSection.SectionId = dbSubSection.Section.Value;
+                    subSection.success = "ok";
+                }
+            }
+            return subSection;
+        }
         [HttpGet]
         public IList<SubSectionModel> Get(int sectionId)
         {

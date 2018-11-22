@@ -20,11 +20,12 @@ namespace WebApi
             Sections = new List<BookSectionModel>();
         }
         public int Id { get; set; }
+        public int BookId { get; set; }
+        public string BookTitle { get; set; }
         public string ChapterTitle { get; set; }
         public int ChapterOrder { get; set; }
         public string Preface { get; set; }
         public int Book { get; set; }
-        public string BookTitle { get; set; }
         public IList<BookSectionModel> Sections { get; set; }
         public string success { get; set; }
     }
@@ -48,6 +49,10 @@ namespace WebApi
         public int SubSectionOrder { get; set; }
         public string SubSectionContents { get; set; }
         public int Section { get; set; }
+        public int SectionId { get; set; }
+        public string SectionTitle { get; set; }
+        public int SectionOrder { get; set; }
+
         public string success { get; set; }
     }
 

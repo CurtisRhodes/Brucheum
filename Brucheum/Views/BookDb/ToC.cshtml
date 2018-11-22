@@ -4,39 +4,43 @@
 
 <link href="~/Styles/tableofContents.css" rel="stylesheet" />
 <style>
+    .pageTitle {
+        margin-top: 44px;
+    }
     #tocEdit {
         margin-top: 66px;
         margin-right: 11px;
+    }
+    .threeColumnArray {
+        background-color: #ddd69f;
     }
 </style>
 <div class="threeColumnArray">
     <div id="leftColumn">
     </div>
     <div id="middleColumn">
-        <div id="bookTitle" class="pageTitle"></div>
-
-        <div id="divToC" class="toCcontainer">
-            Put ToC here
-
+        <div id="bookTitle" class="pageTitle" onclick='javascript:goRead(0,0)'></div>
+        <div>
+            <div id="divToC" class="toCcontainer">
+                <div id="tocLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+            </div>
         </div>
-
     </div>
-    <div id="rightColumn">        
-        <div id="tocEdit"><a href="javascript:redirectToEdit()">Edit</a></div>
+    <div id="rightColumn">
+        @if (User.IsInRole("Book Editor"))
+        {
+            <div id="tocEdit"><a href="javascript:redirectToEdit()">Edit</a></div>
+        }
     </div>
 </div>
 
 <script>
-    var bookId = '@ViewBag.BookId';
     var service = '@ViewBag.Service';
+    var bookId = '@ViewBag.BookId';
 
     $(document).ready(function () {
-        getdbBook();
+        getTocChapterTree();
     })
-
-    function redirectToEdit() {
-        window.location.href = "/BookDb/Edit?book=" + bookId;
-    }
 
     $('.divChapter').click(function () {
         //$('.divSections').hide();
@@ -52,12 +56,9 @@
         }
     });
 
-
-
-
-
-    function getdbBook() {
+    function getTocChapterTree() {
         try {
+            $('#tocLoadingGif').show();
             $.ajax({
                 type: "get",
                 url: service + "/api/BookDb/?bookId=" + bookId,
@@ -71,21 +72,23 @@
                         $.each(book.Chapters, function (idx, obj) {
                             // kludge String To Prevent Jquery from auto closing divs
                             var kludge = "<div class='divChapter'>";  // Id='" + obj.Id + "'
-                            kludge += "<div class='chapterName'>" + obj.ChapterTitle + "</div>";
-                            kludge += "<div class='dots'></div>";
-                            kludge += "<div class='divCaret'><img onclick='javascript:toggleChapter()' src='/Images/downCaret.png'></div></div>";
-                            kludge += "<div class='tocSectionContainer'>";
+                            kludge += "<div id=ct" + obj.Id + " class='chapterName' onclick='javascript:goRead(1," + obj.Id + ")'>" + obj.ChapterTitle + "</div>";
+                            kludge += "<div class='dots' onclick='javascript:toggleChapter(" + obj.Id +")'></div>";
+                            kludge += "<div class='divCaret'><img id=img" + obj.Id + " onclick='javascript:toggleChapter(" + obj.Id +")' src='/Images/downCaret.png'></div></div>";
+                            kludge += "</div>";
+                            kludge += "<div id=sc" + obj.Id + " class='tocSectionContainer'>";
                             $.each(obj.Sections, function (idx, obj) {
-                                kludge += "<div class='divSection'>" + obj.SectionTitle + "</div>";
+                                kludge += "<div class='divSection' onclick='javascript:goRead(2," + obj.Id + ")'>" + obj.SectionTitle + "</div>";
                                 kludge += "<div class='divSubsections'>";
                                 $.each(obj.SubSections, function (idx, obj) {
-                                    kludge += "<div class='divSubSection'>" + obj.SubSectionTitle + "</div>";
+                                    kludge += "<div class='divSubSection' onclick='javascript:goRead(3," + obj.Id + ")'>" + obj.SubSectionTitle + "</div>";
                                 })
                                 kludge += "</div>";
                             })
                             kludge += "</div>";
                             $('#divToC').append(kludge);
                         })
+                        $('#tocLoadingGif').hide();
                     }
                 },
                 error: function (jqXHR, exception) {
@@ -97,39 +100,24 @@
         }
     }
 
-    function toggleChapter() {
-
-        alert("$(this).attr('src'): " + $(this).attr('src'));
-
-
-
-        //alert("toggleChapter: " + '#chapterId' + chapterId + ' img');
-        var cc = "#chapterId" + chapterId + " img";
-        var x = $(this).get(0).tagName;
-        //alert("$(" + cc + ") : " + $(cc).prop('src'));
-            alert("bbb: " + x);
-        //if ($(this).children(0).attr("src") === "/Images/upCaret.png") {
-        //    $(this).children(0).attr("src", "/Images/downCaret.png");
-        //}
-        //else {
-        //    $(this).next().show();
-        //    //alert("next: " + $(this).next());
-        //    $('.divChapter').children(0).attr("src", "/Images/downCaret.png");
-        //    $(this).children(0).attr("src", "/Images/upCaret.png");
-        //}
-
-
-
-        //if ($(cc).attr("src") == "/Images/downCaret.png") {
-        //    $("chapterId" + chapterId).show();
-        //    $(this).attr("src", "/Images/upCaret.png");
-        //}
-        //else {
-        //    $(this).attr("src", "/Images/downCaret.png");
-        //    $("chapterId" + chapterId).hide();
-        //}
+    function toggleChapter(id) {
+        var caretImg = $('#img' + id);
+        var sectionContainer = $('#sc' + id);
+        if (caretImg.attr('src') == "/Images/downCaret.png") {
+            sectionContainer.show();
+            caretImg.attr('src', '/Images/upCaret.png');
+        }
+        else {
+            caretImg.attr('src', '/Images/downCaret.png')
+            sectionContainer.hide();
+        }
     }
 
-
+    function redirectToEdit() {
+        window.location.href = "/BookDb/Edit?book=" + bookId;
+    }
+    function goRead(type, id) {
+        window.location.href = "/BookDb/read?b=" + bookId + "&t=" + type + "&id=" + id;
+    }
 
 </script>

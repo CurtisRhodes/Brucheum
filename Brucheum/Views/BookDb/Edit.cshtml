@@ -18,12 +18,21 @@
     #klude123 {
         height: 100%;
     }
+    .threeColumnArray {
+        /*
+        background-image: url('../../Images/parchment01.jpg');
+        background-repeat: no-repeat;
+        background-size: 100%;
+        background-color: #eeddbb;
+        */
+        background-color: #ddd69f;
+    }
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
-        <div id="bookTitle" class="pageTitle"></div>
+        <div id="bookTitle" class="pageTitle" onclick="javascript:redirectToToC()"></div>
         <div id="divStatusMessage"></div>
         <div class="flexContainer">
             <div id="editBook" class="crudContainer floatLeft">
@@ -70,7 +79,7 @@
                     <div>
                         <button id="btnAddUpdate" class="roundendButton" onclick="mediateAddUpdateBtn()">Add</button>
                         <button id="btnNewCancel" class="roundendButton" onclick="mediateNewCancelbtn()">Cancel</button>
-                        <button id="btnContinue" class="roundendButton" onclick="javascript:redirectToSectionEdit()">Write Some</button>
+                        <button id="btnContinue" class="roundendButton" onclick="javascript:redirectToWrite()">Write Some</button>
                     </div>
                     <div id="chapterList" class="crudList">
                         chapter list
@@ -318,7 +327,10 @@
         }
     }
 
-    function redirectToSectionEdit() {
+    function redirectToToC() {
+        window.location.href = "/BookDb/ToC?book=" + bookId;
+    }
+    function redirectToWrite() {
         window.location.href = "/BookDb/Write?chapter=" + chapterModel.Id;
     }
 

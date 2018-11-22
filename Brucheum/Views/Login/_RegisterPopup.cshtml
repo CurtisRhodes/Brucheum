@@ -61,51 +61,64 @@
                 <input id="txtPin" type="text" class="roundedInput" placeholder="you may use this to login"><br>*@
         </div>
 
-        <button class="roundendButton" id="btnRegister">Register</button>
+        <button class="roundendButton" id="btnRegister">
+            <img id="btnRegisterSpinnerImage" class="spinnerImage" src="~/Images/loader.gif" />
+            Register
+        </button>
 
         @*<input type="submit" class="roundendButton" style="float:right" value="Submit" />*@
     </div>
 </div>
 
 <script>
+    $(document).ready(function () {
+        $('#btnRegisterSpinnerImage').hide();
+    });
 
     $('#btnRegister').click(function () {
-        if ($('#btnRegister').html() == "Register") {
-            if (validate()) {
-                $('#btnRegister').html("wait");
+        try {
+            $('#btnRegisterSpinnerImage').show();
+            if ($('#btnRegister').html() == "Register") {
+                if (validate()) {
+                    $('#btnRegister').html("wait");
 
-                var regVM = new Object();
-                regVM.UserName = $('#txtUserName').val();
-                regVM.Password = $('#txtPassword').val();
-                regVM.ConfirmPassword = $('#txtConfirmPassword').val();
-                regVM.Email = $('#txtEmail').val();
-                regVM.FirstName = $('#txtFirstName').val();
-                regVM.LastName = $('#txtLastName').val();
-                regVM.Phone = $('#txtPhone').val();
-                regVM.RememberMe = $('#ckRememberMe').prop('checked');
-
-                $.ajax({
-                    type: "POST",
-                    url: "/Login/RegisterAndLogin",
-                    data: regVM,
-                    datatype: "json",
-                    success: function (success) {
-                        if (success === "ok") {
-                            location.reload(true);
-                            sendEmailFromJS("CONGRATULATIONS: " + regVM.UserName + " just Registered onto The Brucheum", "someday it will be someone other than you");
+                    var regVM = new Object();
+                    regVM.UserName = $('#txtUserName').val();
+                    regVM.Password = $('#txtPassword').val();
+                    regVM.ConfirmPassword = $('#txtConfirmPassword').val();
+                    regVM.Email = $('#txtEmail').val();
+                    regVM.FirstName = $('#txtFirstName').val();
+                    regVM.LastName = $('#txtLastName').val();
+                    regVM.Phone = $('#txtPhone').val();
+                    regVM.RememberMe = $('#ckRememberMe').prop('checked');
+                    $.ajax({
+                        type: "POST",
+                        url: "/Login/RegisterAndLogin",
+                        data: regVM,
+                        datatype: "json",
+                        success: function (success) {
+                            if (success === "ok") {
+                                sendEmailFromJS("CONGRATULATIONS: " + regVM.UserName + " just Registered onto The Brucheum", "someday it will be someone other than you");
+                                location.reload(true);
+                            }
+                            else {
+                                $('#btnRegisterSpinnerImage').hide();
+                                $('#errSummary').html(success);
+                                $('#errSummary').show();
+                                $('#btnRegister').html("Register");
+                            }
+                        },
+                        error: function (xhr) {
+                            $('#btnRegisterSpinnerImage').hide();
+                            displayStatusMessage("severityError", "error: " + xhr.statusText);
+                            alert("Register  error: " + xhr.statusText);
                         }
-                        else {
-                            $('#errSummary').html(success);
-                            $('#errSummary').show();
-                            $('#btnRegister').html("Register");
-                        }
-                    },
-                    error: function (xhr) {
-                        displayStatusMessage("severityError", "error: " + xhr.statusText);
-                        alert("Register  error: " + xhr.statusText);
-                    }
-                });
+                    });
+                }
             }
+        } catch (e) {
+            $('#btnRegisterSpinnerImage').hide();
+            alert("Register Catch: " + e);
         }
     });
 

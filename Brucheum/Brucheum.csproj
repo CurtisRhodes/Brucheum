@@ -264,18 +264,17 @@
     <Content Include="Images\Apps\happyMan.gif" />
     <Content Include="Images\Apps\LodgeSecretary.jpg" />
     <Content Include="Images\Apps\redballon.png" />
-    <Content Include="Images\Books\PaupaBook\book-bottomleftmid.jpg" />
-    <Content Include="Images\Books\PaupaBook\book-bottomrightmid.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-bottomleft.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-bottomright.jpg" />
     <Content Include="Images\Books\PaupaBook\book-cornerbleft.jpg" />
     <Content Include="Images\Books\PaupaBook\book-cornerbright.jpg" />
-    <Content Include="Images\Books\PaupaBook\book-cornertopleft2.jpg" />
-    <Content Include="Images\Books\PaupaBook\book-cornertopright2.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-cornertopleft.jpg" />
+    <Content Include="Images\Books\PaupaBook\book-cornertopright.jpg" />
     <Content Include="Images\Books\PaupaBook\book-innerspine.jpg" />
     <Content Include="Images\Books\PaupaBook\book-innerspinebottom.jpg" />
     <Content Include="Images\Books\PaupaBook\book-innerspinetop.jpg" />
     <Content Include="Images\Books\PaupaBook\book-left.jpg" />
     <Content Include="Images\Books\PaupaBook\book-right.jpg" />
-    <Content Include="Images\Books\PaupaBook\book-top.jpg" />
     <Content Include="Images\Books\PaupaBook\book-topLeft.jpg" />
     <Content Include="Images\Books\PaupaBook\book-topRight.jpg" />
     <Content Include="Images\Books\ReadyFireAim.jpg" />
@@ -300,12 +299,10 @@
     <Content Include="Images\intel01.jpg" />
     <Content Include="Images\left.jpg" />
     <Content Include="Images\loader.gif" />
+    <Content Include="Images\parchment01.jpg" />
     <Content Include="Images\powerOnOffSilver.png" />
     <Content Include="Images\powerOffRed01.png" />
     <Content Include="Images\RenStimpy8.jpg" />
-    <Content Include="Images\ResumeBuilder.PNG" />
-    <Content Include="Images\scrnShot Transform01.PNG" />
-    <Content Include="Images\scrnShot Transform02.PNG" />
     <Content Include="Images\TanBlue\BlondJewBlue.png" />
     <Content Include="Images\TanBlue\BlondJewTan.png" />
     <Content Include="Images\TanBlue\BrucheumBlue.png" />
@@ -396,7 +393,6 @@
     <Content Include="Views\Article\Article.cshtml" />
     <Content Include="Views\Article\ArticleEdit.cshtml" />
     <Content Include="Views\Article\ArticleList.cshtml" />
-    <Content Include="Views\Book\BooksRead.cshtml" />
     <Content Include="Views\Book\Index.cshtml" />
     <Content Include="Views\Book\MyBooks.cshtml" />
     <Content Include="Views\Book\Read.cshtml" />
@@ -453,6 +449,7 @@
     <Content Include="Views\BookDb\ToC.cshtml" />
     <Content Include="Views\BookDb\Edit.cshtml" />
     <Content Include="Views\BookDb\Write.cshtml" />
+    <Content Include="Views\BookDb\Read.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

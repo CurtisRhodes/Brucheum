@@ -1,6 +1,5 @@
 ﻿/*CRUD control style*/
 .crudContainer {
-    margin-top: 16px;
     margin-left: 30px;
     background-color: #fff;
     border: solid 1.5px #bbb;
@@ -15,7 +14,10 @@
     z-index: 0;
     width: 100%;
 }
-
+.crudBreadcrumb {
+    margin-left: 56px;
+    font-size: 16px;
+}
 /*.editorContainer > div:first-child {
     width: 100%;
 }*/
@@ -72,6 +74,14 @@
     margin-bottom: 5px;
     background-color: #74bac3;
     border-radius: 5px;
+}
+.crudListSubItem {
+    padding: 4px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    background-color: #74bac3;
+    border-radius: 5px;
+    padding-left: 88px;
 }
 
 .crudDropDown {

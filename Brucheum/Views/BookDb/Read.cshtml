@@ -1,0 +1,208 @@
+﻿@{
+    ViewBag.Title = "Read";
+}
+
+<style>
+    .threeColumnArray {
+        background-image: url('../../Images/parchment01.jpg');
+        background-repeat: no-repeat;
+        background-size: 100%;
+        background-color: #eeddbb;
+    }
+
+    .bookContainer {
+        font-family: 'Georgia';
+        margin-top: 15px;
+        background-color: #ddd69f;
+        height: 660px;
+        overflow-y: scroll;
+    }
+    .bookContentArea {
+    }
+    .sip {
+        width: 48%;
+        height: 50px;
+    }
+    #paupaStyle {
+        display: none;
+    }
+    .paupaPage {
+        background-color: rgb(251,241,206);
+        font-family: 'Times New Roman';
+        font-size: 17px;
+        text-align: justify;
+        width: 48%;
+        height: 100%;
+    }
+
+    .bookTitle {
+        font-size: 32px;
+        font-weight: bold;
+        font-style: italic;
+        text-align: center;
+        padding-bottom: 2px;
+        cursor: pointer;
+    }
+    .bookCenterTitle {
+        font-size: 28px;
+        text-align: center;
+        padding: 11px;
+    }
+    .bookPreface {
+        margin: 5px 166px;
+        text-align: center;
+        font-size: 14px;
+        font-style: italic;
+        color: #821c1c;
+        font-weight: bold;
+    }
+    .chapterTitle {
+        clear: left !important;
+        font-size: 28px;
+        margin-left: 44px;
+        padding-bottom: 2px;
+        width: 100%;
+    }
+    .sectionTitle {
+        clear: left !important;
+        font-size: 24px;
+        margin-left: 88px;
+        padding: 6px;
+    }
+    .subsectionTitle {
+        font-size: 22px;
+        margin-left: 114px;
+        padding-top: 6px;
+    }
+    .sectionContents {
+        padding: 2px 11px;
+        text-align: justify;
+        font-size: 18px;
+    }
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn"></div>
+    <div id="middleColumn">
+        <div id="bookTitle" class="pageTitle">
+            <div id="bookTitleLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+        </div>
+        <div>
+            <div id="paupaStyle" class="bookContainer">
+                <div class="flexContainer">
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornertopleft.jpg" />
+                    <img class="floatLeft sip" src="~/Images/Books/PaupaBook/book-topLeft.jpg" />
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-innerspinetop.jpg" />
+                    <img class="floatLeft sip" src="~/Images/Books/PaupaBook/book-topRight.jpg" />
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornertopright.jpg" />
+                </div>
+                <div class="flexContainer">
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-left.jpg" />
+                    <div class="floatLeft paupaPage" id="bookLeftContent"></div>
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-innerspine.jpg" />
+                    <div class="floatLeft paupaPage" id="bookRightContent"></div>
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-right.jpg" />
+                </div>
+                <div class="flexContainer">
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornerbleft.jpg" />
+                    <img class="floatLeft sip" id="bookBottomLeft" src="~/Images/Books/PaupaBook/book-bottomleft.jpg" />
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-innerspinebottom.jpg" />
+                    <img class="floatLeft sip" id="bookBottomRight" src="~/Images/Books/PaupaBook/book-bottomright.jpg" />
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornerbright.jpg" />
+                </div>
+            </div>
+            <div id="fullBookStyle" class="bookContainer">
+                <div id="bookContents" class="bookContentArea"></div>
+            </div>
+        </div>
+    </div>
+    <div id="rightColumn">
+        @if (User.IsInRole("Book Editor"))
+        {
+            <div id="tocEdit"><a href="javascript:redirectToEdit()">Edit</a></div>
+        }
+    </div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+    var bookId = '@ViewBag.BookId';
+    var sectionId = '@ViewBag.SectionId';
+    var sectionTypeId = '@ViewBag.SectionType';
+    var sectionType, bookTitle;
+
+    $(document).ready(function () {
+
+        //setSectionTypeUnneded();
+        getTheWholeBook();
+
+    })
+
+    function setSectionTypeUnneded() {
+        switch (sectionTypeId) {
+            case '0':
+                sectionType = "TitlePage";
+                break;
+            case '1':
+                sectionType = "Chapter";
+                break;
+            case '2':
+                sectionType = "Section";
+                break;
+            case '3':
+                sectionType = "SubSection";
+                break;
+            default:
+                sectionType = "Unknown: " + sectionTypeId;
+                break;
+        }
+        $('#bookContents').html("sectionType: " + sectionType);
+    }
+
+    function getTheWholeBook() {
+        try {
+            $('#bookTitleLoadingGif').show();
+            $.ajax({
+                type: "get",
+                url: service + "/api/BookDb/?bookId=" + bookId,
+                success: function (book) {
+                    if (book.success != "ok")
+                        alert("getBook: " + book.success);
+                    else {
+                        $('#bookTitle').html(book.BookTitle);
+
+                        $('#bookContents').html("<div id=bk" + book.Id + " class='bookTitle'>" + book.BookTitle + "</div>");
+                        $('#bookContents').append("<div class='bookCenterTitle'>Preface</div>");
+                        $('#bookContents').append("<div class='bookPreface'>" + book.Preface + "</div>");
+                        $('#bookContents').append("<div class='bookCenterTitle'>Introduction</div>");
+                        $('#bookContents').append("<div class='sectionContents'>" + book.Introduction + "</div>");
+                        $.each(book.Chapters, function (idx, obj) {
+                            $('#bookContents').append("<div id=ct" + obj.Id + " class='chapterTitle'>" + obj.ChapterTitle + "</div>");
+                            $('#bookContents').append("<div class='bookPreface'>" + obj.Preface + "</div>");
+                            $.each(obj.Sections, function (idx, obj) {
+                                $('#bookContents').append("<div id=sc" + obj.Id + " class='sectionTitle'>" + obj.SectionTitle + "</div>");
+                                $('#bookContents').append("<div class='sectionContents'>" + obj.SectionContents + "</div>");
+                                $.each(obj.SubSections, function (idx, obj) {
+                                    $('#bookContents').append("<div id=ssc" + obj.Id + " class='subsectionTitle'>" + obj.SubSectionTitle + "</div>");
+                                    $('#bookContents').append("<div class='sectionContents'>" + obj.SubSectionContents + "</div>");
+                                });
+                            });
+                        });
+                        resizePage();
+                        //$('#bookTitleLoadingGif').hide();
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    alert("getTheWholeBook XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("getTheWholeBook CATCH: " + e);
+        }
+    }
+
+    function redirectToEdit() {
+        window.location.href = "/BookDb/Edit?book=" + bookId;
+    }
+
+</script>

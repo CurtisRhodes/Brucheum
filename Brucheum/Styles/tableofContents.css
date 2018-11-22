@@ -2,8 +2,7 @@
 .toCcontainer {
     box-sizing: border-box;
     margin-top: 33px;
-    padding-left: 145px;
-    padding-right: 145px;
+    padding: 16px 145px;
 }
 
 .divChapter {
@@ -39,7 +38,7 @@
     }
 
 .tocSectionContainer {
-    
+    display: none;
     padding-left: 100px;
 }
 

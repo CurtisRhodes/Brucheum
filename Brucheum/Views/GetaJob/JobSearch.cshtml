@@ -4,5 +4,51 @@
     Layout = "~/Views/GetaJob/_GetaJobLayout.cshtml";
 }
 
-<h2>JobSearch</h2>
 
+<link href="~/Styles/default.css" rel="stylesheet" />
+<link href="~/Styles/admin.css" rel="stylesheet" />
+
+<style>
+    .leftMiddleColumn {
+        float: left;
+        display: flex;
+        border-right: solid thin purple;
+        width: 200px;
+        height: 100%;
+    }
+
+    .middleMiddleCouimn {
+        float: left;
+        height: 100%;
+    }
+
+    .pageTitle {
+        text-align: center;
+    }
+
+    #rightColumn {
+        border-left: solid thin purple;
+    }
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+
+    </div>
+    <div id="middleColumn">
+        <div class="leftMiddleColumn">
+            <div class="vertMenu">
+                <div class="vertMenuTab" id="optJobSearch">Add Job Search</div>
+                <div class="vertMenuTab" id="optActivity">Add Job Search Activity</div>
+                <div class="vertMenuTab" id="optResume">Edit Resume</div>
+                <div class="vertMenuTab" id="optSkills">Add Skills</div>
+            </div>
+        </div>
+        <div class="middleMiddleCouimn">
+            <div class="pageTitle">Job Searches</div>
+            <div id="jobSearchList"></div>
+        </div>
+    </div>
+    <div id="rightColumn">
+    </div>
+</div>

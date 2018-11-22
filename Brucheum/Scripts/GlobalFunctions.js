@@ -1,28 +1,4 @@
-﻿
-
-function logPageHit(service, userName, ipAddress, page, details) {
-    
-    $.ajax({
-        type: "GET",
-        url: service + "/api/HitCounter/AddPageHit?ipAddress=" + ipAddress + "&app=Brucheum&page=" + page + "&details=" + details,
-        success: function (success) {
-            if (!success.startsWith("ERROR"))
-            {
-                sendEmailFromJS("Page Hit", userName + " visited " + page + " " + details);
-                //displayStatusMessage("severityOK", "email sent");
-            }
-            else
-                alert("Page Hit Fail: " + success);
-        },
-        error: function (xhr) {
-            //displayStatusMessage("severityError", "error: " + xhr.statusText);
-            alert("Page Hit XHR error: " + xhr.statusText);
-        }
-    });
-
-}
-
-function displayStatusMessage(severity, message) {
+﻿function displayStatusMessage(severity, message) {
 	$('#divStatusMessage').removeClass();
 	$('#divStatusMessage').addClass(severity);
 	$('#divStatusMessage').html(message);
@@ -119,32 +95,58 @@ function logoutPlease() {
 }
 
 function sendEmailFromJS(msg, body) {
-    alert("sendEmailFromJS");
-    var success = "";
-    var sendObj = new Object();
-    sendObj.Subject = msg;
-    sendObj.Body = body;
+    try {
+        var sendObj = new Object();
+        sendObj.Subject = msg;
+        sendObj.Body = body;
+
+        var rtn = "async";
+        //alert("sendEmailFromJS msg: " + msg + " body: " + body);
+        $.ajax({
+            type: "POST",
+            url: "https://api.curtisrhodes.com/Api/Email/Send",
+            data: sendObj,
+            async: false,
+            success: function (emailSuccess) {
+                rtn = emailSuccess;
+                if (rtn === "ok") {
+                    //alert("Email says: " + sendObj.Subject);
+                    //displayStatusMessage("severityOk", "email sent");
+                }
+                else
+                    alert("Email Fail: " + rtn);
+            },
+            error: function (xhr) {
+                rtn = xhr.statusText;
+                //displayStatusMessage("severityError", "error: " + xhr.statusText);
+                alert("sendEmailFromJS error: " + rtn);
+            }
+        });
+    } catch (e) {
+        rtn = e;
+        alert("sendEmailFromJS CATCH: " + rtn);
+    }
+    return rtn;
+}
+
+function logPageHit(service, userName, ipAddress, page, details) {
     $.ajax({
-        type: "POST",
-        url: "https://api.curtisrhodes.com/Api/Email/Send",
-        data: sendObj,
-        async: false,
-        success: function (emailSuccess) {
-            success = emailSuccess;
-            if (success === "ok") {
-                alert("Email says: " + sendObj.Subject);
-                displayStatusMessage("severityOk", "email sent");
+        type: "GET",
+        url: service + "/api/HitCounter/AddPageHit?ipAddress=" + ipAddress + "&app=Brucheum&page=" + page + "&details=" + details,
+        success: function (success) {
+            if (!success.startsWith("ERROR")) {
+                sendEmailFromJS("Page Hit", userName + " visited " + page + " " + details);
+                //displayStatusMessage("severityOK", "email sent");
             }
             else
-                alert("Email Fail: " + success);
+                alert("Page Hit Fail: " + success);
         },
         error: function (xhr) {
             //displayStatusMessage("severityError", "error: " + xhr.statusText);
-            alert("sendEmailFromJS error: " + xhr.statusText);
-            success = xhr.statusText;
+            alert("Page Hit XHR error: " + xhr.statusText);
         }
     });
-};
+}
 
 function beautify(stankyString) {
     if (stankyString === undefined)

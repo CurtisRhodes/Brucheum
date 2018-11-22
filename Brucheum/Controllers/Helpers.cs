@@ -13,54 +13,54 @@ namespace Brucheum
         private static readonly string ipAddress = GetIPAddress();
         private static readonly string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
 
-        public static async Task<string> SessionStart()
-        {
-            ThrowError("email not working");
+        //public static async Task<string> SessionStart()
+        //{
+        //    ThrowError("email not working");
 
-            string success = "";
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
+        //    string success = "";
+        //    try
+        //    {
+        //        using (HttpClient client = new HttpClient())
+        //        {
 
-                    // , HttpCompletionOption.ResponseContentRead
-                    //HttpResponseMessage response = await client.GetAsync(apiService + "/api/HitCounter/LogVisit?ipAddress=" + ipAddress + "&app=Brucheum");
+        //            // , HttpCompletionOption.ResponseContentRead
+        //            //HttpResponseMessage response = await client.GetAsync(apiService + "/api/HitCounter/LogVisit?ipAddress=" + ipAddress + "&app=Brucheum");
 
-                    //string content = await response.Content.ReadAsStringAsync();
+        //            //string content = await response.Content.ReadAsStringAsync();
 
-                    //var scode = response.IsSuccessStatusCode;
-                    //var rp = response.ReasonPhrase;
-                    //HttpContent xx = response.Content;
-                    //string bbb = xx.ReadAsStringAsync().Result;
-
-
-                    //if (response.IsSuccessStatusCode)
-                    //{
-                    //    var x = response.ReasonPhrase;
-                    //}
+        //            //var scode = response.IsSuccessStatusCode;
+        //            //var rp = response.ReasonPhrase;
+        //            //HttpContent xx = response.Content;
+        //            //string bbb = xx.ReadAsStringAsync().Result;
 
 
-                    ////success = await response.Content.ReadAsStringAsync();
-                    //if (success != "ok")
-                    //{
-                    //    ThrowError(success);
-                    //}
+        //            //if (response.IsSuccessStatusCode)
+        //            //{
+        //            //    var x = response.ReasonPhrase;
+        //            //}
 
-                    //if (exists == "false")
-                    //{
-                    //    // WE HAVE A NEW VISITOR
-                    //    var AddVisitorResponseMessage = await client.GetAsync(apiService + "/api/HitCounter/AddVisitor?ipAddress=" + ipAddress + "&app=Brucheum&userId=duh", HttpCompletionOption.ResponseContentRead);
-                    //    string success = await response.Content.ReadAsStringAsync();
-                    //    await SendEmail("CONGRATULATIONS: someone just visited your site", "ip: " + ipAddress + " visited: The Brucheum");
-                    //}
-                }
-            }
-            catch (Exception ex)
-            {
-                ThrowError(ErrorDetails(ex));
-            }
-            return success;
-        }
+
+        //            ////success = await response.Content.ReadAsStringAsync();
+        //            //if (success != "ok")
+        //            //{
+        //            //    ThrowError(success);
+        //            //}
+
+        //            //if (exists == "false")
+        //            //{
+        //            //    // WE HAVE A NEW VISITOR
+        //            //    var AddVisitorResponseMessage = await client.GetAsync(apiService + "/api/HitCounter/AddVisitor?ipAddress=" + ipAddress + "&app=Brucheum&userId=duh", HttpCompletionOption.ResponseContentRead);
+        //            //    string success = await response.Content.ReadAsStringAsync();
+        //            //    await SendEmail("CONGRATULATIONS: someone just visited your site", "ip: " + ipAddress + " visited: The Brucheum");
+        //            //}
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ThrowError(ErrorDetails(ex));
+        //    }
+        //    return success;
+        //}
 
         public static async Task<string> PageHit(string page, string details)
         {

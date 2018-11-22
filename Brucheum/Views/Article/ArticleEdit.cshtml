@@ -43,8 +43,9 @@
                 </div>
             </div>
             <div id="divStatusMessage"></div>
-            <div>@Html.Partial("_Editor") </div>
-
+            <div id="articleEditor">
+                <div>@Html.Partial("_Editor") </div>
+            </div>
             @*<div id="divQuilleditor"></div>*@
 
             <div id="divButtons">
@@ -80,7 +81,7 @@
             $('#txtCreated').val(formatDate(new Date()));
         }
         $('#btnDelete').hide();
-        $('#summernote').summernote({
+        $('#articleEditor').summernote({
             height: 222,
             codemirror: { mode: "htmlmixed", theme: "monokai" },
             toolbar: [
@@ -105,7 +106,7 @@
         $('#hiddenImageName').val(article.ImageName);
         $('#ddAvatars').val(article.Byline);
         $('#txtCreated').val(article.DateCreated);
-        $('#summernote').summernote('code', article.Contents);
+        $('#articleEditor').summernote('code', article.Contents);
     }
 
     function unBind() {
@@ -117,7 +118,7 @@
             article.ImageName = $('#hiddenImageName').val();
             article.Byline = $('#ddAvatars option:selected').text();
             article.DateCreated = $('#txtCreated').val();
-            article.Contents = beautify($('#summernote').summernote('code'));
+            article.Contents = beautify($('#articleEditor').summernote('code'));
             //article.Contents = quill.root.innerHTML;  //quill.getContents(0, quill.getLength()).innerHtml;
             article.Tags = metaTags;
         }

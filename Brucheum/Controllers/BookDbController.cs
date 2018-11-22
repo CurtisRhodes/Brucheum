@@ -20,6 +20,14 @@ namespace Brucheum.Controllers
             ViewBag.BookId = book;
             return View();
         }
+        public ActionResult Read(int b, int t, int id)
+        {
+            ViewBag.Service = apiService;
+            ViewBag.BookId = b;
+            ViewBag.SectionType = t;
+            ViewBag.SectionId = id;
+            return View();
+        }
         public ActionResult Edit(int book)
         {
             ViewBag.Service = apiService;
