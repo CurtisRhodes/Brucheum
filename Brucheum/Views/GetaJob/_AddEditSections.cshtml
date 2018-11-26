@@ -1,5 +1,9 @@
 ﻿@using Microsoft.AspNet.Identity;
 <style>
+    .editorContainer {
+        width: 800px;
+    }
+
     #addEditResumeSection {
         width: 800px;
     }
@@ -20,7 +24,7 @@
                     <div class="crudRowLabel">Section Title</div>
                     <input id="txtSectionTitle" class="roundedInput" />
                 </div>
-                <div id="thisSucks" class="editorContainer">
+                <div id="resumeEditor" class="editorContainer">
                     @Html.Partial("_Editor")
                 </div>
                 <div>
@@ -45,7 +49,7 @@
     var sectionModel = new Object;
 
     $(document).ready(function () {
-        $('#thisSucks').summernote({
+        $('#resumeEditor').summernote({
             height: 428,
             codemirror: { mode: "htmlmixed", theme: "monokai" },
             toolbar: [
@@ -83,14 +87,14 @@
         sectionModel.Id = addEditSection.Id;
         //sectionModel.PersonId = addEditSection.PersonId;
         $('#txtSectionTitle').val(addEditSection.SectionTitle);
-        $('#thisSucks').summernote('code', addEditSection.SectionContents);
+        $('#resumeEditor').summernote('code', addEditSection.SectionContents);
         //alert("editSkillModel.SectionTitle:" + addEditSection.SectionTitle)
     }
 
     function unbindSection() {
         sectionModel.SectionTitle = $('#txtSectionTitle').val();
         sectionModel.PersonId = addEditSectionUserId;
-        sectionModel.SectionContents = $('#thisSucks').summernote('code');
+        sectionModel.SectionContents = $('#resumeEditor').summernote('code');
     }
 
     function insertSection() {
@@ -150,17 +154,17 @@
         $('#btnSectionNew').hide();
         sectionModel.Id = "";
         $('#txtSectionTitle').val("");
-        $('#thisSucks').summernote('code', "");
+        $('#resumeEditor').summernote('code', "");
     }
 
     function validate() {
         $('#errSummary').hide();
 
-        if ($('#txtSectionTitle').val() === "") {
-            $('#errSummary').html("section title required").show();
-            return false;
-        }
-        $('#errSkillName').hide();
+        //if ($('#txtSectionTitle').val() === "") {
+        //    $('#errSummary').html("section title required").show();
+        //    return false;
+        //}
+        //$('#errSkillName').hide();
 
         return true;
     };

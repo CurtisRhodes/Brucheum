@@ -32,6 +32,7 @@
     <div id="leftColumn"></div>
     <div id="middleColumn">
         <div id="bookTitle" class="pageTitle" onclick="javascript:redirectToToC()"></div>
+        <div id="divStatusMessage"></div>
         <a class="crudBreadcrumb" href="javascript:redirectToEdit()">&#8592; chapters</a>
         <div class="crudContainer floatLeft">
             <div id="chapterCrudContainerTitle" class="crudContainerTitle">Chapters</div>
@@ -107,7 +108,7 @@
         if ($('#btnAddUpdate').html() == "Add Subsection") {
             addSubSection();
         }
-        if ($('#btnAddUpdate').html() == "Update Subsection") {
+        if ($('#btnAddUpdate').html() == "Update SubSection") {
             updateSubSection();
         }
         else {
@@ -214,6 +215,8 @@
     }
 
     function updateSection() {
+
+        //alert("updateSection()")
         try {
             sectionModel.SectionTitle = $('#txtSectionTitle').val();
             sectionModel.SectionOrder = $('#txtSectionOrder').val();
@@ -224,7 +227,7 @@
                 data: sectionModel,
                 success: function (success) {
                     if (success == "ok") {
-                        displayStatusMessage("severityOk", sectionModel.SectionTitle + " Added");
+                        displayStatusMessage("severityOk", sectionModel.SectionTitle + " Updated");
                         $('#btnAddUpdate').html("Update");
                         $('#btnNewCancel').html("New");
                         loadSectionList();
@@ -326,16 +329,17 @@
 
     function updateSubSection() {
         try {
-            sectionModel.SectionTitle = $('#txtSectionTitle').val();
-            sectionModel.SectionOrder = $('#txtSectionOrder').val();
-            sectionModel.SectionContents = $('#sectionEditor').summernote('code');
+            subSectionModel.SubSectionTitle = $('#txtSubSectionTitle').val();
+            subSectionModel.SubSectionOrder = $('#txtSubSectionOrder').val();
+            subSectionModel.SubSectionContents = $('#sectionEditor').summernote('code');
+            //alert("subSectionModel.Id: " + subSectionModel.Id)
             $.ajax({
                 type: "PUT",
                 url: service + "/api/SubSection/",
                 data: subSectionModel,
                 success: function (success) {
                     if (success == "ok") {
-                        displayStatusMessage("severityOk", sectionModel.SectionTitle + " Added");
+                        displayStatusMessage("severityOk", subSectionModel.SubSectionTitle + " Updated");
                         $('#btnAddUpdate').html("Update Subsection");
                         $('#btnNewCancel').html("New Subsection");
                         $("#btnContinue").html("Cancel Subsection").show();
@@ -364,7 +368,7 @@
                     $('#txtSubSectionOrder').val(subSection.SubSectionOrder);
                     $('#sectionEditor').summernote('code', subSection.SubSectionContents);
 
-                    sectionModel.Id = subSection.SectionId;
+                    subSectionModel.Id = subSection.Id;
                     $('#txtSectionTitle').val(subSection.SectionTitle);
                     $('#txtSectionOrder').val(subSection.SectionOrder);
 

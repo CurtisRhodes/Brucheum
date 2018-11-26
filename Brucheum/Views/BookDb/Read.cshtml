@@ -4,9 +4,9 @@
 
 <style>
     .threeColumnArray {
-        background-image: url('../../Images/parchment01.jpg');
+        /*background-image: url('../../Images/parchment01.jpg');
         background-repeat: no-repeat;
-        background-size: 100%;
+        background-size: 100%;*/
         background-color: #eeddbb;
     }
 
@@ -14,17 +14,24 @@
         font-family: 'Georgia';
         margin-top: 15px;
         background-color: #ddd69f;
-        height: 660px;
-        overflow-y: scroll;
+        /*height: 660px;*/
+        overflow-y: auto;
     }
     .bookContentArea {
     }
-    .sip {
+    .paupaWidth {
         width: 48%;
         height: 50px;
     }
+    .full {
+        width:100%;
+    }
+
     #paupaStyle {
         display: none;
+    }
+    .flexContainer {
+        background-color: #eeddbb;
     }
     .paupaPage {
         background-color: rgb(251,241,206);
@@ -79,36 +86,45 @@
         text-align: justify;
         font-size: 18px;
     }
+    .absTitle {
+        position: absolute;
+        margin-top: 15px;
+        font-size: 18px;
+    }
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
-        <div id="bookTitle" class="pageTitle">
+        <div id="bookTitle" class="pageTitle" onclick="javascript:redirectToToC()">
             <div id="bookTitleLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
         </div>
         <div>
             <div id="paupaStyle" class="bookContainer">
                 <div class="flexContainer">
-                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornertopleft.jpg" />
-                    <img class="floatLeft sip" src="~/Images/Books/PaupaBook/book-topLeft.jpg" />
-                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-innerspinetop.jpg" />
-                    <img class="floatLeft sip" src="~/Images/Books/PaupaBook/book-topRight.jpg" />
-                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornertopright.jpg" />
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornertopleft.png" />
+                    <div class="paupaWidth">
+                        <img class="floatLeft full" src="~/Images/Books/PaupaBook/book-topLeft.png" />
+                        <div id="chapterTitle" class="absTitle"></div>
+                     </div>
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-innerspinetop.png" />
+                    <img class="floatLeft paupaWidth" src="~/Images/Books/PaupaBook/book-topRight.png" />
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornertopright.png" />
                 </div>
                 <div class="flexContainer">
-                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-left.jpg" />
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-left.png" />
                     <div class="floatLeft paupaPage" id="bookLeftContent"></div>
                     <img class="floatLeft" src="~/Images/Books/PaupaBook/book-innerspine.jpg" />
                     <div class="floatLeft paupaPage" id="bookRightContent"></div>
-                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-right.jpg" />
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-right.png" />
                 </div>
                 <div class="flexContainer">
-                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornerbleft.jpg" />
-                    <img class="floatLeft sip" id="bookBottomLeft" src="~/Images/Books/PaupaBook/book-bottomleft.jpg" />
-                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-innerspinebottom.jpg" />
-                    <img class="floatLeft sip" id="bookBottomRight" src="~/Images/Books/PaupaBook/book-bottomright.jpg" />
-                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornerbright.jpg" />
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornerbleft.png" />
+                    <img class="floatLeft paupaWidth clickable" id="bookBottomLeft" src="~/Images/Books/PaupaBook/book-bottomleft.png" onclick="javascritpt:pagePrevious()"/>
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-innerspinebottom.png" />
+                    
+                    <img class="floatLeft paupaWidth clickable" id="bookBottomRight" src="~/Images/Books/PaupaBook/book-bottomright.png" onclick="javascritpt:pageNext()"/>
+                    <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornerbright.png" />
                 </div>
             </div>
             <div id="fullBookStyle" class="bookContainer">
@@ -127,14 +143,21 @@
 <script>
     var service = '@ViewBag.Service';
     var bookId = '@ViewBag.BookId';
+    var chapterId = '@ViewBag.ChapterId';
     var sectionId = '@ViewBag.SectionId';
     var sectionTypeId = '@ViewBag.SectionType';
     var sectionType, bookTitle;
+    var chapterArray = [];
+    var pages = [];
+    var pageIndex = 0;
 
     $(document).ready(function () {
 
         //setSectionTypeUnneded();
-        getTheWholeBook();
+        //getTheWholeBook();
+        //chapterId = 0;
+        loadBook();
+        $('#fullBookStyle').hide();
 
     })
 
@@ -201,8 +224,160 @@
         }
     }
 
+    function loadBook() {
+        try {
+            var contents;
+            //$('#bookTitleLoadingGif').show();
+            $.ajax({
+                type: "get",
+                url: service + "/api/BookDb/?bookId=" + bookId,
+                success: function (book) {
+                    if (book.success != "ok")
+                        alert("loadBook: " + book.success);
+                    else {
+                        $('#bookTitle').html(book.BookTitle);
+                        contents = "<div id=bk" + book.Id + " class='bookTitle'>" + book.BookTitle + "</div>";
+                        contents += "<div class='bookCenterTitle'>Preface</div>"
+                        contents += "<div class='bookPreface'>" + book.Preface + "</div>";
+                        contents += "<div class='bookCenterTitle'>Introduction</div>";
+                        contents += "<div class='sectionContents'>" + book.Introduction + "</div>";
+                        chapterArray.push(contents);
+
+                        $.each(book.Chapters, function (idx, obj) {
+                            contents = "<div id=ct" + obj.Id + " class='chapterTitle'>" + obj.ChapterTitle + "</div>";
+                            contents += "<div class='bookPreface'>" + obj.Preface + "</div>";
+                            $.each(obj.Sections, function (idx, obj) {
+                                contents += "<div id=sc" + obj.Id + " class='sectionTitle'>" + obj.SectionTitle + "</div>";
+                                contents += "<div class='sectionContents'>" + obj.SectionContents + "</div>";
+                                $.each(obj.SubSections, function (idx, obj) {
+                                    contents += "<div id=ssc" + obj.Id + " class='subsectionTitle'>" + obj.SubSectionTitle + "</div>";
+                                    contents += "<div class='sectionContents'>" + obj.SubSectionContents + "</div>";
+                                });
+                            });
+                            chapterArray.push(contents);
+                            if (obj.Id == chapterId)
+                                $('#chapterTitle').html("Chapter " + obj.Id + " " + obj.ChapterTitle); 
+                        });
+
+                        pages = [];
+
+                        breakIntoPages(chapterArray[chapterId])
+
+                        //alert("pages.length: " + pages.length + "   pages[0].len: " + pages[0].length + "  pages[1].len: " + pages[1].length);
+                        $('#paupaStyle').show();
+                        $('#bookLeftContent').html(pages[pageIndex++]);
+                        $('#bookRightContent').html(pages[pageIndex++]);                        
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    alert("loadBook XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("loadBook CATCH: " + e);
+        }
+    }
+
+    function breakIntoPages(chapter) {
+        //alert("$('#bookLeftContent').height(): " + $('#bookLeftContent').height())
+
+        //var fontSize = $('#bookLeftContent').css('font-size');
+        //var lineHeight = Math.floor(parseInt(fontSize.replace('px', '')) * 1.5);
+        //alert("lineHeight: " + lineHeight);
+        //var linesPerPage = $('#bookLeftContent').height() // / lineHeight; //$('#bookLeftContent').css("line-height");
+        //var wordsPerLine = 10;
+        //var wordsPerPage = linesPerPage * wordsPerLine;
+        //alert("wordsPerPage: " + word sPerPage);
+        wordsPerPage = 444;
+
+        var idx = 0;
+        while (idx < chapter.length) {
+            //alert("chapter.substr(idx).len: " + chapter.substr(idx).length);
+            var ppindx = getWordIdx(chapter.substr(idx), wordsPerPage);
+            //alert("chapter.substring(" + idx + "," + idx + ppindx + "): " + chapter.substring(idx, idx + ppindx));
+            pages.push(chapter.substring(idx, idx + ppindx));
+            idx += ppindx;
+        }
+        //alert("bb pages.len: " + pages.length);
+    }
+
+    function getWordIdx(contentso, numWords) {
+        //alert("numWords: " + numWords);
+        var wordCount = 0;
+        var xindx = 0;
+        while (wordCount < numWords) {
+            //alert("doc.substr(" + indx + ", 1): " + doc.substr(indx, 1));
+            if (contentso.substr(xindx, 1) == " ") {
+                wordCount++;
+                //alert("wordCount: " + wordCount)
+            }
+            xindx++;
+
+            if (xindx > contentso.length) {
+                //alert("fail");
+                break;
+            }
+        }
+        //alert("getWordIdx: " + xindx);
+        return xindx;
+    }
+
+    function getWordCount(cont) {
+
+        //var cont = $("#content").html();
+        cont = cont.replace(/<[^>]*>/g, " ");
+        cont = cont.replace(/\s+/g, ' ');
+        cont = cont.trim();
+        return cont.split(" ").length
+
+    }
+
+    function pageNext() {
+        if (pageIndex + 2 < pages.length) {
+            $('#bookLeftContent').html(pages[pageIndex++]);
+            $('#bookRightContent').html(pages[pageIndex++]);
+        }
+        else {
+            if (pageIndex + 1 == pages.length) {
+                $('#bookLeftContent').html(pages[pageIndex++]);
+                $('#bookRightContent').html("");
+            }
+            else {
+                if (chapterId < chapterArray.length) {
+                    pageIndex = 0;
+                    breakIntoPages(chapterArray[++chapterId])
+                }
+                else {
+                    $('#bookLeftContent').html("The End");
+                    $('#bookRightContent').html("");
+                }
+            }
+        }
+    }
+
+    function pagePrevious() {
+        if (pageIndex - 2 > 0) {
+            $('#bookRightContent').html(pages[pageIndex--]);
+            $('#bookLeftContent').html(pages[pageIndex--]);
+        }
+        if (chapterId > 0) {
+            //alert("chapterId: " + (chapterId - 1));
+
+            //alert("chapterArray[--chapterId]" + chapterArray[--chapterId])
+
+            pageIndex = 0;
+            chapterId = chapterId - 1;
+            alert("chapterId: " + chapterId);
+
+            breakIntoPages(chapterArray[chapterId])
+        }
+    }
+
     function redirectToEdit() {
         window.location.href = "/BookDb/Edit?book=" + bookId;
+    }
+    function redirectToToC() {
+        window.location.href = "/BookDb/ToC?book=" + bookId;
     }
 
 </script>

@@ -11,78 +11,136 @@
 *@
 
 <style>
-    .carouselItemTitle {
-        color: #fff;
-        position: relative;
-        font-size: 22px;
-        top: -58px;
-        left: 33px;
+    .maxSize {
+        height: 100%;
     }
-    .carouselItemTitleBlack {
-        color: #000;
-    }
-    .carouselItemCategory {
-        color: #fff;
-        position: relative;
-        font-size: 18px;
-        top: -499px;
-    }
-    .carouselItemCategoryBlack {
-        color: #000;
-    }
-    .carouselItemImage {
-        margin-top: 1px;
-        height: 431px;
-        width: 1020px;
+    .carouselImage {
+        width: 100%;
         cursor: pointer;
     }
+    
+    .carouselContainer {
+        display: block;
+        margin-top: 12%;
+        margin-left: 25%;
+        width: 52%;
+        height: 45%;
+        padding: 1px;
+        border: solid thin #ada267;
+        background-color: rgba(164, 168, 169, 0.75);
+        z-index: 10;
+    }   
+
+    .fbutton {
+        position: absolute;
+        height: 100px;
+        cursor: pointer;
+        top: 45%;
+        z-index: 5;
+    }
+    #leftFbutton {
+        left: 29%;
+    }
+    #rightFbutton {
+        left: 73%;
+    }
+
+
+    .carouselLabel {
+        position: absolute;
+        display: inline-block;
+        color: #fff;
+        background-color: #000;
+        padding: 3px;
+        font-size: 22px;
+        z-index: 11;
+    }
+
 </style>
 
+<div class="flexContainer maxSize">
+    <img id="leftFbutton" class="fbutton" src="~/Images/blueCircleLeft.png" onclick="javascript:clickPrevious()" />
+    <div id="articleImage" class="carouselContainer">
 
-<div id="carousel" class="carousel">
-    <div id="articleJog"></div>
+        <div class='carouselItem'>
+            <img class='carouselImage' src="~/Images/house.gif" />
+            <div id='articleTitle' class='carouselLabel'>article.Title</div>
+            <div id='articleCat' class='carouselLabel'>article.Category</div>
+
+        </div>
+        
+    </div>
+    <img id="rightFbutton" class="fbutton" src="~/Images/blueCircleRight.png" onclick="javascript:clickNext()" />
 </div>
 
 <script>
     var service = '@ViewBag.Service';
     var numArticles = 15;
-    var rotationSpeed = 5400;
+    var rotationSpeed = 15000;
     var carouselItems = new Array();
     var imageNum = 0;
+    var Carousel;
+    var carouselContainerHeight;
 
-    $(document).ready(function () { })
+    $(document).ready(function () {
+        adjustCarousel();
+    });
+
+
+    function adjustCarousel() {
+        $('.carouselImage').height($('#articleImage').height());
+
+        var x = $('#articleImage').position().top;
+        var y = $('#articleImage').position().left; //- ;
+        $('#articleTitle').css('top', $('.carouselItem').position().top + $('.carouselItem').height() - 40);
+        $('#articleTitle').css('left', $('.carouselItem').position().left + 5);
+
+        //$('#articleCat').css('top', $('.carouselItem').position().top + 30);
+        $('#articleCat').css('left', $('.carouselItem').position().left + $('.carouselItem').width() - $('#articleCat').width() - 10);
+    }
 
     function rotate() {
-        $('#articleJog').html(carouselItems[imageNum]);
+        $('#articleImage').html(carouselItems[imageNum]);
+        adjustCarousel()
         imageNum++;
-        var shellHeight = $('.carouselContainer').height();
-        var shellWidth = $('.carouselContainer').width();
-        $('.carouselItemImage').height(shellHeight - 2);
-        $('.carouselItemImage').width(shellWidth - 2);
-        $('.carouselItemCategory').css('left', shellWidth - ($('.carouselItemCategory').html().length * 2));
-        
-        setInterval(function showNextImage() {
-            $('#articleJog').html(carouselItems[imageNum]);
 
-            var shellHeight = $('.carouselContainer').height();
-            var shellWidth = $('.carouselContainer').width();
-            $('.carouselItemImage').height(shellHeight - 2);
-            $('.carouselItemImage').width(shellWidth - 2);
-            //alert("shellWidth: " + shellWidth + "sc: " + $('.carouselItemCategory').html().length);
-            $('.carouselItemCategory').css('left', shellWidth - ($('.carouselItemCategory').html().length * 2));
+        Carousel = setInterval(function showNextImage() {
 
-            $('#articleJog').click(function () {
-                window.location.href = "/Article/Article?Id=" + $('.carouselItem').attr('Id');
-            })
+            $('#articleImage').html(carouselItems[imageNum]);
+            adjustCarousel();
 
             imageNum++;
             if (imageNum >= numArticles) {
                 imageNum = 0;
             }
+            $('.fbutton').show();
         }, rotationSpeed);
     }
 
+    $('#articleImage').click(function () {
+        clearInterval(Carousel);
+        //alert("$('.carouselItem').attr('Id'): " + $('.carouselItem').attr('Id'));
+        window.location.href = "/Article/Article?Id=" + $('.carouselItem').attr('Id');
+    })
+
+    function stopCarousel() {
+        clearInterval(Carousel);
+    }
     function startCarousel() {
+        clearInterval(Carousel);
+        rotate();
+    }
+
+    function clickPrevious() {
+        alert("stop");
+        stopCarousel();
+    }
+
+    function clickNext() {
+        clearInterval(Carousel);
+        rotate();
+    }
+    function loadAndStartCarousel() {
         $.ajax({
             type: "GET",
             url: service + "/api/Article?pageLen=" + numArticles + "&page=0&filterType=none&filter=none",
@@ -92,27 +150,22 @@
                 rotate();
             },
             error: function (xhr) {
-                alert("updateSiteUser error: " + xhr.statusText);
+                alert("loadAndStartCarousel error: " + xhr.statusText);
             }
         });
     };
 
     function loadArray(article) {
         try {
-            //var title = article.Title.split(' ').join('_');
             if (article.ImageName !== "") {
                 imgSrc = service + "/App_Data/Images/" + article.ImageName;
             };
-            //alert("article.Title :" + article.Title);
             carouselItems.push(`
                 <div class='carouselItem' id='`+ article.Id + `' >
-                    <img class='carouselItemImage' src=` + imgSrc + `>
-                    <div class='carouselItemTitle'>` + article.Title + `
-                    <div class='carouselItemTitleBlack'>` + article.Title + `</div></div>
-                    <div class='carouselItemCategory'>` + article.Category + `
-                    <div class='carouselItemCategoryBlack'>` + article.Category + `</div></div>
+                    <img class='carouselImage' src=` + imgSrc + `>
+                    <div id='articleTitle' class='carouselLabel'>` + article.Title + `</div>
+                    <div id='articleCat'   class='carouselLabel'> ` + article.Category + `</div>
                 </div>`);
- 
         } catch (e) {
             alert("formatArticleJog error: " + e);
         }

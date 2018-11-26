@@ -151,12 +151,13 @@ function logPageHit(service, userName, ipAddress, page, details) {
 function beautify(stankyString) {
     if (stankyString === undefined)
         return stankyString;
-	return stankyString.replace(/&lt;/g, "<")
-		.replace(/&gt;/g, ">")
-		.replace(/&quot;/g, "\"")
-		.replace(/&#39;/g, "'")
-		.replace(/&nbsp;/g, " ")
-		.replace(/\n/g, "");
+    return stankyString.replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, "\"")
+        .replace(/&#39;/g, "'")
+        .replace(/&nbsp;/g, " ")
+        .replace(/%20/g, "_")
+        .replace(/\n/g, "");
 }
 
 function formatDate(date) {

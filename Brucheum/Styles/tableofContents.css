@@ -5,7 +5,7 @@
     padding: 16px 145px;
 }
 
-.divChapter {
+.chapterContainer {
     display: flex;
     cursor: pointer;
     margin-top: 4px;

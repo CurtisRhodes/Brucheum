@@ -19,7 +19,7 @@
     <div id="leftColumn">
     </div>
     <div id="middleColumn">
-        <div id="bookTitle" class="pageTitle" onclick='javascript:goRead(0,0)'></div>
+        <div id="bookTitle" class="pageTitle" onclick='javascript:goRead(0,0,0)'></div>
         <div>
             <div id="divToC" class="toCcontainer">
                 <div id="tocLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
@@ -39,24 +39,11 @@
     var bookId = '@ViewBag.BookId';
 
     $(document).ready(function () {
-        getTocChapterTree();
+        getChapterTree();
     })
 
-    $('.divChapter').click(function () {
-        //$('.divSections').hide();
-        //alert("children : " + $(this).children(2).attr("src"));
-        if ($(this).children(0).children(0).attr("src") === "../../Images/upCaret.png") {
-            $(this).children(0).children(0).attr("src", "../../Images/downCaret.png");
-        }
-        else {
-            $(this).next().show();
-            //alert("next: " + $(this).next());
-            $('.divChapter').children(0).children(0).attr("src", "../../Images/downCaret.png");
-            $(this).children(0).children(0).attr("src", "../../Images/upCaret.png");
-        }
-    });
 
-    function getTocChapterTree() {
+    function getChapterTree() {
         try {
             $('#tocLoadingGif').show();
             $.ajax({
@@ -69,19 +56,19 @@
                         $('#bookTitle').html(book.BookTitle);
 
                         $('#divToC').html("");
-                        $.each(book.Chapters, function (idx, obj) {
-                            // kludge String To Prevent Jquery from auto closing divs
-                            var kludge = "<div class='divChapter'>";  // Id='" + obj.Id + "'
-                            kludge += "<div id=ct" + obj.Id + " class='chapterName' onclick='javascript:goRead(1," + obj.Id + ")'>" + obj.ChapterTitle + "</div>";
-                            kludge += "<div class='dots' onclick='javascript:toggleChapter(" + obj.Id +")'></div>";
-                            kludge += "<div class='divCaret'><img id=img" + obj.Id + " onclick='javascript:toggleChapter(" + obj.Id +")' src='/Images/downCaret.png'></div></div>";
+                        $.each(book.Chapters, function (idx, chapter) {
+                            // kludge String To Prevent Jquery .append() from auto closing divs
+                            var kludge = "<div class='chapterContainer'>";
+                            kludge += "<div id=ct" + chapter.Id + " class='chapterName' onclick='javascript:goRead(1," + chapter.Id + ",0)'>" + chapter.ChapterTitle + "</div>";
+                            kludge += "<div class='dots' onclick='javascript:toggleSection(" + chapter.Id +")'></div>";
+                            kludge += "<div class='divCaret'><img id=img" + chapter.Id + " onclick='javascript:toggleSection(" + chapter.Id +")' src='/Images/downCaret.png'></div></div>";
                             kludge += "</div>";
-                            kludge += "<div id=sc" + obj.Id + " class='tocSectionContainer'>";
-                            $.each(obj.Sections, function (idx, obj) {
-                                kludge += "<div class='divSection' onclick='javascript:goRead(2," + obj.Id + ")'>" + obj.SectionTitle + "</div>";
+                            kludge += "<div id=st" + chapter.Id +" class='tocSectionContainer'>";
+                            $.each(chapter.Sections, function (idx, section) {
+                                kludge += "<div id=sc" + section.Id + " class='divSection' onclick='javascript:goRead(2," + chapter.Id + "," + section.Id + ")'>" + section.SectionTitle + "</div>";
                                 kludge += "<div class='divSubsections'>";
-                                $.each(obj.SubSections, function (idx, obj) {
-                                    kludge += "<div class='divSubSection' onclick='javascript:goRead(3," + obj.Id + ")'>" + obj.SubSectionTitle + "</div>";
+                                $.each(section.SubSections, function (idx, subSection) {
+                                    kludge += "<div class='divSubSection' onclick='javascript:goRead(3," + chapter.Id + "," + subSection.Id + ")'>" + subSection.SubSectionTitle + "</div>";
                                 })
                                 kludge += "</div>";
                             })
@@ -101,8 +88,23 @@
     }
 
     function toggleChapter(id) {
+        alert("toggleChapter(id): " + id);
         var caretImg = $('#img' + id);
-        var sectionContainer = $('#sc' + id);
+        var chapterContainer = $('#ct' + id);
+        if (caretImg.attr('src') == "/Images/downCaret.png") {
+            chapterContainer.show();
+            caretImg.attr('src', '/Images/upCaret.png');
+        }
+        else {
+            caretImg.attr('src', '/Images/downCaret.png')
+            sectionContainer.hide();
+        }
+    };
+
+    function toggleSection(id) {
+        //alert("toggleSection(id): " + id);
+        var caretImg = $('#img' + id);
+        var sectionContainer = $('#st' + id);
         if (caretImg.attr('src') == "/Images/downCaret.png") {
             sectionContainer.show();
             caretImg.attr('src', '/Images/upCaret.png');
@@ -116,8 +118,9 @@
     function redirectToEdit() {
         window.location.href = "/BookDb/Edit?book=" + bookId;
     }
-    function goRead(type, id) {
-        window.location.href = "/BookDb/read?b=" + bookId + "&t=" + type + "&id=" + id;
+
+    function goRead(type, chapterId, sectionId) {
+        window.location.href = "/BookDb/read?b=" + bookId + "&c=" + chapterId + "&t=" + type + "&id=" + sectionId;
     }
 
 </script>
