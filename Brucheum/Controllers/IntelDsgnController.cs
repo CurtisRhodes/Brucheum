@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -19,6 +20,7 @@ namespace Brucheum
         public ActionResult MyResume()
         {
             ViewBag.Service = apiService;
+            ViewBag.UserId = User.Identity.GetUserId();
             return View();
         }
         public ActionResult About()

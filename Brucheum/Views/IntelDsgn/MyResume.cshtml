@@ -16,15 +16,13 @@
 *@
 
 <style>
-    .center {
-        text-align: center;
-    }
-
     .resumeContainer {
         background-color: #bbb489;
         color: #000;
     }
-
+    .center {
+        text-align: center;
+    }
     li {
         text-align: left;
     }
@@ -98,11 +96,56 @@
     }
 </style>
 
+<style>
+    .resumeDateRow {
+        margin-top: 11px;
+        margin-bottom: 4px;
+        font-size: 18px;
+        font-family: Arial;
+        border-bottom: solid thin black;
+        width: 100%;
+    }
+    .resumeDateRowLeft {
+        margin-left: 22px;
+        width: 45%;
+        display: inline-block;
+    }
+    .resumeDateRowCenter {
+        display: inline-block;
+    }
+    .resumeDateRowRight {
+        display: inline-block;
+        float: right;
+        margin-right: 22px;
+    }
+    .resumeContents {
+        text-align: justify;
+        margin-top: 7px;
+        margin-left: 22px;
+        margin-right: 22px;
+    }
+    #resumeSectionContainer {
+        padding-bottom: 6px;
+        margin-bottom: 26px;
+        width: 80%;
+        margin-left: 10%;
+    }
+</style>
+
+
 <div class="threeColumnArray">
     <div id="leftColumn">
     </div>
     <div id="middleColumn">
-        <div id="resumeSectionContainer" class="resumeContainer"></div>
+        <div id="resumeSectionContainer" class="resumeContainer">
+            <div id="resumeLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+
+            <div id="resumeTopSection"></div>
+            <div id="resumeJobSection"></div>
+            <div id="resumeBottomSection"></div>
+
+
+        </div>
     </div>
     <div id="rightColumn">
         @if (User.IsInRole("Admin"))        {
@@ -118,28 +161,57 @@
 
 <script>
     var service = '@ViewBag.Service';
+    var currentUser = '@ViewBag.UserId'
 
     $(document).ready(function () {
-        buildResume();
+        buildResume(2);
     })
 
-    // Ready; Fire; Aim;
     function buildResume(resumeId) {
-        // getSections based on the resume sections in the ResumeSections table
-        //var sectionOrder = [12, 16];
-
+        $('#resumeLoadingGif').show();
         $.ajax({
-            type: "GET",
-            url: service + "/api/DbArticle?articleType=RES",
-            success: function (articles) {
-                //for (var i in sectionOrder) {
-                for (var i = 0; i < articles.length; i++) {
-                    $('#resumeSectionContainer').append("<div class='resumeSection' >" + articles[i] + "</div>");
-                }
+            type: "Patch",
+            url: service + "/api/Resume/GetLoadedResume?resumeId=" + resumeId,
+            success: function (loadedResume) {
+                $.each(loadedResume.TopSections, function (idx, topSection) {
+                    $('#resumeTopSection').append("<div class='sectionContents'>" + topSection.SectionContents + "</dev>");
+                });
+                $.each(loadedResume.LostJobs, function (idx, lostJob) {
+                    var dateline = lostJob.StartMonth + " " + lostJob.StartYear + " - " + lostJob.FiredMonth + " " + lostJob.FiredYear;
+                    var kluge = "<div class='resumeDateRow'><div class='resumeDateRowLeft'>" + lostJob.Employer + "</div>";
+                    kluge += "<div class='resumeDateRowCenter'>" + lostJob.JobLocation + "</div><div class='resumeDateRowRight'>" + dateline + "</div></div>";
+                    $('#resumeJobSection').append(kluge);
+                    $('#resumeJobSection').append("<div class='resumeContents'>" + lostJob.Summary + "</dev>");
+                })
+                $.each(loadedResume.BottomSections, function (idx, bottomSection) {
+                    $('#resumeBottomSection').append("<div class='sectionContents'>" + bottomSection.SectionContents + "</dev>");
+                });
+                $('#resumeLoadingGif').hide();
+                $('#middleColumn').height($('#resumeSectionContainer').height());
+                resizePage();
             }
         })
 
     }
+
+
+
+    // Ready; Fire; Aim;
+    //public class LostJobModel {
+    //public int Id { get; set; }
+    //public string ElementId { get; set; }
+    //public string JobTitle { get; set; }
+    //public string Employer { get; set; }
+    //public string JobLocation { get; set; }
+    //public string StartMonth { get; set; }
+    //public string StartYear { get; set; }
+    //public string FiredMonth { get; set; }
+    //public string FiredYear { get; set; }
+    //public string Summary { get; set; }
+    //public string ReasonForLeaving { get; set; }
+    //public string SecretNarative { get; set; }
+
+
 
 
 </script>

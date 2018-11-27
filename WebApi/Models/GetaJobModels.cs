@@ -7,20 +7,28 @@ namespace WebApi.Models
 {
     public class ResumeModel
     {
+        public ResumeModel()
+        {
+            TopSections = new List<SectionModel>();
+            LostJobs = new List<LostJobModel>();
+            BottomSections = new List<SectionModel>();
+        }
         public int Id { get; set; }
         public string PersonId { get; set; }
         public string ResumeName { get; set; }
-        public DateTime Created { get; set; }
+        public string Created { get; set; }
+        public IList<SectionModel> TopSections { get; set; }
+        public IList<LostJobModel> LostJobs { get; set; }
+        public IList<SectionModel> BottomSections { get; set; }
     }
     public class SectionModel
     {
         public int Id { get; set; }
         public string ElementId { get; set; }
         public string PersonId { get; set; }
-        //public string SectionType { get; set; }
-        //public string SectionTypeDescription { get; set; }
         public string SectionTitle { get; set; }
         public string SectionContents { get; set; }
+        public int SortOrder { get; set; }
     }
     public class SkillModel
     {
@@ -32,6 +40,10 @@ namespace WebApi.Models
     }
     public class LostJobModel
     {
+        public LostJobModel()
+        {
+            JobSkills = new List<SkillModel>();
+        }
         public int Id { get; set; }
         public string ElementId { get; set; }
         public string JobTitle { get; set; }
@@ -44,12 +56,16 @@ namespace WebApi.Models
         public string Summary { get; set; }
         public string ReasonForLeaving { get; set; }
         public string SecretNarative { get; set; }
+        public IList<SkillModel> JobSkills { get; set; }
+        public int SortOrder { get; set; }
     }
+
     public class ResumeElementModel
     {
         public string ElementId { get; set; }
         public int ResumeId { get; set; }
         public string ElementType { get; set; }
+        public string ElementName { get; set; }
         public int SortOrder { get; set; }
     }
 }

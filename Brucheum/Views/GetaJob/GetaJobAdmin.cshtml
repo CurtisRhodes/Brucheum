@@ -51,13 +51,10 @@
     var service = '@ViewBag.Service';
 
     $(document).ready(function () {
-
         if (!isAuthenticated) {
             var msg = "You must <span class='clickable' onclick='registerPlease()'>Register</span> or <span onclick='loginPlease()' class='clickable'>Login</span> to use this feature</div>";
             showCustomMessage("User data kept private", msg);
         }
-
-
         $('.vertMenuTab').mouseout(function () {
             $(this).css('background-color', '#74bac3').css('color', '#000');
         });
@@ -65,10 +62,7 @@
             $(this).css('background-color', '#4163aa').css('color', '#e4e4e4');
         });
     });
-
-
-
-
+    
     // Jobs
     $("#optAddJobs").click(function () {
         $('.adminOption').hide();
@@ -101,7 +95,5 @@
         $('#tabSections').show();
         AddEditSectionsInitialize();
     })
-
-
 </script>
 

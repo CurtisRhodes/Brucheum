@@ -275,7 +275,7 @@ namespace WebApi
             ResumeElements = new HashSet<ResumeElement>();
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Key]
         public int Id { get; set; }
 
         [StringLength(128)]

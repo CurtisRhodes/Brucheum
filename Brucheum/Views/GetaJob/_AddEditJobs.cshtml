@@ -16,9 +16,17 @@
         margin-right: 11px;
         display: inline-block;
     }
-    #jobListContainer {
+    .editorScriptContainer {
+        width: 765px;
     }
-
+    #addEditJobContainer {
+        width: 860px
+    }
+    #jobListContainer {
+        width: 600px;
+        max-height: 614.5px;
+        overflow-y: auto;
+    }
 
     .jobListItem {
         background-color: #74bac3;
@@ -37,7 +45,7 @@
 
 <div class="flexContainer">
     <div class="floatLeft">
-        <div id="addEditJob" class="crudContainer">
+        <div id="addEditJobContainer" class="crudContainer">
             <div id="divStatusMessage"></div>
             <div id="crudContainerTitle" class="crudContainerTitle">Add A Lost Job</div>
             <div class="crudArea">
@@ -72,10 +80,11 @@
                     <input id="txtLocation" class="roundedInput" />
                 </div>
                 <div>
-                    <div class="crudRowLabel">Summary</div>
+                    <div class="crudRowLabel"><input id="radioPublic" type="radio">  Summary  <input id="radioFired" type="radio" >  Secret    </div>
                 </div>
                 <div id="jobSummaryEditor" class="editorContainer">
                     @Html.Partial("_Editor")
+                    <div id="editorLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
                 </div>
                 <div>
                     <button id="btnJobAddEdit" class="roundendButton" onclick="medeiateJobAddEditButton()">Add</button>
@@ -87,7 +96,7 @@
     <div class="floatLeft">
         <div id="jobListContainer" class="crudContainer">
             <div id="JobListTitle" class="crudContainerTitle">Job List</div>
-            <div id="loadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+            <div id="lostJobsLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
             <div id="jobList" class="crudList"></div>
         </div>
     </div>
@@ -95,6 +104,7 @@
 
 <script>
     var service = '@ViewBag.Service'
+    var currentUser = '@ViewBag.UserId'
     var jobModel = new Object;
 
     $(document).ready(function () {
@@ -121,6 +131,7 @@
     }
 
     function addNewLostJob() {
+        $('#editorLoadingGif').show();
         $.ajax({
             type: "POST",
             url: service + "/api/Job",
@@ -129,9 +140,10 @@
                 if (!success.startsWith("ERROR")) {
                     jobModel.Id = success;
                     displayStatusMessage("severityOk", "Job Added");
-                    $('#btnJobAddEdit').html("Edit");
+                    $('#btnJobAddEdit').html("Update");
                     $('#btnJobNew').show();
                     getLostJobs();
+                    $('#editorLoadingGif').hide();
               }
                 else {
                     alert("addEditJob: " + success)
@@ -144,6 +156,7 @@
     }
 
     function updateLostJob() {
+        $('#editorLoadingGif').show();
         $.ajax({
             type: "PUT",
             url: service + "/api/Job",
@@ -152,6 +165,7 @@
                 if (success == "ok") {
                     displayStatusMessage("severityOk", "Job Edited");
                     getLostJobs();
+                    $('#editorLoadingGif').hide();
                 }
                 else {
                     alert("Edit Job: " + success)
@@ -166,6 +180,7 @@
     function medeiateJobAddEditButton() {
         if (validateJobs()) {
             //unbindJobs();
+            jobModel.PersonId = currentUser;
             jobModel.StartMonth = $('#txtStartMonth').val();
             jobModel.StartYear = $('#txtStartYear').val();
             jobModel.FiredMonth = $('#txtFiredMonth').val();
@@ -256,21 +271,20 @@
 
     function getLostJobs() {
         try {
-            $('#loadingGif').show();
-
+            $('#lostJobsLoadingGif').show();
             $.ajax({
                 type: "GET",
-                url: service + "/api/Job",
+                url: service + "/api/Job?personId=" + currentUser,
                 success: function (response) {
                     if (true) {
                         $('#jobList').html("");
                         $.each(response, function (idx, obj) {
-                            $('#jobList').append("<div class='jobListItem' id=" + obj.Id + ">" + obj.StartMonth + " | " + obj.StartYear + " | " + obj.Employer + " |" + obj.JobLocation + "</div>");
+                            $('#jobList').append("<div class='jobListItem' id=" + obj.Id + ">" + obj.StartMonth + ", " + obj.StartYear + "  " + obj.Employer + " " + obj.JobLocation + "</div>");
                         })
                         $('.jobListItem').click(function () {
                             loadJobsEditor($(this).attr("id"));
                         });
-                        $('#loadingGif').hide();
+                        $('#lostJobsLoadingGif').hide();
                     }
                     else {
                         alert("getLostJobs: " + success)
@@ -302,7 +316,7 @@
                     $('#txtCompany').val(response.Employer);
                     $('#jobSummaryEditor').summernote('code', response.Summary);
 
-                    $('#btnJobAddEdit').html("Edit");
+                    $('#btnJobAddEdit').html("Update");
                     $('#btnJobNew').show();
                 }
                 else {
@@ -314,7 +328,6 @@
             }
         });
     }
-
 
 </script>
 

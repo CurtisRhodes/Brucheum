@@ -43,22 +43,23 @@ namespace WebApi
         }
 
         [HttpGet]
-        public List<LostJobModel> Get()
+        public List<LostJobModel> Get(string personId)
         {
             var lostJobs = new List<LostJobModel>();
             using (GetaJobContext db = new GetaJobContext())
             {
-                var dbJobs = db.LostJobs.ToList();
+                var dbJobs = db.LostJobs.Where(j => j.PersonId == personId).OrderBy(j => j.StartYear).ThenBy(j => j.StartMonth).ToList();
                 foreach (LostJob lostjob in dbJobs)
                 {
                     lostJobs.Add(new LostJobModel()
                     {
                         Id = lostjob.Id,
+                        ElementId = lostjob.ElementId.ToString(),
                         JobTitle = lostjob.JobTitle,
                         Employer = lostjob.Employer,
-                        StartMonth = lostjob.StartMonth,
+                        StartMonth = Helpers.DateName(lostjob.StartMonth),
                         StartYear = lostjob.StartYear,
-                        FiredMonth = lostjob.FiredMonth,
+                        FiredMonth = Helpers.DateName( lostjob.FiredMonth),
                         FiredYear = lostjob.FiredYear,
                         JobLocation = lostjob.JobLocation,
                         ReasonForLeaving = lostjob.ReasonForLeaving,
@@ -287,6 +288,7 @@ namespace WebApi
                          {
                              Id = sections.Id,
                              SectionTitle = sections.SectionTitle,
+                             ElementId = sections.ElementId.ToString(),
                              //SectionType = sections.SectionType,
                              //SectionTypeDescription = xrefs.RefDescription == null ? "" : xrefs.RefDescription,
                          }).ToList();
@@ -359,44 +361,99 @@ namespace WebApi
     }
 
     [EnableCors("*", "*", "*")]
-    public class ResumeController
+    public class ResumeController : ApiController
     {
+        [HttpGet]
+        public List<ResumeModel> Get(string personId)
+        {
+            var rm = new List<ResumeModel>();
+            using (GetaJobContext db = new GetaJobContext())
+            {
+                var dbResumes = db.Resumes.Where(r => r.PersonId == personId).ToList();
+                foreach (Resume dbResume in dbResumes)
+                {
+                    rm.Add(new ResumeModel() { Id = dbResume.Id, ResumeName = dbResume.ResumeName, Created = dbResume.Created.Value.ToShortDateString() });
+                }
+            }
+            return rm;
+        }
+
+        [HttpPatch]
+        public ResumeModel GetLoadedResume(int resumeId)
+        {
+            var fullyLoadedResume = new ResumeModel();
+            fullyLoadedResume.Id = resumeId;
+            using (GetaJobContext db = new GetaJobContext())
+            {
+                var dbResume = db.Resumes.Where(r => r.Id == resumeId).FirstOrDefault();
+                fullyLoadedResume.ResumeName = dbResume.ResumeName;
+
+                fullyLoadedResume.TopSections = (from e in dbResume.ResumeElements.Where(e => e.ElementType == "1")
+                                                 join dbSections in db.Sections on e.ElementId equals dbSections.ElementId
+                                                 orderby e.SortOrder
+                                                 select new SectionModel()
+                                                 {
+                                                     SortOrder = e.SortOrder,
+                                                     ElementId = e.ElementId.ToString(),
+                                                     SectionTitle = dbSections.SectionTitle,
+                                                     SectionContents = dbSections.SectionContents
+                                                 }).ToList();
+                fullyLoadedResume.LostJobs = (from e in dbResume.ResumeElements.Where(e => e.ElementType == "2")
+                                              join dbJob in db.LostJobs on e.ElementId equals dbJob.ElementId
+                                              orderby e.SortOrder
+                                              select new LostJobModel()
+                                              {
+                                                  SortOrder = e.SortOrder,
+                                                  Id = dbJob.Id,
+                                                  ElementId = dbJob.ElementId.ToString(),
+                                                  Employer = dbJob.Employer,
+                                                  JobLocation = dbJob.JobLocation,
+                                                  StartMonth = Helpers.DateName(dbJob.StartMonth),
+                                                  StartYear = dbJob.StartYear,
+                                                  FiredMonth = Helpers.DateName(dbJob.FiredMonth),
+                                                  FiredYear = dbJob.FiredYear,
+                                                  JobTitle = dbJob.JobTitle,
+                                                  Summary = dbJob.Summary
+                                              }).ToList();
+                fullyLoadedResume.BottomSections = (from e in dbResume.ResumeElements.Where(e => e.ElementType == "3")
+                                                    join dbSections in db.Sections on e.ElementId equals dbSections.ElementId
+                                                    orderby e.SortOrder
+                                                    select new SectionModel()
+                                                    {
+                                                        SortOrder = e.SortOrder,
+                                                        ElementId = e.ElementId.ToString(),
+                                                        SectionTitle = dbSections.SectionTitle,
+                                                        SectionContents = dbSections.SectionContents
+                                                    }).ToList();
+            }
+            return fullyLoadedResume;
+        }
+
         [HttpGet]
         public Resume Get(int resumeId)
         {
-            //var resume = new ResumeModel();
-            //try
+            using (GetaJobContext db = new GetaJobContext())
             {
-                using (GetaJobContext db = new GetaJobContext())
-                {
-                    //if (dbRresume != null)
-                    //{
-                    //    resume.Id = resumeId;
-                    //    resume.ResumeName = dbRresume.ResumeName;
-                    //    dbRresume..Id = resumeId;
-                    //}
-
-                    //var x = new Resume();
-                    //x.ResumeElements. // Ienumeral
-
-                    return db.Resumes.Where(r => r.Id == resumeId).FirstOrDefault();
-                }
+                return db.Resumes.Where(r => r.Id == resumeId).FirstOrDefault();
             }
-            //catch (Exception ex) { lostJob.Summary = "ERROR: " + Helpers.ErrorDetails(ex); }
-            //return resume;
         }
 
         [HttpPost]
-        public string Post(Resume newResume)
+        public string Post(ResumeModel newResume)
         {
             string success = "ERROR: ";
             try
             {
                 using (GetaJobContext db = new GetaJobContext())
                 {
-                    db.Resumes.Add(newResume);
+                    var r = new Resume();
+                    r.ResumeName = newResume.ResumeName;
+                    r.Created = DateTime.Now;
+                    r.PersonId = newResume.PersonId;
+
+                    db.Resumes.Add(r);
                     db.SaveChanges();
-                    success = newResume.Id.ToString();
+                    success = r.Id.ToString();
                 }
             }
             catch (DbEntityValidationException e)
@@ -441,7 +498,7 @@ namespace WebApi
     }
 
     [EnableCors("*", "*", "*")]
-    public class ResumeElementController
+    public class ResumeElementController : ApiController
     {
         [HttpGet]
         public List<ResumeElementModel> Get(int resumeId)
@@ -452,15 +509,18 @@ namespace WebApi
                 var dbElements = db.ResumeElements.Where(e => e.ResumeId == resumeId).ToList(); ;
                 foreach (ResumeElement element in dbElements)
                 {
-                    resumeElements.Add(new ResumeElementModel()
-                    {
-                        ElementId = element.ElementId.ToString(),
-                        ElementType = element.ElementType,
-                        SortOrder = element.SortOrder
-                    });
+                    var m = new ResumeElementModel();
+                    if (element.ElementType == "2")
+                        m.ElementName = db.LostJobs.Where(j => j.ElementId == element.ElementId).FirstOrDefault().Employer;
+                    else
+                        m.ElementName = db.Sections.Where(s => s.ElementId == element.ElementId).FirstOrDefault().SectionTitle;
+                    m.ElementId = element.ElementId.ToString();
+                    m.ElementType = element.ElementType;
+                    m.SortOrder = element.SortOrder;
+                    resumeElements.Add(m);
                 }
             }
-            return resumeElements;
+            return resumeElements.OrderBy(r => r.ElementType).ThenBy(r => r.SortOrder).ToList();
         }
 
         [HttpPost]
@@ -472,13 +532,13 @@ namespace WebApi
                 using (GetaJobContext db = new GetaJobContext())
                 {
                     var resumeElement = new ResumeElement();
-                    resumeElement.ElementId = Guid.NewGuid();
+                    resumeElement.ElementId = Guid.Parse(elementModel.ElementId);
                     resumeElement.ResumeId = elementModel.ResumeId;
                     resumeElement.ElementType = elementModel.ElementType;
                     resumeElement.SortOrder = elementModel.SortOrder;
                     db.ResumeElements.Add(resumeElement);
                     db.SaveChanges();
-                    success = resumeElement.ElementId.ToString();
+                    success = "ok";
                 }
             }
             catch (DbEntityValidationException e)
