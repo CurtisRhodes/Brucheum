@@ -70,7 +70,7 @@
                 $('#listHeader').html(filter);
 
             $.ajax({
-                url: service + "/api/Article?pageLen=" + pageLen + "&page=" + page + "&filterType=" + filterType + "&filter=" + filter,
+                url: service + "/api/ArticleXml?pageLen=" + pageLen + "&page=" + page + "&filterType=" + filterType + "&filter=" + filter,
                 type: "get",
                 timeout: 90210,  //  nine seconds
                 success: function (list) {
