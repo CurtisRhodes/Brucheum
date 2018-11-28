@@ -141,17 +141,17 @@
                         if (view === "View")
                             window.location = "Article?Id=" + articleId; // $('#hiddenId').val();
                         else
-                            displayStatusMessage("severityOk", "updated");
+                            displayStatusMessage("ok", "updated");
                     else
-                        displayStatusMessage("severityError", success);
+                        displayStatusMessage("error", success);
                 },
                 error: function (xhr) {
-                    displayStatusMessage("severityError", "error: " + xhr.statusText);
+                    displayStatusMessage("error", "error: " + xhr.statusText);
                     alert("ArticleEdit PUT error: " + xhr.statusText);
                 }
             });
         } catch (e) {
-            displayStatusMessage("severityError", "ERROR"  + e);
+            displayStatusMessage("error", "ERROR"  + e);
         }
     }
 
@@ -175,18 +175,18 @@
                     }
                     else {
                       //  alert("result: " + result);
-                        displayStatusMessage("severityOk", "Saved");
+                        displayStatusMessage("ok", "Saved");
                         $('#btnSave').text("Update");
                     }
                 },
                 error: function (xhr) {
-                    displayStatusMessage("severityError", "error: " + xhr.statusText);
+                    displayStatusMessage("error", "error: " + xhr.statusText);
                     alert("postArticle error: " + xhr.statusText);
                 }
             });
         } catch (e) {
 
-            displayStatusMessage("severityError", "catch ERROR: "  + e);
+            displayStatusMessage("error", "catch ERROR: "  + e);
         }
     }
 
@@ -213,7 +213,7 @@
                 setTimeout(function () { adjust() }, 1000);
             },
             error: function (xhr, textStatus, error) {
-                displayStatusMessage("severityError", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                displayStatusMessage("error", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
                 alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
             }
         });
@@ -232,7 +232,7 @@
                 });
             },
             error: function (xhr, textStatus, error) {
-                displayStatusMessage("severityError", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                displayStatusMessage("error", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
                 alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
             }
         });
@@ -251,7 +251,7 @@
                 });
             },
             error: function (xhr, textStatus, error) {
-                displayStatusMessage("severityError", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                displayStatusMessage("error", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
                 alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
             }
         });

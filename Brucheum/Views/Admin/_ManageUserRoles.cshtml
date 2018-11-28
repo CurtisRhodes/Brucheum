@@ -94,7 +94,7 @@
                     }
                 });
             } catch (e) {
-                //displayStatusMessage("severityError", "catch ERROR: " +e);
+                //displayStatusMessage("error", "catch ERROR: " +e);
                 alert("catch: " + e);
             }
         }
@@ -154,7 +154,7 @@
                     },
                 });
             } catch (e) {
-                //displayStatusMessage("severityError", "catch ERROR: " +e);
+                //displayStatusMessage("error", "catch ERROR: " +e);
                 alert("catch: " + e);
             }
         }
@@ -201,7 +201,7 @@
                     },
                 });
             } catch (e) {
-                //displayStatusMessage("severityError", "catch ERROR: " +e);
+                //displayStatusMessage("error", "catch ERROR: " +e);
                 alert("catch: " + e);
             }
         }
@@ -214,21 +214,21 @@
                     //dataType: "Json",
                     success: function (success) {
                         if (success == "ok") {
-                            displayStatusMessage("severityOk", "User Role [" + roleName + "] added");
+                            displayStatusMessage("ok", "User Role [" + roleName + "] added");
                         }
                         else {
-                            displayStatusMessage("severityError", "ERROR: " + success);
+                            displayStatusMessage("error", "ERROR: " + success);
                             alert("addUserRole success not ok: " + success);
                         }
                     },
                     error: function (xhr) {
-                        displayStatusMessage("severityError", "error: " + xhr.statusText);
+                        displayStatusMessage("error", "error: " + xhr.statusText);
                         alert("addUserRole xhr error: " + xhr.statusText);
                     }
                 });
             }
             catch (e) {
-                //displayStatusMessage("severityError", "catch ERROR: " + e);
+                //displayStatusMessage("error", "catch ERROR: " + e);
                 alert("addUserRole error: " + e);
             }
         }
@@ -242,19 +242,19 @@
                     //data: objClassification,
                     success: function (success) {
                         if (success.toUpperCase() == "OK") {
-                            displayStatusMessage("severityOk", "Role [" + roleName + "] Removed");
+                            displayStatusMessage("ok", "Role [" + roleName + "] Removed");
                         }
                         else
-                            displayStatusMessage("severityError", "ERROR: " + success);
+                            displayStatusMessage("error", "ERROR: " + success);
                     },
                     error: function (xhr) {
-                        displayStatusMessage("severityError", "error: " + xhr.statusText);
+                        displayStatusMessage("error", "error: " + xhr.statusText);
                         alert("remove error: " + xhr.statusText);
                     }
                 });
             }
             catch (e) {
-                displayStatusMessage("severityError", "catch ERROR: " + e);
+                displayStatusMessage("error", "catch ERROR: " + e);
             }
         }
     </script>

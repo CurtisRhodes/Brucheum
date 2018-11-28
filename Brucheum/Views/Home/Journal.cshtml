@@ -3,29 +3,40 @@
 }
 
 <link href="~/Styles/JournalEditor.css" rel="stylesheet" />
+<script src="~/Scripts/GlobalFunctions.js"></script>
+<script src="~/Scripts/ResizeThreeColumnPage.js"></script>
 
-<h2>Journal</h2>
-<div id="divStatusMessage"></div>
-<div>
-    <button id="btnShowEditor">Add New Entry</button>
-</div>
-<div id="divBlogList"> </div>
 
-<div id="divEditor">
-    <div>Title: <input id="Title" title="put title here" /></div>
-    <textarea id="Content" cols="164" rows="20"></textarea>
-    <div>
-        <button id="btnSave">xxx</button>
-        <button id="btnDelete">Delete</button>
-        <button id="btnCancel">Cancel</button>
+<div class="threeColumnArray">
+    <div id="leftColumn"></div>
+    <div id="middleColumn">
+        <h2>Journal</h2>
+        <div id="divStatusMessage"></div>
+        <div>
+            <button id="btnShowEditor">Add New Entry</button>
+        </div>
+        <div id="divBlogList"> </div>
+
+        <div id="divEditor">
+            <div>Title: <input id="Title" title="put title here" /></div>
+            <textarea id="Content" cols="164" rows="20"></textarea>
+            <div>
+                <button id="btnSave">xxx</button>
+                <button id="btnDelete">Delete</button>
+                <button id="btnCancel">Cancel</button>
+            </div>
+            <input id="hiddenId" type="hidden" />
+        </div>
     </div>
-    <input id="hiddenId" type="hidden" />
+    <div id="rightColumn"></div>
 </div>
+
+
 <script>
     var service = '@ViewBag.Service';
 
     $(document).ready(function () {
-        get();
+        getJournal();
      });
 
     function put() {
@@ -41,15 +52,15 @@
                 dataType: "json",
                 data: blogEntry,
                 success: function () {
-                    displayStatusMessage("severityOk", "Saved");
+                    displayStatusMessage("ok", "Saved");
                 },
                 error: function (xhr) {
-                    displayStatusMessage("severityError", "error: " + xhr.statusText);
-                    alert("ajax error: " + xhr.statusText);
+                    displayStatusMessage("error", "error: " + xhr.statusText);
+                    alert("Journal PUT ajax error: " + xhr.statusText);
                 }
             });
         } catch (e) {
-            displayStatusMessage("severityError", "ERROR"  + e);
+            displayStatusMessage("Journal PUT catch: "  + e);
         }
     }
 
@@ -66,26 +77,27 @@
                 data: JournalEntry,
                 success: function (result) {
                     $('#hiddenId').val(result);
-                    displayStatusMessage("severityOk", "Saved");
+                    displayStatusMessage("ok", "Saved");
                     $('#btnSave').text("Update");
                 },
                 error: function (xhr) {
-                    displayStatusMessage("severityError", "error: " + xhr.statusText);
-                    alert("ajax error: " + xhr.statusText);
+                    displayStatusMessage("error", "error: " + xhr.statusText);
+                    alert("JournalPost error: " + xhr.statusText);
                 }
              });
         } catch (e) {
-            displayStatusMessage("severityError", "ERROR"  + e);
+            displayStatusMessage("JournalPost error: "  + e);
         }
     }
 
-    function get() {
+    function getJournal() {
         try {
+            //alert("service: " + service);
             $('#hiddenId').val(null);
             $.ajax({
-                url: service + "/api/Journal/",
                 type: "get",
-                success: function (list, textstatus, xhr) {
+                url: service + "/api/Journal/",
+                success: function (list) {
                     $('#divBlogList').html("<ul>");
                     $.each(list, function () {
                         $('#divBlogList').append("<li Id=" + this.Id + " >" + this.DateCreated + " - " + this.Title + "</li>");
@@ -96,12 +108,12 @@
                      });
                 },
                 error: function (xhr) {
-                    displayStatusMessage("severityError", "error: " + xhr.statusText);
-                    alert("ajax error: " + xhr.statusText);
+                    //displayStatusMessage("error", "error: " + getXHRErrorDetails(xhr));
+                    alert("getJournal ajax error: " + getXHRErrorDetails(xhr));
                 }
              });
         } catch (e) {
-            displayStatusMessage("severityError", "tERROR"  + e);
+            displayStatusMessage("getJournal catch error", "tERROR"  + e);
         }
     }
 
@@ -119,7 +131,7 @@
                 $('#btnDelete').show();
             },
             error: function (xhr, textStatus, error) {
-                displayStatusMessage("severityError", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                displayStatusMessage("error", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
                 alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
             }
          });
@@ -140,16 +152,16 @@
                     url: service + "/api/Journal/?Id=" + $('#hiddenId').val(),
                     type: "delete",
                     success: function (list, textstatus, xhr) {
-                        displayStatusMessage("severityOk", "entry deleted");
+                        displayStatusMessage("ok", "entry deleted");
                         ToggleBlogEdit();
                     },
                     error: function (xhr) {
-                        displayStatusMessage("severityError", "error: " + xhr.statusText);
-                        alert("ajax error: " + xhr.statusText);
+                        displayStatusMessage("error", "error: " + xhr.statusText);
+                        alert("Delete ajax error: " + xhr.statusText);
                     }
                  });
             } catch (e) {
-                displayStatusMessage("severityError", "tERROR"  + e);
+                displayStatusMessage("delete error", "tERROR"  + e);
             }
         }
      });
@@ -179,4 +191,3 @@
 
 
 </script>
-<script src="~/Scripts/ResizePage.js"></script>

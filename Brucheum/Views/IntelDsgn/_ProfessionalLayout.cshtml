@@ -53,14 +53,18 @@
 
                 @if (Request.IsAuthenticated)
                 {
-                    <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
+                    <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log 4Out</a></div>
                     <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
                 }
                 else
                 {
-                    <div class="menuTab floatRight"><a href="javascript:callRegisterPopup()">Register</a></div>
-                    <div class="menuTab floatRight"><a href="javascript:callLoginPopup()">Log In</a></div>
+                    <div class="menuTab floatRight"><a href="javascript:registerPlease()">Register</a></div>
+                    <div id="btnLayLogin" class="menuTab floatRight">
+                        <a href="javascript:loginPlease()">Log In</a>
+                        <img id="btnHeaderLoginSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
+                    </div>
                 }
+
             </div>
         </div>
         <div class="noFloat"></div>

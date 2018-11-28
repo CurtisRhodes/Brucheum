@@ -209,7 +209,7 @@
                 data: bookModel,
                 success: function (success) {
                     if (success === "ok") {
-                        displayStatusMessage("severityOk", bookModel.BookTitle + " updated");
+                        displayStatusMessage("ok", bookModel.BookTitle + " updated");
                     }
                     else
                         alert("updateBook: " + success);
@@ -235,7 +235,7 @@
                 data: chapterModel,
                 success: function (chapterId) {
                     chapterModel.Id = chapterId;
-                    displayStatusMessage("severityOk", chapterModel.ChapterTitle + " Added");
+                    displayStatusMessage("ok", chapterModel.ChapterTitle + " Added");
                     $('#btnAddUpdate').html("Update");
                     $('#btnNewCancel').html("New Chapter");
                     $("#btnContinue").show();
@@ -263,7 +263,7 @@
                 data: chapterModel,
                 success: function (success) {
                     if (success === "ok") {
-                        displayStatusMessage("severityOk", chapterModel.ChapterTitle + " updated");
+                        displayStatusMessage("ok", chapterModel.ChapterTitle + " updated");
                         getChapters();
                     }
                     else

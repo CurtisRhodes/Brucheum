@@ -199,7 +199,7 @@
                 data: sectionModel,
                 success: function (sectionId) {
                     sectionModel.Id = sectionId;
-                    displayStatusMessage("severityOk", sectionModel.SectionTitle + " Added");
+                    displayStatusMessage("ok", sectionModel.SectionTitle + " Added");
                     $('#btnAddUpdate').html("Update");
                     $('#btnNewCancel').html("New");
                     $("#btnContinue").show();
@@ -227,7 +227,7 @@
                 data: sectionModel,
                 success: function (success) {
                     if (success == "ok") {
-                        displayStatusMessage("severityOk", sectionModel.SectionTitle + " Updated");
+                        displayStatusMessage("ok", sectionModel.SectionTitle + " Updated");
                         $('#btnAddUpdate').html("Update");
                         $('#btnNewCancel').html("New");
                         loadSectionList();
@@ -312,7 +312,7 @@
                 data: subSectionModel,
                 success: function (subSectionId) {
                     subSectionModel.Id = subSectionId;
-                    displayStatusMessage("severityOk", subSectionModel.SubSectionTitle + " Added");
+                    displayStatusMessage("ok", subSectionModel.SubSectionTitle + " Added");
                     $('#btnAddUpdate').html("Update Subsection");
                     $('#btnNewCancel').html("New Subsection");
                     $("#btnContinue").html("Cancel Subsection").show();
@@ -339,7 +339,7 @@
                 data: subSectionModel,
                 success: function (success) {
                     if (success == "ok") {
-                        displayStatusMessage("severityOk", subSectionModel.SubSectionTitle + " Updated");
+                        displayStatusMessage("ok", subSectionModel.SubSectionTitle + " Updated");
                         $('#btnAddUpdate').html("Update Subsection");
                         $('#btnNewCancel').html("New Subsection");
                         $("#btnContinue").html("Cancel Subsection").show();

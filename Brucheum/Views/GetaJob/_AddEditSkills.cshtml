@@ -77,7 +77,7 @@
                     $('#btnSkillAddEdit').html("Edit");
                     $('#btnSkillNew').show();
                     skillModel.Id = success;
-                    displayStatusMessage("severityOk", "Job Added");
+                    displayStatusMessage("ok", "Job Added");
                     loadSkillsList();
                 }
                 else {
@@ -98,7 +98,7 @@
             success: function (success) {
                 if (success == "ok") {
                     $('#btnSkillAddEdit').val("Edit");
-                    displayStatusMessage("severityOk", "Skill Edited");
+                    displayStatusMessage("ok", "Skill Edited");
                     loadSkillsList();
                 }
                 else {
@@ -209,7 +209,7 @@
                 },
             });
         } catch (e) {
-            //displayStatusMessage("severityError", "catch ERROR: " + e);
+            //displayStatusMessage("error", "catch ERROR: " + e);
             alert("loadRefTypesDD catch: " + e);
         }
     }

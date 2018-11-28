@@ -13,7 +13,7 @@
         padding: 30px;
         border: 1px solid #e4e6e8;
         background: #fff;
-        z-index: 20;
+        z-index: 200;
     }
 
     #divButtonRow {
@@ -108,14 +108,14 @@
                         }
                     },
                     error: function (xhr) {
-                        displayStatusMessage("severityError", "error: " + xhr.statusText);
-                        alert("ajax error: " + xhr.statusText);
+                        displayStatusMessage("error", "error: " + xhr.statusText);
+                        alert("_ProfilePopup UpdateProfile error: " + xhr.statusText);
                     }
                 });
             }
         } catch (e) {
-            displayStatusMessage("severityError", "ERROR" + e);
-            alert("ajax catch error: " + xhr.statusText);
+            displayStatusMessage("_ProfilePopup catch error", "ERROR" + e);
+            alert("_ProfilePopup ajax catch error: " + xhr.statusText);
         }
     });
 

@@ -58,9 +58,6 @@
 <script>
     var service = '@ViewBag.Service';
     var tags = '@ViewBag.MetaTags';
-    var articleId = '@Model.Id'
-    var imageName = '@Model.ImageName';
-    var content = '@ViewBag.Contents';
     var summary = '@ViewBag.Summary';
     var title = '@Model.Title';
     var userId = '@ViewBag.UserId';
@@ -68,33 +65,16 @@
     var filePath = '@ViewBag.FilePath';
     var ipAddress = '@ViewBag.IpAddress';
 
+    //    var content; // = 'ViewBag.Contents';
+    var imageName; // = '@Model.ImageName';
+    var articleId;  // = '@Model.Id'
     $(document).ready(function () {
         try {
-            if (imageName !== "") {
-                $('#articleImage').attr("src", service + "/App_Data/Images/" + imageName);
-            }
-            content = beautify(content);
 
-            //alert("$('#middleColumn').height(): " + $('#middleColumn').height());
-
-            $('#divContent').html(content);
-
-            var mch = $('#middleColumn').height()
-            $('#middleColumn').height(mch + $('#divContent').height());
-
-            //alert("$('#middleColumn').height(): " + $('#middleColumn').height());
+            loadArticle();
 
 
-            logPageHit(service, userName, ipAddress, "ViewArticle", title);
 
-
-            //stickCommentsButton();
-
-            //var hdr = $('.Header').height();
-            //var mch = $('#middleColumn').height()
-            //var cch = $('#divCommentsBody').height()
-            //$('#middleColumn').height(hdr + mch + cch);
-            resizePage();
         }
         catch (e) {
             alert("$(document).ready ERROR: " + e);
@@ -107,7 +87,33 @@
             type:"GET",
             url: service + "api/ArticleXml?Id=",
             success: function (article) {
-                article.
+                articleId = article.Id;
+                if (imageName !== "") {
+                    $('#articleImage').attr("src", service + "/App_Data/Images/" + imageName);
+                }
+
+
+                //content = beautify(article.Contents);
+                //alert("$('#middleColumn').height(): " + $('#middleColumn').height());
+                $('#divContent').html(beautify(article.Contents));
+
+                var mch = $('#middleColumn').height()
+                $('#middleColumn').height(mch + $('#divContent').height());
+                //alert("$('#middleColumn').height(): " + $('#middleColumn').height());
+
+
+                logPageHit(service, userName, ipAddress, "ViewArticle", title);
+
+
+                //stickCommentsButton();
+
+                //var hdr = $('.Header').height();
+                //var mch = $('#middleColumn').height()
+                //var cch = $('#divCommentsBody').height()
+                //$('#middleColumn').height(hdr + mch + cch);
+                resizePage();
+
+
             }
         })
         

@@ -1,10 +1,29 @@
-﻿function displayStatusMessage(severity, message) {
+﻿function displayStatusMessage(msgCode, message) {
+
+    var severityClassName;
+    switch (msgCode) {
+        case "ok":
+            severityClassName = "severityOk";
+            break;
+        case "warning":
+            severityClassName = "severityWarning";
+            break;
+        case "error":
+            severityClassName = "severityError";
+            break;
+        default:
+            severityClassName = msgCode;
+    }
+//.severityOk {background - color: rgba(88, 139, 108, 0.75);    }
+//.severityWarning {        background - color: #e6de3b;    }
+//.severityError {        background - color: #c64e4e;    }
+
 	$('#divStatusMessage').removeClass();
-	$('#divStatusMessage').addClass(severity);
+    $('#divStatusMessage').addClass(severityClassName);
 	$('#divStatusMessage').html(message);
 	$('#divStatusMessage').show();
 
-    if (severity === "severityOk") {
+    if (msgCode === "ok") {
 		setTimeout(function () { $('#divStatusMessage').hide("slow"); }, 2500);
 	}
 	else {
@@ -95,6 +114,9 @@ function logoutPlease() {
 }
 
 function sendEmailFromJS(msg, body) {
+
+    //alert("sendEmailFromJS 1");
+
     try {
         var sendObj = new Object();
         sendObj.Subject = msg;
@@ -105,20 +127,21 @@ function sendEmailFromJS(msg, body) {
         $.ajax({
             type: "POST",
             url: "https://api.curtisrhodes.com/Api/Email/Send",
+            //url: "http://localhost:40395/Api/Email/Send",
             data: sendObj,
             async: false,
             success: function (emailSuccess) {
-                rtn = emailSuccess;
-                if (rtn === "ok") {
+                if (emailSuccess === "ok") {
                     //alert("Email says: " + sendObj.Subject);
-                    //displayStatusMessage("severityOk", "email sent");
+                    displayStatusMessage("ok", "email sent " + sendObj.Subject);
                 }
                 else
-                    alert("Email Fail: " + rtn);
+                    alert("Email Fail: " + emailSuccess);
+                rtn = emailSuccess;
             },
             error: function (xhr) {
                 rtn = xhr.statusText;
-                //displayStatusMessage("severityError", "error: " + xhr.statusText);
+                //displayStatusMessage("error", "error: " + xhr.statusText);
                 alert("sendEmailFromJS error: " + rtn);
             }
         });
@@ -130,22 +153,30 @@ function sendEmailFromJS(msg, body) {
 }
 
 function logPageHit(service, userName, ipAddress, page, details) {
+    try {
+
     $.ajax({
         type: "GET",
         url: service + "/api/HitCounter/AddPageHit?ipAddress=" + ipAddress + "&app=Brucheum&page=" + page + "&details=" + details,
         success: function (success) {
             if (!success.startsWith("ERROR")) {
-                sendEmailFromJS("Page Hit", userName + " visited " + page + " " + details);
-                //displayStatusMessage("severityOK", "email sent");
+                sendEmailFromJS("Page Hit", ipAddress + " visited " + page + " " + details);
+
+
+                displayStatusMessage("ok", "email sent");
             }
             else
-                alert("Page Hit Fail: " + success);
+                alert("logPageHit Fail: " + success);
         },
         error: function (xhr) {
-            //displayStatusMessage("severityError", "error: " + xhr.statusText);
+            //displayStatusMessage("error", "error: " + xhr.statusText);
             alert("Page Hit XHR error: " + xhr.statusText);
         }
     });
+    } catch (e) {
+        alert("logPageHit CATCH error: " + e);
+
+    }
 }
 
 function beautify(stankyString) {
@@ -171,7 +202,7 @@ function formatDate(date) {
     return date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear(); // + "  " + strTime;
 }
 
-function getXHRErrorDetails(jqXHR, exception) {
+function getXHRErrorDetails(jqXHR) {
     var msg = '';
     if (jqXHR.status === 0) {
         msg = 'Not connect.\n Verify Network.';
@@ -179,11 +210,12 @@ function getXHRErrorDetails(jqXHR, exception) {
         msg = 'Requested page not found. [404]';
     } else if (jqXHR.status === 500) {
         msg = 'Internal Server Error [500].';
-    } else if (exception === 'parsererror') {
+
+    } else if (jqXHR.responseText === 'parsererror') {
         msg = 'Requested JSON parse failed.';
-    } else if (exception === 'timeout') {
+    } else if (jqXHR.responseText === 'timeout') {
         msg = 'Time out error.';
-    } else if (exception === 'abort') {
+    } else if (jqXHR.responseText === 'abort') {
         msg = 'Ajax request aborted.';
     } else {
         msg = 'Uncaught Error.\n' + jqXHR.responseText;

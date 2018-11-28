@@ -44,7 +44,7 @@
                     <div class="menuTab floatRight"><a href="javascript:registerPlease()">Register</a></div>
                     <div id="btnLayLogin" class="menuTab floatRight">
                         <a href="javascript:loginPlease()">Log In</a>
-                        <img id="btnHeaderLoginSpinner" class="spinnerImage" src="~/Images/loader.gif" />
+                        <img id="btnHeaderLoginSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
                     </div>
                 }
             </div>
@@ -66,7 +66,7 @@
     </div>
     @Html.Partial("_bFooter")
     <div id="modalContainer" class="modalVail">
-        <div id="modalContent"></div>
+        <div id="modalContent" class="modalContentStyle"></div>
     </div>
     @RenderSection("scripts", required: false)
     <script>resizePage();</script>

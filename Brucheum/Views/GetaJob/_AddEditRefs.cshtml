@@ -75,7 +75,7 @@
                 },
             });
         } catch (e) {
-            //displayStatusMessage("severityError", "catch ERROR: " + e);
+            //displayStatusMessage("error", "catch ERROR: " + e);
             alert("loadRefTypesDD catch: " + e);
         }
     }
@@ -106,7 +106,7 @@
                 },
             });
         } catch (e) {
-            //displayStatusMessage("severityError", "catch ERROR: " +e);
+            //displayStatusMessage("error", "catch ERROR: " +e);
             alert("GetRefs catch: " + e);
         }
     }
@@ -122,7 +122,7 @@
                 data: refModel,
                 success: function (result) {
                     if (result.Success.toUpperCase() == "OK") {
-                        displayStatusMessage("severityOk", $('#txtRefName').val() + " Added");
+                        displayStatusMessage("ok", $('#txtRefName').val() + " Added");
                         $('#txtRefName').val("");
                         $('#btnAddUpdateRef').text("Add");
                         $('#btnRefToggle').hide();
@@ -130,11 +130,11 @@
                     }
                     else {
                         alert("Post ref error :" + result.Success);
-                        //displayStatusMessage("severityError", "xhr ERROR: " + success);
+                        //displayStatusMessage("error", "xhr ERROR: " + success);
                     }
                 },
                 error: function (jqXHR, exception) {
-                    //displayStatusMessage("severityError", "AddRole error: " + getXHRErrorDetails(jqXHR, exception));
+                    //displayStatusMessage("error", "AddRole error: " + getXHRErrorDetails(jqXHR, exception));
                     alert("Post ref xhr error: " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
@@ -153,23 +153,23 @@
                 data: refModel,
                 success: function (success) {
                     if (success === "ok") {
-                        displayStatusMessage("severityOk", $('#txtRefName').val() + "Updated");
+                        displayStatusMessage("ok", $('#txtRefName').val() + "Updated");
                         $('#txtRefName').val("");
                         $('#btnAddUpdateRef').text("Add");
                         $('#btnRefToggle').hide();
                         getRefs(selectedRefType);
                     }
                     else
-                        displayStatusMessage("severityError", "server ERROR: " + success);
+                        displayStatusMessage("error", "server ERROR: " + success);
                 },
                 error: function (xhr) {
-                    displayStatusMessage("severityError", "error: " + xhr.statusText);
+                    displayStatusMessage("error", "error: " + xhr.statusText);
                     //alert("Admin Refs PUT error: " + xhr.statusText);
                 }
             });
         }
         catch (e) {
-            displayStatusMessage("severityError", "catch ERROR: " + e);
+            displayStatusMessage("error", "catch ERROR: " + e);
         }
     }
 

@@ -121,7 +121,7 @@
                     $('#btnArticleAddEdit').html("Update");
                     $('#btnArticleNew').show();
                     getArticleList();
-                    displayStatusMessage("severityOk", "article added");
+                    displayStatusMessage("ok", "article added");
                 }
                 else {
                     alert("addEditArticle: " + response)
@@ -147,7 +147,7 @@
                     $('#btnArticleAddEdit').html("Update");
                     $('#btnArticleNew').show();
                     getArticleList();
-                    displayStatusMessage("severityOk", "article Edited");
+                    displayStatusMessage("ok", "article Edited");
                 }
                 else {
                     alert("Edit aArticle: " + success)
@@ -202,7 +202,7 @@
                 },
             });
         } catch (e) {
-            //displayStatusMessage("severityError", "catch ERROR: " + e);
+            //displayStatusMessage("error", "catch ERROR: " + e);
             alert("loadRefTypesDD catch: " + e);
         }
     }

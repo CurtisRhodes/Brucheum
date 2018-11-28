@@ -62,7 +62,7 @@
                 },
             });
         } catch (e) {
-            //displayStatusMessage("severityError", "catch ERROR: " +e);
+            //displayStatusMessage("error", "catch ERROR: " +e);
             alert("getAllRoles catch: " +e);
         }
     }
@@ -78,17 +78,17 @@
                     if (success== "ok") {
                         $('#txtRoleName').val("");
                         $('#btnAddUpdateRole').text("Add");
-                        displayStatusMessage("severityOk", "Saved");
+                        displayStatusMessage("ok", "Saved");
                         getAllRoles();
                         $('#btnRoleToggle').hide();
                     }
                     else {
                         alert("success :" + success);
-                        //displayStatusMessage("severityError", "xhr ERROR: " + success);
+                        //displayStatusMessage("error", "xhr ERROR: " + success);
                     }
                 },
                 error: function (jqXHR, exception) {
-                    //displayStatusMessage("severityError", "AddRole error: " + getXHRErrorDetails(jqXHR, exception));
+                    //displayStatusMessage("error", "AddRole error: " + getXHRErrorDetails(jqXHR, exception));
                     alert("AddRole error: " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
@@ -109,21 +109,21 @@
                     if (success === "ok") {
                         $('#txtRoleName').val("");
                         $('#btnAddUpdateRole').text("Add");
-                        displayStatusMessage("severityOk", "Updated");
+                        displayStatusMessage("ok", "Updated");
                         getAllRoles();
                         $('#btnRoleToggle').hide();
                     }
                     else
-                        displayStatusMessage("severityError", "server ERROR: " + success);
+                        displayStatusMessage("error", "server ERROR: " + success);
                 },
                 error: function (xhr) {
-                    displayStatusMessage("severityError", "error: " + xhr.statusText);
+                    displayStatusMessage("error", "error: " + xhr.statusText);
                     //alert("Admin Refs PUT error: " + xhr.statusText);
                 }
             });
         }
         catch (e) {
-            displayStatusMessage("severityError", "catch ERROR: " +e);
+            displayStatusMessage("error", "catch ERROR: " +e);
         }
     }
 

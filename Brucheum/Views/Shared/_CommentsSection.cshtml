@@ -215,7 +215,7 @@
             });
         } catch (e) {
             alert("getComments: " + e);
-            displayStatusMessage("severityError", "catch ERROR: " + e);
+            displayStatusMessage("error", "catch ERROR: " + e);
         }
     };
 
@@ -235,17 +235,17 @@
                     $('#btnSubmit').html("Update");
                     $('#btnNew').show();
 
-                    displayStatusMessage("severityOk", "comment posted");
+                    displayStatusMessage("ok", "comment posted");
                     getComments();
 
                 }
                 else {
                     alert("POST ajax return error: " + response.success);
-                    //displayStatusMessage("severityError", "xhr ERROR: " + Success);
+                    //displayStatusMessage("error", "xhr ERROR: " + Success);
                 }
             },
             error: function (xhr) {
-                //displayStatusMessage("severityError", "error: " + xhr.statusText);
+                //displayStatusMessage("error", "error: " + xhr.statusText);
                 alert("post error: " + xhr.statusText);
             }
         });
@@ -262,18 +262,18 @@
             data: comment,
             success: function (success) {
                 if (success == "ok") {
-                    displayStatusMessage("severityOk", "comment edited");
+                    displayStatusMessage("ok", "comment edited");
                     //$('#btnSubmit').val("Update");
                     getComments();
                 }
                 else {
                     alert("PUT ajax return error: " + success);
-                    //displayStatusMessage("severityError", "xhr ERROR: " + success);
+                    //displayStatusMessage("error", "xhr ERROR: " + success);
                 }
             },
             error: function (xhr, textStatus, error) {
-                //displayStatusMessage("severityError", "error: " + xhr.statusText);
-                alert("PUT ajax error: " + xhr.statusText);
+                //displayStatusMessage("error", "error: " + xhr.statusText);
+                alert("updateComment PUT ajax error: " + xhr.statusText);
             }
         });
     }

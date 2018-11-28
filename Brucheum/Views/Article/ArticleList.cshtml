@@ -99,17 +99,17 @@
                 error: function (xmlhttprequest, textstatus, message) {
                     $('#loadingGif').hide();
                     if (textstatus === "timeout") {
-                        displayStatusMessage("severityError", "Server Timeout");
+                        displayStatusMessage("error", "Server Timeout");
                         alert("Sorry. Server timeout. \n This webside is down.     ");
                     }
                     else {
-                        displayStatusMessage("severityError", "status: " + textstatus + "   text: [" + textstatus + "]   error: " + message);
+                        displayStatusMessage("error", "status: " + textstatus + "   text: [" + textstatus + "]   error: " + message);
                         alert("getArticleList ERROR: [" + xmlhttprequest.status + "]  textstatus: [" + xmlhttprequest.textstatus + "]   message: " + message);
                     }
                 }
             });
         } catch (e) {
-            displayStatusMessage("severityError", "tERROR" + e);
+            displayStatusMessage("error", "tERROR" + e);
             alert("getArticleList catch: " + e);
         }
     }
