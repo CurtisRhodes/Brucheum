@@ -111,7 +111,7 @@
                         $('#btnSkillAddEdit').html("Edit");
                         $('#btnSkillNew').show();
                         sectionModel.Id = success;
-                        displayStatusMessage("severityOk", "section added");
+                        displayStatusMessage("ok", "section added");
                         loadSectionsList();
                     }
                     else {
@@ -135,7 +135,7 @@
             success: function (success) {
                 if (success == "ok") {
                     $('#btnSkillAddEdit').val("Edit");
-                    displayStatusMessage("severityOk", "Skill Edited");
+                    displayStatusMessage("ok", "Skill Edited");
                     loadSectionsList();
                 }
                 else {

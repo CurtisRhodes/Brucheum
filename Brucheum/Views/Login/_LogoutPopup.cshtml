@@ -36,7 +36,7 @@
                 clearModal();
             },
             error: function (xhr, textStatus, error) {
-                displayStatusMessage("severityError", "status: " + textStatus + " text: " + xhr.statusText + " error: " + error);
+                displayStatusMessage("error", "status: " + textStatus + " text: " + xhr.statusText + " error: " + error);
                 alert("btnUpdateUserInfo: " + textStatus + " text: " + xhr.statusText + " error: " + error);
             }
         });

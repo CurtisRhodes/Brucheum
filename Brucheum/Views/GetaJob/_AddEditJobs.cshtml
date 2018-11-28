@@ -139,7 +139,7 @@
             success: function (success) {
                 if (!success.startsWith("ERROR")) {
                     jobModel.Id = success;
-                    displayStatusMessage("severityOk", "Job Added");
+                    displayStatusMessage("ok", "Job Added");
                     $('#btnJobAddEdit').html("Update");
                     $('#btnJobNew').show();
                     getLostJobs();
@@ -163,7 +163,7 @@
             data: jobModel,
             success: function (success) {
                 if (success == "ok") {
-                    displayStatusMessage("severityOk", "Job Edited");
+                    displayStatusMessage("ok", "Job Edited");
                     getLostJobs();
                     $('#editorLoadingGif').hide();
                 }

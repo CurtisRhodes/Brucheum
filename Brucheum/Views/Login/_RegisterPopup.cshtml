@@ -41,9 +41,9 @@
             <input id="ckRememberMe" type="checkbox" checked="checked" />Remember Me ?  (<span>uses a cookie</span>)
         </div>
 
-        <div id="divShowDetails">
+        <div id="divShowDetails" style="margin: 11px 0;">
             Extra Details
-            <div class="divCloseButton">
+            <div class="caretImgContainer">
                 <img id="upDownCaret" class="carets" src="~/Images/downCaret.png" />
             </div>
         </div>
@@ -58,11 +58,11 @@
             <label>Phone Number</label><br />
             <input id="txtPhone" type="tel" class="roundedInput"><br>
             @*<label>Pin </label><br />
-                <input id="txtPin" type="text" class="roundedInput" placeholder="you may use this to login"><br>*@
+            <input id="txtPin" type="text" class="roundedInput" placeholder="you may use this to login"><br>*@
         </div>
-
-        <button class="roundendButton" id="btnRegister">
-            <img id="btnRegisterSpinnerImage" class="spinnerImage" src="~/Images/loader.gif" />
+        
+        <button id="btnRegister" class="roundendButton" onclick="javascript:register()">
+            <img id="btnRegisterSpinnerImage" class="btnSpinnerImage" src="~/Images/loader.gif" />
             Register
         </button>
 
@@ -71,34 +71,67 @@
 </div>
 
 <script>
+
+    function xxxRegister() {
+        $.ajax({
+            type: "POST",
+            url: service + "/api/GAJRef",
+            dataType: "Json",
+            data: refModel,
+            success: function (result) {
+                if (result.Success.toUpperCase() == "OK") {
+                    displayStatusMessage("ok", $('#txtRefName').val() + " Added");
+                    $('#txtRefName').val("");
+                    $('#btnAddUpdateRef').text("Add");
+                    $('#btnRefToggle').hide();
+                    getRefs(selectedRefType);
+                }
+                else {
+                    alert("Post ref error :" + result.Success);
+                    //displayStatusMessage("error", "xhr ERROR: " + success);
+                }
+            },
+            error: function (jqXHR, exception) {
+                //displayStatusMessage("error", "AddRole error: " + getXHRErrorDetails(jqXHR, exception));
+                alert("Post ref xhr error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
     $(document).ready(function () {
         $('#btnRegisterSpinnerImage').hide();
+        $('.carouselContainer').css("z-index", "0");
+        $('.carouselLabel').css("z-index", "0");
     });
 
-    $('#btnRegister').click(function () {
+    function register() {
         try {
-            $('#btnRegisterSpinnerImage').show();
-            if ($('#btnRegister').html() == "Register") {
-                if (validate()) {
-                    $('#btnRegister').html("wait");
+            if (validate()) {
+                // alert("/Login/RegisterAndLogin 1")
+                $('#btnRegister').html("wait");
+                $('#btnRegisterSpinnerImage').show();
 
-                    var regVM = new Object();
-                    regVM.UserName = $('#txtUserName').val();
-                    regVM.Password = $('#txtPassword').val();
-                    regVM.ConfirmPassword = $('#txtConfirmPassword').val();
-                    regVM.Email = $('#txtEmail').val();
-                    regVM.FirstName = $('#txtFirstName').val();
-                    regVM.LastName = $('#txtLastName').val();
-                    regVM.Phone = $('#txtPhone').val();
-                    regVM.RememberMe = $('#ckRememberMe').prop('checked');
+                var regVM = new Object();
+                regVM.UserName = $('#txtUserName').val();
+                regVM.Password = $('#txtPassword').val();
+                regVM.ConfirmPassword = $('#txtConfirmPassword').val();
+                regVM.Email = $('#txtEmail').val();
+                regVM.FirstName = $('#txtFirstName').val();
+                regVM.LastName = $('#txtLastName').val();
+                regVM.Phone = $('#txtPhone').val();
+                regVM.RememberMe = $('#ckRememberMe').prop('checked');
+
+                if (sendEmailFromJS("CONGRATULATIONS: " + regVM.UserName + " just Registered onto The Brucheum", "someday it will be someone other than you") == "ok") {
                     $.ajax({
                         type: "POST",
                         url: "/Login/RegisterAndLogin",
                         data: regVM,
                         datatype: "json",
                         success: function (success) {
+                            //alert("/Login/RegisterAndLogin 2: " + success);
                             if (success === "ok") {
-                                sendEmailFromJS("CONGRATULATIONS: " + regVM.UserName + " just Registered onto The Brucheum", "someday it will be someone other than you");
+                                $('.carouselContainer').css("z-index", "7");
+                                $('.carouselLabel').css("z-index", "11");
                                 location.reload(true);
                             }
                             else {
@@ -110,7 +143,7 @@
                         },
                         error: function (xhr) {
                             $('#btnRegisterSpinnerImage').hide();
-                            displayStatusMessage("severityError", "error: " + xhr.statusText);
+                            displayStatusMessage("error", "error: " + xhr.statusText);
                             alert("Register  error: " + xhr.statusText);
                         }
                     });
@@ -120,12 +153,10 @@
             $('#btnRegisterSpinnerImage').hide();
             alert("Register Catch: " + e);
         }
-    });
+    }
 
     function validate() {
-
         $('#errSummary').hide();
-
 
         if ($('#txtUserName').val() === "") {
             $('#errUserName').show();
@@ -166,6 +197,8 @@
     });
 
     $('#btnClose').click(function () {
+        $('.carouselContainer').css("z-index", "7");
+        $('.carouselLabel').css("z-index", "11");
         clearModal();
     });
 

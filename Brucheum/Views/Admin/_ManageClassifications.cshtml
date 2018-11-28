@@ -50,12 +50,12 @@
                         $('#ArticleClassLoading').hide();
                     },
                     error: function (xhr) {
-                        //displayStatusMessage("severityError", "error: " + xhr.statusText);
+                        //displayStatusMessage("error", "error: " + xhr.statusText);
                         alert("GetArticleClasses error: " + xhr.statusText);
                     }
                 });
             } catch (e) {
-                displayStatusMessage("severityError", "catch ERROR: " + e);
+                displayStatusMessage("error", "catch ERROR: " + e);
             }
         }
 
@@ -72,20 +72,20 @@
                         if (result.Success === "ok") {
                             $('#txtDescription').val("");
                             $('#btnAddEditArticleClass').text("Add");
-                            displayStatusMessage("severityOk", "Saved");
+                            displayStatusMessage("ok", "Saved");
                             GetArticleClasses();
                         }
                         else
-                            displayStatusMessage("severityError", "xhr ERROR: " + result.Success);
+                            displayStatusMessage("error", "xhr ERROR: " + result.Success);
                     },
                     error: function (xhr) {
-                        displayStatusMessage("severityError", "error: " + xhr.statusText);
+                        displayStatusMessage("error", "error: " + xhr.statusText);
                         alert("Admin Refs Post error: " + xhr.statusText);
                     }
                 });
             }
             catch (e) {
-                displayStatusMessage("severityError", "catch ERROR: " + e);
+                displayStatusMessage("error", "catch ERROR: " + e);
             }
         }
 
@@ -99,20 +99,20 @@
                     data: objClassification,
                     success: function (success) {
                         if (success === "ok") {
-                            displayStatusMessage("severityOk", "Saved");
+                            displayStatusMessage("ok", "Saved");
                             GetArticleClasses();
                         }
                         else
-                            displayStatusMessage("severityError", "server ERROR: " + success);
+                            displayStatusMessage("error", "server ERROR: " + success);
                     },
                     error: function (xhr) {
-                        displayStatusMessage("severityError", "error: " + xhr.statusText);
+                        displayStatusMessage("error", "error: " + xhr.statusText);
                         alert("Admin Refs PUT error: " + xhr.statusText);
                     }
                 });
             }
             catch (e) {
-                displayStatusMessage("severityError", "catch ERROR: " + e);
+                displayStatusMessage("error", "catch ERROR: " + e);
             }
         }
 

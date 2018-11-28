@@ -130,13 +130,13 @@
                         $('#btnSave').text("Update");
                     }
                     else {
-                        displayStatusMessage("severityError", response.success);
+                        displayStatusMessage("error", response.success);
                         alert("request.responseText: " + response.success);
 
                     }
                 },
                 error: function (request, status, error) {
-                    displayStatusMessage("severityError", request.responseText);
+                    displayStatusMessage("error", request.responseText);
                     alert("request.responseText: " + request.responseText);
                 }
             });
@@ -162,20 +162,20 @@
                         $('#btnNew').show();
                         $('#btnNewSection').show();
                         $('#btnNewSubSection').show();
-                        displayStatusMessage("severityOk", "Saved");
+                        displayStatusMessage("ok", "Saved");
                     }
                     else {
-                        displayStatusMessage("severityError", "server ERROR: " + result.success);
+                        displayStatusMessage("error", "server ERROR: " + result.success);
                         alert("server ERROR: " + result.success);
                     }
                 },
                 error: function (xhr) {
-                    displayStatusMessage("severityError", "error: " + xhr.statusText);
+                    displayStatusMessage("error", "error: " + xhr.statusText);
                     alert("Post book error: " + xhr.statusText);
                 }
              });
         } catch (e) {
-            displayStatusMessage("severityError", "catch ERROR: "  + e);
+            displayStatusMessage("error", "catch ERROR: "  + e);
             alert("catch ERROR: "  + e);
         }
     }
@@ -192,23 +192,23 @@
                     if (result.success === "ok") {
                         article.SubSectionId = result.SubSectionId;
                         article.SectionId = result.SectionId;
-                        displayStatusMessage("severityOk", "Saved");
+                        displayStatusMessage("ok", "Saved");
                         $('#btnSave').text("Update");
                         $('#btnNew').show();
                         $('#btnNewSection').show();
                         $('#btnNewSubSection').show();
                     }
                     else {
-                        displayStatusMessage("severityError", result.success);
+                        displayStatusMessage("error", result.success);
                     }
                 },
                 error: function (xhr) {
-                    displayStatusMessage("severityError", "error: " + xhr.statusText);
+                    displayStatusMessage("error", "error: " + xhr.statusText);
                     alert("Write PUT error: " + xhr.statusText);
                 }
             });
         } catch (e) {
-            displayStatusMessage("severityError", "ERROR"  + e);
+            displayStatusMessage("error", "ERROR"  + e);
         }
     }
 
@@ -263,7 +263,7 @@
                 $('#modalContainer').show();
             },
             error: function (xhr, textStatus, error) {
-                displayStatusMessage("severityError", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                displayStatusMessage("error", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
                 alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
             }
         });
@@ -283,16 +283,16 @@
                     url: webApiURL + "?Id=" + $('#hiddenId').val(),
                     type: "delete",
                     success: function (list, textstatus, xhr) {
-                        displayStatusMessage("severityOk", "entry deleted");
+                        displayStatusMessage("ok", "entry deleted");
                         window.location = "ArticleList";
                     },
                     error: function (xhr) {
-                        displayStatusMessage("severityError", "error: " + xhr.statusText);
+                        displayStatusMessage("error", "error: " + xhr.statusText);
                         alert("delete write error: " + xhr.statusText);
                     }
                  });
             } catch (e) {
-                displayStatusMessage("severityError", "tERROR"  + e);
+                displayStatusMessage("error", "tERROR"  + e);
             }
         }
      });

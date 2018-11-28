@@ -17,7 +17,7 @@ function postImage(service, fileName) {
                 cache: false,
                 data: image,
                 success: function (data) {
-                    //displayStatusMessage("severityOk", data + " Image Uploaded");
+                    //displayStatusMessage("ok", data + " Image Uploaded");
                     //$('#bImage').attr("src", URL.createObjectURL(image));
                     //$('#hiddenImageName').val(data);
                     //alert("data: " + data);

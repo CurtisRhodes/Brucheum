@@ -101,7 +101,7 @@
         <input id="clearPassword" type="password" class="roundedInput" autocomplete="off" placeholder="********"><br>
 
         <button id="btnLoginPopupLogin" class="roundendButton" onclick="postLogin()">
-            <img id="btnLoginSpinnerImage" class="spinnerImage" src="~/Images/loader.gif" />
+            <img id="btnLoginSpinnerImage" class="btnSpinnerImage" src="~/Images/loader.gif" />
             Log in
         </button>
         
@@ -197,7 +197,7 @@
                         },
                         error: function (xhr) {
                             $('#btnLoginSpinnerImage').hide();
-                            //displayStatusMessage("severityError", "error: " + xhr.statusText);
+                            //displayStatusMessage("error", "error: " + xhr.statusText);
                             alert("_LoginPopup xhr error: " + xhr.statusText);
                         }
                     });
@@ -272,7 +272,7 @@
                                 $('#errSummary').html("xhr " + xhr.statusText);
                                 $('#errSummary').show();
 
-                                //displayStatusMessage("severityError", "error: " + xhr.statusText);
+                                //displayStatusMessage("error", "error: " + xhr.statusText);
                                 //alert("updateSiteUser error: " + xhr.statusText);
                             }
                         });

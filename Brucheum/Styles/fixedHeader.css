@@ -8,6 +8,10 @@
     display: flex;
     z-index: 1000;
 }
+.modalContentStyle {
+    z-index: 15;
+}
+
 .bannerImageContainer {
     float: left;
     padding-top: 2px;

@@ -68,6 +68,7 @@ namespace Brucheum
         {
             return PartialView("_RegisterPopup");
         }
+
         [HttpPost]
         public async Task<JsonResult> RegisterAndLogin(RegisterViewModel regVM)
         {

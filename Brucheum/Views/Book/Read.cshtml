@@ -217,7 +217,7 @@
                 $('#modalContainer').show();
             },
             error: function (xhr, textStatus, error) {
-                displayStatusMessage("severityError", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
+                displayStatusMessage("error", "status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
                 alert("status: " + textStatus + "text: " + xhr.statusText + "error: " + error);
             }
         });
@@ -267,7 +267,7 @@
                     }
                 },
                 error: function (xhr) {
-                    displayStatusMessage("severityError", "error: " + xhr.statusText);
+                    displayStatusMessage("error", "error: " + xhr.statusText);
                     alert("construct single document error: " + xhr.statusText);
                 }
             });
@@ -356,7 +356,7 @@
 
                 },
                 error: function (xhr) {
-                    displayStatusMessage("severityError", "error: " + xhr.statusText);
+                    displayStatusMessage("error", "error: " + xhr.statusText);
                     alert("Construct Chapters error: " + xhr.statusText);
                 }
             });

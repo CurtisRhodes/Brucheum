@@ -43,7 +43,7 @@
                 },
                 error: function (xhr) {
                     $('#loadingGif').hide();
-                    //displayStatusMessage("severityError", "error: " + xhr.statusText);
+                    //displayStatusMessage("error", "error: " + xhr.statusText);
                     alert("Load Db error: " + xhr.responseText);
                 }
             });
