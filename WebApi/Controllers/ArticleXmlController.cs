@@ -12,7 +12,7 @@ using WebApi.Models;
 namespace WebApi
 {
     [EnableCors("*", "*", "*")]
-    public class ArticleController : ApiController
+    public class ArticleXmlController : ApiController
     {
         readonly string fileName = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Articles.xml");
 

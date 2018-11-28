@@ -72,6 +72,15 @@ namespace Brucheum
             return View(article);
         }
 
+        public ActionResult ArticleView(string Id)
+        {
+            ViewBag.IpAddress = Helpers.GetIPAddress();
+            ViewBag.Service = apiService;
+            ViewBag.UserId = User.Identity.GetUserId();  //   Session["UserId"];
+            ViewBag.UserName = User.Identity.GetUserName();  //    Session["UserName"];
+            return View();
+        }
+
         public ActionResult HtmlPage(string page)
         {
             string filePath = System.Web.HttpContext.Current.Server.MapPath("~/Static_Pages");
@@ -88,41 +97,17 @@ namespace Brucheum
             return View();
         }
 
-        //private JsonResult GetArticleCategories() //  Dictionary<string, string>
-        //{
-        //    var articleCategories = new Dictionary<string, string>();
-        //    HttpClient client = new HttpClient();
-        //    client.BaseAddress = new Uri(apiService);
-        //    //HttpContent content = new StringContent(ToString());
-
-
-        //    using (var response = client.GetAsync("api/ref?refType=CAT").Result)
-        //    {
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            string scat = response.Content.ReadAsStringAsync().Result;
-        //            scat = scat.Replace("[", "").Replace("]", "").Replace('"', ' ');  // I don't like this
-        //            foreach (string cat in cats)
-        //            {
-        //                articleCategories.Add(cat[0], cat[1]);
-        //            }
-        //        }
-        //    }
-        //    return articleCategories;
+        //public class HtmlModel {
+        //    public string html { get; set; }
         //}
 
-        public class HtmlModel {
-            public string html { get; set; }
-        }
-
         [HttpPost]
-        public JsonResult CreateStaticFile(HtmlModel model)
+        public JsonResult CreateStaticFile(string html)
         {
             string success = "";
             try
             {
                 string filePath = Server.MapPath("~/Static_Pages");
-                string html = model.html;
                 //string html = Request.     .RequestContext.HttpContext.CurrentHandler.   .Content.ReadAsStringAsync().Result;
                 string fileName = html.Substring(html.IndexOf("divTitle") + 10, 500);
                 fileName = filePath + "/" + fileName.Substring(0, fileName.IndexOf("</div>")).Replace(" ", "_") + ".html";

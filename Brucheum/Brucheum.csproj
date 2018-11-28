@@ -452,6 +452,7 @@
     <Content Include="Views\BookDb\Edit.cshtml" />
     <Content Include="Views\BookDb\Write.cshtml" />
     <Content Include="Views\BookDb\Read.cshtml" />
+    <Content Include="Views\Article\ArticleView.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

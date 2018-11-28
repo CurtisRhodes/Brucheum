@@ -132,7 +132,7 @@
             unBind();
             $.ajax({
                 type: "PUT",
-                url: service + "/api/Article",
+                url: service + "/api/ArticleXml",
                 async: "false",
                 dataType: "json",
                 data: article,
@@ -163,7 +163,7 @@
                 return;
             }
             $.ajax({
-                url: service + "/api/Article",
+                url: service + "/api/ArticleXml",
                 type: "post",
                 dataType: "Json",
                 data: article,
@@ -192,7 +192,7 @@
 
     function getArticle() {
         $.ajax({
-            url: service + "/api/Article?id=" + articleId,
+            url: service + "/api/ArticleXml?id=" + articleId,
             type: "get",
             dataType: "json",
             success: function (response) {
