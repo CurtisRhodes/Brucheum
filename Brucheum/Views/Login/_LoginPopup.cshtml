@@ -83,7 +83,6 @@
 </style>
 
 <div id="loginDialog" class="modalDialog">
-    <div id="divStatusMessage"></div>
     <div class="dialogHeader">
         Log In to <span>The Brucheum</span>
         <div id="btnClose" class="dialogCloseButton">
@@ -157,20 +156,21 @@
     var loginVM = new Object();
     $(document).ready(function () {
         $('#btnLoginSpinnerImage').hide();
+        $('.carouselContainer').css("z-index", "0");
+        $('.carouselLabel').css("z-index", "0");
     });
 
-    var loggingIn = false;
     function postLogin() {
-        if (!loggingIn) {
-            try {
-                if (validate()) {
-                    $('#btnLoginSpinnerImage').show();
-                    loggingIn = true;
-                    loginVM.UserName = $('#txtUserName').val();
-                    loginVM.Password = $('#clearPassword').val();
-                    loginVM.ConfirmPassword = $('#txtConfirmPassword').val();
-                    loginVM.RememberMe = $('#ckRememberMe').prop('checked');
-
+        try {
+            if (validate()) {
+                $('#btnLoginSpinnerImage').show();
+                loggingIn = true;
+                loginVM.UserName = $('#txtUserName').val();
+                loginVM.Password = $('#clearPassword').val();
+                loginVM.ConfirmPassword = $('#txtConfirmPassword').val();
+                loginVM.RememberMe = $('#ckRememberMe').prop('checked');
+                var emailSubject = "CONGRATULATIONS: " + loginVM.UserName + " just logged onto The Brucheum";
+                if (sendEmailFromJS(emailSubject, "someday it will be someone other than you") == "ok") {
                     $.ajax({
                         type: "POST",
                         url: "/Login/Login",
@@ -178,14 +178,10 @@
                         datatype: "Json",
                         success: function (success) {
                             if (success == "ok") {
-                                var xxxemailSeccess = sendEmailFromJS(loginVM.UserName + " just loged in to The Brucheum", "someday it will be someone other than you");
-                                if (xxxemailSeccess == "ok") {
-                                    location.reload(true);
-                                }
-                                else {
-                                    $('#btnLoginSpinnerImage').hide();
-                                    alert("xxxemailSeccess: " + xxxemailSeccess);
-                                }
+                                $('.carouselContainer').css("z-index", "7");
+                                $('.carouselLabel').css("z-index", "11");
+                                displayStatusMessage("ok", "email sent " + emailSubject);
+                                location.reload(true);
                             }
                             else {
                                 $('#btnLoginSpinnerImage').hide();
@@ -202,16 +198,16 @@
                         }
                     });
                 }
-                else {
-                    $('#btnLoginSpinnerImage').hide();
-                    $('#errSummary').html(e);
-                    $('#errSummary').show();
+            }
+            else {
+                $('#btnLoginSpinnerImage').hide();
+                $('#errSummary').html(e);
+                $('#errSummary').show();
 
-                }
             }
-            catch (e) {
-                alert("_LoginPopup catch: " + e);
-            }
+        }
+        catch (e) {
+            alert("_LoginPopup catch: " + e);
         }
     }
 
@@ -320,7 +316,9 @@
     }
 
     $('#btnClose, #btnCancel').click(function () {
-        clearModal();
+        $('.carouselContainer').css("z-index", "0");
+        $('.carouselLabel').css("z-index", "0");
+       clearModal();
     });
 
 </script>

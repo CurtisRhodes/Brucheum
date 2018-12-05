@@ -17,18 +17,18 @@ namespace WebApi
         readonly string fileName = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Articles.xml");
 
         [HttpGet]
-        public IEnumerable<ArticleModel> Get(int pageLen, int page, string filterType, string filter)
+        public IEnumerable<ArticelXmlModel> Get(int pageLen, int page, string filterType, string filter)
         {
-            IEnumerable<ArticleModel> orderedList = new List<ArticleModel>();
+            IEnumerable<ArticelXmlModel> orderedList = new List<ArticelXmlModel>();
             try
             {
-                var regularList = new List<ArticleModel>();
+                var regularList = new List<ArticelXmlModel>();
                 XmlDocument xdoc = new XmlDocument();
                 xdoc.Load(fileName);
 
                 XmlNodeList entries = xdoc.SelectNodes("//Article");
                 xdoc = null;
-                var articleList = new List<ArticleModel>();
+                var articleList = new List<ArticelXmlModel>();
                 foreach (XmlNode entry in entries)
                 {
                     if (entry.Attributes["DateCreated"].InnerText != "")
@@ -36,7 +36,7 @@ namespace WebApi
                         //entry.Attributes["DateCreated"].InnerText = DateTime.Now.ToString();
 
 
-                        articleList.Add(new ArticleModel()
+                        articleList.Add(new ArticelXmlModel()
                         {
                             Id = entry.Attributes["Id"].InnerText,
                             Title = entry.Attributes["Title"].InnerText,
@@ -55,7 +55,7 @@ namespace WebApi
                 switch (filterType)
                 {
                     case "Category":
-                        foreach (ArticleModel article in articleList)
+                        foreach (ArticelXmlModel article in articleList)
                         {
                             if (article.Category.Trim().StartsWith(filter))
                             {
@@ -65,7 +65,7 @@ namespace WebApi
                         //regularList = articleList.Where(a => a.Category.Trim() == filter).ToList();
                         break;
                     case "Byline":
-                        foreach (ArticleModel article in articleList)
+                        foreach (ArticelXmlModel article in articleList)
                         {
                             if (article.Byline.Trim().StartsWith(filter))
                             {
@@ -87,15 +87,15 @@ namespace WebApi
             }
             catch (Exception e)
             {
-                orderedList.Append(new ArticleModel() { Title = "ERROR", Summary = e.Message });
+                orderedList.Append(new ArticelXmlModel() { Title = "ERROR", Summary = e.Message });
             }
             return orderedList;
         }
 
         [HttpGet]
-        public JsonResult<ArticleModel> Get(string Id)
+        public JsonResult<ArticelXmlModel> Get(string Id)
         {
-            var article = new ArticleModel();
+            var article = new ArticelXmlModel();
             try
             {
                 XmlDocument xdoc = new XmlDocument();
@@ -109,8 +109,12 @@ namespace WebApi
                 article.ImageName = node.Attributes["ImageName"].InnerText;
                 article.DateCreated = DateTime.Parse(node.Attributes["DateCreated"].InnerText).ToShortDateString();
                 //article.DateCreated = Convert.ToDateTime(node.Attributes["DateCreated"].InnerText).ToString("MM/dd/yyyy");
-                article.Summary = node.ChildNodes[0].InnerText;
-                article.Contents = node.ChildNodes[1].InnerText;
+
+
+                article.Summary = node.ChildNodes[1].InnerText;
+                article.Contents = node.ChildNodes[0].InnerText;
+
+
 
                 if (node.ChildNodes[2] != null)
                 {
@@ -130,21 +134,50 @@ namespace WebApi
         }
 
         [HttpGet]
-        public JsonResult<ArticleModel> Get()
+        public IList<ArticelXmlModel> Get()
         {
-            var article = new ArticleModel();
+            var articleList = new List<ArticelXmlModel>();
             try
             {
+                XmlDocument xdoc = new XmlDocument();
+                xdoc.Load(fileName);
+                XmlNodeList entries = xdoc.SelectNodes("//Article");
+                foreach (XmlNode entry in entries)
+                {
+                    var model = new ArticelXmlModel();
+                    model.Id = entry.Attributes["Id"].InnerText;
+                    model.Title = entry.Attributes["Title"].InnerText;
+                    model.Byline = entry.Attributes["ByLine"].InnerText;
+                    model.ImageName = entry.Attributes["ImageName"].InnerText;
+                    model.Category = entry.Attributes["Category"].InnerText;
+                    model.Updated = DateTime.Parse(entry.Attributes["LastUpdated"].InnerText);
+                    model.Created = DateTime.Parse(entry.Attributes["DateCreated"].InnerText);
+                    model.LastUpdated = Convert.ToDateTime(entry.Attributes["LastUpdated"].InnerText).ToShortDateString();
+                    model.DateCreated = Convert.ToDateTime(entry.Attributes["DateCreated"].InnerText).ToLongDateString();
+                    model.SortDate = Convert.ToDateTime(entry.Attributes["DateCreated"].InnerText).ToString("yyyyMMdd");
+                    model.Contents = entry.ChildNodes[0].InnerText;
+                    model.Summary = entry.ChildNodes[1].InnerText;
+                    if (entry.ChildNodes[2] != null)
+                    {
+                        IList<string> tags = new List<string>();
+                        foreach (XmlNode tag in entry.ChildNodes[2])
+                        {
+                            tags.Add(tag.InnerText);
+                        }
+                        model.Tags = tags.ToArray();
+                    }
+                    articleList.Add(model);
+                }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                article.Title = "ERROR: " + ex.Message;
+                articleList.Append(new ArticelXmlModel() { Title = "ERROR", Summary = e.Message });
             }
-            return Json(article);
+            return articleList;
         }
 
         [HttpPost]
-        public string Post(ArticleModel model)
+        public string Post(ArticelXmlModel model)
         {
             try
             {
@@ -189,7 +222,7 @@ namespace WebApi
         }
 
         [HttpPut]
-        public string Put(ArticleModel model)
+        public string Put(ArticelXmlModel model)
         {
             string success = "ERROR unknown";
             try

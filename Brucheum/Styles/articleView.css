@@ -68,10 +68,10 @@
     background-color: #fff;
 }
 
-#shareToFacebook {
+.staticFileLinks {
     margin-top: 111px;
+    margin-left: 12px;
 }
-
 .fb-share-button {
     background: #3b5998;
     border-radius: 3px;

@@ -1,226 +1,196 @@
 ﻿<div id="fb-root"></div>
 <script src="~/Scripts/ImageTools.js"></script>
-<link href="~/Styles/article.css" rel="stylesheet" />
+<link href="~/Styles/articleView.css" rel="stylesheet" />
 
 <div class="threeColumnArray">
     <div id="leftColumn">
-        @if (User.IsInRole("Article Editor"))
-        {
-            <div id="shareToFacebook">
-                <button id="btnStaticify" class="roundendButton">staticify</button>
+
+        <div class="staticFileLinks">
+            @if (User.IsInRole("Article Editor"))
+            {
+                <div id="lnkStaticify" class="clickable" onclick="javascript:saveAsStaticFile()">staticify</div>
+            }
+
+            <div id="lnkFacebook" class="fb-share-button" data-href="' + pageName + '" data-layout="button" data-size="large" data-mobile-iframe="false">
+                <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + pageName + '&src=sdkpreparse">Share on Facebook</a>
             </div>
-        }
+
+            <div id="lnkPermalink" class="clickable" onclick="javascript:goToPermaLink()">permalink</div>
+        </div>
+    
     </div>
     <div id="middleColumn">
-
-        @if (Model.Id != null)
-        {
-            <div id="divStatusMessage"></div>
-            <div id="pollybox">
-                <div id="divTopLine">
-                    @Model.DateCreated
-                    <div class="floatRightDiv">
-                        @Model.Category
-                    </div>
-                </div>
-                <div id="divTitle">@Model.Title</div>
-
-                <div id="divByline">
-                    by: @Model.Byline
-                    @if (User.IsInRole("Article Editor"))
-                    {
-                        <div class="floatRightDivEdit">
-                            <a href="ArticleEdit?Id=@Model.Id">edit</a>
-                        </div>
-                    }
-                </div>
+        <div id="divStatusMessage"></div>
+        <div id="pollybox">
+            <div id="divTopLine">
+                <div id="divArticleDate" class="floatLeft"></div>
+                <div id="divCategory" class="floatRightDiv"></div>
             </div>
+            <div id="divTitle"></div>
+            <div class="flexContainer">
+                <div id="divByline"></div>
+                @if (User.IsInRole("Article Editor"))
+                {
+                    <div class="floatRightDivEdit clickable" onclick="javascript:gotoArticleEdit();">edit</div>
+                }
+            </div>
+        </div>
+        <div id="contentArea">
             <div id="divImage"><img id="articleImage" /></div>
-            <div id="divSummary">@Model.Summary</div>
+            <div id="divSummary"></div>  
             <div id="divContent"></div>
             <div id="divStatusMessage"></div>
             <div id="divCommentsButton" class="roundendButton">comments</div>
-            <div id="divCommentsSection">
-                @Html.Partial("_CommentsSection");
-            </div>
-        }
-        else
-        {
-            <div style="padding:200px">No Artice Found</div>
-        }
-        <input id="hiddenId" type="hidden" />
+        </div>
+        <div id="divCommentsSection">
+            @Html.Partial("_CommentsSection");
+        </div>
     </div>
     <div id="rightColumn">
-        <div id="divTagList"></div>
     </div>
 </div>
 
 <script>
     var service = '@ViewBag.Service';
-    var tags = '@ViewBag.MetaTags';
-    var summary = '@ViewBag.Summary';
-    var title = '@Model.Title';
+    var articleId = '@ViewBag.ArticleId';
+
+    var artitleTitle = "";
+    var articleTagString = "";
+    var articleImageName = "";
     var userId = '@ViewBag.UserId';
     var userName = '@ViewBag.UserName';
     var filePath = '@ViewBag.FilePath';
     var ipAddress = '@ViewBag.IpAddress';
 
-    //    var content; // = 'ViewBag.Contents';
-    var imageName; // = '@Model.ImageName';
-    var articleId;  // = '@Model.Id'
     $(document).ready(function () {
-        try {
+        $('#lnkPermalink').hide();
+        $('#lnkFacebook').hide();
 
-            loadArticle();
-
-
-
+        if (window.location.pathname.startsWith("/static_pages")) {
+            $('#lnkFacebook').show();            
+            $('#lnkStaticify').hide();
         }
-        catch (e) {
-            alert("$(document).ready ERROR: " + e);
-        }
+
+        loadArticle(articleId);
     });
 
-
-    function loadArticle() {
-        $.ajax({
-            type:"GET",
-            url: service + "api/ArticleXml?Id=",
-            success: function (article) {
-                articleId = article.Id;
-                if (imageName !== "") {
-                    $('#articleImage').attr("src", service + "/App_Data/Images/" + imageName);
-                }
-
-
-                //content = beautify(article.Contents);
-                //alert("$('#middleColumn').height(): " + $('#middleColumn').height());
-                $('#divContent').html(beautify(article.Contents));
-
-                var mch = $('#middleColumn').height()
-                $('#middleColumn').height(mch + $('#divContent').height());
-                //alert("$('#middleColumn').height(): " + $('#middleColumn').height());
-
-
-                logPageHit(service, userName, ipAddress, "ViewArticle", title);
-
-
-                //stickCommentsButton();
-
-                //var hdr = $('.Header').height();
-                //var mch = $('#middleColumn').height()
-                //var cch = $('#divCommentsBody').height()
-                //$('#middleColumn').height(hdr + mch + cch);
-                resizePage();
-
-
-            }
-        })
-        
-
+    function gotoArticleEdit() {
+        window.location.href = "/Article/ArticleEdit?Id=" + articleId;
     }
 
+    function loadArticle(articleId) {
+        try {
+            var webService = "https://api.curtisrhodes.com";
+            //alert("articleId: " + articleId);
+            //alert("get: " + service + "/api/DbArticle?articleId=" + articleId)
+            $.ajax({
+                type: "GET",
+                url: service + "api/DbArticle/Get?articleId=" + articleId,
+                dataType: "json",
+                success: function (article) {
+                    if (article.Success == "ok") {
+                        artitleTitle = article.Title;
+                        articleImageName = article.ImageName;
+                        $('#articleImage').attr("src", webService + "/App_Data/Images/" + article.ImageName);
+                        $('#divCategory').html(article.Category);
+                        $('#divTitle').html(article.Title);
+                        $('#divArticleDate').html(article.LastUpdated);
+                        $('#divSummary').html(article.Summary);
+                        $('#divByline').html(article.Byline);
+                        $('#divContent').html(beautify(article.Contents));
 
-    //function stickCommentsButton() {
-    //    var x = $('#divContent').position();
-    //    var contentBottom = $('#divContent').position().top + $('#divContent').height() + $('.Header').height();
-    //    var pageBottom = $('.threeColumnArray').height();
+                        $.each(article.Tags, function (idx, tag) {
+                            articleTagString += tag.TagName + ",";
+                        })
 
-    //    if (pageBottom < contentBottom) {
-    //        //alert("pageBottom: " + pageBottom + "  contentBottom: " + contentBottom);
-    //        $('#divCommentsButton').css("position", "absolute").css("bottom", 0);
-    //        $('#divCommentsButton').width($('#middleColumn').width());
-    //        $('#divCommentsSection').css("position", "absolute").css("top", $('#divCommentsButton').position().top + 50);
-    //        $('#divCommentsSection').width($('#middleColumn').width());
-    //    }
-    //}
+                        //logPageHit(webService, userName, ipAddress, "ViewArticle", article.Title);
 
-        // Show Comments
+                        //stickCommentsButton();
+                        var mch = $('#middleColumn').height()
+                        $('#middleColumn').height(mch + $('#contentArea').height());
+                        var mch2 = $('#middleColumn').height()
+
+                        //var hdr = $('.Header').height();
+                        //var cch = $('#divCommentsBody').height()
+                        $('.threeColumnArray').height(mch2);
+                        resizePage();
+                    }
+                    else
+                        alert("loadDBArticle: " + article.Success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("loadArticle jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("load article catch: " + e);
+        }
+    }
+
+    function goToPermaLink() {
+        window.location.href = "/static_pages/" + beautify(artitleTitle).replace(/ /g, "_") + ".html", "target='_blank'";
+    };
+
+    // Show Comments
     $('#divCommentsButton').click(function () {
-        //$('#divCommentsSection').toggle();
         if ($('#divCommentsSection').css("display") == "none") {
             $('#divCommentsSection').show();
-
             getComments();
-            //var mch = $('#middleColumn').height()
-            //var cch = $('#divCommentsBody').height()
-            //$('#middleColumn').height(mch + cch);
-            //resizePage();
-
         }
         else {
             $('#divCommentsSection').hide();
         }
     });
 
-    $('#btnStaticify').click(function () {
-        saveAsStaticFile();
-    });
+    function saveAsStaticFile() {        
+        $('head').append('<meta name="Title" content="' + artitleTitle + '" property="og:title">');
+        //$('head').append('<meta property="og:description" content="' + beautify(summary.substr(0, 300)) + '" />');
+        $('head').append('<meta name="Keywords" content="' + articleTagString + '>');
+        $('head').append('<meta property="og:type" content="website">');
+        $('head').append("<meta property='og:image' content='https://api.curtisrhodes.com/app_data/images/" + articleImageName + "'>");
 
-    function saveAsStaticFile() {
-            if (imageName === "") {
-                displayStatusMessage("severityWarning", "insuficent data. Image required");
-                return;
-            }
-            $('head').append('<meta name="Title" content="' + title + '" property="og:title">');
-            //$('head').append('<meta property="og:description" content="' + beautify(summary.substr(0, 300)) + '" />');
-            $('head').append('<meta name="Keywords" content="' + beautify(tags.split(",").toString()) + '>');
-            $('head').append('<meta property="og:type" content="website">');
+        var pageName = "https://Curtisrhodes.com/static_pages/" + artitleTitle.replace(/ /g, "_") + ".html";
+        $('head').append('<br/><meta property="og:url" content="' + pageName + '">');
 
-            $('head').append("<meta property='og:image' content='https://api.curtisrhodes.com/app_data/images/" + imageName + "'>");
-            //$('head').append("<meta property='og:image' content='https://curtisrhodes.com/app_data/images/" + imageName + "'>");
-            //$('head').append("<meta property='og:image' content='data:image/gif;base64," + getImage(service, imageName) + "'>");
+        //var html = $('html').html();
+        var data = new Object();
+        data.html = "<!DOCTYPE html>" + $('html').html();
+        try {
+            $.ajax({
+                type: "POST",
+                url: "CreateStaticFile",
 
-            var pageName = "https://Curtisrhodes.com/static_pages/" + title.replace(/ /g, "_") + ".html";
-            $('head').append('<br/><meta property="og:url" content="' + pageName + '">');
-
-            $('#shareToFacebook').html('<div class="fb-share-button" data-href="' + pageName + '" data-layout="button" data-size="large" data-mobile-iframe="false">' +
-                '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + pageName + '&src=sdkpreparse">Share on Facebook</a></div>');
-
-            //var html = $('html').html();
-            var data = new Object();
-            data.html = "<!DOCTYPE html>" + $('html').html();
-            try {
-                $.ajax({
-                    type: "POST",
-                    url: "CreateStaticFile",
-
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (success) {
-                        if (success === "ok") {
-                            $('#btnStaticify').val("permalink");
-                            $('#shareToFacebook').html('<button id="btnPermalink" class="roundendButton">permalink</button>');
-
-                            $('#btnPermalink').click(function () {
-                                window.location.href = "/static_pages/" + beautify(title).replace(/ /g, "_") + ".html", "target='_blank'";
-                            })
-
-                        }
-                        else
-                            alert("/api//File returned: " + success);
-                    },
-                    error: function (jqXHR, exception) {
-                        alert("/api//File error: " + getXHRErrorDetails(jqXHR, exception));
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (success) {
+                    if (success === "ok") {
+                        $('#lnkPermalink').show();
+                        $('#lnkStaticify').hide();
                     }
-                });
-            }
-            catch (e) {
-                //alert("/api//File catch: " + e);
-                alert("/api//File catch: " + e);
-            }
-    };
+                    else
+                        alert("/api//File returned: " + success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("CreateStaticFile error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
+        catch (e) {
+            alert("saveAsStaticFile catch: " + e);
+        }
+    }
 
     $(window).unload(function () {
-        //$(this)
-        alert("page move");
+        // log page visit End
+       // logPageHit(service, userName, ipAddress, "ViewArticle", article.Title);
+        //alert("page move");
     });
 
     ///////////////////////////////////////////////////
 
     $('#btnTest').click(function () {
-        location.href = "/Home/get_image?w=" + imageName;
+        location.href = "/Home/get_image?w=" + article.ImageName;
     });
     $('#btnSpinnerTest').click(function () {
         $(this).append("<img src='/Images/loader.gif' class='tinyLoader' >");

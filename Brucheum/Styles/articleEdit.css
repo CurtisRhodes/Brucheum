@@ -9,26 +9,18 @@
     width: 100%;
 }
 
-#imgArticleJog {
-    min-height: 290px;
+.imageContainer {
     min-width: 300px;
-    height: 290px;
+    height: 300px;
     border: solid thin #000;
     margin-left: 5px;
-    margin-bottom: 4px;
+    margin-top: 4px;
 }
 .imageUpload {
     height: 32px;
 }
 
-#divQuilleditor {
-    margin-top: 8px;
-    height: 300px;
-    border-radius: 4px;
-    margin-bottom: 8px;
-}
-
-#divButtons {
+.btnRow {
     margin-bottom: 17px;
 }
 .ddOption {
@@ -78,6 +70,7 @@
 
 .articleSummary {
     height: 142px;
+    width: 800px;
 }
 
 .tagContainer {
@@ -93,10 +86,6 @@
     margin-top: 5px;
     margin-right: 3px;
     cursor: pointer;
-}
-
-.wide {
-    width: 800px;
 }
 
 .align-right {

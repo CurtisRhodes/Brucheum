@@ -1,4 +1,6 @@
-﻿.adminOptionTitle {
+﻿
+
+.adminOptionTitle {
     font-size: 24px;
     text-align: center;
     padding: 4px;
@@ -30,8 +32,8 @@
 }
 
 .adminInput {
-    float: left;
-    height: 21px;
+    /*float: left;
+    height: 21px;*/
     margin-left: 6px;
     padding: 3px 6px;
     color: #555;

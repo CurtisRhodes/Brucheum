@@ -155,6 +155,16 @@
         }
     }
 
+
+    var source = new EventSource('https://api.curtisrhodes.com/Api/Email/');  
+
+    source.onmessage = function (e) {
+        alert("e: " + e.data);
+
+    };  
+
+
+
     function validate() {
         $('#errSummary').hide();
 

@@ -10,21 +10,36 @@ namespace WebApi
     {
         public ActionResult Index()
         {
-            return View();
+            var vm = new ModelResponse();
+            return View(vm);
         }
         public ActionResult ImageTest()
         {
             return View();
         }
+
+
         public ActionResult JournalTest()
         {
-            return View();
+            var vm = new ModelResponse();
+            return View(vm);
         }
 
+        [HttpPost]
         public ActionResult EmailTest()
         {
-            return View();
+            var emailMessage = new EmailMessageModel() { Subject = "Test Email", Body = "may you have a good day" };
+
+            string success = new EmailController().Post(emailMessage);
+
+            //string success = new EmailController().SendWithHotMail(emailMessage);
+
+            ModelResponse vm = new ModelResponse() { Response = success };
+            return View("Index", vm);
+
         }
+
+
 
         public ActionResult ArticleTest(string Id)
         {
@@ -33,6 +48,12 @@ namespace WebApi
             return View();
         }
     }
+
+    public class ModelResponse
+    {
+        public string Response { get; set; }
+    }
+
     public class ErrorController : Controller
     {
         public ActionResult Index(string msg, string st)

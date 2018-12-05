@@ -126,14 +126,14 @@ function sendEmailFromJS(msg, body) {
         //alert("sendEmailFromJS msg: " + msg + " body: " + body);
         $.ajax({
             type: "POST",
-            url: "https://api.curtisrhodes.com/Api/Email/Send",
+            url: "https://api.curtisrhodes.com/api/Email/",
             //url: "http://localhost:40395/Api/Email/Send",
             data: sendObj,
             async: false,
             success: function (emailSuccess) {
                 if (emailSuccess === "ok") {
+                    displayStatusMessage("ok", "email sent");
                     //alert("Email says: " + sendObj.Subject);
-                    displayStatusMessage("ok", "email sent " + sendObj.Subject);
                 }
                 else
                     alert("Email Fail: " + emailSuccess);
@@ -142,7 +142,7 @@ function sendEmailFromJS(msg, body) {
             error: function (xhr) {
                 rtn = xhr.statusText;
                 //displayStatusMessage("error", "error: " + xhr.statusText);
-                alert("sendEmailFromJS error: " + rtn);
+                alert("sendEmailFromJS XHR error: " + rtn);
             }
         });
     } catch (e) {
@@ -160,9 +160,7 @@ function logPageHit(service, userName, ipAddress, page, details) {
         url: service + "/api/HitCounter/AddPageHit?ipAddress=" + ipAddress + "&app=Brucheum&page=" + page + "&details=" + details,
         success: function (success) {
             if (!success.startsWith("ERROR")) {
-                sendEmailFromJS("Page Hit", ipAddress + " visited " + page + " " + details);
-
-
+                //sendEmailFromJS("Page Hit", ipAddress + " visited " + page + " " + details);
                 displayStatusMessage("ok", "email sent");
             }
             else

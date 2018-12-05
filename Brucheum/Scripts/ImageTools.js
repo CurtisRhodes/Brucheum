@@ -8,8 +8,8 @@ function postImage(service, fileName) {
 		if (image !== null) {
 			//alert("url: " + service + "/api/Images");
             $.ajax({
-                url: service + "/api/Images?fileName=" + fileName,
                 type: "POST",
+                url: service + "/api/Images?oFileName=" + fileName,
                 enctype: 'multipart/form-data',
                 processData: false,  // Important!
                 contentType: false,
@@ -17,17 +17,12 @@ function postImage(service, fileName) {
                 cache: false,
                 data: image,
                 success: function (data) {
-                    //displayStatusMessage("ok", data + " Image Uploaded");
-                    //$('#bImage').attr("src", URL.createObjectURL(image));
-                    //$('#hiddenImageName').val(data);
-                    //alert("data: " + data);
                     serverImageName = data;
                 },
                 error: function (xhr) {
                     alert("PostTimage error: " + xhr.statusText);
                 }
             });
-
 		}
 		else {
 			alert("ERROR: image == null")
