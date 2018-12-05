@@ -16,7 +16,7 @@ namespace Brucheum
 {
     public class ArticleController : Controller
     {
-        private string apiService = ConfigurationManager.AppSettings["apiService"];
+        private readonly string apiService = ConfigurationManager.AppSettings["apiService"];
 
         public ActionResult ArticleList(string filterType, string filter)
         {
@@ -26,7 +26,7 @@ namespace Brucheum
             return View();
         }
 
-        public ActionResult Article(string Id)
+        public ActionResult xxxArticle(string Id)
         {
             ArticleModel article = new ArticleModel();
             if (Id != null)
@@ -74,8 +74,9 @@ namespace Brucheum
 
         public ActionResult ArticleView(string Id)
         {
-            ViewBag.IpAddress = Helpers.GetIPAddress();
             ViewBag.Service = apiService;
+            ViewBag.ArticleId = Id;
+            ViewBag.IpAddress = Helpers.GetIPAddress();
             ViewBag.UserId = User.Identity.GetUserId();  //   Session["UserId"];
             ViewBag.UserName = User.Identity.GetUserName();  //    Session["UserName"];
             return View();

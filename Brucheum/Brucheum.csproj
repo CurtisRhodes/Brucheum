@@ -334,7 +334,7 @@
     <Content Include="Scripts\HeaderLogin.js" />
     <Content Include="Scripts\ImageTools.js" />
     <Content Include="Scripts\ResizeThreeColumnPage.js" />
-    <Content Include="Styles\article.css" />
+    <Content Include="Styles\articleView.css" />
     <Content Include="Styles\articleEdit.css" />
     <Content Include="Styles\articleList.css" />
     <Content Include="Styles\bFooter.css" />
@@ -392,7 +392,6 @@
     <None Include="packages.config" />
     <Content Include="Views\Shared\_bFooter.cshtml" />
     <Content Include="Views\Shared\_BookPannel.cshtml" />
-    <Content Include="Views\Article\Article.cshtml" />
     <Content Include="Views\Article\ArticleEdit.cshtml" />
     <Content Include="Views\Article\ArticleList.cshtml" />
     <Content Include="Views\Book\Index.cshtml" />
@@ -453,6 +452,7 @@
     <Content Include="Views\BookDb\Write.cshtml" />
     <Content Include="Views\BookDb\Read.cshtml" />
     <Content Include="Views\Article\ArticleView.cshtml" />
+    <Content Include="Views\Admin\_SiteStats.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

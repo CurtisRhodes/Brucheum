@@ -10,28 +10,76 @@ namespace WebApi.Models
         public string Key { get; set; }
         public string Value { get; set; }
     }
-    public class DbArticelModel
-    {
-        public int ArticleId { get; set; }
-        public string ArticleTitle { get; set; }
-        public string ArticleType { get; set; }
-        public string ArticleText { get; set; }
-        public DateTime CreateDate { get; set; }
-        public string ArticleTypeDescription { get; set; }
+    public class DbArticleTagModel {
+        public int Id { get; set; }
+        public string TagName { get; set; }
+        public string TagCategoryRef { get; set; }
     }
 
-    public class ArticleModel
+    public class DbArticleModel
     {
+        public DbArticleModel() {
+            Tags = new List<DbArticleTagModel>();
+        }
         public string Id { get; set; }
         public string Title { get; set; }
         public string Category { get; set; }
+        public string SubCategory { get; set; }
         public string Summary { get; set; }
         public string ImageName { get; set; }
         public string Byline { get; set; }
         public string DateCreated { get; set; }
         public string LastUpdated { get; set; }
+        public DateTime Created { get; set; }
+        public DateTime Updated { get; set; }
+        public List<DbArticleTagModel> Tags { get; set; }
+        public string Contents { get; set; }
+        public string SortDate { get; set; }
+        public string ArticleTypeDescription { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class ArticelXmlModel
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Category { get; set; }
+        public string SubCategory { get; set; }
+        public string Summary { get; set; }
+        public string ImageName { get; set; }
+        public string Byline { get; set; }
+        public string DateCreated { get; set; }
+        public string LastUpdated { get; set; }
+        public DateTime Created { get; set; }
+        public DateTime Updated { get; set; }
         public string[] Tags { get; set; }
         public string Contents { get; set; }
+        public string SortDate { get; set; }
+        public string ArticleTypeDescription { get; set; }
+    }
+
+    public class BlogModel
+    {
+        public BlogModel() {
+            Entries = new List<BlogEntryModel>();
+        }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Owner { get; set; }
+        public List<BlogEntryModel> Entries { get; set; }
+    }
+
+    public class BlogEntryModel
+    {
+        public string Id { get; set; }
+        public string BlogId { get; set; }
+        public string Title { get; set; }
+        public string Category { get; set; }
+        public string ImageName { get; set; }
+        public string Created { get; set; }
+        public string LastUpdated { get; set; }
+        public string Contents { get; set; }
+        public string Summary { get; set; }
         public string SortDate { get; set; }
     }
 

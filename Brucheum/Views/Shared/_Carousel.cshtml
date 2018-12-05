@@ -75,6 +75,7 @@
 
 <script>
     var service = '@ViewBag.Service';
+    var webService = "https://api.curtisrhodes.com";
     var numArticles = 15;
     var rotationSpeed = 15000;
     var carouselItems = new Array();
@@ -120,7 +121,7 @@
     $('#articleImage').click(function () {
         clearInterval(Carousel);
         //alert("$('.carouselItem').attr('Id'): " + $('.carouselItem').attr('Id'));
-        window.location.href = "/Article/Article?Id=" + $('.carouselItem').attr('Id');
+        window.location.href = "/Article/ArticleView?Id=" + $('.carouselItem').attr('Id');
     })
 
     function stopCarousel() {
@@ -143,8 +144,8 @@
     function loadAndStartCarousel() {
         $.ajax({
             type: "GET",
-            url: service + "/api/ArticleXml?pageLen=" + numArticles + "&page=0&filterType=none&filter=none",
-            //datatype: "json",
+            url: service + "/api/DbArticle?pageLen=" + numArticles + "&page=1&filterType=null&filter=null",
+            //url: service + "/api/ArticleXml?pageLen=" + numArticles + "&page=0&filterType=none&filter=none",
             success: function (articles) {
                 articles.forEach(loadArray);
                 rotate();
@@ -158,7 +159,7 @@
     function loadArray(article) {
         try {
             if (article.ImageName !== "") {
-                imgSrc = service + "/App_Data/Images/" + article.ImageName;
+                imgSrc = webService + "/App_Data/Images/" + article.ImageName;
             };
             carouselItems.push(`
                 <div class='carouselItem' id='`+ article.Id + `' >

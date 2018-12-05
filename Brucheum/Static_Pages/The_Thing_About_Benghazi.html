@@ -7,7 +7,7 @@
     <script src="/Scripts/3rd Party/jquery.min.js"></script>
     <script src="/Scripts/GlobalFunctions.js"></script>
     <script src="/Scripts/ResizeThreeColumnPage.js"></script>
-<meta name="Title" content="Let's Talk About Relationships" property="og:title"><meta content="website" property="og:type"><meta content="https://api.curtisrhodes.com/app_data/images/EPtIkweucPwi.jpg" property="og:image"><br><meta content="https://Curtisrhodes.com/static_pages/Let's_Talk_About_Relationships.html" property="og:url"></head>
+<meta name="Title" content="The Thing About Benghazi" property="og:title"><meta content="website" property="og:type"><meta content="https://api.curtisrhodes.com/app_data/images/2NhFE3STyCpu.jpg" property="og:image"><br><meta content="https://Curtisrhodes.com/static_pages/The_Thing_About_Benghazi.html" property="og:url"></head>
 <body>
     <div class="standardHeader" id="bheader">
         <div class="bannerImageContainer">
@@ -50,13 +50,13 @@
 <script src="/Scripts/ImageTools.js"></script>
 <link href="/Styles/articleView.css" rel="stylesheet">
 
-<div class="threeColumnArray" style="height: 2069px;">
+<div class="threeColumnArray" style="height: 2035px;">
     <div id="leftColumn">
 
         <div class="staticFileLinks">
                 <div class="clickable" id="lnkStaticify" onclick="javascript:saveAsStaticFile()">staticify</div>
 
-            <div class="fb-share-button" id="lnkFacebook" style="display: inline-block;" data-mobile-iframe="false" data-size="large" data-layout="button" data-href="' + pageName + '">
+            <div class="fb-share-button" id="lnkFacebook" style="display: none;" data-mobile-iframe="false" data-size="large" data-layout="button" data-href="' + pageName + '">
                 <a href="https://www.facebook.com/sharer/sharer.php?u=' + pageName + '&amp;src=sdkpreparse" target="_blank">Share on Facebook</a>
             </div>
 
@@ -64,23 +64,77 @@
         </div>
     
     </div>
-    <div id="middleColumn" style="width: 1633px; height: 2069px;">
+    <div id="middleColumn" style="width: 1633px; height: 2035px;">
         <div id="divStatusMessage"></div>
         <div id="pollybox">
             <div id="divTopLine">
                 <div class="floatLeft" id="divDateCreated"></div>
-                <div class="floatRightDiv" id="divCategory">computer programming</div>
+                <div class="floatRightDiv" id="divCategory">Conspiracy Theory of the Week</div>
             </div>
-            <div id="divTitle">Let's Talk About Relationships</div>
+            <div id="divTitle">The Thing About Benghazi</div>
             <div class="flexContainer">
-                <div id="divByline">Cranky Old Man</div>
+                <div id="divByline">Gandolf</div>
                     <div class="floatRightDivEdit clickable" onclick="javascript:gotoArticleEdit();">edit</div>
             </div>
         </div>
         <div id="contentArea">
-            <div id="divImage"><img id="articleImage" src="https://api.curtisrhodes.com/App_Data/Images/EPtIkweucPwi.jpg"></div>
-            <div id="divSummary">Dependency is bad. We all want and need relationships but they should be managed. When we come to depend on some outside of our control we lose control and have no say over their whims. Ideally a relationship is a good and wonderful thing. But as we all know, relationships can sometimes lead to problems. Unreliable partners can bring us down if they do bad things that is no fault or ours. So we always need to guard against the dangers that come with relationships.<div class="editorScriptContainer">   Probably the first program you ever wrote was "Hello World". Programming languages and development environments like to boast they can let you write a program that echoes "Hello Word" to the console screen with one line of code. But is it really just one line of code? Think of all the things behind the scenes that have to take place to get your one line program to work. There has to be a process somewhere that handles the keyboard input to allow you write the words. There has to be a screen graphics process that takes those keystrokes and forms glyphs of letters out of pixels and presents them on your monitor screen. Already we're talking about thousands perhaps millions of lines of code just handle the keyboard and screen graphics aspects of your program. Then you have the compiler that takes your input and boils it down to executable binary code. Then you have the a processor that takes your translated code and executes it through the operating system. By now we really are talking about millions of lines of code. So your one line program isn't really one line after all. Your app has dependencies. It has to form relationships with other chunks of code.<br>  We all like to think we can make all alone on out own. We forget to notice how we depend on the grocery store to deliver our food and all the suppliers who package and deliver our food and the growers and ranchers and pickers and planters and processors who provide the products. We really aren't as self reliant as we like to think. The same applies to the clothes we ware and the shelters we live in. You get the point there are all sorts of dependency relationships out there whether we like it or not. Not all of them we can control.<h3>Inversion of Control</h3>The first thing you have to do is recognize and identify the dependencies you have. We will talk later when we dive deeper into Object Oriented Design about IOC. Basically IOC is just a way of Injecting dependencies into your constructor instead of simply inheriting them or including a using statement. Theoretically this means you could someday replace the dependency with some other object that implements the same interface or create a wrapper around your own version of the object where you can add or modify the functionality it provides. Say you create your own authentication and login controller. You can replace the default object with your custom one.<p>Practically the say IOC facilitates testing. It allows you to strictly delineate a separation of concerns. Again we'll talk about this later when I can provide links to an article about encapsulation. For now let's just appreciate the concept. Remember, there is nothing wrong with having relationships. You are writing a custom application after all. If you didn't want anything special or unique about your app your users could just use Microsoft Excel Spreadsheet or something and create the functionality themselves. You want to impact your domain in a specialized way so users derive some specific benefit from establishing a relationship with the functionality your app provides.</p><h3>Loosely Coupled </h3> What sort of relationship do you want? Just friends or something more. To be loosely coupled means that your app doesn't get hopelessly intertwined with some other object beyond the point of graceful separation. If you use string manipulation hundreds of times all over the place you can't just decouple from the String.IO library that easily. Fortunately such base class libraries are usually bullet proof and highly dependable. If there was any problem with one of these core system libraries zillions of people would howl and complain right away. But when get to using some esoteric third party library you might want to be more careful and not get so deeply involved.</div><div class="editorScriptContainer">The companion concept with Loosely Coupled is "Coarsely Grained". This means you treat the object as a big lump of foreign code that you use explicitly. You don't leave it open forever. You expect it to implement the Idisposable interface and you close it as soon as you are done with it ideally with a using statement. Again if Idisposable and using statements are new to you don't worry for now. These are just more links to future articles I will try to cover.<h3>Don't Talk To Strangers</h3>Once we get a handle on all this talk about relationships we can go one step further. The objects we have established relationships with often have other objects that they have dependency relationships with. It is bad practice to reference these parent objects directly. Just because your aunt's sister in law knows a guy who knows a guy who says he has an in with the governor of some province in Bolivia doesn't mean you should this reference. It is better to create a new object somehow that references this object more directly. That's all for now. I just wanted to give you a brief taste of the concept of relationships in computer app design and get you thinking about when you go about becoming a proficient computer programmer. Thank you for any feedback. </div></div>  
-            <div id="divContent">Dependency Injection, Don't Talk To Strangers. Coarsely Grained Loosely Coupled. All these are actual computer architecture concepts. What do they mean? In this article we will talk about the concepts of relationships in computer programming. Turns out computer programming is all about relationships. This article is intended just to get you thinking about some of the things going on when you write code. </div>
+            <div id="divImage"><img id="articleImage" src="https://api.curtisrhodes.com/App_Data/Images/2NhFE3STyCpu.jpg"></div>
+            <div id="divSummary">No one has ever changed their position on anything it is possible to change</div>  
+            <div id="divContent">If you ever saw 'Mission Impossible' you know that the show starts with Mr. Phelps receiving his secret assignment.  And we all know that right before 
+the tape self-destructs in five seconds it always says "If any of your IM force is caught or captured the Secretary will disavow any knowledge of your actions."
+By now it's generally known what was going on in Benghazi.  Following the decapitation of the Qaddafi regime it seems some MAN-pads came up missing.  A MAN-pad is a shoulder fired surface to air 
+missile sort of like a stinger missile from Iran-Contra fame and for the devastating impact stinger missiles had on the Soviets when Charlie Wilson armed the Mujahadeen with them in Afghanistan.  
+				 Except that a MAN-pad can take out an aircraft at 30,000 feet, which is like six miles which is where commercial airlines fly. It is a state of the art heat seaking 
+				 proximity weapon which means it doesn't 
+				 even need to hit its target, just get close enough to explode and blow the tail or nose section off or just sufficiently disrupt the avionics.
+				 It seems the US military and the CIA are highly uninterested in having this particular weapons system floating around unaccounted for.  
+				 It's likely that an operation was underway in Benghazi to police up some of these weapons.
+				 Chris Stephens was a full rank State Department ambassador, but he was not the kind of ambassador that gets appointed to Paris or Rome as a political reward for donating to the winning
+				  campaign.  He was an ambassador in a war zone, which is a much more highly operational role not assigned to amateurs.  In some areas he may have had a higher security clearance than 
+				  Secretary Hillary herself. There is no reason to assume that she was even read into an operation as sensitive as the attempt to reacquire these embarrassingly unaccounted for weapons
+				   until the night the mission went sideways.
+				   Tripoli is the capital of Libya not Benghazi.  Libya, like Iraq, is a nation whose borders are rectangular lines drawn on a map by mid level British officials following the dissolution 
+				   of the Ottoman empire after World War I .  The lines do not reflect the facts on the ground.  The western part of Libya where Tripoli is located is more like Algeria or Tunisia. 
+				    To the east, where Benghazi is located is an entirely different tribe of people more like the Egyptians. (note: my understanding of the ethnic tribes of Libya is 99% inaccurate). 
+					 They may be Berbers or Carthaginians for all I know.  But Benghazi is not Tripoli and the people of each area don't even like each other.
+					  The building where Chris Stephens was killed was not the embassy.  It may not have even been a formal consulate.  It was more of a safe house, unmarked, nondescript in a quiet 
+					  upscale residential area of the city.  The consulate or safe house whatever you want to call it, had a panic room in it which was made of thick steel.  When whoever it was who
+					   attacked his house, they managed to blow it to bits.  I suspect that one of the rebels said; "You want your fancy stinger missiles back?  Here I'll give you one back." and fired 
+					   a MAN-pad into the house.  Again, this is not a simple rocket propelled grenade.  Not that a RPG would not do serious damage, but a MAN-pad would do several orders of magnitude more.
+					     Chis Stephens' panic room turned into an oven and he was effectively baked to death.
+						  Meanwhile, at the same time, September 11, 2011, in Cairo Egypt an actual embassy came under attack and was in serious danger of being breached.  
+						  No offence to Benghazi, but in the scheme of things, what was going on in Cairo had to be considered a much more serious situation.  Secretary Clinto
+						  n and even the president were woken up and informed of the situation in Cairo.  Extra emergency assets were deployed, the rules of engagement were elev
+						  ated and a concerted effort to defend the US embassy in Egypt was underway.  If I'm not mistaken, other embassies in the Middle East were also coming under attac
+						  k.  And the situation in Egypt was explicitly understood to be a reaction to an internet video that insulted the prophet Muhammad, at least by the mobs chanting 
+						  in the streets.  In the midst of all of this, reports that something was going on in Benghazi were coming through but may have been lost in the fog.
+						    But by late that night the ambassador was already dead.  If Clinton even asked what the hell he was doing in Benghazi anyway, she may or may not have been given a full briefing. 
+							 It was a clandestine mission and the protocol was to deny any knowledge of why he was even there.  So no rescue mission was likely contemplated at least until Cario was
+							  contained.
+							  But if things were not bad enough, as Murphy's Law clearly states, they can always get worse.  About eight hours later, the next morning, what has been described
+							   as a CIA compound in a warehouse district on the other side of Benghazi came under attack.  It has since been suggested that the CIA may have been 'holding' some insurgent
+							    rebels at this location.  So technically the location could be described as a secret CIA prison. To the aggrieved mother who cried "Why did Hillary lie to me?" remember 
+								what Mr. Phelps is told every time just before his secret instructions self-destruct.  "If any of your IM forces are caught or killed the Secretary will disavow any knowledge 
+								of your actions." The Secretary.  The SECRETARY.
+								  After all the relentless hatred about her being dishonest I know that I personally would have cracked long ago and spilled the beans about the secret mission and
+								   the CIA's rouge behavior.  But, good soldier that she is, Hillary has endured countless House committee bloviating rants and perhaps irreparable damage to her 
+								   reputation. To this day has never mentioned officially publicly any of the now fairly well known details about the missing surface to air missiles or what Chris 
+								   Stevens and the CIA were up to in Benghazi.
+								   Why the coincidence that the attack on the CIA compound happened the day after the killing of the ambassador?  Perhaps the location of the CIA black site 
+								   prison was compromised by his cell phone or some document found at the destroyed home where Chis Stephens was killed.  Then the insurgents full of adrenal
+								   ine raced off to attack the CIA site trying to release their captured comrades.  Some hapless non military type computer guy was shot and killed, the son o
+								   f the mother so horrendously exploited by Fox News and Trump.  But then they met resistance.  Some Blackwater contractors on the roof in a snipers nest held
+								    off the attack. Then someone fired a mortar.  Mortar tubes are not the most accurate of weapons but somehow they landed a round right on top of the roof.
+									  Depending on how far away they were from the building they had to fire the round at almost a 90 degree angle to hit those two Blackwater contractors on the 
+									  roof.  That was a hell of a shot.
+									    Again, as per the CIA's rules of engagement as so often repeated to Mr. Phelps, when your cover is blown, it's over.  Your on your own.  Expect no help to come.
+										  That's how the game is played.  This is not the Marines leave no man behind.  Your orders are to destroy everything, especially hard drives and any secret co
+										  mmunications equipment, shred all documents then bend over and kiss your ass goodbye.  I don't know if an evacuation mission was eventually performed.  There
+										   may have been more deaths than reported. Blackwater security may have been able to hold the position long enough to repel the attack.  Only Clay Gouddy knows.
+										   Again, its unclear that Hillary was even aware of the Benghazi operation until the night it all went Fubar.  Even so, even if she were a man, what 
+										   would you want the Secretary of State to tell that aggrieved mother at Dover AFB a few days later?  Would you want her to read her in to all these 
+										   details or would you expect her to do her job?  "Your son was working at a secret CIA black site prison in a war zone that was compromised by an op
+										   eration to police up missing surface to air missiles."  I suspect the kid told his mother he was working in Vermont or something.</div>
             <div id="divStatusMessage"></div>
             <div class="roundendButton" id="divCommentsButton">comments</div>
         </div>
@@ -367,7 +421,7 @@
 
 <script>
     var service = 'http://localhost:40395/';
-    var articleId = '0527c2e6-5ea4-403b-9b74-2371b0a63e07';
+    var articleId = '83926631-53d4-466e-9335-e345fccb412e';
 
     var artitleTitle = "";
     var articleTagString = "";
@@ -380,6 +434,12 @@
     $(document).ready(function () {
         $('#lnkPermalink').hide();
         $('#lnkFacebook').hide();
+
+        if (window.location.pathname.startsWith("/static_pages")) {
+            $('#lnkFacebook').show();            
+            $('#lnkStaticify').hide();
+        }
+
         loadArticle(articleId);
     });
 
@@ -511,7 +571,6 @@
 
         var pageName = "https://Curtisrhodes.com/static_pages/" + artitleTitle.replace(/ /g, "_") + ".html";
         $('head').append('<br/><meta property="og:url" content="' + pageName + '">');
-        $('#lnkFacebook').show();
 
         //var html = $('html').html();
         var data = new Object();
@@ -528,7 +587,6 @@
                     if (success === "ok") {
                         $('#lnkPermalink').show();
                         $('#lnkStaticify').hide();
-                        $('#lnkFacebook').hide();
                     }
                     else
                         alert("/api//File returned: " + success);
@@ -597,188 +655,7 @@
     <script>resizePage();</script>
 
 
-</body>'Dependency is bad. We all want and need relationships but they should be managed. When we come to depend on some outside of our control we lose control and have no say over their whims. Ideally a relationship is a good and wonderful thing. But as we all know, relationships can sometimes lead to problems. Unreliable partners can bring us down if they do bad things that is no fault or ours. So we always need to guard against the dangers that come with relationships.&lt;div class=&quot;editorScriptContainer&quot;&gt;   Probably the first program you ever wrote was &quot;Hello World&quot;. Programming languages and development environments like to boast they can let you write a program that echoes &quot;Hello Word&quot; to the console screen with one line of code. But is it really just one line of code? Think of all the things behind the scenes that have to take place to get your one line program to work. There has to be a process somewhere that handles the keyboard input to allow you write the words. There has to be a screen graphics process that takes those keystrokes and forms glyphs of letters out of pixels and presents them on your monitor screen. Already we&#39;re talking about thousands perhaps millions of lines of code just handle the keyboard and screen graphics aspects of your program. Then you have the compiler that takes your input and boils it down to executable binary code. Then you have the a processor that takes your translated code and executes it through the operating system. By now we really are talking about millions of lines of code. So your one line program isn&#39;t really one line after all. Your app has dependencies. It has to form relationships with other chunks of code.&lt;br&gt;  We all like to think we can make all alone on out own. We forget to notice how we depend on the grocery store to deliver our food and all the suppliers who package and deliver our food and the growers and ranchers and pickers and planters and processors who provide the products. We really aren&#39;t as self reliant as we like to think. The same applies to the clothes we ware and the shelters we live in. You get the point there are all sorts of dependency relationships out there whether we like it or not. Not all of them we can control.&lt;h3&gt;Inversion of Control&lt;/h3&gt;The first thing you have to do is recognize and identify the dependencies you have. We will talk later when we dive deeper into Object Oriented Design about IOC. Basically IOC is just a way of Injecting dependencies into your constructor instead of simply inheriting them or including a using statement. Theoretically this means you could someday replace the dependency with some other object that implements the same interface or create a wrapper around your own version of the object where you can add or modify the functionality it provides. Say you create your own authentication and login controller. You can replace the default object with your custom one.&lt;p&gt;Practically the say IOC facilitates testing. It allows you to strictly delineate a separation of concerns. Again we&#39;ll talk about this later when I can provide links to an article about encapsulation. For now let&#39;s just appreciate the concept. Remember, there is nothing wrong with having relationships. You are writing a custom application after all. If you didn&#39;t want anything special or unique about your app your users could just use Microsoft Excel Spreadsheet or something and create the functionality themselves. You want to impact your domain in a specialized way so users derive some specific benefit from establishing a relationship with the functionality your app provides.&lt;/p&gt;&lt;h3&gt;Loosely Coupled &lt;/h3&gt; What sort of relationship do you want? Just friends or something more. To be loosely coupled means that your app doesn&#39;t get hopelessly intertwined with some other object beyond the point of graceful separation. If you use string manipulation hundreds of times all over the place you can&#39;t just decouple from the String.IO library that easily. Fortunately such base class libraries are usually bullet proof and highly dependable. If there was any problem with one of these core system libraries zillions of people would howl and complain right away. But when get to using some esoteric third party library you might want to be more careful and not get so deeply involved.&lt;/div&gt;&lt;div class=&quot;editorScriptContainer&quot;&gt;The companion concept with Loosely Coupled is &quot;Coarsely Grained&quot;. This means you treat the object as a big lump of foreign code that you use explicitly. You don&#39;t leave it open forever. You expect it to implement the Idisposable interface and you close it as soon as you are done with it ideally with a using statement. Again if Idisposable and using statements are new to you don&#39;t worry for now. These are just more links to future articles I will try to cover.&lt;h3&gt;Don&#39;t Talk To Strangers&lt;/h3&gt;Once we get a handle on all this talk about relationships we can go one step further. The objects we have established relationships with often have other objects that they have dependency relationships with. It is bad practice to reference these parent objects directly. Just because your aunt&#39;s sister in law knows a guy who knows a guy who says he has an in with the governor of some province in Bolivia doesn&#39;t mean you should this reference. It is better to create a new object somehow that references this object more directly. That&#39;s all for now. I just wanted to give you a brief taste of the concept of relationships in computer app design and get you thinking about when you go about becoming a proficient computer programmer. Thank you for any feedback. &lt;/div&gt;';
-    var summary = 'Dependency Injection, Don&#39;t Talk To Strangers. Coarsely Grained Loosely Coupled. All these are actual computer architecture concepts. What do they mean? In this article we will talk about the concepts of relationships in computer programming. Turns out computer programming is all about relationships. This article is intended just to get you thinking about some of the things going on when you write code. ';
-    var title = 'Let&#39;s Talk About Relationships';
-    var userId = 'ee229ec2-8657-4dc5-9af4-b68e8041677a';
-    var userName = 'Admin';
-    var filePath = '';
-    var ipAddress = '68.203.92.166';
-
-    $(document).ready(function () {
-        try {
-            if (imageName !== "") {
-                $('#articleImage').attr("src", service + "/App_Data/Images/" + imageName);
-            }
-            content = beautify(content);
-            $('#divContent').html(content);
-
-            logPageHit(service, userName, ipAddress, "ViewArticle", title);
-
-
-            //stickCommentsButton();
-
-            var hdr = $('.Header').height();
-            var mch = $('#middleColumn').height()
-            var cch = $('#divCommentsBody').height()
-            $('#middleColumn').height(hdr + mch + cch);
-            resizePage();
-        }
-        catch (e) {
-            alert("$(document).ready ERROR: " + e);
-        }
-    });
-
-    function stickCommentsButton() {
-        var x = $('#divContent').position();
-        var contentBottom = $('#divContent').position().top + $('#divContent').height() + $('.Header').height();
-        var pageBottom = $('.threeColumnArray').height();
-
-        if (pageBottom < contentBottom) {
-            //alert("pageBottom: " + pageBottom + "  contentBottom: " + contentBottom);
-            $('#divCommentsButton').css("position", "absolute").css("bottom", 0);
-            $('#divCommentsButton').width($('#middleColumn').width());
-            $('#divCommentsSection').css("position", "absolute").css("top", $('#divCommentsButton').position().top + 50);
-            $('#divCommentsSection').width($('#middleColumn').width());
-        }
-    }
-
-        // Show Comments
-    $('#divCommentsButton').click(function () {
-        //$('#divCommentsSection').toggle();
-        if ($('#divCommentsSection').css("display") == "none") {
-            $('#divCommentsSection').show();
-
-            getComments();
-            var mch = $('#middleColumn').height()
-            var cch = $('#divCommentsBody').height()
-            $('#middleColumn').height(mch + cch);
-            resizePage();
-
-        }
-        else {
-            $('#divCommentsSection').hide();
-        }
-    });
-
-    $('#btnStaticify').click(function () {
-        saveAsStaticFile();
-    });
-
-    function saveAsStaticFile() {
-            if (imageName === "") {
-                displayStatusMessage("severityWarning", "insuficent data. Image required");
-                return;
-            }
-            $('head').append('<meta name="Title" content="' + title + '" property="og:title">');
-            //$('head').append('<meta property="og:description" content="' + beautify(summary.substr(0, 300)) + '" />');
-            $('head').append('<meta name="Keywords" content="' + beautify(tags.split(",").toString()) + '>');
-            $('head').append('<meta property="og:type" content="website">');
-
-            $('head').append("<meta property='og:image' content='https://api.curtisrhodes.com/app_data/images/" + imageName + "'>");
-            //$('head').append("<meta property='og:image' content='https://curtisrhodes.com/app_data/images/" + imageName + "'>");
-            //$('head').append("<meta property='og:image' content='data:image/gif;base64," + getImage(service, imageName) + "'>");
-
-            var pageName = "https://Curtisrhodes.com/static_pages/" + title.replace(/ /g, "_") + ".html";
-            $('head').append('<br/><meta property="og:url" content="' + pageName + '">');
-
-            $('#shareToFacebook').html('<div class="fb-share-button" data-href="' + pageName + '" data-layout="button" data-size="large" data-mobile-iframe="false">' +
-                '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + pageName + '&src=sdkpreparse">Share on Facebook</a></div>');
-
-            //var html = $('html').html();
-            var data = new Object();
-            data.html = "<!DOCTYPE html>" + $('html').html();
-            try {
-                $.ajax({
-                    type: "POST",
-                    url: "CreateStaticFile",
-
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (success) {
-                        if (success === "ok") {
-                            $('#btnStaticify').val("permalink");
-                            $('#shareToFacebook').html('<button id="btnPermalink" class="roundendButton">permalink</button>');
-
-                            $('#btnPermalink').click(function () {
-                                alert("beautify(title): " + beautify(title).replace(/ /g, "_"));
-                                window.location.href = "/static_pages/" + beautify(title).replace(/ /g, "_") + ".html", "target='_blank'";
-                            })
-
-                        }
-                        else
-                            alert("/api//File returned: " + success);
-                    },
-                    error: function (jqXHR, exception) {
-                        alert("/api//File error: " + getXHRErrorDetails(jqXHR, exception));
-                    }
-                });
-            }
-            catch (e) {
-                //alert("/api//File catch: " + e);
-                alert("/api//File catch: " + e);
-            }
-    };
-
-    $(window).unload(function () {
-        //$(this)
-        alert("page move");
-    });
-
-    ///////////////////////////////////////////////////
-
-    $('#btnTest').click(function () {
-        location.href = "/Home/get_image?w=" + imageName;
-    });
-    $('#btnSpinnerTest').click(function () {
-        $(this).append("<img src='/Images/loader.gif' class='tinyLoader' >");
-    });
-    $('#btnSpinnerTest').dblclick(function () {
-        $(this).html("Add");
-    });
-</script>
-
-    </div>
-    <link href="/Styles/bFooter.css" rel="stylesheet">
-<div class="Footer" id="footer">
-    <div class="footerCol">
-        <div><a href="/Home/Index">Articles</a></div>
-        <div><a href="/Book/MyBooks">Books</a></div>
-        <div><a href="/IntelDsgn/Index">Professional</a></div>
-        <div><a href="#">Apps</a></div>
-    </div>
-    <div class="footerCol">
-        <div><a href="#">About us</a></div>
-        <div><a href="mailto:curtishrhodes@hotmail.com">Love Letters</a></div>
-        <div><a href="mailto:curtis,rhodes@gmail.com">Death Threats</a></div>
-        <div><a href="#">Archive</a></div>
-    </div>
-    <div class="footerCol">
-        <div><a href="#">Site Map</a></div>
-        <div><a href="#">Search</a></div>
-        <div><a href="#">Research</a></div>
-        <div><a href="#">Advertize</a></div>
-    </div>
-    <div id="copyright">
-        ? 2018 - <a href="/IntelDsgn/Index">Intelligent Design SoftWare</a>
-    </div>
-</div>
-
-<div id="fb-root"></div>
-
-    <div class="modalVail" id="modalContainer">
-        <div id="modalContent"></div>
-    </div>
-    
-    <script>resizePage();</script>
-
-
-</body>class="modalVail" id="modalContainer">
-        <div id="modalContent"></div>
-    </div>
-    
-    <script>resizePage();</script>
+</body>>zePage();</script>
 
 
 </body>

@@ -1,0 +1,51 @@
+﻿
+
+<div class="adminContainer">
+    <div class="adminOptionTitle">Convert Articles to Db</div>
+    <div class="roundendButton" id="btnConvert" onclick="javascript:getAllXmlArticles()" >go</div>
+    <div id="msgArea"></div>
+</div>
+
+
+<script>
+
+    function insert(article) {
+        try {
+            $.ajax({
+                type: "POST",
+                data: article,
+                async: false,
+                url: service + "/api/DbArticle",
+                success: function (success) {
+                    if (success.startsWith("ERROR"))
+                        alert("insert article :" + article.Title + "  " + success);
+                }
+            })
+        } catch (e) {
+            alert("insert catch: " + e);
+        }
+    }
+
+    var counter = 0;
+    function getAllXmlArticles() {
+        try {
+            $.ajax({
+                type: "GET",
+                url: service + "/api/ArticleXml",
+                success: function (articles) {
+                    //alert("articles.Length: " + articles.length);
+                    $.each(articles, function (idx, article) {
+                        insert(article);
+                        $('#msgArea').html(++counter);
+                    });
+                },
+                error: function (jqXHR, exception) {
+                    alert("loadArticle post : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("getAllXmlArticles catch: " + e);
+        }
+    }
+
+</script>

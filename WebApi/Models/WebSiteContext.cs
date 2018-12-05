@@ -18,6 +18,9 @@ namespace WebApi
         public virtual DbSet<Visit> Visits { get; set; }
         public virtual DbSet<Visitor> Visitors { get; set; }
         public virtual DbSet<Article> Articles { get; set; }
+        public virtual DbSet<ArticleTag> ArticleTags { get; set; }
+        public virtual DbSet<Blog> Blogs { get; set; }
+        public virtual DbSet<BlogEntry> BlogEntries { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -28,7 +31,17 @@ namespace WebApi
 
             modelBuilder.Entity<Ref>()
                 .Property(e => e.RefCode)
-                .IsFixedLength();        
+                .IsFixedLength();
+
+            modelBuilder.Entity<Article>()
+                .HasMany(e => e.ArticleTags)
+                .WithRequired(e => e.Article)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Blog>()
+                .HasMany(e => e.BlogEntries)
+                .WithRequired(e => e.Blog)
+                .WillCascadeOnDelete(false);
         }
     }
 
@@ -135,19 +148,99 @@ namespace WebApi
     [Table("website.Article")]
     public partial class Article
     {
-        [Key]
-        public int ArticleId { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Article()
+        {
+            ArticleTags = new HashSet<ArticleTag>();
+        }
 
-        [Required]
-        [StringLength(500)]
-        public string ArticleTitle { get; set; }
+        public Guid Id { get; set; }
+
+        [StringLength(400)]
+        public string Title { get; set; }
+
+        [StringLength(400)]
+        public string ImageName { get; set; }
 
         [StringLength(3)]
-        public string ArticleType { get; set; }
+        public string CategoryRef { get; set; }
 
-        public string ArticleText { get; set; }
+        [StringLength(3)]
+        public string SubCategoryRef { get; set; }
 
-        public DateTime CreateDate { get; set; }
+        [StringLength(3)]
+        public string ByLineRef { get; set; }
+
+        public DateTime Created { get; set; }
+
+        public DateTime LastUpdated { get; set; }
+
+        public string Summary { get; set; }
+
+        public string Content { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ArticleTag> ArticleTags { get; set; }
     }
 
+    [Table("website.ArticleTag")]
+    public partial class ArticleTag
+    {
+        public int Id { get; set; }
+
+        public Guid articleId { get; set; }
+
+        [StringLength(200)]
+        public string TagName { get; set; }
+
+        [StringLength(3)]
+        public string TagCategoryRef { get; set; }
+
+        public virtual Article Article { get; set; }
+    }
+
+    [Table("website.Blog")]
+    public partial class Blog
+    {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Blog()
+        {
+            BlogEntries = new HashSet<BlogEntry>();
+        }
+
+        public Guid Id { get; set; }
+
+        [StringLength(200)]
+        public string BlogName { get; set; }
+
+        [StringLength(128)]
+        public string BlogOwner { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BlogEntry> BlogEntries { get; set; }
+    }
+
+    [Table("website.BlogEntry")]
+    public partial class BlogEntry
+    {
+        public int Id { get; set; }
+
+        public Guid BlogId { get; set; }
+
+        [StringLength(200)]
+        public string Title { get; set; }
+
+        [StringLength(400)]
+        public string ImageName { get; set; }
+
+        public DateTime? Created { get; set; }
+
+        public DateTime? LastUpdated { get; set; }
+
+        public string Summary { get; set; }
+
+        public string Content { get; set; }
+
+        public virtual Blog Blog { get; set; }
+    }
 }

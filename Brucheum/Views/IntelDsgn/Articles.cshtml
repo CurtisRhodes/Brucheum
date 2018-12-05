@@ -8,16 +8,22 @@
 <link href="~/Styles/admin.css" rel="stylesheet" />
 
 <style>
-    #divArticleContainer {    
+    .blocksDisplay {
         margin-top: 55px;
-        width: 444px;
+        width: 1400px;
+        height: 666px;
+        border: solid thin red;
     }
-    .intelDsgnListItem {
-        min-height: 150px;
-        min-width: 150px;
-        float: left;
+    .blockContainer {
+        vertical-align: top;
         display: inline-block;
-    }
+        height: 150px;
+        width: 150px;
+        padding: 4px;
+        margin: 5px;
+        background-color: #74bac3;
+        cursor: pointer;
+    } 
 
 </style>
 
@@ -26,9 +32,7 @@
     <div id="leftColumn"></div>
     <div id="middleColumn">
         <div id="divStatusMessage"></div>
-        <div id="divArticleContainer"></div>
-
-
+        <div id="divArticleContainer" class="blocksDisplay"></div>
     </div>
     <div id="rightColumn"></div>
 </div>
@@ -61,7 +65,7 @@
                     if (true) {
                         $.each(response, function (idx, obj) {
                             //alert("ArticleTypeDescription:" + obj.ArticleTypeDescription);
-                            $('#divArticleContainer').append("<div class='crudListItem intelDsgnListItem' id='" + obj.ArticleId + "'>" + obj.ArticleTypeDescription + " | " + obj.ArticleTitle + "</div>");
+                            $('#divArticleContainer').append("<div class='blockContainer' id='" + obj.ArticleId + "'>" + obj.ArticleTypeDescription + " | " + obj.ArticleTitle + "</div>");
                         })
                         $('#loadingGif').hide();
                         $('.crudListItem').click(function () {

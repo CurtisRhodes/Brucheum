@@ -14,15 +14,15 @@ namespace Service1.Controllers
 
         // POST: api/Image
         [HttpPost]
-        public string Post() 
+        public string Post(string oFileName) 
         {
-            string fileName = GetRandomString()+ ".jpg";
+            //string fileName = GetRandomString()+ ".jpg";
 
-            var fullPathImageFileName = Path.Combine(imagesPath, fileName);
+            var fullPathImageFileName = Path.Combine(imagesPath, oFileName);
             Byte[] byteArray = Request.Content.ReadAsByteArrayAsync().Result;
             File.WriteAllBytes(fullPathImageFileName, byteArray);
 
-            return fileName;
+            return "ok";
         }
 
         //GET api/Image/filename

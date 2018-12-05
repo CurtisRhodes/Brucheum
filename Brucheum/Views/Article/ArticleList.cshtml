@@ -38,8 +38,7 @@
     var filterType= '@ViewBag.FilterType';
     var filter= '@ViewBag.Filter';
     var previousFilter = '@ViewBag.Filter';
-    var loggedIn = '@Session["UserName"]';
-
+    var isArticeEditor = '@User.IsInRole("Article Editor")';
     var page = 1;
     var pageLen = 5;
     var articleCount;
@@ -63,14 +62,13 @@
                     $('#articleList').html('');
                 }
             }
-
             if (filterType === "")
                 $('#listHeader').html("Latest Articles");
             else
                 $('#listHeader').html(filter);
 
             $.ajax({
-                url: service + "/api/ArticleXml?pageLen=" + pageLen + "&page=" + page + "&filterType=" + filterType + "&filter=" + filter,
+                url: service + "/api/DbArticle?pageLen=" + pageLen + "&page=" + page + "&filterType=" + filterType + "&filter=" + filter,
                 type: "get",
                 timeout: 90210,  //  nine seconds
                 success: function (list) {
@@ -84,17 +82,9 @@
                     else
                         $('#divMoreButton').show();
 
-                    //$("#rightColumn").append("<div id='adminMsg'><a href='/Article/ArticleEdit'>add new</a></div>");
-
-
-                    //if (loggedIn !== "") {
-                    //    $('#adminMsg').show();
-                    //}
-
                     $('#divBookPannel').css("visibility", "visible");
                     $('#middleColumn').height($('#articleList').height() + 115);
                     resizePage();
-
                 },
                 error: function (xmlhttprequest, textstatus, message) {
                     $('#loadingGif').hide();
@@ -116,14 +106,10 @@
 
     function formatArticleJog(article) {
         try {
+            var webService = "https://api.curtisrhodes.com";
             var title = article.Title.split(' ').join('_');
-            var articleHref = "/Article/Article?Id=" + article.Id;
-            var imgSrc = "<img>";
-            if (article.ImageName !== "") {
-
-                imgSrc = service + "/App_Data/Images/" + article.ImageName;
-                //imgSrc = '<img src="data:image/gif; base64,' + getImage(service, article.ImageName) + '">';
-            };
+            var articleHref = "/Article/ArticleView?Id=" + article.Id;
+            var imgSrc = webService + "/App_Data/Images/" + article.ImageName;
             $('#articleList').append(`
                 <div class='divArticle'><div id='divImg'><a href="`+ articleHref + `"><img src=` + imgSrc + `></a></div>
                     <div id='divArticleDetail'>
@@ -135,9 +121,9 @@
                         <a href="`+ articleHref + `"><div id='divArticleSummary'>` + article.Summary + `</div></a>
                         <div id='divBottomRow'>
                             <div id='divByline'>By: <a href=/Article/ArticleList?filterType=Byline&filter=`+ article.Byline + `>` + article.Byline + `</a></div>
-                            @if (User.IsInRole("Article Editor"))
+                            if (isArticeEditor)
                             {
-                                @:<div id='divArticleEdit'><a href=/Article/ArticleEdit?Id=` + article.Id + `>edit</a></div>
+                                <div id='divArticleEdit'><a href=/Article/ArticleEdit?Id=` + article.Id + `>edit</a></div>
                             }
                         </div>
                     </div>
@@ -147,4 +133,5 @@
             alert("formatArticleJog error: " + e);
         }
     }
+
 </script>

@@ -14,19 +14,19 @@
                 <div id="divArticleRowContainer" class="editArticleRowContainer">
                     <div class="editArticleRow">
                         <div class="editArticleLabel">Title:</div>
-                        <div class="editArticleInput"><input class="roundedInput wide" id="txtTitle" /></div>
+                        <div class="editArticleInput"><input class="roundedInput" id="txtTitle" /></div>
                     </div>
                     <div class="editArticleRow">
                         <div class="editArticleLabel">Category:</div>
                         <div class="editArticleInput"><select id="ddCategory" class="roundedInput"></select></div>
                         <div class="editArticleLabel align-right">Byline:</div>
                         <div class="editArticleInput"><select id="ddAvatars" class="roundedInput"></select></div>
-                        <div class="editArticleLabel align-right">Created:</div>
-                        <div class="editArticleInput"><input class="roundedInput" id="txtCreated" /></div>
+                        <div class="editArticleLabel align-right">Updated:</div>
+                        <div class="editArticleInput"><input class="roundedInput" id="txtUpdated" /></div>
                     </div>
                     <div class="editArticleRow">
                         <div class="editArticleLabel">Image:</div>
-                        <div class="editArticleInput"><input id="uplImage" type="file" class="imageUpload wide" /></div>
+                        <div class="editArticleInput"><input id="uplImage" type="file" class="imageUpload" onchange="javascript:loadImage()" /></div>
                     </div>
                     <div class="editArticleRow">
                         <div class="editArticleLabel">Meta Tag:</div>
@@ -39,22 +39,18 @@
                     </div>
                 </div>
                 <div id="#divEditArticlePicContainer" class="editArticlePicContainer">
-                    <img id="imgArticleJog" />
+                    <img id="imgArticleJog" class="imageContainer" />
                 </div>
             </div>
             <div id="divStatusMessage"></div>
             <div id="articleEditor">
                 <div>@Html.Partial("_Editor") </div>
             </div>
-            @*<div id="divQuilleditor"></div>*@
 
-            <div id="divButtons">
-                <button id="btnSave" class="roundendButton">Save</button>
-                <button id="btnView" class="roundendButton">View</button>
-                <button id="btnDelete" class="roundendButton">Delete</button>
+            <div class="btnRow">
+                <button id="btnSave" class="roundendButton" onclick="javascript:addUpdateArticle()">Save</button>
+                <button id="btnView" class="roundendButton" onclick="javascript:saveAndView()">View</button>
             </div>
-            @*<input id="hiddenId" type="hidden" />*@
-            <input id="hiddenImageName" type="hidden" />
         </div>
     </div>
     <div id="rightColumn"></div>
@@ -66,9 +62,6 @@
     var article = new Object();
     var metaTags = new Array();
 
-    //var quill = new Quill('#divQuilleditor', { theme: 'snow' });
-    //var quill = new Quill('#divQuilleditor', { theme: 'snow', modules: { toolbar: '#full-toolbar' } 	});
-
     $(document).ready(function () {
         //$('#divLoadingGif').show();
 
@@ -78,7 +71,7 @@
             getArticle();
         }
         else {
-            $('#txtCreated').val(formatDate(new Date()));
+            $('#txtUpdated').val(formatDate(new Date()));
         }
         $('#btnDelete').hide();
         $('#articleEditor').summernote({
@@ -98,14 +91,12 @@
     });
 
     function bind(article) {
-        //$('#hiddenId').val(article.Id );
         $('#txtTitle').val(article.Title);
         $('#ddCategory').val(article.Category);
-        //alert("article.Category: " + article.Category)
         $('#txaSummary').val(article.Summary);
-        $('#hiddenImageName').val(article.ImageName);
+        $('#imgArticleJog').attr("src", service + "/App_Data/Images/" + article.ImageName);
         $('#ddAvatars').val(article.Byline);
-        $('#txtCreated').val(article.DateCreated);
+        $('#txtUpdated').val(article.LastUpdated);
         $('#articleEditor').summernote('code', article.Contents);
     }
 
@@ -115,11 +106,9 @@
             article.Title = $('#txtTitle').val();
             article.Category = $('#ddCategory option:selected').text();
             article.Summary = $('#txaSummary').val();
-            article.ImageName = $('#hiddenImageName').val();
             article.Byline = $('#ddAvatars option:selected').text();
-            article.DateCreated = $('#txtCreated').val();
+            article.LastUpdated = $('#LastUpdated').val();
             article.Contents = beautify($('#articleEditor').summernote('code'));
-            //article.Contents = quill.root.innerHTML;  //quill.getContents(0, quill.getLength()).innerHtml;
             article.Tags = metaTags;
         }
         catch (e) {
@@ -132,7 +121,7 @@
             unBind();
             $.ajax({
                 type: "PUT",
-                url: service + "/api/ArticleXml",
+                url: service + "/api/DbArticle",
                 async: "false",
                 dataType: "json",
                 data: article,
@@ -163,7 +152,7 @@
                 return;
             }
             $.ajax({
-                url: service + "/api/ArticleXml",
+                url: service + "/api/DbArticle",
                 type: "post",
                 dataType: "Json",
                 data: article,
@@ -191,25 +180,27 @@
     }
 
     function getArticle() {
+        //alert("getArticle: " + articleId);
         $.ajax({
-            url: service + "/api/ArticleXml?id=" + articleId,
-            type: "get",
+            type: "GET",
+            url: service + "api/DbArticle/Get?articleId=" + articleId,
             dataType: "json",
             success: function (response) {
+                var webService = "https://api.curtisrhodes.com";
+                $('#imgArticleJog').attr("src", webService + "/App_Data/Images/" + response.ImageName);
                 bind(response);
-                if (response.ImageName !== "") {
-                    //var image = getImage(service, response.ImageName);
-                    //$('#bImage').attr("src", "data:image/gif;base64," + image);
-                    //$('#imgArticleJog').attr("src", response.ImageName);
-                    $('#imgArticleJog').attr("src", service + "/App_Data/Images/" + response.ImageName);
-                }
                 $('#btnSave').text("Update");
-                if (response.Tags != "") {
-                    metaTags = response.Tags;
-                    for (var tag in metaTags) {
-                        $("#divTagContainer").append("<div class='tagItem'>" + metaTags[tag] + "</div>");
-                    };
-                }
+
+                $.each(response.Tags, function (idx, tag) {
+                        $("#divTagContainer").append("<div class='tagItem'>" + tag.TagName + "</div>");
+                })
+
+                //if (response.Tags != "") {
+                //    metaTags = response.Tags;
+                //    for (var tag in metaTags) {
+                //        $("#divTagContainer").append("<div class='tagItem'>" + metaTags[tag] + "</div>");
+                //    };
+                //}
                 setTimeout(function () { adjust() }, 1000);
             },
             error: function (xhr, textStatus, error) {
@@ -265,47 +256,36 @@
         }
     });
 
-    $('#uplImage').change(function () {
-        var localImageName = $('#uplImage').val();
-        var serverImageName = postImage(service, localImageName);
-        $('#hiddenImageName').val(serverImageName);
-        $('#imgArticleJog').attr("src", service + "/App_Data/Images/" + serverImageName);
-        //var bytes = getImage(service, serverImageName);
-        //$('#bImage').attr("src", "data:image/gif;base64," + bytes);
-    });
+    function loadImage() {
+        article.ImageName = $('#uplImage').val();
+        var success = postImage(service, localImageName);
 
-    $('#btnSave').click(function () {
+        $('#imgArticleJog').attr("src", service + "/App_Data/Images/" + article.ImageName);
+        setTimeout(function () { adjust() }, 1000);
+    }
+
+    function addUpdateArticle() {
         if ($('#btnSave').text() === "Save")
             postArticle();
         else
             updateArticle();
-    });
+    }
 
-    $('#btnView').click(function () {
+    function saveAndView() {
         if ($('#btnSave').text() === "Save")
             postArticle("View");
         else
             updateArticle("View");
-    });
+    }
 
     function adjust() {
         var wPic = $('#imgArticleJog').width();
         var wAcl = $('#divEditArticleContainer').width();
-
         $('#divArticleRowContainer').width(wAcl - wPic);
         var wAcr = $('#divArticleRowContainer').width();
-
-        //alert("ArticleContainer: " + wAcl + " pic: " + wPic + " RowContainer: " + wAcr);
-
         var wlbl = $('#divEditArticleLabel').width() + 20;
-        //alert("ArticleLabel: " + wlbl);        
-        //var start = $('#txaSummary').width();
         $('#txaSummary').width(wAcr - wlbl);
-        //var wNow = $('#txaSummary').width();
-
-        //alert("txtArea start: " + start + " now: " + wNow);
-        //$('#divLoadingGif').hide();
-        //$('#divAjustableItemsWrapper').show();
+        $('#txtTitle').width(wAcr - wlbl);
     }
 
 </script>
