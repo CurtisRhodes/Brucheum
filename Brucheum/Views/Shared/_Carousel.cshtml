@@ -66,7 +66,6 @@
             <img class='carouselImage' src="~/Images/house.gif" />
             <div id='articleTitle' class='carouselLabel'>article.Title</div>
             <div id='articleCat' class='carouselLabel'>article.Category</div>
-
         </div>
         
     </div>
@@ -136,11 +135,11 @@
         alert("stop");
         stopCarousel();
     }
-
     function clickNext() {
         clearInterval(Carousel);
         rotate();
     }
+
     function loadAndStartCarousel() {
         $.ajax({
             type: "GET",
@@ -165,7 +164,7 @@
                 <div class='carouselItem' id='`+ article.Id + `' >
                     <img class='carouselImage' src=` + imgSrc + `>
                     <div id='articleTitle' class='carouselLabel'>` + article.Title + `</div>
-                    <div id='articleCat'   class='carouselLabel'> ` + article.Category + `</div>
+                    <div id='articleCat'   class='carouselLabel'> ` + article.CategoryLabel + `</div>
                 </div>`);
         } catch (e) {
             alert("formatArticleJog error: " + e);

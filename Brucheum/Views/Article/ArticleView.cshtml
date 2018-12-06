@@ -37,7 +37,7 @@
         </div>
         <div id="contentArea">
             <div id="divImage"><img id="articleImage" /></div>
-            <div id="divSummary"></div>  
+            <div id="divSummary" class="summaryText"></div>  
             <div id="divContent"></div>
             <div id="divStatusMessage"></div>
             <div id="divCommentsButton" class="roundendButton">comments</div>
@@ -80,23 +80,22 @@
 
     function loadArticle(articleId) {
         try {
-            var webService = "https://api.curtisrhodes.com";
             //alert("articleId: " + articleId);
             //alert("get: " + service + "/api/DbArticle?articleId=" + articleId)
             $.ajax({
                 type: "GET",
-                url: service + "api/DbArticle/Get?articleId=" + articleId,
-                dataType: "json",
+                url: service + "/api/DbArticle?articleId=" + articleId,
+                //dataType: "json",
                 success: function (article) {
                     if (article.Success == "ok") {
                         artitleTitle = article.Title;
                         articleImageName = article.ImageName;
-                        $('#articleImage').attr("src", webService + "/App_Data/Images/" + article.ImageName);
-                        $('#divCategory').html(article.Category);
+                        $('#articleImage').attr("src", service + "/App_Data/Images/" + article.ImageName);
+                        $('#divCategory').html(article.CategoryLabel);
                         $('#divTitle').html(article.Title);
                         $('#divArticleDate').html(article.LastUpdated);
                         $('#divSummary').html(article.Summary);
-                        $('#divByline').html(article.Byline);
+                        $('#divByline').html(article.ByLineLabel);
                         $('#divContent').html(beautify(article.Contents));
 
                         $.each(article.Tags, function (idx, tag) {

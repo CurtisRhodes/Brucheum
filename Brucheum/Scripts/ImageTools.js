@@ -4,7 +4,6 @@ function postImage(service, fileName) {
 		fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
         var image = $('#uplImage')[0].files[0];
         //var data = "{'imageName':'" + fileName + "'image':'" + image + "'}";
-		var serverImageName;
 		if (image !== null) {
 			//alert("url: " + service + "/api/Images");
             $.ajax({
@@ -16,8 +15,9 @@ function postImage(service, fileName) {
                 async: false,
                 cache: false,
                 data: image,
-                success: function (data) {
-                    serverImageName = data;
+                success: function (success) {
+                    if (success !== "ok")
+                        alert("postImage: " + success);
                 },
                 error: function (xhr) {
                     alert("PostTimage error: " + xhr.statusText);
@@ -28,7 +28,7 @@ function postImage(service, fileName) {
 			alert("ERROR: image == null")
 			//displayStatusMessage("alert-danger", "ERROR: not working");
 		}
-		return serverImageName;
+		return fileName;
 	} catch (e) {
 		//displayStatusMessage("alert-danger", "ERROR t: " + e);
 		alert("try catch ERROR : " + e);

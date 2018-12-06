@@ -23,6 +23,7 @@
             })
         } catch (e) {
             alert("insert catch: " + e);
+
         }
     }
 
@@ -33,10 +34,20 @@
                 type: "GET",
                 url: service + "/api/ArticleXml",
                 success: function (articles) {
+
                     //alert("articles.Length: " + articles.length);
                     $.each(articles, function (idx, article) {
-                        insert(article);
+
                         $('#msgArea').html(++counter);
+
+                        article.CategoryRef = 'MOO';
+                        article.SubCategoryRef = 'AUW';
+                        article.ByLineRef = 'BET'
+
+                        var a = article.Summary;
+                        article.Summary = article.Contents;
+                        article.Contents = a;
+                        setTimeout(function () { insert(article) }, 100);
                     });
                 },
                 error: function (jqXHR, exception) {
