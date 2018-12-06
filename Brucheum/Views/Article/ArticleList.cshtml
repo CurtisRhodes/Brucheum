@@ -10,9 +10,9 @@
     </div>
     <div id="middleColumn">
         <div id="divArticleList">
-            <div id="listHeader"></div>
+            <div id="divlistHeader" class="articleListHeader" ></div>
             <div id="divStatusMessage"></div>
-            <div id="articleList">
+            <div id="articleListContainer">
                 <div id="loadingGif">
                     <img src="~/Images/loader.gif" />  @*"~/Images/ingranaggi3.gif"*@
                 </div>
@@ -23,7 +23,7 @@
     <div id="rightColumn">
         @if (User.IsInRole("Article Editor"))
         {
-            <div id="divHrefAddNew">
+            <div class="clickArea01">
                 <a id="hrefAddNew" href='/Article/ArticleEdit'>add new article</a>
             </div>
         }
@@ -45,6 +45,8 @@
 
 
     $(document).ready(function () {
+        $('#hrefAddNew').hide();
+        $('#divBookPannel').hide();
         getArticleList();
     });
 
@@ -63,14 +65,13 @@
                 }
             }
             if (filterType === "")
-                $('#listHeader').html("Latest Articles");
+                $('#divlistHeader').html("Latest Articles");
             else
-                $('#listHeader').html(filter);
+                $('#divlistHeader').html(filter);
 
             $.ajax({
                 url: service + "/api/DbArticle?pageLen=" + pageLen + "&page=" + page + "&filterType=" + filterType + "&filter=" + filter,
                 type: "get",
-                timeout: 90210,  //  nine seconds
                 success: function (list) {
                     $('#loadingGif').hide();
 
@@ -82,7 +83,9 @@
                     else
                         $('#divMoreButton').show();
 
-                    $('#divBookPannel').css("visibility", "visible");
+                    $('#hrefAddNew').show();
+                    $('#divBookPannel').show();
+
                     $('#middleColumn').height($('#articleList').height() + 115);
                     resizePage();
                 },
@@ -107,28 +110,32 @@
     function formatArticleJog(article) {
         try {
             var webService = "https://api.curtisrhodes.com";
-            var title = article.Title.split(' ').join('_');
-            var articleHref = "/Article/ArticleView?Id=" + article.Id;
             var imgSrc = webService + "/App_Data/Images/" + article.ImageName;
-            $('#articleList').append(`
-                <div class='divArticle'><div id='divImg'><a href="`+ articleHref + `"><img src=` + imgSrc + `></a></div>
-                    <div id='divArticleDetail'>
-                        <div id='divTopRow'>
-                            <div id='divCategory'><a href=/Article/ArticleList?filterType=Category&filter=`+ encodeURI(article.Category) + `>` + article.Category + `</a></div>
-                            <div id='divArticleTitle'><a href="`+ articleHref + `">` + article.Title + `</div>
-                            <div id='divLastUpdated'>`+ article.DateCreated + `</div>
-                        </div>
-                        <a href="`+ articleHref + `"><div id='divArticleSummary'>` + article.Summary + `</div></a>
-                        <div id='divBottomRow'>
-                            <div id='divByline'>By: <a href=/Article/ArticleList?filterType=Byline&filter=`+ article.Byline + `>` + article.Byline + `</a></div>
-                            if (isArticeEditor)
-                            {
-                                <div id='divArticleEdit'><a href=/Article/ArticleEdit?Id=` + article.Id + `>edit</a></div>
-                            }
-                        </div>
-                    </div>
-                </div>`);
+
+            //var title = article.Title.split(' ').join('_');
+            var articleHref = "/Article/ArticleView?Id=" + article.Id;
+
+            var kludge = "<div class='articleListItem'>";
+            kludge += "<div id='divImg'><a href=" + articleHref + "><img src=" + imgSrc + "></a></div>";
+            kludge += "<div class='articleDetail'>";
+            kludge += "<div class='articleTopRow'>";
+            kludge += "<div class='articleRowItemLeft'><a href=/Article/ArticleList?filterType=Category&filter="+ article.CategoryRef + ">" + article.CategoryLabel + "</a></div>";
+            kludge += "<div class='articleRowItemCenter'><a href=" + articleHref + ">" + article.Title + "</a></div>";
+            kludge += "<div class='articleRowItemRight'>" + article.LastUpdated + "</div>";
+            kludge += "</div>";  // top row
+            kludge += "<a href=" + articleHref + "><div class='articleSummary'>" + article.Summary + "</div></a>";
+            kludge += "<div class='articleBottomRow'>";
+            kludge += "<div class='articleRowItemLeft'> By: <a href=/Article/ArticleList?filterType=Byline& filter=" + article.ByLineRef + ">" + article.ByLineLabel + "</a></div>";
+            if (isArticeEditor)
+                kludge += "<div class='articleRowItemRight'><a href=/Article/ArticleEdit?Id=" + article.Id + ">edit</a></div>";
+            kludge += "</div>";  // bottom row
+            kludge += "</div>";  // article detail 
+            kludge += "</div>";  // article listItem
+
+            $('#articleListContainer').append(kludge);
+
             articleCount++;
+
         } catch (e) {
             alert("formatArticleJog error: " + e);
         }
