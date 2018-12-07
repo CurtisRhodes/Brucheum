@@ -12,6 +12,13 @@
     <script src="~/Scripts/ResizeThreeColumnPage.js"></script>
 </head>
 <body>
+    <div id="loadingGif" style="display:none">
+        <div style="position: absolute; left: 50%; top:40%">
+            <div style="position:relative; left: -50%; border:dotted red 1px;">
+                <div class="loadingGif"><img src="~/Images/loader.gif" /></div>
+            </div>
+        </div>
+    </div>
     <div id="bheader" class="standardHeader">
         <div class="bannerImageContainer">
             <a href="~/Home/Index"><img src="~/images/house.gif" class="bannerImage" /></a>
@@ -20,12 +27,12 @@
             <div id="bannerTitle" class="headerTitle">
                 Curtis Rhodes.com
             </div>
-            
+
             <div id="menuContainer" class="menuTabContainer">
                 <div id="replaceableMenuItems">
                     <div class="menuTab floatLeft"><a href="~/Article/ArticleList">Latest Articles</a></div>
-                    <div class="menuTab floatLeft"><a href="~/Article/ArticleList?filterType=Category&filter=POL">Political Rants</a></div>
-                    <div class="menuTab floatLeft"><a href="~/Article/ArticleList?filterType=Category&filter=conspiracy">Conspiracy Theories</a></div>
+                    <div class="menuTab floatLeft"><a href="~/Article/ArticleList?filterLabel=Political Rants&filterType=Category&filter=POL">Political Rants</a></div>
+                    <div class="menuTab floatLeft"><a href="~/Article/ArticleList?filterLabel=Conspiracy Theories&filterType=Category&filter=CON">Conspiracy Theories</a></div>
                     <div class="menuTab floatLeft"><a href="~/BookDb/Index">Books</a></div>
                     <div class="menuTab floatLeft"><a href="~/Home/Apps">Apps</a></div>
                     <div class="menuTab floatLeft"><a href="~/IntelDsgn/Index">Intelligent Design</a></div>
@@ -36,8 +43,8 @@
                 }
                 @if (Request.IsAuthenticated)
                 {
-                    <div  class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
-                    <div  class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
+                    <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
+                    <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
                 }
                 else
                 {

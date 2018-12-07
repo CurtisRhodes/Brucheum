@@ -154,7 +154,7 @@ namespace WebApi
             ArticleTags = new HashSet<ArticleTag>();
         }
 
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         [StringLength(400)]
         public string Title { get; set; }
@@ -188,7 +188,7 @@ namespace WebApi
     {
         public int Id { get; set; }
 
-        public Guid articleId { get; set; }
+        public string articleId { get; set; }
 
         [StringLength(200)]
         public string TagName { get; set; }

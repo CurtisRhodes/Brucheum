@@ -8,7 +8,6 @@
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
-        <div id="divLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
         <div id="divAjustableItemsWrapper">
             <div id="divEditArticlePicContainer" class="editArticlePicContainer">
                 <div>
@@ -71,8 +70,6 @@
     var metaTagsStringArray = new Array();
 
     $(document).ready(function () {
-        //$('#divLoadingGif').show();
-
         getCategories()
         getAvatars()
         if (article.Id !== "") {
