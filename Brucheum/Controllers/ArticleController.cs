@@ -18,8 +18,9 @@ namespace Brucheum
     {
         private readonly string apiService = ConfigurationManager.AppSettings["apiService"];
 
-        public ActionResult ArticleList(string filterType, string filter)
+        public ActionResult ArticleList(string filterLabel, string filterType, string filter)
         {
+            ViewBag.filterLabel = filterLabel;
             ViewBag.FilterType = filterType;
             ViewBag.Filter = filter;
             ViewBag.Service = apiService;

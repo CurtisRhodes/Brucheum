@@ -12,11 +12,7 @@
         <div id="divArticleList">
             <div id="divlistHeader" class="articleListHeader" ></div>
             <div id="divStatusMessage"></div>
-            <div id="articleListContainer">
-                <div id="loadingGif">
-                    <img src="~/Images/loader.gif" />  @*"~/Images/ingranaggi3.gif"*@
-                </div>
-            </div>
+            <div id="articleListContainer"></div>
             <div id="divMoreButton" class="roundendButton">More</div>
         </div>
     </div>
@@ -35,9 +31,10 @@
 
 <script>
     var service = '@ViewBag.Service';
+    var filterLabel = '@ViewBag.filterLabel';
     var filterType= '@ViewBag.FilterType';
     var filter= '@ViewBag.Filter';
-    var previousFilter = '@ViewBag.Filter';
+    var filterLabel = '@ViewBag.Filter';
     var isArticeEditor = '@User.IsInRole("Article Editor")';
     var page = 1;
     var pageLen = 5;
@@ -59,15 +56,15 @@
         try {
             $('#loadingGif').show();
 
-            if (filter !== "") {
-                if (more === undefined) {
-                    $('#articleList').html('');
-                }
-            }
+            if (more === undefined)
+                $('#articleList').html('');
+            else
+                page += pageLen;
+
             if (filterType === "")
                 $('#divlistHeader').html("Latest Articles");
-            else
-                $('#divlistHeader').html(filter);
+            else 
+                $('#divlistHeader').html(filterLabel);
 
             $.ajax({
                 url: service + "/api/DbArticle?pageLen=" + pageLen + "&page=" + page + "&filterType=" + filterType + "&filter=" + filter,
@@ -86,7 +83,12 @@
                     $('#hrefAddNew').show();
                     $('#divBookPannel').show();
 
-                    $('#middleColumn').height($('#articleList').height() + 115);
+                    if (more !== undefined) {
+                        //var mch = $('#middleColumn').height();
+                        var als = $('#articleListContainer').height();
+                        $('.threeColumnArray').height(als + 150);
+                        //alert("$('#threeColumnArray').height: " + $('.threeColumnArray').height());
+                    }
                     resizePage();
                 },
                 error: function (xmlhttprequest, textstatus, message) {
@@ -102,6 +104,7 @@
                 }
             });
         } catch (e) {
+            $('#loadingGif').hide();
             displayStatusMessage("error", "tERROR" + e);
             alert("getArticleList catch: " + e);
         }
@@ -119,13 +122,13 @@
             kludge += "<div id='divImg'><a href=" + articleHref + "><img src=" + imgSrc + "></a></div>";
             kludge += "<div class='articleDetail'>";
             kludge += "<div class='articleTopRow'>";
-            kludge += "<div class='articleRowItemLeft'><a href=/Article/ArticleList?filterType=Category&filter="+ article.CategoryRef + ">" + article.CategoryLabel + "</a></div>";
+            kludge += "<div class='articleRowItemLeft'><a href=/Article/ArticleList?filterLabel=" + article.CategoryLabel +"&filterType=Category&filter="+ article.CategoryRef + ">" + article.CategoryLabel + "</a></div>";
             kludge += "<div class='articleRowItemCenter'><a href=" + articleHref + ">" + article.Title + "</a></div>";
             kludge += "<div class='articleRowItemRight'>" + article.LastUpdated + "</div>";
             kludge += "</div>";  // top row
             kludge += "<a href=" + articleHref + "><div class='articleSummary'>" + article.Summary + "</div></a>";
             kludge += "<div class='articleBottomRow'>";
-            kludge += "<div class='articleRowItemLeft'> By: <a href=/Article/ArticleList?filterType=Byline& filter=" + article.ByLineRef + ">" + article.ByLineLabel + "</a></div>";
+            kludge += "<div class='articleRowItemLeft'> By: <a href=/Article/ArticleList?filterLabel=" + article.ByLineLabel +"&filterType=Byline&filter=" + article.ByLineRef + ">" + article.ByLineLabel + "</a></div>";
             if (isArticeEditor)
                 kludge += "<div class='articleRowItemRight'><a href=/Article/ArticleEdit?Id=" + article.Id + ">edit</a></div>";
             kludge += "</div>";  // bottom row

@@ -2,12 +2,19 @@
 
 <div class="adminContainer">
     <div class="adminOptionTitle">Convert Articles to Db</div>
-    <div class="roundendButton" id="btnConvert" onclick="javascript:getAllXmlArticles()" >go</div>
+    <div class="roundendButton" id="btnConvert" onclick="javascript:getAllXmlArticles()">go</div>
     <div id="msgArea"></div>
 </div>
 
+@*<div class="adminContainer">
+    <div class="adminOptionTitle">Convert Article Tags to Db</div>
+    <div class="roundendButton" id="btnConvert" onclick="javascript:getXmlTags()">go</div>
+    <div id="msgArea"></div>
+</div>*@
+
 
 <script>
+    var counter = 0;
 
     function insert(article) {
         try {
@@ -27,12 +34,64 @@
         }
     }
 
-    var counter = 0;
+    //public class DbArticleTagModel {
+    //    public int Id { get; set; }
+    //    public Guid ArticleId { get; set; }
+    //    public string TagName { get; set; }
+    //    public string TagCategoryRef { get; set; }
+    //}
+
+    //var tagModel = new Object();
+    //function addTag(articleId, tagName) {
+    //    try {
+    //        tagModel.ArticleId = articleId;
+    //        tagModel.TagName = tagName;
+
+
+    //        $.ajax({
+    //            type: "POST",
+    //            data: tagModel,
+    //            async: false,
+    //            url: service + "/api/DbArticleTag",
+    //            success: function (success) {
+    //                if (success != "ok")
+    //                    alert("addTag :" + success);
+    //            }
+    //        })
+    //    } catch (e) {
+    //        alert("addTag catch: " + e);
+    //    }
+    //}
+
+    //function getXmlTags() {
+    //    try {
+    //        $.ajax({
+    //            type: "GET",
+    //            url: service + "/api/ArticleXml",
+    //            success: function (articles) {
+    //                $.each(articles, function (idx, article) {
+    //                    $('#msgArea').html(++counter);
+
+    //                    $.each(article.Tags, function (idx, tag) {
+    //                        if (tag != "tag1")
+    //                            addTag(article.Id, tag)
+    //                    });
+    //                });
+    //            },
+    //            error: function (jqXHR, exception) {
+    //                alert("loadArticle post : " + getXHRErrorDetails(jqXHR, exception));
+    //            }
+    //        });
+    //    } catch (e) {
+    //        alert("getAllXmlArticles catch: " + e);
+    //    }
+    //}
+
     function getAllXmlArticles() {
         try {
             $.ajax({
-                type: "GET",
-                url: service + "/api/ArticleXml",
+                type: "PATCH",
+                url: service + "/api/ArticleXml/ConvertForDb",
                 success: function (articles) {
 
                     //alert("articles.Length: " + articles.length);
@@ -40,14 +99,19 @@
 
                         $('#msgArea').html(++counter);
 
-                        article.CategoryRef = 'MOO';
-                        article.SubCategoryRef = 'AUW';
-                        article.ByLineRef = 'BET'
+                        if (article.CategoryRef == null)
+                            article.CategoryRef = 'MOO';
+                        if (article.CategoryRef.length != 3)
+                            article.CategoryRef = 'POL';
 
-                        var a = article.Summary;
-                        article.Summary = article.Contents;
-                        article.Contents = a;
-                        setTimeout(function () { insert(article) }, 100);
+                        article.SubCategoryRef = 'AUW';
+                        if (article.ByLineRef == null)
+                            article.ByLineRef = 'TRO';
+                        if (article.ByLineRef.length != 3)
+                            article.ByLineRef = 'BET';
+
+
+                        insert(article)
                     });
                 },
                 error: function (jqXHR, exception) {

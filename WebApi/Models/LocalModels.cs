@@ -10,8 +10,10 @@ namespace WebApi.Models
         public string Key { get; set; }
         public string Value { get; set; }
     }
+
     public class DbArticleTagModel {
         public int Id { get; set; }
+        public string ArticleId { get; set; }
         public string TagName { get; set; }
         public string TagCategoryRef { get; set; }
     }

@@ -44,7 +44,7 @@
             <div class="crudContainer">
                 <div class="crudContainerTitle">Article List</div>
                 <div class="crudArea">
-                    <div id="loadingGif" class="loadingGif">
+                    <div id="crudAreaLoadingGif" class="loadingGif">
                         <img src="~/Images/loader.gif" />  @*"~/Images/ingranaggi3.gif"*@
                     </div>
                     <div id="articledbList" class="crudList"></div>
@@ -210,7 +210,7 @@
     /// Get List
     function getArticleList() {
         try {
-            $('#loadingGif').show();
+            $('#crudAreaLoadingGif').show();
             //only call me if you have an offer
             // remember my conditions
             // remember the terms. Work from home only unless travel paid for //by those
@@ -228,7 +228,7 @@
                             $('#articledbList').append("<div class='crudListItem' refCat=" + obj.ArticleType + "  id='" + obj.ArticleId + "'>" +
                                 obj.ArticleTypeDescription + " | " + obj.ArticleTitle + "</div>");
                         })
-                        $('#loadingGif').hide();
+                        $('#crudAreaLoadingGif').hide();
                         $('.crudListItem').click(function () {
                             selectedRefCat = $(this).attr("refCat");
                             //alert("this.id: " + $(this).attr("id"));

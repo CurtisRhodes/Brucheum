@@ -1,7 +1,4 @@
-﻿.body-content {
-    margin-top: 94px;
-}
-body {
+﻿body {
     margin: 0;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 14px;
@@ -13,6 +10,9 @@ body {
     top: 0;
     height: 72px;
     z-index: 10;
+}
+.body-content {
+    margin-top: 94px;
 }
 
 .threeColumnArray {
@@ -41,18 +41,9 @@ body {
     padding-bottom: 2px;
     cursor: pointer;
 }
-
-
-.loadingGif {
-    position: relative;
-    top: 150px;
-    left: 150px;
-    display: none;
+.loadingGif img {
+    height: 45px;
 }
-    .loadingGif img {
-        height: 45px;
-    }
-
 
 #modalContainer {
     z-index: 6; /* Sit on top */

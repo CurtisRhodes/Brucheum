@@ -84,7 +84,10 @@
         margin-bottom: 4px;
     */
 }
-
+.loadingGif {
+    height:150px;
+    width: 150px;
+}
 .articleRowItemCenter {
     float: left;
     text-align: center;
@@ -135,11 +138,4 @@
     border-radius: 3px;
     background-color: #74bac3;
     color: #000;
-}
-
-#loadingGif {
-    position: relative;
-    top: 150px;
-    left: 450px;
-    display: none;
 }

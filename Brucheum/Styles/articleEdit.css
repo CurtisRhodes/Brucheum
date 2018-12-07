@@ -122,13 +122,6 @@
     text-align: right;
 }
 
-.loadingGif {
-    position: absolute;
-    top: 150px;
-    left: 450px;
-    display: none;
-}
-
 #divAjustableItemsWrapper {
     /*display: none;*/
 }

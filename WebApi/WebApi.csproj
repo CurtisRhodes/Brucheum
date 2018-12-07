@@ -157,15 +157,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ArticleDbController.cs" />
     <Compile Include="Controllers\ArticleXmlController.cs" />
+    <Compile Include="Controllers\BlogDbController.cs" />
     <Compile Include="Controllers\BookController.cs" />
     <Compile Include="Controllers\BookDbController.cs" />
     <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\EmailController.cs" />
     <Compile Include="Controllers\GetaJobController.cs" />
+    <Compile Include="Controllers\Helpers.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImagesController.cs" />
-    <Compile Include="Controllers\JournalController.cs" />
+    <Compile Include="Controllers\BlogXmlController.cs" />
     <Compile Include="Controllers\xAspNetController.cs" />
     <Compile Include="Controllers\OggleBoobleController.cs" />
     <Compile Include="Global.asax.cs">
