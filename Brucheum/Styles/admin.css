@@ -29,6 +29,7 @@
     padding: 4px 3px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 17px;
+    white-space: nowrap;
 }
 
 .adminInput {

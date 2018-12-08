@@ -40,12 +40,13 @@
 </style>
 
 <div class="threeColumnArray">
+    <div id="divStatusMessage"></div>
     <div id="leftColumn">
         <div id="tanBlue" class="vMenu">
             <div id="itemIntelDesgn" class="tabvMenuItem" onclick="window.location.href='/IntelDsgn/'">
                 <img src="~/Images/TanBlue/IntelligentDesignTan.png" onmouseover="this.src='/Images/TanBlue/IntelligentDesignBlue.png'" onmouseout="this.src='/Images/TanBlue/IntelligentDesignTan.png'" />
             </div>
-            <div id="itemBlondJew" class="tabvMenuItem" onclick="window.location.href='/BookDb/ToC?book=1'" >
+            <div id="itemBlondJew" class="tabvMenuItem" onclick="window.location.href='/BookDb/ToC?book=1'">
                 <img src="~/Images/TanBlue/BlondJewTan.png" onmouseover="this.src='/Images/TanBlue/BlondJewBlue.png'" onmouseout="this.src='/Images/TanBlue/BlondJewTan.png'" />
             </div>
             <div id="itemBooks" class="tabvMenuItem">
@@ -60,7 +61,7 @@
             <div id="itemOggle" class="tabvMenuItem" onclick="window.open('/BookDb/ToC?book=2', '_blank')">
                 <img src="~/Images/TanBlue/TimeSquaredTan.png" onmouseover="this.src='/Images/TanBlue/TimeSquaredBlue.png'" onmouseout="this.src='/Images/TanBlue/TimeSquaredTan.png'" />
             </div>
-            <div id="item2aT" class="tabvMenuItem">
+            <div id="item2aT" class="tabvMenuItem" onclick="emailTest()">
                 <img src="~/Images/TanBlue/ToATeeTan.png" onmouseover="this.src='/Images/TanBlue/ToATeeBlue.png'" onmouseout="this.src='/Images/TanBlue/ToATeeTan.png'" />
             </div>
         </div>
@@ -81,6 +82,16 @@
         loadAndStartCarousel();
 
     });
+
+    function emailTest() {
+
+        var rtn = sendEmailFromJS("TEST EMAIL", "someday it will be someone other than you");
+        if (rtn == "ok")
+            displayStatusMessage("ok", "Email went through");
+        else
+            displayStatusMessage("error", rtn);
+    }
+
 
 </script>
 

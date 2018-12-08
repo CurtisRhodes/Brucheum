@@ -8,7 +8,7 @@ using WebApi.Models;
 
 namespace WebApi
 {
-    [System.Web.Http.Cors.EnableCors("*", "*", "*")]
+    [System.Web.Http.Cors.EnableCors("*", "*", "*")] 
     public class DbArticleController : ApiController
     {
         [HttpGet]
@@ -116,32 +116,34 @@ namespace WebApi
             var success = "";
             try
             {
-                Article article = new Article();
-                //article.Id = Guid.NewGuid();
-                article.Id = articleModel.Id;
-                article.Title = articleModel.Title;
-                article.CategoryRef = articleModel.CategoryRef;
-                article.SubCategoryRef = articleModel.SubCategoryRef;
-                article.ImageName = articleModel.ImageName;
-                article.Created = DateTime.Now;
-                article.LastUpdated = DateTime.Parse(articleModel.LastUpdated);
-                article.Content = articleModel.Contents;
-                article.Summary = articleModel.Summary;
-                article.ByLineRef = articleModel.ByLineRef;
+                Article newArticle = new Article();
+                if (articleModel.Id == null)
+                    newArticle.Id = Guid.NewGuid().ToString();
+                else
+                    newArticle.Id = articleModel.Id;
+                newArticle.Title = articleModel.Title;
+                newArticle.CategoryRef = articleModel.CategoryRef;
+                newArticle.SubCategoryRef = articleModel.SubCategoryRef;
+                newArticle.ImageName = articleModel.ImageName;
+                newArticle.Created = DateTime.Now;
+                newArticle.LastUpdated = DateTime.Parse(articleModel.LastUpdated);
+                newArticle.Content = articleModel.Contents;
+                newArticle.Summary = articleModel.Summary;
+                newArticle.ByLineRef = articleModel.ByLineRef;
 
                 foreach (DbArticleTagModel tag in articleModel.Tags)
                     if (tag.TagName != null)
-                         article.ArticleTags.Add(new ArticleTag() { TagName = tag.TagName, TagCategoryRef = tag.TagCategoryRef });
+                        newArticle.ArticleTags.Add(new ArticleTag() { TagName = tag.TagName, TagCategoryRef = tag.TagCategoryRef });
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    db.Articles.Add(article);
+                    db.Articles.Add(newArticle);
                     db.SaveChanges();
-                    success = article.Id.ToString();
+                    success = newArticle.Id.ToString();
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 success = Helpers.ErrorDetails(ex);
-
             }
             return success;
         }
@@ -203,6 +205,7 @@ namespace WebApi
             return success;
         }
     }
+
     [System.Web.Http.Cors.EnableCors("*", "*", "*")]
     public class CommentsController : ApiController
     {
@@ -272,7 +275,7 @@ namespace WebApi
                     newComment.CreateDate = comment.CreateDate.ToShortDateString();
                     newComment.success = "ok";
 
-                    newComment.success = new EmailController().Post(new EmailMessageModel()
+                    newComment.success = new GodaddyEmailController().Post(new EmailMessageModel()
                     {
                         Subject = "Somebody Actually Made A comment",
                         Body = comment.UserName + " said: " + comment.CommentText
@@ -314,5 +317,4 @@ namespace WebApi
             return success;
         }
     }
-
 }

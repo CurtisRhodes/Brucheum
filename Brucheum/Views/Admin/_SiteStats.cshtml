@@ -2,7 +2,7 @@
 
 <div class="adminContainer">
     <div class="adminOptionTitle">Convert Articles to Db</div>
-    <div class="roundendButton" id="btnConvert" onclick="javascript:getAllXmlArticles()">go</div>
+    <div class="roundendButton" id="btnConvert" onclick="getAllXmlArticles()">go</div>
     <div id="msgArea"></div>
 </div>
 
@@ -30,7 +30,6 @@
             })
         } catch (e) {
             alert("insert catch: " + e);
-
         }
     }
 
@@ -89,6 +88,9 @@
 
     function getAllXmlArticles() {
         try {
+            $('#loadingGif').show();
+
+
             $.ajax({
                 type: "PATCH",
                 url: service + "/api/ArticleXml/ConvertForDb",
@@ -110,9 +112,9 @@
                         if (article.ByLineRef.length != 3)
                             article.ByLineRef = 'BET';
 
-
                         insert(article)
                     });
+                    $('#loadingGif').hide();
                 },
                 error: function (jqXHR, exception) {
                     alert("loadArticle post : " + getXHRErrorDetails(jqXHR, exception));

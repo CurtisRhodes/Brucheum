@@ -30,7 +30,7 @@ namespace WebApi
         {
             var emailMessage = new EmailMessageModel() { Subject = "Test Email", Body = "may you have a good day" };
 
-            string success = new EmailController().Post(emailMessage);
+            string success = new GodaddyEmailController().Post(emailMessage);
 
             //string success = new EmailController().SendWithHotMail(emailMessage);
 

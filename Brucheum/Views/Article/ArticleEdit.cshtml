@@ -47,14 +47,10 @@
                 </div>
             </div>
         </div>
-
         <div id="divStatusMessage"></div>
         <div id="articleContentEditor">
             <div>@Html.Partial("_Editor") </div>
         </div>
-
-
-
         <div class="btnRow">
             <button id="btnSave" class="roundendButton" onclick="javascript:addUpdateArticle()">Save</button>
             <button id="btnView" class="roundendButton" onclick="javascript:saveAndView()">View</button>
@@ -77,9 +73,7 @@
         }
         else {
             $('#txtUpdated').val(formatDate(new Date()));
-        }
-
-        
+        }        
         $('#articleSummaryEditor').summernote({
             height: 150,
             codemirror: { mode: "htmlmixed", theme: "monokai" },
@@ -94,7 +88,6 @@
                 ['height', ['height']]
             ]
         });
-
         $('#articleContentEditor').summernote({
             height: 400,
             codemirror: { mode: "htmlmixed", theme: "monokai" },

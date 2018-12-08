@@ -132,7 +132,7 @@ namespace WebApi
                         db.Visitors.Add(visitor);
                         db.SaveChanges();
 
-                        success = new EmailController().Post(new EmailMessageModel()
+                        success = new GodaddyEmailController().Post(new EmailMessageModel()
                         {
                             Subject = "CONGRATULATIONS: someone just visited your site",
                             Body = "ip: " + ipAddress + " visited: " + app
@@ -156,7 +156,7 @@ namespace WebApi
 
                         if (ipAddress != "50.62.160.105")  // could be something at Godaddy
                         {
-                            success = new EmailController().Post(new EmailMessageModel()
+                            success = new GodaddyEmailController().Post(new EmailMessageModel()
                             {
                                 Subject = "Site Visit",
                                 Body = "ip: " + ipAddress + " visited: " + app

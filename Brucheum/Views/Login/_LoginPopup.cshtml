@@ -169,35 +169,35 @@
                 loginVM.Password = $('#clearPassword').val();
                 loginVM.ConfirmPassword = $('#txtConfirmPassword').val();
                 loginVM.RememberMe = $('#ckRememberMe').prop('checked');
-                var emailSubject = "CONGRATULATIONS: " + loginVM.UserName + " just logged onto The Brucheum";
-                if (sendEmailFromJS(emailSubject, "someday it will be someone other than you") == "ok") {
-                    $.ajax({
-                        type: "POST",
-                        url: "/Login/Login",
-                        data: loginVM,
-                        datatype: "Json",
-                        success: function (success) {
-                            if (success == "ok") {
-                                $('.carouselContainer').css("z-index", "7");
-                                $('.carouselLabel').css("z-index", "11");
-                                displayStatusMessage("ok", "email sent " + emailSubject);
-                                location.reload(true);
-                            }
-                            else {
-                                $('#btnLoginSpinnerImage').hide();
-                                $('#errSummary').html(success);
-                                $('#errSummary').show();
-                                $('#btnLoginPopupLogin').html("Log in");
-                                loggingIn = false;
-                            }
-                        },
-                        error: function (xhr) {
-                            $('#btnLoginSpinnerImage').hide();
-                            //displayStatusMessage("error", "error: " + xhr.statusText);
-                            alert("_LoginPopup xhr error: " + xhr.statusText);
+                $.ajax({
+                    type: "POST",
+                    url: "/Login/Login",
+                    data: loginVM,
+                    datatype: "Json",
+                    success: function (success) {
+                        if (success == "ok") {
+                            $('.carouselContainer').css("z-index", "7");
+                            $('.carouselLabel').css("z-index", "11");
+                            displayStatusMessage("ok", "email sent " + emailSubject);
+                            location.reload(true);
                         }
-                    });
-                }
+                        else {
+                            $('#btnLoginSpinnerImage').hide();
+                            $('#errSummary').html(success);
+                            $('#errSummary').show();
+                            $('#btnLoginPopupLogin').html("Log in");
+                            loggingIn = false;
+                        }
+                    },
+                    error: function (xhr) {
+                        $('#btnLoginSpinnerImage').hide();
+                        //displayStatusMessage("error", "error: " + xhr.statusText);
+                        alert("_LoginPopup xhr error: " + xhr.statusText);
+                    }
+                });
+
+                var emailSubject = "CONGRATULATIONS: " + loginVM.UserName + " just logged onto The Brucheum";
+                sendEmailFromJS(emailSubject, "someday it will be someone other than you");
             }
             else {
                 $('#btnLoginSpinnerImage').hide();
