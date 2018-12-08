@@ -48,7 +48,7 @@ namespace WebApi
             var lostJobs = new List<LostJobModel>();
             using (GetaJobContext db = new GetaJobContext())
             {
-                var dbJobs = db.LostJobs.Where(j => j.PersonId == personId).OrderBy(j => j.StartYear).ThenBy(j => j.StartMonth).ToList();
+                var dbJobs = db.LostJobs.Where(j => j.PersonId == personId).OrderByDescending(j => j.StartYear).ThenByDescending(j => j.StartMonth).ToList();
                 foreach (LostJob lostjob in dbJobs)
                 {
                     lostJobs.Add(new LostJobModel()
@@ -523,6 +523,39 @@ namespace WebApi
             return resumeElements.OrderBy(r => r.ElementType).ThenBy(r => r.SortOrder).ToList();
         }
 
+        [HttpGet]
+        public List<ResumeElementModel> GetAvailable(string personId, int resumeId)
+        {
+            List<ResumeElementModel> availableElements = new List<ResumeElementModel>();
+            using (GetaJobContext db = new GetaJobContext())
+            {
+                List<Guid> selectedElements = db.ResumeElements.Where(e => e.ResumeId == resumeId).Select(e => e.ElementId).ToList();
+
+                List<Guid> availableJobElementIds = db.LostJobs.Where(j => j.PersonId == personId).Select(j => j.ElementId).Except(selectedElements).ToList();
+                availableElements = (from jobs in db.LostJobs
+                                     where availableJobElementIds.Contains(jobs.ElementId)
+                                     select new ResumeElementModel()
+                                     {
+                                         ElementId = jobs.ElementId.ToString(),
+                                         ElementName = jobs.Employer,
+                                         ElementType = "JOB"
+                                     }).ToList();
+
+                var availableResumeSectionElemenIds = db.Sections.Where(s => s.PersonId == personId).Select(s => s.ElementId).Except(selectedElements).ToList();
+                var availableSections = (from sections in db.Sections
+                                         where availableResumeSectionElemenIds.Contains(sections.ElementId)
+                                         select new ResumeElementModel()
+                                         {
+                                             ElementId = sections.ElementId.ToString(),
+                                             ElementName = sections.SectionTitle,
+                                             ElementType = "SEC"
+                                         }).ToList();
+
+                availableElements = availableElements.Concat(availableSections).ToList();
+            }
+            return availableElements.OrderByDescending(r => r.ElementType).ToList();
+        }
+
         [HttpPost]
         public string Post(ResumeElementModel elementModel)
         {
@@ -565,13 +598,11 @@ namespace WebApi
             {
                 using (GetaJobContext db = new GetaJobContext())
                 {
-                    var element = db.ResumeElements.Where(e => e.ElementId.ToString() == editedElement.ElementId).FirstOrDefault();
+                    var element = db.ResumeElements.Where(e => e.ElementId.ToString() == editedElement.ElementId && e.ResumeId == editedElement.ResumeId).FirstOrDefault();
                     if (element == null)
                         success = "record not found";
                     else
                     {
-                        element.ResumeId = editedElement.ResumeId;
-                        element.ElementType = editedElement.ElementType;
                         element.SortOrder = editedElement.SortOrder;
                         db.SaveChanges();
                         success = "ok";

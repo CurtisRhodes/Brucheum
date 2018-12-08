@@ -1,130 +1,30 @@
 ﻿
-<style>
-    .crudContainer {
-        width: 700px;
-        margin-top: 42px;
-    }
-</style>
-
-<div class="flexContainer">
-    <div class="floatLeft">
-        <div id="divStatusMessage"></div>
-        <div id="addEditResumeContainer" class="crudContainer">
-            <div id="addEditResumeContainerTitle" class="crudContainerTitle"></div>
-            <div class="crudArea">
-                <div id="errSummary" class="validationError"></div>
-                <div class="crudRow">
-                    <div class="crudRowLabel">Resume Name</div>
-                    <input id="txtResumeName" class="roundedInput" />
-                </div>
-                <div>
-                    <button id="btnResumeAddEdit" class="roundendButton" onclick="mediateResumeAddEditButton()">Add</button>
-                    <button id="btnResumeNew" class="roundendButton" onclick="mediateResumeNewButton()">New</button>
-                </div>
-            </div>
-            <div id="resumeListLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
-            <div id="resumeList" class="crudList"></div>
+<div id="addEditResumeContainer" class="crudContainer">
+    <div id="addEditResumeContainerTitle" class="crudContainerTitle"></div>
+    <div class="crudArea">
+        <div id="errSummary" class="validationError"></div>
+        <div class="crudRow">
+            <div class="crudRowLabel">Resume Name</div>
+            <input id="txtResumeName" class="roundedInput" />
+        </div>
+        <div>
+            <button id="btnResumeAddEdit" class="roundendButton" onclick="mediateResumeAddEditButton()">Add</button>
+            <button id="btnResumeNew" class="roundendButton" onclick="mediateResumeNewButton()">New</button>
         </div>
     </div>
-    <div class="floatLeft">
-        <div id="resumeElementsContainer" class="crudContainer">
-            <div class="crudContainerTitle">Add Resume Elements</div>
-            <div class="crudArea">
-                <div id="errSummary" class="validationError"></div>
-                <div class="crudRow">
-                    <div class="crudRowLabel">Section</div>
-                    <select id="ddSectionType" class="roundedInput inline" onchange="setItemList()">
-                        <option class='ddOption' value='1'>TOP</option>
-                        <option class='ddOption' value='2'>Job</option>
-                        <option class='ddOption' value='3'>Bottom</option>
-                    </select>
-                    <div class="crudLabel inline">Order</div>
-                    <input id="txtResumeElementOrder" class="roundedInput inline dateSize" />
-                    <div class="crudLabel inline">Item</div>
-                    <div id="elementDDsLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
-                    <select id="ddLostJobs" class="roundedInput inline"></select>
-                    <select id="ddResumeSections" class="roundedInput inline"></select>
-                </div>
-                <div>
-                    <button id="btnResumeSectionAddEdit" class="roundendButton" onclick="mediateResumeSectionAddEditButton()">Add</button>
-                    <button id="btnResumeSectionNew" class="roundendButton crudBtnNew" onclick="mediateResumeSectionNewButton()">New</button>
-                </div>
-            </div>
-            <div id="resumeElementsLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
-            <div id="resumeElementsList" class="crudList"></div>
-        </div>
-    </div>
+    <div id="resumeListLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+    <div id="resumeList" class="crudList"></div>
 </div>
 
 <script>
-    var service = '@ViewBag.Service';
-    var currentUser = '@ViewBag.UserId';
-    var personName = '@User.Identity.Name';
     var resumeModel = {};
-    var resumeElementModel = {};
 
     $(document).ready(function () {
         $('#btnResumeNew').hide();
-        $('#btnResumeSectionNew').hide();
+        $('#resumeListLoadingGif').hide();
         $('#addEditResumeContainerTitle').html("Add Edit Resumes for " + personName);
         loadResumeList();
-        loadSelectionLists();
-        $('#ddLostJobs').hide();
     });
-
-    function setItemList() {
-        if ($('#ddSectionType').val() == "2") {
-            $('#ddResumeSections').hide();
-            $('#ddLostJobs').show();
-        }
-        else {
-            $('#ddLostJobs').hide();
-            $('#ddResumeSections').show();
-        }
-    }
-
-    function loadResumeList() {
-        $.ajax({
-            type: "GET",
-            url: service + "/api/Resume?personId=" + currentUser,
-            success: function (resumes) {
-                $('#resumeList').html("");
-                $.each(resumes, function (idx, resume) {
-                    $('#resumeList').append("<div id=" + resume.Id + " class='crudListItem resumeItem'>" + resume.ResumeName + "</div>");
-                });
-                $('.resumeItem').click(function () {
-                    resumeModel.Id = $(this).attr("id");
-                    $('#txtResumeName').val($(this).html());
-                    $('#btnResumeAddEdit').html("Edit");
-                    $('#btnResumeNew').show();
-                    loadResumeElementsList();
-                })
-            }
-        })
-    }
-    function loadSelectionLists() {
-        $('#elementDDsLoadingGif').show();
-        $.ajax({
-            type: "GET",
-            url: service + "/api/Job?personId=" + currentUser,
-            success: function (jobs) {
-                $('#ddLostJobs').html("");
-                $.each(jobs, function (idx, job) {
-                    $('#ddLostJobs').append("<option class='ddOption' value='" + job.ElementId + "'>" + job.StartYear + ", " + job.Employer + "</option>");
-                });
-                $('#elementDDsLoadingGif').hide();
-            }
-        })
-        $.ajax({
-            type: "GET",
-            url: service + "/api/Section?personId=" + currentUser,
-            success: function (sections) {
-                $.each(sections, function (idx, section) {
-                    $('#ddResumeSections').append("<option class='ddOption' value='" + section.ElementId + "'>" + section.SectionTitle + "</option>");
-                });
-            }
-        })
-    }
 
     function mediateResumeAddEditButton() {
         if ($('#btnResumeAddEdit').html() == "Add")
@@ -135,6 +35,29 @@
     function mediateResumeNewButton() {
         $('#btnResumeAddEdit').html("Add");
         $('#btnResumeNew').hide();
+    }
+
+    function loadResumeList() {
+        $('#resumeListLoadingGif').show();
+        $.ajax({
+            type: "GET",
+            url: service + "/api/Resume?personId=" + currentUser,
+            success: function (resumes) {
+                $('#resumeList').html("");
+                $.each(resumes, function (idx, resume) {
+                    $('#resumeList').append("<div id=" + resume.Id + " class='crudListItem resumeItem'>" + resume.ResumeName + "</div>");
+                });
+
+                $('.resumeItem').click(function () {
+                    resumeModel.Id = $(this).attr("id");
+                    $('#txtResumeName').val($(this).html());
+                    $('#btnResumeAddEdit').html("Edit");
+                    $('#btnResumeNew').show();
+                })
+
+                $('#resumeListLoadingGif').hide();
+            }
+        })
     }
     function insertResume() {
         resumeModel.ResumeName = $('#txtResumeName').val();
@@ -169,91 +92,6 @@
                 }
                 else
                     alert("updateResume: " + success);
-            }
-        })
-    }
-
-    function mediateResumeSectionAddEditButton() {
-        resumeElementModel.ElementType = $('#ddSectionType').val();
-        if (resumeElementModel.ElementType == "2") {
-            resumeElementModel.ElementId = $('#ddLostJobs').val();
-        }
-        else {
-            resumeElementModel.ElementId = $('#ddResumeSections').val();
-        }
-        resumeElementModel.ResumeId = resumeModel.Id;
-        resumeElementModel.PersonId = currentUser;
-        resumeElementModel.SortOrder = $('#txtResumeElementOrder').val();
-
-        if ($('#btnResumeSectionAddEdit').html() == "Add")
-            insertResumeElement();
-        else
-            updateResumeElement();
-    }
-    function mediateResumeSectionNewButton() {
-        $('#btnResumeSectionAddEdit').html("Add");
-        $('#btnResumeSectionNew').hide();
-
-    }
-    function insertResumeElement() {
-        $.ajax({
-            type: "POST",
-            url: service + "/api/ResumeElement",
-            data: resumeElementModel,
-            success: function (success) {
-                if (success == "ok") {
-                    displayStatusMessage("ok", "Resume Added")
-                    $('#btnResumeSectionAddEdit').html("Edit");
-                    $('#btnResumeSectionNew').show();
-                    loadResumeElementsList()
-                }
-                else
-                    alert("insertResumeElement: " + success);
-            }
-        })
-    }
-    function updateResumeElement() {
-        $.ajax({
-            type: "PUT",
-            url: service + "/api/ResumeElement",
-            data: resumeElementModel,
-            success: function (success) {
-                if (success == "ok") {
-                    displayStatusMessage("ok", "Resume Elements Updated")
-                    loadResumeElementsList()
-                }
-                else
-                    alert("updateResume: " + success);
-            }
-        })
-    }
-    function loadResumeElementsList() {
-        $('#resumeElementsLoadingGif').show();
-        $.ajax({
-            type: "GET",
-            url: service + "/api/ResumeElement?resumeId=" + resumeModel.Id,
-            success: function (resumeElements) {
-                $('#resumeElementsList').html("");
-                $.each(resumeElements, function (idx, resumeElement) {
-                    $('#resumeElementsList').append("<div id=" + resumeElement.ElementId + " eleType=" + resumeElement.ElementType + " eleOrder=" + resumeElement.SortOrder +
-                        " class='crudListItem resumeElementItem'>" + resumeElement.SortOrder + " | " + resumeElement.ElementName + "</div>");
-                });
-
-                $('.resumeElementItem').click(function () {
-
-                    resumeElementModel.ElementId = $(this).attr("id");
-                    $('#txtResumeElementOrder').val($(this).attr("eleOrder"));
-                    ddSectionType
-                    $('#ddSectionType').val($(this).attr("eleType"));
-                    setItemList();
-                    if ($(this).attr("eleType") == "2") 
-                        $('#ddLostJobs').val($(this).attr("id"));
-                    else
-                        $('#ddResumeSections').val($(this).attr("id"));
-                    $('#btnResumeSectionAddEdit').html("Edit");
-                    $('#btnResumeSectionNew').show();
-                });
-                $('#resumeElementsLoadingGif').hide();
             }
         })
     }

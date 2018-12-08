@@ -15,31 +15,35 @@
 <div class="threeColumnArray">
     <div id="leftColumn">
         <div class="vertMenu">
-            <div class="vertMenuTab" id="optResume">Add/Edit Resume</div>
-            <div class="vertMenuTab" id="optAddJobs">Add/Edit Jobs</div>
-            <div class="vertMenuTab" id="optAddSkills">Add/Edit Job Skills</div>
-            <div class="vertMenuTab" id="optSections">Add/Edit Resume Sections</div>
-            <div class="vertMenuTab" id="optRefEditor">Add/Edit Refs</div>
+            <div class="vertMenuTab" id="optElements">Add Elements to Resume</div>
+            <div class="vertMenuTab" id="optResume">Add New Resume</div>
+            <div class="vertMenuTab" id="optSections">Resume Sections</div>
+            <div class="vertMenuTab" id="optAddJobs">Lost Jobs</div>
+            <div class="vertMenuTab" id="optAddSkills">Job Skills</div>
+            <div class="vertMenuTab" id="optRefEditor">Refs</div>
         </div>
     </div>
     <div id="middleColumn">
         <div id="divStatusMessage"></div>
 
         <div class="adminOptionContainer">
+            <div id="tabElements" class="adminOption">
+                @Html.Partial("_BuildResume")
+            </div>
+            <div id="tabResume" class="adminOption">
+                @Html.Partial("_AddEditResume")
+            </div>
+            <div id="tabSections" class="adminOption">
+                @Html.Partial("_AddEditSections")
+            </div>
             <div id="tabAddJobs" class="adminOption">
                 @Html.Partial("_AddEditJobs")
             </div>
             <div id="tabAddSkills" class="adminOption">
                 @Html.Partial("_AddEditSkills")
             </div>
-            <div id="tabResume" class="adminOption">
-                @Html.Partial("_AddEditResume")
-            </div>
             <div id="tabGajRefs" class="adminOption">
                 @Html.Partial("_AddEditRefs")
-            </div>
-            <div id="tabSections" class="adminOption">
-                @Html.Partial("_AddEditSections")
             </div>
         </div>
     </div>
@@ -47,8 +51,10 @@
 </div>
 
 <script>
-    var isAuthenticated = '@User.Identity.IsAuthenticated';
     var service = '@ViewBag.Service';
+    var isAuthenticated = '@User.Identity.IsAuthenticated';
+    var currentUser = '@ViewBag.UserId';
+    var personName = '@User.Identity.Name';
 
     $(document).ready(function () {
         if (!isAuthenticated) {
@@ -63,28 +69,13 @@
         });
     });
     
-    // Jobs
-    $("#optAddJobs").click(function () {
-        $('.adminOption').hide();
-        $('#tabAddJobs').show();
-        gajLostJobsInitialize();
-    })
-
-    // skills
-    $("#optAddSkills").click(function () {
-        $('.adminOption').hide();
-        $('#tabAddSkills').show();
-        gajSkillsInititalize()
-    })
-
-    // my famous Ref Editor
-    $("#optRefEditor").click(function () {
-        $('.adminOption').hide();
-        $('#tabGajRefs').show();
-        gajRefsInititalize()
-    })
-
     // resume builder
+    $("#optElements").click(function () {
+        $('.adminOption').hide();
+        $('#tabElements').show();
+        resumeBuilderInitialize();
+    })
+    // resume versions
     $("#optResume").click(function () {
         $('.adminOption').hide();
         $('#tabResume').show();
@@ -93,7 +84,26 @@
     $("#optSections").click(function () {
         $('.adminOption').hide();
         $('#tabSections').show();
-        AddEditSectionsInitialize();
+        resumeSectionsInitialize();
     })
+    // Jobs
+    $("#optAddJobs").click(function () {
+        $('.adminOption').hide();
+        $('#tabAddJobs').show();
+        gajLostJobsInitialize();
+    })
+    // skills
+    $("#optAddSkills").click(function () {
+        $('.adminOption').hide();
+        $('#tabAddSkills').show();
+        gajSkillsInititalize()
+    })
+    // my famous Ref Editor
+    $("#optRefEditor").click(function () {
+        $('.adminOption').hide();
+        $('#tabGajRefs').show();
+        gajRefsInititalize()
+    })
+
 </script>
 

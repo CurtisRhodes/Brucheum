@@ -1,0 +1,241 @@
+﻿
+<style>
+    #resumeAvailableElementsList {
+        overflow-y: auto;
+        max-height: 444px;
+    }
+</style>
+
+<div class="flexContainer">
+    <div class="floatLeft">
+        <div id="resumeSelectedElementsContainer" class="crudContainer">
+            <div class="crudContainerTitle" id="selectedResumeItemsTitle">Resume Elements</div>
+            <div class="crudArea">
+                <div class="crudRow">
+                    <div class="crudLabel inline">Resume</div>
+                    <div id="elementDDsLoadingGif" class= "loadingGif" > <img src="~/Images/loader.gif" /></div>
+                    <select id="ddResumes" class="roundedInput inline" onchange="SelectedResumeChange()"></select>
+                </div>
+                <div id="editSelectedElementsCrudRow" class="crudRow"  >
+                    <div class="crudLabel inline">Order</div>
+                    <input id="txtResumeSelectedElementOrder" class="roundedInput inline dateSize" />
+                    <div class="crudLabel inline">Item</div>
+                    <input id="txtSelectedElement" class="roundedInput inline" readonly="readonly" />
+                </div>
+                <div>
+                    <button id="btnResumeSelectedElementAddEdit" class="roundendButton" onclick="updateResumeElement()">Edit Sort Order</button>
+                    <button id="btnResumeSelectedElementDelete" class="roundendButton crudBtnNew" onclick="removeSelectedElement()">Remove</button>
+                </div>
+            </div>
+            <div id="resumeSelectedElementsLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+            <div id="resumeSelectedElementsList" class="crudList"></div>
+        </div>
+    </div>
+    <div class="floatLeft">
+        <div id="resumeAvailableElementsContainer" class="crudContainer">
+            <div class="crudContainerTitle">Available Resume Sections</div>
+            <div class="crudArea" id="availableElementsCrudSection">
+                <div class="crudRow">
+                    <div class="crudRowLabel">Section</div>
+                    <select id="ddSectionType" class="roundedInput inline" onchange="setDropDownElementType()">
+                        <option class='ddOption' value='1'>TOP</option>
+                        <option class='ddOption' value='2'>Job</option>
+                        <option class='ddOption' value='3'>Bottom</option>
+                    </select>
+                    <div class="crudLabel inline">Order</div>
+                    <input id="txtResumeAvailableElementOrder" class="roundedInput inline dateSize" />
+                    <div class="crudLabel inline">Item</div>
+                    <input id="txtAvailableElement" class="roundedInput inline" readonly="readonly" />
+                </div>
+                <div>
+                    <button class="roundendButton" onclick="addElementToResume()">Add</button>
+                </div>
+            </div>
+            <div id="resumeAvaibleElementsLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+            <div id="resumeAvailableElementsList" class="crudList"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var resumeSelectedElementModel = {};
+    var resumeAvailableElementModel = {};
+
+    $(document).ready(function () {
+        $('#btnResumeSelectedElementAddEdit').hide();
+        $('#btnResumeSelectedElementDelete').hide();
+        $('#editSelectedElementsCrudRow').hide();
+        $('#resumeSelectedElementsLoadingGif').hide();
+        $('#resumeAvaibleElementsLoadingGif').hide();
+        $('#availableElementsCrudSection').hide();
+        $('#ddLostJobs').hide();
+        $('#btnResumeNew').hide();
+        $('#selectedResumeItemsTitle').html(personName + " Resumes");
+    });
+
+    function resumeBuilderInitialize() {
+        if ($('#ddResumes').html() == "")
+            loadDropDownLists();
+    }
+
+    function SelectedResumeChange() {
+        loadSelectedResumeElements($('#ddResumes').val());
+    }
+
+    function removeSelectedElement() {
+
+    }
+    function setDropDownElementType() {
+        if ($('#ddSectionType').val() == "2") {
+            $('#ddResumeSections').hide();
+            $('#ddLostJobs').show();
+        }
+        else {
+            $('#ddLostJobs').hide();
+            $('#ddResumeSections').show();
+        }
+    }
+    function mediateResumeAddEditButton() {
+        if ($('#btnResumeAddEdit').html() == "Add")
+            insertResume();
+        else
+            updateResume();
+    }
+
+    function mediateResumeNewButton() {
+        $('#btnResumeAddEdit').html("Add");
+        $('#btnResumeNew').hide();
+    }
+
+    function loadSelectedResumeElements(resumeId) {
+        $('#resumeSelectedElementsLoadingGif').show();
+        $.ajax({
+            type: "GET",
+            url: service + "/api/ResumeElement?resumeId=" + resumeId,
+            success: function (resumeElements) {
+                $('#resumeSelectedElementsList').html("");
+                var lastElementType = "bongo"; 
+                var eleTypName = "pgpg";
+                $.each(resumeElements, function (idx, resumeElement) {
+                    if (resumeElement.ElementType != lastElementType) {
+                        if (resumeElement.ElementType == 1) eleTypName = "TOP";
+                        if (resumeElement.ElementType == 2) eleTypName = "JOBS";
+                        if (resumeElement.ElementType == 3) eleTypName = "BOTTOM";
+                        $('#resumeSelectedElementsList').append("<div>" + eleTypName + "</div>");
+                        lastElementType = resumeElement.ElementType;
+                    }
+                    $('#resumeSelectedElementsList').append("<div id=" + resumeElement.ElementId + " eleName=" + resumeElement.ElementName + " eleOrder=" + resumeElement.SortOrder +
+                        " class='crudListItem resumeSelectedElementItem'>" + resumeElement.SortOrder + " | " + resumeElement.ElementName + "</div>");
+                });
+                $('.resumeSelectedElementItem').click(function () {
+                    $('#editSelectedElementsCrudRow').show();
+                    $('#btnResumeSelectedElementAddEdit').show();
+                    $('#btnResumeSelectedElementDelete').show();
+                    resumeSelectedElementModel.ElementId = $(this).attr("id");
+                    resumeSelectedElementModel.ResumeId = resumeId;
+                    $('#txtResumeSelectedElementOrder').val($(this).attr("eleOrder"));
+                    $('#txtSelectedElement').val($(this).attr("eleName"));
+                });
+                $('#resumeSelectedElementsLoadingGif').hide();
+                loadAvailableResumeElements(resumeId);
+            }
+        })
+    }
+
+    function loadAvailableResumeElements(resumeId) {
+        $('#resumeAvaibleElementsLoadingGif').show();
+        resumeAvailableElementModel.ResumeId = resumeId;
+        $.ajax({
+            type: "GET",
+            url: service + "/api/ResumeElement/GetAvailable?personId=" + currentUser + "&resumeId=" + resumeId,
+            success: function (availableElements) {
+                $('#resumeAvailableElementsList').html("");
+                $.each(availableElements, function (idx, availableElement) {
+                    $('#resumeAvailableElementsList').append("<div id=" + availableElement.ElementId + " eleType=" + availableElement.ElementType + " eleName='" + availableElement.ElementName +
+                        "' class='crudListItem resumeAvailableElementItem'>" + availableElement.ElementType + " | " + availableElement.ElementName + "</div>");
+                });
+
+                $('.resumeAvailableElementItem').click(function () {
+                    resumeAvailableElementModel.ElementId = $(this).attr("id");
+                    //alert("resumeAvailableElementItem eleType: " + $(this).attr("eleType"))
+                    if ($(this).attr("eleType") == "JOB")
+                        $('#ddSectionType').val("2");
+                    $('#txtAvailableElement').val($(this).attr("eleName"));
+                    $('#availableElementsCrudSection').show();
+                });
+                $('#resumeAvaibleElementsLoadingGif').hide();
+            }
+        })
+    }
+
+    function addElementToResume() {
+        resumeAvailableElementModel.ElementType = $('#ddSectionType').val();
+        resumeAvailableElementModel.SortOrder = $('#txtResumeAvailableElementOrder').val();
+        $.ajax({
+            type: "POST",
+            url: service + "/api/ResumeElement",
+            data: resumeAvailableElementModel,
+            success: function (success) {
+                if (success == "ok") {
+                    loadSelectedResumeElements($('#ddResumes').val());
+                    displayStatusMessage("ok", "Element Added To Resume")
+                }
+                else
+                    alert("addElementToResume: " + success);
+            }
+        })
+    }
+    function updateResumeElement() {
+        resumeSelectedElementModel.ElementId
+        resumeSelectedElementModel.SortOrder = $('#txtResumeSelectedElementOrder').val();
+        $.ajax({
+            type: "PUT",
+            url: service + "/api/ResumeElement",
+            data: resumeSelectedElementModel,
+            success: function (success) {
+                if (success == "ok") {
+                    loadSelectedResumeElements(resumeSelectedElementModel.ResumeId);
+                    displayStatusMessage("ok", "Resume Element Updated")
+                }
+                else
+                    alert("updateResume: " + success);
+            }
+        })
+    }
+
+    function loadDropDownLists() {
+        $('#elementDDsLoadingGif').show();
+        $.ajax({
+            type: "GET",
+            url: service + "/api/Resume?personId=" + currentUser,
+            success: function (resumes) {
+                $.each(resumes, function (idx, resume) {
+                    $('#ddResumes').append("<option class='ddOption resumeOption' value='" + resume.Id + "'>" + resume.ResumeName + "</option>");
+                });
+            }
+        })
+        $.ajax({
+            type: "GET",
+            url: service + "/api/Job?personId=" + currentUser,
+            success: function (jobs) {
+                $('#ddLostJobs').html("");
+                $.each(jobs, function (idx, job) {
+                    $('#ddLostJobs').append("<option class='ddOption' value='" + job.ElementId + "'>" + job.StartYear + ", " + job.Employer + "</option>");
+                });
+            } 
+        })
+        $.ajax({
+            type: "GET",
+            url: service + "/api/Section?personId=" + currentUser,
+            success: function (sections) {
+                $.each(sections, function (idx, section) {
+                    $('#ddResumeSections').append("<option class='ddOption' value='" + section.ElementId + "'>" + section.SectionTitle + "</option>");
+                });
+                $('#elementDDsLoadingGif').hide();
+            }
+        })
+
+    }
+
+</script>
+

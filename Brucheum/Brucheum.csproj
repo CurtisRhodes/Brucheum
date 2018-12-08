@@ -453,6 +453,7 @@
     <Content Include="Views\BookDb\Read.cshtml" />
     <Content Include="Views\Article\ArticleView.cshtml" />
     <Content Include="Views\Admin\_SiteStats.cshtml" />
+    <Content Include="Views\GetaJob\_BuildResume.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

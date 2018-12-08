@@ -41,6 +41,10 @@
     padding-bottom: 2px;
     cursor: pointer;
 }
+.loadingGif {
+    height: 150px;
+    width: 150px;
+}
 .loadingGif img {
     height: 45px;
 }

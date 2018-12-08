@@ -1,7 +1,9 @@
 ﻿/*CRUD control style*/
 .crudContainer {
-    margin-left: 30px;
-    background-color: #fff;
+    display: inline-block;
+    margin-left: 22px;
+    margin-top: 42px;
+    background-color: #eee;
     border: solid 1.5px #bbb;
     border-radius: 5px;
 }

@@ -116,33 +116,33 @@ function logoutPlease() {
 function sendEmailFromJS(msg, body) {
 
     //alert("sendEmailFromJS 1");
-
+    var rtn = "";
     try {
-        var sendObj = new Object();
-        sendObj.Subject = msg;
-        sendObj.Body = body;
+        var emailMessage = new Object();
+        emailMessage.Subject = msg;
+        emailMessage.Body = body;
 
-        var rtn = "async";
-        //alert("sendEmailFromJS msg: " + msg + " body: " + body);
+        var service = "https://api.curtisrhodes.com/";
+        //service = "http://localhost:40395/";
+
+        //alert("url: " + service + "api/GodaddyEmail");
         $.ajax({
             type: "POST",
-            url: "https://api.curtisrhodes.com/api/Email/",
-            //url: "http://localhost:40395/Api/Email/Send",
-            data: sendObj,
-            async: false,
+            url: service + "api/GodaddyEmail",
+            data: emailMessage,
             success: function (emailSuccess) {
                 if (emailSuccess === "ok") {
                     displayStatusMessage("ok", "email sent");
                     //alert("Email says: " + sendObj.Subject);
                 }
-                else
+                else {
                     alert("Email Fail: " + emailSuccess);
+                }
                 rtn = emailSuccess;
             },
-            error: function (xhr) {
-                rtn = xhr.statusText;
-                //displayStatusMessage("error", "error: " + xhr.statusText);
-                alert("sendEmailFromJS XHR error: " + rtn);
+            error: function (jqXHR, exception) {
+                alert("sendEmailFromJS XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                rtn = getXHRErrorDetails(jqXHR, exception);
             }
         });
     } catch (e) {

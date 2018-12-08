@@ -10,10 +10,15 @@ using System.Web.Http.Cors;
 
 namespace WebApi
 {
-    [EnableCors("*", "*", "*")]
-    public class EmailController : ApiController
+    public class EmailMessageModel
     {
+        public string Subject { get; set; }
+        public string Body { get; set; }
+    }
 
+    [EnableCors("*", "*", "*")]
+    public class GodaddyEmailController : ApiController
+    {
         [HttpPost]
         public string Post(EmailMessageModel emailMessage)
         {
@@ -23,7 +28,7 @@ namespace WebApi
                 //using (SmtpClient smtp = new SmtpClient("smtpout.secureserver.net", 25))
                 using (SmtpClient smtp = new SmtpClient("relay-hosting.secureserver.net", 25))
                 {
-                    MailMessage mailMessage = new MailMessage("CurtishRhodes@hotmail.com", "CurtishRhodes@hotmail.com", emailMessage.Subject, emailMessage.Body);
+                    MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "CurtishRhodes@hotmail.com", emailMessage.Subject, emailMessage.Body);
                     smtp.Send(mailMessage);
                     success = "ok";
                 }
@@ -32,52 +37,52 @@ namespace WebApi
             return success;
         }
 
-        public string SendWithHotMail(EmailMessageModel emailMessage) {
-            string success = "";
-            try
-            {
-                using (SmtpClient smtp = new SmtpClient("smtp.live.com", 25))
-                {
-                    //smtp.Send("info@curtisrhodes.com", "Curtis.Rhodes@hotmail.com", emailMessage.Subject, emailMessage.Body);
+        //public string SendWithHotMail(EmailMessageModel emailMessage) {
+        //    string success = "";
+        //    try
+        //    {
+        //        using (SmtpClient smtp = new SmtpClient("smtp.live.com", 25))
+        //        {
+        //            //smtp.Send("info@curtisrhodes.com", "Curtis.Rhodes@hotmail.com", emailMessage.Subject, emailMessage.Body);
 
-                    var mail = new MailMessage();
-                    mail.From = new MailAddress("curtishrhodes@hotmail.com");
-                    mail.To.Add("curtis.rhodes@gmail.com");
-                    mail.Subject = emailMessage.Subject;
-                    mail.IsBodyHtml = true;
-                    mail.Body = emailMessage.Body;
+        //            var mail = new MailMessage();
+        //            mail.From = new MailAddress("curtishrhodes@hotmail.com");
+        //            mail.To.Add("curtis.rhodes@gmail.com");
+        //            mail.Subject = emailMessage.Subject;
+        //            mail.IsBodyHtml = true;
+        //            mail.Body = emailMessage.Body;
 
-                    smtp.UseDefaultCredentials = false;
-                    smtp.Credentials = new System.Net.NetworkCredential("curtishrhodes@hotmail.com", "R@quel11");
-                    smtp.EnableSsl = true;
+        //            smtp.UseDefaultCredentials = false;
+        //            smtp.Credentials = new System.Net.NetworkCredential("curtishrhodes@hotmail.com", "R@quel11");
+        //            smtp.EnableSsl = true;
 
 
-                    smtp.Send(mail);
-                    success = "ok";
-                }
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
+        //            smtp.Send(mail);
+        //            success = "ok";
+        //        }
+        //    }
+        //    catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+        //    return success;
+        //}
 
-        public string SendWithGmail(EmailMessageModel emailMessage)
-        {
-            string success = "";
-            try
-            {
-                var client = new SmtpClient("smtp.gmail.com", 587)
-                {
-                    Credentials = new NetworkCredential("curtis.rhodes@gmail.com", "R@quel11"),
-                    EnableSsl = true
-                };
-                //client.Send("curtis.rhodes@gmail.com", "curtishrhodes@ghotmail.com", emailMessage.Subject, emailMessage.Body);
-                MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "CurtishRhodes@hotmail.com", emailMessage.Subject, emailMessage.Body);
-                client.Send(mailMessage);
-                success = "ok";
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
+        //public string SendWithGmail(EmailMessageModel emailMessage)
+        //{
+        //    string success = "";
+        //    try
+        //    {
+        //        var client = new SmtpClient("smtp.gmail.com", 587)
+        //        {
+        //            Credentials = new NetworkCredential("curtis.rhodes@gmail.com", "R@quel11"),
+        //            EnableSsl = true
+        //        };
+        //        //client.Send("curtis.rhodes@gmail.com", "curtishrhodes@ghotmail.com", emailMessage.Subject, emailMessage.Body);
+        //        MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "CurtishRhodes@hotmail.com", emailMessage.Subject, emailMessage.Body);
+        //        client.Send(mailMessage);
+        //        success = "ok";
+        //    }
+        //    catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+        //    return success;
+        //}
 
 
 
@@ -117,18 +122,11 @@ namespace WebApi
         //    string token = (string)e.UserState;
         //}
 
-        [HttpGet]
-        public HttpResponseMessage Subscribe(HttpRequestMessage request)
-        {
-            var response = request.CreateResponse();
-            return response;
-        }
+        //[HttpGet]
+        //public HttpResponseMessage Subscribe(HttpRequestMessage request)
+        //{
+        //    var response = request.CreateResponse();
+        //    return response;
+        //}
     }
-
-    public class EmailMessageModel
-    { 
-        public string Subject { get; set; }
-        public string Body { get; set; }
-    }
-
 }

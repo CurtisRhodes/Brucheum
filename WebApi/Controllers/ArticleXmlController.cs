@@ -198,8 +198,8 @@ namespace WebApi
                     dbMmodel.LastUpdated = Convert.ToDateTime(entry.Attributes["LastUpdated"].InnerText).ToShortDateString();
                     dbMmodel.Created = Convert.ToDateTime(entry.Attributes["DateCreated"].InnerText);
                     //dbMmodel.SortDate = Convert.ToDateTime(entry.Attributes["DateCreated"].InnerText).ToString("yyyyMMdd");
-                    dbMmodel.Contents = entry.ChildNodes[0].InnerText;
-                    dbMmodel.Summary = entry.ChildNodes[1].InnerText;
+                    dbMmodel.Summary = entry.ChildNodes[0].InnerText;
+                    dbMmodel.Contents = entry.ChildNodes[1].InnerText;
                     if (entry.ChildNodes[2] != null)
                     {
                         IList<string> tags = new List<string>();
