@@ -1,4 +1,4 @@
-namespace WebApi
+namespace WebApi.DataContext
 {
     using System;
     using System.Data.Entity;
@@ -21,7 +21,6 @@ namespace WebApi
         public virtual DbSet<ArticleTag> ArticleTags { get; set; }
         public virtual DbSet<Blog> Blogs { get; set; }
         public virtual DbSet<BlogEntry> BlogEntries { get; set; }
-
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

@@ -5,67 +5,71 @@ using System.Web;
 
 namespace WebApi.Models
 {
-    public class ResumeModel
+    public class JobSearchModel
     {
-        public ResumeModel()
-        {
-            TopSections = new List<SectionModel>();
-            LostJobs = new List<LostJobModel>();
-            BottomSections = new List<SectionModel>();
-        }
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string PersonId { get; set; }
-        public string ResumeName { get; set; }
-        public string Created { get; set; }
-        public IList<SectionModel> TopSections { get; set; }
-        public IList<LostJobModel> LostJobs { get; set; }
-        public IList<SectionModel> BottomSections { get; set; }
-    }
-    public class SectionModel
-    {
-        public int Id { get; set; }
-        public string ElementId { get; set; }
-        public string PersonId { get; set; }
-        public string SectionTitle { get; set; }
-        public string SectionContents { get; set; }
-        public int SortOrder { get; set; }
-    }
-    public class SkillModel
-    {
-        public int Id { get; set; }
-        public string SkillName { get; set; }
-        public string SkillCategory { get; set; }
-        public string SkillCategoryDescription { get; set; }
-        public string GenericNarrative { get; set; }
-    }
-    public class LostJobModel
-    {
-        public LostJobModel()
-        {
-            JobSkills = new List<SkillModel>();
-        }
-        public int Id { get; set; }
-        public string ElementId { get; set; }
-        public string JobTitle { get; set; }
-        public string Employer { get; set; }
-        public string JobLocation { get; set; }
-        public string StartMonth { get; set; }
-        public string StartYear { get; set; }
-        public string FiredMonth { get; set; }
-        public string FiredYear { get; set; }
-        public string Summary { get; set; }
-        public string ReasonForLeaving { get; set; }
-        public string SecretNarative { get; set; }
-        public IList<SkillModel> JobSkills { get; set; }
-        public int SortOrder { get; set; }
+        public string SearchName { get; set; }
+        public string Initiated { get; set; }
+        public string Abandoned { get; set; }
     }
 
-    public class ResumeElementModel
+    public class JobListingModel
     {
-        public string ElementId { get; set; }
-        public int ResumeId { get; set; }
-        public string ElementType { get; set; }
-        public string ElementName { get; set; }
-        public int SortOrder { get; set; }
+        public string Id { get; set; }
+        public string JobSearchId { get; set; }
+        public string PostedDate { get; set; }
+        public string JobTitle { get; set; }
+        public string AgentId { get; set; }
+        public string AgencyId { get; set; }
+        public string TargetCompanyId { get; set; }
+        public string Comments { get; set; }
+        public string ListingStatus { get; set; }
+        public string Rate { get; set; }
+        public string EmploymentType { get; set; }
+        public string Distance { get; set; }
+        public string ListingSource { get; set; }
+        public string Desirability { get; set; }
+        public string Fit { get; set; }
+    }
+
+    public class JobListingActivityModel
+    {
+        public string Id { get; set; }
+        public string JobListingId { get; set; }
+        public string ActivityType { get; set; }
+        public string ActivityDate { get; set; }
+        public string ActivityStatus { get; set; }
+        public string Comments { get; set; }
+    }
+    public class AgentModel
+    {
+        public string Id { get; set; }
+        public string AgencyId { get; set; }
+        public string FName { get; set; }
+        public string LName { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string Cell {get; set; }
+    }
+    public class AgencyModel
+    {
+        public string Id { get; set; }
+        public string CompanyName { get; set; }
+        public string CompanyType { get; set; }
+        public string CompanyAddress { get; set; }
+        public string CompanyZip { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string Website { get; set; }
     }
 }
+
+
+
+
+
+
+
+
+

@@ -20,7 +20,7 @@
         </div>
     </div>
     <div id="bheader" class="standardHeader">
-        <div class="bannerImageContainer">
+        <div id="divTopLeftLogo" class="bannerImageContainer">
             <a href="~/Home/Index"><img src="~/images/house.gif" class="bannerImage" /></a>
         </div>
         <div class="headerBodyContainer">
@@ -48,8 +48,11 @@
                 }
                 else
                 {
-                    <div class="menuTab floatRight"><a href="javascript:registerPlease()">Register</a></div>
-                    <div id="btnLayLogin" class="menuTab floatRight">
+                    <div id="btnLayoutRegister" class="menuTab floatRight">
+                        <a href="javascript:registerPlease()">Register</a>
+                        <img id="btnHeaderRegisterSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
+                    </div>
+                    <div id="btnLayoutLogin" class="menuTab floatRight">
                         <a href="javascript:loginPlease()">Log In</a>
                         <img id="btnHeaderLoginSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
                     </div>
@@ -62,7 +65,7 @@
         <div id="customMessage" class="customMessageBox">
             <div class="customMessageTitleBar">
                 <div id="customMessageTitle" class="customMessageTitleText"> </div>
-                <div id="customMessagebtnClose" class="customMessageCloseButton" onclick="javascript:$('#customMessage').hide();">
+                <div id="customMessagebtnClose" class="customMessageCloseButton" onclick="$('#customMessage').hide(); closeCustomMessageBox();">
                     <img height="19" src="~/Images/powerOffRed01.png" />
                 </div>
             </div>

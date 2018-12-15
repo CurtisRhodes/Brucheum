@@ -33,6 +33,7 @@
 
 .dialogCloseButton {
     float: right;
+    padding-left: 11px;
     margin-top: 6px;
     margin-right: 4px;
     cursor: pointer;

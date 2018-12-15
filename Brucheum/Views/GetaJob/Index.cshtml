@@ -3,13 +3,200 @@
     ViewBag.Title = "Home";
     Layout = "~/Views/GetaJob/_GetaJobLayout.cshtml";
 }
+<link href="~/Styles/admin.css" rel="stylesheet" />
+<link href="~/Styles/crudEdit.css" rel="stylesheet" />
 
 <div class="threeColumnArray">
     <div id="leftColumn">
     </div>
     <div id="middleColumn">
         <h2>Get a Job</h2>
+
     </div>
     <div id="rightColumn">
     </div>
 </div>
+
+<script>
+    @*var service = '@ViewBag.Service';
+    var currentUser = '@ViewBag.UserId';
+
+    $(document).ready(function () {
+        resizePage();
+        $('.crudContainer').hide();
+
+        if (!'@User.Identity.IsAuthenticated') {
+            $('#divJobSearch').hide();
+            var msg = "You must <span class='clickable' onclick='registerPlease()'>Register</span> or <span onclick='loginPlease()' class='clickable'>Login</span> to use this feature</div>";
+            showCustomMessage("User data kept private", msg);
+        }
+        else {
+
+            //$('.crudContainer').hide();
+            //$('#divJobSearch').show();
+            //getJobSearches();
+        }
+    });
+
+    function closeCustomMessageBox() {
+        alert("closeCustomMessageBox()");
+        window.location.href = "/Home/Index";
+    }
+
+*@
+
+    //    create table gaj.SearchActivity(
+    //    JobSearchActivityId int identity(1, 1) primary key clustered,
+    //    JobListingId int foreign key references gaj.Listing(Id),
+    //    ActivityType tinyint,
+    //    ActivityDate date not null,
+    //    ActivityStatus tinyint,
+    //    Comments varchar(600),
+
+    //function getJobSearchActivities() {
+    //      alert("url: " + service + "/api/JobSearch?personId=" + currentUser);
+    //    $.ajax({
+    //        type: "GET",
+    //        url: service + "/api/JobSearch?personId=" + currentUser,
+    //        success: function (jobSearchs) {
+    //            $('#jobSearchList').html("");
+    //            $.each(jobSearchs, function (idx, jobSearch) {
+    //                $('#jobSearchList').append("<div class='crudListItem jobSearchItem' id=" + jobSearch.Id + " >" + jobSearch.Initiated + " | " +
+    //                    jobSearch.SearchName + " | " + jobSearch.Abandoned + "</div>");
+    //            })
+
+    //            $('.jobSearchItem').click(function () {
+    //                //alert("this.id" + $(this).attr("Id"));
+    //                loadSearchEditor($(this).attr("id"));
+    //            });
+    //        },
+    //        error: function (jqXHR, exception) {
+    //            alert("getJobSearches xhr error: " + getXHRErrorDetails(jqXHR, exception));
+    //        }
+    //    })
+    //}
+
+
+
+    //function getJobSearches() {
+    //  //  alert("url: " + service + "/api/JobSearch?personId=" + currentUser);
+    //    $.ajax({
+    //        type: "GET",
+    //        url: service + "/api/JobSearch?personId=" + currentUser,
+    //        success: function (jobSearchs) {
+    //            $('#jobSearchList').html("");
+    //            $.each(jobSearchs, function (idx, jobSearch) {
+    //                $('#jobSearchList').append("<div class='crudListItem jobSearchItem' id=" + jobSearch.Id + " >" + jobSearch.Initiated + " | " +
+    //                    jobSearch.SearchName + " | " + jobSearch.Abandoned + "</div>");
+    //            })
+
+    //            $('.jobSearchItem').click(function () {
+    //                //alert("this.id" + $(this).attr("Id"));
+    //                loadSearchEditor($(this).attr("id"));
+    //            });
+    //        },
+    //        error: function (jqXHR, exception) {
+    //            alert("getJobSearches xhr error: " + getXHRErrorDetails(jqXHR, exception));
+    //        }
+    //    })
+
+    //}
+
+    //function loadSearchEditor(Id) {
+    //    $.ajax({
+    //        type: "GET",
+    //        url: service + "/api/JobSearch?jobSearchId=" + Id,
+    //        success: function (response) {
+    //            if (!response.SearchName.startsWith("ERROR")) {
+    //                //bind
+    //                jobSearch.Id = Id;
+    //                $('#txtSearchStart').val(response.Initiated);
+    //                $('#txtSearchName').val(response.SearchName);
+    //                $('#txtSearchEnd').val(response.Abandoned);
+    //                $('#btnJobSearchAddEdit').html("Edit");
+    //                $('#btnJobSearchToggle').show();
+    //            }
+    //            else {
+    //                alert("loadSearchEditor: " + response.SearchName)
+    //            }
+    //        },
+    //        error: function (jqXHR, exception) {
+    //            alert("loadSearchEditor xhr error: " + getXHRErrorDetails(jqXHR, exception));
+    //        }
+    //    });
+    //}
+
+    //function setDefaultBind() {
+    //    //alert("jobSearch.PersonId :" + jobSearch.PersonId);
+    //    jobSearch.PersonId = currentUser;
+
+    //    jobSearch.Initiated = $('#txtSearchStart').val();
+    //    if ($('#txtSearchStart').val() == "")
+    //        jobSearch.Initiated = "11/11/2018";
+    //    jobSearch.SearchName = $('#txtSearchName').val();
+    //    if ($('#txtSearchName').val() == "") {
+    //        //alert("$('#txtSearchName').val(): [" + $('#txtSearchName').val()+"]")
+    //        jobSearch.SearchName = "Name";
+    //    }
+    //    jobSearch.Abandoned = $('#txtSearchEnd').val();
+    //    //if ($('#txtSearchEnd').val() == "")
+    //    //    jobSearch.End = "11/11/18";
+    //    //alert("jobSearch: " + $('#btnJobSearchAddEdit').html() + " :" + jobSearch.Start + ": " + jobSearch.Name + ": " + jobSearch.End);
+    //    //alert("jobSearch.PersonId: " + jobSearch.PersonId + " jobSearch.Start: " + jobSearch.Start + " jobSearch.Name: " + jobSearch.Name + " jobSearch.End: " + jobSearch.End);
+    //    ///footerm
+    //    $('#footerMessage').html("PersonId: " + jobSearch.PersonId + " Initiated: " + jobSearch.Initiated + " SearchName: " + jobSearch.SearchName); // + " jobSearch.End: " + jobSearch.End);
+    //}
+
+    //var jobSearch = new Object();
+    //function addEditSearch() {
+    //    /// make a hotkey tabtab macro .
+    //    /// the life of a sperm
+    //    setDefaultBind();
+    //    if ($('#btnJobSearchAddEdit').html() == "Add") {
+    //        $.ajax({
+    //            type: "POST",
+    //            url: service + "/api/JobSearch/",
+    //            data: jobSearch,
+    //            success: function (result) {
+    //                //alert("jobSearch post result: " + result);
+    //                if (!result.startsWith("Error")) {
+    //                    jobSearch.Id = result;
+    //                    $('#btnJobSearchAddEdit').html("Edit");
+    //                    $('#btnJobSearchToggle').show();
+    //                    getJobSearches();
+    //                }
+    //                else
+    //                    alert("jobSearch result: " + result);
+    //            },
+    //            error: function (jqXHR, exception) {
+    //                alert("addSearch xhr error: " + getXHRErrorDetails(jqXHR, exception));
+    //            }
+    //        })
+    //    }
+    //    else {
+    //        //alert("jobSearch.Id: " + jobSearch.Id)
+    //        $.ajax({
+    //            type: "PUT",
+    //            url: service + "api/JobSearch",
+    //            data: jobSearch,
+    //            success: function (success) {
+    //                if (success == "ok")
+    //                    getJobSearches();
+    //                else
+    //                    alert("jobSearch put: " + success);
+    //            },
+    //            error: function (jqXHR, exception) {
+    //                alert("editSearch xhr error: " + getXHRErrorDetails(jqXHR, exception));
+    //            }
+    //        })
+    //    }
+    //}
+
+    //function searchToggle() {
+    //    $('#btnJobSearchToggle').hide();
+    //    $('#btnJobSearchAddEdit').html("Add");
+    //}
+
+
+</script>
+

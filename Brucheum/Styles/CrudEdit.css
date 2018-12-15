@@ -1,11 +1,12 @@
 ﻿/*CRUD control style*/
 .crudContainer {
-    display: inline-block;
+    /*display: inline-block;*/
     margin-left: 22px;
     margin-top: 42px;
     background-color: #eee;
     border: solid 1.5px #bbb;
     border-radius: 5px;
+    padding-bottom: 22px;
 }
 /*summernote*/
 .editorContainer {
@@ -15,6 +16,7 @@
     border-radius: 5px;
     z-index: 0;
     width: 100%;
+    margin-bottom: 5px;
 }
 .crudBreadcrumb {
     margin-left: 56px;
@@ -39,6 +41,7 @@
 }
 .crudRow {
     margin-top: 10px;
+    padding: 0 22px;
     white-space: nowrap;
 }
 
@@ -67,7 +70,8 @@
 }
 
 .crudListItem {
-    padding: 4px;
+    padding: 8px;
+    font-size: 18px;
     cursor: pointer;
     margin-bottom: 5px;
     background-color: #74bac3;

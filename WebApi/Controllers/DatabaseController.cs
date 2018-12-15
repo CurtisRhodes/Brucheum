@@ -6,6 +6,7 @@ using System.Net.Mail;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Results;
+using WebApi.DataContext;
 using WebApi.Models;
 
 namespace WebApi

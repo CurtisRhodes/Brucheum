@@ -7,28 +7,16 @@ using System.Web.Mvc;
 
 namespace Brucheum.Controllers
 {
-    public class GetaJobController : Controller
+    public class ResumeController : Controller
     {
         private string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
 
-        public ActionResult Index()
-        {
-            return View("GetaJobAdmin");
-        }
-        public ActionResult GetaJobAdmin()
+        // GET: Resume
+        public ActionResult ResumeAdmin()
         {
             ViewBag.UserId = User.Identity.GetUserId();
             ViewBag.Service = apiService;
             return View();
         }
-        public ActionResult Agent()
-        {
-           
-            return View();
-        }
-
-
-
-
     }
 }

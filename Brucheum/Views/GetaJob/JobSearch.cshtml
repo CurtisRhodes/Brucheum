@@ -5,10 +5,11 @@
 }
 
 
-<link href="~/Styles/default.css" rel="stylesheet" />
-<link href="~/Styles/admin.css" rel="stylesheet" />
+@*<link href="~/Styles/default.css" rel="stylesheet" />
+<link href="~/Styles/crudEdit.css" rel="stylesheet" />
+<link href="~/Styles/admin.css" rel="stylesheet" />*@
 
-<style>
+@*<style>
     .leftMiddleColumn {
         float: left;
         display: flex;
@@ -17,9 +18,8 @@
         height: 100%;
     }
 
-    .middleMiddleCouimn {
+    .middleMiddleColumn {
         float: left;
-        height: 100%;
     }
 
     .pageTitle {
@@ -29,26 +29,43 @@
     #rightColumn {
         border-left: solid thin purple;
     }
-</style>
+</style>*@
 
+@*<div class="pageTitle">Job Searches</div>
 <div class="threeColumnArray">
     <div id="leftColumn">
-
+        <div class="vertMenu">
+            <div class="vertMenuTab" id="optJobSearch" onclick="showOption('JobSearch')">Add Job Search</div>
+            <div class="vertMenuTab" id="optActivity"  onclick="showOption('SearchActivity')">Add Job Search Activity</div>
+            <div class="vertMenuTab" id="optResume">Edit Resume</div>
+            <div class="vertMenuTab" id="optSkills">Add Skills</div>
+        </div>
     </div>
     <div id="middleColumn">
-        <div class="leftMiddleColumn">
-            <div class="vertMenu">
-                <div class="vertMenuTab" id="optJobSearch">Add Job Search</div>
-                <div class="vertMenuTab" id="optActivity">Add Job Search Activity</div>
-                <div class="vertMenuTab" id="optResume">Edit Resume</div>
-                <div class="vertMenuTab" id="optSkills">Add Skills</div>
+
+        <div id="divSearchActivity" class="crudContainer">
+            <div class="crudContainerTitle">Job Searches</div>
+            <div class="crudArea">
+                <div class="crudRow">
+                    <div class="crudRowLabel">Start:</div>
+                    <input id="txtSearchStart" class="roundedInput" placeholder="11/11/18" />
+                    <div class="crudRowLabel">Search Name:</div>
+                    <input id="txtSearchName" class="roundedInput" placeholder="name" />
+                    <div class="crudRowLabel">End:</div>
+                    <input id="txtSearchEnd" class="roundedInput" />
+                </div>
+                <div>
+                    <div class="roundendButton inline" id="btnJobSearchAddEdit" onclick="addEditSearch()">Add</div>
+                    <div class="roundendButton inline" id="btnJobSearchToggle" onclick="searchToggle()">New</div>
+                </div>
             </div>
+            <div id="jobSearchList" class="itemsList"></div>
         </div>
-        <div class="middleMiddleCouimn">
-            <div class="pageTitle">Job Searches</div>
-            <div id="jobSearchList"></div>
-        </div>
+
+
     </div>
-    <div id="rightColumn">
-    </div>
-</div>
+    <div id="rightColumn"></div>
+</div>*@
+
+
+

@@ -140,12 +140,12 @@
                     if (true) {
                         $('#skillList').html("");
                         $.each(response, function (idx, obj) {
-                            $('#skillList').append("<div class='crudListItem' CatId=" + obj.SkillCategory + " id=" + obj.Id + " >" + obj.SkillCategoryDescription + " | " + obj.SkillName + "</div>");
+                            $('#skillList').append("<div class='crudListItem refItem' CatId=" + obj.SkillCategory + " id=" + obj.Id + " >" + obj.SkillCategoryDescription + " | " + obj.SkillName + "</div>");
                         })
 
                         $('#loadingGif').hide();
 
-                        $('.crudListItem').click(function () {
+                        $('.refItem').click(function () {
                             //alert("this.id" + $(this).attr("Id"));
                             loadSkillsEditor($(this).attr("id"));
                         });
