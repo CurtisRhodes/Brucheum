@@ -1,0 +1,155 @@
+﻿
+<div id="divJobSearch" class="crudContainer">
+    <div class="crudContainerTitle">Job Searches</div>
+    <div class="crudArea">
+        <div class="crudRow">
+            <div class="crudRowLabel">Initiated:</div>
+            <input id="txtSearchStart" class="roundedInput" placeholder="11/11/18" />
+            <div class="crudRowLabel">Subject:</div>
+            <input id="txtSearchName" class="roundedInput" placeholder="name" />
+            <div class="crudRowLabel">Abandoned:</div>
+            <input id="txtSearchEnd" class="roundedInput" />
+        </div>
+        <div>
+            <div class="roundendButton inline" id="btnJobSearchAddEdit" onclick="addEditSearch()">Add</div>
+            <div class="roundendButton inline" id="btnJobSearchToggle" onclick="searchToggle()">New</div>
+        </div>
+    </div>
+    <div id="jobSearchList" class="itemsList"></div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+    var currentUser = '@ViewBag.UserId';
+
+    $(document).ready(function () {
+
+    });
+
+    function closeCustomMessageBox() {
+        alert("closeCustomMessageBox()");
+        window.location.href = "/Home/Index";
+    }
+
+
+    function getJobSearches() {
+        //alert("url: " + service + "/api/JobSearch?personId=" + currentUser);
+        $.ajax({
+            type: "GET",
+            url: service + "/api/JobSearch?personId=" + currentUser,
+            success: function (jobSearchs) {
+                $('#jobSearchList').html("");
+                $.each(jobSearchs, function (idx, jobSearch) {
+                    $('#jobSearchList').append("<div class='crudListItem jobSearchItem' id=" + jobSearch.Id + " >" + jobSearch.Initiated + " | " +
+                        jobSearch.SearchName + " | " + jobSearch.Abandoned + "</div>");
+                })
+
+                $('.jobSearchItem').click(function () {
+                    //alert("this.id" + $(this).attr("Id"));
+                    loadSearchEditor($(this).attr("id"));
+                });
+            },
+            error: function (jqXHR, exception) {
+                alert("getJobSearches xhr error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        })
+
+    }
+
+    function loadSearchEditor(Id) {
+        $.ajax({
+            type: "GET",
+            url: service + "/api/JobSearch?jobSearchId=" + Id,
+            success: function (response) {
+                if (!response.SearchName.startsWith("ERROR")) {
+                    //bind
+                    jobSearch.Id = Id;
+                    $('#txtSearchStart').val(response.Initiated);
+                    $('#txtSearchName').val(response.SearchName);
+                    $('#txtSearchEnd').val(response.Abandoned);
+                    $('#btnJobSearchAddEdit').html("Edit");
+                    $('#btnJobSearchToggle').show();
+                }
+                else {
+                    alert("loadSearchEditor: " + response.SearchName)
+                }
+            },
+            error: function (jqXHR, exception) {
+                alert("loadSearchEditor xhr error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
+    function setDefaultBind() {
+        //alert("jobSearch.PersonId :" + jobSearch.PersonId);
+        jobSearch.PersonId = currentUser;
+
+        jobSearch.Initiated = $('#txtSearchStart').val();
+        if ($('#txtSearchStart').val() == "")
+            jobSearch.Initiated = "11/11/2018";
+        jobSearch.SearchName = $('#txtSearchName').val();
+        if ($('#txtSearchName').val() == "") {
+            //alert("$('#txtSearchName').val(): [" + $('#txtSearchName').val()+"]")
+            jobSearch.SearchName = "Name";
+        }
+        jobSearch.Abandoned = $('#txtSearchEnd').val();
+        //if ($('#txtSearchEnd').val() == "")
+        //    jobSearch.End = "11/11/18";
+        //alert("jobSearch: " + $('#btnJobSearchAddEdit').html() + " :" + jobSearch.Start + ": " + jobSearch.Name + ": " + jobSearch.End);
+        //alert("jobSearch.PersonId: " + jobSearch.PersonId + " jobSearch.Start: " + jobSearch.Start + " jobSearch.Name: " + jobSearch.Name + " jobSearch.End: " + jobSearch.End);
+        ///footerm
+        $('#footerMessage').html("PersonId: " + jobSearch.PersonId + " Initiated: " + jobSearch.Initiated + " SearchName: " + jobSearch.SearchName); // + " jobSearch.End: " + jobSearch.End);
+    }
+
+    var jobSearch = new Object();
+    function addEditSearch() {
+        /// make a hotkey tabtab macro .
+        /// the life of a sperm
+        setDefaultBind();
+        if ($('#btnJobSearchAddEdit').html() == "Add") {
+            $.ajax({
+                type: "POST",
+                url: service + "/api/JobSearch/",
+                data: jobSearch,
+                success: function (result) {
+                    //alert("jobSearch post result: " + result);
+                    if (!result.startsWith("Error")) {
+                        jobSearch.Id = result;
+                        $('#btnJobSearchAddEdit').html("Edit");
+                        $('#btnJobSearchToggle').show();
+                        getJobSearches();
+                    }
+                    else
+                        alert("jobSearch result: " + result);
+                },
+                error: function (jqXHR, exception) {
+                    alert("addSearch xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            })
+        }
+        else {
+            //alert("jobSearch.Id: " + jobSearch.Id)
+            $.ajax({
+                type: "PUT",
+                url: service + "api/JobSearch",
+                data: jobSearch,
+                success: function (success) {
+                    if (success == "ok")
+                        getJobSearches();
+                    else
+                        alert("jobSearch put: " + success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("editSearch xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            })
+        }
+    }
+
+    function searchToggle() {
+        $('#btnJobSearchToggle').hide();
+        $('#btnJobSearchAddEdit').html("Add");
+    }
+
+</script>
+

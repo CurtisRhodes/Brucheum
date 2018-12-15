@@ -1,0 +1,139 @@
+﻿
+<div id="divJobListing" class="crudContainer">
+    <div class="crudContainerTitle">Job Listings</div>
+    <div class="crudRow">
+        <div class="crudRowLabel">Active Job Search:</div>
+        <div class="inline" id="currentJobSearch">vv</div>
+    </div>
+    <div class="crudRow">
+        <div class="crudRowLabel">Posted:</div>
+        <input id="txtPostedDate" class="roundedInput" placeholder="11/11/18" />
+        <div class="crudRowLabel">Status:</div>
+        <select id="ddStatus" class="roundedInput"></select>
+    </div>
+    <div class="crudRow">
+        <div class="crudRowLabel">Location:</div>
+        <input id="txtLocation" class="roundedInput" />
+        <div class="crudRowLabel">Type:</div>
+        <select id="ddEmploymentType" class="roundedInput"></select>
+        <div class="crudRowLabel">Source:</div>
+        <select id="ddSource" class="roundedInput"></select>
+    </div>
+    <div class="crudRow">
+        <div class="crudRowLabel">Agency:</div>
+        <select id="ddAgency" class="roundedInput"></select>
+        <div class="crudRowLabel">Agent:</div>
+        <select id="ddAgent" class="roundedInput"></select>
+    </div>
+    <div class="crudRow">
+        <div class="crudRowLabel">Target Employer:</div>
+        <input id="txtTargetEmployer" class="roundedInput" />
+    </div>
+    <div class="crudRow">
+        <div class="crudRowLabel">Job:</div>
+        <input id="txtJobTitle" class="roundedInput" placeholder="developer" />
+        <div class="crudRowLabel">Fit:</div>
+        <select id="ddFit" class="roundedInput"></select>
+        <div class="crudRowLabel">Desirability:</div>
+        <select id="ddDesirability" class="roundedInput"></select>
+    </div>
+    <div class="crudArea">
+        <div>
+            <div class="roundendButton inline" id="btnJobListingAddEdit" onclick="addEditJobListing()">Add</div>
+            <div class="roundendButton inline" id="btnJobListingToggle" onclick="JobListingToggle()">New</div>
+        </div>
+    </div>
+    <div id="JobListingList" class="itemsList"></div>
+</div>
+
+<script>
+    var jobListingObject = new Object();
+
+
+    $(document).ready(function () {
+
+    });
+
+    function addEditJobListing() {
+        unBindListing();
+        if ($('#btnJobListingAddEdit').html() == "Add") {
+            $.ajax({
+                type: "POST",
+                data: jobListingObject,
+                url: service + "/api/JobListing",
+                success: function (success) {
+
+
+                }
+
+            })
+        }
+        else {
+
+
+        }
+        //$('#btnJobListingToggle').hide();
+
+    }
+    function bindListing() {
+        $('#txtPostedDate').val();
+        $('#ddStatus').val();
+        $('#txtLocation').val();
+        $('#ddEmploymentType').val();
+        $('#ddSource').val();
+        $('#ddAgency').val();
+        $('#ddAgent').val();
+        $('#txtTargetEmployer').val();
+        $('#txtJobTitle').val();
+        $('#ddFit').val();
+        $('#ddDesirability').val();
+    }
+
+    function unBindListing() {
+        jobListingObject.$('#txtPostedDate').val();
+        jobListingObject.ListingStatus=  $('#ddStatus').val();
+        jobListingObject.Location=  $('#txtLocation').val();
+        jobListingObject.EmploymentType = $('#ddEmploymentType').val();
+        jobListingObject.ListingSource = $('#ddSource').val();
+        jobListingObject.AgencyId = $('#ddAgency').val();
+        jobListingObject.AgentId =  $('#ddAgent').val();
+        jobListingObject = $('#txtTargetEmployer').val();
+        jobListingObject.JobTitle = $('#txtJobTitle').val();
+        jobListingObject.Fit = $('#ddFit').val();
+        jobListingObject.Desirability = $('#ddDesirability').val();
+    }
+
+    function loadListingDropDowns() {
+        getRefs("AST", "#ddStatus")
+        getRefs("EMP", "#ddEmploymentType")
+        getRefs("LTS", "#ddSource")
+        getRefs("DES", "#ddDesirability")
+        getRefs("FIT", "#ddFit")
+    }
+
+    function getRefs(refType, ddId) {
+        try {
+            $.ajax({
+                type: "GET",
+                url: service + "/api/GAJRef/Get?refType=" + refType,
+                success: function (result) {
+                    //alert("getRefs() ddId: " + ddId)
+                    $(ddId).html("<option value='000' class='ddOption'> -- select option --</option>");
+                    $.each(result, function (idx, obj) {
+                        //alert("<div id=" + obj.RefCode + " class='crudListItem'>" + obj.RefDescription + "</div>");
+                        $(ddId).append("<option value='" + obj.RefCode + "' class='ddOption'>" + obj.RefDescription + "</option>");
+                    });
+                },
+                error: function (jqXHR, exception) {
+                    alert("GetRefs error: " + getXHRErrorDetails(jqXHR, exception));
+                },
+            });
+        } catch (e) {
+            //displayStatusMessage("error", "catch ERROR: " +e);
+            alert("GetRefs catch: " + e);
+        }
+    }
+
+</script>
+
+

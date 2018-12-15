@@ -155,9 +155,11 @@
 <script>
     var loginVM = new Object();
     $(document).ready(function () {
-        $('#btnLoginSpinnerImage').hide();
-        $('.carouselContainer').css("z-index", "0");
-        $('.carouselLabel').css("z-index", "0");
+        if (typeof stopCarousel == 'function') {
+            $('.carouselContainer').css("z-index", "0");
+            $('.carouselLabel').css("z-index", "0");
+            stopCarousel();
+        }
     });
 
     function postLogin() {
@@ -176,9 +178,11 @@
                     datatype: "Json",
                     success: function (success) {
                         if (success == "ok") {
-                            $('.carouselContainer').css("z-index", "7");
-                            $('.carouselLabel').css("z-index", "11");
-                            displayStatusMessage("ok", "email sent " + emailSubject);
+                            if (typeof startCarousel == 'function') {
+                                $('.carouselContainer').css("z-index", "7");
+                                $('.carouselLabel').css("z-index", "11");
+                                startCarousel();
+                            }
                             location.reload(true);
                         }
                         else {

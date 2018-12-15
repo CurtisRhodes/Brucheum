@@ -44,7 +44,7 @@ function clearModal() {
 }
 
 function loginPlease() {
-    var loff = $('#btnLayLogin').offset().left;
+    var loff = $('#btnLayoutLogin').offset().left;
     $('#btnHeaderLoginSpinner').css("left", loff + 30);
     $('#btnHeaderLoginSpinner').show();
     $.ajax({
@@ -56,12 +56,15 @@ function loginPlease() {
             $('#modalContainer').show();
             $('#btnHeaderLoginSpinner').hide();
         },
-        error: function (xhr) {
-            alert("RegisterPopup error: " + xhr.statusText);
+        error: function (jqXHR, exception) {
+            alert("LoginPopup XHR error: " + getXHRErrorDetails(jqXHR, exception));
         }
     });
 }
 function registerPlease() {
+    var loff = $('#btnLayoutRegister').offset().left;
+    $('#btnHeaderRegisterSpinner').css("left", loff + 30);
+    $('#btnHeaderRegisterSpinner').show();
     $.ajax({
         type: "get",
         url: "/Login/Register",
@@ -69,9 +72,10 @@ function registerPlease() {
         success: function (data) {
             $('#modalContent').html(data);
             $('#modalContainer').show();
+            $('#btnHeaderRegisterSpinner').hide();
         },
-        error: function (xhr) {
-            alert("RegisterPopup error: " + xhr.statusText);
+        error: function (jqXHR, exception) {
+            alert("RegisterPopup XHR error: " + getXHRErrorDetails(jqXHR, exception));
         }
     });
 }
@@ -85,8 +89,8 @@ function profilePease() {
                 $('#modalContent').html(data);
                 $('#modalContainer').show();
             },
-            error: function (xhr) {
-                alert("ProfilePopup error: " + xhr.statusText);
+            error: function (jqXHR, exception) {
+                alert("ProfilePopup XHR error: " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     } catch (e) {
@@ -104,8 +108,8 @@ function logoutPlease() {
                 else
                     alert("callLogout: " + success);
             },
-            error: function (xhr) {
-                alert("callLogout XHR error: " + xhr.statusText);
+            error: function (jqXHR, exception) {
+                alert("logoutPlease XHR error: " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     } catch (e) {
@@ -154,23 +158,22 @@ function sendEmailFromJS(msg, body) {
 
 function logPageHit(service, userName, ipAddress, page, details) {
     try {
-
-    $.ajax({
-        type: "GET",
-        url: service + "/api/HitCounter/AddPageHit?ipAddress=" + ipAddress + "&app=Brucheum&page=" + page + "&details=" + details,
-        success: function (success) {
-            if (!success.startsWith("ERROR")) {
-                //sendEmailFromJS("Page Hit", ipAddress + " visited " + page + " " + details);
-                displayStatusMessage("ok", "email sent");
+        alert("logPageHit ipAddress: " + ipAddress);
+        $.ajax({
+            type: "GET",
+            url: service + "/api/HitCounter/AddPageHit?ipAddress=" + ipAddress + "&app=Brucheum&page=" + page + "&details=" + details,
+            success: function (success) {
+                if (!success.startsWith("ERROR")) {
+                    //sendEmailFromJS("Page Hit", ipAddress + " visited " + page + " " + details);
+                    displayStatusMessage("ok", "email sent");
+                }
+                else
+                    alert("logPageHit Fail: " + success);
+            },
+            error: function (jqXHR, exception) {
+                alert("logPageHit XHR error: " + getXHRErrorDetails(jqXHR, exception));
             }
-            else
-                alert("logPageHit Fail: " + success);
-        },
-        error: function (xhr) {
-            //displayStatusMessage("error", "error: " + xhr.statusText);
-            alert("Page Hit XHR error: " + xhr.statusText);
-        }
-    });
+        });
     } catch (e) {
         alert("logPageHit CATCH error: " + e);
 
@@ -219,4 +222,69 @@ function getXHRErrorDetails(jqXHR) {
         msg = 'Uncaught Error.\n' + jqXHR.responseText;
     }
     return msg;
+}
+
+function setLayout(layoutName) {
+    //use "menuContainer" to remove logon tabs  #replaceableMenuItems to keep them
+    switch (layoutName) {
+        case 'Admin':
+            $('#bheader').css("background-color", "#ffcccc");
+            $('#bannerTitle').html("Intelligent Design.Admin");
+            $('#menuContainer').html(
+                `<div class="menuTab floatLeft"><a href="~/Article/ArticleList">Directory</a></div>
+                 <div class="menuTab floatLeft"><a href="/GetaJob/GetaJobAdmin">GetaJob</a></div>
+                 <div class="menuTab floatLeft"><a href="~/Article/ArticleList">Refs</a></div>
+                 <div class="menuTab floatLeft"><a href="~/~/Article/ArticleList">Articles</a></div>
+                 <div class="menuTab floatLeft"><a href="/Home/Apps">Apps</a></div>
+                 <div class="menuTab floatLeft"><a href="/IntelDsgn/Index">Intelligent Design</a></div>`);
+            break;
+        case 'Resume':
+            //$('#divTopLeftLogo').html("<a href='~/Home/Index'><img src='~/images/house.gif' class='bannerImage'/></a>");
+            $('#divTopLeftLogo').html("<a href='/IntelDsgn/Index'><img src='~/images/intel01.jpg' class='bannerImage'/></a>");
+            $('#bheader').css("background-color", "#c64e4e");
+            $('#bannerTitle').html("Resume Builder");
+            $('#menuContainer').html(
+                `<div class="menuTab floatLeft"><a href="~/Article/ArticleList">Directory</a></div>
+                 <div class="menuTab floatLeft"><a href="/GetaJob/GetaJobAdmin">GetaJob</a></div>
+                 <div class="menuTab floatLeft"><a href="~/Article/ArticleList">Refs</a></div>
+                 <div class="menuTab floatLeft"><a href="~/~/Article/ArticleList">Articles</a></div>
+                 <div class="menuTab floatLeft"><a href="/Home/Apps">Apps</a></div>
+                 <div class="menuTab floatLeft"><a href="/IntelDsgn/Index">Intelligent Design</a></div>`);
+            break;
+        case 'Intelligent Design':
+            $('#bheader').css("background-color", "#ffffe6");
+            $('#bannerTitle').html("GetaJob");
+            $('#replaceableMenuItems').html(`
+               <div class="menuTab floatLeft"><a href="~/Home/Index/">CurtisRhodes.com</a></div>
+               <div class="menuTab floatLeft"><a href="~/Resume/ResumeAdmin">Resume Builder</a></div>
+               <div class="menuTab floatLeft"><a href="~/GetaJob/GetaJobAdmin">Edit</a></div>
+               <div class="menuTab floatLeft"><a href="~/IntelDsgn/MyResume/">My Resume</a></div>`);
+            break;
+        case 'GetaJob':
+            $('#divTopLeftLogo').html("<a href='/GetaJob'><img src='/images/Apps/GetaJob.png' class='bannerImage'/></a>");
+            $('head title').html("Get a Gig");
+            //$('#bheader').css("background-color", "#ffffe6");
+            $('#bheader').css("background-color", "#fff");
+            $('#bannerTitle').html("Get a Gig");
+            $('#replaceableMenuItems').html(`
+               <div class="menuTab floatLeft"><a href="/Home/Index/">CurtisRhodes.com</a></div>
+               <div class="menuTab floatLeft"><a href="/GetaJob/GetaJobAdmin">Job Search</a></div>
+               <div class="menuTab floatLeft"><a href="/GetaJob/GetaJobAdmin">Skills</a></div>
+               <div class="menuTab floatLeft"><a href="/GetaJob/Agent">Reports</a></div>
+               <div class="menuTab floatLeft"><a href="/Resume/ResumeAdmin">Resume Builder</a></div>
+               <div class="menuTab floatLeft"><a href="/IntelDsgn/MyResume/">My Resume</a></div>`);
+            break;
+        default:
+
+    }
+}
+
+function isNullorUndefined(val) {
+    if (val == "")
+        return true;
+    if(val == null)
+        return true;
+    if (val == undefined)
+        return true;
+    return false;
 }

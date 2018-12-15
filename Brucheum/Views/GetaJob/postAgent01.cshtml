@@ -1,0 +1,48 @@
+﻿@model Brucheum.RoleModel
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+    </div>
+    <div id="middleColumn">
+
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            <div id="errPassword" class="validationError">Required</div>
+            <input name="Name" class="form-control text-box single-line" id="Name" type="text" value="">
+            <input type="submit" value="Save" class="btn btn-default" />
+        }
+
+        <div>
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    </div>
+    <div id="rightColumn"></div>
+</div>
+
+
+
+<style>
+    .form-horizontal {
+        background-color: #d6f5f5;
+    }
+</style>
+<script>
+    var service = '@ViewBag.Service';
+
+    $(document).ready(function () {
+
+
+
+        $('.vertMenuTab').mouseout(function () {
+            $(this).css('background-color', '#74bac3').css('color', '#000');
+        });
+        $('.vertMenuTab').mouseover(function () {
+            $(this).css('background-color', '#4163aa').css('color', '#e4e4e4');
+        });
+    });
+
+    setLayout('GetaJob');
+
+</script>

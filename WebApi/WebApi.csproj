@@ -169,20 +169,23 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImagesController.cs" />
     <Compile Include="Controllers\BlogXmlController.cs" />
+    <Compile Include="Controllers\ResumeApiController.cs" />
     <Compile Include="Controllers\xAspNetController.cs" />
     <Compile Include="Controllers\OggleBoobleController.cs" />
+    <Compile Include="DataContext\ResumeContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\AspNetContext.cs" />
-    <Compile Include="Models\BookDbContext.cs" />
+    <Compile Include="DataContext\AspNetContext.cs" />
+    <Compile Include="DataContext\BookDbContext.cs" />
+    <Compile Include="DataContext\GetaJobContext.cs" />
+    <Compile Include="Models\ResumeModels.cs" />
     <Compile Include="Models\GetaJobModels.cs" />
     <Compile Include="Models\LocalModels.cs" />
-    <Compile Include="Models\GetaJobContext.cs" />
-    <Compile Include="Models\OggleBoobleContext.cs" />
+    <Compile Include="DataContext\OggleBoobleContext.cs" />
     <Compile Include="Models\BookDbModels.cs" />
-    <Compile Include="Models\WebSiteContext.cs" />
+    <Compile Include="DataContext\WebSiteContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

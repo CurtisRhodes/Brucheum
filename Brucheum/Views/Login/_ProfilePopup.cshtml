@@ -3,49 +3,40 @@
 <link href="~/Styles/default.css" rel="stylesheet" />
 
 <style>
-    #userProfileDialog {
-        position: absolute;
-        top: 28%;
-        left: 43%;
-        box-sizing: content-box;
-        color: #242729;
-        width: 280px;
-        padding: 30px;
-        border: 1px solid #e4e6e8;
-        background: #fff;
-        z-index: 200;
+    .dialogBody {
+        margin-bottom: 44px;
     }
-
     #divButtonRow {
-        margin-top: 4px;
+        margin-top: 11px;
     }
 </style>
 
-<div id="userProfileDialog">
+<div id="userProfileDialog" class="modalDialog">
     <div id="divStatusMessage"></div>
     <div class="dialogHeader">
         Modify Profile for <span>The Brucheum</span>
-        <div id="btnClose" class="divCloseButton">
+        <div id="btnClose" class="dialogCloseButton">
             <img height="19" src="~/Images/powerOffRed01.png" />
         </div>
     </div>
-    <div style="clear:both"></div>
-    <div id="errSummary" class="validationError"></div>
-    <label>User Name</label><br>
-    <input id="txtUserName" type="text" value="@User.Identity.Name" class="roundedInput" placeholder="your go by name"><br>
-    <label>Email</label><br>
-    <input id="txtEmail" type="email" class="roundedInput" value="" placeholder="you@example.org"><br>
-    <label>FirstName</label><br>
-    <input id="txtFirstName" type="text" class="roundedInput"><br>
-    <label>Last Name</label><br>
-    <input id="txtLastName" type="text" class="roundedInput"><br>
-    <label>Phone Number</label><br>
-    <input id="txtPhone" type="tel" class="roundedInput"><br>
-    <label>Pin</label><br>
-    <input id="txtPin" type="text" class="roundedInput" placeholder="you may use this in place of your password"><br>
-    <div id="divButtonRow">
-        <button class="roundendButton" style="float:left" id="btnUpdate">Update</button>
-        <button class="roundendButton" style="float:left" id="btnCancel">Cancel</button>
+    <div class="dialogBody">
+        <div id="errSummary" class="validationError"></div>
+        <label>User Name</label><br>
+        <input id="txtUserName" type="text" value="@User.Identity.Name" class="roundedInput" placeholder="your go by name"><br>
+        <label>Email</label><br>
+        <input id="txtEmail" type="email" class="roundedInput" value="" placeholder="you@example.org"><br>
+        <label>FirstName</label><br>
+        <input id="txtFirstName" type="text" class="roundedInput"><br>
+        <label>Last Name</label><br>
+        <input id="txtLastName" type="text" class="roundedInput"><br>
+        <label>Phone Number</label><br>
+        <input id="txtPhone" type="tel" class="roundedInput"><br>
+        <label>Pin</label><br>
+        <input id="txtPin" type="text" class="roundedInput" placeholder="you may use this in place of your password"><br>
+        <div id="divButtonRow">
+            <button class="roundendButton" style="float:left" id="btnUpdate">Update</button>
+            <button class="roundendButton" style="float:left" id="btnCancel">Cancel</button>
+        </div>
     </div>
 </div>
 
@@ -58,10 +49,11 @@
     var userProfile = new Object();
 
     $(document).ready(function () {
-
-        //alert("response.UserName: " + response.UserName);
-        //alert("appUser: " + appUser);
-
+        if (typeof stopCarousel == 'function') {
+            $('.carouselContainer').css("z-index", "0");
+            $('.carouselLabel').css("z-index", "0");
+            stopCarousel();
+        }
 
         //bind(appUser);
         $('#txtUserName').val(_UserName);
@@ -69,7 +61,6 @@
         $('#txtFirstName').val(_FirstName);
         $('#txtLastName').val(_LastName);
         $('#txtPhone').val(_PhoneNumber);
-
         $('#txtUserName').focus();
     });
 
@@ -120,6 +111,11 @@
     });
 
     $('#btnClose, #btnCancel').click(function () {
+        if (typeof startCarousel == 'function') {
+            $('.carouselContainer').css("z-index", "7");
+            $('.carouselLabel').css("z-index", "11");
+            startCarousel();
+        }
         clearModal();
     });
 </script>

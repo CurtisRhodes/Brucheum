@@ -244,10 +244,12 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\ResumeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\GetaJobModels.cs" />
     <Compile Include="Models\LocalModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -284,6 +286,8 @@
     <Content Include="Images\Books\TimeSquared.jpg" />
     <Content Include="Images\brain02.ico" />
     <Content Include="Images\Brucheum.ico" />
+    <Content Include="Images\caretDown.png" />
+    <Content Include="Images\caretUp.png" />
     <Content Include="Images\caveStairs.jpg" />
     <Content Include="Images\caveStairsWide.jpg" />
     <Content Include="Images\closeBtn02.png" />
@@ -437,14 +441,14 @@
     <Content Include="Views\GetaJob\Index.cshtml" />
     <Content Include="Views\GetaJob\_GetaJobFooter.cshtml" />
     <Content Include="Views\GetaJob\_GetaJobLayout.cshtml" />
-    <Content Include="Views\GetaJob\_AddEditJobs.cshtml" />
-    <Content Include="Views\GetaJob\_AddEditSkills.cshtml" />
-    <Content Include="Views\GetaJob\_AddEditResume.cshtml" />
+    <Content Include="Views\Resume\_AddEditJobs.cshtml" />
+    <Content Include="Views\Resume\_AddEditSkills.cshtml" />
+    <Content Include="Views\Resume\_AddEditResume.cshtml" />
     <Content Include="Views\Error\ErrorwMessages.cshtml" />
     <Content Include="Views\Error\ErrorwException.cshtml" />
-    <Content Include="Views\GetaJob\_AddEditSections.cshtml" />
+    <Content Include="Views\Resume\_AddEditSections.cshtml" />
     <Content Include="Views\Admin\_ManageArticles.cshtml" />
-    <Content Include="Views\GetaJob\_AddEditRefs.cshtml" />
+    <Content Include="Views\Resume\_AddEditRefs.cshtml" />
     <Content Include="Views\GetaJob\JobSearch.cshtml" />
     <Content Include="Views\BookDb\Index.cshtml" />
     <Content Include="Views\BookDb\ToC.cshtml" />
@@ -453,7 +457,14 @@
     <Content Include="Views\BookDb\Read.cshtml" />
     <Content Include="Views\Article\ArticleView.cshtml" />
     <Content Include="Views\Admin\_SiteStats.cshtml" />
-    <Content Include="Views\GetaJob\_BuildResume.cshtml" />
+    <Content Include="Views\Resume\_BuildResume.cshtml" />
+    <Content Include="Views\Resume\ResumeAdmin.cshtml" />
+    <Content Include="Views\GetaJob\_JobSearch.cshtml" />
+    <Content Include="Views\GetaJob\_SearchActivity.cshtml" />
+    <Content Include="Views\GetaJob\_JobListing.cshtml" />
+    <Content Include="Views\GetaJob\_AgentsAgencies.cshtml" />
+    <Content Include="Views\GetaJob\postAgent01.cshtml" />
+    <Content Include="Views\GetaJob\Agent.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

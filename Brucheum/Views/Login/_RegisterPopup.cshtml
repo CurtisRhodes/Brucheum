@@ -72,36 +72,13 @@
 
 <script>
 
-    function xxxRegister() {
-        $.ajax({
-            type: "POST",
-            url: service + "/api/GAJRef",
-            dataType: "Json",
-            data: refModel,
-            success: function (result) {
-                if (result.Success.toUpperCase() == "OK") {
-                    displayStatusMessage("ok", $('#txtRefName').val() + " Added");
-                    $('#txtRefName').val("");
-                    $('#btnAddUpdateRef').text("Add");
-                    $('#btnRefToggle').hide();
-                    getRefs(selectedRefType);
-                }
-                else {
-                    alert("Post ref error :" + result.Success);
-                    //displayStatusMessage("error", "xhr ERROR: " + success);
-                }
-            },
-            error: function (jqXHR, exception) {
-                //displayStatusMessage("error", "AddRole error: " + getXHRErrorDetails(jqXHR, exception));
-                alert("Post ref xhr error: " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
-    }
-
     $(document).ready(function () {
         $('#btnRegisterSpinnerImage').hide();
-        $('.carouselContainer').css("z-index", "0");
-        $('.carouselLabel').css("z-index", "0");
+        if (typeof stopCarousel == 'function') {
+            $('.carouselContainer').css("z-index", "0");
+            $('.carouselLabel').css("z-index", "0");
+            stopCarousel();
+        }
     });
 
     function register() {
@@ -127,6 +104,7 @@
                         if (success === "ok") {
                             $('.carouselContainer').css("z-index", "7");
                             $('.carouselLabel').css("z-index", "11");
+                            startCarousel();
                             location.reload(true);
                         }
                         else {
@@ -150,15 +128,6 @@
         }
     }
     
-    var source = new EventSource('https://api.curtisrhodes.com/Api/Email/');  
-
-    source.onmessage = function (e) {
-        alert("e: " + e.data);
-
-    };  
-
-
-
     function validate() {
         $('#errSummary').hide();
 
@@ -201,8 +170,11 @@
     });
 
     $('#btnClose').click(function () {
-        $('.carouselContainer').css("z-index", "7");
-        $('.carouselLabel').css("z-index", "11");
+        if (typeof startCarousel == 'function') {
+            $('.carouselContainer').css("z-index", "7");
+            $('.carouselLabel').css("z-index", "11");
+            startCarousel();
+        }
         clearModal();
     });
 

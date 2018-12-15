@@ -50,7 +50,8 @@
         position: absolute;
         display: inline-block;
         color: #fff;
-        background-color: #000;
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
         padding: 3px;
         font-size: 22px;
         z-index: 11;
@@ -69,7 +70,7 @@
         </div>
         
     </div>
-    <img id="rightFbutton" class="fbutton" src="~/Images/blueCircleRight.png" onclick="javascript:clickNext()" />
+    <img id="rightFbutton" class="fbutton" src="~/Images/blueCircleRight.png" onclick="clickNext()" />
 </div>
 
 <script>
@@ -79,13 +80,20 @@
     var rotationSpeed = 15000;
     var carouselItems = new Array();
     var imageNum = 0;
-    var Carousel;
     var carouselContainerHeight;
+    var Carousel;
 
     $(document).ready(function () {
         adjustCarousel();
     });
 
+    function stopCarousel() {
+        clearInterval(Carousel);
+    }
+    function startCarousel() {
+        clearInterval(Carousel);
+        rotate();
+    }
 
     function adjustCarousel() {
         $('.carouselImage').height($('#articleImage').height());
@@ -123,16 +131,8 @@
         window.location.href = "/Article/ArticleView?Id=" + $('.carouselItem').attr('Id');
     })
 
-    function stopCarousel() {
-        clearInterval(Carousel);
-    }
-    function startCarousel() {
-        clearInterval(Carousel);
-        rotate();
-    }
 
     function clickPrevious() {
-        alert("stop");
         stopCarousel();
     }
     function clickNext() {

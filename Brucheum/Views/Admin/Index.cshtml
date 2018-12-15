@@ -72,19 +72,20 @@
         setAdminLayout();
     });
 
-    function setAdminLayout() {
-        //use "menuContainer" to remove logon tabs  #replaceableMenuItems to keep them
-        $('#bheader').css("background-color","#c64e4e");
+    setLayout('Admin');
 
-        $('#bannerTitle').html("Intelligent Design.Admin");
-        $('#menuContainer').html(
-            `<div class="menuTab floatLeft"><a href="~/Article/ArticleList">Directory</a></div>
-             <div class="menuTab floatLeft"><a href="/GetaJob/GetaJobAdmin">GetaJob</a></div>
-             <div class="menuTab floatLeft"><a href="~/Article/ArticleList">Refs</a></div>
-             <div class="menuTab floatLeft"><a href="~/~/Article/ArticleList">Articles</a></div>
-             <div class="menuTab floatLeft"><a href="/Home/Apps">Apps</a></div>
-             <div class="menuTab floatLeft"><a href="/IntelDsgn/Index">Intelligent Design</a></div>`);
-    }
+    //function setAdminLayout() {
+    //    $('#bheader').css("background-color","#c64e4e");
+
+    //    $('#bannerTitle').html("Intelligent Design.Admin");
+    //    $('#menuContainer').html(
+    //        `<div class="menuTab floatLeft"><a href="~/Article/ArticleList">Directory</a></div>
+    //         <div class="menuTab floatLeft"><a href="/GetaJob/GetaJobAdmin">GetaJob</a></div>
+    //         <div class="menuTab floatLeft"><a href="~/Article/ArticleList">Refs</a></div>
+    //         <div class="menuTab floatLeft"><a href="~/~/Article/ArticleList">Articles</a></div>
+    //         <div class="menuTab floatLeft"><a href="/Home/Apps">Apps</a></div>
+    //         <div class="menuTab floatLeft"><a href="/IntelDsgn/Index">Intelligent Design</a></div>`);
+    //}
 
 
     // Articles
