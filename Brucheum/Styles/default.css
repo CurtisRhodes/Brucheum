@@ -44,6 +44,7 @@
 .loadingGif {
     height: 150px;
     width: 150px;
+    display: none;
 }
 .loadingGif img {
     height: 45px;

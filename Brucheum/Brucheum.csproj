@@ -406,7 +406,7 @@
     <Content Include="Views\Book\_EditTreePopup.cshtml" />
     <Content Include="Views\IntelDsgn\About.cshtml" />
     <Content Include="Views\IntelDsgn\Approach.cshtml" />
-    <Content Include="Views\IntelDsgn\Articles.cshtml" />
+    <Content Include="Views\IntelDsgn\Blog.cshtml" />
     <Content Include="Views\IntelDsgn\Code.cshtml" />
     <Content Include="Views\IntelDsgn\Index.cshtml" />
     <Content Include="Views\IntelDsgn\Contact.cshtml" />

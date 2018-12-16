@@ -159,7 +159,7 @@
   <ItemGroup>
     <Compile Include="Controllers\ArticleApiController.cs" />
     <Compile Include="Controllers\ArticleXmlController.cs" />
-    <Compile Include="Controllers\BlogDbController.cs" />
+    <Compile Include="Controllers\BlogApiController.cs" />
     <Compile Include="Controllers\BookController.cs" />
     <Compile Include="Controllers\BookDbController.cs" />
     <Compile Include="Controllers\DatabaseController.cs" />
@@ -182,7 +182,7 @@
     <Compile Include="DataContext\GetaJobContext.cs" />
     <Compile Include="Models\ResumeModels.cs" />
     <Compile Include="Models\GetaJobModels.cs" />
-    <Compile Include="Models\LocalModels.cs" />
+    <Compile Include="Models\ArticleModels.cs" />
     <Compile Include="DataContext\OggleBoobleContext.cs" />
     <Compile Include="Models\BookDbModels.cs" />
     <Compile Include="DataContext\WebSiteContext.cs" />

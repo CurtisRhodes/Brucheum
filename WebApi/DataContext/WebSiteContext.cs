@@ -207,12 +207,8 @@ namespace WebApi.DataContext
             BlogEntries = new HashSet<BlogEntry>();
         }
 
-        public Guid Id { get; set; }
-
-        [StringLength(200)]
+        public string Id { get; set; }
         public string BlogName { get; set; }
-
-        [StringLength(128)]
         public string BlogOwner { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -222,19 +218,17 @@ namespace WebApi.DataContext
     [Table("website.BlogEntry")]
     public partial class BlogEntry
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
-        public Guid BlogId { get; set; }
+        public string BlogId { get; set; }
 
-        [StringLength(200)]
         public string Title { get; set; }
 
-        [StringLength(400)]
         public string ImageName { get; set; }
 
-        public DateTime? Created { get; set; }
+        public DateTime Created { get; set; }
 
-        public DateTime? LastUpdated { get; set; }
+        public DateTime LastUpdated { get; set; }
 
         public string Summary { get; set; }
 
