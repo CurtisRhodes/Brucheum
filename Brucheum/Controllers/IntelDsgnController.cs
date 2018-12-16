@@ -39,8 +39,9 @@ namespace Brucheum
         {
             return View(); 
         }
-        public ActionResult Articles()
+        public ActionResult Blog()
         {
+            ViewBag.UserId = User.Identity.GetUserId();
             ViewBag.Service = apiService;
             return View();
         }

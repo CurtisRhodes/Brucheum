@@ -1,0 +1,195 @@
+﻿@{
+    ViewBag.Title = "Blog";
+}
+<link href="~/Styles/default.css" rel="stylesheet" />
+<link href="~/Styles/CrudEdit.css" rel="stylesheet" />
+<link href="~/Styles/admin.css" rel="stylesheet" />
+
+<style>
+    .blocksDisplay {
+        margin-top: 55px;
+        width: 1400px;
+        height: 666px;
+        border: solid thin red;
+    }
+    .blockContainer {
+        vertical-align: top;
+        display: inline-block;
+        height: 150px;
+        width: 150px;
+        padding: 4px;
+        margin: 5px;
+        background-color: #74bac3;
+        cursor: pointer;
+    }
+    #blogEdit {
+        display: none;
+    }
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+        <div class="vertMenu">
+            <div class="vertMenuTab" onclick="$('.blogSpaSection').hide(); $('#blogEdit').show(); loadBlogList(); ">New Blog</div>
+            <div class="vertMenuTab" onclick="$('.blogSpaSection').hide(); $('#blogEntryEditor').show();">New Entry</div>
+        </div>
+    </div>
+    <div id="middleColumn">
+        <div id="divStatusMessage"></div>
+        <div>current blog <select id="ddBlogs" class="roundedInput" onchange="setCurrentBlog()"></select></div>
+        <div id="blockdisplayArea" class="blogSpaSection"></div>
+        <div id="blogEdit" class="blogSpaSection">
+            <div id="addEditJobContainer" class="crudContainer"> 
+                <div id="crudContainerTitle" class="crudContainerTitle">Blog</div>
+                <div class="crudArea">
+                    <div class="crudRow">
+                        <div class="crudRowLabel">Blog Name</div>
+                        <div id="errBlog Name" class="validationError">Required</div>
+                        <input id="txtBlogName" class="roundedInput" />
+                    </div>
+                    <div>
+                        <button id="btnBlogAddEdit" class="roundendButton" onclick="AddEditBlog()">Add</button>
+                        <button id="btnBlogNew" class="roundendButton crudBtnNew" onclick="toggleBlog()">New</button>
+                    </div>
+                </div>
+                <div class="crudContainer">
+                    <div class="crudContainerTitle">Blogs</div>
+                    <div id="blogLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+                    <div id="blogList" class="crudList"></div>
+                </div>
+            </div>
+        </div>
+        <div id="blogEntryEditor" class="blogSpaSection">
+
+
+        </div>
+    </div>
+    <div id="rightColumn"></div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+    var currentUser = '@ViewBag.UserId';
+    var blogModel = {};
+    blogModel.Owner = currentUser;
+
+    $(document).ready(function () {
+        setLayout("Intelligent Design");
+        $('#btnBlogNew').hide();
+        getCurrentBlog();
+        $('#footerMessage').append("  service: " + service);
+    });
+
+    //only call me if you have an offer
+    // remember my conditions
+    // remember the terms. Work from home only unless travel paid for //by those
+    //alert("getArticleList()")
+
+    // on block click an entire other new editor.  really! Why?
+    //just to try out different formats
+
+    function getCurrentBlog() {
+        loadCurrentBlogElementsIntoBlocks();
+    }
+    function loadCurrentBlogElementsIntoBlocks() {
+    }
+    function loadBlocksDisplay() {
+        //$('#blogList').append("<div class='blockContainer' id='" + obj.ArticleId + "'>" + obj.Title + "</div>");
+    }
+    function toggleBlog() {
+        $('#btnBlogNew').hide();
+        $('#btnBlogAddEdit').html("Add");
+        $('#txtBlogName').val("");
+    }
+    function loadBlogList() {
+        try {
+            $('#blogLoadingGif').show();
+            $.ajax({
+                type: "GET",
+                url: service + "/api/Blog",
+                success: function (response) {
+                    $('#blogList').html("");
+                    if (true) {
+                        $.each(response, function (idx, obj) {
+                            $('#blogList').append("<div class='crudListItem blogListItem' id='" + obj.Id + "' name='" + obj.Name + "'>" + obj.Name + "</div>");
+                        })
+                        $('#loadingGif').hide();
+                        $('.blogListItem').click(function () {
+                            //alert("this.id: " + $(this).attr("id"));
+                            blogModel.Id = $(this).attr("id");
+                            $('#txtBlogName').val($(this).attr("name"));
+                            $('#btnBlogAddEdit').html("Update");
+                            $('#btnBlogNew').show();
+                        });
+                        $('#blogLoadingGif').hide();
+                    }
+                    else {
+                        $('#blogLoadingGif').hide();
+                        alert("getBlogList: " + success)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    $('#blogLoadingGif').hide();
+                    alert("getBlogList XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            $('#blogLoadingGif').hide();
+            alert("get BlogList CATCH: " + e)
+        }
+    }
+    function AddEditBlog() {
+
+    //public class BlogModel {
+    //    public BlogModel() {
+    //        Entries = new List<BlogEntryModel>();
+    //    }
+    //    public string Id { get; set; }
+    //    public string Name { get; set; }
+    //    public string Owner { get; set; }
+    //    public List < BlogEntryModel > Entries { get; set; }
+    //}
+
+        blogModel.Name = $('#txtBlogName').val();
+
+        if ($('#btnBlogAddEdit').html() == "Add") {
+            $.ajax({
+                type: "POST",
+                url: service + "/api/Blog",
+                data: blogModel,
+                success: function (response) {
+                    if (!response.startsWith("ERROR")) {
+                        $('#btnBlogAddEdit').html("Update");
+                        $('#btnBlogNew').show();
+                        blogModel.Id = response;
+                        loadBlogList();
+                    }
+                    else
+                        alert("AddEditBlog POST: " + response);
+                },
+                error: function (jqXHR, exception) {
+                    alert("AddEditBlog POST xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            })
+        }
+        if ($('#btnBlogAddEdit').html() == "Update") {
+            $.ajax({
+                type: "PUT",
+                url: service + "/api/Blog",
+                data: $('#txtBlogName').val(),
+                success: function (success) {
+                    if (success=="ok") {
+                        loadBlogList();
+                    }
+                    else
+                        alert("AddEditBlog PUT: " + response);
+                },
+                error: function (jqXHR, exception) {
+                    alert("AddEditBlog PUT xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            })
+        }
+    }
+
+</script>
+

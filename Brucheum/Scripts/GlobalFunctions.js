@@ -229,7 +229,7 @@ function setLayout(layoutName) {
     switch (layoutName) {
         case 'Admin':
             $('#bheader').css("background-color", "#ffcccc");
-            $('#bannerTitle').html("Intelligent Design.Admin");
+            $('#bannerTitle').html("Admin");
             $('#menuContainer').html(
                 `<div class="menuTab floatLeft"><a href="~/Article/ArticleList">Directory</a></div>
                  <div class="menuTab floatLeft"><a href="/GetaJob/GetaJobAdmin">GetaJob</a></div>
@@ -237,28 +237,38 @@ function setLayout(layoutName) {
                  <div class="menuTab floatLeft"><a href="~/~/Article/ArticleList">Articles</a></div>
                  <div class="menuTab floatLeft"><a href="/Home/Apps">Apps</a></div>
                  <div class="menuTab floatLeft"><a href="/IntelDsgn/Index">Intelligent Design</a></div>`);
-            break;
+           break;
         case 'Resume':
+            $('#bannerTitle').html("Resume Builder");
             //$('#divTopLeftLogo').html("<a href='~/Home/Index'><img src='~/images/house.gif' class='bannerImage'/></a>");
             $('#divTopLeftLogo').html("<a href='/IntelDsgn/Index'><img src='~/images/intel01.jpg' class='bannerImage'/></a>");
             $('#bheader').css("background-color", "#c64e4e");
-            $('#bannerTitle').html("Resume Builder");
-            $('#menuContainer').html(
-                `<div class="menuTab floatLeft"><a href="~/Article/ArticleList">Directory</a></div>
-                 <div class="menuTab floatLeft"><a href="/GetaJob/GetaJobAdmin">GetaJob</a></div>
+            $('#replaceableMenuItems').html(
+                `<div class="menuTab floatLeft"><a href="/GetaJob/GetaJobAdmin">GetaJob</a></div>
                  <div class="menuTab floatLeft"><a href="~/Article/ArticleList">Refs</a></div>
                  <div class="menuTab floatLeft"><a href="~/~/Article/ArticleList">Articles</a></div>
                  <div class="menuTab floatLeft"><a href="/Home/Apps">Apps</a></div>
                  <div class="menuTab floatLeft"><a href="/IntelDsgn/Index">Intelligent Design</a></div>`);
             break;
         case 'Intelligent Design':
-            $('#bheader').css("background-color", "#ffffe6");
-            $('#bannerTitle').html("GetaJob");
+            $('#bannerTitle').html("Intelligent Design");
+            $('#divTopLeftLogo').html("<a href='/IntelDsgn/Index'><img src='/images/intel01.jpg' class='bannerImage'/></a>");
+            $('#bheader').css("background-color", "#d6f5f5");
+            $('.headerTitle').css("color", "#333");
+            //$('.menuTab a: hover').css("color", "#eee");
+            //background - color: #222730; /* #273235; #486167;*/
             $('#replaceableMenuItems').html(`
-               <div class="menuTab floatLeft"><a href="~/Home/Index/">CurtisRhodes.com</a></div>
-               <div class="menuTab floatLeft"><a href="~/Resume/ResumeAdmin">Resume Builder</a></div>
-               <div class="menuTab floatLeft"><a href="~/GetaJob/GetaJobAdmin">Edit</a></div>
-               <div class="menuTab floatLeft"><a href="~/IntelDsgn/MyResume/">My Resume</a></div>`);
+               <div class="menuTab floatLeft"><a href="/Home/Index/">CurtisRhodes.com</a></div>
+               <div class="menuTab floatLeft"><a href="/IntelDsgn/Index?a=2">Our Approach</a></div>
+               <div class="menuTab floatLeft"><a href="/IntelDsgn/Blog/">Blog</a></div>
+               <div class="menuTab floatLeft"><a href="/IntelDsgn/Index?a=3">Contact Us</a></div>
+               <div class="menuTab floatLeft"><a href="/IntelDsgn/MyResume/">My Resume</a></div>`);
+                //<div class="menuTab floatLeft"><a href="~/IntelDsgn/About/">Who We Are</a></div>
+                //<div class="menuTab floatLeft"><a href="~/IntelDsgn/Portfolio">Portfolio</a></div>
+                //<div class="menuTab floatLeft"><a href="~/IntelDsgn/Code">Sample Code</a></div>
+                //<div class="menuTab floatLeft"><a href="~/home/journal/">Blog</a></div>
+                //<div class="menuTab floatLeft"><a href="~/IntelDsgn/Articles">Articles</a></div>
+                //<div class="menuTab floatLeft"><a href="~/IntelDsgn/MyResume">My Resume</a></div>
             break;
         case 'GetaJob':
             $('#divTopLeftLogo').html("<a href='/GetaJob'><img src='/images/Apps/GetaJob.png' class='bannerImage'/></a>");
@@ -275,7 +285,6 @@ function setLayout(layoutName) {
                <div class="menuTab floatLeft"><a href="/IntelDsgn/MyResume/">My Resume</a></div>`);
             break;
         default:
-
     }
 }
 

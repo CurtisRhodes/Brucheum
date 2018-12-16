@@ -14,7 +14,40 @@ namespace WebApi
     public class BlogController : ApiController
     {
         [HttpGet]
-        public IList<BlogModel> Get()
+        public BlogModel GetOne(string blogId)
+        {
+            var blog = new BlogModel();
+            try
+            {
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    var dbBlog = db.Blogs.Where(b => b.Id.ToString() == blogId).FirstOrDefault();
+                    if (dbBlog != null)
+                    {
+                        blog.Id = dbBlog.Id.ToString();
+                        blog.Name = dbBlog.BlogName;
+                        blog.Owner = dbBlog.BlogOwner;
+
+                        //foreach (BlogEntry entry in dbBlog.BlogEntries)
+                        //{
+                        //    blog.Entries.Add(new BlogEntryModel()
+                        //    {
+                        //        Id = entry.Id.ToString(),
+                        //        Title = entry.Title,
+                        //        ImageName=entry.ImageName,
+                        //        Summary = entry.Summary,
+                        //        Contents = entry.Content,
+                        //        Created=entry.Created.ToShortDateString()
+                        //    });
+                        //}
+                    }
+                }
+            }
+            catch (Exception ex) { blog.Name = "ERROR: " + Helpers.ErrorDetails(ex); }
+            return blog;
+        }
+        [HttpGet]
+        public IList<BlogModel> GetMany()
         {
             var blogs = new List<BlogModel>();
             try
@@ -31,40 +64,6 @@ namespace WebApi
             catch (Exception ex) { blogs.Add(new BlogModel() { Name = Helpers.ErrorDetails(ex) }); }
             return blogs;
         }
-
-        [HttpGet]
-        public BlogModel Get(string blogId)
-        {
-            var blog = new BlogModel();
-            try
-            {
-                using (WebSiteContext db = new WebSiteContext())
-                {
-                    var dbBlog = db.Blogs.Where(b => b.Id.ToString() == blogId).FirstOrDefault();
-                    if (dbBlog != null)
-                    {
-                        blog.Id = dbBlog.Id.ToString();
-                        blog.Name = dbBlog.BlogName;
-                        blog.Owner = dbBlog.BlogOwner;
-                        foreach (BlogEntry entry in dbBlog.BlogEntries)
-                        {
-                            blog.Entries.Add(new BlogEntryModel()
-                            {
-                                Id = entry.Id.ToString(),
-                                Summary = entry.Summary,
-                                Contents = entry.Content,
-                                Title = entry.Title
-
-                            });
-
-                        }
-                    }
-                }
-            }
-            catch (Exception ex) { blog.Name = "ERROR: " + Helpers.ErrorDetails(ex); }
-            return blog;
-        }
-
         [HttpPost]
         public string Post(BlogModel newBlog)
         {
@@ -74,8 +73,10 @@ namespace WebApi
                 using (WebSiteContext db = new WebSiteContext())
                 {
                     Blog blog = new Blog();
+                    blog.Id = Guid.NewGuid().ToString();
                     blog.BlogName = newBlog.Name;
                     blog.BlogOwner = newBlog.Owner;
+
                     db.Blogs.Add(blog);
                     db.SaveChanges();
                     success = blog.Id.ToString();
@@ -84,7 +85,6 @@ namespace WebApi
             catch (Exception ex) { success = "ERROR: " + Helpers.ErrorDetails(ex); }
             return success;
         }
-
         [HttpPut]
         public string Put(BlogModel editBlog)
         {
@@ -113,27 +113,27 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class BlogEntryController : ApiController
     {
-        //[HttpGet]
-        //public IList<BlogEntryModel> Get(string blogId)
-        //{
-        //    var blogs = new List<BlogEntryModel>();
-        //    try
-        //    {
-        //        using (WebSiteContext db = new WebSiteContext())
-        //        {
-        //            var dbBblogEntries = db.Blogs.ToList();
-        //            foreach (Blog blog in dbBblogs)
-        //            {
-        //                blogs.Add(new BlogModel() { Id = blog.Id.ToString(), Name = blog.BlogName, Owner = blog.BlogOwner });
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex) { blogs.Add(new BlogModel() { Name = Helpers.ErrorDetails(ex) }); }
-        //    return blogs;
-        //}
+        [HttpGet]
+        public IList<BlogEntryModel> GetMany(string blogId, string kludge)
+        {
+            var blogs = new List<BlogEntryModel>();
+            try
+            {
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    var dbBblogEntries = db.BlogEntries.Where(b => b.BlogId == blogId).ToList();
+                    foreach (BlogEntry blog in dbBblogEntries)
+                    {
+                        blogs.Add(new BlogEntryModel() { Id = blog.Id.ToString(), Title = blog.Title, Created = blog.Created.ToShortDateString() });
+                    }
+                }
+            }
+            catch (Exception ex) { blogs.Add(new BlogEntryModel() { Title = Helpers.ErrorDetails(ex) }); }
+            return blogs;
+        }
 
         [HttpGet]
-        public BlogEntryModel Get(string Id)
+        public BlogEntryModel GetOne(string Id)
         {
             var blogEntry = new BlogEntryModel();
             try
@@ -160,10 +160,16 @@ namespace WebApi
             var success = "";
             try
             {
+                BlogEntry blogEntry = new BlogEntry();
+                blogEntry.Id = Guid.NewGuid().ToString();
+                blogEntry.Title = newBlogEntry.Title;
+                blogEntry.ImageName = newBlogEntry.ImageName;
+                blogEntry.Summary = newBlogEntry.Summary;
+                blogEntry.Content = newBlogEntry.Contents;
+                blogEntry.Created = DateTime.Now;
+
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    BlogEntry blogEntry = new BlogEntry();
-                    blogEntry.Title = newBlogEntry.Title;
                     db.BlogEntries.Add(blogEntry);
                     db.SaveChanges();
                     success = blogEntry.Id.ToString();
@@ -187,8 +193,10 @@ namespace WebApi
                     else
                     {
                         blogEntry.Title = editBlogEntry.Title;
-
-
+                        blogEntry.ImageName = editBlogEntry.ImageName;
+                        blogEntry.Summary = editBlogEntry.Summary;
+                        blogEntry.Content = editBlogEntry.Contents;
+                        blogEntry.LastUpdated = DateTime.Now;
                         db.SaveChanges();
                         success = "ok";
                     }

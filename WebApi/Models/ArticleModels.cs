@@ -76,13 +76,11 @@ namespace WebApi.Models
         public string Id { get; set; }
         public string BlogId { get; set; }
         public string Title { get; set; }
-        public string Category { get; set; }
         public string ImageName { get; set; }
         public string Created { get; set; }
         public string LastUpdated { get; set; }
         public string Contents { get; set; }
         public string Summary { get; set; }
-        public string SortDate { get; set; }
     }
 
     public class XmlBookModel
