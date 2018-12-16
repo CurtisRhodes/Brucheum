@@ -52,7 +52,11 @@
             <div>@Html.Partial("_Editor") </div>
         </div>
         <div class="btnRow">
-            <button id="btnSave" class="roundendButton" onclick="javascript:addUpdateArticle()">Save</button>
+            <button id="btnSave" class="roundendButton" onclick="addUpdateArticle()">
+                <img id="updateArticleSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
+
+                Save
+            </button>
             <button id="btnView" class="roundendButton" onclick="javascript:saveAndView()">View</button>
         </div>
     </div>
@@ -191,6 +195,7 @@
                 displayStatusMessage("severityWarning", "Title Required");
                 return;
             }
+            $('#updateArticleSpinner').show();            
             $.ajax({
                 url: service + "/api/DbArticle",
                 type: "post",
@@ -201,6 +206,7 @@
                         if (view === "View")
                             window.location = "Article?Id=" + newArticleId;
                         article.Id = newArticleId;
+                        $('#updateArticleSpinner').hide();            
                         displayStatusMessage("ok", "Saved");
                         $('#btnSave').text("Update");
                     }
