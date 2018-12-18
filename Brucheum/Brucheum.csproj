@@ -338,10 +338,13 @@
     <Content Include="Scripts\HeaderLogin.js" />
     <Content Include="Scripts\ImageTools.js" />
     <Content Include="Scripts\ResizeThreeColumnPage.js" />
+    <Content Include="Scripts\StaticPage.js" />
+    <Content Include="Static_Pages\favicon.ico" />
     <Content Include="Styles\articleView.css" />
     <Content Include="Styles\articleEdit.css" />
     <Content Include="Styles\articleList.css" />
     <Content Include="Styles\bFooter.css" />
+    <Content Include="Styles\code.css" />
     <Content Include="Styles\crudEdit.css" />
     <Content Include="Styles\editor\bootstrap.css" />
     <Content Include="Styles\editor\codeMirror.css" />

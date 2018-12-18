@@ -189,7 +189,7 @@ function beautify(stankyString) {
         .replace(/&#39;/g, "'")
         .replace(/&nbsp;/g, " ")
         .replace(/%20/g, "_")
-        .replace(/\n/g, "");
+        .replace(/\n/g, ""); 
 }
 
 function formatDate(date) {

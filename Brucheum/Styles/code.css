@@ -1,0 +1,24 @@
+﻿
+
+
+code {
+    display: block;
+    margin-left: 45px;
+    background-color: #444;
+    color: #fff;
+}
+keyword {
+    color: #39f;
+}
+strtext {
+    color: #f90;
+}
+.tab1 {
+    padding-left: 15px;
+}
+.tab2 {
+    padding-left: 30px;
+}
+.tab3 {
+    padding-left: 45px;
+}

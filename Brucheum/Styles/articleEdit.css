@@ -1,6 +1,13 @@
 ﻿.threeColumnArray {
     background-color: #e2e1d2;
 }
+
+.articleSaveSpinner {
+    padding-top: 11px;
+    padding-left: 27px;
+    height: 32px;
+}
+
 .tbLabel {
     padding-left: 5px;
     padding-right: 5px;

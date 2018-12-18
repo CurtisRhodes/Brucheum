@@ -1,9 +1,8 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Article List";
 }
 <link href="~/Styles/articleList.css" rel="stylesheet" />
-<script src="~/Scripts/ImageTools.js"></script>
+@*<script src="~/Scripts/ImageTools.js"></script>*@
 
 <div class="threeColumnArray">
     <div id="leftColumn">
@@ -114,31 +113,26 @@
         try {
             var webService = "https://api.curtisrhodes.com";
             var imgSrc = webService + "/App_Data/Images/" + article.ImageName;
-
-            //var title = article.Title.split(' ').join('_');
             var articleHref = "/Article/ArticleView?Id=" + article.Id;
-
             var kludge = "<div class='articleListItem'>";
             kludge += "<div id='divImg'><a href=" + articleHref + "><img src=" + imgSrc + "></a></div>";
             kludge += "<div class='articleDetail'>";
             kludge += "<div class='articleTopRow'>";
-            kludge += "<div class='articleRowItemLeft'><a href=/Article/ArticleList?filterLabel=" + article.CategoryLabel +"&filterType=Category&filter="+ article.CategoryRef + ">" + article.CategoryLabel + "</a></div>";
+            kludge += "<div class='articleRowItemLeft'><a href=/Article/ArticleList?filterLabel=" + article.CategoryLabel + "&filterType=Category&filter=" + article.CategoryRef + ">" + article.CategoryLabel + "</a></div>";
             kludge += "<div class='articleRowItemCenter'><a href=" + articleHref + ">" + article.Title + "</a></div>";
             kludge += "<div class='articleRowItemRight'>" + article.LastUpdated + "</div>";
             kludge += "</div>";  // top row
             kludge += "<a href=" + articleHref + "><div class='articleSummary'>" + article.Summary + "</div></a>";
             kludge += "<div class='articleBottomRow'>";
-            kludge += "<div class='articleRowItemLeft'> By: <a href=/Article/ArticleList?filterLabel=" + article.ByLineLabel +"&filterType=Byline&filter=" + article.ByLineRef + ">" + article.ByLineLabel + "</a></div>";
-            if (isArticeEditor)
+            kludge += "<div class='articleRowItemLeft'> By: <a href=/Article/ArticleList?filterLabel=" + article.ByLineLabel + "&filterType=Byline&filter=" + article.ByLineRef + ">" + article.ByLineLabel + "</a></div>";
+            if (isArticeEditor == "True") {
                 kludge += "<div class='articleRowItemRight'><a href=/Article/ArticleEdit?Id=" + article.Id + ">edit</a></div>";
+            }
             kludge += "</div>";  // bottom row
             kludge += "</div>";  // article detail 
             kludge += "</div>";  // article listItem
-
             $('#articleListContainer').append(kludge);
-
             articleCount++;
-
         } catch (e) {
             alert("formatArticleJog error: " + e);
         }

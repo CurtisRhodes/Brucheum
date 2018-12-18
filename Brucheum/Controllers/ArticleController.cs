@@ -104,19 +104,18 @@ namespace Brucheum
         //}
 
         [HttpPost]
-        public JsonResult CreateStaticFile(string html)
+        public JsonResult CreateStaticFile(staticPageModel staticPage)
         {
             string success = "";
             try
             {
                 string filePath = Server.MapPath("~/Static_Pages");
                 //string html = Request.     .RequestContext.HttpContext.CurrentHandler.   .Content.ReadAsStringAsync().Result;
-                string fileName = html.Substring(html.IndexOf("divTitle") + 10, 500);
-                fileName = filePath + "/" + fileName.Substring(0, fileName.IndexOf("</div>")).Replace(" ", "_") + ".html";
-
-                using (var staticFile = System.IO.File.Open(fileName, FileMode.OpenOrCreate))
+                //string fileName = html.Substring(html.IndexOf("divTitle") + 10, 500);
+                //fileName = filePath + "/" + fileName.Substring(0, fileName.IndexOf("</div>")).Replace(" ", "_") + ".html";
+                using (var staticFile = System.IO.File.Open(filePath + "/" + staticPage.filename, FileMode.OpenOrCreate))
                 {
-                    Byte[] byteArray = Encoding.ASCII.GetBytes(html);
+                    Byte[] byteArray = Encoding.ASCII.GetBytes(staticPage.html);
                     staticFile.Write(byteArray, 0, byteArray.Length);
                 }
                 //File.WriteAllBytes(fileName, byteArray);                
@@ -125,5 +124,10 @@ namespace Brucheum
             catch (Exception e) { success = Helpers.ErrorDetails(e); }
             return Json(success, JsonRequestBehavior.AllowGet);
         }
+    }
+    public class staticPageModel
+    {
+        public string html { get; set; }
+        public string filename { get; set; }
     }
 }

@@ -1,45 +1,41 @@
 ﻿<div id="fb-root"></div>
 <script src="~/Scripts/ImageTools.js"></script>
 <link href="~/Styles/articleView.css" rel="stylesheet" />
+<script src="~/Scripts/StaticPage.js"></script>
 
 <div class="threeColumnArray">
     <div id="leftColumn">
-
         <div class="staticFileLinks">
             @if (User.IsInRole("Article Editor"))
             {
-                <div id="lnkStaticify" class="clickable" onclick="javascript:saveAsStaticFile()">staticify</div>
+                <div id="lnkStaticify" class="clickable" onclick="staticify()">staticify</div>
             }
-
             <div id="lnkFacebook" class="fb-share-button" data-href="' + pageName + '" data-layout="button" data-size="large" data-mobile-iframe="false">
                 <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + pageName + '&src=sdkpreparse">Share on Facebook</a>
             </div>
-
-            <div id="lnkPermalink" class="clickable" onclick="javascript:goToPermaLink()">permalink</div>
+            <div id="lnkPermalink" class="clickable" onclick="goToPermaLink()">permalink</div>
         </div>
-    
     </div>
     <div id="middleColumn">
         <div id="divStatusMessage"></div>
-        <div id="pollybox">
-            <div id="divTopLine">
+        <div class="pollybox">
+            <div class="divTopLine">
                 <div id="divArticleDate" class="floatLeft"></div>
                 <div id="divCategory" class="floatRightDiv"></div>
             </div>
-            <div id="divTitle"></div>
+            <div id="divTitle" class='articleTitle'></div>
             <div class="flexContainer">
-                <div id="divByline"></div>
-                @if (User.IsInRole("Article Editor"))
+                <div id="divByline" class="byline"></div>
+                @if (@User.IsInRole("Article Editor"))
                 {
-                    <div class="floatRightDivEdit clickable" onclick="javascript:gotoArticleEdit();">edit</div>
+                    <div class="floatRightDivEdit clickable" onclick="gotoArticleEdit()">edit</div>
                 }
             </div>
         </div>
+        <img id="divImage" class="articleCenterImage" />
         <div id="contentArea">
-            <div id="divImage"><img id="articleImage" /></div>
-            <div id="divSummary" class="summaryText"></div>  
-            <div id="divContent"></div>
-            <div id="divStatusMessage"></div>
+            <div id="divSummary" class="summaryText"></div>
+            <div id="divContent" class="articleContent"></div>
             <div id="divCommentsButton" class="roundendButton">comments</div>
         </div>
         <div id="divCommentsSection">
@@ -53,54 +49,39 @@
 <script>
     var service = '@ViewBag.Service';
     var articleId = '@ViewBag.ArticleId';
-
-    var artitleTitle = "";
-    var articleTagString = "";
-    var articleImageName = "";
     var userId = '@ViewBag.UserId';
     var userName = '@ViewBag.UserName';
     var filePath = '@ViewBag.FilePath';
     var ipAddress = '@ViewBag.IpAddress';
+    var thisArticle = {};
 
     $(document).ready(function () {
+        thisArticle.Id = articleId;
         $('#lnkPermalink').hide();
         $('#lnkFacebook').hide();
-
-        if (window.location.pathname.startsWith("/static_pages")) {
-            $('#lnkFacebook').show();            
-            $('#lnkStaticify').hide();
-        }
-
-        loadArticle(articleId);
+        loadArticle();
     });
 
-    function gotoArticleEdit() {
-        window.location.href = "/Article/ArticleEdit?Id=" + articleId;
-    }
-
-    function loadArticle(articleId) {
+    function loadArticle() {
         try {
-            //alert("articleId: " + articleId);
-            //alert("get: " + service + "/api/DbArticle?articleId=" + articleId)
             $.ajax({
                 type: "GET",
                 url: service + "/api/DbArticle?articleId=" + articleId,
                 //dataType: "json",
                 success: function (article) {
                     if (article.Success == "ok") {
-                        artitleTitle = article.Title;
-                        articleImageName = article.ImageName;
-                        $('#articleImage').attr("src", service + "/App_Data/Images/" + article.ImageName);
-                        $('#divCategory').html(article.CategoryLabel);
-                        $('#divTitle').html(article.Title);
-                        $('#divArticleDate').html(article.LastUpdated);
-                        $('#divSummary').html(article.Summary);
-                        $('#divByline').html(article.ByLineLabel);
-                        $('#divContent').html(beautify(article.Contents));
+                        thisArticle = article;
+                        $('#divImage').attr("src", service + "/App_Data/Images/" + article.ImageName);
+                        $('#divCategory').html(thisArticle.CategoryLabel);
+                        $('#divTitle').html(thisArticle.Title);
+                        $('#divArticleDate').html(thisArticle.LastUpdated);
+                        $('#divSummary').html(thisArticle.Summary);
+                        $('#divByline').html(thisArticle.ByLineLabel);
+                        $('#divContent').html(beautify(thisArticle.Contents));
 
-                        $.each(article.Tags, function (idx, tag) {
-                            articleTagString += tag.TagName + ",";
-                        })
+                        //$.each(article.Tags, function (idx, tag) {
+                        //    thisArticle.TagString += tag.TagName + ",";
+                        //})
 
                         //logPageHit(webService, userName, ipAddress, "ViewArticle", article.Title);
 
@@ -126,11 +107,16 @@
         }
     }
 
-    function goToPermaLink() {
-        window.location.href = "/static_pages/" + beautify(artitleTitle).replace(/ /g, "_") + ".html", "target='_blank'";
-    };
 
-    // Show Comments
+
+
+
+    function staticify() {
+        saveAsStaticFile(thisArticle);
+    }
+    function goToPermaLink() {
+        window.location.href = "/static_pages/" + beautify(thisArticle.Title).replace(/ /g, "_") + ".html", "target='_blank'";
+    };
     $('#divCommentsButton').click(function () {
         if ($('#divCommentsSection').css("display") == "none") {
             $('#divCommentsSection').show();
@@ -140,59 +126,110 @@
             $('#divCommentsSection').hide();
         }
     });
+    $(window).unload(function () {
+        // log page visit End
+        //logPageHit(service, userName, ipAddress, "ViewArticle", article.Title);
+        //alert("page move");
+    });
+    function gotoArticleEdit() {
+        window.location.href = "/Article/ArticleEdit?Id=" + articleId;
+    }
 
-    function saveAsStaticFile() {        
-        $('head').append('<meta name="Title" content="' + artitleTitle + '" property="og:title">');
+    ///////////////////////////////////////////////////
+
+    function saveAsStaticFile2() {
+        $('head').append('<meta name="Title" content="' + thisArticle.Title + '" property="og:title"/>');
         //$('head').append('<meta property="og:description" content="' + beautify(summary.substr(0, 300)) + '" />');
-        $('head').append('<meta name="Keywords" content="' + articleTagString + '>');
-        $('head').append('<meta property="og:type" content="website">');
-        $('head').append("<meta property='og:image' content='https://api.curtisrhodes.com/app_data/images/" + articleImageName + "'>");
-
-        var pageName = "https://Curtisrhodes.com/static_pages/" + artitleTitle.replace(/ /g, "_") + ".html";
-        $('head').append('<br/><meta property="og:url" content="' + pageName + '">');
-
+        $('head').append('<meta name="Keywords" content="' + articleTagString + '/>');
+        $('head').append('<meta property="og:type" content="website"/>');
+        $('head').append("<meta property='og:image' content='https://api.curtisrhodes.com/app_data/images/" + articleImageName + "'/>");
+        var pageName = "https://Curtisrhodes.com/static_pages/" + thisArticle.Title.replace(/ /g, "_") + ".html";
+        $('head').append('<br/><meta property="og:url" content="' + pageName + '"/>');
         //var html = $('html').html();
         var data = new Object();
         data.html = "<!DOCTYPE html>" + $('html').html();
-        try {
-            $.ajax({
-                type: "POST",
-                url: "CreateStaticFile",
-
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (success) {
-                    if (success === "ok") {
-                        $('#lnkPermalink').show();
-                        $('#lnkStaticify').hide();
-                    }
-                    else
-                        alert("/api//File returned: " + success);
-                },
-                error: function (jqXHR, exception) {
-                    alert("CreateStaticFile error: " + getXHRErrorDetails(jqXHR, exception));
+        $.ajax({
+            type: "POST",
+            url: "CreateStaticFile",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (success) {
+                if (success === "ok") {
+                    $('#lnkPermalink').show();
+                    $('#lnkStaticify').hide();
                 }
-            });
-        }
-        catch (e) {
-            alert("saveAsStaticFile catch: " + e);
-        }
+                else
+                    alert("/api//File returned: " + success);
+            },
+            error: function (jqXHR, exception) {
+                alert("CreateStaticFile error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
     }
+    function saveAsStaticFile00() {
+        ////alert("thisArticle.Title: " + thisArticle.Title);
+        //var underscorePageName = beautify(thisArticle.Title).replace(/ /g, "_") + ".html";
+        //var strWebPage = "<!DOCTYPE html>";
 
-    $(window).unload(function () {
-        // log page visit End
-        logPageHit(service, userName, ipAddress, "ViewArticle", article.Title);
-        //alert("page move");
-    });
+        //strWebPage += "<body>";
+        //strWebPage += staticHeader();
+        //strWebPage += $('bheader').html();
+        //strWebPage += "<div class='threeColumnArray'>";
+        //strWebPage += "<div id='leftColumn'>";
+        //strWebPage += "<div id='lnkFacebook' class='fb-share-button' data-href='https://Curtisrhodes.com/static_pages/"  + underscorePageName + "' data-layout='button' data-size='large' data-mobile-iframe='false'>";
+        //strWebPage += "<a target='_blank' href='https://www.facebook.com/sharer/sharer.php?u=" + underscorePageName + "&src=sdkpreparse'>Share on Facebook</a>";
+        //strWebPage += "</div>"; 
+        //strWebPage += "<div id='middleColumn'>";
 
-    ///////////////////////////////////////////////////
+        //strWebPage += "<div id='pollybox'><div id='divTopLine'><div class='floatLeft'>" + thisArticle.LastUpdated +"</div>";
+        //strWebPage += "<div class='floatRightDiv'>" + thisArticle.CategoryLabel + "</div></div>";
+        //strWebPage += "<div class='articleTitle'>" + thisArticle.Title + "</div>";
+        //strWebPage += "<div class='flexContainer'><div class='byline'>" + thisArticle.ByLineLabel +"</div></div></div>";
+        //strWebPage += "<div id='contentArea'><div class='articleImageContainer'>";
+        //strWebPage += "<img class='articleViewImage' src=https://api.curtisrhodes.com/app_data/images/" + thisArticle.ImageName + "'/></div>";
+        //strWebPage += "<div class='summaryText'>" + thisArticle.Summary + "</div>";
+        //strWebPage += "<div class='articleContent'>" + beautify(thisArticle.Contents) + "</div></div>";
+        //strWebPage += "<div id='rightColumn'></div>";
+        //strWebPage += "</body>";
+
+        ////    <div id="divCommentsButton" class="roundendButton">comments</div>
+        ////strWebPage += "<div class='Footer' id='footer'></div>";
+        ////strWebPage += $('#footer').html();
+
+        //var myObj = new Object();
+        //myObj.html = strWebPage;
+        //myObj.filename = underscorePageName;
+        //try {
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "CreateStaticFile",
+        //        data: JSON.stringify(myObj),
+        //        dataType: "json",
+        //        contentType: "application/json; charset=utf-8",
+        //        success: function (success) {
+        //            if (success === "ok") {
+        //                $('#lnkPermalink').show();
+        //                $('#lnkStaticify').hide();
+        //            }
+        //            else
+        //                alert("/api//File returned: " + success);
+        //        },
+        //        error: function (jqXHR, exception) {
+        //            alert("CreateStaticFile error: " + getXHRErrorDetails(jqXHR, exception));
+        //        }
+        //    });
+        //}
+        //catch (e) {
+        //    alert("saveAsStaticFile catch: " + e);
+        //}
+    }
 
     $('#btnTest').click(function () {
         location.href = "/Home/get_image?w=" + article.ImageName;
     });
     $('#btnSpinnerTest').click(function () {
-        $(this).append("<img src='/Images/loader.gif' class='tinyLoader' >");
+        $(this).append("<img src='/Images/loader.gif' class='tinyLoader'>");
     });
     $('#btnSpinnerTest').dblclick(function () {
         $(this).html("Add");
