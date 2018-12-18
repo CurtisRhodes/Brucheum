@@ -52,12 +52,9 @@
             <div>@Html.Partial("_Editor") </div>
         </div>
         <div class="btnRow">
-            <button id="btnSave" class="roundendButton" onclick="addUpdateArticle()">
-                <img id="updateArticleSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
-
-                Save
-            </button>
-            <button id="btnView" class="roundendButton" onclick="javascript:saveAndView()">View</button>
+            <img id="updateArticleSpinner" class="btnSpinnerImage articleSaveSpinner" src="~/Images/loader.gif" />
+            <button id="btnSave" class="roundendButton" onclick="addUpdateArticle()">Save</button>
+            <button id="btnView" class="roundendButton" onclick="saveAndView()">View</button>
         </div>
     </div>
     <div id="rightColumn"></div>
@@ -74,8 +71,9 @@
         getAvatars()
         if (article.Id !== "") {
             getArticle();
+            $('#btnSave').text("Update")
         }
-        else {
+        else {            
             $('#txtUpdated').val(formatDate(new Date()));
         }        
         $('#articleSummaryEditor').summernote({
@@ -160,32 +158,12 @@
         }
     }
 
-    function updateArticle(view) {
-        try {
-            unBind();
-            //alert("put article.ImageName: " + article.ImageName)
-            $.ajax({
-                type: "PUT",
-                url: service + "/api/DbArticle",
-                async: "false",
-                dataType: "json",
-                data: article,
-                success: function (success) {
-                    if (success === "ok")
-                        if (view === "View")
-                            window.location = "ArticleView?Id=" + article.Id;
-                        else
-                            displayStatusMessage("ok", "updated");
-                    else
-                        displayStatusMessage("error", success);
-                },
-                error: function (jqXHR, exception) {
-                    alert("update Article jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-                }
-             });
-        } catch (e) {
-            displayStatusMessage("error","update Article CATCH error" + e);
-        }
+    function addUpdateArticle() {
+        $('#updateArticleSpinner').show();
+        if ($('#btnSave').text() == "Save")
+            postArticle();
+        else
+            updateArticle();
     }
 
     function postArticle(view) {
@@ -195,7 +173,6 @@
                 displayStatusMessage("severityWarning", "Title Required");
                 return;
             }
-            $('#updateArticleSpinner').show();            
             $.ajax({
                 url: service + "/api/DbArticle",
                 type: "post",
@@ -219,6 +196,37 @@
             });
         } catch (e) { alert("catch ERROR: " + e); }
     }
+
+    function updateArticle(view) {
+        try {
+            unBind();
+            //alert("put article.ImageName: " + article.ImageName)
+            $.ajax({
+                type: "PUT",
+                url: service + "/api/DbArticle",
+                async: "false",
+                dataType: "json",
+                data: article,
+                success: function (success) {
+                    if (success === "ok")
+                        if (view === "View")
+                            window.location = "ArticleView?Id=" + article.Id;
+                        else
+                            displayStatusMessage("ok", "updated");
+                    else
+                        displayStatusMessage("error", success);
+                    $('#updateArticleSpinner').hide();            
+                },
+                error: function (jqXHR, exception) {
+                    alert("update Article jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            displayStatusMessage("error", "update Article CATCH error" + e);
+        }
+    }
+
+
 
     function getArticle() {
         $.ajax({
@@ -291,15 +299,9 @@
         setTimeout(function () { adjust() }, 1000);
     }
 
-    function addUpdateArticle() {
-        if ($('#btnSave').text() === "Save")
-            postArticle();
-        else
-            updateArticle();
-    }
 
     function saveAndView() {
-        if ($('#btnSave').text() === "Save")
+        if ($('#btnSave').text() == "Save")
             postArticle("View");
         else
             updateArticle("View");

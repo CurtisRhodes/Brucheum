@@ -44,7 +44,17 @@
     #rightFbutton {
         left: 73%;
     }
-
+    .carouselImageContainer {
+        position: absolute;
+        top: 20px;
+        left: 50px;
+    }
+    .animatedGears {
+        display: none;
+        position: relative;
+        top: 120px;
+        left: 230px;
+    }
 
     .carouselLabel {
         position: absolute;
@@ -60,15 +70,14 @@
 </style>
 
 <div class="flexContainer maxSize">
-    <img id="leftFbutton" class="fbutton" src="~/Images/blueCircleLeft.png" onclick="javascript:clickPrevious()" />
+    <img id="leftFbutton" class="fbutton" src="~/Images/blueCircleLeft.png" onclick="clickPrevious()" />
     <div id="articleImage" class="carouselContainer">
-
         <div class='carouselItem'>
+            <img id="carouselLoadingGif" class="animatedGears" src="~/Images/ingranaggi3.gif" />
             <img class='carouselImage' src="~/Images/house.gif" />
             <div id='articleTitle' class='carouselLabel'>article.Title</div>
             <div id='articleCat' class='carouselLabel'>article.Category</div>
         </div>
-        
     </div>
     <img id="rightFbutton" class="fbutton" src="~/Images/blueCircleRight.png" onclick="clickNext()" />
 </div>
@@ -97,7 +106,6 @@
 
     function adjustCarousel() {
         $('.carouselImage').height($('#articleImage').height());
-
         var x = $('#articleImage').position().top;
         var y = $('#articleImage').position().left; //- ;
         $('#articleTitle').css('top', $('.carouselItem').position().top + $('.carouselItem').height() - 40);
@@ -133,7 +141,9 @@
 
 
     function clickPrevious() {
-        stopCarousel();
+        imageNum = Math.max(0, imageNum - 2);
+        rotate();
+        //stopCarousel();
     }
     function clickNext() {
         clearInterval(Carousel);
@@ -141,6 +151,7 @@
     }
 
     function loadAndStartCarousel() {
+        $('#carouselLoadingGif').show();
         $.ajax({
             type: "GET",
             url: service + "/api/DbArticle?pageLen=" + numArticles + "&page=1&filterType=null&filter=null",
@@ -148,6 +159,7 @@
             success: function (articles) {
                 articles.forEach(loadArray);
                 rotate();
+                $('#carouselLoadingGif').hide();
             },
             error: function (xhr) {
                 alert("loadAndStartCarousel error: " + xhr.statusText);

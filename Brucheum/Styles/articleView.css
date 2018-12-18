@@ -1,16 +1,22 @@
 ﻿
-#pollybox {
+
+.pollybox {
     box-sizing: border-box;
     margin-top: 4px;
     background-color: #cec8ab; /*#74bac3; #86bdc4; #b4b4b4;*/
 }
+.pollybox30 {
+    margin-top: 100px;
+    box-sizing: border-box;
+    background-color: #cec8ab; /*#74bac3; #86bdc4; #b4b4b4;*/
+}
 
-#divTopLine {
+.divTopLine {
     padding-top: 5px;
     padding-left: 12px;
 }
 
-#divTitle {
+.articleTitle {
     text-align: center;
     font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif;
     font-size: 40px;
@@ -24,7 +30,7 @@
     margin-bottom: 10px;
     text-justify: auto;
 }
-#divByline {
+.byline {
     width: 100%;
     font-family: Chap, Arial, sans-serif;
     font-size: 15px;
@@ -44,18 +50,19 @@
     text-align: right;
 }
 
-#divImage {
-    width: 100%;
-    text-align: center;
+.articleCenterImage {
+    height: 333px;
+    display: block;
+    margin: auto;
     padding: 6px;
 }
 
-#articleImage {
+.articleViewImage {
     height: 300px;
     max-width: 100%;
 }
 
-#divContent {
+.articleContent {
     clear: both;
     font-family: MillerText, Georgia,serif;
     font-size: 16px;
@@ -72,13 +79,15 @@
     margin-top: 111px;
     margin-left: 12px;
 }
-.fb-share-button {
-    background: #3b5998;
+
+.staticFaceBookButton {
+    margin-top: 200px;
+    /*background: #3b5998;
     border-radius: 3px;
     font-weight: 500;
     padding: 5px 8px;
     display: inline-block;
-    position: static;
+    position: static;*/
 }
 
     .fb-share-button a {
