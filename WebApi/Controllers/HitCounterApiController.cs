@@ -11,6 +11,15 @@ using WebApi.Models;
 
 namespace WebApi
 {
+
+    public class HitCounterModel
+    {
+        public string IpAddress { get; set; }
+        public string AppName { get; set; }
+        public string PageName { get; set; }
+        public string Details { get; set; }
+    }
+
     [EnableCors("*", "*", "*")]
     public class RefController : ApiController
     {
@@ -170,32 +179,31 @@ namespace WebApi
             return success;
         }
 
-        [HttpGet]
-        public string AddPageHit(string ipAddress, string app, string page, string details)
+        [HttpPost]
+        public string LogPageHit(HitCounterModel hitCounterModel)
         {
-            string success = "ERROR: ohno";
+            string success = "";
             try
             {
                 //var ipAddress = System.Text.Encoding.UTF32.GetString(bytes);
                 using (WebSiteContext db = new WebSiteContext())
                 {
                     Hit hit = new Hit();
-                    hit.IPAddress = ipAddress;
-                    hit.App = app;
+                    hit.IPAddress = hitCounterModel.IpAddress;
+                    hit.App = hitCounterModel.AppName;
                     hit.BeginView = DateTime.Now;
-                    hit.PageName = page;
-                    hit.Details = details;
+                    hit.PageName = hitCounterModel.PageName;
+                    hit.Details = hitCounterModel.Details;
                     db.Hits.Add(hit);
                     db.SaveChanges();
-
-                    success = hit.HitId.ToString();
+                    success = "ok";
                 }
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
 
-        [HttpGet]
+        [HttpPut]
         public string EndVisit(int hitId)
         {
             var success = "on no";

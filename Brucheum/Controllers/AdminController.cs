@@ -27,8 +27,12 @@ namespace Brucheum.Controllers
             }
         }
 
-
         public ActionResult Index()
+        {
+            ViewBag.Service = apiService;
+            return View("AdminIndex");
+        }
+        public ActionResult AdminIndex()
         {
             ViewBag.Service = apiService;
             return View();

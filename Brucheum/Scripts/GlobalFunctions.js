@@ -157,27 +157,71 @@ function sendEmailFromJS(msg, body) {
 }
 
 function logPageHit(service, userName, ipAddress, page, details) {
+    var myLocalDevelopmentBox = "50.62.160.105";
     try {
-        alert("logPageHit ipAddress: " + ipAddress);
+        if (ipAddress != myLocalDevelopmentBox) {
+            var hit = {};
+            hit.IpAddress = ipAddress;
+            hit.AppName = "Brucheum";
+            hit.PageName = page;
+            hit.Details = details;
+
+            //alert("logPageHit ipAddress: " + ipAddress);
+            $.ajax({
+                type: "POST",
+                url: service + "/api/HitCounter",
+                data: hit,
+                success: function (success) {
+                    if (!success.startsWith("ERROR")) {
+
+                        sendEmailFromJS("Page Hit", ipAddress + " visited " + page + " " + details);
+                        //displayStatusMessage("ok", "Page Hit " + page + " / " + details);
+
+                        //sendEmailFromJS("Page Hit", String.Format("{0} visited {1} {2} may you have a good day",
+                        //    hit.IPAddress, hit.PageName, hit.Details));
+
+                        return success;
+                    }
+                    else
+                        alert("logPageHit Fail: " + success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("logPageHit XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
+    } catch (e) {
+        alert("logPageHit CATCH error: " + e);
+    }
+}
+
+function logPageVisitEnd(hitSession) {
+    try {
+        
+        var hit = {};
+        hit.Id = hitSession;
+        //alert("logPageHit ipAddress: " + ipAddress);
         $.ajax({
-            type: "GET",
-            url: service + "/api/HitCounter/AddPageHit?ipAddress=" + ipAddress + "&app=Brucheum&page=" + page + "&details=" + details,
+            type: "PUT",
+            url: service + "/api/HitCounter/?hitId=" + hitSession,
             success: function (success) {
-                if (!success.startsWith("ERROR")) {
+                if (success === "ok") {
                     //sendEmailFromJS("Page Hit", ipAddress + " visited " + page + " " + details);
-                    displayStatusMessage("ok", "email sent");
+                    displayStatusMessage("ok", "Page Hit " + page + " / " + details);
+                    alert("Recorded End Visit");
+                    return success;
                 }
                 else
-                    alert("logPageHit Fail: " + success);
+                    alert("logPageVisitEnd Fail: " + success);
             },
             error: function (jqXHR, exception) {
-                alert("logPageHit XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                alert("logPageVisitEnd XHR error: " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     } catch (e) {
-        alert("logPageHit CATCH error: " + e);
-
+        alert("logPageVisitEnd CATCH error: " + e);
     }
+
 }
 
 function beautify(stankyString) {

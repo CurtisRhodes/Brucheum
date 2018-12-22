@@ -114,6 +114,30 @@ namespace WebApi
     public class BlogEntryController : ApiController
     {
         [HttpGet]
+        public IList<BlogEntryModel> GetAll()
+        {
+            var blogs = new List<BlogEntryModel>();
+            try
+            {
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    var dbBblogEntries = db.BlogEntries.ToList();
+                    foreach (BlogEntry blog in dbBblogEntries)
+                    {
+                        blogs.Add(new BlogEntryModel() {
+                            BlogName = blog.Blog.BlogName,  
+                            Id = blog.Id.ToString(),
+                            Title = blog.Title,
+                            Created = blog.Created.ToShortDateString()
+                        });
+                    }
+                }
+            }
+            catch (Exception ex) { blogs.Add(new BlogEntryModel() { Title = Helpers.ErrorDetails(ex) }); }
+            return blogs;
+        }
+
+        [HttpGet]
         public IList<BlogEntryModel> GetMany(string blogId, string kludge)
         {
             var blogs = new List<BlogEntryModel>();
@@ -143,9 +167,10 @@ namespace WebApi
                     var dbBlogEntry = db.BlogEntries.Where(b => b.Id.ToString() == Id).FirstOrDefault();
                     if (dbBlogEntry != null)
                     {
+                        blogEntry.BlogId = dbBlogEntry.BlogId;
                         blogEntry.Title = dbBlogEntry.Title;
                         blogEntry.Summary = dbBlogEntry.Summary;
-                        blogEntry.Contents = dbBlogEntry.Content;
+                        blogEntry.Content = dbBlogEntry.Content;
                         blogEntry.ImageName = dbBlogEntry.ImageName;
                     }
                 }
@@ -161,12 +186,14 @@ namespace WebApi
             try
             {
                 BlogEntry blogEntry = new BlogEntry();
+                blogEntry.BlogId = newBlogEntry.BlogId;
                 blogEntry.Id = Guid.NewGuid().ToString();
                 blogEntry.Title = newBlogEntry.Title;
                 blogEntry.ImageName = newBlogEntry.ImageName;
                 blogEntry.Summary = newBlogEntry.Summary;
-                blogEntry.Content = newBlogEntry.Contents;
+                blogEntry.Content = newBlogEntry.Content;
                 blogEntry.Created = DateTime.Now;
+                blogEntry.LastUpdated = DateTime.Now;
 
                 using (WebSiteContext db = new WebSiteContext())
                 {
@@ -195,7 +222,7 @@ namespace WebApi
                         blogEntry.Title = editBlogEntry.Title;
                         blogEntry.ImageName = editBlogEntry.ImageName;
                         blogEntry.Summary = editBlogEntry.Summary;
-                        blogEntry.Content = editBlogEntry.Contents;
+                        blogEntry.Content = editBlogEntry.Content;
                         blogEntry.LastUpdated = DateTime.Now;
                         db.SaveChanges();
                         success = "ok";

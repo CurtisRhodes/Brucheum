@@ -1,24 +1,51 @@
-﻿
-
-
-code {
-    display: block;
+﻿code {
+    display: inline-block;    
+    padding: 16px;
     margin-left: 45px;
     background-color: #444;
     color: #fff;
 }
+
 keyword {
     color: #39f;
 }
+
 strtext {
     color: #f90;
 }
+
+cskeyword {
+    color: #0cc;
+}
+
+csmodifier {
+    color: #0af;
+}
+
+csstruct {
+    color: #9f3;
+}
+
 .tab1 {
     padding-left: 15px;
 }
+
 .tab2 {
     padding-left: 30px;
 }
+
 .tab3 {
     padding-left: 45px;
+}
+
+.tab4 {
+    padding-left: 60px;
+}
+
+.tab5 {
+    padding-left: 75px;
+}
+
+.tab6 {
+    padding-left: 90px;
 }

@@ -162,7 +162,7 @@
     <Compile Include="Controllers\BlogApiController.cs" />
     <Compile Include="Controllers\BookController.cs" />
     <Compile Include="Controllers\BookDbController.cs" />
-    <Compile Include="Controllers\DatabaseController.cs" />
+    <Compile Include="Controllers\HitCounterApiController.cs" />
     <Compile Include="Controllers\EmailController.cs" />
     <Compile Include="Controllers\GetaJobApiController.cs" />
     <Compile Include="Controllers\Helpers.cs" />
