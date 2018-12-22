@@ -103,7 +103,7 @@
         try {
             $.ajax({
                 type: "POST",
-                url: service + "/api/Section",
+                url: service + "/api/ResumeSection",
                 //dataType: 'string',
                 data: sectionModel,
                 success: function (success) {
@@ -130,12 +130,12 @@
     function updateSection() {
         $.ajax({
             type: "PUT",
-            url: service + "/api/Section/",
+            url: service + "/api/ResumeSection/",
             data: sectionModel,
             success: function (success) {
                 if (success == "ok") {
                     $('#btnSkillAddEdit').val("Edit");
-                    displayStatusMessage("ok", "Skill Edited");
+                    displayStatusMessage("ok", "Section Edited");
                     loadSectionsList();
                 }
                 else {
@@ -173,7 +173,7 @@
             $('#addEditSectionLoadingGif').show();
             $.ajax({
                 type: "GET",
-                url: service + "/api/Section/Get?personId=" + addEditSectionUserId,
+                url: service + "/api/ResumeSection/Get?personId=" + addEditSectionUserId,
                 success: function (response) {
                     if (true) {
                         $('#divSectionList').html("");
@@ -203,7 +203,7 @@
         try {
             $.ajax({
                 type: "GET",
-                url: service + "/api/Section?sectionId=" + Id,
+                url: service + "/api/ResumeSection?sectionId=" + Id,
                 success: function (response) {
                     if (!response.SectionTitle.startsWith("ERROR")) {
 

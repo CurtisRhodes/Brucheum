@@ -44,7 +44,7 @@ namespace WebApi
                         articleModel.SubCategoryRef = dbArticle.SubCategoryRef;
 
                         try { articleModel.ByLineLabel = db.Refs.Where(r => r.RefCode == dbArticle.ByLineRef).FirstOrDefault().RefDescription; }
-                        catch (Exception ex) { articleModel.ByLineLabel = Helpers.ErrorDetails(ex); }
+                        catch (Exception) { articleModel.ByLineLabel = "0"; }
 
                         try { articleModel.CategoryLabel = db.Refs.Where(r => r.RefCode == dbArticle.CategoryRef).FirstOrDefault().RefDescription; }
                         catch (Exception ex) { articleModel.CategoryLabel = Helpers.ErrorDetails(ex); }
@@ -86,8 +86,8 @@ namespace WebApi
                         try { articleModel.CategoryLabel = db.Refs.Where(r => r.RefCode == dbArticle.CategoryRef).FirstOrDefault().RefDescription; }
                         catch (Exception ex) { articleModel.CategoryLabel = Helpers.ErrorDetails(ex); }
 
-                        try { articleModel.SubCategoryLabel = db.Refs.Where(r => r.RefCode == dbArticle.SubCategoryRef).FirstOrDefault().RefDescription; }
-                        catch (Exception ex) { articleModel.SubCategoryLabel = Helpers.ErrorDetails(ex); }
+                        //try { articleModel.SubCategoryLabel = db.Refs.Where(r => r.RefCode == dbArticle.SubCategoryRef).FirstOrDefault().RefDescription; }
+                        //catch (Exception ex) { articleModel.SubCategoryLabel = Helpers.ErrorDetails(ex); }
 
                         articleModel.ByLineRef = dbArticle.ByLineRef;
                         articleModel.CategoryRef = dbArticle.CategoryRef;
@@ -168,10 +168,10 @@ namespace WebApi
                     article.Summary = editArticle.Summary;
 
                     db.ArticleTags.RemoveRange(db.ArticleTags.Where(t => t.articleId.ToString() == editArticle.Id));
-                    article.ArticleTags = null;
+                    //article.ArticleTags = null;
                     foreach (DbArticleTagModel tagModel in editArticle.Tags)
                     {
-                        article.ArticleTags.Add(new ArticleTag() { articleId = article.Id, Id = tagModel.Id, TagCategoryRef = tagModel.TagCategoryRef, TagName = tagModel.TagName });
+                        article.ArticleTags.Add(new ArticleTag() { articleId = article.Id, Id = tagModel.Id, TagName = tagModel.TagName });
                     }
 
                     db.SaveChanges();

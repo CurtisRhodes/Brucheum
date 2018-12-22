@@ -81,6 +81,7 @@
 }
 
 .editArticleRow {
+    margin-left: 4px;
 }
 .articleSummary {
     /*display: inline-block;
@@ -127,12 +128,4 @@
 
 .align-right {
     text-align: right;
-}
-
-#divAjustableItemsWrapper {
-    /*display: none;*/
-}
-
-.hidden {
-    visibility: hidden;
 }

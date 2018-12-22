@@ -79,8 +79,9 @@ namespace WebApi.Models
         public string ImageName { get; set; }
         public string Created { get; set; }
         public string LastUpdated { get; set; }
-        public string Contents { get; set; }
+        public string Content { get; set; }
         public string Summary { get; set; }
+        public string BlogName { get; set; }
     }
 
     public class XmlBookModel
@@ -128,5 +129,4 @@ namespace WebApi.Models
         public string success { get; set; }
         public string CreateDate { get; set; }
     };
-
 }

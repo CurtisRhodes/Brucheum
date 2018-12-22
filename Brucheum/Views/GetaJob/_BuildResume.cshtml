@@ -109,6 +109,7 @@
 
     function loadSelectedResumeElements(resumeId) {
         $('#resumeSelectedElementsLoadingGif').show();
+        //alert("loadSelectedResumeElements(" + resumeId + ")");
         $.ajax({
             type: "GET",
             url: service + "/api/ResumeElement?resumeId=" + resumeId,
@@ -226,7 +227,7 @@
         })
         $.ajax({
             type: "GET",
-            url: service + "/api/Section?personId=" + currentUser,
+            url: service + "/api/ResumeSection?personId=" + currentUser,
             success: function (sections) {
                 $.each(sections, function (idx, section) {
                     $('#ddResumeSections').append("<option class='ddOption' value='" + section.ElementId + "'>" + section.SectionTitle + "</option>");

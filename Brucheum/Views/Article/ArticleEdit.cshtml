@@ -3,6 +3,7 @@
 }
 
 <link href="~/Styles/articleEdit.css" rel="stylesheet" />
+<link href="~/Styles/code.css" rel="stylesheet" />
 <script src="~/Scripts/ImageTools.js"></script>
 
 <div class="threeColumnArray">
@@ -30,7 +31,7 @@
                     </div>
                     <div class="editArticleRow">
                         <div class="editArticleLabel">Image:</div>
-                        <div class="editArticleInput" style="width:88%"><input id="uplImage" type="file" class="imageUpload" onchange="javascript:loadImage()" /></div>
+                        <div class="editArticleInput" style="width:91px"><input id="uplImage" type="file" class="imageUpload" onchange="loadImage()" /></div>
                     </div>
                     <div class="editArticleRow">
                         <div class="editArticleLabel">Meta Tag:</div>
@@ -47,10 +48,10 @@
                 </div>
             </div>
         </div>
-        <div id="divStatusMessage"></div>
         <div id="articleContentEditor">
             <div>@Html.Partial("_Editor") </div>
         </div>
+        <div id="divStatusMessage"></div>
         <div class="btnRow">
             <img id="updateArticleSpinner" class="btnSpinnerImage articleSaveSpinner" src="~/Images/loader.gif" />
             <button id="btnSave" class="roundendButton" onclick="addUpdateArticle()">Save</button>
@@ -73,12 +74,16 @@
             getArticle();
             $('#btnSave').text("Update")
         }
-        else {            
+        else {
             $('#txtUpdated').val(formatDate(new Date()));
-        }        
+        }
         $('#articleSummaryEditor').summernote({
             height: 150,
-            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            codemirror: {
+                lineWrapping: true,
+                mode: "htmlmixed",
+                theme: "monokai"
+            },
             toolbar: [
                 ['codeview'],
                 ['style', ['bold', 'italic', 'underline', 'clear']],
@@ -92,7 +97,11 @@
         });
         $('#articleContentEditor').summernote({
             height: 400,
-            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            codemirror: {
+                lineWrapping: true,
+                mode: "htmlmixed",
+                theme: "monokai"
+            },
             toolbar: [
                 ['codeview'],
                 ['style', ['bold', 'italic', 'underline', 'clear']],
@@ -111,7 +120,7 @@
 
             $('#txtTitle').val(response.Title);
             $('#ddCategory').val(response.CategoryRef);
-            //alert("CategoryRef: " + response.CategoryRef)
+            //alert("$('#ddCategory').val(): " + $('#ddCategory').val());
             //alert("BylineRef: " + response.ByLineRef)
             $('#ddAvatars').val(response.ByLineRef);
             $('#txtUpdated').val(response.LastUpdated);
@@ -122,7 +131,7 @@
 
             $.each(response.Tags, function (idx, tag) {
                 if (tag.TagName != null)
-                    $("#divTagContainer").append("<div class='tagItem'>" + tag.TagName + "</div>");
+                    $("#divTagContainer").append("<div class='tagItem' id=" + tag.Id + ">" + tag.TagName + "</div>");
             })
         } catch (e) {
             alert("bind(response): " + e);
@@ -132,26 +141,22 @@
     function unBind() {
         try {
             article.Title = $('#txtTitle').val();
-            article.CategoryRef = $('#ddCategory option:selected').val();
-            article.BylineRef = $('#ddAvatars option:selected').val();
-
-            //alert("CategoryRef: " + article.CategoryRef)
-            //alert("BylineRef: " + response.ByLineRef)
-
-
-            //alert("article.BylineRef: " + article.ByLineRef)
+            article.CategoryRef = $('#ddCategory').val();
+            article.BylineRef = $('#ddAvatars').val();
             article.SubCategoryRef = 'AWC';
             article.LastUpdated = $('#txtUpdated').val();
-            article.Summary = beautify($('#articleSummaryEditor').summernote('code'));
-            article.Contents = beautify($('#articleContentEditor').summernote('code'));
-
+            //article.Summary = beautify($('#articleSummaryEditor').summernote('code'));
+            //article.Contents = beautify($('#articleContentEditor').summernote('code'));
+            article.Summary = $('#articleSummaryEditor').summernote('code');
+            article.Contents =$('#articleContentEditor').summernote('code');
             article.Tags = new Array;
-            $.each(metaTagsStringArray, function (idx, tag) {
+            $('#divTagContainer>div').each(function () {
                 var dbArticleTagModel = new Object();
-                dbArticleTagModel.TagName = tag;
+                dbArticleTagModel.TagName = $(this).html();
+                dbArticleTagModel.Id = $(this).attr("Id");
+                //alert("dbArticleTagModel.Id: " + dbArticleTagModel.Id);
                 article.Tags.push(dbArticleTagModel);
-            });
-            //alert("updateArticle article.Id: " + article.Id);
+            })
         }
         catch (e) {
             alert("unBind: " + e);
@@ -164,6 +169,13 @@
             postArticle();
         else
             updateArticle();
+    }
+    function saveAndView() {
+        $('#updateArticleSpinner').show();
+        if ($('#btnSave').text() == "Save")
+            postArticle("View");
+        else
+            updateArticle("View");
     }
 
     function postArticle(view) {
@@ -183,7 +195,7 @@
                         if (view === "View")
                             window.location = "Article?Id=" + newArticleId;
                         article.Id = newArticleId;
-                        $('#updateArticleSpinner').hide();            
+                        $('#updateArticleSpinner').hide();
                         displayStatusMessage("ok", "Saved");
                         $('#btnSave').text("Update");
                     }
@@ -214,8 +226,8 @@
                         else
                             displayStatusMessage("ok", "updated");
                     else
-                        displayStatusMessage("error", success);
-                    $('#updateArticleSpinner').hide();            
+                        displayStatusMessage("updateArticle", success);
+                    $('#updateArticleSpinner').hide();
                 },
                 error: function (jqXHR, exception) {
                     alert("update Article jqXHR : " + getXHRErrorDetails(jqXHR, exception));
@@ -226,18 +238,19 @@
         }
     }
 
-
-
     function getArticle() {
         $.ajax({
             type: "GET",
             url: service + "/api/DbArticle?articleId=" + article.Id,
             success: function (response) {
-                bind(response);
-                article.ImageName = response.ImageName;
-
-                $('#btnSave').text("Update");
-                setTimeout(function () { adjust() }, 1000);
+                if (response.Success == "ok") {
+                    bind(response);
+                    article.ImageName = response.ImageName;
+                    $('#btnSave').text("Update");
+                    //setTimeout(function () { adjust() }, 1000);
+                }
+                else
+                    alert("getArticle: " + response.Success);
             },
             error: function (jqXHR, exception) {
                 alert("getArticle jqXHR : " + getXHRErrorDetails(jqXHR, exception));
@@ -295,28 +308,14 @@
         article.ImageName = postImage(service, $('#uplImage').val());
         //alert("article.ImageName: " + article.ImageName)
         $('#imgArticleJog').attr("src", service + "/App_Data/Images/" + article.ImageName);
-
-        setTimeout(function () { adjust() }, 1000);
+        //setTimeout(function () { adjust() }, 1000);
     }
 
-
-    function saveAndView() {
-        if ($('#btnSave').text() == "Save")
-            postArticle("View");
-        else
-            updateArticle("View");
-    }
-
-
-    //    <div id="divEditArticleContainer" class="editArticleContainer">
 
     function adjust() {
-
         // percentage of container   var wPic = $('#imgArticleJog').width();
         // var wAcl = $('#divEditArticleContainer').width();
         //$('#divArticleRowContainer').width(wAcl - wPic);
-
-
         //var wAcr = $('#divArticleRowContainer').width();
         //var wlbl = $('#divEditArticleLabel').width() + 20;
         //$('#articleSummaryEditor').width(wAcr - wlbl);

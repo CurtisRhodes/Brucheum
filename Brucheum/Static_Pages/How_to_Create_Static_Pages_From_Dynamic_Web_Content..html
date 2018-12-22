@@ -1,0 +1,133 @@
+<!DOCTYPE html><html>
+    <head>
+        <title>How to Create Static Pages From Dynamic Web Content.</title>
+        <link href='/Styles/default.css' rel='stylesheet'>
+        <link href='/Styles/fixedHeader.css' rel='stylesheet'>
+        <link href='/Styles/articleView.css' rel='stylesheet'>
+        <script src='/Scripts/GlobalFunctions.js'></script>
+        <script src="/Scripts/3rd Party/jquery.min.js"></script>
+        <script src='/Scripts/ResizeThreeColumnPage.js'></script>
+        <meta name="Title" content="How to Create Static Pages From Dynamic Web Content." property="og:title">
+        <meta property="og:description" content="                            <div><div class="editorScriptContainer">First Why? I have built a really cool web page article builder which I am going to begin documenting. But why do I want to take the pages which have their various attributes stored in a database and convert them into static pages? T">
+        <meta name="Keywords" content="">
+        <meta property="og:type" content="website">
+        <meta property="og:image" content="https://api.curtisrhodes.com/app_data/images/static-vs-dynamic-web-pages.jpg">
+        <meta property="og:url" content="https://Curtisrhodes.com/static_pages/How_to_Create_Static_Pages_From_Dynamic_Web_Content..html">
+    </head><body>
+    <div class='standardHeader' id='bheader'>
+        <div class='bannerImageContainer' id='divTopLeftLogo'>
+            <a href='/Home/Index'><img class='bannerImage' src='../images/house.gif'></a>
+        </div>
+        <div class='headerBodyContainer'>
+            <div class='headerTitle' id='bannerTitle'>
+                Curtis Rhodes.com
+            </div>
+            <div class='menuTabContainer' id='menuContainer'>
+                <div id='replaceableMenuItems'>
+                    <div class='menuTab floatLeft'><a href='/Article/ArticleList'>Latest Articles</a></div>
+                    <div class='menuTab floatLeft'><a href='/Article/ArticleList?filterLabel=Political Rants&amp;filterType=Category&amp;filter=POL'>Political Rants</a></div>
+                    <div class='menuTab floatLeft'><a href='/Article/ArticleList?filterLabel=Conspiracy Theories&amp;filterType=Category&amp;filter=CON'>Conspiracy Theories</a></div>
+                    <div class='menuTab floatLeft'><a href='/BookDb/Index'>Books</a></div>
+                    <div class='menuTab floatLeft'><a href='/Home/Apps'>Apps</a></div>
+                    <div class='menuTab floatLeft'><a href='/IntelDsgn/Index'>Intelligent Design</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='threeColumnArray'>
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
+            fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));</script>
+        <div id='leftColumn'>
+            <div class="fb-share-button staticFaceBookButton" data-href="https://Curtisrhodes.com/static_pages/"How_to_Create_Static_Pages_From_Dynamic_Web_Content..html " data-layout="button_count"></div>
+        </div>
+        <div id='middleColumn'>
+            <div class='pollybox30'>
+                <div class='divTopLine'>
+                    <div class='floatLeft'>12/17/2018</div>
+                    <div class='floatRightDiv'>computer programming</div>
+                </div>
+                <div class='articleTitle'>How to Create Static Pages From Dynamic Web Content.</div>
+                <div class='flexContainer'><div class='byline'>Cooler</div></div>
+            </div>
+            <div id='contentArea'><div class='articleImageContainer'>
+                <img id="divImage" class="articleCenterImage" src=https://api.curtisrhodes.com/app_data/images/static-vs-dynamic-web-pages.jpg />
+            </div>
+            <div class='summaryText'>                            <div><div class="editorScriptContainer">First Why? I have built a really cool web page article builder which I am going to begin documenting. But why do I want to take the pages which have their various attributes stored in a database and convert them into static pages? The hope is that these pages can be easier searched and found and linked to. It is my perception that search engines deploy crawlers that leisurely traverse the web and can't readily find dynamic web pages that don't formally exist except for the moments when they are generated. If that   </div><div class="editorScriptContainer">will persist </div> </div>                        </div>
+            <div class='articleContent'> <p></p><p>This is beginning I hope of my dream of documenting some of my code for this web site and for me to start submitting articles to other place and establish credentials.Often I search the web for solutions. For simple syntax problems I find good answers but there are many times where no goodanswers exist. Given the reasons mentioned above, primarily to make my pages more available to search engines,I consider it good practice to convert your dynamic content pages to permalink pages.I am here giving this solution away for free.This piece of code is located in the script section of the page that provides a nicely formattedview of a news article. </p>
+<style> 
+  code {   	display: inline-block;  	padding: 16px;      	margin-left: 45px;      	background-color: #444;      	color: #fff;  }  keyword { color: #39f; } 
+  strtext { color: #f90; }  
+  cskeyword { color: #0cc; } 
+  csmodifier { color: #0af; }  
+  csstruct { color: #9f3; } 
+  .tab1 { padding-left: 15px; }
+  .tab2 { padding-left: 30px; }  
+  .tab3 { padding-left: 45px; }
+</style>
+<code>  
+  <div><keyword>var</keyword> data = <keyword>new</keyword> Object();</div>
+  <div>data.html = <strtext>"&lt;!DOCTYPE html&gt;"</strtext> + $(<strtext>'html'</strtext>).html();</div>
+  <div>$.ajax({</div>  <div class="tab1">type: <strtext>"POST"</strtext>,</div>
+  <div class="tab1">url: <strtext>"CreateStaticFile"</strtext>,</div>
+  <div class="tab1">data: JSON.stringify(data),</div>
+  <div class="tab1">contentType: <strtext>"application/json; charset=utf-8"</strtext>,</div>
+  <div class="tab1">dataType: <strtext>"json"</strtext>,</div>
+  <div class="tab1">success: <keyword>function</keyword> (success) {</div>
+  <div class="tab2">if (success === <strtext>"ok"</strtext>) {</div>
+  <div class="tab3">$(<strtext>'#lnkPermalink'</strtext>).show();</div>
+  <div class="tab3">$(<strtext>'#lnkStaticify'</strtext>).hide();</div>
+  <div class="tab2">}</div>
+  <div class="tab2">else</div>
+  <div class="tab3">alert(<strtext>"/api//File returned: "</strtext> + success);</div>
+  <div class="tab1">},</div>
+  <div class="tab1">error: function (jqXHR, exception) {</div>
+  <div class="tab2">alert(<strtext>"CreateStaticFile error: "</strtext> + getXHRErrorDetails(jqXHR, exception));</div>
+  <div class="tab1">}</div>       
+  <div>});</div>
+</code>
+<p></p>
+<p>This piece of code takes a string value and passes it using ajax to a server side method which we will look at next. The server side method actually in the ASP.Net MVC controller of the ArticleView razor view hence the delightfully uncomplimented one word url. (Don't ask how long it took to refactor down to this obvious solution.<br>The string that is passed happens to be the html of the entire web page. The key line of code here is var x = $('html').html(); First let me specify that although I am resistant to using frameworks and prefer to develop in POJO plain old JavaScript objects, I'm a hypocrite in that I rely heavily on jQuery. It is not a framework. jQuery is a function library and primarily a shortcut notation. The dollar sign is the equivalent as writing some iteration of document.getElementbyId() and if works for   properties and classes as well tags in consistent but wonderful ways. </p><p>So what <b>$('html').html()</b> does is return the contents of the html tag which is the root container. We then take that contents and place it in an object and pass to a function written in C# on the server side in a controller. All this stupid creating an object with one text attribute and using Json is because the text of the entire html page is too big to be passed as a command line parameter in a GET and so it has to be passed in the body of a POST. More refactoring might remove the need to use Json but I was so happy when I finally got it to work I was satisfied to be on my way.</p>
+<code>
+  <div><cskeyword>[HttpPost]</cskeyword></div>
+  <div><keyword>public</keyword> <cskeyword>JsonResult</cskeyword> CreateStaticFile(<cskeyword>staticPageModel</cskeyword> staticPage)</div>
+  <div>{</div>
+  <div class="tab1"><keyword>string</keyword> success = <strtext>""</strtext>;</div>
+  <div class="tab1"><keyword>try</keyword></div>
+  <div class="tab1">{</div>
+  <div class="tab2"><keyword>string</keyword> filePath = Server.MapPath(<strtext>"~/Static_Pages"</strtext>);</div>
+  <div class="tab2"><keyword>using</keyword> <keyword>(</keyword>var staticFile = System.IO.<cskeyword>File</cskeyword>.Open(filePath + "/" + staticPage.filename, <csmodifier>FileMode</csmodifier>.OpenOrCreate))</div>
+  <div class="tab2">{</div>
+  <div class="tab3"><csmodifier>Byte</csmodifier>[] byteArray = Encoding.ASCII.GetBytes(staticPage.html);</div>
+  <div class="tab3">staticFile.Write(byteArray, 0, byteArray.Length);</div>
+  <div class="tab2">}</div>
+  <div class="tab2">success = <strtext>"ok"</strtext>;</div>
+  <div class="tab1">}</div>
+  <div class="tab1"><keyword>catch</keyword> (<cskeyword>Exception</cskeyword> e) { success = <cskeyword>Helpers</cskeyword>.ErrorDetails(e); }</div>
+  <div class="tab1"><keyword>return</keyword> Json(success, <csmodifier>JsonRequestBehavior</csmodifier>.AllowGet);</div>
+  <div>}</div>
+</code>    <p>Javascript may actually have some of these byte encoding functions but I am more familiar with C#. More importantly, server side I can take advantage to the <font style="background-color: rgb(255, 255, 0);">Server.MapPath</font> function to return me the physical name of my writable directory even when this code gets published to the hosting web server. I used to have the static_files foder in the app-data directory but this is the url that shows up in the browser so I have it off the root to get a nice looking command line that just says CurtisRhodes.com/static_files/the_name_of_my_brilliant_article.html. 
+<br>Since the main reason I am doing this conversion to Another feature you might be interested in
+<br>I have shown you this ingenious solution just to show you how to solve the problem. It works. This works so I am proud to show it. However, if anything this works too well. It exposes all the other client side script on the page revealing where I use @IsInRole and lots of more things a static page viewer doesn't need to see. You may have noticed $('#lnkPermalink').show(); and $('#lnkStaticify').hide(); in the top script. These are buttons that only show if a logged in user as admin rights. These are actually replaced by a link to Facebook button on the static page. So I built a more custom solution that uses the same CreateStaticFile function but provides a little more granularly constructed html page text string. It looks like 
+this <br></p>
+<code>  
+  <div>function saveAsStaticFile(thisArticle) {</div>
+  <div class="tab1">var strWebPage = <strtext>"&lt;!DOCTYPE html&gt;"</strtext>;</div>
+  <div class="tab1">strWebPage += <strtext>"&lt;html&gt;";</strtext></div>
+  <div class="tab1">strWebPage += staticPageMetaHead(thisArticle);</div>
+  <div class="tab1">strWebPage += <strtext>"&lt;body&gt;"</strtext>;</div>
+  <div class="tab1">strWebPage += staticLayoutHeader(thisArticle);</div>
+  <div class="tab1">strWebPage += staticPageBody(thisArticle);</div>
+  <div class="tab1">strWebPage += "&lt;/body&gt;";</div>
+  <div class="tab1">strWebPage += <strtext>"&lt;\html&gt;"</strtext>;</div>
+</code> 
+<p></p>
+<p>To see the full code go to my website CurtisRhodes.com and look for the link to Git Hub. As I said, this is a sample post. My website is still a work in progress.</p></div>
+        </div>
+        <div id='rightColumn'></div>
+    </div></html>

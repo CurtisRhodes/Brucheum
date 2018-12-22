@@ -3,10 +3,9 @@
 }
 <link href="~/Styles/default.css" rel="stylesheet" />
 <link href="~/Styles/CrudEdit.css" rel="stylesheet" />
-<link href="~/Styles/admin.css" rel="stylesheet" />
-
+<link href="~/Styles/code.css" rel="stylesheet" />
 <style>
-    .blocksDisplay {
+    .blockDisplayArea {
         margin-top: 55px;
         width: 1400px;
         height: 666px;
@@ -23,36 +22,92 @@
         cursor: pointer;
     }
     #blogEdit {
+        width: 550px;
+    }
+    .blogEntryEditor {
+        max-width: 850px;
+    }
+    .note-editable {
+        max-width: 850px;
+    }
+    #txtBlogEntryTitle {
+        width: 90%;
+    }
+    .blogSpaSection {
+        margin-top: 25px;
+        margin-left: 55px;
         display: none;
+    }
+    .blogContainer {
+        margin-left: 22px;
+        border: solid 1.5px #bbb;
+        border-radius: 5px;
+        margin-bottom: 24px;
+    }
+    .blockContainerBlogName {
+        background-color: #decf78;
+        margin-bottom: 12px;
+    }
+    #blogViewTitle {
+        text-align:center;
+        font-size: 22px;
+        margin-bottom: 8px;
+    }
+    #blogViewSummary {
+        border: solid thin #333;
+        font-size: 18px;
+        height: 200px;
+        padding: 4px;
+        background-color: #ddd;
+    }
+    #blogViewContent {
+        margin-top: 8px;
+        border: solid thin #333;
+        font-size: 15px;
+        font-family: serif;
+        height: 500px;
+        padding: 4px;
+        background-color: #eee;
     }
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn">
         <div class="vertMenu">
-            <div class="vertMenuTab" onclick="$('.blogSpaSection').hide(); $('#blogEdit').show(); loadBlogList(); ">New Blog</div>
+            <div class="vertMenuTab" onclick="$('.blogSpaSection').hide(); loadBlocksDisplay(); $('#blockDisplayArea').show();">View Blog</div>
+            <div class="vertMenuTab" onclick="$('.blogSpaSection').hide(); $('#blogEdit').show();">New Blog</div>
             <div class="vertMenuTab" onclick="$('.blogSpaSection').hide(); $('#blogEntryEditor').show();">New Entry</div>
         </div>
     </div>
     <div id="middleColumn">
         <div id="divStatusMessage"></div>
-        <div>current blog <select id="ddBlogs" class="roundedInput" onchange="setCurrentBlog()"></select></div>
-        <div id="blockdisplayArea" class="blogSpaSection"></div>
+        <div id="blockDisplayArea" class="blogSpaSection">
+
+            blocks
+
+        </div>
+        <div id="blogView" class="blogSpaSection">
+            <div id="blogViewTitle"></div>
+            <div id="blogViewSummary"></div>
+            <div id="blogViewContent"></div>
+            <button id="btnshowEditor" class="roundendButton" onclick="showEditor()">Edit</button>
+
+        </div>
         <div id="blogEdit" class="blogSpaSection">
-            <div id="addEditJobContainer" class="crudContainer"> 
+            <div class="blogContainer">
                 <div id="crudContainerTitle" class="crudContainerTitle">Blog</div>
-                <div class="crudArea">
-                    <div class="crudRow">
-                        <div class="crudRowLabel">Blog Name</div>
-                        <div id="errBlog Name" class="validationError">Required</div>
-                        <input id="txtBlogName" class="roundedInput" />
-                    </div>
-                    <div>
-                        <button id="btnBlogAddEdit" class="roundendButton" onclick="AddEditBlog()">Add</button>
-                        <button id="btnBlogNew" class="roundendButton crudBtnNew" onclick="toggleBlog()">New</button>
-                    </div>
+                <div class="crudRow">
+                    <div class="crudRowLabel">Blog Name</div>
+                    <div id="errBlogName" class="validationError">Required</div>
+                    <input id="txtBlogName" class="roundedInput" />
                 </div>
-                <div class="crudContainer">
+                <div>
+                    <button id="btnBlogAddEdit" class="roundendButton" onclick="addEditBlog()">Add</button>
+                    <button id="btnBlogNew" class="roundendButton crudBtnNew" onclick="toggleBlog()">New</button>
+                </div>
+            </div>
+            <div>
+                <div class="blogContainer">
                     <div class="crudContainerTitle">Blogs</div>
                     <div id="blogLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
                     <div id="blogList" class="crudList"></div>
@@ -60,8 +115,47 @@
             </div>
         </div>
         <div id="blogEntryEditor" class="blogSpaSection">
-
-
+            <div class="flexContainer">
+                <div class="floatLeft">
+                    <div class="blogContainer">
+                        <div id="crudContainerTitle" class="crudContainerTitle">Blog Entry</div>
+                        <div class="crudRow">
+                            <div class="crudRowLabel">Current Blog</div>
+                            <select id="ddBlogs" class="roundedInput" onchange="setCurrentBlog()"></select>
+                        </div>
+                        <div class="crudRow">
+                            <div class="crudRowLabel">Title</div>
+                            <div id="errBlogTitle" class="validationError">Required</div>
+                            <input id="txtBlogEntryTitle" class="roundedInput" />
+                        </div>
+                        <div class="crudRow">
+                            <div class="crudRowLabel">Summary</div>
+                            <div id="errBlogSummary" class="validationError">Required</div>
+                            <div id="blogSummaryEditor">
+                                <div>@Html.Partial("_Editor") </div>
+                            </div>
+                        </div>
+                        <div class="crudRow">
+                            <div class="crudRowLabel">Content</div>
+                            <div id="errBlogContent" class="validationError">Required</div>
+                            <div id="blogContentEditor">
+                                <div>@Html.Partial("_Editor") </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button id="btnBlogEntryAddEdit" class="roundendButton" onclick="addEditBlogEntry()">Add</button>
+                            <button id="btnBlogEntryNew" class="roundendButton crudBtnNew" onclick="resetBlogPage()">New</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="floatLeft">
+                    <div class="blogContainer">
+                        <div class="crudContainerTitle">Blog Entries</div>
+                        <div id="blogEntryLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+                        <div id="blogEntryList" class="crudList"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div id="rightColumn"></div>
@@ -72,86 +166,261 @@
     var currentUser = '@ViewBag.UserId';
     var blogModel = {};
     blogModel.Owner = currentUser;
+    var blogEntryModel = {};
 
     $(document).ready(function () {
         setLayout("Intelligent Design");
         $('#btnBlogNew').hide();
-        getCurrentBlog();
+        $('#btnBlogEntryNew').hide();
+        loadBlogList();
         $('#footerMessage').append("  service: " + service);
+
+        $('#blogSummaryEditor').summernote({
+            height: 120,
+            width: 850,
+            codemirror: {
+                lineWrapping: true,
+                mode: "htmlmixed",
+                theme: "monokai"
+            },
+            toolbar: [
+                ['codeview'],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontname', 'fontsize']],
+                ['insert', ['picture', 'link', 'video', 'table', 'hr']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height']]
+            ]
+        });
+        $('#blogContentEditor').summernote({
+            height: 290,
+            width: 850,
+            codemirror: {
+                lineWrapping: true,
+                mode: "htmlmixed",
+                theme: "monokai"
+            },
+            toolbar: [
+                ['codeview'],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontname', 'fontsize']],
+                ['insert', ['picture', 'link', 'video', 'table', 'hr']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height']]
+            ]
+        });
     });
 
     //only call me if you have an offer
     // remember my conditions
     // remember the terms. Work from home only unless travel paid for //by those
     //alert("getArticleList()")
-
     // on block click an entire other new editor.  really! Why?
     //just to try out different formats
 
-    function getCurrentBlog() {
-        loadCurrentBlogElementsIntoBlocks();
-    }
-    function loadCurrentBlogElementsIntoBlocks() {
-    }
     function loadBlocksDisplay() {
-        //$('#blogList').append("<div class='blockContainer' id='" + obj.ArticleId + "'>" + obj.Title + "</div>");
+        try {
+            $.ajax({
+                type: "GET",
+                url: service + "/api/BlogEntry",
+                success: function (response) {
+                    $('#blockDisplayArea').html("");
+                    $.each(response, function (idx, obj) {
+
+                        //switch (obj.BlogName) {
+                        //    default:
+                        //}
+
+                        $('#blockDisplayArea').append("<div id=" + obj.Id + " class='blockContainer'><div class='blockContainerBlogName'>" +
+                            obj.BlogName + "</div><div class='blockContainerBlogTitle'>" + obj.Title + "</div></div>");
+                    })
+
+                    $('.blockContainer').click(function () {
+                        loadBlogView($(this).attr("id"));
+                    });
+
+
+                },
+                error: function (jqXHR, exception) {
+                    $('#blogEntryLoadingGif').hide();
+                    alert("loadBlocksDisplay XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            $('#blogEntryLoadingGif').hide();
+            alert("loadBlocksDisplay CATCH: " + e)
+        }
     }
+    function loadBlogView(id) {
+        try {
+            //$('#blogEntryLoadingGif').show();
+            $.ajax({
+                type: "GET",
+                url: service + "/api/BlogEntry/GetOne?Id=" + id,
+                success: function (response) {
+                    if (!response.Title.startsWith("ERROR")) {
+                        blogEntryModel.Id = id;
+                        $('#blogViewTitle').html(response.Title);
+                        $('#blogViewSummary').html(response.Summary);
+                        $('#blogViewContent').html(response.Content);
+                        //$('#blogEntryLoadingGif').hide();
+                        $('.blogSpaSection').hide();
+                        $('#blogView').show();
+                    }
+                    else {
+                        //$('#blogEntryLoadingGif').hide();
+                        alert("loadBlogView: " + success)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    //$('#blogEntryLoadingGif').hide();
+                    alert("loadBlogView XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            //$('#blogEntryLoadingGif').hide();
+            alert("get loadBlogView CATCH: " + e)
+        }
+    }
+    function showEditor() {
+        $('.blogSpaSection').hide();
+        $('#blogEntryEditor').show();
+        loadBlogEntryEditor(blogEntryModel.Id);
+    }
+    function setCurrentBlog() {
+        blogEntryModel.BlogId = $('#ddBlogs').val();
+        loadBlogEntryList();
+        resetBlogPage();
+    }
+    function resetBlogPage() {
+        $('#btnBlogEntryNew').hide();
+        $('#btnBlogEntryAddEdit').html("Add");
+        $('#txtBlogEntryTitle').val("");
+        $('#blogSummaryEditor').summernote('code', "");
+        $('#blogContentEditor').summernote('code', "");
+    }
+
+    function addEditBlogEntry() {
+        blogEntryModel.BlogId = $('#ddBlogs').val();
+        blogEntryModel.Title = $('#txtBlogEntryTitle').val();
+        blogEntryModel.Content = $('#blogContentEditor').summernote('code');
+        blogEntryModel.Summary = $('#blogSummaryEditor').summernote('code');
+        if ($('#btnBlogEntryAddEdit').html() == "Add") {
+            $.ajax({
+                type: "POST",
+                url: service + "/api/BlogEntry",
+                data: blogEntryModel,
+                success: function (response) {
+                    if (!response.startsWith("ERROR")) {
+                        $('#btnBlogEntryAddEdit').html("Update");
+                        $('#btnBlogEntryNew').show();
+                        blogEntryModel.Id = response;
+                        loadBlogEntryList();
+                    }
+                    else
+                        alert("AddEditBlog POST: " + response);
+                },
+                error: function (jqXHR, exception) {
+                    alert("AddEditBlog POST xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            })
+        }
+        if ($('#btnBlogEntryAddEdit').html() == "Update") {
+            $.ajax({
+                type: "PUT",
+                url: service + "/api/BlogEntry",
+                data: blogEntryModel,
+                success: function (success) {
+                    if (success == "ok") {
+                        displayStatusMessage("ok", "blog entry saved");
+                        loadBlogEntryList();
+                    }
+                    else
+                        alert("AddEditBlogEntry PUT: " + success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("AddEditBlogEntry PUT xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            })
+        }
+    }
+    function loadBlogEntryList() {
+        try {
+            $('#blogEntryLoadingGif').show();
+            $.ajax({
+                type: "GET",
+                url: service + "/api/BlogEntry/GetMany?blogId=" + blogEntryModel.BlogId + "&kludge=kludge",
+                success: function (response) {
+                    $('#blogEntryList').html("");
+                    if (true) {
+                        $.each(response, function (idx, obj) {
+                            $('#blogEntryList').append("<div class='crudListItem blogEntryListItem' id='" + obj.Id + "'>" + obj.Title + "</div>");
+                        })
+                        $('.blogEntryListItem').click(function () {
+                            loadBlogEntryEditor($(this).attr("id"))
+                        });
+                        $('#blogEntryLoadingGif').hide();
+                    }
+                    else {
+                        $('#blogEntryLoadingGif').hide();
+                        alert("loadBlogEntryList: " + success)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    $('#blogEntryLoadingGif').hide();
+                    alert("loadBlogEntryList XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            $('#blogEntryLoadingGif').hide();
+            alert("get BlogList CATCH: " + e)
+        }
+    }
+    function loadBlogEntryEditor(id) {
+        try {
+            $('#blogEntryLoadingGif').show();
+            $.ajax({
+                type: "GET",
+                url: service + "/api/BlogEntry/GetOne?Id=" + id,
+                success: function (response) {
+                    if (!response.Title.startsWith("ERROR")) {
+                        blogEntryModel.Id = id;
+                        blogModel.Id = response.BlogId;
+                        $('#ddBlogs').val(response.BlogId);
+                        $('#txtBlogEntryTitle').val(response.Title);
+                        $('#blogSummaryEditor').summernote('code', response.Summary);
+                        $('#blogContentEditor').summernote('code', response.Content);
+                        $('#btnBlogEntryAddEdit').html("Update");
+                        $('#btnBlogEntryNew').show();
+                        $('#blogEntryLoadingGif').hide();
+                    }
+                    else {
+                        $('#blogEntryLoadingGif').hide();
+                        alert("getBlogList: " + success)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    $('#blogEntryLoadingGif').hide();
+                    alert("getBlogList XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            $('#blogEntryLoadingGif').hide();
+            alert("get BlogList CATCH: " + e)
+        }
+    }
+
     function toggleBlog() {
         $('#btnBlogNew').hide();
         $('#btnBlogAddEdit').html("Add");
         $('#txtBlogName').val("");
     }
-    function loadBlogList() {
-        try {
-            $('#blogLoadingGif').show();
-            $.ajax({
-                type: "GET",
-                url: service + "/api/Blog",
-                success: function (response) {
-                    $('#blogList').html("");
-                    if (true) {
-                        $.each(response, function (idx, obj) {
-                            $('#blogList').append("<div class='crudListItem blogListItem' id='" + obj.Id + "' name='" + obj.Name + "'>" + obj.Name + "</div>");
-                        })
-                        $('#loadingGif').hide();
-                        $('.blogListItem').click(function () {
-                            //alert("this.id: " + $(this).attr("id"));
-                            blogModel.Id = $(this).attr("id");
-                            $('#txtBlogName').val($(this).attr("name"));
-                            $('#btnBlogAddEdit').html("Update");
-                            $('#btnBlogNew').show();
-                        });
-                        $('#blogLoadingGif').hide();
-                    }
-                    else {
-                        $('#blogLoadingGif').hide();
-                        alert("getBlogList: " + success)
-                    }
-                },
-                error: function (jqXHR, exception) {
-                    $('#blogLoadingGif').hide();
-                    alert("getBlogList XHR error: " + getXHRErrorDetails(jqXHR, exception));
-                }
-            });
-        } catch (e) {
-            $('#blogLoadingGif').hide();
-            alert("get BlogList CATCH: " + e)
-        }
-    }
-    function AddEditBlog() {
-
-    //public class BlogModel {
-    //    public BlogModel() {
-    //        Entries = new List<BlogEntryModel>();
-    //    }
-    //    public string Id { get; set; }
-    //    public string Name { get; set; }
-    //    public string Owner { get; set; }
-    //    public List < BlogEntryModel > Entries { get; set; }
-    //}
-
+    function addEditBlog() {
         blogModel.Name = $('#txtBlogName').val();
-
         if ($('#btnBlogAddEdit').html() == "Add") {
             $.ajax({
                 type: "POST",
@@ -176,7 +445,7 @@
             $.ajax({
                 type: "PUT",
                 url: service + "/api/Blog",
-                data: $('#txtBlogName').val(),
+                data: blogModel,
                 success: function (success) {
                     if (success=="ok") {
                         loadBlogList();
@@ -188,6 +457,45 @@
                     alert("AddEditBlog PUT xhr error: " + getXHRErrorDetails(jqXHR, exception));
                 }
             })
+        }
+    }
+    function loadBlogList() {
+        try {
+            $('#blogLoadingGif').show();
+            $.ajax({
+                type: "GET",
+                url: service + "/api/Blog",
+                success: function (response) {
+                    $('#blogList').html("");
+                    $('#ddBlogs').html("");
+                    if (true) {
+                        $.each(response, function (idx, obj) {
+                            $('#blogList').append("<div class='crudListItem blogListItem' id='" + obj.Id + "' name='" + obj.Name + "'>" + obj.Name + "</div>");
+                            $('#ddBlogs').append("<option class='ddOption' value='" + obj.Id + "'>" + obj.Name + "</option>");
+                        })
+                        blogEntryModel.BlogId = $('#ddBlogs').val();
+                        $('.blogListItem').click(function () {
+                            //alert("this.id: " + $(this).attr("id"));
+                            blogModel.Id = $(this).attr("id");
+                            $('#txtBlogName').val($(this).attr("name"));
+                            $('#btnBlogAddEdit').html("Update");
+                            $('#btnBlogNew').show();
+                        });
+                        $('#blogLoadingGif').hide();
+                    }
+                    else {
+                        $('#blogLoadingGif').hide();
+                        alert("getBlogList: " + success)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    $('#blogLoadingGif').hide();
+                    alert("getBlogList XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            $('#blogLoadingGif').hide();
+            alert("get BlogList CATCH: " + e)
         }
     }
 

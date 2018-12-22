@@ -99,10 +99,6 @@ namespace Brucheum
             return View();
         }
 
-        //public class HtmlModel {
-        //    public string html { get; set; }
-        //}
-
         [HttpPost]
         public JsonResult CreateStaticFile(staticPageModel staticPage)
         {
@@ -110,9 +106,6 @@ namespace Brucheum
             try
             {
                 string filePath = Server.MapPath("~/Static_Pages");
-                //string html = Request.     .RequestContext.HttpContext.CurrentHandler.   .Content.ReadAsStringAsync().Result;
-                //string fileName = html.Substring(html.IndexOf("divTitle") + 10, 500);
-                //fileName = filePath + "/" + fileName.Substring(0, fileName.IndexOf("</div>")).Replace(" ", "_") + ".html";
                 using (var staticFile = System.IO.File.Open(filePath + "/" + staticPage.filename, FileMode.OpenOrCreate))
                 {
                     Byte[] byteArray = Encoding.ASCII.GetBytes(staticPage.html);

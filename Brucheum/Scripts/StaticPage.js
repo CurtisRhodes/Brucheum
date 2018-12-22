@@ -1,6 +1,4 @@
-﻿/// <reference path="3rd party/jquery.min.js" />
-
-function saveAsStaticFile(thisArticle) {
+﻿function saveAsStaticFile(thisArticle) {
     var strWebPage = "<!DOCTYPE html>";
     strWebPage += "<html>";
     strWebPage += staticPageMetaHead(thisArticle);
@@ -97,7 +95,7 @@ function staticPageBody(thisArticle) {
             fjs.parentNode.insertBefore(js, fjs);
           }(document, 'script', 'facebook-jssdk'));</script>
         <div id='leftColumn'>
-            <div class="fb-share-button staticFaceBookButton" data-href="https://Curtisrhodes.com/static_pages/"` + thisArticle.Title.replace(/ /g, "_") + `" data-layout="button_count"></div>
+            <div class="fb-share-button staticFaceBookButton" data-href="https://Curtisrhodes.com/static_pages/"` + thisArticle.Title.replace(/ /g, "_") + `.html " data-layout="button_count"></div>
         </div>
         <div id='middleColumn'>
             <div class='pollybox30'>

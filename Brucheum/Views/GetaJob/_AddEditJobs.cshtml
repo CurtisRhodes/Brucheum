@@ -1,6 +1,5 @@
 ﻿
 <style>
-    /*summernote*/
     #txtCompany {
         width: 350px;
     }
@@ -42,7 +41,6 @@
 <div class="flexContainer">
     <div class="floatLeft">
         <div id="addEditJobContainer" class="crudContainer">
-            <div id="divStatusMessage"></div>
             <div id="crudContainerTitle" class="crudContainerTitle">Add A Lost Job</div>
             <div class="crudArea">
                 <div id="errSummary" class="validationError"></div>
@@ -83,6 +81,7 @@
                     <div id="editorLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
                 </div>
                 <div>
+                    <div id="divStatusMessage"></div>
                     <button id="btnJobAddEdit" class="roundendButton" onclick="medeiateJobAddEditButton()">Add</button>
                     <button id="btnJobNew" class="roundendButton crudBtnNew" onclick="mediateJobNewButton()">New</button>
                 </div>

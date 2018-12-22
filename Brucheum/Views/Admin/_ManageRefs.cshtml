@@ -1,9 +1,22 @@
 ﻿
-<div class="adminContainer">
-    <div class="adminOptionTitle">Add Edit Refs</div>
-    <div class="selectedUerContainer">
+<style>
+    .crudRefsContainer {
+    min-width: 500px;
+    }
+    .roundendButton {
+        display: inline-block;
+    }
+</style>
+
+
+<div class="crudContainer crudRefsContainer">
+    <div class="crudContainerTitle">Add Edit Refs</div>
+    <div class="flexContainer">
         <label>Ref Type:</label>
-        <div><select id="ddRefs" class="crudDropDown"></select></div>
+        <div>
+             <img id="refLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
+             <select id="ddRefs" class="crudDropDown"></select>
+        </div>
     </div>
     <div>
         <label>Ref Name:</label>
@@ -11,151 +24,156 @@
         <div class="roundendButton" id="btnAddUpdateRef">Add</div>
         <div class="roundendButton" id="btnRefToggle">New</div>
     </div>
-    <div class="itemsList" id="divRefList"></div>
+    <div class="crudItemsList" id="divRefList"></div>
 </div>
-    <script>
-        var refModel = new Object();
-        var selectedRefType;
 
-        function setRefsInititalState() {
-            selectedRefType = "";
-            $('#btnRefToggle').hide();
-            $('#txtRefName').prop('readonly', true);
-            if ($('#divRefList').html() == "")
-                loadRefTypesDD();
+<script>
+    var refModel = new Object();
+    var selectedRefType;
+
+    function setRefsInititalState() {
+        selectedRefType = "";
+        $('#btnRefToggle').hide();
+        $('#txtRefName').prop('readonly', true);
+        if ($('#divRefList').html() == "")
+            loadRefTypesDD();
+    }
+
+    $('#btnAddUpdateRef').click(function () {
+        if ($(this).text() === "Add")
+            addRef();
+        else
+            updateRef();
+    });
+
+    $('#btnRefToggle').click(function () {
+        $('#btnAddUpdateRef').text("Add");
+        $(this).hide();
+    });
+
+    function loadRefTypesDD() {
+        $('#refLoadingGif').show();
+        try {
+            $.ajax({
+                type: "GET",
+                dataType: "Json",
+                url: service + "/api/Ref/Get?refType=000",
+                success: function (result) {
+                    $('#ddRefs').html("<option class= 'ddOption' value ='0'>-- select a ref type --</option >");
+                    $.each(result, function (idx, obj) {
+                        $('#ddRefs').append("<option class='ddOption' value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
+                    });
+
+                    $('#ddRefs').change(function () {
+                        selectedRefType = $('#ddRefs option:selected').attr("value")
+                        getRefs($('#ddRefs option:selected').val());
+                    });
+
+                    $('#refLoadingGif').hide();
+                },
+                error: function (jqXHR, exception) {
+                    $('#refLoadingGif').hide();
+                    alert("loadRefTypesDD xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                },
+            });
+        } catch (e) {
+            $('#refLoadingGif').hide();
+            //displayStatusMessage("error", "catch ERROR: " + e);
+            alert("loadRefTypesDD catch: " + e);
         }
+    }
 
-        $('#btnAddUpdateRef').click(function () {
-            if ($(this).text() === "Add")
-                addRef();
-            else
-                updateRef();
-        });
+    function getRefs(refType) {
+        try {
+            $.ajax({
+                type: "GET",
+                dataType: "Json",
+                url: service + "/api/Ref/Get?refType=" + refType,
+                success: function (result) {
+                    $('#divRefList').html("<ul>");
+                    $.each(result, function (idx, obj) {
+                        $('#divRefList').append("<li  id='" + obj.RefCode + "'>" + obj.RefDescription + "</li>");
+                    });
+                    $('#divRefList').append("</ul>");
+                    $('#txtRefName').prop('readonly', false);
 
-        $('#btnRefToggle').click(function () {
-            $('#btnAddUpdateRef').text("Add");
-            $(this).hide();
-        });
-
-        function loadRefTypesDD() {
-            try {
-                $.ajax({
-                    type: "GET",
-                    dataType: "Json",
-                    url: service + "/api/Ref/Get?refType=000",
-                    success: function (result) {
-                        $('#ddRefs').html("<option class= 'ddOption' value ='0'>-- select a ref type --</option >");
-                        $.each(result, function (idx, obj) {
-                            $('#ddRefs').append("<option class='ddOption' value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
-                        });
-
-                        $('#ddRefs').change(function () {
-                            selectedRefType = $('#ddRefs option:selected').attr("value")
-                            getRefs($('#ddRefs option:selected').val());
-                        });
-
-                    },
-                    error: function (jqXHR, exception) {
-                        alert("loadRefTypesDD xhr error: " + getXHRErrorDetails(jqXHR, exception));
-                    },
-                });
-            } catch (e) {
-                //displayStatusMessage("error", "catch ERROR: " + e);
-                alert("loadRefTypesDD catch: " + e);
-            }
+                    $('#divRefList li').click(function () {
+                        refModel.RefCode = $(this).attr('id');
+                        $('#txtRefName').val($(this).html());
+                        $('#btnAddUpdateRef').text("Update");
+                        $('#btnRefToggle').show();
+                    });
+                },
+                error: function (jqXHR, exception) {
+                    alert("GetRefs error: " + getXHRErrorDetails(jqXHR, exception));
+                },
+            });
+        } catch (e) {
+            //displayStatusMessage("error", "catch ERROR: " +e);
+            alert("GetRefs catch: " + e);
         }
+    }
 
-        function getRefs(refType) {
-            try {
-                $.ajax({
-                    type: "GET",
-                    dataType: "Json",
-                    url: service + "/api/Ref/Get?refType=" + refType,
-                    success: function (result) {
-                        $('#divRefList').html("<ul>");
-                        $.each(result, function (idx, obj) {
-                            $('#divRefList').append("<li  id='" + obj.RefCode + "'>" + obj.RefDescription + "</li>");
-                        });
-                        $('#divRefList').append("</ul>");
-                        $('#txtRefName').prop('readonly', false);
-
-                        $('#divRefList li').click(function () {
-                            refModel.RefCode = $(this).attr('id');
-                            $('#txtRefName').val($(this).html());
-                            $('#btnAddUpdateRef').text("Update");
-                            $('#btnRefToggle').show();
-                        });
-                    },
-                    error: function (jqXHR, exception) {
-                        alert("GetRefs error: " + getXHRErrorDetails(jqXHR, exception));
-                    },
-                });
-            } catch (e) {
-                //displayStatusMessage("error", "catch ERROR: " +e);
-                alert("GetRefs catch: " + e);
-            }
+    function addRef() {
+        refModel.refType = selectedRefType;
+        refModel.refDescription = $('#txtRefName').val();
+        try {
+            $.ajax({
+                type: "POST",
+                url: service + "/api/Ref",
+                dataType: "Json",
+                data: refModel,
+                success: function (result) {
+                    if (result.Success.toUpperCase() == "OK") {
+                        displayStatusMessage("ok", $('#txtRefName').val() + " Added");
+                        $('#txtRefName').val("");
+                        $('#btnAddUpdateRef').text("Add");
+                        $('#btnRefToggle').hide();
+                        getRefs(selectedRefType);
+                    }
+                    else {
+                        alert("Post ref error :" + result.Success);
+                        //displayStatusMessage("error", "xhr ERROR: " + success);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    //displayStatusMessage("error", "AddRole error: " + getXHRErrorDetails(jqXHR, exception));
+                    alert("Post ref xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
         }
+        catch (e) {
+            alert("Post ref catch: " + e);
+        }
+    }
 
-        function addRef() {
-            refModel.refType = selectedRefType;
+    function updateRef() {
+        try {
             refModel.refDescription = $('#txtRefName').val();
-            try {
-                $.ajax({
-                    type: "POST",
-                    url: service + "/api/Ref",
-                    dataType: "Json",
-                    data: refModel,
-                    success: function (result) {
-                        if (result.Success.toUpperCase() == "OK") {
-                            displayStatusMessage("ok", $('#txtRefName').val() + " Added");
-                            $('#txtRefName').val("");
-                            $('#btnAddUpdateRef').text("Add");
-                            $('#btnRefToggle').hide();
-                            getRefs(selectedRefType);
-                        }
-                        else {
-                            alert("Post ref error :" + result.Success);
-                            //displayStatusMessage("error", "xhr ERROR: " + success);
-                        }
-                    },
-                    error: function (jqXHR, exception) {
-                        //displayStatusMessage("error", "AddRole error: " + getXHRErrorDetails(jqXHR, exception));
-                        alert("Post ref xhr error: " + getXHRErrorDetails(jqXHR, exception));
+            $.ajax({
+                type: "PUT",
+                url: service + "/api/ref",
+                data: refModel,
+                success: function (success) {
+                    if (success === "ok") {
+                        displayStatusMessage("ok", $('#txtRefName').val() + "Updated");
+                        $('#txtRefName').val("");
+                        $('#btnAddUpdateRef').text("Add");
+                        $('#btnRefToggle').hide();
+                        getRefs(selectedRefType);
                     }
-                });
-            }
-            catch (e) {
-                alert("Post ref catch: " + e);
-            }
+                    else
+                        displayStatusMessage("error", "server ERROR: " + success);
+                },
+                error: function (xhr) {
+                    displayStatusMessage("error", "error: " + xhr.statusText);
+                    //alert("Admin Refs PUT error: " + xhr.statusText);
+                }
+            });
         }
-
-        function updateRef() {
-            try {
-                refModel.refDescription = $('#txtRefName').val();
-                $.ajax({
-                    type: "PUT",
-                    url: service + "/api/ref",
-                    data: refModel,
-                    success: function (success) {
-                        if (success === "ok") {
-                            displayStatusMessage("ok", $('#txtRefName').val() + "Updated");
-                            $('#txtRefName').val("");
-                            $('#btnAddUpdateRef').text("Add");
-                            $('#btnRefToggle').hide();
-                            getRefs(selectedRefType);
-                        }
-                        else
-                            displayStatusMessage("error", "server ERROR: " + success);
-                    },
-                    error: function (xhr) {
-                        displayStatusMessage("error", "error: " + xhr.statusText);
-                        //alert("Admin Refs PUT error: " + xhr.statusText);
-                    }
-                });
-            }
-            catch (e) {
-                displayStatusMessage("error", "catch ERROR: " + e);
-            }
+        catch (e) {
+            displayStatusMessage("error", "catch ERROR: " + e);
         }
+    }
+</script>
 
-    </script>

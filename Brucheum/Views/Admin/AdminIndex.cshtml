@@ -1,35 +1,24 @@
 ﻿@{
     ViewBag.Title = "Admin";
 }
-<link href="~/Styles/admin.css" rel="stylesheet" />
+
 <link href="~/Styles/crudEdit.css" rel="stylesheet" />
 
-<style>
-    .adminContainer {
-        width: 455px;
-        margin-left: 33px;
-        border: solid 1px purple;
-        border-radius: 4px;
-    }
-
+@*<style>
     .roundendButton {
         width: 111px;
         display: inline-block;
     }
-
-    .adminOptionTitle {
-        background-color: #74bac3;
-    }
-</style>
+</style>*@
 
 <div class="threeColumnArray">
     <div id="leftColumn">
         <div class="vertMenu">
-            <div class="vertMenuTab" id="optAddArticle">Add Articles</div>
+            @*<div class="vertMenuTab" id="optAddArticle">Add Articles</div>*@
             <div class="vertMenuTab" id="optAddRoles">Add Roles</div>
             <div class="vertMenuTab" id="optAssignRoles">Assign Roles</div>
             <div class="vertMenuTab" id="optRefEditor">Ref Editor</div>
-            <div class="vertMenuTab" id="optArticleClass"> Article Classifications</div>
+            @*<div class="vertMenuTab" id="optArticleClass"> Article Classifications</div>*@
             <div class="vertMenuTab" id="optShowSiteStats">Show Site Stats</div>
         </div>
     </div>
@@ -62,6 +51,8 @@
 <script>
     var service = '@ViewBag.Service';
 
+    setLayout('Admin');
+
     $(document).ready(function () {
         $('.vertMenuTab').mouseout(function () {
             $(this).css('background-color', '#74bac3').css('color', '#000');
@@ -69,24 +60,7 @@
         $('.vertMenuTab').mouseover(function () {
             $(this).css('background-color', '#4163aa').css('color', '#e4e4e4');
         });
-        setAdminLayout();
     });
-
-    setLayout('Admin');
-
-    //function setAdminLayout() {
-    //    $('#bheader').css("background-color","#c64e4e");
-
-    //    $('#bannerTitle').html("Intelligent Design.Admin");
-    //    $('#menuContainer').html(
-    //        `<div class="menuTab floatLeft"><a href="~/Article/ArticleList">Directory</a></div>
-    //         <div class="menuTab floatLeft"><a href="/GetaJob/GetaJobAdmin">GetaJob</a></div>
-    //         <div class="menuTab floatLeft"><a href="~/Article/ArticleList">Refs</a></div>
-    //         <div class="menuTab floatLeft"><a href="~/~/Article/ArticleList">Articles</a></div>
-    //         <div class="menuTab floatLeft"><a href="/Home/Apps">Apps</a></div>
-    //         <div class="menuTab floatLeft"><a href="/IntelDsgn/Index">Intelligent Design</a></div>`);
-    //}
-
 
     // Articles
     $("#optAddArticle").click(function () {

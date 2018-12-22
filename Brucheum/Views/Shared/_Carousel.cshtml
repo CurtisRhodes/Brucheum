@@ -60,7 +60,7 @@
         position: absolute;
         display: inline-block;
         color: #fff;
-        background-color: rgba(0, 0, 0, 0.3);
+        background-color: rgba(0, 0, 0, 0.5);
         border-radius: 5px;
         padding: 3px;
         font-size: 22px;
@@ -74,9 +74,9 @@
     <div id="articleImage" class="carouselContainer">
         <div class='carouselItem'>
             <img id="carouselLoadingGif" class="animatedGears" src="~/Images/ingranaggi3.gif" />
-            <img class='carouselImage' src="~/Images/house.gif" />
+            @*<img class='carouselImage' src="~/Images/house.gif" />
             <div id='articleTitle' class='carouselLabel'>article.Title</div>
-            <div id='articleCat' class='carouselLabel'>article.Category</div>
+            <div id='articleCat' class='carouselLabel'>article.Category</div>*@
         </div>
     </div>
     <img id="rightFbutton" class="fbutton" src="~/Images/blueCircleRight.png" onclick="clickNext()" />
@@ -106,13 +106,15 @@
 
     function adjustCarousel() {
         $('.carouselImage').height($('#articleImage').height());
-        var x = $('#articleImage').position().top;
-        var y = $('#articleImage').position().left; //- ;
-        $('#articleTitle').css('top', $('.carouselItem').position().top + $('.carouselItem').height() - 40);
-        $('#articleTitle').css('left', $('.carouselItem').position().left + 5);
+        //var x = $('#articleImage').position().top;
+        //var y = $('#articleImage').position().left;
 
-        //$('#articleCat').css('top', $('.carouselItem').position().top + 30);
-        $('#articleCat').css('left', $('.carouselItem').position().left + $('.carouselItem').width() - $('#articleCat').width() - 10);
+        //$('#articleTitle').css('left', $('.carouselItem').position().left + $('.carouselItem').width() - $('#articleCat').width() - 10);
+        $('#articleTitle').css('left', $('.carouselItem').position().left + 10);
+
+        $('#articleCat').css('top', $('.carouselItem').position().top + $('.carouselItem').height() - 40);
+        //$('#articleCat').css('right', y + $('#articleImage').width());
+        $('#articleCat').css('right', $('.carouselItem').position().left - 100);
     }
 
     function rotate() {
@@ -176,7 +178,7 @@
                 <div class='carouselItem' id='`+ article.Id + `' >
                     <img class='carouselImage' src=` + imgSrc + `>
                     <div id='articleTitle' class='carouselLabel'>` + article.Title + `</div>
-                    <div id='articleCat'   class='carouselLabel'> ` + article.CategoryLabel + `</div>
+                    <div id='articleCat'   class='carouselLabel'> ` + article.CategoryLabel.trim() + `</div>
                 </div>`);
         } catch (e) {
             alert("formatArticleJog error: " + e);

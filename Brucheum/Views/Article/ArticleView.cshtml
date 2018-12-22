@@ -54,6 +54,7 @@
     var filePath = '@ViewBag.FilePath';
     var ipAddress = '@ViewBag.IpAddress';
     var thisArticle = {};
+    var hitSession = "";
 
     $(document).ready(function () {
         thisArticle.Id = articleId;
@@ -71,19 +72,18 @@
                 success: function (article) {
                     if (article.Success == "ok") {
                         thisArticle = article;
-                        $('#divImage').attr("src", service + "/App_Data/Images/" + article.ImageName);
+                        $('#divImage').attr("src", "https://api.curtisrhodes.com" + "/App_Data/Images/" + article.ImageName);
                         $('#divCategory').html(thisArticle.CategoryLabel);
                         $('#divTitle').html(thisArticle.Title);
                         $('#divArticleDate').html(thisArticle.LastUpdated);
                         $('#divSummary').html(thisArticle.Summary);
-                        $('#divByline').html(thisArticle.ByLineLabel);
-                        $('#divContent').html(beautify(thisArticle.Contents));
+                        $('#divByline').html("by " + thisArticle.ByLineLabel);
+                        $('#divContent').html(thisArticle.Contents);
 
-                        //$.each(article.Tags, function (idx, tag) {
-                        //    thisArticle.TagString += tag.TagName + ",";
-                        //})
+                        hitSession = logPageHit(service, userName, ipAddress, "ViewArticle", article.Title);
 
-                        //logPageHit(webService, userName, ipAddress, "ViewArticle", article.Title);
+                        //var emailSubject = "CONGRATULATIONS: " + loginVM.UserName + " just logged onto The Brucheum";
+                        //sendEmailFromJS(emailSubject, "someday it will be someone other than you");
 
                         //stickCommentsButton();
                         var mch = $('#middleColumn').height()
@@ -128,7 +128,9 @@
     });
     $(window).unload(function () {
         // log page visit End
-        //logPageHit(service, userName, ipAddress, "ViewArticle", article.Title);
+        if (hitSession !== "") {
+            logPageVisitEnd(hitSession)
+        }
         //alert("page move");
     });
     function gotoArticleEdit() {

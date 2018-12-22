@@ -187,6 +187,7 @@ namespace WebApi
             try
             {
                 var jobSearch = new JobSearch();
+                jobSearch.Id = Guid.NewGuid().ToString();
                 jobSearch.PersonId = searchModel.PersonId;
                 jobSearch.SearchName = searchModel.SearchName;
                 jobSearch.Initiated = DateTime.Parse(searchModel.Initiated);
