@@ -1,0 +1,171 @@
+<!DOCTYPE html><html>
+    <head>
+    <title>How To Build a Left Right Choose Box</title>
+    <link href='/Styles/default.css' rel="stylesheet" />
+    <link href='/Styles/fixedHeader.css' rel="stylesheet" />
+    <link href='/Styles/articleView.css' rel="stylesheet" />
+    <link href="/Styles/footer.css" rel="stylesheet" />
+    <script src='/Scripts/GlobalFunctions.js'></script>
+    <script src="/Scripts/3rd Party/jquery.min.js"></script>
+    <script src='/Scripts/ResizeThreeColumnPage.js'></script>
+    <meta name="Title" content="How To Build a Left Right Choose Box" property="og:title" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://api.curtisrhodes.com/app_data/images/ChooseBox.PNG" />
+    <meta property="og:url" content="https://Curtisrhodes.com/static_pages/How_To_Build_a_Left_Right_Choose_Box.html" />
+    <meta name="Keywords" content="muli select listbox, multiple selected items, HTML multiple select box, many to many dialog, choose dialog, choose box,  /">;
+    <meta property="og:description" content="Article written by an old fat guy no one should listen to" />
+    </head><body>
+    <div class='standardHeader' id='bheader'>
+        <div class='bannerImageContainer' id='divTopLeftLogo'>
+            <a href='/Home/Index'><img class='bannerImage' src='../images/house.gif'></a>
+        </div>
+        <div class='headerBodyContainer'>
+            <div class='headerTitle' id='bannerTitle'>
+                The Brucheum
+            </div>
+        </div>
+    </div>
+    <div class='threeColumnArray'>
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.2&appId=264735744158135&autoLogAppEvents=1';
+            fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));</script>
+        <div id='leftColumn'>
+            <div class="fb-share-button staticFaceBookButton" data-href="/static_pages/How_To_Build_a_Left_Right_Choose_Box.html" data-layout="button" data-size="small" 
+              data-mobile-iframe="true"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fcurtisrhodes.com%2F&amp;src=sdkpreparse" 
+              class="fb-xfbml-parse-ignore">Share</a></div>
+        </div>
+        <div id='middleColumn'>
+            <div class='pollybox30'>
+                <div class='divTopLine'>
+                    <div class='floatLeft'>12/22/2018</div>
+                    <div class='floatRightDiv'>computer programming</div>
+                </div>
+                <div class='articleTitle'>How To Build a Left Right Choose Box</div>
+                <div class='flexContainer'><div class='byline'>Troth</div></div>
+            </div>
+            <div id='contentArea'><div class='articleImageContainer'>
+                <img id="divImage" class="articleCenterImage" src=https://api.curtisrhodes.com/app_data/images/ChooseBox.PNG />
+            </div>
+            <div class='summaryText'>A many to many relationship is where one person can belong to more than one group and a group can contain more than one person. In a database schema you cannot have a foreign key in the person tale that references the group table because it points to only one row where the requirement is that a person can belong to more than one. So what you have to do is add a table called PersonGroup with a multi part key of PersonId plus GroupId. This is a fairly common basic concept of database design. And yet, when I search for this feature I find little. Hopefully I can put this out there with enough meta tags that it will rise to the top when programmers search for such a solution.
+</div>
+            <div class='articleContent'><link href="https://curtisrhodes.com/Styles/code.css" rel="stylesheet">
+<div>
+<p>Perhaps I need a better name for it. I call it a left right choose box but I must be missing a common description. As shown in the banner image, a choose box consists of two columns with list items and a middle column with four arrow icons. From top down the buttons represent Add one, Add all, Remove one, and Remove All. the add and remove options may be applicable in some cases but in general are dangerous and should be disables. The functionality required includes methods to load the list boxes and to add and remove entries in the many to many tables, in this case UserRoles.
+  </p>
+  <div style="margin-right: 32px; margin=bottom: 12px; float: left;">
+<code>
+<div>&lt;<keyword>div</keyword> <cskeyword>class</cskeyword>="crudContainer AssignRolesContainer"&gt;</div>
+<div class="tab1">&lt;<keyword>div</keyword> <cskeyword>class</cskeyword>="crudContainerTitle"&gt;Assign Roles&lt;<keyword>/div</keyword>&gt;</div>
+<div class="tab1">&lt;<keyword>div</keyword> <cskeyword>class</cskeyword>="flexContainer"&gt;</div>
+<div class="tab2">&lt;<keyword>div&gt;</keyword>&gt;&lt;<keyword>select</keyword> <cskeyword>class</cskeyword>="crudDropDown"&gt;&lt;<keyword>/select</keyword>&gt;</div>
+<div class="tab1">&lt;<keyword>/div</keyword>&gt;</div>
+<div class="tab2">&lt;<keyword>div</keyword> <cskeyword>id</cskeyword>="divRolesChoose" <cskeyword>class</cskeyword>"chooseBoxContainer"&gt;</div>
+<div class="tab3">&lt;<keyword>div</keyword> <cskeyword>id</cskeyword>="divChooseAvailable"&gt; <cskeyword>class</cskeyword>="chooseBox floatLeft"&lt;<keyword>/div</keyword>&gt;</div>
+
+<div class="tab3">&lt;<keyword>div</keyword>&gt; <cskeyword>id</cskeyword>="divChooseButtons"<cskeyword>class</cskeyword>="chooseBtnsContainer floatLeft"&gt;</div>
+<div class="tab4">&lt;<keyword>div</keyword>&gt;&lt;<keyword>img</keyword> <cskeyword>id</cskeyword>="imgAdd" <cskeyword>class</cskeyword>="chooseBtn" src="~/Images/IntelDsgn/sglright.jpg"/&gt;&lt;<keyword>/div</keyword>&gt;</div>
+<div class="tab4">&lt;<keyword>div</keyword>&gt;&lt;<keyword>img</keyword> <cskeyword>id</cskeyword>="imgAddAll" <cskeyword>class</cskeyword>="chooseBtn" src="~/Images/IntelDsgn/dblright.jpg"/&gt;<keyword>&lt;/div</keyword>&gt;</div>
+<div class="tab4">&lt;<keyword>div</keyword>&gt;&lt;<keyword>img</keyword> <cskeyword>id</cskeyword>="imgRemove" <cskeyword>class</cskeyword>="chooseBtn" src="~/Images/IntelDsgn/sglleft.jpg"/&gt;&lt;<keyword>/div</keyword>&gt;</div>
+<div class="tab4">&lt;<keyword>div</keyword>&gt;&lt;<keyword>img</keyword> <cskeyword>id</cskeyword>="imgRemoveAll" <cskeyword>class</cskeyword>="chooseBtn" src="~/Images/IntelDsgn/dblleft.jpg"/&gt;&lt;<keyword>/div</keyword>&gt;</div>
+<div class="tab3">&lt;<keyword>/div</keyword>&gt;</div>
+<div class="tab2">&lt;<keyword>div</keyword> <cskeyword>class</cskeyword>="chooseBox floatLeft" id="divChooseAssigned"&gt;&lt;<keyword>/div&gt;</keyword></div>
+<div class="tab1">&lt;<keyword>/div</keyword>&gt;</div>
+<div>&lt;<keyword>/div</keyword>&gt;</div>
+</code>
+</div>  
+  <p>Here is the full extent of the html. Inside a container are three rows; diivChooseAvailable, divChooseButttons, and divChooseAssigned. The rest is handled in JavaScript. The example here being used is assigning roles to users. The data base handling of this is is a special case. I will show in a different article that the data table being affected here is AspUserRoles which is unique to the Asp OAuth Owin authentication system, in this case the authorization system actually. It is a nightmare to try to manipulate these tables programmatically because of cookies or something. It is possible to bugger with the AspUserRoles table in SQL Management Studio but they contain little more than guid keys. The proper way to manipulate the roles table is to set up an ApplicationRoleManager class in a special class called Startup decorated with OwinStartup attribute. I have written a special controller class that exposes RoleManager methods. I will add a link to that article soon.</p>
+  
+  <p>Conceptually when an item in one list is selected to moved to the other list, an add or remove action is performed at the database level and at the display level one list is shortened by one item and the item is added to the other list. Simple. Right? I will show how that is done, but first some other things have to happen.</p><p>The dialog initial state shows no user selected and all the roles are in the left hand list box; the Available items list. Before you do any adding or removing first a User has to be selected. You will notice on top of this dialog there is a &lt;<cskeyword>select</cskeyword>&gt; dropdown where you choose the pivot element of the many-to-many relationship. A onChange() event on the select drop down remembers the selected user in globally scoped (in this page's js script block) variable. A warning message will insist you select a user before you try to add roles.&nbsp;<br></p><p>Before we look at some functionality let me ask you a question. Where would you put the code for this onchange event? It seems a mundane point but it reveals an important principle of JavaScript programming that of course all you smarter than me already know, but is worth pointing out. Where do you put the onclick event for the items in a list box?
+   </p><h4>The Difference between a Compiler and an Interperter</h4>When you press F6 in Visual Studio to "Build" your code is when all the files in the OBJ folder and in the BIN folder are created. Normally only the files that have been touched since the last compile but you can totally blow away these folders and they will be totally rebuilt the next time you build. Sometimes this is a good idea. That's why there's a Clean option on the Build menu. A compiler steps through all your code and it pulls in libraries and references it needs when it needs them to get everything to work. You can put pieces of your code where ever you want and the compiler will try to find them and make sure everything works.&nbsp;</div><div>An Interpreter works differently. An interpreter takes one line of code performs it and moves on to the next line. Obviously, this is a lot simpler. Scripting languages like JavaScript are interpreted code. Visual Studio only can compile you C# server side code. This is why frameworks like Angular are all about setting includes and references in a base module to overcome the step-by-step, top/down behavior of client side script. Understanding how an interpreter works is important if only of better awareness of where to put things. The answer to my question is that you have to place the code for event handlers such as onchange or onclick AFTER the list items has been created. If you have an ajax call that returns the elements for your list and it has a success or callback function, first you populate your list or in the case of a select tag, you append the list items as option tags, in a loop. Only then do you put the code for the event handler. The items you expect to respond to the event handler have to exist first before they can be told to attach the event. As my great uncle Olaf always used to say; Rape, Pillage an THEN burn. Sequence is important. How can you pillage if you've already burnt 
+everything down? Notice that embedded in the onSuccess callback is the onClick code.<br><div style="margin-right: 3px; margin-bottom: 12px; float: right;">
+<code>
+<div></div>
+<div>    <keyword>function</keyword> loadRoles() {</div>
+<div class="tab1"><keyword>try</keyword>{</div>
+<div class="tab2">            // $('#divLoadingGif').show();</div>
+<div class="tab2">            $.ajax({</div>
+<div class="tab3">                type: <strtext>"GET"</strtext>,</div>
+<div class="tab3">                dataType: <strtext>"Json"</strtext>,</div>
+<div class="tab3">                url: <strtext>"/Admin/GetAllRoles"</strtext>,</div>
+<div class="tab3">                success: <keyword>function</keyword> (result) {</div>
+<div class="tab4">                    $(<strtext>'#divChooseAvailable'</strtext>).html("");</div>
+<div class="tab4">                    $.each(result, <keyword>function</keyword> (idx, obj) {</div>
+<div class="tab5">                        $(<strtext>'#divChooseAvailable'</strtext>).append("</div>
+<div class="tab5">                        <strtext>&lt;div class='availableListBoxItem chooseBoxListItem'<br>&nbsp;Id='" + obj.Id + "'&gt;" + obj.Name + "&lt;/div&gt;</strtext>");</div>
+<div class="tab4">                    });</div>
+<div>&nbsp;</div>
+<div class="tab4">                    if (!isNullorUndefined(selectedUserId)) </div>
+<div class="tab5">                        getRolesAssignedToUser(selectedUserId)</div>
+<div>&nbsp;</div>
+<div class="tab4">          		  $(<strtext>'.availableListBoxItem'</strtext>).click(<keyword>function</keyword> () {</div>
+<div class="tab6">                            $(<strtext>'.chooBoxListItem'</strtext>).removeClass(<strtext>"highlightItem"</strtext>);</div>
+<div class="tab5">                        if (isNullorUndefined(selectedName)) {</div>
+<div class="tab6">                            $(<keyword>this</keyword>).addClass(<strtext>"highlightItem"</strtext>);</div>
+<div class="tab6">                            selectedRoleType = <strtext>"Available"</strtext>)</div>
+<div class="tab6">                            selectedRoleName = $(<keyword>this</keyword>).text();</div>
+<div class="tab5">                        }</div>
+<div class="tab5">                        else {</div>
+<div class="tab6">                            <keyword>if</keyword> (selectedRoleName === $(<keyword>this</keyword>).text();) {</div>
+<div class="tab7">                                selectedRoleId = "";</div>
+<div class="tab6">                            }</div>
+<div class="tab6">                            else {</div>
+<div class="tab7">                                $(<keyword>this</keyword>).addClass(<strtext>"highlightItem"</strtext>);</div>
+<div class="tab7">                                selectedRoleType = <strtext>"Available"</strtext>)</div>
+<div class="tab7">                                selectedRoleName = $(<keyword>this</keyword>).text();</div>
+<div class="tab6">                            }</div>
+<div class="tab5">                        }</div>
+<div class="tab4">                    });</div>
+<div class="tab3">                },</div>
+<div class="tab3">                error: <keyword>function</keyword> (jqXHR, exception) {</div>
+<div class="tab4">                    alert(<strtext>"error: "</strtext> + getXHRErrorDetails(jqXHR, exception));</div>
+<div class="tab3">                },</div>
+<div class="tab2">            });</div>
+<div class="tab1">        } catch (e) {</div>
+<div class="tab2">            //displayStatusMessage("error", "catch ERROR: " +e);</div>
+<div class="tab3">		      alert(<strtext>"catch: "</strtext> + e);</div>
+<div class="tab1">}</div>
+<div>}</div>
+</code>
+</div><p><br>The function of loading all items in the left side Available list, and the function of loading of the Assigned items in the right side list are two distinct processes.&nbsp; After debugging and refactoring, as understood from my discussion about the importance of the proper workflow sequence, the most reliable solution is to merge these two functions and ensure that the one function occurs after the other. Notice that in addition to click event, also imbedded in the onSuccess callback of the function that loads all available items is the call to the next function that loads the available roles assigned to a selected user in the other column.<br><br>&nbsp;When you come back from the first database the first thing you do is loop through the result set and append the Role Names into the Available list. This essentially brings into existence, creates the elements. Attaching the call to the onClick() function can now be instantiated. I put the call to the load available next because its ajax call executes asynchronously so it falls right through. But it takes a millionth of a microsecond which is plenty of time in computer time for the available list item to frim up and complete what ever finish up processes that might be involved.</p>
+<h4>The Visual Interface</h4>
+<p>Another thing that has to happen before an item can be added or removed it has to be selected. Selecting this option is the entire purpose of the UI. A left-right choose box is not the only interface possible for handling many-to-many relationships. Cascading dropdown boxes are another popular solution. (I hate to say that I remember before HTML came out with the &lt;select&gt; tag in 1995. We used to build them by hand). Carve them out of stone. The ASP combo box control introduced the multiselect feature. But nothing better visually represents the many-to-many process han a choose box. I have searched the web and you're  not going to    find    a better implementation.<br><br>When a user clicks on an item a visual clue has to be provided. The click event applies to the class; all items of class .avaliableListBoxItem. I like to use different class names for (most) classes which are used only for styling and class names that are used programmatically. The $(this) tag allows us to specify an individual item of the class, the particular one clicked .addClass() gives it out highlight style. Notice that the first line of the function removes the highlight class upon the entire class so which ever item was previously selected is already unhighlighted. There are three states the buttons are tested for. If we are just starting or no items are selected the first if sets the selected item. The selectedRoleType is used to prevent adding when an assigned item from the right column is the selected it or prevents deleting if an item from the left side available column is the selected item. These special case bug trapping features often take up more code and verbose explanation than actual f
+The second if is the special case where the currently already selected item is clicked again. Since the class level command has already reset its style nothing more really has to be done but this visual cue makes the interface seem more intuitive since this seems like the expected behavior.<br></p>
+<p>One more thing. An interesting challenge when dealing with a many-to-many tables is that you often don't have a unique primary key to work with.The AspUserRoles table consists of only two columns; the UserId and the Role Id. So you have to deal with composite keys. This is fine but the way Microsoft OWIN handles it is to rely on the RoleName so I'm sure this must be the right way. There is a probably unique constraint on the Name column in the AspNetRoles table. This article is not about OWIN or authorization roles, but just to point out that managing many-to-many tables can bring up this specific challenge.&nbsp;</p>
+<h4>Functional Behavior</h4>
+<p>This article doesn't show a complete plug in ready to use. It is an example of a design pattern that can be customized but the database calls will have to be replaced. There is more I need to show for a other to get this to work but this is getting tedious. I have been working on this article for two days. I could go on if I felt confident that someone will ever actually look and this maybe I'll finish this article show the styling and the switch case statement for the buttons which makes this thing work. I'm going to push this much up. If anyone shows any interest I will happily reply.</p><p>Curtis Rhodes</p>
+
+</div></div>
+        </div>
+    <footer>
+        <div class="flexContainer">
+            <div class="footerCol">
+                <div><a href="~/Home/Index">Articles</a></div>
+                <div><a href="~/Book/MyBooks">Books</a></div>
+                <div><a href="~/IntelDsgn/Index">Professional</a></div>
+                <div><a href="#">Apps</a></div>
+            </div>
+            <div class="footerCol">
+                <div><a href="#">About us</a></div>
+                <div><a href="mailto:curtishrhodes@hotmail.com">Love Letters</a></div>
+                <div><a href="mailto:curtis,rhodes@gmail.com">Death Threats</a></div>
+                <div><a href="#">Archive</a></div>
+            </div>
+            <div class="footerCol">
+                <div><a href="#">Site Map</a></div>
+                <div><a href="#">Search</a></div>
+                <div><a href="#">Research</a></div>
+                <div><a href="#">Advertize</a></div>
+            </div>
+        </div>
+        <div class="footerFooter">
+            <div id="footerMessage"></div>
+            <div id="copyright">&copy; 2019 <a href="/IntelDsgn/Index">Intelligent Design SoftWare</a></div>
+        </div>
+    </footer>
+        <div id='rightColumn'></div>
+    </div></body></html>

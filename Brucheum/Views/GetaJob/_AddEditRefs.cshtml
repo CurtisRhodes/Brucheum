@@ -4,7 +4,7 @@
     <div class="crudArea">
         <div class="crudRow">
             <div class="crudRowLabel">Ref Type:</div>
-            <select id="ddRefs" class="roundedInput"></select>
+            <select id="ddRefs" class="crudDropDown"></select>
             <div class="crudRowLabel">Ref Name:</div>
             <input id="txtRefName" class="roundedInput" />
         </div>
@@ -20,12 +20,13 @@
     var refModel = new Object();
     var selectedRefType;
 
-    function gajRefsInititalize() {
+    function jobRefsInititalize() {
         selectedRefType = "";
         $('#btnRefToggle').hide();
         $('#txtRefName').prop('readonly', true);
-        if ($('#divRefList').html() == "")
+        if ($('#ddRefs').html() == "") {
             loadRefTypesDD();
+        }
     }
 
     $('#btnAddUpdateRef').click(function () {
@@ -37,6 +38,7 @@
 
     $('#btnRefToggle').click(function () {
         $('#btnAddUpdateRef').text("Add");
+        $('#txtRefName').val("");
         $(this).hide();
     });
 
@@ -45,7 +47,7 @@
             $.ajax({
                 type: "GET",
                 dataType: "Json",
-                url: service + "/api/GAJRef/Get?refType=000",
+                url: service + "/api/JobRef/Get?refType=000",
                 success: function (result) {
                     $('#ddRefs').html("<option class= 'ddOption' value ='0'>-- select a ref type --</option >");
                     $.each(result, function (idx, obj) {
@@ -73,7 +75,7 @@
             $.ajax({
                 type: "GET",
                 dataType: "Json",
-                url: service + "/api/GAJRef/Get?refType=" + refType,
+                url: service + "/api/JobRef/Get?refType=" + refType,
                 success: function (result) {
                     $('#divRefList').html("<ul>");
                     $.each(result, function (idx, obj) {
@@ -105,7 +107,7 @@
         try {
             $.ajax({
                 type: "POST",
-                url: service + "/api/GAJRef",
+                url: service + "/api/JobRef",
                 dataType: "Json",
                 data: refModel,
                 success: function (result) {
@@ -137,7 +139,7 @@
             refModel.refDescription = $('#txtRefName').val();
             $.ajax({
                 type: "PUT",
-                url: service + "/api/GAJRef",
+                url: service + "/api/JobRef",
                 data: refModel,
                 success: function (success) {
                     if (success === "ok") {

@@ -44,11 +44,6 @@
 
 }*/
 
-.wide {
-    width: 80%;
-    border: solid thin red;
-}
-
 .editArticleContainer {
     margin-top: 12px;
     display: flex;

@@ -1,18 +1,4 @@
 ﻿<style>
-    #divAgenciesCrudContainer {
-        /*            
-            width: 750px;
-        */
-    }
-
-    .crudRow {
-        padding-left: 22px;
-    }
-
-    .crudDetailRow {
-        display: none;
-    }
-
     .littleCaret {
         height: 15px;
         margin-left: 14px;
@@ -21,18 +7,18 @@
 </style>
 
 <div class="flexContainer">
-    <div class="floatLeft">
-        <div id="divAgenciesCrudContainer" class="crudContainer">
+    <div class="floatLeftFifty">
+        <div id="divAgenciesCrudContainer" class="crudContainer width100">
             <div class="crudContainerTitle">Agency</div>
             <div class="crudRow">
                 <div class="crudRowLabel">Agency:</div>
                 <div id="errSummary" class="validationError"></div>
                 <div id="errCompanyName" class="validationError">Required</div>
                 <input id="txtCompanyName" class="roundedInput wide" />
-                <select id="ddAgencies" class="roundedInput"></select>
+                <select id="ddAgencies" class="crudDropDown"></select>
                 <img id="imgAgencyDetails" class="littleCaret" src="~/Images/caretDown.png" onclick="$('#divAgencyDetails').toggle(); toggleCaret('Agency')" />
             </div>
-            <div id="divAgencyDetails" class="crudDetailRow">
+            <div id="divAgencyDetails" class="hidden">
                 <div class="crudRow">
                     <div class="crudRowLabel">Address:</div>
                     <input id="txtCompanyAddress" class="roundedInput inline" />
@@ -44,6 +30,8 @@
                     <input id="txtAgencyEmail" class="roundedInput inline" />
                     <div class="crudLabel  inline">Phone:</div>
                     <input id="txtAgencyPhone" class="roundedInput inline" />
+                </div>
+                <div class="crudRow">
                     <div class="crudLabel  inline">Website:</div>
                     <input id="txtAgencyWebsite" class="roundedInput" />
                 </div>
@@ -53,7 +41,7 @@
                 <div class="roundendButton inline" id="btnAgencyToggle" onclick="agencyToggle()">New</div>
             </div>
         </div>
-        <div id="divHeadHunters" class="crudContainer">
+        <div id="divHeadHunters" class="crudContainer width100">
             <div class="crudContainerTitle">Agent</div>
             <div class="crudRow">
                 <div class="crudRowLabel">Agent:</div>
@@ -62,32 +50,33 @@
                 <div id="errAgentLName" class="validationError">Required</div>
                 <input id="txtAgentLName" class="roundedInput" />
                 <img id="imgAgentDetails" class="littleCaret" src="~/Images/caretDown.png" onclick="$('#divAgentDetails').toggle(); toggleCaret('Agent')" />
-
             </div>
-            <div id="divAgentDetails" class="crudDetailRow">
+            <div id="divAgentDetails" class="hidden">
                 <div class="crudRow">
                     <div class="crudRowLabel">Email:</div>
                     <input id="txtAgentEmail" class="roundedInput inline" />
                     <div class="crudLabel inline">Office Phone:</div>
                     <input id="txtAgentPhone" class="roundedInput inline" />
+                </div>
+                <div class="crudRow">
                     <div class="crudLabel inline">Mobile:</div>
                     <input id="txtAgentCell" class="roundedInput inline" />
                 </div>
-            </div>
-            <div class="crudRow">
-                <div class="roundendButton inline" id="btnAgentAddEdit" onclick="addEditAgent()">Add</div>
-                <div class="roundendButton inline" id="btnAgentToggle" onclick="agentToggle()">New</div>
+                <div class="crudRow">
+                    <div class="roundendButton inline" id="btnAgentAddEdit" onclick="addEditAgent()">Add</div>
+                    <div class="roundendButton inline" id="btnAgentToggle" onclick="agentToggle()">New</div>
+                </div>
             </div>
         </div>
+        <div id="agentListContainer" class="crudContainer width100">
+            <div class="crudContainerTitle">Agents</div>
+            <div id="divAgentList" class="crudItemsList"></div>
+        </div>
     </div>
-    <div class="floatLeft">
+    <div class="floatLeftFifty">
         <div id="agencyListContainer" class="crudContainer">
             <div class="crudContainerTitle">Agencies</div>
             <div id="divAgencyList" class="crudItemsList"></div>
-        </div>
-        <div id="agentListContainer" class="crudContainer">
-            <div class="crudContainerTitle">Agents</div>
-            <div id="divAgentList" class="crudItemsList"></div>
         </div>
     </div>
 </div>
@@ -115,7 +104,6 @@
                 $('#imgAgentDetails').attr('src', '/Images/caretDown.png');
         }
     }
-
     function agencyToggle() {
         $('#btnAgencyAddEdit').html("Add")
         $('#btnAgencyToggle').hide();
@@ -126,6 +114,8 @@
         $('#txtAgencyEmail').val("");
         $('#txtAgencyPhone').val("");
         $('#txtAgencyWebsite').val("");
+        agentToggle();
+
     }
     function bindAgency() {
         try {
@@ -247,6 +237,7 @@
         $('#txtAgentEmail').val("");
         $('#txtAgentPhone').val("");
         $('#txtAgentCell').val("");
+        $('#divAgentList').html("");
     }
     function bindAgent() {
         agentObject.AgencyId = agencyObject.Id;
@@ -346,9 +337,6 @@
         })
     }
     function loadAgent(id) {
-
-       // alert("loadAgent(id)  id:" + id);
-
         $.ajax({
             type: "GET",
             url: service + "/api/HeadHunter/GetOne?id=" + id,

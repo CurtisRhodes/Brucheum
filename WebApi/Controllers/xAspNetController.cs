@@ -6,10 +6,9 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Results;
-using WebApi.DataContext;
-using WebApi.Models;
+using WebApi.AspNet.DataContext;
 
-namespace WebApi
+namespace WebApi.Asp
 {
     [EnableCors("*", "*", "*")]
     public class xUserController : ApiController
@@ -275,6 +274,13 @@ namespace WebApi
             return success;
         }
     }
+    public class KeyValuePair
+    {
+        public string Key { get; set; }
+        public string Value { get; set; }
+    }
+
+
 
     [EnableCors("*", "*", "*")]
     public class xUserRoleController : ApiController

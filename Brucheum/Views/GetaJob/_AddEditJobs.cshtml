@@ -3,24 +3,11 @@
     #txtCompany {
         width: 350px;
     }
-    #txtLocation {
-        width: 600px;
-    }
-    .note-editable {
-        width: 800px;
-    }
     /*default overrides*/
     .roundedInput {
         margin-bottom: 4px;
         margin-right: 11px;
         display: inline-block;
-    }
-    .editorScriptContainer {
-        width: 765px;
-    }
-    #jobListContainer {
-        max-height: 614.5px;
-        overflow-y: auto;
     }
 
     .jobListItem {
@@ -30,9 +17,6 @@
         padding: 6px 20px;
     }
 
-    .dateSize {
-        width: 50px;
-    }
     .valignMiddle {
         vertical-align: middle;
     }
@@ -49,29 +33,29 @@
                     <div id="errStartMonth" class="validationError">Start Month Required</div>
                     <div class="crudRowLabel">Start</div>
                     <div class="inline alignMiddle">Month</div>
-                    <input id="txtStartMonth" class="roundedInput inline dateSize" />
+                    <input id="txtStartMonth" class="roundedInput inline width50px" />
                     <div class="inline valignMiddle">Year</div>
-                    <input id="txtStartYear" class="roundedInput inline dateSize" />
+                    <input id="txtStartYear" class="roundedInput inline width50px" />
                     <div class="crudRowLabel">Ended</div>
                     <div class="inline valignMiddle">Month</div>
                     <div id="errFiredMonth" class="validationError">Required</div>
-                    <input id="txtFiredMonth" class="roundedInput inline dateSize" />
+                    <input id="txtFiredMonth" class="roundedInput inline width50px" />
                     <div class="inline valignMiddle">Year</div>
                     <div id="errFiredYear" class="validationError">Required</div>
-                    <input id="txtFiredYear" class="roundedInput inline dateSize" />
+                    <input id="txtFiredYear" class="roundedInput inline width50px" />
                 </div>
                 <div class="crudRow">
                     <div class="crudRowLabel">Company</div>
                     <div id="errCompany" class="validationError">Company Required</div>
                     <div id="errJobTitle" class="validationError">Title Required</div>
                     <input id="txtCompany" class="roundedInput" />
-                    <div class="crudRowLabel">Job Title</div>
-                    <input id="txtJobTitle" class="roundedInput" />
                 </div>
                 <div class="crudRow">
-                    <div class="crudRowLabel">Location</div>
+                    <div class="crudRowLabel">Job Title</div>
+                    <input id="txtJobTitle" class="roundedInput inline" />
+                    <div class="crudLabel inline">Location</div>
                     <div id="errLocation" class="validationError">Location Required</div>
-                    <input id="txtLocation" class="roundedInput" />
+                    <input id="txtLocation" class="roundedInput inline" />
                 </div>
                 <div>
                     <div class="crudRowLabel"><input id="radioPublic" type="radio">  Summary  <input id="radioFired" type="radio" >  Secret    </div>
@@ -89,7 +73,7 @@
         </div>
     </div>
     <div class="floatLeft">
-        <div id="jobListContainer" class="crudContainer">
+        <div class="crudContainer">
             <div id="JobListTitle" class="crudContainerTitle">Job List</div>
             <div id="lostJobsLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
             <div id="jobList" class="crudList"></div>
@@ -105,7 +89,11 @@
     $(document).ready(function () {
         $('#jobSummaryEditor').summernote({
             height: 250,
-            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            codemirror: {
+                lineWrapping: true,
+                mode: "htmlmixed",
+                theme: "monokai"
+            },
             toolbar: [
                 ['codeview'],
                 ['style', ['bold', 'italic', 'underline', 'clear']],
@@ -119,7 +107,7 @@
         });
     });
 
-    function gajLostJobsInitialize() {
+    function lostJobsInitialize() {
         if ($('#jobList').html() === "")
             getLostJobs();
         mediateJobNewButton();
@@ -129,7 +117,7 @@
         $('#editorLoadingGif').show();
         $.ajax({
             type: "POST",
-            url: service + "/api/Job",
+            url: service + "/api/LostJob",
             data: jobModel,
             success: function (success) {
                 if (!success.startsWith("ERROR")) {
@@ -154,7 +142,7 @@
         $('#editorLoadingGif').show();
         $.ajax({
             type: "PUT",
-            url: service + "/api/Job",
+            url: service + "/api/LostJob",
             data: jobModel,
             success: function (success) {
                 if (success == "ok") {
@@ -269,7 +257,7 @@
             $('#lostJobsLoadingGif').show();
             $.ajax({
                 type: "GET",
-                url: service + "/api/Job?personId=" + currentUser,
+                url: service + "/api/LostJob?personId=" + currentUser,
                 success: function (response) {
                     if (true) {
                         $('#jobList').html("");
@@ -297,7 +285,7 @@
     function loadJobsEditor(Id) {
         $.ajax({
             type: "GET",
-            url: service + "/api/Job?jobId=" + Id,
+            url: service + "/api/LostJob?jobId=" + Id,
             success: function (response) {
                 if (!response.Summary.startsWith("ERROR")) {
                     //bindJobs(response);

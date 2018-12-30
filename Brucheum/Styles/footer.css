@@ -1,6 +1,8 @@
-﻿#footer {
+﻿
+
+footer {
     margin-top: 4px;
-    box-sizing: border-box;
+    border-top: solid 4px #feb236;
     font-family: Arial;
     background-color: #000;
     color: #eee;
@@ -20,16 +22,21 @@
         text-decoration: none;
         color: #fff;
     }
-#footerFooter {
-    clear: both;
+
+.footerFooter {
+    width:100%;
     background-color: #212121;
     padding-bottom: 2px;
 }
 #footerMessage {
+    display: inline-block;
     padding-left: 12px;
 }
 #copyright {
     display: inline-block;
-    width: 90%;
-    text-align:right;
+    float: right;
+    margin-right: 8px;
 }
+    #copyright a:visited {
+        color: #eee;
+    }

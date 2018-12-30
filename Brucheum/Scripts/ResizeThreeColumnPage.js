@@ -27,7 +27,7 @@ function resizePage() {
     if (mcH + hdrH  < winH) {
         $('#middleColumn').height(winH - hdrH);
         mcH = $('#middleColumn').height();
-        $('#footerMessage').append(" (mcH + hdrH  < winH) ");
+        //$('#footerMessage').append(" (mcH + hdrH  < winH) ");
     }
 }
 

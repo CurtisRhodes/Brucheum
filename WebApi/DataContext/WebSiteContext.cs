@@ -1,4 +1,4 @@
-namespace WebApi.DataContext
+namespace WebApi.WebSite.DataContext
 {
     using System;
     using System.Data.Entity;
@@ -21,6 +21,8 @@ namespace WebApi.DataContext
         public virtual DbSet<ArticleTag> ArticleTags { get; set; }
         public virtual DbSet<Blog> Blogs { get; set; }
         public virtual DbSet<BlogEntry> BlogEntries { get; set; }
+        public virtual DbSet<ToDoList> Lists { get; set; }
+        public virtual DbSet<ListItem> ListItems { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -209,6 +211,7 @@ namespace WebApi.DataContext
 
         public string Id { get; set; }
         public string BlogName { get; set; }
+        public string Color { get; set; }
         public string BlogOwner { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -236,4 +239,56 @@ namespace WebApi.DataContext
 
         public virtual Blog Blog { get; set; }
     }
+
+    [Table("website.List")]
+    public partial class ToDoList
+    {
+        [Required]
+        [StringLength(128)]
+        public string Id { get; set; }
+
+        [StringLength(200)]
+        public string ListName { get; set; }
+
+        public DateTime Created { get; set; }
+
+        [StringLength(128)]
+        public string ListOwner { get; set; }
+    }
+
+    [Table("website.ListItem")]
+    public partial class ListItem
+    {
+        [StringLength(128)]
+        public string ListId { get; set; }
+
+        public string Id { get; set; }
+
+        [StringLength(128)]
+        public string ParentId { get; set; }
+
+        [Required]
+        [StringLength(200)]
+        public string ItemName { get; set; }
+
+        [StringLength(3)]
+        public string ItemPriorityRef { get; set; }
+
+        [StringLength(128)]
+        public string AssignedTo { get; set; }
+
+        [StringLength(50)]
+        public string PercentComplete { get; set; }
+
+        [StringLength(3)]
+        public string ItemStatusRef { get; set; }
+
+        public string Narrative { get; set; }
+
+        public DateTime Created { get; set; }
+
+        public DateTime? DateCompleted { get; set; }
+    }
+
+
 }

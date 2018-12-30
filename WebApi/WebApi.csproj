@@ -160,7 +160,7 @@
     <Compile Include="Controllers\ArticleApiController.cs" />
     <Compile Include="Controllers\ArticleXmlController.cs" />
     <Compile Include="Controllers\BlogApiController.cs" />
-    <Compile Include="Controllers\BookController.cs" />
+    <Compile Include="Controllers\BookXmlController.cs" />
     <Compile Include="Controllers\BookDbController.cs" />
     <Compile Include="Controllers\HitCounterApiController.cs" />
     <Compile Include="Controllers\EmailController.cs" />
@@ -180,6 +180,7 @@
     <Compile Include="DataContext\AspNetContext.cs" />
     <Compile Include="DataContext\BookDbContext.cs" />
     <Compile Include="DataContext\GetaJobContext.cs" />
+    <Compile Include="Models\BlogModels.cs" />
     <Compile Include="Models\ResumeModels.cs" />
     <Compile Include="Models\GetaJobModels.cs" />
     <Compile Include="Models\ArticleModels.cs" />

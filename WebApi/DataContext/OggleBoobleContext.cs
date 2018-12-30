@@ -1,4 +1,4 @@
-namespace WebApi.DataContext
+namespace WebApi.OggleBooble.DataContext
 {
     using System;
     using System.Data.Entity;

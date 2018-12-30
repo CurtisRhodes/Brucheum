@@ -6,20 +6,12 @@ using System.Net.Mail;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Results;
-using WebApi.DataContext;
-using WebApi.Models;
+using WebApi.Articles.Models;
+using WebApi.Home.Models;
+using WebApi.WebSite.DataContext;
 
-namespace WebApi
+namespace WebApi.Home
 {
-
-    public class HitCounterModel
-    {
-        public string IpAddress { get; set; }
-        public string AppName { get; set; }
-        public string PageName { get; set; }
-        public string Details { get; set; }
-    }
-
     [EnableCors("*", "*", "*")]
     public class RefController : ApiController
     {
@@ -224,8 +216,6 @@ namespace WebApi
             return success;
         }
     }
-
-
  
  }
 

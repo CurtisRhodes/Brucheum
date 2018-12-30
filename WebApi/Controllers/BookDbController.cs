@@ -5,9 +5,10 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using WebApi.DataContext;
+using WebApi.Book.DataContext;
+using WebApi.Book.Models;
 
-namespace WebApi
+namespace WebApi.Book
 {
     [EnableCors("*", "*", "*")]
     public class BookDbController : ApiController
@@ -19,7 +20,7 @@ namespace WebApi
             using (var db = new BookDbContext())
             {
                 var dbBooks = db.Books.ToList();
-                foreach (Book book in dbBooks)
+                foreach (DataContext.Book book in dbBooks)
                 {
                     books.Add(new DbBookModel()
                     {
@@ -83,7 +84,7 @@ namespace WebApi
             string success = "";
             using (var db = new BookDbContext())
             {
-                var dbBook = new Book();
+                var dbBook = new DataContext.Book();
                 dbBook.BookTitle = bookModel.BookTitle;
                 dbBook.Author = bookModel.Author;
                 dbBook.Introduction = bookModel.Introduction;

@@ -1,41 +1,55 @@
 ﻿
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link href="~/Styles/JqueryDatePicker.css" rel="stylesheet" />
+
+<style>
+    .ui-datepicker {
+        background-color: #bdbdbd;
+        border: solid thin #808080;        
+    }
+</style>
+
 <div id="divJobListing" class="crudContainer">
     <div class="crudContainerTitle">Job Listings</div>
     <div class="crudRow">
         <div class="crudRowLabel">Active Job Search:</div>
-        <div class="inline" id="currentJobSearch">vv</div>
+        <div class="roundedInput inline" id="currentJobSearch"></div>
     </div>
     <div class="crudRow">
         <div class="crudRowLabel">Posted:</div>
-        <input id="txtPostedDate" class="roundedInput" placeholder="11/11/18" />
+        <input id="txtPostedDate" class="roundedInput" />
         <div class="crudRowLabel">Status:</div>
-        <select id="ddStatus" class="roundedInput"></select>
+        <select id="ddStatus" class="crudDropDown"></select>
     </div>
     <div class="crudRow">
-        <div class="crudRowLabel">Location:</div>
-        <input id="txtLocation" class="roundedInput" />
+        <div class="crudRowLabel">Rate:</div>
+        <input id="txtRate" class="roundedInput width40px" />
         <div class="crudRowLabel">Type:</div>
-        <select id="ddEmploymentType" class="roundedInput"></select>
+        <select id="ddEmploymentType" class="crudDropDown"></select>
         <div class="crudRowLabel">Source:</div>
-        <select id="ddSource" class="roundedInput"></select>
+        <select id="ddSource" class="crudDropDown"></select>
     </div>
     <div class="crudRow">
         <div class="crudRowLabel">Agency:</div>
-        <select id="ddAgency" class="roundedInput"></select>
+        <select id="ddAgency" class="crudDropDown"></select>
         <div class="crudRowLabel">Agent:</div>
-        <select id="ddAgent" class="roundedInput"></select>
+        <select id="ddAgent" class="crudDropDown"></select>
     </div>
     <div class="crudRow">
         <div class="crudRowLabel">Target Employer:</div>
         <input id="txtTargetEmployer" class="roundedInput" />
+        <div class="crudRowLabel">Location:</div>
+        <input id="txtListingLocation" class="roundedInput" />
+        <div class="crudRowLabel">Distance:</div>
+        <input id="txtDistance" class="roundedInput width50px" />
     </div>
     <div class="crudRow">
-        <div class="crudRowLabel">Job:</div>
-        <input id="txtJobTitle" class="roundedInput" placeholder="developer" />
+        <div class="crudRowLabel">Job Title:</div>
+        <input id="txtListingJobTitle" class="roundedInput"  />
         <div class="crudRowLabel">Fit:</div>
-        <select id="ddFit" class="roundedInput"></select>
+        <select id="ddFit" class="crudDropDown"></select>
         <div class="crudRowLabel">Desirability:</div>
-        <select id="ddDesirability" class="roundedInput"></select>
+        <select id="ddDesirability" class="crudDropDown"></select>
     </div>
     <div class="crudArea">
         <div>
@@ -43,79 +57,207 @@
             <div class="roundendButton inline" id="btnJobListingToggle" onclick="JobListingToggle()">New</div>
         </div>
     </div>
-    <div id="JobListingList" class="crudItemsList"></div>
+    <div id="jobListingLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+    <div id="jobListingList" class="crudItemsList"></div>
 </div>
 
 <script>
     var jobListingObject = new Object();
 
-
     $(document).ready(function () {
-
+        $('#txtPostedDate').datepicker();
     });
 
+    function JobListingToggle() {
+        $('#btnJobListingToggle').hide();
+        $('#btnJobListingAddEdit').html("Add");
+        //clear gets
+        $('#txtPostedDate').val("");
+        $('#ddStatus').val("");
+        $('#txtListingLocation').val("");
+        $('#ddEmploymentType').val("");
+        $('#ddSource').val("");
+        $('#ddAgency').val("");
+        $('#ddAgent').val("");
+        $('#txtTargetEmployer').val("");
+        $('#txtListingJobTitle').val("");
+        $('#ddFit').val("");
+        $('#ddDesirability').val("");
+    }
+
     function addEditJobListing() {
-        unBindListing();
+        //  unBindListing;
+        jobListingObject.PostedDate = $('#txtPostedDate').val();
+        jobListingObject.Status = $('#ddStatus').val();
+        jobListingObject.JobSearchId = selectedJobSearch.Id;
+        jobListingObject.Location = $('#txtListingLocation').val();
+        jobListingObject.EmploymentType = $('#ddEmploymentType').val();
+        jobListingObject.ListingSource = $('#ddSource').val();
+        jobListingObject.AgencyId = $('#ddAgency').val();
+        jobListingObject.AgentId = $('#ddAgent').val();
+        jobListingObject.TargetCompanyId = $('#txtTargetEmployer').val();
+        jobListingObject.JobTitle = $('#txtListingJobTitle').val();
+        jobListingObject.Fit = $('#ddFit').val();
+        jobListingObject.Desirability = $('#ddDesirability').val();
+        jobListingObject.JobLocation= $('#txtLocation').val();
+        jobListingObject.Distance = $('#txtDistance').val();
+        jobListingObject.Rate = $('#txtRate').val();
+        
         if ($('#btnJobListingAddEdit').html() == "Add") {
             $.ajax({
                 type: "POST",
                 data: jobListingObject,
                 url: service + "/api/JobListing",
-                success: function (success) {
-
-
+                success: function (response) {
+                    if (!response.startWith("ERROR")) {
+                        jobListingObject.Id = response;
+                        $('#btnJobListingAddEdit').html("Update");
+                        $('#btnJobListingToggle').show();
+                        loadJobListings();
+                    }
+                    else
+                        alert("JobListing POST: " + response);
+                },
+                error: function (jqXHR, exception) {
+                    alert("AddEditBlog POST xhr error: " + getXHRErrorDetails(jqXHR, exception));
                 }
-
             })
         }
         else {
-
-
+            $.ajax({
+                type: "PUT",
+                data: jobListingObject,
+                url: service + "/api/JobListing",
+                success: function (success) {
+                    if (success == "ok") {
+                        displayStatusMessage("ok", "blog entry saved");
+                        loadJobListings();
+}
+                    else
+                        alert("JobListing PUT: " + success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("AddEditBlog POST xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            })
         }
-        //$('#btnJobListingToggle').hide();
-
-    }
-    function bindListing() {
-        $('#txtPostedDate').val();
-        $('#ddStatus').val();
-        $('#txtLocation').val();
-        $('#ddEmploymentType').val();
-        $('#ddSource').val();
-        $('#ddAgency').val();
-        $('#ddAgent').val();
-        $('#txtTargetEmployer').val();
-        $('#txtJobTitle').val();
-        $('#ddFit').val();
-        $('#ddDesirability').val();
     }
 
-    function unBindListing() {
-        jobListingObject.$('#txtPostedDate').val();
-        jobListingObject.ListingStatus=  $('#ddStatus').val();
-        jobListingObject.Location=  $('#txtLocation').val();
-        jobListingObject.EmploymentType = $('#ddEmploymentType').val();
-        jobListingObject.ListingSource = $('#ddSource').val();
-        jobListingObject.AgencyId = $('#ddAgency').val();
-        jobListingObject.AgentId =  $('#ddAgent').val();
-        jobListingObject = $('#txtTargetEmployer').val();
-        jobListingObject.JobTitle = $('#txtJobTitle').val();
-        jobListingObject.Fit = $('#ddFit').val();
-        jobListingObject.Desirability = $('#ddDesirability').val();
+    function loadJobListings() {
+        try {
+            //alert("loadJobListings()  selectedJobSearch.Id: " + selectedJobSearch.Id)
+            $('#jobListingLoadingGif').show();
+            $.ajax({
+                type: "GET",
+                url: service + "/api/JobListing/GetMany?jobSearchId=" + selectedJobSearch.Id + "&kludge=kludge",
+                success: function (response) {
+                    $('#jobListingLoadingGif').hide();
+                    if (response != null) {
+                        $('#jobListingList').html("");
+                        if (   !response[0].Id.startsWith("Error")) {
+
+                            $.each(response, function (idx, obj) {
+                                $('#jobListingList').append("<div class='crudListItem jobListingListItem' id='" + obj.Id + "'>" + obj.PostedDate + " | " + obj.Location + " | " + obj.StatusText + "</div>");
+                            })
+
+                            $('.jobListingListItem').click(function () {
+                                loadJobListingEditor($(this).attr("id"))
+                            });
+                        }
+                        else
+                            alert("loadBlogEntryList: " + success)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    $('#jobListingLoadingGif').hide();
+                    alert("loadBlogEntryList XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            $('#blogEntryLoadingGif').hide();
+            alert("get BlogList CATCH: " + e)
+        }
     }
 
-    function loadListingDropDowns() {
-        getRefs("AST", "#ddStatus")
-        getRefs("EMP", "#ddEmploymentType")
-        getRefs("LTS", "#ddSource")
-        getRefs("DES", "#ddDesirability")
-        getRefs("FIT", "#ddFit")
+    function loadJobListingEditor(id) {
+        $.ajax({
+            type: "GET",
+            url: service + "/api/JobListing/GetOne?jobListingId=" + id,
+            success: function (response) {
+                if (!response.Id.startsWith("Error")) {
+
+                    //bind
+                    jobListingObject.Id = id;
+                    $('#txtPostedDate').val(response.PostedDate);
+                    $('#ddStatus').val(response.Status);
+                    $('#txtListingLocation').val(response.Location);
+                    $('#ddEmploymentType').val(response.EmploymentType);
+                    $('#ddSource').val(response.ListingSource);
+                    $('#ddAgency').val(response.AgencyId);
+                    $('#ddAgent').val(response.AgentId);
+                    $('#txtTargetEmployer').val(response.TargetCompanyId);
+                    $('#txtListingJobTitle').val(response.JobTitle);
+                    $('#ddFit').val(response.Fit);
+                    $('#ddDesirability').val(response.Desirability);
+                    $('#txtLocation').val(response.Location);
+                    $('#txtDistance').val(response.Distance);
+                    $('#txtRate').val(jobListingObject.Rate); 
+
+                    $('#btnJobListingAddEdit').html("Update");
+                    $('#btnJobListingToggle').show();
+                }
+                else {
+                    //$('#jobListingLoadingGif').hide();
+                    alert("loadJobListingEditor: " + success)
+                }
+            },
+            error: function (jqXHR, exception) {
+                //$('#jobListingLoadingGif').hide();
+                alert("loadJobListingEditor XHR error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
     }
 
-    function getRefs(refType, ddId) {
+    function loadJobListingDropDowns() {
+        //alert("loadJobListingDropDowns getrefs");
+        getJobListingRefs("AST", "#ddStatus")
+        getJobListingRefs("EMP", "#ddEmploymentType")
+        getJobListingRefs("LTS", "#ddSource")
+        getJobListingRefs("DES", "#ddDesirability")
+        getJobListingRefs("FIT", "#ddFit")
+
         try {
             $.ajax({
                 type: "GET",
-                url: service + "/api/GAJRef/Get?refType=" + refType,
+                url: service + "/api/Agency/",
+                success: function (result) {
+                    $('#ddAgency').html("<option value='000' class='ddOption'> -- Agency --</option>");
+                    $.each(result, function (idx, obj) {
+                        $('#ddAgency').append("<option value='" + obj.Id + "' class='ddOption'>" + obj.CompanyName + "</option>");
+                    });
+                    $('#ddList').change(function () {
+                        // load agents
+                        //alert("$('#ddList').change val(): " + $(this).val());
+                    });
+
+
+                },
+                error: function (jqXHR, exception) {
+                    alert("Get ddAgency error: " + getXHRErrorDetails(jqXHR, exception));
+                },
+            });
+        } catch (e) {
+            alert("Get ddAgency catch: " + e);
+        }
+
+
+    }
+
+    function getJobListingRefs(refType, ddId) {
+        try {
+            $.ajax({
+                type: "GET",
+                url: service + "/api/JobRef/Get?refType=" + refType,
                 success: function (result) {
                     //alert("getRefs() ddId: " + ddId)
                     $(ddId).html("<option value='000' class='ddOption'> -- select option --</option>");

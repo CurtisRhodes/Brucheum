@@ -7,15 +7,10 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using WebApi.Home.Models;
 
-namespace WebApi
+namespace WebApi.Home
 {
-    public class EmailMessageModel
-    {
-        public string Subject { get; set; }
-        public string Body { get; set; }
-    }
-
     [EnableCors("*", "*", "*")]
     public class GodaddyEmailController : ApiController
     {

@@ -7,9 +7,9 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Results;
 using System.Xml;
-using WebApi.Models;
+using WebApi.Xml.Models;
 
-namespace WebApi
+namespace WebApi.Xml
 {
     [EnableCors("*", "*", "*")]
     public class ArticleXmlController : ApiController
@@ -177,9 +177,9 @@ namespace WebApi
         }
 
         [HttpPatch]
-        public IList<DbArticleModel> ConvertForDb()
+        public IList<Articles.Models.DbArticleModel> ConvertForDb()
         {
-            var articleList = new List<DbArticleModel>();
+            var articleList = new List<Articles.Models.DbArticleModel>();
             try
             {
                 XmlDocument xdoc = new XmlDocument();
@@ -187,7 +187,7 @@ namespace WebApi
                 XmlNodeList entries = xdoc.SelectNodes("//Article");
                 foreach (XmlNode entry in entries)
                 {
-                    var dbMmodel = new DbArticleModel();
+                    var dbMmodel = new Articles.Models.DbArticleModel();
                     dbMmodel.Id = entry.Attributes["Id"].InnerText;
                     dbMmodel.Title = entry.Attributes["Title"].InnerText;
                     dbMmodel.ByLineRef = entry.Attributes["ByLine"].InnerText;
@@ -206,7 +206,7 @@ namespace WebApi
                         foreach (XmlNode tag in entry.ChildNodes[2])
                         {
                             if ((tag.InnerText != null) && (tag.InnerText != "tag1"))
-                                dbMmodel.Tags.Add(new DbArticleTagModel() { TagName = tag.InnerText });
+                                dbMmodel.Tags.Add(new Articles.Models.DbArticleTagModel() { TagName = tag.InnerText });
                         }
                     }
                     articleList.Add(dbMmodel);
@@ -214,7 +214,7 @@ namespace WebApi
             }
             catch (Exception e)
             {
-                articleList.Append(new DbArticleModel() { Title = "ERROR", Summary = e.Message });
+                articleList.Append(new Articles.Models.DbArticleModel() { Title = "ERROR", Summary = e.Message });
             }
             return articleList;
         }

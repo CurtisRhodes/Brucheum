@@ -1,24 +1,14 @@
-﻿@*
-    ready fire aim
-    get a few items from Articles
-    put the title on top of the image
-    load them into an arry
-
-    build the div with arrows and dots
-
-    <div id="carousel01" class="carouselContainer"></div>
-
-*@
-
+﻿
 <style>
     .maxSize {
         height: 100%;
     }
+
     .carouselImage {
         width: 100%;
         cursor: pointer;
     }
-    
+
     .carouselContainer {
         display: block;
         margin-top: 12%;
@@ -29,31 +19,27 @@
         border: solid thin #ada267;
         background-color: rgba(164, 168, 169, 0.75);
         z-index: 10;
-    }   
+    }
+
+    .animatedGears {
+        display: none;
+        position: relative;
+        top: 100px;
+        left: 100px;
+    }
 
     .fbutton {
         position: absolute;
         height: 100px;
         cursor: pointer;
-        top: 45%;
         z-index: 5;
+        display: none;
     }
-    #leftFbutton {
-        left: 29%;
-    }
-    #rightFbutton {
-        left: 73%;
-    }
+
     .carouselImageContainer {
         position: absolute;
         top: 20px;
         left: 50px;
-    }
-    .animatedGears {
-        display: none;
-        position: relative;
-        top: 120px;
-        left: 230px;
     }
 
     .carouselLabel {
@@ -66,17 +52,14 @@
         font-size: 22px;
         z-index: 11;
     }
-
 </style>
+
 
 <div class="flexContainer maxSize">
     <img id="leftFbutton" class="fbutton" src="~/Images/blueCircleLeft.png" onclick="clickPrevious()" />
-    <div id="articleImage" class="carouselContainer">
+    <div id="imageContainer" class="carouselContainer">
         <div class='carouselItem'>
             <img id="carouselLoadingGif" class="animatedGears" src="~/Images/ingranaggi3.gif" />
-            @*<img class='carouselImage' src="~/Images/house.gif" />
-            <div id='articleTitle' class='carouselLabel'>article.Title</div>
-            <div id='articleCat' class='carouselLabel'>article.Category</div>*@
         </div>
     </div>
     <img id="rightFbutton" class="fbutton" src="~/Images/blueCircleRight.png" onclick="clickNext()" />
@@ -105,37 +88,35 @@
     }
 
     function adjustCarousel() {
-        $('.carouselImage').height($('#articleImage').height());
-        //var x = $('#articleImage').position().top;
-        //var y = $('#articleImage').position().left;
 
-        //$('#articleTitle').css('left', $('.carouselItem').position().left + $('.carouselItem').width() - $('#articleCat').width() - 10);
-        $('#articleTitle').css('left', $('.carouselItem').position().left + 10);
-
+        $('.carouselImage').height($('#imageContainer').height());
+        $('#articleTitle').css('left', $('.carouselItem').position().left + 3);
         $('#articleCat').css('top', $('.carouselItem').position().top + $('.carouselItem').height() - 40);
-        //$('#articleCat').css('right', y + $('#articleImage').width());
-        $('#articleCat').css('right', $('.carouselItem').position().left - 100);
+        $('#articleCat').css('left', (($('.carouselItem').position().left + $('.carouselItem').width()) - $('#articleCat').width()) - 8);
+
+        $('#leftFbutton').css('left', $('.carouselItem').position().left - 70);
+        $('#rightFbutton').css('left', $('.carouselItem').position().left + $('.carouselItem').width() - 30);
+        $('#leftFbutton').css('top', $('.carouselItem').position().top + (($('.carouselItem').height() / 2) - 50));
+        $('#rightFbutton').css('top', $('#leftFbutton').position().top);
     }
 
     function rotate() {
-        $('#articleImage').html(carouselItems[imageNum]);
+        $('#imageContainer').html(carouselItems[imageNum]);
         adjustCarousel()
-        imageNum++;
-
-        Carousel = setInterval(function showNextImage() {
-
-            $('#articleImage').html(carouselItems[imageNum]);
-            adjustCarousel();
-
+        Carousel = setInterval(function () {
+            $('#carouselImage').fadeOut("slow");
             imageNum++;
-            if (imageNum >= numArticles) {
+            if (imageNum >= numArticles)
                 imageNum = 0;
-            }
-            $('.fbutton').show();
+            $('#carouselImage').hide();
+            $('#imageContainer').html(carouselItems[imageNum]);
+            $('#carouselImage').fadeIn("slow");
+            $('#footerMessage').html("imageNum: " + imageNum)
+            adjustCarousel();
         }, rotationSpeed);
     }
 
-    $('#articleImage').click(function () {
+    $('#imageContainer').click(function () {
         clearInterval(Carousel);
         //alert("$('.carouselItem').attr('Id'): " + $('.carouselItem').attr('Id'));
         window.location.href = "/Article/ArticleView?Id=" + $('.carouselItem').attr('Id');
@@ -143,23 +124,30 @@
 
 
     function clickPrevious() {
-        imageNum = Math.max(0, imageNum - 2);
+        imageNum--;
+        if (imageNum < 0) 
+            imageNum = numArticles - 1;
+        clearInterval(Carousel);
         rotate();
-        //stopCarousel();
     }
     function clickNext() {
         clearInterval(Carousel);
+        imageNum++;
+        if (imageNum >= numArticles)
+            imageNum = 0;
         rotate();
     }
 
     function loadAndStartCarousel() {
         $('#carouselLoadingGif').show();
+
         $.ajax({
             type: "GET",
             url: service + "/api/DbArticle?pageLen=" + numArticles + "&page=1&filterType=null&filter=null",
             //url: service + "/api/ArticleXml?pageLen=" + numArticles + "&page=0&filterType=none&filter=none",
             success: function (articles) {
                 articles.forEach(loadArray);
+                $('.fbutton').show();
                 rotate();
                 $('#carouselLoadingGif').hide();
             },

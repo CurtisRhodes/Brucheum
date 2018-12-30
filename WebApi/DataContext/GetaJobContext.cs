@@ -1,4 +1,4 @@
-namespace WebApi.DataContext
+namespace WebApi.GetaJob.DataContext
 { 
     using System;
     using System.Data.Entity;
@@ -128,7 +128,7 @@ namespace WebApi.DataContext
         public string JobSearchId { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? PostedDate { get; set; }
+        public DateTime PostedDate { get; set; }
 
         [StringLength(250)]
         public string JobTitle { get; set; }

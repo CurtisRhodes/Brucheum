@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using WebApi.Home.Models;
 
-namespace WebApi
+namespace WebApi.Home
 {
     public class HomeController : Controller
     {
         public ActionResult Index()
         {
-            var vm = new ModelResponse();
+            var vm = new ResponseModel();
             return View(vm);
         }
         public ActionResult ImageTest()
@@ -21,7 +22,7 @@ namespace WebApi
 
         public ActionResult JournalTest()
         {
-            var vm = new ModelResponse();
+            var vm = new ResponseModel();
             return View(vm);
         }
 
@@ -34,12 +35,10 @@ namespace WebApi
 
             //string success = new EmailController().SendWithHotMail(emailMessage);
 
-            ModelResponse vm = new ModelResponse() { Response = success };
+            ResponseModel vm = new ResponseModel() { Response = success };
             return View("Index", vm);
 
         }
-
-
 
         public ActionResult ArticleTest(string Id)
         {
@@ -47,11 +46,6 @@ namespace WebApi
             //ViewBag.Categories = GetArticleCategories();
             return View();
         }
-    }
-
-    public class ModelResponse
-    {
-        public string Response { get; set; }
     }
 
     public class ErrorController : Controller
@@ -77,5 +71,23 @@ namespace WebApi
             return View();
         }
     }
-
+}
+namespace WebApi.Home.Models
+{
+    public class ResponseModel
+    {
+        public string Response { get; set; }
+    }
+    public class EmailMessageModel
+    {
+        public string Subject { get; set; }
+        public string Body { get; set; }
+    }
+    public class HitCounterModel
+    {
+        public string IpAddress { get; set; }
+        public string AppName { get; set; }
+        public string PageName { get; set; }
+        public string Details { get; set; }
+    }
 }
