@@ -75,14 +75,16 @@
 .customMessageBox {
     position: absolute;
     top: 300px;
-    left: 600px;
-    min-height: 200px;
-    background-color: #fff;  
-    border: solid 2px purple;
+    left: 50%;
     display: none;
-
 }
-
+.customMessageBoxInner {
+    position: relative;
+    left: -50%;
+    min-height: 200px;
+    background-color: #fff;
+    border: solid 2px purple;
+}
 .alegro {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-size: 21px;
@@ -125,11 +127,11 @@ label {
 }
 .roundedInput {
     /*height: 32px;*/
-    padding: 8px 6px;
+    padding: 2px;
     color: #555;
     background-color: #ddd;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 3px;
 }
 
 .severityOk {
@@ -151,6 +153,10 @@ label {
     cursor: pointer;
     text-decoration: underline;
 }
+.center {
+    text-align: center;
+}
+
 /*.clickable {
     margin-top: 5px;
     text-decoration: underline;
@@ -167,6 +173,15 @@ label {
 .floatLeft {
     float: left;
 }
+.floatLeftFifty {
+    float: left;
+    width: 45%;
+    margin-right: 11px;
+}
+.width100 {
+    width: 100%
+}
+
 .noFloat {
     clear: both;
 }
@@ -175,6 +190,9 @@ label {
 }
 .inline {
     display: inline-block;
+}
+.hidden {
+    display: none;
 }
 .flexContainer {
     display: flex;

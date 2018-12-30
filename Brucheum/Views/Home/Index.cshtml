@@ -6,7 +6,7 @@
         background-color: #eeddbb;
     }
     .vMenu {
-        padding-top: 63px;
+        padding-top: 33px;
         padding-left: 33px;
     }
     .tabvMenuItem {
@@ -19,9 +19,10 @@
         }
 
     #middleColumn {
+        border: solid #444;
         background-image: url("/Images/caveStairsWide.jpg");
         background-repeat: no-repeat;
-        background-size: contain;
+        background-size: cover;
     }
 
 </style>
@@ -75,33 +76,18 @@
 </div>
 
 <script>
-    /*
-        #ffffe6 getajob yellow 10%
-        #ffcccc admin red
-
-        #aa00aa; purple
-        #a39ca5
-        #9c88a4;
-        #74bac3; brucheum Blue
-        #d6f5f5; brucheum Lighter Blue
-    */
-
     $(document).ready(function () {
         $('#bannerTitle').html("Curtis Rhodes.com");
-
         loadAndStartCarousel();
-
     });
 
-    function emailTest() {
-
-        var rtn = sendEmailFromJS("TEST EMAIL", "someday it will be someone other than you");
-        if (rtn == "ok")
-            displayStatusMessage("ok", "Email went through");
-        else
-            displayStatusMessage("error", rtn);
-    }
-
+    //function emailTest() {
+    //    var rtn = sendEmailFromJS("TEST EMAIL", "someday it will be someone other than you");
+    //    if (rtn == "ok")
+    //        displayStatusMessage("ok", "Email went through");
+    //    else
+    //        displayStatusMessage("error", rtn);
+    //}
 
 </script>
 

@@ -6,18 +6,19 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using WebApi.DataContext;
-using WebApi.Models;
+using WebApi.GetaJob.DataContext;
+using WebApi.GetaJob.Models;
 
-namespace WebApi
+namespace WebApi.GetaJob
 {
+
     [EnableCors("*", "*", "*")]
-    public class GAJRefController : ApiController
+    public class JobRefController : ApiController
     {
         [HttpGet]
-        public List<RefModel> Get(string refType)
+        public List<JobRefModel> Get(string refType)
         {
-            var refs = new List<RefModel>();
+            var refs = new List<JobRefModel>();
             try
             {
                 using (var db = new GetaJobContext())
@@ -25,19 +26,19 @@ namespace WebApi
                     IList<JobRef> dbrefs = db.JobRefs.Where(r => r.RefType == refType).OrderBy(r => r.RefDescription).ToList();
                     foreach (JobRef r in dbrefs)
                     {
-                        refs.Add(new RefModel() { RefCode = r.RefCode, RefDescription = r.RefDescription });
+                        refs.Add(new JobRefModel() { RefCode = r.RefCode, RefDescription = r.RefDescription });
                     }
                 }
             }
             catch (Exception ex)
             {
-                refs.Add(new RefModel() { RefCode = "ERR", RefType = "ERR", RefDescription = Helpers.ErrorDetails(ex) });
+                refs.Add(new JobRefModel() { RefCode = "ERR", RefType = "ERR", RefDescription = Helpers.ErrorDetails(ex) });
             }
             return refs;
         }
 
         [HttpPost]
-        public RefModel Post(RefModel refModel)
+        public JobRefModel Post(JobRefModel refModel)
         {
             try
             {
@@ -62,7 +63,7 @@ namespace WebApi
         }
 
         [HttpPut]
-        public string Put(RefModel refModel)
+        public string Put(JobRefModel refModel)
         {
             string success = "";
             try
@@ -80,7 +81,7 @@ namespace WebApi
         }
 
         /// helper apps
-        private string GetUniqueRefCode(string refDescription, GetaJobContext db)
+        private string GetUniqueRefCode(string refDescription, DataContext.GetaJobContext db)
         {
             if (refDescription.Length < 3)
                 refDescription = refDescription.PadRight(3, 'A');
@@ -128,7 +129,7 @@ namespace WebApi
                     }
                 }
             }
-            catch (Exception ex) { jobSearch.SearchName = "ERROR: " + Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { jobSearch.SearchName = Helpers.ErrorDetails(ex); }
             return jobSearch;
         }
         [HttpGet]
@@ -199,7 +200,7 @@ namespace WebApi
                     success = jobSearch.Id.ToString();
                 }
             }
-            catch (Exception ex) { success = "ERROR: " + Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { success =  Helpers.ErrorDetails(ex); }
             return success;
         }
         [HttpPut]
@@ -244,26 +245,34 @@ namespace WebApi
                     if (dbJobListing != null)
                     {
                         jobListing.Id = dbJobListing.Id;
+                        jobListing.PostedDate = dbJobListing.PostedDate.ToShortDateString();
                         jobListing.JobTitle = dbJobListing.JobTitle;
                         jobListing.AgentId = dbJobListing.AgentId;
-                        jobListing.AgencyId = dbJobListing.Agent.AgencyId;
+                        if (dbJobListing.AgentId != null) {
+                            jobListing.AgentId = dbJobListing.AgentId;
+                            jobListing.AgencyId = dbJobListing.Agent.AgencyId;
+                        }
+
                         jobListing.TargetCompanyId = dbJobListing.TargetCompanyId;
+
+
                         jobListing.Comments = dbJobListing.Comments;
-                        jobListing.ListingStatus = dbJobListing.ListingStatusRef;
+                        jobListing.Status = dbJobListing.ListingStatusRef;
                         jobListing.Rate = dbJobListing.Rate;
                         jobListing.EmploymentType = dbJobListing.EmploymentTypeRef;
                         jobListing.Distance = dbJobListing.Distance;
                         jobListing.ListingSource = dbJobListing.ListingSourceRef;
                         jobListing.Desirability = dbJobListing.DesirabilityRef;
                         jobListing.Fit = dbJobListing.FitnessRef;
+                        jobListing.Location = dbJobListing.JobLocation;
                     }
                 }
             }
-            catch (Exception ex) { jobListing.Comments = "ERROR: " + Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { jobListing.Id = Helpers.ErrorDetails(ex); }
             return jobListing;
         }
         [HttpGet]
-        public List<JobListingModel> GetMany(string jobSearchId)
+        public List<JobListingModel> GetMany(string jobSearchId, string kludge)
         {
             var jobListingModels = new List<JobListingModel>();
             try
@@ -271,30 +280,36 @@ namespace WebApi
                 using (var db = new GetaJobContext())
                 {
                     var dbJobListings = db.JobListings.Where(l => l.JobSearchId == jobSearchId).ToList();
-                    foreach (JobListing listing in dbJobListings)
+                    foreach (JobListing dbListing in dbJobListings)
                     {
+                        // just need items for list
                         JobListingModel jobListingModel = new JobListingModel();
-                        jobListingModel.Id = listing.Id;
-                        jobListingModel.JobTitle = listing.JobTitle;
-                        jobListingModel.AgentId = listing.AgentId;
-                        jobListingModel.TargetCompanyId = listing.TargetCompanyId;
-                        jobListingModel.Comments = listing.Comments;
-                        jobListingModel.ListingStatus = listing.ListingStatusRef;
-                        jobListingModel.Rate = listing.Rate;
-                        jobListingModel.EmploymentType = listing.EmploymentTypeRef;
-                        jobListingModel.Distance = listing.Distance;
-                        jobListingModel.ListingSource = listing.ListingSourceRef;
-                        jobListingModel.Desirability = listing.DesirabilityRef;
-                        jobListingModel.Fit = listing.FitnessRef;
-                        //jobListingModel.Fit = listing.
+                        jobListingModel.Id = dbListing.Id;
+                        jobListingModel.PostedDate = dbListing.PostedDate.ToShortDateString();
+                        jobListingModel.Location = dbListing.JobLocation;
 
+                        var dbstatusRef = db.JobRefs.Where(r => r.RefCode == dbListing.ListingStatusRef).FirstOrDefault();
+                        if (dbstatusRef != null)
+                            jobListingModel.StatusText = dbstatusRef.RefDescription;
+
+                        //dbJobListing.JobSearchId = newJobListing.JobSearchId;
+                        //jobListingModel.JobTitle = listing.JobTitle;
+                        //jobListingModel.AgentId = listing.AgentId;
+                        //jobListingModel.TargetCompanyId = listing.TargetCompanyId;
+                        //jobListingModel.Comments = listing.Comments;
+                        //jobListingModel.Rate = listing.Rate;
+                        //jobListingModel.Status = listing.ListingStatusRef;
+                        //jobListingModel.EmploymentType = listing.EmploymentTypeRef;
+                        //jobListingModel.Distance = listing.Distance;
+                        //jobListingModel.ListingSource = listing.ListingSourceRef;
+                        //jobListingModel.Desirability = listing.DesirabilityRef;
+                        //jobListingModel.Fit = listing.FitnessRef;
 
                         jobListingModels.Add(jobListingModel);
                     }
-                    //Id { get; set; }
                 }
             }
-            catch (Exception ex) { jobListingModels.Add(new JobListingModel() { Comments = Helpers.ErrorDetails(ex) }); }
+            catch (Exception ex) { jobListingModels.Add(new JobListingModel() { Id = Helpers.ErrorDetails(ex) }); }
             return jobListingModels;
         }
         [HttpPost]
@@ -304,14 +319,17 @@ namespace WebApi
             try
             {
                 JobListing dbJobListing = new JobListing();
+                dbJobListing.Id = Guid.NewGuid().ToString();
+                dbJobListing.JobSearchId = newJobListing.JobSearchId;
+                dbJobListing.PostedDate = DateTime.Parse(newJobListing.PostedDate);
                 dbJobListing.JobTitle = newJobListing.JobTitle;
-                //dbJobListing.Location= newJobListing.Location;
                 dbJobListing.AgentId = newJobListing.AgentId;
                 dbJobListing.TargetCompanyId = newJobListing.TargetCompanyId;
                 dbJobListing.Comments = newJobListing.Comments;
-                dbJobListing.Distance = newJobListing.Distance;
                 dbJobListing.Rate = newJobListing.Rate;
-                dbJobListing.ListingStatusRef = newJobListing.ListingStatus;
+                dbJobListing.Distance = newJobListing.Distance;
+                dbJobListing.JobLocation = newJobListing.Location;
+                dbJobListing.ListingStatusRef = newJobListing.Status;
                 dbJobListing.EmploymentTypeRef = newJobListing.EmploymentType;
                 dbJobListing.ListingSourceRef = newJobListing.ListingSource;
                 dbJobListing.DesirabilityRef = newJobListing.Desirability;
@@ -324,7 +342,7 @@ namespace WebApi
                     success = dbJobListing.Id.ToString();
                 }
             }
-            catch (Exception ex) { success = "ERROR: " + Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { success =  Helpers.ErrorDetails(ex); }
             return success;
         }
         [HttpPut]
@@ -338,11 +356,13 @@ namespace WebApi
                     JobListing dbJobListing = db.JobListings.Where(j => j.Id == editJobListing.Id).FirstOrDefault();
                     if (dbJobListing != null)
                     {
+                        dbJobListing.PostedDate = DateTime.Parse(editJobListing.PostedDate);
+                        dbJobListing.JobLocation = editJobListing.Location;
                         dbJobListing.JobTitle = editJobListing.JobTitle;
                         dbJobListing.AgentId = editJobListing.AgentId;
                         dbJobListing.TargetCompanyId = editJobListing.TargetCompanyId;
                         dbJobListing.Comments = editJobListing.Comments;
-                        dbJobListing.ListingStatusRef = editJobListing.ListingStatus;
+                        dbJobListing.ListingStatusRef = editJobListing.Status;
                         dbJobListing.Rate = editJobListing.Rate;
                         dbJobListing.EmploymentTypeRef = editJobListing.EmploymentType;
                         dbJobListing.Distance = editJobListing.Distance;
@@ -369,7 +389,7 @@ namespace WebApi
     }
 
     [EnableCors("*", "*", "*")]
-    public class SkillController : ApiController
+    public class JobSkillController : ApiController
     {
         [HttpGet]
         public SkillModel Get(string skillId)
@@ -382,14 +402,13 @@ namespace WebApi
                     var dbSkill = db.JobSkills.Where(s => s.Id == skillId).FirstOrDefault();
                     if (dbSkill != null)
                     {
-                        skill.Id = skillId;
-                        skill.SkillName = dbSkill.SkillName;
-                        skill.SkillCategory = dbSkill.SkillType;
-                        skill.GenericNarrative = dbSkill.Narrative;
+                        skill.Name = dbSkill.SkillName;
+                        skill.Category = dbSkill.SkillType;
+                        skill.Narrative = dbSkill.Narrative;
                     }
                 }
             }
-            catch (Exception ex) { skill.SkillName = "ERROR: " + Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { skill.Name = Helpers.ErrorDetails(ex); }
             return skill;
         }
 
@@ -408,41 +427,42 @@ namespace WebApi
                          select new SkillModel
                          {
                              Id = skils.Id,
-                             SkillName = skils.SkillName,
-                             SkillCategory = skils.SkillType,
-                             SkillCategoryDescription = xrefs.RefDescription == null ? "" : xrefs.RefDescription,
-                             GenericNarrative = skils.Narrative
+                             Name = skils.SkillName,
+                             Category = skils.SkillType,
+                             CategoryDescription = xrefs.RefDescription == null ? "" : xrefs.RefDescription,
+                             Narrative = skils.Narrative
                          }).ToList();
                 }
             }
-            catch (Exception ex) { skillModels.Add(new SkillModel() { SkillName = Helpers.ErrorDetails(ex) }); }
+            catch (Exception ex) { skillModels.Add(new SkillModel() { Name = Helpers.ErrorDetails(ex) }); }
             return skillModels;
         }
 
         [HttpPost]
-        public string Post(JobSkill newSkill)
+        public string Post(SkillModel newSkill)
         {
-            string success = "ERROR: ";
+            string success = "";
             try
             {
-                if (newSkill.SkillName == null)
-                    success = "bad data";
-                else
+                var dbSkill = new JobSkill();
+                dbSkill.Id = Guid.NewGuid().ToString();
+                dbSkill.Narrative = newSkill.Narrative;
+                dbSkill.SkillName = newSkill.Name;
+                dbSkill.SkillType = newSkill.Category;
+
+                using (GetaJobContext db = new GetaJobContext())
                 {
-                    using (GetaJobContext db = new GetaJobContext())
-                    {
-                        db.JobSkills.Add(newSkill);
-                        db.SaveChanges();
-                        success = newSkill.Id.ToString();
-                    }
+                    db.JobSkills.Add(dbSkill);
+                    db.SaveChanges();
+                    success = dbSkill.Id;
                 }
             }
-            catch (Exception ex) { success = "ERROR: " + Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
 
         [HttpPut]
-        public string Put(JobSkill editedSkill)
+        public string Put(SkillModel editedSkill)
         {
             string success = "";
             try
@@ -450,8 +470,9 @@ namespace WebApi
                 using (GetaJobContext db = new GetaJobContext())
                 {
                     var dbSkill = db.JobSkills.Where(j => j.Id == editedSkill.Id).FirstOrDefault();
-                    dbSkill.SkillName = editedSkill.SkillName;
-                    dbSkill.SkillType = editedSkill.SkillType;
+                    dbSkill.SkillName = editedSkill.Name;
+                    dbSkill.SkillType = editedSkill.Category;
+                    dbSkill.Narrative = editedSkill.Narrative;
 
                     db.SaveChanges();
                     success = "ok";
@@ -541,7 +562,7 @@ namespace WebApi
                     success = agent.Id;
                 }
             }
-            catch (Exception ex) { success = "ERROR: " + Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { success =  Helpers.ErrorDetails(ex); }
             return success;
         }
         
@@ -608,17 +629,22 @@ namespace WebApi
                     var dbAgencies = db.Agencies.ToList();
                     foreach (Agency dbAgency in dbAgencies)
                     {
-                        //var agency = new AgencyModel
-                        agencys.Add(new AgencyModel()
+                        var agency = new AgencyModel();
+                        agency.Id = dbAgency.Id;
+                        agency.CompanyName = dbAgency.JobCompany.CompanyName;
+                        agency.CompanyAddress = dbAgency.JobCompany.CompanyAddress;
+                        //CompanyZip = dbAgency.JobCompany.CompanyZip,
+                        //Email = dbAgency.JobCompany.Email,
+                        //Phone = dbAgency.JobCompany.OfficePhone,
+                        //Website = dbAgency.JobCompany.Website
+                        foreach (Agent dbAgent in dbAgency.Agents)
                         {
-                            Id = dbAgency.Id,
-                            CompanyName = dbAgency.JobCompany.CompanyName,
-                            CompanyAddress = dbAgency.JobCompany.CompanyAddress,
-                            //CompanyZip = dbAgency.JobCompany.CompanyZip,
-                            //Email = dbAgency.JobCompany.Email,
-                            //Phone = dbAgency.JobCompany.OfficePhone,
-                            //Website = dbAgency.JobCompany.Website
-                        });
+                            var agent = new AgentModel();
+                            agent.FName = dbAgent.Person.FName;
+                            agent.LName = dbAgent.Person.LName;
+                            agency.Agents.Add(agent);
+                        }
+                        agencys.Add(agency);
                     }
                 }
             }
@@ -656,7 +682,7 @@ namespace WebApi
                     success = agency.Id;
                 }
             }
-            catch (Exception ex) { success = "ERROR: " + Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { success =  Helpers.ErrorDetails(ex); }
             return success;
         }
         [HttpPut]

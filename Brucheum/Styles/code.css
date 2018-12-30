@@ -2,14 +2,16 @@
     display: inline-block;    
     padding: 16px;
     margin-left: 45px;
-    background-color: #444;
+    background-color: #000;
     color: #fff;
 }
 
 keyword {
     color: #39f;
 }
-
+comment {
+    color: #53e13d;
+}
 strtext {
     color: #f90;
 }
@@ -48,4 +50,7 @@ csstruct {
 
 .tab6 {
     padding-left: 90px;
+}
+.tab7 {
+    padding-left: 105px;
 }

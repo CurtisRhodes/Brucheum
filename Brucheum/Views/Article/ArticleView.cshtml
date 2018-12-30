@@ -106,11 +106,7 @@
             alert("load article catch: " + e);
         }
     }
-
-
-
-
-
+         
     function staticify() {
         saveAsStaticFile(thisArticle);
     }
@@ -126,6 +122,8 @@
             $('#divCommentsSection').hide();
         }
     });
+
+
     $(window).unload(function () {
         // log page visit End
         if (hitSession !== "") {

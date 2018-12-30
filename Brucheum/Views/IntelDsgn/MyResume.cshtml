@@ -1,28 +1,8 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "My Resume";
-    Layout = "~/Views/IntelDsgn/_ProfessionalLayout.cshtml";
 }
-
-@*
-    -- ready fire aim
-    create tables or use xml?
-    rersume sections
-        addess header
-        skills section
-
-    put in the editor
-    add a close icon and a cancel button
-*@
-
 <style>
-    .resumeContainer {
-        background-color: #bbb489;
-        color: #000;
-    }
-    .center {
-        text-align: center;
-    }
+    
     li {
         text-align: left;
     }
@@ -61,42 +41,32 @@
         font-size: 14px;
     }
 
-    p {
+    /*p {
         margin: 3px 33px;
         text-align: justify;
         font-family: serif;
         font-weight: bold;
-    }
+    }*/
 
     .collapseable {
         display: none;
         cursor: pointer;
     }
 
-    /*right column*/
-    .adminButton {
-        margin-top: 100px;
-        margin-left: 17px;
-        padding: 3px;
-        display: inline-block;
-        background-color: #555;
-        border-radius: 3px;
-        cursor: pointer;
-    }
-
-    .resumeDocContainer {
-        padding: 20px;
-    }
-
-    .resumeSection {
-    }
-
-    .resumeDoc {
-        height: 45px;
-    }
 </style>
 
 <style>
+    .threeColumnArray {
+        background-color: #222730; /* #273235; #486167;*/
+        color: #fff;
+    }
+    .resumeContainer {
+        background-color: #bbb489;
+        color: #000;
+        max-height: 877px;
+        overflow-y: auto;
+    }
+
     .resumeDateRow {
         margin-top: 11px;
         margin-bottom: 4px;
@@ -118,7 +88,7 @@
         float: right;
         margin-right: 22px;
     }
-    .resumeContents {
+    .resumeJobContents {
         text-align: justify;
         margin-top: 7px;
         margin-left: 22px;
@@ -130,41 +100,63 @@
         width: 80%;
         margin-left: 10%;
     }
-</style>
 
+    /*right column*/
+    .adminButton {
+        display:inline-block;
+        margin-top: 37px;
+        background-color: #555;
+        padding: 9px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    .rightColumnContents {
+        margin-top: 200px;
+    }
+    .docImage {
+        width: 55px;
+    }
+</style>
 
 <div class="threeColumnArray">
     <div id="leftColumn">
     </div>
     <div id="middleColumn">
+        @if (User.IsInRole("Admin"))
+        {
+            <select id="ddAvailableResumes" class="roundedInput" onchange="buildResume($('#ddAvailableResumes').val())"></select>
+        }
         <div id="resumeSectionContainer" class="resumeContainer">
             <div id="resumeLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
-
             <div id="resumeTopSection"></div>
             <div id="resumeJobSection"></div>
             <div id="resumeBottomSection"></div>
-
-
         </div>
     </div>
     <div id="rightColumn">
-        @if (User.IsInRole("Admin"))        {
-            <div class="adminButton" onclick="window.location.href='/GetaJob/GetaJobAdmin'">manage</div>
-        }
-        <div class="resumeDocContainer">
+        <div class="rightColumnContents">
             <a href="~/Curtis Rhodes Resume 2017.doc" )>
-                <img id="prntResume" class="resumeDoc" title="download print copy" onclick="" src="~/Images/wordDoc.jpg" />
+                <img id="prntResume" class="docImage" title="download print copy" src="~/Images/wordDoc.jpg" />
             </a>
+            @if (User.IsInRole("Admin"))
+            {
+                <div><div class="adminButton" onclick="window.location.href='/GetaJob/GetaJobAdmin'">manage</div></div>
+                <div><div class="adminButton" onclick="docify()">docify</div></div>
+            }
         </div>
     </div>
 </div>
-
 <script>
     var service = '@ViewBag.Service';
     var currentUser = '@ViewBag.UserId'
+    var resDefault = "ABEC149E-1A81-4591-86EA-3DE7575A4B4E";
+
 
     $(document).ready(function () {
-        buildResume("9D5A199E-158D-4E6E-B30C-55B987742383");
+        setLayout('Intelligent Design');
+        buildResume(resDefault);
+        getAvailableResumes();
+        resizePage();
     })
 
     function buildResume(resumeId) {
@@ -173,16 +165,19 @@
             type: "Patch",
             url: service + "/api/Resume/GetLoadedResume?resumeId=" + resumeId,
             success: function (loadedResume) {
+                $('#resumeTopSection').html('');
                 $.each(loadedResume.TopSections, function (idx, topSection) {
                     $('#resumeTopSection').append("<div class='sectionContents'>" + topSection.SectionContents + "</dev>");
                 });
+                $('#resumeJobSection').html('');
                 $.each(loadedResume.LostJobs, function (idx, lostJob) {
                     var dateline = lostJob.StartMonth + " " + lostJob.StartYear + " - " + lostJob.FiredMonth + " " + lostJob.FiredYear;
                     var kluge = "<div class='resumeDateRow'><div class='resumeDateRowLeft'>" + lostJob.Employer + "</div>";
                     kluge += "<div class='resumeDateRowCenter'>" + lostJob.JobLocation + "</div><div class='resumeDateRowRight'>" + dateline + "</div></div>";
                     $('#resumeJobSection').append(kluge);
-                    $('#resumeJobSection').append("<div class='resumeContents'>" + lostJob.Summary + "</dev>");
+                    $('#resumeJobSection').append("<div class='resumeJobContents'>" + lostJob.Summary + "</dev>");
                 })
+                $('#resumeBottomSection').html('');
                 $.each(loadedResume.BottomSections, function (idx, bottomSection) {
                     $('#resumeBottomSection').append("<div class='sectionContents'>" + bottomSection.SectionContents + "</dev>");
                 });
@@ -194,25 +189,31 @@
 
     }
 
+    function docify() {
 
+    }
+    
+    $(window).resize(function () {
+        $('.resumeContainer').css('max-height', $('#middleColumn').height());
+        $('#footerMessage').html('max-height= ' + $('.resumeContainer').css('max-height'));
+    });
 
-    // Ready; Fire; Aim;
-    //public class LostJobModel {
-    //public int Id { get; set; }
-    //public string ElementId { get; set; }
-    //public string JobTitle { get; set; }
-    //public string Employer { get; set; }
-    //public string JobLocation { get; set; }
-    //public string StartMonth { get; set; }
-    //public string StartYear { get; set; }
-    //public string FiredMonth { get; set; }
-    //public string FiredYear { get; set; }
-    //public string Summary { get; set; }
-    //public string ReasonForLeaving { get; set; }
-    //public string SecretNarative { get; set; }
+    function resetResume() {
 
+        buildResume($('#ddAvailableResumes').val());
+    }
 
-
+    function getAvailableResumes() {
+        $.ajax({
+            type:"GET",
+            url: service + "/api/Resume?personId=" + currentUser,
+            success: function (results) {
+                $.each(results, function (idx, obj) {
+                    $('#ddAvailableResumes').append("<option class='ddOption availResume' value=" + obj.Id + ">" + obj.ResumeName + "</option>");
+                })
+            } 
+        })
+    }
 
 </script>
 
@@ -238,6 +239,7 @@
     </div>
     <div id="resumeLostJobs">
         <h3 class="center">PROFESSIONAL EXPERIENCE</h3>
+
         <h4 class="center clickable" onclick="$('#clipperSub').toggle()">10 years Clipper dBase III Firefox</h4>
         <div id="clipperSub" class="collapseable">
             <p>

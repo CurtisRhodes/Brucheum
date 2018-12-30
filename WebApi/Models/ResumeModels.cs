@@ -3,8 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace WebApi.Models
+namespace WebApi.Resume.Models
 {
+    public class LostJobModel
+    {
+        public LostJobModel()
+        {
+            JobSkills = new List<GetaJob.Models.SkillModel>();
+        }
+        public string Id { get; set; }
+        public string ElementId { get; set; }
+        public string JobTitle { get; set; }
+        public string Employer { get; set; }
+        public string JobLocation { get; set; }
+        public string StartMonth { get; set; }
+        public string StartYear { get; set; }
+        public string FiredMonth { get; set; }
+        public string FiredYear { get; set; }
+        public string Summary { get; set; }
+        public string ReasonForLeaving { get; set; }
+        public string SecretNarative { get; set; }
+        public IList<GetaJob.Models.SkillModel> JobSkills { get; set; }
+        public int SortOrder { get; set; }
+    }
+
     public class ResumeModel
     {
         public ResumeModel()
@@ -21,41 +43,13 @@ namespace WebApi.Models
         public IList<LostJobModel> LostJobs { get; set; }
         public IList<ResumeSectionModel> BottomSections { get; set; }
     }
+
     public class ResumeSectionModel
     {
         public string Id { get; set; }
         public string PersonId { get; set; }
         public string SectionTitle { get; set; }
         public string SectionContents { get; set; }
-        public int SortOrder { get; set; }
-    }
-    public class SkillModel
-    {
-        public string Id { get; set; }
-        public string SkillName { get; set; }
-        public string SkillCategory { get; set; }
-        public string SkillCategoryDescription { get; set; }
-        public string GenericNarrative { get; set; }
-    }
-    public class LostJobModel
-    {
-        public LostJobModel()
-        {
-            JobSkills = new List<SkillModel>();
-        }
-        public string Id { get; set; }
-        public string ElementId { get; set; }
-        public string JobTitle { get; set; }
-        public string Employer { get; set; }
-        public string JobLocation { get; set; }
-        public string StartMonth { get; set; }
-        public string StartYear { get; set; }
-        public string FiredMonth { get; set; }
-        public string FiredYear { get; set; }
-        public string Summary { get; set; }
-        public string ReasonForLeaving { get; set; }
-        public string SecretNarative { get; set; }
-        public IList<SkillModel> JobSkills { get; set; }
         public int SortOrder { get; set; }
     }
 

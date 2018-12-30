@@ -30,8 +30,12 @@
         $('#btnResumeNew').hide();
         $('#resumeListLoadingGif').hide();
         $('#addEditResumeContainerTitle').html("Add Edit Resumes for " + personName);
-        loadResumeList();
     });
+
+    function addResumeInitialize() {
+        if ($('#resumeList').html() == "")
+            loadResumeList();
+    }
 
     function mediateResumeAddEditButton() {
         if ($('#btnResumeAddEdit').html() == "Add")
@@ -42,6 +46,7 @@
     function mediateResumeNewButton() {
         $('#btnResumeAddEdit').html("Add");
         $('#btnResumeNew').hide();
+        $('#txtResumeName').val("");
     }
 
     function loadResumeList() {
@@ -66,6 +71,7 @@
             }
         })
     }
+
     function insertResume() {
         resumeModel.ResumeName = $('#txtResumeName').val();
         resumeModel.PersonId = currentUser;
@@ -86,6 +92,7 @@
             }
         })
     }
+
     function updateResume() {
         resumeModel.ResumeName = $('#txtResumeName').val();
         $.ajax({

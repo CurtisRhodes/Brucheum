@@ -1,9 +1,17 @@
 ﻿@{
     ViewBag.Title = "Blog";
 }
+<script src="~/Scripts/EditorToolbar.js"></script>
 <link href="~/Styles/default.css" rel="stylesheet" />
 <link href="~/Styles/CrudEdit.css" rel="stylesheet" />
 <link href="~/Styles/code.css" rel="stylesheet" />
+
+<style>
+    .note-editable {
+        white-space: normal;
+    }
+</style>
+
 <style>
     .blockDisplayArea {
         margin-top: 55px;
@@ -11,6 +19,7 @@
         height: 666px;
         border: solid thin red;
     }
+
     .blockContainer {
         vertical-align: top;
         display: inline-block;
@@ -18,48 +27,42 @@
         width: 150px;
         padding: 4px;
         margin: 5px;
-        background-color: #74bac3;
+        /*background-color: #74bac3;*/
         cursor: pointer;
     }
-    #blogEdit {
-        width: 550px;
-    }
-    .blogEntryEditor {
-        max-width: 850px;
-    }
-    .note-editable {
-        max-width: 850px;
-    }
+
     #txtBlogEntryTitle {
         width: 90%;
     }
+
     .blogSpaSection {
-        margin-top: 25px;
-        margin-left: 55px;
         display: none;
     }
-    .blogContainer {
-        margin-left: 22px;
-        border: solid 1.5px #bbb;
-        border-radius: 5px;
+
+    .crudContainer {
         margin-bottom: 24px;
     }
+
     .blockContainerBlogName {
         background-color: #decf78;
         margin-bottom: 12px;
     }
+
     #blogViewTitle {
-        text-align:center;
+        text-align: center;
         font-size: 22px;
         margin-bottom: 8px;
     }
+
     #blogViewSummary {
         border: solid thin #333;
         font-size: 18px;
-        height: 200px;
+        height: 88px;
+        overflow-y: auto;
         padding: 4px;
         background-color: #ddd;
     }
+
     #blogViewContent {
         margin-top: 8px;
         border: solid thin #333;
@@ -74,40 +77,110 @@
 <div class="threeColumnArray">
     <div id="leftColumn">
         <div class="vertMenu">
-            <div class="vertMenuTab" onclick="$('.blogSpaSection').hide(); loadBlocksDisplay(); $('#blockDisplayArea').show();">View Blog</div>
-            <div class="vertMenuTab" onclick="$('.blogSpaSection').hide(); $('#blogEdit').show();">New Blog</div>
-            <div class="vertMenuTab" onclick="$('.blogSpaSection').hide(); $('#blogEntryEditor').show();">New Entry</div>
+            <div class="vertMenuTab" onclick="showSpaSection('blockDisplayArea')">View Blog</div>
+            <div class="vertMenuTab" onclick="showSpaSection('blogEntryEditor')">New Entry</div>
+            <div class="vertMenuTab" onclick="showSpaSection('listItemAddEdit')">List Item</div>
+            <div class="vertMenuTab" onclick="showSpaSection('listHeaderAddEdit')">New List</div>
+            <div class="vertMenuTab" onclick="showSpaSection('blogHeader')">New Blog</div>
         </div>
     </div>
+
     <div id="middleColumn">
         <div id="divStatusMessage"></div>
-        <div id="blockDisplayArea" class="blogSpaSection">
-
-            blocks
-
-        </div>
+        <div id="blockLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+        <div id="blockDisplayArea" class="blogSpaSection"></div>
         <div id="blogView" class="blogSpaSection">
             <div id="blogViewTitle"></div>
             <div id="blogViewSummary"></div>
             <div id="blogViewContent"></div>
             <button id="btnshowEditor" class="roundendButton" onclick="showEditor()">Edit</button>
-
         </div>
-        <div id="blogEdit" class="blogSpaSection">
-            <div class="blogContainer">
+        <div id="listHeaderAddEdit" class="blogSpaSection">
+            <div class="crudContainer">
+                <div id="crudContainerTitle" class="crudContainerTitle">List</div>
+                <div class="crudRow">
+                    <div class="crudRowLabel">List Name</div>
+                    <div id="errListName" class="validationError">Required</div>
+                    <input id="txtListName" class="roundedInput" />
+                </div>
+                <div class="crudButtonRow">
+                    <button id="btnlistHeaderAddEdit" class="roundendButton" onclick="addEditListHeader()">Add</button>
+                    <button id="btnListNew" class="roundendButton crudBtnNew" onclick="toggleListHeaderEdit()">New</button>
+                </div>
+            </div>
+            <div>
+                <div class="crudContainer">
+                    <div class="crudContainerTitle">Lists</div>
+                    <div id="listLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+                    <div id="listList" class="crudList"></div>
+                </div>
+            </div>
+        </div>
+        <div id="listItemAddEdit" class="blogSpaSection">
+            <div class="crudContainer">
+                <div id="crudContainerTitle" class="crudContainerTitle">List Item</div>
+                <div class="crudRow">
+                    <div class="crudRowLabel">List</div>
+                    <select id="ddList" class="crudDropDown"></select>
+                    <div class="crudLabel inline">Parent</div>
+                    <select id="ddParentListItems" class="roundedInput inline"></select>
+                </div>
+                <div class="crudRow">
+                    <div class="crudRowLabel">Item</div>
+                    <div id="errListItemName" class="validationError">Required</div>
+                    <input id="txtListItemName" class="roundedInput wide" />
+                </div>
+                <div class="crudRow">
+                    <div class="crudRowLabel">Status</div>
+                    <div id="errStatus" class="validationError">Required</div>
+                    <select id="ddStatus" class="crudDropDown"></select>
+                    <div class="crudRowLabel">Priority</div>
+                    <div id="errPriority" class="validationError">Required</div>
+                    <select id="ddPriority" class="crudDropDown"></select>
+                </div>
+                <div class="crudRow">
+                    <div class="crudRowLabel">Percent Complete</div>
+                    <div id="errPercent" class="validationError">Required</div>
+                    <input id="txtPercent" class="roundedInput width50px" />
+                    <div class="crudRowLabel">Assigned To</div>
+                    <input id="txtAssigned" class="roundedInput" />
+                </div>
+                <div class="crudRow">
+                    <div class="crudRowLabel">Narrative</div>
+                    <div id="listItemNarrativeEditor" class="editorContainer">
+                        <div>@Html.Partial("_Editor") </div>
+                    </div>
+                </div>
+                <div class="crudButtonRow">
+                    <button id="btnListItemAddEdit" class="roundendButton" onclick="addEditListItem()">Add</button>
+                    <button id="btnListItemNew" class="roundendButton crudBtnNew" onclick="toggleListItem()">New</button>
+                </div>
+            </div>
+            <div>
+                <div class="crudContainer">
+                    <div class="crudContainerTitle">List Items</div>
+                    <div id="listItemLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+                    <div id="listItemList" class="crudList"></div>
+                </div>
+            </div>
+        </div>
+        <div id="blogHeader" class="blogSpaSection">
+            <div class="crudContainer">
                 <div id="crudContainerTitle" class="crudContainerTitle">Blog</div>
                 <div class="crudRow">
                     <div class="crudRowLabel">Blog Name</div>
                     <div id="errBlogName" class="validationError">Required</div>
                     <input id="txtBlogName" class="roundedInput" />
+                    <div class="crudRowLabel inline">Color</div>
+                    <input id="txtblogColor" class="roundedInput inline" />
                 </div>
-                <div>
-                    <button id="btnBlogAddEdit" class="roundendButton" onclick="addEditBlog()">Add</button>
-                    <button id="btnBlogNew" class="roundendButton crudBtnNew" onclick="toggleBlog()">New</button>
+                <div class="crudButtonRow">
+                    <button id="btnBlogAddEdit" class="roundendButton" onclick="addEditBlogHeader()">Add</button>
+                    <button id="btnBlogNew" class="roundendButton crudBtnNew" onclick="toggleBlogHeaderEdit()">New</button>
                 </div>
             </div>
             <div>
-                <div class="blogContainer">
+                <div class="crudContainer">
                     <div class="crudContainerTitle">Blogs</div>
                     <div id="blogLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
                     <div id="blogList" class="crudList"></div>
@@ -117,11 +190,11 @@
         <div id="blogEntryEditor" class="blogSpaSection">
             <div class="flexContainer">
                 <div class="floatLeft">
-                    <div class="blogContainer">
+                    <div class="crudContainer">
                         <div id="crudContainerTitle" class="crudContainerTitle">Blog Entry</div>
                         <div class="crudRow">
                             <div class="crudRowLabel">Current Blog</div>
-                            <select id="ddBlogs" class="roundedInput" onchange="setCurrentBlog()"></select>
+                            <select id="ddBlogs" class="roundedInput" onchange="setCurrentBlogEntryBlog()"></select>
                         </div>
                         <div class="crudRow">
                             <div class="crudRowLabel">Title</div>
@@ -130,26 +203,24 @@
                         </div>
                         <div class="crudRow">
                             <div class="crudRowLabel">Summary</div>
-                            <div id="errBlogSummary" class="validationError">Required</div>
-                            <div id="blogSummaryEditor">
+                            <div id="blogSummaryEditor" class="editorContainer">
                                 <div>@Html.Partial("_Editor") </div>
                             </div>
                         </div>
                         <div class="crudRow">
                             <div class="crudRowLabel">Content</div>
-                            <div id="errBlogContent" class="validationError">Required</div>
-                            <div id="blogContentEditor">
+                            <div id="blogContentEditor" class="editorContainer">
                                 <div>@Html.Partial("_Editor") </div>
                             </div>
                         </div>
-                        <div>
+                        <div class="crudButtonRow">
                             <button id="btnBlogEntryAddEdit" class="roundendButton" onclick="addEditBlogEntry()">Add</button>
-                            <button id="btnBlogEntryNew" class="roundendButton crudBtnNew" onclick="resetBlogPage()">New</button>
+                            <button id="btnBlogEntryNew" class="roundendButton crudBtnNew" onclick="toggleBlogEntryEdit()">New</button>
                         </div>
                     </div>
                 </div>
                 <div class="floatLeft">
-                    <div class="blogContainer">
+                    <div class="crudContainer">
                         <div class="crudContainerTitle">Blog Entries</div>
                         <div id="blogEntryLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
                         <div id="blogEntryList" class="crudList"></div>
@@ -160,69 +231,70 @@
     </div>
     <div id="rightColumn"></div>
 </div>
-
 <script>
     var service = '@ViewBag.Service';
     var currentUser = '@ViewBag.UserId';
     var blogModel = {};
-    blogModel.Owner = currentUser;
     var blogEntryModel = {};
+    var listModel = {};
+    var listItemModel = {};
 
     $(document).ready(function () {
-        setLayout("Intelligent Design");
-        $('#btnBlogNew').hide();
-        $('#btnBlogEntryNew').hide();
-        loadBlogList();
-        $('#footerMessage').append("  service: " + service);
+        setLayout("Blog");
 
-        $('#blogSummaryEditor').summernote({
-            height: 120,
-            width: 850,
-            codemirror: {
-                lineWrapping: true,
-                mode: "htmlmixed",
-                theme: "monokai"
-            },
-            toolbar: [
-                ['codeview'],
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontname', 'fontsize']],
-                ['insert', ['picture', 'link', 'video', 'table', 'hr']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['height', ['height']]
-            ]
-        });
-        $('#blogContentEditor').summernote({
-            height: 290,
-            width: 850,
-            codemirror: {
-                lineWrapping: true,
-                mode: "htmlmixed",
-                theme: "monokai"
-            },
-            toolbar: [
-                ['codeview'],
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontname', 'fontsize']],
-                ['insert', ['picture', 'link', 'video', 'table', 'hr']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['height', ['height']]
-            ]
-        });
+    //    $('.jqEditor').jqte();
+
+        showSpaSection("blockDisplayArea")
+
+        //$('#footerMessage').append("  service: " + service);
+        setToolbar("#blogContentEditor", 220, 500);
+
+        setToolbar("#blogSummaryEditor", 120, 500);
+        setToolbar("#listItemNarrativeEditor", 120, 500);
     });
 
-    //only call me if you have an offer
-    // remember my conditions
-    // remember the terms. Work from home only unless travel paid for //by those
-    //alert("getArticleList()")
-    // on block click an entire other new editor.  really! Why?
-    //just to try out different formats
+    function showSpaSection(menuOption) {
+        $('.blogSpaSection').hide();
+        switch (menuOption) {
+            case "blockDisplayArea":
+                if (isNullorUndefined($('#blockDisplayArea').html()))
+                    loadBlocksDisplay();
+                $('#blockDisplayArea').show()
+                break;
+            case "blogEntryEditor":
+                toggleBlogEntryEdit();
+                $('#blogEntryEditor').show();
+                if (isNullorUndefined($('#ddBlogs').html()))
+                    loadBlogHeaderList();
+                //loadBlogEntryEditor(blogEntryModel.Id);
+                break;
+            case "listItemAddEdit":
+                if (isNullorUndefined($('#ddList').html()))
+                    loadListHeaderList();
+                if (isNullorUndefined($('#ddStatus').html()))
+                    loadListItemDropDowns();
+                if (isNullorUndefined($('#listItemList').html()))
+                    loadListItemList();
+                $('#listItemAddEdit').show();
+                break;
+            case "listHeaderAddEdit":
+                if ($('#listList').html() == "")
+                    loadListHeaderList();
+                $('#listHeaderAddEdit').show();
+                break;
+            case "blogHeader":
+                loadBlogHeaderList();
+                if (isNullorUndefined($('#blogList').html()))
+                    loadBlogHeaderList();
+                toggleBlogHeaderEdit();
+                $('#blogHeader').show();
+                break;
+            default:
+        }
+    }
 
     function loadBlocksDisplay() {
+        $('#blockLoadingGif').show();
         try {
             $.ajax({
                 type: "GET",
@@ -231,31 +303,26 @@
                     $('#blockDisplayArea').html("");
                     $.each(response, function (idx, obj) {
 
-                        //switch (obj.BlogName) {
-                        //    default:
-                        //}
-
-                        $('#blockDisplayArea').append("<div id=" + obj.Id + " class='blockContainer'><div class='blockContainerBlogName'>" +
+                        $('#blockDisplayArea').append("<div id=" + obj.Id + " class='blockContainer' style='background-color:" + obj.Color + "'><div class='blockContainerBlogName'>" +
                             obj.BlogName + "</div><div class='blockContainerBlogTitle'>" + obj.Title + "</div></div>");
+
                     })
-
                     $('.blockContainer').click(function () {
-                        loadBlogView($(this).attr("id"));
+                        loadBlogViewFromBlocDisplay($(this).attr("id"));
                     });
-
-
+                    $('#blockLoadingGif').hide();
                 },
                 error: function (jqXHR, exception) {
-                    $('#blogEntryLoadingGif').hide();
+                    $('#blockLoadingGif').hide();
                     alert("loadBlocksDisplay XHR error: " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         } catch (e) {
-            $('#blogEntryLoadingGif').hide();
+            $('#blockLoadingGif').hide();
             alert("loadBlocksDisplay CATCH: " + e)
         }
     }
-    function loadBlogView(id) {
+    function loadBlogViewFromBlocDisplay(id) {
         try {
             //$('#blogEntryLoadingGif').show();
             $.ajax({
@@ -287,28 +354,117 @@
         }
     }
     function showEditor() {
-        $('.blogSpaSection').hide();
-        $('#blogEntryEditor').show();
         loadBlogEntryEditor(blogEntryModel.Id);
+        $('.blogSpaSection').hide();
+        $('#blogEntryEditor').fadeIn();
     }
-    function setCurrentBlog() {
-        blogEntryModel.BlogId = $('#ddBlogs').val();
-        loadBlogEntryList();
-        resetBlogPage();
+    function toggleBlogHeaderEdit() {
+        $('#btnBlogNew').hide();
+        $('#btnBlogAddEdit').html("Add");
+        $('#txtBlogName').val("");
     }
-    function resetBlogPage() {
-        $('#btnBlogEntryNew').hide();
-        $('#btnBlogEntryAddEdit').html("Add");
-        $('#txtBlogEntryTitle').val("");
-        $('#blogSummaryEditor').summernote('code', "");
-        $('#blogContentEditor').summernote('code', "");
+    function addEditBlogHeader() {
+        // bind
+        blogModel.Name = $('#txtBlogName').val();
+        blogModel.Color = $('#txtblogColor').val();
+        blogModel.Owner = currentUser;
+
+        if ($('#btnBlogAddEdit').html() == "Add") {
+            $.ajax({
+                type: "POST",
+                url: service + "/api/Blog",
+                data: blogModel,
+                success: function (response) {
+                    if (!response.startsWith("ERROR")) {
+                        $('#btnBlogAddEdit').html("Update");
+                        $('#btnBlogNew').show();
+                        blogModel.Id = response;
+                        loadBlogHeaderList();
+                    }
+                    else
+                        alert("AddEditBlog POST: " + response);
+                },
+                error: function (jqXHR, exception) {
+                    alert("AddEditBlog POST xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            })
+        }
+        if ($('#btnBlogAddEdit').html() == "Update") {
+            $.ajax({
+                type: "PUT",
+                url: service + "/api/Blog",
+                data: blogModel,
+                success: function (success) {
+                    if (success == "ok") {
+                        loadBlogHeaderList();
+                    }
+                    else
+                        alert("AddEditBlog PUT: " + response);
+                },
+                error: function (jqXHR, exception) {
+                    alert("AddEditBlog PUT xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            })
+        }
+    }
+    function loadBlogHeaderList() {
+        try {
+            $('#blogLoadingGif').show();
+            $.ajax({
+                type: "GET",
+                url: service + "/api/Blog",
+                success: function (response) {
+                    $('#blogList').html("");
+                    $('#ddBlogs').html("<option class='ddOption' value='0'>-- select blog --</option>");
+                    if (true) {
+                        $.each(response, function (idx, obj) {
+                            $('#blogList').append("<div class='crudListItem blogListItem' id='" + obj.Id + "' name='" + obj.Name + "' color=" + obj.Color + " >" + obj.Name + "</div>");
+                            $('#ddBlogs').append("<option class='ddOption' value='" + obj.Id + "'>" + obj.Name + "</option>");
+                        })
+                        blogEntryModel.BlogId = $('#ddBlogs').val();
+                        $('.blogListItem').click(function () {
+                            //alert("this.id: " + $(this).attr("id"));
+                            blogModel.Id = $(this).attr("id");
+                            $('#txtBlogName').val($(this).attr("name"));
+                            $('#txtblogColor').val($(this).attr("color"));
+                            $('#btnBlogAddEdit').html("Update");
+                            $('#btnBlogNew').show();
+                        });
+                        $('#blogLoadingGif').hide();
+                    }
+                    else {
+                        $('#blogLoadingGif').hide();
+                        alert("getBlogList: " + success)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    $('#blogLoadingGif').hide();
+                    alert("getBlogList XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            $('#blogLoadingGif').hide();
+            alert("get BlogList CATCH: " + e)
+        }
     }
 
+    function toggleBlogEntryEdit() {
+        $('#btnBlogEntryNew').hide();
+        $('#btnBlogEntryAddEdit').html("Add");
+        //clear gets
+        $('#txtBlogEntryTitle').val("");        
+        $('#blogSummaryEditor').summernote('code', "");
+        $('#blogContentEditor').summernote('code', "");
+        //$('#txtBlogEntryContent').jqteVal('');
+    }
     function addEditBlogEntry() {
+        //bind
         blogEntryModel.BlogId = $('#ddBlogs').val();
         blogEntryModel.Title = $('#txtBlogEntryTitle').val();
-        blogEntryModel.Content = $('#blogContentEditor').summernote('code');
         blogEntryModel.Summary = $('#blogSummaryEditor').summernote('code');
+        blogEntryModel.Content = $('#blogContentEditor').summernote('code');
+        //blogEntryModel.Content = $('#txtBlogEntryContent').jqteVal();
+
         if ($('#btnBlogEntryAddEdit').html() == "Add") {
             $.ajax({
                 type: "POST",
@@ -348,6 +504,10 @@
             })
         }
     }
+    function setCurrentBlogEntryBlog() {
+        blogEntryModel.BlogId = $('#ddBlogs').val();
+        loadBlogEntryList();
+    }
     function loadBlogEntryList() {
         try {
             $('#blogEntryLoadingGif').show();
@@ -356,7 +516,7 @@
                 url: service + "/api/BlogEntry/GetMany?blogId=" + blogEntryModel.BlogId + "&kludge=kludge",
                 success: function (response) {
                     $('#blogEntryList').html("");
-                    if (true) {
+                    if (!response[0].Title.startsWith("Error")) {
                         $.each(response, function (idx, obj) {
                             $('#blogEntryList').append("<div class='crudListItem blogEntryListItem' id='" + obj.Id + "'>" + obj.Title + "</div>");
                         })
@@ -394,6 +554,10 @@
                         $('#txtBlogEntryTitle').val(response.Title);
                         $('#blogSummaryEditor').summernote('code', response.Summary);
                         $('#blogContentEditor').summernote('code', response.Content);
+
+                        //alert("$('#txtBlogEntryContent').val(): " + response.Content);
+                        //$('#txtBlogEntryContent').jqteVal(response.Content);
+
                         $('#btnBlogEntryAddEdit').html("Update");
                         $('#btnBlogEntryNew').show();
                         $('#blogEntryLoadingGif').hide();
@@ -414,41 +578,44 @@
         }
     }
 
-    function toggleBlog() {
-        $('#btnBlogNew').hide();
-        $('#btnBlogAddEdit').html("Add");
-        $('#txtBlogName').val("");
+    function toggleListHeaderEdit() {
+        $('#btnListNew').hide();
+        $('#btnlistHeaderAddEdit').html("Add");
+        $('#txtListName').val("");
     }
-    function addEditBlog() {
-        blogModel.Name = $('#txtBlogName').val();
-        if ($('#btnBlogAddEdit').html() == "Add") {
+    function addEditListHeader() {
+        //bind
+        listModel.ListName = $('#txtListName').val();
+        listModel.ListOwner = currentUser;
+
+        if ($('#btnlistHeaderAddEdit').html() == "Add") {
             $.ajax({
                 type: "POST",
-                url: service + "/api/Blog",
-                data: blogModel,
+                url: service + "/api/List",
+                data: listModel,
                 success: function (response) {
                     if (!response.startsWith("ERROR")) {
                         $('#btnBlogAddEdit').html("Update");
                         $('#btnBlogNew').show();
-                        blogModel.Id = response;
-                        loadBlogList();
+                        listModel.Id = response;
+                        loadListHeaderList();
                     }
                     else
                         alert("AddEditBlog POST: " + response);
                 },
                 error: function (jqXHR, exception) {
-                    alert("AddEditBlog POST xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                    alert("addEditList POST xhr error: " + getXHRErrorDetails(jqXHR, exception));
                 }
             })
         }
-        if ($('#btnBlogAddEdit').html() == "Update") {
+        if ($('#btnlistHeaderAddEdit').html() == "Update") {
             $.ajax({
                 type: "PUT",
-                url: service + "/api/Blog",
-                data: blogModel,
+                url: service + "/api/List",
+                data: listModel,
                 success: function (success) {
-                    if (success=="ok") {
-                        loadBlogList();
+                    if (success == "ok") {
+                        loadListHeaderList();
                     }
                     else
                         alert("AddEditBlog PUT: " + response);
@@ -459,45 +626,222 @@
             })
         }
     }
-    function loadBlogList() {
+    function loadListHeaderList() {
         try {
-            $('#blogLoadingGif').show();
+            $('#listLoadingGif').show();
             $.ajax({
                 type: "GET",
-                url: service + "/api/Blog",
+                url: service + "/api/List",
                 success: function (response) {
-                    $('#blogList').html("");
-                    $('#ddBlogs').html("");
+                    $('#listList').html("");
+                    $('#ddList').html("<option class='itemListList' value='0'>-- select To Do List --</option>");
                     if (true) {
                         $.each(response, function (idx, obj) {
-                            $('#blogList').append("<div class='crudListItem blogListItem' id='" + obj.Id + "' name='" + obj.Name + "'>" + obj.Name + "</div>");
-                            $('#ddBlogs').append("<option class='ddOption' value='" + obj.Id + "'>" + obj.Name + "</option>");
+                            $('#ddList').append("<option class='listItemOption' value='" + obj.Id + "'>" + obj.ListName + "</option>");
+                            $('#listList').append("<div class='crudListItem listListItem' id='" + obj.Id + "' name='" + obj.ListName + "'>" + obj.ListName + "</div>");
                         })
-                        blogEntryModel.BlogId = $('#ddBlogs').val();
-                        $('.blogListItem').click(function () {
-                            //alert("this.id: " + $(this).attr("id"));
-                            blogModel.Id = $(this).attr("id");
-                            $('#txtBlogName').val($(this).attr("name"));
-                            $('#btnBlogAddEdit').html("Update");
-                            $('#btnBlogNew').show();
+
+                        $('.listListItem').click(function () {
+                            $('#btnListNew').show();
+                            $('#btnlistHeaderAddEdit').html("Update");
+                            listModel.Id = $(this).attr('id')
+                            $('#txtListName').val($(this).attr('name'));
+                        })
+
+                        $('#ddList').change(function () {
+                            //alert("$('#ddList').change val(): " + $(this).val());
+                            listItemModel.ListId = $(this).val();
+                            loadListItemList();
                         });
-                        $('#blogLoadingGif').hide();
+                        $('#listLoadingGif').hide();
                     }
                     else {
-                        $('#blogLoadingGif').hide();
-                        alert("getBlogList: " + success)
+                        $('#listLoadingGif').hide();
+                        alert("get ListList: " + success)
                     }
                 },
                 error: function (jqXHR, exception) {
-                    $('#blogLoadingGif').hide();
-                    alert("getBlogList XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                    $('#listLoadingGif').hide();
+                    alert("get ListList XHR error: " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         } catch (e) {
-            $('#blogLoadingGif').hide();
-            alert("get BlogList CATCH: " + e)
+            $('#listLoadingGif').hide();
+            alert("get ListList CATCH: " + e)
+        }
+    }
+
+    function toggleListItem() {
+        $('#btnListItemNew').hide();
+        $('#btnListItemAddEdit').html("Add");
+        // clear gets
+        listItemModel.id = "";
+        $('#txtListName').val("");
+        $('#txtListItemName').val("");
+        $('#ddParentListItems').val("0");
+        $('#ddPriority').val("0");
+        $('#ddStatus').val("0");
+        $('#txtAssigned').val("");
+        $('#listItemNarrativeEditor').summernote('code', '');
+    }
+    function addEditListItem() {
+        // bind
+        //listItemModel.ListId = listModel.Id;
+        listItemModel.ItemName = $('#txtListItemName').val();
+        listItemModel.ParentId = $('#ddParentListItems').val();
+        listItemModel.ItemPriorityRef = $('#ddPriority').val();
+        listItemModel.ItemStatusRef = $('#ddStatus').val();
+        listItemModel.AssignedTo = $('#txtAssigned').val();
+        //listItemModel.DateCompleted = $('#').val();
+        listItemModel.PercentComplete = $('#txtPercent').val();
+        listItemModel.Narrative = $('#listItemNarrativeEditor').summernote('code');
+
+        if ($('#btnListItemAddEdit').html() == "Add") {
+            $.ajax({
+                type: "POST",
+                url: service + "/api/ListItem",
+                data: listItemModel,
+                success: function (response) {
+                    if (!response.startsWith("ERROR")) {
+                        $('#btnListItemAddEdit').html("Update");
+                        $('#btnListItemNew').show();
+                        listItemModel.Id = response;
+                        loadListItemList();
+                    }
+                    else
+                        alert("btnListItemAddEdit POST: " + response);
+                },
+                error: function (jqXHR, exception) {
+                    alert("btnListItemAddEdit POST xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            })
+        }
+        if ($('#btnListItemAddEdit').html() == "Update") {
+            $.ajax({
+                type: "PUT",
+                url: service + "/api/ListItem",
+                data: listItemModel,
+                success: function (success) {
+                    if (success == "ok") {
+                        loadListItemList();
+                    }
+                    else
+                        alert("btnListItemAddEdit PUT: " + response);
+                },
+                error: function (jqXHR, exception) {
+                    alert("btnListItemAddEdit PUT xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            })
+        }
+    }
+    function loadListItemList() {
+        try {
+            if (!isNullorUndefined(listItemModel.ListId)) {
+                //alert("loadListItemList listId=" + listItemModel.ListId);
+                $('#listItemLoadingGif').show();
+                $.ajax({
+                    type: "GET",
+                    url: service + "/api/ListItem?listId=" + listItemModel.ListId,
+                    success: function (response) {
+                        $('#listItemList').html("");
+                        if (true) {
+                            $.each(response, function (idx, obj) {
+                                $('#listItemList').append("<div class='crudListItem listItemListItem' id='" + obj.Id + "'>" + obj.ItemName + "</div>");
+                            })
+                            $('.listItemListItem').click(function () {
+                                loadListItemDialog($(this).attr("id"));
+                            });
+                            $('#listItemLoadingGif').hide();
+                        }
+                        else {
+                            $('#listItemLoadingGif').hide();
+                            alert("loadListItemList: " + success)
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                        $('#listItemLoadingGif').hide();
+                        alert("loadListItemList XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                    }
+                });
+            }
+        } catch (e) {
+            $('#listItemLoadingGif').hide();
+            alert("loadListItemList CATCH: " + e)
+        }
+    }
+    function loadListItemDialog(id) {
+        try {
+            $('#listItemLoadingGif').show();
+            $.ajax({
+                type: "PATCH",
+                url: service + "/api/ListItem/GetOne?id=" + id,
+                success: function (response) {
+                    $('#listItemLoadingGif').hide();
+                    if (!response.ItemName.startsWith("Error")) {
+                        listItemModel.id = id;
+                        $('#txtListItemName').val(response.ItemName);
+                        $('#ddParentListItems').val(response.ParentId);
+                        $('#ddPriority').val(response.ItemPriorityRef);
+                        $('#ddStatus').val(response.ItemStatusRef);
+                        $('#txtAssigned').val(response.AssignedTo);
+                        $('#listItemNarrativeEditor').summernote('code', response.Narrative);
+
+                        $('#btnListItemAddEdit').html("Update");
+                        $('#btnListItemNew').show();
+                    }
+                    else {
+                        alert("loadListItemDialog: " + response.ItemName)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    $('#listItemLoadingGif').hide();
+                    alert("loadListItemDialog XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            $('#listItemLoadingGif').hide();
+            alert("loadListItemDialog CATCH: " + e)
+        }
+    }
+    function loadListItemDropDowns() {
+        try {
+            // ToDo List Status
+            $.ajax({
+                type: "GET",
+                dataType: "Json",
+                url: service + "/api/Ref/Get?refType=TDS",
+                success: function (result) {
+                    $('#ddStatus').html("");
+                    $.each(result, function (idx, obj) {
+                        $('#ddStatus').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
+                    });
+                },
+                error: function (jqXHR, exception) {
+                    alert("GetRefs TDS error: " + getXHRErrorDetails(jqXHR, exception));
+                },
+            });
+            // ToDo List Priority
+            $.ajax({
+                type: "GET",
+                dataType: "Json",
+                url: service + "/api/Ref/Get?refType=TDP",
+                success: function (result) {
+                    $('#ddPriority').html("");
+                    $.each(result, function (idx, obj) {
+                        $('#ddPriority').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
+                    });
+                },
+                error: function (jqXHR, exception) {
+                    alert("GetRefs TDP error: " + getXHRErrorDetails(jqXHR, exception));
+                },
+            });
+            //  ddList -- handled
+        } catch (e) {
+            //displayStatusMessage("error", "catch ERROR: " +e);
+            alert("GetRefs catch: " + e);
         }
     }
 
 </script>
+
 

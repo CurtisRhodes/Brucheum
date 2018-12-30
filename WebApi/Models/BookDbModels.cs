@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace WebApi
+namespace WebApi.Book.Models
 {
     public class DbBookModel {
         public DbBookModel() {

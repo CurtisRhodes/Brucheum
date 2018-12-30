@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace WebApi.Models
+namespace WebApi.GetaJob.Models
 {
     public class JobSearchModel
     {
@@ -24,10 +24,12 @@ namespace WebApi.Models
         public string AgencyId { get; set; }
         public string TargetCompanyId { get; set; }
         public string Comments { get; set; }
-        public string ListingStatus { get; set; }
+        public string Status { get; set; }
+        public string StatusText { get; set; }
         public string Rate { get; set; }
         public string EmploymentType { get; set; }
         public string Distance { get; set; }
+        public string Location { get; set; }
         public string ListingSource { get; set; }
         public string Desirability { get; set; }
         public string Fit { get; set; }
@@ -42,6 +44,7 @@ namespace WebApi.Models
         public string ActivityStatus { get; set; }
         public string Comments { get; set; }
     }
+
     public class AgentModel
     {
         public string Id { get; set; }
@@ -52,8 +55,12 @@ namespace WebApi.Models
         public string Phone { get; set; }
         public string Cell {get; set; }
     }
+
     public class AgencyModel
     {
+        public AgencyModel() {
+            Agents = new List<AgentModel>();
+        }
         public string Id { get; set; }
         public string CompanyName { get; set; }
         public string CompanyType { get; set; }
@@ -62,14 +69,23 @@ namespace WebApi.Models
         public string Email { get; set; }
         public string Phone { get; set; }
         public string Website { get; set; }
+        public List<AgentModel> Agents { get; set; }
+    }
+
+    public class JobRefModel
+    {
+        public string RefType { get; set; }
+        public string RefCode { get; set; }
+        public string RefDescription { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class SkillModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Category { get; set; }
+        public string CategoryDescription { get; set; }        
+        public string Narrative { get; set; }
     }
 }
-
-
-
-
-
-
-
-
-

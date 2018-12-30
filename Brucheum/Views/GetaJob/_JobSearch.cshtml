@@ -1,22 +1,14 @@
 ﻿
-
-<style>
-    #divJobSearch {
-        width: 888px;
-    }
-
-</style>
-
 <div id="divJobSearch" class="crudContainer">
     <div class="crudContainerTitle">Job Searches</div>
     <div class="crudArea">
         <div class="crudRow">
             <div class="crudRowLabel">Initiated:</div>
-            <input id="txtSearchStart" class="roundedInput" placeholder="11/11/18" />
-            <div class="crudRowLabel">Subject:</div>
+            <input id="txtSearchStart" class="roundedInput width50px" placeholder="11/11/18" />
+            <div class="crudRowLabel">Name:</div>
             <input id="txtSearchName" class="roundedInput" placeholder="name" />
             <div class="crudRowLabel">Abandoned:</div>
-            <input id="txtSearchEnd" class="roundedInput" />
+            <input id="txtSearchEnd" class="roundedInput width50px" />
         </div>
         <div>
             <div class="roundendButton inline" id="btnJobSearchAddEdit" onclick="addEditSearch()">Add</div>
@@ -49,7 +41,7 @@
                 $('#jobSearchList').html("");
                 $.each(jobSearchs, function (idx, jobSearch) {
                     $('#jobSearchList').append("<div class='crudListItem jobSearchItem' id=" + jobSearch.Id + " >" + jobSearch.Initiated + " | " +
-                        jobSearch.SearchName + " | " + jobSearch.Abandoned + "</div>");
+                        jobSearch.SearchName + " | " + (jobSearch.Abandoned == 'null' ? jobSearch.Abandoned : 'active') + "</div>");
                 })
 
                 $('.jobSearchItem').click(function () {

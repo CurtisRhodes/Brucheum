@@ -8,7 +8,7 @@ using System.Web.Http.Cors;
 using System.Web.Http.Results;
 using System.Xml;
 
-namespace WebApi
+namespace WebApi.Xml
 {
 
     [EnableCors("*", "*", "*")]

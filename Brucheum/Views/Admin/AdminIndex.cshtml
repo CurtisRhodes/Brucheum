@@ -1,15 +1,14 @@
 ﻿@{
     ViewBag.Title = "Admin";
 }
-
 <link href="~/Styles/crudEdit.css" rel="stylesheet" />
 
 @*<style>
-    .roundendButton {
-        width: 111px;
-        display: inline-block;
-    }
-</style>*@
+        .roundendButton {
+            width: 111px;
+            display: inline-block;
+        }
+    </style>*@
 
 <div class="threeColumnArray">
     <div id="leftColumn">
@@ -20,14 +19,15 @@
             <div class="vertMenuTab" id="optRefEditor">Ref Editor</div>
             @*<div class="vertMenuTab" id="optArticleClass"> Article Classifications</div>*@
             <div class="vertMenuTab" id="optShowSiteStats">Show Site Stats</div>
+            <div class="vertMenuTab" id="optShowSiteStats">Set Resume</div>
         </div>
     </div>
     <div id="middleColumn">
         <div id="divStatusMessage"></div>
         <div class="adminOptionContainer">
-            <div id="tabArticles" class="adminOption">
+            @*<div id="tabArticles" class="adminOption">
                 @Html.Partial("_ManageArticles")
-            </div>
+            </div>*@
             <div id="tabAddRoles" class="adminOption">
                 @Html.Partial("_ManageRoles")
             </div>
@@ -37,9 +37,9 @@
             <div id="tabRefEditor" class="adminOption">
                 @Html.Partial("_ManageRefs")
             </div>
-            <div id="tabArticleClass" class="adminOption">
+            @*<div id="tabArticleClass" class="adminOption">
                 @Html.Partial("_ManageClassifications")
-            </div>
+            </div>*@
             <div id="tabShowSiteStats" class="adminOption">
                 @Html.Partial("_SiteStats")
             </div>
@@ -63,15 +63,15 @@
     });
 
     // Articles
-    $("#optAddArticle").click(function () {
-        $('.adminOption').hide();
-        $('#tabArticles').show();
-        $('#btnArticleNew').hide();
-        if ($('#articledbList').html() === "")
-            getArticleList();
-        if ($('#ddArticleCategory').html() == "")
-            loadArticleCats();
-    })
+    //$("#optAddArticle").click(function () {
+    //    $('.adminOption').hide();
+    //    $('#tabArticles').show();
+    //    $('#btnArticleNew').hide();
+    //    if ($('#articledbList').html() === "")
+    //        getArticleList();
+    //    if ($('#ddArticleCategory').html() == "")
+    //        loadArticleCats();
+    //})
     // Roles
     $("#optAddRoles").click(function () {
         $('.adminOption').hide();
@@ -81,13 +81,13 @@
             getAllRoles();
     })
     // article Classifications
-    $("#optArticleClass").click(function () {
-        $('.adminOption').hide();
-        $('#tabArticleClass').show();
-        $('#btnArticleClassToggle').hide();
-        if ($('#divArticleClassList').html() === "")
-            GetArticleClasses();
-    })
+    //$("#optArticleClass").click(function () {
+    //    $('.adminOption').hide();
+    //    $('#tabArticleClass').show();
+    //    $('#btnArticleClassToggle').hide();
+    //    if ($('#divArticleClassList').html() === "")
+    //        GetArticleClasses();
+    //})
     // my famous Ref Editor
     $("#optRefEditor").click(function () {
         $('.adminOption').hide();

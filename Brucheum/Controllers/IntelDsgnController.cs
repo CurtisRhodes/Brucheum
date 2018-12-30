@@ -23,31 +23,32 @@ namespace Brucheum
             ViewBag.UserId = User.Identity.GetUserId();
             return View();
         }
-        public ActionResult About()
-        {
-            return View();
-        }
-        public ActionResult Approach()
-        {
-            return View();
-        }
-        public ActionResult Portfolio()
-        {
-            return View();
-        }
-        public ActionResult Code()
-        {
-            return View(); 
-        }
         public ActionResult Blog()
         {
             ViewBag.UserId = User.Identity.GetUserId();
             ViewBag.Service = apiService;
             return View();
         }
-        public ActionResult Contact()
-        {
-            return View();
-        }
+
+        //public ActionResult About()
+        //{
+        //    return View();
+        //}
+        //public ActionResult Approach()
+        //{
+        //    return View();
+        //}
+        //public ActionResult Portfolio()
+        //{
+        //    return View();
+        //}
+        //public ActionResult Code()
+        //{
+        //    return View(); 
+        //}
+        //public ActionResult Contact()
+        //{
+        //    return View();
+        //}
     }
 }

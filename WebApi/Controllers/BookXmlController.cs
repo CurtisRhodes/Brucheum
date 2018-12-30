@@ -11,12 +11,12 @@ using System.Web.Http.Cors;
 using System.Web.Http.Results;
 using System.Xml;
 using System.Xml.Linq;
-using WebApi.Models;
+using WebApi.Xml.Models;
 
-namespace WebApi.Controllers
+namespace WebApi.Xml
 {
     [EnableCors("*", "*", "*")]
-    public class BookController : ApiController
+    public class BookXmlController : ApiController
     {
         [HttpGet]
         public string GetEntireBook(string bookTitle)
@@ -222,6 +222,7 @@ namespace WebApi.Controllers
             }
         }
     }
+
     public class CleanXmlAttributesJsonWriter : JsonTextWriter
     {
         public CleanXmlAttributesJsonWriter(TextWriter writer) : base(writer) { }

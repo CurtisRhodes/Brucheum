@@ -5,13 +5,13 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using WebApi.DataContext;
-using WebApi.Models;
+using WebApi.Resume.DataContext;
+using WebApi.Resume.Models;
 
-namespace WebApi.Controllers
+namespace WebApi.Resume
 {
     [EnableCors("*", "*", "*")]
-    public class JobController : ApiController
+    public class LostJobController : ApiController
     {
         [HttpGet]
         public LostJobModel Get(string jobId)
@@ -19,7 +19,7 @@ namespace WebApi.Controllers
             var lostJob = new LostJobModel();
             try
             {
-                using (var db = new ResumeContext())
+                using (var db = new Resume.DataContext.ResumeContext())
                 {
                     var dbJob = db.LostJobs.Where(j => j.Id == jobId).FirstOrDefault();
                     if (dbJob != null)
@@ -38,7 +38,7 @@ namespace WebApi.Controllers
                     }
                 }
             }
-            catch (Exception ex) { lostJob.Summary = "ERROR: " + Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { lostJob.Summary = Helpers.ErrorDetails(ex); }
             return lostJob;
         }
 
@@ -72,9 +72,9 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public string Post(LostJob newJob)
+        public string Post(Resume.DataContext.LostJob newJob)
         {
-            string success = "ERROR: ";
+            string success = "";
             try
             {
                 using (var db = new ResumeContext())
@@ -85,7 +85,7 @@ namespace WebApi.Controllers
                     success = newJob.Id.ToString();
                 }
             }
-            catch (Exception ex) { success = "ERROR: " + Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { success =  Helpers.ErrorDetails(ex); }
             return success;
         }
 
@@ -144,7 +144,7 @@ namespace WebApi.Controllers
                     }
                 }
             }
-            catch (Exception ex) { section.SectionTitle = "ERROR: " + Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { section.SectionTitle = Helpers.ErrorDetails(ex); }
             return section;
         }
 
@@ -234,7 +234,7 @@ namespace WebApi.Controllers
             using (var db = new ResumeContext())
             {
                 var dbResumes = db.Resumes.Where(r => r.PersonId == personId).ToList();
-                foreach (Resume dbResume in dbResumes)
+                foreach ( DataContext.Resume dbResume in dbResumes)
                 {
                     rm.Add(new ResumeModel() { Id = dbResume.Id, ResumeName = dbResume.ResumeName, Created = dbResume.Created.ToShortDateString() });
                 }
@@ -293,7 +293,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public Resume GetOne(string resumeId)
+        public DataContext.Resume GetOne(string resumeId)
         {
             using (var db = new ResumeContext())
             {
@@ -309,7 +309,7 @@ namespace WebApi.Controllers
             {
                 using (var db = new ResumeContext())
                 {
-                    var r = new Resume();
+                    var r = new DataContext.Resume();
                     r.ResumeName = newResume.ResumeName;
                     r.Created = DateTime.Now;
                     r.PersonId = newResume.PersonId;
@@ -319,7 +319,7 @@ namespace WebApi.Controllers
                     success = r.Id.ToString();
                 }
             }
-            catch (Exception ex) { success = "ERROR: " + Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { success =  Helpers.ErrorDetails(ex); }
             return success;
         }
 
@@ -331,7 +331,7 @@ namespace WebApi.Controllers
             {
                 using (var db = new ResumeContext())
                 {
-                    Resume resume = db.Resumes.Where(r => r.Id == resumeModel.Id).FirstOrDefault();
+                    DataContext.Resume resume = db.Resumes.Where(r => r.Id == resumeModel.Id).FirstOrDefault();
                     if (resume != null)
                     {
                         resume.ResumeName = resumeModel.ResumeName;
@@ -410,7 +410,7 @@ namespace WebApi.Controllers
         [HttpPost]
         public string Post(ResumeElementModel elementModel)
         {
-            string success = "ERROR: ";
+            string success = "";
             try
             {
                 var resumeElement = new ResumeElement();
@@ -425,7 +425,7 @@ namespace WebApi.Controllers
                     success = "ok";
                 }
             }
-            catch (Exception ex) { success = "ERROR: " + Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { success =  Helpers.ErrorDetails(ex); }
             return success;
         }
 
@@ -452,4 +452,5 @@ namespace WebApi.Controllers
             return success;
         }
     }
+
 }

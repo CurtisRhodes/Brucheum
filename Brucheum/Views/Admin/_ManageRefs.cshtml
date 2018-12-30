@@ -66,7 +66,7 @@
 
                     $('#ddRefs').change(function () {
                         selectedRefType = $('#ddRefs option:selected').attr("value")
-                        getRefs($('#ddRefs option:selected').val());
+                        getAdminRefs($('#ddRefs option:selected').val());
                     });
 
                     $('#refLoadingGif').hide();
@@ -83,7 +83,7 @@
         }
     }
 
-    function getRefs(refType) {
+    function getAdminRefs(refType) {
         try {
             $.ajax({
                 type: "GET",
@@ -105,12 +105,12 @@
                     });
                 },
                 error: function (jqXHR, exception) {
-                    alert("GetRefs error: " + getXHRErrorDetails(jqXHR, exception));
+                    alert("getAdminRefs error: " + getXHRErrorDetails(jqXHR, exception));
                 },
             });
         } catch (e) {
             //displayStatusMessage("error", "catch ERROR: " +e);
-            alert("GetRefs catch: " + e);
+            alert("getAdminRefs catch: " + e);
         }
     }
 
@@ -129,7 +129,7 @@
                         $('#txtRefName').val("");
                         $('#btnAddUpdateRef').text("Add");
                         $('#btnRefToggle').hide();
-                        getRefs(selectedRefType);
+                        getAdminRefs(selectedRefType);
                     }
                     else {
                         alert("Post ref error :" + result.Success);
@@ -160,7 +160,7 @@
                         $('#txtRefName').val("");
                         $('#btnAddUpdateRef').text("Add");
                         $('#btnRefToggle').hide();
-                        getRefs(selectedRefType);
+                        getAdminRefs(selectedRefType);
                     }
                     else
                         displayStatusMessage("error", "server ERROR: " + success);

@@ -1,0 +1,145 @@
+<!DOCTYPE html><html>
+    <head>
+    <title>Book Writing Tool</title>
+    <link href='/Styles/default.css' rel='stylesheet'>
+    <link href='/Styles/fixedHeader.css' rel='stylesheet'>
+    <link href='/Styles/articleView.css' rel='stylesheet'>
+    <link href="/Styles/bFooter.css" rel="stylesheet" />
+    <script src='/Scripts/GlobalFunctions.js'></script>
+    <script src="/Scripts/3rd Party/jquery.min.js"></script>
+    <script src='/Scripts/ResizeThreeColumnPage.js'></script>
+    <meta name="Title" content="Book Writing Tool" property="og:title">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://api.curtisrhodes.com/app_data/images/MyBook.jpg">
+    <meta property="og:url" content="https://Curtisrhodes.com/static_pages/Book_Writing_Tool.html">
+    <meta name="Keywords" content="">;
+    <meta property="og:description" content="<div style="font-size:18px;">Talk about procrastination. Instead of writing my novel, I wrote a book building tool. There are already many places to write your book from Microsoft Word to Google Docs to any of a number of blog engines. Some people have even been known to use pen and paper. Why does ">
+    </head><body>
+    <div class='standardHeader' id='bheader'>
+        <div class='bannerImageContainer' id='divTopLeftLogo'>
+            <a href='/Home/Index'><img class='bannerImage' src='../images/house.gif'></a>
+        </div>
+        <div class='headerBodyContainer'>
+            <div class='headerTitle' id='bannerTitle'>
+                The Brucheum
+            </div>
+        </div>
+    </div>
+    <div class='threeColumnArray'>
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
+            fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));</script>
+        <div id='leftColumn'>
+            <div class="fb-share-button staticFaceBookButton" data-href="https://Curtisrhodes.com/static_pages/"Book_Writing_Tool.html " data-layout="button_count"></div>
+        </div>
+        <div id='middleColumn'>
+            <div class='pollybox30'>
+                <div class='divTopLine'>
+                    <div class='floatLeft'>12/18/2018</div>
+                    <div class='floatRightDiv'>technical article</div>
+                </div>
+                <div class='articleTitle'>Book Writing Tool</div>
+                <div class='flexContainer'><div class='byline'>The Uarbach</div></div>
+            </div>
+            <div id='contentArea'><div class='articleImageContainer'>
+                <img id="divImage" class="articleCenterImage" src=https://api.curtisrhodes.com/app_data/images/MyBook.jpg />
+            </div>
+            <div class='summaryText'><div style="font-size:18px;">Talk about procrastination. Instead of writing my novel, I wrote a book building tool. There are already many places to write your book from Microsoft Word to Google Docs to any of a number of blog engines. Some people have even been known to use pen and paper. Why does the world need a new book Building tool? I believe this app is an advancement from any thing else out there. This app uses the concept of chapters, sections and subsections allowing you to organize all the scraps of writing you have lying around and even shuffle things around as you go. And, as you can see from the banner graphic, it presents your book in a really cool page flip display better than even Kindle of Nook. &nbsp;<br>&nbsp; If you're anything like me organization is an even bigger challenge than writing itself. You may have scraps of ideas written all over the place. You can use this tool to cut and paste chapters from all over the place. But, if you have any HTML style skills, the editor available in this tool has the ability to toggle from normal view to HTML. This allows you to add images and links.</div></div>
+            <div class='articleContent'><link href="https://curtisrhodes.com/Styles/code.css" rel="stylesheet">
+<div style="font-family:sarif; font-size:24px">
+<p>There are so many ways and places to write your novel. I have already started and left scraps of my uncompleted novels in a number of them including Word Documents, Google Docs, my Blogger web post editor and even actual spiral notebooks. Each of these tools has its advantages. I especially love OneNote. As a developer, I consider Microsoft OneNote a masterpiece of computer app programming. OneNote has organizational features in the form of books, sections and pages and you can even nest pages under each other. I have found OneNote very useful given the way my brain works, which is to flitter and fly from one topic to another as thinking about one thing causes me to have an idea about something largely unrelated but that I don't want to loose.
+  <br>
+  <br>
+  This book writing tool incorporates a OneNote tree likle design concept in that it allows you to add books, chapters, sections and subsections on the fly and then go back and continue fleshing out your main train of thought. OneNote is great but I don't consider it a proper place to write an entire book. I wanted a tool that allows me to build my book in sections but then present it a coherent form. This app, which I call Flitter, in addition to it's editing functions, is also a powerful presentation engine. In fact, the only thing a non logged-in user assigned the book editing roll can see is the presentation portion. There are only two main forms to the presentation. One is the Table of Contents, and then there's the page viewing form. Currently there are only two page viewing format templates, one a very fancy one shown above with pale yellow pages and borders that look like an antique book. The most complicated part of it is that it calculates using a word count algorithm based on screen size and line height and creates two page blocks left and right. The default template is a much more simple single page display that relies on book specific style sheet libraries for backgrounds and borders and fonts and colors.&nbsp;</p><p><br>   
+<img height="300" align="right" style="padding:10px;" src="https:\\api.curtisrhodes.com\app_data\images\tableofcontents.png">The data including the formatted text is stored in a number of database tables. I had originally written the entire tool using XML files, but somehow got it the idea that data tables were the way to go so I converted the whole thing.&nbsp; Originally I was using a combination of xPath commands and anchor tags jump around but sql tables and keys embedded in the table of contents page work a little better. The TOC page shown here is built from the meta data of the Book Chapter and Section tables. It has collapsing divs that expand when you click on the up down carets or the dot row. If you click on a chapter or section label it takes to that spot in document. For performance the entire document is assembled into local storage and anchor tags are used for paging from the TOC page. The Book table is actually the smallest. It contains just one row for each book. It has two columns that contain varchar(max) text data; Preface and Introduction. The Chapter table is next smallest. It contains one contents field and you can put your whole book in the chapter table, but I recommend putting the bulk of the text in sections and subsections. Chapters, sections and subsections are laid out in the presentation with descending header tags you can format in your style sheet.</p><p> &nbsp; The app uses entity framework for database access and EF has some really cool features if you set up proper foreign key relationships. The entire book can be pulled down in one call. However, this means that the EF models themselves are a little too complex to be passed down themselves. It is better if each instance is put in POCO (Plain old Common language runtime Object) and leave all the annotations and virtual fields relationships required in the EF mod
+  
+  els up in the API.
+  
+  
+  
+  
+  
+  
+ </p><div style="float:left; margin-right: 22px; font-size: 14px; "> 
+<code>
+<div><cskeyword>[HttpGet]</cskeyword></div>
+<div><keyword>public</keyword> <cskeyword>DbBookModel</cskeyword> Get(<keyword>int</keyword> bookId)</div>
+<div>{</div>
+<div class="tab1"><cskeyword>DbBookModel</cskeyword> book = <keyword>new</keyword> <cskeyword>DbBookModel</cskeyword>();</div>
+<div class="tab1"><cskeyword>ChapterModel</cskeyword> chapterModel = <keyword>null</keyword>;</div>
+<div class="tab1"><cskeyword>BookSectionModel</cskeyword> sectionModel = <keyword>null</keyword>;</div>
+<div class="tab1"><keyword>using</keyword> (<keyword>var</keyword> db = <keyword>new</keyword> <cskeyword>BookDbContext</cskeyword>())</div>
+<div class="tab1">{</div>
+<div class="tab2"><keyword>var</keyword> dbBook = db.Books.Where(b =&gt; b.Id == bookId).FirstOrDefault();</div>
+<div class="tab2">book.Id = dbBook.Id;</div>
+<div class="tab2">book.BookTitle = dbBook.BookTitle;</div>
+<div class="tab2">book.Introduction = dbBook.Introduction;</div>
+<div class="tab2">book.Preface = dbBook.Preface;</div>
+<div class="tab2"><keyword>foreach</keyword> (<cskeyword>Chapter</cskeyword> dbChapter in dbBook.Chapters)</div>
+<div class="tab2">{</div>
+<div class="tab3">chapterModel  = <keyword>new</keyword> <cskeyword>ChapterModel</cskeyword>();</div>
+<div class="tab3">chapterModel.Id = dbChapter.Id;</div>
+<div class="tab3">chapterModel.ChapterTitle = dbChapter.ChapterTitle;</div>
+<div class="tab3">chapterModel.ChapterOrder = dbChapter.ChapterOrder.Value;</div>
+<div class="tab3">chapterModel.Preface = dbChapter.Preface;</div>
+<div class="tab3"><keyword>foreach</keyword> (<cskeyword>BookSection</cskeyword> dbSection <keyword>in</keyword> dbChapter.Sections)</div>
+<div class="tab3">{</div>
+<div class="tab4">sectionModel = <keyword>new</keyword> <cskeyword>BookSectionModel</cskeyword>();</div>
+<div class="tab4">sectionModel.Id = dbSection.Id;</div>
+<div class="tab4">sectionModel.SectionTitle = dbSection.SectionTitle;</div>
+<div class="tab4">sectionModel.SectionOrder = dbSection.SectionOrder.Value;</div>
+<div class="tab4">sectionModel.SectionContents = dbSection.SectionContents;</div>
+<div class="tab4"><keyword>foreach</keyword> (<cskeyword>SubSection</cskeyword> dbSubSection <keyword>in</keyword> dbSection.SubSections)</div>
+<div class="tab4">{</div>
+<div class="tab5">sectionModel.SubSections.Add(<keyword>new</keyword> <cskeyword>SubSectionModel</cskeyword>()</div>
+<div class="tab5">{</div>
+<div class="tab6">Id = dbSubSection.Id,</div>
+<div class="tab6">SubSectionContents = dbSubSection.SubSectionContents,</div>
+<div class="tab6">SubSectionTitle = dbSubSection.SubSectionTitle,</div>
+<div class="tab6">SubSectionOrder = dbSubSection.SubSectionOrder.Value</div>
+<div class="tab5">});</div>
+<div class="tab4">}</div>
+<div class="tab4">chapterModel.Sections.Add(sectionModel);</div>
+<div class="tab3">}</div>
+<div class="tab3">book.Chapters.Add(chapterModel);</div>
+<div class="tab2">}</div>
+<div class="tab2">book.success = <strtext>"ok"</strtext>;</div>
+<div class="tab1">}</div>
+<div class="tab1">return book;</div>
+<div>}</div>     
+</code>
+</div>Notice how in makes for a nice nested drill down loop. </div><div style="font-family:sarif; font-size:24px">Let's look at the form where the book is built.&nbsp; where the Before I show&nbsp; o&nbsp; and&nbsp; of &nbsp; hem but I wanted publishing features like a blogging site as well. So I decided to add to world one more place to stash your writing and create this tool. It has editing, a multi level organizational structure, it published out to the web, and it can display output any way I like. This page turning model is a replaceable template. The editor has a very important feature; it toggles between text view and html view. This feature is only available on expensive 3rd party tools, but I found an extension someone had written for a free JavaScript editor and put out on GittHub. It took a while to figure out. You have to actually read the documentation, but I got it configured to my needs. I'm using it here in this article writing tool. The thing about other wysiwyg editors it that they just let you see what get and the underlying html is horribly verbose, convoluted and redundant even in my Blogger editor owned by the ever perfect Russians (Google). I strip all of that out and use minimal formatting in the text body. No style tags just class names.  And I can go in to the html and add images or links the  l24px;"&gt;  Believe it or not I originally had this whole thing working using XML. This article is still stored in XML. But I decided to rebuild the whole thing using data tables instead. The organizational structure of my book is reflected in the table structure I designed to store it. There is a table called Book and another called Chapter and another table called Section. A book contains chapters and a chapter contains sections and a section can contain subsections. The only text stored in the book table is a varchar(max) field called Preface and another called Introduction. The only text field in a row in the chapter table is Preface. Sections and subsections are where the writing is c&gt;  It's cool how I pull down the entire contents of the book using only one connection. When you let it map tables with proper foreign keys Entity Framework provides a virtual collection of all the chapters belonging to a book and sections belonging to those chapters in nice cascading arrays. The only problem is that this makes the actual EF models too complex to passed around in http response objects so you have to transfer everything into simple model objects to send down to the javascript via ajax. But it's all good and it works just like XML. I love hierarchically structured nested tree objects.  The chapters are parsed and loaded in to an array. The trick is when you then pick a chapter to display you have to further break the chapter array item in to an array of pages. This is done by taking the dynamic screen size of the two facing pages and alculating the number of words that will fit on each page based on the font size and line spacing. Once a word count is determined a function stepspace and returns a letter count that can be used to construct a substring for each page.  This algorithm needs a little more googling but I was able to approximate close enough to keep going. Ahh the fine art of pagpace: normal; word-spacing: 0px;"&gt;   The formatting and styling of the lovely page with book borders and a middle spine was every bit as tedious and if anything more time consuming than all the data access programming which I have been doing for years. I saw the design long ago and was impressed and stole the images with a "save as webpage complete" but it was all hard coded. Getting the corners and edges to line up is still causing headaches. If you resize the page too small it starts to misbehave like a hamburger menu. A good old fashioned table with trs and tds would have been fine by me but I just couldn't cell borders and cell spacing not to show and get the images to stretch the way I wanted. Div's that flex and float after much fiddling and frustration finally facilitated the fiasco. I'm sure there are plenty in the younger generations who speak css more flspacing: 0px        <p></p>
+
+</div></div>
+        </div>
+        <div id='rightColumn'></div>
+    </div>
+        <div class="noFloat"/>
+        <div id="footer" class="Footer">
+            <div class="footerCol">
+                <div><a href="~/Home/Index">Articles</a></div>
+                <div><a href="~/Book/MyBooks">Books</a></div>
+                <div><a href="~/IntelDsgn/Index">Professional</a></div>
+                <div><a href="#">Apps</a></div>
+            </div>
+            <div class="footerCol">
+                <div><a href="#">About us</a></div>
+                <div><a href="mailto:curtishrhodes@hotmail.com">Love Letters</a></div>
+                <div><a href="mailto:curtis,rhodes@gmail.com">Death Threats</a></div>
+                <div><a href="#">Archive</a></div>
+            </div>
+            <div class="footerCol">
+                <div><a href="#">Site Map</a></div>
+                <div><a href="#">Search</a></div>
+                <div><a href="#">Research</a></div>
+                <div><a href="#">Advertize</a></div>
+            </div>
+            <div id="copyright">
+                &copy; @DateTime.Now.Year - <a href="~/IntelDsgn/Index">Intelligent Design SoftWare</a>
+            </div>
+        </div></body></html>

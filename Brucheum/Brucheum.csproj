@@ -304,6 +304,7 @@
     <Content Include="Images\ingranaggi3.gif" />
     <Content Include="Images\intel01.jpg" />
     <Content Include="Images\blueCircleLeft.jpg" />
+    <Content Include="Images\jquery-te.png" />
     <Content Include="Images\loader.gif" />
     <Content Include="Images\parchment01.jpg" />
     <Content Include="Images\powerOnOffSilver.png" />
@@ -336,16 +337,18 @@
     <Content Include="Scripts\3rd Party\Editor\formatting.js" />
     <Content Include="Scripts\3rd Party\Editor\summernote.js" />
     <Content Include="Scripts\3rd Party\Editor\xml.js" />
+    <Content Include="Scripts\EditorToolbar.js" />
     <Content Include="Scripts\GlobalFunctions.js" />
     <Content Include="Scripts\HeaderLogin.js" />
     <Content Include="Scripts\ImageTools.js" />
+    <Content Include="Scripts\LayoutHeaders.js" />
     <Content Include="Scripts\ResizeThreeColumnPage.js" />
     <Content Include="Scripts\StaticPage.js" />
     <Content Include="Static_Pages\favicon.ico" />
     <Content Include="Styles\articleView.css" />
     <Content Include="Styles\articleEdit.css" />
     <Content Include="Styles\articleList.css" />
-    <Content Include="Styles\bFooter.css" />
+    <Content Include="Styles\footer.css" />
     <Content Include="Styles\code.css" />
     <Content Include="Styles\crudEdit.css" />
     <Content Include="Styles\editor\bootstrap.css" />
@@ -355,6 +358,9 @@
     <Content Include="Styles\bookEdit.css" />
     <Content Include="Styles\default.css" />
     <Content Include="Styles\JournalEditor.css" />
+    <Content Include="Styles\jquery-te-1.4.0.css" />
+    <Content Include="Styles\JqueryDatePicker.css" />
+    <Content Include="Styles\jqueryUI.css" />
     <Content Include="Styles\modalDialog.css" />
     <Content Include="Styles\editor\monokai.css" />
     <Content Include="Styles\editor\quill.snow.css" />
@@ -400,7 +406,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <Content Include="Views\Shared\_bFooter.cshtml" />
+    <Content Include="Views\Shared\_Footer.cshtml" />
     <Content Include="Views\Shared\_BookPannel.cshtml" />
     <Content Include="Views\Article\ArticleEdit.cshtml" />
     <Content Include="Views\Article\ArticleList.cshtml" />
@@ -445,8 +451,6 @@
     <Content Include="Views\Error\NotFound.cshtml" />
     <Content Include="Views\GetaJob\GetaJobAdmin.cshtml" />
     <Content Include="Views\GetaJob\Index.cshtml" />
-    <Content Include="Views\GetaJob\_GetaJobFooter.cshtml" />
-    <Content Include="Views\GetaJob\_GetaJobLayout.cshtml" />
     <Content Include="Views\GetaJob\_AddEditJobs.cshtml" />
     <Content Include="Views\GetaJob\_AddEditSkills.cshtml" />
     <Content Include="Views\GetaJob\_AddEditResume.cshtml" />

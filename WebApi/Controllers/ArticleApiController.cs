@@ -4,10 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using WebApi.DataContext;
-using WebApi.Models;
+using WebApi.Articles.Models;
+using WebApi.WebSite.DataContext;
 
-namespace WebApi
+namespace WebApi.Articles
 {
     [System.Web.Http.Cors.EnableCors("*", "*", "*")] 
     public class DbArticleController : ApiController
@@ -178,7 +178,7 @@ namespace WebApi
                     success = "ok";
                 }
             }
-            catch (Exception ex) { success = "ERROR: " + Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { success =  Helpers.ErrorDetails(ex); }
             return success;
         }
     }
@@ -202,7 +202,7 @@ namespace WebApi
                     success = "ok";
                 }
             }
-            catch (Exception ex) { success = "ERROR: " + Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { success =  Helpers.ErrorDetails(ex); }
             return success;
         }
     }
@@ -276,7 +276,7 @@ namespace WebApi
                     newComment.CreateDate = comment.CreateDate.ToShortDateString();
                     newComment.success = "ok";
 
-                    newComment.success = new GodaddyEmailController().Post(new EmailMessageModel()
+                    newComment.success = new Home.GodaddyEmailController().Post(new Home.Models.EmailMessageModel()
                     {
                         Subject = "Somebody Actually Made A comment",
                         Body = comment.UserName + " said: " + comment.CommentText
@@ -285,7 +285,7 @@ namespace WebApi
             }
             catch (Exception ex)
             {
-                newComment.success = "ERROR: " + Helpers.ErrorDetails(ex);
+                newComment.success =  Helpers.ErrorDetails(ex);
             }
             return newComment;
         }
@@ -313,7 +313,7 @@ namespace WebApi
             }
             catch (Exception ex)
             {
-                success = "ERROR: " + Helpers.ErrorDetails(ex);
+                success =  Helpers.ErrorDetails(ex);
             }
             return success;
         }

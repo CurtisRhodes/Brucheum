@@ -1,26 +1,47 @@
 ﻿
 .crudContainer {
-    /*display: inline-block;*/
-    margin-left: 22px;
-    margin-top: 42px;
+    display: inline-block;
+    margin: 11px;
     background-color: #eee;
     border: solid 1.5px #bbb;
-    border-radius: 5px;
-    /*padding-bottom: 22px;*/
+    border-radius: 4px;
+    padding-bottom: 4px;
 }
 /*summernote*/
 .editorContainer {
     display: inline-flex;
     color: #555;
-    background-color: #ddd;
+    background-color: #c166bf;
     border-radius: 5px;
     z-index: 0;
     width: 100%;
     margin-bottom: 5px;
 }
 
+.crudContainerTitle {
+    text-align: center;
+    background-color: #74bac3;
+    font-size: 22px;
+    padding: 3px;
+}
 
+.width40px {
+    width: 40px;
+}
+.width50px {
+    width: 50px;
+}
+.width60px {
+    width: 60px;
+}
 
+.wide {
+    width: 80%;
+}
+.crudButtonRow {
+    margin-left: 4px;
+    margin-bottom: 8px;
+}
 .crudBreadcrumb {
     margin-left: 56px;
     font-size: 16px;
@@ -39,6 +60,7 @@
     margin-top: 5px;
     margin-bottom: 20px;
 }
+
 .adminOption {
     display: none;
 }
@@ -59,26 +81,20 @@
 }
 
 .crudArea {
-    padding: 11px;
-    border: solid 2px rgba(0, 0, 0, 0.70);
+    padding: 8px;
+    border: solid 2px rgba(85, 85, 85, 0.50);
     border-radius: 4px;
 }
 .crudRowLabel {
     display: inline-block;
-    min-width: 65px;
+    /*min-width: 65px;*/
     vertical-align: middle;
 }
 .crudRow {
-    margin-top: 10px;
+    margin:5px;
+    /*margin-top: 10px;
     padding: 0 22px;
-    white-space: nowrap;
-}
-
-.crudContainerTitle {
-    text-align: center;
-    background-color: #74bac3;
-    font-size: 25px;
-    padding: 8px;
+    white-space: nowrap;*/
 }
 
 .closeIcon {
@@ -89,13 +105,15 @@
 }
 
 .crudList {
-    /*min-height: 606px;
-    min-width: 574px;*/
+    /*
+        min-height: 606px;
+        min-width: 574px;
+        color: #555;
+        background-color: #ddd;
+        border-radius: 5px;
+        margin: 2px 11px;
+    */
     padding: 8px;
-    margin: 2px 11px;
-    color: #555;
-    background-color: #ddd;
-    border-radius: 5px;
 }
 
 .crudListItem {
@@ -108,9 +126,10 @@
 }
 
 .crudItemsList {
-    border: solid 2px rgba(0, 0, 0, 0.70);
+    border: solid 2px rgba(85, 85, 85, 0.50);
     border-radius: 4px;
     margin: 3px;
+    min-height: 200px;
     max-height: 500px;
     overflow-y: auto;
 }
@@ -143,13 +162,13 @@
 }
 
 .crudDropDown {
-    height: 28px;
-    margin: 6px;
+    /*height: 28px;
+    margin: 6px;*/
     padding: 3px 6px;
     color: #555;
     background-color: #ddd;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 3px;
 }
 
 .vertMenu {

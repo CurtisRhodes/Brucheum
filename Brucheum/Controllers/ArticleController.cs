@@ -106,7 +106,8 @@ namespace Brucheum
             try
             {
                 string filePath = Server.MapPath("~/Static_Pages");
-                using (var staticFile = System.IO.File.Open(filePath + "/" + staticPage.filename, FileMode.OpenOrCreate))
+
+                using (var staticFile = System.IO.File.Open(filePath + "/" + staticPage.filename, FileMode.Create))
                 {
                     Byte[] byteArray = Encoding.ASCII.GetBytes(staticPage.html);
                     staticFile.Write(byteArray, 0, byteArray.Length);

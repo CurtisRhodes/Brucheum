@@ -44,9 +44,11 @@ function clearModal() {
 }
 
 function loginPlease() {
-    var loff = $('#btnLayoutLogin').offset().left;
-    $('#btnHeaderLoginSpinner').css("left", loff + 30);
-    $('#btnHeaderLoginSpinner').show();
+    if (!isNullorUndefined($('#btnLayoutLogin').offset())) {
+        var loff = $('#btnLayoutLogin').offset().left;
+        $('#btnHeaderLoginSpinner').css("left", loff + 30);
+        $('#btnHeaderLoginSpinner').show();
+    }
     $.ajax({
         type: "get",
         url: "/Login/LoginPopup",
@@ -62,9 +64,11 @@ function loginPlease() {
     });
 }
 function registerPlease() {
-    var loff = $('#btnLayoutRegister').offset().left;
-    $('#btnHeaderRegisterSpinner').css("left", loff + 30);
-    $('#btnHeaderRegisterSpinner').show();
+    if (!isNullorUndefined($('#btnLayoutLogin').offset())) {
+        var loff = $('#btnLayoutLogin').offset().left;
+        $('#btnHeaderLoginSpinner').css("left", loff + 30);
+        $('#btnHeaderLoginSpinner').show();
+    }
     $.ajax({
         type: "get",
         url: "/Login/Register",
@@ -159,7 +163,7 @@ function sendEmailFromJS(msg, body) {
 function logPageHit(service, userName, ipAddress, page, details) {
     var myLocalDevelopmentBox = "50.62.160.105";
     try {
-        if (ipAddress != myLocalDevelopmentBox) {
+        if (ipAddress !== myLocalDevelopmentBox) {
             var hit = {};
             hit.IpAddress = ipAddress;
             hit.AppName = "Brucheum";
@@ -268,76 +272,12 @@ function getXHRErrorDetails(jqXHR) {
     return msg;
 }
 
-function setLayout(layoutName) {
-    //use "menuContainer" to remove logon tabs  #replaceableMenuItems to keep them
-    switch (layoutName) {
-        case 'Admin':
-            $('#bheader').css("background-color", "#ffcccc");
-            $('#bannerTitle').html("Admin");
-            $('#menuContainer').html(
-                `<div class="menuTab floatLeft"><a href="~/Article/ArticleList">Directory</a></div>
-                 <div class="menuTab floatLeft"><a href="/GetaJob/GetaJobAdmin">GetaJob</a></div>
-                 <div class="menuTab floatLeft"><a href="~/Article/ArticleList">Refs</a></div>
-                 <div class="menuTab floatLeft"><a href="~/~/Article/ArticleList">Articles</a></div>
-                 <div class="menuTab floatLeft"><a href="/Home/Apps">Apps</a></div>
-                 <div class="menuTab floatLeft"><a href="/IntelDsgn/Index">Intelligent Design</a></div>`);
-           break;
-        case 'Resume':
-            $('#bannerTitle').html("Resume Builder");
-            //$('#divTopLeftLogo').html("<a href='~/Home/Index'><img src='~/images/house.gif' class='bannerImage'/></a>");
-            $('#divTopLeftLogo').html("<a href='/IntelDsgn/Index'><img src='~/images/intel01.jpg' class='bannerImage'/></a>");
-            $('#bheader').css("background-color", "#c64e4e");
-            $('#replaceableMenuItems').html(
-                `<div class="menuTab floatLeft"><a href="/GetaJob/GetaJobAdmin">GetaJob</a></div>
-                 <div class="menuTab floatLeft"><a href="~/Article/ArticleList">Refs</a></div>
-                 <div class="menuTab floatLeft"><a href="~/~/Article/ArticleList">Articles</a></div>
-                 <div class="menuTab floatLeft"><a href="/Home/Apps">Apps</a></div>
-                 <div class="menuTab floatLeft"><a href="/IntelDsgn/Index">Intelligent Design</a></div>`);
-            break;
-        case 'Intelligent Design':
-            $('#bannerTitle').html("Intelligent Design");
-            $('#divTopLeftLogo').html("<a href='/IntelDsgn/Index'><img src='/images/intel01.jpg' class='bannerImage'/></a>");
-            $('#bheader').css("background-color", "#d6f5f5");
-            $('.headerTitle').css("color", "#333");
-            //$('.menuTab a: hover').css("color", "#eee");
-            //background - color: #222730; /* #273235; #486167;*/
-            $('#replaceableMenuItems').html(`
-               <div class="menuTab floatLeft"><a href="/Home/Index/">CurtisRhodes.com</a></div>
-               <div class="menuTab floatLeft"><a href="/IntelDsgn/Index?a=2">Our Approach</a></div>
-               <div class="menuTab floatLeft"><a href="/IntelDsgn/Blog/">Blog</a></div>
-               <div class="menuTab floatLeft"><a href="/IntelDsgn/Index?a=3">Contact Us</a></div>
-               <div class="menuTab floatLeft"><a href="/IntelDsgn/MyResume/">My Resume</a></div>`);
-                //<div class="menuTab floatLeft"><a href="~/IntelDsgn/About/">Who We Are</a></div>
-                //<div class="menuTab floatLeft"><a href="~/IntelDsgn/Portfolio">Portfolio</a></div>
-                //<div class="menuTab floatLeft"><a href="~/IntelDsgn/Code">Sample Code</a></div>
-                //<div class="menuTab floatLeft"><a href="~/home/journal/">Blog</a></div>
-                //<div class="menuTab floatLeft"><a href="~/IntelDsgn/Articles">Articles</a></div>
-                //<div class="menuTab floatLeft"><a href="~/IntelDsgn/MyResume">My Resume</a></div>
-            break;
-        case 'GetaJob':
-            $('#divTopLeftLogo').html("<a href='/GetaJob'><img src='/images/Apps/GetaJob.png' class='bannerImage'/></a>");
-            $('head title').html("Get a Gig");
-            //$('#bheader').css("background-color", "#ffffe6");
-            $('#bheader').css("background-color", "#fff");
-            $('#bannerTitle').html("Get a Gig");
-            $('#replaceableMenuItems').html(`
-               <div class="menuTab floatLeft"><a href="/Home/Index/">CurtisRhodes.com</a></div>
-               <div class="menuTab floatLeft"><a href="/GetaJob/GetaJobAdmin">Job Search</a></div>
-               <div class="menuTab floatLeft"><a href="/GetaJob/GetaJobAdmin">Skills</a></div>
-               <div class="menuTab floatLeft"><a href="/GetaJob/Agent">Reports</a></div>
-               <div class="menuTab floatLeft"><a href="/Resume/ResumeAdmin">Resume Builder</a></div>
-               <div class="menuTab floatLeft"><a href="/IntelDsgn/MyResume/">My Resume</a></div>`);
-            break;
-        default:
-    }
-}
-
 function isNullorUndefined(val) {
-    if (val == "")
+    if (val === "")
         return true;
-    if(val == null)
+    if(val === null)
         return true;
-    if (val == undefined)
+    if (val === undefined)
         return true;
     return false;
 }
