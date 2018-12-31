@@ -21,10 +21,16 @@
                     <div id="errSkillName" class="validationError">Required</div>
                     <div class="crudLabel">Skill</div>
                     <input id="txtSkillName" class="roundedInput" />
-
                     <div id="errSkillCat" class="validationError">Select a Category</div>
                     <div class="crudLabel">Category</div>
                     <select id="ddSkillCats" class="crudDropDown"></select>
+                </div>
+                <div class="crudRow">
+                    <div id="errProfeciency" class="validationError">Required</div>
+                    <div class="crudLabel">Profeciency</div>
+                    <select id="ddProfeciency" class="crudDropDown"></select>
+                    <div class="crudLabel">Sort Order</div>
+                    <input id="txtSortOrder" class="roundedInput" />
                 </div>
                 <div class="crudRow">
                     <div id="skillNarrativeEditor">
@@ -72,7 +78,7 @@
     function initializeSkillsDialog() {
         $('#btnSkillNew').hide();
         if ($('#ddSkillCats').html() === "") {
-            loadSkillCatsDD();
+            loadSkillDDs();
             loadSkillsList();
         }
     }
@@ -82,6 +88,8 @@
             //  unbind
             skillModel.Name = $('#txtSkillName').val();
             skillModel.Category = selectedRefType = $('#ddSkillCats option:selected').attr("value");
+            skillModel.Proficiency = $('#ddProfeciency').val();
+            skillModel.SortOrder = $('#txtSortOrder').val();
             skillModel.Narrative = $('#skillNarrativeEditor').summernote('code');
             if ($('#btnSkillAddEdit').html() == "Add") {
                 insertSkill();
@@ -145,7 +153,11 @@
         skillModel.Id = "";
         $('#txtSkillName').val("");
         $('#ddSkillCats').val("0");
-        $('#skillNarrativeEditor').summernote('code', "");
+        $('#txtSkillName').val("");
+        $('#ddProfeciency').val("0");
+        $('#txtSortOrder').val("");
+        $('#skillNarrativeEditor').summernote('code', '');
+
     }
 
     function validateSkill() {
@@ -175,7 +187,7 @@
                     if (true) {
                         $('#skillList').html("");
                         $.each(response, function (idx, obj) {
-                            $('#skillList').append("<div class='crudListItem skillItem' CatId=" + obj.Category + " id=" + obj.Id + " >" + obj.CategoryDescription + " | " + obj.Name + "</div>");
+                            $('#skillList').append("<div class='crudListItem skillItem' id=" + obj.Id + " >" + obj.Name + " | " + obj.CategoryDescription + " | " + obj.SortOrder + "</div>");
                         })
                         $('#loadingGif').hide();
 
@@ -200,7 +212,7 @@
     function loadSkillsEditor(Id) {
         $.ajax({
             type: "GET",
-            url: service + "/api/Skill?skillId=" + Id,
+            url: service + "/api/JobSkill?skillId=" + Id,
             success: function (response) {
                 if (!response.Name.startsWith("ERROR")) {
                     //bind
@@ -208,6 +220,8 @@
                     $('#ddSkillCats').val(response.Category);
                     $('#txtSkillName').val(response.Name);
                     $('#skillNarrativeEditor').summernote('code',response.Narrative);
+                    $('#ddProfeciency').val(response.Proficiency);
+                    $('#txtSortOrder').val(response.SortOrder);
 
                     $('#btnSkillAddEdit').html("Edit");
                     $('#btnSkillNew').show();
@@ -222,28 +236,38 @@
         });
     }
 
-    function loadSkillCatsDD() {
+    function loadSkillDDs() {
         try {
             $.ajax({
                 type: "GET",
-                //dataType: "Json",
                 url: service + "/api/JobRef/Get?refType=SKL",
                 success: function (result) {
-                    if (result.RefCode == "ERR") {
+                    if (result.RefCode == "ERR")
                         alert(result.RefDescription)
-                    }
                     else {
-
-                        $('#ddSkillCats').html("<option class= 'ddOption' value ='0'>-- select a job skill category --</option >");
+                        $('#ddSkillCats').html("<option class= 'ddOption' value ='0'>-- select job skill category --</option >");
                         $.each(result, function (idx, obj) {
                             $('#ddSkillCats').append("<option class='ddOption' value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
                         });
                     }
-                    //$('#ddSkillCats').change(function () {
-                    //    selectedRefType = $('#ddSkillCats option:selected').attr("value")
-                    //    getRefs($('#ddSkillCats option:selected').val());
-                    //});
+                },
+                error: function (jqXHR, exception) {
+                    alert("loadRefTypesDD xhr error: " + getXHRErrorDetails(jqXHR, exception));
+                },
+            });
 
+            $.ajax({
+                type: "GET",
+                url: service + "/api/JobRef/Get?refType=SKP",
+                success: function (result) {
+                    if (result.RefCode == "ERR")
+                        alert(result.RefDescription)
+                    else {
+                        $('#ddProfeciency').html("<option class= 'ddOption' value ='0'>-- select skill profeciency --</option >");
+                        $.each(result, function (idx, obj) {
+                            $('#ddProfeciency').append("<option class='ddOption' value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
+                        });
+                    }
                 },
                 error: function (jqXHR, exception) {
                     alert("loadRefTypesDD xhr error: " + getXHRErrorDetails(jqXHR, exception));

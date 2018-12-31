@@ -9,7 +9,7 @@ namespace WebApi.Resume.Models
     {
         public LostJobModel()
         {
-            JobSkills = new List<GetaJob.Models.SkillModel>();
+            JobSkills = new List<GetaJob.Models.JobSkillModel>();
         }
         public string Id { get; set; }
         public string ElementId { get; set; }
@@ -23,7 +23,7 @@ namespace WebApi.Resume.Models
         public string Summary { get; set; }
         public string ReasonForLeaving { get; set; }
         public string SecretNarative { get; set; }
-        public IList<GetaJob.Models.SkillModel> JobSkills { get; set; }
+        public IList<GetaJob.Models.JobSkillModel> JobSkills { get; set; }
         public int SortOrder { get; set; }
     }
 

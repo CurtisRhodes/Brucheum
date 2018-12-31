@@ -14,11 +14,6 @@
         cursor: pointer;
     }
 
-    .dialogSnipitContainer {
-        position: absolute;
-        color: white;
-    }
-
     .articleBox {
         top: 300px;
         left: 444px;
@@ -58,7 +53,7 @@
     <div id="middleColumn">
         <img alt="" id="FullCenterImage" src="~/Images/IntelDsgn/globlic.jpg" />
 
-        <div id="divWelcomeMessage" class="dialogSnipitContainer">
+        <div id="divWelcomeMessage" class="centeredDivShell">
             <div class="algerian">Welcome to Intelligent Design Software</div>
             <p>This web site demonstrates the work of an experienced if socially autistic web applications developer</p>
             <p>Check out the scection describing the <a href="~/IntelDsgn/Index?a=4">skills used to build this site</a></p>
@@ -68,11 +63,12 @@
             <p>(remote only) (direct hire only) please <a href="?a=Contact_Us">contact me</a> </p>
         </div>
 
-        <div id="divDialogSnipitContainer" class="dialogSnipitContainer articleBox" onclick="$(this).fadeOut()" >
-            <div id="divHeaderRow" class="algerian"></div>
-            <div id="divArticleContainerContents"></div>
+        <div id="snipitContainer" class="centeredDivShell articleBox" onclick="$(this).fadeOut()">
+            <div class="centeredDivInner">
+                <div id="divHeaderRow" class="algerian"></div>
+                <div id="divArticleContainerContents"></div>
+            </div>
         </div>
-
     </div>
     <div id="rightColumn"></div>
 </div>
@@ -118,7 +114,7 @@
 
                         $('#divHeaderRow').html(response.Title);
                         $('#divArticleContainerContents').html(response.Content);
-                        $('#divDialogSnipitContainer').fadeIn();
+                        $('#snipitContainer').fadeIn();
                         $('#loadingGif').hide();
                     }
                     else {

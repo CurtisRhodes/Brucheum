@@ -392,9 +392,9 @@ namespace WebApi.GetaJob
     public class JobSkillController : ApiController
     {
         [HttpGet]
-        public SkillModel Get(string skillId)
+        public JobSkillModel Get(string skillId)
         {
-            var skill = new SkillModel();
+            var skill = new JobSkillModel();
             try
             {
                 using (GetaJobContext db = new GetaJobContext())
@@ -404,6 +404,8 @@ namespace WebApi.GetaJob
                     {
                         skill.Name = dbSkill.SkillName;
                         skill.Category = dbSkill.SkillType;
+                        skill.Proficiency = dbSkill.Proficiency;
+                        skill.SortOrder = dbSkill.SortOrder;
                         skill.Narrative = dbSkill.Narrative;
                     }
                 }
@@ -413,9 +415,9 @@ namespace WebApi.GetaJob
         }
 
         [HttpGet]
-        public List<SkillModel> Get()
+        public List<JobSkillModel> Get()
         {
-            var skillModels = new List<SkillModel>();
+            var skillModels = new List<JobSkillModel>();
             try
             {
                 using (var db = new GetaJobContext())
@@ -424,22 +426,24 @@ namespace WebApi.GetaJob
                         (from skils in db.JobSkills
                          join crefs in db.JobRefs on skils.SkillType equals crefs.RefCode into sr
                          from xrefs in sr.DefaultIfEmpty()
-                         select new SkillModel
+                         select new JobSkillModel
                          {
                              Id = skils.Id,
                              Name = skils.SkillName,
                              Category = skils.SkillType,
+                             Proficiency = skils.Proficiency,
+                             SortOrder = skils.SortOrder,
                              CategoryDescription = xrefs.RefDescription == null ? "" : xrefs.RefDescription,
                              Narrative = skils.Narrative
                          }).ToList();
                 }
             }
-            catch (Exception ex) { skillModels.Add(new SkillModel() { Name = Helpers.ErrorDetails(ex) }); }
+            catch (Exception ex) { skillModels.Add(new JobSkillModel() { Name = Helpers.ErrorDetails(ex) }); }
             return skillModels;
         }
 
         [HttpPost]
-        public string Post(SkillModel newSkill)
+        public string Post(JobSkillModel newSkill)
         {
             string success = "";
             try
@@ -448,6 +452,8 @@ namespace WebApi.GetaJob
                 dbSkill.Id = Guid.NewGuid().ToString();
                 dbSkill.Narrative = newSkill.Narrative;
                 dbSkill.SkillName = newSkill.Name;
+                dbSkill.Proficiency = newSkill.Proficiency;
+                dbSkill.SortOrder = newSkill.SortOrder;
                 dbSkill.SkillType = newSkill.Category;
 
                 using (GetaJobContext db = new GetaJobContext())
@@ -462,7 +468,7 @@ namespace WebApi.GetaJob
         }
 
         [HttpPut]
-        public string Put(SkillModel editedSkill)
+        public string Put(JobSkillModel editedSkill)
         {
             string success = "";
             try
@@ -473,7 +479,8 @@ namespace WebApi.GetaJob
                     dbSkill.SkillName = editedSkill.Name;
                     dbSkill.SkillType = editedSkill.Category;
                     dbSkill.Narrative = editedSkill.Narrative;
-
+                    dbSkill.Proficiency = editedSkill.Proficiency;
+                    dbSkill.SortOrder = editedSkill.SortOrder;
                     db.SaveChanges();
                     success = "ok";
                 }

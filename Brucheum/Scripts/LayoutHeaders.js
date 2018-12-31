@@ -51,6 +51,7 @@ function setLayout(layoutName) {
             //background - color: #222730; /* #273235; #486167;*/
             $('#replaceableMenuItems').html(`
                <div class="menuTab floatLeft"><a href="/Home/Index/">CurtisRhodes.com</a></div>
+               <div class="menuTab floatLeft"><a href="/IntelDsgn/Skills">Skills</a></div>
                <div class="menuTab floatLeft"><a href="/IntelDsgn/Index?a=Our_Approach">Our Approach</a></div>
                <div class="menuTab floatLeft"><a href="/IntelDsgn/Blog/">Articles</a></div>
                <div class="menuTab floatLeft"><a href="/IntelDsgn/Index?a=Contact_Us">Contact Us</a></div>
