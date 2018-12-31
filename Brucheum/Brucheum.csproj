@@ -474,6 +474,7 @@
     <Content Include="Views\GetaJob\_AgentsAgencies.cshtml" />
     <Content Include="Views\GetaJob\postAgent01.cshtml" />
     <Content Include="Views\GetaJob\Agent.cshtml" />
+    <Content Include="Views\IntelDsgn\Skills.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

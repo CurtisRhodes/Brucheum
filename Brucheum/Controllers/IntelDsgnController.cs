@@ -29,11 +29,12 @@ namespace Brucheum
             ViewBag.Service = apiService;
             return View();
         }
-
-        //public ActionResult About()
-        //{
-        //    return View();
-        //}
+        public ActionResult Skills()
+        {
+            ViewBag.UserId = User.Identity.GetUserId();
+            ViewBag.Service = apiService;
+            return View();
+        }
         //public ActionResult Approach()
         //{
         //    return View();

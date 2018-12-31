@@ -234,13 +234,10 @@ namespace WebApi.GetaJob.DataContext
         }
 
         public string Id { get; set; }
-
-        [StringLength(50)]
         public string SkillName { get; set; }
-
-        [StringLength(3)]
         public string SkillType { get; set; }
-
+        public string Proficiency { get; set; }
+        public string SortOrder { get; set; }
         public string Narrative { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

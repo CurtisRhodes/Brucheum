@@ -72,13 +72,14 @@
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
-.customMessageBox {
+.centeredDivShell {
     position: absolute;
     top: 300px;
     left: 50%;
+    z-index: 20;
     display: none;
 }
-.customMessageBoxInner {
+.centeredDivInner {
     position: relative;
     left: -50%;
     min-height: 200px;

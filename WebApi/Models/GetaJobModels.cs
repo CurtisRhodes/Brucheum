@@ -80,12 +80,14 @@ namespace WebApi.GetaJob.Models
         public string Success { get; set; }
     }
 
-    public class SkillModel
+    public class JobSkillModel
     {
         public string Id { get; set; }
         public string Name { get; set; }
         public string Category { get; set; }
-        public string CategoryDescription { get; set; }        
+        public string CategoryDescription { get; set; }
+        public string Proficiency { get; set; }
+        public string SortOrder { get; set; }
         public string Narrative { get; set; }
     }
 }

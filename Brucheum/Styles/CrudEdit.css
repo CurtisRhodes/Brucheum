@@ -1,5 +1,6 @@
 ﻿
 .crudContainer {
+    font-size: 14px;
     display: inline-block;
     margin: 11px;
     background-color: #eee;
@@ -21,7 +22,6 @@
 .crudContainerTitle {
     text-align: center;
     background-color: #74bac3;
-    font-size: 22px;
     padding: 3px;
 }
 
@@ -113,16 +113,16 @@
         border-radius: 5px;
         margin: 2px 11px;
     */
-    padding: 8px;
+    padding: 4px;
+
 }
 
 .crudListItem {
-    padding: 8px;
-    font-size: 18px;
+    padding: 4px;
     cursor: pointer;
     margin-bottom: 5px;
     background-color: #74bac3;
-    border-radius: 5px;
+    border-radius: 4px;
 }
 
 .crudItemsList {
@@ -157,7 +157,6 @@
 .ddOption {
     padding: 4px 3px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 17px;
     white-space: nowrap;
 }
 
