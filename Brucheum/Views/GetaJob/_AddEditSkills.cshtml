@@ -7,6 +7,12 @@
     #txtSkillName {
         width: 301px;
     }
+    .positionSkillsSpinner {
+        padding-top: 11px;
+        padding-left: 27px;
+        height: 32px;
+    }
+
 </style>
 <div class="flexContainer">
     <div class="floatLeft">
@@ -29,8 +35,8 @@
                     <div id="errProfeciency" class="validationError">Required</div>
                     <div class="crudLabel">Profeciency</div>
                     <select id="ddProfeciency" class="crudDropDown"></select>
-                    <div class="crudLabel">Sort Order</div>
-                    <input id="txtSortOrder" class="roundedInput" />
+                    <div class="crudLabel">Font Size</div>
+                    <input id="txtFontSize" class="roundedInput" />
                 </div>
                 <div class="crudRow">
                     <div id="skillNarrativeEditor">
@@ -38,8 +44,9 @@
                     </div>
                 </div>
                 <div>
+                    <img id="skillAddEditSpinner" class="btnSpinnerImage positionSkillsSpinner" src="~/Images/loader.gif" />
                     <button id="btnSkillAddEdit" class="roundendButton" onclick="addEditSkill()">Add</button>
-                    <button id="btnSkillNew" class="roundendButton crudBtnNew" onclick="btnSkillNewToggle()">New</button>
+                    <button id="btnSkillNew" class="roundendButton" onclick="btnSkillNewToggle()">New</button>
                 </div>
             </div>
         </div>
@@ -85,11 +92,14 @@
 
     function addEditSkill() {
         if (validateSkill()) {
+
+            $('#skillAddEditSpinner').show();
+
             //  unbind
             skillModel.Name = $('#txtSkillName').val();
             skillModel.Category = selectedRefType = $('#ddSkillCats option:selected').attr("value");
             skillModel.Proficiency = $('#ddProfeciency').val();
-            skillModel.SortOrder = $('#txtSortOrder').val();
+            skillModel.FontSize = $('#txtFontSize').val();
             skillModel.Narrative = $('#skillNarrativeEditor').summernote('code');
             if ($('#btnSkillAddEdit').html() == "Add") {
                 insertSkill();
@@ -114,12 +124,15 @@
                     skillModel.Id = success;
                     displayStatusMessage("ok", "Skill Added");
                     loadSkillsList();
+                    $('#skillAddEditSpinner').hide();
                 }
                 else {
+                    $('#skillAddEditSpinner').hide();
                     alert("addEditSkill: " + success)
                 }
             },
             error: function (jqXHR, exception) {
+                $('#skillAddEditSpinner').hide();
                 alert("addaJob post error: " + getXHRErrorDetails(jqXHR, exception));
             }
         });
@@ -133,14 +146,17 @@
             success: function (success) {
                 if (success == "ok") {
                     $('#btnSkillAddEdit').val("Edit");
+                    $('#skillAddEditSpinner').hide();
                     displayStatusMessage("ok", "Skill Edited");
                     loadSkillsList();
                 }
                 else {
+                    $('#skillAddEditSpinner').hide();
                     alert("Edit Skill: " + success)
                 }
             },
             error: function (jqXHR, exception) {
+                $('#skillAddEditSpinner').hide();
                 alert("addaJob put error: " + getXHRErrorDetails(jqXHR, exception));
             }
         });
@@ -155,7 +171,7 @@
         $('#ddSkillCats').val("0");
         $('#txtSkillName').val("");
         $('#ddProfeciency').val("0");
-        $('#txtSortOrder').val("");
+        $('#txtFontSize').val("");
         $('#skillNarrativeEditor').summernote('code', '');
 
     }
@@ -187,7 +203,7 @@
                     if (true) {
                         $('#skillList').html("");
                         $.each(response, function (idx, obj) {
-                            $('#skillList').append("<div class='crudListItem skillItem' id=" + obj.Id + " >" + obj.Name + " | " + obj.CategoryDescription + " | " + obj.SortOrder + "</div>");
+                            $('#skillList').append("<div class='crudListItem skillItem' id=" + obj.Id + " >" + obj.Name + " | " + obj.CategoryDescription + " | " + obj.FontSize + "</div>");
                         })
                         $('#loadingGif').hide();
 
@@ -221,7 +237,7 @@
                     $('#txtSkillName').val(response.Name);
                     $('#skillNarrativeEditor').summernote('code',response.Narrative);
                     $('#ddProfeciency').val(response.Proficiency);
-                    $('#txtSortOrder').val(response.SortOrder);
+                    $('#txtFontSize').val(response.FontSize);
 
                     $('#btnSkillAddEdit').html("Edit");
                     $('#btnSkillNew').show();

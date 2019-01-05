@@ -4,13 +4,15 @@
 }
 
 <style>
+    .threeColumnArray {
+        background-color: #222730; /* #273235; #486167;*/
+    }
+
     .wordCloudContainer {
-        height: 700px;
-        width: 1000px;
-        border: solid thin red;
         margin-left: 2px;
         margin-top: 14px;
     }
+
     .cloudWord {
         position: absolute;
         display: inline-block;
@@ -18,73 +20,103 @@
         margin: 4px;
         border: solid thin #5888c2;
         border-radius: 4px;
-        background-color: #fef7f7; 
+        background-color: #fef7f7;
         cursor: pointer;
     }
-    .dialogSnipitContainer {
-        position: absolute;
-        color: white;
-    }
-
 
     .vertical-text {
         transform: rotate(90deg);
         transform-origin: left top 0;
+        float: left;
     }
+
+    .adminButton {
+        display: inline-block;
+        margin-top: 37px;
+        background-color: #555;
+        padding: 9px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    .rightColumnContents {
+        margin-top: 200px;
+    }
+
+    .skillDialogPopupBox {
+        background-color: #a6a4a8;
+        box-shadow: #555 4px 8px;
+    }
+
     .skillTitle {
         /*font-family: Algerian;*/
         font-size: 34px;
         text-align: center;
         padding: 2px 6px;
+        cursor: pointer;
+    }
+    .skillProficiency {
+        font-size: 17px;
+        padding: 2px 6px;
+        cursor: pointer;
     }
     .skillNarrative {
         padding: 6px;
         width: 444px;
         overflow-y: auto;
         font-size: 14px;
+        cursor: pointer;
     }
 
+    h2 {
+        color: #fff;
+    }
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
         <h2>My Skills</h2>
+        <img alt="" class="fullCenterImage" src="~/Images/IntelDsgn/globlic.jpg" />
         <div id="skillsloadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
-        <div id="skillsCloud" class="wordCloudContainer"></div>
-
+        <div id="skillsCloud" class="wordCloudContainer"></div>        
 
         <div id="skillDetails" class="centeredDivShell" onclick="$(this).fadeOut()">
-            <div class="centeredDivInner">
+            <div class="centeredDivInner skillDialogPopupBox">
                 <div id="skillName" class="skillTitle"></div>
+                <div id="skillProficiency" class="skillProficiency"></div>
                 <div id="skillNarrative" class="skillNarrative"></div>
             </div>
         </div>
-
     </div>
-    <div id="rightColumn"></div>
+    <div id="rightColumn">
+        <div class="rightColumnContents">
+            @if (User.IsInRole("Admin"))
+            {
+                <div><div class="adminButton" onclick="window.location.href='/GetaJob/GetaJobAdmin'">manage</div></div>
+            }
+        </div>
+    </div>
 </div>
 
 <script>
     var service = '@ViewBag.Service';
+    var ipAddress = '@ViewBag.IpAddress';
     var currentUser = '@ViewBag.UserId';
     var skills = {};
 
-    $(document).ready(function () { 
-        setLayout("Blog");
+    $(document).ready(function () {
+        setLayout("Intelligent Design");
         loadSkillCloud();
+        resizePage();
+
+        var emailSubject = "OH MY GOD: ";
+        sendEmailFromJS(emailSubject, "someone just looked at your skills page");
+
+        hitSession = logPageHit(service, currentUser, ipAddress, "SKILLs", "nothing");
+
     });
 
-    /// here we go ready fire aim
-    /// sortOrder means Font Size
-
-    //Name
-    //Category
-    //Proficiency
-    //SortOrder
-    //Narrative
-
-       
     function loadSkillCloud() {
         try {
             $('#skillsloadingGif').show();
@@ -103,7 +135,7 @@
                             //    $('#skillsCloud').append("<div class='cloudWord vertical-text' style='font-size:" + obj.SortOrder +
                             //        "px; top:" + topOff + "px; left:" + leftOff + "px;' >" + obj.Name + "</div>");
                             //else {
-                            $('#skillsCloud').append("<div id=" + obj.Id + " class='cloudWord' style='font-size:" + obj.SortOrder +
+                            $('#skillsCloud').append("<div id=" + obj.Id + " class='cloudWord' style='font-size:" + obj.FontSize +
                                 "px; top:" + topOff + "px; left:" + leftOff + "px;' >" + obj.Name + "</div>");
 
                             leftOff += $('#' + obj.Id + '').width() + 21;
@@ -130,6 +162,7 @@
             alert("get jobs CATCH: " + e)
         }
     }
+
     function showSkillDialog(id) {
         try {
             $('#skillsloadingGif').show();
@@ -141,6 +174,8 @@
 
                     //alert("response.Name: " + response.Name);
                     $('#skillName').html(response.Name);
+                    $('#skillProficiency').html(response.ProficiencyDescription);
+
                     $('#skillNarrative').html(response.Narrative);
                     $('#skillDetails').fadeIn();
                 },

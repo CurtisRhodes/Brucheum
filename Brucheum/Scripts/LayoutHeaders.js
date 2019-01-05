@@ -1,14 +1,4 @@
-﻿/*
-    #ffffe6 getajob yellow 10%
-    #ffcccc admin red
-
-    #aa00aa; purple
-    #a39ca5
-    #9c88a4;
-    #74bac3; brucheum Blue
-    #d6f5f5; brucheum Lighter Blue
-*/
-
+﻿
 function setLayout(layoutName) {
     //use "menuContainer" to remove logon tabs  #replaceableMenuItems to keep them
     switch (layoutName) {
@@ -18,7 +8,8 @@ function setLayout(layoutName) {
             $('#menuContainer').html(
                 `<div class="menuTab floatLeft"><a href="~/Article/ArticleList">Directory</a></div>
                  <div class="menuTab floatLeft"><a href="/GetaJob/GetaJobAdmin">GetaJob Admin</a></div>
-                 <div class="menuTab floatLeft"><a href="/IntelDsgn/Index">Intelligent Design</a></div>`);
+                 <div class="menuTab floatLeft"><a href="/IntelDsgn/Index">Intelligent Design</a></div>
+                 <div class="menuTab floatLeft"><a href="/GetaJob/Agent">Reports</a></div>`);
             break;
         case 'Resume':
             $('#bannerTitle').html("My Resume");
@@ -53,7 +44,7 @@ function setLayout(layoutName) {
                <div class="menuTab floatLeft"><a href="/Home/Index/">CurtisRhodes.com</a></div>
                <div class="menuTab floatLeft"><a href="/IntelDsgn/Skills">Skills</a></div>
                <div class="menuTab floatLeft"><a href="/IntelDsgn/Index?a=Our_Approach">Our Approach</a></div>
-               <div class="menuTab floatLeft"><a href="/IntelDsgn/Blog/">Articles</a></div>
+               <div class="menuTab floatLeft"><a href="/IntelDsgn/Blog/">Blog</a></div>
                <div class="menuTab floatLeft"><a href="/IntelDsgn/Index?a=Contact_Us">Contact Us</a></div>
                <div class="menuTab floatLeft"><a href="/IntelDsgn/MyResume/">My Resume</a></div>`);
             //<div class="menuTab floatLeft"><a href="~/IntelDsgn/About/">Who We Are</a></div>
@@ -72,7 +63,7 @@ function setLayout(layoutName) {
             $('#menuContainer').html(`
                 <div class="menuTab floatLeft"><a href="/Home/Index/">CurtisRhodes.com</a></div>
                 <div class="menuTab floatLeft"><a href="/IntelDsgn/Index">Intelligent Design</a></div>
-                <div class="menuTab floatLeft"><a href="/GetaJob/Agent">Reports</a></div>`);
+                `);
             break;
         default:
     }

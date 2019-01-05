@@ -405,7 +405,11 @@ namespace WebApi.GetaJob
                         skill.Name = dbSkill.SkillName;
                         skill.Category = dbSkill.SkillType;
                         skill.Proficiency = dbSkill.Proficiency;
-                        skill.SortOrder = dbSkill.SortOrder;
+                        if (dbSkill.Proficiency != null)
+                        {
+                            skill.ProficiencyDescription = db.JobRefs.Where(r => r.RefCode == dbSkill.Proficiency).FirstOrDefault().RefDescription;
+                        }
+                        skill.FontSize = dbSkill.SortOrder;
                         skill.Narrative = dbSkill.Narrative;
                     }
                 }
@@ -432,14 +436,14 @@ namespace WebApi.GetaJob
                              Name = skils.SkillName,
                              Category = skils.SkillType,
                              Proficiency = skils.Proficiency,
-                             SortOrder = skils.SortOrder,
+                             FontSize = skils.SortOrder,
                              CategoryDescription = xrefs.RefDescription == null ? "" : xrefs.RefDescription,
                              Narrative = skils.Narrative
                          }).ToList();
                 }
             }
             catch (Exception ex) { skillModels.Add(new JobSkillModel() { Name = Helpers.ErrorDetails(ex) }); }
-            return skillModels;
+            return skillModels.OrderBy(s => s.Name).ToList();
         }
 
         [HttpPost]
@@ -453,7 +457,7 @@ namespace WebApi.GetaJob
                 dbSkill.Narrative = newSkill.Narrative;
                 dbSkill.SkillName = newSkill.Name;
                 dbSkill.Proficiency = newSkill.Proficiency;
-                dbSkill.SortOrder = newSkill.SortOrder;
+                dbSkill.SortOrder = newSkill.FontSize;
                 dbSkill.SkillType = newSkill.Category;
 
                 using (GetaJobContext db = new GetaJobContext())
@@ -480,7 +484,7 @@ namespace WebApi.GetaJob
                     dbSkill.SkillType = editedSkill.Category;
                     dbSkill.Narrative = editedSkill.Narrative;
                     dbSkill.Proficiency = editedSkill.Proficiency;
-                    dbSkill.SortOrder = editedSkill.SortOrder;
+                    dbSkill.SortOrder = editedSkill.FontSize;
                     db.SaveChanges();
                     success = "ok";
                 }

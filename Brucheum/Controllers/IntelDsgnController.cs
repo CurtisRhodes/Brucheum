@@ -31,6 +31,7 @@ namespace Brucheum
         }
         public ActionResult Skills()
         {
+            ViewBag.IpAddress = Helpers.GetIPAddress();
             ViewBag.UserId = User.Identity.GetUserId();
             ViewBag.Service = apiService;
             return View();

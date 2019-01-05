@@ -9,17 +9,19 @@
         background-size: 100%;*/
         background-color: #eeddbb;
     }
-
+    
     .bookContainer {
+        display: none;
+    }
+
+    .paupaStyle {
         font-family: 'Georgia';
         margin-top: 15px;
         background-color: #ddd69f;
         /*height: 660px;*/
         overflow-y: auto;
     }
-    .bookContentArea {
-    }
-    .paupaWidth {
+    .paupaBorderContainer {
         width: 48%;
         height: 50px;
     }
@@ -27,9 +29,6 @@
         width:100%;
     }
 
-    #paupaStyle {
-        display: none;
-    }
     .flexContainer {
         background-color: #eeddbb;
     }
@@ -90,25 +89,32 @@
         position: absolute;
         margin-top: 15px;
         font-size: 18px;
+
     }
+    .cosmic01 {
+        background-color: #98d1d3;
+        height: 666px;
+        overflow-y: auto;
+    }
+
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
         <div id="bookTitle" class="pageTitle" onclick="redirectToToC()">
-            <div id="bookTitleLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+            <div id="bookContentsLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
         </div>
         <div>
-            <div id="paupaStyle" class="bookContainer">
+            <div id="paupaStyleContainer" class="bookContainer paupaStyle">               
                 <div class="flexContainer">
                     <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornertopleft.png" />
-                    <div class="paupaWidth">
+                    <div class="paupaBorderContainer">
                         <img class="floatLeft full" src="~/Images/Books/PaupaBook/book-topLeft.png" />
                         <div id="chapterTitle" class="absTitle"></div>
-                     </div>
+                    </div>
                     <img class="floatLeft" src="~/Images/Books/PaupaBook/book-innerspinetop.png" />
-                    <img class="floatLeft paupaWidth" src="~/Images/Books/PaupaBook/book-topRight.png" />
+                    <img class="floatLeft paupaBorderContainer" src="~/Images/Books/PaupaBook/book-topRight.png" />
                     <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornertopright.png" />
                 </div>
                 <div class="flexContainer">
@@ -120,15 +126,26 @@
                 </div>
                 <div class="flexContainer">
                     <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornerbleft.png" />
-                    <img class="floatLeft paupaWidth clickable" id="bookBottomLeft" src="~/Images/Books/PaupaBook/book-bottomleft.png" onclick="javascritpt:pagePrevious()"/>
+                    <img class="floatLeft paupaBorderContainer clickable" id="bookBottomLeft" src="~/Images/Books/PaupaBook/book-bottomleft.png" onclick="javascritpt:pagePrevious()" />
                     <img class="floatLeft" src="~/Images/Books/PaupaBook/book-innerspinebottom.png" />
-                    
-                    <img class="floatLeft paupaWidth clickable" id="bookBottomRight" src="~/Images/Books/PaupaBook/book-bottomright.png" onclick="javascritpt:pageNext()"/>
+
+                    <img class="floatLeft paupaBorderContainer clickable" id="bookBottomRight" src="~/Images/Books/PaupaBook/book-bottomright.png" onclick="javascritpt:pageNext()" />
                     <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornerbright.png" />
                 </div>
             </div>
-            <div id="fullBookStyle" class="bookContainer">
-                <div id="bookContents" class="bookContentArea"></div>
+
+            <div id="twoPageBookStyle" class="bookContainer">
+                <div class="flexContainer">
+                    <div class="floatLeft  " id="fullBookStyleLeftContent"></div>
+                </div>
+                <div class="flexContainer">
+                    <div class="floatLeft" id="fullBookStyleRightContent"></div>
+                </div>
+            </div>
+
+            <div id="fullBookStyleContainer" class="bookContainer">
+                <div id="fullBookStyleContents" class="cosmic01">
+                </div>
             </div>
         </div>
     </div>
@@ -153,34 +170,15 @@
 
     $(document).ready(function () {
 
-        //setSectionTypeUnneded();
-        //getTheWholeBook();
-        //chapterId = 0;
-        loadBook();
-        $('#fullBookStyle').hide();
 
-    })
-
-    function setSectionTypeUnneded() {
-        switch (sectionTypeId) {
-            case '0':
-                sectionType = "TitlePage";
-                break;
-            case '1':
-                sectionType = "Chapter";
-                break;
-            case '2':
-                sectionType = "Section";
-                break;
-            case '3':
-                sectionType = "SubSection";
-                break;
-            default:
-                sectionType = "Unknown: " + sectionTypeId;
-                break;
+        if (bookId == "2") {
+            $('.threeColumnArray').css('background-color', '#0e325e')
+            getTheWholeBook();
         }
-        $('#bookContents').html("sectionType: " + sectionType);
-    }
+        else {
+            loadBookIntoChapterArray();
+        }
+    })
 
     function getTheWholeBook() {
         try {
@@ -194,25 +192,26 @@
                     else {
                         $('#bookTitle').html(book.BookTitle);
 
-                        $('#bookContents').html("<div id=bk" + book.Id + " class='bookTitle'>" + book.BookTitle + "</div>");
-                        $('#bookContents').append("<div class='bookCenterTitle'>Preface</div>");
-                        $('#bookContents').append("<div class='bookPreface'>" + book.Preface + "</div>");
-                        $('#bookContents').append("<div class='bookCenterTitle'>Introduction</div>");
-                        $('#bookContents').append("<div class='sectionContents'>" + book.Introduction + "</div>");
+                        //$('#fullBookStyleContents').html("<div id=bk" + book.Id + " class='bookTitle'>" + book.BookTitle + "</div>");
+                        $('#fullBookStyleContents').append("<div class='bookCenterTitle'>Preface</div>");
+                        $('#fullBookStyleContents').append("<div class='bookPreface'>" + book.Preface + "</div>");
+                        $('#fullBookStyleContents').append("<div class='bookCenterTitle'>Introduction</div>");
+                        $('#fullBookStyleContents').append("<div class='sectionContents'>" + book.Introduction + "</div>");
                         $.each(book.Chapters, function (idx, obj) {
-                            $('#bookContents').append("<div id=ct" + obj.Id + " class='chapterTitle'>" + obj.ChapterTitle + "</div>");
-                            $('#bookContents').append("<div class='bookPreface'>" + obj.Preface + "</div>");
+                            $('#fullBookStyleContents').append("<div id=ct" + obj.Id + " class='chapterTitle'>" + obj.ChapterTitle + "</div>");
+                            $('#fullBookStyleContents').append("<div class='bookPreface'>" + obj.Preface + "</div>");
                             $.each(obj.Sections, function (idx, obj) {
-                                $('#bookContents').append("<div id=sc" + obj.Id + " class='sectionTitle'>" + obj.SectionTitle + "</div>");
-                                $('#bookContents').append("<div class='sectionContents'>" + obj.SectionContents + "</div>");
+                                $('#fullBookStyleContents').append("<div id=sc" + obj.Id + " class='sectionTitle'>" + obj.SectionTitle + "</div>");
+                                $('#fullBookStyleContents').append("<div class='sectionContents'>" + obj.SectionContents + "</div>");
                                 $.each(obj.SubSections, function (idx, obj) {
-                                    $('#bookContents').append("<div id=ssc" + obj.Id + " class='subsectionTitle'>" + obj.SubSectionTitle + "</div>");
-                                    $('#bookContents').append("<div class='sectionContents'>" + obj.SubSectionContents + "</div>");
+                                    $('#fullBookStyleContents').append("<div id=ssc" + obj.Id + " class='subsectionTitle'>" + obj.SubSectionTitle + "</div>");
+                                    $('#fullBookStyleContents').append("<div class='sectionContents'>" + obj.SubSectionContents + "</div>");
                                 });
                             });
                         });
+
+                        $('#fullBookStyleContainer').show();
                         resizePage();
-                        //$('#bookTitleLoadingGif').hide();
                     }
                 },
                 error: function (jqXHR, exception) {
@@ -224,10 +223,11 @@
         }
     }
 
-    function loadBook() {
+    function loadBookIntoChapterArray() {
         try {
+            chapterArray = [];
             var contents;
-            //$('#bookTitleLoadingGif').show();
+            $('#bookContentsLoadingGif').show();
             $.ajax({
                 type: "get",
                 url: service + "/api/BookDb/?bookId=" + bookId,
@@ -259,14 +259,20 @@
                                 $('#chapterTitle').html("Chapter " + obj.Id + " " + obj.ChapterTitle); 
                         });
 
-                        pages = [];
-
-                        breakIntoPages(chapterArray[chapterId])
-
                         //alert("pages.length: " + pages.length + "   pages[0].len: " + pages[0].length + "  pages[1].len: " + pages[1].length);
-                        $('#paupaStyle').show();
-                        $('#bookLeftContent').html(pages[pageIndex++]);
-                        $('#bookRightContent').html(pages[pageIndex++]);                        
+                        pages = [];
+                        breakIntoPages(chapterId);
+                                               
+                        if (bookId == 1) {
+                            $('#paupaStyleContainer').show();
+                            $('#bookLeftContent').html(pages[pageIndex++]);
+                            $('#bookRightContent').html(pages[pageIndex++]);
+                        }
+                        if (bookId == 3) {
+                            $('#twoPageBookStyle').show();
+                            $('#fullBookStyleLeftContent').html(pages[pageIndex++]);
+                            $('#fullBookStyleRightContent').html(pages[pageIndex++]);
+                        }
                     }
                 },
                 error: function (jqXHR, exception) {
@@ -278,51 +284,24 @@
         }
     }
 
-    function breakIntoPages(chapter) {
-        //alert("$('#bookLeftContent').height(): " + $('#bookLeftContent').height())
+    function breakIntoPages(chapterId) {
+        //alert("breakIntoPages  chapterId: " + chapterId);
 
-        //var fontSize = $('#bookLeftContent').css('font-size');
-        //var lineHeight = Math.floor(parseInt(fontSize.replace('px', '')) * 1.5);
-        //alert("lineHeight: " + lineHeight);
-        //var linesPerPage = $('#bookLeftContent').height() // / lineHeight; //$('#bookLeftContent').css("line-height");
-        //var wordsPerLine = 10;
-        //var wordsPerPage = linesPerPage * wordsPerLine;
-        //alert("wordsPerPage: " + word sPerPage);
-        wordsPerPage = 444;
+        var pageCharCount = calcPageCharCount();
 
-        var idx = 0;
-        while (idx < chapter.length) {
-            //alert("chapter.substr(idx).len: " + chapter.substr(idx).length);
-            var ppindx = getWordIdx(chapter.substr(idx), wordsPerPage);
-            //alert("chapter.substring(" + idx + "," + idx + ppindx + "): " + chapter.substring(idx, idx + ppindx));
-            pages.push(chapter.substring(idx, idx + ppindx));
-            idx += ppindx;
+        var chapterContents = chapterArray[chapterId];
+        var pageStart = 0;
+        var pageEnd = pageCharCount;
+        while (pageStart < chapterContents.length) {
+            pages.push(chapterContents.substring(pageStart, pageEnd));
+            pageEnd += 1;
+            pageStart = pageEnd;
+            pageEnd += pageCharCount;
         }
-        //alert("bb pages.len: " + pages.length);
+        $('#bookContentsLoadingGif').hide();
     }
 
-    function getWordIdx(contentso, numWords) {
-        //alert("numWords: " + numWords);
-        var wordCount = 0;
-        var xindx = 0;
-        while (wordCount < numWords) {
-            //alert("doc.substr(" + indx + ", 1): " + doc.substr(indx, 1));
-            if (contentso.substr(xindx, 1) == " ") {
-                wordCount++;
-                //alert("wordCount: " + wordCount)
-            }
-            xindx++;
-
-            if (xindx > contentso.length) {
-                //alert("fail");
-                break;
-            }
-        }
-        //alert("getWordIdx: " + xindx);
-        return xindx;
-    }
-
-    function getWordCount(cont) {
+    function xxgetWordCount(cont) {
 
         //var cont = $("#content").html();
         cont = cont.replace(/<[^>]*>/g, " ");
@@ -333,19 +312,26 @@
     }
 
     function pageNext() {
-        if (pageIndex + 2 < pages.length) {
+        //alert("pageNext  pageIndex: " + pageIndex + "   pages.length: " + pages.length);
+        if (pageIndex + 2 <= pages.length) {
             $('#bookLeftContent').html(pages[pageIndex++]);
             $('#bookRightContent').html(pages[pageIndex++]);
         }
         else {
             if (pageIndex + 1 == pages.length) {
+                alert("final page")
                 $('#bookLeftContent').html(pages[pageIndex++]);
                 $('#bookRightContent').html("");
             }
             else {
                 if (chapterId < chapterArray.length) {
                     pageIndex = 0;
-                    breakIntoPages(chapterArray[++chapterId])
+
+                    alert("moving: ")
+
+                    breakIntoPages(++chapterId)
+                    //$('#bookLeftContent').html(pages[pageIndex]);
+                    //$('#bookRightContent').html(pages[pageIndex++]);
                 }
                 else {
                     $('#bookLeftContent').html("The End");
@@ -362,15 +348,27 @@
         }
         if (chapterId > 0) {
             //alert("chapterId: " + (chapterId - 1));
-
             //alert("chapterArray[--chapterId]" + chapterArray[--chapterId])
-
             pageIndex = 0;
             chapterId = chapterId - 1;
-            alert("chapterId: " + chapterId);
-
-            breakIntoPages(chapterArray[chapterId])
+            //alert("chapterId: " + chapterId);
+            breakIntoPages(chapterId)
         }
+    }
+
+    function calcPageCharCount() {
+        var middleColumnHeight = $('#middleColumn').height();
+        var lineHeight = 44;
+        var lineCount = middleColumnHeight / lineHeight;
+        //alert("estimated line count: " + lineCount);
+        var pageAreaWidth = $('#bookLeftContent').width()
+        var characterWidth = 8;
+        var charactersPerLine = pageAreaWidth / characterWidth;
+        var pageCharCount = lineCount * charactersPerLine 
+        //alert("pageCharCount: " + pageCharCount)
+        //return pageCharCount;
+
+        return 1500;
     }
 
     function redirectToEdit() {

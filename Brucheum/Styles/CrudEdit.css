@@ -39,6 +39,7 @@
     width: 80%;
 }
 .crudButtonRow {
+    width: 95%;
     margin-left: 4px;
     margin-bottom: 8px;
 }
@@ -142,8 +143,6 @@
         margin-bottom: 4px;
         background-color: #c3cecf;
     }
-
-
 
 .crudListSubItem {
     padding: 4px;
