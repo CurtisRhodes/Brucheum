@@ -39,10 +39,15 @@ namespace Brucheum.Controllers
             return View();
         }
 
-        public ActionResult Write(int chapter)
+        public ActionResult Write(int? chapter)
         {
+            if (chapter == null)
+                {
+
+            }
             ViewBag.Service = apiService;
             //ViewBag.BookId = book;
+            
             ViewBag.ChapterId = chapter;
             return View();
         }

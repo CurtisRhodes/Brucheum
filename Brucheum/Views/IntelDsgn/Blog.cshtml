@@ -48,13 +48,19 @@
         margin-bottom: 12px;
     }
 
-    #blogViewTitle {
+    #blogReadOnlyViewBlogName {
+        background-color: rgba(128, 128, 128, 0.47);
+        border: solid thin #333;
+        border-radius: 4px;
+    }
+
+    #blogReadOnlyViewTitle {
         text-align: center;
         font-size: 22px;
         margin-bottom: 8px;
     }
 
-    #blogViewSummary {
+    #blogReadOnlyViewSummary {
         border: solid thin #333;
         font-size: 18px;
         height: 88px;
@@ -63,7 +69,7 @@
         background-color: #ddd;
     }
 
-    #blogViewContent {
+    #blogReadOnlyViewContent {
         margin-top: 8px;
         border: solid thin #333;
         font-size: 15px;
@@ -78,123 +84,62 @@
     <div id="leftColumn">
         <div class="vertMenu">
             <div class="vertMenuTab" onclick="showSpaSection('blockDisplayArea')">View Blog</div>
-            <div class="vertMenuTab" onclick="showSpaSection('blogEntryEditor')">New Entry</div>
-            <div class="vertMenuTab" onclick="showSpaSection('listItemAddEdit')">List Item</div>
-            <div class="vertMenuTab" onclick="showSpaSection('listHeaderAddEdit')">New List</div>
-            <div class="vertMenuTab" onclick="showSpaSection('blogHeader')">New Blog</div>
+            <div class="vertMenuTab" onclick="showSpaSection('blogEntryAddEdit')">Blog Entry</div>
+            <div class="vertMenuTab" onclick="showSpaSection('listItemAddEdit')">To Do</div>
+            @*<div class="vertMenuTab" onclick="showSpaSection('listHeaderAddEdit')">New List</div>*@
+            @*<div class="vertMenuTab" onclick="showSpaSection('blogHeaderAddEdit')">New Blog</div>*@
         </div>
     </div>
 
     <div id="middleColumn">
-        <div id="divStatusMessage"></div>
         <div id="blockLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
         <div id="blockDisplayArea" class="blogSpaSection"></div>
-        <div id="blogView" class="blogSpaSection">
-            <div id="blogViewTitle"></div>
-            <div id="blogViewSummary"></div>
-            <div id="blogViewContent"></div>
-            <button id="btnshowEditor" class="roundendButton" onclick="showEditor()">Edit</button>
+
+        <div id="blogReadOnlyView" class="blogSpaSection">
+            <div id="blogReadOnlyViewBlogName"></div>
+            <div id="blogReadOnlyViewTitle"></div>
+            <div id="blogEntryReadOnlyViewLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+            <div id="blogReadOnlyViewSummary"></div>
+            <div id="blogReadOnlyViewContent"></div>
+            <button class="roundendButton" onclick="showEditorFromReadOnlyView()">Edit</button>
         </div>
-        <div id="listHeaderAddEdit" class="blogSpaSection">
-            <div class="crudContainer">
-                <div id="crudContainerTitle" class="crudContainerTitle">List</div>
-                <div class="crudRow">
-                    <div class="crudRowLabel">List Name</div>
-                    <div id="errListName" class="validationError">Required</div>
-                    <input id="txtListName" class="roundedInput" />
-                </div>
-                <div class="crudButtonRow">
-                    <button id="btnlistHeaderAddEdit" class="roundendButton" onclick="addEditListHeader()">Add</button>
-                    <button id="btnListNew" class="roundendButton crudBtnNew" onclick="toggleListHeaderEdit()">New</button>
-                </div>
-            </div>
-            <div>
-                <div class="crudContainer">
-                    <div class="crudContainerTitle">Lists</div>
-                    <div id="listLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
-                    <div id="listList" class="crudList"></div>
-                </div>
-            </div>
-        </div>
-        <div id="listItemAddEdit" class="blogSpaSection">
-            <div class="crudContainer">
-                <div id="crudContainerTitle" class="crudContainerTitle">List Item</div>
-                <div class="crudRow">
-                    <div class="crudRowLabel">List</div>
-                    <select id="ddList" class="crudDropDown"></select>
-                    <div class="crudLabel inline">Parent</div>
-                    <select id="ddParentListItems" class="roundedInput inline"></select>
-                </div>
-                <div class="crudRow">
-                    <div class="crudRowLabel">Item</div>
-                    <div id="errListItemName" class="validationError">Required</div>
-                    <input id="txtListItemName" class="roundedInput wide" />
-                </div>
-                <div class="crudRow">
-                    <div class="crudRowLabel">Status</div>
-                    <div id="errStatus" class="validationError">Required</div>
-                    <select id="ddStatus" class="crudDropDown"></select>
-                    <div class="crudRowLabel">Priority</div>
-                    <div id="errPriority" class="validationError">Required</div>
-                    <select id="ddPriority" class="crudDropDown"></select>
-                </div>
-                <div class="crudRow">
-                    <div class="crudRowLabel">Percent Complete</div>
-                    <div id="errPercent" class="validationError">Required</div>
-                    <input id="txtPercent" class="roundedInput width50px" />
-                    <div class="crudRowLabel">Assigned To</div>
-                    <input id="txtAssigned" class="roundedInput" />
-                </div>
-                <div class="crudRow">
-                    <div class="crudRowLabel">Narrative</div>
-                    <div id="listItemNarrativeEditor" class="editorContainer">
-                        <div>@Html.Partial("_Editor") </div>
+
+        <div id="blogHeaderAddEdit" class="blogSpaSection">
+            <div class="flexContainer">
+                <div class="floatLeft">
+                    <div class="crudContainer">
+                        <div id="crudContainerTitle" class="crudContainerTitle">Blog</div>
+                        <div class="crudRow">
+                            <div class="crudRowLabel">Blog Name</div>
+                            <div id="errBlogName" class="validationError">Required</div>
+                            <input id="txtBlogName" class="roundedInput" />
+                            <div class="crudRowLabel inline">Color</div>
+                            <input id="txtblogColor" class="roundedInput inline" />
+                        </div>
+                        <div class="crudButtonRow">
+                            <button id="btnBlogAddEdit" class="roundendButton" onclick="addEditBlogHeader()">Add</button>
+                            <button id="btnBlogNew" class="roundendButton" onclick="toggleBlogHeaderEdit()">New</button>
+                        </div>
                     </div>
                 </div>
-                <div class="crudButtonRow">
-                    <button id="btnListItemAddEdit" class="roundendButton" onclick="addEditListItem()">Add</button>
-                    <button id="btnListItemNew" class="roundendButton crudBtnNew" onclick="toggleListItem()">New</button>
-                </div>
-            </div>
-            <div>
-                <div class="crudContainer">
-                    <div class="crudContainerTitle">List Items</div>
-                    <div id="listItemLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
-                    <div id="listItemList" class="crudList"></div>
+                <div class="floatLeft">
+                    <div class="crudContainer">
+                        <div class="crudContainerTitle">Blogs</div>
+                        <div id="blogLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+                        <div id="blogList" class="crudList"></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div id="blogHeader" class="blogSpaSection">
-            <div class="crudContainer">
-                <div id="crudContainerTitle" class="crudContainerTitle">Blog</div>
-                <div class="crudRow">
-                    <div class="crudRowLabel">Blog Name</div>
-                    <div id="errBlogName" class="validationError">Required</div>
-                    <input id="txtBlogName" class="roundedInput" />
-                    <div class="crudRowLabel inline">Color</div>
-                    <input id="txtblogColor" class="roundedInput inline" />
-                </div>
-                <div class="crudButtonRow">
-                    <button id="btnBlogAddEdit" class="roundendButton" onclick="addEditBlogHeader()">Add</button>
-                    <button id="btnBlogNew" class="roundendButton crudBtnNew" onclick="toggleBlogHeaderEdit()">New</button>
-                </div>
-            </div>
-            <div>
-                <div class="crudContainer">
-                    <div class="crudContainerTitle">Blogs</div>
-                    <div id="blogLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
-                    <div id="blogList" class="crudList"></div>
-                </div>
-            </div>
-        </div>
-        <div id="blogEntryEditor" class="blogSpaSection">
+
+        <div id="blogEntryAddEdit" class="blogSpaSection">
             <div class="flexContainer">
                 <div class="floatLeft">
                     <div class="crudContainer">
                         <div id="crudContainerTitle" class="crudContainerTitle">Blog Entry</div>
                         <div class="crudRow">
                             <div class="crudRowLabel">Current Blog</div>
-                            <select id="ddBlogs" class="roundedInput" onchange="setCurrentBlogEntryBlog()"></select>
+                            <select id="ddBlogEntryParentBlogs" class="roundedInput" onchange="currentBlogEntryParentBlogddChange()"></select>
                         </div>
                         <div class="crudRow">
                             <div class="crudRowLabel">Title</div>
@@ -215,22 +160,103 @@
                         </div>
                         <div class="crudButtonRow">
                             <button id="btnBlogEntryAddEdit" class="roundendButton" onclick="addEditBlogEntry()">Add</button>
-                            <button id="btnBlogEntryNew" class="roundendButton crudBtnNew" onclick="toggleBlogEntryEdit()">New</button>
+                            <button id="btnBlogEntryNew" class="roundendButton" onclick="toggleBlogEntryEdit()">New</button>
+                            <button class="roundendButton floatRight" onclick="showSpaSection('blogHeaderAddEdit')">New Blog</button>
                         </div>
                     </div>
                 </div>
                 <div class="floatLeft">
                     <div class="crudContainer">
-                        <div class="crudContainerTitle">Blog Entries</div>
+                        <div id="blogEditorEntriesListTitle" class="crudContainerTitle">Blog Entries</div>
                         <div id="blogEntryLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
                         <div id="blogEntryList" class="crudList"></div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div id="listHeaderAddEdit" class="blogSpaSection">
+            <div class="crudContainer">
+                <div id="crudContainerTitle" class="crudContainerTitle">List</div>
+                <div class="crudRow">
+                    <div class="crudRowLabel">List Name</div>
+                    <div id="errListName" class="validationError">Required</div>
+                    <input id="txtListName" class="roundedInput" />
+                </div>
+                <div class="crudButtonRow">
+                    <button id="btnlistHeaderAddEdit" class="roundendButton" onclick="addEditListHeader()">Add</button>
+                    <button id="btnListNew" class="roundendButton" onclick="toggleListHeaderEdit()">New</button>
+                </div>
+            </div>
+            <div>
+                <div class="crudContainer">
+                    <div class="crudContainerTitle">Lists</div>
+                    <div id="listLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+                    <div id="listList" class="crudList"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="listItemAddEdit" class="blogSpaSection">
+            <div class="flexContainer">
+                <div class="floatLeft">
+                    <div class="crudContainer">
+                        <div id="listItemAddEditContainerTitle" class="crudContainerTitle">List Item</div>
+                        <div class="crudRow">
+                            <div class="crudRowLabel">List</div>
+                            <select id="ddList" class="crudDropDown"></select>
+                            <div class="crudLabel inline">Parent</div>
+                            <select id="ddParentListItems" class="roundedInput inline"></select>
+                        </div>
+                        <div class="crudRow">
+                            <div class="crudRowLabel">Item</div>
+                            <div id="errListItemName" class="validationError">Required</div>
+                            <input id="txtListItemName" class="roundedInput wide" />
+                        </div>
+                        <div class="crudRow">
+                            <div class="crudRowLabel">Status</div>
+                            <div id="errStatus" class="validationError">Required</div>
+                            <select id="ddStatus" class="crudDropDown"></select>
+                            <div class="crudRowLabel">Priority</div>
+                            <div id="errPriority" class="validationError">Required</div>
+                            <select id="ddPriority" class="crudDropDown"></select>
+                        </div>
+                        <div class="crudRow">
+                            <div class="crudRowLabel">Percent Complete</div>
+                            <div id="errPercent" class="validationError">Required</div>
+                            <input id="txtPercent" class="roundedInput width50px" />
+                            <div class="crudRowLabel">Assigned To</div>
+                            <input id="txtAssigned" class="roundedInput" />
+                        </div>
+                        <div class="crudRow">
+                            <div class="crudRowLabel">Narrative</div>
+                            <div id="listItemNarrativeEditor" class="editorContainer">
+                                <div>@Html.Partial("_Editor") </div>
+                            </div>
+                        </div>
+                        <div class="crudButtonRow">
+                            <button id="btnListItemAddEdit" class="roundendButton" onclick="addEditListItem()">Add</button>
+                            <button id="btnListItemNew" class="roundendButton" onclick="toggleListItem()">New</button>
+                            <button class="roundendButton floatRight" onclick="showSpaSection('listHeaderAddEdit')">New List</button>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="floatLeft">
+                    <div class="crudContainer">
+                        <div id="listItemContainerTitle" class="crudContainerTitle">List Items</div>
+                        <div id="listItemLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+                        <div id="listItemList" class="crudList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="divStatusMessage"></div>
     </div>
     <div id="rightColumn"></div>
 </div>
+
 <script>
     var service = '@ViewBag.Service';
     var currentUser = '@ViewBag.UserId';
@@ -261,12 +287,18 @@
                     loadBlocksDisplay();
                 $('#blockDisplayArea').show()
                 break;
-            case "blogEntryEditor":
-                toggleBlogEntryEdit();
-                $('#blogEntryEditor').show();
-                if (isNullorUndefined($('#ddBlogs').html()))
+            case "blogHeaderAddEdit":
+                if (isNullorUndefined($('#blogList').html()))
                     loadBlogHeaderList();
-                //loadBlogEntryEditor(blogEntryModel.Id);
+                toggleBlogHeaderEdit();
+                $('#blogHeaderAddEdit').show();
+                break;
+            case "blogEntryAddEdit":
+                toggleBlogEntryEdit();
+                $('#blogEntryAddEdit').show();
+                if (isNullorUndefined($('#ddBlogEntryParentBlogs').html()))
+                    loadBlogEntryBlogsDD();
+                //loadblogEntryAddEdit(blogEntryModel.Id);
                 break;
             case "listItemAddEdit":
                 if (isNullorUndefined($('#ddList').html()))
@@ -282,13 +314,6 @@
                     loadListHeaderList();
                 $('#listHeaderAddEdit').show();
                 break;
-            case "blogHeader":
-                loadBlogHeaderList();
-                if (isNullorUndefined($('#blogList').html()))
-                    loadBlogHeaderList();
-                toggleBlogHeaderEdit();
-                $('#blogHeader').show();
-                break;
             default:
         }
     }
@@ -303,12 +328,13 @@
                     $('#blockDisplayArea').html("");
                     $.each(response, function (idx, obj) {
 
-                        $('#blockDisplayArea').append("<div id=" + obj.Id + " class='blockContainer' style='background-color:" + obj.Color + "'><div class='blockContainerBlogName'>" +
-                            obj.BlogName + "</div><div class='blockContainerBlogTitle'>" + obj.Title + "</div></div>");
+                        $('#blockDisplayArea').append("<div id=" + obj.Id + " blogId=" + obj.BlogId + " class='blockContainer' style='background-color:" +
+                            obj.Color + "'><div class='blockContainerBlogName'>" + obj.BlogName + "</div><div class='blockContainerBlogTitle'>" + obj.Title + "</div></div>");
 
                     })
                     $('.blockContainer').click(function () {
-                        loadBlogViewFromBlocDisplay($(this).attr("id"));
+
+                        loadBlogViewFromBlocDisplay($(this).attr("id"), $(this).attr("blogId"));
                     });
                     $('#blockLoadingGif').hide();
                 },
@@ -322,42 +348,51 @@
             alert("loadBlocksDisplay CATCH: " + e)
         }
     }
-    function loadBlogViewFromBlocDisplay(id) {
+    function loadBlogViewFromBlocDisplay(id, blogId ) {
         try {
-            //$('#blogEntryLoadingGif').show();
+            blogEntryModel.Id = id;
+            blogEntryModel.BlogId = blogId;
+
+            if (isNullorUndefined($('#ddBlogEntryParentBlogs').html()))
+                loadBlogEntryBlogsDD();
+
+            $('#blogEntryReadOnlyViewLoadingGif').show();
             $.ajax({
                 type: "GET",
                 url: service + "/api/BlogEntry/GetOne?Id=" + id,
                 success: function (response) {
                     if (!response.Title.startsWith("ERROR")) {
-                        blogEntryModel.Id = id;
-                        $('#blogViewTitle').html(response.Title);
-                        $('#blogViewSummary').html(response.Summary);
-                        $('#blogViewContent').html(response.Content);
-                        //$('#blogEntryLoadingGif').hide();
+                        $('#blogReadOnlyViewBlogName').html(response.BlogName);
+                        $('#blogReadOnlyViewTitle').html(response.Title);
+                        $('#blogReadOnlyViewSummary').html(response.Summary);
+                        $('#blogReadOnlyViewContent').html(response.Content);
+
+                        $('#blogEntryReadOnlyViewLoadingGif').hide();
                         $('.blogSpaSection').hide();
-                        $('#blogView').show();
+                        $('#blogReadOnlyView').show();
                     }
                     else {
-                        //$('#blogEntryLoadingGif').hide();
-                        alert("loadBlogView: " + success)
+                        $('#blogEntryReadOnlyViewLoadingGif').hide();
+                        alert("loadblogReadOnlyView: " + success)
                     }
                 },
                 error: function (jqXHR, exception) {
-                    //$('#blogEntryLoadingGif').hide();
-                    alert("loadBlogView XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                    $('#blogEntryReadOnlyViewLoadingGif').hide();
+                    alert("loadblogReadOnlyView XHR error: " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         } catch (e) {
-            //$('#blogEntryLoadingGif').hide();
-            alert("get loadBlogView CATCH: " + e)
+            $('#blogEntryReadOnlyViewLoadingGif').hide();
+            alert("get loadblogReadOnlyView CATCH: " + e)
         }
     }
-    function showEditor() {
-        loadBlogEntryEditor(blogEntryModel.Id);
+
+    function showEditorFromReadOnlyView() {
         $('.blogSpaSection').hide();
-        $('#blogEntryEditor').fadeIn();
+        loadBlogEntryEditor(blogEntryModel.Id);
+        $('#blogEntryAddEdit').fadeIn();
     }
+
     function toggleBlogHeaderEdit() {
         $('#btnBlogNew').hide();
         $('#btnBlogAddEdit').html("Add");
@@ -414,16 +449,13 @@
                 type: "GET",
                 url: service + "/api/Blog",
                 success: function (response) {
-                    $('#blogList').html("");
-                    $('#ddBlogs').html("<option class='ddOption' value='0'>-- select blog --</option>");
+                    $('#blogList').html("<option class='ddOption' value='0'>-- select blog --</option>");
                     if (true) {
                         $.each(response, function (idx, obj) {
                             $('#blogList').append("<div class='crudListItem blogListItem' id='" + obj.Id + "' name='" + obj.Name + "' color=" + obj.Color + " >" + obj.Name + "</div>");
-                            $('#ddBlogs').append("<option class='ddOption' value='" + obj.Id + "'>" + obj.Name + "</option>");
                         })
-                        blogEntryModel.BlogId = $('#ddBlogs').val();
+
                         $('.blogListItem').click(function () {
-                            //alert("this.id: " + $(this).attr("id"));
                             blogModel.Id = $(this).attr("id");
                             $('#txtBlogName').val($(this).attr("name"));
                             $('#txtblogColor').val($(this).attr("color"));
@@ -448,18 +480,53 @@
         }
     }
 
+    function loadBlogEntryBlogsDD() {
+        try {
+            $('#blogLoadingGif').show();
+            $.ajax({
+                type: "GET",
+                url: service + "/api/Blog",
+                success: function (response) {
+                    $('#ddBlogEntryParentBlogs').html("<option class='ddOption' value='0'>-- select blog --</option>");
+                    if (true) {
+                        $.each(response, function (idx, obj) {
+                            $('#ddBlogEntryParentBlogs').append("<option class='ddOption logEntryParentBlog' value='" + obj.Id + "'>" + obj.Name + "</option>");
+                        })
+
+                        //$('.logEntryParentBlog').click(function () {
+                        //    //alert("this.id: " + $(this).attr("id"));
+                        //    blogEntryModel.BlogId = $('#ddBlogEntryParentBlogs').val();
+                        //}
+
+                        $('#blogLoadingGif').hide();
+                    }
+                    else {
+                        $('#blogLoadingGif').hide();
+                        alert("loadBlogEntryBlogsDD: " + success)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    $('#blogLoadingGif').hide();
+                    alert("loadBlogEntryBlogsDD XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            $('#blogLoadingGif').hide();
+            alert("get loadBlogEntryBlogsDD CATCH: " + e)
+        }
+    }
     function toggleBlogEntryEdit() {
         $('#btnBlogEntryNew').hide();
         $('#btnBlogEntryAddEdit').html("Add");
         //clear gets
-        $('#txtBlogEntryTitle').val("");        
+        $('#txtBlogEntryTitle').val("");
         $('#blogSummaryEditor').summernote('code', "");
         $('#blogContentEditor').summernote('code', "");
         //$('#txtBlogEntryContent').jqteVal('');
     }
     function addEditBlogEntry() {
         //bind
-        blogEntryModel.BlogId = $('#ddBlogs').val();
+        blogEntryModel.BlogId = $('#ddBlogEntryParentBlogs').val();
         blogEntryModel.Title = $('#txtBlogEntryTitle').val();
         blogEntryModel.Summary = $('#blogSummaryEditor').summernote('code');
         blogEntryModel.Content = $('#blogContentEditor').summernote('code');
@@ -504,9 +571,11 @@
             })
         }
     }
-    function setCurrentBlogEntryBlog() {
-        blogEntryModel.BlogId = $('#ddBlogs').val();
+    function currentBlogEntryParentBlogddChange() {
+        blogEntryModel.BlogId = $('#ddBlogEntryParentBlogs option:selected').val();
+        $('#blogEditorEntriesListTitle').html($('#ddBlogEntryParentBlogs option:selected').text() + " Blog Entries");
         loadBlogEntryList();
+        toggleBlogEntryEdit();
     }
     function loadBlogEntryList() {
         try {
@@ -516,18 +585,24 @@
                 url: service + "/api/BlogEntry/GetMany?blogId=" + blogEntryModel.BlogId + "&kludge=kludge",
                 success: function (response) {
                     $('#blogEntryList').html("");
-                    if (!response[0].Title.startsWith("Error")) {
-                        $.each(response, function (idx, obj) {
-                            $('#blogEntryList').append("<div class='crudListItem blogEntryListItem' id='" + obj.Id + "'>" + obj.Title + "</div>");
-                        })
-                        $('.blogEntryListItem').click(function () {
-                            loadBlogEntryEditor($(this).attr("id"))
-                        });
+                    if (response.length == 0) {
                         $('#blogEntryLoadingGif').hide();
+                        $('#blogEntryList').append("<div class='crudListItem'>no items yet</div>");
                     }
                     else {
-                        $('#blogEntryLoadingGif').hide();
-                        alert("loadBlogEntryList: " + success)
+                        if (!response[0].Title.startsWith("Error")) {
+                            $.each(response, function (idx, obj) {
+                                $('#blogEntryList').append("<div class='crudListItem blogEntryListItem' id='" + obj.Id + "'>" + obj.Title + "</div>");
+                            })
+                            $('.blogEntryListItem').click(function () {
+                                loadBlogEntryEditor($(this).attr("id"))
+                            });
+                            $('#blogEntryLoadingGif').hide();
+                        }
+                        else {
+                            $('#blogEntryLoadingGif').hide();
+                            alert("loadBlogEntryList: " + success)
+                        }
                     }
                 },
                 error: function (jqXHR, exception) {
@@ -549,18 +624,27 @@
                 success: function (response) {
                     if (!response.Title.startsWith("ERROR")) {
                         blogEntryModel.Id = id;
-                        blogModel.Id = response.BlogId;
-                        $('#ddBlogs').val(response.BlogId);
+                        blogEntryModel.BlogId = response.BlogId;
+
+                        $('#ddBlogEntryParentBlogs').val(response.BlogId);
+                        //alert("00  $('#ddBlogEntryParentBlogs').val(): " + $('#ddBlogEntryParentBlogs').val)
+
                         $('#txtBlogEntryTitle').val(response.Title);
                         $('#blogSummaryEditor').summernote('code', response.Summary);
                         $('#blogContentEditor').summernote('code', response.Content);
 
-                        //alert("$('#txtBlogEntryContent').val(): " + response.Content);
-                        //$('#txtBlogEntryContent').jqteVal(response.Content);
-
                         $('#btnBlogEntryAddEdit').html("Update");
                         $('#btnBlogEntryNew').show();
                         $('#blogEntryLoadingGif').hide();
+
+                        //$('#ddBlogEntryParentBlogs').val(blogEntryModel.BlogId);
+                        //alert("1.  $('#ddBlogEntryParentBlogs option:selected').val: " + $('#ddBlogEntryParentBlogs').val())
+                        //currentBlogEntryParentBlogddChange();
+                        //alert("111.  $('#ddBlogEntryParentBlogs option:selected').TEXT: " + $('#ddBlogEntryParentBlogs option:selected').text())
+                        $('#blogEditorEntriesListTitle').html($('#ddBlogEntryParentBlogs option:selected').text() + " Blog Entries");
+                        loadBlogEntryList();
+
+
                     }
                     else {
                         $('#blogEntryLoadingGif').hide();
@@ -581,7 +665,8 @@
     function toggleListHeaderEdit() {
         $('#btnListNew').hide();
         $('#btnlistHeaderAddEdit').html("Add");
-        $('#txtListName').val("");
+        //clear gets
+        $('#txtBlogEntryTitle').val("");
     }
     function addEditListHeader() {
         //bind
@@ -647,9 +732,15 @@
                             listModel.Id = $(this).attr('id')
                             $('#txtListName').val($(this).attr('name'));
                         })
+                        
+                        $('.listItemOption').click(function () {
+                            $('#listItemContainerTitle').html($(this).html());
+                        })
 
                         $('#ddList').change(function () {
+                            toggleListItem();
                             //alert("$('#ddList').change val(): " + $(this).val());
+                            //" class="crudContainerTitle">List Item</div>
                             listItemModel.ListId = $(this).val();
                             loadListItemList();
                         });

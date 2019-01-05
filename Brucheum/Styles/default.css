@@ -1,4 +1,20 @@
-﻿body {
+﻿/*
+    #ffffe6 getajob yellow 10%
+    #ffcccc admin red
+
+    #aa00aa; purple
+    #a39ca5
+    #9c88a4;
+    #74bac3; brucheum Blue
+    #d6f5f5; brucheum Lighter Blue
+*/
+
+:root {
+    --brucheumBlue: #74bac3;
+}
+
+
+body {
     margin: 0;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 14px;
@@ -42,8 +58,7 @@
     cursor: pointer;
 }
 .loadingGif {
-    height: 150px;
-    width: 150px;
+    position: absolute;
     display: none;
 }
 .loadingGif img {
@@ -76,15 +91,12 @@
     position: absolute;
     top: 300px;
     left: 50%;
-    z-index: 20;
     display: none;
 }
 .centeredDivInner {
     position: relative;
     left: -50%;
     min-height: 200px;
-    background-color: #fff;
-    border: solid 2px purple;
 }
 .alegro {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
@@ -120,7 +132,7 @@ label {
 }
 .roundendButton {
     text-align: center;
-    background: #74bac3;
+    background: var(--brucheumBlue);
     color: #000;
     border-radius: 6px;
     padding: 8px 20px;
@@ -133,6 +145,10 @@ label {
     background-color: #ddd;
     border: 1px solid #ccc;
     border-radius: 3px;
+}
+.fullCenterImage {
+    width: 100%;
+    cursor: pointer;
 }
 
 .severityOk {
@@ -158,13 +174,6 @@ label {
     text-align: center;
 }
 
-/*.clickable {
-    margin-top: 5px;
-    text-decoration: underline;
-    display: inline-block;
-    text-align: initial;
-    margin-left: 8px;
-}*/
 .btnSpinnerImage {
     position: absolute;
     /*margin-left: 10px;*/
@@ -182,12 +191,18 @@ label {
 .width100 {
     width: 100%
 }
-
+.collapsible {
+    display: none;
+    cursor: pointer;
+}
 .noFloat {
     clear: both;
 }
 .floatRight {
     float: right;
+}
+.align-right {
+    text-align: right;
 }
 .inline {
     display: inline-block;

@@ -14,6 +14,12 @@
         width: 70%;
         margin-bottom: 14px;
     }
+
+    .nestedList {
+        height: 400px;
+        overflow-y: auto;
+    }
+
     #sectionList {
         margin-top: 14px;
     }
@@ -27,7 +33,30 @@
         background-size: 100%;*/
         background-color: #ddd69f;
     }
+    .bookSectionSpinnerOffset {
+        top: 10px;
+        left: 30px;
+    }
+    .nestedListItem {
+        padding: 4px;
+        cursor: pointer;
+        margin-bottom: 5px;
+        background-color: #74bac3;
+        border-radius: 5px;
+    }
+
+    .nestedListChapterItem {
+        font-weight: bold;
+        padding-left: 8px;
+    }
+    .nestedListSectionItem {
+        padding-left: 50px;
+    }
+    .nestedListSubSectionItem {
+        padding-left: 100px;
+    }
 </style>
+
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
@@ -53,12 +82,18 @@
                     @Html.Partial("_Editor")
                 </div>
                 <div>
-                    <button id="btnAddUpdate" class="roundendButton" onclick="mediateAddUpdateBtn()">Add</button>
-                    <button id="btnNewCancel" class="roundendButton" onclick="mediateNewCancelbtn()">Cancel</button>
-                    <button id="btnContinue" class="roundendButton" onclick="mediateContinueBtn()">Add Subsection</button>
+                    <img id="bookSectionSpinner" class="btnSpinnerImage bookSectionSpinnerOffset" src="~/Images/loader.gif" />
+                    <button id="btnAddUpdateSection" class="roundendButton" onclick="addUpdateSection()">Add</button>
+                    <button id="btnNewSection" class="roundendButton" onclick="toggleNewSection()">New Section</button>
+                    <button id="btnAddUpdateSubSection" class="roundendButton" onclick="addUpdateSubSection()">New Subsection</button>
+                    <button id="btnNewSubSection" class="roundendButton" onclick="toggleNewSubSection()">New Subsection</button>
+                </div>
+                <div>
+                    <div id="writeSectionsListLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+                    <div id="nestedBookChaptersList" class="crudList nestedList"></div>
                 </div>
                 <div id="sectionList" class="crudList">
-                    section list
+                    <div id="writeSectionsListLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
                 </div>
             </div>
         </div>
@@ -76,17 +111,28 @@
 ///
     var service = '@ViewBag.Service';
     var chapterId = '@ViewBag.ChapterId';
-    var sectionModel = {};
-    var bookId;
-    sectionModel.Chapter = chapterId;
-    var subSectionModel = {};
+    var bookId = 1;
+
+    var bookModel = {};
 
     $(document).ready(function () {
+        if (chapterId == null) {
+            window.location.href = "/BookDb"
+        }
+
+        $('#btnNewSection').hide();
+        $('#btnNewSubSection').hide();
+        $('#btnAddUpdateSubSection').hide();
+
         setUpSummerNoteEditor();
-        getChapter(chapterId);
+
+        loadNestedList();
+
+        //getChapter(chapterId);
         $('#chaptersCrudArea').height($('#bookCrudArea').height());
         $("#btnContinue").hide();
     })
+
     function setUpSummerNoteEditor() {
         $('#sectionEditor').summernote({
             height: 200,
@@ -104,63 +150,154 @@
         });
     }
 
-    function mediateAddUpdateBtn() {
-        if ($('#btnAddUpdate').html() == "Add Subsection") {
-            addSubSection();
-        }
-        if ($('#btnAddUpdate').html() == "Update SubSection") {
-            updateSubSection();
-        }
-        else {
-            if ($('#btnAddUpdate').html() == "Add")
-                addSection();
-            else
-                updateSection()
+    function addUpdateSection() {
+       
+        $('#bookSectionSpinner').show();
+
+        sectionModel.SectionTitle = $('#txtSectionTitle').val();
+        sectionModel.SectionOrder = $('#txtSectionOrder').val();
+        sectionModel.SectionContents = $('#sectionEditor').summernote('code');
+        try {
+            if ($('#btnAddUpdateSection').html() == "Add") {
+                $.ajax({
+                    type: "POST",
+                    url: service + "/api/BookSection/",
+                    data: sectionModel,
+                    success: function (sectionId) {
+                        sectionModel.Id = sectionId;
+                        displayStatusMessage("ok", sectionModel.SectionTitle + " Added");
+                        $('#btnAddUpdateSection').html("Update");
+                        $('#btnNewCancel').html("New");
+                        $("#btnContinue").show();
+                        loadSectionList();
+                        $('#bookSectionSpinner').hide();
+                    },
+                    error: function (jqXHR, exception) {
+                        $('#bookSectionSpinner').hide();
+                        alert("addSection XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                    }
+                });
+            }
+            if ($('#btnAddUpdateSection').html() == "Update")
+            {
+                sectionModel.SectionTitle = $('#txtSectionTitle').val();
+                sectionModel.SectionOrder = $('#txtSectionOrder').val();
+                sectionModel.SectionContents = $('#sectionEditor').summernote('code');
+                $.ajax({
+                    type: "PUT",
+                    url: service + "/api/BookSection/",
+                    data: sectionModel,
+                    success: function (success) {
+                        $('#bookSectionSpinner').hide();
+                        if (success == "ok") {
+                            displayStatusMessage("ok", sectionModel.SectionTitle + " Updated");
+                            loadSectionList();
+                        }
+                        else
+                            alert("success: " + success);
+                    },
+                    error: function (jqXHR, exception) {
+                        $('#bookSectionSpinner').hide();
+                        alert("getChapter XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                    }
+                });
+            }
+        } catch (e) {
+            $('#bookSectionSpinner').hide();
+            alert("addSection CATCH: " + e);
         }
     }
-    function mediateNewCancelbtn() {
+    
+    function toggleNewSection() {
         // clear
         sectionModel.Id = null;
         $('#sectionEditor').summernote('code', "");
         $('#txtSectionTitle').val("");
         $('#txtSectionOrder').val("");
-        if ($('#btnNewCancel').html() == "Cancel Subsection") {
-            $('#subSectionRow').hide();
-            $('#btnAddUpdate').html("Add");
-            $('#btnNewCancel').html("Cancel");
-            $("#btnContinue").hide();
+        $('#btnAddUpdateSection').html("Add");
+        $('#btnNewSection').hide();
+        $('#btnAddUpdateSubSection').hide();
+        $('#btnNewSubSection').hide();
+    }
+
+    function addUpdateSubSection() {
+        if ($('#btnAddUpdateSubSection').html() == "New Subsection") {
+            $('#subSectionRow').show();
+            $('#btnNewSection').hide()
+            $('#btnAddUpdateSection').hide()
+            $('#btnNewSubSection').html("Cancel")
+            $('#btnNewSubSection').show()
+            $('#btnAddUpdateSubSection').html("Save Subsection")
+            // clear gets
+            $('#sectionEditor').summernote('code', "");
+            //$('#txtSectionTitle').val("");
+            //$('#txtSectionOrder').val("");
+            $('#txtSubSectionTitle').val("");
+            $('#txtSubSectionOrder').val("");
         }
         else {
-            if ($('#btnNewCancel').html() == "Cancel") {
-                $('#btnAddUpdate').html("Add");
+            subSectionModel.Section = sectionModel.Id;
+            subSectionModel.SubSectionTitle = $('#txtSubSectionTitle').val();
+            subSectionModel.SubSectionOrder = $('#txtSubSectionOrder').val();
+            subSectionModel.SubSectionContents = $('#sectionEditor').summernote('code');
+            if ($('#btnAddUpdateSubSection').html() == "Save Subsection") {
+                try {
+                    $.ajax({
+                        type: "POST",
+                        url: service + "/api/SubSection/",
+                        data: subSectionModel,
+                        success: function (subSectionId) {
+                            subSectionModel.Id = subSectionId;
+                            displayStatusMessage("ok", subSectionModel.SubSectionTitle + " Added");
+                            $('#btnAddUpdateSubSection').html("Update Subsection");
+                            $('#btnNewSubSection').html("New Subsection").show();
+                            loadSectionList();
+                        },
+                        error: function (jqXHR, exception) {
+                            alert("addSection XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                        }
+                    });
+                } catch (e) {
+                    alert("addSection CATCH: " + e);
+                }
             }
-            else {  //   btnNewCancel == "new"
-                $('#btnAddUpdate').html("Add");
-                $('#btnNewCancel').html("Cancel");
-                $("#btnContinue").hide();
+            if ($('#btnAddUpdateSubSection').html() == "Update SubSection") {
+                try {
+                $.ajax({
+                    type: "PUT",
+                    url: service + "/api/SubSection/",
+                    data: subSectionModel,
+                    success: function (success) {
+                        if (success == "ok") {
+                            displayStatusMessage("ok", subSectionModel.SubSectionTitle + " Updated");
+                            loadSectionList();
+                        }
+                        else
+                            alert("success: " + success);
+                    },
+                    error: function (jqXHR, exception) {
+                        alert("getChapter XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                    }
+                });
+                } catch (e) {
+                    alert("updateSection CATCH: " + e);
+                }
             }
         }
     }
-    function mediateContinueBtn() {
-        if ($('#btnContinue').html() == "Add Subsection") {
-            $('#subSectionRow').show();
-            $('#btnAddUpdate').html("Add Subsection");
-            $('#btnNewCancel').html("Cancel Subsection");
-            $("#btnContinue").hide();
-            $('#sectionEditor').summernote('code', "");
-        }        
-        if ($('#btnContinue').html() == "Cancel Subsection") {
-            sectionModel.Id = null;
-            $('#sectionEditor').summernote('code', "");
-            $('#txtSectionTitle').val("");
-            $('#txtSectionOrder').val("");
-            $('#txtSubSectionTitle').val("");
-            $('#txtSubSectionOrder').val("");
 
-            $('#subSectionRow').hide();
-            $('#btnAddUpdate').html("Add");
-            $('#btnNewCancel').html("Cancel");
-            $("#btnContinue").hide();
+    function toggleNewSubSection() {
+        if ($('#btnNewSubSection').html() == "Cancel") {
+            // go back to section
+            //alert("sectionModel.Id :" + sectionModel.Id)
+            loadSectionDetails(sectionModel.Id);
+        }
+        if ($('#btnNewSubSection').html() == "New SubSection") {
+            $('#txtSubSectionTitle').val('');
+            $('#txtSubSectionOrder').val('');
+            $('#sectionEditor').summernote('code', "");
+            $('#btnAddUpdateSubSection').show().html("Add");
+            $('#btnNewSubSection').html("Cancel");
         }
     }
 
@@ -188,68 +325,101 @@
         }
     }
 
-    function addSection() {
+    function loadNestedList() {
         try {
-            sectionModel.SectionTitle = $('#txtSectionTitle').val();
-            sectionModel.SectionOrder = $('#txtSectionOrder').val();
-            sectionModel.SectionContents = $('#sectionEditor').summernote('code');
+            $('#writeSectionsListLoadingGif').show();
             $.ajax({
-                type: "POST",
-                url: service + "/api/BookSection/",
-                data: sectionModel,
-                success: function (sectionId) {
-                    sectionModel.Id = sectionId;
-                    displayStatusMessage("ok", sectionModel.SectionTitle + " Added");
-                    $('#btnAddUpdate').html("Update");
-                    $('#btnNewCancel').html("New");
-                    $("#btnContinue").show();
-                    loadSectionList();
+                type: "get",
+                url: service + "/api/BookDb/?bookId=" + bookId,
+                success: function (book) {
+
+                    bookModel.Id = book.Id;
+                    bookModel.BookTitle = book.BookTitle;
+                    bookModel.Introduction = book.Introduction;
+                    bookModel.Preface = book.Preface;
+                    bookModel.Chapters = new Array();
+                    //$('#nestedBookChaptersList').append("<div id=" + objs.Id + " class='crudListSubItem' >" + objs.SubSectionOrder + " | " + objs.SubSectionTitle + "</div>");
+                    $('#nestedBookChaptersList').html("");
+
+                    $.each(book.Chapters, function (idx, dbChapter) {
+                        var chapterModel = new Object();
+                        chapterModel.Array = new Object();
+                        chapterModel.Id = dbChapter.Id;
+                        chapterModel.ChapterTitle = dbChapter.ChapterTitle;
+                        chapterModel.ChapterOrder = dbChapter.ChapterOrder;
+                        chapterModel.Preface = dbChapter.Preface;
+                        $('#nestedBookChaptersList').append("<div chapterId=" + dbChapter.Id + " class='nestedListItem nestedListChapterItem' >" +
+                            dbChapter.ChapterOrder + " | " + dbChapter.ChapterTitle + "</div><div id='chapterContainer" + dbChapter.Id + "' class='collapsible' ></div>");
+
+                        $.each(dbChapter.Sections, function (idx, dbSection) {
+                            var sectionModel = new Object();
+                            sectionModel.SubSections = new Array();
+                            sectionModel.Id = dbSection.Id;
+                            sectionModel.SectionTitle = dbSection.SectionTitle;
+                            sectionModel.SectionOrder = dbSection.SectionOrder;
+                            sectionModel.SectionContents = dbSection.SectionContents;
+                            $('#chapterContainer' + dbChapter.Id + '').append("<div sectionId" + dbSection.Id + " chapter=" + dbChapter.Id + " class='nestedListItem nestedListSectionItem' >"
+                                + dbSection.SectionOrder + " | " + dbSection.SectionTitle + "</div><div id='sectionContainer" + dbSection.Id + "' class='collapsible' ></div>");
+
+                            $.each(dbSection.SubSections, function (idx, dbSubSection) {
+                                var subSectionModel = new Object();
+                                subSectionModel.Id = dbSubSection.Id;
+                                subSectionModel.Contents = dbSubSection.SubSectionContents;
+                                subSectionModel.Title = dbSubSection.SubSectionTitle;
+                                subSectionModel.Order = dbSubSection.SubSectionOrder;
+
+                                //alert("c: " + dbChapter.ChapterTitle + "s: " + sectionModel.SectionTitle + "  ss: " + dbSubSection.SubSectionTitle)
+
+                                $('#sectionContainer' + dbSection.Id + '').append("<div id='subSection" + dbSubSection.Id + "' section='" +
+                                    dbSection.Id + "' class='nestedListItem nestedListSubSectionItem' >" + dbSubSection.SubSectionOrder + " | " + dbSubSection.SubSectionTitle + "</div>");
+                                //sectionModel.SubSections.push(subSectionModel);
+                            });
+                        });
+                        //chapterModel.Sections.push(sectionModel);
+                    });
+                    // bookModel.Chapters.push(chapterModel);
+
+                    $('.nestedListChapterItem').click(function () {
+                        $('#chapterContainer' + $(this).attr("chapterId") + '').slideToggle();
+                        //loadSectionDetails($(this).attr('id'));
+                    })                    
+
+                    $('.nestedListSectionItem').click(function () {
+                        alert("nestedListSectionItem click sectionId: " + $(this).attr("sectionId"))
+
+
+                        $('#sectionContainer' + $(this).attr("sectionId") + '').slideToggle();
+                    })
+
+
+
+
+                    $('.nestedListSubSectionItem').click(function () {
+                        $('#sectionContainer' + $(this).attr("id") + '').slideToggle();
+                    })
+
+                    $('#writeSectionsListLoadingGif').hide();
                 },
                 error: function (jqXHR, exception) {
-                    alert("addSection XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                    alert("loadSectionList XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                    $('#writeSectionsListLoadingGif').hide();
                 }
             });
         } catch (e) {
-            alert("addSection CATCH: " + e);
+            $('#writeSectionsListLoadingGif').hide();
+            alert("loadSectionList CATCH: " + e);
         }
     }
 
-    function updateSection() {
-
-        //alert("updateSection()")
-        try {
-            sectionModel.SectionTitle = $('#txtSectionTitle').val();
-            sectionModel.SectionOrder = $('#txtSectionOrder').val();
-            sectionModel.SectionContents = $('#sectionEditor').summernote('code');
-            $.ajax({
-                type: "PUT",
-                url: service + "/api/BookSection/",
-                data: sectionModel,
-                success: function (success) {
-                    if (success == "ok") {
-                        displayStatusMessage("ok", sectionModel.SectionTitle + " Updated");
-                        $('#btnAddUpdate').html("Update");
-                        $('#btnNewCancel').html("New");
-                        loadSectionList();
-                    }
-                    else
-                        alert("success: " + success);
-                },
-                error: function (jqXHR, exception) {
-                    alert("getChapter XHR error: " + getXHRErrorDetails(jqXHR, exception));
-                }
-            });
-        } catch (e) {
-            alert("getChapter CATCH: " + e);
-        }
-    }
 
     function loadSectionList() {
         try {
+            $('#writeSectionsListLoadingGif').show();
             $.ajax({
                 type: "get",
                 url: service + "/api/BookSection/?chapterId=" + chapterId,
                 success: function (sections) {
+                    $('#writeSectionsListLoadingGif').hide();
                     $('#sectionList').html("");
                     $.each(sections, function (idx, obj) {
                         $('#sectionList').append("<div id=" + obj.Id + " class='crudListItem' >" + obj.SectionOrder + " | " + obj.SectionTitle + "</div>");
@@ -266,13 +436,14 @@
                 },
                 error: function (jqXHR, exception) {
                     alert("loadSectionList XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                    $('#writeSectionsListLoadingGif').hide();
                 }
             });
         } catch (e) {
+            $('#writeSectionsListLoadingGif').hide();
             alert("loadSectionList CATCH: " + e);
         }
     }
-
     function loadSectionDetails(sectionId) {
         try {
             $.ajax({
@@ -284,11 +455,11 @@
                     $('#txtSectionOrder').val(section.SectionOrder);
                     $('#sectionEditor').summernote('code', section.SectionContents);
 
-                    $("#btnAddUpdate").html("Update")
-                    $('#btnNewCancel').html("New Section");
                     $('#subSectionRow').hide();
-                    $("#btnContinue").html("Add Subsection").show();
-
+                    $("#btnAddUpdateSection").html("Update").show();
+                    $('#btnNewSection').show();
+                    $('#btnAddUpdateSubSection').html("New Subsection").show();
+                    $('#btnNewSubSection').hide();
                 },
                 error: function (jqXHR, exception) {
                     alert("loadSectionDetails XHR error: " + getXHRErrorDetails(jqXHR, exception));
@@ -298,65 +469,6 @@
             alert("loadSectionDetails CATCH: " + e);
         }
     }
-
-    function addSubSection() {
-        try {
-            subSectionModel.Section = sectionModel.Id;
-            subSectionModel.SubSectionTitle = $('#txtSubSectionTitle').val();
-            subSectionModel.SubSectionOrder = $('#txtSubSectionOrder').val();
-            subSectionModel.SubSectionContents = $('#sectionEditor').summernote('code');
-            
-            $.ajax({
-                type: "POST",
-                url: service + "/api/SubSection/",
-                data: subSectionModel,
-                success: function (subSectionId) {
-                    subSectionModel.Id = subSectionId;
-                    displayStatusMessage("ok", subSectionModel.SubSectionTitle + " Added");
-                    $('#btnAddUpdate').html("Update Subsection");
-                    $('#btnNewCancel').html("New Subsection");
-                    $("#btnContinue").html("Cancel Subsection").show();
-                    loadSectionList();
-                },
-                error: function (jqXHR, exception) {
-                    alert("addSection XHR error: " + getXHRErrorDetails(jqXHR, exception));
-                }
-            });
-        } catch (e) {
-            alert("addSection CATCH: " + e);
-        }
-    }
-
-    function updateSubSection() {
-        try {
-            subSectionModel.SubSectionTitle = $('#txtSubSectionTitle').val();
-            subSectionModel.SubSectionOrder = $('#txtSubSectionOrder').val();
-            subSectionModel.SubSectionContents = $('#sectionEditor').summernote('code');
-            //alert("subSectionModel.Id: " + subSectionModel.Id)
-            $.ajax({
-                type: "PUT",
-                url: service + "/api/SubSection/",
-                data: subSectionModel,
-                success: function (success) {
-                    if (success == "ok") {
-                        displayStatusMessage("ok", subSectionModel.SubSectionTitle + " Updated");
-                        $('#btnAddUpdate').html("Update Subsection");
-                        $('#btnNewCancel').html("New Subsection");
-                        $("#btnContinue").html("Cancel Subsection").show();
-                        loadSectionList();
-                    }
-                    else
-                        alert("success: " + success);
-                },
-                error: function (jqXHR, exception) {
-                    alert("getChapter XHR error: " + getXHRErrorDetails(jqXHR, exception));
-                }
-            });
-        } catch (e) {
-            alert("getChapter CATCH: " + e);
-        }
-    }
-
     function loadSubSectionDetails(subSectionId) {
         try {
             $.ajax({
@@ -372,9 +484,10 @@
                     $('#txtSectionTitle').val(subSection.SectionTitle);
                     $('#txtSectionOrder').val(subSection.SectionOrder);
 
-                    $('#btnAddUpdate').html("Update SubSection");
-                    $('#btnNewCancel').html("New SubSection");
-                    $('#btnContinue').html("Cancel Subsection").show();
+                    $('#btnAddUpdateSubSection').show().html("Update SubSection");
+                    $('#btnAddUpdateSection').hide();
+                    $('#btnNewSection').hide();
+                    $('#btnNewSubSection').show().html("New SubSection");;
                 },
                 error: function (jqXHR, exception) {
                     alert("loadSubSectionDetails XHR error: " + getXHRErrorDetails(jqXHR, exception));

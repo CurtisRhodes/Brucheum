@@ -8,6 +8,7 @@
         margin-top: 44px;
     }
     #tocEdit {
+        
         margin-top: 66px;
         margin-right: 11px;
     }
@@ -39,9 +40,29 @@
     var bookId = '@ViewBag.BookId';
 
     $(document).ready(function () {
+        setStyle();
         getChapterTree();
+
+
+
+
     })
 
+    function setStyle() {
+
+        //alert("bookid: " + bookId);// + "   =2: " + bookId == "2");
+
+        if (bookId == '2') {
+            //alert("ok");
+            $('.threeColumnArray').css('background-image', 'url("/Images/Books/timeSquared01.jpg")')
+            $('.threeColumnArray').css('background-repeat', 'no-repeat');
+            $('.threeColumnArray').css('background-size', 'cover');
+            $('#divToC').css('color', '#fff');
+            $('dots').css('border-bottom-color', '#fff');
+            $('#bookTitle').css('color', '#fff');
+        }
+
+    }
 
     function getChapterTree() {
         try {
@@ -60,17 +81,17 @@
                             // kludge String To Prevent Jquery .append() from auto closing divs
                             var kludge = "<div class='chapterContainer'>";
                             kludge += "<div id=ct" + chapter.Id + " class='chapterName' onclick='javascript:goRead(1," + chapter.Id + ",0)'>" + chapter.ChapterTitle + "</div>";
-                            kludge += "<div class='dots' onclick='javascript:toggleSection(" + chapter.Id +")'></div>";
-                            kludge += "<div class='divCaret'><img id=img" + chapter.Id + " onclick='javascript:toggleSection(" + chapter.Id +")' src='/Images/downCaret.png'></div></div>";
+                            kludge += "<div class='dots' onclick='toggleTocSection(" + chapter.Id +")'></div>";
+                            kludge += "<div class='divCaret'><img id=img" + chapter.Id + " onclick='toggleTocSection(" + chapter.Id +")' src='/Images/caretDown.png'></div></div>";
                             kludge += "</div>";
                             kludge += "<div id=st" + chapter.Id +" class='tocSectionContainer'>";
                             $.each(chapter.Sections, function (idx, section) {
                                 kludge += "<div id=sc" + section.Id + " class='divSection' onclick='javascript:goRead(2," + chapter.Id + "," + section.Id + ")'>" + section.SectionTitle + "</div>";
-                                kludge += "<div class='divSubsections'>";
-                                $.each(section.SubSections, function (idx, subSection) {
-                                    kludge += "<div class='divSubSection' onclick='javascript:goRead(3," + chapter.Id + "," + subSection.Id + ")'>" + subSection.SubSectionTitle + "</div>";
-                                })
-                                kludge += "</div>";
+                                //kludge += "<div class='divSubsections'>";
+                                //$.each(section.SubSections, function (idx, subSection) {
+                                //    kludge += "<div class='divSubSection' onclick='javascript:goRead(3," + chapter.Id + "," + subSection.Id + ")'>" + subSection.SubSectionTitle + "</div>";
+                                //})
+                                //kludge += "</div>";
                             })
                             kludge += "</div>";
                             $('#divToC').append(kludge);
@@ -101,16 +122,16 @@
         }
     };
 
-    function toggleSection(id) {
-        //alert("toggleSection(id): " + id);
+    function toggleTocSection(id) {
+        //alert("toggleTocSection(id): " + id);
         var caretImg = $('#img' + id);
         var sectionContainer = $('#st' + id);
-        if (caretImg.attr('src') == "/Images/downCaret.png") {
+        if (caretImg.attr('src') == "/Images/caretDown.png") {
             sectionContainer.show();
-            caretImg.attr('src', '/Images/upCaret.png');
+            caretImg.attr('src', '/Images/caretUp.png');
         }
         else {
-            caretImg.attr('src', '/Images/downCaret.png')
+            caretImg.attr('src', '/Images/caretDown.png')
             sectionContainer.hide();
         }
     }

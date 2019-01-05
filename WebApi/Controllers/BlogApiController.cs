@@ -123,7 +123,8 @@ namespace WebApi.Blogs
                         blogs.Add(new BlogEntryModel()
                         {
                             BlogName = blog.Blog.BlogName,
-                            Id = blog.Id.ToString(),
+                            BlogId = blog.Id.ToString(),
+                            Id = blog.Id,
                             Title = blog.Title,
                             Created = blog.Created.ToShortDateString(),
                             Color = blog.Blog.Color
@@ -165,6 +166,7 @@ namespace WebApi.Blogs
                     var dbBlogEntry = db.BlogEntries.Where(b => b.Id.ToString() == Id).FirstOrDefault();
                     if (dbBlogEntry != null)
                     {
+                        blogEntry.BlogName = dbBlogEntry.Blog.BlogName;
                         blogEntry.BlogId = dbBlogEntry.BlogId;
                         blogEntry.Title = dbBlogEntry.Title;
                         blogEntry.Summary = dbBlogEntry.Summary;
