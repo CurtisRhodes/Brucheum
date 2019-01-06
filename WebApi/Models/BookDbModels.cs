@@ -38,7 +38,9 @@ namespace WebApi.Book.Models
         public string SectionTitle { get; set; }
         public int SectionOrder { get; set; }
         public string SectionContents { get; set; }
-        public int Chapter { get; set; }
+        public int ChapterId { get; set; }
+        public string ChapterTitle { get; set; }
+        public int ChapterOrder { get; set; }
         public IList<SubSectionModel> SubSections { get; set; }
         public string success { get; set; }
     }
