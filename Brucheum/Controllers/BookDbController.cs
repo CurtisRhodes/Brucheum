@@ -15,7 +15,7 @@ namespace Brucheum.Controllers
             return View();
         }
 
-        public ActionResult ToC(int book)
+        public ActionResult ToC(int? book)
         {
             ViewBag.Service = apiService;
             ViewBag.BookId = book;
@@ -39,16 +39,11 @@ namespace Brucheum.Controllers
             return View();
         }
 
-        public ActionResult Write(int? chapter)
+        public ActionResult Write(int? book)
         {
-            if (chapter == null)
-                {
-
-            }
             ViewBag.Service = apiService;
-            //ViewBag.BookId = book;
-            
-            ViewBag.ChapterId = chapter;
+            ViewBag.BookId = book;            
+            //ViewBag.ChapterId = chapter;
             return View();
         }
     }

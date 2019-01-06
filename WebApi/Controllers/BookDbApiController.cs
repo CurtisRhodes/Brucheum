@@ -46,19 +46,19 @@ namespace WebApi.Book
                 book.BookTitle = dbBook.BookTitle;
                 book.Introduction = dbBook.Introduction;
                 book.Preface = dbBook.Preface;
-                foreach (Chapter dbChapter in dbBook.Chapters)
+                foreach (BookChapter dbChapter in dbBook.Chapters)
                 {
                     chapterModel  = new ChapterModel();
                     chapterModel.Id = dbChapter.Id;
                     chapterModel.ChapterTitle = dbChapter.ChapterTitle;
-                    chapterModel.ChapterOrder = dbChapter.ChapterOrder.Value;
+                    chapterModel.ChapterOrder = dbChapter.ChapterOrder;
                     chapterModel.Preface = dbChapter.Preface;
                     foreach (BookSection dbSection in dbChapter.Sections)
                     {
                         sectionModel = new BookSectionModel();
                         sectionModel.Id = dbSection.Id;
                         sectionModel.SectionTitle = dbSection.SectionTitle;
-                        sectionModel.SectionOrder = dbSection.SectionOrder.Value;
+                        sectionModel.SectionOrder = dbSection.SectionOrder;
                         sectionModel.SectionContents = dbSection.SectionContents;
                         foreach (SubSection dbSubSection in dbSection.SubSections)
                         {
@@ -67,7 +67,7 @@ namespace WebApi.Book
                                 Id = dbSubSection.Id,
                                 SubSectionContents = dbSubSection.SubSectionContents,
                                 SubSectionTitle = dbSubSection.SubSectionTitle,
-                                SubSectionOrder = dbSubSection.SubSectionOrder.Value
+                                SubSectionOrder = dbSubSection.SubSectionOrder
                             });
                         }
                         chapterModel.Sections.Add(sectionModel);                        
@@ -133,10 +133,10 @@ namespace WebApi.Book
                 {
                     chapter.Id = dbChapter.Id;
                     chapter.ChapterTitle = dbChapter.ChapterTitle;
-                    chapter.ChapterOrder = dbChapter.ChapterOrder.Value;
+                    chapter.ChapterOrder = dbChapter.ChapterOrder;
                     chapter.Preface = dbChapter.Preface;
-                    chapter.BookTitle = dbChapter.Book1.BookTitle;
-                    chapter.BookId = dbChapter.Book1.Id;
+                    chapter.BookTitle = dbChapter.Book.BookTitle;
+                    chapter.BookId = dbChapter.BookId.Value;
                     chapter.success="ok";
                 }
             }        
@@ -148,15 +148,15 @@ namespace WebApi.Book
             var chapters = new List<ChapterModel>();
             using (var db = new BookDbContext())
             {
-                var dbChapters = db.Chapters.Where(c => c.Book == bookId).ToList();
-                foreach (Chapter chapter in dbChapters)
+                List<BookChapter> dbChapters = db.Chapters.Where(c => c.BookId == bookId).ToList();
+                foreach (BookChapter chapter in dbChapters)
                 {
                     chapters.Add(new ChapterModel()
                     {
                         Book = bookId,
                         Id = chapter.Id,
                         ChapterTitle = chapter.ChapterTitle,
-                        ChapterOrder = chapter.ChapterOrder.Value,
+                        ChapterOrder = chapter.ChapterOrder,
                         Preface = chapter.Preface,
                         success = "ok"
                     });
@@ -170,9 +170,9 @@ namespace WebApi.Book
             int success = 0;
             using (var db = new BookDbContext())
             {
-                var chapter = new Chapter()
+                var chapter = new BookChapter()
                 {
-                    Book = chapterModel.Book,
+                    BookId = chapterModel.BookId,
                     ChapterTitle = chapterModel.ChapterTitle,
                     ChapterOrder = chapterModel.ChapterOrder,
                     Preface = chapterModel.Preface
@@ -211,20 +211,22 @@ namespace WebApi.Book
         [HttpPatch]
         public BookSectionModel Patch(int sectionId)
         {
-            var section = new BookSectionModel();
+            var sectionModel = new BookSectionModel();
             using (var db = new BookDbContext())
             {
-                var dbSection = db.Sections.Where(s => s.Id == sectionId).FirstOrDefault();
+                BookSection dbSection = db.Sections.Where(s => s.Id == sectionId).FirstOrDefault();
                 if (dbSection != null)
                 {
-                    section.Id = dbSection.Id;
-                    section.SectionTitle = dbSection.SectionTitle;
-                    section.SectionOrder = dbSection.SectionOrder.Value;
-                    section.SectionContents = dbSection.SectionContents;
-                    section.success = "ok";
+                    sectionModel.Id = dbSection.Id;
+                    sectionModel.ChapterOrder = dbSection.Chapter.ChapterOrder;
+                    sectionModel.ChapterTitle = dbSection.Chapter.ChapterTitle;
+                    sectionModel.SectionTitle = dbSection.SectionTitle;
+                    sectionModel.SectionOrder = dbSection.SectionOrder;
+                    sectionModel.SectionContents = dbSection.SectionContents;
+                    sectionModel.success = "ok";
                 }
             }
-            return section;
+            return sectionModel;
         }
         [HttpGet]
         public IList<BookSectionModel> Get(int chapterId)
@@ -233,13 +235,13 @@ namespace WebApi.Book
             BookSectionModel section = null;
             using (var db = new BookDbContext())
             {
-                var dbSections = db.Sections.Where(s => s.Chapter == chapterId).ToList();
+                var dbSections = db.Sections.Where(s => s.ChapterId == chapterId).ToList();
                 foreach (BookSection dbSection in dbSections)
                 {
                     section = new BookSectionModel();
                     section.Id = dbSection.Id;
                     section.SectionTitle = dbSection.SectionTitle;
-                    section.SectionOrder = dbSection.SectionOrder.Value;
+                    section.SectionOrder = dbSection.SectionOrder;
                     section.SectionContents = dbSection.SectionContents;
                     foreach (SubSection dbSubSection in dbSection.SubSections)
                     {
@@ -248,7 +250,7 @@ namespace WebApi.Book
                             Id = dbSubSection.Id,
                             SubSectionContents = dbSubSection.SubSectionContents,
                             SubSectionTitle = dbSubSection.SubSectionTitle,
-                            SubSectionOrder = dbSubSection.SubSectionOrder.Value
+                            SubSectionOrder = dbSubSection.SubSectionOrder
                         });
                     }
                     sections.Add(section);
@@ -264,7 +266,7 @@ namespace WebApi.Book
             {
                 var bookSection = new BookSection()
                 {
-                    Chapter = bookSectionModel.Chapter,
+                    ChapterId = bookSectionModel.ChapterId,
                     SectionTitle = bookSectionModel.SectionTitle,
                     SectionOrder = bookSectionModel.SectionOrder,
                     SectionContents = bookSectionModel.SectionContents
@@ -311,11 +313,11 @@ namespace WebApi.Book
                 {
                     subSection.Id = dbSubSection.Id;
                     subSection.SubSectionTitle = dbSubSection.SubSectionTitle;
-                    subSection.SubSectionOrder = dbSubSection.SubSectionOrder.Value;
+                    subSection.SubSectionOrder = dbSubSection.SubSectionOrder;
                     subSection.SubSectionContents = dbSubSection.SubSectionContents;
-                    subSection.SectionTitle = dbSubSection.Section1.SectionTitle;
-                    subSection.SectionOrder = dbSubSection.Section1.SectionOrder.Value;
-                    subSection.SectionId = dbSubSection.Section.Value;
+                    subSection.SectionTitle = dbSubSection.BookSection.SectionTitle;
+                    subSection.SectionOrder = dbSubSection.BookSection.SectionOrder;
+                    subSection.SectionId = dbSubSection.SectionId.Value;
                     subSection.success = "ok";
                 }
             }
@@ -334,7 +336,7 @@ namespace WebApi.Book
                     {
                         Id = dbSubSection.Id,
                         SubSectionTitle= dbSubSection.SubSectionTitle,
-                        SubSectionOrder = dbSubSection.SubSectionOrder.Value,
+                        SubSectionOrder = dbSubSection.SubSectionOrder,
                        SubSectionContents= dbSubSection.SubSectionContents
                     });
                 }
@@ -349,7 +351,7 @@ namespace WebApi.Book
             {
                 var bookSubSection = new SubSection()
                 {
-                    Section = subSectionModel.Section,
+                    Id = subSectionModel.Id,
                     SubSectionTitle = subSectionModel.SubSectionTitle,
                     SubSectionOrder = subSectionModel.SubSectionOrder,
                     SubSectionContents = subSectionModel.SubSectionContents,

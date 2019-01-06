@@ -42,10 +42,6 @@
     $(document).ready(function () {
         setStyle();
         getChapterTree();
-
-
-
-
     })
 
     function setStyle() {
@@ -80,7 +76,7 @@
                         $.each(book.Chapters, function (idx, chapter) {
                             // kludge String To Prevent Jquery .append() from auto closing divs
                             var kludge = "<div class='chapterContainer'>";
-                            kludge += "<div id=ct" + chapter.Id + " class='chapterName' onclick='javascript:goRead(1," + chapter.Id + ",0)'>" + chapter.ChapterTitle + "</div>";
+                            kludge += "<div id=ct" + chapter.Id + " class='chapterName' onclick='goRead(1," + chapter.Id + ",0)'>" + chapter.ChapterTitle + "</div>";
                             kludge += "<div class='dots' onclick='toggleTocSection(" + chapter.Id +")'></div>";
                             kludge += "<div class='divCaret'><img id=img" + chapter.Id + " onclick='toggleTocSection(" + chapter.Id +")' src='/Images/caretDown.png'></div></div>";
                             kludge += "</div>";
@@ -137,7 +133,8 @@
     }
 
     function redirectToEdit() {
-        window.location.href = "/BookDb/Edit?book=" + bookId;
+        //window.location.href = "/BookDb/Edit?book=" + bookId;
+        window.location.href = "/BookDb/Write?book=" + bookId;
     }
 
     function goRead(type, chapterId, sectionId) {
