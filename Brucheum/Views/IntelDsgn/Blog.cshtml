@@ -13,6 +13,10 @@
 </style>
 
 <style>
+    .threeColumnArray {
+        background-color: #222730; /* #273235; #486167;*/
+    }
+
     .blockDisplayArea {
         margin-top: 55px;
         width: 1400px;
@@ -82,13 +86,15 @@
 
 <div class="threeColumnArray">
     <div id="leftColumn">
-        <div class="vertMenu">
+        @*
+            <div class="vertMenu">
             <div class="vertMenuTab" onclick="showSpaSection('blockDisplayArea')">View Blog</div>
             <div class="vertMenuTab" onclick="showSpaSection('blogEntryAddEdit')">Blog Entry</div>
-            <div class="vertMenuTab" onclick="showSpaSection('listItemAddEdit')">To Do</div>
-            @*<div class="vertMenuTab" onclick="showSpaSection('listHeaderAddEdit')">New List</div>*@
-            @*<div class="vertMenuTab" onclick="showSpaSection('blogHeaderAddEdit')">New Blog</div>*@
-        </div>
+                <div class="vertMenuTab" onclick="showSpaSection('listItemAddEdit')">To Do</div>
+                <div class="vertMenuTab" onclick="showSpaSection('listHeaderAddEdit')">New List</div>
+                <div class="vertMenuTab" onclick="showSpaSection('blogHeaderAddEdit')">New Blog</div>
+            </div>
+        *@
     </div>
 
     <div id="middleColumn">
@@ -175,86 +181,17 @@
             </div>
         </div>
 
-        <div id="listHeaderAddEdit" class="blogSpaSection">
-            <div class="crudContainer">
-                <div id="crudContainerTitle" class="crudContainerTitle">List</div>
-                <div class="crudRow">
-                    <div class="crudRowLabel">List Name</div>
-                    <div id="errListName" class="validationError">Required</div>
-                    <input id="txtListName" class="roundedInput" />
-                </div>
-                <div class="crudButtonRow">
-                    <button id="btnlistHeaderAddEdit" class="roundendButton" onclick="addEditListHeader()">Add</button>
-                    <button id="btnListNew" class="roundendButton" onclick="toggleListHeaderEdit()">New</button>
-                </div>
-            </div>
-            <div>
-                <div class="crudContainer">
-                    <div class="crudContainerTitle">Lists</div>
-                    <div id="listLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
-                    <div id="listList" class="crudList"></div>
-                </div>
-            </div>
-        </div>
-
-        <div id="listItemAddEdit" class="blogSpaSection">
-            <div class="flexContainer">
-                <div class="floatLeft">
-                    <div class="crudContainer">
-                        <div id="listItemAddEditContainerTitle" class="crudContainerTitle">List Item</div>
-                        <div class="crudRow">
-                            <div class="crudRowLabel">List</div>
-                            <select id="ddList" class="crudDropDown"></select>
-                            <div class="crudLabel inline">Parent</div>
-                            <select id="ddParentListItems" class="roundedInput inline"></select>
-                        </div>
-                        <div class="crudRow">
-                            <div class="crudRowLabel">Item</div>
-                            <div id="errListItemName" class="validationError">Required</div>
-                            <input id="txtListItemName" class="roundedInput wide" />
-                        </div>
-                        <div class="crudRow">
-                            <div class="crudRowLabel">Status</div>
-                            <div id="errStatus" class="validationError">Required</div>
-                            <select id="ddStatus" class="crudDropDown"></select>
-                            <div class="crudRowLabel">Priority</div>
-                            <div id="errPriority" class="validationError">Required</div>
-                            <select id="ddPriority" class="crudDropDown"></select>
-                        </div>
-                        <div class="crudRow">
-                            <div class="crudRowLabel">Percent Complete</div>
-                            <div id="errPercent" class="validationError">Required</div>
-                            <input id="txtPercent" class="roundedInput width50px" />
-                            <div class="crudRowLabel">Assigned To</div>
-                            <input id="txtAssigned" class="roundedInput" />
-                        </div>
-                        <div class="crudRow">
-                            <div class="crudRowLabel">Narrative</div>
-                            <div id="listItemNarrativeEditor" class="editorContainer">
-                                <div>@Html.Partial("_Editor") </div>
-                            </div>
-                        </div>
-                        <div class="crudButtonRow">
-                            <button id="btnListItemAddEdit" class="roundendButton" onclick="addEditListItem()">Add</button>
-                            <button id="btnListItemNew" class="roundendButton" onclick="toggleListItem()">New</button>
-                            <button class="roundendButton floatRight" onclick="showSpaSection('listHeaderAddEdit')">New List</button>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="floatLeft">
-                    <div class="crudContainer">
-                        <div id="listItemContainerTitle" class="crudContainerTitle">List Items</div>
-                        <div id="listItemLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
-                        <div id="listItemList" class="crudList"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div id="divStatusMessage"></div>
     </div>
-    <div id="rightColumn"></div>
+    <div id="rightColumn">
+        <div class="rightColumnContents">
+            @if (User.IsInRole("Admin"))
+            {
+                <div><div class="adminButton" onclick="showBlogEditor()">manage</div></div>
+            }
+        </div>
+    </div>
 </div>
 
 <script>
@@ -262,61 +199,49 @@
     var currentUser = '@ViewBag.UserId';
     var blogModel = {};
     var blogEntryModel = {};
-    var listModel = {};
-    var listItemModel = {};
 
     $(document).ready(function () {
-        setLayout("Blog");
+        setLayout("Intelligent Design");
 
-    //    $('.jqEditor').jqte();
-
-        showSpaSection("blockDisplayArea")
+        loadBlocksDisplay();
+        $('#blockDisplayArea').show()
 
         //$('#footerMessage').append("  service: " + service);
         setToolbar("#blogContentEditor", 220, 500);
-
         setToolbar("#blogSummaryEditor", 120, 500);
-        setToolbar("#listItemNarrativeEditor", 120, 500);
     });
 
-    function showSpaSection(menuOption) {
-        $('.blogSpaSection').hide();
-        switch (menuOption) {
-            case "blockDisplayArea":
-                if (isNullorUndefined($('#blockDisplayArea').html()))
-                    loadBlocksDisplay();
-                $('#blockDisplayArea').show()
-                break;
-            case "blogHeaderAddEdit":
-                if (isNullorUndefined($('#blogList').html()))
-                    loadBlogHeaderList();
-                toggleBlogHeaderEdit();
-                $('#blogHeaderAddEdit').show();
-                break;
-            case "blogEntryAddEdit":
-                toggleBlogEntryEdit();
-                $('#blogEntryAddEdit').show();
-                if (isNullorUndefined($('#ddBlogEntryParentBlogs').html()))
-                    loadBlogEntryBlogsDD();
-                //loadblogEntryAddEdit(blogEntryModel.Id);
-                break;
-            case "listItemAddEdit":
-                if (isNullorUndefined($('#ddList').html()))
-                    loadListHeaderList();
-                if (isNullorUndefined($('#ddStatus').html()))
-                    loadListItemDropDowns();
-                if (isNullorUndefined($('#listItemList').html()))
-                    loadListItemList();
-                $('#listItemAddEdit').show();
-                break;
-            case "listHeaderAddEdit":
-                if ($('#listList').html() == "")
-                    loadListHeaderList();
-                $('#listHeaderAddEdit').show();
-                break;
-            default:
-        }
+    function showBlogEditor() {
+        toggleBlogEntryEdit();
+        $('#blogEntryAddEdit').show();
+        if (isNullorUndefined($('#ddBlogEntryParentBlogs').html()))
+            loadBlogEntryBlogsDD();
     }
+
+    //function showSpaSection(menuOption) {
+    //    $('.blogSpaSection').hide();
+    //    switch (menuOption) {
+    //        case "blockDisplayArea":
+    //            if (isNullorUndefined($('#blockDisplayArea').html()))
+    //                loadBlocksDisplay();
+    //            $('#blockDisplayArea').show()
+    //            break;
+    //        case "blogHeaderAddEdit":
+    //            if (isNullorUndefined($('#blogList').html()))
+    //                loadBlogHeaderList();
+    //            toggleBlogHeaderEdit();
+    //            $('#blogHeaderAddEdit').show();
+    //            break;
+    //        case "blogEntryAddEdit":
+    //            toggleBlogEntryEdit();
+    //            $('#blogEntryAddEdit').show();
+    //            if (isNullorUndefined($('#ddBlogEntryParentBlogs').html()))
+    //                loadBlogEntryBlogsDD();
+    //            //loadblogEntryAddEdit(blogEntryModel.Id);
+    //            break;
+    //        default:
+    //    }
+    //}
 
     function loadBlocksDisplay() {
         $('#blockLoadingGif').show();
@@ -659,277 +584,6 @@
         } catch (e) {
             $('#blogEntryLoadingGif').hide();
             alert("get BlogList CATCH: " + e)
-        }
-    }
-
-    function toggleListHeaderEdit() {
-        $('#btnListNew').hide();
-        $('#btnlistHeaderAddEdit').html("Add");
-        //clear gets
-        $('#txtBlogEntryTitle').val("");
-    }
-    function addEditListHeader() {
-        //bind
-        listModel.ListName = $('#txtListName').val();
-        listModel.ListOwner = currentUser;
-
-        if ($('#btnlistHeaderAddEdit').html() == "Add") {
-            $.ajax({
-                type: "POST",
-                url: service + "/api/List",
-                data: listModel,
-                success: function (response) {
-                    if (!response.startsWith("ERROR")) {
-                        $('#btnBlogAddEdit').html("Update");
-                        $('#btnBlogNew').show();
-                        listModel.Id = response;
-                        loadListHeaderList();
-                    }
-                    else
-                        alert("AddEditBlog POST: " + response);
-                },
-                error: function (jqXHR, exception) {
-                    alert("addEditList POST xhr error: " + getXHRErrorDetails(jqXHR, exception));
-                }
-            })
-        }
-        if ($('#btnlistHeaderAddEdit').html() == "Update") {
-            $.ajax({
-                type: "PUT",
-                url: service + "/api/List",
-                data: listModel,
-                success: function (success) {
-                    if (success == "ok") {
-                        loadListHeaderList();
-                    }
-                    else
-                        alert("AddEditBlog PUT: " + response);
-                },
-                error: function (jqXHR, exception) {
-                    alert("AddEditBlog PUT xhr error: " + getXHRErrorDetails(jqXHR, exception));
-                }
-            })
-        }
-    }
-    function loadListHeaderList() {
-        try {
-            $('#listLoadingGif').show();
-            $.ajax({
-                type: "GET",
-                url: service + "/api/List",
-                success: function (response) {
-                    $('#listList').html("");
-                    $('#ddList').html("<option class='itemListList' value='0'>-- select To Do List --</option>");
-                    if (true) {
-                        $.each(response, function (idx, obj) {
-                            $('#ddList').append("<option class='listItemOption' value='" + obj.Id + "'>" + obj.ListName + "</option>");
-                            $('#listList').append("<div class='crudListItem listListItem' id='" + obj.Id + "' name='" + obj.ListName + "'>" + obj.ListName + "</div>");
-                        })
-
-                        $('.listListItem').click(function () {
-                            $('#btnListNew').show();
-                            $('#btnlistHeaderAddEdit').html("Update");
-                            listModel.Id = $(this).attr('id')
-                            $('#txtListName').val($(this).attr('name'));
-                        })
-                        
-                        $('.listItemOption').click(function () {
-                            $('#listItemContainerTitle').html($(this).html());
-                        })
-
-                        $('#ddList').change(function () {
-                            toggleListItem();
-                            //alert("$('#ddList').change val(): " + $(this).val());
-                            //" class="crudContainerTitle">List Item</div>
-                            listItemModel.ListId = $(this).val();
-                            loadListItemList();
-                        });
-                        $('#listLoadingGif').hide();
-                    }
-                    else {
-                        $('#listLoadingGif').hide();
-                        alert("get ListList: " + success)
-                    }
-                },
-                error: function (jqXHR, exception) {
-                    $('#listLoadingGif').hide();
-                    alert("get ListList XHR error: " + getXHRErrorDetails(jqXHR, exception));
-                }
-            });
-        } catch (e) {
-            $('#listLoadingGif').hide();
-            alert("get ListList CATCH: " + e)
-        }
-    }
-
-    function toggleListItem() {
-        $('#btnListItemNew').hide();
-        $('#btnListItemAddEdit').html("Add");
-        // clear gets
-        listItemModel.id = "";
-        $('#txtListName').val("");
-        $('#txtListItemName').val("");
-        $('#ddParentListItems').val("0");
-        $('#ddPriority').val("0");
-        $('#ddStatus').val("0");
-        $('#txtAssigned').val("");
-        $('#listItemNarrativeEditor').summernote('code', '');
-    }
-    function addEditListItem() {
-        // bind
-        //listItemModel.ListId = listModel.Id;
-        listItemModel.ItemName = $('#txtListItemName').val();
-        listItemModel.ParentId = $('#ddParentListItems').val();
-        listItemModel.ItemPriorityRef = $('#ddPriority').val();
-        listItemModel.ItemStatusRef = $('#ddStatus').val();
-        listItemModel.AssignedTo = $('#txtAssigned').val();
-        //listItemModel.DateCompleted = $('#').val();
-        listItemModel.PercentComplete = $('#txtPercent').val();
-        listItemModel.Narrative = $('#listItemNarrativeEditor').summernote('code');
-
-        if ($('#btnListItemAddEdit').html() == "Add") {
-            $.ajax({
-                type: "POST",
-                url: service + "/api/ListItem",
-                data: listItemModel,
-                success: function (response) {
-                    if (!response.startsWith("ERROR")) {
-                        $('#btnListItemAddEdit').html("Update");
-                        $('#btnListItemNew').show();
-                        listItemModel.Id = response;
-                        loadListItemList();
-                    }
-                    else
-                        alert("btnListItemAddEdit POST: " + response);
-                },
-                error: function (jqXHR, exception) {
-                    alert("btnListItemAddEdit POST xhr error: " + getXHRErrorDetails(jqXHR, exception));
-                }
-            })
-        }
-        if ($('#btnListItemAddEdit').html() == "Update") {
-            $.ajax({
-                type: "PUT",
-                url: service + "/api/ListItem",
-                data: listItemModel,
-                success: function (success) {
-                    if (success == "ok") {
-                        loadListItemList();
-                    }
-                    else
-                        alert("btnListItemAddEdit PUT: " + response);
-                },
-                error: function (jqXHR, exception) {
-                    alert("btnListItemAddEdit PUT xhr error: " + getXHRErrorDetails(jqXHR, exception));
-                }
-            })
-        }
-    }
-    function loadListItemList() {
-        try {
-            if (!isNullorUndefined(listItemModel.ListId)) {
-                //alert("loadListItemList listId=" + listItemModel.ListId);
-                $('#listItemLoadingGif').show();
-                $.ajax({
-                    type: "GET",
-                    url: service + "/api/ListItem?listId=" + listItemModel.ListId,
-                    success: function (response) {
-                        $('#listItemList').html("");
-                        if (true) {
-                            $.each(response, function (idx, obj) {
-                                $('#listItemList').append("<div class='crudListItem listItemListItem' id='" + obj.Id + "'>" + obj.ItemName + "</div>");
-                            })
-                            $('.listItemListItem').click(function () {
-                                loadListItemDialog($(this).attr("id"));
-                            });
-                            $('#listItemLoadingGif').hide();
-                        }
-                        else {
-                            $('#listItemLoadingGif').hide();
-                            alert("loadListItemList: " + success)
-                        }
-                    },
-                    error: function (jqXHR, exception) {
-                        $('#listItemLoadingGif').hide();
-                        alert("loadListItemList XHR error: " + getXHRErrorDetails(jqXHR, exception));
-                    }
-                });
-            }
-        } catch (e) {
-            $('#listItemLoadingGif').hide();
-            alert("loadListItemList CATCH: " + e)
-        }
-    }
-    function loadListItemDialog(id) {
-        try {
-            $('#listItemLoadingGif').show();
-            $.ajax({
-                type: "PATCH",
-                url: service + "/api/ListItem/GetOne?id=" + id,
-                success: function (response) {
-                    $('#listItemLoadingGif').hide();
-                    if (!response.ItemName.startsWith("Error")) {
-                        listItemModel.id = id;
-                        $('#txtListItemName').val(response.ItemName);
-                        $('#ddParentListItems').val(response.ParentId);
-                        $('#ddPriority').val(response.ItemPriorityRef);
-                        $('#ddStatus').val(response.ItemStatusRef);
-                        $('#txtAssigned').val(response.AssignedTo);
-                        $('#listItemNarrativeEditor').summernote('code', response.Narrative);
-
-                        $('#btnListItemAddEdit').html("Update");
-                        $('#btnListItemNew').show();
-                    }
-                    else {
-                        alert("loadListItemDialog: " + response.ItemName)
-                    }
-                },
-                error: function (jqXHR, exception) {
-                    $('#listItemLoadingGif').hide();
-                    alert("loadListItemDialog XHR error: " + getXHRErrorDetails(jqXHR, exception));
-                }
-            });
-        } catch (e) {
-            $('#listItemLoadingGif').hide();
-            alert("loadListItemDialog CATCH: " + e)
-        }
-    }
-    function loadListItemDropDowns() {
-        try {
-            // ToDo List Status
-            $.ajax({
-                type: "GET",
-                dataType: "Json",
-                url: service + "/api/Ref/Get?refType=TDS",
-                success: function (result) {
-                    $('#ddStatus').html("");
-                    $.each(result, function (idx, obj) {
-                        $('#ddStatus').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
-                    });
-                },
-                error: function (jqXHR, exception) {
-                    alert("GetRefs TDS error: " + getXHRErrorDetails(jqXHR, exception));
-                },
-            });
-            // ToDo List Priority
-            $.ajax({
-                type: "GET",
-                dataType: "Json",
-                url: service + "/api/Ref/Get?refType=TDP",
-                success: function (result) {
-                    $('#ddPriority').html("");
-                    $.each(result, function (idx, obj) {
-                        $('#ddPriority').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
-                    });
-                },
-                error: function (jqXHR, exception) {
-                    alert("GetRefs TDP error: " + getXHRErrorDetails(jqXHR, exception));
-                },
-            });
-            //  ddList -- handled
-        } catch (e) {
-            //displayStatusMessage("error", "catch ERROR: " +e);
-            alert("GetRefs catch: " + e);
         }
     }
 

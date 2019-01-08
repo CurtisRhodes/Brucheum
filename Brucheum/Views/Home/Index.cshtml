@@ -41,7 +41,6 @@
 </style>
 
 <div class="threeColumnArray">
-    <div id="divStatusMessage"></div>
     <div id="leftColumn">
         <div id="tanBlue" class="vMenu">
             <div id="itemIntelDesgn" class="tabvMenuItem" onclick="window.location.href='/IntelDsgn/'">
@@ -50,16 +49,16 @@
             <div id="itemBlondJew" class="tabvMenuItem" onclick="window.location.href='/BookDb/ToC?book=1'">
                 <img src="~/Images/TanBlue/BlondJewTan.png" onmouseover="this.src='/Images/TanBlue/BlondJewBlue.png'" onmouseout="this.src='/Images/TanBlue/BlondJewTan.png'" />
             </div>
-            <div id="itemBooks" class="tabvMenuItem">
+            <div class="tabvMenuItem">
                 <img src="~/Images/TanBlue/BrucheumTan.png" onmouseover="this.src='/Images/TanBlue/BrucheumBlue.png'" onmouseout="this.src='/Images/TanBlue/BrucheumTan.png'" />
             </div>
-            <div id="itemFlitter" class="tabvMenuItem">
+            <div class="tabvMenuItem" onclick="window.location.href='/Flitter/Flitter'"> @*// onclick="window.open('/Flitter/Flitter')">*@
                 <img src="~/Images/TanBlue/FlitterTan.png" onmouseover="this.src='/Images/TanBlue/FlitterBlue.png'" onmouseout="this.src='/Images/TanBlue/FlitterTan.png'" />
             </div>
-            <div id="itemGetaJob" class="tabvMenuItem" onclick="window.location.href='/GetaJob/GetaJobAdmin'">
+            <div class="tabvMenuItem" onclick="window.location.href='/GetaJob/GetaJobAdmin'">
                 <img src="~/Images/TanBlue/GetaJobTan.png" onmouseover="this.src='/Images/TanBlue/GetaJobBlue.png'" onmouseout="this.src='/Images/TanBlue/GetaJobTan.png'" />
             </div>
-            <div id="itemOggle" class="tabvMenuItem" onclick="window.open('/BookDb/ToC?book=2', '_blank')">
+            <div class="tabvMenuItem" onclick="window.location.href='/BookDb/ToC?book=2'">
                 <img src="~/Images/TanBlue/TimeSquaredTan.png" onmouseover="this.src='/Images/TanBlue/TimeSquaredBlue.png'" onmouseout="this.src='/Images/TanBlue/TimeSquaredTan.png'" />
             </div>
             <div id="item2aT" class="tabvMenuItem" onclick="emailTest()">
@@ -68,10 +67,12 @@
         </div>
     </div>
     <div id="middleColumn">
-        @Html.Partial("_Carousel")
+        <div id="divStatusMessage"></div>
+        <div id="carousel">
+            @Html.Partial("_Carousel")
+        </div>
     </div>
     <div id="rightColumn">
-
     </div>
 </div>
 

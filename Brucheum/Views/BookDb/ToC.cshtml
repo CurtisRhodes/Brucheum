@@ -40,6 +40,9 @@
     var bookId = '@ViewBag.BookId';
 
     $(document).ready(function () {
+        if (isNullorUndefined(bookId)) {
+            window.location.href = "/BookDb"
+        }
         setStyle();
         getChapterTree();
     })

@@ -75,11 +75,16 @@
         if ('@ViewBag.chapterId' !== "") {
             getChapter();
         }
+
+        //var queryString = "?bookTitle=" + '@ViewBag.BookTitle' + "&chapterId=" + '@ViewBag.chapterId' + "&sectionId=" + '@ViewBag.sectionId' + "&subSectionId=" + '@ViewBag.subSectionId';
+
+
+
         resizeEditor();
         $('#btnNew').hide();
         $('#btnNewSection').hide();
         $('#btnNewSubSection').hide();
-     });
+    });
 
     $(window).resize(function () {
         resizeEditor();
@@ -115,35 +120,6 @@
         article.Contents = $('.ql-editor').html(); // quill.root.innerHTML;
     }
 
-
-    function getChapter() {
-        try {
-            var queryString = "?bookTitle=" + '@ViewBag.BookTitle' + "&chapterId=" + '@ViewBag.chapterId' + "&sectionId=" + '@ViewBag.sectionId' + "&subSectionId=" + '@ViewBag.subSectionId';
-            $.ajax({
-                url: service + "/api/Book/" + queryString,
-                type: "get",
-                dataType: "json",
-                success: function (response) {
-                    if (response.success === "ok") {
-                        article = response;
-                        bind();
-                        $('#btnSave').text("Update");
-                    }
-                    else {
-                        displayStatusMessage("error", response.success);
-                        alert("request.responseText: " + response.success);
-
-                    }
-                },
-                error: function (request, status, error) {
-                    displayStatusMessage("error", request.responseText);
-                    alert("request.responseText: " + request.responseText);
-                }
-            });
-        } catch (e) {
-            alert("e: "  + e);
-        }
-    }
 
     function post() {
         try {
