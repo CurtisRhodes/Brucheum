@@ -50,8 +50,12 @@ namespace WebApi.Book.Models
         public string SubSectionTitle { get; set; }
         public int SubSectionOrder { get; set; }
         public string SubSectionContents { get; set; }
-        public int Section { get; set; }
+
+        //public int Section { get; set; }
         public int SectionId { get; set; }
+
+        public string ChapterTitle { get; set; }
+        public int ChapterOrder { get; set; }
         public string SectionTitle { get; set; }
         public int SectionOrder { get; set; }
 

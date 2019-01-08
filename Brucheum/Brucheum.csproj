@@ -237,6 +237,7 @@
     <Compile Include="Controllers\ArticleController.cs" />
     <Compile Include="Controllers\BookController.cs" />
     <Compile Include="Controllers\BookDbController.cs" />
+    <Compile Include="Controllers\FlitterController.cs" />
     <Compile Include="Controllers\IntelDsgnController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\GetaJobController.cs" />
@@ -292,6 +293,7 @@
     <Content Include="Images\caveStairs.jpg" />
     <Content Include="Images\caveStairsWide.jpg" />
     <Content Include="Images\closeBtn02.png" />
+    <Content Include="Images\happyMan.gif" />
     <Content Include="Images\IntelDsgn\dblleft.jpg" />
     <Content Include="Images\IntelDsgn\dblright.jpg" />
     <Content Include="Images\IntelDsgn\globlic.jpg" />
@@ -476,6 +478,8 @@
     <Content Include="Views\GetaJob\postAgent01.cshtml" />
     <Content Include="Views\GetaJob\Agent.cshtml" />
     <Content Include="Views\IntelDsgn\Skills.cshtml" />
+    <Content Include="Views\Flitter\Flitter.cshtml" />
+    <Content Include="Views\Flitter\ToDo.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

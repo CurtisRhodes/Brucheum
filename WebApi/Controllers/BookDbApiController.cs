@@ -99,22 +99,41 @@ namespace WebApi.Book
         public string Put(DbBookModel bookModel)
         {
             string success = "";
-            using (var db = new BookDbContext())
+            try
             {
-                var dbBook = db.Books.Where(b => b.Id == bookModel.Id).FirstOrDefault();
-                if (dbBook == null)
-                    success = "not found";
-                else
+                using (var db = new BookDbContext())
                 {
-                    dbBook.BookTitle = bookModel.BookTitle;
-                    dbBook.Author = bookModel.Author;
-                    dbBook.Introduction = bookModel.Introduction;
-                    dbBook.Preface = bookModel.Preface;
+                    var dbBook = db.Books.Where(b => b.Id == bookModel.Id).FirstOrDefault();
+                    if (dbBook == null)
+                        success = "not found";
+                    else
+                    {
+                        dbBook.BookTitle = bookModel.BookTitle;
+                        dbBook.Author = bookModel.Author;
+                        dbBook.Introduction = bookModel.Introduction;
+                        dbBook.Preface = bookModel.Preface;
 
-                    db.SaveChanges();
-                    success = "ok";
+                        db.SaveChanges();
+
+                        //System.Data.Entity.Validation.DbEntityValidationException
+                        //HResult = 0x80131920
+                        //Message = Validation failed for one or more entities.See 'EntityValidationErrors' property for more details.
+                        // Source = EntityFramework
+                        // StackTrace:
+                        //  at System.Data.Entity.Internal.InternalContext.SaveChanges()
+                        //  at System.Data.Entity.Internal.LazyInternalContext.SaveChanges()
+                        //   at System.Data.Entity.DbContext.SaveChanges()
+                        //   at WebApi.Book.BookDbController.Put(DbBookModel bookModel) in F:\Devl\WebApi\Controllers\BookDbApiController.cs:line 114
+                        //   at System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<> c__DisplayClass6_1.< GetExecutor > b__3(Object instance, Object[] methodParameters)
+                        //  at System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.Execute(Object instance, Object[] arguments)
+                        //  at System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ExecuteAsync(HttpControllerContext controllerContext, IDictionary`2 arguments, CancellationToken cancellationToken)
+
+
+                        success = "ok";
+                    }
                 }
             }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
     }
@@ -305,23 +324,28 @@ namespace WebApi.Book
         [HttpPatch]
         public SubSectionModel Patch(int subSectionId)
         {
-            var subSection = new SubSectionModel();
+            var subSectionModel = new SubSectionModel();
             using (var db = new BookDbContext())
             {
                 var dbSubSection = db.SubSections.Where(s => s.Id == subSectionId).FirstOrDefault();
                 if (dbSubSection != null)
                 {
-                    subSection.Id = dbSubSection.Id;
-                    subSection.SubSectionTitle = dbSubSection.SubSectionTitle;
-                    subSection.SubSectionOrder = dbSubSection.SubSectionOrder;
-                    subSection.SubSectionContents = dbSubSection.SubSectionContents;
-                    subSection.SectionTitle = dbSubSection.BookSection.SectionTitle;
-                    subSection.SectionOrder = dbSubSection.BookSection.SectionOrder;
-                    subSection.SectionId = dbSubSection.SectionId.Value;
-                    subSection.success = "ok";
+                    subSectionModel.Id = dbSubSection.Id;
+                    subSectionModel.SubSectionTitle = dbSubSection.SubSectionTitle;
+                    subSectionModel.SubSectionOrder = dbSubSection.SubSectionOrder;
+                    subSectionModel.SubSectionContents = dbSubSection.SubSectionContents;
+
+                    //subSection.v
+                    subSectionModel.SectionTitle = dbSubSection.BookSection.SectionTitle;
+                    subSectionModel.SectionOrder = dbSubSection.BookSection.SectionOrder;
+                    subSectionModel.ChapterTitle = dbSubSection.BookSection.Chapter.ChapterTitle;
+                    subSectionModel.ChapterOrder = dbSubSection.BookSection.Chapter.ChapterOrder;
+
+                    subSectionModel.SectionId = dbSubSection.SectionId.Value;
+                    subSectionModel.success = "ok";
                 }
             }
-            return subSection;
+            return subSectionModel;
         }
         [HttpGet]
         public IList<SubSectionModel> Get(int sectionId)
@@ -343,43 +367,54 @@ namespace WebApi.Book
             }
             return subSections;
         }
+
         [HttpPost]
-        public int Post(SubSectionModel subSectionModel)
+        public string Post(SubSectionModel subSectionModel)
         {
-            int success = 0;
-            using (var db = new BookDbContext())
+            string success = "";
+            try
             {
-                var bookSubSection = new SubSection()
+                using (var db = new BookDbContext())
                 {
-                    Id = subSectionModel.Id,
-                    SubSectionTitle = subSectionModel.SubSectionTitle,
-                    SubSectionOrder = subSectionModel.SubSectionOrder,
-                    SubSectionContents = subSectionModel.SubSectionContents,
-                };
-                db.SubSections.Add(bookSubSection);
-                db.SaveChanges();
-                success = bookSubSection.Id;
+                    var bookSubSection = new SubSection()
+                    {
+                        SectionId = subSectionModel.SectionId,
+                        Id = subSectionModel.Id,
+                        SubSectionTitle = subSectionModel.SubSectionTitle,
+                        SubSectionOrder = subSectionModel.SubSectionOrder,
+                        SubSectionContents = subSectionModel.SubSectionContents,
+                    };
+                    db.SubSections.Add(bookSubSection);
+                    db.SaveChanges();
+                    success = bookSubSection.Id.ToString();
+                }
             }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
+
         [HttpPut]
         public string Put(SubSectionModel subSectionModel)
         {
             string success = "";
-            using (var db = new BookDbContext())
+            try
             {
-                var bookSubSection = db.SubSections.Where(s => s.Id == subSectionModel.Id).FirstOrDefault();
-                if (bookSubSection == null)
-                    success = "not found";
-                else
+                using (var db = new BookDbContext())
                 {
-                    bookSubSection.SubSectionTitle = subSectionModel.SubSectionTitle;
-                    bookSubSection.SubSectionOrder = subSectionModel.SubSectionOrder;
-                    bookSubSection.SubSectionContents = subSectionModel.SubSectionContents;
-                    db.SaveChanges();
-                    success = "ok";
+                    var bookSubSection = db.SubSections.Where(s => s.Id == subSectionModel.Id).FirstOrDefault();
+                    if (bookSubSection == null)
+                        success = "not found";
+                    else
+                    {
+                        bookSubSection.SubSectionTitle = subSectionModel.SubSectionTitle;
+                        bookSubSection.SubSectionOrder = subSectionModel.SubSectionOrder;
+                        bookSubSection.SubSectionContents = subSectionModel.SubSectionContents;
+                        db.SaveChanges();
+                        success = "ok";
+                    }
                 }
             }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
     }

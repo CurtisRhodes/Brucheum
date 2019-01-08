@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -41,6 +42,7 @@ namespace Brucheum.Controllers
 
         public ActionResult Write(int? book)
         {
+            ViewBag.UserId = User.Identity.GetUserId();
             ViewBag.Service = apiService;
             ViewBag.BookId = book;            
             //ViewBag.ChapterId = chapter;
