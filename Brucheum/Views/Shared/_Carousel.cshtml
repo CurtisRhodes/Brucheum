@@ -1,23 +1,24 @@
 ﻿
 <style>
-    .maxSize {
+    /*.maxSize {
         height: 100%;
-    }
+    }*/
 
-    .carouselImage {
-        width: 100%;
-        cursor: pointer;
-    }
+    /*.carouselImageContainer {
+        position: absolute;
+        top: 20px;
+        left: 50px;
+    }*/
 
     .carouselContainer {
-        display: block;
+        /*display: block;
         margin-top: 12%;
         margin-left: 25%;
         width: 52%;
         height: 45%;
         padding: 1px;
         border: solid thin #ada267;
-        background-color: rgba(164, 168, 169, 0.75);
+        background-color: rgba(164, 168, 169, 0.75);*/
         z-index: 10;
     }
 
@@ -28,20 +29,6 @@
         left: 100px;
     }
 
-    .fbutton {
-        position: absolute;
-        height: 100px;
-        cursor: pointer;
-        z-index: 5;
-        display: none;
-    }
-
-    .carouselImageContainer {
-        position: absolute;
-        top: 20px;
-        left: 50px;
-    }
-
     .carouselLabel {
         position: absolute;
         display: inline-block;
@@ -50,34 +37,71 @@
         border-radius: 5px;
         padding: 3px;
         font-size: 22px;
-        z-index: 11;
+        white-space: nowrap;
+        z-index: 7;
+    }
+
+    .centeredDivShell {
+        top: 230px;
+    }
+
+    .carosuelContainer {
+        border: solid 6px #a16728;
+        /*width: 500px;
+        height: 350px;*/
+        z-index: 6;
+    }
+
+    .carouselImage {
+        height: 350px;
+        width: 500px;
+        /*
+            object-fit: contain;
+        */
+        cursor: pointer;
+    }
+
+    .carouselImageContainer {
+        z-index: 7;
+    }
+    .arrowButton {
+        position: absolute;
+        z-index: 2;
+        height: 70px;
+        cursor: pointer;
     }
 </style>
 
 
-<div class="flexContainer maxSize">
-    <img id="leftFbutton" class="fbutton" src="~/Images/blueCircleLeft.png" onclick="clickPrevious()" />
-    <div id="imageContainer" class="carouselContainer">
-        <div class='carouselItem'>
-            <img id="carouselLoadingGif" class="animatedGears" src="~/Images/ingranaggi3.gif" />
+<div class="centeredDivShell">
+    <div class="centeredDivInner">
+
+        <div id="carosuelContainer" class="carosuelContainer">
+            <img id="leftFbutton" class="arrowButton" src="~/Images/blueCircleLeft.png" onclick="clickPrevious()" />
+            <img id="rightFbutton" class="arrowButton" src="~/Images/blueCircleRight.png" onclick="clickNext()" />
+            <div id='articleTitle' class='carouselLabel'></div>
+            <div id='articleCat' class='carouselLabel'></div>
+
+            <div class="carouselImageContainer">
+                <img id="carouselImage" class="carouselImage" src="~/Images/ingranaggi3.gif" onclick="viewArticle()" />
+            </div>
         </div>
+
     </div>
-    <img id="rightFbutton" class="fbutton" src="~/Images/blueCircleRight.png" onclick="clickNext()" />
 </div>
 
 <script>
     var service = '@ViewBag.Service';
     var webService = "https://api.curtisrhodes.com";
-    var numArticles = 15;
+    var numArticles = 21;
     var rotationSpeed = 15000;
-    var carouselItems = new Array();
+    var carouselItemArray = new Array();
     var imageNum = 0;
     var carouselContainerHeight;
     var Carousel;
+    var currentArticleId = 0;
 
-    $(document).ready(function () {
-        adjustCarousel();
-    });
+    $(document).ready(function () { });
 
     function stopCarousel() {
         clearInterval(Carousel);
@@ -87,69 +111,58 @@
         rotate();
     }
 
-    function adjustCarousel() {
-
-        $('.carouselImage').height($('#imageContainer').height());
-        $('#articleTitle').css('left', $('.carouselItem').position().left + 3);
-        $('#articleCat').css('top', $('.carouselItem').position().top + $('.carouselItem').height() - 40);
-        $('#articleCat').css('left', (($('.carouselItem').position().left + $('.carouselItem').width()) - $('#articleCat').width()) - 8);
-
-        $('#leftFbutton').css('left', $('.carouselItem').position().left - 70);
-        $('#rightFbutton').css('left', $('.carouselItem').position().left + $('.carouselItem').width() - 30);
-        $('#leftFbutton').css('top', $('.carouselItem').position().top + (($('.carouselItem').height() / 2) - 50));
-        $('#rightFbutton').css('top', $('#leftFbutton').position().top);
-    }
-
-    function rotate() {
-        $('#imageContainer').html(carouselItems[imageNum]);
-        adjustCarousel()
-        Carousel = setInterval(function () {
-            $('#carouselImage').fadeOut("slow");
-            imageNum++;
-            if (imageNum >= numArticles)
-                imageNum = 0;
-            $('#carouselImage').hide();
-            $('#imageContainer').html(carouselItems[imageNum]);
-            $('#carouselImage').fadeIn("slow");
-            $('#footerMessage').html("imageNum: " + imageNum)
-            adjustCarousel();
-        }, rotationSpeed);
-    }
-
-    $('#imageContainer').click(function () {
+    function viewArticle() {
+        //$('#carosuelContainer').click(function () {
         clearInterval(Carousel);
         //alert("$('.carouselItem').attr('Id'): " + $('.carouselItem').attr('Id'));
-        window.location.href = "/Article/ArticleView?Id=" + $('.carouselItem').attr('Id');
-    })
-
-
+        //window.location.href = "/Article/ArticleView?Id=" + $('.carouselItem').attr('Id');
+        window.location.href = "/Article/ArticleView?Id=" + currentArticleId;
+    }
     function clickPrevious() {
+        //alert("clickPrevious")
         imageNum--;
-        if (imageNum < 0) 
-            imageNum = numArticles - 1;
+        if (imageNum > 0)
+            imageNum--;
+        else
+            imageNum = numArticles;
         clearInterval(Carousel);
         rotate();
+        event.stopPropagation();
+        return false;
     }
     function clickNext() {
+        //alert("clickNext")
         clearInterval(Carousel);
         imageNum++;
         if (imageNum >= numArticles)
             imageNum = 0;
         rotate();
+        event.stopPropagation();
+        return false;
     }
 
     function loadAndStartCarousel() {
-        $('#carouselLoadingGif').show();
-
         $.ajax({
             type: "GET",
             url: service + "/api/DbArticle?pageLen=" + numArticles + "&page=1&filterType=null&filter=null",
             //url: service + "/api/ArticleXml?pageLen=" + numArticles + "&page=0&filterType=none&filter=none",
             success: function (articles) {
-                articles.forEach(loadArray);
-                $('.fbutton').show();
+                $.each(articles, function (idx, article) {
+                    carouselItemArray.push(article);
+                });
+
+                $('.centeredDivShell').show();
+                var carouselArrayItem = carouselItemArray[imageNum];
+                currentArticleId = carouselArrayItem.Id;
+                var fullImageName = webService + "/App_Data/Images/" + carouselArrayItem.ImageName;
+                $('#articleTitle').html(carouselArrayItem.Title);
+                $('#articleCat').html(carouselArrayItem.CategoryLabel.trim());
+                $('#carouselImage').attr('src', fullImageName).fadeIn("slow");;
+                $('#carouselImage').css('z-index', 10);
+
+                adjustCarousel();
                 rotate();
-                $('#carouselLoadingGif').hide();
+                //setTimeout(function () { adjustCarousel() }, 2000);
             },
             error: function (xhr) {
                 alert("loadAndStartCarousel error: " + xhr.statusText);
@@ -157,20 +170,48 @@
         });
     };
 
-    function loadArray(article) {
-        try {
-            if (article.ImageName !== "") {
-                imgSrc = webService + "/App_Data/Images/" + article.ImageName;
-            };
-            carouselItems.push(`
-                <div class='carouselItem' id='`+ article.Id + `' >
-                    <img class='carouselImage' src=` + imgSrc + `>
-                    <div id='articleTitle' class='carouselLabel'>` + article.Title + `</div>
-                    <div id='articleCat'   class='carouselLabel'> ` + article.CategoryLabel.trim() + `</div>
-                </div>`);
-        } catch (e) {
-            alert("formatArticleJog error: " + e);
-        }
+    function adjustCarousel() {
+        //adjustCarousel();
+        // just center the div
+
+        var carouselPosLeft = $('.centeredDivShell').offset().left - $('.centeredDivInner').offset().left;
+        //alert("carouselPosLeft: " + carouselPosLeft + "    $('#carosuelContainer').position().left: " + $('#carosuelContainer').position().left);
+
+        $('#leftFbutton').css('left', carouselPosLeft - 65);
+        $('#rightFbutton').css('left', carouselPosLeft + $('#carosuelContainer').width() - 40);
+        $('.arrowButton').css('top', $('#carosuelContainer').height() - 210);
+
+        $('#articleCat').css('top', $('#carosuelContainer').height());
     }
 
+    function rotate() {
+        var carouselArrayItem = carouselItemArray[imageNum];
+        currentArticleId = carouselArrayItem.Id;
+        var fullImageName = webService + "/App_Data/Images/" + carouselArrayItem.ImageName;
+        $('#articleTitle').html(carouselArrayItem.Title);
+        $('#articleCat').html(carouselArrayItem.CategoryLabel.trim());
+        $('#carouselImage').attr('src', fullImageName).fadeIn(5000);
+        $('#carouselImage').css('z-index', 10);
+
+        imageNum++;
+        Carousel = setInterval(function () {
+            carouselArrayItem = carouselItemArray[imageNum];
+            fullImageName = webService + "/App_Data/Images/" + carouselArrayItem.ImageName;
+
+            //alert("carouselArrayItem[" + imageNum + "].Title :" + carouselArrayItem.Title);
+
+            //$('#carouselImage').fadeOut("slow");
+            $('#articleTitle').html(carouselArrayItem.Title);
+            $('#articleCat').html(carouselArrayItem.CategoryLabel.trim());
+            $('#carouselImage').attr('src', fullImageName).fadeIn(5000);
+            $('#carouselImage').css('z-index', 10);
+
+            //$('#footerMessage').html("imageNum: " + imageNum)
+            //adjustCarousel();
+            imageNum++;
+            if (imageNum >= numArticles) {
+                imageNum = 0;
+            }
+        }, rotationSpeed);
+    }
 </script>

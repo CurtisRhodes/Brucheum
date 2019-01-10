@@ -31,7 +31,7 @@ function setLayout(layoutName) {
             $('#bheader').css("background-color", "#fff");
             $('#replaceableMenuItems').html(`
                 <div class="menuTab floatLeft"><a href="/Home/Index/">CurtisRhodes.com</a></div>
-                <div class="menuTab floatLeft"><a href="~/home/journal/">Journal</a></div>
+                <div class="menuTab floatLeft"><a href="/home/journal/">Journal</a></div>
                 <div class="menuTab floatLeft"><a href="ToDo">ToDo</a></div>`);
             break;
 

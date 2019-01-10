@@ -189,6 +189,7 @@
     }
     
     $(window).resize(function () {
+        alert("MyResume window resize");
         $('.resumeContainer').css('max-height', $('#middleColumn').height());
         $('#footerMessage').html('max-height= ' + $('.resumeContainer').css('max-height'));
     });

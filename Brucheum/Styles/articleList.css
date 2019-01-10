@@ -1,7 +1,11 @@
 ﻿.threeColumnArray {
     background-color: #e4e4e4;
     font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif;
-    box-sizing: border-box;
+    /*box-sizing: border-box;*/
+}
+
+divArticleList {
+    display: block;
 }
 
 .articleListHeader {
@@ -55,41 +59,42 @@
         color: #555;
     }
 
-.articleTopRow {
-    /*
-        display: flex;
-        width: 100%;
-        margin-top: 6px;
-    */
-}
 .articleBottomRow {
     /*
         background-color: lightpink;
         margin-bottom: 4px;
     */
 }
-.articleRowItemCenter {
+
+
+/*kludge + = "<div class='articleTopRow'>";
+kludge + = "<div class='articleRowItemLeft'><a href=/Article/ArticleList?filterLabel=" + article.CategoryLabel + "&filterType=Category&filter=" + article.CategoryRef + ">" + article.CategoryLabel + "</a></div>";
+kludge + = "<div class='articleRowItemCenter'><a href=" + articleHref + ">" + article.Title + "</a></div>";
+kludge + = "<div class='articleRowItemRight'>" + article.LastUpdated + "</div>";
+kludge + = "</div>"; // top row*/
+
+
+.articleTopRow {
+    display: flex;
+    width: 100%;
+    margin-top: 6px;
+}
+.articleRowItemLeft {
     float: left;
-    text-align: center;
-    width: 88%;
-    font-size: 30px;
     white-space: nowrap;
-    overflow: hidden;
+    font-family: Arial, sans-serif;
+    text-decoration: underline;
+    padding-left: 5px;
 }
-.articleSummary {
-    display: inline-block;
-    font-size: 18px;
-    overflow: hidden;
-    padding: 5px;
-    width: 99%;
-    height: 84.63px;
-    /*
-        background-color: #e6dede;
-    */
+.articleRowItemCenter {
+    width:100%;
+    text-align: center;
+    font-size: 27px;
+    white-space: nowrap;
 }
+
 .articleRowItemRight {
-    float: right !important;
-    display: inline-block;
+    float: right;
     cursor: pointer;
     text-decoration: underline;
     margin-right: 6px;
@@ -99,12 +104,18 @@
     text-align: right;
     */
 }
-.articleRowItemLeft {
-    white-space: nowrap;
-    font-family: Arial, sans-serif;
-    text-decoration: underline;
-    float: left;
-    padding-left: 5px;
+
+.articleSummary {
+    display: inline-block;
+    font-size: 16px;
+    line-height: normal;
+    overflow: hidden;
+    padding: 5px;
+    width: 99%;
+    height: 84.63px;
+    /*
+        background-color: #e6dede;
+    */
 }
 
 .clickArea01 {
