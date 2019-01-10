@@ -88,7 +88,13 @@
                         $('.threeColumnArray').height(als + 150);
                         //alert("$('#threeColumnArray').height: " + $('.threeColumnArray').height());
                     }
+
+
+                    //alert("$('#divArticleList').height(): " + $('#divArticleList').height() + "  $('#middleColumn').height(): " + $('#middleColumn').height());
+                    
+                    $('#middleColumn').height($('#divArticleList').height() + 100);
                     resizePage();
+
                 },
                 error: function (xmlhttprequest, textstatus, message) {
                     $('#loadingGif').hide();

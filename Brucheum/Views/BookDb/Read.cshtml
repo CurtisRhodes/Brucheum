@@ -9,9 +9,12 @@
         background-size: 100%;*/
         background-color: #eeddbb;
     }
-    
-    .bookContainer {
+
+    .hiddenContainer {
         display: none;
+    }
+    .block {
+        display: block;
     }
 
     .paupaStyle {
@@ -29,11 +32,11 @@
         width:100%;
     }
 
-    .flexContainer {
-        background-color: #eeddbb;
+    .paupaPageColor {
+        background-color: rgb(247,240,214);
     }
     .paupaPage {
-        background-color: rgb(251,241,206);
+        background-color: rgb(247,240,214);
         font-family: 'Times New Roman';
         font-size: 17px;
         text-align: justify;
@@ -55,7 +58,7 @@
         padding: 11px;
     }
     .bookPreface {
-        margin: 5px 166px;
+        /*margin: 5px 166px;*/
         text-align: center;
         font-size: 14px;
         font-style: italic;
@@ -105,19 +108,19 @@
         <div id="bookTitle" class="pageTitle" onclick="redirectToToC()">
             <div id="bookContentsLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
         </div>
-        <div>
-            <div id="paupaStyleContainer" class="bookContainer paupaStyle">               
+        <div id="bookContentsContainer" class="block">
+            <div id="paupaStyleContainer" class="paupaStyle hiddenContainer">               
                 <div class="flexContainer">
                     <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornertopleft.png" />
                     <div class="paupaBorderContainer">
                         <img class="floatLeft full" src="~/Images/Books/PaupaBook/book-topLeft.png" />
-                        <div id="chapterTitle" class="absTitle"></div>
+                        <div id="paupaChapterTitle" class="absTitle"></div>
                     </div>
                     <img class="floatLeft" src="~/Images/Books/PaupaBook/book-innerspinetop.png" />
                     <img class="floatLeft paupaBorderContainer" src="~/Images/Books/PaupaBook/book-topRight.png" />
                     <img class="floatLeft" src="~/Images/Books/PaupaBook/book-cornertopright.png" />
                 </div>
-                <div class="flexContainer">
+                <div class="flexContainer paupaPageColor">
                     <img class="floatLeft" src="~/Images/Books/PaupaBook/book-left.png" />
                     <div class="floatLeft paupaPage" id="bookLeftContent"></div>
                     <img class="floatLeft" src="~/Images/Books/PaupaBook/book-innerspine.jpg" />
@@ -134,7 +137,7 @@
                 </div>
             </div>
 
-            <div id="twoPageBookStyle" class="bookContainer">
+            <div id="twoPageBookStyle" class="hiddenContainer">
                 <div class="flexContainer">
                     <div class="floatLeft  " id="fullBookStyleLeftContent"></div>
                 </div>
@@ -143,7 +146,7 @@
                 </div>
             </div>
 
-            <div id="fullBookStyleContainer" class="bookContainer">
+            <div id="fullBookStyleContainer" class="hiddenContainer">
                 <div id="fullBookStyleContents" class="cosmic01">
                 </div>
             </div>
@@ -163,13 +166,18 @@
     var chapterId = '@ViewBag.ChapterId';
     var sectionId = '@ViewBag.SectionId';
     var sectionTypeId = '@ViewBag.SectionType';
+
+    //var queryString = "?bookTitle=" + '@ViewBag.BookTitle' + "&chapterId=" + '@ViewBag.chapterId' + "&sectionId=" + '@ViewBag.sectionId' + "&subSectionId=" + '@ViewBag.subSectionId';
+
     var sectionType, bookTitle;
     var chapterArray = [];
     var pages = [];
     var pageIndex = 0;
 
     $(document).ready(function () {
-
+        if (isNullorUndefined(bookId)) {
+            window.location.href = "/BookDb"
+        }
 
         if (bookId == "2") {
             $('.threeColumnArray').css('background-color', '#0e325e')
@@ -225,7 +233,6 @@
 
     function getChapter() {
         try {
-            var queryString = "?bookTitle=" + '@ViewBag.BookTitle' + "&chapterId=" + '@ViewBag.chapterId' + "&sectionId=" + '@ViewBag.sectionId' + "&subSectionId=" + '@ViewBag.subSectionId';
             $.ajax({
                 url: service + "/api/Book/" + queryString,
                 type: "get",
@@ -255,6 +262,7 @@
     function loadBookIntoChapterArray() {
         try {
             chapterArray = [];
+
             var contents;
             $('#bookContentsLoadingGif').show();
             $.ajax({
@@ -270,12 +278,16 @@
                         contents += "<div class='bookPreface'>" + book.Preface + "</div>";
                         contents += "<div class='bookCenterTitle'>Introduction</div>";
                         contents += "<div class='sectionContents'>" + book.Introduction + "</div>";
-                        chapterArray.push(contents);
+                        var chapterObject = {};
+                        chapterObject.ChapterOrder = 0;
+                        chapterObject.ChapterTitle = book.BookTitle; // intro
+                        chapterObject.Content = contents;
+                        chapterArray.push(chapterObject);
 
-                        $.each(book.Chapters, function (idx, obj) {
-                            contents = "<div id=ct" + obj.Id + " class='chapterTitle'>" + obj.ChapterTitle + "</div>";
-                            contents += "<div class='bookPreface'>" + obj.Preface + "</div>";
-                            $.each(obj.Sections, function (idx, obj) {
+                        $.each(book.Chapters, function (idx, objChapter) {
+                            contents = "<div id=ct" + objChapter.Id + " class='chapterTitle'>" + objChapter.ChapterTitle + "</div>";
+                            contents += "<div class='bookPreface'>" + objChapter.Preface + "</div>";
+                            $.each(objChapter.Sections, function (idx, obj) {
                                 contents += "<div id=sc" + obj.Id + " class='sectionTitle'>" + obj.SectionTitle + "</div>";
                                 contents += "<div class='sectionContents'>" + obj.SectionContents + "</div>";
                                 $.each(obj.SubSections, function (idx, obj) {
@@ -283,24 +295,22 @@
                                     contents += "<div class='sectionContents'>" + obj.SubSectionContents + "</div>";
                                 });
                             });
-                            chapterArray.push(contents);
-                            if (obj.Id == chapterId)
-                                $('#chapterTitle').html("Chapter " + obj.Id + " " + obj.ChapterTitle); 
+                            //chapterArray.push(contents);
+                            var chapterObject = {};
+                            chapterObject.ChapterOrder = objChapter.ChapterOrder;
+                            chapterObject.ChapterTitle = objChapter.ChapterTitle;
+                            chapterObject.Content = contents;
+                            chapterArray.push(chapterObject);
                         });
 
                         //alert("pages.length: " + pages.length + "   pages[0].len: " + pages[0].length + "  pages[1].len: " + pages[1].length);
                         pages = [];
-                        breakIntoPages(chapterId);
-                                               
+                        breakChapterIntoPages(chapterId);
                         if (bookId == 1) {
                             $('#paupaStyleContainer').show();
-                            $('#bookLeftContent').html(pages[pageIndex++]);
-                            $('#bookRightContent').html(pages[pageIndex++]);
                         }
                         if (bookId == 3) {
                             $('#twoPageBookStyle').show();
-                            $('#fullBookStyleLeftContent').html(pages[pageIndex++]);
-                            $('#fullBookStyleRightContent').html(pages[pageIndex++]);
                         }
                     }
                 },
@@ -313,21 +323,40 @@
         }
     }
 
-    function breakIntoPages(chapterId) {
-        //alert("breakIntoPages  chapterId: " + chapterId);
+    function breakChapterIntoPages(chapterIndex) {
+
+        //alert("breakChapterIntoPages  chapterId: " + chapterIndex +"  chapterArray.length: " + chapterArray.length)
+        var chapterObject = chapterArray[chapterIndex];
+
+        $('#paupaChapterTitle').html("Chapter " + chapterObject.ChapterOrder + " " + chapterObject.ChapterTitle); 
 
         var pageCharCount = calcPageCharCount();
 
-        var chapterContents = chapterArray[chapterId];
+        var chapterContents = chapterObject.Content;
+
+        // break chapter into pages
+
         var pageStart = 0;
         var pageEnd = pageCharCount;
+        pages = [];
         while (pageStart < chapterContents.length) {
             pages.push(chapterContents.substring(pageStart, pageEnd));
             pageEnd += 1;
             pageStart = pageEnd;
             pageEnd += pageCharCount;
         }
-        $('#bookContentsLoadingGif').hide();
+
+        pageIndex = 0;
+        if (bookId == 1) {
+            $('#bookLeftContent').html(pages[pageIndex++]);
+            $('#bookRightContent').html(pages[pageIndex++]);
+        }
+        if (bookId == 3) {
+            $('#fullBookStyleLeftContent').html(pages[pageIndex++]);
+            $('#fullBookStyleRightContent').html(pages[pageIndex++]);
+        }
+
+        resizePage();
     }
 
     function xxgetWordCount(cont) {
@@ -354,19 +383,20 @@
             }
             else {
                 if (chapterId < chapterArray.length) {
-                    pageIndex = 0;
-
-                    alert("moving: ")
-
-                    breakIntoPages(++chapterId)
-                    //$('#bookLeftContent').html(pages[pageIndex]);
-                    //$('#bookRightContent').html(pages[pageIndex++]);
+                    //alert("moving: ")
+                    breakChapterIntoPages(++chapterId)
                 }
                 else {
                     $('#bookLeftContent').html("The End");
                     $('#bookRightContent').html("");
                 }
             }
+        }
+
+        if ($('#bookContentsContainer').height() > $('#middleColumn').height()) {
+            alert("$('#middleColumn').height: " + $('#middleColumn').height() + "   $('#bookContentsContainer').height(): " + $('#bookContentsContainer').height())
+            $('#middleColumn').height($('#fullBookStyleLeftContent').height() + 100);
+            alert("$('#middleColumn').height: " + $('#middleColumn').height())
         }
     }
 
@@ -381,7 +411,7 @@
             pageIndex = 0;
             chapterId = chapterId - 1;
             //alert("chapterId: " + chapterId);
-            breakIntoPages(chapterId)
+            breakChapterIntoPages(chapterId)
         }
     }
 
@@ -403,6 +433,7 @@
     function redirectToEdit() {
         window.location.href = "/BookDb/Write?book=" + bookId;
     }
+
     function redirectToToC() {
         window.location.href = "/BookDb/ToC?book=" + bookId;
     }

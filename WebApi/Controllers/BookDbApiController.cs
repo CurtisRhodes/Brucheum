@@ -36,16 +36,16 @@ namespace WebApi.Book
         [HttpGet]
         public DbBookModel Get(int bookId)
         {
-            DbBookModel book = new DbBookModel();
+            DbBookModel bookModel = new DbBookModel();
             ChapterModel chapterModel = null;
             BookSectionModel sectionModel = null;
             using (var db = new BookDbContext())
             {
                 var dbBook = db.Books.Where(b => b.Id == bookId).FirstOrDefault();
-                book.Id = dbBook.Id;
-                book.BookTitle = dbBook.BookTitle;
-                book.Introduction = dbBook.Introduction;
-                book.Preface = dbBook.Preface;
+                bookModel.Id = dbBook.Id;
+                bookModel.BookTitle = dbBook.BookTitle;
+                bookModel.Introduction = dbBook.Introduction;
+                bookModel.Preface = dbBook.Preface;
                 foreach (BookChapter dbChapter in dbBook.Chapters)
                 {
                     chapterModel  = new ChapterModel();
@@ -72,11 +72,11 @@ namespace WebApi.Book
                         }
                         chapterModel.Sections.Add(sectionModel);                        
                     }
-                    book.Chapters.Add(chapterModel);
+                    bookModel.Chapters.Add(chapterModel);
                 }
-                book.success = "ok";
+                bookModel.success = "ok";
             }
-            return book;
+            return bookModel;
         }
         [HttpPost]
         public string Post(DbBookModel bookModel)
@@ -112,23 +112,7 @@ namespace WebApi.Book
                         dbBook.Author = bookModel.Author;
                         dbBook.Introduction = bookModel.Introduction;
                         dbBook.Preface = bookModel.Preface;
-
                         db.SaveChanges();
-
-                        //System.Data.Entity.Validation.DbEntityValidationException
-                        //HResult = 0x80131920
-                        //Message = Validation failed for one or more entities.See 'EntityValidationErrors' property for more details.
-                        // Source = EntityFramework
-                        // StackTrace:
-                        //  at System.Data.Entity.Internal.InternalContext.SaveChanges()
-                        //  at System.Data.Entity.Internal.LazyInternalContext.SaveChanges()
-                        //   at System.Data.Entity.DbContext.SaveChanges()
-                        //   at WebApi.Book.BookDbController.Put(DbBookModel bookModel) in F:\Devl\WebApi\Controllers\BookDbApiController.cs:line 114
-                        //   at System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<> c__DisplayClass6_1.< GetExecutor > b__3(Object instance, Object[] methodParameters)
-                        //  at System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.Execute(Object instance, Object[] arguments)
-                        //  at System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ExecuteAsync(HttpControllerContext controllerContext, IDictionary`2 arguments, CancellationToken cancellationToken)
-
-
                         success = "ok";
                     }
                 }
