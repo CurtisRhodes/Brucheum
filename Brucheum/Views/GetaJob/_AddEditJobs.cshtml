@@ -58,12 +58,10 @@
                     <input id="txtLocation" class="roundedInput inline" />
                 </div>
                 <div>
-                    <div class="crudRowLabel"><input id="radioPublic" type="radio">  Summary  <input id="radioFired" type="radio" >  Secret    </div>
+                    <div class="crudRowLabel"><input id="radioPublic" type="radio">  Summary  <input id="radioFired" type="radio">  Secret    </div>
                 </div>
-                <div id="jobSummaryEditor" class="editorContainer">
-                    @Html.Partial("_Editor")
-                    <div id="editorLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
-                </div>
+                <div id="editorLoadingGif" class="loadingGif"><img src="~/Images/loader.gif" /></div>
+                <div id="jobSummaryEditor"></div>
                 <div>
                     <div id="divStatusMessage"></div>
                     <button id="btnJobAddEdit" class="roundendButton" onclick="medeiateJobAddEditButton()">Add</button>
@@ -89,20 +87,10 @@
     $(document).ready(function () {
         $('#jobSummaryEditor').summernote({
             height: 250,
-            codemirror: {
-                lineWrapping: true,
-                mode: "htmlmixed",
-                theme: "monokai"
-            },
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
             toolbar: [
                 ['codeview'],
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                //['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontname', 'fontsize']],
-                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
-                ['color', ['color']]
-                //['para', ['ul', 'ol', 'paragraph']],
-                //['height', ['height']]
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
             ]
         });
     });

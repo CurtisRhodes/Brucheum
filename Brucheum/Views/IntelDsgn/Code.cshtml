@@ -1,27 +1,45 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Code";
-    Layout = "~/Views/IntelDsgn/_ProfessionalLayout.cshtml";
 }
 
 <div class="threeColumnArray">
     <div id="leftColumn">
     </div>
     <div id="middleColumn">
-       <h2>Code</h2>
+        <h2>Code</h2>
 
+
+        <div id="sectionEditor" class="editorContainer">
+            <div id="codeEditor"></div>
+        </div>
+
+        <div class="roundendButton" onclick="Bang()">Save</div>
 
     </div>
     <div id="rightColumn">
-        <div class="clickable" onclick="add">add</div>
     </div>
-</div>
 
+</div>
 
 
 <script>
 
+    jQuery(document).ready(function ($) {
+        $('#codeEditor').summernote({
+            height: 222,
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+            toolbar: [
+                ['codeview'],
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
+            ]
+        });
+    });
 
+    function Bang() {
+        alert("bang: " + $('#codeEditor').summernote('code'));
+        //+ "  wang: " + $('#anotherEditor #summernote').summernote('code'));
+    }
 
 </script>
+
 

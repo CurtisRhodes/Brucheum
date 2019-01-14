@@ -139,10 +139,10 @@
 
             <div id="twoPageBookStyle" class="hiddenContainer">
                 <div class="flexContainer">
-                    <div class="floatLeft  " id="fullBookStyleLeftContent"></div>
+                    <div class="floatLeft  " id="twoPageBookStyleLeftContent"></div>
                 </div>
                 <div class="flexContainer">
-                    <div class="floatLeft" id="fullBookStyleRightContent"></div>
+                    <div class="floatLeft" id="twoPageBookStyleRightContent"></div>
                 </div>
             </div>
 
@@ -178,13 +178,25 @@
         if (isNullorUndefined(bookId)) {
             window.location.href = "/BookDb"
         }
-
-        if (bookId == "2") {
-            $('.threeColumnArray').css('background-color', '#0e325e')
-            getTheWholeBook();
-        }
-        else {
-            loadBookIntoChapterArray();
+        switch (bookId) {
+            case '1':  // the blond jew
+                $('#paupaStyleContainer').show();
+                loadBookIntoChapterArray();
+                break;
+            case '2':  // time squared
+                $('.threeColumnArray').css('background-image', 'url("/Images/Books/timeSquared01.jpg")')
+                $('#bookTitle').css('color', '#fff');
+                $('#fullBookStyleContainer').show();
+                getTheWholeBook();
+                break;
+            case '3':  // ready;fire;aim;
+                $('.threeColumnArray').css('background-color', '#98d1d3')
+                $('#fullBookStyleContainer').show();
+                getTheWholeBook();
+                //$('#twoPageBookStyle').show();
+                //loadBookIntoChapterArray();
+                break;
+            default:
         }
     })
 
@@ -218,8 +230,12 @@
                             });
                         });
 
-                        $('#fullBookStyleContainer').show();
-                        resizePage();
+                        $(window).resize(function () {
+                            //alert("READ.cshtml  $(window).resize()");
+                            $('#fullBookStyleContainer').height($('#middleColumn').height() - 120);
+                            resizePage();
+                        });
+                        $(window).resize();
                     }
                 },
                 error: function (jqXHR, exception) {
@@ -231,7 +247,7 @@
         }
     }
 
-    function getChapter() {
+    function XXXgetChapter() {
         try {
             $.ajax({
                 url: service + "/api/Book/" + queryString,
@@ -305,13 +321,8 @@
 
                         //alert("pages.length: " + pages.length + "   pages[0].len: " + pages[0].length + "  pages[1].len: " + pages[1].length);
                         pages = [];
+                        //alert("breakChapterIntoPages(" + chapterId + ")");
                         breakChapterIntoPages(chapterId);
-                        if (bookId == 1) {
-                            $('#paupaStyleContainer').show();
-                        }
-                        if (bookId == 3) {
-                            $('#twoPageBookStyle').show();
-                        }
                     }
                 },
                 error: function (jqXHR, exception) {
@@ -335,7 +346,6 @@
         var chapterContents = chapterObject.Content;
 
         // break chapter into pages
-
         var pageStart = 0;
         var pageEnd = pageCharCount;
         pages = [];
@@ -352,9 +362,22 @@
             $('#bookRightContent').html(pages[pageIndex++]);
         }
         if (bookId == 3) {
-            $('#fullBookStyleLeftContent').html(pages[pageIndex++]);
-            $('#fullBookStyleRightContent').html(pages[pageIndex++]);
+
+            alert("pages.length: " + pages.length)
+
+            $('#twoPageBookStyleLeftContent').html(pages[pageIndex++]);
+            $('#twoPageBookStyleRightContent').html(pages[pageIndex++]);
         }
+
+        //<div id="twoPageBookStyle" class="hiddenContainer">
+        //    <div class="flexContainer">
+        //        <div class="floatLeft  " id="twoPageBookStyleLeftContent"></div>
+        //    </div>
+        //    <div class="flexContainer">
+        //        <div class="floatLeft" id="twoPageBookStyleContent"></div>
+        //    </div>
+        //</div>
+
 
         resizePage();
     }
@@ -394,9 +417,10 @@
         }
 
         if ($('#bookContentsContainer').height() > $('#middleColumn').height()) {
-            alert("$('#middleColumn').height: " + $('#middleColumn').height() + "   $('#bookContentsContainer').height(): " + $('#bookContentsContainer').height())
-            $('#middleColumn').height($('#fullBookStyleLeftContent').height() + 100);
-            alert("$('#middleColumn').height: " + $('#middleColumn').height())
+            //alert(" pageNext()    $('#middleColumn').height: " + $('#middleColumn').height() + "   $('#bookContentsContainer').height(): " + $('#bookContentsContainer').height())
+            $('#middleColumn').height($('#bookContentsContainer').height() + 100);
+            //alert("$('#middleColumn').height: " + $('#middleColumn').height())
+
         }
     }
 

@@ -70,9 +70,7 @@
                         </div>
                         <div class="crudRow">
                             <div class="crudRowLabel">Narrative</div>
-                            <div id="listItemNarrativeEditor" class="editorContainer">
-                                <div>@Html.Partial("_Editor") </div>
-                            </div>
+                            <div id="listItemNarrativeEditor"></div>
                         </div>
                         <div class="crudButtonRow">
                             <button id="btnListItemAddEdit" class="roundendButton" onclick="addEditListItem()">Add</button>
@@ -105,14 +103,20 @@
 
     $(document).ready(function () {
         setLayout("Flitter");
+        $('#codeEditor').summernote({
+            height: 120,
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+            toolbar: [
+                ['codeview'],
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
+            ]
+        });
 
         $('#listHeaderAddEdit').hide();
-
         loadListHeaderList();
         loadListItemDropDowns();
         loadListItemList();
         //$('#footerMessage').append("  service: " + service);
-        setToolbar("#listItemNarrativeEditor", 120, 500);
     });
 
 

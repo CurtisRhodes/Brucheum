@@ -97,7 +97,7 @@
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
-        <div id="pageBookTitle" class="pageTitle" onclick="redirectToToC()"></div>
+        <div id="bookTitle" class="pageTitle" onclick="redirectToToC()"></div>
         @*<a class="crudBreadcrumb" href="javascript:redirectToToC()">&#8592;</a>*@
         <div class="crudContainer floatLeft">
             <div id="crudTopBorderHeader" class="crudContainerTitle"></div>
@@ -135,9 +135,7 @@
                     <input id="txtSubSectionTitle" class="roundedInput width60percent" />
                 </div>
 
-                <div id="sectionEditor" class="editorContainer">
-                    @Html.Partial("_Editor")
-                </div>
+                <div id="sectionEditor"></div>
                 <div id="divStatusMessage"></div>
 
                 <div>
@@ -166,7 +164,6 @@
     <div id="rightColumn"></div>
 </div>
 
-
 <script>
 /// ready fire aim
 /// set up an editor screen for sections and subsections
@@ -187,35 +184,51 @@
             window.location.href = "/BookDb"
         }
         $('.allBookButtons').hide();
-        setUpSummerNoteEditor();
-        //setToolbar("#sectionEditor", 220, 500);
-        loadNestedList();
-    })
-
-    function setUpSummerNoteEditor() {
         $('#sectionEditor').summernote({
-            height: 200,
-            codemirror: {
-                lineWrapping: true,
-                mode: "htmlmixed",
-                theme: "monokai"
-            },
+            height: 222,
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
             toolbar: [
                 ['codeview'],
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']],
                 ['style', ['bold', 'italic', 'underline', 'clear']],
-                //['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontname', 'fontsize']],
-                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
-                ['color', ['color']]
-                //['para', ['ul', 'ol', 'paragraph']],
-                //['height', ['height']]
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['insert', ['picture', 'link', 'video', 'table', 'hr']],
+                ['para', ['ul', 'ol', 'paragraph']]
             ]
         });
+        setStyle();
+        loadNestedList();
+
+        $('.note-resizebar').mouseup(function () {
+            if (($('#sectionsCrudArea').height() + 50) > $('#middleColumn').height()) {
+               // alert("$('#sectionsCrudArea').height(): " + $('#sectionsCrudArea').height() + "  $('#middleColumn').height(): " + $('#middleColumn').height())
+                $('#middleColumn').height($('#sectionsCrudArea').height() + 100);
+                resizePage();
+            }
+        });
+    })
+
+    function setStyle() {
+        switch (bookId) {
+            case '1':  // the blond jew
+                break;
+            case '2':  // time squared
+                $('.threeColumnArray').css('background-image', 'url("/Images/Books/timeSquared01.jpg")')
+                $('#bookTitle').css('color', '#fff');
+                break;
+            case '3':  // ready;fire;aim;
+                $('.threeColumnArray').css('background-color', '#98d1d3')
+                break;
+            default:
+        }
     }
 
+
     function loadBookDetails() {
-        bookModel.Id = bookId;
+        $('#radioIntro').prop('checked', true);
+        $('#radioPreface').prop('checked', false);
         $('#sectionEditor').summernote('code', bookModel.Introduction);
+
         $('#txtBookTitle').val(bookModel.BookTitle);
 
         $('.allBookButtons').hide();
@@ -235,27 +248,29 @@
         bookModel.Preface = "";
         $('#sectionEditor').summernote('code', "");
     }
-    function toggleBookRadioButtons(editContents) {
-        //alert("setBookEditor: " + editContents);
-        if (editContents == "Preface") {
+    function toggleBookRadioButtons(checked) {
+
+        //alert("checked: " + checked)
+
+        if (checked == "Preface") {
             bookModel.Introduction = $('#sectionEditor').summernote('code');
             $('#sectionEditor').summernote('code', bookModel.Preface);
-            $('#radioIntro').attr('checked', false);
+            $('#radioIntro').prop('checked', false);
         }
-        if (editContents == "Introduction") {
+        if (checked == "Introduction") {
             bookModel.Preface = $('#sectionEditor').summernote('code');
             $('#sectionEditor').summernote('code', bookModel.Introduction);
-            $('#radioPreface').attr('checked', false);
+            $('#radioPreface').prop('checked', false);
         }
     }
     function addUpdateBook() {
         bookModel.BookTitle = $('#txtBookTitle').val();
         bookModel.Author = currentUser;
 
-        if ($('#radioIntro').attr('checked')) {
+        if ($('#radioIntro').prop('checked')) {
             bookModel.Introduction = $('#sectionEditor').summernote('code');
         }
-        else {
+        if ($('#radioPreface').prop('checked')) {
             bookModel.Preface = $('#sectionEditor').summernote('code');
         }
 
@@ -269,11 +284,10 @@
                     success: function (result) {
                         if (result == "ok") {
                             bookModel.Id = result.Id; // $('#hiddenId').val();
-
+                            loadNestedList();
                             $('.allBookButtons').hide();
                             $('#btnAddUpdateBook').show().html("Update");
                             //$('#btnNewBook').show();
-
                             //alert("bookModel.Id: " + bookModel.Id)
                             displayStatusMessage("ok", " A New Book " + bookModel.BookTitle + " Added");
                         }
@@ -303,7 +317,7 @@
                             //$('.allBookButtons').hide();
                             //$('#btnAddUpdateChapter').html("Update").show();
                             //$('#btnNewChapter').show();
-
+                            loadNestedList();
                             displayStatusMessage("ok", bookModel.BookTitle + " updated");
                         }
                         else {
@@ -342,6 +356,7 @@
                         $('.allBookButtons').hide();
                         $('#btnAddUpdateChapter').html("Update").show();
                         $('#btnNewChapter').show();
+                        $('#btnNewSection').show();
                     }
                     else
                         alert("getChapter: " + chapter.success)
@@ -371,6 +386,7 @@
                         chapterModel.Id = chapterId;
                         $('#bookAddUpdateSpinner').hide();
                         displayStatusMessage("ok", chapterModel.ChapterTitle + " Added");
+                        $('#crudTopBorderHeader').html("Chapter " + chapterModel.ChapterOrder + ".    " + chapterModel.ChapterTitle);
                         loadNestedList();
                     },
                     error: function (jqXHR, exception) {
@@ -413,9 +429,12 @@
         $('.allBookButtons').hide();
         $('.writeRow').hide();
         $('#chapterRow').show();
-        $('#btnAddUpdateChapter').show();
+        $('#btnAddUpdateChapter').html("Add").show();
         // clear
+        $('#crudTopBorderHeader').html("");
         $('#sectionEditor').summernote('code', "");
+        $('#txtChapterTitle').val("");
+        $('#txtChapterOrder').val("");
     }
 
     function loadSectionDetails(chapterId, sectionId) {
@@ -639,7 +658,7 @@
                 success: function (book) {
                     bookModel.Id = book.Id;
                     bookModel.BookTitle = book.BookTitle;
-                    $('#pageBookTitle').html(bookModel.BookTitle);
+                    $('#bookTitle').html(bookModel.BookTitle);
                     bookModel.Introduction = book.Introduction;
                     bookModel.Preface = book.Preface;
                     bookModel.Chapters = new Array();
@@ -699,6 +718,12 @@
                         // bookModel.Chapters.push(chapterModel);
                     });
                     resizePage();
+
+                    $('#nestedBookChaptersList').resize(function () {
+                        alert("$('#nestedBookChaptersList').resize()")
+                    });
+
+
                     $('#writeSectionsListLoadingGif').hide();
                 },
                 error: function (jqXHR, exception) {
@@ -715,7 +740,17 @@
         $('#sectionContainer' + sectionId + '').slideToggle();
     }
     function toggleNestedSection(chapterId) {
-        $('#chapterContainer' + chapterId + '').slideToggle();
+
+        var tbefore = $('#nestedBookChaptersList').height();
+        $('#chapterContainer' + chapterId + '').slideToggle('fast', function () {
+            var tafter = $('#nestedBookChaptersList').height()
+            //alert("$('#nestedBookChaptersList').resize() before: " + tbefore + "  after: " + tafter);
+            //if (tafter > tbefore) {
+                var mh = $('#middleColumn').height();
+                $('#middleColumn').height(mh + (tafter - tbefore));
+                resizePage();
+            //}
+        });        
     }
 
     function redirectToToC() {

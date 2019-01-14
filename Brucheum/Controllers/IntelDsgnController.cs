@@ -44,10 +44,10 @@ namespace Brucheum
         //{
         //    return View();
         //}
-        //public ActionResult Code()
-        //{
-        //    return View(); 
-        //}
+        public ActionResult Code()
+        {
+            return View();
+        }
         //public ActionResult Contact()
         //{
         //    return View();

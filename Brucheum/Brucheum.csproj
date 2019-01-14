@@ -340,7 +340,6 @@
     <Content Include="Scripts\3rd Party\Editor\formatting.js" />
     <Content Include="Scripts\3rd Party\Editor\summernote.js" />
     <Content Include="Scripts\3rd Party\Editor\xml.js" />
-    <Content Include="Scripts\EditorToolbar.js" />
     <Content Include="Scripts\GlobalFunctions.js" />
     <Content Include="Scripts\HeaderLogin.js" />
     <Content Include="Scripts\ImageTools.js" />
@@ -351,6 +350,8 @@
     <Content Include="Styles\articleView.css" />
     <Content Include="Styles\articleEdit.css" />
     <Content Include="Styles\articleList.css" />
+    <Content Include="Styles\editor\cobalt.css" />
+    <Content Include="Styles\editor\font-awesome.min.css" />
     <Content Include="Styles\footer.css" />
     <Content Include="Styles\code.css" />
     <Content Include="Styles\crudEdit.css" />
@@ -416,8 +417,6 @@
     <Content Include="Views\BookXML\Index.cshtml" />
     <Content Include="Views\BookXML\MyBooksXML.cshtml" />
     <Content Include="Views\BookXML\ReadXML.cshtml" />
-    <Content Include="Views\BookXML\TableOfContents.cshtml" />
-    <Content Include="Views\BookXML\Write.cshtml" />
     <Content Include="Views\BookXML\_EditTreePopup.cshtml" />
     <Content Include="Views\IntelDsgn\About.cshtml" />
     <Content Include="Views\IntelDsgn\Approach.cshtml" />
@@ -480,6 +479,8 @@
     <Content Include="Views\IntelDsgn\Skills.cshtml" />
     <Content Include="Views\Flitter\Flitter.cshtml" />
     <Content Include="Views\Flitter\ToDo.cshtml" />
+    <Content Include="Views\BookXML\ToCXML.cshtml" />
+    <Content Include="Views\BookXML\WriteXML.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

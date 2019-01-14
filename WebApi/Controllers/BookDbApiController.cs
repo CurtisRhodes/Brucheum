@@ -46,21 +46,28 @@ namespace WebApi.Book
                 bookModel.BookTitle = dbBook.BookTitle;
                 bookModel.Introduction = dbBook.Introduction;
                 bookModel.Preface = dbBook.Preface;
-                foreach (BookChapter dbChapter in dbBook.Chapters)
+
+                var bookChapters = dbBook.Chapters.OrderBy(c => c.ChapterOrder).ToList();
+
+                foreach (BookChapter dbChapter in bookChapters)
                 {
                     chapterModel  = new ChapterModel();
                     chapterModel.Id = dbChapter.Id;
                     chapterModel.ChapterTitle = dbChapter.ChapterTitle;
                     chapterModel.ChapterOrder = dbChapter.ChapterOrder;
                     chapterModel.Preface = dbChapter.Preface;
-                    foreach (BookSection dbSection in dbChapter.Sections)
+
+                    var chapterSections = dbChapter.Sections.OrderBy(s => s.SectionOrder).ToList();
+
+                    foreach (BookSection dbSection in chapterSections)
                     {
                         sectionModel = new BookSectionModel();
                         sectionModel.Id = dbSection.Id;
                         sectionModel.SectionTitle = dbSection.SectionTitle;
                         sectionModel.SectionOrder = dbSection.SectionOrder;
-                        sectionModel.SectionContents = dbSection.SectionContents;
-                        foreach (SubSection dbSubSection in dbSection.SubSections)
+                        //sectionModel.SectionContents = dbSection.SectionContents;
+                        var subSections = dbSection.SubSections.OrderBy(ss => ss.SubSectionOrder).ToList();
+                        foreach (SubSection dbSubSection in subSections)
                         {
                             sectionModel.SubSections.Add(new SubSectionModel()
                             {

@@ -39,9 +39,7 @@
                     <input id="txtFontSize" class="roundedInput" />
                 </div>
                 <div class="crudRow">
-                    <div id="skillNarrativeEditor">
-                        <div>@Html.Partial("_Editor") </div>
-                    </div>
+                    <div id="skillNarrativeEditor"></div>
                 </div>
                 <div>
                     <img id="skillAddEditSpinner" class="btnSpinnerImage positionSkillsSpinner" src="~/Images/loader.gif" />
@@ -67,16 +65,10 @@
         $('#skillNarrativeEditor').summernote({
             height: 200,
             width: 400,
-            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
             toolbar: [
                 ['codeview'],
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                //['font', ['strikethrough', 'superscript', 'subscript']],
-                //['fontsize', ['fontname', 'fontsize']],
-                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
-                //['color', ['color']]
-                ['para', ['ul', 'ol', 'paragraph']],
-                //['height', ['height']]
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
             ]
         });
         $('#skillNarrativeEditor').summernote('code', "");

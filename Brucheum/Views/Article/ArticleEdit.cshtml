@@ -40,17 +40,13 @@
                     </div>
                     <div class="editArticleRow">
                         <div class="editArticleLabel">Summary:</div>
-                        <div id="articleSummaryEditor" class="articleSummary">
-                            <div>@Html.Partial("_Editor") </div>
-                        </div>
+                        <div id="articleSummaryEditor"></div>
                     </div>
                     <div style="clear:both"></div>
                 </div>
             </div>
         </div>
-        <div id="articleContentEditor">
-            <div>@Html.Partial("_Editor") </div>
-        </div>
+        <div id="articleContentEditor"></div>
         <div id="divStatusMessage"></div>
         <div class="btnRow">
             <img id="updateArticleSpinner" class="btnSpinnerImage articleSaveSpinner" src="~/Images/loader.gif" />
@@ -79,36 +75,21 @@
         }
         $('#articleSummaryEditor').summernote({
             height: 150,
-            codemirror: {
-                lineWrapping: true,
-                mode: "htmlmixed",
-                theme: "monokai"
-            },
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
             toolbar: [
                 ['codeview'],
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                //['font', ['strikethrough', 'superscript', 'subscript']],
-                //['fontsize', ['fontname', 'fontsize']],
-                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['height', ['height']]
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]]
             ]
         });
         $('#articleContentEditor').summernote({
             height: 400,
-            codemirror: {
-                lineWrapping: true,
-                mode: "htmlmixed",
-                theme: "monokai"
-            },
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
             toolbar: [
                 ['codeview'],
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
                 ['style', ['bold', 'italic', 'underline', 'clear']],
                 ['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontname', 'fontsize']],
                 ['insert', ['picture', 'link', 'video', 'table', 'hr']],
-                ['color', ['color']],
                 ['para', ['ul', 'ol', 'paragraph']],
                 ['height', ['height']]
             ]
