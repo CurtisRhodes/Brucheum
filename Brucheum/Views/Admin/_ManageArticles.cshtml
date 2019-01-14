@@ -30,9 +30,7 @@
                     <div class="crudRowLabel">Category</div>
                     <select id="ddArticleCategory" class="crudDropDown"></select>
                 </div>
-                <div id="atricleEditor" class="editorContainer">
-                    <div>@Html.Partial("_Editor") </div>
-                </div>
+                <div id="atricleEditor"></div>
                 <div>
                     <button id="btnArticleAddEdit" class="roundendButton" onclick="addEditArticle()">Add</button>
                     <button id="btnArticleNew" class="roundendButton" onclick="btnArticleNewToggle()">New</button>
@@ -66,16 +64,10 @@
 
         $('#atricleEditor').summernote({
             height: 455,
-            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
             toolbar: [
                 ['codeview'],
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                //['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontname', 'fontsize']],
-                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
-                ['color', ['color']]
-                ['para', ['ul', 'ol', 'paragraph']],
-                //['height', ['height']]
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
             ]
         });
 

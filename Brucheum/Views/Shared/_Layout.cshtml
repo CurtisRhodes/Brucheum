@@ -13,11 +13,14 @@
     <link href="~/Styles/fixedHeader.css" rel="stylesheet" />
     <link href="~/Styles/footer.css" rel="stylesheet" />
 
+    <link href="~/Styles/editor/bootstrap.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.css" rel="stylesheet">
+    <link href="~/Styles/editor/codeMirror.css" rel="stylesheet" />
+    <link href="~/Styles/editor/cobalt.css" rel="stylesheet" />
+
     <script src="~/Scripts/3rd Party/jquery.min.js"></script>
-    <script src="~/Scripts/3rd Party/Editor/codemirror08.js"></script>
-    <script src="~/Scripts/GlobalFunctions.js"></script>
-    <script src="~/Scripts/ResizeThreeColumnPage.js"></script>
-    <script src="~/Scripts/LayoutHeaders.js"></script>
+    <script src="~/Scripts/3rd Party/Editor/codemirror.js"></script>
+    <script src="~/Scripts/3rd Party/Editor/htmlmixed.js"></script>
 </head>
 <body>
     <div id="loadingGif" style="display:none">
@@ -40,7 +43,7 @@
                 <div id="replaceableMenuItems">
                     <div class="menuTab floatLeft"><a href="~/Article/ArticleList">Latest Articles</a></div>
                     @*<div class="menuTab floatLeft"><a href="~/Article/ArticleList?filterLabel=Political Rants&filterType=Category&filter=POL">Political Rants</a></div>
-                    <div class="menuTab floatLeft"><a href="~/Article/ArticleList?filterLabel=Conspiracy Theories&filterType=Category&filter=CON">Conspiracy Theories</a></div>*@
+                        <div class="menuTab floatLeft"><a href="~/Article/ArticleList?filterLabel=Conspiracy Theories&filterType=Category&filter=CON">Conspiracy Theories</a></div>*@
                     <div class="menuTab floatLeft"><a href="~/BookDb/Index">Books</a></div>
                     <div class="menuTab floatLeft"><a href="~/Home/Apps">Apps</a></div>
                     <div class="menuTab floatLeft"><a href="~/IntelDsgn/Index">Intelligent Design</a></div>
@@ -70,7 +73,7 @@
         <div class="noFloat"></div>
     </div>
     <div class="body-content">
-        
+
         <div id="customMessage" class="centeredDivShell">
             <div class="centeredDivInner">
                 <div class="customMessageTitleBar">
@@ -90,6 +93,16 @@
         <div id="modalContent" class="modalContentStyle"></div>
     </div>
     @RenderSection("scripts", required: false)
+
+    <script src="~/Scripts/3rd Party/Editor/bootstrap.js"></script>
+    <script src="~/Scripts/3rd Party/Editor/summernote.js"></script>
+    <script src="~/Scripts/3rd Party/Editor/xml.js"></script>
+    <script src="~/Scripts/3rd Party/Editor/formatting.js"></script>
+
+    <script src="~/Scripts/GlobalFunctions.js"></script>
+    <script src="~/Scripts/ResizeThreeColumnPage.js"></script>
+    <script src="~/Scripts/LayoutHeaders.js"></script>
+
     <script>resizePage();</script>
 </body>
 </html>

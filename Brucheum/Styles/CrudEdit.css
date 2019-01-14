@@ -1,4 +1,16 @@
 ﻿
+
+/*Find all "CrudEdit.css", Subfolders, Find Results 1, Current Project: Brucheum\Brucheum.csproj, ""
+F:\Devl\Brucheum\Views\Admin\AdminIndex.cshtml(4):<link href="~/Styles/crudEdit.css" rel="stylesheet" / >
+F:\Devl\Brucheum\Views\BookDb\Edit.cshtml(1):<link href="~/Styles/crudEdit.css" rel="stylesheet" / >
+F:\Devl\Brucheum\Views\BookDb\Write.cshtml(5):<link href="~/Styles/crudEdit.css" rel="stylesheet" / >
+F:\Devl\Brucheum\Views\Flitter\ToDo.cshtml(8):<link href="~/Styles/CrudEdit.css" rel="stylesheet" / >
+F:\Devl\Brucheum\Views\GetaJob\GetaJobAdmin.cshtml(4):<link href="~/Styles/crudEdit.css" rel="stylesheet" / >
+F:\Devl\Brucheum\Views\GetaJob\Index.cshtml(5):<link href="~/Styles/crudEdit.css" rel="stylesheet" / >
+F:\Devl\Brucheum\Views\IntelDsgn\Blog.cshtml(6):<link href="~/Styles/CrudEdit.css" rel="stylesheet" / >
+F:\Devl\Brucheum\Views\Resume\ResumeAdmin.cshtml(6):<link href="~/Styles/crudEdit.css" rel="stylesheet" / >
+Matching lines: 8 Matching files: 8 Total files searched: 158*/
+
 .crudContainer {
     font-size: 14px;
     display: inline-block;
@@ -65,9 +77,9 @@
 .adminOption {
     display: none;
 }
-#leftColumn {
+/*#leftColumn {
     border-right: solid 1px orange;
-}
+}*/
 
 .adminInput {
     /*float: left;

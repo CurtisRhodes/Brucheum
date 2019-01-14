@@ -33,7 +33,7 @@ namespace Brucheum.Controllers
             return View();
         }
 
-        public ActionResult Edit(int book)
+        public ActionResult Edit(int? book)
         {
             ViewBag.Service = apiService;
             ViewBag.BookId = book;

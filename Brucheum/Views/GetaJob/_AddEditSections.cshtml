@@ -11,9 +11,7 @@
                     <div class="crudRowLabel">Section Title</div>
                     <input id="txtSectionTitle" class="roundedInput" />
                 </div>
-                <div id="resumeSectionEditor" class="editorContainer">
-                    @Html.Partial("_Editor")
-                </div>
+                <div id="resumeSectionEditor"></div>
                 <div>
                     <button id="btnSectionAddEdit" class="roundendButton" onclick="addEditSection()">Save</button>
                     <button id="btnSectionNew" class="roundendButton" onclick="btnSectionNewToggle()">New</button>
@@ -36,25 +34,16 @@
     var sectionModel = new Object;
 
     $(document).ready(function () {
+
         $('#resumeSectionEditor').summernote({
             height: 428,
             lineWrapping: true,
             width: 500,
-            codemirror: {
-                lineWrapping: true,
-                mode: "htmlmixed",
-                theme: "monokai"
-            },
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
             toolbar: [
                 ['codeview'],
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                //['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontname', 'fontsize']],
-                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
-                ['color', ['color']]
-                //['para', ['ul', 'ol', 'paragraph']],
-                //['height', ['height']]
-            ]
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
+            ],
         });
     });
 

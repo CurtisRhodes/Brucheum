@@ -44,16 +44,12 @@
                     <div>
                         <div class="crudRowLabel">Preface</div>
                     </div>
-                    <div id="prefaceEditor" class="editorContainer">
-                        @Html.Partial("_Editor")
-                    </div>
+                    <div id="prefaceEditor" class="editorContainer"></div>
                     <div>
                         <div>
                             <div class="crudRowLabel">Introduction</div>
                         </div>
-                        <div id="introEditor" class="editorContainer">
-                            @Html.Partial("_Editor")
-                        </div>
+                        <div id="introEditor" class="editorContainer"></div>
                         <div>
                             <button id="btnBookUpdate" class="roundendButton" onclick="updateBook()">Update</button>
                         </div>
@@ -73,9 +69,7 @@
                     <div>
                         <div class="crudRowLabel">Chapter Preface</div>
                     </div>
-                    <div id="chapterPrefaceEditor" class="editorContainer">
-                        @Html.Partial("_Editor")
-                    </div>
+                    <div id="chapterPrefaceEditor" class="editorContainer"></div>
                     <div>
                         <button id="btnAddUpdate" class="roundendButton" onclick="mediateAddUpdateBtn()">Add</button>
                         <button id="btnNewCancel" class="roundendButton" onclick="mediateNewCancelbtn()">Cancel</button>
@@ -98,6 +92,9 @@
     var chapterModel = {};
 
     $(document).ready(function () {
+        if (isNullorUndefined(bookId)) {
+            window.location.href = "/BookDb"
+        }
         setUpSummerNoteEditors();
         getdbBook();
         getChapters();
@@ -108,44 +105,26 @@
     function setUpSummerNoteEditors() {
         $('#prefaceEditor').summernote({
             height: 200,
-            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
             toolbar: [
                 ['codeview'],
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                //['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontname', 'fontsize']],
-                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
-                ['color', ['color']]
-                //['para', ['ul', 'ol', 'paragraph']],
-                //['height', ['height']]
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
             ]
         });
         $('#introEditor').summernote({
             height: 200,
-            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
             toolbar: [
                 ['codeview'],
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                //['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontname', 'fontsize']],
-                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
-                ['color', ['color']]
-                //['para', ['ul', 'ol', 'paragraph']],
-                //['height', ['height']]
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
             ]
         });
         $('#chapterPrefaceEditor').summernote({
             height: 150,
-            codemirror: { mode: "htmlmixed", theme: "monokai" },
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
             toolbar: [
                 ['codeview'],
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                //['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontname', 'fontsize']],
-                //['insert', ['picture', 'link', 'video', 'table', 'hr']],
-                ['color', ['color']]
-                //['para', ['ul', 'ol', 'paragraph']],
-                //['height', ['height']]
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
             ]
         });
     }
