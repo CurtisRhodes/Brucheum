@@ -1,0 +1,72 @@
+﻿.standardHeader {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #74bac3;
+    border-top: #40767d 3px solid;
+    border-bottom: #decd6f 3px solid;
+    display: flex;
+    z-index: 1000;
+}
+.modalContentStyle {
+    z-index: 15;
+}
+
+.bannerImageContainer {
+    float: left;
+    padding-top: 2px;
+    padding-left: 2px;
+}
+.bannerImage {
+    height: 80px;
+    cursor: pointer;
+}
+.headerBodyContainer {
+    float: left;
+    width: 100%;
+    /*
+    */
+}
+
+.headerTitle {
+    display: inline-block;
+    color: #490157;
+    padding-left: 26px;
+    padding-top: 8px;
+    font-family: 'Lucida Calligraphy';
+    font-size: 33px;
+    margin-right: 133px;
+}
+
+.headerSubTitle {
+    display: inline-block;
+    font-family: Comic Sans MS;
+    color: #d22ef2;
+    vertical-align: top;
+    margin-top: 7px;
+    font-size: 22px;
+}
+
+.menuTabContainer {
+    margin-left: 71px;
+    padding-left: 24px;
+}
+.menuTab {
+    font-size: 14px;
+    margin-top: 9px;
+    margin-right: 12px;
+}
+    .menuTab a {
+        text-decoration: none;
+        cursor: pointer;
+        color: #490157;
+        padding: 5px 5px;
+        border-radius: 1px;
+        /*
+            margin-bottom: 6px;
+        */
+    }
+        .menuTab a:hover {
+            text-decoration: underline;
+            background-color: #fef;
+        }

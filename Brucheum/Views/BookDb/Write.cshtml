@@ -346,6 +346,7 @@
                     if (chapter.success == "ok") {
                         $('#crudTopBorderHeader').html("Chapter " + chapter.ChapterOrder + ".    " + chapter.ChapterTitle);
                         chapterModel.Id = chapterId;
+
                         $('#txtChapterOrder').val(chapter.ChapterOrder)
                         $('#txtChapterTitle').val(chapter.ChapterTitle)
                         $('#sectionEditor').summernote('code', chapter.Preface);
@@ -356,6 +357,7 @@
                         $('.allBookButtons').hide();
                         $('#btnAddUpdateChapter').html("Update").show();
                         $('#btnNewChapter').show();
+                        sectionModel.ChapterId = chapterId;
                         $('#btnNewSection').show();
                     }
                     else
@@ -438,7 +440,6 @@
     }
 
     function loadSectionDetails(chapterId, sectionId) {
-        //alert("loadSectionDetails :" + sectionId);
         try {
             $.ajax({
                 type: "PATCH",
@@ -446,8 +447,9 @@
                 success: function (section) {
 
                     $('#crudTopBorderHeader').html("Chapter " + section.ChapterOrder + ".    " + section.ChapterTitle);
-
                     sectionModel.Id = sectionId;
+                    sectionModel.ChapterId = chapterId;
+                    //alert("loadSectionDetails chapterId:" + sectionModel.ChapterId);
                     $('#txtSectionTitle').val(section.SectionTitle);
                     $('#txtSectionOrder').val(section.SectionOrder);
                     $('#sectionEditor').summernote('code', section.SectionContents);
@@ -526,6 +528,8 @@
     function toggleNewSection() {
         $('.allBookButtons').hide();
         $('#btnAddUpdateSection').html("Add").show();
+        $('.writeRow').hide();
+        $('#sectionRow').show();
         // clear gets
         sectionModel.Id = null;
         $('#sectionEditor').summernote('code', "");

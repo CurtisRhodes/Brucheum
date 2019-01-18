@@ -1,24 +1,36 @@
 ﻿
 <style>
-    middleColumn {
-        box-sizing: border-box;
+    .threeColumnArray {
+        background-color: #fef; /*#b081b1*/
+        margin-top: 90px;
     }
-    #imageContainer {
+
+    .centeredDivShell {
+        position: absolute;
+        left: 50%;
+    }
+    .centeredDivInner {
+        position: relative;
+        left: -50%;
+        min-height: 200px;
+        cursor: pointer;
+    }
+
+    .slideShowContainer {
+        background-image: linear-gradient(#b190b6, #b84cc8);
+        clear: both;
         border: solid thin black;
-        display: flex;
         margin-bottom: 4px;
         text-align: center;
     }
-    #imageContainer div{
-        float: left;
+
+    .leftRightImage {
+        position: absolute;
     }
-    #mainImage {
-        cursor: pointer; 
-    }
-    #nextImage img, #prevImage img {
+    .leftRightImage img {
         width: 200px;
         height: 200px;
-        opacity: 0.25;
+        opacity: 0.5;
         border: solid thin black;
         cursor: pointer;
     }
@@ -70,11 +82,18 @@
     <div id="leftColumn"></div>
     <div id="middleColumn">
         <div id="divBreadCrumbs"></div>
-        <div id="imageContainer">
-            <div id="prevImage"></div>
-            <div id="mainImage"></div>
-            <div id="nextImage"></div>
+       
+        <div id="imageContainer" class="slideShowContainer">
+            <div id="prevImage" class="leftRightImage"></div>
+            <div class="centeredDivShell">
+                <div id="centeredContainer" class="centeredDivInner">
+                    <div id="mainImage"></div>
+                </div>
+            </div>
+            <div id="nextImage" class="leftRightImage"></div>
         </div>
+
+
         <div style="clear:both"></div>
         <div id="tabStrip">
             <div id="tabStripLeftArrow"><img src="~/Images/leftArrow.png" /></div>
@@ -84,7 +103,7 @@
         <div style="clear:both"></div>
     </div>
     <div id="rightColumn"></div>
-</div>
+</div>        
 
 <script>
     var service = '@ViewBag.Service';
@@ -99,24 +118,19 @@
     $(document).ready(function () {
         showBreadCrumbs(folder);
         GetTabStripImageArray();
-    });
-
-    $(window).resize(function () {
-        // set heigth of main image
-        var mHeight = $('#middleColumn').height() - 180;
-        $('#nextImage').css("margin-top", (mHeight - 200) / 2);
-        $('#mainImage img').height(mHeight);
-        $('#prevImage').css("margin-top", (mHeight - 200) / 2);
-        // ceter in imageContainer
-        var icw = ($('#imageContainer').width() / 2) - ($('#mainImage').width() / 2);
-        $('#imageContainer').css("padding-left", icw);
-        // set width of tabstrip
-        $('#tabStrip').width($('#middleColumn').width());
+        $('#slideShowLink').hide();
 
         // tab images = 104
         imageTabMax = Math.floor($('#tabStrip').width() / 104);
         //alert("imageTabMax: " + imageTabMax);
         //alert("$(window).resize")
+    });
+
+    $(window).resize(function () {
+        // set heigth of main image
+        var mHeight = $('#middleColumn').height() - 180;
+        $('#imageContainer').height(mHeight);
+        $('#mainImage img').height(mHeight);
     });
 
     function ShowImage(currentImageIndex) {
@@ -128,6 +142,15 @@
         else 
             alert("currentImageIndex: " + currentImageIndex + "  < imageArray.length: " + imageArray.length);
         $(window).resize();
+
+        setTimeout(function () {
+            var mHeight = $('#centeredContainer').height();
+            $('.leftRightImage').css("top", (mHeight / 2));
+            var mWidth = $('#centeredContainer').width();
+            var centeredLeft = $('.centeredDivShell').position().left + $('#centeredContainer').position().left;
+            $('#prevImage').css("left", centeredLeft - 200);
+            $('#nextImage').css("left", centeredLeft + mWidth);
+        }, 200);
     }
 
     function ScrollTabStrip(direction) {

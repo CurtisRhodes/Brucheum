@@ -73,7 +73,8 @@
     var curIndex = 0;
 
     $(document).ready(function () {
-        LoadPicArray();
+        var imageFolder = "https://api.curtisrhodes.com/app_data/Danni/Boobs/transitions";
+        LoadPicArray(imageFolder);
     });
     
     $('#floatingMessage').click(function () {
@@ -92,27 +93,26 @@
         mode = (mode === "play") ? "skip" : "play";
     } 
     ///  11:11 11:11
-    function LoadPicArray() {
-
+    // 1/14/19
+    function LoadPicArray(folder) {
         //alert("service: " + service);
-        try {
 
-        $.ajax({
-            type: "get",
-            url: service + "/api/transtion/LoadPicArray",
-            datatype: "json",
-            success: function (data) {
-                picArray = data;
-                alert("picArray: " + picArray);
-                $('#imgNakedGirl').attr("src", service + "/App_Data/Danni/boobs/transitions/" + picArray[0]);
-                pic2 = service + "/App_Data/Danni/boobs/transitions/" + picArray[1];
-                $('#floatingMessage').css("left", ($('#imageContainer').width() / 2));
-            },
-            error: function (e, xhr, opt) {
-                //alert("LoadPicArray opt.url : " + opt.url + " xhr.status: " + xhr.status + " xhr.statusText: " + xhr.statusText + "  e:" + e.Message);
-                alert("LoadPicArray ajax error :" + xhr.statusText);
-            }
-        });
+        try {
+            $.ajax({
+                type: "get",
+                url: service + "api/Transition/LoadImages", //?imageFolder=" + folder,
+                //datatype: "json",
+                success: function (data) {
+                    picArray = data;
+                    //alert("picArray: " + picArray);
+                    $('#imgNakedGirl').attr("src", service + "/App_Data/Danni/boobs/transitions/" + picArray[0]);
+                    pic2 = service + "/App_Data/Danni/boobs/transitions/" + picArray[1];
+                    $('#floatingMessage').css("left", ($('#imageContainer').width() / 2));
+                },
+                error: function (jqXHR, exception) {
+                    alert("LoadPicArray  XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
         } catch (e) {
             alert("LoadPicArray CATCH :" + e.Message);
         }

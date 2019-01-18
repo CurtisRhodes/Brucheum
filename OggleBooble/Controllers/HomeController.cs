@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Web.Mvc;
 
 namespace OggleBooble
@@ -33,12 +36,12 @@ namespace OggleBooble
         {
             if (folder == null)
                 return View("Index");
+            ViewBag.Title = "Slideshow"; // folder.Substring(folder.LastIndexOf("/") + 1);
             ViewBag.Service = apiService;
             ViewBag.Folder = folder;
             ViewBag.StartFile = startFile;
             return View();
         }
-
         public ActionResult Transitions()
         {
             ViewBag.Service = apiService;
@@ -49,7 +52,11 @@ namespace OggleBooble
             ViewBag.Service = apiService;
             return View();
         }
-
+        public ActionResult Videos()
+        {
+            ViewBag.Service = apiService;
+            return View();
+        }
     }
     public class ErrorController : Controller
     {
