@@ -7,18 +7,146 @@ using System.Net.Http;
 using System.Text;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using WebApi.Directory.Models;
 using WebApi.OggleBooble.DataContext;
 
 namespace WebApi.OggleBooble
 {
+
+    [EnableCors("*", "*", "*")]
+    public class FilesController : ApiController
+    {
+        [HttpGet]
+        public List<FileModel> GetFiles(string folderPath)
+        {
+            string fullFolderPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/" + folderPath);
+            FileInfo[] files = new DirectoryInfo(fullFolderPath).GetFiles();
+            List<FileModel> images = new List<FileModel>();
+            foreach (FileInfo img in files)
+            {
+                if (img.Extension != ".db")
+                {
+                    images.Add(new FileModel()
+                    {
+                        FileName = img.Name,
+                        Length = img.Length,
+                        Created = img.CreationTime,
+                        Extension = img.Extension,
+                        FullName = img.FullName
+                    });
+                }
+            }
+            return images;
+        }
+    }
+
     [EnableCors("*", "*", "*")]
     public class DirectoryController : ApiController
     {
         bool cancel = false;
         int imagesPerPage = 30;
 
+        private string GetFirstImage(DirectoryInfo dir)
+        {
+            string firstImage = string.Empty;
+            foreach (FileInfo file in dir.GetFiles())
+            {
+                if (file.Extension != ".db")
+                {
+                    firstImage = file.Name;
+                    break;
+                }
+            }
+            if (firstImage == string.Empty)
+            {
+                foreach (DirectoryInfo subDirectory in dir.GetDirectories())
+                {
+                    if (firstImage != string.Empty) break;
+                    foreach (FileInfo file in subDirectory.GetFiles())
+                    {
+                        if (file.Extension != ".db")
+                        {
+                            firstImage = subDirectory.Name + "/" + file.Name;
+                            break;
+                        }
+                    }
+                    if (firstImage == string.Empty)
+                    {
+                        var dirRoot = subDirectory.Name + "/";
+                        foreach (DirectoryInfo subSubDirectory in subDirectory.GetDirectories())
+                        {
+                            if (firstImage != string.Empty) break;
+                            foreach (FileInfo file in subSubDirectory.GetFiles())
+                            {
+                                if (file.Extension != ".db")
+                                {
+                                    firstImage = dirRoot + subSubDirectory.Name + "/" + file.Name;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (firstImage == string.Empty)
+            {
+                GetFirstImageRecurr(dir);
+            }
+            return firstImage;
+        }
+
+        private string GetFirstImageRecurr(DirectoryInfo dir)
+        {
+            string firstImage = string.Empty;
+
+            return firstImage;
+        }
+
+
+
+
         [HttpGet]
-        public string Get()
+        public List<FolderModel> GetSubdirectories(string parentFolder)
+        {
+            List<FolderModel> subDirectories = new List<FolderModel>();
+            string fullFolderPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/" + parentFolder);
+            DirectoryInfo[] directories = new DirectoryInfo(fullFolderPath).GetDirectories();
+            foreach (DirectoryInfo dir in directories)
+            { 
+                var danniPath = "";
+                var pparent = dir.Parent;
+                while (pparent.Name != "Danni")
+                {
+                    danniPath = pparent.Name + "/" + danniPath;
+                    pparent = pparent.Parent;
+                }
+                danniPath += dir.Name;
+
+                subDirectories.Add(new FolderModel()
+                {
+                    DirectoryName = dir.Name,
+                    Created = dir.CreationTime,
+                    DanniPath = danniPath,
+                    Path = dir.FullName,
+                    Parent = dir.Parent.Name,
+                    FirstImage = GetFirstImage(dir)
+                });
+            }
+            return subDirectories;
+        }
+
+        //public double ImageCount(string folder)
+        //{
+        //    string danni = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/" + folder);
+        //    double len = Math.Floor((double)(new DirectoryInfo(danni).GetFiles().Length / imagesPerPage));
+        //    return len;
+        //}
+
+
+
+
+        [HttpPost]
+        public string WriteFileList()
         {
             string success = "ono";
             cancel = false;
@@ -99,7 +227,6 @@ namespace WebApi.OggleBooble
             }
             db.SaveChanges();
         }
-
 
         private string GetSubDirs(DirectoryInfo childDir, string folder, string thisService)
         {
@@ -221,10 +348,10 @@ namespace WebApi.OggleBooble
                     {
                         if ((childDir.GetFiles().Length > 0) && (childDir.GetFiles("*.jpg").Length > 0))
                         {
-                            var defaultImage = thisService + "/App_Data/Danni/" + folder + "/" + childDir.Name + "/" + childDir.GetFiles("*.jpg")[0].Name;
-                            sb.Append("<div class='divImage'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name +
-                                "'><img class='thumbImage' src='" + defaultImage + "' alt='check out " + childDir.Name +
-                                " gallery' /></a><div class='galleryLabel'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name + "'>" + childDir.Name + "</a></div></div>");
+                            //var defaultImage = thisService + "/App_Data/Danni/" + folder + "/" + childDir.Name + "/" + childDir.GetFiles("*.jpg")[0].Name;
+                            //sb.Append("<div class='divImage'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name +
+                            //    "'><img class='thumbImage' src='" + defaultImage + "' alt='check out " + childDir.Name +
+                            //    " gallery' /></a><div class='galleryLabel'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name + "'>" + childDir.Name + "</a></div></div>");
                         }
                     }
 
@@ -262,14 +389,6 @@ namespace WebApi.OggleBooble
         }
 
         [HttpGet]
-        public double ImageCount(string folder)
-        {
-            string danni = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/" + folder);
-            double len = Math.Floor((double)(new DirectoryInfo(danni).GetFiles().Length / imagesPerPage));
-            return len;
-        }
-
-        [HttpGet]
         public string[] TabStrip(string folder, string thisService, string startImage)
         {
             var images = new List<string>();
@@ -294,12 +413,6 @@ namespace WebApi.OggleBooble
             return images.ToArray();
         }
 
-
-        // POST: api/Directory
-        public void Post([FromBody]string value)
-        {
-        }
-
         // PUT: api/Directory/5
         public void Put(int id, [FromBody]string value)
         {
@@ -312,7 +425,7 @@ namespace WebApi.OggleBooble
     }
 
     [EnableCors("*", "*", "*")]
-    public class TranstionController : ApiController
+    public class TransitionController : ApiController
     {
         [HttpGet]
         public string[] LoadPicArray()

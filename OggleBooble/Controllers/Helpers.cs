@@ -9,7 +9,7 @@ using System.Web;
 
 namespace OggleBooble
 {
-    public class HitCounter
+    public class Helpers
     {
         public static string SessionStartHit()
         {
@@ -17,21 +17,23 @@ namespace OggleBooble
             try
             {
                 string ipAddress = GetIPAddress();
-                string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
-                using (HttpClient client = new HttpClient())
+                if (ipAddress != "68.203.92.166")  // my development machine
                 {
-                    HttpResponseMessage response = client.GetAsync(apiService + "/api/HitCounter/Verify?ipAddress=" + ipAddress + "&app=Brucheum").Result;
-                    string exists = response.Content.ReadAsStringAsync().Result;
-                    if (exists == "false")
+                    string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
+                    using (HttpClient client = new HttpClient())
                     {
-                        // WE HAVE A NEW VISITOR
-                        response = client.GetAsync(apiService + "/api/HitCounter/AddVisitor?ipAddress=" + ipAddress + "&app=Brucheum&userId=duh").Result;
-                        success = response.Content.ReadAsStringAsync().Result;
-                        if (success.StartsWith("ERROR"))
+                        HttpResponseMessage response = client.GetAsync(apiService + "/api/HitCounter/Verify?ipAddress=" + ipAddress + "&app=Brucheum").Result;
+                        string exists = response.Content.ReadAsStringAsync().Result;
+                        if (exists == "false")
                         {
-                            Console.Write(success);
+                            // WE HAVE A NEW VISITOR
+                            response = client.GetAsync(apiService + "/api/HitCounter/AddVisitor?ipAddress=" + ipAddress + "&app=Brucheum&userId=duh").Result;
+                            success = response.Content.ReadAsStringAsync().Result;
+                            if (success.StartsWith("ERROR"))
+                            {
+                                Console.Write(success);
+                            }
                         }
-
                     }
                 }
             }
@@ -39,19 +41,16 @@ namespace OggleBooble
             {
                 success = ex.Message;
             }
-
-
             return success;
-
         }
 
         public static void PageHit(string page, string details)
         {
-            string ipAddress = GetIPAddress();
-            //if (ipAddress != "68.203.92.166")
-            { // my development machine
-                if (IsBeingLogged(page))
-                {
+            if (IsBeingLogged(page))
+            {
+                string ipAddress = GetIPAddress();
+                if (ipAddress != "68.203.92.166")  // my development machine
+                { 
                     using (HttpClient client = new HttpClient())
                     {
                         try
@@ -99,7 +98,7 @@ namespace OggleBooble
             return allow;
         }
 
-        private static string GetIPAddress()
+        public static string GetIPAddress()
         {
             String address = "";
             WebRequest request = WebRequest.Create("http://checkip.dyndns.org/");
@@ -117,5 +116,16 @@ namespace OggleBooble
             }
         }
 
+        public static string ErrorDetails(Exception ex)
+        {
+            var exceptionType = ex.GetBaseException();
+            string msg = "ERROR: " + ex.Message;
+            while (ex.InnerException != null)
+            {
+                ex = ex.InnerException;
+                msg = ex.Message;
+            }
+            return msg;
+        }
     }
 }

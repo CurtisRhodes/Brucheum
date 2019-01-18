@@ -1,6 +1,11 @@
 ﻿
 <style>
-    #imageContainer {
+    .threeColumnArray {
+        background-color: #fef; /*#b081b1*/
+        margin-top: 90px;
+    }
+    .flexWrapContainer {
+        background-image: linear-gradient(#b190b6, #b84cc8);
         border: solid thin black;
         min-height: 200px;
         display: flex;
@@ -9,14 +14,28 @@
     }
     .thumbImage {
         height: 200px;
-        padding: 2px;
+        cursor: pointer;
+        margin-bottom: -3px;
+        width: 100%;
     }
 
-    #pageContainer {
-        display: flex;
-        padding-top: 3px;
+    .postage {
+        margin: 2px;
     }
-
+    .folderFirsty {
+        border: solid 4px #ff00dc;
+        margin: 4px;
+        height: 222px;
+    }
+    :after {
+        border: solid 1px #ff00dc;
+        margin: 2px;
+    }
+    .fname {
+        background-color: #ff00dc;
+        text-align: center;
+        font-family: 'Comic Sans MS';
+    }
     .divPage {
         float: left;
         padding: 3px;
@@ -31,9 +50,8 @@
     <div id="leftColumn"></div>
     <div id="middleColumn">
         <div id="divBreadCrumbs"></div>
-        <div id="imageContainer"></div>
-        <div style="clear:both"></div>
-        <div id="pageContainer"></div>
+        <div id="divBigImage" class="bigImage"></div>
+        <div id="imageContainer" class="flexWrapContainer" ></div>
     </div>
     <div id="rightColumn"></div>
 </div>
@@ -43,11 +61,16 @@
     var service = '@ViewBag.Service';
     var folder = '@ViewBag.Folder';
     var page = 0;
-
+    var mySubDirs = new Array();
+    var thumbImageHeight = 200;
+    
     $(document).ready(function () {
         $('#divGalleryName').html(folder.substr(folder.lastIndexOf("/") + 1));
 
         showBreadCrumbs(folder);
+
+        $('.thumbImage').css("height", thumbImageHeight + "px");
+
 
         // set width
         $('#imageContainer').width($('#middleColumn').width());
@@ -56,9 +79,14 @@
         $('#imageContainer').height($('#middleColumn').height() - 115);
         $('#imageContainer').css("min-height", $('#middleColumn').height() - 115);
 
-        SetPageTabs();
+        //SetPageTabs();
 
-        GetImages();
+        getImages(folder);
+
+        //var folderContainsSubDirectories = checkForSubDirectories(folder);
+
+
+
     });
 
     $(window).resize(function () {
@@ -66,19 +94,100 @@
         $('#imageContainer').height($('#middleColumn').height() - 115);
     });
 
-    function GetImages() {
+    function getImages(folder) {
+
+        //var maxRowWidth = $('#imageContainer').width();
+        //var rowColumns = Math.floor($('#imageContainer').height() / thumbImageHeight);
+        //var rowWidth = 0;
+        //var rowColumn = 1;
+        var danniPath = service + "app_data/danni/";
+
+
+
+        $('#imageContainer').html('');
         $.ajax({
-            type: "get",
-            url: service + "/api/directory/ImagePage?folder=" + folder + "&thisService=" + service + "&page=" + page,
-            datatype: "json",
-            success: function (data) {
-                $('#imageContainer').html(data);
+            type: "GET",
+            url: service + "/api/Directory/GetSubdirectories?parentFolder=" + folder,
+            success: function (subDirectories) {
+
+                $.each(subDirectories, function (idx, obj) {
+                    $('#imageContainer').append("<div path='" + obj.DanniPath + "' class='folderFirsty'><img class='thumbImage' src='" +
+                        danniPath + obj.DanniPath + "/" + obj.FirstImage + "'/><div class='fname'>" + obj.DirectoryName + "</div></div>");
+                })
+                $('.folderFirsty').click(function () {
+                    //alert("folder: " + $(this).attr("id"))
+                    window.location.href = "imagePage?folder=" + $(this).attr("path");
+                })
+
+                $.ajax({
+                    type: "GET",
+                    url: service + "/api/Files/GetFiles?folderPath=" + folder,
+                    success: function (images) {
+                        if (images.length > 0) {
+                            $('#slideShowLink').show();
+
+
+                            $.each(images, function (idx, obj) {
+                                $('#imageContainer').append("<div class='postage'><img class='thumbImage blowup' src='" + danniPath + folder + "/" + obj.FileName + "'/></div>");
+                            })
+                            $('.blowup').click(function () {
+                                //alert("src: " + $(this).attr("src"))
+                                window.open($(this).attr("src"), "_blank");
+                            })
+
+                        }
+                        else {
+                            //alert("no images");
+                            $('#slideShowLink').hide();
+                        }
+                    },
+                    error: function (xhr) {
+                        alert("GetFiles error: " + xhr.statusText);
+                    }
+                });
             },
             error: function (xhr) {
-                alert("GetGalleryPage error: " + xhr.statusText);
+                alert("GetSubdirectories error: " + xhr.statusText);
             }
         });
     }
+  //  <img class="thumbImage" src="htts://api.curtisrhodes.com/App_Data/Danni/boobs/flavors/knockers/918_1000[1].jpg" <= "" a = "" >
+
+
+
+    //var sb = new StringBuilder();
+    //            if ((childDir.GetFiles().Length > 0) && (childDir.GetFiles("*.jpg").Length > 0)) {
+    //                //var defaultImage = thisService + "/App_Data/Danni/" + folder + "/" + childDir.Name + "/" + childDir.GetFiles("*.jpg")[0].Name;
+    //                //sb.Append("<div class='divImage'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name +
+    //                //    "'><img class='thumbImage' src='" + defaultImage + "' alt='check out " + childDir.Name +
+    //                //    " gallery' /></a><div class='galleryLabel'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name + "'>" + childDir.Name + "</a></div></div>");
+    //            }
+    //    }
+    //    FileInfo[] files = di.GetFiles();
+    //    int max = files.Length;
+    //    foreach(FileInfo file in files)
+    //    {
+    //        count++;
+    //        if (count > start) {
+    //            imageFile = thisService + "/App_Data/Danni/" + folder + "/" + file.Name;
+    //            sb.Append("<div class='divImage'><a href='/Home/Viewer?folder=" + folder + "&startFile=" + file.Name +
+    //                "'><img class='thumbImage' src='" + imageFile + "'</a></div>");
+    //        }
+    //        if (count >= (start + imagesPerPage)) {
+    //            break;
+    //        }
+    //    }
+    //}
+
+    //public class FolderModel {
+    //    public string DirectoryName { get; set; }
+    //    public DateTime Created { get; set; }
+    //    public long Length { get; set; }
+    //    public string Path { get; set; }
+    //    public string Parent { get; set; }
+    //    public string FirstImage { get; set; }
+    //}
+
 
     function SetPageTabs() {
         var pgKnt;
