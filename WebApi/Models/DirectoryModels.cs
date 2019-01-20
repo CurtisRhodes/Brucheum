@@ -15,6 +15,11 @@ namespace WebApi.Directory.Models
     }
     public class FolderModel
     {
+        public FolderModel() {
+            Files = new List<FileModel>();
+            SubDirs = new List<FolderModel>();
+        }
+        public string Id { get; set; }
         public string DirectoryName { get; set; }
         public DateTime Created { get; set; }
         public long Length { get; set; }
@@ -22,5 +27,7 @@ namespace WebApi.Directory.Models
         public string DanniPath { get; set; }
         public string Parent { get; set; }
         public string FirstImage { get; set; }
+        public List<FileModel> Files { get; set; }
+        public List<FolderModel> SubDirs { get; set; }
     }
 }

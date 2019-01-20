@@ -279,7 +279,6 @@
     <Content Include="Styles\footer.css" />
     <Content Include="Styles\header.css" />
     <Content Include="Styles\modalDialog.css" />
-    <Content Include="Styles\threeColumnPage.css" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

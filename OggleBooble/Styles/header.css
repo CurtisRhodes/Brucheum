@@ -5,15 +5,16 @@
 }
 
 #bheader {
+    position: fixed;
+    display: block;
     box-sizing: border-box;
     font-family: Arial;
-    position: fixed;
     top: 0;
     width: 100%;
     padding: 4px;
     background-color: #fef;
     border-top: #40767d 3px solid;
-    border-bottom: #decd6f 3px solid
+    /*border-bottom: #decd6f 3px solid;*/
 }
     #bheader #tdBannerTitle {
         font-family: 'Comic Sans MS';  /*'Lucida Calligraphy';*/

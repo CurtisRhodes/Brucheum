@@ -12,6 +12,12 @@ $('#middleColumn').resize(function () {
 });
 
 function resizePage(debug) {
+
+    $('.RenderBody').css("margin-top", $('#bheader').height());
+    //$('#footerMessage').html("resizePage  $('#bheader').height(): " + $('#bheader').height() + "  " + $('.RenderBody').css("margin-top"));
+
+
+
 	var winW = $(window).width();
 	var lcW = $('#leftColumn').width();
 	var rcW = $('#rightColumn').width();

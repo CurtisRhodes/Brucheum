@@ -21,96 +21,48 @@
         width: 208px;
     }
 </style>
+
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
         <h2>Videos</h2>
-        <div class="videoContainer">
-            <div>
-                <a href="https://www.pornhub.com/view_video.php?viewkey=ph5b5b31013e678" target="_blank">
-                    <img src="https://api.curtisrhodes.com/app_data/links/images/aaRiver.png" />
-                    <br /><div class="vlinkLabel">Amature Alure</div>
-                </a>
-            </div>
-            <div>
-                <a href="https://xhamster.com/videos/blowjobs-deluxe-13-2022228" target="_blank">
-                    <img src="https://api.curtisrhodes.com/app_data/links/images/bjDelux1305.png" />
-                    <br /><div class="vlinkLabel">Blowjobs Deluxe</div>
-                </a>
-            </div>
-            <div>
-                <a href="https://xhamster.com/videos/busty-blonde-cock-sucker-1159592" target="_blank">
-                    <img src="https://api.curtisrhodes.com/app_data/links/images/bbc03.png" />
-                    <br /><div class="vlinkLabel">Busty Blonde Cocksucker</div>
-                </a>
-            </div>
-
-            <div>
-                <a href="https://xhamster.com/videos/busty-and-beautiful-anal-fucked-gf-731803" target="_blank">
-                    <img src="https://api.curtisrhodes.com/app_data/links/images/bustybj04.png" />
-                    <br /><div class="vlinkLabel">Big Titted Cocksucker</div>
-                </a>
-            </div>
-            <div>
-                <a href="https://xhamster.com/videos/babe-head-96-secretary-sensual-seduction-3758728" target="_blank">
-                    <img src="https://api.curtisrhodes.com/app_data/links/images/Secretary9601.png" />
-                    <br /><div class="vlinkLabel">Alltime Greatest</div>
-                </a>
-            </div>
-            <div>
-                <a href="https://xhamster.com/videos/santas-horny-helper-sucks-cock-and-plays-jingle-balls-8714133" target="_blank">
-                    <img src="https://api.curtisrhodes.com/app_data/links/images/slowDeepSanta01.png" />
-                    <br /><div class="vlinkLabel">Slow and Deep</div>
-                </a>
-            </div>
-            <div>
-                <a href="https://xhamster.com/videos/goth-college-girl-gives-a-blowjob-888424" target="_blank">
-                    <img src="https://api.curtisrhodes.com/app_data/links/images/dagfs01.png" />
-                    <br /><div class="vlinkLabel">Floppy Tits Blowjob</div>
-                </a>
-            </div>
-            <div>
-                <a href="https://xhamster.com/videos/fuck-doll-part-1-by-amedee-vause-5243484" target="_blank">
-                    <img src="https://api.curtisrhodes.com/app_data/links/images/AmedeeVause01.png" />
-                    <br /><div class="vlinkLabel">Amedee Vause</div>
-                </a>
-            </div>
-            <div>
-                <a href="https://xhamster.com/videos/petite-girlfriend-loves-sucking-big-cock-7199121" target="_blank">
-                    <img src="https://api.curtisrhodes.com/app_data/links/images/thisgirlsucks02.png" />
-                    <br /><div class="vlinkLabel">This Girl Sucks</div>
-                </a>
-            </div>
-            <div>
-                <a href="https://xhamster.com/videos/fixation-slow-cock-fixation-trainer-4487120" target="_blank">
-                    <img src="https://api.curtisrhodes.com/app_data/links/images/cockworship02.png" />
-                    <br /><div class="vlinkLabel">Cock Worship</div>
-                </a>
-            </div>
-            <div>
-                <a href="https://xhamster.com/videos/worship-slow-cock-worship-trainer-4447171" target="_blank">
-                    <img src="https://api.curtisrhodes.com/app_data/links/images/cockworship01.png" />
-                    <br /><div class="vlinkLabel">Cock Worship</div>
-                </a>
-            </div>
-            <div>
-                <a href="https://xhamster.com/videos/dirty-talking-cock-sucking-wife-1333116" target="_blank">
-                    <img src="https://api.curtisrhodes.com/app_data/links/images/dirtytalkcocksucker01.png" />
-                    <br /><div class="vlinkLabel">Dirty Talk</div>
-                </a>
-            </div>
-
-
-            
-
-
-        </div>
+        <div id="linksContainer" class="videoContainer"></div>
     </div>
     <div id="rightColumn"></div>
 </div>
 
 <script>
 
+    $(document).ready(function () {
 
+        var imagePath = "https://api.curtisrhodes.com/app_data/links/images/";
+        var t = linksArray();
+        for (i = 0; i < t.length; i++) {
+            $('#linksContainer').append("<div><a href=" + t[i][0] + " target='_blank'><img src=" + imagePath + t[i][1] + " /><br/><div class='vlinkLabel'>" + t[i][2] + "</div></a></div>");
+        }
+    });
+
+    function linksArray() {
+        return new Array(
+            ["https://xhamster.com/videos/horny-girlfriend-swallows-cum-920776", "dagfsfuckandsuck03.PNG", "nice suck and fuck"],
+            ["https://www.pornhub.com/view_video.php?viewkey=ph5b5b31013e678", "aaRiver.png", "Amature Alure"],
+            ["https://xhamster.com/videos/blowjobs-deluxe-13-2022228", "bjDelux1305.png", "Blowjobs Deluxe"],
+            ["https://xhamster.com/videos/busty-blonde-cock-sucker-1159592", "bbc03.png", "Busty Blonde Cocksucker"],
+            ["https://xhamster.com/videos/busty-and-beautiful-anal-fucked-gf-731803", "bustybj04.png", "Big Titted Cocksucker"],
+            ["https://xhamster.com/videos/babe-head-96-secretary-sensual-seduction-3758728", "Secretary9601.png", "Alltime Greatest BJ"],
+            ["https://xhamster.com/videos/santas-horny-helper-sucks-cock-and-plays-jingle-balls-8714133", "slowDeepSanta01.png", "Slow and Deep"],
+            ["https://xhamster.com/videos/goth-college-girl-gives-a-blowjob-888424", "dagfs01.png", "Floppy Tits Blowjob"],
+            ["https://xhamster.com/videos/fuck-doll-part-1-by-amedee-vause-5243484", "AmedeeVause01.png", "Amedee Vause"],
+            ["https://xhamster.com/videos/petite-girlfriend-loves-sucking-big-cock-7199121", "thisgirlsucks02.png", "This Girl Sucks"],
+            ["https://xhamster.com/videos/fixation-slow-cock-fixation-trainer-4487120", "cockworship02.png", "Cock Worship"],
+            ["https://xhamster.com/videos/worship-slow-cock-worship-trainer-4447171", "cockworship01.png", "Cock Worship"],
+            ["https://xhamster.com/videos/i-luv-the-80-s-vintage-big-tits-striptease-stockings-dance-7461213", "dancers01.png", "Topless Dancers"],
+            ["https://xhamster.com/videos/dirty-talking-cock-sucking-wife-1333116", "dirtytalkcocksucker01.png", "Dirty Talk"]);        
+    }
+
+    
+
+
+    
 </script>
 
