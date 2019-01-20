@@ -41,6 +41,57 @@ namespace WebApi.OggleBooble
     }
 
     [EnableCors("*", "*", "*")]
+    public class DirStatsController : ApiController
+    {
+        [HttpGet]
+        public FolderModel Get(string root)
+        {
+            var danniTree = new FolderModel();
+            string fullFolderPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/" + root);
+            danniTree.DirectoryName = root.Substring(root.LastIndexOf("/") + 1);
+            danniTree.Path = fullFolderPath;
+            Recurr(danniTree);
+            return danniTree;
+        }
+
+        private void Recurr(FolderModel folder)
+        {
+            try
+            {
+                DirectoryInfo directory = new DirectoryInfo(folder.Path);
+                foreach (FileInfo fileInfo in directory.GetFiles())
+                {
+                    folder.Files.Add(new FileModel()
+                    {
+                        FileName = fileInfo.Name,
+                        FullName = fileInfo.FullName,
+                        Created = fileInfo.CreationTime,
+                        Extension = fileInfo.Extension,
+                        Length = fileInfo.Length
+                    });
+                }
+                foreach (DirectoryInfo subDirInfo in directory.GetDirectories())
+                {
+                    var subDir = new FolderModel()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Path = subDirInfo.FullName,
+                        DirectoryName = subDirInfo.Name
+                    };
+                    folder.SubDirs.Add(subDir);
+                    Recurr(subDir);
+                }
+            }
+            catch (Exception ex)
+            {
+                folder.DirectoryName = Helpers.ErrorDetails(ex);
+            }
+        }
+
+    }
+
+
+    [EnableCors("*", "*", "*")]
     public class DirectoryController : ApiController
     {
         bool cancel = false;
@@ -101,9 +152,6 @@ namespace WebApi.OggleBooble
 
             return firstImage;
         }
-
-
-
 
         [HttpGet]
         public List<FolderModel> GetSubdirectories(string parentFolder)

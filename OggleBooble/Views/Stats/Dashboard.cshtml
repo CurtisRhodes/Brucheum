@@ -3,23 +3,99 @@
     ViewBag.Title = "Dashboard";
 }
 
+<style>
+    .treeContainer {
+        border: solid 2px #111;
+        margin-top: 4px;
+        height: 500px;
+        overflow-y: auto;
+        padding: 6px;
+    }
+    .collapsable {
+        display: block;
+    }
+    .fileCount {
+        display: inline;
+        color: blue;
+        font-size: smaller;
+    }
+
+</style>
+
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
         <h2>Dashboard</h2>
 
-        <div id="test1" onclick="getDirTree()">Get Directory List</div>
+        <div class="clickable" onclick="getDirTree()">Get Directory List</div>
 
-
+        <div id="dirTreeContainer" class="treeContainer" ></div>
 
     </div>
     <div id="rightColumn"></div>
 </div>
 
 <script>
+    var service = '@ViewBag.Service';
+    var root = "/";  //    "/boobs/babes/new";
+
     function getDirTree() {
+        //alert("service: " + service)
+        $.ajax({
+            type: "GET",
+            url: service + "/api/DirStats/Get?root=" + root,
+            success: function (dirTree) {
 
+                //alert("getDirTree")
 
+                //$.each(dir.Files, function (idx, obj) {
+                //    $('#' + container + '').append("<div class='fileItem'>" + obj.FileName + "</div>")
+                //    k += obj.Length;
+                //});
+
+                $('#dirTreeContainer').append("<div class='clickable' onclick='treeToggle(rootDivContainer)'>" + dirTree.DirectoryName + "</div>");
+                $('#dirTreeContainer').append("<div id='rootDivContainer' class='xxxcollapsable'></div>");
+                recurr(dirTree, 'rootDivContainer');
+
+            },
+            error: function (xhr) { alert("DirStats xhr error: " + xhr.statusText); }
+        });
     }
+
+    var tabIndent = 0;
+    function recurr(dir, container) {
+        tabIndent += 33;
+        $.each(dir.SubDirs, function (idx, obj) {
+            //$.each(obj.Files, function (idx, obj) {
+            //    $('#' + container + '').append("<div class='fileItem'>" + obj.FileName + "</div>")
+            //    k += obj.Length;
+            //});
+            $('#' + container + '').append("<div class='clickable' style='text-indent:" + tabIndent + "px' onclick=treeToggle('" + obj.Id + "')>"
+                + obj.DirectoryName + "<span class='fileCount'>  : " + obj.Files.length + "</span></div>");
+            $('#' + container + '').append("<div id=" + obj.Id + " class='collapsable'></div>");
+            recurr(obj, obj.Id);
+            tabIndent -= 33;
+        });
+    }
+
+    //function recurr(dir, container) {
+    //    var k = 0;
+    //    $.each(dir.Files, function (idx, obj) {
+    //        $('#' + container + '').append("<div class='fileItem'>" + obj.FileName + "</div>")
+    //        k += obj.Length;
+    //    });
+    //    $.each(dir.SubDirs, function (idx, obj) {
+    //        $('#' + container + '').append("<div class='clickable' onclick=treeToggle('"  + obj.Id + "')>" + obj.DirectoryName + "</div>");
+    //        $('#' + container + '').append("<div id=" + obj.Id + " class='collapsable'></div>");
+    //        recurr(obj, obj.Id);
+    //    });
+    //}
+
+
+    function treeToggle(id) {
+        //alert("treeToggle: " + ccid);
+        $('#' + id + '').toggle();
+    }
+
 
 </script>
