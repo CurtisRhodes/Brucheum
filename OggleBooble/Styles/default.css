@@ -72,7 +72,9 @@
 #modalContainer {
     z-index: 6; /* Sit on top */
 }
-
+.tittymenu {
+    display: none;
+}
 #divStatusMessage {
     margin-top: 10px;
     font-size: 18px;

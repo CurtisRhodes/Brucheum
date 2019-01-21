@@ -19,22 +19,30 @@ namespace WebApi.OggleBooble
         [HttpGet]
         public List<FileModel> GetFiles(string folderPath)
         {
-            string fullFolderPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/" + folderPath);
-            FileInfo[] files = new DirectoryInfo(fullFolderPath).GetFiles();
             List<FileModel> images = new List<FileModel>();
-            foreach (FileInfo img in files)
+            try
             {
-                if (img.Extension != ".db")
+                string fullFolderPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/" + folderPath);
+                //string fullFolderPath = "https://api.curtisrhodes.com/App_Data/Danni/" + folderPath;
+                FileInfo[] files = new DirectoryInfo(fullFolderPath).GetFiles();
+                foreach (FileInfo img in files)
                 {
-                    images.Add(new FileModel()
+                    if (img.Extension != ".db")
                     {
-                        FileName = img.Name,
-                        Length = img.Length,
-                        Created = img.CreationTime,
-                        Extension = img.Extension,
-                        FullName = img.FullName
-                    });
+                        images.Add(new FileModel()
+                        {
+                            FileName = img.Name,
+                            Length = img.Length,
+                            Created = img.CreationTime,
+                            Extension = img.Extension,
+                            FullName = img.FullName
+                        });
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                images.Add(new FileModel() { FileName = Helpers.ErrorDetails(ex) });
             }
             return images;
         }
@@ -157,38 +165,41 @@ namespace WebApi.OggleBooble
         public List<FolderModel> GetSubdirectories(string parentFolder)
         {
             List<FolderModel> subDirectories = new List<FolderModel>();
-            string fullFolderPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/" + parentFolder);
-            DirectoryInfo[] directories = new DirectoryInfo(fullFolderPath).GetDirectories();
-            foreach (DirectoryInfo dir in directories)
-            { 
-                var danniPath = "";
-                var pparent = dir.Parent;
-                while (pparent.Name != "Danni")
-                {
-                    danniPath = pparent.Name + "/" + danniPath;
-                    pparent = pparent.Parent;
-                }
-                danniPath += dir.Name;
+            try
+            {
+                string fullFolderPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/" + parentFolder);
+                //string fullFolderPath = "https://api.curtisrhodes.com/App_Data/Danni/" + parentFolder;
 
-                subDirectories.Add(new FolderModel()
+                DirectoryInfo[] directories = new DirectoryInfo(fullFolderPath).GetDirectories();
+
+                foreach (DirectoryInfo dir in directories)
                 {
-                    DirectoryName = dir.Name,
-                    Created = dir.CreationTime,
-                    DanniPath = danniPath,
-                    Path = dir.FullName,
-                    Parent = dir.Parent.Name,
-                    FirstImage = GetFirstImage(dir)
-                });
+                    var danniPath = "";
+                    var pparent = dir.Parent;
+                    while (pparent.Name != "Danni")
+                    {
+                        danniPath = pparent.Name + "/" + danniPath;
+                        pparent = pparent.Parent;
+                    }
+                    danniPath += dir.Name;
+
+                    subDirectories.Add(new FolderModel()
+                    {
+                        DirectoryName = dir.Name,
+                        Created = dir.CreationTime,
+                        DanniPath = danniPath,
+                        Path = dir.FullName,
+                        Parent = dir.Parent.Name,
+                        FirstImage = GetFirstImage(dir)
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                subDirectories.Add(new FolderModel() { DirectoryName = Helpers.ErrorDetails(ex) });
             }
             return subDirectories;
         }
-
-        //public double ImageCount(string folder)
-        //{
-        //    string danni = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/" + folder);
-        //    double len = Math.Floor((double)(new DirectoryInfo(danni).GetFiles().Length / imagesPerPage));
-        //    return len;
-        //}
 
 
 
