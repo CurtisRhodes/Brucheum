@@ -18,6 +18,25 @@ function showBreadCrumbs(folder) {
     $('#divBreadCrumbs').append("<a id='slideShowLink' class='slideShowBreadCrub' href='Viewer?folder=" + xfolder + "'>SlideShow</a>");
 }
 
+function setCookie(key, value) {
+    var expires = new Date();
+    expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+    document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+}
+
+function getCookie(key, defaultValue) {
+    var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+    if (keyValue == null) {
+        setCookie(key, defaultValue);
+        keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+        return keyValue[2];
+    }
+    else
+        return keyValue[2];
+}
+
+
+
 function displayStatusMessage(severity, message) {
     $('#divStatusMessage').removeClass();
     $('#divStatusMessage').addClass(severity);

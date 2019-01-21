@@ -43,6 +43,10 @@
         cursor: pointer;
         background-color: #fef;
     }
+    .countContainer {
+        width: 100%;
+        text-align: right;
+    }
 </style>
 
 <div class="threeColumnArray">
@@ -50,7 +54,8 @@
     <div id="middleColumn">
         <div id="divBreadCrumbs"></div>
         <div id="divBigImage" class="bigImage"></div>
-        <div id="imageContainer" class="flexWrapContainer" ></div>
+        <div id="imageContainer" class="flexWrapContainer"></div>
+        <div id="fileCount" class="countContainer"></div>
     </div>
     <div id="rightColumn"></div>
 </div>
@@ -94,46 +99,43 @@
     });
 
     function getImages(folder) {
-
-        //var maxRowWidth = $('#imageContainer').width();
-        //var rowColumns = Math.floor($('#imageContainer').height() / thumbImageHeight);
-        //var rowWidth = 0;
-        //var rowColumn = 1;
         var danniPath = service + "app_data/danni/";
-
-
-
         $('#imageContainer').html('');
         $.ajax({
             type: "GET",
             url: service + "/api/Directory/GetSubdirectories?parentFolder=" + folder,
             success: function (subDirectories) {
-
-                $.each(subDirectories, function (idx, obj) {
-                    $('#imageContainer').append("<div path='" + obj.DanniPath + "' class='folderFirsty'><img class='thumbImage' src='" +
-                        danniPath + obj.DanniPath + "/" + obj.FirstImage + "'/><div class='fname'>" + obj.DirectoryName + "</div></div>");
-                })
-                $('.folderFirsty').click(function () {
-                    //alert("folder: " + $(this).attr("id"))
-                    window.location.href = "imagePage?folder=" + $(this).attr("path");
-                })
-
+                if (subDirectories.length > 0) {
+                    if (!subDirectories[0].DirectoryName.startsWith("ERROR")) {
+                        $.each(subDirectories, function (idx, obj) {
+                            $('#imageContainer').append("<div path='" + obj.DanniPath + "' class='folderFirsty'><img class='thumbImage' src='" +
+                                danniPath + obj.DanniPath + "/" + obj.FirstImage + "'/><div class='fname'>" + obj.DirectoryName + "</div></div>");
+                        })
+                        $('.folderFirsty').click(function () {
+                            window.location.href = "imagePage?folder=" + $(this).attr("path");
+                        })
+                    }
+                }
                 $.ajax({
                     type: "GET",
                     url: service + "/api/Files/GetFiles?folderPath=" + folder,
                     success: function (images) {
                         if (images.length > 0) {
-                            $('#slideShowLink').show();
-
-
-                            $.each(images, function (idx, obj) {
-                                $('#imageContainer').append("<div class='postage'><img class='thumbImage blowup' src='" + danniPath + folder + "/" + obj.FileName + "'/></div>");
-                            })
-                            $('.blowup').click(function () {
-                                //alert("src: " + $(this).attr("src"))
-                                window.open($(this).attr("src"), "_blank");
-                            })
-
+                            if (!images[0].FileName.startsWith("ERROR")) {
+                                $('#slideShowLink').show();
+                                var k = 0;
+                                $.each(images, function (idx, obj) {
+                                    $('#imageContainer').append("<div class='postage'><img class='thumbImage blowup' src='" + danniPath + folder + "/" + obj.FileName + "'/></div>");
+                                    k++;
+                                })
+                                $('#fileCount').html(k);
+                                fileCount
+                                $('.blowup').click(function () {
+                                    window.open($(this).attr("src"), "_blank");
+                                })
+                            }
+                            else
+                                alert("GetSubdirectories GetFiles: " + images[0].FileName);
                         }
                         else {
                             //alert("no images");
@@ -141,7 +143,7 @@
                         }
                     },
                     error: function (xhr) {
-                        alert("GetFiles error: " + xhr.statusText);
+                        alert("GetSubdirectories GetFiles XHR error: " + xhr.statusText);
                     }
                 });
             },
@@ -150,44 +152,6 @@
             }
         });
     }
-  //  <img class="thumbImage" src="htts://api.curtisrhodes.com/App_Data/Danni/boobs/flavors/knockers/918_1000[1].jpg" <= "" a = "" >
-
-
-
-    //var sb = new StringBuilder();
-    //            if ((childDir.GetFiles().Length > 0) && (childDir.GetFiles("*.jpg").Length > 0)) {
-    //                //var defaultImage = thisService + "/App_Data/Danni/" + folder + "/" + childDir.Name + "/" + childDir.GetFiles("*.jpg")[0].Name;
-    //                //sb.Append("<div class='divImage'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name +
-    //                //    "'><img class='thumbImage' src='" + defaultImage + "' alt='check out " + childDir.Name +
-    //                //    " gallery' /></a><div class='galleryLabel'><a href='/Home/ImagePage?folder=" + folder + "/" + childDir.Name + "'>" + childDir.Name + "</a></div></div>");
-    //            }
-    //    }
-    //    FileInfo[] files = di.GetFiles();
-    //    int max = files.Length;
-    //    foreach(FileInfo file in files)
-    //    {
-    //        count++;
-    //        if (count > start) {
-    //            imageFile = thisService + "/App_Data/Danni/" + folder + "/" + file.Name;
-    //            sb.Append("<div class='divImage'><a href='/Home/Viewer?folder=" + folder + "&startFile=" + file.Name +
-    //                "'><img class='thumbImage' src='" + imageFile + "'</a></div>");
-    //        }
-    //        if (count >= (start + imagesPerPage)) {
-    //            break;
-    //        }
-    //    }
-    //}
-
-    //public class FolderModel {
-    //    public string DirectoryName { get; set; }
-    //    public DateTime Created { get; set; }
-    //    public long Length { get; set; }
-    //    public string Path { get; set; }
-    //    public string Parent { get; set; }
-    //    public string FirstImage { get; set; }
-    //}
-
-
     function SetPageTabs() {
         var pgKnt;
         $.ajax({
