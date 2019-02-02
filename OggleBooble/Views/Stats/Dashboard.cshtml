@@ -4,12 +4,22 @@
 }
 
 <style>
-    .treeContainer {
+    .dashBoardContainer {
+        display: flex;
         border: solid 2px #111;
-        margin-top: 4px;
-        height: 500px;
-        overflow-y: auto;
         padding: 6px;
+    }
+    .treeContainer {
+        float:right;
+        border: solid .5px #555;
+        height: 666px;
+        min-width: 345px;
+        overflow: auto;
+    }
+    .workarea {
+        float:left;
+        width:80%;
+        background-color: #eee;
     }
     .collapsable {
         display: block;
@@ -19,83 +29,307 @@
         color: blue;
         font-size: smaller;
     }
-
+    .loadingGif {
+        left: 150px;
+        top: 200px;
+        height: 140px;
+    }
+    .addLinkCrudArea {
+        font-size: 16px;
+        display: inline-block;
+        margin-top: 30px;
+        margin-left: 40px;
+        border: solid .5px #555;
+        padding: 6px;
+    }
+    .linkImage {
+        float:right;
+        height: 430px;
+        width: 520px;
+        border: solid .5px #555;
+    }
+    .roundedInput {
+        display: inline-block;
+        width: 97%;
+        margin-right: 6px;
+        font-size: 22px;
+    }
+    .roundendButton {
+        margin-top: 6px;
+        display: inline-block;        
+    }
+    .infoLine {
+        display:none;
+        margin-top: 6px;
+        padding-left: 4px;
+        padding-top: 2px;
+        margin-left: 40px;
+        margin-right: 6px;
+        border: solid .5px #555;
+        height: 32px;
+        min-width: 610px;
+        background-color: #f8e8e8;
+    }
+    .linkContainer {
+        margin-bottom: 4px;
+    }
+        .linkContainer div {
+            display: inline;
+            color: blue;
+            margin-right: 22px;
+        }
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
+        <div id="divStatusMessage"></div>
         <h2>Dashboard</h2>
+        <dir class="linkContainer">
+            <div class="clickable" onclick="rebuildFolderTable()">Rebuild Tables</div>
+            <div class="clickable" onclick="getCatTree()">Refresh Dir Tree</div>
 
-        <div class="clickable" onclick="getDirTree()">Get Directory List</div>
+            @*
 
-        <div id="dirTreeContainer" class="treeContainer" ></div>
 
+        <div class="clickable" onclick="dataifyFiles()">Load Images File</div>
+        <div class="clickable" onclick="getDirTree()">Directory List</div>
+        <div class="clickable" onclick="dataifyFolders('Boobs')">Create BOOBS folders</div>
+        <div class="clickable" onclick="XXXgetLinkTree(0)">Category Tree</div>
+        <div class="clickable" onclick="datify('Boobs')">Dataify Boobs</div>
+        <div class="clickable" onclick="datify('Porn')">Dataify Porn</div>
+        <div class="clickable" onclick="galleryPage('Porn')">Gallery Page</div>
+            *@
+        </dir>
+        <img id="getDirTreeLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
+        <div id="divDashboardContainer" class="dashBoardContainer">
+            <div id="divWorkArea" class="workarea">
+                <div class="addLinkCrudArea">
+                    <div>link  <input id="txtNewLink" class="roundedInput" onblur="previewLinkImage()" /></div>
+                    <div>path<input id="txtLinkPath" class="roundedInput" /></div>
+                    <input type="hidden" id="txtHiddenLinkPathId" />
+                    <div class="roundendButton" onclick="postImage()">Insert</div>
+                    <img id="imgLinkPreview" class="linkImage" />
+                </div>
+                <div id="dataifyInfo" class="infoLine"></div>
+
+
+            </div>
+            <div id="dirTreeContainer" class="treeContainer"></div>
+
+        </div>
     </div>
     <div id="rightColumn"></div>
 </div>
 
 <script>
-    var service = '@ViewBag.Service';
-    var root = "/";  //    "/boobs/babes/new";
+    var service = '@ViewBag.Service';    
 
-    function getDirTree() {
-        //alert("service: " + service)
+    $(document).ready(function () {
+        getCatTree();
+    });
+
+    var tabIndent = 22;
+    var tab = 0;
+    var totalPics = 0;
+    var totalFolders = 0;
+
+    function getCatTree() {
+        $('#getDirTreeLoadingGif').fadeIn();
+        totalPics = 0;
+        totalFolders = 0;
+        $('#dirTreeContainer').html("");
         $.ajax({
             type: "GET",
-            url: service + "/api/DirStats/Get?root=" + root,
-            success: function (dirTree) {
+            url: service + "/api/ImageFolderTree",
+            success: function (danni) {
+                //$('#dirTreeContainer').append("<div class='clickable' onclick='treeToggle(rootDivContainer)'>" + dirTree.DirectoryName + "</div>");
+                $('#dirTreeContainer').append("<div class='clickable' onclick='treeToggle(rootDivContainer)'>Root</div>");
+                $('#dirTreeContainer').append("<div id='rootDivContainer'></div>");
 
-                //alert("getDirTree")
+                recurrGetCatTree(danni, 'rootDivContainer');
 
-                //$.each(dir.Files, function (idx, obj) {
-                //    $('#' + container + '').append("<div class='fileItem'>" + obj.FileName + "</div>")
-                //    k += obj.Length;
-                //});
-
-                $('#dirTreeContainer').append("<div class='clickable' onclick='treeToggle(rootDivContainer)'>" + dirTree.DirectoryName + "</div>");
-                $('#dirTreeContainer').append("<div id='rootDivContainer' class='xxxcollapsable'></div>");
-                recurr(dirTree, 'rootDivContainer');
-
+                $('#getDirTreeLoadingGif').fadeOut();
+                $('#dataifyInfo').show().html("total folders: " + totalFolders + " total pics: " + totalPics);
             },
-            error: function (xhr) { alert("DirStats xhr error: " + xhr.statusText); }
+            error: function (xhr) {
+                $('#getDirTreeLoadingGif').fadeOut();
+                alert("DirStats xhr error: " + xhr.statusText);
+            }
         });
     }
+    function recurrGetCatTree(dir, container) {
+        tab += tabIndent;
+        $.each(dir.SubDirs, function (idx, subDir) {
+            $('#' + container + '').append("<div class='clickable' style='text-indent:" + tab + "px'>"
+                + "<span id=S" + subDir.LinkId + " onclick=treeToggle('" + subDir.LinkId + "')>[-] </span>"
+                + "<span onclick=clickPath('" + subDir.DanniPath + "','" + subDir.CategoryId + "')>" + subDir.DirectoryName +
+                "</span><span class='fileCount'>  : " + subDir.Length + "</span></div>");
+            $('#' + container + '').append("<div id=" + subDir.LinkId + " class='zzcollapsable'></div>");
 
-    var tabIndent = 0;
-    function recurr(dir, container) {
-        tabIndent += 33;
-        $.each(dir.SubDirs, function (idx, obj) {
-            //$.each(obj.Files, function (idx, obj) {
-            //    $('#' + container + '').append("<div class='fileItem'>" + obj.FileName + "</div>")
-            //    k += obj.Length;
-            //});
-            $('#' + container + '').append("<div class='clickable' style='text-indent:" + tabIndent + "px' onclick=treeToggle('" + obj.Id + "')>"
-                + obj.DirectoryName + "<span class='fileCount'>  : " + obj.Files.length + "</span></div>");
-            $('#' + container + '').append("<div id=" + obj.Id + " class='collapsable'></div>");
-            recurr(obj, obj.Id);
-            tabIndent -= 33;
+            totalPics += subDir.Length;
+            totalFolders++;
+            recurrGetCatTree(subDir, subDir.LinkId);
+            tab -= tabIndent;
         });
     }
-
-    //function recurr(dir, container) {
-    //    var k = 0;
-    //    $.each(dir.Files, function (idx, obj) {
-    //        $('#' + container + '').append("<div class='fileItem'>" + obj.FileName + "</div>")
-    //        k += obj.Length;
-    //    });
-    //    $.each(dir.SubDirs, function (idx, obj) {
-    //        $('#' + container + '').append("<div class='clickable' onclick=treeToggle('"  + obj.Id + "')>" + obj.DirectoryName + "</div>");
-    //        $('#' + container + '').append("<div id=" + obj.Id + " class='collapsable'></div>");
-    //        recurr(obj, obj.Id);
-    //    });
-    //}
-
-
     function treeToggle(id) {
-        //alert("treeToggle: " + ccid);
+        //alert($('#' + id + '').css("display"));
+        if ($('#' + id + '').css("display") == "none") {
+            $('#S' + id + '').html("[-]");
+        }
+        else
+            $('#S' + id + '').html("[+]");
         $('#' + id + '').toggle();
     }
+    function clickPath(path, id) {
+        $('#txtLinkPath').val(path);
+        $('#txtHiddenLinkPathId').val(id);
+        //alert("txtHiddenLinkPathId: " + $('#txtHiddenLinkPathId').val());
+    }
+
+    var treeItemArray = new Array();
+    function rebuildFolderTable() {
+        
+        treeItemArray = new Array();
+        $('#getDirTreeLoadingGif').fadeIn();
+        $('#dataifyInfo').show().html("rebuilding ImageFolder list");
+        $.ajax({
+            type: "GET",
+            url: service + "/api/Directory/GetDirTree",
+            success: function (folderModel) {
+                totalPics = 0;
+                rebuildFolderTableRecurr(folderModel);
+                //$('#dataifyInfo').html("total folders: " + totalFolders + " total pics: " + totalPics);
+                writeFolderArrayItems(treeItemArray);
+
+            },
+            error: function (xhr) {
+                $('#getDirTreeLoadingGif').hide();
+                alert("wastedHours xhr error: " + xhr.statusText);
+            }
+        });
+    }
+    function rebuildFolderTableRecurr(folderModel) {
+        $.each(folderModel.SubDirs, function (idx, subFolderModel) {
+            totalPics += subFolderModel.Length;
+            totalFolders++;
+
+            treeItemArray.push({
+                FolderName: subFolderModel.DirectoryName,
+                FolderPath: subFolderModel.DanniPath,
+                FileCount: subFolderModel.Length,
+                Parent: subFolderModel.ParentId,
+                Id: subFolderModel.CategoryId
+            });
+            rebuildFolderTableRecurr(subFolderModel);
+        });
+    }
+    function writeFolderArrayItems(treeItems) {
+        try {
+            $('#dataifyInfo').html("building Image Folder table");
+            $.ajax({
+                type: "POST",
+                url: service + "/api/ImageFolder",
+                data: { '': treeItems },
+                success: function (success) {
+                    $('#dataifyInfo').append("  : " + success);
 
 
+                    rebuildImageTable()
+                },
+                error: function (xhr) {
+                    $('#getDirTreeLoadingGif').hide();
+                    alert("writeFolderArrayItems xhr: " + getXHRErrorDetails(xhr));
+                }
+            });
+        } catch (e) {
+            $('#getDirTreeLoadingGif').hide();
+            alert("recurrdatify: " + e);
+        }
+    }
+
+    function rebuildImageTable() {
+        var successSum = 0;
+        var folderCount = 0;
+        var totalFolders = 0;
+        $('#dataifyInfo').html("loading image links");
+        $.ajax({
+            type: "GET",
+            url: service + "api/ImageFolder",
+            success: function (folders) {
+                totalFolders = folders.length
+                $.each(folders, function (idx, obj) {
+                    $.ajax({
+                        type: "POST",
+                        url: service + "/api/ImageLink/RebuildImageTable?parentId=" + obj.Id + "&pathName=" + obj.FolderPath,
+                        success: function (success) {
+                            if (!success.startsWith("ERROR")) {
+                                ++folderCount;
+                                successSum += Number(success);
+                                $('#dataifyInfo').html(" Adding folder " + folderCount + " folders of " +
+                                    totalFolders + " total Files: " + successSum + " " + obj.FolderPath);
+
+                                if (folderCount == totalFolders) {
+                                    $.ajax({
+                                        type: "PATCH",
+                                        url: service + "/api/ImageFolder/LoadCategoryImageLink",
+                                        success: function (success) {
+                                            $('#getDirTreeLoadingGif').fadeOut();
+                                            $('#dataifyInfo').append("  done");
+                                            if (success.startsWith("ERROR")) {
+                                                alert("LoadCategoryImageLink: " + success);
+                                            }
+                                        },
+                                        error: function (xhr) {
+                                            $('#getDirTreeLoadingGif').hide();
+                                            alert("AddFiles xhr: " + getXHRErrorDetails(xhr));
+                                        }
+                                    });
+                                }
+                            }
+                            else {
+                                $('#getDirTreeLoadingGif').hide();
+                                alert("dataifyRecurr error: " + success);
+                            }
+                        },
+                        error: function (xhr) {
+                            $('#getDirTreeLoadingGif').hide();
+                            alert("AddFiles xhr: " + getXHRErrorDetails(xhr));
+                        }
+                    });
+                });
+            },
+            error: function (xhr) {
+                $('#getDirTreeLoadingGif').hide();
+                alert("AddFiles xhr: " + getXHRErrorDetails(xhr));
+            }
+        })
+    }
+    
+  
+    // used to add links not in danni image collection
+    function previewLinkImage() {
+        $('#imgLinkPreview').attr('src', $('#txtNewLink').val());
+    }
+    function postImage() {
+        var newLink = {};
+        newLink.Link = $('#txtNewLink').val();
+
+        newLink.PathId = $('#txtHiddenLinkPathId').val();
+        $.ajax({
+            type: "POST",
+            url: service + "/api/ImageLinkCategory",
+            data: newLink,
+            success: function (success) {
+                if (success == "ok")
+                    alert("image added");
+                else
+                    alert(success);
+            },
+            error: function (xhr) {
+                alert("DirStats xhr error: " + xhr.statusText);
+            }
+        });
+    }
 </script>

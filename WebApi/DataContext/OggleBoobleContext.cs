@@ -14,10 +14,64 @@ namespace WebApi.OggleBooble.DataContext
 
         public virtual DbSet<ImageFile> ImageFiles { get; set; }
         public virtual DbSet<ImageFolder> ImageFolders { get; set; }
-
+        public virtual DbSet<CustomLink> CustomLinks { get; set; }        
+        public virtual DbSet<VideoLink> VideoLinks { get; set; }
+        public virtual DbSet<ImageLink> ImageLinks { get; set; }
+        public virtual DbSet<Category_ImageLink> Category_ImageLinks { get; set; }
+        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
+    }
+
+    [Table("OggleBooble.ImageLink")]
+    public partial class ImageLink
+    {
+        [Key]
+        public string Id { get; set; }
+        public string Link { get; set; }
+    }
+
+    [Table("OggleBooble.CustomLink")]
+    public partial class CustomLink
+    {
+        [Key]
+        [Column(Order = 0)]
+        public string Link { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string FolderPath { get; set; }
+    }
+    [Table("OggleBooble.VideoLink")]
+    public partial class VideoLink
+    {
+        [Key]
+        public int Id { get; set; }
+        public string Link { get; set; }
+        public int Image { get; set; }
+        public int Title { get; set; }
+    }
+
+    [Table("OggleBooble.Category_ImageLink")]
+    public partial class Category_ImageLink
+    {
+        [Key]
+        [Column(Order = 0)]
+        public int ImageCategoryId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string ImageLinkId { get; set; }
+    }
+
+    [Table("OggleBooble.ImageFolder")]
+    public partial class ImageFolder
+    {
+        [Key]
+        public int Id { get; set; }
+        public int Parent { get; set; }
+        public string FolderName { get; set; }
+        public string FolderPath { get; set; }
+        public int FileCount { get; set; }
     }
 
     [Table("OggleBooble.ImageFile")]
@@ -45,33 +99,4 @@ namespace WebApi.OggleBooble.DataContext
         public virtual ImageFolder ImageFolder { get; set; }
     }
 
-    [Table("OggleBooble.ImageFolder")]
-    public partial class ImageFolder
-    {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ImageFolder()
-        {
-            ImageFiles = new HashSet<ImageFile>();
-        }
-
-        [Key]
-        public int FolderId { get; set; }
-
-        public int? ParentFolderId { get; set; }
-
-        [Required]
-        [StringLength(100)]
-        public string FolderName { get; set; }
-
-        [Required]
-        [StringLength(300)]
-        public string RelativePath { get; set; }
-
-        public int? Files { get; set; }
-
-        public long? Size { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ImageFile> ImageFiles { get; set; }
-    }
 }

@@ -63,8 +63,9 @@
 </div>
 
 <script>
-
     var service = '@ViewBag.Service';
+    var folder = '@ViewBag.Folder';
+
     var transformEngine;
     var pic1 = "/Images/babes.jpg";
     var pic2 = "/Images/nicetits.jpg";
@@ -73,8 +74,7 @@
     var curIndex = 0;
 
     $(document).ready(function () {
-        var imageFolder = "https://api.curtisrhodes.com/app_data/Danni/Boobs/transitions";
-        LoadPicArray(imageFolder);
+        LoadPicArray(folder);
     });
     
     $('#floatingMessage').click(function () {
@@ -95,18 +95,17 @@
     ///  11:11 11:11
     // 1/14/19
     function LoadPicArray(folder) {
-        //alert("service: " + service);
+        var imageFolder = "https://api.curtisrhodes.com/app_data/Danni/transitions";
 
         try {
             $.ajax({
                 type: "get",
-                url: service + "api/Transition/LoadImages", //?imageFolder=" + folder,
-                //datatype: "json",
+                url: service + "api/Directory/?folder=" + folder,
                 success: function (data) {
                     picArray = data;
-                    //alert("picArray: " + picArray);
-                    $('#imgNakedGirl').attr("src", service + "/App_Data/Danni/boobs/transitions/" + picArray[0]);
-                    pic2 = service + "/App_Data/Danni/boobs/transitions/" + picArray[1];
+
+                    $('#imgNakedGirl').attr("src", service + "/App_Data/Danni/transitions/" + folder + "/" + picArray[0]);
+                    pic2 = service + "/App_Data/Danni/transitions/" + folder + "/" + picArray[1];
                     $('#floatingMessage').css("left", ($('#imageContainer').width() / 2));
                 },
                 error: function (jqXHR, exception) {
@@ -122,10 +121,14 @@
         curIndex += 2;
         if (curIndex >= picArray.length)
             curIndex = 0;
-        pic1 = service + "/App_Data/Danni/boobs/transitions/" + picArray[curIndex];
-        pic2 = service + "/App_Data/Danni/boobs/transitions/" + picArray[curIndex + 1];
+        pic1 = service + "/App_Data/Danni/transitions/" + folder + "/" + picArray[curIndex];
+        pic2 = service + "/App_Data/Danni/transitions/" + folder + "/" + picArray[curIndex + 1];
         $('#imgNakedGirl').attr("src", pic1)
         $('#floatingMessage').html("Want to see her tits?")
+
+        //alert("pic1: " + pic1)
+
+        //alert("src: " + service + "/App_Data/Danni/transitions/" + picArray[0])
     }
 
     function PerformTransform(ndx) {

@@ -1,33 +1,34 @@
 ﻿
 function showBreadCrumbs(folder) {
     var sc = folder.split("/");
-    var xfolder = "";
+    var bcPath = "";
     $('#divBreadCrumbs').html("");
     $('#divBreadCrumbs').append("<a class='activeBreadCrumb' href='Index'>home</a>");
-    for (i = 0; i < sc.length; i++) {
+    bcPath = sc[0].replace(/ /g, "%20");
+    $('#divBreadCrumbs').append("<a class='activeBreadCrumb' href='/Home/imagePage?folder=" + bcPath + "'>" + sc[0] + "</a>");
+    for (i = 1; i < sc.length; i++) {
+        bcPath += "/" + sc[i].replace(/ /g, "%20");
         if (i < Number(sc.length - 1)) {
-            if (sc[i] !== "boobs") {
-                $('#divBreadCrumbs').append("<a class='activeBreadCrumb' href=/Home/imagePage?folder=" + (xfolder + "/" + sc[i].replace(/ /g, "%20")) + ">" + sc[i] + "</a>");
-            }
+            $('#divBreadCrumbs').append("<a class='activeBreadCrumb' href='/Home/imagePage?folder=" + bcPath + "'>" + sc[i] + "</a>");
         }
         else {
-            $('#divBreadCrumbs').append("<span class='inactiveBreadCrumb'>" + (sc[i]) + "</span>");
+            $('#divBreadCrumbs').append("<span class='inactiveBreadCrumb'>" + sc[i] + "</span>");
         }
-        xfolder += ("/" + sc[i].replace(/ /g, "%20"));
     }
-    $('#divBreadCrumbs').append("<a id='slideShowLink' class='slideShowBreadCrub' href='Viewer?folder=" + xfolder + "'>SlideShow</a>");
+    $('#divBreadCrumbs').append("<a id='slideShowLink' class='slideShowBreadCrub' href='Viewer?folder=" + bcPath + "'>SlideShow</a>");
 }
 
-function setCookie(key, value) {
+function setOBCookie(key, value) {
     var expires = new Date();
     expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
     document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
 }
 
-function getCookie(key, defaultValue) {
+function getOBCookie(key, defaultValue) {
     var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
     if (keyValue == null) {
-        setCookie(key, defaultValue);
+        alert("still no cookie");
+        setOBCookie(key, defaultValue);
         keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
         return keyValue[2];
     }
