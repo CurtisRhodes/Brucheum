@@ -34,13 +34,39 @@
 <script>
 
     $(document).ready(function () {
-
-        var imagePath = "https://api.curtisrhodes.com/app_data/links/images/";
-        var t = linksArray();
-        for (i = 0; i < t.length; i++) {
-            $('#linksContainer').append("<div><a href=" + t[i][0] + " target='_blank'><img src=" + imagePath + t[i][1] + " /><br/><div class='vlinkLabel'>" + t[i][2] + "</div></a></div>");
-        }
+        getVideoLinks();
+        //var t = linksArray();
+        //for (i = 0; i < t.length; i++) {
+        //    $('#linksContainer').append("<div><a href=" + t[i][0] + " target='_blank'><img src=" + imagePath + t[i][1] + " /><br/><div class='vlinkLabel'>" + t[i][2] + "</div></a></div>");
+        //}
     });
+
+    function getVideoLinks() {
+        var imagePath = "https://api.curtisrhodes.com/app_data/links/images/";
+        try {
+            $.ajax({
+                type: "PATCH",
+                url: service + "/api/ImageFolder/LoadCategoryImageLink",
+                success: function (videoLinks) {
+                    $.each(folders, function (idx, obj) {
+                        $('#linksContainer').append("<div><a href=" + obj.Link + " target='_blank'><img src=" +
+                            imagePath + obj.Image + " /><br/><div class='vlinkLabel'>" +
+                            obj.Title + "</div></a></div>");
+                    });
+                },
+                error: function (xhr) {
+                    $('#getDirTreeLoadingGif').hide();
+                    alert("getVideoLinks xhr: " + getXHRErrorDetails(xhr));
+                }
+            });
+        } catch (e) {
+            $('#getDirTreeLoadingGif').hide();
+            alert("recurrdatify: " + e);
+        }
+    }
+
+
+
 
     function linksArray() {
         return new Array(
@@ -57,12 +83,9 @@
             ["https://xhamster.com/videos/fixation-slow-cock-fixation-trainer-4487120", "cockworship02.png", "Cock Worship"],
             ["https://xhamster.com/videos/worship-slow-cock-worship-trainer-4447171", "cockworship01.png", "Cock Worship"],
             ["https://xhamster.com/videos/i-luv-the-80-s-vintage-big-tits-striptease-stockings-dance-7461213", "dancers01.png", "Topless Dancers"],
+            ["https://xhamster.com/videos/sucking-and-blowing-compilation-6168489", "beautifulCocksucker02.PNG", "beautiful cocksucker"],
+            ["https://xhamster.com/videos/mouth-creampies-the-ultimate-compilation-3-5040401", "cuminMouth38.PNG", "Oral Creampies"],
             ["https://xhamster.com/videos/dirty-talking-cock-sucking-wife-1333116", "dirtytalkcocksucker01.png", "Dirty Talk"]);        
-    }
-
-    
-
-
-    
+    }    
 </script>
 

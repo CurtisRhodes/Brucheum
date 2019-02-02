@@ -12,10 +12,11 @@ $('#middleColumn').resize(function () {
 });
 
 function resizePage(debug) {
+    //alert("here  resizePage()");
 
     $('.RenderBody').css("margin-top", $('#bheader').height());
-    //$('#footerMessage').html("resizePage  $('#bheader').height(): " + $('#bheader').height() + "  " + $('.RenderBody').css("margin-top"));
-
+    $('#footerMessage').html("resizePage  $('#bheader').height(): " + $('#bheader').height() + "  " + $('.RenderBody').css("margin-top"));
+    //alert("resizePage  $('#bheader').height(): " + $('#bheader').height() + "  " + $('.RenderBody').css("margin-top"));
 
 
 	var winW = $(window).width();

@@ -35,7 +35,7 @@
             <div id="menuContainer" class="menuTabContainer">
                 <div id="replaceableMenuItems">
                     <div id="tittyShapeLinks" class="tittymenu">
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes">shapes</a></div>
+                        <div class="menuTab floatLeft showOff"><a href="~/Home/ImagePage?folder=boobs/shapes">shapes</a></div>
                         <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/knockers">knockers</a></div>
                         <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/juggs">juggs</a></div>
                         <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/Headlights">headlights</a></div>
@@ -48,7 +48,7 @@
                         <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/slim and stacked">slim and stacked</a></div>
                     </div>
                     <div id="tittyPosesLinks" class="tittymenu">
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses">poses</a></div>
+                        <div class="menuTab floatLeft showOff"><a href="~/Home/ImagePage?folder=boobs/poses">poses</a></div>
                         <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/ankles" title="big titters grabing their ankles letting em hang">Ankles</a></div>
                         <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/kneezles" title="titties so big she has to rest them on her knees">kneezles</a></div>
                         <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/hanging">hanging</a></div>
@@ -95,16 +95,16 @@
     @RenderSection("scripts", required: false)
     <script>
         $(document).ready(function () {
-            toggleTittyMenu(getCookie("ShapeOrPosesMenu", "shapes"));
+            toggleTittyMenu(getOBCookie("ShapeOrPosesMenu", "shapes"));
         });
         function toggleTittyMenu(sepectedTittyMenu) {
-            //alert("tittyMenu: " + tittyMenu);
+            //alert("tittyMenu: " + sepectedTittyMenu);
             $('.tittymenu').hide();
             if (sepectedTittyMenu == "poses")
                 $('#tittyPosesLinks').show();
-            else
+            else 
                 $('#tittyShapeLinks').show();
-            setCookie('ShapeOrPosesMenu', sepectedTittyMenu);
+            setOBCookie('ShapeOrPosesMenu', sepectedTittyMenu);
         }
     </script>
 </body>

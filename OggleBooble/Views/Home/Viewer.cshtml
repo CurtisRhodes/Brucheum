@@ -188,7 +188,7 @@
                         else {
                             tabStartPos = 0;
                             tabEndPos = imageTabMax;
-                            alert("not sure it this gets hit")
+                            //alert("not sure it this gets hit")
                             //$('#footerMessage').html("scrollTabStrip previous tabStartPos: " + tabStartPos + "  imageCurrentIndex: " + imageCurrentIndex + " tabEndPos: " + tabEndPos);
                         }
                     }
@@ -268,20 +268,26 @@
     function getTabStripImageArray() {
         try {
             $.ajax({
-                type: "get",
-                url: service + "/api/Files/GetFiles?folderPath=" + folder,
-                //url: service + "/api/directory/GetTabStripImages?folder=" + folder + "&thisService=" + service + "&startImage=" + startFile,
+                type: "GET",
+                url: service + "/api/ImageLink/GetFiles?folderPath=" + folder,
                 success: function (images) {
-                    try {
+                    if (images.length > 0) {
+
                         $.each(images, function (idx, item) {
-                            imageArray.push("<img idx=" + idx + "  src='" + service + "App_Data/Danni" + folder + "/" + item.FileName + "'/>");
+                            //imageArray.push("<img idx=" + idx + "  src='" + service + "App_Data/Danni" + folder.replace(/ /g, "%20") + "/" + item.FileName.replace(/ /g, "%20") + "'/>");
+                            imageArray.push("<img idx=" + idx + "  src='" + item.FileName.replace(/ /g, "%20") + "'/>");
                         });
+
                         showImage();
                         scrollTabStrip("ensureVisible");
                     }
-                    catch (e) { alert("GetTabStripImageArray ERROR: " + e) }
+                    else
+                        alert("no images found")
                 },
-                error: function (xhr) { alert("GetTabStripImageArray error: " + xhr.statusText); }
+                error: function (xhr) {
+                    //$('#getImagesLoadingGif').hide();
+                    alert("xhr: " + getXHRErrorDetails(xhr))
+                }
             });
         } catch (e) { alert("GetTabStripImageArray ERROR2: " + e) }
     }

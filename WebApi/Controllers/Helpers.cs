@@ -26,7 +26,7 @@ namespace WebApi
             while (ex.InnerException != null)
             {
                 ex = ex.InnerException;
-                msg = ex.Message;
+                msg = "ERROR: " + ex.Message;
             }
             return msg;
         }
@@ -67,6 +67,13 @@ namespace WebApi
             }
         }
 
+        private static Random random = new Random();
+        public string GetRandomString(int length = 12)
+        {
+            const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
 
     }
 }

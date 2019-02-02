@@ -46,7 +46,6 @@
     margin-top: 7px;
     font-size: 22px;
 }
-
 .menuTabContainer {
     margin-left: 71px;
     padding-left: 24px;
@@ -59,14 +58,15 @@
     .menuTab a {
         text-decoration: none;
         cursor: pointer;
-        color: #490157;
+        color: #7f2c8f;
         padding: 5px 5px;
         border-radius: 1px;
-        /*
-            margin-bottom: 6px;
-        */
     }
         .menuTab a:hover {
             text-decoration: underline;
             background-color: #fef;
         }
+.showOff {
+    font-size: 16px;
+    color: #cebc59 !important;
+}

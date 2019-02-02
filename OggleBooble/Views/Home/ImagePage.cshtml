@@ -17,7 +17,11 @@
         margin-bottom: -3px;
         /*width: 100%;*/
     }
-
+    .loadingGif {
+        left: 150px;
+        top: 140px;
+        height: 140px;
+    }
     .postage {
         margin: 2px;
     }
@@ -53,7 +57,7 @@
     <div id="leftColumn"></div>
     <div id="middleColumn">
         <div id="divBreadCrumbs"></div>
-        <div id="divBigImage" class="bigImage"></div>
+        <img id="getImagesLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
         <div id="imageContainer" class="flexWrapContainer"></div>
         <div id="fileCount" class="countContainer"></div>
     </div>
@@ -83,13 +87,8 @@
         $('#imageContainer').height($('#middleColumn').height() - 115);
         $('#imageContainer').css("min-height", $('#middleColumn').height() - 115);
 
-        //SetPageTabs();
-
-        getImages(folder);
-
-        //var folderContainsSubDirectories = checkForSubDirectories(folder);
-
-
+        //getImages(folder);
+        getImageLinks(folder);
 
     });
 
@@ -98,7 +97,8 @@
         $('#imageContainer').height($('#middleColumn').height() - 115);
     });
 
-    function getImages(folder) {
+    function xxgetImages(folder) {
+        $('#getImagesLoadingGif').show();
         var danniPath = service + "app_data/danni/";
         $('#imageContainer').html('');
         $.ajax({
@@ -122,6 +122,7 @@
                     success: function (images) {
                         if (images.length > 0) {
                             if (!images[0].FileName.startsWith("ERROR")) {
+                                $('#getImagesLoadingGif').hide();
                                 $('#slideShowLink').show();
                                 var k = 0;
                                 $.each(images, function (idx, obj) {
@@ -140,6 +141,7 @@
                         else {
                             //alert("no images");
                             $('#slideShowLink').hide();
+                            $('#getImagesLoadingGif').hide();
                         }
                     },
                     error: function (xhr) {
@@ -152,27 +154,49 @@
             }
         });
     }
-    function SetPageTabs() {
-        var pgKnt;
-        $.ajax({
-            type: "get",
-            url: service + "/api/directory/ImageCount?folder=" + folder,
-            async: false,
-            success: function (pageCount) {
-                for (i = 1; i <= pageCount + 1; i++) {
-                    $('#pageContainer').append("<div class='divPage' page=" + i + " >Page " + i + "</div>");
-                };
 
-                $('.divPage').click(function () {
-                    page = $(this).attr("page") - 1;
-                    GetImages();
-                });
-            },
-            error: function (xhr) {
-                alert("GetGalleryPage error: " + xhr.statusText);
-            }
-        });
+    function getImageLinks(folder) {
+        try {
+            $('#getImagesLoadingGif').show();
+            $.ajax({
+                type: "GET", 
+                url: service + "/api/ImageFolder/GetLinks?folder=" + folder,
+                success: function (folderModel) {
+                    if (!folderModel.DirectoryName.startsWith("ERROR")) {
+                        $('#imageContainer').html('');
+                        $.each(folderModel.SubDirs, function (idx, obj) {
+                            $('#imageContainer').append("<div path='" + obj.Path + "' class='folderFirsty'><img class='thumbImage' src='" +
+                                obj.FirstImage + "'/><div class='fname'>" + obj.DirectoryName + "</div></div>");
+                        })
+                        $('.folderFirsty').click(function () {
+                            window.location.href = "imagePage?folder=" + $(this).attr("path");
+                        })
+
+                        $('#slideShowLink').show();
+                        var k = 0;
+                        $.each(folderModel.Files, function (idx, obj) {
+                            $('#imageContainer').append("<div class='postage'><img class='thumbImage blowup' src='" + obj.FileName + "'/></div>");
+                            k++;
+                        })
+                        $('.blowup').click(function () {                            
+                            window.open($(this).attr("src"), "_blank");
+                        })
+                        $('#fileCount').html(k);
+                        $('#getImagesLoadingGif').hide();
+                    }
+                    else {
+                        $('#getImagesLoadingGif').hide();
+                        alert("GetLinkFolders: " + folderModel.DirectoryName);
+                    }
+                },
+                error: function (xhr) {
+                    $('#getImagesLoadingGif').hide();
+                    alert("xhr: " + getXHRErrorDetails(xhr))
+                }
+            });
+        } catch (e) {
+            $('#getImagesLoadingGif').hide();
+            alert("GetLinkFolders CATCH: " + e);
+        }
     }
-
-
 </script>

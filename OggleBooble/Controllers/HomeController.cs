@@ -42,8 +42,9 @@ namespace OggleBooble
             ViewBag.StartFile = startFile;
             return View();
         }
-        public ActionResult Transitions()
+        public ActionResult Transitions(string folder)
         {
+            ViewBag.Folder = folder;
             ViewBag.Service = apiService;
             return View();
         }
