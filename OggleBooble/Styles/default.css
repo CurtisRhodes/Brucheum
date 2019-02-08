@@ -28,6 +28,16 @@
         min-width: 7%;
     }
 
+.centeredDivShell {
+    position: absolute;
+    left: 50%;    
+}
+
+.centeredDivInner {
+    position: relative;
+    left: -50%;    
+}
+
 .pageTitle {
     font-size: 33px;
     font-family: 'Georgia';
@@ -280,10 +290,6 @@ label {
     display: none;
     color: red;
     font-style: italic;
-}
-
-.clickable {
-    cursor: pointer;
 }
 
 .streach {

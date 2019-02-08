@@ -75,5 +75,16 @@ namespace WebApi
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        public static void SendProgress(string progressMessage, int progressCount, int totalItems)
+        {
+            Microsoft.AspNet.SignalR.IHubContext hubContext = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<ProgressHub>();
+            hubContext.Clients.All.addProgress(progressMessage, progressCount, totalItems);
+
+            //var percentage = 0;
+            //if (totalItems > 0)
+            //    percentage = (progressCount * 100) / totalItems;
+            //hubContext.Clients.All.AddProgress(progressMessage, percentage + "%");
+
+        }
     }
 }

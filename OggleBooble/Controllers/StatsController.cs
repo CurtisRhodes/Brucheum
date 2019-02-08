@@ -20,5 +20,10 @@ namespace OggleBooble.Controllers
             ViewBag.Service = apiService;
             return View();
         }
+        public ActionResult AdminDashboard()
+        {
+            ViewBag.Service = apiService;
+            return View();
+        }
     }
 }

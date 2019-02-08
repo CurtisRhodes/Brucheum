@@ -1,0 +1,232 @@
+﻿
+<style>
+
+    .carouselContainer {
+        padding: 1px;
+        border: solid 2px #b200ff;
+        background-color: rgba(164, 168, 169, 0.75);
+        z-index: 10;
+        display: none;
+    }
+
+    .animatedGears {
+        display: none;
+        position: relative;
+        top: 100px;
+        left: 100px;
+    }
+
+    .carouselLabel {
+        position: absolute;
+        display: inline-block;
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 5px;
+        padding: 3px;
+        font-size: 22px;
+        white-space: nowrap;
+        z-index: 7;
+    }
+
+    .carouselImage {
+        height: 500px;
+        cursor: pointer;
+    }
+
+    .carouselImageContainer {
+        border: solid 5px gold;
+        z-index: 7;
+    }
+
+    .arrowButton {
+        position: absolute;
+        z-index: 1;
+        height: 70px;
+        cursor: pointer;
+    }
+</style>
+
+<div class="centeredDivShell">
+    <div class="centeredDivInner">
+        <div id="laCarousel" class="carouselContainer">
+
+            <div id='articleTitle' class='carouselLabel'></div>
+            <div class="carouselImageContainer">
+                <img id="carouselImage" class="carouselImage" src="~/Images/ingranaggi3.gif" onclick="clickViewGallery()" />
+            </div>
+            <div id='categoryLabel' class='carouselLabel'></div>
+            <img id="leftFbutton" class="arrowButton" src="~/Images/blueCircleLeft.png" onclick="clickPrevious()" />
+            <img id="rightFbutton" class="arrowButton" src="~/Images/blueCircleRight.png" onclick="clickNext()" />
+
+        </div>
+    </div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+    var webService = "https://api.curtisrhodes.com";
+    var numImages = 0;
+    var rotationSpeed = 5000;
+    var carouselItemArray = new Array();
+    var imageIndex = 0;
+    var carouselContainerHeight;
+    var Carousel;
+    var currentArticleId = 0;
+
+    $(document).ready(function () {
+
+        getFolderCount();
+
+        //carouselHeadStart('Boobs');
+        //loadAllImages('boobs');
+    });
+
+    function stopCarousel() {
+        clearInterval(Carousel);
+    }
+    function startCarousel() {
+        clearInterval(Carousel);
+        rotate();
+    }
+
+    function clickViewGallery() {
+        clearInterval(Carousel);
+        window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderPath;
+    }
+
+    function clickPrevious() {
+        //alert("clickPrevious")
+        imageIndex--;
+        if (imageIndex > 0)
+            imageIndex--;
+        else
+            imageIndex = numImages;
+        clearInterval(Carousel);
+        rotate();
+        event.stopPropagation();
+        return false;
+    }
+
+    function clickNext() {
+        //alert("clickNext")
+        clearInterval(Carousel);
+        imageIndex++;
+        if (imageIndex >= numImages)
+            imageIndex = 0;
+        rotate();
+        event.stopPropagation();
+        return false;
+    }
+
+    function launchCarousel(root) {
+       // $('#laCarousel').show();
+        $.ajax({
+            type: "GET",
+            url: service + "/api/FolderLink/Get?root=" + root + "&headstart=12",
+            success: function (folderLinks) {
+                //alert("folderLinks.length: " + folderLinks.length);
+                $.each(folderLinks, function (idx, obj) {
+                    //alert(obj.FolderPath + ": " + category);
+                    //var category = obj.FolderPath.substring(obj.FolderPath.indexOf("/") + 1, obj.FolderPath.lastIndexOf("/")).replace("archive/", "").replace("/", " - ");
+                    carouselItemArray.push({
+                        FolderName: obj.FolderName,
+                        Link: obj.Link,
+                        Parent: obj.Parent,
+                        FolderPath: obj.FolderPath
+                    });
+                });
+                //alert("folderLinks.length: " + folderLinks.length)
+                if (folderLinks.length > 0) {
+                    numImages = folderLinks.length;
+                    $('#laCarousel').show();
+                    imageIndex = Math.floor(Math.random() * numImages);
+                    showImage();
+                    rotate();
+                    loadAllImages(root);
+                }
+            },
+            error: function (xhr) {
+                alert("loadAndStartCarousel error: " + xhr.statusText);
+            }
+        });
+    }
+
+    function loadAllImages(root) {
+        $.ajax({
+            type: "GET",
+            url: service + "/api/FolderLink/Get?root=" + root,
+            success: function (folderLinks) {
+                $.each(folderLinks, function (idx, obj) {
+                    //category = obj.FolderPath.substring(obj.FolderPath.indexOf("/") + 1, obj.FolderPath.lastIndexOf("/")).replace("archive/", "").replace("/", " - ");
+                    carouselItemArray.push({
+                        FolderName: obj.FolderName,
+                        Link: obj.Link,
+                        Parent: obj.Parent,
+                        FolderPath: obj.FolderPath
+                    });
+                });
+                numImages = folderLinks.length;
+
+                imageIndex = Math.floor(Math.random() * numImages);
+
+                //imageIndex = Math.floor(numImages / 2);
+
+                //$('#laCarousel').show();
+                //showImage();
+                //rotate();
+
+            },
+            error: function (xhr) {
+                alert("loadAndStartCarousel error: " + xhr.statusText);
+            }
+        });
+    };
+
+    function getFolderCount() {
+        $.ajax({
+            type: "PATCH",
+            url: service + "api/ImageFolder",
+            success: function (folderCount) {
+                $('#galleryMessage').html("Select from " + folderCount + " Galleries");
+            },
+            error: function (xhr) {
+                $('#getDirTreeLoadingGif').hide();
+                alert("getFolderCount xhr: " + getXHRErrorDetails(xhr));
+            }
+        })
+    }
+
+    function showImage() {
+        var carouselArrayItem = carouselItemArray[imageIndex];
+        currentArticleId = carouselArrayItem.Id;
+        $('#carouselImage').attr('src', carouselArrayItem.Link);
+        $('#carouselImage').css('z-index', 10);
+        $('#articleTitle').html(carouselArrayItem.FolderName);
+        $('#categoryLabel').html(carouselArrayItem.Parent);
+
+        setTimeout(function () {
+            adjustCarousel();
+        }, 300);
+        setTimeout(function () {
+            adjustCarousel();
+        }, 600);
+
+        $('#statMessage').html(imageIndex + 1 + " of " + numImages.toLocaleString());
+    }
+
+    function adjustCarousel() {
+        $('#leftFbutton').css('left', -65);
+        $('#rightFbutton').css('left', $('#laCarousel').width());
+        $('.arrowButton').css('top', $('#laCarousel').height() - 210);
+        $('#categoryLabel').css('top', $('#laCarousel').height());
+    }
+
+    function rotate() {
+        showImage();
+        Carousel = setInterval(function () {
+            imageIndex = Math.floor(Math.random() * numImages);
+            showImage();
+        }, rotationSpeed);
+    }
+
+</script>

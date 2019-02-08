@@ -1,0 +1,358 @@
+﻿
+@{
+    ViewBag.Title = "AdminDashboard";
+}
+
+
+<script src="~/Scripts/jquery.signalR-2.4.0.min.js"></script>
+<script src="/signalr/hubs"></script>
+<style>
+    .dashBoardContainer {
+        display: flex;
+        border: solid 2px #111;
+    }
+
+    .treeContainer {
+        float: right;
+        border-left: solid .5px #555;
+        min-height: 106px;
+        overflow-y: auto;
+    }
+
+    .workarea {
+        float: left;
+        width: 80%;
+        background-color: #eee;
+    }
+
+    .collapsable {
+        display: block;
+    }
+
+    .fileCount {
+        display: inline;
+        color: blue;
+        font-size: smaller;
+    }
+
+    .loadingGif {
+        left: 150px;
+        top: 200px;
+        height: 140px;
+    }
+
+    .addLinkCrudArea {
+        font-size: 16px;
+        display: inline-block;
+        margin-top: 30px;
+        margin-left: 40px;
+        border: solid .5px #555;
+        padding: 6px;
+    }
+
+    .linkImage {
+        float: right;
+        height: 430px;
+        min-width: 520px;
+        border: solid .5px #555;
+    }
+
+    .roundedInput {
+        display: inline-block;
+        width: 97%;
+        margin-right: 6px;
+        font-size: 22px;
+    }
+
+    .roundendButton {
+        margin-top: 6px;
+        display: inline-block;
+    }
+
+    .infoLine {
+        display: none;
+        margin-top: 6px;
+        padding-left: 4px;
+        padding-top: 2px;
+        margin-left: 40px;
+        margin-right: 6px;
+        border: solid .5px #555;
+        height: 32px;
+        min-width: 610px;
+        background-color: #f8e8e8;
+    }
+
+    #dashboardTop {
+        border: solid thin green;
+    }
+
+    .myH2 {
+        font-family: Verdana;
+        margin-top: 1px;
+        font-size: 22px;
+    }
+
+    .linkContainer {
+        margin-bottom: 4px;
+        font-size: 12px;
+    }
+
+        .linkContainer div {
+            display: inline;
+            color: #585a38;
+            margin-right: 22px;
+        }
+
+    .clickable {
+        white-space: nowrap;
+    }
+
+    .floatingCrud {
+        position: absolute;
+        top: 250px;
+        left: 350px;
+        border: solid 2px #555;
+        box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
+        display: none;
+    }
+
+    .videoCrudBanner {
+        background-color: #cfcfcf;
+        text-align: center;
+        font-size: larger;
+        padding: 10px;
+    }
+
+    .videoCrudContainer {
+        background-color: #f8e8e8;
+        padding: 10px;
+    }
+
+    .farSide {
+        display: inline-block;
+        float: right;
+        cursor: pointer;
+    }
+</style>
+
+<div class="threeColumnArray">
+    <div id="leftColumn"></div>
+    <div id="middleColumn">
+        <div id="divStatusMessage"></div>
+
+        <div id="dashboardTop">
+            <div class="myH2">Dashboard</div>
+
+            <dir class="linkContainer">
+                <div class="clickable" onclick="buildFolderLinkTable()">build FolderLink Table</div>
+                <div class="clickable" onclick="buildFolderTables()">Rebuild Tables</div>
+                @*<div class="clickable" onclick="rebuildLinkTables()">Rebuild Link Tables</div>*@
+                <div class="clickable" onclick="getCatTree()">Refresh Dir Tree</div>
+                <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
+            </dir>
+        </div>
+
+        <img id="getDirTreeLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
+    </div>
+    <div id="rightColumn"></div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+
+    var totalPics = 0;
+    var totalFolders = 0;
+
+    $(document).ready(function () {
+        $(window).resize();
+    });
+
+    $(window).resize(function () {
+        //alert("$('#middleColumn').height(): " + $('#middleColumn').height());
+        var initial = $('#dirTreeContainer').height();
+        var adjusted = $('#middleColumn').height() - $('#dashboardTop').height() - 150
+        $('#dirTreeContainer').height(adjusted);
+        $('#imgLinkPreview').height(adjusted);
+        $('#footerMessage').html("initial: " + initial + "  & adjusted: " + $('#dirTreeContainer').height());
+    });
+
+    $(function () {
+
+       // $.connection.hub.url = "https://api.curtisrhodes.com/signalr";
+
+        var progress = $.connection.progressHub;
+        console.log(progress);
+
+        $.connection.hub.start().done(function () {
+            var connectionId = $.connection.hub.id;
+            console.log("connectionId: " + connectionId);
+            //alert("connectionId: " + connectionId);
+        });
+
+        progress.client.addProgress = function (message, progressCount, totalItems) {
+            alert("progress.client.addProgress: " + message);
+            if (message == "...") {
+                $('#dataifyInfo').show().html("processing: " + progressCount + " of " + totalItems);
+            }
+            else {
+                $('#dataifyInfo').show().html(message);
+            }
+        };
+
+    });
+
+    function buildFolderTables() {
+        $('#getDirTreeLoadingGif').show();
+        $('#dataifyInfo').show().html(".");
+        $.ajax({
+            type: "POST",
+            url: service + "/api/Directory",  //  BuildImageFolderTable
+            success: function (success) {
+                $('#getDirTreeLoadingGif').hide();
+                alert(success);
+                $('#dataifyInfo').append("  : " + success);
+            },
+            error: function (xhr) {
+                $('#getDirTreeLoadingGif').hide();
+                alert("writeFolderArrayItems xhr: " + getXHRErrorDetails(xhr));
+            }
+        });
+    }
+
+    function rebuildLinkTables() {
+        $('#dataifyInfo').show().html("emptying ImageLink table");
+        $.ajax({
+            type: "DELETE",
+            url: service + "/api/ImageLink",   // step 1a
+            success: function (success) {
+                if (success != "ok") {
+                    alert("DELETE ImageLink: " + success);
+                }
+                else {
+                    getImageFolderList()
+                }
+            },
+            error: function (xhr) {
+                $('#getDirTreeLoadingGif').hide();
+                alert("AddFiles xhr: " + getXHRErrorDetails(xhr));
+            }
+        });
+    }
+    function getImageFolderList() {
+        try {
+            var totalFolders = 0;
+            $('#getDirTreeLoadingGif').fadeIn();
+            $('#dataifyInfo').show().html("getting ImageFolder list");
+            $.ajax({
+                type: "GET",
+                url: service + "/api/ImageFolder",   // step 1
+                success: function (imageFolders) {
+                    writeImageLinktable(imageFolders)
+                },
+                error: function (xhr) {
+                    $('#getDirTreeLoadingGif').hide();
+                    alert("wastedHours xhr error: " + xhr.statusText);
+                }
+            });
+        } catch (e) {
+            $('#getDirTreeLoadingGif').hide();
+            alert("wastedHours CATCH: " + xhr.statusText);
+        }
+    }
+    function writeImageLinktable(imageFolders) {
+        totalFolders = imageFolders.length;
+        var imageFolderArray = new Array();
+        $.each(imageFolders, function (idx, obj) {
+            imageFolderArray.push({
+                FolderPath: obj.FolderPath,
+            });
+        })
+        alert("writeImageLinktable totalFolders: " + totalFolders)
+        totalPics = 0;
+        var successSum = 0;
+        var folderCount = 0;
+        $('#dataifyInfo').html("building Image Folder table");
+        try {
+            $.ajax({
+                type: "POST",
+                //async: false,
+                url: service + "/api/ImageLink",  // step 2a  writeImageLinks
+                data: imageFolderArray,
+                success: function (filesAdded) {
+
+                    if (filesAdded.startsWith("ERROR")) {
+                        $('#getDirTreeLoadingGif').hide();
+                        alert("writeImageLinks: " + filesAdded);
+                        ok = false;
+                    }
+                    else {
+                        ++folderCount;
+                        if (!isNaN(filesAdded)) {
+                            successSum += Number(filesAdded);
+                            $('#dataifyInfo').html(" Adding folder " + folderCount + " folders of " +
+                                totalFolders + " total Files: " + successSum + " " + obj.FolderPath);
+                        }
+                        else {
+                            alert(obj.FolderPath + "successSum NAN: " + filesAdded);
+                        }
+
+                        // the final step
+                        if (folderCount == totalFolders) {
+
+                            $('#dataifyInfo').append("  done");
+                            finalizeFileRefreshProcess();
+                        }
+                    }
+                },
+                error: function (xhr) {
+                    $('#getDirTreeLoadingGif').hide();
+                    alert("writeImageLinktable xhr: " + getXHRErrorDetails(xhr));
+                }
+            });
+        } catch (e) {
+            $('#getDirTreeLoadingGif').hide();
+            alert("writeImageLinktable CATCH: " + e)
+        }
+    }
+    function finalizeFileRefreshProcess() {
+        alert("rebuildCategory_ImageLink")
+        $.ajax({
+            type: "PATCH",
+            url: service + "/api/ImageLink/rebuildCategory_ImageLink",
+            success: function (success) {
+                if (success.startsWith("ERROR")) {
+                    alert("rebuildCategoryImageLink: " + success);
+                }
+                else {
+                }
+            },
+            error: function (xhr) {
+                $('#getDirTreeLoadingGif').hide();
+                alert("rebuildCategoryImageLink xhr: " + getXHRErrorDetails(xhr));
+            }
+        });
+    }
+
+    function buildFolderLinkTable() {
+        $('#dataifyInfo').append("  Building FolderLink Table");
+        $.ajax({
+            type: "POST",
+            url: service + "/api/FolderLink",
+            success: function (success) {
+                if (success == "ok") {
+                    $('#getDirTreeLoadingGif').fadeOut();
+                    $('#dataifyInfo').append("  done");
+                }
+                else {
+                    alert("FolderLink: " + success);
+                }
+            },
+            error: function (xhr) {
+                $('#getDirTreeLoadingGif').hide();
+                alert("FolderLink xhr: " + getXHRErrorDetails(xhr));
+            }
+        });
+    }
+
+
+</script>

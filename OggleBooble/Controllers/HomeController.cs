@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.SignalR;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
@@ -12,6 +13,7 @@ namespace OggleBooble
         private string apiService = ConfigurationManager.AppSettings["apiService"];
         public ActionResult Index()
         {
+            ViewBag.Service = apiService;
             return View();
         }
         public ActionResult ImagePage(string folder)
@@ -83,4 +85,5 @@ namespace OggleBooble
             return View();
         }
     }
+
 }

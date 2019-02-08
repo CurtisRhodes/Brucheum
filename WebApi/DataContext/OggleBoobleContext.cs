@@ -12,7 +12,7 @@ namespace WebApi.OggleBooble.DataContext
         public OggleBoobleContext()
             : base("GoDaddy") { }
 
-        public virtual DbSet<ImageFile> ImageFiles { get; set; }
+        public virtual DbSet<FolderLink> FolderLinks { get; set; }
         public virtual DbSet<ImageFolder> ImageFolders { get; set; }
         public virtual DbSet<CustomLink> CustomLinks { get; set; }        
         public virtual DbSet<VideoLink> VideoLinks { get; set; }
@@ -42,14 +42,14 @@ namespace WebApi.OggleBooble.DataContext
         [Column(Order = 1)]
         public string FolderPath { get; set; }
     }
+
     [Table("OggleBooble.VideoLink")]
     public partial class VideoLink
     {
         [Key]
-        public int Id { get; set; }
         public string Link { get; set; }
-        public int Image { get; set; }
-        public int Title { get; set; }
+        public string Image { get; set; }
+        public string Title { get; set; }
     }
 
     [Table("OggleBooble.Category_ImageLink")]
@@ -74,29 +74,34 @@ namespace WebApi.OggleBooble.DataContext
         public int FileCount { get; set; }
     }
 
-    [Table("OggleBooble.ImageFile")]
-    public partial class ImageFile
+    [Table("OggleBooble.FolderLink")]
+    public partial class FolderLink
     {
+        public string RootFolder { get; set; }
+        public string Parent { get; set; }
         [Key]
-        public Guid ImageId { get; set; }
-
-        [Required]
-        [StringLength(200)]
-        public string ImageName { get; set; }
-
-        public int? FolderId { get; set; }
-
-        [Required]
-        [StringLength(100)]
+        [Column(Order = 1)]
         public string FolderName { get; set; }
+        public string FolderPath { get; set; }
+        public string Link { get; set; }
+        [Key]
+        [Column(Order = 0)]
+        public string LinkId { get; set; }
+    }
 
-        public long? Size { get; set; }
 
-        public int VotesUp { get; set; }
+    [Table("OggleBooble.ImageVote")]
+    public partial class ImageVote
+    {
+        //[Key]
+        //public string Id { get; set; }
 
-        public int VotesDown { get; set; }
+        public string SelectedImageId { get; set; }
+        public string RegectedImageId { get; set; }
+        public DateTime Created { get; set; }
+        public string Voter { get; set; }
 
-        public virtual ImageFolder ImageFolder { get; set; }
+        //public virtual ImageFolder ImageFolder { get; set; }
     }
 
 }
