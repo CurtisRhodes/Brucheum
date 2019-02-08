@@ -8,6 +8,8 @@ using System.Web;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Client;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 
@@ -23,9 +25,12 @@ namespace OggleBooble
     {
         public void Configuration(IAppBuilder app)
         {
-            ConfigureAuth(app);
+            ConfigureAuth(app);  
+            //app.MapSignalR("/api.curtisrhodes.com/signalr", new HubConfiguration() { EnableJSONP = true });
+            app.MapSignalR();
         }
     }
+
 
     public partial class Startup
     {
@@ -87,6 +92,10 @@ namespace OggleBooble
             //    ClientSecret = ""
             //});
         }
+
+
+
+
     }
 
     public class EmailService : IIdentityMessageService

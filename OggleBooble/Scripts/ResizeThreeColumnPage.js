@@ -15,7 +15,7 @@ function resizePage(debug) {
     //alert("here  resizePage()");
 
     $('.RenderBody').css("margin-top", $('#bheader').height());
-    $('#footerMessage').html("resizePage  $('#bheader').height(): " + $('#bheader').height() + "  " + $('.RenderBody').css("margin-top"));
+    //$('#footerMessage').html("resizePage  $('#bheader').height(): " + $('#bheader').height() + "  " + $('.RenderBody').css("margin-top"));
     //alert("resizePage  $('#bheader').height(): " + $('#bheader').height() + "  " + $('.RenderBody').css("margin-top"));
 
 
@@ -29,7 +29,9 @@ function resizePage(debug) {
 
 
 	var winH = $(window).height() - $('#bheader').height();
-	if ($('.threeColumnArray').height() < winH) {
+    $('#middleColumn').height(winH);
+
+    if ($('.threeColumnArray').height() < winH) {
 		$('.threeColumnArray').height(winH);
 	}
 	var tcH = $('.threeColumnArray').height();

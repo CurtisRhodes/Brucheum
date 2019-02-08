@@ -2,19 +2,18 @@
 @{
     ViewBag.Title = "Dashboard";
 }
-
+<script src="~/Scripts/jquery.signalR-2.4.0.min.js"></script>
+<script src="/signalr/hubs"></script>
 <style>
     .dashBoardContainer {
         display: flex;
         border: solid 2px #111;
-        padding: 6px;
     }
     .treeContainer {
         float:right;
-        border: solid .5px #555;
-        height: 666px;
-        min-width: 345px;
-        overflow: auto;
+        border-left: solid .5px #555;
+        min-height: 106px;
+        overflow-y: auto;
     }
     .workarea {
         float:left;
@@ -36,16 +35,17 @@
     }
     .addLinkCrudArea {
         font-size: 16px;
-        display: inline-block;
-        margin-top: 30px;
-        margin-left: 40px;
         border: solid .5px #555;
         padding: 6px;
+        display: none;
     }
     .linkImage {
-        float:right;
+        /*
+            float:right;
         height: 430px;
-        width: 520px;
+        min-width: 520px;
+
+        */       
         border: solid .5px #555;
     }
     .roundedInput {
@@ -69,53 +69,112 @@
         height: 32px;
         min-width: 610px;
         background-color: #f8e8e8;
+        vertical-align: bottom;
+    }
+    #dashboardTop {
+    }
+    .myH2 {
+        font-family: Verdana;
+        margin-top: 1px;
+        font-size: 22px;
     }
     .linkContainer {
         margin-bottom: 4px;
+        font-size: 12px;
     }
         .linkContainer div {
             display: inline;
-            color: blue;
+            color: #585a38;
             margin-right: 22px;
         }
+
+    .clickable {
+        white-space: nowrap;
+    }
+    .floatingCrud {
+        position: absolute;
+        top: 250px;
+        left: 200px;
+        border: solid 2px #555;
+        box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
+        width: 66%;
+        display: none;
+    }
+    .floatingCrudContainer {
+        padding: 10px;
+        background-color: #f8e8e8;
+    }
+    .floatingCrudBanner {
+        background-color: #cfcfcf;
+        text-align: center;
+        font-size: larger;
+        padding: 10px;
+    }
+
+    .farSide {
+        display: inline-block;
+        float: right;
+        cursor: pointer;
+    }
+
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
         <div id="divStatusMessage"></div>
-        <h2>Dashboard</h2>
-        <dir class="linkContainer">
-            <div class="clickable" onclick="rebuildFolderTable()">Rebuild Tables</div>
-            <div class="clickable" onclick="getCatTree()">Refresh Dir Tree</div>
 
-            @*
+        <div id="dashboardTop">
+            <div class="myH2">Dashboard</div>
 
+            <dir class="linkContainer">
+                <div class="clickable" onclick="window.location.href='/stats/AdminDashboard'">Rebuild Tables</div>
+                <div class="clickable" onclick="$('#addNewLink').show()">Add Link</div>
+                @*
+        <div class="clickable" onclick="buildFolderLinkTable()">build FolderLink Table</div>
+        <div class="clickable" onclick="rebuildLinkTables()">Rebuild Link Tables</div>
+        <div class="clickable" onclick="getCatTree()">Refresh Dir Tree</div>
+                *@
+                <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
+                <div class="clickable" onclick="$('#newFolderCrud').fadeIn()">Create Virtual Folder</div>
+            </dir>
+        </div>
 
-        <div class="clickable" onclick="dataifyFiles()">Load Images File</div>
-        <div class="clickable" onclick="getDirTree()">Directory List</div>
-        <div class="clickable" onclick="dataifyFolders('Boobs')">Create BOOBS folders</div>
-        <div class="clickable" onclick="XXXgetLinkTree(0)">Category Tree</div>
-        <div class="clickable" onclick="datify('Boobs')">Dataify Boobs</div>
-        <div class="clickable" onclick="datify('Porn')">Dataify Porn</div>
-        <div class="clickable" onclick="galleryPage('Porn')">Gallery Page</div>
-            *@
-        </dir>
         <img id="getDirTreeLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
         <div id="divDashboardContainer" class="dashBoardContainer">
-            <div id="divWorkArea" class="workarea">
-                <div class="addLinkCrudArea">
-                    <div>link  <input id="txtNewLink" class="roundedInput" onblur="previewLinkImage()" /></div>
-                    <div>path<input id="txtLinkPath" class="roundedInput" /></div>
+
+            <div class="workarea">
+                <div id="addNewLink" class="addLinkCrudArea">
+                    <div>link<input id="txtNewLink" class="roundedInput" onblur="previewLinkImage()" /></div>
+                    <div>path<input id="txtLinkPath" readonly="readonly" class="roundedInput" /></div>
                     <input type="hidden" id="txtHiddenLinkPathId" />
-                    <div class="roundendButton" onclick="postImage()">Insert</div>
+                    <div class="roundendButton" onclick="addImageLink()">Insert</div>
                     <img id="imgLinkPreview" class="linkImage" />
                 </div>
                 <div id="dataifyInfo" class="infoLine"></div>
-
-
             </div>
             <div id="dirTreeContainer" class="treeContainer"></div>
+
+            <div id="videoCrud" class="floatingCrud">
+                <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
+                <div class="floatingCrudContainer">
+                    <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
+                    <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
+                    <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
+                    <div class="roundendButton" onclick="addVideo()">Insert</div>
+                </div>
+            </div>
+
+            <div id="newFolderCrud" class="floatingCrud">
+                <div class="floatingCrudBanner">Create New Folder<div onclick="$('#newFolderCrud').fadeOut()" class="farSide">x</div> </div>
+                <div class="floatingCrudContainer">
+                    <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
+                    <div><span>parent</span><input id="txtNewFolderParent" readonly="readonly" class="roundedInput" /></div>
+                    <div class="roundendButton" onclick="createNewFolder()">Create Folder</div>
+                </div>
+            </div>
+
+
 
         </div>
     </div>
@@ -124,15 +183,52 @@
 
 <script>
     var service = '@ViewBag.Service';    
-
-    $(document).ready(function () {
-        getCatTree();
-    });
-
     var tabIndent = 22;
     var tab = 0;
     var totalPics = 0;
     var totalFolders = 0;
+
+    $(document).ready(function () {
+        getCatTree();
+        $(window).resize();
+    });
+
+    $(window).resize(function () {
+        //alert("$('#middleColumn').height(): " + $('#middleColumn').height());
+        var initial = $('#dirTreeContainer').height();
+        var adjusted = $('#middleColumn').height() - $('#dashboardTop').height() - 150
+        $('#dirTreeContainer').height(adjusted);
+        //$('#imgLinkPreview').height(adjusted);
+        $('#footerMessage').html("initial: " + initial + "  & adjusted: " + $('#dirTreeContainer').height());
+
+        $('.floatingCrud').width($('.workarea').width() - 100);
+
+    });
+
+    $(function () {
+
+       // $.connection.hub.url = "https://api.curtisrhodes.com/signalr";
+
+        var progress = $.connection.progressHub;
+        console.log(progress);
+
+        $.connection.hub.start().done(function () {
+            var connectionId = $.connection.hub.id;
+            console.log("connectionId: " + connectionId);
+            //alert("connectionId: " + connectionId);
+        });
+
+        progress.client.addProgress = function (message, progressCount, totalItems) {
+            alert("progress.client.addProgress: " + message);
+            if (message == "...") {
+                $('#dataifyInfo').show().html("processing: " + progressCount + " of " + totalItems);
+            }
+            else {
+                $('#dataifyInfo').show().html(message);
+            }
+        };
+
+    });
 
     function getCatTree() {
         $('#getDirTreeLoadingGif').fadeIn();
@@ -183,153 +279,101 @@
         $('#' + id + '').toggle();
     }
     function clickPath(path, id) {
-        $('#txtLinkPath').val(path);
+        $('#txtLinkPath').val(path.replace(/%20/g, " "));        
+        $('#txtNewFolderParent').val(path.replace(/%20/g, " "));
         $('#txtHiddenLinkPathId').val(id);
-        //alert("txtHiddenLinkPathId: " + $('#txtHiddenLinkPathId').val());
     }
 
-    var treeItemArray = new Array();
-    function rebuildFolderTable() {
-        
-        treeItemArray = new Array();
-        $('#getDirTreeLoadingGif').fadeIn();
-        $('#dataifyInfo').show().html("rebuilding ImageFolder list");
-        $.ajax({
-            type: "GET",
-            url: service + "/api/Directory/GetDirTree",
-            success: function (folderModel) {
-                totalPics = 0;
-                rebuildFolderTableRecurr(folderModel);
-                //$('#dataifyInfo').html("total folders: " + totalFolders + " total pics: " + totalPics);
-                writeFolderArrayItems(treeItemArray);
 
-            },
-            error: function (xhr) {
-                $('#getDirTreeLoadingGif').hide();
-                alert("wastedHours xhr error: " + xhr.statusText);
-            }
-        });
-    }
-    function rebuildFolderTableRecurr(folderModel) {
-        $.each(folderModel.SubDirs, function (idx, subFolderModel) {
-            totalPics += subFolderModel.Length;
-            totalFolders++;
-
-            treeItemArray.push({
-                FolderName: subFolderModel.DirectoryName,
-                FolderPath: subFolderModel.DanniPath,
-                FileCount: subFolderModel.Length,
-                Parent: subFolderModel.ParentId,
-                Id: subFolderModel.CategoryId
-            });
-            rebuildFolderTableRecurr(subFolderModel);
-        });
-    }
-    function writeFolderArrayItems(treeItems) {
+    function addVideo() {
         try {
-            $('#dataifyInfo').html("building Image Folder table");
+            $('#getDirTreeLoadingGif').show();
+            var videoLink = {};
+            videoLink.Link = $('#txtVideoLink').val();
+            videoLink.Image = $('#txtVideoImage').val();
+            videoLink.Title = $('#txtVideoTitle').val();
             $.ajax({
                 type: "POST",
-                url: service + "/api/ImageFolder",
-                data: { '': treeItems },
-                success: function (success) {
-                    $('#dataifyInfo').append("  : " + success);
-
-
-                    rebuildImageTable()
+                url: service + "api/VideoLink",
+                data: videoLink,
+                success(success) {
+                    $('#getDirTreeLoadingGif').hide();
+                    if (!success.startsWith("ERROR")) {
+                        displayStatusMessage("ok", "video link added");
+                    }
+                    else
+                        alert("addVideo: " + success);
                 },
                 error: function (xhr) {
                     $('#getDirTreeLoadingGif').hide();
-                    alert("writeFolderArrayItems xhr: " + getXHRErrorDetails(xhr));
+                    alert("addVideo xhr: " + getXHRErrorDetails(xhr));
                 }
-            });
+            })
         } catch (e) {
-            $('#getDirTreeLoadingGif').hide();
-            alert("recurrdatify: " + e);
+            alert("addVideo Catch : " + e);
         }
+
+
     }
 
-    function rebuildImageTable() {
-        var successSum = 0;
-        var folderCount = 0;
-        var totalFolders = 0;
-        $('#dataifyInfo').html("loading image links");
-        $.ajax({
-            type: "GET",
-            url: service + "api/ImageFolder",
-            success: function (folders) {
-                totalFolders = folders.length
-                $.each(folders, function (idx, obj) {
-                    $.ajax({
-                        type: "POST",
-                        url: service + "/api/ImageLink/RebuildImageTable?parentId=" + obj.Id + "&pathName=" + obj.FolderPath,
-                        success: function (success) {
-                            if (!success.startsWith("ERROR")) {
-                                ++folderCount;
-                                successSum += Number(success);
-                                $('#dataifyInfo').html(" Adding folder " + folderCount + " folders of " +
-                                    totalFolders + " total Files: " + successSum + " " + obj.FolderPath);
-
-                                if (folderCount == totalFolders) {
-                                    $.ajax({
-                                        type: "PATCH",
-                                        url: service + "/api/ImageFolder/LoadCategoryImageLink",
-                                        success: function (success) {
-                                            $('#getDirTreeLoadingGif').fadeOut();
-                                            $('#dataifyInfo').append("  done");
-                                            if (success.startsWith("ERROR")) {
-                                                alert("LoadCategoryImageLink: " + success);
-                                            }
-                                        },
-                                        error: function (xhr) {
-                                            $('#getDirTreeLoadingGif').hide();
-                                            alert("AddFiles xhr: " + getXHRErrorDetails(xhr));
-                                        }
-                                    });
-                                }
-                            }
-                            else {
-                                $('#getDirTreeLoadingGif').hide();
-                                alert("dataifyRecurr error: " + success);
-                            }
-                        },
-                        error: function (xhr) {
-                            $('#getDirTreeLoadingGif').hide();
-                            alert("AddFiles xhr: " + getXHRErrorDetails(xhr));
-                        }
-                    });
-                });
-            },
-            error: function (xhr) {
-                $('#getDirTreeLoadingGif').hide();
-                alert("AddFiles xhr: " + getXHRErrorDetails(xhr));
-            }
-        })
-    }
-    
-  
-    // used to add links not in danni image collection
     function previewLinkImage() {
         $('#imgLinkPreview').attr('src', $('#txtNewLink').val());
     }
-    function postImage() {
+
+    function addImageLink() {
+        $('#getDirTreeLoadingGif').fadeIn();
+
         var newLink = {};
         newLink.Link = $('#txtNewLink').val();
-
         newLink.PathId = $('#txtHiddenLinkPathId').val();
+
         $.ajax({
             type: "POST",
             url: service + "/api/ImageLinkCategory",
             data: newLink,
             success: function (success) {
+                $('#getDirTreeLoadingGif').hide();
                 if (success == "ok")
                     alert("image added");
-                else
-                    alert(success);
+                else {
+                    alert("CreateVirtualFolder: " + success);
+                }
             },
             error: function (xhr) {
-                alert("DirStats xhr error: " + xhr.statusText);
+                $('#getDirTreeLoadingGif').hide();
+                alert("CreateVirtualFolder xhr error: " + xhr.statusText);
             }
         });
+    }
+
+    function createNewFolder() {
+        $('#getDirTreeLoadingGif').fadeIn();
+        var newFolder = {};
+        newFolder.FolderName = $('#txtNewFolderTitle').val();
+        newFolder.Parent = $('#txtHiddenLinkPathId').val();
+        newFolder.FolderPath = $('#txtNewFolderParent').val() + "/" + $('#txtNewFolderTitle').val();
+
+        $.ajax({
+            type: "POST",
+            url: service + "/api/ImageFolder",
+            data: newFolder,
+            success: function (success) {
+                if (success == "ok")
+                    getCatTree();
+                else {
+                    $('#getDirTreeLoadingGif').hide();
+                    alert("CreateVirtualFolder: " + success);
+                }
+            },
+            error: function (xhr) {
+                alert("CreateVirtualFolder xhr error: " + xhr.statusText);
+            }
+        });
+    }
+
+    function moveFolder() {
+
+
+
     }
 </script>

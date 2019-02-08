@@ -26,12 +26,15 @@
     <div id="leftColumn"></div>
     <div id="middleColumn">
         <h2>Videos</h2>
+        <img id="getVideoLinksLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
+
         <div id="linksContainer" class="videoContainer"></div>
     </div>
     <div id="rightColumn"></div>
 </div>
 
 <script>
+    var service = '@ViewBag.Service';    
 
     $(document).ready(function () {
         getVideoLinks();
@@ -42,25 +45,27 @@
     });
 
     function getVideoLinks() {
+        $('#getVideoLinksLoadingGif').fadeIn();
         var imagePath = "https://api.curtisrhodes.com/app_data/links/images/";
         try {
             $.ajax({
-                type: "PATCH",
-                url: service + "/api/ImageFolder/LoadCategoryImageLink",
+                type: "GET",
+                url: service + "/api/VideoLink",
                 success: function (videoLinks) {
-                    $.each(folders, function (idx, obj) {
+                    $.each(videoLinks, function (idx, obj) {
                         $('#linksContainer').append("<div><a href=" + obj.Link + " target='_blank'><img src=" +
                             imagePath + obj.Image + " /><br/><div class='vlinkLabel'>" +
                             obj.Title + "</div></a></div>");
                     });
+                    $('#getVideoLinksLoadingGif').hide();
                 },
                 error: function (xhr) {
-                    $('#getDirTreeLoadingGif').hide();
+                    $('#getVideoLinksLoadingGif').hide();
                     alert("getVideoLinks xhr: " + getXHRErrorDetails(xhr));
                 }
             });
         } catch (e) {
-            $('#getDirTreeLoadingGif').hide();
+            $('#getVideoLinksLoadingGif').hide();
             alert("recurrdatify: " + e);
         }
     }

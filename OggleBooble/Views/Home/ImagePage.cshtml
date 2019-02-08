@@ -81,6 +81,7 @@
 
 
         // set width
+        ///
         $('#imageContainer').width($('#middleColumn').width());
 
         // set heigth
@@ -163,6 +164,8 @@
                 url: service + "/api/ImageFolder/GetLinks?folder=" + folder,
                 success: function (folderModel) {
                     if (!folderModel.DirectoryName.startsWith("ERROR")) {
+
+                        // add folders to html view
                         $('#imageContainer').html('');
                         $.each(folderModel.SubDirs, function (idx, obj) {
                             $('#imageContainer').append("<div path='" + obj.Path + "' class='folderFirsty'><img class='thumbImage' src='" +
@@ -172,16 +175,20 @@
                             window.location.href = "imagePage?folder=" + $(this).attr("path");
                         })
 
+
+                        // add files
                         $('#slideShowLink').show();
-                        var k = 0;
+                        var fileCount = 0;
                         $.each(folderModel.Files, function (idx, obj) {
                             $('#imageContainer').append("<div class='postage'><img class='thumbImage blowup' src='" + obj.FileName + "'/></div>");
-                            k++;
+                            fileCount++;
                         })
                         $('.blowup').click(function () {                            
                             window.open($(this).attr("src"), "_blank");
                         })
-                        $('#fileCount').html(k);
+
+                        fileCount += folderModel.SubDirs.length;
+                        $('#fileCount').html(fileCount);
                         $('#getImagesLoadingGif').hide();
                     }
                     else {

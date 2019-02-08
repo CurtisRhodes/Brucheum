@@ -22,6 +22,7 @@
         display: flex;
         margin-bottom: 100px;
         width: 100%;
+        display: none;
     }
     .majorCategoryRowLinkItem {
         float: left;
@@ -42,11 +43,24 @@
         padding-left: 222px;
         padding-bottom: 8px;
     }
+
+    .indexTitle {
+        display: block;
+        width: 100%;
+        text-align: center;
+        color: #490157;
+        font-family: 'Lucida Calligraphy';
+        font-size: 33px;
+        margin-bottom: 8px;
+    }
+
+
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
+        <div id="statMessage"></div>
         <div class="majorCategoryRow">
             <a class="majorCategoryRowLinkItem" href="~/home/ImagePage?folder=boobs/shapes">
                 <img class="boobleClassic" alt="" src="~/Images/bighonkers.jpg" />
@@ -70,15 +84,27 @@
             </a>
         </div>
 
+        <div id="galleryMessage" class="indexTitle">
+            Select a Gallery
+        </div>
+
+        <div id="carousel">
+            @Html.Partial("_RandomImage")
+        </div>
+
         <div class="bottomLinks">
             <a href="ContentPage.aspx?pg=LetMeExplain">Boobs Rater</a>
         </div>
         <div class="bottomLinks">
+            <a href="~/home/transitions?folder=boobs">Transitions</a>
+        </div>
+
+        <div class="bottomLinks">
             <a href="ContentPage.aspx?pg=LetMeExplain">Let me Expalin</a>
         </div>
-        <div class="bottomLinks">
+        @*<div class="bottomLinks">
             <a href="ContentPage.aspx?pg=CategoryList1">Category List</a>
-        </div>
+        </div>*@
         <div class="bottomLinks">
             <a href="~/home/ImagePage?folder=porn">nasty porn</a>
         </div>
@@ -92,5 +118,10 @@
 
 <script>
     $(document).ready(function () {
+
+        launchCarousel('Boobs');
+
     });
+
+
 </script>
