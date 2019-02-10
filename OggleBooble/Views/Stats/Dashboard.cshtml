@@ -17,7 +17,7 @@
     }
     .workarea {
         float:left;
-        width:80%;
+        width: 100%;
         background-color: #eee;
     }
     .collapsable {
@@ -37,7 +37,6 @@
         font-size: 16px;
         border: solid .5px #555;
         padding: 6px;
-        display: none;
     }
     .linkImage {
         /*
@@ -46,6 +45,7 @@
         min-width: 520px;
 
         */       
+        max-width: 80%;
         border: solid .5px #555;
     }
     .roundedInput {
@@ -137,6 +137,7 @@
                 *@
                 <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
                 <div class="clickable" onclick="$('#newFolderCrud').fadeIn()">Create Virtual Folder</div>
+                <div class="clickable" onclick="$('#moveFolderCrud').fadeIn()">Move Folder</div>
             </dir>
         </div>
 
@@ -146,14 +147,16 @@
             <div class="workarea">
                 <div id="addNewLink" class="addLinkCrudArea">
                     <div>link<input id="txtNewLink" class="roundedInput" onblur="previewLinkImage()" /></div>
-                    <div>path<input id="txtLinkPath" readonly="readonly" class="roundedInput" /></div>
+                    <div>path<input class="txtLinkPath roundedInput" readonly="readonly" /></div>
                     <input type="hidden" id="txtHiddenLinkPathId" />
                     <div class="roundendButton" onclick="addImageLink()">Insert</div>
-                    <img id="imgLinkPreview" class="linkImage" />
                 </div>
+                <img id="imgLinkPreview" class="linkImage" />
                 <div id="dataifyInfo" class="infoLine"></div>
             </div>
-            <div id="dirTreeContainer" class="treeContainer"></div>
+            <div id="dirTreeContainer" class="treeContainer">
+                @Html.Partial("_DirTree")
+            </div>
 
             <div id="videoCrud" class="floatingCrud">
                 <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
@@ -169,11 +172,19 @@
                 <div class="floatingCrudBanner">Create New Folder<div onclick="$('#newFolderCrud').fadeOut()" class="farSide">x</div> </div>
                 <div class="floatingCrudContainer">
                     <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
-                    <div><span>parent</span><input id="txtNewFolderParent" readonly="readonly" class="roundedInput" /></div>
+                    <div><span>parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
                     <div class="roundendButton" onclick="createNewFolder()">Create Folder</div>
                 </div>
             </div>
 
+            <div id="moveFolderCrud" class="floatingCrud">
+                <div class="floatingCrudBanner">Move Folder<div onclick="$('#moveFolderCrud').fadeOut()" class="farSide">x</div> </div>
+                <div class="floatingCrudContainer">
+                    <div><span>folder to move</span><select id="selFolder" class="dirTreeDropDown">@Html.Partial("_DirOptions");</select></div>
+                    <div><span>new parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                    <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
+                </div>
+            </div>
 
 
         </div>
@@ -189,21 +200,25 @@
     var totalFolders = 0;
 
     $(document).ready(function () {
-        getCatTree();
-        $(window).resize();
+        resizeThisPage();    
     });
 
-    $(window).resize(function () {
-        //alert("$('#middleColumn').height(): " + $('#middleColumn').height());
-        var initial = $('#dirTreeContainer').height();
-        var adjusted = $('#middleColumn').height() - $('#dashboardTop').height() - 150
-        $('#dirTreeContainer').height(adjusted);
-        //$('#imgLinkPreview').height(adjusted);
-        $('#footerMessage').html("initial: " + initial + "  & adjusted: " + $('#dirTreeContainer').height());
+    function resizeThisPage() {
+        var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);
+        if (workAreaHeight > $('#middleColumn').height()) {
 
+            $('#middleColumn').height(workAreaHeight)
+            alert("workAreaHeight: " + workAreaHeight)
+        }
+        $('#divDashboardContainer').height($('#middleColumn').height() - 200);
+
+        //$('#dirTreeContainer').height($();
+        //$('#imgLinkPreview').height()
+        
         $('.floatingCrud').width($('.workarea').width() - 100);
+        $('#footerMessage').html("image height: " + $('#imgLinkPreview').height());
 
-    });
+    };
 
     $(function () {
 
@@ -230,60 +245,19 @@
 
     });
 
-    function getCatTree() {
-        $('#getDirTreeLoadingGif').fadeIn();
-        totalPics = 0;
-        totalFolders = 0;
-        $('#dirTreeContainer').html("");
-        $.ajax({
-            type: "GET",
-            url: service + "/api/ImageFolderTree",
-            success: function (danni) {
-                //$('#dirTreeContainer').append("<div class='clickable' onclick='treeToggle(rootDivContainer)'>" + dirTree.DirectoryName + "</div>");
-                $('#dirTreeContainer').append("<div class='clickable' onclick='treeToggle(rootDivContainer)'>Root</div>");
-                $('#dirTreeContainer').append("<div id='rootDivContainer'></div>");
-
-                recurrGetCatTree(danni, 'rootDivContainer');
-
-                $('#getDirTreeLoadingGif').fadeOut();
-                $('#dataifyInfo').show().html("total folders: " + totalFolders + " total pics: " + totalPics);
-            },
-            error: function (xhr) {
-                $('#getDirTreeLoadingGif').fadeOut();
-                alert("DirStats xhr error: " + xhr.statusText);
-            }
-        });
-    }
-    function recurrGetCatTree(dir, container) {
-        tab += tabIndent;
-        $.each(dir.SubDirs, function (idx, subDir) {
-            $('#' + container + '').append("<div class='clickable' style='text-indent:" + tab + "px'>"
-                + "<span id=S" + subDir.LinkId + " onclick=treeToggle('" + subDir.LinkId + "')>[-] </span>"
-                + "<span onclick=clickPath('" + subDir.DanniPath + "','" + subDir.CategoryId + "')>" + subDir.DirectoryName +
-                "</span><span class='fileCount'>  : " + subDir.Length + "</span></div>");
-            $('#' + container + '').append("<div id=" + subDir.LinkId + " class='zzcollapsable'></div>");
-
-            totalPics += subDir.Length;
-            totalFolders++;
-            recurrGetCatTree(subDir, subDir.LinkId);
-            tab -= tabIndent;
-        });
-    }
     function treeToggle(id) {
         //alert($('#' + id + '').css("display"));
         if ($('#' + id + '').css("display") == "none") {
-            $('#S' + id + '').html("[-]");
+            $('#S' + id + '').html("[-] ");
         }
         else
-            $('#S' + id + '').html("[+]");
+            $('#S' + id + '').html("[+] ");
         $('#' + id + '').toggle();
     }
     function clickPath(path, id) {
-        $('#txtLinkPath').val(path.replace(/%20/g, " "));        
-        $('#txtNewFolderParent').val(path.replace(/%20/g, " "));
+        $('.txtLinkPath').val(path.replace(/%20/g, " "));        
         $('#txtHiddenLinkPathId').val(id);
     }
-
 
     function addVideo() {
         try {
@@ -318,30 +292,28 @@
 
     function previewLinkImage() {
         $('#imgLinkPreview').attr('src', $('#txtNewLink').val());
+        $('#footerMessage').html("ini image height: " + $('#imgLinkPreview').height());
+        resizeThisPage();
     }
 
     function addImageLink() {
-        $('#getDirTreeLoadingGif').fadeIn();
-
         var newLink = {};
         newLink.Link = $('#txtNewLink').val();
         newLink.PathId = $('#txtHiddenLinkPathId').val();
-
         $.ajax({
             type: "POST",
             url: service + "/api/ImageLinkCategory",
             data: newLink,
             success: function (success) {
-                $('#getDirTreeLoadingGif').hide();
                 if (success == "ok")
-                    alert("image added");
+                    displayStatusMessage("ok", "image link added");
+
                 else {
-                    alert("CreateVirtualFolder: " + success);
+                    alert("addImageLink: " + success);
                 }
             },
             error: function (xhr) {
-                $('#getDirTreeLoadingGif').hide();
-                alert("CreateVirtualFolder xhr error: " + xhr.statusText);
+                alert("addImageLink xhr error: " + xhr.statusText);
             }
         });
     }
@@ -358,22 +330,52 @@
             url: service + "/api/ImageFolder",
             data: newFolder,
             success: function (success) {
+                $('#getDirTreeLoadingGif').hide();
                 if (success == "ok")
-                    getCatTree();
+                    displayStatusMessage("ok", "done");
                 else {
-                    $('#getDirTreeLoadingGif').hide();
                     alert("CreateVirtualFolder: " + success);
                 }
             },
             error: function (xhr) {
+                $('#getDirTreeLoadingGif').hide();
                 alert("CreateVirtualFolder xhr error: " + xhr.statusText);
             }
         });
     }
 
     function moveFolder() {
+        var moveFolderModel = {};
+        moveFolderModel.FolderToMoveId = $('#selFolder').val();
+        moveFolderModel.NewParentId = $('#txtHiddenLinkPathId').val();
+
+        $('#getDirTreeLoadingGif').fadeIn();
+
+        $.ajax({
+            type: "PUT",
+            url: service + "/api/ImageFolder",
+            data: moveFolderModel,
+            success: function (success) {
+                $('#getDirTreeLoadingGif').hide();
+                if (success == "ok")
+                    displayStatusMessage("ok", "done");
+                else {
+                    $('#getDirTreeLoadingGif').hide();
+                    alert("CreateVirtualFolder: " + success);
+                }
+            },
+            error: function (xhr) {
+                $('#getDirTreeLoadingGif').hide();
+                alert("CreateVirtualFolder xhr error: " + xhr.statusText);
+            }
+        });
 
 
 
     }
+
+    function addPhysicalFile() {
+
+    }
+
 </script>

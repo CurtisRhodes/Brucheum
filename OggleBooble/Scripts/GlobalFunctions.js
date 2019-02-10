@@ -1,4 +1,5 @@
 ﻿
+
 function showBreadCrumbs(folder) {
     var sc = folder.split("/");
     var bcPath = "";
@@ -37,18 +38,35 @@ function getOBCookie(key, defaultValue) {
 }
 
 
+function displayStatusMessage(msgCode, message) {
 
-function displayStatusMessage(severity, message) {
+    var severityClassName;
+    switch (msgCode) {
+        case "ok":
+            severityClassName = "severityOk";
+            break;
+        case "warning":
+            severityClassName = "severityWarning";
+            break;
+        case "error":
+            severityClassName = "severityError";
+            break;
+        default:
+            severityClassName = msgCode;
+    }
+    //.severityOk {background - color: rgba(88, 139, 108, 0.75);    }
+    //.severityWarning {        background - color: #e6de3b;    }
+    //.severityError {        background - color: #c64e4e;    }
+
     $('#divStatusMessage').removeClass();
-    $('#divStatusMessage').addClass(severity);
+    $('#divStatusMessage').addClass(severityClassName);
     $('#divStatusMessage').html(message);
     $('#divStatusMessage').show();
 
-    if (severity === "alert-success") {
+    if (msgCode === "ok") {
         setTimeout(function () { $('#divStatusMessage').hide("slow"); }, 2500);
     }
     else {
-        $('#divStatusMessage').css("color", "#fff");
         setTimeout(function () { $('#divStatusMessage').hide("slow"); }, 15000);
     }
 }

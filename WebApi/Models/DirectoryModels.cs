@@ -7,6 +7,7 @@ namespace WebApi.Directory.Models
 {
     public class FileModel
     {
+        public string ImageId { get; set; }
         public string FileName { get; set; }
         public DateTime Created { get; set; }
         public long Length { get; set; }
@@ -39,6 +40,12 @@ namespace WebApi.Directory.Models
     {
         public int PathId { get; set; }
         public string Link { get; set; }
+    }
+
+    public class MoveFolderModel
+    {
+        public int FolderToMoveId { get; set; }
+        public int NewParentId { get; set; }
     }
 
     public class ImageFolderModel

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using WebApi.Directory.Models;
@@ -45,6 +46,8 @@ namespace WebApi.OggleBooble
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
+                    folderModel.CategoryId = db.ImageFolders.Where(f => f.FolderPath == folder).FirstOrDefault().Id;
+
                     folderModel.SubDirs.AddRange((from f1 in db.ImageFolders
                                                   join fp in db.ImageFolders on f1.Parent equals fp.Id
                                                   where fp.FolderPath == folder
@@ -68,6 +71,7 @@ namespace WebApi.OggleBooble
                                          where pp.FolderPath == folder
                                          select new FileModel()
                                          {
+                                             ImageId = il.Id,
                                              FileName = il.Link
                                          }
                                       ).ToList();
@@ -107,7 +111,7 @@ namespace WebApi.OggleBooble
         }
 
         [HttpPut]
-        public string MoveVirtualFolder(ImageFolderModel model)
+        public string MoveVirtualFolder(MoveFolderModel model)
         {
             string success = "";
             try
@@ -115,7 +119,9 @@ namespace WebApi.OggleBooble
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     /// replace parent
-
+                    var dbFolder = db.ImageFolders.Where(f => f.Id == model.FolderToMoveId).First();
+                    dbFolder.Parent = model.NewParentId;
+                    db.SaveChanges();
                     success = "ok";
                 }
             }
@@ -184,6 +190,7 @@ namespace WebApi.OggleBooble
     [EnableCors("*", "*", "*")]
     public class ImageLinkController : ApiController
     {
+        // used by viewer
         [HttpGet]
         public List<FileModel> GetFiles(string folderPath)
         {
@@ -251,53 +258,6 @@ namespace WebApi.OggleBooble
             return success;
         }
 
-        //[HttpPut]
-        //public string Update(int parentId, string pathName)
-        //{
-        //    string success = "";
-        //    try
-        //    {
-        //        // check for files added to a folder
-        //        string fullFolderPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/" + pathName);
-        //        DirectoryInfo dir = new DirectoryInfo(fullFolderPath);
-        //        var danniPath = "https://api.curtisrhodes.com/App_Data/Danni/" + pathName;
-        //        var filesAdded = 0;
-        //        using (OggleBoobleContext db = new OggleBoobleContext())
-        //        {
-        //            foreach (FileInfo file in dir.GetFiles())
-        //            {
-        //                if (file.Name.Contains(" "))
-        //                {
-        //                    var reName = fullFolderPath + "/" + file.Name.Replace(" ", "_");
-        //                    file.MoveTo(reName);
-        //                }
-
-        //                var exitingLink = db.ImageLinks.Where(l => l.Link == danniPath + "/" + file.Name).FirstOrDefault();
-        //                if (exitingLink == null)
-        //                {
-        //                    var imageLinkRow = new ImageLink();
-        //                    imageLinkRow.Id = Guid.NewGuid().ToString();
-        //                    imageLinkRow.Link = danniPath + "/" + file.Name; //.Replace(' ', '_');
-        //                    db.ImageLinks.Add(imageLinkRow);
-
-        //                    var categoryImageLink = new Category_ImageLink();
-        //                    categoryImageLink.ImageLinkId = imageLinkRow.Id;
-        //                    categoryImageLink.ImageCategoryId = parentId;
-        //                    db.Category_ImageLinks.Add(categoryImageLink);
-        //                    db.SaveChanges();
-        //                    filesAdded++;
-        //                }
-        //            }
-        //        }
-        //        success = " " + filesAdded;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        success = Helpers.ErrorDetails(ex);
-        //    }
-        //    return success;
-        //}
-
         [HttpPatch]
         public string rebuildCategory_ImageLink()
         {
@@ -323,34 +283,11 @@ namespace WebApi.OggleBooble
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
-
-        [HttpDelete]
-        public string Delete()
-        {
-            string success = "";
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    //db.ImageLinks.RemoveRange
-                    db.Database.ExecuteSqlCommand("DELETE OggleBooble.ImageLink");
-                    success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-
-
     }
 
     [EnableCors("*", "*", "*")]
     public class ImageLinkCategoryController : ApiController
     {
-
         [HttpPost]
         public string AddImageLink(ImageLinkModel newLink)
         {
@@ -386,6 +323,44 @@ namespace WebApi.OggleBooble
             return success;
         }
 
+        [HttpPut]
+        public string CopyImageLink(ImageLinkModel newLink)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    db.Category_ImageLinks.Add(new Category_ImageLink()
+                    {
+                        ImageCategoryId = newLink.PathId,
+                        ImageLinkId = newLink.Link
+                    });
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        [HttpDelete]
+        public string DeleteImageLink(ImageLinkModel badLink)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    var dbBadLink = db.Category_ImageLinks.Where(c => c.ImageCategoryId == badLink.PathId && c.ImageLinkId == badLink.Link).First();
+                    db.Category_ImageLinks.Remove(dbBadLink);
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
     }
 
     [EnableCors("*", "*", "*")]
@@ -623,28 +598,27 @@ namespace WebApi.OggleBooble
             var childFolders = db.ImageFolders.Where(f => f.Parent == parent.CategoryId).ToList();
             foreach (ImageFolder childFolder in childFolders)
             {
-                if (childFolder.FolderName != "RoOt")
+                if (childFolder.FolderName != "Root")
                 {
-
                     var subChild = new DirectoryModel()
                     {
                         CategoryId = childFolder.Id,
                         ParentId = childFolder.Parent,
                         DirectoryName = childFolder.FolderName,
-                        Length=childFolder.FileCount,
+                        Length = childFolder.FileCount,
                         DanniPath = childFolder.FolderPath.Replace(" ", "%20"),
                         Path = childFolder.FolderPath + "/" + childFolder.FolderName,
                     };
+
+
                     subChild.LinkId = subChild.GetHashCode().ToString();
+
+
                     parent.SubDirs.Add(subChild);
                     ImageFolderGetRecurr(subChild, db);
                 }
             }
         }
-
-
-
-
     }
 
     [EnableCors("*", "*", "*")]
