@@ -116,7 +116,7 @@
                     alert("LogOUT: " + success);
             },
             error: function (xhr) {
-                displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                displayStatusMessage("warning", "error: " + xhr.statusText);
                 alert("tabLogout error: " + xhr.statusText);
             }
         });

@@ -258,6 +258,7 @@
     <Content Include="Global.asax" />
     <Content Include="Images\blueCircleLeft.png" />
     <Content Include="Images\blueCircleRight.png" />
+    <Content Include="Images\dots.png" />
     <Content Include="Images\downCaret.png" />
     <Content Include="Images\fuckMarryKill03.jpg" />
     <Content Include="Images\ingranaggi3.gif" />
@@ -265,6 +266,7 @@
     <Content Include="Images\powerOffRed01.png" />
     <Content Include="Images\RenStimpy8.jpg" />
     <Content Include="Images\transitions2.jpg" />
+    <Content Include="Scripts\adminFunctions.js" />
     <Content Include="Scripts\GlobalFunctions.js" />
     <None Include="Scripts\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\Helper.js" />
@@ -316,6 +318,9 @@
     <Content Include="Views\Shared\_header.cshtml" />
     <Content Include="Views\Shared\_footer.cshtml" />
     <Content Include="Views\Stats\AdminDashboard.cshtml" />
+    <Content Include="Views\Shared\_DirOptions.cshtml" />
+    <Content Include="Views\Shared\_DirTree.cshtml" />
+    <Content Include="Views\Test\contextTest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

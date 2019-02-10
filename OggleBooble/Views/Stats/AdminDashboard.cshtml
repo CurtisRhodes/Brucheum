@@ -2,8 +2,6 @@
 @{
     ViewBag.Title = "AdminDashboard";
 }
-
-
 <script src="~/Scripts/jquery.signalR-2.4.0.min.js"></script>
 <script src="/signalr/hubs"></script>
 <style>
@@ -81,11 +79,6 @@
         min-width: 610px;
         background-color: #f8e8e8;
     }
-
-    #dashboardTop {
-        border: solid thin green;
-    }
-
     .myH2 {
         font-family: Verdana;
         margin-top: 1px;
@@ -96,7 +89,6 @@
         margin-bottom: 4px;
         font-size: 12px;
     }
-
         .linkContainer div {
             display: inline;
             color: #585a38;
@@ -133,26 +125,48 @@
         float: right;
         cursor: pointer;
     }
+
+    .dirTreeDropDown {
+        margin-top: 22px;
+        margin-left: 50px;
+        padding: 3px 6px;
+        font-size: 19px;
+        color: #555;
+        background-color: #ddd;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
+
+
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
         <div id="divStatusMessage"></div>
-
         <div id="dashboardTop">
             <div class="myH2">Dashboard</div>
-
             <dir class="linkContainer">
                 <div class="clickable" onclick="buildFolderLinkTable()">build FolderLink Table</div>
                 <div class="clickable" onclick="buildFolderTables()">Rebuild Tables</div>
                 @*<div class="clickable" onclick="rebuildLinkTables()">Rebuild Link Tables</div>*@
-                <div class="clickable" onclick="getCatTree()">Refresh Dir Tree</div>
-                <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
+                <div class="clickable" onclick="buildCatTree()">Refresh Dir Tree</div>
             </dir>
         </div>
-
         <img id="getDirTreeLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
+        <div id="divDashboardContainer" class="dashBoardContainer">
+            <div class="workarea">
+
+                <select id="dirTreeDropDown" class="dirTreeDropDown">
+                    @Html.Partial("_DirOptions");
+                </select>
+
+                <div id="dataifyInfo" class="infoLine"></div>
+            </div>
+            <div id="dirTreeContainer" class="treeContainer">
+                @Html.Partial("_DirTree");
+            </div>
+        </div>
     </div>
     <div id="rightColumn"></div>
 </div>
@@ -162,6 +176,8 @@
 
     var totalPics = 0;
     var totalFolders = 0;
+    var tabIndent = 22;
+    var tab = 0;
 
     $(document).ready(function () {
         $(window).resize();
@@ -219,6 +235,117 @@
         });
     }
 
+    var optionTree = "";
+    function buildCatTree() {
+        try {
+            $('#getDirTreeLoadingGif').fadeIn();
+            totalPics = 0;
+            totalFolders = 0;
+            tab = 0;
+            $('#dirTreeContainer').html("");
+            $.ajax({
+                type: "GET",
+                url: service + "/api/ImageFolderTree",
+                success: function (danni) {
+                    //$('#dirTreeContainer').append("<div class='clickable' onclick='treeToggle(rootDivContainer)'>" + dirTree.DirectoryName + "</div>");
+                    //$('#dirTreeContainer').append("<div class='clickable' onclick='treeToggle(rootDivContainer)'>Root</div>");
+                    //$('#dirTreeContainer').append("<div id='rootDivContainer'></div>");
+                    recurrGetCatTree(danni, 'dirTreeContainer');
+
+                    saveAsStaticFile("dirTree");
+                    saveAsStaticFile("dirSelect");
+
+                    $('#getDirTreeLoadingGif').hide();
+                    $('#dataifyInfo').show().html("total folders: " + totalFolders + " total pics: " + totalPics);
+                },
+                error: function (xhr) {
+                    $('#getDirTreeLoadingGif').hide();
+                    alert("buildCatTree xhr error: " + xhr.statusText);
+                }
+            });
+        } catch (e) {
+            $('#getDirTreeLoadingGif').hide();
+            alert("buildCatTree catch: " + e);
+        }
+    }
+    function recurrGetCatTree(dir, container) {
+        tab += tabIndent;
+        $.each(dir.SubDirs, function (idx, subDir) {
+            $('#' + container + '').append("<div class='clickable' style='text-indent:" + tab + "px'>"
+                + "<span id=S" + subDir.LinkId + " onclick=treeToggle('" + subDir.LinkId + "')>[-] </span>"
+                + "<span onclick=clickPath('" + subDir.DanniPath + "','" + subDir.CategoryId + "')>" + subDir.DirectoryName +
+                "</span><span class='fileCount'>  : " + subDir.Length + "</span></div>");
+            $('#' + container + '').append("<div id=" + subDir.LinkId + " class='zzcollapsable'></div>");
+
+            optionTree += "<option value='" + subDir.CategoryId + "'>";
+            var optTab = tab;
+            //alert("optTab: " + optTab)
+            while (optTab > 0) {
+                optionTree += " - ";
+                optTab -= tabIndent;
+                //alert("optTab w: " + optTab)
+            }
+            optionTree += subDir.DirectoryName + "</option > ";
+
+            totalPics += subDir.Length;
+            totalFolders++;
+            recurrGetCatTree(subDir, subDir.LinkId);
+            tab -= tabIndent;
+        });
+    }
+
+    function treeToggle(id) {
+        //alert($('#' + id + '').css("display"));
+        if ($('#' + id + '').css("display") == "none") {
+            $('#S' + id + '').html("[-] ");
+        }
+        else
+            $('#S' + id + '').html("[+] ");
+        $('#' + id + '').toggle();
+    }
+    function clickPath(path, id) {
+        alert("xc: " + path.replace(/%20/g, " "));
+
+
+        //$('#txtLinkPath').val(path.replace(/%20/g, " "));
+        //$('#txtNewFolderParent').val(path.replace(/%20/g, " "));
+        //$('#txtHiddenLinkPathId').val(id);
+    }
+
+    function saveAsStaticFile(fileName) {
+        try {
+
+            var data = new Object();
+            if (fileName == "dirTree") {
+                data.html = $('#dirTreeContainer').html();
+                data.fileName = "_DirTree.cshtml";
+            }
+            if (fileName == "dirSelect") {
+                data.html = optionTree;
+                data.fileName = "_DirOptions.cshtml";
+            }
+            $.ajax({
+                type: "POST",
+                url: "CreateStaticFile",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (success) {
+                    if (success === "ok") {
+                        $('#dataifyInfo').show().html(data.fileName +" saved");
+                    }
+                    else
+                        alert("CreateStaticFile: " + success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("CreateStaticFile XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("CreateStaticFile CATCH: " + success);
+        }
+    }
+
     function rebuildLinkTables() {
         $('#dataifyInfo').show().html("emptying ImageLink table");
         $.ajax({
@@ -240,7 +367,6 @@
     }
     function getImageFolderList() {
         try {
-            var totalFolders = 0;
             $('#getDirTreeLoadingGif').fadeIn();
             $('#dataifyInfo').show().html("getting ImageFolder list");
             $.ajax({

@@ -86,11 +86,12 @@
     display: none;
 }
 #divStatusMessage {
-    margin-top: 10px;
+    margin: 4px 0;
+    width: 100%;
     font-size: 18px;
-    display: none;
     margin-bottom: 3px;
     padding: 4px;
+    display: none;
 }
 
 .modalVail {
@@ -274,15 +275,15 @@ label {
     z-index: 6; /* Sit on top */
 }
 
-.alert-success {
-    background-color: #44c147;
+.severityOk {
+    background-color: rgba(80, 206, 83, 0.71);
 }
 
-.alert-warning {
+.severityWarning {
     background-color: #e6de3b;
 }
 
-.alert-danger {
+.severityError {
     background-color: #c64e4e;
 }
 
@@ -296,3 +297,17 @@ label {
     width: 100%;
     margin-right: 35px;
 }
+
+.dirTreeDropDown {
+    margin-top: 22px;
+    margin-left: 50px;
+    padding: 3px 6px;
+    font-size: 19px;
+    color: #555;
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+
+

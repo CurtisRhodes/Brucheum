@@ -86,4 +86,17 @@ namespace OggleBooble
         }
     }
 
+    public class TestController : Controller
+    {
+        private string apiService = ConfigurationManager.AppSettings["apiService"];
+
+        public ActionResult contextTest()
+        {
+            ViewBag.Service = apiService;
+            return View();
+        }
+    }
+
+
+
 }
