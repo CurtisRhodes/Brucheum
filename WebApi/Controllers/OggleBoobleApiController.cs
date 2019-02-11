@@ -85,8 +85,9 @@ namespace WebApi.OggleBooble
             return folderModel;
         }
 
+        // dashboard
         [HttpPost]
-        public string CreateVirtualFolder (ImageFolderModel model)
+        public string CreateFolder (ImageFolderModel model)
         {
             string success = "";
             try
@@ -110,19 +111,25 @@ namespace WebApi.OggleBooble
             return success;
         }
 
+        // dashboard
         [HttpPut]
-        public string MoveVirtualFolder(MoveFolderModel model)
+        public string MoveFolder(MoveFolderModel model)
         {
             string success = "";
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    /// replace parent
-                    var dbFolder = db.ImageFolders.Where(f => f.Id == model.FolderToMoveId).First();
-                    dbFolder.Parent = model.NewParentId;
+                    var dbFolderToMove = db.ImageFolders.Where(f => f.Id == model.FolderToMoveId).First();
+
+                    var dbNewParent = db.ImageFolders.Where(f => f.Id == model.NewParentId).First();
+                    var newFolderPath = dbNewParent.FolderPath + "/" + dbFolderToMove.FolderName;
+
+                    dbFolderToMove.Parent = model.NewParentId;
+                    dbFolderToMove.FolderPath = newFolderPath;
+
                     db.SaveChanges();
-                    success = "ok";
+                    success = dbNewParent.FolderPath;
                 }
             }
             catch (Exception ex)
@@ -132,59 +139,6 @@ namespace WebApi.OggleBooble
             return success;
         }
 
-
-
-
-        //writeFolderArrayItems
-        string Add(List<ImageFolderModel> treeItems)
-        {
-            string success = "";
-            try
-            {
-                //using (OggleBoobleContext db = new OggleBoobleContext())
-                //{
-                //    // save custom links
-                //    db.Database.ExecuteSqlCommand("TRUNCATE TABLE OggleBooble.CustomLink");
-
-                //    List<ImageLinkModel> customLinks = (from il in db.ImageLinks
-                //                                   join cl in db.Category_ImageLinks on il.Id equals cl.ImageLinkId
-                //                                   join f in db.ImageFolders on cl.ImageCategoryId equals f.Id
-                //                                   where !il.Link.Contains("https://api.curtisrhodes.com/App_Data/Danni")
-                //                                   select new ImageLinkModel() { Link = il.Link, Path = f.FolderPath }).ToList();
-                //    foreach (ImageLinkModel linkModel in customLinks)
-                //    {
-                //        db.CustomLinks.Add(new CustomLink() {
-                //            Link = linkModel.Link,
-                //            FolderPath = linkModel.Path
-                //        });
-                //    }
-                //    db.SaveChanges();
-
-                //    db.Database.ExecuteSqlCommand("DROP TABLE OggleBooble.Category_ImageLink");
-                //    db.Database.ExecuteSqlCommand("TRUNCATE TABLE OggleBooble.ImageLink");
-                //    db.Database.ExecuteSqlCommand("create table OggleBooble.Category_ImageLink(" +
-                //        "ImageCategoryId int foreign key references OggleBooble.ImageFolder(Id)," +
-                //        "ImageLinkId nvarchar(128) foreign key references OggleBooble.ImageLink(Id)," +
-                //        "primary key(ImageCategoryId, ImageLinkId))");
-                //    success = "ok";
-                //}
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return "Obsolete";
-        }
-
-        [HttpPatch]
-        public int GetFolderCount()
-        {
-            using (OggleBoobleContext db = new OggleBoobleContext())
-            {
-                //return db.ImageFolders.ToList().Count();
-                return db.ImageFolders.Count();
-            }
-        }
     }
 
     [EnableCors("*", "*", "*")]
@@ -211,83 +165,56 @@ namespace WebApi.OggleBooble
             }
             return links;
         }
-
-        [HttpPost]
-        public string writeImageLinks(string[] imageFolders)
-        {
-            //writeFolderArrayItems step 2  datify images saved in folder 
-            string success = "";
-            var totalFilesAdded = 0;
-            try
-            {
-                //string fullFolderPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/");
-                //DirectoryInfo dir = new DirectoryInfo(fullFolderPath);
-                string danniPath = "https://api.curtisrhodes.com/App_Data/Danni/";
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    foreach (string folderPath in imageFolders)
-                    {
-                        FileInfo[] fileInfos = new DirectoryInfo(folderPath).GetFiles();
-                        var filesAdded = 0;
-                        foreach (FileInfo fileInfo in fileInfos)
-                        {
-                            if (fileInfo.Extension != ".db")
-                            {
-                                var imageLinkRow = new ImageLink();
-                                imageLinkRow.Id = Guid.NewGuid().ToString();
-                                imageLinkRow.Link = danniPath + "/" + fileInfo.Name.Replace(" ", "%20");
-
-                                db.ImageLinks.Add(imageLinkRow);
-                                filesAdded++;
-                            }
-                            else
-                                success = "db";
-                        }
-                        if (filesAdded > 0)
-                        {
-                            db.SaveChanges();
-                            totalFilesAdded += filesAdded;
-                        }
-                    }
-                }
-                success = " " + totalFilesAdded;
-            }
-            catch (Exception ex) {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-
-        [HttpPatch]
-        public string rebuildCategory_ImageLink()
-        {
-            string success = "";
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    db.Database.ExecuteSqlCommand("insert OggleBooble.Category_ImageLink " +
-                        "select f.Id ImageCategoryId, l.Id imageLinkId " +
-                        "from OggleBooble.ImageLink l " +
-                        "join OggleBooble.ImageFolder f on f.FolderPath = substring(l.Link, 45, len(Link) " +
-                        " - 44 - charindex('/', reverse(l.Link)))");
-
-                    //--put custom links back into ImageLink and CatLink
-                    db.Database.ExecuteSqlCommand("insert OggleBooble.ImageLink select max(newid()), link from OggleBooble.CustomLink group by link");
-                    db.Database.ExecuteSqlCommand("insert OggleBooble.Category_ImageLink select f.Id, l.Id from OggleBooble.CustomLink c " +
-                        "join OggleBooble.ImageFolder f on f.FolderPath = c.FolderPath join OggleBooble.ImageLink l on l.Link = c.Link");
-
-                    success = "ok";
-                }
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
     }
 
     [EnableCors("*", "*", "*")]
     public class ImageLinkCategoryController : ApiController
     {
+        // dashboard
+        [HttpGet]
+        public DirectoryModel RebuildCatTree()
+        {
+            var timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
+            var danni = new DirectoryModel() { DirectoryName = "RoOt", CategoryId = 0 };
+            using (OggleBoobleContext db = new OggleBoobleContext())
+            {
+                GetCatTreeRecurr(danni, db);
+            }
+            timer.Stop();
+            System.Diagnostics.Debug.WriteLine("RebuildCatTree took: " + timer.Elapsed);
+            return danni;
+        }
+        private void GetCatTreeRecurr(DirectoryModel parent, OggleBoobleContext db)
+        {
+            var childFolders = db.ImageFolders.Where(f => f.Parent == parent.CategoryId).ToList();
+            foreach (ImageFolder childFolder in childFolders)
+            {
+                if (childFolder.FolderName != "Root")
+                {
+                    var linkCount = db.Category_ImageLinks.Where(c => c.ImageCategoryId == childFolder.Id).Count();
+                    if (childFolder.FileCount < linkCount)
+                    {
+                        childFolder.FileCount = linkCount;
+                    }
+                    var subChild = new DirectoryModel()
+                    {
+                        CategoryId = childFolder.Id,
+                        ParentId = childFolder.Parent,
+                        DirectoryName = childFolder.FolderName,
+                        Length = childFolder.FileCount,
+                        DanniPath = childFolder.FolderPath.Replace(" ", "%20"),
+                        Path = childFolder.FolderPath + "/" + childFolder.FolderName,
+                    };
+                    subChild.LinkId = subChild.GetHashCode().ToString();
+
+                    parent.SubDirs.Add(subChild);
+                    GetCatTreeRecurr(subChild, db);
+                }
+            }
+        }
+
+        // dashboard 
         [HttpPost]
         public string AddImageLink(ImageLinkModel newLink)
         {
@@ -309,12 +236,24 @@ namespace WebApi.OggleBooble
                         });
                         db.SaveChanges();
                     }
-                    //int imageCatId = db.ImageFolders.Where(f => f.FolderPath == newLink.Path).First().Id;
                     db.Category_ImageLinks.Add(new Category_ImageLink()
                     {
                         ImageCategoryId = newLink.PathId,
                         ImageLinkId = imageLinkId
                     });
+                    //var dbFolder = db.ImageFolders.Where(f => f.Id == newLink.PathId).First();
+                    //var dbParentFoder = db.ImageFolders.Where(f => f.Id == dbFolder.Parent).First();
+                    //var root = dbFolder.FolderPath.Substring(0, dbFolder.FolderPath.IndexOf("/"));
+                    //db.FolderLinks.Add(new FolderLink()
+                    //{
+                    //    RootFolder = root,
+                    //    Parent = dbParentFoder.FolderName,
+                    //    FolderName = dbFolder.FolderName,
+                    //    FolderPath = dbFolder.FolderPath,
+                    //    Link = newLink.Link,
+                    //    LinkId = imageLinkId
+                    //});
+
                     db.SaveChanges();
                     success = "ok";
                 }
@@ -323,6 +262,7 @@ namespace WebApi.OggleBooble
             return success;
         }
 
+        // imagePage copy
         [HttpPut]
         public string CopyImageLink(ImageLinkModel newLink)
         {
@@ -344,6 +284,7 @@ namespace WebApi.OggleBooble
             return success;
         }
 
+        // impagePage remove
         [HttpDelete]
         public string DeleteImageLink(ImageLinkModel badLink)
         {
@@ -581,155 +522,63 @@ namespace WebApi.OggleBooble
     }
 
     [EnableCors("*", "*", "*")]
-    public class ImageFolderTreeController : ApiController
+    public class CarouselController : ApiController
     {
+        // Carousel
         [HttpGet]
-        public DirectoryModel GetCatTree()
+        public int GetFolderCount()
         {
-            var danni = new DirectoryModel() { DirectoryName = "RoOt", CategoryId = 0 };
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
-                ImageFolderGetRecurr(danni, db);
-            }
-            return danni;
-        }
-        private void ImageFolderGetRecurr(DirectoryModel parent, OggleBoobleContext db)
-        {
-            var childFolders = db.ImageFolders.Where(f => f.Parent == parent.CategoryId).ToList();
-            foreach (ImageFolder childFolder in childFolders)
-            {
-                if (childFolder.FolderName != "Root")
-                {
-                    var subChild = new DirectoryModel()
-                    {
-                        CategoryId = childFolder.Id,
-                        ParentId = childFolder.Parent,
-                        DirectoryName = childFolder.FolderName,
-                        Length = childFolder.FileCount,
-                        DanniPath = childFolder.FolderPath.Replace(" ", "%20"),
-                        Path = childFolder.FolderPath + "/" + childFolder.FolderName,
-                    };
-
-
-                    subChild.LinkId = subChild.GetHashCode().ToString();
-
-
-                    parent.SubDirs.Add(subChild);
-                    ImageFolderGetRecurr(subChild, db);
-                }
+                //return db.ImageFolders.ToList().Count();
+                return db.ImageFolders.Count();
             }
         }
-    }
 
-    [EnableCors("*", "*", "*")]
-    public class FolderLinkController : ApiController
-    {
-        // used by carosel headstart
-        [HttpGet]
-        public List<FolderLinkModel> Get(string root, int headStart)
-        {
-            var firstFewImages = new List<FolderLinkModel>();
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    int rand = new Random().Next(10000);
-                    firstFewImages = (from f in db.FolderLinks
-                                      where f.RootFolder == root
-                                      select new FolderLinkModel()
-                                      {
-                                          LinkId = f.LinkId,
-                                          FolderName = f.FolderName,
-                                          Link = f.Link,
-                                          Parent = f.Parent,
-                                          FolderPath = f.FolderPath,
-                                      }).OrderBy(f => f.LinkId).Skip(rand).Take(headStart).ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                firstFewImages.Add(new FolderLinkModel() { FolderName = Helpers.ErrorDetails(ex) });
-            }
-            return firstFewImages;
-        }
         // used by carosel get all
         [HttpGet]
-        public List<FolderLink> Get(string root)
+        public List<VLink> GetAll(string root)
         {
-            var allImages = new List<FolderLink>();
+            var allImages = new List<VLink>();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    allImages = db.FolderLinks.Where(l => l.RootFolder == root).ToList();
+                    var timer = new System.Diagnostics.Stopwatch();
+                    timer.Start();
+                    allImages = db.VLinks.Where(l => l.RootFolder == root).ToList();
+                    timer.Stop();
+                    System.Diagnostics.Debug.WriteLine("Select * from vLinks took: " + timer.Elapsed);
                 }
-                allImages.RemoveRange(0, 12);
             }
             catch (Exception ex)
             {
-                allImages.Add(new FolderLink() { FolderName = Helpers.ErrorDetails(ex) });
+                allImages.Add(new VLink() { FolderName = Helpers.ErrorDetails(ex) });
             }
             return allImages;
         }
 
-        // buildFolderLinkTable  
-        [HttpPost]
-        public string Write()
+        // used by carosel get all
+        [HttpGet]
+        public List<VLink> GetaFew(string root, int headstart)
         {
-            string success = "";
+            var afewImages = new List<VLink>();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    db.Database.ExecuteSqlCommand("TRUNCATE TABLE OggleBooble.FolderLink");
-                    var fileProgress = 0;
-                    var totalFiles = 0;
-                    Helpers.SendProgress("performing the linq", fileProgress, totalFiles);
-                    var folderLinks =
-                        (from c in db.Category_ImageLinks
-                         join l in db.ImageLinks on c.ImageLinkId equals l.Id
-                         join f in db.ImageFolders on c.ImageCategoryId equals f.Id
-                         join p in db.ImageFolders on f.Parent equals p.Id
-                         select new FolderLinkModel()
-                         {
-                             LinkId = l.Id,
-                             RootFolder = f.FolderPath.Substring(0, f.FolderPath.IndexOf("/")),
-                             FolderName = f.FolderName,
-                             FolderPath = f.FolderPath,
-                             Parent = p.FolderName,
-                             Link = l.Link
-                         }).ToList();
-
-                    totalFiles = folderLinks.Count();
-
-
-                    foreach (FolderLinkModel folderLink in folderLinks)
-                    {
-
-                        db.FolderLinks.Add(new FolderLink()
-                        {
-                            RootFolder = folderLink.RootFolder,
-                            Parent = folderLink.Parent,
-                            FolderName = folderLink.FolderName,
-                            FolderPath = folderLink.FolderPath,
-                            Link = folderLink.Link,
-                            LinkId = folderLink.LinkId
-                        });
-                        if (++fileProgress % 1000 == 0)
-                        {
-                            db.SaveChanges();
-                            Helpers.SendProgress("...", fileProgress, ++totalFiles);
-                        }
-                    }
-                    db.SaveChanges();
-                    success = "ok";
+                    var timer = new System.Diagnostics.Stopwatch();
+                    timer.Start();
+                    afewImages = db.VLinks.Where(l => l.RootFolder == root).Take(headstart).ToList();
+                    timer.Stop();
+                    System.Diagnostics.Debug.WriteLine("Select " + headstart + " from vLinks took: " + timer.Elapsed);
                 }
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex);
+                afewImages.Add(new VLink() { FolderName = Helpers.ErrorDetails(ex) });
             }
-            return success;
+            return afewImages;
         }
     }
 
@@ -779,11 +628,3 @@ namespace WebApi.OggleBooble
 }
 
 
-/// Rules to rebuild Image link files
-/// 
-/// 1. rebuildFolderTable()  "/api/Directory/GetDirTree" 
-/// 2. writeFolderArrayItems() [post] "/api/ImageFolder"  TRUCATING DONE HERE 
-/// 3. rebuildImageTable() [get] "api/ImageFolder"    AVOIDABLE?
-/// 4. rebuildImageTable() [post] "/api/ImageLink/RebuildImageTable"
-/// 5. rebuildImageTable() [patch] "/api/ImageFolder/LoadCategoryImageLink" REBUILD CAT_LINK TABLE
-/// 

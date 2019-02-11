@@ -43,6 +43,7 @@
         z-index: 1;
         height: 70px;
         cursor: pointer;
+        display: none;
     }
 </style>
 
@@ -119,14 +120,13 @@
     }
 
     function launchCarousel(root) {
-       // $('#laCarousel').show();
+        $('#laCarousel').show();
         $.ajax({
             type: "GET",
-            url: service + "/api/FolderLink/Get?root=" + root + "&headstart=12",
+            url: service + "/api/Carousel/GetaFew?root=" + root + "&headstart=12",
             success: function (folderLinks) {
-                //alert("folderLinks.length: " + folderLinks.length);
+              //alert("folderLinks.length: " + folderLinks.length);
                 $.each(folderLinks, function (idx, obj) {
-                    //alert(obj.FolderPath + ": " + category);
                     //var category = obj.FolderPath.substring(obj.FolderPath.indexOf("/") + 1, obj.FolderPath.lastIndexOf("/")).replace("archive/", "").replace("/", " - ");
                     carouselItemArray.push({
                         FolderName: obj.FolderName,
@@ -135,10 +135,9 @@
                         FolderPath: obj.FolderPath
                     });
                 });
-                //alert("folderLinks.length: " + folderLinks.length)
                 if (folderLinks.length > 0) {
                     numImages = folderLinks.length;
-                    $('#laCarousel').show();
+                    //$('#laCarousel').show();
                     imageIndex = Math.floor(Math.random() * numImages);
                     showImage();
                     rotate();
@@ -154,7 +153,7 @@
     function loadAllImages(root) {
         $.ajax({
             type: "GET",
-            url: service + "/api/FolderLink/Get?root=" + root,
+            url: service + "/api/Carousel/GetAll?root=" + root,
             success: function (folderLinks) {
                 $.each(folderLinks, function (idx, obj) {
                     //category = obj.FolderPath.substring(obj.FolderPath.indexOf("/") + 1, obj.FolderPath.lastIndexOf("/")).replace("archive/", "").replace("/", " - ");
@@ -166,15 +165,7 @@
                     });
                 });
                 numImages = folderLinks.length;
-
-                imageIndex = Math.floor(Math.random() * numImages);
-
-                //imageIndex = Math.floor(numImages / 2);
-
-                //$('#laCarousel').show();
-                //showImage();
-                //rotate();
-
+                //imageIndex = Math.floor(Math.random() * numImages);
             },
             error: function (xhr) {
                 alert("loadAndStartCarousel error: " + xhr.statusText);
@@ -184,10 +175,11 @@
 
     function getFolderCount() {
         $.ajax({
-            type: "PATCH",
-            url: service + "api/ImageFolder",
+            type: "GET",
+            url: service + "/api/Carousel",
             success: function (folderCount) {
                 $('#galleryMessage').html("Select from " + folderCount + " Galleries");
+                $('#laCarousel').show();
             },
             error: function (xhr) {
                 $('#getDirTreeLoadingGif').hide();
@@ -202,7 +194,7 @@
         $('#carouselImage').attr('src', carouselArrayItem.Link);
         $('#carouselImage').css('z-index', 10);
         $('#articleTitle').html(carouselArrayItem.FolderName);
-        $('#categoryLabel').html(carouselArrayItem.Parent);
+        $('#categoryLabel').html(carouselArrayItem.FolderPath.substring(carouselArrayItem.FolderPath.indexOf("/"), carouselArrayItem.FolderPath.lastIndexOf("/")).replace(/\//g, "  "));
 
         setTimeout(function () {
             adjustCarousel();
@@ -211,7 +203,7 @@
             adjustCarousel();
         }, 600);
 
-        $('#statMessage').html(imageIndex + 1 + " of " + numImages.toLocaleString());
+        $('#statMessage').html((imageIndex + 1).toLocaleString() + " of " + numImages.toLocaleString());
     }
 
     function adjustCarousel() {

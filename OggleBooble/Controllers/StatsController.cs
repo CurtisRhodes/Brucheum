@@ -21,11 +21,6 @@ namespace OggleBooble.Controllers
             ViewBag.Service = apiService;
             return View();
         }
-        public ActionResult AdminDashboard()
-        {
-            ViewBag.Service = apiService;
-            return View();
-        }
 
         [HttpPost]
         public JsonResult CreateStaticFile(staticPageModel staticPage)
@@ -42,6 +37,13 @@ namespace OggleBooble.Controllers
                 success = "ok";
             }
             catch (Exception e) { success = Helpers.ErrorDetails(e); }
+            return Json(success, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult ConnectionTest()
+        {
+            string success = "ok";
             return Json(success, JsonRequestBehavior.AllowGet);
         }
     }

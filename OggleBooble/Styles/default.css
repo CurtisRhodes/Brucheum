@@ -308,6 +308,18 @@ label {
     border: 1px solid #ccc;
     border-radius: 3px;
 }
+.floatingCrudBanner {
+    background-color: #cfcfcf;
+    text-align: center;
+    font-size: larger;
+    padding: 10px;
+}
+
+.farSide {
+    display: inline-block;
+    float: right;
+    cursor: pointer;
+}
 
 
 

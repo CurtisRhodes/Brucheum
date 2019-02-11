@@ -40,6 +40,7 @@ namespace WebApi.Directory.Models
     {
         public int PathId { get; set; }
         public string Link { get; set; }
+        public string ImageId { get; set; }
     }
 
     public class MoveFolderModel
@@ -72,16 +73,4 @@ namespace WebApi.Directory.Models
         public string FolderPath { get; set; }
         public int FileCount { get; set; }
     }
-
-    public class FolderLinkModel
-    {
-        public string RootFolder { get; set; }
-        public string Parent { get; set; }
-        public string FolderName { get; set; }
-        public string FolderPath { get; set; }
-        public int FileCount { get; set; }
-        public string Link { get; set; }
-        public string LinkId { get; set; }
-    }
-
 }
