@@ -12,13 +12,14 @@ namespace WebApi.OggleBooble.DataContext
         public OggleBoobleContext()
             : base("GoDaddy") { }
 
-        public virtual DbSet<FolderLink> FolderLinks { get; set; }
+        //public virtual DbSet<FolderLink> FolderLinks { get; set; }
         public virtual DbSet<ImageFolder> ImageFolders { get; set; }
         public virtual DbSet<CustomLink> CustomLinks { get; set; }        
         public virtual DbSet<VideoLink> VideoLinks { get; set; }
         public virtual DbSet<ImageLink> ImageLinks { get; set; }
         public virtual DbSet<Category_ImageLink> Category_ImageLinks { get; set; }
-        
+        public virtual DbSet<VLink> VLinks { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
@@ -74,20 +75,20 @@ namespace WebApi.OggleBooble.DataContext
         public int FileCount { get; set; }
     }
 
-    [Table("OggleBooble.FolderLink")]
-    public partial class FolderLink
-    {
-        public string RootFolder { get; set; }
-        public string Parent { get; set; }
-        [Key]
-        [Column(Order = 1)]
-        public string FolderName { get; set; }
-        public string FolderPath { get; set; }
-        public string Link { get; set; }
-        [Key]
-        [Column(Order = 0)]
-        public string LinkId { get; set; }
-    }
+    //[Table("OggleBooble.FolderLink")]
+    //public partial class FolderLink
+    //{
+    //    public string RootFolder { get; set; }
+    //    public string Parent { get; set; }
+    //    [Key]
+    //    [Column(Order = 1)]
+    //    public string FolderName { get; set; }
+    //    public string FolderPath { get; set; }
+    //    public string Link { get; set; }
+    //    [Key]
+    //    [Column(Order = 0)]
+    //    public string LinkId { get; set; }
+    //}
 
 
     [Table("OggleBooble.ImageVote")]
@@ -102,6 +103,18 @@ namespace WebApi.OggleBooble.DataContext
         public string Voter { get; set; }
 
         //public virtual ImageFolder ImageFolder { get; set; }
+    }
+    [Table("OggleBooble.vwLinks")]
+    public partial class VLink
+    {
+        public int? Parent { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int Id { get; set; }
+        public string RootFolder { get; set; }
+        public string FolderName { get; set; }
+        public string FolderPath { get; set; }
+        public string LinkId { get; set; }
+        public string Link { get; set; }
     }
 
 }

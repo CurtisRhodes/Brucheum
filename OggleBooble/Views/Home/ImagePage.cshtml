@@ -91,18 +91,6 @@
         background-color: #f8e8e8;
     }
 
-    .floatingCrudBanner {
-        background-color: #cfcfcf;
-        text-align: center;
-        font-size: larger;
-        padding: 10px;
-    }
-
-    .farSide {
-        display: inline-block;
-        float: right;
-        cursor: pointer;
-    }
 
     .roundendButton {
         margin-top: 6px;
@@ -169,6 +157,7 @@
             <div id="btnCopyLink" class="roundendButton" onclick="copyLink(false)">Copy</div>
             <div id="btnMoveLink" class="roundendButton" onclick="copyLink(true)">Move</div>
         </div>
+        
     </div>
 </div>
 
@@ -222,8 +211,8 @@
                         var fileCount = 0;
                         $.each(folderModel.Files, function (idx, obj) {
                             $('#imageContainer').append("<div>" +
-                                "<img id=" + obj.ImageId + " class= 'thumbImage blowup' src='" + obj.FileName + "'/>" +
-                                "<img class='dots' src='/Images/dots.png' onmouseover = showContextMenu('" + obj.ImageId + "') />" +
+                                "<img id=" + obj.ImageId + " class= 'thumbImage blowup' src='" + obj.FileName + "'  />" +           // onmouseout=$('.ogContextMenu').hide()
+                                "<img class='dots' src='/Images/dots.png' onmouseover=showContextMenu('" + obj.ImageId + "') />" +
                                 "</div >");
                             //style = 'left:$('#'" + obj.ImageId + "'').width();'
                             fileCount++;
@@ -322,8 +311,9 @@
     function copyLink(andRemove) {
        // alert("folderId: " + $('#dirTreeDropDown').val() + " currentContextImageId: " + currentContextImageId)
         var newLink = {};
-        newLink.Link = currentContextImageId;
+        newLink.ImageId = currentContextImageId;
         newLink.PathId = $('#dirTreeDropDown').val();
+        newLink.Link = $('#' + currentContextImageId + '').attr("src");
         $.ajax({
             type: "PUT",
             url: service + "/api/ImageLinkCategory",

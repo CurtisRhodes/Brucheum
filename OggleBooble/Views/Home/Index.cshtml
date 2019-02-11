@@ -13,7 +13,6 @@
     }
 
     .boobleClassic {
-        
         height: 225px;
     }
 
@@ -24,10 +23,12 @@
         width: 100%;
         display: none;
     }
+
     .majorCategoryRowLinkItem {
         float: left;
         margin-left: 60px;
     }
+
     .containerImage {
         float: left;
         margin-left: 60px;
@@ -54,11 +55,42 @@
         margin-bottom: 8px;
     }
 
+    .comicList {
+        margin-top: 123px;
+    }
 
+        .comicList div {
+            font-size: 21px;
+            cursor: pointer;
+            color: #9a4ea9;
+            margin-left: 14px;
+            margin-bottom: 23px;
+            white-space: nowrap;
+        }
+
+    .floatingDirTree {
+        border: solid thin blue;
+        max-height: 666px;
+        overflow: auto;
+        position: absolute;
+        background-color: #fef; /*#b081b1*/
+        top: 100px;
+        left: 200px;
+        display: none;
+    }
 </style>
 
 <div class="threeColumnArray">
-    <div id="leftColumn"></div>
+    <div id="leftColumn">
+        <div class="comicList">
+            <div id="obBoobsRater" onclick="window.location.href='/home/transitions?folder=boobs'">Boobs Rater</div>
+            <div id="obTranitions" onclick="window.location.href='/test/contextTest'">Transitions</div>
+            <div id="obLetExplain" onclick="window.location.href='/test/contextTest'">Let me Expalin</div>
+            <div id="obCategories" onclick="$('#dirTreeContainer').toggle()">Category List</div>
+            <div id="obNastyPorny" onclick="window.location.href='/home/ImagePage?folder=porn'">Nasty Porn</div>
+            <div id="obVideoLinks" onclick="window.location.href='/home/Videos'">video links</div>
+        </div>
+    </div>
     <div id="middleColumn">
         <div id="statMessage"></div>
         <div class="majorCategoryRow">
@@ -92,28 +124,13 @@
             @Html.Partial("_RandomImage")
         </div>
 
-        <div class="bottomLinks">
-            <a href="~/test/contextTest">Boobs Rater</a>
-        </div>
-        <div class="bottomLinks">
-            <a href="~/home/transitions?folder=boobs">Transitions</a>
-        </div>
-        <div class="bottomLinks">
-            <a href="ContentPage.aspx?pg=LetMeExplain">Let me Expalin</a>
-        </div>
-        <div class="bottomLinks">
-            <a href="ContentPage.aspx?pg=CategoryList1">Category List</a>
-        </div>
-        <div class="bottomLinks">
-            <a href="~/home/ImagePage?folder=porn">nasty porn</a>
-        </div>
-        <div class="bottomLinks">
-            <a href="~/home/Videos">video links</a>
-        </div>
     </div>
     <div id="rightColumn"></div>
 </div>
-
+<div id="dirTreeContainer" class="floatingDirTree">
+    <div class="floatingCrudBanner">View A Category <div onclick="$('#dirTreeContainer').fadeOut()" class="farSide">x</div> </div>
+    @Html.Partial("_DirTree")
+</div>
 
 <script>
     $(document).ready(function () {
@@ -121,6 +138,20 @@
         launchCarousel('Boobs');
 
     });
+
+    function treeToggle(id) {
+        //alert($('#' + id + '').css("display"));
+        if ($('#' + id + '').css("display") == "none") {
+            $('#S' + id + '').html("[-] ");
+        }
+        else
+            $('#S' + id + '').html("[+] ");
+        $('#' + id + '').toggle();
+    }
+    function clickPath(path, id) {
+        //alert(path.replace(/%20/g, " ") + "  " + id);
+        window.location.href = "/home/ImagePage?folder=" + path.replace(/%20/g, " ");
+    }
 
 
 </script>

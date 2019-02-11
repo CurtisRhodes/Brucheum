@@ -13,6 +13,7 @@
         float:right;
         border-left: solid .5px #555;
         min-height: 106px;
+        min-width: 275px;
         overflow-y: auto;
     }
     .workarea {
@@ -104,18 +105,6 @@
         padding: 10px;
         background-color: #f8e8e8;
     }
-    .floatingCrudBanner {
-        background-color: #cfcfcf;
-        text-align: center;
-        font-size: larger;
-        padding: 10px;
-    }
-
-    .farSide {
-        display: inline-block;
-        float: right;
-        cursor: pointer;
-    }
 
 </style>
 
@@ -128,16 +117,19 @@
             <div class="myH2">Dashboard</div>
 
             <dir class="linkContainer">
-                <div class="clickable" onclick="window.location.href='/stats/AdminDashboard'">Rebuild Tables</div>
-                <div class="clickable" onclick="$('#addNewLink').show()">Add Link</div>
                 @*
+        <div class="clickable" onclick="window.location.href='/stats/AdminDashboard'">Rebuild Tables</div>
+        <div class="clickable" onclick="$('#addNewLink').show()">Add Link</div>
         <div class="clickable" onclick="buildFolderLinkTable()">build FolderLink Table</div>
         <div class="clickable" onclick="rebuildLinkTables()">Rebuild Link Tables</div>
         <div class="clickable" onclick="getCatTree()">Refresh Dir Tree</div>
+                <div class="clickable" onclick="testConnection();">testConnection();</div>
                 *@
+                <div class="clickable" onclick="rebuildCatTree()">ReBuild Dir Tree</div>
                 <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
-                <div class="clickable" onclick="$('#newFolderCrud').fadeIn()">Create Virtual Folder</div>
+                <div class="clickable" onclick="$('#newFolderCrud').fadeIn()">Create New Folder</div>
                 <div class="clickable" onclick="$('#moveFolderCrud').fadeIn()">Move Folder</div>
+                <div class="clickable" onclick="$('#renameFolderCrud').fadeIn()">ReName Folder</div>
             </dir>
         </div>
 
@@ -181,7 +173,7 @@
                 <div class="floatingCrudBanner">Move Folder<div onclick="$('#moveFolderCrud').fadeOut()" class="farSide">x</div> </div>
                 <div class="floatingCrudContainer">
                     <div><span>folder to move</span><select id="selFolder" class="dirTreeDropDown">@Html.Partial("_DirOptions");</select></div>
-                    <div><span>new parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                    <div><span>new parent</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
                     <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
                 </div>
             </div>
@@ -207,8 +199,8 @@
         var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);
         if (workAreaHeight > $('#middleColumn').height()) {
 
-            $('#middleColumn').height(workAreaHeight)
-            alert("workAreaHeight: " + workAreaHeight)
+        $('#middleColumn').height(workAreaHeight);
+            //alert("workAreaHeight: " + workAreaHeight)
         }
         $('#divDashboardContainer').height($('#middleColumn').height() - 200);
 
@@ -246,6 +238,7 @@
     });
 
     function treeToggle(id) {
+        //alert("id: " + id);
         //alert($('#' + id + '').css("display"));
         if ($('#' + id + '').css("display") == "none") {
             $('#S' + id + '').html("[-] ");
@@ -331,11 +324,13 @@
             data: newFolder,
             success: function (success) {
                 $('#getDirTreeLoadingGif').hide();
-                if (success == "ok")
-                    displayStatusMessage("ok", "done");
-                else {
-                    alert("CreateVirtualFolder: " + success);
+                $('#newFolderCrud').hide();                
+                if (success == "ok") {
+                    rebuildCatTree();
+                    displayStatusMessage("ok", "new folder created");
                 }
+                else 
+                    alert("CreateVirtualFolder: " + success);                
             },
             error: function (xhr) {
                 $('#getDirTreeLoadingGif').hide();
@@ -348,34 +343,150 @@
         var moveFolderModel = {};
         moveFolderModel.FolderToMoveId = $('#selFolder').val();
         moveFolderModel.NewParentId = $('#txtHiddenLinkPathId').val();
-
         $('#getDirTreeLoadingGif').fadeIn();
-
         $.ajax({
             type: "PUT",
             url: service + "/api/ImageFolder",
             data: moveFolderModel,
             success: function (success) {
                 $('#getDirTreeLoadingGif').hide();
-                if (success == "ok")
-                    displayStatusMessage("ok", "done");
-                else {
-                    $('#getDirTreeLoadingGif').hide();
-                    alert("CreateVirtualFolder: " + success);
+
+                if (!success.startsWith("ERROR")) {
+                    $('#moveFolderCrud').fadeOut();
+                    rebuildCatTree();
+                    displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + success);
                 }
+                else
+                    alert("CreateVirtualFolder: " + success);
             },
             error: function (xhr) {
                 $('#getDirTreeLoadingGif').hide();
                 alert("CreateVirtualFolder xhr error: " + xhr.statusText);
             }
         });
-
-
-
     }
 
     function addPhysicalFile() {
 
     }
+    function renameFolder() {
+
+    }
+
+    var optionTree = "";
+    function rebuildCatTree() {
+        try {
+            $('#dataifyInfo').show().html("rebuilding directory tree");
+
+            $('#getDirTreeLoadingGif').fadeIn();
+            totalPics = 0;
+            totalFolders = 0;
+            tab = 0;
+            $('#dirTreeContainer').html("");
+            $.ajax({
+                type: "GET",
+                url: service + "/api/ImageLinkCategory",
+                success: function (danni) {
+                    recurrGetCatTree(danni, 'dirTreeContainer');
+
+                    $('#getDirTreeLoadingGif').hide();
+
+                    saveAsStaticFile("dirTree");
+                    saveAsStaticFile("dirSelect");
+
+                    $('#dataifyInfo').html("total folders: " + totalFolders + " total pics: " + totalPics);
+                },
+                error: function (xhr) {
+                    $('#getDirTreeLoadingGif').hide();
+                    alert("buildCatTree xhr error: " + xhr.statusText);
+                }
+            });
+        } catch (e) {
+            $('#getDirTreeLoadingGif').hide();
+            alert("buildCatTree catch: " + e);
+        }
+    }
+    function recurrGetCatTree(dir, container) {
+        tab += tabIndent;
+        $.each(dir.SubDirs, function (idx, subDir) {
+            $('#' + container + '').append("<div class='clickable' style='text-indent:" + tab + "px'>"
+                + "<span id=S" + subDir.LinkId + " onclick=treeToggle('" + subDir.LinkId + "')>[-] </span>"
+                + "<span onclick=clickPath('" + subDir.DanniPath + "','" + subDir.CategoryId + "')>" + subDir.DirectoryName +
+                "</span><span class='fileCount'>  : " + subDir.Length + "</span></div>");
+            $('#' + container + '').append("<div id=" + subDir.LinkId + " class='zzcollapsable'></div>");
+
+            optionTree += "<option value='" + subDir.CategoryId + "'>";
+            var optTab = tab;
+            //alert("optTab: " + optTab)
+            while (optTab > 0) {
+                optionTree += " - ";
+                optTab -= tabIndent;
+                //alert("optTab w: " + optTab)
+            }
+            optionTree += subDir.DirectoryName + "</option > ";
+
+            totalPics += subDir.Length;
+            totalFolders++;
+            recurrGetCatTree(subDir, subDir.LinkId);
+            tab -= tabIndent;
+
+
+
+
+        });
+    }
+    function saveAsStaticFile(fileName) {
+        try {
+
+            var data = new Object();
+            if (fileName == "dirTree") {
+                data.html = $('#dirTreeContainer').html();
+                data.fileName = "_DirTree.cshtml";
+            }
+            if (fileName == "dirSelect") {
+                data.html = optionTree;
+                data.fileName = "_DirOptions.cshtml";
+            }
+
+            $('#dataifyInfo').show().html("Create Static File");
+            alert("Create Static File: " + fileName);
+            $.ajax({
+                type: "POST",
+                url: "CreateStaticFile",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (success) {
+                    if (success === "ok") {
+                        $('#dataifyInfo').show().html(data.fileName + " saved");
+                    }
+                    else
+                        alert("CreateStaticFile: " + success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("CreateStaticFile XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        } catch (e) {
+            alert("CreateStaticFile CATCH: " + success);
+        }
+    }
+
+
+    function testConnection() {
+        $.ajax({
+            type: "POST",
+            url: "ConnectionTest",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (success) {
+                alert("testConnection: " + success);
+            },
+            error: function (jqXHR, exception) {
+                alert("testConnection XHR error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
 
 </script>
