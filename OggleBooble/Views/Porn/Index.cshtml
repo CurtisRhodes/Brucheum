@@ -1,5 +1,7 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Guzzle";
+    Layout = "_PornLayout.cshtml";
+
 }
 <style>
     #leftColumn, #middleColumn, #rightColumn {
@@ -87,7 +89,7 @@
             <div id="obTranitions" onclick="window.location.href='/test/contextTest'">Transitions</div>
             <div id="obLetExplain" onclick="window.location.href='/test/contextTest'">Let me Expalin</div>
             <div id="obCategories" onclick="$('#dirTreeContainer').toggle()">Category List</div>
-            <div id="obNastyPorny" onclick="window.location.href='/porn'">Nasty Porn</div>
+            <div id="obNastyPorny" onclick="window.location.href='/home/ImagePage?folder=porn'">Nasty Porn</div>
             <div id="obVideoLinks" onclick="window.location.href='/home/Videos'">video links</div>
         </div>
     </div>
@@ -96,7 +98,7 @@
             Select a Gallery
         </div>
         <div id="carousel">
-            @Html.Partial("_RandomImage", "boobs")
+            @Html.Partial("_RandomImage", "porn")
         </div>
     </div>
     <div id="rightColumn"></div>
@@ -108,7 +110,9 @@
 
 <script>
     $(document).ready(function () {
-        launchCarousel('boobs');
+
+        launchCarousel('porn');
+
     });
 
     function treeToggle(id) {

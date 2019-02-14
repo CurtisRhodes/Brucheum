@@ -126,10 +126,12 @@
                 <div class="clickable" onclick="testConnection();">testConnection();</div>
                 *@
                 <div class="clickable" onclick="rebuildCatTree()">ReBuild Dir Tree</div>
+                <div class="clickable" onclick="rebuildLinkTables()">ReBuild Link Tables</div>
                 <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
                 <div class="clickable" onclick="$('#newFolderCrud').fadeIn()">Create New Folder</div>
                 <div class="clickable" onclick="$('#moveFolderCrud').fadeIn()">Move Folder</div>
                 <div class="clickable" onclick="$('#renameFolderCrud').fadeIn()">ReName Folder</div>
+                <div class="clickable" onclick="$('#addFromPhysicalFolderCrud').fadeIn()">Up From Physical Folder</div>
             </dir>
         </div>
 
@@ -169,12 +171,31 @@
                 </div>
             </div>
 
+            <div id="renameFolderCrud" class="floatingCrud">
+                <div class="floatingCrudBanner">Rename Folder<div onclick="$('#renameFolderCrud').fadeOut()" class="farSide">x</div> </div>
+                <div class="floatingCrudContainer">
+                    <div><span>folder to rename</span><select id="selRenameFolder" class="dirTreeDropDown">@Html.Partial("_DirOptions");</select></div>
+                    <div><span>new name</span><input id="txtReName" class="roundedInput" /></div>
+                    <div class="roundendButton" onclick="renameFolder()">Rename Folder</div>
+                </div>
+            </div>
+
             <div id="moveFolderCrud" class="floatingCrud">
                 <div class="floatingCrudBanner">Move Folder<div onclick="$('#moveFolderCrud').fadeOut()" class="farSide">x</div> </div>
                 <div class="floatingCrudContainer">
-                    <div><span>folder to move</span><select id="selFolder" class="dirTreeDropDown">@Html.Partial("_DirOptions");</select></div>
+                    <div><span>folder to move</span><select id="selMoveFolder" class="dirTreeDropDown">@Html.Partial("_DirOptions");</select></div>
                     <div><span>new parent</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
                     <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
+                </div>
+            </div>
+
+            <div id="addFromPhysicalFolderCrud" class="floatingCrud">
+                <div class="floatingCrudBanner">Refresh From Physical Folder<div onclick="$('#addFromPhysicalFolderCrud').fadeOut()" class="farSide">x</div> </div>
+                <div class="floatingCrudContainer">
+                    <div><span>folder to update</span><select id="selVirtualFolder" class="dirTreeDropDown">@Html.Partial("_DirOptions");</select></div>
+                    <div><span>physicalFolder</span><input id="txtphysicalFolder" class="roundedInput" /></div>
+                    <div><span>danni path</span><input id="txtDanniPath" class="roundedInput" /></div>
+                    <div class="roundendButton" onclick="addFromPhysicalFile()">add From Physical Folder</div>
                 </div>
             </div>
 
@@ -192,7 +213,9 @@
     var totalFolders = 0;
 
     $(document).ready(function () {
+        resizePage("resize from documant ready");
         resizeThisPage();    
+
     });
 
     function resizeThisPage() {
@@ -341,7 +364,7 @@
 
     function moveFolder() {
         var moveFolderModel = {};
-        moveFolderModel.FolderToMoveId = $('#selFolder').val();
+        moveFolderModel.FolderToMoveId = $('#selMoveFolder').val();
         moveFolderModel.NewParentId = $('#txtHiddenLinkPathId').val();
         $('#getDirTreeLoadingGif').fadeIn();
         $.ajax({
@@ -366,18 +389,34 @@
         });
     }
 
-    function addPhysicalFile() {
-
-    }
     function renameFolder() {
+        $.ajax({
+            type: "PUT",
+            url: service + "/api/ImageFolder/RenameFolder?folderId=" + $('#selRenameFolder').val() + "&newName=" + $('#txtReName').val(),
+            success: function (success) {
+                $('#getDirTreeLoadingGif').hide();
+
+                if (!success.startsWith("ERROR")) {
+                    $('#renameFolderCrud').fadeOut();
+                    rebuildCatTree();
+                    displayStatusMessage("ok", "folder " + $('#selRenameFolder option:selected').val() + " renamed to " + $('#txtReName').val());
+                }
+                else
+                    alert("CreateVirtualFolder: " + success);
+            },
+            error: function (xhr) {
+                $('#getDirTreeLoadingGif').hide();
+                alert("CreateVirtualFolder xhr error: " + xhr.statusText);
+            }
+        });
 
     }
 
     var optionTree = "";
     function rebuildCatTree() {
         try {
+            var start = Date.now();
             $('#dataifyInfo').show().html("rebuilding directory tree");
-
             $('#getDirTreeLoadingGif').fadeIn();
             totalPics = 0;
             totalFolders = 0;
@@ -389,12 +428,12 @@
                 success: function (danni) {
                     recurrGetCatTree(danni, 'dirTreeContainer');
 
-                    $('#getDirTreeLoadingGif').hide();
-
+                    var delta = (Date.now() - start) / 1000;
+                    console.log("rebuildCatTree took: " + delta.toFixed(3));
+                    $('#dataifyInfo').html("total folders: " + totalFolders + " total pics: " + totalPics);
                     saveAsStaticFile("dirTree");
                     saveAsStaticFile("dirSelect");
-
-                    $('#dataifyInfo').html("total folders: " + totalFolders + " total pics: " + totalPics);
+                    $('#getDirTreeLoadingGif').hide();
                 },
                 error: function (xhr) {
                     $('#getDirTreeLoadingGif').hide();
@@ -442,23 +481,25 @@
             if (fileName == "dirTree") {
                 data.html = $('#dirTreeContainer').html();
                 data.fileName = "_DirTree.cshtml";
+                $('#dataifyInfo').append(" Create DirTree");
             }
             if (fileName == "dirSelect") {
                 data.html = optionTree;
                 data.fileName = "_DirOptions.cshtml";
+                $('#dataifyInfo').append(" Create DirOptions");
             }
-
-            $('#dataifyInfo').show().html("Create Static File");
-            alert("Create Static File: " + fileName);
+            //alert("Create Static File")
+            
             $.ajax({
                 type: "POST",
-                url: "CreateStaticFile",
+                url: "/Stats/CreateStaticFile",
                 data: JSON.stringify(data),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (success) {
                     if (success === "ok") {
-                        $('#dataifyInfo').show().html(data.fileName + " saved");
+                        //$('#dataifyInfo').show().html(data.fileName + " saved");
+                        $('#dataifyInfo').append(" ok");
                     }
                     else
                         alert("CreateStaticFile: " + success);
@@ -472,21 +513,53 @@
         }
     }
 
-
-    function testConnection() {
-        $.ajax({
-            type: "POST",
-            url: "ConnectionTest",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (success) {
-                alert("testConnection: " + success);
-            },
-            error: function (jqXHR, exception) {
-                alert("testConnection XHR error: " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
+    function rebuildLinkTables() {
+        try {
+            $('#dataifyInfo').show().html("rebuilding Link Tables");
+            $('#getDirTreeLoadingGif').fadeIn();
+            $.ajax({
+                type: "PUT",
+                url: service + "/api/Carousel",
+                success: function (success) {
+                    $('#getDirTreeLoadingGif').hide();
+                    if (success == "ok")
+                        $('#dataifyInfo').append(" ok");
+                    else
+                        alert("rebuildLinkTables: " + success);
+                },
+                error: function (xhr) {
+                    $('#getDirTreeLoadingGif').hide();
+                    alert("rebuildLinkTables xhr error: " + xhr.statusText);
+                }
+            });
+        } catch (e) {
+            $('#getDirTreeLoadingGif').hide();
+            alert("rebuildLinkTables catch: " + e);
+        }
     }
 
+    function addFromPhysicalFile() {
+        $('#getDirTreeLoadingGif').fadeIn();
+        $.ajax({
+            type: "PUT",
+            url: service + "/api/Directory/rebiuldPhy?folderId=" + $('#selVirtualFolder').val() + "&dirPath=" + $('#txtphysicalFolder').val() + "&danniPathHint=" + $('#txtDanniPath').val(),
+            success: function (success) {
+                $('#getDirTreeLoadingGif').hide();
+
+                if (!success.startsWith("ERROR")) {
+                    $('#addFromPhysicalFolderCrud').fadeOut();
+                    rebuildCatTree();
+                    displayStatusMessage("ok", "folder " + $('#selVirtualFolder option:selected').val() + " renamed to " + $('#txtReName').val());
+                }
+                else
+                    alert("CreateVirtualFolder: " + success);
+            },
+            error: function (xhr) {
+                $('#getDirTreeLoadingGif').hide();
+                alert("CreateVirtualFolder xhr error: " + xhr.statusText);
+            }
+        });
+
+    }
 
 </script>

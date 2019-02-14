@@ -73,4 +73,16 @@ namespace WebApi.Directory.Models
         public string FolderPath { get; set; }
         public int FileCount { get; set; }
     }
+
+    public partial class FolderLink
+    {
+        public string LinkId { get; set; }
+        public int FolderId { get; set; }
+        public int ParentId { get; set; }
+        public string FolderName { get; set; }
+        public string FolderPath { get; set; }
+        public string Link { get; set; }
+    }
+
+
 }

@@ -12,7 +12,8 @@ namespace WebApi.OggleBooble.DataContext
         public OggleBoobleContext()
             : base("GoDaddy") { }
 
-        //public virtual DbSet<FolderLink> FolderLinks { get; set; }
+        public virtual DbSet<BoobsLink> BoobsLinks { get; set; }
+        public virtual DbSet<PornLink> PornLinks { get; set; }
         public virtual DbSet<ImageFolder> ImageFolders { get; set; }
         public virtual DbSet<CustomLink> CustomLinks { get; set; }        
         public virtual DbSet<VideoLink> VideoLinks { get; set; }
@@ -75,21 +76,36 @@ namespace WebApi.OggleBooble.DataContext
         public int FileCount { get; set; }
     }
 
-    //[Table("OggleBooble.FolderLink")]
-    //public partial class FolderLink
-    //{
-    //    public string RootFolder { get; set; }
-    //    public string Parent { get; set; }
-    //    [Key]
-    //    [Column(Order = 1)]
-    //    public string FolderName { get; set; }
-    //    public string FolderPath { get; set; }
-    //    public string Link { get; set; }
-    //    [Key]
-    //    [Column(Order = 0)]
-    //    public string LinkId { get; set; }
-    //}
+    [Table("OggleBooble.BoobsLink")]
+    public partial class BoobsLink
+    {
+        [Key]
+        [Column(Order = 0)]
+        public string LinkId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public int FolderId { get; set; }
+        public int ParentId { get; set; }
+        public string FolderName { get; set; }
+        public string FolderPath { get; set; }
+        public string Link { get; set; }
+    }
 
+    [Table("OggleBooble.PornLink")]
+    public partial class PornLink
+    {
+        //public string RootFolder { get; set; }
+        [Key]
+        [Column(Order = 0)]
+        public string LinkId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public int FolderId { get; set; }
+        public int ParentId { get; set; }
+        public string FolderName { get; set; }
+        public string FolderPath { get; set; }
+        public string Link { get; set; }
+    }
 
     [Table("OggleBooble.ImageVote")]
     public partial class ImageVote
