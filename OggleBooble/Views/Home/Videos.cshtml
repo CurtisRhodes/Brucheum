@@ -2,47 +2,96 @@
 @{
     ViewBag.Title = "Videos";
 }
+
+<script src="~/Scripts/video/mediaelement-and-player.js"></script>
+<link href="~/Styles/video/mediaelementplayer.css" rel="stylesheet" />
 <style>
     .threeColumnArray {
         background-image: linear-gradient(#b190b6, #b84cc8);
     }
+
     .videoContainer {
-        background-color:#b081b1;
+        background-color: #b081b1;
     }
-    .videoContainer div {
-        display: inline-block;
-    }
+
+        .videoContainer div {
+            display: inline-block;
+        }
+
     .vlinkLabel {
         width: 100%;
         text-align: center;
     }
+
     img {
         height: 124px;
         width: 208px;
+    }
+
+    .myPlayerContainer {
+        cursor: pointer;
+        display: inline-block;
+        border: solid thin green;
+    }
+
+    .videolinkLabel {
+        text-align: center;
+    }
+
+    .videoScreen {
+        position: absolute;
+        top: 123px;
+        left: 234px;
+        height: 444px;
+        border: solid 4px #80228e;
+        background-color: #d580d7;
+        display: none;
     }
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
-        <h2>Videos</h2>
-        <img id="getVideoLinksLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
 
+        <h2>Video Links</h2>
+        <img id="getVideoLinksLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
         <div id="linksContainer" class="videoContainer"></div>
+
     </div>
     <div id="rightColumn"></div>
 </div>
 
+<div id="vidScrn1" class="videoScreen">
+    <div class="floatingCrudBanner">wasted life<div onclick="$('#vidScrn1').fadeOut()" class="farSide">x</div> </div>
+    <video controls="controls">
+        <source id="vidScrn1Source" type="video/mp4">
+    </video>
+    <div class="videolinkLabel">cocksucker</div>
+</div>
+
+
+
 <script>
-    var service = '@ViewBag.Service';    
+    var service = '@ViewBag.Service';
 
     $(document).ready(function () {
         getVideoLinks();
-        //var t = linksArray();
-        //for (i = 0; i < t.length; i++) {
-        //    $('#linksContainer').append("<div><a href=" + t[i][0] + " target='_blank'><img src=" + imagePath + t[i][1] + " /><br/><div class='vlinkLabel'>" + t[i][2] + "</div></a></div>");
-        //}
     });
+
+    /// Ready Fire Aim
+    /// give vid a close box
+
+
+    function runRiver(rsrc){
+        try {
+            alert("playVid: " + rsrc);
+            $('#vidScrn1Source').attr("src", rsrc);
+            $('#vidScrn1').fadeIn();
+        } catch (e) {
+            alert("playVid: " + e);
+
+        }
+    }
 
     function getVideoLinks() {
         $('#getVideoLinksLoadingGif').fadeIn();
@@ -53,6 +102,8 @@
                 url: service + "/api/VideoLink",
                 success: function (videoLinks) {
                     $.each(videoLinks, function (idx, obj) {
+                        //$('#linksContainer').append("<div class='myPlayerContainer' onclick=runRiver('" + obj.Link + "')>" +
+                        //    "<img src=" + imagePath + obj.Image + " /><br/><div class='vlinkLabel'>" + obj.Title + "</div></a></div>");
                         $('#linksContainer').append("<div><a href=" + obj.Link + " target='_blank'><img src=" +
                             imagePath + obj.Image + " /><br/><div class='vlinkLabel'>" +
                             obj.Title + "</div></a></div>");
@@ -90,7 +141,7 @@
             ["https://xhamster.com/videos/i-luv-the-80-s-vintage-big-tits-striptease-stockings-dance-7461213", "dancers01.png", "Topless Dancers"],
             ["https://xhamster.com/videos/sucking-and-blowing-compilation-6168489", "beautifulCocksucker02.PNG", "beautiful cocksucker"],
             ["https://xhamster.com/videos/mouth-creampies-the-ultimate-compilation-3-5040401", "cuminMouth38.PNG", "Oral Creampies"],
-            ["https://xhamster.com/videos/dirty-talking-cock-sucking-wife-1333116", "dirtytalkcocksucker01.png", "Dirty Talk"]);        
-    }    
+            ["https://xhamster.com/videos/dirty-talking-cock-sucking-wife-1333116", "dirtytalkcocksucker01.png", "Dirty Talk"]);
+    }
 </script>
 

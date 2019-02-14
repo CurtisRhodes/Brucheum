@@ -36,7 +36,10 @@ namespace OggleBooble.Controllers
                 }
                 success = "ok";
             }
-            catch (Exception e) { success = Helpers.ErrorDetails(e); }
+            catch (Exception e) {
+                //if(e.)
+
+                success = Helpers.ErrorDetails(e); }
             return Json(success, JsonRequestBehavior.AllowGet);
         }
 

@@ -123,6 +123,9 @@
         $('.threeColumnArray').focus();
         imageTabMax = Math.floor($('#tabStripContainer').width() / 104);  // tabimagewidth + margin
         tabEndPos = imageTabMax;
+
+        //alert("max:" + Number($('#middleColumn').width() - 400));
+
     }); 
 
     $(window).resize(function () {
@@ -131,9 +134,13 @@
         $('#imageContainer').height(mHeight);
         $('#mainImage img').height(mHeight);
         imageTabMax = Math.floor($('#tabStripContainer').width() / 104);  // tabimagewidth + margin
+        $('#mainImage img').css("max-width", Number($('#middleColumn').width() - 400));
+
+        $('#footerMessage').html("img height: " + $('#mainImage img').height() + " width: " + $('#mainImage img').width());
     });
 
     function showImage() {
+        //alert("showImage")
         if (imageCurrentIndex > 0) 
             $('#prevImage').html(imageArray[Number(imageCurrentIndex) - 1]);
 
@@ -310,7 +317,7 @@
             case 37: scrollTabStrip('previous'); break;
             case 39: scrollTabStrip('next'); break;
             default:
-                alert("event.which: " + event.which)
+              //  alert("event.which: " + event.which)
         }
     });
 

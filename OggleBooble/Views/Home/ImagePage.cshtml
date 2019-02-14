@@ -104,11 +104,6 @@
         display: inline-block;
     }*/
 
-    .copyDialogImage {
-        float: left;
-        height: 100px;
-    }
-
     .dots {
         position: relative;
         height: 22px;
@@ -123,7 +118,30 @@
         z-index: 100;
     }
 
+    .copyDialogImage {
+        float: left;
+        height: 100px;
+        margin-right: 7px;
+    }
 
+    .dropdownButton {
+        height: 21px;
+        cursor: pointer;
+        padding: 7px;
+        margin-top: 21px;
+    }
+    .copyTree {
+        display: inline-block;
+        border:solid thin #000;
+        min-width: 266px;
+        padding-top: 4px;
+        min-height: 30px;
+    }
+    .dirTreeDropDown {
+        display: none;
+        max-height: 300px;
+        overflow-y: auto;
+    }
 </style>
 
 <div class="threeColumnArray">
@@ -151,13 +169,15 @@
     <div class="floatingCrudContainer flexContainer">
         <img id="copyDialogImage" class="copyDialogImage" />
         <div>
-            <select id="dirTreeDropDown" class="dirTreeDropDown">
-                @Html.Partial("_DirOptions");
-            </select>
+            <div id="dirTreeContainer" class="copyTree">
+                <div id="dirTreeDropDown" class="dirTreeDropDown">
+                    @Html.Partial("_DirTree");
+                </div>
+            </div>
+            <img id="pusedoDropdown" class="dropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeDropDown').toggle()" />
             <div id="btnCopyLink" class="roundendButton" onclick="copyLink(false)">Copy</div>
             <div id="btnMoveLink" class="roundendButton" onclick="copyLink(true)">Move</div>
         </div>
-        
     </div>
 </div>
 
@@ -171,6 +191,7 @@
     var folderId;
 
     $(document).ready(function () {
+
         $('#divGalleryName').html(folder.substr(folder.lastIndexOf("/") + 1));
         showBreadCrumbs(folder);
         $('.thumbImage').css("height", thumbImageHeight + "px");
@@ -289,7 +310,7 @@
 
     function removeLink() {
         var badLink = {};
-        badLink.Link = currentContextImageId;
+        badLink.ImageId = currentContextImageId; 
         badLink.PathId = folderId;
         $.ajax({
             type: "DELETE",
@@ -308,11 +329,11 @@
         });
     }
 
+    var newLink = {};
     function copyLink(andRemove) {
        // alert("folderId: " + $('#dirTreeDropDown').val() + " currentContextImageId: " + currentContextImageId)
-        var newLink = {};
         newLink.ImageId = currentContextImageId;
-        newLink.PathId = $('#dirTreeDropDown').val();
+        //newLink.PathId = $('#dirTreeContainer').html();
         newLink.Link = $('#' + currentContextImageId + '').attr("src");
         $.ajax({
             type: "PUT",
@@ -323,7 +344,26 @@
                     $('#moveCopyDialog').hide()
                     displayStatusMessage("ok", "link added to " + $('#dirTreeDropDown option:selected').text())
                     if (andRemove) {
-                        removeLink();
+
+                        var badLink = {};
+                        badLink.ImageId = newLink.ImageId;
+                        badLink.PathId = folderId;
+                        $.ajax({
+                            type: "DELETE",
+                            url: service + "/api/ImageLinkCategory",
+                            data: badLink,
+                            success: function (success) {
+                                if (success == "ok")
+                                    getImageLinks();
+                                else {
+                                    alert("CreateVirtualFolder: " + success);
+                                }
+                            },
+                            error: function (xhr) {
+                                alert("delete xhr error: " + xhr.statusText);
+                            }
+                        });
+
                     }
                 }
                 else {
@@ -343,4 +383,20 @@
     function aboutThisImage() {
 
     }
+
+    function treeToggle(id) {
+        //alert($('#' + id + '').css("display"));
+        if ($('#' + id + '').css("display") == "none") {
+            $('#S' + id + '').html("[-] ");
+        }
+        else
+            $('#S' + id + '').html("[+] ");
+        $('#' + id + '').toggle();
+    }
+    function clickPath(path, id) {
+        newLink.PathId = id;
+        $('#dirTreeContainer').html(path.replace(/%20/g, " "));
+        $('#dirTreeDropDown').hide();
+    }
+
 </script>

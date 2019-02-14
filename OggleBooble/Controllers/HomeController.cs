@@ -16,24 +16,22 @@ namespace OggleBooble
             ViewBag.Service = apiService;
             return View();
         }
+
         public ActionResult ImagePage(string folder)
         {
             if (folder == null)
                 return View("Index");
+
             ViewBag.Title = folder.Substring(folder.LastIndexOf("/") + 1);
             ViewBag.Service = apiService;
             ViewBag.Folder = folder;
-            return View();
+
+            if (folder.StartsWith("Porn"))
+                return View("ImagePage", "~/Views/Porn/_PornLayout.cshtml");
+            else
+                return View();
         }
-        public ActionResult Gallery(string folder)
-        {
-            if (folder == null)
-                return View("Index");
-            ViewBag.Title = folder.Substring(folder.LastIndexOf("/") + 1);
-            ViewBag.Service = apiService;
-            ViewBag.Folder = folder;
-            return View();
-        }
+
         public ActionResult Viewer(string folder, string startFile)
         {
             if (folder == null)
@@ -42,25 +40,33 @@ namespace OggleBooble
             ViewBag.Service = apiService;
             ViewBag.Folder = folder;
             ViewBag.StartFile = startFile;
-            return View();
+
+            if (folder.StartsWith("Porn"))
+                return View("Viewer", "~/Views/Porn/_PornLayout.cshtml");
+            else
+                return View();
         }
+
         public ActionResult Transitions(string folder)
         {
             ViewBag.Folder = folder;
             ViewBag.Service = apiService;
             return View();
         }
+
         public ActionResult BoobsRanker()
         {
             ViewBag.Service = apiService;
             return View();
         }
+
         public ActionResult Videos()
         {
             ViewBag.Service = apiService;
             return View();
         }
     }
+
     public class ErrorController : Controller
     {
         public ViewResult Index()

@@ -13,28 +13,23 @@ namespace WebApi.OggleBooble
     [EnableCors("*", "*", "*")]
     public class ImageFolderController : ApiController
     {
-        // used by rebuildLinkTables
+        
         [HttpGet]
-        public string[] Get()
+        public int GetFolderCount(string root)
         {
-            List<string> folderPaths = new List<string>();
-            try
+            var folderCount = 0;
+            using (OggleBoobleContext db = new OggleBoobleContext())
             {
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                if (root == "boobs")
                 {
-                    var folders = db.ImageFolders.ToList();
-                    foreach (ImageFolder f in folders)
-                    {
-                        folderPaths.Add(f.FolderPath);
-                    }
-
+                    folderCount = db.ImageFolders.Where(f => (f.FolderPath.Contains("boobs")) && (!f.FolderPath.Contains("archive"))).Count();
+                }
+                if (root == "porn")
+                {
+                    folderCount = db.ImageFolders.Where(f => (f.FolderPath.Contains("porn")) && (!f.FolderPath.Contains("sluts"))).Count();
                 }
             }
-            catch (Exception ex)
-            {
-                folderPaths.Add(Helpers.ErrorDetails(ex));
-            }
-            return folderPaths.ToArray();
+            return folderCount;
         }
 
         // used by ImagePage
@@ -138,6 +133,30 @@ namespace WebApi.OggleBooble
             }
             return success;
         }
+
+        // dashboard
+        [HttpPut]
+        public string RenameFolder(int folderId, string newName)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    var dbFolder = db.ImageFolders.Where(f => f.Id == folderId).First();
+                    dbFolder.FolderName = newName;
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+
 
     }
 
@@ -293,7 +312,7 @@ namespace WebApi.OggleBooble
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    var dbBadLink = db.Category_ImageLinks.Where(c => c.ImageCategoryId == badLink.PathId && c.ImageLinkId == badLink.Link).First();
+                    var dbBadLink = db.Category_ImageLinks.Where(c => c.ImageCategoryId == badLink.PathId && c.ImageLinkId == badLink.ImageId).First();
                     db.Category_ImageLinks.Remove(dbBadLink);
                     db.SaveChanges();
                     success = "ok";
@@ -519,23 +538,99 @@ namespace WebApi.OggleBooble
 
             return fileCount;
         }
+
+        [HttpPut]
+        public string rebiuldPhy(int folderId, string dirPath,string danniPathHint)
+        {
+            string success = "";
+            string danniPath = "https://api.curtisrhodes.com/App_Data/Danni/";
+
+            try
+            {
+                FileInfo[] imgs = new DirectoryInfo(dirPath).GetFiles();
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    foreach (FileInfo fileInfo in imgs)
+                    {
+                        string newId = Guid.NewGuid().ToString();
+                        db.ImageLinks.Add(new ImageLink()
+                        {
+                            Id = newId,
+                            Link = danniPath + "/" + danniPathHint + "/" + fileInfo.Name
+                        });
+                        db.Category_ImageLinks.Add(new Category_ImageLink()
+                        {
+                            ImageCategoryId = folderId,
+                            ImageLinkId = newId
+                        });
+                        db.SaveChanges();
+                    }
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;            
+        }
     }
 
     [EnableCors("*", "*", "*")]
     public class CarouselController : ApiController
     {
-        // Carousel
         [HttpGet]
-        public int GetFolderCount()
+        public List<VLink> GetaFew(string root, int headstart)
         {
-            using (OggleBoobleContext db = new OggleBoobleContext())
+            var afewImages = new List<VLink>();
+            try
             {
-                //return db.ImageFolders.ToList().Count();
-                return db.ImageFolders.Count();
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    var timer = new System.Diagnostics.Stopwatch();
+                    timer.Start();
+                    if (root == "boobs")
+                    {
+                        var dbBoobs = db.BoobsLinks.Take(headstart).ToList();
+                        foreach (BoobsLink boobLink in dbBoobs)
+                        {
+                            afewImages.Add(new VLink()
+                            {
+                                Id = boobLink.FolderId,
+                                Parent = boobLink.ParentId,
+                                FolderName = boobLink.FolderName,
+                                FolderPath = boobLink.FolderPath,
+                                LinkId = boobLink.LinkId,
+                                Link = boobLink.Link
+                            });
+                        }
+                    }
+                    if (root == "porn")
+                    {
+                        var dbPorn = db.PornLinks.Take(headstart).ToList();
+                        foreach (PornLink pornlink in dbPorn)
+                        {
+                            afewImages.Add(new VLink()
+                            {
+                                Id = pornlink.FolderId,
+                                Parent = pornlink.ParentId,
+                                FolderName = pornlink.FolderName,
+                                FolderPath = pornlink.FolderPath,
+                                LinkId = pornlink.LinkId,
+                                Link = pornlink.Link
+                            });
+                        }
+                    }
+
+                    //afewImages = db.VLinks.Where(l => l.RootFolder == root).Take(headstart).ToList();
+                    timer.Stop();
+                    System.Diagnostics.Debug.WriteLine("Select " + headstart + " from vLinks took: " + timer.Elapsed);
+                }
             }
+            catch (Exception ex)
+            {
+                afewImages.Add(new VLink() { FolderName = Helpers.ErrorDetails(ex) });
+            }
+            return afewImages;
         }
 
-        // used by carosel get all
         [HttpGet]
         public List<VLink> GetAll(string root)
         {
@@ -546,7 +641,39 @@ namespace WebApi.OggleBooble
                 {
                     var timer = new System.Diagnostics.Stopwatch();
                     timer.Start();
-                    allImages = db.VLinks.Where(l => l.RootFolder == root).ToList();
+                    if (root == "boobs")
+                    {
+                        var dbBoobs = db.BoobsLinks.ToList();
+                        foreach (BoobsLink boobLink in dbBoobs)
+                        {
+                            allImages.Add(new VLink()
+                            {
+                                Id = boobLink.FolderId,
+                                Parent = boobLink.ParentId,
+                                FolderName = boobLink.FolderName,
+                                FolderPath = boobLink.FolderPath,
+                                LinkId = boobLink.LinkId,
+                                Link = boobLink.Link
+                            });
+                        }
+                    }
+                    if (root == "porn")
+                    {
+                        var dbPorn = db.PornLinks.ToList();
+                        foreach (PornLink pornlink in dbPorn)
+                        {
+                            allImages.Add(new VLink()
+                            {
+                                Id = pornlink.FolderId,
+                                Parent = pornlink.ParentId,
+                                FolderName = pornlink.FolderName,
+                                FolderPath = pornlink.FolderPath,
+                                LinkId = pornlink.LinkId,
+                                Link = pornlink.Link
+                            });
+                        }
+                    }
+                    //allImages = db.VLinks.Where(l => l.RootFolder == root).ToList();
                     timer.Stop();
                     System.Diagnostics.Debug.WriteLine("Select * from vLinks took: " + timer.Elapsed);
                 }
@@ -558,28 +685,36 @@ namespace WebApi.OggleBooble
             return allImages;
         }
 
-        // used by carosel get all
-        [HttpGet]
-        public List<VLink> GetaFew(string root, int headstart)
+        [HttpPut]
+        public string RebuildLinkTables()
         {
-            var afewImages = new List<VLink>();
+            string success = "";
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    var timer = new System.Diagnostics.Stopwatch();
-                    timer.Start();
-                    afewImages = db.VLinks.Where(l => l.RootFolder == root).Take(headstart).ToList();
-                    timer.Stop();
-                    System.Diagnostics.Debug.WriteLine("Select " + headstart + " from vLinks took: " + timer.Elapsed);
+                    db.Database.ExecuteSqlCommand("truncate table OggleBooble.BoobsLink");
+                    db.Database.ExecuteSqlCommand("insert OggleBooble.BoobsLink " +
+                        " select Id, Parent, FolderName, FolderPath, LinkId, Link from OggleBooble.vwLinks" +
+                        " where RootFolder = 'boobs' and FolderPath not like '%archive%'" +
+                        " order by LinkId");
+
+                    db.Database.ExecuteSqlCommand("truncate table OggleBooble.PornLink");
+                    db.Database.ExecuteSqlCommand("insert OggleBooble.PornLink "+ 
+                        " select Id, Parent, FolderName, FolderPath, LinkId, Link from OggleBooble.vwLinks"+
+                        " where RootFolder = 'porn' and FolderPath not like '%sluts%'"+
+                        " order by LinkId");
+
+                    success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                afewImages.Add(new VLink() { FolderName = Helpers.ErrorDetails(ex) });
+                success = Helpers.ErrorDetails(ex);
             }
-            return afewImages;
+            return success;
         }
+
     }
 
     [EnableCors("*", "*", "*")]
