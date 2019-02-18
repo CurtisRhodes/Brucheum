@@ -5,6 +5,8 @@
     }
 
     .flexWrapContainer {
+        border: solid 4px red;
+        margin-top: 16px;
         background-image: linear-gradient(#b190b6, #b84cc8);
         border: solid thin black;
         min-height: 200px;
@@ -104,7 +106,7 @@
         display: inline-block;
     }*/
 
-    .dots {
+    /*.dots {
         position: relative;
         height: 22px;
         margin: -10px;
@@ -116,7 +118,7 @@
         margin: 2px;
         background-image: url("/Images/dots.png");
         z-index: 100;
-    }
+    }*/
 
     .copyDialogImage {
         float: left;
@@ -130,33 +132,84 @@
         padding: 7px;
         margin-top: 21px;
     }
-    .copyTree {
+
+    .pusedoTextBox {
         display: inline-block;
-        border:solid thin #000;
+        border: solid thin #000;
         min-width: 266px;
         padding-top: 4px;
         min-height: 30px;
     }
-    .dirTreeDropDown {
-        display: none;
+
+    .hideableDropDown {
+        display: inline-block;
         max-height: 300px;
         overflow-y: auto;
+        display: none;
+    }
+
+    .expandoImageViewer {
+        display: inline-block;
+        position: absolute;
+        border: solid 6px lime;
+        min-height: 200px;
+        background-color: #999;
+        display: none;
+        overflow: hidden;
+    }
+    .expandoImage {
+        object-fit: contain;
+        transition: all .75s ease-in-out;
+    }
+    .expandoImageDiv {
+        float: left;
+    }
+    .viewerImageNav {
+        float: left;
+        cursor: pointer;
+    }
+    .closeButton {
+        margin-top: -5px;
+        margin-right: -5px;
+        padding-left: 10px;
+
+    }
+    .magnifyingGlass {
+        position: absolute;
+        display: none;
+        height: 70px;
+        z-index: 4;
     }
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
-        <div id="divBreadCrumbs"></div>        
+        <div id="divBreadCrumbs"></div>
         <div id="divStatusMessage"></div>
         <img id="getImagesLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
         <div id="imageContainer" class="flexWrapContainer"></div>
         <div id="fileCount" class="countContainer"></div>
+        <div id="text55"></div>
     </div>
     <div id="rightColumn"></div>
 </div>
 
-<div id="testContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
+<div id="customViewer" class="expandoImageViewer" onclick="slide('next')">
+    <div id="expandoViewerBanner" class="floatingCrudBanner">
+        <div id="prev" class="viewerImageNav" onclick="slide('prev')">PREV</div>
+        <span id="expandoBannerText">img</span>
+        <div onclick="$('#customViewer').hide(); viewerShowing = false;" class="farSide"><img class="closeButton" src="~/Images/close.png" height="35" /></div>
+        <div id="next" class="farSide" onclick="slide('next')">NEXT</div>
+        <img id="magnifyingGlass" class="magnifyingGlass" src="~/Images/Loupe.png" onclick="blowupImage()"/>
+    </div>
+
+    <div  class="expandoImageDiv">
+        <img id="viewerImage" class="expandoImage" />
+    </div>
+</div>
+
+<div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
     <div>Copy</div>
     <div>Move</div>
     <div>Remove</div>
@@ -170,53 +223,88 @@
         <img id="copyDialogImage" class="copyDialogImage" />
         <div>
             <div id="dirTreeContainer" class="copyTree">
-                <div id="dirTreeDropDown" class="dirTreeDropDown">
+                <div id="dirTreeResults" class="pusedoTextBox"></div>
+                <div id="dirTreeDropDown" class="hideableDropDown">
                     @Html.Partial("_DirTree");
                 </div>
             </div>
-            <img id="pusedoDropdown" class="dropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeDropDown').toggle()" />
+            <img id="pusedoDropdown" class="dropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeResults').hide();$('#dirTreeDropDown').show()" />
             <div id="btnCopyLink" class="roundendButton" onclick="copyLink(false)">Copy</div>
             <div id="btnMoveLink" class="roundendButton" onclick="copyLink(true)">Move</div>
         </div>
     </div>
 </div>
 
+
+<style>
+    .folatingBox {
+        position: absolute;
+        border: solid thin orange;
+        top: 400px;
+        left: 85%;
+        min-height: 50px;
+        min-width: 200px;
+        background-color: #e7dbe9;
+        padding: 5px;
+        display: none;
+    }
+</style>
+<div id="debugMessageArea" class="folatingBox">
+    <div id="msg1"></div>
+    <div id="msg2"></div>
+    <div id="msg3"></div>
+    <div id="msg4"></div>
+</div>
+
+
+
 <script>
     var service = '@ViewBag.Service';
-    var folder = '@ViewBag.Folder';
+    var folderPath = '@ViewBag.Folder';
     var page = 0;
     var mySubDirs = new Array();
     var thumbImageHeight = 200;
     var currentContextImageId;
-    var folderId;
+    var currentContextFolderId;
+    var imageArray = new Array();
+    var imageArrayIndex = 0;
+    var exploderInterval;
+    var viewerShowing = false;
 
     $(document).ready(function () {
-
-        $('#divGalleryName').html(folder.substr(folder.lastIndexOf("/") + 1));
-        showBreadCrumbs(folder);
+        if (folderPath == "") {
+            window.location.href = "/";
+        }
+        $('#divGalleryName').html(folderPath.substr(folderPath.lastIndexOf("/") + 1));
+        showBreadCrumbs(folderPath);
         $('.thumbImage').css("height", thumbImageHeight + "px");
+
         // set width
         $('#imageContainer').width($('#middleColumn').width());
-        // set heigth
-        $('#imageContainer').height($('#middleColumn').height() - 115);
-        $('#imageContainer').css("min-height", $('#middleColumn').height() - 115);
-        getImageLinks(folder);
+        $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
+        getImageLinks();
     });
 
     $(window).resize(function () {
         $('#imageContainer').width($('#middleColumn').width());
-        $('#imageContainer').height($('#middleColumn').height() - 115);
+        $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
+        if (viewerShowing)
+            explodeViewer();
     });
 
     function getImageLinks() {
         try {
+            var start = Date.now();
             $('#getImagesLoadingGif').show();
             $.ajax({
                 type: "GET",
-                url: service + "/api/ImageFolder/GetLinks?folder=" + folder,
+                url: service + "/api/ImageFolder/GetLinks?folder=" + folderPath,
                 success: function (folderModel) {
                     if (!folderModel.DirectoryName.startsWith("ERROR")) {
-                        folderId = folderModel.CategoryId;
+                        var delta = (Date.now() - start) / 1000;
+                        console.log("/api/ImageFolder/GetLinks?folder=" + folderPath+" took: " + delta.toFixed(3));
+
+                        currentContextFolderId = folderModel.CategoryId;
                         // add folders to html view
                         $('#imageContainer').html('');
                         $.each(folderModel.SubDirs, function (idx, obj) {
@@ -231,17 +319,28 @@
                         $('#slideShowLink').show();
                         var fileCount = 0;
                         $.each(folderModel.Files, function (idx, obj) {
-                            $('#imageContainer').append("<div>" +
-                                "<img id=" + obj.ImageId + " class= 'thumbImage blowup' src='" + obj.FileName + "'  />" +           // onmouseout=$('.ogContextMenu').hide()
-                                "<img class='dots' src='/Images/dots.png' onmouseover=showContextMenu('" + obj.ImageId + "') />" +
-                                "</div >");
-                            //style = 'left:$('#'" + obj.ImageId + "'').width();'
+                            $('#imageContainer').append("<div><img id=" + obj.ImageId + " idx=" + fileCount + " class='thumbImage' src='" + obj.FileName + "'/></div>");
+                            //"<img class='dots' src='/Images/dots.png' onmouseover=showContextMenu('" + obj.ImageId + "') />" +
                             fileCount++;
+
+                            imageArray.push({
+                                Index: fileCount,
+                                Link: obj.FileName.replace(/ /g, "%20"),
+                                ImageId: obj.ImageId
+                            });
                         })
 
-                        $('.blowup').click(function () {
-                            window.open($(this).attr("src"), "_blank");
+                        $('.thumbImage').click(function () {
+                            showViewer($(this).attr("id"));
                         })
+
+                        $('.thumbImage').contextmenu(function () {
+                            //alert("id: " + $(this).attr("id"));
+                            event.preventDefault();
+                            window.event.returnValue = false;
+                            showContextMenu($(this).attr("id"));
+                        });
+
 
                         fileCount += folderModel.SubDirs.length;
                         $('#fileCount').html(fileCount);
@@ -262,17 +361,144 @@
             alert("GetLinkFolders CATCH: " + e);
         }
     }
-
+    
     function showContextMenu(imageId) {
         currentContextImageId = imageId;
         var thisImage = $('#' + imageId + '');
-        var picpos = thisImage.offset()
-        var picTop = picpos.top + 50;;
+        var picpos = thisImage.offset();
         var picLeft = picpos.left + thisImage.width() - $('.ogContextMenu').width() - 50;
-        $('#testContextMenu').css("top", picTop);
-        $('#testContextMenu').css("left", picLeft);
-        $('#testContextMenu').fadeIn();
-        //$('#msg1').append("  left: " + picLeft + "  top: " + picTop + "  " + $('.ogContextMenu').width());
+        $('#thumbImageContextMenu').css("top", picpos.top + 5);
+        $('#thumbImageContextMenu').css("left", picLeft);
+        $('#thumbImageContextMenu').fadeIn();
+    }
+
+    function slide(direction) {
+        //$('#debugMessageArea').hide();
+        $('#magnifyingGlass').hide();
+
+        if (direction == 'next') {
+            imageArrayIndex++;
+            if (imageArrayIndex >= imageArray.length)
+                imageArrayIndex = 0;
+
+            $('#viewerImage').css("transform", "translateX(1100px)");
+            setTimeout(function () {
+                $('#viewerImage').hide();
+                $('#viewerImage').css("transform", "translateX(-2200px)");
+                $('#viewerImage').show();
+                $('#viewerImage').attr("src", imageArray[imageArrayIndex].Link);
+                $('#viewerImage').css("transform", "translateX(0)");
+                $('#magnifyingGlass').show();
+            }, 450);
+
+        }
+        if (direction == 'prev') {
+            imageArrayIndex--;
+            if (imageArrayIndex < 0) {
+                imageArrayIndex = imageArray.length - 1;
+            }
+
+            $('#viewerImage').css("transform", "translateX(-1100px)");
+            setTimeout(function () {
+                $('#viewerImage').hide();
+                $('#viewerImage').css("transform", "translateX(2200px)");
+                $('#viewerImage').show();
+                $('#viewerImage').attr("src", imageArray[imageArrayIndex].Link);
+                $('#viewerImage').css("transform", "translateX(0)");
+                $('#magnifyingGlass').show();
+            }, 450);
+        }
+    }
+
+    function showViewer(imageId) {
+        var thisImage = $('#' + imageId + '');
+        imageArrayIndex = thisImage.attr("idx");
+        viewerShowing = true;
+
+        //$('#customViewerContainer').css("top", 100);
+        //alert("$('#customViewerContainer').css('top') :" + $('#customViewerContainer').css("top"));
+
+        var picpos = thisImage.offset();
+        $('#customViewer').css("top", picpos.top - 100);
+        $('#customViewer').css("left", picpos.left);
+        $('#customViewer').width(100);
+        $('#customViewer').height(150);
+        $('#customViewer').show();
+        $('#viewerImage').attr("src", thisImage.attr("src"));
+
+
+        //$('#debugMessageArea').show();
+        //var imagePos = $('#viewerImage').position();
+        //var imageTop = Number(imagePos.top);
+        //var imageLeft = Number(imagePos.left);
+        //var imageHeight = $('#viewerImage').height();
+        //var imageWidth = $('#viewerImage').width();
+
+        $('#magnifyingGlass').css('top', 980);
+        $('#magnifyingGlass').css('left', 1325);
+
+        $('#text55').html("");
+        exploderInterval = setInterval(explodeViewer, 5);
+    }
+
+    function explodeViewer() {
+        var Xincrimentor = 15;
+        var Yincrimentor = 10;
+
+        var margin = 100;
+        var viewAreaHeight = Number($('#middleColumn').height() - 150);
+        var viewAreaWidth = Number($('#middleColumn').width());
+        var viewAreaPos = $('#middleColumn').position();
+        var viewAreaTop = Number(viewAreaPos.top);
+        var viewAreaLeft = Number(viewAreaPos.left);
+
+        if ((Number($('#customViewer').width()) >= viewAreaWidth) &&
+            (Number($('#customViewer').height()) >= viewAreaHeight)) {
+            clearInterval(exploderInterval);
+            $('#customViewer').css("top", viewAreaTop + "px");
+            $('#customViewer').css("left", " " + viewAreaLeft + "px");
+            $('#magnifyingGlass').show();
+            //alert("done");
+        }
+
+        var toppx = $('#customViewer').css("top")
+        var topY = Number(toppx.substr(0, toppx.length - 2));
+        if (topY > viewAreaTop) {
+            $('#customViewer').css("top", "-=" + Yincrimentor + "px");
+        }
+        if (topY < viewAreaTop) {
+            $('#customViewer').css("top", Yincrimentor + "px");
+        }
+
+        if ($('#customViewer').height() < viewAreaHeight) {
+            $('#customViewer').height($('#customViewer').height() + Yincrimentor);
+        }
+        if ($('#customViewer').height() > viewAreaHeight) {
+            $('#customViewer').height(viewAreaHeight)
+        }
+
+        var leftpx = $('#customViewer').css("left")
+        var leftX = Number(leftpx.substr(0, toppx.length - 2));
+        if (leftX > (viewAreaLeft - margin)) {
+            $('#customViewer').css("left", "-=" + Xincrimentor + "px");
+        }
+
+        if ($('#customViewer').width() < viewAreaWidth) {
+            $('#customViewer').width($('#customViewer').width() + (Xincrimentor * 2));
+
+            if ((Number($('#customViewer').width()) + Number(leftX)) > (viewAreaWidth + margin)) {
+                $('#text55').append("X ");
+                $('#customViewer').css("left", "-=" + Xincrimentor + "px");
+                //$('#customViewer').width($('#customViewer').width() + Xincrimentor);
+
+            }
+        }
+        if ($('#customViewer').width() > viewAreaWidth) {
+            $('#customViewer').width(viewAreaWidth)
+        }
+
+        $('#viewerImage').height($('#customViewer').height() - 50);
+        $('#viewerImage').width($('#customViewer').width());
     }
 
     $('.ogContextMenu div').click(function () {
@@ -280,7 +506,7 @@
         switch (action) {
             case "Copy":
                 $('#btnCopyLink').show();
-                $('#btnMoveLink').hide();                
+                $('#btnMoveLink').hide();
                 $('#dialogBannerText').html("Copy Image Link");
                 $('#copyDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
                 $('#moveCopyDialog').show();
@@ -310,8 +536,8 @@
 
     function removeLink() {
         var badLink = {};
-        badLink.ImageId = currentContextImageId; 
-        badLink.PathId = folderId;
+        badLink.ImageId = currentContextImageId;
+        badLink.PathId = currentContextFolderId;
         $.ajax({
             type: "DELETE",
             url: service + "/api/ImageLinkCategory",
@@ -331,7 +557,7 @@
 
     var newLink = {};
     function copyLink(andRemove) {
-       // alert("folderId: " + $('#dirTreeDropDown').val() + " currentContextImageId: " + currentContextImageId)
+       // alert("currentContextFolderId: " + $('#dirTreeDropDown').val() + " currentContextImageId: " + currentContextImageId)
         newLink.ImageId = currentContextImageId;
         //newLink.PathId = $('#dirTreeContainer').html();
         newLink.Link = $('#' + currentContextImageId + '').attr("src");
@@ -347,7 +573,7 @@
 
                         var badLink = {};
                         badLink.ImageId = newLink.ImageId;
-                        badLink.PathId = folderId;
+                        badLink.PathId = currentContextFolderId;
                         $.ajax({
                             type: "DELETE",
                             url: service + "/api/ImageLinkCategory",
@@ -384,6 +610,10 @@
 
     }
 
+    function blowupImage() {
+        window.open(imageArray[imageArrayIndex].Link, "_blank");
+    }
+
     function treeToggle(id) {
         //alert($('#' + id + '').css("display"));
         if ($('#' + id + '').css("display") == "none") {
@@ -395,8 +625,33 @@
     }
     function clickPath(path, id) {
         newLink.PathId = id;
-        $('#dirTreeContainer').html(path.replace(/%20/g, " "));
+        $('#dirTreeResults').show();
+        $('#dirTreeResults').html(path.replace(/%20/g, " "));
         $('#dirTreeDropDown').hide();
     }
+
+    $(document).keydown(function (event) {
+        //  8  back
+
+        //  34 pg down
+        //  38 up arrow
+        //  40 down arrow
+        switch (event.which) {
+            //case 38: scrollTabStrip('foward'); break;
+            //case 33: scrollTabStrip('foward'); break;            
+            case 34:                        // pg down
+            case 40:                        // dowm arrow
+            case 37: slide('prev'); break;  // left arrow
+            case 13:                        // enter 
+            case 38:                        // up arrow
+            case 39: slide('next'); break;  // right arrow
+            case 122: $('#standardHeader').hide(); break; // F11
+            default:
+                $('#expandoBannerText').html("event.which: " + event.which)
+            //  alert("event.which: " + event.which)
+        }
+    });
+
+
 
 </script>

@@ -5,7 +5,7 @@
 }
 <style>
     #leftColumn, #middleColumn, #rightColumn {
-        background-color: #fef; /*#b081b1*/
+        background-color: #e2c2ab;
         font-family: Comic Sans MS;
     }
 
@@ -89,14 +89,12 @@
             <div id="obTranitions" onclick="window.location.href='/test/contextTest'">Transitions</div>
             <div id="obLetExplain" onclick="window.location.href='/test/contextTest'">Let me Expalin</div>
             <div id="obCategories" onclick="$('#dirTreeContainer').toggle()">Category List</div>
-            <div id="obNastyPorny" onclick="window.location.href='/home/ImagePage?folder=porn'">Nasty Porn</div>
+            <div id="obNastyPorny" onclick="window.location.href='/'">Oggle Booble</div>
             <div id="obVideoLinks" onclick="window.location.href='/home/Videos'">video links</div>
         </div>
     </div>
     <div id="middleColumn">
-        <div id="galleryMessage" class="indexTitle">
-            Select a Gallery
-        </div>
+        <div id="galleryMessage" class="indexTitle"></div>
         <div id="carousel">
             @Html.Partial("_RandomImage", "porn")
         </div>
@@ -128,6 +126,4 @@
         //alert(path.replace(/%20/g, " ") + "  " + id);
         window.location.href = "/home/ImagePage?folder=" + path.replace(/%20/g, " ");
     }
-
-
 </script>

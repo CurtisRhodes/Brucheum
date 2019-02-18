@@ -15,12 +15,11 @@ $('#middleColumn').resize(function () {
 });
 
 function resizePage(debug) {
-    $('.RenderBody').css("margin-top", $('#bheader').height());
+   // $('.renderBody').css("margin-top", $('#oggleBoobleHeader').height());
 
+    $('#footerMessage').html("header: " + $('#oggleBoobleHeader').height());
 
-    //"resizePage  $('#bheader').height(): " + $('#bheader').height() + "  " + $('.RenderBody').css("margin-top"));
-
-    // adjust width 
+    // adjust width
     var winW = $(window).width();
     var lcW = $('#leftColumn').width();
     var rcW = $('#rightColumn').width();

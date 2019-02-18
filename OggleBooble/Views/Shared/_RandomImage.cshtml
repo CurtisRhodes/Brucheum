@@ -69,22 +69,6 @@
     }
 </style>
 
-
-<style>
-    .folatingBox {
-        position: absolute;
-        border: solid thin orange;
-        top: 400px;
-        left: 85%;
-        min-height: 50px;
-        min-width: 200px;
-        background-color: #e7dbe9;
-        padding: 5px;
-        display: none;
-    }
-
-</style>
-
 <div class="centeredDivShell">
     <div class="centeredDivInner">
         <div id="laCarousel" class="carouselContainer">
@@ -102,12 +86,6 @@
     </div>
 </div>
 
-<div id="debugMessageArea" class="folatingBox">
-    <div id="msg1"></div>
-    <div id="msg2"></div>
-    <div id="msg3"></div>
-    <div id="msg4"></div>
-</div>
 
 
 <script>
@@ -136,7 +114,7 @@
         clearInterval(Carousel);
     }
     function startCarousel() {
-        clearInterval(Carousel);
+        imageIndex = Math.floor(Math.random() * numImages);
         rotate();
     }
 
@@ -228,7 +206,7 @@
                     });
                 });
                 numImages = folderLinks.length;
-                $('#galleryMessage').html("Select from " + numImages.toLocaleString() + " images in " + folderCount + " galleries");
+                $('#headerMessage').html("<span style='font-family:Lucida Calligraphy;font-size:28px;'>Select from " + numImages.toLocaleString() + " images in " + folderCount + " galleries</span>");
                 imageIndex = Math.floor(Math.random() * numImages);
                 var delta = (Date.now() - start) / 1000;
                 console.log("Select * from Carousel/GetAll took: " + delta.toFixed(3));
@@ -245,7 +223,7 @@
             url: service + "/api/ImageFolder?root="+root,
             success: function (rtn) {
                 folderCount = rtn;
-                $('#galleryMessage').html("Select from " + folderCount + " Galleries");
+                $('#headerMessage').html("Select from " + folderCount + " Galleries");
                 //$('#laCarousel').show();
             },
             error: function (xhr) {

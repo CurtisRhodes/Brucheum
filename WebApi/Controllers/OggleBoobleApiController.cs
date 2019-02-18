@@ -144,7 +144,13 @@ namespace WebApi.OggleBooble
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     var dbFolder = db.ImageFolders.Where(f => f.Id == folderId).First();
+
+                    dbFolder.FolderPath = dbFolder.FolderPath.Substring(0, dbFolder.FolderPath.LastIndexOf("/") + 1) + newName;
+
                     dbFolder.FolderName = newName;
+
+
+
                     db.SaveChanges();
                     success = "ok";
                 }
@@ -155,9 +161,6 @@ namespace WebApi.OggleBooble
             }
             return success;
         }
-
-
-
     }
 
     [EnableCors("*", "*", "*")]
@@ -211,11 +214,15 @@ namespace WebApi.OggleBooble
             {
                 if (childFolder.FolderName != "Root")
                 {
-                    var linkCount = db.Category_ImageLinks.Where(c => c.ImageCategoryId == childFolder.Id).Count();
+                    var linkCount = db.Category_ImageLinks.Where(c => c.ImageCategoryId == childFolder.Id).Count();  //
                     if (childFolder.FileCount < linkCount)
                     {
                         childFolder.FileCount = linkCount;
                     }
+                    if (linkCount == 0) {
+                        childFolder.FileCount = db.ImageFolders.Where(f => f.Parent == childFolder.Id).Count();  //
+                    }
+
                     var subChild = new DirectoryModel()
                     {
                         CategoryId = childFolder.Id,
@@ -293,7 +300,7 @@ namespace WebApi.OggleBooble
                     db.Category_ImageLinks.Add(new Category_ImageLink()
                     {
                         ImageCategoryId = newLink.PathId,
-                        ImageLinkId = newLink.Link
+                        ImageLinkId = newLink.ImageId
                     });
                     db.SaveChanges();
                     success = "ok";

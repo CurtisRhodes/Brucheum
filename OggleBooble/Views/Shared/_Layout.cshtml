@@ -25,89 +25,80 @@
 
 </head>
 <body>
-    <div id="bheader" class="standardHeader">
-        <div id="divTopLeftLogo" class="bannerImageContainer">
-            <a href="~/Home/Index"><img src="~/Images/redballon.png" class="bannerImage" /></a>
-        </div>
-        <div class="headerBodyContainer">
-            <div id="bannerTitle" class="headerTitle">OggleBooble</div>
-            <div class="headerSubTitle">
-                titties organized by
-                <span class="clickable" onclick="toggleTittyMenu('poses');">poses</span> and
-                <span class="clickable" onclick="toggleTittyMenu('shapes');;">shapes</span>
-            </div> 
-
-            <div id="menuContainer" class="menuTabContainer">
-                <div id="replaceableMenuItems">
-                    <div id="tittyShapeLinks" class="tittymenu">
-                        <div class="menuTab floatLeft showOff"><a href="~/Home/ImagePage?folder=boobs/shapes">shapes</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/knockers">knockers</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/juggs">juggs</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/Headlights">headlights</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/Racks">racks</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/droopy">droopy</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/floppy">floppy</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/perky">perky</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/morphed">morphed</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/torpedos">torpedos</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/slim and stacked">slim and stacked</a></div>
-                    </div>
-                    <div id="tittyPosesLinks" class="tittymenu">
-                        <div class="menuTab floatLeft showOff"><a href="~/Home/ImagePage?folder=boobs/poses">poses</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/ankles" title="big titters grabing their ankles letting em hang">Ankles</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/kneezles" title="titties so big she has to rest them on her knees">kneezles</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/hanging">hanging</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/draped">draped</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/hands and knees">hands and knees</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/hold em">hold em</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/squeeze em">squeeze em</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/reclining">reclining</a></div>
-                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/wingers" title="big top girls from behind with tits showing off the sides">wingers</a></div>
+    <div id="oggleBoobleHeader" class="standardHeader">
+        <div class="flexContainer">
+            <div id="divTopLeftLogo" class="bannerImageContainer">
+                <a href="~/Home/Index"><img src="~/Images/redballon.png" class="bannerImage" /></a>
+            </div>
+            <div class="headerBodyContainer">
+                <div id="headerTopRow">
+                    <div id="bannerTitle" class="headerTitle">OggleBooble</div>
+                    <div class="headerSubTitle">
+                        titties organized by
+                        <span class="clickable" onclick="window.location.href='/Home/ImagePage?folder=boobs/poses'">poses</span> ,
+                        <span class="clickable" onclick="window.location.href='/Home/ImagePage?folder=boobs/shapes'">shapes</span> and
+                        <span class="clickable" onclick="window.location.href='/Home/ImagePage?folder=boobs/sizes'">sizes</span>
                     </div>
                 </div>
-
-                @if (Request.IsAuthenticated)
-                {
-                    <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
-                    <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
-                }
-                else
-                {
-                    <div id="btnLayoutRegister" class="menuTab floatRight">
-                        <a href="javascript:registerPlease()">Register</a>
-                        <img id="btnHeaderRegisterSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
+                <div id="headerBottomRow" class="flexContainer">
+                    <div id="headerMessage" class="headerMessageArea"></div>
+                    <div id="menuContainer" class="menuTabContainer">
+                        <div id="replaceableMenuItems"></div>
+                        @if (Request.IsAuthenticated)
+                        {
+                            <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
+                            <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
+                        }
+                        else
+                        {
+                            <div id="btnLayoutRegister" class="menuTab">
+                                <a href="javascript:registerPlease()">Register</a>
+                                <img id="btnHeaderRegisterSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
+                            </div>
+                            <div id="btnLayoutLogin" class="menuTab floatRight">
+                                <a href="javascript:loginPlease()">Log In</a>
+                                <img id="btnHeaderLoginSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
+                            </div>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div class="menuTab floatRight"><a href="~/Stats">Admin</a></div>
+                        }
                     </div>
-                    <div id="btnLayoutLogin" class="menuTab floatRight">
-                        <a href="javascript:loginPlease()">Log In</a>
-                        <img id="btnHeaderLoginSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
-                    </div>
-                }
-                @if (User.IsInRole("Admin"))
-                {
-                    <div class="menuTab floatRight"><a href="~/Stats">Admin</a></div>
-                }
+                </div>
             </div>
+            <div class="noFloat"></div>
         </div>
-        <div class="noFloat"></div>
     </div>
-    <div class="RenderBody">
+
+    <div class="renderBody">
         @RenderBody()
     </div>
     @Html.Partial("_footer")
+
+
+
     <div id="modalContainer" class="modalVail">
         <div id="modalContent" class="modalContentStyle"></div>
     </div>
+
+
+
+
     @RenderSection("scripts", required: false)
     <script>
         $(document).ready(function () {
             toggleTittyMenu(getOBCookie("ShapeOrPosesMenu", "shapes"));
+
+
+
         });
         function toggleTittyMenu(sepectedTittyMenu) {
             //alert("tittyMenu: " + sepectedTittyMenu);
             $('.tittymenu').hide();
             if (sepectedTittyMenu == "poses")
                 $('#tittyPosesLinks').show();
-            else 
+            else
                 $('#tittyShapeLinks').show();
             setOBCookie('ShapeOrPosesMenu', sepectedTittyMenu);
         }
