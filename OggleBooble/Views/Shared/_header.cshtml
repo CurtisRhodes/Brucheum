@@ -1,6 +1,6 @@
 ﻿<link href="~/Styles/Header.css" rel="stylesheet" />
 
-<div id="bheader">
+@*<div id="bheader">
     <table>
         <tr>
             <td rowspan="2">
@@ -12,113 +12,151 @@
         <tr>
             <td colspan="2">
                 <ul>
-                    <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/hooters">Hooters</a></li>
-                    <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/juggs">Juggs</a></li>
-                    <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/knockers">Knockers</a></li>
-                    <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/Headlights">Headlights</a></li>
-                    <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/Racks">Racks</a></li>
-                    <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/torpedos">Torpedos</a></li>
-                    <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/Mellons">Mellons</a></li>
-                    <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/whoppers">Whoppers</a></li>
-                    @*<li class="menuTab"><a href="~/Home/ImagePage?folder=boobs//big tits/wingers">Wingers</a></li>
-                    <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs//big tits/draped">Draped</a></li>
-                    <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/nice tits/clevage">Cleveage</a></li>
-                    <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/nice tits/nice ass">Nice Ass</a></li>*@
-                </ul>
-            </td>
-            <td>
-                <div id="divlogin">
-                    @using Microsoft.AspNet.Identity
-                    @if (Request.IsAuthenticated)
-                    {
-                        <div class="menuTab" id="tabProfile" title="modify profile">
-                            <a href="#">Hello @User.Identity.GetUserName() </a>
-                        </div>
-                        <div class="menuTab" id="tabLogout"><a href="#">Log Out</a></div>
-                    }
-                    else
-                    {
-                        <div class="menuTab" id="tabRegister"><a href="#">Register</a></div>
-                        <div class="menuTab" id="tabLogIn"><a href="#">Log In</a></div>
-                    }
+                    @*<li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/hooters">Hooters</a></li>
+        <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/juggs">Juggs</a></li>
+        <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/knockers">Knockers</a></li>
+        <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/Headlights">Headlights</a></li>
+        <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/Racks">Racks</a></li>
+        <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/torpedos">Torpedos</a></li>
+        <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/Mellons">Mellons</a></li>
+        <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/flavors/whoppers">Whoppers</a></li>
+        <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs//big tits/wingers">Wingers</a></li>
+        <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs//big tits/draped">Draped</a></li>
+        <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/nice tits/clevage">Cleveage</a></li>
+        <li class="menuTab"><a href="~/Home/ImagePage?folder=boobs/nice tits/nice ass">Nice Ass</a></li>
+
+
+
+                @*<div id="replaceableMenuItems">
+                    <div id="tittyShapeLinks" class="tittymenu">
+                        <div class="menuTab floatLeft showOff"><a href="~/Home/ImagePage?folder=boobs/shapes">shapes</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/knockers">knockers</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/juggs">juggs</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/Headlights">headlights</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/Racks">racks</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/droopy">droopy</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/floppy">floppy</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/perky">perky</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/morphed">morphed</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/torpedos">torpedos</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/shapes/slim and stacked">slim and stacked</a></div>
+                    </div>
+                    <div id="tittyPosesLinks" class="tittymenu">
+                        <div class="menuTab floatLeft showOff"><a href="~/Home/ImagePage?folder=boobs/poses">poses</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/ankles" title="big titters grabing their ankles letting em hang">Ankles</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/kneezles" title="titties so big she has to rest them on her knees">kneezles</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/hanging">hanging</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/draped">draped</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/hands and knees">hands and knees</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/hold em">hold em</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/squeeze em">squeeze em</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/reclining">reclining</a></div>
+                        <div class="menuTab floatLeft"><a href="~/Home/ImagePage?folder=boobs/poses/wingers" title="big top girls from behind with tits showing off the sides">wingers</a></div>
+                    </div>
                 </div>
-            </td>
-        </tr>
+
+
+
+
+
+    </ul>
+    </td>
+    <td>
+        <div id="divlogin">
+            @using Microsoft.AspNet.Identity
+            @if (Request.IsAuthenticated)
+            {
+                //Request.ApplicationPath.a
+
+
+                <div class="menuTab" id="tabProfile" title="modify profile">
+                    <a href="#">Hello @User.Identity.GetUserName() </a>
+                </div>
+                <div class="menuTab" id="tabLogout"><a href="#">Log Out</a></div>
+            }
+            else
+            {
+                <div class="menuTab" id="tabRegister"><a href="#">Register</a></div>
+                <div class="menuTab" id="tabLogIn"><a href="#">Log In</a></div>
+            }
+        </div>
+    </td>
+    </tr>
     </table>
 
     <div id="modalContainer" class="modalVail">
         <div id="modalContent"></div>
     </div>
-</div>
+    </div>*@
 
 
-<script>
+    <script>
 
-    //$(document).ready(function () {    });
+        //$(document).ready(function () {    });
 
-    $('#tabRegister').click(function () {
-        $.ajax({
-            type: "get",
-            url: "/Login/RegisterPopup",
-            datatype: "json",
-            success: function (data) {
-                $('#modalContent').html(data);
-                $('#modalContainer').show();
-            },
-            error: function (xhr) {
-                alert("RegisterPopup error: " + xhr.statusText);
-            }
-        });
-    });
-
-    $('#tabLogIn').click(function () {
-        $.ajax({
-            type: "get",
-            url: "/Login/LoginPopup",
-            datatype: "json",
-            success: function (data) {
-                $('#modalContent').html(data);
-                $('#modalContainer').show();
-            },
-            error: function (xhr) {
-                alert("LoginPopup error: " + xhr.statusText);
-            }
-        });
-    });
-
-    $('#tabProfile').click(function () {
-        try {
+        $('#tabRegister').click(function () {
             $.ajax({
                 type: "get",
-                url: "/Login/ProfilePopup",
+                url: "/Login/RegisterPopup",
                 datatype: "json",
                 success: function (data) {
                     $('#modalContent').html(data);
                     $('#modalContainer').show();
                 },
                 error: function (xhr) {
-                    alert("ProfilePopup error: " + xhr.statusText);
+                    alert("RegisterPopup error: " + xhr.statusText);
                 }
             });
-        } catch (e) {
-            alert("tabProfile catch: " + e);
-        }
-    });
+        });
 
-    $('#tabLogout').click(function () {
-        $.ajax({
-            type: "get",
-            url: "/Login/DeleteCookie",
-            success: function (success) {
-                if (success === "ok")
-                    location.reload(true);
-                else
-                    alert("LogOUT: " + success);
-            },
-            error: function (xhr) {
-                displayStatusMessage("warning", "error: " + xhr.statusText);
-                alert("tabLogout error: " + xhr.statusText);
+        $('#tabLogIn').click(function () {
+            $.ajax({
+                type: "get",
+                url: "/Login/LoginPopup",
+                datatype: "json",
+                success: function (data) {
+                    $('#modalContent').html(data);
+                    $('#modalContainer').show();
+                },
+                error: function (xhr) {
+                    alert("LoginPopup error: " + xhr.statusText);
+                }
+            });
+        });
+
+        $('#tabProfile').click(function () {
+            try {
+                $.ajax({
+                    type: "get",
+                    url: "/Login/ProfilePopup",
+                    datatype: "json",
+                    success: function (data) {
+                        $('#modalContent').html(data);
+                        $('#modalContainer').show();
+                    },
+                    error: function (xhr) {
+                        alert("ProfilePopup error: " + xhr.statusText);
+                    }
+                });
+            } catch (e) {
+                alert("tabProfile catch: " + e);
             }
         });
-    });
-</script>
+
+        $('#tabLogout').click(function () {
+            $.ajax({
+                type: "get",
+                url: "/Login/DeleteCookie",
+                success: function (success) {
+                    if (success === "ok")
+                        location.reload(true);
+                    else
+                        alert("LogOUT: " + success);
+                },
+                error: function (xhr) {
+                    displayStatusMessage("warning", "error: " + xhr.statusText);
+                    alert("tabLogout error: " + xhr.statusText);
+                }
+            });
+        });
+    </script>

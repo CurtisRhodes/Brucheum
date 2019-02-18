@@ -19,54 +19,59 @@
     <meta name="Title" content="Free Big Tits Pics By Shapes and Poses">
     <meta name="Keywords" content="Tits,Boobs,Naked,Nude,Topless,Hooters,Hogans,Juggs,Knockers,Headlights,Racks,Torpedos,Mellons,Whoppers,Wingers,Cleveage,Ass" />
 </head>
-<body>
 
+<body>
     <style>
         .standardHeader {
             background-color: #cbc080;
         }
     </style>
-
-
-    <div id="bheader" class="standardHeader">
-        <div id="divTopLeftLogo" class="bannerImageContainer">
-            <a href="~/Porn"><img src="~/Images/csLips.png" class="bannerImage" /></a>
-        </div>
-        <div class="headerBodyContainer">
-            <div id="bannerTitle" class="headerTitle">The Church of Cock</div>
-            <div class="headerSubTitle">
-                bad behavior catergorized 
+    <div id="pornHheader" class="standardHeader">
+        <div class="flexContainer">
+            <div id="divTopLeftLogo" class="bannerImageContainer">
+                <a href="~/Porn"><img src="~/Images/csLips.png" class="bannerImage" /></a>
             </div>
-
-            <div id="menuContainer" class="menuTabContainer">
-                <div id="replaceableMenuItems">
+            <div class="headerBodyContainer">
+                <div id="headerTopRow">
+                    <div id="bannerTitle" class="headerTitle">The Church of My Cock</div>
+                    <div class="headerSubTitle">
+                        bad behavior catergorized
+                    </div>
                 </div>
+                <div id="headerBottomRow" class="flexContainer">
+                    <div id="headerMessage" class="headerMessageArea"></div>
+                    <div id="menuContainer" class="menuTabContainer">
+                        <div id="replaceableMenuItems">
+                        </div>
 
-                @if (Request.IsAuthenticated)
-                {
-                    <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
-                    <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
-                }
-                else
-                {
-                    <div id="btnLayoutRegister" class="menuTab floatRight">
-                        <a href="javascript:registerPlease()">Register</a>
-                        <img id="btnHeaderRegisterSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
+                        @if (Request.IsAuthenticated)
+                        {
+                            <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
+                            <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
+                        }
+                        else
+                        {
+                            <div id="btnLayoutRegister" class="menuTab floatRight">
+                                <a href="javascript:registerPlease()">Register</a>
+                                <img id="btnHeaderRegisterSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
+                            </div>
+                            <div id="btnLayoutLogin" class="menuTab floatRight">
+                                <a href="javascript:loginPlease()">Log In</a>
+                                <img id="btnHeaderLoginSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
+                            </div>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div class="menuTab floatRight"><a href="~/Stats">Admin</a></div>
+                        }
                     </div>
-                    <div id="btnLayoutLogin" class="menuTab floatRight">
-                        <a href="javascript:loginPlease()">Log In</a>
-                        <img id="btnHeaderLoginSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
-                    </div>
-                }
-                @if (User.IsInRole("Admin"))
-                {
-                    <div class="menuTab floatRight"><a href="~/Stats">Admin</a></div>
-                }
+                </div>
             </div>
         </div>
-        <div class="noFloat"></div>
     </div>
-    <div class="RenderBody">
+
+    <div class="noFloat"></div>
+    <div class="renderBody">
         @RenderBody()
     </div>
     @Html.Partial("_footer")

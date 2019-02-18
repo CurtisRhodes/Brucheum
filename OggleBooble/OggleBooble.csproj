@@ -259,12 +259,15 @@
     <Content Include="Images\blueCircleLeft.png" />
     <Content Include="Images\blueCircleRight.png" />
     <Content Include="Images\caretDown.png" />
+    <Content Include="Images\close.png" />
     <Content Include="Images\csLips.png" />
     <Content Include="Images\dots.png" />
     <Content Include="Images\downCaret.png" />
     <Content Include="Images\fuckMarryKill03.jpg" />
     <Content Include="Images\ingranaggi3.gif" />
     <Content Include="Images\loader.gif" />
+    <Content Include="Images\Loupe.png" />
+    <Content Include="Images\magnifyingGlass.png" />
     <Content Include="Images\powerOffRed01.png" />
     <Content Include="Images\RenStimpy8.jpg" />
     <Content Include="Images\classic\transitions2.jpg" />

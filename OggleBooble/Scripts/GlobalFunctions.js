@@ -3,20 +3,20 @@
 function showBreadCrumbs(folder) {
     var sc = folder.split("/");
     var bcPath = "";
-    $('#divBreadCrumbs').html("");
-    $('#divBreadCrumbs').append("<a class='activeBreadCrumb' href='Index'>home</a>");
+    $('#headerMessage').html("");
+    //$('#headerMessage').append("<a class='activeBreadCrumb' href='Index'>home</a>");
     bcPath = sc[0].replace(/ /g, "%20");
-    $('#divBreadCrumbs').append("<a class='activeBreadCrumb' href='/Home/imagePage?folder=" + bcPath + "'>" + sc[0] + "</a>");
+    $('#headerMessage').append("<a class='activeBreadCrumb' href='/Home/imagePage?folder=" + bcPath + "'>" + sc[0] + "</a>");
     for (i = 1; i < sc.length; i++) {
         bcPath += "/" + sc[i].replace(/ /g, "%20");
         if (i < Number(sc.length - 1)) {
-            $('#divBreadCrumbs').append("<a class='activeBreadCrumb' href='/Home/imagePage?folder=" + bcPath + "'>" + sc[i] + "</a>");
+            $('#headerMessage').append("<a class='activeBreadCrumb' href='/Home/imagePage?folder=" + bcPath + "'>" + sc[i] + "</a>");
         }
         else {
-            $('#divBreadCrumbs').append("<span class='inactiveBreadCrumb'>" + sc[i] + "</span>");
+            $('#headerMessage').append("<span class='inactiveBreadCrumb'>" + sc[i] + "</span>");
         }
     }
-    $('#divBreadCrumbs').append("<a id='slideShowLink' class='slideShowBreadCrub' href='Viewer?folder=" + bcPath + "'>SlideShow</a>");
+    //$('#replaceableMenuItems').append("<a id='slideShowLink' class='slideShowBreadCrub' href='Viewer?folder=" + bcPath + "'>SlideShow</a>");
 }
 
 function setOBCookie(key, value) {
