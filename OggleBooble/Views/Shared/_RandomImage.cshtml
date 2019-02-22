@@ -206,7 +206,7 @@
                     });
                 });
                 numImages = folderLinks.length;
-                $('#headerMessage').html("<span style='font-family:Lucida Calligraphy;font-size:28px;'>Select from " + numImages.toLocaleString() + " images in " + folderCount + " galleries</span>");
+                //$('#headerMessage').html("<span style='font-family:Lucida Calligraphy;font-size:28px;'>Select from " + numImages.toLocaleString() + " images in " + folderCount + " galleries</span>");
                 imageIndex = Math.floor(Math.random() * numImages);
                 var delta = (Date.now() - start) / 1000;
                 console.log("Select * from Carousel/GetAll took: " + delta.toFixed(3));
@@ -223,7 +223,7 @@
             url: service + "/api/ImageFolder?root="+root,
             success: function (rtn) {
                 folderCount = rtn;
-                $('#headerMessage').html("Select from " + folderCount + " Galleries");
+                //$('#headerMessage').html("Select from " + folderCount + " Galleries");
                 //$('#laCarousel').show();
             },
             error: function (xhr) {
@@ -239,7 +239,8 @@
         setTimeout(function () {
             $('#carouselImage').attr('src', carouselItemArray[imageIndex].Link).fadeIn(1500);
             $('#carouselImage').on('load', onImageLoaded());
-            $('#footerMessage').html((imageIndex + 1).toLocaleString() + " of " + numImages.toLocaleString());
+            //"<span style='font-family:Lucida Calligraphy;font-size:28px;'>Select from " + numImages.toLocaleString() + " images in " + folderCount + " galleries</span>"
+            $('#footerMessage').html(numImages.toLocaleString() + " images in " + folderCount + " galleries " + (imageIndex + 1).toLocaleString() + " of " + numImages.toLocaleString());
         }, 500);
     }
 

@@ -1,0 +1,23 @@
+﻿
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+    </div>
+    <div id="middleColumn">
+        @Html.Partial("_RandomImage", "boobs")
+    </div>
+    <div id="rightColumn"></div>
+</div>
+
+<script>
+    var folder = '@ViewBag.Folder';
+    $(document).ready(function () {
+        if (folder == 'porn') {
+            setLayout("mobilePorn");
+        }
+        else {
+            setLayout("mobileBoobs");
+        }
+        launchCarousel(folder);
+    });
+</script>

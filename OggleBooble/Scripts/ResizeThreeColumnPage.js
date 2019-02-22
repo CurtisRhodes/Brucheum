@@ -15,7 +15,11 @@ $('#middleColumn').resize(function () {
 });
 
 function resizePage(debug) {
-   // $('.renderBody').css("margin-top", $('#oggleBoobleHeader').height());
+
+    //var x = $('.renderBody').offset().top;
+    //alert("$('.renderBody').offset().top: " + $('.renderBody').offset().top);
+
+    //$('.renderBody').css("margin-top", $('#oggleBoobleHeader').height() - $('.renderBody').offset().top);
 
     $('#footerMessage').html("header: " + $('#oggleBoobleHeader').height());
 

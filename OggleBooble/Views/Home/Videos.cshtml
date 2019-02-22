@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "Videos";
 }
-
+<link href="~/Styles/default.css" rel="stylesheet" />
 <script src="~/Scripts/video/mediaelement-and-player.js"></script>
 <link href="~/Styles/video/mediaelementplayer.css" rel="stylesheet" />
 <style>
@@ -11,6 +11,7 @@
     }
 
     .videoContainer {
+        clear: both;
         background-color: #b081b1;
     }
 
@@ -47,19 +48,63 @@
         background-color: #d580d7;
         display: none;
     }
+
+    .smallButton {
+        margin-top: 20px;
+        margin-right: 33px;
+        width: 32px;
+        height: 32px;
+    }
+
+    .headerDiv {
+        border: solid thin green;
+        width: 100%;
+    }
+
+
+    .roundedInput {
+        display: inline-block;
+        width: 97%;
+        margin-right: 6px;
+        font-size: 22px;
+    }
+
+    .roundendButton {
+        margin-top: 6px;
+        display: inline-block;
+    }
+
+
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
-
-        <h2>Video Links</h2>
+        <div id="divStatusMessage"></div>
+        <div class="headerDiv">
+            <h2 class="floatLeft">Video Links</h2>
+            <div class="farSide">
+                <img src="~/Images/plusCirclePurple01.png" class="smallButton" onclick="$('#videoCrud').fadeIn()"
+                     onmouseover="$(this).attr('src', '/Images/plusCirclePurple02.png');" onmouseout="$(this).attr('src', '/Images/plusCirclePurple01.png');" />
+            </div>
+        </div>
         <img id="getVideoLinksLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
         <div id="linksContainer" class="videoContainer"></div>
 
     </div>
     <div id="rightColumn"></div>
 </div>
+
+<div id="videoCrud" class="floatingCrud">
+    <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
+    <div class="floatingCrudContainer">
+        <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
+        <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
+        <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
+        <div class="roundendButton" onclick="addVideo()">Insert</div>
+    </div>
+</div>
+
 
 <div id="vidScrn1" class="videoScreen">
     <div class="floatingCrudBanner">wasted life<div onclick="$('#vidScrn1').fadeOut()" class="farSide">x</div> </div>
@@ -75,6 +120,7 @@
     var service = '@ViewBag.Service';
 
     $(document).ready(function () {
+        setLayout("porn");
         getVideoLinks();
     });
 
@@ -101,6 +147,7 @@
                 type: "GET",
                 url: service + "/api/VideoLink",
                 success: function (videoLinks) {
+                    $('#linksContainer').html("");
                     $.each(videoLinks, function (idx, obj) {
                         //$('#linksContainer').append("<div class='myPlayerContainer' onclick=runRiver('" + obj.Link + "')>" +
                         //    "<img src=" + imagePath + obj.Image + " /><br/><div class='vlinkLabel'>" + obj.Title + "</div></a></div>");
@@ -121,8 +168,36 @@
         }
     }
 
-
-
+    function addVideo() {
+        try {
+            $('#getDirTreeLoadingGif').show();
+            var videoLink = {};
+            videoLink.Link = $('#txtVideoLink').val();
+            videoLink.Image = $('#txtVideoImage').val();
+            videoLink.Title = $('#txtVideoTitle').val();
+            $.ajax({
+                type: "POST",
+                url: service + "api/VideoLink",
+                data: videoLink,
+                success(success) {
+                    $('#getDirTreeLoadingGif').hide();
+                    if (!success.startsWith("ERROR")) {
+                        $('#videoCrud').fadeOut()
+                        getVideoLinks();
+                        displayStatusMessage("ok", "video link added");
+                    }
+                    else
+                        alert("addVideo: " + success);
+                },
+                error: function (xhr) {
+                    $('#getDirTreeLoadingGif').hide();
+                    alert("addVideo xhr: " + getXHRErrorDetails(xhr));
+                }
+            })
+        } catch (e) {
+            alert("addVideo Catch : " + e);
+        }
+    }
 
     function linksArray() {
         return new Array(

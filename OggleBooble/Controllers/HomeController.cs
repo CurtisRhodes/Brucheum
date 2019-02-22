@@ -20,31 +20,21 @@ namespace OggleBooble
         public ActionResult ImagePage(string folder)
         {
             if (folder == null)
-                return View("Index");
+                return RedirectToAction("Index");
 
             ViewBag.Title = folder.Substring(folder.LastIndexOf("/") + 1);
             ViewBag.Service = apiService;
             ViewBag.Folder = folder;
-
-            if (folder.StartsWith("Porn"))
-                return View("ImagePage", "~/Views/Porn/_PornLayout.cshtml");
-            else
-                return View();
+            return View();
         }
 
         public ActionResult Viewer(string folder, string startFile)
         {
-            if (folder == null)
-                return View("Index");
-            ViewBag.Title = "Slideshow"; // folder.Substring(folder.LastIndexOf("/") + 1);
+            ViewBag.Title = "Slideshow"; 
             ViewBag.Service = apiService;
             ViewBag.Folder = folder;
             ViewBag.StartFile = startFile;
-
-            if (folder.StartsWith("Porn"))
-                return View("Viewer", "~/Views/Porn/_PornLayout.cshtml");
-            else
-                return View();
+            return View();
         }
 
         public ActionResult Transitions(string folder)
@@ -65,6 +55,15 @@ namespace OggleBooble
             ViewBag.Service = apiService;
             return View();
         }
+
+        public ActionResult Mobile(string folder)
+        {
+            ViewBag.Folder = folder;
+            ViewBag.Service = apiService;
+            return View();
+        }
+
+
     }
 
     public class ErrorController : Controller

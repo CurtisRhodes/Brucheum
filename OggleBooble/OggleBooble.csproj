@@ -261,16 +261,23 @@
     <Content Include="Images\caretDown.png" />
     <Content Include="Images\close.png" />
     <Content Include="Images\csLips.png" />
+    <Content Include="Images\csLips02.png" />
     <Content Include="Images\dots.png" />
     <Content Include="Images\downCaret.png" />
+    <Content Include="Images\expand02.png" />
+    <Content Include="Images\slideshowFaster.png" />
     <Content Include="Images\fuckMarryKill03.jpg" />
     <Content Include="Images\ingranaggi3.gif" />
     <Content Include="Images\loader.gif" />
     <Content Include="Images\Loupe.png" />
     <Content Include="Images\magnifyingGlass.png" />
+    <Content Include="Images\plusCirclePurple01.png" />
+    <Content Include="Images\plusCirclePurple02.png" />
     <Content Include="Images\powerOffRed01.png" />
     <Content Include="Images\RenStimpy8.jpg" />
     <Content Include="Images\classic\transitions2.jpg" />
+    <Content Include="Images\slideshow.png" />
+    <Content Include="Images\slideshowSlower.png" />
     <Content Include="Scripts\adminFunctions.js" />
     <Content Include="Scripts\GlobalFunctions.js" />
     <None Include="Scripts\jquery-1.6.4-vsdoc.js" />
@@ -279,6 +286,7 @@
     <Content Include="Scripts\jquery-1.6.4.min.js" />
     <Content Include="Scripts\jquery.signalR-2.4.0.js" />
     <Content Include="Scripts\jquery.signalR-2.4.0.min.js" />
+    <Content Include="Scripts\Layouts.js" />
     <Content Include="Scripts\ResizeThreeColumnPage.js" />
     <Content Include="Scripts\very-array.js" />
     <Content Include="Scripts\video\mediaelement-and-player.js" />
@@ -305,7 +313,6 @@
     <Content Include="Images\classic\transitions.jpg" />
     <Content Include="Styles\fixedHeader.css" />
     <Content Include="Styles\footer.css" />
-    <Content Include="Styles\header.css" />
     <Content Include="Styles\video\mediaelementplayer-legacy.css" />
     <Content Include="Styles\video\mediaelementplayer.css" />
     <Content Include="Styles\video\mejs-controls.png" />
@@ -326,14 +333,14 @@
     <Content Include="xxError.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Shared\_header.cshtml" />
+    <Content Include="Views\Shared\_MobileBoobs.cshtml" />
     <Content Include="Views\Shared\_footer.cshtml" />
     <Content Include="Views\Shared\_DirOptions.cshtml" />
     <Content Include="Views\Shared\_DirTree.cshtml" />
     <Content Include="Views\Test\contextTest.cshtml" />
     <Content Include="Views\Porn\Index.cshtml" />
-    <Content Include="Views\Porn\_PornLayout.cshtml" />
     <Content Include="Styles\video\mejs-controls.ai" />
+    <Content Include="Views\Home\Mobile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
