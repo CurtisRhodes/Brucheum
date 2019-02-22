@@ -1,10 +1,5 @@
-﻿@{
-    ViewBag.Title = "Guzzle";
-    Layout = "_PornLayout.cshtml";
-
-}
-<style>
-    #leftColumn, #middleColumn, #rightColumn {
+﻿<style>
+    /*#leftColumn, #middleColumn, #rightColumn {
         background-color: #e2c2ab;
         font-family: Comic Sans MS;
     }
@@ -57,6 +52,8 @@
         margin-bottom: 8px;
     }
 
+    */
+
     .comicList {
         margin-top: 123px;
     }
@@ -80,17 +77,19 @@
         left: 200px;
         display: none;
     }
-</style>
 
+</style>
+<script src="~/Scripts/Layouts.js"></script>
 <div class="threeColumnArray">
     <div id="leftColumn">
         <div class="comicList">
-            <div id="obBoobsRater" onclick="window.location.href='/home/transitions?folder=boobs'">Boobs Rater</div>
+            <div onclick="window.location.href='/home/Mobile?folder=porn'">Mobile</div>
             <div id="obTranitions" onclick="window.location.href='/test/contextTest'">Transitions</div>
             <div id="obLetExplain" onclick="window.location.href='/test/contextTest'">Let me Expalin</div>
             <div id="obCategories" onclick="$('#dirTreeContainer').toggle()">Category List</div>
             <div id="obNastyPorny" onclick="window.location.href='/'">Oggle Booble</div>
             <div id="obVideoLinks" onclick="window.location.href='/home/Videos'">video links</div>
+
         </div>
     </div>
     <div id="middleColumn">
@@ -108,10 +107,11 @@
 
 <script>
     $(document).ready(function () {
-
+        setLayout("porn");
         launchCarousel('porn');
 
     });
+    
 
     function treeToggle(id) {
         //alert($('#' + id + '').css("display"));

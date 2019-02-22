@@ -61,11 +61,6 @@
     float: left;
 }
 
-.slideShowBreadCrub {
-    font-size: smaller;
-    float: right;
-}
-
 .loadingGif {
     position: absolute;
     display: none;
@@ -294,6 +289,29 @@ label {
     border: 1px solid #ccc;
     border-radius: 3px;
 }
+.floatingCrud {
+    position: absolute;
+    top: 250px;
+    left: 200px;
+    border: solid 2px #555;
+    box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
+    width: 66%;
+    display: none;
+}
+
+.floatingCrudContainer {
+    padding: 10px;
+    background-color: #f8e8e8;
+}
+.floatingCrudDialog {
+    position: absolute;
+    top: 250px;
+    left: 200px;
+    border: solid 2px #555;
+    box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
+    display: none;
+}
+
 .floatingCrudBanner {
     background-color: #cfcfcf;
     text-align: center;

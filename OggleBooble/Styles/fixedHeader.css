@@ -1,18 +1,25 @@
 ﻿
-.standardHeader {
+.fixedHeader {
     position: fixed;
     top: 0;
     width: 100%;
+    z-index: 1000;
+}
+.classicColors{
     background-color: #74bac3;
     border-top: #40767d 3px solid;
     border-bottom: #decd6f 11px solid;
-    display: block;    
-    z-index: 1000;
+}
+.pornColors {
+    background-color: #ffcccc;
+    border-top: #40767d 3px solid;
+    border-bottom: #decd6f 11px solid;
 }
 .renderBody {
     clear: both;
-    position: sticky;
-    margin-top: 53px;
+    display: block;
+    /*position: sticky;*/
+
     border-top: solid 5px #511783;
 }
 
@@ -24,6 +31,14 @@
     padding-top: 2px;
     padding-left: 2px;
     height: 80px;
+    width: 108px;
+    cursor: pointer;
+}
+.littlelogo {
+    padding-top: 2px;
+    padding-left: 2px;
+    height: 30px;
+    width: 30px;
     cursor: pointer;
 }
 
@@ -47,10 +62,10 @@
 .headerSubTitle {
     display: inline-block;
     font-family: Comic Sans MS;
-    color: #d22ef2;
+    color: #7f2c8f;
     vertical-align: top;
     margin-top: 7px;
-    font-size: 22px;
+    font-size: 28px;
 }
 .headerMessageArea {
     width: 100%;
@@ -87,10 +102,6 @@
     font-size: 16px;
     color: #cebc59 !important;
 }
-
-
-
-
 
 .modalVail {
     display: none; /*Hidden by default */

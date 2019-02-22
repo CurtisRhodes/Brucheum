@@ -18,8 +18,10 @@
     .thumbImage {
         height: 200px;
         cursor: pointer;
-        margin-bottom: -3px;
-        /*width: 100%;*/
+        /*
+            border: dashed thin black;
+            margin-bottom: -3px;            
+            width: 100%;*/
     }
 
     .loadingGif {
@@ -79,46 +81,10 @@
             cursor: pointer;
         }
 
-    .floatingCrudDialog {
-        position: absolute;
-        top: 250px;
-        left: 200px;
-        border: solid 2px #555;
-        box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
-        display: none;
-    }
-
-    .floatingCrudContainer {
-        padding: 10px;
-        background-color: #f8e8e8;
-    }
-
-
     .roundendButton {
         margin-top: 6px;
         display: inline-block;
     }
-    /*
-                <div class="innerfloatingCrudContainer">
-
-        .innerfloatingCrudContainer {
-        float: right;
-        display: inline-block;
-    }*/
-
-    /*.dots {
-        position: relative;
-        height: 22px;
-        margin: -10px;
-        top: -185px;
-        left: -20px;
-        cursor: pointer;
-    }
-    .innerImageContainer {
-        margin: 2px;
-        background-image: url("/Images/dots.png");
-        z-index: 100;
-    }*/
 
     .copyDialogImage {
         float: left;
@@ -175,10 +141,20 @@
 
     }
     .magnifyingGlass {
+        cursor: pointer;
         position: absolute;
         display: none;
         height: 70px;
         z-index: 4;
+    }
+    .popout {
+        height: 27px;
+        margin-right:8px;
+    }
+    .slideShowContainer {
+        display: inline-block;
+        float: right;
+        margin-right: 17px;
     }
 </style>
 
@@ -195,18 +171,61 @@
     <div id="rightColumn"></div>
 </div>
 
-<div id="customViewer" class="expandoImageViewer" onclick="slide('next')">
+<div id="customViewer" class="expandoImageViewer">
+
+
     <div id="expandoViewerBanner" class="floatingCrudBanner">
         <div id="prev" class="viewerImageNav" onclick="slide('prev')">PREV</div>
-        <span id="expandoBannerText">img</span>
+        <span id="expandoBannerText"></span>
         <div onclick="$('#customViewer').hide(); viewerShowing = false;" class="farSide"><img class="closeButton" src="~/Images/close.png" height="35" /></div>
-        <div id="next" class="farSide" onclick="slide('next')">NEXT</div>
-        <img id="magnifyingGlass" class="magnifyingGlass" src="~/Images/Loupe.png" onclick="blowupImage()"/>
-    </div>
 
-    <div  class="expandoImageDiv">
+        <div id="next" class="farSide" onclick="slide('next')">NEXT</div>
+        <div class="farSide" onclick="blowupImage()"><img class="popout" src="~/Images/expand02.png" /></div>
+        <div class="slideShowContainer">
+            <div class="farSide" onclick="runSlideShow('faster')"><img id="fasterSlideshow" title="faster slideshow" class="popout" src="~/Images/slideshowFaster.png" /></div>
+            <div class="farSide" onclick="runSlideShow('start')" ><img id="showSlideshow" title="start slideshow" class="popout" src="~/Images/slideshow.png" /></div>
+            <div class="farSide" onclick="runSlideShow('slower')"><img id="slowerSlideShow" title="slower slideshow" class="popout" src="~/Images/slideshowSlower.png" /></div>
+        </div>
+    </div>
+    @*<img id="magnifyingGlass" class="magnifyingGlass" src="~/Images/Loupe.png" onclick="blowupImage()" /></div>*@
+
+    <div class="expandoImageDiv">
+        <div id="leftClickArea" onclick="slide('prev')" class="hiddeClickArea"></div>
+        <div id="rightClickArea" onclick="slide('next')" class="hiddeClickArea" style="left:50%;"></div>
         <img id="viewerImage" class="expandoImage" />
     </div>
+</div>
+
+
+<style>
+    .hiddeClickArea {
+        position: absolute;
+        width: 50%;
+        display: inline-block;
+        top: 100px;
+        float: left;
+        height: 100%;
+        z-index: 100;
+    }
+    .megaView {
+        position: absolute;
+        border: solid 6px #b84cc8;
+        background-color: #ddd;
+        display: none;
+        min-height: 400px;
+        min-width: 300px;
+        top: 100px;
+        left: 100px;
+    }
+    #megaImage {
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<div id="megaView" class="megaView">
+
+    <img id="megaImage" onclick="$('#megaView').hide()" />
 </div>
 
 <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
@@ -256,8 +275,6 @@
     <div id="msg4"></div>
 </div>
 
-
-
 <script>
     var service = '@ViewBag.Service';
     var folderPath = '@ViewBag.Folder';
@@ -270,15 +287,19 @@
     var imageArrayIndex = 0;
     var exploderInterval;
     var viewerShowing = false;
+    var slideShow;
+    var slideShowSpeed = 0;
 
     $(document).ready(function () {
         if (folderPath == "") {
             window.location.href = "/";
         }
-        $('#divGalleryName').html(folderPath.substr(folderPath.lastIndexOf("/") + 1));
         showBreadCrumbs(folderPath);
-        $('.thumbImage').css("height", thumbImageHeight + "px");
 
+        if (folderPath.substr(folderPath, folderPath.indexOf("/")) == 'Porn') {
+            setLayout("porn");
+        }
+        $('#expandoBannerText').html(folderPath.substr(folderPath.lastIndexOf("/") + 1));
         // set width
         $('#imageContainer').width($('#middleColumn').width());
         $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
@@ -373,7 +394,7 @@
     }
 
     function slide(direction) {
-        //$('#debugMessageArea').hide();
+        $('#footerMessage').html("slide: " + direction);
         $('#magnifyingGlass').hide();
 
         if (direction == 'next') {
@@ -415,9 +436,6 @@
         imageArrayIndex = thisImage.attr("idx");
         viewerShowing = true;
 
-        //$('#customViewerContainer').css("top", 100);
-        //alert("$('#customViewerContainer').css('top') :" + $('#customViewerContainer').css("top"));
-
         var picpos = thisImage.offset();
         $('#customViewer').css("top", picpos.top - 100);
         $('#customViewer').css("left", picpos.left);
@@ -437,37 +455,51 @@
         $('#magnifyingGlass').css('top', 980);
         $('#magnifyingGlass').css('left', 1325);
 
-        $('#text55').html("");
-        exploderInterval = setInterval(explodeViewer, 5);
+        //$('#text55').html("");
+
+        viewAreaTop = Number($('#middleColumn').position().top + 10);
+        viewAreaLeft = Number($('#middleColumn').position().left);
+        viewAreaWidth = Number($('#middleColumn').width());
+        var dd = Number($('#rightColumn').width());
+
+        viewAreaRight = viewAreaWidth + viewAreaLeft;
+        //alert("viewAreaRight: " + viewAreaRight + " dd: " + dd);
+        //alert("viewAreaTop: " + viewAreaTop + " viewAreaLeft: " + viewAreaLeft + " viewAreaWidth: " + viewAreaWidth + " viewAreaRight: " + viewAreaRight + " dd: " + dd);
+
+
+        $('#viewerImage').contextmenu(function () {
+            //alert("id: " + $(this).attr("id"));
+            event.preventDefault();
+            window.event.returnValue = false;
+            showContextMenu(imageArray[imageArrayIndex].ImageId);
+        });
+
+
+        exploderInterval = setInterval(function () {
+            explodeViewer()
+        }, 8);
     }
 
+    var viewAreaTop;
+    var viewAreaLeft;
+    var viewAreaWidth;
+    var viewAreaRight;
     function explodeViewer() {
         var Xincrimentor = 15;
         var Yincrimentor = 10;
 
         var margin = 100;
         var viewAreaHeight = Number($('#middleColumn').height() - 150);
-        var viewAreaWidth = Number($('#middleColumn').width());
-        var viewAreaPos = $('#middleColumn').position();
-        var viewAreaTop = Number(viewAreaPos.top);
-        var viewAreaLeft = Number(viewAreaPos.left);
 
         if ((Number($('#customViewer').width()) >= viewAreaWidth) &&
             (Number($('#customViewer').height()) >= viewAreaHeight)) {
             clearInterval(exploderInterval);
             $('#customViewer').css("top", viewAreaTop + "px");
             $('#customViewer').css("left", " " + viewAreaLeft + "px");
+            $('#viewerImage').height($('#customViewer').height() - 50);
+            $('#viewerImage').width($('#customViewer').width());
             $('#magnifyingGlass').show();
             //alert("done");
-        }
-
-        var toppx = $('#customViewer').css("top")
-        var topY = Number(toppx.substr(0, toppx.length - 2));
-        if (topY > viewAreaTop) {
-            $('#customViewer').css("top", "-=" + Yincrimentor + "px");
-        }
-        if (topY < viewAreaTop) {
-            $('#customViewer').css("top", Yincrimentor + "px");
         }
 
         if ($('#customViewer').height() < viewAreaHeight) {
@@ -476,29 +508,25 @@
         if ($('#customViewer').height() > viewAreaHeight) {
             $('#customViewer').height(viewAreaHeight)
         }
-
-        var leftpx = $('#customViewer').css("left")
-        var leftX = Number(leftpx.substr(0, toppx.length - 2));
-        if (leftX > (viewAreaLeft - margin)) {
-            $('#customViewer').css("left", "-=" + Xincrimentor + "px");
-        }
-
         if ($('#customViewer').width() < viewAreaWidth) {
             $('#customViewer').width($('#customViewer').width() + (Xincrimentor * 2));
-
-            if ((Number($('#customViewer').width()) + Number(leftX)) > (viewAreaWidth + margin)) {
-                $('#text55').append("X ");
-                $('#customViewer').css("left", "-=" + Xincrimentor + "px");
-                //$('#customViewer').width($('#customViewer').width() + Xincrimentor);
-
-            }
         }
         if ($('#customViewer').width() > viewAreaWidth) {
             $('#customViewer').width(viewAreaWidth)
         }
+        if ($('#customViewer').position().top > viewAreaTop) {
+            $('#customViewer').css("top", $('#customViewer').position().top - Yincrimentor);
+        }
 
-        $('#viewerImage').height($('#customViewer').height() - 50);
-        $('#viewerImage').width($('#customViewer').width());
+
+        var imageRight = Number($('#customViewer').width() + $('#customViewer').position().left);
+        if (imageRight > viewAreaRight) {
+            //alert("imageRight(" + imageRight + ") > viewAreaRight (" + viewAreaRight + ")  delta: " + (imageRight - viewAreaRight));
+            $('#customViewer').css("left", $('#customViewer').position().left - (imageRight - viewAreaRight));
+        }
+
+        //$('#viewerImage').height($('#customViewer').height() - 50);
+        //$('#viewerImage').width($('#customViewer').width());
     }
 
     $('.ogContextMenu div').click(function () {
@@ -611,6 +639,21 @@
     }
 
     function blowupImage() {
+
+        //var thisLink = document.getElementById(imageArray[imageArrayIndex].ImageId)
+
+            //imageArray[imageArrayIndex].Link;  //$('#viewerImage').attr("src");
+
+        //var test1 = thisLink.scrollHeight;
+        //var test2 = thisLink.scrollWidth;
+        //alert("couold be h: " + test1 + " w: " + test2);
+
+        //$('#megaImage').attr("src", imageArray[imageArrayIndex].Link);
+        //$('#megaView').show();
+       // alert("hello")
+        //event.cancelBubble();
+        //$('#customViewer').hide(); viewerShowing = false
+        //return false;
         window.open(imageArray[imageArrayIndex].Link, "_blank");
     }
 
@@ -641,10 +684,14 @@
             //case 33: scrollTabStrip('foward'); break;            
             case 34:                        // pg down
             case 40:                        // dowm arrow
-            case 37: slide('prev'); break;  // left arrow
+            case 37:                        // left arrow
+                slide('prev');
+                break;  
             case 13:                        // enter 
             case 38:                        // up arrow
-            case 39: slide('next'); break;  // right arrow
+            case 39:                        // right arrow
+                slide('next');
+                break;            
             case 122: $('#standardHeader').hide(); break; // F11
             default:
                 $('#expandoBannerText').html("event.which: " + event.which)
@@ -652,6 +699,45 @@
         }
     });
 
+    function runSlideShow(action) {
+        //alert("slideShow action: " + action)
 
+        if (action == 'start') {
+            if ($('#showSlideshow').attr("Title") == "start slideshow") {
+                $('#showSlideshow').attr("Title", "stop slideshow");
+            }
+            else {
+                $('#showSlideshow').attr("Title", "start slideshow");
+                $('#fasterSlideshow').attr("Title", "faster slideshow");
+                $('#slowerSlideShow').attr("Title", "slower slideshow");
+                clearInterval(slideShow);
+                return;
+            }
+        }
+        if (slideShowSpeed == 0) {
+            slideShowSpeed = 5000;
+        }
+        if (action == "faster") {
+            slideShowSpeed -= 1000;
+        }
+        if (action == "slower") {
+            slideShowSpeed += 1000;
+        }
+        if (slideShowSpeed <= 0) {
+            $('#showSlideshow').attr("Title", "start slideshow");
+            $('#fasterSlideshow').attr("Title", "faster slideshow");
+            $('#slowerSlideShow').attr("Title", "slower slideshow");
+            clearInterval(slideShow);
+        }
+        else {
+            slide('next');
+            $('#fasterSlideshow').attr("Title", "slideshow " + (10 - (slideShowSpeed / 1000)) + "x");
+            $('#slowerSlideShow').attr("Title", "slideshow " + (10 - (slideShowSpeed / 1000)) + "x");
+            clearInterval(slideShow);
+            slideShow = setInterval(function () {
+                slide('next');
+            }, slideShowSpeed);
+        }
+    }
 
 </script>
