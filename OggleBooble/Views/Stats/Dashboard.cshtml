@@ -98,7 +98,6 @@
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
-        <div id="divStatusMessage"></div>
 
         <div id="dashboardTop">
             <div class="myH2">Dashboard</div>
@@ -119,6 +118,7 @@
                 <div class="clickable" onclick="$('#moveFolderCrud').fadeIn()">Move Folder</div>
                 <div class="clickable" onclick="$('#renameFolderCrud').fadeIn()">ReName Folder</div>
                 <div class="clickable" onclick="$('#addFromPhysicalFolderCrud').fadeIn()">Up From Physical Folder</div>
+                <div class="clickable" onclick="$('#copyLinksCrud').fadeIn()">Copy Links</div>
             </dir>
         </div>
 
@@ -126,6 +126,7 @@
         <div id="divDashboardContainer" class="dashBoardContainer">
 
             <div class="workarea">
+                <div id="divStatusMessage"></div>
                 <div id="addNewLink" class="addLinkCrudArea">
                     <div>link<input id="txtNewLink" class="roundedInput" onblur="previewLinkImage()" /></div>
                     <div>path<input class="txtLinkPath roundedInput" readonly="readonly" /></div>
@@ -161,7 +162,8 @@
             <div id="renameFolderCrud" class="floatingCrud">
                 <div class="floatingCrudBanner">Rename Folder<div onclick="$('#renameFolderCrud').fadeOut()" class="farSide">x</div> </div>
                 <div class="floatingCrudContainer">
-                    <div><span>folder to rename</span><select id="selRenameFolder" class="dirTreeDropDown">@Html.Partial("_DirOptions");</select></div>
+                    @*<div><span>folder to rename</span><select id="selRenameFolder" class="dirTreeDropDown">@Html.Partial("_DirOptions");</select></div>*@
+                    <div><span>folder to rename</span><input id="txtFolderToRename" class="txtLinkPath roundedInput" readonly="readonly" /></div>
                     <div><span>new name</span><input id="txtReName" class="roundedInput" /></div>
                     <div class="roundendButton" onclick="renameFolder()">Rename Folder</div>
                 </div>
@@ -185,6 +187,16 @@
                     <div class="roundendButton" onclick="addFromPhysicalFile()">add From Physical Folder</div>
                 </div>
             </div>
+
+            <div id="copyLinksCrud" class="floatingCrud">
+                <div class="floatingCrudBanner">Copy Links<div onclick="$('#copyLinksCrud').fadeOut()" class="farSide">x</div> </div>
+                <div class="floatingCrudContainer">
+                    <div><span>destination</span><input id="txtdestination" value="F:/Danni" class="roundedInput" /></div>
+                    <div><span>start path</span><input class="txtLinkPath roundedInput" /></div>
+                    <div class="roundendButton" onclick="copyLinks()">create files</div>
+                </div>
+            </div>
+
 
 
         </div>
@@ -295,11 +307,15 @@
 
     function previewLinkImage() {
         $('#imgLinkPreview').attr('src', $('#txtNewLink').val());
-        $('#footerMessage').html("ini image height: " + $('#imgLinkPreview').height());
-        resizeThisPage();
+
+        $('#imgLinkPreview').one("load", function () {
+            $('#footerMessage').html("ini image height: " + $('#imgLinkPreview').height());
+            resizeThisPage();
+        });
     }
 
     function addImageLink() {
+        $('#dataifyInfo').hide()
         var newLink = {};
         newLink.Link = $('#txtNewLink').val();
         newLink.PathId = $('#txtHiddenLinkPathId').val();
@@ -334,10 +350,12 @@
             data: newFolder,
             success: function (success) {
                 $('#getDirTreeLoadingGif').hide();
-                $('#newFolderCrud').hide();                
                 if (success == "ok") {
-                    rebuildCatTree();
+                    $('#newFolderCrud').fadeOut();
                     displayStatusMessage("ok", "new folder created");
+                    if (confirm("rebuild Dir Tree?")) {
+                        rebuildCatTree();
+                    }
                 }
                 else 
                     alert("CreateVirtualFolder: " + success);                
@@ -362,9 +380,11 @@
                 $('#getDirTreeLoadingGif').hide();
 
                 if (!success.startsWith("ERROR")) {
-                    $('#moveFolderCrud').fadeOut();
-                    rebuildCatTree();
                     displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + success);
+                    $('#moveFolderCrud').fadeOut();
+                    if (confirm("rebuild Dir Tree?")) {
+                        rebuildCatTree();
+                    }
                 }
                 else
                     alert("CreateVirtualFolder: " + success);
@@ -379,21 +399,22 @@
     function renameFolder() {
         $.ajax({
             type: "PUT",
-            url: service + "/api/ImageFolder/RenameFolder?folderId=" + $('#selRenameFolder').val() + "&newName=" + $('#txtReName').val(),
+            url: service + "/api/ImageFolder/RenameFolder?folderId=" + $('#txtHiddenLinkPathId').val() + "&newName=" + $('#txtReName').val(),
             success: function (success) {
                 $('#getDirTreeLoadingGif').hide();
-
                 if (!success.startsWith("ERROR")) {
-                    $('#renameFolderCrud').fadeOut();
-                    rebuildCatTree();
+                    $('#renameFolderCrud').fadeOut();                    
                     displayStatusMessage("ok", "folder " + $('#selRenameFolder option:selected').val() + " renamed to " + $('#txtReName').val());
+                    if (confirm("rebuild Dir Tree?")) {
+                        rebuildCatTree();
+                    }
                 }
                 else
-                    alert("CreateVirtualFolder: " + success);
+                    alert("renameFolder: " + success);
             },
             error: function (xhr) {
                 $('#getDirTreeLoadingGif').hide();
-                alert("CreateVirtualFolder xhr error: " + xhr.statusText);
+                alert("renameFolder xhr error: " + xhr.statusText);
             }
         });
 
@@ -417,7 +438,7 @@
 
                     var delta = (Date.now() - start) / 1000;
                     console.log("rebuildCatTree took: " + delta.toFixed(3));
-                    $('#dataifyInfo').html("total folders: " + totalFolders + " total pics: " + totalPics);
+                    $('#dataifyInfo').html("rebuildCatTree took: " + delta.toFixed(3) + " total folders: " + totalFolders + " total pics: " + totalPics);
                     saveAsStaticFile("dirTree");
                     saveAsStaticFile("dirSelect");
                     $('#getDirTreeLoadingGif').hide();
@@ -532,11 +553,12 @@
             url: service + "/api/Directory/rebiuldPhy?folderId=" + $('#selVirtualFolder').val() + "&dirPath=" + $('#txtphysicalFolder').val() + "&danniPathHint=" + $('#txtDanniPath').val(),
             success: function (success) {
                 $('#getDirTreeLoadingGif').hide();
-
                 if (!success.startsWith("ERROR")) {
                     $('#addFromPhysicalFolderCrud').fadeOut();
-                    rebuildCatTree();
                     displayStatusMessage("ok", "folder " + $('#selVirtualFolder option:selected').val() + " renamed to " + $('#txtReName').val());
+                    if (confirm("rebuild Dir Tree?")) {
+                        rebuildCatTree();
+                    }
                 }
                 else
                     alert("CreateVirtualFolder: " + success);
@@ -547,6 +569,29 @@
             }
         });
 
+    }
+
+    function copyLinks() {
+        var rootId = $('#txtHiddenLinkPathId').val();        
+        var destination = $('#txtdestination').val(); // "f:/Danni/";
+        $('#getDirTreeLoadingGif').fadeIn();
+        $.ajax({
+            type: "POST",
+            url: service + "/api/Directory/CopyLinks?rootId=" + rootId + "&destination=" + destination,
+            success: function (success) {
+                $('#getDirTreeLoadingGif').hide();
+                $('#copyLinksCrud').fadeOut();
+                if (!success.startsWith("ERROR")) {
+                    displayStatusMessage("ok", "populated folder " + destination + $('.txtLinkPath').val());
+                }
+                else
+                    alert("copyLinks: " + success);
+            },
+            error: function (xhr) {
+                $('#getDirTreeLoadingGif').hide();
+                alert("copyLinks xhr error: " + xhr.statusText);
+            }
+        });
     }
 
 </script>

@@ -20,7 +20,7 @@
         cursor: pointer;
         /*
             border: dashed thin black;
-            margin-bottom: -3px;            
+            margin-bottom: -3px;
             width: 100%;*/
     }
 
@@ -64,13 +64,16 @@
     .testMessage {
         margin-top: 15px;
     }
-
+    .floatingCrudDialog {
+        z-index: 120;
+    }
     .ogContextMenu {
         position: absolute;
         background-color: #e1e1de;
         border: solid 2px #923c76;
         padding: 8px 10px;
         display: none;
+        z-index: 110;
     }
 
         .ogContextMenu div {
@@ -80,6 +83,16 @@
             border-radius: 3px;
             cursor: pointer;
         }
+
+    .hiddeClickArea {
+        position: absolute;
+        width: 50%;
+        display: inline-block;
+        top: 100px;
+        float: left;
+        height: 100%;
+        z-index: 100;
+    }
 
     .roundendButton {
         margin-top: 6px;
@@ -123,23 +136,27 @@
         display: none;
         overflow: hidden;
     }
+
     .expandoImage {
         object-fit: contain;
         transition: all .75s ease-in-out;
     }
+
     .expandoImageDiv {
         float: left;
     }
+
     .viewerImageNav {
         float: left;
         cursor: pointer;
     }
+
     .closeButton {
         margin-top: -5px;
         margin-right: -5px;
         padding-left: 10px;
-
     }
+
     .magnifyingGlass {
         cursor: pointer;
         position: absolute;
@@ -147,10 +164,12 @@
         height: 70px;
         z-index: 4;
     }
+
     .popout {
         height: 27px;
-        margin-right:8px;
+        margin-right: 8px;
     }
+
     .slideShowContainer {
         display: inline-block;
         float: right;
@@ -183,30 +202,20 @@
         <div class="farSide" onclick="blowupImage()"><img class="popout" src="~/Images/expand02.png" /></div>
         <div class="slideShowContainer">
             <div class="farSide" onclick="runSlideShow('faster')"><img id="fasterSlideshow" title="faster slideshow" class="popout" src="~/Images/slideshowFaster.png" /></div>
-            <div class="farSide" onclick="runSlideShow('start')" ><img id="showSlideshow" title="start slideshow" class="popout" src="~/Images/slideshow.png" /></div>
+            <div class="farSide" onclick="runSlideShow('start')"><img id="showSlideshow" title="start slideshow" class="popout" src="~/Images/slideshow.png" /></div>
             <div class="farSide" onclick="runSlideShow('slower')"><img id="slowerSlideShow" title="slower slideshow" class="popout" src="~/Images/slideshowSlower.png" /></div>
         </div>
     </div>
     @*<img id="magnifyingGlass" class="magnifyingGlass" src="~/Images/Loupe.png" onclick="blowupImage()" /></div>*@
 
     <div class="expandoImageDiv">
-        <div id="leftClickArea" onclick="slide('prev')" class="hiddeClickArea"></div>
-        <div id="rightClickArea" onclick="slide('next')" class="hiddeClickArea" style="left:50%;"></div>
+        <div id="leftClickArea" onclick="slide('prev')"  contextmenu="viewerContextMenu()" class="hiddeClickArea"></div>
+        <div id="rightClickArea" onclick="slide('next')" contextmenu="viewerContextMenu()" class="hiddeClickArea" style="left:50%;"></div>
         <img id="viewerImage" class="expandoImage" />
     </div>
 </div>
 
-
 <style>
-    .hiddeClickArea {
-        position: absolute;
-        width: 50%;
-        display: inline-block;
-        top: 100px;
-        float: left;
-        height: 100%;
-        z-index: 100;
-    }
     .megaView {
         position: absolute;
         border: solid 6px #b84cc8;
@@ -217,6 +226,7 @@
         top: 100px;
         left: 100px;
     }
+
     #megaImage {
         width: 100%;
         height: 100%;
@@ -303,6 +313,7 @@
         // set width
         $('#imageContainer').width($('#middleColumn').width());
         $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
+
         getImageLinks();
     });
 
@@ -337,6 +348,7 @@
                         })
 
                         // add files
+                        imageArray = new Array();
                         $('#slideShowLink').show();
                         var fileCount = 0;
                         $.each(folderModel.Files, function (idx, obj) {
@@ -382,7 +394,7 @@
             alert("GetLinkFolders CATCH: " + e);
         }
     }
-    
+
     function showContextMenu(imageId) {
         currentContextImageId = imageId;
         var thisImage = $('#' + imageId + '');
@@ -394,9 +406,6 @@
     }
 
     function slide(direction) {
-        $('#footerMessage').html("slide: " + direction);
-        $('#magnifyingGlass').hide();
-
         if (direction == 'next') {
             imageArrayIndex++;
             if (imageArrayIndex >= imageArray.length)
@@ -409,7 +418,6 @@
                 $('#viewerImage').show();
                 $('#viewerImage').attr("src", imageArray[imageArrayIndex].Link);
                 $('#viewerImage').css("transform", "translateX(0)");
-                $('#magnifyingGlass').show();
             }, 450);
 
         }
@@ -426,9 +434,9 @@
                 $('#viewerImage').show();
                 $('#viewerImage').attr("src", imageArray[imageArrayIndex].Link);
                 $('#viewerImage').css("transform", "translateX(0)");
-                $('#magnifyingGlass').show();
             }, 450);
         }
+        $('#footerMessage').html("image: " + imageArrayIndex + " of: " + imageArray.length);
     }
 
     function showViewer(imageId) {
@@ -444,36 +452,16 @@
         $('#customViewer').show();
         $('#viewerImage').attr("src", thisImage.attr("src"));
 
-
-        //$('#debugMessageArea').show();
-        //var imagePos = $('#viewerImage').position();
-        //var imageTop = Number(imagePos.top);
-        //var imageLeft = Number(imagePos.left);
-        //var imageHeight = $('#viewerImage').height();
-        //var imageWidth = $('#viewerImage').width();
-
-        $('#magnifyingGlass').css('top', 980);
-        $('#magnifyingGlass').css('left', 1325);
-
-        //$('#text55').html("");
-
         viewAreaTop = Number($('#middleColumn').position().top + 10);
         viewAreaLeft = Number($('#middleColumn').position().left);
         viewAreaWidth = Number($('#middleColumn').width());
-        var dd = Number($('#rightColumn').width());
-
         viewAreaRight = viewAreaWidth + viewAreaLeft;
-        //alert("viewAreaRight: " + viewAreaRight + " dd: " + dd);
-        //alert("viewAreaTop: " + viewAreaTop + " viewAreaLeft: " + viewAreaLeft + " viewAreaWidth: " + viewAreaWidth + " viewAreaRight: " + viewAreaRight + " dd: " + dd);
 
-
-        $('#viewerImage').contextmenu(function () {
-            //alert("id: " + $(this).attr("id"));
+        $('.hiddeClickArea').contextmenu(function () {
             event.preventDefault();
             window.event.returnValue = false;
             showContextMenu(imageArray[imageArrayIndex].ImageId);
         });
-
 
         exploderInterval = setInterval(function () {
             explodeViewer()
@@ -498,7 +486,7 @@
             $('#customViewer').css("left", " " + viewAreaLeft + "px");
             $('#viewerImage').height($('#customViewer').height() - 50);
             $('#viewerImage').width($('#customViewer').width());
-            $('#magnifyingGlass').show();
+            //$('#magnifyingGlass').show();
             //alert("done");
         }
 
@@ -585,9 +573,7 @@
 
     var newLink = {};
     function copyLink(andRemove) {
-       // alert("currentContextFolderId: " + $('#dirTreeDropDown').val() + " currentContextImageId: " + currentContextImageId)
         newLink.ImageId = currentContextImageId;
-        //newLink.PathId = $('#dirTreeContainer').html();
         newLink.Link = $('#' + currentContextImageId + '').attr("src");
         $.ajax({
             type: "PUT",
@@ -607,8 +593,11 @@
                             url: service + "/api/ImageLinkCategory",
                             data: badLink,
                             success: function (success) {
-                                if (success == "ok")
+                                if (success == "ok") {
                                     getImageLinks();
+                                    if (viewerShowing)
+                                        slide("next");
+                                }
                                 else {
                                     alert("CreateVirtualFolder: " + success);
                                 }
@@ -681,17 +670,17 @@
         //  40 down arrow
         switch (event.which) {
             //case 38: scrollTabStrip('foward'); break;
-            //case 33: scrollTabStrip('foward'); break;            
+            //case 33: scrollTabStrip('foward'); break;
             case 34:                        // pg down
             case 40:                        // dowm arrow
             case 37:                        // left arrow
                 slide('prev');
-                break;  
-            case 13:                        // enter 
+                break;
+            case 13:                        // enter
             case 38:                        // up arrow
             case 39:                        // right arrow
                 slide('next');
-                break;            
+                break;
             case 122: $('#standardHeader').hide(); break; // F11
             default:
                 $('#expandoBannerText').html("event.which: " + event.which)
