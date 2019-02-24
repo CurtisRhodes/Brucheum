@@ -288,6 +288,7 @@
 <script>
     var service = '@ViewBag.Service';
     var folderPath = '@ViewBag.Folder';
+    var currentUser = '@User.Identity.Name';
     var page = 0;
     var mySubDirs = new Array();
     var thumbImageHeight = 200;
@@ -378,6 +379,9 @@
                         fileCount += folderModel.SubDirs.length;
                         $('#fileCount').html(fileCount);
                         $('#getImagesLoadingGif').hide();
+
+                        var emailSubject = "CONGRATULATIONS: " + currentUser + " just viewed " + folderPath;
+                        sendEmailFromJS(emailSubject, "BODY = someday it will be someone other than you");
                     }
                     else {
                         $('#getImagesLoadingGif').hide();

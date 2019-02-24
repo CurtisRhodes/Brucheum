@@ -15,7 +15,9 @@
         js.src = "https://connect.facebook.net/en_US/sdk.js";
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
-</script><link href="~/Styles/modalDialog.css" rel="stylesheet" />
+</script>
+
+<link href="~/Styles/modalDialog.css" rel="stylesheet" />
 <link href="~/Styles/modalDialog.css" rel="stylesheet" />
 <link href="~/Styles/default.css" rel="stylesheet" />
 <script src="~/Scripts/GlobalFunctions.js"></script>
@@ -189,7 +191,7 @@
                     }
                 });
 
-                var emailSubject = "CONGRATULATIONS: " + loginVM.UserName + " just logged onto The Brucheum";
+                var emailSubject = "CONGRATULATIONS: " + loginVM.UserName + " just logged onto OggleBooble";
                 sendEmailFromJS(emailSubject, "someday it will be someone other than you");
             }
             else {

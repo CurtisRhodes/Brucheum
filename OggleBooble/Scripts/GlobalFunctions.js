@@ -165,7 +165,7 @@ function sendEmailFromJS(msg, body) {
             success: function (emailSuccess) {
                 if (emailSuccess === "ok") {
                     displayStatusMessage("ok", "email sent");
-                    //alert("Email says: " + sendObj.Subject);
+//alert("Email says: " + emailMessage.Subject);
                 }
                 else {
                     alert("Email Fail: " + emailSuccess);

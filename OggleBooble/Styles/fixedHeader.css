@@ -82,6 +82,7 @@
     padding-left: 24px;
 }
 .menuTab {
+    display: inline-block;
     font-size: 14px;
     margin-top: 9px;
     margin-right: 12px;
