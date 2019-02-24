@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity.Owin;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using OggleBooble.Models;
 using System;
@@ -58,57 +59,12 @@ namespace OggleBooble.Controllers
         }
         #endregion
 
-        //private string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
 
-        public ActionResult LoginPopup()
+        // register ------------------------------------------------------------
+        public ActionResult Register()  //  RegisterPopup()
         {
-            //ViewBag.Service = apiService;
-            return PartialView("_LoginPopup");
-        }
-
-        public ActionResult RegisterPopup()
-        {
-            //ViewBag.Service = apiService;
             return PartialView("_RegisterPopup");
         }
-
-        public ActionResult ProfilePopup()
-        {
-            ViewBag.UserId = Session["UserId"];
-            //ViewBag.Service = apiService;
-            //return PartialView("_RegisterPopup");
-            return PartialView("_ProfilePopup");
-        }
-
-
-        [HttpPost]
-        public async Task<JsonResult> Login(LoginViewModel loginVM)
-        {
-            string success = "";
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    JsonResult jsonResult = await LoginRegisteredUser(loginVM);
-                    success = jsonResult.Data.ToString();
-                }
-                else
-                {
-                    var modelStateErrors = this.ModelState.Keys.SelectMany(key => this.ModelState[key].Errors);
-                    foreach (ModelError e in modelStateErrors)
-                    {
-                        success += " :" + e.ErrorMessage;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return Json(success);
-        }
-
-
         [HttpPost]
         public async Task<JsonResult> RegisterAndLogin(RegisterViewModel regVM)
         {
@@ -156,7 +112,124 @@ namespace OggleBooble.Controllers
             return Json(success);
         }
 
+        // login ----------------------------------------------------------------
+        public ActionResult LoginPopup()
+        {
+            return PartialView("_LoginPopup");
+        }
+        [HttpPost]
+        public async Task<JsonResult> Login(LoginViewModel loginVM)
+        {
+            string success = "";
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    JsonResult jsonResult = await LoginRegisteredUser(loginVM);
+                    success = jsonResult.Data.ToString();
+                }
+                else
+                {
+                    var modelStateErrors = this.ModelState.Keys.SelectMany(key => this.ModelState[key].Errors);
+                    foreach (ModelError e in modelStateErrors)
+                    {
+                        success += " :" + e.ErrorMessage;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return Json(success);
+        }
 
+        // logout ---------------------------------------------------------------
+        public string Logout()
+        {
+            string success = "";
+            try
+            {
+                Session.Remove("accessToken");   //sessionStorage.removeItem('accessToken');
+                AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                success = "ok";
+            }
+            catch (Exception ex) { success = ex.Message; }
+            return success;
+        }
+
+        // profile --------------------------------------------------------------
+        public ActionResult ProfilePopup()
+        {
+            //ViewBag.UserId = Session["UserId"];
+            //ViewBag.Service = apiService;
+            //return PartialView("_RegisterPopup");
+            var uid = User.Identity.GetUserId();
+            ApplicationUser usr = UserManager.FindById(uid);
+            ViewBag.FirstName = usr.FirstName;
+            ViewBag.LastName = usr.LastName;
+            ViewBag.PhoneNumber = usr.PhoneNumber;
+            ViewBag.UserName = usr.UserName;
+            ViewBag.Email = usr.Email;
+            return PartialView("_ProfilePopup");
+        }
+
+        [HttpPut]
+        public string UpdateProfile(ProfileViewModel profileViewModel)
+        {
+            string success = "";
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    ApplicationUser usr = UserManager.FindById(User.Identity.GetUserId());
+                    usr.FirstName = profileViewModel.FirstName;
+                    usr.LastName = profileViewModel.LastName;
+                    usr.PhoneNumber = profileViewModel.PhoneNumber;
+                    usr.UserName = profileViewModel.UserName;
+                    usr.Email = profileViewModel.Email;
+
+                    UserManager.Update(usr);
+                    success = "ok";
+                }
+                catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            }
+            else
+            {
+                var modelStateErrors = this.ModelState.Keys.SelectMany(key => this.ModelState[key].Errors);
+                foreach (ModelError e in modelStateErrors)
+                {
+                    success += " :" + e.ErrorMessage;
+                }
+            }
+            return success;
+        }
+
+        [HttpPost]
+        public ActionResult FacebookLogin(FacebookViewModel facebookViewModel)
+        {
+            string success = "";
+            try
+            {
+                ExternalLoginInfo loginInfo = AuthenticationManager.GetExternalLoginInfo();
+
+                loginInfo.Email = facebookViewModel.Email;
+                loginInfo.DefaultUserName = facebookViewModel.UserName;
+                //loginInfo.ExternalIdentity
+                //loginInfo.Login.ProviderKey
+                loginInfo.Login.LoginProvider = "Facebook";
+
+                SignInStatus signInStatus = SignInManager.ExternalSignIn(loginInfo, true);
+                success = "fbk " + signInStatus.ToString();
+            }
+            catch (Exception ex)
+            {
+                success = "try " + Helpers.ErrorDetails(ex);
+            }
+            return Json(success);
+        }
+
+        // helpers   -------------------------------------------------------------
         private async Task<JsonResult> LoginRegisteredUser(LoginViewModel loginVM)
         {
             string success = "";

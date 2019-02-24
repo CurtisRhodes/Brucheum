@@ -313,6 +313,7 @@
     <Content Include="Images\classic\transitions.jpg" />
     <Content Include="Styles\fixedHeader.css" />
     <Content Include="Styles\footer.css" />
+    <Content Include="Styles\modalDialog.css" />
     <Content Include="Styles\video\mediaelementplayer-legacy.css" />
     <Content Include="Styles\video\mediaelementplayer.css" />
     <Content Include="Styles\video\mejs-controls.png" />

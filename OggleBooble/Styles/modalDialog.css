@@ -1,0 +1,90 @@
+﻿.modalDialog {
+    position: absolute;
+    top: 22%;
+    left: 40%;
+    box-sizing: content-box;
+    color: #242729;
+    min-width: 300px;
+    border: 1px solid #e4e6e8;
+    background: #fff;
+    z-index: 20;
+    border: solid thin #777;
+    border-radius: 6px;
+    box-shadow: 10px 10px rgba(95, 12, 12, 0.5);
+    z-index: 12;
+}
+
+.dialogHeader {
+    text-align: center;
+    padding: 6px;
+    background-color: #74bac3;
+}
+    .dialogHeader span {
+        font-family: 'Lucida Calligraphy';
+        color: #69387e;
+        font-size: 22px;
+        font-style: italic;
+    }
+.dialogBody {
+    padding:  13px 30px;
+
+    z-index: 12;
+}
+
+.dialogCloseButton {
+    float: right;
+    padding-left: 11px;
+    margin-top: 6px;
+    margin-right: 4px;
+    cursor: pointer;
+}
+.caretImgContainer {
+    display: inline-block;
+}
+#divShowDetails {
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#divRememberMe {
+    margin-top: 4px;
+}
+
+.carets {
+    height: 6px;
+    width: 10px;
+}
+
+#divExtraDetails {
+    margin-top: 4px;
+    display: none;
+}
+
+.labelStyle {
+    color: purple;
+}
+
+.or-container {
+    text-align: center;
+    margin-bottom: 10px;
+    clear: both;
+    color: #6a737c;
+    font-variant: small-caps;
+}
+
+.or-hr {
+    margin-bottom: 0;
+    position: relative;
+    top: 19px;
+    height: 0;
+    border: 0;
+    border-top: 1px solid #3436e8;
+}
+
+.or {
+    display: inline-block;
+    position: relative;
+    padding: 10px;
+    background-color: #fff;
+}
+

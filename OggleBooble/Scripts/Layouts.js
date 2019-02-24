@@ -6,14 +6,14 @@ function setLayout(layoutName) {
         case 'porn':
             $('#oggleBoobleHeader').removeClass('classicColors').addClass('pornColors');
             $('.threeColumnArray').css("background-color", "#e2c2ab");
-            $('head title').html("girls sucking dick");
+            //$('head title').html("girls sucking dick");
             $('#divTopLeftLogo').html("<a href='/porn'><img src='/images/csLips02.png' class='bannerImage'/></a>");
             $('#bannerTitle').html("The Church of My Cock");
             $('#headerSubTitle').html("physical behavior catergorized");
             break;
         case 'mobileBoobs':
             $('#divTopLeftLogo').html("<a href='/home'><img src='/images/redballon.png' class='littlelogo' /></a>");
-            $('head title').html("Mobile Boobs");
+            //$('head title').html("Mobile Boobs");
             $('#bannerTitle').css("font-size", "15px");
             $('#headerSubTitle').html(" ");
             $('#headerMessage').html(" ");
@@ -24,7 +24,7 @@ function setLayout(layoutName) {
             $('.threeColumnArray').css("background-color", "#e2c2ab");
             $('#divTopLeftLogo').html("<a href='/porn'><img src='/images/csLips02.png' class='littlelogo' /></a>");
             $('#bannerTitle').css("font-size", "15px").html("cocksuckers");
-            $('head title').html("Mobile Porn");
+            //$('head title').html("Mobile Porn");
             $('#headerSubTitle').html(" ");
             $('#headerMessage').html(" ");
             $('#menuContainer').html(" ");

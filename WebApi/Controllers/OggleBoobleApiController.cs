@@ -59,7 +59,7 @@ namespace WebApi.OggleBooble
                                                                     join il in db.ImageLinks on cl.ImageLinkId equals il.Id
                                                                     where f2.FolderPath.StartsWith(f1.FolderPath)
                                                                     select il.Link).FirstOrDefault()
-                                                  }).ToList());
+                                                  }).OrderBy(f => f.DirectoryName).ToList());
 
                     // images
                     folderModel.Files = (from pp in db.ImageFolders
@@ -125,6 +125,11 @@ namespace WebApi.OggleBooble
                     dbFolderToMove.Parent = model.NewParentId;
                     dbFolderToMove.FolderPath = newFolderPath;
 
+                    List<ImageFolder> subdirs = db.ImageFolders.Where(f => f.Parent == model.FolderToMoveId).ToList();
+                    foreach (ImageFolder subdir in subdirs)
+                    {
+                        subdir.FolderPath = newFolderPath + "/" + subdir.FolderName;
+                    }
                     db.SaveChanges();
                     success = dbNewParent.FolderPath;
                 }
@@ -167,40 +172,37 @@ namespace WebApi.OggleBooble
         }
     }
 
-    [EnableCors("*", "*", "*")]
-    public class ImageLinkController : ApiController
-    {
-        // used by viewer
-        [HttpGet]
-        public List<FileModel> GetFiles(string folderPath)
-        {
-            if (folderPath.StartsWith("/"))
-                folderPath = folderPath.Substring(1);
+    //[EnableCors("*", "*", "*")]
+    //public class ImageLinkController : ApiController
+    //{
+    //    // used by viewer
+    //    [HttpGet]
+    //    public List<FileModel> GetFiles(string folderPath)
+    //    {
+    //        if (folderPath.StartsWith("/"))
+    //            folderPath = folderPath.Substring(1);
                 
-            List<FileModel> links = new List<FileModel>();
-            using (OggleBoobleContext db = new OggleBoobleContext())
-            {
-                links = (from f in db.ImageFolders
-                         join c in db.Category_ImageLinks on f.Id equals c.ImageCategoryId
-                         join l in db.ImageLinks on c.ImageLinkId equals l.Id
-                         where f.FolderPath == folderPath
-                         select new FileModel() {
-                             FileName = l.Link.Replace(" ", "%20")
-                         }).ToList();
+    //        List<FileModel> links = new List<FileModel>();
+    //        using (OggleBoobleContext db = new OggleBoobleContext())
+    //        {
+    //            links = (from f in db.ImageFolders
+    //                     join c in db.Category_ImageLinks on f.Id equals c.ImageCategoryId
+    //                     join l in db.ImageLinks on c.ImageLinkId equals l.Id
+    //                     where f.FolderPath == folderPath
+    //                     select new FileModel() {
+    //                         FileName = l.Link.Replace(" ", "%20")
+    //                     }).ToList();
 
-            }
-            return links;
-        }
-    }
+    //        }
+    //        return links;
+    //    }
+    //}
 
     [EnableCors("*", "*", "*")]
     public class ImageLinkCategoryController : ApiController
     {
         // dashboard
-        /// <summary>
-        ///  returns a fully loaded 
-        /// </summary>
-        /// <returns></returns>
+        //  returns a fully loaded dir tree
         [HttpGet]
         public DirectoryModel RebuildCatTree()
         {
@@ -435,63 +437,56 @@ namespace WebApi.OggleBooble
         {
             try
             {
-
-            var links = new List<FolderLink>();
-            int[] subFolders;
-            using (OggleBoobleContext db = new OggleBoobleContext())
-            {
-                links = (from c in db.Category_ImageLinks
-                         join l in db.ImageLinks on c.ImageLinkId equals l.Id
-                         join f in db.ImageFolders on c.ImageCategoryId equals f.Id
-                         where c.ImageCategoryId == rootId
-                         select new FolderLink()
-                         {
-                             Link = l.Link,
-                             LinkId = l.Id,
-                             FolderId = f.Id,
-                             ParentId = f.Parent,
-                             FolderPath = f.FolderPath,
-                             FolderName = f.FolderName
-                         }).ToList();
-
-                subFolders = db.ImageFolders.Where(f => f.Parent == rootId).Select(f => f.Id).ToArray();
-
-
-            }
-            if (links.Count > 0)
-            {
-                new FileInfo(_destination + links[0].FolderPath + "/").Directory.Create();
-                byte[] bytes;
-                using (WebClient client = new WebClient())
+                var links = new List<FolderLink>();
+                int[] subFolders;
+                using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    //var folderIncrimentor = 0;
-                    foreach (FolderLink link in links)
+                    links = (from c in db.Category_ImageLinks
+                             join l in db.ImageLinks on c.ImageLinkId equals l.Id
+                             join f in db.ImageFolders on c.ImageCategoryId equals f.Id
+                             where c.ImageCategoryId == rootId
+                             select new FolderLink()
+                             {
+                                 Link = l.Link,
+                                 LinkId = l.Id,
+                                 FolderId = f.Id,
+                                 ParentId = f.Parent,
+                                 FolderPath = f.FolderPath,
+                                 FolderName = f.FolderName
+                             }).ToList();
+
+                    subFolders = db.ImageFolders.Where(f => f.Parent == rootId).Select(f => f.Id).ToArray();
+
+
+                }
+                if (links.Count > 0)
+                {
+                    new FileInfo(_destination + links[0].FolderPath + "/").Directory.Create();
+                    byte[] bytes;
+                    using (WebClient client = new WebClient())
                     {
-                        bytes = client.DownloadData(link.Link);
-                        var extension = link.Link.Substring(link.Link.LastIndexOf("."));
-                        var imageName = link.FolderPath.Substring(link.FolderPath.IndexOf("/") + 1).Replace("/", "-");
-                        //System.IO.File.WriteAllBytes(destination + link.FolderPath + "/" + imageName + (++folderIncrimentor).ToString("0000") + extension, bytes);
-                        System.IO.File.WriteAllBytes(_destination + link.FolderPath + "/" + link.LinkId + extension, bytes);
+                        //var folderIncrimentor = 0;
+                        foreach (FolderLink link in links)
+                        {
+                            bytes = client.DownloadData(link.Link);
+                            var extension = link.Link.Substring(link.Link.LastIndexOf("."));
+                            var imageName = link.FolderPath.Substring(link.FolderPath.IndexOf("/") + 1).Replace("/", "-");
+                            //System.IO.File.WriteAllBytes(destination + link.FolderPath + "/" + imageName + (++folderIncrimentor).ToString("0000") + extension, bytes);
+                            System.IO.File.WriteAllBytes(_destination + link.FolderPath + "/" + link.LinkId + extension, bytes);
+                        }
                     }
                 }
+                foreach (int subFolder in subFolders)
+                {
+                    SaveLinksRecurr(subFolder);
+                }
             }
-            foreach (int subFolder in subFolders)
-            {
-                SaveLinksRecurr(subFolder);
-            }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            catch (Exception ex) { throw ex; }
         }
 
         private void CreateShortcut(string target, string destination)
         {
             object shDesktop = (object)"Desktop";
-
-            //var x = new LnkReader.
-
             WshShell shell = new WshShell();
             //string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\Notepad.lnk";
             IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(target);
@@ -500,15 +495,13 @@ namespace WebApi.OggleBooble
             //shortcut.TargetPath = Environment.GetFolderPath(Environment.SpecialFolder.System) + @"\notepad.exe";
             shortcut.TargetPath = destination;
             shortcut.Save();
+            //public object ShellLink { get; private set; }
         }
 
         // THE BIG ONE
+        // too dangerous to now use
         int totalFiles = 0;
         int fileProgress = 0;
-
-        //public object ShellLink { get; private set; }
-
-        // too dangerous to now use
         private string BuildImageFolderTable()
         {
             string success = "";
