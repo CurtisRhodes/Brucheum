@@ -21,7 +21,7 @@ function resizePage(debug) {
 
     //$('.renderBody').css("margin-top", $('#oggleBoobleHeader').height() - $('.renderBody').offset().top);
 
-    $('#footerMessage').html("header: " + $('#oggleBoobleHeader').height());
+    //$('#footerMessage').html("header: " + $('#oggleBoobleHeader').height());
 
     // adjust width
     var winW = $(window).width();

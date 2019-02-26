@@ -56,6 +56,7 @@ namespace WebApi.Directory.Models
         public string FolderName { get; set; }
         public string FolderPath { get; set; }
         public int FileCount { get; set; }
+        public string CatergoryDescription { get; set; }
     }
 
     public class VideoLinkModel

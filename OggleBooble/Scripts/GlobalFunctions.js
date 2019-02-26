@@ -145,27 +145,17 @@ function getXHRErrorDetails(jqXHR) {
     return msg;
 }
 
-function sendEmailFromJS(msg, body) {
-
+function sendEmailFromJS(subject, messsage) {
     //alert("sendEmailFromJS 1");
     var rtn = "";
     try {
-        var emailMessage = new Object();
-        emailMessage.Subject = msg;
-        emailMessage.Body = body;
-
-        var service = "https://api.curtisrhodes.com/";
-        //service = "http://localhost:40395/";
-
-        //alert("url: " + service + "api/GodaddyEmail");
         $.ajax({
-            type: "POST",
-            url: service + "api/GodaddyEmail",
-            data: emailMessage,
+            type: "GET",
+            url: "/Email/SendEmail?subject=" + subject + "&message=" + messsage,
             success: function (emailSuccess) {
                 if (emailSuccess === "ok") {
-                    displayStatusMessage("ok", "email sent");
-//alert("Email says: " + emailMessage.Subject);
+                    //displayStatusMessage("ok", "email sent");
+                    //alert("Email says: " + emailMessage.Subject);
                 }
                 else {
                     alert("Email Fail: " + emailSuccess);
