@@ -175,6 +175,14 @@
         float: right;
         margin-right: 17px;
     }
+    .leftSideButton {
+        float: left;
+        display: inline-block;
+        margin-left: 50px;
+        margin-bottom: 2px;
+        height: 30px;
+        cursor: pointer;
+    }
 </style>
 
 <div class="threeColumnArray">
@@ -191,10 +199,9 @@
 </div>
 
 <div id="customViewer" class="expandoImageViewer">
-
-
     <div id="expandoViewerBanner" class="floatingCrudBanner">
         <div id="prev" class="viewerImageNav" onclick="slide('prev')">PREV</div>
+        <img id="imgComment" class="leftSideButton" title="comment" onclick="showCommentDialog()" src="~/Images/comment.png" />
         <span id="expandoBannerText"></span>
         <div onclick="$('#customViewer').hide(); viewerShowing = false;" class="farSide"><img class="closeButton" src="~/Images/close.png" height="35" /></div>
 
@@ -207,7 +214,6 @@
         </div>
     </div>
     @*<img id="magnifyingGlass" class="magnifyingGlass" src="~/Images/Loupe.png" onclick="blowupImage()" /></div>*@
-
     <div class="expandoImageDiv">
         <div id="leftClickArea" onclick="slide('prev')"  contextmenu="viewerContextMenu()" class="hiddeClickArea"></div>
         <div id="rightClickArea" onclick="slide('next')" contextmenu="viewerContextMenu()" class="hiddeClickArea" style="left:50%;"></div>
@@ -289,6 +295,7 @@
     var service = '@ViewBag.Service';
     var folderPath = '@ViewBag.Folder';
     var currentUser = '@User.Identity.Name';
+    var ipAddress = '@ViewBag.IpAddress';
     var page = 0;
     var mySubDirs = new Array();
     var thumbImageHeight = 200;
@@ -331,7 +338,7 @@
             $('#getImagesLoadingGif').show();
             $.ajax({
                 type: "GET",
-                url: service + "/api/ImageFolder/GetLinks?folder=" + folderPath,
+                url: service + "/api/ImageLink/Get?folder=" + folderPath,
                 success: function (folderModel) {
                     if (!folderModel.DirectoryName.startsWith("ERROR")) {
                         var delta = (Date.now() - start) / 1000;
@@ -375,22 +382,22 @@
                             showContextMenu($(this).attr("id"));
                         });
 
-
                         fileCount += folderModel.SubDirs.length;
                         $('#fileCount').html(fileCount);
                         $('#getImagesLoadingGif').hide();
-
-                        var emailSubject = "CONGRATULATIONS: " + currentUser + " just viewed " + folderPath;
-                        sendEmailFromJS(emailSubject, "BODY = someday it will be someone other than you");
+                        if (ipAddress != "68.203.92.166") {
+                            var emailSubject = currentUser + " just viewed " + folderPath;
+                            sendEmailFromJS(emailSubject, "someday it will be someone other than " + ipAddress);
+                        }
                     }
                     else {
                         $('#getImagesLoadingGif').hide();
                         alert("GetLinkFolders: " + folderModel.DirectoryName);
                     }
                 },
-                error: function (xhr) {
+                error: function (jqXHR, exception) {
                     $('#getImagesLoadingGif').hide();
-                    alert("xhr: " + getXHRErrorDetails(xhr))
+                    alert("getImageLinks jqXHR : " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         } catch (e) {
@@ -402,10 +409,17 @@
     function showContextMenu(imageId) {
         currentContextImageId = imageId;
         var thisImage = $('#' + imageId + '');
-        var picpos = thisImage.offset();
-        var picLeft = picpos.left + thisImage.width() - $('.ogContextMenu').width() - 50;
-        $('#thumbImageContextMenu').css("top", picpos.top + 5);
-        $('#thumbImageContextMenu').css("left", picLeft);
+
+        if (viewerShowing) {
+            $('#thumbImageContextMenu').css("top", event.clientY + 5);
+            $('#thumbImageContextMenu').css("left", event.clientX);
+        }
+        else {
+            var picpos = thisImage.offset();
+            var picLeft = picpos.left + thisImage.width() - $('.ogContextMenu').width() - 50;
+            $('#thumbImageContextMenu').css("top", picpos.top + 5);
+            $('#thumbImageContextMenu').css("left", picLeft);
+        }
         $('#thumbImageContextMenu').fadeIn();
     }
 
@@ -563,8 +577,11 @@
             url: service + "/api/ImageLinkCategory",
             data: badLink,
             success: function (success) {
-                if (success == "ok")
+                if (success == "ok") {
+                    if (viewerShowing)
+                        slide("next");
                     getImageLinks();
+                }
                 else {
                     alert("CreateVirtualFolder: " + success);
                 }
@@ -623,9 +640,11 @@
         });
     }
 
-    function addComment() {
+    function showCommentDialog() {
 
     }
+
+
 
     function aboutThisImage() {
 
@@ -686,8 +705,8 @@
                 slide('next');
                 break;
             case 122: $('#standardHeader').hide(); break; // F11
-            default:
-                $('#expandoBannerText').html("event.which: " + event.which)
+            //default:
+            //  $('#expandoBannerText').html("event.which: " + event.which)
             //  alert("event.which: " + event.which)
         }
     });

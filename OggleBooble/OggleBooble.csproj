@@ -260,6 +260,7 @@
     <Content Include="Images\blueCircleRight.png" />
     <Content Include="Images\caretDown.png" />
     <Content Include="Images\close.png" />
+    <Content Include="Images\comment.png" />
     <Content Include="Images\csLips.png" />
     <Content Include="Images\csLips02.png" />
     <Content Include="Images\dots.png" />
@@ -334,7 +335,6 @@
     <Content Include="xxError.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Shared\_MobileBoobs.cshtml" />
     <Content Include="Views\Shared\_footer.cshtml" />
     <Content Include="Views\Shared\_DirOptions.cshtml" />
     <Content Include="Views\Shared\_DirTree.cshtml" />
@@ -353,7 +353,6 @@
     <Content Include="Views\Home\Transitions.cshtml" />
     <None Include="Properties\PublishProfiles\OggleBoobleGoDaddy.pubxml" />
     <Content Include="Views\Home\BoobsRanker.cshtml" />
-    <Content Include="Views\Shared\_LayoutBoobsRanker.cshtml" />
     <Content Include="Views\Login\_RegisterPopup.cshtml" />
     <Content Include="Views\Login\_ProfilePopup.cshtml" />
     <Content Include="Views\Login\_LoginPopup.cshtml" />

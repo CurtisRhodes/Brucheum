@@ -169,11 +169,6 @@
                     datatype: "Json",
                     success: function (success) {
                         if (success == "ok") {
-                            if (typeof startCarousel == 'function') {
-                                $('.carouselContainer').css("z-index", "7");
-                                $('.carouselLabel').css("z-index", "11");
-                                startCarousel();
-                            }
                             location.reload(true);
                         }
                         else {

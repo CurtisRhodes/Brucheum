@@ -270,7 +270,7 @@
         $('#' + id + '').toggle();
     }
     function clickPath(path, id) {
-        $('.txtLinkPath').val(path.replace(/%20/g, " "));        
+        $('.txtLinkPath').val(path.replace(/%20/g, " "));
         $('#txtHiddenLinkPathId').val(id);
     }
 
@@ -351,10 +351,10 @@
             success: function (success) {
                 $('#getDirTreeLoadingGif').hide();
                 if (success == "ok") {
-                    $('#newFolderCrud').fadeOut();
                     displayStatusMessage("ok", "new folder created");
                     if (confirm("rebuild Dir Tree?")) {
                         rebuildCatTree();
+                        $('#newFolderCrud').fadeOut();
                     }
                 }
                 else 
@@ -456,6 +456,7 @@
     function recurrGetCatTree(dir, container) {
         tab += tabIndent;
         $.each(dir.SubDirs, function (idx, subDir) {
+
             $('#' + container + '').append("<div class='clickable' style='text-indent:" + tab + "px'>"
                 + "<span id=S" + subDir.LinkId + " onclick=treeToggle('" + subDir.LinkId + "')>[-] </span>"
                 + "<span onclick=clickPath('" + subDir.DanniPath + "','" + subDir.CategoryId + "')>" + subDir.DirectoryName +
@@ -527,7 +528,7 @@
             $('#getDirTreeLoadingGif').fadeIn();
             $.ajax({
                 type: "PUT",
-                url: service + "/api/Carousel",
+                url: service + "/api/ImageLink",
                 success: function (success) {
                     $('#getDirTreeLoadingGif').hide();
                     if (success == "ok")
@@ -535,9 +536,13 @@
                     else
                         alert("rebuildLinkTables: " + success);
                 },
-                error: function (xhr) {
+                //error: function (xhr) {
+                //    $('#getDirTreeLoadingGif').hide();
+                //    alert("rebuildLinkTables xhr error: " + xhr.statusText);
+                //}
+                error: function (jqXHR, exception) {
                     $('#getDirTreeLoadingGif').hide();
-                    alert("rebuildLinkTables xhr error: " + xhr.statusText);
+                    alert("update Article jqXHR : " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         } catch (e) {

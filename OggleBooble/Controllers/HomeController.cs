@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Net;
+using System.Net.Mail;
 using System.Web.Mvc;
 
 namespace OggleBooble
@@ -24,6 +26,7 @@ namespace OggleBooble
 
             ViewBag.Title = folder.Substring(folder.LastIndexOf("/") + 1);
             ViewBag.Service = apiService;
+            ViewBag.IpAddress = Helpers.GetIPAddress();
             ViewBag.Folder = folder;
             return View();
         }
@@ -102,6 +105,33 @@ namespace OggleBooble
         }
     }
 
+    public class EmailController : Controller
+    {
+        [HttpGet]
+        public string SendEmail(string subject, string message)
+        {
+            string success = "";
+            try
+            {
+                SmtpClient smtpClient = new SmtpClient();
+                smtpClient.Host = "relay-hosting.secureserver.net";
+                smtpClient.Port = 25;
+#if DEBUG
+                smtpClient.Host = "smtp.live.com";
+                smtpClient.Credentials = new NetworkCredential("curtishrhodes@hotmail.com", "R@quel11");
+                smtpClient.EnableSsl = true;
+#endif
+                smtpClient.Send("curtishrhodes@hotmail.com", "curtishrhodes@hotmail.com", subject, message);
 
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = "this worked locally but, " + Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+    }
 
 }

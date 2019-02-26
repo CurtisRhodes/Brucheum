@@ -74,6 +74,7 @@ namespace WebApi.OggleBooble.DataContext
         public string FolderName { get; set; }
         public string FolderPath { get; set; }
         public int FileCount { get; set; }
+        public string CatergoryDescription { get; set; }
     }
 
     [Table("OggleBooble.BoobsLink")]
@@ -85,7 +86,6 @@ namespace WebApi.OggleBooble.DataContext
         [Key]
         [Column(Order = 1)]
         public int FolderId { get; set; }
-        public int ParentId { get; set; }
         public string FolderName { get; set; }
         public string FolderPath { get; set; }
         public string Link { get; set; }
@@ -101,7 +101,6 @@ namespace WebApi.OggleBooble.DataContext
         [Key]
         [Column(Order = 1)]
         public int FolderId { get; set; }
-        public int ParentId { get; set; }
         public string FolderName { get; set; }
         public string FolderPath { get; set; }
         public string Link { get; set; }
@@ -123,8 +122,6 @@ namespace WebApi.OggleBooble.DataContext
     [Table("OggleBooble.vwLinks")]
     public partial class VLink
     {
-        public int? Parent { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public string RootFolder { get; set; }
         public string FolderName { get; set; }

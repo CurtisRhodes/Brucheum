@@ -15,7 +15,7 @@
         left: 100px;
     }
 
-    .carouselLabel {
+    .floatingLabel {
         position: absolute;
         display: inline-block;
         color: #fff;
@@ -24,7 +24,8 @@
         padding: 3px;
         font-size: 22px;
         white-space: nowrap;
-        /*z-index: 7;*/
+        cursor: pointer;
+        z-index: 27;
     }
 
     .carouselImage {
@@ -45,10 +46,12 @@
         cursor: pointer;
         display: none;
     }
+
     .imgBottom {
         background-color: #efeacb;
         text-align: center;
     }
+
     .pauseButton {
         border-radius: 50%;
         width: 40px;
@@ -59,6 +62,7 @@
         font-weight: bold;
         cursor: pointer;
     }
+
     .carouselCategoryLabel {
         float: left;
         cursor: pointer;
@@ -67,12 +71,25 @@
         margin-bottom: 4px;
         color: #b200ff;
     }
+    .floatingCrudDialog {
+        z-index: 27;
+        background-color: #808080;
+    }
+    .catDescArea {
+        height: 323px;
+        width: 434px;
+        border: solid thin #b200ff;
+        background-color: #e0dcc8;
+        padding: 4px;
+        margin: 3px;
+    }
 </style>
+
 
 <div class="centeredDivShell">
     <div class="centeredDivInner">
+        <div id='categoryTitle' class='floatingLabel' onclick="showCategoryDialog()" onmouseover="showCategoryDialog()" ></div>
         <div id="laCarousel" class="carouselContainer">
-            <div id='articleTitle' class='carouselLabel'></div>
             <div class="carouselImageContainer">
                 <img id="carouselImage" class="carouselImage" src="~/Images/ingranaggi3.gif" onclick="clickViewGallery()" />
                 <div class="imgBottom">
@@ -81,16 +98,22 @@
                 </div>
             </div>
             @*<img id="leftFbutton" class="arrowButton" src="~/Images/blueCircleLeft.png" onclick="clickPrevious()" />
-            <img id="rightFbutton" class="arrowButton" src="~/Images/blueCircleRight.png" onclick="clickNext()" />*@
+                <img id="rightFbutton" class="arrowButton" src="~/Images/blueCircleRight.png" onclick="clickNext()" />*@
         </div>
     </div>
 </div>
 
+<div id="categoryDialog" class="floatingCrudDialog" onmouseleave="closeCatDialog()">
+    <div id="catDlgFolderName" class="center"></div>
+    <textarea id="catDlgDescription" class="catDescArea"></textarea>
+    <br />
+    <div id="catDlgEdit" class="roundendButton inline" onclick="editCatDialog()">Edit</div>
+    <div id="catDlgCancel" class="roundendButton inline" onclick="$('#categoryDialog').hide(); pause();">Cancel</div>
+</div>
 
 
 <script>
     var service = '@ViewBag.Service';
-    var webService = "https://api.curtisrhodes.com";
     var numImages = 0;
     var rotationSpeed = 5123;
     var carouselItemArray = new Array();
@@ -98,21 +121,91 @@
     var carouselContainerHeight;
     var Carousel;
     var folderCount;
+    var folderModel = {};
 
     $(document).ready(function () {
-
-        //carouselHeadStart('Boobs');
-        //loadAllImages('boobs');
-
         $('#carouselImage').css("max-width", $('#middleColumn').width());
         $('#carouselImage').css("max-height", $('#middleColumn').innerHeight() - 150);
 
-
     });
 
-    function stopCarousel() {
-        clearInterval(Carousel);
+    function showCategoryDialog() {
+        // 11:11 2/25/19
+        // create a new table (or row)
+        // --alter table OggleBooble.ImageFolder add CatergoryDescription nvarchar(max)
+        try {
+            pause();
+            $.ajax({
+                type: "GET",
+                url: service + "/api/ImageFolder/Get?id=" + carouselItemArray[imageIndex].Id,
+                success: function (model) {
+                    //alert("categoryDialog: " + model.FolderName)
+
+                    if (!model.FolderName.startsWith("ERROR")) {
+                        folderModel.Id = model.Id;
+                        //folderModel.Parent = model.Parent;
+                        //folderModel.FolderName = model.FolderName;
+                        //folderModel.FolderPath = model.FolderPath;
+                        //folderModel.FileCount = model.FileCount;
+                        folderModel.CatergoryDescription = model.CatergoryDescription;
+
+                        $('#catDlgFolderName').html(model.FolderName)
+                        $('#catDlgDescription').val(model.CatergoryDescription);
+                        $('#categoryDialog').css("top", $('#categoryTitle').offset().top + 50);
+                        $('#categoryDialog').css("left", $('#categoryTitle').offset().left + 50);
+                        $('#catDlgCancel').hide();
+
+                        $('#categoryDialog').fadeIn();
+
+                    }
+                    else
+                        alert("showCategoryDialog: " + model.FolderName);
+                },
+                error: function (jqXHR, exception) {
+                    alert("showCategoryDialog XHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
+        catch (e) {
+            alert("showCategoryDialog catch: " + e);
+        }            
     }
+
+    function editCatDialog() {
+        if ($('#catDlgEdit').html() == "Edit") {
+            $('#catDlgEdit').html("Save");
+            $('#catDlgCancel').show();
+        }
+        else {
+            folderModel.CatergoryDescription = $('#catDlgDescription').val();
+
+            //updateImageFolder();
+            $.ajax({
+                type: "PUT",
+                url: service + "/api/ImageFolder/Update?field=description",
+                data: folderModel,
+                success: function (success) {
+                    if (success == "ok") {
+                        displayStatusMessage("ok", "category description updated");
+                        $('#catDlgEdit').html("Edit");
+                    }
+                    else
+                        alert("updateImageFolder: " + success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("updateImageFolder XHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            })
+        }
+    }
+
+    function closeCatDialog() {
+        if ($('#catDlgEdit').html() == "Edit") {
+            $('#categoryDialog').fadeOut();
+            pause();
+        }
+    }
+
     function startCarousel() {
         imageIndex = Math.floor(Math.random() * numImages);
         rotate();
@@ -158,15 +251,15 @@
         $('#laCarousel').show();
         $.ajax({
             type: "GET",
-            url: service + "/api/Carousel/GetaFew?root=" + root + "&headstart=12",
+            url: service + "/api/ImageLink/GetLinks?root=" + root + "&headstart=12",
             success: function (folderLinks) {
                 //alert("folderLinks.length: " + folderLinks.length);
                 $.each(folderLinks, function (idx, obj) {
                     //var category = obj.FolderPath.substring(obj.FolderPath.indexOf("/") + 1, obj.FolderPath.lastIndexOf("/")).replace("archive/", "").replace("/", " - ");
                     carouselItemArray.push({
+                        Id: obj.Id,
                         FolderName: obj.FolderName,
                         Link: obj.Link,
-                        Parent: obj.ParentId,
                         FolderPath: obj.FolderPath
                     });
                 });
@@ -183,9 +276,11 @@
                     loadAllImages(root);
 
                 }
+                else
+                    alert("No Images");
             },
-            error: function (xhr) {
-                alert("loadAndStartCarousel error: " + xhr.statusText);
+            error: function (jqXHR, exception) {
+                alert("launchCarousel XHR : " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     }
@@ -194,14 +289,14 @@
         var start = Date.now();
         $.ajax({
             type: "GET",
-            url: service + "/api/Carousel/GetAll?root=" + root,
+            url: service + "/api/ImageLink/GetLinks?root=" + root + "&headstart=0",
             success: function (folderLinks) {
                 $.each(folderLinks, function (idx, obj) {
                     //category = obj.FolderPath.substring(obj.FolderPath.indexOf("/") + 1, obj.FolderPath.lastIndexOf("/")).replace("archive/", "").replace("/", " - ");
                     carouselItemArray.push({
+                        Id: obj.Id,
                         FolderName: obj.FolderName,
                         Link: obj.Link,
-                        Parent: obj.ParentId,
                         FolderPath: obj.FolderPath
                     });
                 });
@@ -211,16 +306,16 @@
                 var delta = (Date.now() - start) / 1000;
                 console.log("Select * from Carousel/GetAll took: " + delta.toFixed(3));
             },
-            error: function (xhr) {
-                alert("loadAndStartCarousel error: " + xhr.statusText);
+            error: function (jqXHR, exception) {
+                alert("loadAllImages jqXHR : " + getXHRErrorDetails(jqXHR, exception));
             }
         });
-    };
+    }
 
     function getFolderCount(root) {
         $.ajax({
             type: "GET",
-            url: service + "/api/ImageFolder?root="+root,
+            url: service + "/api/ImageFolder?root=" + root,
             success: function (rtn) {
                 folderCount = rtn;
                 //$('#headerMessage').html("Select from " + folderCount + " Galleries");
@@ -240,37 +335,15 @@
             $('#carouselImage').attr('src', carouselItemArray[imageIndex].Link).fadeIn(1500);
             $('#carouselImage').on('load', onImageLoaded());
             //"<span style='font-family:Lucida Calligraphy;font-size:28px;'>Select from " + numImages.toLocaleString() + " images in " + folderCount + " galleries</span>"
-            $('#footerMessage').html(numImages.toLocaleString() + " images in " + folderCount + " galleries " + (imageIndex + 1).toLocaleString() + " of " + numImages.toLocaleString());
         }, 500);
+        $('#footerMessage').html("in " + folderCount + " galleries  " + (imageIndex + 1).toLocaleString() + " of " + numImages.toLocaleString() + " images");
     }
 
     function onImageLoaded() {
         if ($('#carouselImage').attr('src') == carouselItemArray[imageIndex].Link) {
-
-            $('#articleTitle').html(carouselItemArray[imageIndex].FolderName);
             $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath.substring(carouselItemArray[imageIndex].FolderPath.indexOf("/"), carouselItemArray[imageIndex].FolderPath.lastIndexOf("/")).replace(/\//g, "  "));
-            resizePage("carouselImage");
-
-            //    adjustCarousel();
-            //$('#leftFbutton').css('left', -65);
-            //$('#rightFbutton').css('left', $('#laCarousel').width());
-            //$('.arrowButton').css('top', $('#laCarousel').height() - 210);
-
-            //$('#msg1').html("doc height: " + $(Document).height())
-            //$('#msg2').html("img height: " + $('#carouselImage').height())
-            //$('#msg3').html("middleColumn height: " + $('#middleColumn').height())
-            //resizePage("carouselImage");
-            //$('#msg4').html("middleColumn resize: " + $('#middleColumn').height())
-            //$('#categoryLabel').css('top', $('#laCarousel').height());
-            //if ($('#middleColumn').height() < $('#carouselImage').height() + 150) {
-            //    //pause();
-            //    $('#footerMessage').html(" image too big " + $('#carouselImage').height());
-            //    $('#middleColumn').height($('#carouselImage').height() + 150);
-            //    resizePage("carouselImage");
-            //    //alert("resixe")
-            //}
-            //else
-            //    $('#footerMessage').append(" mc: " + $('#middleColumn').height() + "  img: " + $('#carouselImage').height())
+            $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName);
+            resizePage();
         }
         else
             alert("not loaded");
@@ -285,9 +358,8 @@
     }
 
     function pause() {
-        
         if ($('#pauseButton').html() == "||") {
-            stopCarousel();
+            clearInterval(Carousel);
             $('#pauseButton').html(">");
             $('#footerMessage').html("pause");
         }
