@@ -15,6 +15,7 @@ namespace OggleBooble
         private string apiService = ConfigurationManager.AppSettings["apiService"];
         public ActionResult Index()
         {
+            ViewBag.IsPornEditor = User.IsInRole("Porn Editor");
             ViewBag.Service = apiService;
             return View();
         }
@@ -25,6 +26,8 @@ namespace OggleBooble
                 return RedirectToAction("Index");
 
             ViewBag.Title = folder.Substring(folder.LastIndexOf("/") + 1);
+
+            ViewBag.IsPornEditor = User.IsInRole("Porn Editor");
             ViewBag.Service = apiService;
             ViewBag.IpAddress = Helpers.GetIPAddress();
             ViewBag.Folder = folder;

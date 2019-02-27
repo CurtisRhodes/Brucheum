@@ -20,10 +20,23 @@ namespace WebApi.OggleBooble.DataContext
         public virtual DbSet<ImageLink> ImageLinks { get; set; }
         public virtual DbSet<Category_ImageLink> Category_ImageLinks { get; set; }
         public virtual DbSet<VLink> VLinks { get; set; }
+        public virtual DbSet<BlogComment> BlogComments { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
+    }
+
+    [Table("OggleBooble.BlogComment")]
+    public partial class BlogComment
+    {
+        [Key]
+        public string CommentTitle { get; set; }
+        public string CommentType { get; set; }
+        public string Link { get; set; }
+        public string UserId { get; set; }
+        public string CommentText { get; set; }
+        public DateTime Posted { get; set; }
     }
 
     [Table("OggleBooble.ImageLink")]

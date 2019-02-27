@@ -73,8 +73,11 @@
     }
     .floatingCrudDialog {
         z-index: 27;
-        background-color: #808080;
+        background-color: #efeacb;
     }
+</style>
+@*categoy description*@
+<style>
     .catDescArea {
         height: 323px;
         width: 434px;
@@ -83,8 +86,21 @@
         padding: 4px;
         margin: 3px;
     }
+    .readOnlyCatDialog {
+        height: 323px;
+        width: 434px;
+        font-size: 28px;
+        font-family: 'Comic Sans MS';
+        border: solid thin #b200ff;
+        border-radius: 10px;
+        background-color: #e0dcc8;
+        padding: 4px;
+        margin: 3px;
+    }
+    .optionalcatDlgView {
+        display: none;
+    }
 </style>
-
 
 <div class="centeredDivShell">
     <div class="centeredDivInner">
@@ -93,7 +109,7 @@
             <div class="carouselImageContainer">
                 <img id="carouselImage" class="carouselImage" src="~/Images/ingranaggi3.gif" onclick="clickViewGallery()" />
                 <div class="imgBottom">
-                    <div id="pauseButton" class='pauseButton' onclick="pause()">||</div>
+                    <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
                     <div id='categoryLabel' class='carouselCategoryLabel' onclick="clickViewTopGallery()"></div>
                 </div>
             </div>
@@ -105,15 +121,21 @@
 
 <div id="categoryDialog" class="floatingCrudDialog" onmouseleave="closeCatDialog()">
     <div id="catDlgFolderName" class="center"></div>
-    <textarea id="catDlgDescription" class="catDescArea"></textarea>
-    <br />
-    <div id="catDlgEdit" class="roundendButton inline" onclick="editCatDialog()">Edit</div>
-    <div id="catDlgCancel" class="roundendButton inline" onclick="$('#categoryDialog').hide(); pause();">Cancel</div>
+    <div id="adminCatDlg" class="optionalcatDlgView">
+        <textarea id="catDlgDescription" class="catDescArea"></textarea>
+        <br />
+        <div id="catDlgEdit" class="roundendButton inline" onclick="editCatDialog()">Edit</div>
+        <div id="catDlgCancel" class="roundendButton inline" onclick="$('#categoryDialog').hide(); resume();">Cancel</div>
+    </div>
+    <div id="userCatDlg" class="optionalcatDlgView">
+        <div id="userCatDlgTextArea" class="readOnlyCatDialog"></div>
+    </div>
 </div>
 
 
 <script>
     var service = '@ViewBag.Service';
+    var isPornEditor = '@ViewBag.IsPornEditor';
     var numImages = 0;
     var rotationSpeed = 5123;
     var carouselItemArray = new Array();
@@ -155,6 +177,16 @@
                         $('#categoryDialog').css("left", $('#categoryTitle').offset().left + 50);
                         $('#catDlgCancel').hide();
 
+                        if (isPornEditor == "True") {
+                            $('#userCatDlg').hide();
+                            $('#adminCatDlg').show();
+                            $('#catDlgDescription').val(model.CatergoryDescription);
+                        }
+                        else {
+                            $('#adminCatDlg').hide();
+                            $('#userCatDlg').show();
+                            $('#userCatDlgTextArea').val(model.CatergoryDescription + " read only");
+                        }
                         $('#categoryDialog').fadeIn();
 
                     }
@@ -202,13 +234,8 @@
     function closeCatDialog() {
         if ($('#catDlgEdit').html() == "Edit") {
             $('#categoryDialog').fadeOut();
-            pause();
+            resume();
         }
-    }
-
-    function startCarousel() {
-        imageIndex = Math.floor(Math.random() * numImages);
-        rotate();
     }
 
     function clickViewGallery() {
@@ -357,17 +384,25 @@
         }, rotationSpeed);
     }
 
+    function togglePause() {
+        if ($('#pauseButton').html() == "||") 
+            pause();        
+        else 
+            resume();        
+    }
+
     function pause() {
-        if ($('#pauseButton').html() == "||") {
-            clearInterval(Carousel);
-            $('#pauseButton').html(">");
-            $('#footerMessage').html("pause");
-        }
-        else {
-            startCarousel();
-            $('#pauseButton').html("||");
-            $('#footerMessage').html("resume");
-        }
+        clearInterval(Carousel);
+        $('#pauseButton').html(">");
+    }
+
+    function resume() {
+        startCarousel();
+        $('#pauseButton').html("||");
+    }
+    function startCarousel() {
+        imageIndex = Math.floor(Math.random() * numImages);
+        rotate();
     }
 
 </script>

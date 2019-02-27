@@ -1,0 +1,244 @@
+﻿
+@{
+    ViewBag.Title = "Blog";
+}
+
+<style>
+    .crudList {
+        float: left;
+        border: solid 3px #555;
+        height: 700px;
+        width: 300px;
+    }
+    .blogCrudContainer {
+        display: inline-block;
+        border: solid 3px gold;
+        margin-left: 122px;
+    }
+    .blogCrudArea {
+        display: flex;
+    }
+    .crudLabel {
+        min-width: 45px;
+        margin-right: 4px;
+        margin-left: 7px;
+    }
+    .roundedInput {
+        margin-bottom: 7px;
+        width: 500px;
+    }
+    .blogEntryTextArea {
+        height: 500px;
+        width: 800px;
+        padding: 4px;
+        font-size: 15px;
+        margin: 7px;
+    }
+    .leftImage {
+        border: solid .05px #555;
+        height: 130px;
+        min-width: 120px;
+        margin-left: 10px;
+    }
+    .crudListItem {
+        border: solid .05px rgba(154, 122, 122, 0.50);
+        padding: 5px;
+        margin: 5px;
+        background-color: #f1ceb5;
+        width: 285px;
+        cursor: pointer;
+    }
+</style>
+
+
+<div class="threeColumnArray">
+    <div id="leftColumn">
+        <div class="leftColumnList">
+            <div onclick="window.location.href='/Admin'">Admin</div>
+            <div onclick="$('#oggleBlogEntry').fadeIn()">New Entry</div>
+        </div>
+    </div>
+    <div id="middleColumn">
+        <div id="divStatusMessage"></div>
+        <h2>Blog</h2>
+        <div class="blogCrudContainer">
+            <div class="blogCrudArea">
+                <div class="floatLeft">
+                    <div class="flexContainer">
+                        <div class="floatLeft">
+                            <div class="crudRow"><div class="crudLabel inline">Title</div><input id="txtCommentTitle" class="roundedInput" /></div>
+                            <div class="crudRow">
+                                <div class="crudLabel inline">Type</div>
+                                <select id="selCommentType" class="roundedInput">
+                                    <option value="CMT">Comment</option>
+                                    <option value="WRN">Warning</option>
+                                    <option value="BLG">BlogEntry</option>
+                                </select>
+                            </div>
+                            <div class="crudRow"><div class="crudLabel inline">Link</div><input id="txtLink" class="roundedInput" onblur="$('#imgBlogLink').attr('src', $('#txtLink').val());" /></div>
+                        </div>
+                        <div class="floatLeft">
+                            <img id="imgBlogLink" class="leftImage" />
+                        </div>
+                    </div>
+                    <div class="crudRow"><div class="crudLabel">Comment</div> <textarea id="txtComment" class="blogEntryTextArea"></textarea></div>
+                    <div>
+                        <div id="blogSave" class="roundendButton" onclick="saveBlogEntry()">Add</div>
+                        <div id="blogNew" class="roundendButton" onclick="newBlogEntry()">New</div>
+                        <div id="blogCancel" class="roundendButton" onclick="cancelBlogEntry()">Cancel</div>
+                    </div>
+                </div>
+                <div id="blogList" class="crudList"></div>
+            </div>
+        </div>
+    </div>
+    <div id="rightColumn"></div>
+</div>
+
+<div id="oggleBlogEntry" class="floatingCrud">
+    <div class="floatingCrudBanner">Blog Entry<div onclick="$('#oggleBlogEntry').fadeOut()" class="farSide">x</div> </div>
+    <div class="floatingCrudContainer">
+        <div><span>title</span><input id="txtBlogEntryTitle" class="roundedInput" /></div>
+        <div><textarea id="txtBlogEntryComment" class="blogEntryTextArea"></textarea></div>
+        <div class="roundendButton" onclick="saveBlogEntry()">Create</div>
+    </div>
+</div>
+
+<script>
+    var service = '@ViewBag.Service';
+
+    $(document).ready(function () {
+        $('#blogNew').hide();
+        loadBlogList();
+    });
+
+    function loadImageLink() {
+        $('#imgBlogLink').attr("src", $('#txtLink').val());
+        
+    }
+    function loadBlogList() {
+        try {
+            $.ajax({
+                type: "GET",
+                url: service + "/api/OggleBlog",
+                success: function (entries) {
+                    $('#blogList').html("");
+                    if (!entries[0].CommentTitle.startsWith("ERROR")) {
+                        $.each(entries, function (idx, entry) {
+                            $('#blogList').append("<div id='" + entry.CommentTitle + "' class='crudListItem'>" + entry.CommentTitle + "</div>");
+                        })
+
+                        $('.crudListItem').click(function () {
+                            var title = $(this).attr("id");
+                            displayBlogEntry(title);
+                        });
+                    }
+                    else
+                        alert("loadBlogList: " + success)
+                },
+                error: function (xhr) {
+                    $('#getDirTreeLoadingGif').hide();
+                    alert("loadBlogList xhr: " + xhr.statusText);
+                }
+            });
+        } catch (e) {
+            alert("loadBlogList catch: " + e);
+        }
+    }
+    function displayBlogEntry(title) {
+        try {
+            $.ajax({
+                type: "GET",
+                url: service + "/api/OggleBlog/?title=" + title,
+                success: function (model) {
+                    if (!model.CommentTitle.startsWith("ERROR")) {
+                        $('#txtCommentTitle').val(model.CommentTitle);
+                        $('#selCommentType').val(model.CommentType);
+                        $('#txtLink').val(model.Link);
+                        $('#txtComment').val(model.CommentText);
+                        $('#blogSave').html("Edit")
+                        $('#blogNew').hide();
+                    }
+                    else
+                        alert("displayBlogEntry: " + success)
+                },
+                error: function (xhr) {
+                    $('#getDirTreeLoadingGif').hide();
+                    alert("displayBlogEntry xhr: " + xhr.statusText);
+                }
+            });
+        } catch (e) {
+            alert("displayBlogEntry catch: " + e);
+        }
+    }
+    function newBlogEntry() {
+        $('#blogSave').html("Add");
+        $('#blogNew').hide();
+        clearGets();
+    }
+    function clearGets() {
+        $('#txtCommentTitle').val("");
+        $('#selCommentType').val("");
+        $('#txtLink').val("");
+        $('#txtComment').val("");
+    }
+    function cancelBlogEntry() {
+        $('#blogSave').html("Add");
+        $('#blogNew').hide();
+        clearGets();
+    }
+    function saveBlogEntry() {
+        try {
+            var blogEntry = {}
+            blogEntry.CommentTitle = $('#txtCommentTitle').val();
+            blogEntry.CommentType = $('#selCommentType').val();
+            blogEntry.Link = $('#txtLink').val();
+            blogEntry.CommentText = $('#txtComment').val();
+            //  UserId nvarchar(128),
+
+            if ($('#blogSave').html() == "Add") {
+                $.ajax({
+                    type: "POST",
+                    url: service + "/api/OggleBlog",
+                    data: blogEntry,
+                    success: function (success) {
+                        if (success == "ok") {
+                            displayStatusMessage("ok", "Entry Saved")
+                            $('#blogSave').html("Edit")
+                            $('#blogNew').show();s
+                            loadBlogList();
+                        }
+                        else
+                            alert("saveBlogEntry: " + success)
+                    },
+                    error: function (xhr) {
+                        $('#getDirTreeLoadingGif').hide();
+                        alert("saveBlogEntry xhr: " + xhr.statusText);
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    type: "PUT",
+                    url: service + "/api/OggleBlog",
+                    data: blogEntry,
+                    success: function (success) {
+                        if (success == "ok") {
+                            displayStatusMessage("ok", "Entry Updated")
+                        }
+                        else
+                            alert("saveBlogEntry: " + success)
+                    },
+                    error: function (xhr) {
+                        $('#getDirTreeLoadingGif').hide();
+                        alert("saveBlogEntry xhr: " + xhr.statusText);
+                    }
+                });
+            }
+        } catch (e) {
+            alert("saveBlogEntry catch: " + e);
+        }
+    }
+
+</script>
+

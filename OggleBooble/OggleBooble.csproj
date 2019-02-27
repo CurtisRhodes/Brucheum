@@ -241,6 +241,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\Helpers.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -342,6 +343,9 @@
     <Content Include="Views\Porn\Index.cshtml" />
     <Content Include="Styles\video\mejs-controls.ai" />
     <Content Include="Views\Home\Mobile.cshtml" />
+    <Content Include="Views\Shared\_Slideshow.cshtml" />
+    <Content Include="Views\Admin\Admin.cshtml" />
+    <Content Include="Views\Admin\Blog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -357,7 +361,7 @@
     <Content Include="Views\Login\_ProfilePopup.cshtml" />
     <Content Include="Views\Login\_LoginPopup.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
-    <Content Include="Views\Stats\Dashboard.cshtml" />
+    <Content Include="Views\Admin\Dashboard.cshtml" />
     <Content Include="Views\Home\Videos.cshtml" />
     <Content Include="Views\Shared\_RandomImage.cshtml" />
   </ItemGroup>

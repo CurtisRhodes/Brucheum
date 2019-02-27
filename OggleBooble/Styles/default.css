@@ -1,7 +1,19 @@
-﻿body {
-    background-color: #fef; /*#b081b1*/
+﻿
+:root {
+    --brucheumBlue: #74bac3;
+    --oggleBackground: #fef; /*#b081b1*/
+    --borderColor: #555;
+}
+
+
+body {
+    background-color: var(--oggleBackground);
     font-family: Verdana;
     box-sizing: border-box;
+}
+.blogCrudArea {
+    border: solid thin var(--borderColor);
+    padding: 5px;
 }
 
 .threeColumnArray {
@@ -120,24 +132,6 @@ label {
     margin: 5px;
 }
 
-.roundendButton {
-    text-align: center;
-    background: var(--brucheumBlue);
-    color: #000;
-    border-radius: 6px;
-    padding: 8px 20px;
-    cursor: pointer;
-}
-
-.roundedInput {
-    /*height: 32px;*/
-    padding: 2px;
-    color: #555;
-    background-color: #ddd;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-}
-
 .fullCenterImage {
     width: 100%;
     cursor: pointer;
@@ -220,8 +214,17 @@ label {
 .flexContainer {
     display: flex;
 }
+/*.roundendButton {
+    text-align: center;
+    background: var(--brucheumBlue);
+    color: #000;
+    border-radius: 6px;
+    padding: 8px 20px;
+    cursor: pointer;
+}*/
 
 .roundendButton {
+    display: inline-block;
     text-align: center;
     background: #07c;
     color: #fff;
@@ -230,14 +233,12 @@ label {
     cursor: pointer;
 }
 
-
-
 .roundedInput {
+    display: inline-block;
     height: 32px;
     padding: 3px 6px;
     color: #555;
     background-color: #fff;
-    background-image: none;
     border: 1px solid #ccc;
     border-radius: 4px;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
@@ -293,9 +294,8 @@ label {
     position: absolute;
     top: 250px;
     left: 200px;
-    border: solid 2px #555;
+    border: solid 2px var(--borderColor);
     box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
-    width: 66%;
     display: none;
 }
 
@@ -307,7 +307,7 @@ label {
     position: absolute;
     top: 250px;
     left: 200px;
-    border: solid 2px #555;
+    border: solid 2px var(--borderColor);
     box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
     display: none;
 }
@@ -325,5 +325,17 @@ label {
     cursor: pointer;
 }
 
+.leftColumnList {
+    margin-top: 123px;
+}
+
+    .leftColumnList div {
+        font-size: 21px;
+        cursor: pointer;
+        color: #9a4ea9;
+        margin-left: 14px;
+        margin-bottom: 23px;
+        white-space: nowrap;
+    }
 
 
