@@ -349,7 +349,7 @@
                         $('#imageContainer').html('');
                         $.each(folderModel.SubDirs, function (idx, obj) {
                             $('#imageContainer').append("<div path='" + obj.Path + "' class='folderFirsty'><img class='thumbImage' src='" +
-                                obj.FirstImage + "'/><div class='fname'>" + obj.DirectoryName + "</div></div>");
+                                obj.FirstImage + "'/><div class='fname'>" + obj.DirectoryName + "  (" + obj.Length + ")</div></div>");
                         })
                         $('.folderFirsty').click(function () {
                             window.location.href = "imagePage?folder=" + $(this).attr("path");

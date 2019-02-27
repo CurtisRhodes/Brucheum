@@ -15,7 +15,6 @@ namespace WebApi.OggleBooble
     [EnableCors("*", "*", "*")]
     public class ImageFolderController : ApiController
     {
-
         [HttpGet]
         public ImageFolderModel Get(int id)
         {
@@ -175,31 +174,90 @@ namespace WebApi.OggleBooble
         }
     }
 
-    //[EnableCors("*", "*", "*")]
-    //public class ImageLinkController : ApiController
-    //{
-    //    // used by viewer
-    //    [HttpGet]
-    //    public List<FileModel> GetFiles(string folderPath)
-    //    {
-    //        if (folderPath.StartsWith("/"))
-    //            folderPath = folderPath.Substring(1);
+    [EnableCors("*", "*", "*")]
+    public class OggleBlogController : ApiController
+    {
+        [HttpGet]
+        public List<BlogComment> Get()
+        {
+            List<BlogComment> entries = null;
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    entries = db.BlogComments.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                entries.Add(new BlogComment() { CommentTitle = Helpers.ErrorDetails(ex) });
+            }
+            return entries;
+        }
 
-    //        List<FileModel> links = new List<FileModel>();
-    //        using (OggleBoobleContext db = new OggleBoobleContext())
-    //        {
-    //            links = (from f in db.ImageFolders
-    //                     join c in db.Category_ImageLinks on f.Id equals c.ImageCategoryId
-    //                     join l in db.ImageLinks on c.ImageLinkId equals l.Id
-    //                     where f.FolderPath == folderPath
-    //                     select new FileModel() {
-    //                         FileName = l.Link.Replace(" ", "%20")
-    //                     }).ToList();
+        [HttpGet]
+        public BlogComment Get(string title)
+        {
+            BlogComment entry = null;
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    entry = db.BlogComments.Where(b => b.CommentTitle == title).First();
+                }
+            }
+            catch (Exception ex)
+            {
+                entry.CommentTitle = Helpers.ErrorDetails(ex);
+            }
+            return entry;
+        }
 
-    //        }
-    //        return links;
-    //    }
-    //}
+        [HttpPost]
+        public string Insert(BlogComment entry)
+        {
+            string success = "";
+            try
+            {
+                entry.Posted = DateTime.Now;
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    db.BlogComments.Add(entry);
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception e)
+            {
+                success = Helpers.ErrorDetails(e);
+            }
+            return success;
+        }
+
+        [HttpPut]
+        public string Update(BlogComment entry)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    var dbEntry = db.BlogComments.Where(b => b.CommentTitle == entry.CommentTitle).First();
+                    //dbEntry.CommentTitle = entry.CommentTitle;
+                    dbEntry.CommentText = entry.CommentText;
+                    dbEntry.CommentType = entry.CommentType;
+                    dbEntry.Link = entry.Link;
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception e)
+            {
+                success = Helpers.ErrorDetails(e);
+            }
+            return success;
+        }
+    }
 
     [EnableCors("*", "*", "*")]
     public class ImageLinkCategoryController : ApiController
@@ -228,13 +286,22 @@ namespace WebApi.OggleBooble
                 if (childFolder.FolderName != "Root")
                 {
                     var linkCount = db.Category_ImageLinks.Where(c => c.ImageCategoryId == childFolder.Id).Count();  //
-                    if (childFolder.FileCount < linkCount)
+                    var subdirCount = db.ImageFolders.Where(f => f.Parent == childFolder.Id).Count();  //
+                    if (childFolder.FileCount != (linkCount + subdirCount))
                     {
-                        childFolder.FileCount = linkCount;
+                        //var dbImageFolder = db.ImageFolders.Where(f => f.Id == childFolder.Id).First();
+                        //dbImageFolder.FileCount = linkCount;
+                        childFolder.FileCount = linkCount + subdirCount;
+                        db.SaveChanges();
                     }
-                    if (linkCount == 0) {
-                        childFolder.FileCount = db.ImageFolders.Where(f => f.Parent == childFolder.Id).Count();  //
-                    }
+                    //if (linkCount == 0) {
+                    //    var subdirCount = db.ImageFolders.Where(f => f.Parent == childFolder.Id).Count();  //
+                    //    if (subdirCount != childFolder.FileCount)
+                    //    {
+                    //        childFolder.FileCount = subdirCount;
+                    //        db.SaveChanges();
+                    //    }
+                    //}
 
                     var subChild = new DirectoryModel()
                     {
@@ -683,6 +750,7 @@ namespace WebApi.OggleBooble
                                                       LinkId = Guid.NewGuid().ToString(),
                                                       CategoryId = f1.Id,
                                                       DirectoryName = f1.FolderName,
+                                                      Length = f1.FileCount,
                                                       Path = f1.FolderPath,
                                                       FirstImage = (from f2 in db.ImageFolders
                                                                     join cl in db.Category_ImageLinks on f2.Id equals cl.ImageCategoryId

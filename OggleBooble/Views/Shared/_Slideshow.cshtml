@@ -1,0 +1,141 @@
+﻿
+<div id="customViewer" class="expandoImageViewer">
+    <div id="expandoViewerBanner" class="floatingCrudBanner">
+        <div id="prev" class="viewerImageNav" onclick="slide('prev')">PREV</div>
+        <img id="imgComment" class="leftSideButton" title="comment" onclick="showCommentDialog()" src="~/Images/comment.png" />
+        <span id="expandoBannerText"></span>
+        <div onclick="$('#customViewer').hide(); viewerShowing = false;" class="farSide"><img class="closeButton" src="~/Images/close.png" height="35" /></div>
+
+        <div id="next" class="farSide" onclick="slide('next')">NEXT</div>
+        <div class="farSide" onclick="blowupImage()"><img class="popout" src="~/Images/expand02.png" /></div>
+        <div class="slideShowContainer">
+            <div class="farSide" onclick="runSlideShow('faster')"><img id="fasterSlideshow" title="faster slideshow" class="popout" src="~/Images/slideshowFaster.png" /></div>
+            <div class="farSide" onclick="runSlideShow('start')"><img id="showSlideshow" title="start slideshow" class="popout" src="~/Images/slideshow.png" /></div>
+            <div class="farSide" onclick="runSlideShow('slower')"><img id="slowerSlideShow" title="slower slideshow" class="popout" src="~/Images/slideshowSlower.png" /></div>
+        </div>
+    </div>
+    @*<img id="magnifyingGlass" class="magnifyingGlass" src="~/Images/Loupe.png" onclick="blowupImage()" /></div>*@
+    <div class="expandoImageDiv">
+        <div id="leftClickArea" onclick="slide('prev')" contextmenu="viewerContextMenu()" class="hiddeClickArea"></div>
+        <div id="rightClickArea" onclick="slide('next')" contextmenu="viewerContextMenu()" class="hiddeClickArea" style="left:50%;"></div>
+        <img id="viewerImage" class="expandoImage" />
+    </div>
+</div>
+
+<script>
+
+    function showViewer(imageId) {
+        var thisImage = $('#' + imageId + '');
+        imageArrayIndex = thisImage.attr("idx");
+        viewerShowing = true;
+
+        var picpos = thisImage.offset();
+        $('#customViewer').css("top", picpos.top - 100);
+        $('#customViewer').css("left", picpos.left);
+        $('#customViewer').width(100);
+        $('#customViewer').height(150);
+        $('#customViewer').show();
+        $('#viewerImage').attr("src", thisImage.attr("src"));
+
+        viewAreaTop = Number($('#middleColumn').position().top + 10);
+        viewAreaLeft = Number($('#middleColumn').position().left);
+        viewAreaWidth = Number($('#middleColumn').width());
+        viewAreaRight = viewAreaWidth + viewAreaLeft;
+
+        $('.hiddeClickArea').contextmenu(function () {
+            event.preventDefault();
+            window.event.returnValue = false;
+            showContextMenu(imageArray[imageArrayIndex].ImageId);
+        });
+
+        exploderInterval = setInterval(function () {
+            explodeViewer()
+        }, 8);
+    }
+
+    function slide(direction) {
+        if (direction == 'next') {
+            imageArrayIndex++;
+            if (imageArrayIndex >= imageArray.length)
+                imageArrayIndex = 0;
+
+            $('#viewerImage').css("transform", "translateX(1100px)");
+            setTimeout(function () {
+                $('#viewerImage').hide();
+                $('#viewerImage').css("transform", "translateX(-2200px)");
+                $('#viewerImage').show();
+                $('#viewerImage').attr("src", imageArray[imageArrayIndex].Link);
+                $('#viewerImage').css("transform", "translateX(0)");
+            }, 450);
+
+        }
+        if (direction == 'prev') {
+            imageArrayIndex--;
+            if (imageArrayIndex < 0) {
+                imageArrayIndex = imageArray.length - 1;
+            }
+
+            $('#viewerImage').css("transform", "translateX(-1100px)");
+            setTimeout(function () {
+                $('#viewerImage').hide();
+                $('#viewerImage').css("transform", "translateX(2200px)");
+                $('#viewerImage').show();
+                $('#viewerImage').attr("src", imageArray[imageArrayIndex].Link);
+                $('#viewerImage').css("transform", "translateX(0)");
+            }, 450);
+        }
+        $('#footerMessage').html("image: " + imageArrayIndex + " of: " + imageArray.length);
+    }
+
+    var viewAreaTop;
+    var viewAreaLeft;
+    var viewAreaWidth;
+    var viewAreaRight;
+    function explodeViewer() {
+        var Xincrimentor = 15;
+        var Yincrimentor = 10;
+
+        var margin = 100;
+        var viewAreaHeight = Number($('#middleColumn').height() - 150);
+
+        if ((Number($('#customViewer').width()) >= viewAreaWidth) &&
+            (Number($('#customViewer').height()) >= viewAreaHeight)) {
+            clearInterval(exploderInterval);
+            $('#customViewer').css("top", viewAreaTop + "px");
+            $('#customViewer').css("left", " " + viewAreaLeft + "px");
+            $('#viewerImage').height($('#customViewer').height() - 50);
+            $('#viewerImage').width($('#customViewer').width());
+            //$('#magnifyingGlass').show();
+            //alert("done");
+        }
+
+        if ($('#customViewer').height() < viewAreaHeight) {
+            $('#customViewer').height($('#customViewer').height() + Yincrimentor);
+        }
+        if ($('#customViewer').height() > viewAreaHeight) {
+            $('#customViewer').height(viewAreaHeight)
+        }
+        if ($('#customViewer').width() < viewAreaWidth) {
+            $('#customViewer').width($('#customViewer').width() + (Xincrimentor * 2));
+        }
+        if ($('#customViewer').width() > viewAreaWidth) {
+            $('#customViewer').width(viewAreaWidth)
+        }
+        if ($('#customViewer').position().top > viewAreaTop) {
+            $('#customViewer').css("top", $('#customViewer').position().top - Yincrimentor);
+        }
+
+
+        var imageRight = Number($('#customViewer').width() + $('#customViewer').position().left);
+        if (imageRight > viewAreaRight) {
+            //alert("imageRight(" + imageRight + ") > viewAreaRight (" + viewAreaRight + ")  delta: " + (imageRight - viewAreaRight));
+            $('#customViewer').css("left", $('#customViewer').position().left - (imageRight - viewAreaRight));
+        }
+
+        //$('#viewerImage').height($('#customViewer').height() - 50);
+        //$('#viewerImage').width($('#customViewer').width());
+    }
+
+</script>
+
+

@@ -55,19 +55,6 @@
         margin-bottom: 8px;
     }
 
-    .comicList {
-        margin-top: 123px;
-    }
-
-        .comicList div {
-            font-size: 21px;
-            cursor: pointer;
-            color: #9a4ea9;
-            margin-left: 14px;
-            margin-bottom: 23px;
-            white-space: nowrap;
-        }
-
     .floatingDirTree {
         border: solid thin blue;
         max-height: 666px;
@@ -78,17 +65,27 @@
         left: 200px;
         display: none;
     }
+    .modalMessage {
+        position: absolute;
+        background-color: #666;
+        top: 250px;
+        color: #c3c2ae;
+        border: solid 2px var(--borderColor);
+        box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
+        display: none;
+    }
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn">
-        <div class="comicList">
+        <div class="leftColumnList">
             <div onclick="window.location.href='/home/transitions?folder=boobs'">Transitions</div>
             <div onclick="window.location.href='/test/contextTest'">Boobs Rater</div>
             <div onclick="window.location.href='/test/contextTest'">Let me Expalin</div>
             <div onclick="$('#dirTreeContainer').toggle()">Category List</div>
             <div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>
-            <div onclick="window.location.href='/porn'">Nasty Porn</div>
+            @*<div onclick="$('#oggleBlogEntry').fadeIn()">Blog</div>*@
+            <div onclick="showMessage('porn warning')">Nasty Porn</div>
         </div>
     </div>
     <div id="middleColumn">
@@ -100,6 +97,8 @@
     </div>
     <div id="rightColumn"></div>
 </div>
+
+<div id="warningMessage" class="modalMessage" onclick="goToPornSite();"   ></div>
 <div id="dirTreeContainer" class="floatingDirTree">
     <div class="floatingCrudBanner">View A Category <div onclick="$('#dirTreeContainer').fadeOut()" class="farSide">x</div> </div>
     @Html.Partial("_DirTree")
@@ -123,5 +122,41 @@
         //alert(path.replace(/%20/g, " ") + "  " + id);
         window.location.href = "/home/ImagePage?folder=" + path.replace(/%20/g, " ");
     }
+
+    function showMessage(title) {
+        try {
+            $.ajax({
+                type: "GET",
+                url: service + "/api/OggleBlog/?title=" + title,
+                success: function (model) {
+                    if (!model.CommentTitle.startsWith("ERROR")) {
+                        pause();
+                        $('#modalContent').html($('#warningMessage').html(model.CommentText).show());
+                        $('#modalContainer').show();
+
+                        //top: 250px;
+                        //left: 200px;
+                        $('#warningMessage').css("left", (($(window).width() / 2) - ($('#warningMessage').width() / 2)));
+
+                    }
+                    else
+                        alert("showMessage: " + success)
+                },
+                error: function (xhr) {
+                    $('#getDirTreeLoadingGif').hide();
+                    alert("showMessage xhr: " + xhr.statusText);
+                }
+            });
+
+        } catch (e) {
+            alert("showMessage: " + e);
+        }
+    }
+
+    function goToPornSite() {
+        clearModal();
+        window.location.href = "/porn";
+    }
+
 
 </script>
