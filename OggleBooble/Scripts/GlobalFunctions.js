@@ -1,24 +1,4 @@
 ﻿
-
-function showBreadCrumbs(folder) {
-    var sc = folder.split("/");
-    var bcPath = "";
-    $('#headerMessage').html("");
-    //$('#headerMessage').append("<a class='activeBreadCrumb' href='Index'>home</a>");
-    bcPath = sc[0].replace(/ /g, "%20");
-    $('#headerMessage').append("<a class='activeBreadCrumb' href='/Home/imagePage?folder=" + bcPath + "'>" + sc[0] + "</a>");
-    for (i = 1; i < sc.length; i++) {
-        bcPath += "/" + sc[i].replace(/ /g, "%20");
-        if (i < Number(sc.length - 1)) {
-            $('#headerMessage').append("<a class='activeBreadCrumb' href='/Home/imagePage?folder=" + bcPath + "'>" + sc[i] + "</a>");
-        }
-        else {
-            $('#headerMessage').append("<span class='inactiveBreadCrumb'>" + sc[i] + "</span>");
-        }
-    }
-    //$('#replaceableMenuItems').append("<a id='slideShowLink' class='slideShowBreadCrub' href='Viewer?folder=" + bcPath + "'>SlideShow</a>");
-}
-
 function setOBCookie(key, value) {
     var expires = new Date();
     expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
@@ -28,7 +8,7 @@ function setOBCookie(key, value) {
 function getOBCookie(key, defaultValue) {
     var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
     if (keyValue == null) {
-        alert("still no cookie");
+        //alert("still no cookie");
         setOBCookie(key, defaultValue);
         keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
         return keyValue[2];

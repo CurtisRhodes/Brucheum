@@ -15,12 +15,12 @@ namespace WebApi.Directory.Models
         public string Extension { get; set; }
     }
 
-    public class DirectoryModel
+    public class DirTreeModel
     {
-        public DirectoryModel()
+        public DirTreeModel()
         {
             Files = new List<FileModel>();
-            SubDirs = new List<DirectoryModel>();
+            SubDirs = new List<DirTreeModel>();
         }
         public int CategoryId { get; set; }
         public string LinkId { get; set; }
@@ -33,7 +33,7 @@ namespace WebApi.Directory.Models
         public string Parent { get; set; }
         public string FirstImage { get; set; }
         public List<FileModel> Files { get; set; }
-        public List<DirectoryModel> SubDirs { get; set; }
+        public List<DirTreeModel> SubDirs { get; set; }
     }
 
     public class ImageLinkModel
@@ -41,6 +41,11 @@ namespace WebApi.Directory.Models
         public int PathId { get; set; }
         public string Link { get; set; }
         public string ImageId { get; set; }
+    }
+    public class GalleryItem
+    {
+        public int FolderId { get; set; }
+        public string FolderName { get; set; }
     }
 
     public class MoveFolderModel
@@ -54,7 +59,7 @@ namespace WebApi.Directory.Models
         public int Id { get; set; }
         public int Parent { get; set; }
         public string FolderName { get; set; }
-        public string FolderPath { get; set; }
+        //public string FolderPath { get; set; }
         public int FileCount { get; set; }
         public string CatergoryDescription { get; set; }
     }
@@ -75,7 +80,7 @@ namespace WebApi.Directory.Models
         public int FileCount { get; set; }
     }
 
-    public partial class FolderLink
+    public class DownloadLink
     {
         public string LinkId { get; set; }
         public int FolderId { get; set; }
@@ -84,6 +89,23 @@ namespace WebApi.Directory.Models
         public string FolderPath { get; set; }
         public string Link { get; set; }
     }
+    public class CarouselItemModel
+    {
+        public int FolderId { get; set; }
+        public int ParentId { get; set; }
+        public string FolderName { get; set; }
+        public string FolderPath { get; set; }
+        public string Link { get; set; }
+    }
 
+    public class CarouselInfoModel
+    {
+        public CarouselInfoModel() {
+            Links = new List<CarouselItemModel>();
+        }
+        public List<CarouselItemModel> Links { get; set; }
+        public int FolderCount { get; set; }
+        public string Success { get; set; }
+    }
 
 }

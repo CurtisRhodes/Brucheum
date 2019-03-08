@@ -293,14 +293,13 @@
 
 <script>
     var service = '@ViewBag.Service';
-    var folderPath = '@ViewBag.Folder';
+    var folderId = '@ViewBag.Folder';
     var currentUser = '@User.Identity.Name';
     var ipAddress = '@ViewBag.IpAddress';
     var page = 0;
     var mySubDirs = new Array();
     var thumbImageHeight = 200;
     var currentContextImageId;
-    var currentContextFolderId;
     var imageArray = new Array();
     var imageArrayIndex = 0;
     var exploderInterval;
@@ -309,15 +308,10 @@
     var slideShowSpeed = 0;
 
     $(document).ready(function () {
-        if (folderPath == "") {
+        if (folderId == "") {
             window.location.href = "/";
         }
-        showBreadCrumbs(folderPath);
-
-        if (folderPath.substr(folderPath, folderPath.indexOf("/")) == 'Porn') {
-            setLayout("porn");
-        }
-        $('#expandoBannerText').html(folderPath.substr(folderPath.lastIndexOf("/") + 1));
+        getBreadCrumbs();
         // set width
         $('#imageContainer').width($('#middleColumn').width());
         $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
@@ -332,27 +326,56 @@
             explodeViewer();
     });
 
+    function getBreadCrumbs() {
+        $.ajax({
+            type: "PATCH",
+            url: service + "api/ImageLink/GetParentPath?folderId=" + folderId,
+            success: function (parents) {
+                $('#headerMessage').html("");
+                //$('#headerMessage').append("<a class='activeBreadCrumb' href='Index'>home</a>");
+
+                //alert("parents.length: " + parents.length)
+
+                for (i = parents.length - 1; i >= 0; i--) {
+
+                    $('#headerMessage').append("<a class='activeBreadCrumb' href='/Home/imagePage?folder=" + parents[i].FolderId + "'>" + parents[i].FolderName + "</a>");
+                }
+
+                setLayout(parents[parents.length - 1].FolderName);
+
+                document.title = parents[0].FolderName + " OggleBooble";
+
+                $('#expandoBannerText').html(parents[0].FolderName);
+                
+                //alert("parents[0]: " + parents[0].FolderName + "  parents[parents.length]: " + parents[parents.length - 1].FolderName);
+
+            },
+            error: function (jqXHR, exception) {
+                $('#getImagesLoadingGif').hide();
+                alert("getImageLinks jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
     function getImageLinks() {
         try {
             var start = Date.now();
             $('#getImagesLoadingGif').show();
             $.ajax({
                 type: "GET",
-                url: service + "/api/ImageLink/Get?folder=" + folderPath,
+                url: service + "/api/ImageLink/Get?folderId=" + folderId,
                 success: function (folderModel) {
                     if (!folderModel.DirectoryName.startsWith("ERROR")) {
                         var delta = (Date.now() - start) / 1000;
-                        console.log("/api/ImageFolder/GetLinks?folder=" + folderPath+" took: " + delta.toFixed(3));
-
-                        currentContextFolderId = folderModel.CategoryId;
+                        console.log("/api/ImageFolder/GetLinks?folder=" + folderId+" took: " + delta.toFixed(3));
                         // add folders to html view
                         $('#imageContainer').html('');
                         $.each(folderModel.SubDirs, function (idx, obj) {
-                            $('#imageContainer').append("<div path='" + obj.Path + "' class='folderFirsty'><img class='thumbImage' src='" +
+                            $('#imageContainer').append("<div id='" + obj.CategoryId + "' class='folderFirsty'><img class='thumbImage' src='" +
                                 obj.FirstImage + "'/><div class='fname'>" + obj.DirectoryName + "  (" + obj.Length + ")</div></div>");
                         })
                         $('.folderFirsty').click(function () {
-                            window.location.href = "imagePage?folder=" + $(this).attr("path");
+                            window.location.href = "imagePage?folder=" + $(this).attr("id");
                         })
 
                         // add files
@@ -386,7 +409,7 @@
                         $('#fileCount').html(fileCount);
                         $('#getImagesLoadingGif').hide();
                         if (ipAddress != "68.203.92.166") {
-                            var emailSubject = currentUser + " just viewed " + folderPath;
+                            var emailSubject = currentUser + " just viewed " + folderId;
                             sendEmailFromJS(emailSubject, "someday it will be someone other than " + ipAddress);
                         }
                     }
@@ -461,6 +484,11 @@
         var thisImage = $('#' + imageId + '');
         imageArrayIndex = thisImage.attr("idx");
         viewerShowing = true;
+
+        if (isNullorUndefined(imageId)) {
+
+            //alert("isNullorUndefined(imageId)")
+        }
 
         var picpos = thisImage.offset();
         $('#customViewer').css("top", picpos.top - 100);
@@ -571,7 +599,7 @@
     function removeLink() {
         var badLink = {};
         badLink.ImageId = currentContextImageId;
-        badLink.PathId = currentContextFolderId;
+        badLink.PathId = folderId;
         $.ajax({
             type: "DELETE",
             url: service + "/api/ImageLinkCategory",
@@ -608,7 +636,7 @@
 
                         var badLink = {};
                         badLink.ImageId = newLink.ImageId;
-                        badLink.PathId = currentContextFolderId;
+                        badLink.PathId = folderId;
                         $.ajax({
                             type: "DELETE",
                             url: service + "/api/ImageLinkCategory",
@@ -620,7 +648,7 @@
                                         slide("next");
                                 }
                                 else {
-                                    alert("CreateVirtualFolder: " + success);
+                                    alert("copyLink(andRemove): " + success);
                                 }
                             },
                             error: function (xhr) {
@@ -631,11 +659,11 @@
                     }
                 }
                 else {
-                    alert("CreateVirtualFolder: " + success);
+                    alert("copyLink: " + success);
                 }
             },
             error: function (xhr) {
-                alert("CreateVirtualFolder xhr error: " + xhr.statusText);
+                alert("copyLink(andRemove) xhr error: " + xhr.statusText);
             }
         });
     }

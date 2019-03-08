@@ -60,12 +60,11 @@
         display: inline-block;        
     }
     .infoLine {
-        display:none;
-        margin-top: 6px;
-        padding-left: 4px;
-        padding-top: 2px;
-        margin-left: 40px;
-        margin-right: 6px;
+        position: absolute;
+        bottom: 34px;
+        display: none;
+        padding: 4px;
+        margin-left: 10px;
         border: solid .5px #555;
         height: 32px;
         min-width: 610px;
@@ -118,7 +117,7 @@
                 <div class="clickable" onclick="$('#moveFolderCrud').fadeIn()">Move Folder</div>
                 <div class="clickable" onclick="$('#renameFolderCrud').fadeIn()">ReName Folder</div>
                 <div class="clickable" onclick="$('#addFromPhysicalFolderCrud').fadeIn()">Up From Physical Folder</div>
-                <div class="clickable" onclick="$('#copyLinksCrud').fadeIn()">Copy Links</div>
+                <div class="clickable" onclick="$('#downloadLinksCrud').fadeIn()">Download Links</div>
             </dir>
         </div>
 
@@ -128,10 +127,10 @@
             <div class="workarea">
                 <div id="divStatusMessage"></div>
                 <div id="addNewLink" class="addLinkCrudArea">
-                    <div>link<input id="txtNewLink" class="roundedInput" onblur="previewLinkImage()" /></div>
+                    <div>link<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
                     <div>path<input class="txtLinkPath roundedInput" readonly="readonly" /></div>
                     <input type="hidden" id="txtHiddenLinkPathId" />
-                    <div class="roundendButton" onclick="addImageLink()">Insert</div>
+                    <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
                 </div>
                 <img id="imgLinkPreview" class="linkImage" />
                 <div id="dataifyInfo" class="infoLine"></div>
@@ -188,12 +187,12 @@
                 </div>
             </div>
 
-            <div id="copyLinksCrud" class="floatingCrud">
-                <div class="floatingCrudBanner">Copy Links<div onclick="$('#copyLinksCrud').fadeOut()" class="farSide">x</div> </div>
+            <div id="downloadLinksCrud" class="floatingCrud">
+                <div class="floatingCrudBanner">Copy Links<div onclick="$('#downloadLinksCrud').fadeOut()" class="farSide">x</div> </div>
                 <div class="floatingCrudContainer">
-                    <div><span>destination</span><input id="txtdestination" value="F:/Danni" class="roundedInput" /></div>
+                    <div><span>destination</span><input id="txtdestination" value="F:/Danni/" class="roundedInput" /></div>
                     <div><span>start path</span><input class="txtLinkPath roundedInput" /></div>
-                    <div class="roundendButton" onclick="copyLinks()">create files</div>
+                    <div class="roundendButton" onclick="downloadLinks()">download</div>
                 </div>
             </div>
 
@@ -315,26 +314,30 @@
     }
 
     function addImageLink() {
-        $('#dataifyInfo').hide()
-        var newLink = {};
-        newLink.Link = $('#txtNewLink').val();
-        newLink.PathId = $('#txtHiddenLinkPathId').val();
-        $.ajax({
-            type: "POST",
-            url: service + "/api/ImageLinkCategory",
-            data: newLink,
-            success: function (success) {
-                if (success == "ok")
-                    displayStatusMessage("ok", "image link added");
+        if (isNullorUndefined($('#txtNewLink').val()))
+            alert("invalid link")
+        else {
+            $('#dataifyInfo').hide()
+            var newLink = {};
+            newLink.Link = $('#txtNewLink').val();
+            newLink.PathId = $('#txtHiddenLinkPathId').val();
+            $.ajax({
+                type: "POST",
+                url: service + "/api/ImageLinkCategory",
+                data: newLink,
+                success: function (success) {
+                    if (success == "ok")
+                        displayStatusMessage("ok", "image link added");
 
-                else {
-                    alert("addImageLink: " + success);
+                    else {
+                        alert("addImageLink: " + success);
+                    }
+                },
+                error: function (xhr) {
+                    alert("addImageLink xhr error: " + xhr.statusText);
                 }
-            },
-            error: function (xhr) {
-                alert("addImageLink xhr error: " + xhr.statusText);
-            }
-        });
+            });
+        }
     }
 
     function createNewFolder() {
@@ -342,7 +345,7 @@
         var newFolder = {};
         newFolder.FolderName = $('#txtNewFolderTitle').val();
         newFolder.Parent = $('#txtHiddenLinkPathId').val();
-        newFolder.FolderPath = $('#txtNewFolderParent').val() + "/" + $('#txtNewFolderTitle').val();
+        //newFolder.FolderPath = $('#txtNewFolderParent').val() + "/" + $('#txtNewFolderTitle').val();
 
         $.ajax({
             type: "POST",
@@ -352,13 +355,10 @@
                 $('#getDirTreeLoadingGif').hide();
                 if (success == "ok") {
                     displayStatusMessage("ok", "new folder created");
-                    if (confirm("rebuild Dir Tree?")) {
-                        rebuildCatTree();
-                        $('#newFolderCrud').fadeOut();
-                    }
+                    rebuildCatTree();
                 }
-                else 
-                    alert("CreateVirtualFolder: " + success);                
+                else
+                    alert("CreateVirtualFolder: " + success);
             },
             error: function (xhr) {
                 $('#getDirTreeLoadingGif').hide();
@@ -378,13 +378,10 @@
             data: moveFolderModel,
             success: function (success) {
                 $('#getDirTreeLoadingGif').hide();
-
                 if (!success.startsWith("ERROR")) {
                     displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + success);
-                    $('#moveFolderCrud').fadeOut();
-                    if (confirm("rebuild Dir Tree?")) {
-                        rebuildCatTree();
-                    }
+                    //$('#moveFolderCrud').fadeOut();
+                    rebuildCatTree();
                 }
                 else
                     alert("CreateVirtualFolder: " + success);
@@ -403,11 +400,9 @@
             success: function (success) {
                 $('#getDirTreeLoadingGif').hide();
                 if (!success.startsWith("ERROR")) {
-                    $('#renameFolderCrud').fadeOut();                    
+                    //$('#renameFolderCrud').fadeOut();                    
                     displayStatusMessage("ok", "folder " + $('#selRenameFolder option:selected').val() + " renamed to " + $('#txtReName').val());
-                    if (confirm("rebuild Dir Tree?")) {
-                        rebuildCatTree();
-                    }
+                    rebuildCatTree();
                 }
                 else
                     alert("renameFolder: " + success);
@@ -429,6 +424,8 @@
             totalPics = 0;
             totalFolders = 0;
             tab = 0;
+
+            //alert("url: " + service + "/api/ImageLinkCategory");
             $('#dirTreeContainer').html("");
             $.ajax({
                 type: "GET",
@@ -561,9 +558,7 @@
                 if (!success.startsWith("ERROR")) {
                     $('#addFromPhysicalFolderCrud').fadeOut();
                     displayStatusMessage("ok", "folder " + $('#selVirtualFolder option:selected').val() + " renamed to " + $('#txtReName').val());
-                    if (confirm("rebuild Dir Tree?")) {
-                        rebuildCatTree();
-                    }
+                    rebuildCatTree();
                 }
                 else
                     alert("CreateVirtualFolder: " + success);
@@ -576,27 +571,43 @@
 
     }
 
-    function copyLinks() {
+    function downloadLinks() {
+        var start = Date.now();
+        $('#dataifyInfo').show().html("downloading links");
+
         var rootId = $('#txtHiddenLinkPathId').val();        
         var destination = $('#txtdestination').val(); // "f:/Danni/";
         $('#getDirTreeLoadingGif').fadeIn();
         $.ajax({
             type: "POST",
-            url: service + "/api/Directory/CopyLinks?rootId=" + rootId + "&destination=" + destination,
+            url: service + "/api/Directory/DownLoadLinks?rootId=" + rootId + "&destination=" + destination,
             success: function (success) {
                 $('#getDirTreeLoadingGif').hide();
-                $('#copyLinksCrud').fadeOut();
-                if (!success.startsWith("ERROR")) {
-                    displayStatusMessage("ok", "populated folder " + destination + $('.txtLinkPath').val());
+                if (success == "ok") {
+                    var delta = (Date.now() - start) / 1000;
+                    console.log("rebuildCatTree took: " + delta.toFixed(3));
+                    //$('#downloadLinksCrud').fadeOut();
+                    //displayStatusMessage("ok", "populated folder " + destination + $('.txtLinkPath').val() + " links found: " + downloadResults.LinksFound + " links added: " + downloadResults.LinksAdded);
+                    $('#dataifyInfo').html("download links from " + $('.txtLinkPath').val() + " took: " + delta.toFixed(3));
                 }
                 else
-                    alert("copyLinks: " + success);
+                    alert("downloadLinks: " + success);
             },
             error: function (xhr) {
                 $('#getDirTreeLoadingGif').hide();
-                alert("copyLinks xhr error: " + xhr.statusText);
+                alert("downloadLinks xhr error: " + xhr.statusText);
             }
         });
     }
+
+
+    $(document).keydown(function (event) {
+        // Number 13 is the "Enter" key on the keyboard
+        if (event.keyCode === 13) {
+            // Cancel the default action, if needed
+            // Trigger the button element with a click
+            addImageLink();
+        }
+    });
 
 </script>
