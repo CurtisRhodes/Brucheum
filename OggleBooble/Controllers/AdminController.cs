@@ -17,6 +17,7 @@ namespace OggleBooble.Controllers
         }
         public ActionResult Dashboard()
         {
+            ViewBag.Service = apiService;
             return View();
         }
         public ActionResult Blog()

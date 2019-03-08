@@ -12,13 +12,13 @@ namespace WebApi.OggleBooble.DataContext
         public OggleBoobleContext()
             : base("GoDaddy") { }
 
-        public virtual DbSet<BoobsLink> BoobsLinks { get; set; }
-        public virtual DbSet<PornLink> PornLinks { get; set; }
         public virtual DbSet<ImageFolder> ImageFolders { get; set; }
-        public virtual DbSet<CustomLink> CustomLinks { get; set; }        
-        public virtual DbSet<VideoLink> VideoLinks { get; set; }
         public virtual DbSet<ImageLink> ImageLinks { get; set; }
         public virtual DbSet<Category_ImageLink> Category_ImageLinks { get; set; }
+        public virtual DbSet<BoobsLink> BoobsLinks { get; set; }
+        public virtual DbSet<PornLink> PornLinks { get; set; }
+        public virtual DbSet<VDirTree> VDirTrees { get; set; }        
+        public virtual DbSet<VideoLink> VideoLinks { get; set; }
         public virtual DbSet<VLink> VLinks { get; set; }
         public virtual DbSet<BlogComment> BlogComments { get; set; }
 
@@ -45,17 +45,6 @@ namespace WebApi.OggleBooble.DataContext
         [Key]
         public string Id { get; set; }
         public string Link { get; set; }
-    }
-
-    [Table("OggleBooble.CustomLink")]
-    public partial class CustomLink
-    {
-        [Key]
-        [Column(Order = 0)]
-        public string Link { get; set; }
-        [Key]
-        [Column(Order = 1)]
-        public string FolderPath { get; set; }
     }
 
     [Table("OggleBooble.VideoLink")]
@@ -85,9 +74,10 @@ namespace WebApi.OggleBooble.DataContext
         public int Id { get; set; }
         public int Parent { get; set; }
         public string FolderName { get; set; }
-        public string FolderPath { get; set; }
+        //public string FolderPath { get; set; }
         public int FileCount { get; set; }
         public string CatergoryDescription { get; set; }
+        public string RootFolder { get; set; }
     }
 
     [Table("OggleBooble.BoobsLink")]
@@ -141,6 +131,16 @@ namespace WebApi.OggleBooble.DataContext
         public string FolderPath { get; set; }
         public string LinkId { get; set; }
         public string Link { get; set; }
+    }
+    [Table("OggleBooble.vwDirtree")]
+    public partial class VDirTree
+    {
+        public int Id { get; set; }
+        public int Parent { get; set; }
+        public string FolderName { get; set; }
+        //public string FolderPath { get; set; }
+        public int SubDirCount { get; set; }
+        public int FileCount { get; set; }
     }
 
 }
