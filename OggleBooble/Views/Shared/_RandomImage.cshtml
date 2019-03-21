@@ -274,47 +274,23 @@
     }
 
     function launchCarousel(root) {
-        var start = Date.now();
-        // ngetFolderCount(root);
         $('#laCarousel').show();
-        $.ajax({
-            type: "GET",
-            url: service + "/api/Carousel/GetLinks?root=" + root + "&headstart=12",
-            success: function (carouselInfo) {
-                if (carouselInfo.Success == "ok") {
-                    $.each(carouselInfo.Links, function (idx, obj) {
-                        carouselItemArray.push({
-                            Id: obj.FolderId,
-                            ParentId: obj.ParentId,
-                            FolderName: obj.FolderName,
-                            Link: obj.Link,
-                            FolderPath: obj.FolderPath
-                        });
-                    });
-                    var delta = (Date.now() - start) / 1000;
-                    console.log("Select * from Carousel/GetaFew took: " + delta.toFixed(3));
 
-                    if (carouselInfo.Links.length > 0) {
-                        numImages = carouselInfo.Links.length;
-                        numFolders = carouselInfo.FolderCount;
-                        imageIndex = Math.floor(Math.random() * numImages);
-                        showImage();
-                        rotate();
-                        loadAllImages(root);
-                    }
-                    else
-                        alert("No Images");
-                }
-                else
-                    alert("loadAllImages: " + carouselInfo.Success);
-            },
-            error: function (jqXHR, exception) {
-                alert("launchCarousel XHR : " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
+        if (root == "boobs") {
+            loadImages(root, false);
+            loadImages("centerfolds", false);
+            loadImages("galleries", true);
+        }
+        else {
+            loadImages(root, true);
+        }
+        //boobs	119
+        //galleries	340
+        //porn	273
+        //centerfolds	68
     }
 
-    function loadAllImages(root) {
+    function loadImages(root, done) {
         var start = Date.now();
         $.ajax({
             type: "GET",
@@ -330,17 +306,22 @@
                             FolderPath: obj.FolderPath
                         });
                     });
-                    numImages = carouselInfo.Links.length;
-                    numFolders = carouselInfo.FolderCount;
+                    numImages += carouselInfo.Links.length;
+                    numFolders += carouselInfo.FolderCount;
                     imageIndex = Math.floor(Math.random() * numImages);
+                    showImage();
+                    if (done) {
+                        rotate();
+                    }
+
                     var delta = (Date.now() - start) / 1000;
-                    console.log("Select * from Carousel/GetAll took: " + delta.toFixed(3));
+                    console.log("loadImages(" + root + ") took: " + delta.toFixed(3));
                 }
                 else
-                    alert("loadAllImages: " + carouselInfo.Success);
+                    alert("loadImages: " + carouselInfo.Success);
             },
             error: function (jqXHR, exception) {
-                alert("loadAllImages jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                alert("loadImages jqXHR : " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     }
@@ -368,7 +349,6 @@
     }
 
     function rotate() {
-        showImage();
         Carousel = setInterval(function () {
             imageIndex = Math.floor(Math.random() * numImages);
             showImage();
@@ -392,7 +372,7 @@
         $('#pauseButton').html("||");
     }
     function startCarousel() {
-        imageIndex = Math.floor(Math.random() * numImages);
+        showImage();
         rotate();
     }
 

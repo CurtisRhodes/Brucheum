@@ -599,7 +599,7 @@
     function removeLink() {
         var badLink = {};
         badLink.ImageId = currentContextImageId;
-        badLink.PathId = folderId;
+        badLink.FolderId = folderId;
         $.ajax({
             type: "DELETE",
             url: service + "/api/ImageLinkCategory",
@@ -611,7 +611,7 @@
                     getImageLinks();
                 }
                 else {
-                    alert("CreateVirtualFolder: " + success);
+                    alert("removeLink: " + success);
                 }
             },
             error: function (xhr) {
@@ -624,6 +624,9 @@
     function copyLink(andRemove) {
         newLink.ImageId = currentContextImageId;
         newLink.Link = $('#' + currentContextImageId + '').attr("src");
+        //alert("dirTreeDropDown: " + newLink.CopyToFolderId);
+
+        newLink.FolderId = $('#dirTreeDropDownn').val();
         $.ajax({
             type: "PUT",
             url: service + "/api/ImageLinkCategory",
@@ -636,7 +639,7 @@
 
                         var badLink = {};
                         badLink.ImageId = newLink.ImageId;
-                        badLink.PathId = folderId;
+                        badLink.FolderId = folderId;
                         $.ajax({
                             type: "DELETE",
                             url: service + "/api/ImageLinkCategory",
@@ -707,7 +710,7 @@
         $('#' + id + '').toggle();
     }
     function clickPath(path, id) {
-        newLink.PathId = id;
+        newLink.CopyToFolderId = id;
         $('#dirTreeResults').show();
         $('#dirTreeResults').html(path.replace(/%20/g, " "));
         $('#dirTreeDropDown').hide();
