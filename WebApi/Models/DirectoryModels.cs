@@ -67,14 +67,6 @@ namespace WebApi.Directory.Models
         public int NewParentId { get; set; }
     }
 
-    public class ImageCategoryModel
-    {
-        public int Id { get; set; }
-        public int Parent { get; set; }
-        public string FolderName { get; set; }
-        public string RootFolder { get; set; }
-    }
-
     public class VideoLinkModel
     {
         public string Link { get; set; }
