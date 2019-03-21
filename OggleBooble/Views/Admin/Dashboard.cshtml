@@ -117,7 +117,7 @@
                 <div class="clickable" onclick="$('#moveFolderCrud').fadeIn()">Move Folder</div>
                 <div class="clickable" onclick="$('#renameFolderCrud').fadeIn()">ReName Folder</div>
                 <div class="clickable" onclick="$('#addFromPhysicalFolderCrud').fadeIn()">Up From Physical Folder</div>
-                <div class="clickable" onclick="$('#downloadLinksCrud').fadeIn()">Download Links</div>
+                <div class="clickable" onclick="$('#repairLinksCrud').fadeIn()">Verify</div>
             </dir>
         </div>
 
@@ -187,12 +187,12 @@
                 </div>
             </div>
 
-            <div id="downloadLinksCrud" class="floatingCrud">
-                <div class="floatingCrudBanner">Copy Links<div onclick="$('#downloadLinksCrud').fadeOut()" class="farSide">x</div> </div>
+            <div id="repairLinksCrud" class="floatingCrud">
+                <div class="floatingCrudBanner">Verify Links<div onclick="$('#repairLinksCrud').fadeOut()" class="farSide">x</div> </div>
                 <div class="floatingCrudContainer">
                     <div><span>destination</span><input id="txtdestination" value="F:/Danni/" class="roundedInput" /></div>
                     <div><span>start path</span><input class="txtLinkPath roundedInput" /></div>
-                    <div class="roundendButton" onclick="downloadLinks()">download</div>
+                    <div class="roundendButton" onclick="repairLinks()">run</div>
                 </div>
             </div>
 
@@ -269,7 +269,7 @@
         $('#' + id + '').toggle();
     }
     function clickPath(path, id) {
-        $('.txtLinkPath').val(path.replace(/%20/g, " "));
+        $('.txtLinkPath').val(path.substring(6).replace(/%20/g, " "));
         $('#txtHiddenLinkPathId').val(id);
     }
 
@@ -320,7 +320,8 @@
             $('#dataifyInfo').hide()
             var newLink = {};
             newLink.Link = $('#txtNewLink').val();
-            newLink.PathId = $('#txtHiddenLinkPathId').val();
+            newLink.FolderId = $('#txtHiddenLinkPathId').val();
+            newLink.Path = $('.txtLinkPath').val().substring(6);
             $.ajax({
                 type: "POST",
                 url: service + "/api/ImageLinkCategory",
@@ -345,11 +346,11 @@
         var newFolder = {};
         newFolder.FolderName = $('#txtNewFolderTitle').val();
         newFolder.Parent = $('#txtHiddenLinkPathId').val();
-        //newFolder.FolderPath = $('#txtNewFolderParent').val() + "/" + $('#txtNewFolderTitle').val();
-
+        //newFolder.rootId = "";
+        //
         $.ajax({
             type: "POST",
-            url: service + "/api/ImageFolder",
+            url: service + "/api/ImageFolder/CreateFolder",
             data: newFolder,
             success: function (success) {
                 $('#getDirTreeLoadingGif').hide();
@@ -384,11 +385,11 @@
                     rebuildCatTree();
                 }
                 else
-                    alert("CreateVirtualFolder: " + success);
+                    alert("Move Folder: " + success);
             },
             error: function (xhr) {
                 $('#getDirTreeLoadingGif').hide();
-                alert("CreateVirtualFolder xhr error: " + xhr.statusText);
+                alert("Move Folder xhr error: " + xhr.statusText);
             }
         });
     }
@@ -401,7 +402,7 @@
                 $('#getDirTreeLoadingGif').hide();
                 if (!success.startsWith("ERROR")) {
                     //$('#renameFolderCrud').fadeOut();                    
-                    displayStatusMessage("ok", "folder " + $('#selRenameFolder option:selected').val() + " renamed to " + $('#txtReName').val());
+                    displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
                     rebuildCatTree();
                 }
                 else
@@ -533,10 +534,6 @@
                     else
                         alert("rebuildLinkTables: " + success);
                 },
-                //error: function (xhr) {
-                //    $('#getDirTreeLoadingGif').hide();
-                //    alert("rebuildLinkTables xhr error: " + xhr.statusText);
-                //}
                 error: function (jqXHR, exception) {
                     $('#getDirTreeLoadingGif').hide();
                     alert("update Article jqXHR : " + getXHRErrorDetails(jqXHR, exception));
@@ -548,50 +545,33 @@
         }
     }
 
-    function addFromPhysicalFile() {
-        $('#getDirTreeLoadingGif').fadeIn();
-        $.ajax({
-            type: "PUT",
-            url: service + "/api/Directory/rebiuldPhy?folderId=" + $('#selVirtualFolder').val() + "&dirPath=" + $('#txtphysicalFolder').val() + "&danniPathHint=" + $('#txtDanniPath').val(),
-            success: function (success) {
-                $('#getDirTreeLoadingGif').hide();
-                if (!success.startsWith("ERROR")) {
-                    $('#addFromPhysicalFolderCrud').fadeOut();
-                    displayStatusMessage("ok", "folder " + $('#selVirtualFolder option:selected').val() + " renamed to " + $('#txtReName').val());
-                    rebuildCatTree();
-                }
-                else
-                    alert("CreateVirtualFolder: " + success);
-            },
-            error: function (xhr) {
-                $('#getDirTreeLoadingGif').hide();
-                alert("CreateVirtualFolder xhr error: " + xhr.statusText);
-            }
-        });
-
-    }
-
-    function downloadLinks() {
+    function repairLinks() {
         var start = Date.now();
-        $('#dataifyInfo').show().html("downloading links");
+        $('#dataifyInfo').show().html("checking and repairing links");
 
         var rootId = $('#txtHiddenLinkPathId').val();        
         var destination = $('#txtdestination').val(); // "f:/Danni/";
         $('#getDirTreeLoadingGif').fadeIn();
         $.ajax({
             type: "POST",
-            url: service + "/api/Directory/DownLoadLinks?rootId=" + rootId + "&destination=" + destination,
-            success: function (success) {
+            url: service + "/api/Directory/Repair?rootId=" + rootId + "&destination=" + destination,
+            success: function (repairReport) {
                 $('#getDirTreeLoadingGif').hide();
-                if (success == "ok") {
-                    var delta = (Date.now() - start) / 1000;
-                    console.log("rebuildCatTree took: " + delta.toFixed(3));
+                if (repairReport.Success=="ok") {
+                    var delta = (Date.now() - start);
+                    var minutes = Math.floor(delta / 60000);
+                    var seconds = ((delta % 60000) / 1000).toFixed(0);
+                    console.log("rebuildCatTree took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                     //$('#downloadLinksCrud').fadeOut();
-                    //displayStatusMessage("ok", "populated folder " + destination + $('.txtLinkPath').val() + " links found: " + downloadResults.LinksFound + " links added: " + downloadResults.LinksAdded);
-                    $('#dataifyInfo').html("download links from " + $('.txtLinkPath').val() + " took: " + delta.toFixed(3));
+                    $('#dataifyInfo').html("download links from " + repairReport.FolderName + " took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+                    //$('#dataifyInfo').append(" errors: " + repairReport.ErrorArray.Length);
+                    $('#dataifyInfo').append(". links edited: " + repairReport.LinksEdited);
+                    $('#dataifyInfo').append(",  images renamed: " + repairReport.ImagesRenamed);
+                    $('#dataifyInfo').append(", links added: " + repairReport.NewLinksAdded);
+                    $('#dataifyInfo').append(", missing links: " + repairReport.LinksRemoved);
                 }
                 else
-                    alert("downloadLinks: " + success);
+                    alert("downloadLinks: " + repairReport.Success);
             },
             error: function (xhr) {
                 $('#getDirTreeLoadingGif').hide();
@@ -599,7 +579,6 @@
             }
         });
     }
-
 
     $(document).keydown(function (event) {
         // Number 13 is the "Enter" key on the keyboard

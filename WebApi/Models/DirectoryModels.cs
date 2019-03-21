@@ -38,10 +38,23 @@ namespace WebApi.Directory.Models
 
     public class ImageLinkModel
     {
-        public int PathId { get; set; }
-        public string Link { get; set; }
+        public int FolderId { get; set; }
+        public int CopyToFolderId { get; set; }
         public string ImageId { get; set; }
+        public string Link { get; set; }
+        public string Path { get; set; }
     }
+
+    public class ImageCategoryModel
+    {
+        public int Id { get; set; }
+        public int Parent { get; set; }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public int FileCount { get; set; }
+    }
+
+
     public class GalleryItem
     {
         public int FolderId { get; set; }
@@ -54,14 +67,12 @@ namespace WebApi.Directory.Models
         public int NewParentId { get; set; }
     }
 
-    public class ImageFolderModel
+    public class ImageCategoryModel
     {
         public int Id { get; set; }
         public int Parent { get; set; }
         public string FolderName { get; set; }
-        //public string FolderPath { get; set; }
-        public int FileCount { get; set; }
-        public string CatergoryDescription { get; set; }
+        public string RootFolder { get; set; }
     }
 
     public class VideoLinkModel
@@ -86,8 +97,11 @@ namespace WebApi.Directory.Models
         public int FolderId { get; set; }
         public int ParentId { get; set; }
         public string FolderName { get; set; }
-        public string FolderPath { get; set; }
-        public string Link { get; set; }
+        public string RootFolder { get; set; }
+        public string GoDaddyLink { get; set; }
+        public string ExternalLink { get; set; }
+        //public string FileName { get; set; }
+        //public string Link { get; set; }
     }
     public class CarouselItemModel
     {
@@ -106,6 +120,22 @@ namespace WebApi.Directory.Models
         public List<CarouselItemModel> Links { get; set; }
         public int FolderCount { get; set; }
         public string Success { get; set; }
+    }
+
+    public class RepairReport
+    {
+        public RepairReport()
+        {
+            Errors = new List<string>();
+        }
+        public int ImagesRenamed { get; set; }
+        public int LinksEdited { get; set; }
+        public int NewLinksAdded { get; set; }
+        public int LinksRemoved { get; set; }
+        public string FolderName { get; set; }
+        public string Success { get; set; }
+        public List<string> Errors { get; set; }
+        public string[] ErrorArray { get; set; }
     }
 
 }

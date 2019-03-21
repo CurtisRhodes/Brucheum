@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Web;
+using System.Web.Http;
+using System.Web.Http.Cors;
+using WebApi.Directory.Models;
+using WebApi.OggleBooble.DataContext;
 
 namespace WebApi
 {
@@ -87,4 +91,41 @@ namespace WebApi
 
         }
     }
+
+
+    [EnableCors("*", "*", "*")]
+    public class DirectoryController : System.Web.Http.ApiController
+    {
+        [HttpGet]
+        public ImageCategoryModel DownloadRejects(int id)
+        {
+            var model = new ImageCategoryModel();
+            try
+            {
+
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                   List<GoDaddyLink> orphans = db.GoDaddyLinks.Where(g => g.Id == g.Link).ToList();
+                    //foreach(GoDaddyLink orphan in orphans)
+
+                    //fileName = dbLink.FolderName + "_" + dbLink.LinkId + extension;
+                    
+                    //var dbImageCategories = db.ImageCategories.Where(f => f.Id == id).First();
+                    //model.Id = dbImageCategories.Id;
+                    //model.Parent = dbImageCategories.Parent;
+                    //model.FolderName = dbImageCategories.FolderName;
+                    //model.RootFolder = dbImageCategories.RootFolder;
+                }
+            }
+            catch (Exception ex)
+            {
+                model.FolderName = Helpers.ErrorDetails(ex);
+            }
+            return model;
+        }
+
+
+    }
+
+
 }
