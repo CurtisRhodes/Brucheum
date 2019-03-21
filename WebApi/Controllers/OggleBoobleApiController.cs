@@ -448,21 +448,8 @@ namespace WebApi.OggleBooble
                             break;
                     }
                 }
-
-
-
             }
             return goodLink;
-        }
-
-
-        private int GetFolderItemCoutn()
-        {
-
-
-
-
-            return 2;
         }
 
         // used by ImagePage
@@ -474,19 +461,16 @@ namespace WebApi.OggleBooble
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    //folderModel.CategoryId = db.ImageFolders.Where(f => f.FolderPath == folder).FirstOrDefault().Id;
-                    // List<int> children = GetAllChildren(folderId);
-                    // var firstImage = (from catLinks in db.Category_ImageLinks where children.Contains(catLinks.ImageCategoryId) select catLinks.ImageLinkId).FirstOrDefault();
-
-                    var childFolders = db.ImageCategories.Where(f => f.Parent == folderId).OrderBy(f => f.FolderName).ToList();
-                    foreach (ImageCategory childFolder in childFolders)
+                    //var childFolders = db.ImageCategories.Where(f => f.Parent == folderId).OrderBy(f => f.FolderName).ToList();
+                    var childFolders = db.VDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.FolderName).ToList();
+                    foreach (VDirTree childFolder in childFolders)
                     {
                         folderModel.SubDirs.Add(new DirTreeModel()
                         {
                             LinkId = Guid.NewGuid().ToString(),
                             CategoryId = childFolder.Id,
                             DirectoryName = childFolder.FolderName,
-                            //Length = childFolder.,
+                            Length = Math.Max(childFolder.FileCount, childFolder.SubDirCount),
                             //Path = childFolder.FolderPath,
                             FirstImage = GetFirstImage(childFolder.Id)
                         });
