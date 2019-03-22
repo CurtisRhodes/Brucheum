@@ -29,7 +29,7 @@ namespace OggleBooble.Controllers
             try
             {
                 string filePath = System.Web.HttpContext.Current.Server.MapPath("~/Views/Shared/" + staticPage.filename);
-                using (var staticFile = System.IO.File.Open(filePath, System.IO.FileMode.Create))
+                using (var staticFile = System.IO.File.Open(filePath, System.IO.FileMode.Truncate))
                 {
                     Byte[] byteArray = Encoding.ASCII.GetBytes(staticPage.html);
                     staticFile.Write(byteArray, 0, byteArray.Length);

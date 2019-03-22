@@ -103,12 +103,12 @@
 
             <dir class="linkContainer">
                 @*
-        <div class="clickable" onclick="window.location.href='/stats/AdminDashboard'">Rebuild Tables</div>
-        <div class="clickable" onclick="$('#addNewLink').show()">Add Link</div>
-        <div class="clickable" onclick="buildFolderLinkTable()">build FolderLink Table</div>
-        <div class="clickable" onclick="rebuildLinkTables()">Rebuild Link Tables</div>
-        <div class="clickable" onclick="getCatTree()">Refresh Dir Tree</div>
-                <div class="clickable" onclick="testConnection();">testConnection();</div>
+                        <div class="clickable" onclick="window.location.href='/stats/AdminDashboard'">Rebuild Tables</div>
+                        <div class="clickable" onclick="$('#addNewLink').show()">Add Link</div>
+                        <div class="clickable" onclick="buildFolderLinkTable()">build FolderLink Table</div>
+                        <div class="clickable" onclick="rebuildLinkTables()">Rebuild Link Tables</div>
+                        <div class="clickable" onclick="getCatTree()">Refresh Dir Tree</div>
+                        <div class="clickable" onclick="testConnection();">testConnection();</div>
                 *@
                 <div class="clickable" onclick="rebuildCatTree()">ReBuild Dir Tree</div>
                 <div class="clickable" onclick="rebuildLinkTables()">ReBuild Link Tables</div>
@@ -116,7 +116,6 @@
                 <div class="clickable" onclick="$('#newFolderCrud').fadeIn()">Create New Folder</div>
                 <div class="clickable" onclick="$('#moveFolderCrud').fadeIn()">Move Folder</div>
                 <div class="clickable" onclick="$('#renameFolderCrud').fadeIn()">ReName Folder</div>
-                <div class="clickable" onclick="$('#addFromPhysicalFolderCrud').fadeIn()">Up From Physical Folder</div>
                 <div class="clickable" onclick="$('#repairLinksCrud').fadeIn()">Verify</div>
             </dir>
         </div>
@@ -129,6 +128,7 @@
                 <div id="addNewLink" class="addLinkCrudArea">
                     <div>link<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
                     <div>path<input class="txtLinkPath roundedInput" readonly="readonly" /></div>
+
                     <input type="hidden" id="txtHiddenLinkPathId" />
                     <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
                 </div>
@@ -321,7 +321,7 @@
             var newLink = {};
             newLink.Link = $('#txtNewLink').val();
             newLink.FolderId = $('#txtHiddenLinkPathId').val();
-            newLink.Path = $('.txtLinkPath').val().substring(6);
+            newLink.Path = $('.txtLinkPath').val();
             $.ajax({
                 type: "POST",
                 url: service + "/api/ImageLinkCategory",
@@ -335,7 +335,7 @@
                     }
                 },
                 error: function (xhr) {
-                    alert("addImageLink xhr error: " + xhr.statusText);
+                    alert("addImageLink xhr error: " + getXHRErrorDetails(xhr));
                 }
             });
         }
@@ -363,7 +363,7 @@
             },
             error: function (xhr) {
                 $('#getDirTreeLoadingGif').hide();
-                alert("CreateVirtualFolder xhr error: " + xhr.statusText);
+                alert("CreateVirtualFolder xhr error: " + getXHRErrorDetails(xhr));
             }
         });
     }
@@ -389,7 +389,7 @@
             },
             error: function (xhr) {
                 $('#getDirTreeLoadingGif').hide();
-                alert("Move Folder xhr error: " + xhr.statusText);
+                alert("Move Folder xhr error: " + getXHRErrorDetails(xhr));
             }
         });
     }
@@ -410,7 +410,7 @@
             },
             error: function (xhr) {
                 $('#getDirTreeLoadingGif').hide();
-                alert("renameFolder xhr error: " + xhr.statusText);
+                alert("renameFolder xhr error: " + getXHRErrorDetails(xhr));
             }
         });
 
@@ -437,13 +437,12 @@
                     var delta = (Date.now() - start) / 1000;
                     console.log("rebuildCatTree took: " + delta.toFixed(3));
                     $('#dataifyInfo').html("rebuildCatTree took: " + delta.toFixed(3) + " total folders: " + totalFolders + " total pics: " + totalPics);
-                    saveAsStaticFile("dirTree");
-                    saveAsStaticFile("dirSelect");
+                    saveStaticFiles();
                     $('#getDirTreeLoadingGif').hide();
                 },
                 error: function (xhr) {
                     $('#getDirTreeLoadingGif').hide();
-                    alert("buildCatTree xhr error: " + xhr.statusText);
+                    alert("buildCatTree xhr error: " + getXHRErrorDetails(xhr));
                 }
             });
         } catch (e) {
@@ -481,22 +480,14 @@
 
         });
     }
-    function saveAsStaticFile(fileName) {
+    function saveStaticFiles() {
         try {
 
             var data = new Object();
-            if (fileName == "dirTree") {
-                data.html = $('#dirTreeContainer').html();
-                data.fileName = "_DirTree.cshtml";
-                $('#dataifyInfo').append(" Create DirTree");
-            }
-            if (fileName == "dirSelect") {
-                data.html = optionTree;
-                data.fileName = "_DirOptions.cshtml";
-                $('#dataifyInfo').append(" Create DirOptions");
-            }
-            //alert("Create Static File")
-            
+            //if (fileName == "dirTree") {
+            data.html = $('#dirTreeContainer').html();
+            data.fileName = "_DirTree.cshtml";
+            $('#dataifyInfo').append(" Create DirTree");
             $.ajax({
                 type: "POST",
                 url: "/Stats/CreateStaticFile",
@@ -505,11 +496,30 @@
                 dataType: "json",
                 success: function (success) {
                     if (success === "ok") {
-                        //$('#dataifyInfo').show().html(data.fileName + " saved");
                         $('#dataifyInfo').append(" ok");
+                        data.html = optionTree;
+                        data.fileName = "_DirOptions.cshtml";
+                        $('#dataifyInfo').append(" Create DirOptions");
+                        $.ajax({
+                            type: "POST",
+                            url: "/Stats/CreateStaticFile",
+                            data: JSON.stringify(data),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (success) {
+                                if (success === "ok") {
+                                    $('#dataifyInfo').append(" ok");
+                                }
+                                else
+                                    alert("Create _DirOptions: " + success);
+                            },
+                            error: function (jqXHR, exception) {
+                                alert("CreateStaticFile XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                            }
+                            });
                     }
                     else
-                        alert("CreateStaticFile: " + success);
+                        alert("Create _DirTree: " + success);
                 },
                 error: function (jqXHR, exception) {
                     alert("CreateStaticFile XHR error: " + getXHRErrorDetails(jqXHR, exception));
@@ -548,16 +558,20 @@
     function repairLinks() {
         var start = Date.now();
         $('#dataifyInfo').show().html("checking and repairing links");
+        var data = new Object();
+        data.FolderId = $('#txtHiddenLinkPathId').val();
+        data.FolderName = $('#txtdestination').val(); // "f:/Danni/";
+        //var rootId = $('#txtHiddenLinkPathId').val();        
+        //var destination = $('#txtdestination').val(); // "f:/Danni/";
 
-        var rootId = $('#txtHiddenLinkPathId').val();        
-        var destination = $('#txtdestination').val(); // "f:/Danni/";
         $('#getDirTreeLoadingGif').fadeIn();
         $.ajax({
             type: "POST",
-            url: service + "/api/Directory/Repair?rootId=" + rootId + "&destination=" + destination,
+            url: service + "/api/DirectoryIO/RepealAndReplace",  //?rootId=" + rootId + "&destination=" + destination,
+            data: data,
             success: function (repairReport) {
                 $('#getDirTreeLoadingGif').hide();
-                if (repairReport.Success=="ok") {
+                if (repairReport.Success == "ok") {
                     var delta = (Date.now() - start);
                     var minutes = Math.floor(delta / 60000);
                     var seconds = ((delta % 60000) / 1000).toFixed(0);
@@ -566,7 +580,7 @@
                     $('#dataifyInfo').html("download links from " + repairReport.FolderName + " took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                     //$('#dataifyInfo').append(" errors: " + repairReport.ErrorArray.Length);
                     $('#dataifyInfo').append(". links edited: " + repairReport.LinksEdited);
-                    $('#dataifyInfo').append(",  images renamed: " + repairReport.ImagesRenamed);
+                    $('#dataifyInfo').append(", images renamed: " + repairReport.ImagesRenamed);
                     $('#dataifyInfo').append(", links added: " + repairReport.NewLinksAdded);
                     $('#dataifyInfo').append(", missing links: " + repairReport.LinksRemoved);
                 }
@@ -575,7 +589,7 @@
             },
             error: function (xhr) {
                 $('#getDirTreeLoadingGif').hide();
-                alert("downloadLinks xhr error: " + xhr.statusText);
+                alert("downloadLinks xhr error: " + getXHRErrorDetails(xhr));
             }
         });
     }
