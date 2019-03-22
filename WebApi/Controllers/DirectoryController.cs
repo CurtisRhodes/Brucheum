@@ -15,7 +15,7 @@ using WebApi.OggleBooble.DataContext;
 namespace WebApi.Controllers
 {
     [EnableCors("*", "*", "*")]
-    public class DirectoryController : ApiController
+    public class DirectoryIOController : ApiController
     {
         [HttpGet]
         public string[] Get(string folder)
@@ -121,8 +121,11 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public RepairReport Repair(int rootId, string destination)
+        public RepairReport RepealAndReplace(GalleryItem data)
         {
+            var rootId = data.FolderId;
+            var destination = data.FolderName;
+            //int rootId, string destination
             var repairReport = new RepairReport() { LinksEdited = 0, ImagesRenamed = 0, NewLinksAdded = 0, LinksRemoved = 0 };
             try
             {
@@ -141,20 +144,23 @@ namespace WebApi.Controllers
                         db: db);
                 }
                 repairReport.FolderName = folderName;
-                repairReport.ErrorArray = repairReport.Errors.ToArray();
+                //repairReport.ErrorArray = repairReport.Errors.ToArray();
                 repairReport.Success = "ok";
             }
-            catch (Exception ex) { repairReport.Success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex)
+            {
+                repairReport.Success = Helpers.ErrorDetails(ex);
+            }
             return repairReport;
         }
         private void RepairRecurr(int parentId, string folderPath, string goDaddyPath, string subFolderPrefix, RepairReport repairReport, OggleBoobleContext db)
         {
             var fileIncrimentor = 0;
-            if (parentId == 299)
-            {
-                fileIncrimentor = 0;
-            }
+            var fileName = "";
+            var folderName = "";
+            FileInfo[] fileInfos = null;
             List<DownloadLink> dbLinks = null;
+            var rootFolder = "";
             {
                 dbLinks = (from l in db.GoDaddyLinks
                            join c in db.Category_ImageLinks on l.Id equals c.ImageLinkId
@@ -192,38 +198,40 @@ namespace WebApi.Controllers
             }
 
 
+            // step 1 rename 
             if (dbLinks.Count() > 0)
             {
-                if (subFolderPrefix != dbLinks[0].FolderName)
+                folderName = dbLinks[0].FolderName;
+                rootFolder = dbLinks[0].RootFolder;
+                if (subFolderPrefix != folderName)
                 {
-                    if (!subFolderPrefix.EndsWith(dbLinks[0].FolderName))
+                    if (!subFolderPrefix.EndsWith(folderName))
                     {
                         if (subFolderPrefix == "")
-                            subFolderPrefix = dbLinks[0].FolderName;
+                            subFolderPrefix = folderName;
                         else
                         {
                             if (subFolderPrefix.Contains("_"))
-                                subFolderPrefix = subFolderPrefix.Substring(subFolderPrefix.IndexOf("_")) + "_" + dbLinks[0].FolderName;
+                                subFolderPrefix = subFolderPrefix.Substring(subFolderPrefix.IndexOf("_")) + "_" + folderName;
                             else
-                                subFolderPrefix += "_" + dbLinks[0].FolderName;
+                                subFolderPrefix += "_" + folderName;
                         }
                     }
-                    goDaddyPath += "/" + dbLinks[0].FolderName;
+                    goDaddyPath += "/" + folderName;
 
                 }
 
-                folderPath += "/" + dbLinks[0].FolderName;
+                folderPath += "/" + folderName;
                 DirectoryInfo dirInfo = new DirectoryInfo(folderPath);
                 if (!dirInfo.Exists)
                 {
                     dirInfo.Create();
                 }
-                FileInfo[] fileInfos = dirInfo.GetFiles();
+                fileInfos = dirInfo.GetFiles();
 
 
                 var linkPrefix = "http://" + dbLinks[0].RootFolder + ".ogglebooble.com/";
                 fileIncrimentor = 0;
-                var fileName = "";
                 var extension = "";
                 var goDaddyLink = "";
 
@@ -231,11 +239,11 @@ namespace WebApi.Controllers
                 foreach (DownloadLink dbLink in dbLinks)
                 {
                     extension = dbLink.ExternalLink.Substring(dbLink.ExternalLink.LastIndexOf("."));
-                    if (dbLink.RootFolder == "centerfolds")
+                    if (rootFolder == "centerfolds")
                         fileName = "Playboy centerfold " + GetMonthName(fileIncrimentor++) + " " + dbLink.FolderName + extension;
                     else
                     {
-                        if (dbLink.RootFolder == "porn")
+                        if (rootFolder == "porn")
                             fileName = dbLink.FolderName + "_" + dbLink.LinkId + extension;
                         else
                             fileName = subFolderPrefix + "_" + dbLink.LinkId + fileInfos[fileIncrimentor].Extension;
@@ -249,7 +257,7 @@ namespace WebApi.Controllers
                         {
                             try
                             {
-                                if(db.Category_ImageLinks.Where(c => c.ImageLinkId == dbLink.LinkId).Where(c => c.ImageCategoryId == parentId).FirstOrDefault() == null)
+                                if (db.Category_ImageLinks.Where(c => c.ImageLinkId == dbLink.LinkId).Where(c => c.ImageCategoryId == parentId).FirstOrDefault() == null)
                                 {
                                     if (fileInfos.Where(f => f.Name == fileName).FirstOrDefault() == null)
                                     {
@@ -288,192 +296,69 @@ namespace WebApi.Controllers
                         }
                     }
                 }
-
-                //  step 3 look for missing images
-                if (fileInfos.Count() > dbLinks.Count())
+            }
+            //  step 3 look for missing images
+            if ((fileInfos == null) && (dbLinks.Count() > 0))
+            {
+                var dbCategory = db.ImageCategories.Where(f => f.Id == parentId).First();
+                folderName = dbCategory.FolderName;
+                rootFolder = dbCategory.RootFolder;
+                DirectoryInfo dirInfo = new DirectoryInfo(folderPath);
+                fileInfos = dirInfo.GetFiles();
+            }
+            if ((fileInfos != null) && (fileInfos.Count() > dbLinks.Count()))
+            {
+                for (int i = 0; i < fileInfos.Count(); i++)
                 {
-                    foreach (FileInfo file in fileInfos)
+                    try
                     {
-                        try
+                        if ((fileInfos[i].Name.Length > 40) && (dbLinks.Select(l => l.LinkId).Contains(fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 40, 36))))
                         {
 
-                            if ((file.Name.Length > 40) && (dbLinks.Select(l => l.LinkId).Contains(file.Name.Substring(file.Name.Length - 40, 36))))
-                            {
-
-                            }
+                        }
+                        else
+                        {
+                            string newId = Guid.NewGuid().ToString();
+                            var extension = fileInfos[i].Extension;
+                            if (rootFolder == "centerfolds")
+                                fileName = "Playboy centerfold " + GetMonthName(i) + " " + folderName + extension;
                             else
                             {
-                                string newId = Guid.NewGuid().ToString();
-                                fileName = subFolderPrefix + "_" + newId + extension;
-                                GoDaddyLink d = new GoDaddyLink()
-                                {
-                                    ExternalLink = fileName,
-                                    Link = fileName,
-                                    Id = newId
-                                };
-                                db.GoDaddyLinks.Add(d);
-                                Category_ImageLink c = new Category_ImageLink()
-                                {
-                                    ImageCategoryId = dbLinks[0].FolderId,
-                                    ImageLinkId = newId
-                                };
-                                db.Category_ImageLinks.Add(c);
-                                db.SaveChanges();
+                                if (rootFolder == "porn")
+                                    fileName = folderName + "_" + newId + fileName;
+                                else
+                                    fileName = subFolderPrefix + "_" + newId + extension;
 
-                                file.MoveTo(folderPath + "/" + fileName);
-                                repairReport.NewLinksAdded++;
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            var x = ex.Message;
-                            repairReport.Errors.Add("fileName: " + fileName + " message: " + ex.Message);
+
+
+                            GoDaddyLink d = new GoDaddyLink()
+                            {
+                                ExternalLink = fileName,
+                                Link = "http://" + rootFolder + ".ogglebooble.com/" + subFolderPrefix + "/" + fileName,
+                                Id = newId
+                            };
+                            db.GoDaddyLinks.Add(d);
+                            Category_ImageLink c = new Category_ImageLink()
+                            {
+                                ImageCategoryId = parentId,
+                                ImageLinkId = newId
+                            };
+                            db.Category_ImageLinks.Add(c);
+                            db.SaveChanges();
+
+                            fileInfos[i].MoveTo(folderPath + "/" + fileName);
+                            repairReport.NewLinksAdded++;
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        var x = ex.Message;
+                        repairReport.Errors.Add("fileName: " + fileName + " message: " + ex.Message);
+                    }
                 }
-
-
-
-
-
-
-                // step 3 make sure all links are right
-                //List<FileInfo> missingImages = new List<FileInfo>();
-                //foreach (FileInfo file in fileInfos)
-                //{
-                //    if (!((file.Name.Length > 40) && (dbLinks.Select(l => l.LinkId).Contains(file.Name.Substring(file.Name.Length - 40, 36)))))
-                //    {
-                //        missingImages.Add(file);
-
-                //    }
-                //}
-                //List<DownloadLink> missingLinks = new List<DownloadLink>();
-
-
-                //var linkFileExists = false;
-                //foreach (DownloadLink dbLink in dbLinks)
-                //{
-                //    linkFileExists = false;
-                //    foreach (FileInfo file in fileInfos)
-                //    {
-                //        if (file.Name == dbLink.GoDaddyLink.Substring(dbLink.GoDaddyLink.LastIndexOf("/") + 1))
-                //        {
-                //            linkFileExists = true;
-                //            break;
-                //        }
-                //    }
-                //    if (!linkFileExists)
-                //    {
-                //        missingLinks.Add(dbLink);
-                //        db.MissingLinks.Add(new MissingLink() { ExternalLink = dbLink.ExternalLink, LinkId = dbLink.LinkId });
-                //        db.SaveChanges();
-                //    }
-                //}
-                //if (missingImages.Count() > 0)
-               // {
-                    //if (missingLinks.Count() > 0)
-                    //{
-                    //    //if (missingLinks.Count() >= missingImages.Count())
-                    //    //{
-                    //    //    for (int i = 0; i < missingImages.Count(); i++)
-                    //    //    {
-                    //    //        try
-                    //    //        {
-                    //    //            fileName = subFolderPrefix + "_" + missingLinks[i].LinkId + missingImages[i].Extension;
-                    //    //            missingImages[i].MoveTo(folderPath + "/" + fileName);
-                    //    //            missingLinks[i].LinkId = "xxx";
-                    //    //            repairReport.ImagesRenamed++;
-                    //    //        }
-                    //    //        catch (Exception ex)
-                    //    //        {
-                    //    //            var x = ex.Message;
-                    //    //            repairReport.Errors.Add("fileName: " + fileName + " message: " + ex.Message);
-                    //    //        }
-                    //    //    }
-                    //    //}
-                    //    //else
-                    //    //{
-                    //    //    for (int i = 0; i < missingLinks.Count(); i++)
-                    //    //    {
-                    //    //        try
-                    //    //        {
-
-                    //    //            fileName = subFolderPrefix + "_" + missingLinks[i].LinkId + missingImages[i].Extension;
-                    //    //            missingImages[i].MoveTo(folderPath + "/" + fileName);
-                    //    //            missingLinks[i].LinkId = "xxx";
-                                    
-                    //    //            repairReport.ImagesRenamed++;
-                    //    //        }
-                    //    //        catch (Exception ex)
-                    //    //        {
-                    //    //            var x = ex.Message;
-                    //    //            repairReport.Errors.Add("fileName: " + fileName + " message: " + ex.Message);
-                    //    //        }
-                    //    //    }
-                    //    //}
-                    //}
-
-                    //for (int i = 0; i < missingLinks.Count(); i++)
-                    //{
-                    //    goDaddyLink = linkPrefix + goDaddyPath + "/" + missingImages[i].Name;
-                    //    if(!dbLinks.Select(l=>l.GoDaddyLink).Contains(goDaddyLink))
-                    //    {
-                    //        GoDaddyLink d = new GoDaddyLink()
-                    //        {
-                    //            ExternalLink = missingImages[i].,
-                    //            Link = fileName,
-                    //            Id = newId
-                    //        };
-                    //        db.GoDaddyLinks.Add(d);
-                    //        Category_ImageLink c = new Category_ImageLink()
-                    //        {
-                    //            ImageCategoryId = dbLinks[0].FolderId,
-                    //            ImageLinkId = newId
-                    //        };
-                    //        db.Category_ImageLinks.Add(c);
-                    //        db.SaveChanges();
-
-                    //        file.MoveTo(folderPath + "/" + fileName);
-                    //        repairReport.NewLinksAdded++;
-
-                    //    }
-
-                    //}
-
-
-               // }
-
-                //if (missingLinks.Count() > 0)
-                //{
-                //    if (missingImages.Count() == 0)
-                //    {
-                //        foreach (DownloadLink downloadLink in missingLinks)
-                //        {
-                //            try
-                //            {
-                //                var otherLinks = db.Category_ImageLinks.Where(g => g.ImageLinkId == downloadLink.ExternalLink).ToList();
-                //                if (otherLinks.Count() == 0)
-                //                {
-                //                    //GoDaddyLink badLink = db.GoDaddyLinks.Where(g => g.Id == downloadLink.LinkId).FirstOrDefault();
-                //                    //if (badLink != null)
-                //                    //{
-                //                    //    db.GoDaddyLinks.Remove(badLink);
-                //                    //    db.SaveChanges();
-                //                    //}
-                //                    repairReport.LinksRemoved++;
-                //                }
-                //            }
-                //            catch (Exception ex)
-                //            {
-                //                var x = ex.Message;
-                //                repairReport.Errors.Add("LinkId: " + downloadLink.LinkId + " message: " + ex.Message);
-                //            }
-                //        }
-                //    }
-                //}
-
-
             }
+
             var subFolderIds = db.ImageCategories.Where(f => f.Parent == parentId).Select(f => f.Id).ToArray();
             foreach (var subFolderId in subFolderIds)
             {

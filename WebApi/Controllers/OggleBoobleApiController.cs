@@ -207,10 +207,6 @@ namespace WebApi.OggleBooble
         [HttpPost]
         public string AddImageLink(ImageLinkModel newLink)
         {
-            //newLink.Link = $('#txtNewLink').val();
-            //newLink.Id = $('#txtHiddenLinkPathId').val();
-            //newLink.Path = $('.txtLinkPath').val();
-
             string success = "";
             try
             {
@@ -224,36 +220,31 @@ namespace WebApi.OggleBooble
                     {
                         ImageCategory dbCategory = db.ImageCategories.Where(f => f.Id == newLink.FolderId).First();
                         string thisWillNeverWork = "G:PleskVhosts//curtisrhodes.com/" + dbCategory.RootFolder + ".ogglebooble.com/";
+                        string danniPath = "F:/Danni/"; // + dbCategory.RootFolder + "/";
                         string extension = newLink.Link.Substring(newLink.Link.Length - 4);
                         string newFileName = dbCategory.FolderName + "_" + imageLinkId + extension;
+                        var trimPath = newLink.Path.Substring(newLink.Path.IndexOf("/") + 1);
 
-                        try
-                        {
-                            // todo  write the image as a file to x.ogglebooble
-                            System.IO.DirectoryInfo dirInfoxx = new System.IO.DirectoryInfo(thisWillNeverWork);
-                            var yyy = dirInfoxx.Exists;
-                            System.IO.DirectoryInfo dirInfo = new System.IO.DirectoryInfo(thisWillNeverWork + newLink.Path);
-                            if (!dirInfo.Exists)
-                            {
-                                dirInfo.Create();
-                            }
-                            using (WebClient wc = new WebClient())
-                            {
-                                wc.DownloadFileAsync(new System.Uri(newLink.Link), thisWillNeverWork + newLink.Path + "/" + newFileName);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            var xx = ex.Message;
-                        }
+                        // todo  write the image as a file to x.ogglebooble
+                        System.IO.DirectoryInfo dirInfo = new System.IO.DirectoryInfo(danniPath + newLink.Path);
+                        if (!dirInfo.Exists)
+                            dirInfo.Create();
+                        dirInfo = new System.IO.DirectoryInfo(thisWillNeverWork + trimPath);
+                        if (!dirInfo.Exists)
+                            dirInfo.Create();
 
+                        using (WebClient wc = new WebClient())
+                        {
+                            wc.DownloadFile(new Uri(newLink.Link), thisWillNeverWork + trimPath + "/" + newFileName);
+                            wc.DownloadFile(new Uri(newLink.Link), danniPath + newLink.Path + "/" + newFileName);
+                        }
 
                         var goDaddyLink = "http://" + dbCategory.RootFolder + ".ogglebooble.com/";
                         db.GoDaddyLinks.Add(new GoDaddyLink()
                         {
                             Id = imageLinkId,
                             ExternalLink = newLink.Link,
-                            Link = goDaddyLink + newLink.Path + "/" + newFileName
+                            Link = goDaddyLink + trimPath + "/" + newFileName
                         });
                         db.SaveChanges();
                     }
