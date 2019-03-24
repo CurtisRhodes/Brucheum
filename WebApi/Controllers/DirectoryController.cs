@@ -331,11 +331,11 @@ namespace WebApi.Controllers
 
                             }
 
-
+                            var ppLink = "http://" + rootFolder + ".ogglebooble.com/" + goDaddyPath + "/" + fileName;
                             GoDaddyLink d = new GoDaddyLink()
                             {
                                 ExternalLink = fileName,
-                                Link = "http://" + rootFolder + ".ogglebooble.com/" + subFolderPrefix + "/" + fileName,
+                                Link = ppLink,
                                 Id = newId
                             };
                             db.GoDaddyLinks.Add(d);

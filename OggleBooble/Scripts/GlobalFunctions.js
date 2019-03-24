@@ -17,7 +17,6 @@ function getOBCookie(key, defaultValue) {
         return keyValue[2];
 }
 
-
 function displayStatusMessage(msgCode, message) {
 
     var severityClassName;

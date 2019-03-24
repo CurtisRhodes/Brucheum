@@ -24,49 +24,50 @@
 
 </head>
 <body>
-    <div id="oggleBoobleHeader" class="fixedHeader flexContainer classicColors">
-        <div id="divTopLeftLogo" class="bannerImageContainer">
-            <a href="~/Home/Index"><img id="logo" class="bannerImage" src="~/Images/redballon.png" /></a>
-        </div>
-        <div id="largeFixedHeader" class="headerBodyContainer">
-            <div id="headerTopRow">
-                <div id="bannerTitle" class="headerTitle">OggleBooble</div>
-                <div id="headerSubTitle" class="headerSubTitle">
-                    <span class="clickable" onclick="window.location.href='/Home/ImagePage?folder=2'">titties</span> organized by 
-                    <span class="clickable" onclick="window.location.href='/Home/ImagePage?folder=136'">poses</span> ,
-                    <span class="clickable" onclick="window.location.href='/Home/ImagePage?folder=199'">shapes</span> and
-                    <span class="clickable" onclick="window.location.href='/Home/ImagePage?folder=241'">sizes</span>
-                </div>
+    <div id="staticHeader">
+        <div id="oggleBoobleHeader" class="fixedHeader flexContainer classicColors">
+            <div id="divTopLeftLogo" class="bannerImageContainer">
+                <a href="~/Home/Index"><img id="logo" class="bannerImage" src="Images/redballon.png" /></a>
             </div>
-            <div id="headerBottomRow" class="flexContainer">
-                <div id="headerMessage" class="headerMessageArea"></div>
-                <div id="menuContainer" class="menuTabContainer">
-                    <div id="replaceableMenuItems"></div>
-                    @if (Request.IsAuthenticated)
-                    {
-                        <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
-                        <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
-                    }
-                    else
-                    {
-                        <div id="btnLayoutRegister" class="menuTab">
-                            <a href="javascript:registerPlease()">Register</a>
-                            <img id="btnHeaderRegisterSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
-                        </div>
-                        <div id="btnLayoutLogin" class="menuTab">
-                            <a href="javascript:loginPlease()">Log In</a>
-                            <img id="btnHeaderLoginSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
-                        </div>
-                    }
-                    @if (User.IsInRole("Porn Editor"))
-                    {
-                        <div class="menuTab floatRight"><a href="~/Admin">Admin</a></div>
-                    }
+            <div id="largeFixedHeader" class="headerBodyContainer">
+                <div id="headerTopRow">
+                    <div id="bannerTitle" class="headerTitle">OggleBooble</div>
+                    <div id="headerSubTitle" class="headerSubTitle">
+                        <span class="clickable" onclick="window.location.href='/Home/ImagePage?folder=2'">titties</span> organized by
+                        <span class="clickable" onclick="window.location.href='/Home/ImagePage?folder=136'">poses</span> ,
+                        <span class="clickable" onclick="window.location.href='/Home/ImagePage?folder=199'">shapes</span> and
+                        <span class="clickable" onclick="window.location.href='/Home/ImagePage?folder=241'">sizes</span>
+                    </div>
+                </div>
+                <div id="headerBottomRow" class="flexContainer">
+                    <div id="headerMessage" class="headerMessageArea"></div>
+                    <div id="menuContainer" class="menuTabContainer">
+                        <div id="replaceableMenuItems"></div>
+                        @if (Request.IsAuthenticated)
+                        {
+                            <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
+                            <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
+                        }
+                        else
+                        {
+                            <div id="btnLayoutRegister" class="menuTab">
+                                <a href="javascript:registerPlease()">Register</a>
+                                <img id="btnHeaderRegisterSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
+                            </div>
+                            <div id="btnLayoutLogin" class="menuTab">
+                                <a href="javascript:loginPlease()">Log In</a>
+                                <img id="btnHeaderLoginSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
+                            </div>
+                        }
+                        @if (User.IsInRole("Porn Editor"))
+                        {
+                            <div class="menuTab floatRight"><a href="~/Admin">Admin</a></div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
     <div class="renderBody">
         @RenderBody()
     </div>
@@ -80,11 +81,7 @@
     <script>
         $(document).ready(function () {
             toggleTittyMenu(getOBCookie("ShapeOrPosesMenu", "shapes"));
-
-            //$('.renderBody').css("margin-top", ($('#oggleBoobleHeader').height() - $('.renderBody').offset().top) + 15);
-            $('.renderBody').css("margin-top", $('#oggleBoobleHeader').height() + 20);
-
-
+            $('body').css("margin-top", $('#oggleBoobleHeader').height() + 20);
         });
         function toggleTittyMenu(sepectedTittyMenu) {
             //alert("tittyMenu: " + sepectedTittyMenu);
