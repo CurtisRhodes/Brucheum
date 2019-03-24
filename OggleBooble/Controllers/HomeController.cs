@@ -6,6 +6,7 @@ using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
+using System.Text;
 using System.Web.Mvc;
 
 namespace OggleBooble
@@ -36,7 +37,7 @@ namespace OggleBooble
 
         public ActionResult Viewer(string folder, string startFile)
         {
-            ViewBag.Title = "Slideshow"; 
+            ViewBag.Title = "Slideshow";
             ViewBag.Service = apiService;
             ViewBag.Folder = folder;
             ViewBag.StartFile = startFile;
@@ -69,7 +70,52 @@ namespace OggleBooble
             return View();
         }
 
+        [HttpPost]
+        public JsonResult CreateImagePageStaticFile(staticPageModel staticPage)
+        {
+            string success = "";
+            try
+            {
+                var articleTagString = "naked women";
+                //$('head').append('<meta property="og:description" content="' + beautify(summary.substr(0, 300)) + '" />');
+                //$('head').append("<meta property='og:image' content='https://api.curtisrhodes.com/app_data/images/" + articleImageName + "'/>");
 
+                var head = "<head><script src='https://code.jquery.com/jquery-latest.min.js' type = 'text/javascript'></script>" +
+                    "<script src = '../Scripts/GlobalFunctions.js'></script>" +
+                    "<script src = '../Scripts/ResizeThreeColumnPage.js'></script>" +
+                    "<link href = '../Styles/Default.css' rel= 'stylesheet' />" +
+                    "<link href = '../Styles/fixedHeader.css' rel= 'stylesheet' />" +
+                    "<link href = '../Styles/footer.css' rel= 'stylesheet' />" +
+                    "<link href = '../Styles/ImagePage.css' rel= 'stylesheet' />" +
+                    "<meta name = 'Title' content = " + staticPage.Filename + " property= 'og:title' />" +
+                    "<meta property = 'og:type' content = 'website' />" +
+                    "<meta property = 'og:url' content = 'https://OggleBooble.com/static_pages/" + staticPage.Filename + "' />" +
+                    "<meta name = 'Keywords' content = '" + articleTagString + "' />" +
+                    "</head>";
+
+                 string staticContent =
+                    "<!DOCTYPE html><html>" + head + "<body style='margin-top:105px'>" + staticPage.Html
+                     + "<script src='../Scripts/ImagePage.js'></script>"
+                     + "<script>$('.thumbImage').click(function() { showViewer($(this).attr('id'));});"
+                     + " var imageArray=" + staticPage.ImageArray + "</script></body></html>";
+
+                string filePath = Server.MapPath("~/Static_Pages");
+                using (var staticFile = System.IO.File.Open(filePath + "/" + staticPage.Filename, FileMode.Create))
+                {
+                    Byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(staticContent);
+                    staticFile.Write(byteArray, 0, byteArray.Length);
+                }
+                success = "ok";
+            }
+            catch (Exception e) { success = Helpers.ErrorDetails(e); }
+            return Json(success, JsonRequestBehavior.AllowGet);
+        }
+    }
+    public class staticPageModel
+    {
+        public string Html { get; set; }
+        public string Filename { get; set; }
+        public string ImageArray { get; set; }
     }
 
     public class ErrorController : Controller
