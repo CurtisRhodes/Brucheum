@@ -1,6 +1,13 @@
 ﻿.imageFrame {
-    margin: 2px;
+    margin: 4.5px;
     border: solid .05px #676b8a;
+}
+.nonLocalImageFrame {
+    margin: 2px;
+    border: dashed 3px #08fb08;
+}
+.nonLocalIndicator {
+    border-right: dotted 24px #ff00dc;
 }
 
 
@@ -25,7 +32,9 @@
     /*
             border: dashed thin black;
             margin-bottom: -3px;
-            width: 100%;*/
+            width: 100%;
+
+    */
 }
 
 .loadingGif {

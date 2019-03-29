@@ -165,10 +165,6 @@
 
                     if (!model.FolderName.startsWith("ERROR")) {
                         folderModel.Id = model.Id;
-                        //folderModel.Parent = model.Parent;
-                        //folderModel.FolderName = model.FolderName;
-                        //folderModel.FolderPath = model.FolderPath;
-                        //folderModel.FileCount = model.FileCount;
                         folderModel.CatergoryDescription = model.CatergoryDescription;
 
                         $('#catDlgFolderName').html(model.FolderName)
@@ -202,7 +198,6 @@
             alert("showCategoryDialog catch: " + e);
         }            
     }
-
     function editCatDialog() {
         if ($('#catDlgEdit').html() == "Edit") {
             $('#catDlgEdit').html("Save");
@@ -230,7 +225,6 @@
             })
         }
     }
-
     function closeCatDialog() {
         if ($('#catDlgEdit').html() == "Edit") {
             $('#categoryDialog').fadeOut();
@@ -244,8 +238,6 @@
     }
 
     function clickViewParentGallery() {
-        //alert("href:" + carouselItemArray[imageIndex].FolderPath.substring(carouselItemArray[imageIndex].FolderPath.indexOf("/"), carouselItemArray[imageIndex].FolderPath.lastIndexOf("/")));
-        //window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderPath.substring(0, carouselItemArray[imageIndex].FolderPath.lastIndexOf("/"));
         window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].ParentId;
     }
 
@@ -274,56 +266,88 @@
     }
 
     function launchCarousel(root) {
-        $('#laCarousel').show();
-
-        if (root == "boobs") {
-            loadImages(root, false);
-            loadImages("centerfolds", false);
-            loadImages("galleries", true);
-        }
-        else {
-            loadImages(root, true);
-        }
-        //boobs	119
-        //galleries	340
-        //porn	273
-        //centerfolds	68
+        loadImages(root, true);
     }
 
-    function loadImages(root, done) {
-        var start = Date.now();
-        $.ajax({
-            type: "GET",
-            url: service + "/api/Carousel/GetLinks?root=" + root + "&headstart=50000",
-            success: function (carouselInfo) {
-                if (carouselInfo.Success == "ok") {
-                    $.each(carouselInfo.Links, function (idx, obj) {
-                        carouselItemArray.push({
-                            Id: obj.FolderId,
-                            ParentId: obj.ParentId,
-                            FolderName: obj.FolderName,
-                            Link: obj.Link,
-                            FolderPath: obj.FolderPath
-                        });
-                    });
-                    numImages += carouselInfo.Links.length;
-                    numFolders += carouselInfo.FolderCount;
-                    imageIndex = Math.floor(Math.random() * numImages);
-                    showImage();
-                    if (done) {
-                        rotate();
-                    }
+    function loadImages(rootFolder, isChecked) {
 
-                    var delta = (Date.now() - start) / 1000;
-                    console.log("loadImages(" + root + ") took: " + delta.toFixed(3));
+        var start = Date.now();
+        var k = 0;
+        var spliced = 0;
+        if (isChecked === false) {
+            var removedFolders = new Array();
+            var newArray = new Array();
+            for (idx = 0; idx < carouselItemArray.length; idx++) {
+                k++;
+                try {
+                    if (carouselItemArray[idx].RootFolder == rootFolder) {
+                        if (idx < carouselItemArray.length) {
+                            if (removedFolders.find(function () { return carouselItemArray[idx].FolderName }) === undefined) {
+                                alert("not found " + carouselItemArray[idx].FolderName)
+                                removedFolders.push(carouselItemArray[idx].FolderName)
+                            }
+                        }
+                        else {
+                            alert("idx: " + idx + " carouselItemArray.length: " + carouselItemArray.length);
+                        }
+                        //if (idx < carouselItemArray.length) {
+                        //    carouselItemArray.splice(idx, 1);
+                        //    spliced++;
+                        //}
+                        //else {
+                        //    alert("SPLICE idx: " + idx + " carouselItemArray.length: " + carouselItemArray.length);
+                        //}
+                    }
+                    else
+                        newArray.push(carouselItemArray[idx]);                    
+                } catch (e) {
+                    alert("idx: " + idx + " error: " + e);
                 }
-                else
-                    alert("loadImages: " + carouselInfo.Success);
-            },
-            error: function (jqXHR, exception) {
-                alert("loadImages jqXHR : " + getXHRErrorDetails(jqXHR, exception));
             }
-        });
+            carouselItemArray = newArray;
+
+            numImages = carouselItemArray.length;
+            numFolders = numFolders - removedFolders.length;
+            var delta = (Date.now() - start) / 1000;
+            console.log("Removing links from (" + rootFolder + ") took: " + delta.toFixed(3));
+            alert("loops: " + k + " spliced: " + spliced + " carouselItemArray.length: " + carouselItemArray.length + " numFolders: " + numFolders + " numImages: " + numImages);
+        }
+        else {
+            $('#laCarousel').show();
+            $.ajax({
+                type: "GET",
+                url: service + "/api/Carousel/GetLinks?root=" + rootFolder + "&headstart=50000",
+                success: function (carouselInfo) {
+                    if (carouselInfo.Success == "ok") {
+                        $.each(carouselInfo.Links, function (idx, obj) {
+                            carouselItemArray.push({
+                                Id: obj.FolderId,
+                                RootFolder: obj.RootFolder,
+                                ParentId: obj.ParentId,
+                                FolderName: obj.FolderName,
+                                Link: obj.Link,
+                                FolderPath: obj.FolderPath
+                            });
+                        });
+                        if (numImages == 0) {
+                            showImage();
+                            rotate();
+                        }
+                        numImages += carouselInfo.Links.length;
+                        numFolders += carouselInfo.FolderCount;
+                        imageIndex = Math.floor(Math.random() * numImages);
+
+                        var delta = (Date.now() - start) / 1000;
+                        console.log("loadImages(" + rootFolder + ") took: " + delta.toFixed(3));
+                    }
+                    else
+                        alert("loadImages: " + carouselInfo.Success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("loadImages jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
     }
 
     function showImage() {
@@ -331,21 +355,22 @@
         setTimeout(function () {
             $('#carouselImage').attr('src', carouselItemArray[imageIndex].Link).fadeIn(1500);
             $('#carouselImage').on('load', onImageLoaded());
+            //$('#carouselImage').error(onImageNotLoaded());
         }, 500);
         $('#footerMessage').html("in " + numFolders + " galleries  " + (imageIndex + 1).toLocaleString() + " of " + numImages.toLocaleString() + " images");
     }
 
     function onImageLoaded() {
         if ($('#carouselImage').attr('src') == carouselItemArray[imageIndex].Link) {
-
-            //$('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath.substring(carouselItemArray[imageIndex].FolderPath.indexOf("/"), carouselItemArray[imageIndex].FolderPath.lastIndexOf("/")).replace(/\//g, "  "));
             $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath);
-
             $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName);
             resizePage();
         }
         else
             alert("not loaded");
+    }
+    function onImageNotLoaded() {
+        alert("bk image " + carouselItemArray[imageIndex].Link+" not found")
     }
 
     function rotate() {

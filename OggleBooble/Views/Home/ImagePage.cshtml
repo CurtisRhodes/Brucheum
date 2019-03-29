@@ -58,9 +58,10 @@
 </div>
 
 <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
-    <div>Copy</div>
-    <div>Move</div>
-    <div>Remove</div>
+    <div>Copy Link</div>
+    <div>Move Link</div>
+    <div>Move Image</div>
+    <div>Remove Link</div>
     <div>Comment</div>
     <div>About</div>
 </div>
@@ -79,29 +80,9 @@
             <img id="pusedoDropdown" class="dropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeResults').hide();$('#dirTreeDropDown').show()" />
             <div id="btnCopyLink" class="roundendButton" onclick="copyLink(false)">Copy</div>
             <div id="btnMoveLink" class="roundendButton" onclick="copyLink(true)">Move</div>
+            <div id="btnMoveImage" class="roundendButton" onclick="moveImage()">Move</div>
         </div>
     </div>
-</div>
-
-
-<style>
-    .folatingBox {
-        position: absolute;
-        border: solid thin orange;
-        top: 400px;
-        left: 85%;
-        min-height: 50px;
-        min-width: 200px;
-        background-color: #e7dbe9;
-        padding: 5px;
-        display: none;
-    }
-</style>
-<div id="debugMessageArea" class="folatingBox">
-    <div id="msg1"></div>
-    <div id="msg2"></div>
-    <div id="msg3"></div>
-    <div id="msg4"></div>
 </div>
 
 <script>
@@ -112,8 +93,8 @@
             window.location.href = "/";
         }
         // set width
-        //$('#imageContainer').width($('#middleColumn').width());
-        //$('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
+        $('#imageContainer').width($('#middleColumn').width());
+        $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
         getBreadCrumbs();
         getImageLinks();
     });
