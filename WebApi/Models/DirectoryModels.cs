@@ -11,7 +11,7 @@ namespace WebApi.Directory.Models
         public string FileName { get; set; }
         public DateTime Created { get; set; }
         public long Length { get; set; }
-        public string FullName { get; set; }
+        //public string FullName { get; set; }
         public string Extension { get; set; }
     }
 
@@ -66,6 +66,12 @@ namespace WebApi.Directory.Models
         public int FolderToMoveId { get; set; }
         public int NewParentId { get; set; }
     }
+    public class MoveImageModel
+    {
+        public int SourceFolderId { get; set; }
+        public int DestinationFolderId { get; set; }
+        public string ImageName { get; set; }
+    }
 
     public class VideoLinkModel
     {
@@ -101,6 +107,7 @@ namespace WebApi.Directory.Models
         public int ParentId { get; set; }
         public string FolderName { get; set; }
         public string FolderPath { get; set; }
+        public string RootFolder { get; set; }
         public string Link { get; set; }
     }
 

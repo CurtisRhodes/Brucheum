@@ -17,8 +17,8 @@ $(window).resize(function () {
 
 function getBreadCrumbs() {
     $.ajax({
-        type: "PATCH",
-        url: service + "api/ImageLink/GetParentPath?folderId=" + folderId,
+        type: "GET",
+        url: service + "api/DashBoard/GetBreadCrumbs?folderId=" + folderId,
         success: function (parents) {
             $('#headerMessage').html("");
             for (i = parents.length - 1; i >= 0; i--) {
@@ -30,7 +30,7 @@ function getBreadCrumbs() {
         },
         error: function (jqXHR, exception) {
             $('#getImagesLoadingGif').hide();
-            alert("getImageLinks jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+            alert("getBreadCrumbs jqXHR : " + getXHRErrorDetails(jqXHR, exception));
         }
     });
 }
@@ -60,13 +60,23 @@ function getImageLinks() {
                     imageArray = new Array();
                     $('#slideShowLink').show();
                     var fileCount = 0;
+                    var nonLocal = false;
+                    var pageName = $('#expandoBannerText').html();
                     $.each(folderModel.Files, function (idx, obj) {
-                        $('#imageContainer').append("<div class='imageFrame'><img id=" + obj.ImageId +
-                            " idx=" + fileCount + " class='thumbImage' src='" + obj.FileName + "'/></div>");
+                        if (obj.FileName.indexOf(pageName) > 0) {
+                            nonLocal = false;
+                            $('#imageContainer').append("<div class='imageFrame'><img id=" + obj.ImageId +
+                                " idx=" + fileCount + " class='thumbImage' src='" + obj.FileName + "'/></div>");
+                        }
+                        else {
+                            nonLocal = true;
+                            $('#imageContainer').append("<div class='nonLocalImageFrame'><img id=" + obj.ImageId +
+                                " idx=" + fileCount + " class='thumbImage' src='" + obj.FileName + "'/></div>");
+                        }
                         fileCount++;
 
                         imageArray.push({
-                            //Index: fileCount,
+                            NonLocal: nonLocal,
                             Link: obj.FileName.replace(/ /g, "%20"),
                             ImageId: obj.ImageId
                         });
@@ -86,7 +96,7 @@ function getImageLinks() {
                     fileCount += folderModel.SubDirs.length;
                     $('#fileCount').html(fileCount);
                     $('#getImagesLoadingGif').hide();
-                    if (ipAddress != "68.203.92.166") {
+                    if (ipAddress !== "68.203.92.166") {
                         var emailSubject = currentUser + " just viewed " + folderId;
                         sendEmailFromJS(emailSubject, "someday it will be someone other than " + ipAddress);
                     }
@@ -125,7 +135,7 @@ function showContextMenu(imageId) {
 }
 
 function slide(direction) {
-    if (direction == 'next') {
+    if (direction === 'next') {
         imageArrayIndex++;
         if (imageArrayIndex >= imageArray.length)
             imageArrayIndex = 0;
@@ -136,11 +146,19 @@ function slide(direction) {
             $('#viewerImage').css("transform", "translateX(-2200px)");
             $('#viewerImage').show();
             $('#viewerImage').attr("src", imageArray[imageArrayIndex].Link);
+            if (imageArray[imageArrayIndex].NonLocal) {
+                $('#viewerImage').addClass("nonLocalIndicator");
+                //$('#viewerImage').width($('#viewerImage').width() - 5);
+            }
+            else {
+                $('#viewerImage').removeClass("nonLocalIndicator");
+                //$('#viewerImage').width($('#viewerImage').width() + 5);
+            }
             $('#viewerImage').css("transform", "translateX(0)");
         }, 450);
 
     }
-    if (direction == 'prev') {
+    if (direction === 'prev') {
         imageArrayIndex--;
         if (imageArrayIndex < 0) {
             imageArrayIndex = imageArray.length - 1;
@@ -238,32 +256,50 @@ function explodeViewer() {
 }
 
 $('.ogContextMenu div').click(function () {
+
+    //<div>Copy Link</div>
+    //<div>Move Link</div>
+    //<div>Remove Link</div>
+    //<div>Move Image</div>
+    //<div>Comment</div>
+    //<div>About</div>
+
     var action = $(this).html();
     switch (action) {
-        case "Copy":
+        case "Copy Link":
+            $('#btnMoveImage').hide();
             $('#btnCopyLink').show();
             $('#btnMoveLink').hide();
             $('#dialogBannerText').html("Copy Image Link");
             $('#copyDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
             $('#moveCopyDialog').show();
             break;
-        case "Move":
+        case "Move Link":
+            $('#btnMoveImage').hide();
             $('#btnCopyLink').hide();
             $('#btnMoveLink').show();
             $('#dialogBannerText').html("Move Image Link");
             $('#copyDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
             $('#moveCopyDialog').show();
             break;
-        case "Remove":
+        case "Remove Link":
             if (confirm("remove this link")) {
                 removeLink();
             }
+            break;
+        case "Move Image":
+            $('#btnCopyLink').hide();
+            $('#btnMoveLink').hide();            
+            $('#btnMoveImage').show();
+            $('#dialogBannerText').html("Move Image File");
+            $('#copyDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
+            $('#moveCopyDialog').show();
             break;
         case "Comment":
             addComment();
             break;
         case "About":
-            aboutThisImage()
+            aboutThisImage();
             break;
         default:
             $('#msg1').html(action);
@@ -276,10 +312,10 @@ function removeLink() {
     badLink.FolderId = folderId;
     $.ajax({
         type: "DELETE",
-        url: service + "/api/ImageLinkCategory",
+        url: service + "/api/ImagePage",
         data: badLink,
         success: function (success) {
-            if (success == "ok") {
+            if (success === "ok") {
                 if (viewerShowing)
                     slide("next");
                 getImageLinks();
@@ -294,21 +330,48 @@ function removeLink() {
     });
 }
 
-var newLink = {};
-function copyLink(andRemove) {
-    newLink.ImageId = currentContextImageId;
-    newLink.Link = $('#' + currentContextImageId + '').attr("src");
-    //alert("dirTreeDropDown: " + newLink.CopyToFolderId);
+function moveImage() {
+    var moveImageModel = new Object();
+    moveImageModel.SourceFolderId = folderId;
+    moveImageModel.DestinationFolderId = newLink.CopyToFolderId;
+    moveImageModel.ImageName = imageArray[imageArrayIndex].Link;
 
-    newLink.FolderId = $('#dirTreeDropDownn').val();
     $.ajax({
         type: "PUT",
-        url: service + "/api/ImageLinkCategory",
+        url: service + "/api/DirectoryIO/MoveImage",
+        data: moveImageModel,
+        success: function (success) {
+            if (success === "ok") {
+                displayStatusMessage("ok", "image moved to " + $('#dirTreeDropDown option:selected').text());
+                $('#moveCopyDialog').hide();
+                if (viewerShowing)
+                    slide("next");
+            }
+            else
+                alert(success);
+        },
+        error: function (xhr) {
+            alert("moveImage xhr error: " + xhr.statusText);
+        }
+    });
+}
+
+var newLink = {};
+function copyLink(andRemove) {
+
+    newLink.ImageId = currentContextImageId;
+    newLink.Link = $('#' + currentContextImageId + '').attr("src");
+    newLink.FolderId = $('#dirTreeDropDownn').val();
+
+    $.ajax({
+        type: "PUT",
+        url: service + "/api/ImagePage",
         data: newLink,
         success: function (success) {
-            if (success == "ok") {
-                $('#moveCopyDialog').hide()
-                displayStatusMessage("ok", "link added to " + $('#dirTreeDropDown option:selected').text())
+            if (success === "ok") {
+                $('#moveCopyDialog').hide();
+                //alert("copy destination folder: " + $('#dirTreeDropDown option:selected').text());
+                displayStatusMessage("ok", "link added to " + $('#dirTreeResults').html());
                 if (andRemove) {
 
                     var badLink = {};
@@ -316,10 +379,10 @@ function copyLink(andRemove) {
                     badLink.FolderId = folderId;
                     $.ajax({
                         type: "DELETE",
-                        url: service + "/api/ImageLinkCategory",
+                        url: service + "/api/ImagePage",
                         data: badLink,
                         success: function (success) {
-                            if (success == "ok") {
+                            if (success === "ok") {
                                 getImageLinks();
                                 if (viewerShowing)
                                     slide("next");
@@ -346,27 +409,13 @@ function copyLink(andRemove) {
 }
 
 function blowupImage() {
-
-    //var thisLink = document.getElementById(imageArray[imageArrayIndex].ImageId)
-
-    //imageArray[imageArrayIndex].Link;  //$('#viewerImage').attr("src");
-
-    //var test1 = thisLink.scrollHeight;
-    //var test2 = thisLink.scrollWidth;
-    //alert("couold be h: " + test1 + " w: " + test2);
-
-    //$('#megaImage').attr("src", imageArray[imageArrayIndex].Link);
-    //$('#megaView').show();
-    // alert("hello")
-    //event.cancelBubble();
-    //$('#customViewer').hide(); viewerShowing = false
-    //return false;
+    //alert("blowupImage: " + imageArray[imageArrayIndex].Link);
     window.open(imageArray[imageArrayIndex].Link, "_blank");
 }
 
 function treeToggle(id) {
     //alert($('#' + id + '').css("display"));
-    if ($('#' + id + '').css("display") == "none") {
+    if ($('#' + id + '').css("display") === "none") {
         $('#S' + id + '').html("[-] ");
     }
     else
@@ -410,8 +459,8 @@ $(document).keydown(function (event) {
 function runSlideShow(action) {
     //alert("slideShow action: " + action)
 
-    if (action == 'start') {
-        if ($('#showSlideshow').attr("Title") == "start slideshow") {
+    if (action === 'start') {
+        if ($('#showSlideshow').attr("Title") === "start slideshow") {
             $('#showSlideshow').attr("Title", "stop slideshow");
         }
         else {
@@ -422,13 +471,13 @@ function runSlideShow(action) {
             return;
         }
     }
-    if (slideShowSpeed == 0) {
+    if (slideShowSpeed === 0) {
         slideShowSpeed = 5000;
     }
-    if (action == "faster") {
+    if (action === "faster") {
         slideShowSpeed -= 1000;
     }
-    if (action == "slower") {
+    if (action === "slower") {
         slideShowSpeed += 1000;
     }
     if (slideShowSpeed <= 0) {
