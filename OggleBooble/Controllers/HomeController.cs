@@ -27,7 +27,6 @@ namespace OggleBooble
                 return RedirectToAction("Index");
 
             ViewBag.Title = folder.Substring(folder.LastIndexOf("/") + 1);
-
             ViewBag.IsPornEditor = User.IsInRole("Porn Editor");
             ViewBag.Service = apiService;
             ViewBag.IpAddress = Helpers.GetIPAddress();

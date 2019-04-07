@@ -90,42 +90,26 @@ namespace WebApi
             //hubContext.Clients.All.AddProgress(progressMessage, percentage + "%");
 
         }
-    }
 
-
-    [EnableCors("*", "*", "*")]
-    public class DirectoryController : System.Web.Http.ApiController
-    {
-        [HttpGet]
-        public ImageCategoryModel DownloadRejects(int id)
+        public static string GetParentPath(int folderId, bool withoutRoot)
         {
-            var model = new ImageCategoryModel();
-            try
+            string parentPath = "";
+            using (OggleBoobleContext db = new OggleBoobleContext())
             {
-
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                //var thisFolder = db.ImageFolders.Where(f => f.Id == folderId).First();
+                //parentPath = thisFolder.FolderName;
+                int parentId = db.CategoryFolders.Where(f => f.Id == folderId).Select(f => f.Parent).First();
+                while (parentId > 1)
                 {
-                   List<GoDaddyLink> orphans = db.GoDaddyLinks.Where(g => g.Id == g.Link).ToList();
-                    //foreach(GoDaddyLink orphan in orphans)
-
-                    //fileName = dbLink.FolderName + "_" + dbLink.LinkId + extension;
-                    
-                    //var dbImageCategories = db.ImageCategories.Where(f => f.Id == id).First();
-                    //model.Id = dbImageCategories.Id;
-                    //model.Parent = dbImageCategories.Parent;
-                    //model.FolderName = dbImageCategories.FolderName;
-                    //model.RootFolder = dbImageCategories.RootFolder;
+                    var parentDb = db.CategoryFolders.Where(f => f.Id == parentId).First();
+                    parentPath = parentDb.FolderName + "/" + parentPath;
+                    parentId = parentDb.Parent;
                 }
             }
-            catch (Exception ex)
-            {
-                model.FolderName = Helpers.ErrorDetails(ex);
-            }
-            return model;
+            if (withoutRoot)
+                return parentPath.Substring(parentPath.IndexOf("/") + 1);
+            else
+                return parentPath;
         }
-
-
     }
-
-
 }

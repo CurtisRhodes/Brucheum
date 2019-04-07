@@ -1,13 +1,15 @@
 ﻿<link href="~/Styles/ImagePage.css" rel="stylesheet" />
 
-
 <div id="staticableContent">
     <div class="threeColumnArray">
         <div id="leftColumn"></div>
         <div id="middleColumn">
             <div id="divBreadCrumbs"></div>
             <div id="divStatusMessage"></div>
-            <div id="xx" class="adminRow">  <div class="floatRight clickable" onclick="staticify()">staticify</div>  </div>
+            <div id="xx" class="adminRow">
+                <div class="floatRight clickable" onclick="staticify()">staticify</div>
+                <div class="floatRight clickable" onclick="showAllChildren()" style="margin-right:10px; margin-bottom:3px;">combine</div>
+            </div>
             <img id="getImagesLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
             <div id="imageContainer" class="flexWrapContainer"></div>
             <div id="fileCount" class="countContainer"></div>
@@ -45,6 +47,7 @@
         var currentUser = '@User.Identity.Name';
         var ipAddress = '@ViewBag.IpAddress';
         var page = 0;
+        var rootFolder = "";
         var mySubDirs = new Array();
         var thumbImageHeight = 200;
         var currentContextImageId;
@@ -59,7 +62,6 @@
 
 <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
     <div>Copy Link</div>
-    <div>Move Link</div>
     <div>Move Image</div>
     <div>Remove Link</div>
     <div>Comment</div>
@@ -74,7 +76,7 @@
             <div id="dirTreeContainer" class="copyTree">
                 <div id="dirTreeResults" class="pusedoTextBox"></div>
                 <div id="dirTreeDropDown" class="hideableDropDown">
-                    @Html.Partial("_DirTree");
+                    @Html.Partial("_DirTree1");
                 </div>
             </div>
             <img id="pusedoDropdown" class="dropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeResults').hide();$('#dirTreeDropDown').show()" />
@@ -85,8 +87,74 @@
     </div>
 </div>
 
-<script>
+<style>
+    .commentDialog {
+        position: absolute;
+        top: 125px;
+        left: 300px;
+        border: solid 2px var(--borderColor);
+        box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
+        display: none;
+        z-index: 200;
+    }
 
+    .imagePageDialog {
+        background-color: #cabcbc;
+        font-size: 18px;
+    }
+    .metaTagListArea {
+        height: 222px;
+        width: 711px;
+        border: solid thin #372f2f;
+    }
+
+    .metaTagItem {
+        display: inline-block;
+        color: #fff;
+        background-color: #4d86eb;
+        margin: 3px;
+        border-radius: 3px;
+        padding: 2px;
+    }
+    commentDialogImage {
+        height: 99px;
+        max-width: 66%;
+    }
+    .tagInput {
+        width: 450px;
+    }
+    #txtCommentTitle {
+        width: 100%;
+    }
+</style>
+
+<div id="metaTagDialog" class="floatingCrudDialog imagePageDialog">
+    <div class="floatingCrudBanner"><span id="metaTagFolderName"></span><div onclick="$('#metaTagDialog').fadeOut()" class="farSide">x</div> </div>
+    <label>Type</label>
+    <select id="selMetaType" class="roundedInput">
+        <option value="KEY">KeyWord</option>
+        <option value="TIT">Title</option>
+        <option value="DES">Description</option>
+    </select>
+    <label>Tag</label>
+    <input id="txtMetaTag" class="roundedInput tagInput" onblur="addMetaTag()" />
+    <div class="metaTagItem clickable" onclick="addMetaTag()">...</div>
+    <div id="metaTagList" class="metaTagListArea"></div>
+</div>
+
+<div id="commentDialog" class="commentDialog">
+    <div class="floatingCrudBanner"><span id="commentDialogBanner">Write a fantasy about this image</span><div onclick="$('#commentDialog').fadeOut()" class="farSide">x</div> </div>
+    <div id="commentDialogContainer" class="commentDialogContainer">
+        <div><img id="commentDialogImage" class="commentDialogImage" /></div>
+        <div></div>
+        <div><input id="txtCommentTitle" class="roundedInput" placeholder="Give your comment a title" /></div>
+        <div id="imageCommentEditor">
+        </div>
+        <div class="roundendButton clickable" onclick="saveComment()">save</div>
+    </div>
+</div>
+
+<script>
     var imageArray = new Array();
     $(document).ready(function () {
         if (folderId == "") {
@@ -101,7 +169,7 @@
 
     function staticify() {
         var customHtml = $('#staticHeader').html();
-        customHtml += $('#staticableContent').html();        
+        customHtml += $('#staticableContent').html();
         customHtml += $('#staticFooter').html();
         var data = new Object();
         data.Filename = $('#expandoBannerText').html() + ".html";
@@ -145,11 +213,155 @@
         });
     };
 
-
-    function showCommentDialog() {
+    var currentMetaTagEditId = "";
+    var metaTagModel = {};
+    function showMetaTagDialog() {
+        // 6:12 AM 3/28/19
+        $('#metaTagFolderName').html($('#expandoBannerText').html())
+        $('#metaTagDialog').fadeIn();
+        getMetaTags();
 
     }
+    function loadMetaTagForEditing(id) {
+        currentMetaTagEditId = id;
+        $.ajax({
+            type: "GET",
+            url: service + "/api/MetaTag/GetOne?tagId=" + id + "&folderId=" + folderId,
+            success: function (model) {
+                if (!model.TagValue.startsWith("ERROR")) {
+                    currentMetaTagEditId = model.TagId;
+                    $('#txtMetaTag').val(model.TagValue);
+                    $('#selMetaType').val(model.TagType);
+                }
+            },
+            error: function (jqXHR, exception) {
+                alert("addMetaTag XHR : " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
 
+    function getMetaTags() {
+        try {
+            $.ajax({
+                type: "GET",
+                url: service + "/api/MetaTag/GetMetaTags?folderId=" + folderId,
+                success: function (metaTagInfo) {
+                    //$('#metaTagFolderName').html(metaTagInfo.FolderName)
+                    if (metaTagInfo.Success == "ok") {
+                        $('#metaTagList').html("");
+                        $.each(metaTagInfo.MetaTags, function (idx, metaTag) {
+                            $('#metaTagList').append("<div id='" + metaTag.TagId + "' class='metaTagItem'  >" + metaTag.TagValue + "</div>");
+                        })
+                        $('.metaTagItem').click(function () {
+                            loadMetaTagForEditing($(this).attr("id"));
+                        })
+                    }
+                    else
+                        alert("metaTagDialog: " + metaTagInfo.Success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("getMetaTags XHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
+        catch (e) {
+            alert("showCategoryDialog catch: " + e);
+        }
+    }
+
+    function addMetaTag() {
+        metaTagModel.FolderId = folderId;
+        metaTagModel.TagType = $('#selMetaType').val();
+        metaTagModel.TagValue = $('#txtMetaTag').val();
+        if (currentMetaTagEditId != "") {
+            metaTagModel.TagId = currentMetaTagEditId;
+            $.ajax({
+                type: "PUT",
+                url: service + "/api/MetaTag",
+                data: metaTagModel,
+                success: function (success) {
+                    if (success == "ok") {
+                        currentMetaTagEditId = "";
+                        metaTagModel.TagId = "";
+                        $('#txtMetaTag').val("");
+                        getMetaTags();
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    alert("edit MetaTag XHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: service + "/api/MetaTag",
+                data: metaTagModel,
+                success: function (success) {
+                    if (success == "ok") {
+                        currentMetaTagEditId = "";
+                        $('#txtMetaTag').val("");
+                        getMetaTags();
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    alert("add MetaTag XHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            })
+        }
+    }
+
+    function showCommentDialog() {
+        if (viewerShowing)
+            $('#commentDialogImage').attr("src", imageArray[imageArrayIndex].Link);
+        else
+            $('#commentDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
+
+        $('#commentDialog').fadeIn();
+
+        //$('#imageCommentEditor').summernote({
+        //    height: 200,
+        //    codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+        //    toolbar: [
+        //        ['codeview'],
+        //        ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
+        //    ]
+        //});
+    }
+    function loadComment() {
+        $('#imageCommentEditor').summernote('code', blogCommentModel.CommentText);
+
+    }
+    function saveComment() {
+        var blogCommentModel = {};
+        blogCommentModel.CommentTitle = $('#txtCommentTitle').val();
+        blogCommentModel.CommentType = "CMT";
+        blogCommentModel.Link = imageArray[imageArrayIndex].Link;
+        if (viewerShowing)
+            blogCommentModel.LinkId = blogCommentModel.Link.substring(blogCommentModel.Link.lastIndexOf("_"), 36);
+        else
+            blogCommentModel.LinkId = currentContextImageId;
+            commentDialogImage
+        blogCommentModel.FolderId = folderId;
+        blogCommentModel.UserId = currentUser + " = " + ipAddress;
+        blogCommentModel.CommentText = $('#imageCommentEditor').summernote('code');
+
+        $.ajax({
+            type: "POST",
+            url: service + "/api/OggleBlog",
+            data: blogCommentModel,
+            success: function (success) {
+                if (success == "ok") {
+                    displayStatusMessage("ok", "Entry Saved");
+                }
+                else
+                    alert("saveComment: " + success);
+            },
+            error: function (jqXHR, exception) {
+                alert("saveComment XHR : " + getXHRErrorDetails(jqXHR, exception));
+            }
+        })
+    }
     function aboutThisImage() {
 
     }

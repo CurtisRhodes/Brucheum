@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Blog";
 }
 
@@ -10,23 +9,28 @@
         height: 700px;
         width: 300px;
     }
+
     .blogCrudContainer {
         display: inline-block;
         border: solid 3px gold;
         margin-left: 122px;
     }
+
     .blogCrudArea {
         display: flex;
     }
+
     .crudLabel {
         min-width: 45px;
         margin-right: 4px;
         margin-left: 7px;
     }
+
     .roundedInput {
         margin-bottom: 7px;
         width: 500px;
     }
+
     .blogEntryTextArea {
         height: 500px;
         width: 800px;
@@ -34,12 +38,14 @@
         font-size: 15px;
         margin: 7px;
     }
+
     .leftImage {
         border: solid .05px #555;
         height: 130px;
         min-width: 120px;
         margin-left: 10px;
     }
+
     .crudListItem {
         border: solid .05px rgba(154, 122, 122, 0.50);
         padding: 5px;
@@ -69,10 +75,11 @@
                             <div class="crudRow"><div class="crudLabel inline">Title</div><input id="txtCommentTitle" class="roundedInput" /></div>
                             <div class="crudRow">
                                 <div class="crudLabel inline">Type</div>
-                                <select id="selCommentType" class="roundedInput">
+                                <select id="selCommentType" class="roundedInput" onchange="loadBlogList(); clearGets()">
                                     <option value="CMT">Comment</option>
                                     <option value="WRN">Warning</option>
                                     <option value="BLG">BlogEntry</option>
+                                    <option value="GMT">MetaTag</option>
                                 </select>
                             </div>
                             <div class="crudRow"><div class="crudLabel inline">Link</div><input id="txtLink" class="roundedInput" onblur="$('#imgBlogLink').attr('src', $('#txtLink').val());" /></div>
@@ -110,11 +117,12 @@
     $(document).ready(function () {
         $('#blogNew').hide();
         loadBlogList();
+        $('#imgBlogLink').attr("src", "http://boobs.ogglebooble.com/redballon.png");
     });
 
     function loadImageLink() {
         $('#imgBlogLink').attr("src", $('#txtLink').val());
-        
+
     }
     function loadBlogList() {
         try {
@@ -125,7 +133,9 @@
                     $('#blogList').html("");
                     if (!entries[0].CommentTitle.startsWith("ERROR")) {
                         $.each(entries, function (idx, entry) {
-                            $('#blogList').append("<div id='" + entry.CommentTitle + "' class='crudListItem'>" + entry.CommentTitle + "</div>");
+                            if (entry.CommentType == $('#selCommentType').val()) {
+                                $('#blogList').append("<div id='" + entry.CommentTitle + "' class='crudListItem'>" + entry.CommentTitle + "</div>");
+                            }
                         })
 
                         $('.crudListItem').click(function () {
@@ -158,6 +168,7 @@
                         $('#txtComment').val(model.CommentText);
                         $('#blogSave').html("Edit")
                         $('#blogNew').hide();
+                        loadImageLink();
                     }
                     else
                         alert("displayBlogEntry: " + success)
@@ -178,9 +189,10 @@
     }
     function clearGets() {
         $('#txtCommentTitle').val("");
-        $('#selCommentType').val("");
+        //$('#selCommentType').val("");
         $('#txtLink').val("");
         $('#txtComment').val("");
+        $('#imgBlogLink').attr("src", "http://boobs.ogglebooble.com/redballon.png");
     }
     function cancelBlogEntry() {
         $('#blogSave').html("Add");
@@ -225,6 +237,7 @@
                     success: function (success) {
                         if (success == "ok") {
                             displayStatusMessage("ok", "Entry Updated")
+                            loadBlogList();
                         }
                         else
                             alert("saveBlogEntry: " + success)

@@ -94,6 +94,7 @@ body {
     font-size: 18px;
     margin-bottom: 3px;
     padding: 4px;
+    position:absolute;
     display: none;
 }
 
@@ -338,4 +339,14 @@ label {
         white-space: nowrap;
     }
 
+.floatingDirTree {
+    border: solid thin blue;
+    max-height: 666px;
+    overflow: auto;
+    position: absolute;
+    background-color: #fef; /*#b081b1*/
+    top: 100px;
+    left: 200px;
+    display: none;
+}
 

@@ -212,11 +212,11 @@ namespace WebApi.Xml
             switch (bookTitle)
             {
                 case "Ready; Fire; Aim":
-                    return System.Web.HttpContext.Current.Server.MapPath("~/App_Data/ReadyFireAim.xml"); ;
+                    return System.Web.HttpContext.Current.Server.MapPath("~/App_Data/ReadyFireAim.xml");
                 case "Time Squared":
-                    return System.Web.HttpContext.Current.Server.MapPath("~/App_Data/TimeSquared.xml"); ;
+                    return System.Web.HttpContext.Current.Server.MapPath("~/App_Data/TimeSquared.xml");
                 case "The Blond Jew":
-                    return System.Web.HttpContext.Current.Server.MapPath("~/App_Data/BlondJew.xml"); ;
+                    return System.Web.HttpContext.Current.Server.MapPath("~/App_Data/BlondJew.xml");
                 default:
                     return "";
             }

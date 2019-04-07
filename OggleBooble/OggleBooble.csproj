@@ -268,6 +268,14 @@
     <Content Include="Images\caretDown.png" />
     <Content Include="Images\close.png" />
     <Content Include="Images\redballon.png" />
+    <Content Include="Scripts\3rd Party\Editor\bootstrap.js" />
+    <Content Include="Scripts\3rd Party\Editor\codemirror.js" />
+    <Content Include="Scripts\3rd Party\Editor\codemirror08.js" />
+    <Content Include="Scripts\3rd Party\Editor\formatting.js" />
+    <Content Include="Scripts\3rd Party\Editor\htmlmixed.js" />
+    <Content Include="Scripts\3rd Party\Editor\summernote.js" />
+    <Content Include="Scripts\3rd Party\Editor\xml.js" />
+    <Content Include="Scripts\3rd Party\jquery.min.js" />
     <Content Include="Static_Pages\Images\close.png" />
     <Content Include="Static_Pages\Images\comment.png" />
     <Content Include="Static_Pages\Images\expand02.png" />
@@ -275,15 +283,19 @@
     <Content Include="Static_Pages\Images\slideshow.png" />
     <Content Include="Static_Pages\Images\slideshowFaster.png" />
     <Content Include="Static_Pages\Images\slideshowSlower.png" />
+    <Content Include="Styles\editor\bootstrap.css" />
+    <Content Include="Styles\editor\cobalt.css" />
+    <Content Include="Styles\editor\codemirror.css" />
+    <Content Include="Styles\editor\codeMirror08.css" />
+    <Content Include="Styles\editor\font-awesome.min.css" />
+    <Content Include="Styles\editor\monokai.css" />
+    <Content Include="Styles\editor\quill.snow.css" />
+    <Content Include="Styles\editor\summernote.css" />
     <Content Include="Views\Admin\Images\redballon.png" />
-    <Content Include="Views\Home\Images\comment.png" />
     <Content Include="Images\csLips.png" />
     <Content Include="Images\csLips02.png" />
     <Content Include="Images\dots.png" />
     <Content Include="Images\downCaret.png" />
-    <Content Include="Views\Home\Images\expand02.png" />
-    <Content Include="Views\Home\Images\close.png" />
-    <Content Include="Views\Home\Images\slideshowFaster.png" />
     <Content Include="Images\fuckMarryKill03.jpg" />
     <Content Include="Images\ingranaggi3.gif" />
     <Content Include="Images\loader.gif" />
@@ -294,8 +306,6 @@
     <Content Include="Images\powerOffRed01.png" />
     <Content Include="Images\RenStimpy8.jpg" />
     <Content Include="Images\classic\transitions2.jpg" />
-    <Content Include="Views\Home\Images\slideshow.png" />
-    <Content Include="Views\Home\Images\slideshowSlower.png" />
     <Content Include="Scripts\adminFunctions.js" />
     <Content Include="Scripts\GlobalFunctions.js" />
     <None Include="Scripts\jQuery\jquery-1.6.4-vsdoc.js" />
@@ -356,8 +366,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\_footer.cshtml" />
-    <Content Include="Views\Shared\_DirOptions.cshtml" />
-    <Content Include="Views\Shared\_DirTree.cshtml" />
     <Content Include="Views\Test\contextTest.cshtml" />
     <Content Include="Views\Porn\Index.cshtml" />
     <Content Include="Styles\video\mejs-controls.ai" />
@@ -365,6 +373,9 @@
     <Content Include="Views\Shared\_Slideshow.cshtml" />
     <Content Include="Views\Admin\Admin.cshtml" />
     <Content Include="Views\Admin\Blog.cshtml" />
+    <Content Include="Views\Shared\_Editor.cshtml" />
+    <Content Include="Views\Shared\_DirTree2.cshtml" />
+    <Content Include="Views\Shared\_DirTree1.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
