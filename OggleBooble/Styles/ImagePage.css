@@ -2,9 +2,19 @@
     margin: 4.5px;
     border: solid .05px #676b8a;
 }
-.nonLocalImageFrame {
+.mmultiLinkImageFrame {
     margin: 2px;
     border: dashed 3px #08fb08;
+}
+
+.nonLocalImageFrame {
+    margin: 2px;
+    border: dashed 3px #ff00dc;
+}
+.noLinksImageFrame {
+    margin: 1px;
+    padding: 1px;
+    border: dashed 2px #d19154;
 }
 .nonLocalIndicator {
     border-right: dotted 24px #ff00dc;
@@ -104,7 +114,6 @@
     width: 50%;
     display: inline-block;
     top: 100px;
-    float: left;
     height: 100%;
     z-index: 100;
 }

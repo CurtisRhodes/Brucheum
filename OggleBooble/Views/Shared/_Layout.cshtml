@@ -27,7 +27,7 @@
     <div id="staticHeader">
         <div id="oggleBoobleHeader" class="fixedHeader flexContainer classicColors">
             <div id="divTopLeftLogo" class="bannerImageContainer">
-                <a href="~/Home/Index"><img id="logo" class="bannerImage" src="Images/redballon.png" /></a>
+                <a href="~/Home/Index"><img id="logo" class="bannerImage" src="/Images/redballon.png" /></a>
             </div>
             <div id="largeFixedHeader" class="headerBodyContainer">
                 <div id="headerTopRow">
@@ -62,6 +62,7 @@
                         @if (User.IsInRole("Porn Editor"))
                         {
                             <div class="menuTab floatRight"><a href="~/Admin">Admin</a></div>
+                            <div class="menuTab floatRight"><a href="javascript:showMetaTagDialog()">Add Meta Tags</a></div>
                         }
                     </div>
                 </div>
@@ -83,6 +84,7 @@
             toggleTittyMenu(getOBCookie("ShapeOrPosesMenu", "shapes"));
             $('body').css("margin-top", $('#oggleBoobleHeader').height() + 20);
         });
+
         function toggleTittyMenu(sepectedTittyMenu) {
             //alert("tittyMenu: " + sepectedTittyMenu);
             $('.tittymenu').hide();

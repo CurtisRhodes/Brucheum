@@ -191,6 +191,7 @@
     <Compile Include="Controllers\BookXmlController.cs" />
     <Compile Include="Controllers\BookDbApiController.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
+    <Compile Include="Controllers\FtpController.cs" />
     <Compile Include="Controllers\HitCounterApiController.cs" />
     <Compile Include="Controllers\EmailController.cs" />
     <Compile Include="Controllers\GetaJobApiController.cs" />
@@ -248,7 +249,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
+    <Folder Include="App_Data\temp\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

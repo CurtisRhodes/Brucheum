@@ -67,16 +67,6 @@
             white-space: nowrap;
         }
 
-    .floatingDirTree {
-        border: solid thin blue;
-        max-height: 666px;
-        overflow: auto;
-        position: absolute;
-        background-color: #fef; /*#b081b1*/
-        top: 100px;
-        left: 200px;
-        display: none;
-    }
 
 </style>
 <script src="~/Scripts/Layouts.js"></script>
@@ -101,7 +91,7 @@
 </div>
 <div id="dirTreeContainer" class="floatingDirTree">
     <div class="floatingCrudBanner">View A Category <div onclick="$('#dirTreeContainer').fadeOut()" class="farSide">x</div> </div>
-    @Html.Partial("_DirTree")
+    @Html.Partial("_DirTree1")
 </div>
 
 <script>
@@ -111,18 +101,14 @@
     });    
 
     // move to script file and reuse
-    function treeToggle(id) {
-        //alert($('#' + id + '').css("display"));
-        if ($('#' + id + '').css("display") == "none") {
+    function toggleDirTree(id) {
+        if ($('#' + id + '').css("display") == "none") 
             $('#S' + id + '').html("[-] ");
-        }
         else
             $('#S' + id + '').html("[+] ");
         $('#' + id + '').toggle();
     }
-    function clickPath(path, id) {
-        //alert(path.replace(/%20/g, " ") + "  " + id);
-        //window.location.href = "/home/ImagePage?folder=" + path.replace(/%20/g, " ");
+    function onDirTreeClick(path, id) {
         window.location.href = "/home/ImagePage?folder=" + id;
     }
 </script>

@@ -22,26 +22,6 @@ namespace OggleBooble.Controllers
             return View();
         }
 
-        [HttpPost]
-        public JsonResult CreateStaticFile(staticPageModel staticPage)
-        {
-            string success = "";
-            try
-            {
-                string filePath = System.Web.HttpContext.Current.Server.MapPath("~/Views/Shared/" + staticPage.filename);
-                using (var staticFile = System.IO.File.Open(filePath, System.IO.FileMode.Truncate))
-                {
-                    Byte[] byteArray = Encoding.ASCII.GetBytes(staticPage.html);
-                    staticFile.Write(byteArray, 0, byteArray.Length);
-                }
-                success = "ok";
-            }
-            catch (Exception e) {
-                //if(e.)
-
-                success = Helpers.ErrorDetails(e); }
-            return Json(success, JsonRequestBehavior.AllowGet);
-        }
 
         [HttpPost]
         public JsonResult ConnectionTest()

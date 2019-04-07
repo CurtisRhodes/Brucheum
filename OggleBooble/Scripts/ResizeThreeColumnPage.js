@@ -74,7 +74,7 @@ function resizePage(debug) {
     //}
 
     if (debug !== undefined) {
-        $('#footerMessage').html("resize debug: " + debug);
+        $('#footerMessage').append("resize debug: " + debug);
     }
 }
 

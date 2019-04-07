@@ -12,52 +12,69 @@ namespace WebApi.OggleBooble.DataContext
         public OggleBoobleContext()
             : base("GoDaddy") { }
 
-        public virtual DbSet<ImageCategory> ImageCategories { get; set; }
+        public virtual DbSet<CategoryFolder> CategoryFolders { get; set; }
         public virtual DbSet<GoDaddyLink> GoDaddyLinks { get; set; }
-        //public virtual DbSet<ImageLink> ImageLinks { get; set; }
-        public virtual DbSet<Category_ImageLink> Category_ImageLinks { get; set; }
+        public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
 
-
-        public virtual DbSet<BoobsLink> BoobsLinks { get; set; }
-        public virtual DbSet<PornLink> PornLinks { get; set; }
-        public virtual DbSet<VDirTree> VDirTrees { get; set; }        
+        public virtual DbSet<VwDirTree> VwDirTrees { get; set; }        
         public virtual DbSet<VideoLink> VideoLinks { get; set; }
-        public virtual DbSet<VLink> VLinks { get; set; }
+        public virtual DbSet<VwLink> VwLinks { get; set; }
         public virtual DbSet<BlogComment> BlogComments { get; set; }
-        public virtual DbSet<MissingLink> MissingLinks { get; set; }
-
+        public virtual DbSet<MetaTag> MetaTags { get; set; }
+        public virtual DbSet<RepairReport> RepairReports { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
     }
 
-    
-    [Table("OggleBooble.MissingLink")]
-    public partial class MissingLink
-    {
-        [Key]
-        public string LinkId { get; set; }
-        public string ExternalLink { get; set; }
-    }
-
-    [Table("OggleBooble.Category")]
-    public partial class ImageCategory
+    [Table("OggleBooble.CategoryFolder")]
+    public partial class CategoryFolder
     {
         [Key]
         public int Id { get; set; }
         public int Parent { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
+        public string CategoryText { get; set; }
     }
-
-    [Table("OggleBooble.ImageLink")]
-    public partial class ImageLink
+    [Table("OggleBooble.GoDaddyLink")]
+    public partial class GoDaddyLink
     {
         [Key]
         public string Id { get; set; }
         public string Link { get; set; }
-        public string GoDaddyLink { get; set; }
+        public string ExternalLink { get; set; }
+
+    }
+    [Table("OggleBooble.CategoryImageLink")]
+    public partial class CategoryImageLink
+    {
+        [Key]
+        [Column(Order = 0)]
+        public int ImageCategoryId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string ImageLinkId { get; set; }
+    }
+    [Table("OggleBooble.vwLinks")]
+    public partial class VwLink
+    {
+        [Key]
+        public string LinkId { get; set; }
+        public int FolderId { get; set; }
+        public string Link { get; set; }
+        public int LinkCount { get; set; }
+    }
+    [Table("OggleBooble.vwDirtree")]
+    public partial class VwDirTree
+    {
+        [Key]
+        public int Id { get; set; }
+        public int Parent { get; set; }
+        public string FolderName { get; set; }
+        public int SubDirCount { get; set; }
+        public int FileCount { get; set; }
     }
 
     [Table("OggleBooble.VideoLink")]
@@ -68,70 +85,16 @@ namespace WebApi.OggleBooble.DataContext
         public string Image { get; set; }
         public string Title { get; set; }
     }
-
-    [Table("OggleBooble.Category_ImageLink")]
-    public partial class Category_ImageLink
-    {
-        [Key]
-        [Column(Order = 0)]
-        public int ImageCategoryId { get; set; }
-        [Key]
-        [Column(Order = 1)]
-        public string ImageLinkId { get; set; }
-        //public string FileName { get; set; }
-    }
-
-    [Table("OggleBooble.ImageFolder")]
-    public partial class xxImageFolder
-    {
-        [Key]
-        public int Id { get; set; }
-        public int Parent { get; set; }
-        public string FolderName { get; set; }
-        //public string FolderPath { get; set; }
-        public int FileCount { get; set; }
-        public string CatergoryDescription { get; set; }
-        public string RootFolder { get; set; }
-    }
-
-
-
-
-
-    [Table("OggleBooble.BoobsLink")]
-    public partial class BoobsLink
-    {
-        [Key]
-        [Column(Order = 0)]
-        public string LinkId { get; set; }
-        [Key]
-        [Column(Order = 1)]
-        public int FolderId { get; set; }
-        public string FolderName { get; set; }
-        public string FolderPath { get; set; }
-        public string Link { get; set; }
-    }
-    [Table("OggleBooble.PornLink")]
-    public partial class PornLink
-    {
-        //public string RootFolder { get; set; }
-        [Key]
-        [Column(Order = 0)]
-        public string LinkId { get; set; }
-        [Key]
-        [Column(Order = 1)]
-        public int FolderId { get; set; }
-        public string FolderName { get; set; }
-        public string FolderPath { get; set; }
-        public string Link { get; set; }
-    }
     [Table("OggleBooble.BlogComment")]
     public partial class BlogComment
     {
         [Key]
+        public int Id { get; set; }
         public string CommentTitle { get; set; }
         public string CommentType { get; set; }
         public string Link { get; set; }
+        public string LinkId { get; set; }
+        public string FolderId { get; set; }
         public string UserId { get; set; }
         public string CommentText { get; set; }
         public DateTime Posted { get; set; }
@@ -139,44 +102,30 @@ namespace WebApi.OggleBooble.DataContext
     [Table("OggleBooble.ImageVote")]
     public partial class ImageVote
     {
-        //[Key]
-        //public string Id { get; set; }
-
+        [Key]
+        public string Id { get; set; }
         public string SelectedImageId { get; set; }
         public string RegectedImageId { get; set; }
         public DateTime Created { get; set; }
         public string Voter { get; set; }
-
-        //public virtual ImageFolder ImageFolder { get; set; }
     }
-    [Table("OggleBooble.vwLinks")]
-    public partial class VLink
-    {
-        public int Id { get; set; }
-        public string RootFolder { get; set; }
-        public string FolderName { get; set; }
-        public string FolderPath { get; set; }
-        public string LinkId { get; set; }
-        public string Link { get; set; }
-    }
-    [Table("OggleBooble.vwDirtree")]
-    public partial class VDirTree
-    {
-        public int Id { get; set; }
-        public int Parent { get; set; }
-        public string FolderName { get; set; }
-        //public string FolderPath { get; set; }
-        public int SubDirCount { get; set; }
-        public int FileCount { get; set; }
-    }
-    [Table("OggleBooble.GoDaddyLink")]
-    public partial class GoDaddyLink
+    [Table("OggleBooble.MetaTag")]
+    public partial class MetaTag
     {
         [Key]
-        public string Id { get; set; }
-        public string Link { get; set; }
-        public string ExternalLink { get; set; }
-                      
+        public int TagId { get; set; }
+        public int FolderId { get; set; }
+        public string TagType { get; set; }
+        public string TagValue { get; set; }
     }
-
+    [Table("OggleBooble.RepairReport")]
+    public partial class RepairReport
+    {
+        [Key]
+        public string LinkId { get; set; }
+        public int FolderId { get; set; }
+        public string ProblemType { get; set; }
+        public string Problem { get; set; }
+        public DateTime Created { get; set; }
+    }
 }
