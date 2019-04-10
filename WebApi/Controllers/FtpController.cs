@@ -21,13 +21,15 @@ namespace WebApi.Controllers
         [HttpPut]
         public string MoveImage(MoveImageModel model)
         {
-            string success = "";
+            string success = "ok";
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    string imageName = model.ImageName.Substring(model.ImageName.LastIndexOf("/") + 1).Replace("%20", " ");
-                    string linkId = model.ImageName.Substring(model.ImageName.LastIndexOf("_") + 1, 36);
+                    int doubleWack = model.ImageName.LastIndexOf("\\") + 1;
+                    int singleSlash = model.ImageName.LastIndexOf("/") + 1;
+                    string imageName = model.ImageName.Substring(Math.Max(doubleWack, singleSlash)).Replace("%20", " ");
+                    string linkId = imageName.Substring(imageName.LastIndexOf("_") + 1, 36);
                     CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.SourceFolderId).FirstOrDefault();
                     CategoryFolder dbDestinationFolder = db.CategoryFolders.Where(f => f.Id == model.DestinationFolderId).FirstOrDefault();
 
@@ -40,42 +42,100 @@ namespace WebApi.Controllers
                     string destinationFtpPath = "ftp://50.62.160.105/" + dbDestinationFolder.RootFolder + ".ogglebooble.com/"
                         + Helpers.GetParentPath(model.DestinationFolderId, true) + dbDestinationFolder.FolderName;
                     if (!FtpIO.DirectoryExists(destinationFtpPath))
-                        FtpIO.CreateDirectory(destinationFtpPath);
-                    success = FtpIO.MoveFile(source, destinationFtpPath + "/" + newImageName);
+                        success = FtpIO.CreateDirectory(destinationFtpPath);
                     if (success == "ok")
                     {
+                        success = FtpIO.MoveFile(source, destinationFtpPath + "/" + newImageName);
+                        if (success == "ok")
+                        {
 #if DEBUG
-                        // move file on local drive 
-                        string localServerPath = "F:/Danni/";
-                        string localSourcePath = localServerPath + Helpers.GetParentPath(model.SourceFolderId, false) + "/" + dbSourceFolder.FolderName;
-                        DirectoryInfo dirInfo = new DirectoryInfo(localSourcePath);
-                        FileInfo fileInfo = dirInfo.GetFiles(imageName).FirstOrDefault();
-                        if (fileInfo == null)
-                            success = "unable to find file";
-                        else
-                        {
-                            string localDestinationPath = localServerPath + Helpers.GetParentPath(model.DestinationFolderId, false) + "/" + dbDestinationFolder.FolderName;
-                            fileInfo.MoveTo(localDestinationPath + "/" + dbDestinationFolder.FolderName + "_" + linkId + fileInfo.Extension);
-                        }
+                            // move file on local drive 
+                            string localServerPath = "F:/Danni/";
+                            string localSourcePath = localServerPath + Helpers.GetParentPath(model.SourceFolderId, false) + "/" + dbSourceFolder.FolderName;
+                            DirectoryInfo dirInfo = new DirectoryInfo(localSourcePath);
+                            if (dirInfo.Exists)
+                            {
+                                FileInfo fileInfo = dirInfo.GetFiles(imageName).FirstOrDefault();
+                                if (fileInfo == null)
+                                    success = "unable to find file";
+                                else
+                                {
+                                    string localDestinationPath = localServerPath + Helpers.GetParentPath(model.DestinationFolderId, false) + "/" + dbDestinationFolder.FolderName;
+                                    try
+                                    {
+                                        fileInfo.MoveTo(localDestinationPath + "/" + dbDestinationFolder.FolderName + "_" + linkId + fileInfo.Extension);
+                                    }
+                                    catch (Exception)
+                                    {
+                                    }
+                                }
+                            }
 #endif
-                        //2. update GoDaddyLink 
-                        string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
-                        string goDaddyLink = linkPrefix + Helpers.GetParentPath(model.DestinationFolderId, true) +
-                            dbDestinationFolder.FolderName + "/" + dbDestinationFolder.FolderName + "_" + linkId + extension;
-                        GoDaddyLink goDaddyrow = db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
-                        goDaddyrow.Link = goDaddyLink;
-                        db.SaveChanges();
-
-                        // no need update existing link
-                        //3 create new link for new location if necessary
-                        if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Where(c => c.ImageLinkId == linkId).FirstOrDefault() == null)
-                        {
-                            CategoryImageLink newCatImageLink = new CategoryImageLink() { ImageCategoryId = model.DestinationFolderId, ImageLinkId = linkId };
-                            db.CategoryImageLinks.Add(newCatImageLink);
+                            //2. update GoDaddyLink 
+                            string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
+                            string goDaddyLink = linkPrefix + Helpers.GetParentPath(model.DestinationFolderId, true) +
+                                dbDestinationFolder.FolderName + "/" + dbDestinationFolder.FolderName + "_" + linkId + extension;
+                            GoDaddyLink goDaddyrow = db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                            goDaddyrow.Link = goDaddyLink;
                             db.SaveChanges();
+
+                            //3 create new link for new location if necessary
+                            if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Where(c => c.ImageLinkId == linkId).FirstOrDefault() == null)
+                            {
+                                CategoryImageLink newCatImageLink = new CategoryImageLink() { ImageCategoryId = model.DestinationFolderId, ImageLinkId = linkId };
+                                db.CategoryImageLinks.Add(newCatImageLink);
+                                db.SaveChanges();
+                            }
+
+                            // only remove link in archive
+                            if (dbSourceFolder.RootFolder == "archive")
+                            {
+                                CategoryImageLink dbBadLink = db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == linkId).First();
+                                db.CategoryImageLinks.Remove(dbBadLink);
+                                db.SaveChanges();
+                            }
+                            success = "ok";
                         }
-                        success = "ok";
                     }
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        [HttpDelete]
+        public string RemoveImage(DeleteLinkModel badLink)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    int linkCount = db.CategoryImageLinks.Where(c => c.ImageLinkId == badLink.ImageId).ToList().Count;
+                    if (linkCount == 1)
+                    {
+                        ///  move image to reject folder
+                        CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == badLink.FolderId).FirstOrDefault();
+                        GoDaddyLink goDaddyLink = db.GoDaddyLinks.Where(g => g.Id == badLink.ImageId).FirstOrDefault();
+                        string fileName = goDaddyLink.Link.Substring(goDaddyLink.Link.LastIndexOf("/") + 1);
+
+                        //string ext = goDaddyLink.Link.Substring(goDaddyLink.Link.Length - 4);
+                        //string expectedFileName = dbFolder.FolderName + "_" + badLink.ImageId + ext;
+                        //if (fileName != expectedFileName)
+                        //    success = "oh well";
+
+                        string folderPath = Helpers.GetParentPath(badLink.FolderId, true);
+                        string ftpPath = "ftp://50.62.160.105/" + dbFolder.RootFolder + ".OGGLEBOOBLE.COM/" + folderPath + "/" + dbFolder.FolderName + "/" + fileName;
+                        string rejectPath = "ftp://50.62.160.105/archive.OGGLEBOOBLE.COM/rejects/" + dbFolder.RootFolder + "/" + fileName;
+                        FtpIO.MoveFile(ftpPath, rejectPath);
+                        goDaddyLink.Link = "http://archive.OGGLEBOOBLE.COM/rejects/" + dbFolder.RootFolder + fileName;
+                        db.SaveChanges();
+                    }
+
+                    CategoryImageLink dbBadLink = db.CategoryImageLinks.Where(c => c.ImageCategoryId == badLink.FolderId && c.ImageLinkId == badLink.ImageId).First();
+                    db.CategoryImageLinks.Remove(dbBadLink);
+                    db.SaveChanges();
+                    success = "ok";
                 }
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
@@ -96,7 +156,7 @@ namespace WebApi.Controllers
                 {
                     var timer = new System.Diagnostics.Stopwatch();
                     timer.Start();
-                    string folderPath = Helpers.GetParentPath(startFolderId, false);
+                    string folderPath = Helpers.GetParentPath(startFolderId, true);
                     RepairLinksRecurr(startFolderId, folderPath, repairReport, db);
                     timer.Stop();
                     System.Diagnostics.Debug.WriteLine("VerifyLinksRecurr took: " + timer.Elapsed);
@@ -109,60 +169,71 @@ namespace WebApi.Controllers
             }
             return repairReport;
         }
-        public void RepairLinksRecurr(int folderId, string folderPath, RepairReportModel repairReport, OggleBoobleContext db)
+        private void RepairLinksRecurr(int folderId, string folderPath, RepairReportModel repairReport, OggleBoobleContext db)
         {
             CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-            folderPath += "/" + categoryFolder.FolderName;
             string ftpPath = "ftp://50.62.160.105/" + categoryFolder.RootFolder + ".ogglebooble.com/"
                 + Helpers.GetParentPath(folderId, true) + categoryFolder.FolderName;
 
-            if (FtpIO.DirectoryExists(ftpPath))
+            if (!FtpIO.DirectoryExists(ftpPath))
             {
-                //FileInfo[] fileInfos = dirInfo.GetFiles();
+                repairReport.DirNotFound++;
+                FtpIO.CreateDirectory(ftpPath);
+                repairReport.Errors.Add("created directory " + ftpPath);
+            }
 
-                List<GoDaddyLink> folderLinks =
-                    (from c in db.CategoryImageLinks
-                     join g in db.GoDaddyLinks on c.ImageLinkId equals g.Id
-                     where c.ImageCategoryId == folderId
-                     select (g)).ToList();
 
-                string linkId = "";
-                string derivedLink = "";
-                string expectedFileName = "";
+            List<GoDaddyLink> goDaddyLinks =
+                (from c in db.CategoryImageLinks
+                 join g in db.GoDaddyLinks on c.ImageLinkId equals g.Id
+                 where c.ImageCategoryId == folderId
+                 select (g)).ToList();
 
-                string[] files = FtpIO.GetFiles(ftpPath);
-                for (int i = 0; i < files.Count(); i++)
+            string[] files = FtpIO.GetFiles(ftpPath);
+            string expectedFileName = "";
+            string expectedLinkName = "";
+            string goDaddyPrefix = "http://" + categoryFolder.RootFolder + ".ogglebooble.com/";
+            string linkId = "";
+            string ext = "";
+            bool fileNameInExpectedForm;
+            foreach (string fileName in files)
+            {
+                //if (fileName.LastIndexOf("_") > 1)
+                if ((fileName.LastIndexOf("_") > 0) && (fileName.Substring(fileName.LastIndexOf("_")).Length > 40))
                 {
-                    if ((files[i].LastIndexOf("_") > 0) && (files[i].Substring(files[i].LastIndexOf("_")).Length > 40))
+                    fileNameInExpectedForm = true;
+                    ext = fileName.Substring(fileName.Length - 4);
+                    linkId = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
+                    expectedFileName = categoryFolder.FolderName + "_" + linkId + ext;
+                    expectedLinkName = goDaddyPrefix + folderPath + categoryFolder.FolderName + "/" + expectedFileName;
+                    if (fileName == expectedFileName)
                     {
-                        repairReport.BadFileNames++;
-                        repairReport.Errors.Add("file name " + files[i]);
-                    }
-                    else
-                    {
-                        linkId = files[i].Substring(files[i].LastIndexOf("_") + 1, 36);
-                        if (folderLinks.Where(g => g.Id == linkId).FirstOrDefault() == null)
+                        GoDaddyLink goDaddyLink = goDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                        if (goDaddyLink != null)
+                        {
+                            if (goDaddyLink.Link != expectedLinkName)
+                            {
+                                goDaddyLink.Link = expectedLinkName;
+                                db.SaveChanges();
+                                repairReport.LinksEdited++;
+                            }
+                        }
+                        else  // missing godaddy row
                         {
                             if (db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault() != null)
                             {
                                 // exists but not in this folder
+                                db.CategoryImageLinks.Add(new CategoryImageLink() { ImageCategoryId = folderId, ImageLinkId = linkId });
+                                db.SaveChanges();
+                                repairReport.NewLinksAdded++;
                             }
                             else
                             {
-                                string extension = files[i].Substring(files[i].Length - 4);
-                                expectedFileName = categoryFolder.FolderName + "_" + linkId + extension;
-                                string goDaddyPrefix = "http://" + categoryFolder.RootFolder + ".ogglebooble.com/";
-                                derivedLink = Path.Combine(goDaddyPrefix, folderPath, expectedFileName);
-
-                                if (files[i] != expectedFileName)
-                                {
-                                    FtpIO.MoveFile(folderPath + "/" + files[i], folderPath + "/" + expectedFileName);
-                                    repairReport.ImagesRenamed++;
-                                }
+                                // add row
                                 GoDaddyLink newLink = new GoDaddyLink()
                                 {
                                     Id = linkId,
-                                    Link = derivedLink,
+                                    Link = expectedLinkName,
                                     ExternalLink = linkId
                                 };
                                 db.GoDaddyLinks.Add(newLink);
@@ -180,66 +251,163 @@ namespace WebApi.Controllers
                                     db.SaveChanges();
                                     repairReport.CatLinksAdded++;
                                 }
-                                //repairReport.MissingImages.Add(fileInfo);
                             }
                         }
-
                     }
-                    repairReport.RowsProcessed++;
+                    else  // filename not in expected form
+                    {
+                        fileNameInExpectedForm = false;
+                    }
                 }
-
-                foreach (GoDaddyLink goDaddyLink in folderLinks)
+                else  // filename not in expected form
                 {
-                    bool found = false;
-                    expectedFileName = categoryFolder.FolderName + "_" + goDaddyLink.Id;
-                    for (int i = 0; i < files.Count(); i++)
+                    ext = fileName.Substring(fileName.Length - 4);
+                    linkId = Guid.NewGuid().ToString();
+                    expectedFileName = categoryFolder.FolderName + "_" + linkId + ext;
+                    expectedLinkName = goDaddyPrefix + folderPath + categoryFolder.FolderName + "/" + expectedFileName;
+
+                    fileNameInExpectedForm = false;
+                }
+                if (!fileNameInExpectedForm)
+                {
+                    string renameSuccess = FtpIO.MoveFile(ftpPath + "/" + fileName, ftpPath + "/" + expectedFileName);
+                    if (renameSuccess == "ok")
                     {
-                        if (files[i].Contains(expectedFileName))
+                        repairReport.ImagesRenamed++;
+                        repairReport.Errors.Add("file name: " + fileName + "  changed to: " + expectedFileName);
+
+                        GoDaddyLink goDaddyLink = goDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                        if (goDaddyLink == null)
                         {
-                            found = true;
-                            break;
+                            // add link 
+                            var newGoDaddyLink = new GoDaddyLink()
+                            {
+                                Id = linkId,
+                                Link = expectedLinkName,
+                                ExternalLink = linkId
+                            };
+                            db.GoDaddyLinks.Add(newGoDaddyLink);
+                            db.SaveChanges();
+                            repairReport.NewLinksAdded++;
+                            if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == folderId).Where(c => c.ImageLinkId == linkId).FirstOrDefault() == null)
+                            {
+                                CategoryImageLink newCatLink = new CategoryImageLink()
+                                {
+                                    ImageCategoryId = folderId,
+                                    ImageLinkId = linkId
+                                };
+                                db.CategoryImageLinks.Add(newCatLink);
+                                db.SaveChanges();
+                                repairReport.CatLinksAdded++;
+                            }
+                        }
+                        else
+                        {
+                            if (goDaddyLink.Link != expectedLinkName)
+                            {
+                                goDaddyLink.Link = expectedLinkName;
+                                db.SaveChanges();
+                                repairReport.LinksEdited++;
+                            }
                         }
                     }
-                    if (!found)
+                    else
                     {
-                        if (goDaddyLink.Link.Contains(categoryFolder.FolderName))
-                        {
-                            repairReport.BadLinks++;
-                            repairReport.Errors.Add("missing link: " + goDaddyLink.Id);
-                        }
+                        repairReport.Errors.Add("rename Failed: " + renameSuccess);
                     }
                 }
-
-
-
-
-
-                //if (folderLinks.Where(g => g.Link.Contains(fileInfo.Name)).FirstOrDefault() == null)
-                //List<CategoryImageLink> categoryImageLinks = db.CategoryImageLinks.Where(c => c.ImageCategoryId == folderId).ToList();
-                //foreach (CategoryImageLink categoryImageLink in categoryImageLinks)
-                //{
-                //    //expectedFileName = goDaddyPrefix + "/" + categoryFolder.FolderName + "/" + categoryFolder.FolderName + "_" + categoryImageLink.ImageLinkId;
-                //    expectedFileName = categoryFolder.FolderName + "_" + categoryImageLink.ImageLinkId;
-                //    FileInfo coorespondingImageFile = fileInfos.Where(f => f.Name.Contains(expectedFileName)).FirstOrDefault();
-                //    if (coorespondingImageFile == null)
-                //    {
-                //        repairReport.BadLinks.Add(db.GoDaddyLinks.Where(g => g.Id == categoryImageLink.ImageLinkId).FirstOrDefault());
-                //        repairReport.ImagesRenamed++;
-                //    }
-                //}
+                repairReport.RowsProcessed++;
             }
-            else
+
+            foreach (GoDaddyLink goDaddyLink in goDaddyLinks)
             {
-                repairReport.DirNotFound++;
+                bool found = false;
+                expectedFileName = categoryFolder.FolderName + "_" + goDaddyLink.Id;
+                for (int i = 0; i < files.Count(); i++)
+                {
+                    ext = files[i].Substring(files[i].Length - 4);
+                    if (files[i].Contains(expectedFileName + ext))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    if (goDaddyLink.Link.Contains(categoryFolder.FolderName))
+                    {
+                        repairReport.BadLinks++;
+                        repairReport.Errors.Add("missing link: " + goDaddyLink.Id);
+                    }
+                    else
+                    {
+                        if (categoryFolder.RootFolder == "archive")
+                        {
+                            repairReport.Errors.Add("link from: " + goDaddyLink.Link + "  in: " + categoryFolder.FolderName);
+                        }
+
+                    }
+                }
             }
-
-
-
+            folderPath += categoryFolder.FolderName + "/";
             int[] subDirs = db.CategoryFolders.Where(f => f.Parent == folderId).Select(f => f.Id).ToArray();
             foreach (int subDir in subDirs)
             {
                 RepairLinksRecurr(subDir, folderPath, repairReport, db);
             }
+        }
+
+        [HttpGet]
+        public string JodiPiperEmergency(int folderId)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    var trimPath = "/pipers/Jodie Piper/";
+                    CategoryFolder dbCategory = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                    trimPath = Helpers.GetParentPath(folderId, true) + dbCategory.FolderName;
+                    List<GoDaddyLink> folderLinks =
+                    (from c in db.CategoryImageLinks
+                     join g in db.GoDaddyLinks on c.ImageLinkId equals g.Id
+                     where c.ImageCategoryId == folderId
+                     select (g)).ToList();
+
+                    var appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
+                    string extension = "";
+                    string ftpPath = "ftp://50.62.160.105/" + dbCategory.RootFolder + ".OGGLEBOOBLE.COM/" + trimPath;
+                    using (WebClient wc = new WebClient())
+                    {
+                        foreach (GoDaddyLink g in folderLinks)
+                        {
+                            extension = g.ExternalLink.Substring(g.ExternalLink.Length - 4);
+                            wc.DownloadFile(new Uri(g.ExternalLink), appDataPath + "tempImage" + extension);
+
+                            if (!FtpIO.DirectoryExists(ftpPath))
+                                FtpIO.CreateDirectory(ftpPath);
+
+                            FtpWebRequest webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + dbCategory.FolderName + "_" + g.Id + extension);
+                            webRequest.Credentials = new NetworkCredential("curtisrhodes", "R@quel77");
+                            webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                            using (Stream requestStream = webRequest.GetRequestStream())
+                            {
+                                byte[] fileContents = System.IO.File.ReadAllBytes(appDataPath + "tempImage" + extension);
+                                webRequest.ContentLength = fileContents.Length;
+                                requestStream.Write(fileContents, 0, fileContents.Length);
+                                requestStream.Flush();
+                                requestStream.Close();
+                            }
+                        }
+                    }
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
         }
 
         [HttpPost]
@@ -269,7 +437,15 @@ namespace WebApi.Controllers
                             DirectoryInfo dirInfo = new DirectoryInfo(danniPath + newLink.Path);
                             if (!dirInfo.Exists)
                                 dirInfo.Create();
-                            wc.DownloadFile(new Uri(newLink.Link), danniPath + newLink.Path + "/" + newFileName);
+                            try
+                            {
+                                wc.DownloadFile(new Uri(newLink.Link), danniPath + newLink.Path + "/" + newFileName);
+                            }
+                            catch (Exception ex)
+                            {
+                                var err = Helpers.ErrorDetails(ex);
+                                System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
+                            }
 #endif
                             try
                             {
@@ -297,8 +473,6 @@ namespace WebApi.Controllers
                         {
                             return " webRequest didnt work " + ex.Message;
                         }
-
-
                         try
                         {
                             using (Stream requestStream = webRequest.GetRequestStream())
@@ -364,49 +538,108 @@ namespace WebApi.Controllers
         }
 
         [HttpPut]
-        public string RenameFolder(int folderId, int kludge, string newFolderName)
+        public RepairReportModel RenameFolder(int folderId, int kludge, string newFolderName)
         {
-            string success = "";
+            RepairReportModel renameReport = new RepairReportModel() { Success = "ono" };
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    string ftpPath = "ftp://50.62.160.105/" + categoryFolder.RootFolder + ".ogglebooble.com/"
-                        + Helpers.GetParentPath(folderId, true) + categoryFolder.FolderName;
+                    CategoryFolder folder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
 
-                    // first rename files
+                    string ftpPath = "ftp://50.62.160.105/" + folder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(folderId, true) + folder.FolderName;
                     string linkId = "";
-                    string newFileName = "";
-                    string[] folderContents = FtpIO.GetFiles(ftpPath);
-                    foreach (string currentFile in folderContents)
+                    string ext = "";
+                    string expectedFileName = "";
+                    string expectedLinkName = "";
+                    string goDaddyPrefix = "http://" + folder.RootFolder + ".ogglebooble.com/";
+                    string folderPath = Helpers.GetParentPath(folderId, true);
+
+                    string[] files = FtpIO.GetFiles(ftpPath);
+                    foreach (string fileName in files)
                     {
-
-                        linkId = currentFile.Substring(currentFile.LastIndexOf("_") + 1, 36);
-                        newFileName = newFolderName + "_" + currentFile.Substring(currentFile.LastIndexOf("_") + 1);
-                        //FtpIO.Rename(Path.Combine(ftpPath, currentFile), Path.Combine(ftpPath, newFileName));
-                        FtpIO.Rename(Path.Combine(ftpPath, currentFile), newFileName);
-
-                        string linkPrefix = "http://" + categoryFolder.RootFolder + ".ogglebooble.com/";
-                        string goDaddyLink = Path.Combine(linkPrefix, Helpers.GetParentPath(folderId, true), newFolderName, newFileName);
-                        GoDaddyLink goDaddyrow = db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
-                        goDaddyrow.Link = goDaddyLink;
-                        db.SaveChanges();
+                        linkId = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
+                        ext = fileName.Substring(fileName.Length - 4);
+                        expectedFileName = newFolderName + "_" + linkId + ext;
+                        if (fileName != expectedFileName)
+                        {
+                            var success = FtpIO.MoveFile(ftpPath + "/" + fileName, ftpPath + "/" + expectedFileName);
+                            if (success == "ok")
+                                renameReport.ImagesRenamed++;
+                            else
+                            {
+                                renameReport.Errors.Add("unable to rename " + fileName + " Message: " + success);
+                                renameReport.Success = "unable to rename ";
+                            }
+                        }
+                        if (renameReport.Success == "ono")
+                        {
+                            GoDaddyLink goDaddyLink = db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                            if (goDaddyLink != null)
+                            {
+                                expectedLinkName = goDaddyPrefix + folderPath + newFolderName + "/" + expectedFileName;
+                                if (goDaddyLink.Link != expectedLinkName)
+                                {
+                                    goDaddyLink.Link = expectedLinkName;
+                                    db.SaveChanges();
+                                    renameReport.LinksEdited++;
+                                }
+                            }
+                            else
+                                renameReport.Errors.Add("missing link: " + linkId);
+                        }
+                        renameReport.RowsProcessed++;
                     }
-                                                         
-                    FtpIO.Rename(ftpPath, newFolderName);
-
-                    categoryFolder.FolderName = newFolderName;
+                    if (renameReport.Success == "ono")
+                    {
+                        List<CategoryFolder> subDirs = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+                        foreach (CategoryFolder subDir in subDirs)
+                        {
+                            RenameChildFolderLinks(subDir, folderPath + "/" + newFolderName, renameReport, db);
+                        }
+                    }
+                    renameReport.Success = FtpIO.RenameFolder(ftpPath, newFolderName);
+                    folder.FolderName = newFolderName;
                     db.SaveChanges();
                 }
-                success = "ok";
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex);
+                renameReport.Success = Helpers.ErrorDetails(ex);
             }
-            return success;
+            return renameReport;
+        }
+        private void RenameChildFolderLinks(CategoryFolder folder, string newFolderPath, RepairReportModel renameReport, OggleBoobleContext db)
+        { 
+            string ftpPath = "ftp://50.62.160.105/" + folder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(folder.Id, true) + folder.FolderName;
+            string linkId = "";
+            string expectedLinkName = "";
+            string goDaddyPrefix = "http://" + folder.RootFolder + ".ogglebooble.com/";
+            string[] files = FtpIO.GetFiles(ftpPath);
+            foreach (string fileName in files)
+            {
+                linkId = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
+                GoDaddyLink goDaddyLink = db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                if (goDaddyLink != null)
+                {
+                    expectedLinkName = goDaddyPrefix + newFolderPath + "/" + folder.FolderName + "/" + fileName;
+                    if (goDaddyLink.Link != expectedLinkName)
+                    {
+                        goDaddyLink.Link = expectedLinkName;
+                        db.SaveChanges();
+                        renameReport.LinksEdited++;
+                    }
+                }
+                else
+                    renameReport.Errors.Add("missing link: " + linkId);
 
+                renameReport.RowsProcessed++;
+            }
+            List<CategoryFolder> subDirs = db.CategoryFolders.Where(f => f.Parent == folder.Id).ToList();
+            foreach (CategoryFolder subDir in subDirs)
+            {
+                RenameChildFolderLinks(subDir, newFolderPath + "/" + folder.FolderName, renameReport, db);
+            }
         }
 
         [HttpPut]
@@ -415,8 +648,17 @@ namespace WebApi.Controllers
             string success = "";
             try
             {
-                MoveFolderRecurr(orignFolderId, destinationParentId, "");
-                success = "ok";
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == orignFolderId).FirstOrDefault();
+                    string originPath = Helpers.GetParentPath(orignFolderId, true);
+                    success = MoveFolderRecurr(orignFolderId, originPath, destinationParentId, dbSourceFolder.FolderName, db);
+                    if (success == "ok")
+                    {
+                        string sourceFtpPath = "ftp://50.62.160.105/" + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName;
+                        success = RemoveFolder(sourceFtpPath);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -424,45 +666,67 @@ namespace WebApi.Controllers
             }
             return success;
         }
-        private void MoveFolderRecurr(int orignFolderId, int destinationParentId, string destinationPath)
+        private string MoveFolderRecurr(int orignFolderId, string originPath, int destinationParentId, string destinationPath, OggleBoobleContext db)
         {
-            using (OggleBoobleContext db = new OggleBoobleContext())
+            string success = "";
+            CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == orignFolderId).FirstOrDefault();
+            CategoryFolder dbDestinationParentFolder = db.CategoryFolders.Where(f => f.Id == destinationParentId).FirstOrDefault();
+
+            string sourceFtpPath = "ftp://50.62.160.105/" + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName;
+
+            string destinationFtpPath = "ftp://50.62.160.105/" + dbDestinationParentFolder.RootFolder + ".ogglebooble.com/" +
+                Helpers.GetParentPath(destinationParentId, true) + dbDestinationParentFolder.FolderName + "/" + dbSourceFolder.FolderName;
+
+            FtpIO.CreateDirectory(destinationFtpPath);
+
+            string linkId = "";
+            string[] folderContents = FtpIO.GetFiles(sourceFtpPath);
+            foreach (string currentFile in folderContents)
             {
-                CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == orignFolderId).FirstOrDefault();
-                CategoryFolder dbDestinationParentFolder = db.CategoryFolders.Where(f => f.Id == destinationParentId).FirstOrDefault();
-                destinationPath += dbDestinationParentFolder.FolderName + "/";
-                string sourceFtpPath = "ftp://50.62.160.105/" + dbSourceFolder.RootFolder + ".ogglebooble.com/"
-                    + Helpers.GetParentPath(orignFolderId, true) + dbSourceFolder.FolderName;
-                string destinationFtpPath = "ftp://50.62.160.105/" + dbDestinationParentFolder.RootFolder + ".ogglebooble.com/"
-                    + Helpers.GetParentPath(destinationParentId, true) + destinationPath + dbSourceFolder.FolderName;
-
-                FtpIO.CreateDirectory(destinationFtpPath);
-
-                string linkId = "";
-                string[] folderContents = FtpIO.GetFiles(sourceFtpPath);
-                foreach (string currentFile in folderContents)
+                linkId = currentFile.Substring(currentFile.LastIndexOf("_") + 1, 36);
+                success = FtpIO.MoveFile(sourceFtpPath + "/" + currentFile, destinationFtpPath + "/" + currentFile);
+                if (success == "ok")
                 {
-                    linkId = currentFile.Substring(currentFile.LastIndexOf("_") + 1, 36);
-                    FtpIO.MoveFile(Path.Combine(sourceFtpPath, currentFile), Path.Combine(destinationFtpPath, currentFile));
-
-                    string linkPrefix = "http://" + dbDestinationParentFolder.RootFolder + ".ogglebooble.com/";
-                    string goDaddyLink = Path.Combine(linkPrefix, Helpers.GetParentPath(destinationParentId, true), destinationPath,
-                        dbSourceFolder.FolderName, dbSourceFolder.FolderName + "_" + linkId + currentFile.Substring(currentFile.Length - 4));
+                    string linkPrefix = "http://" + dbDestinationParentFolder.RootFolder + ".ogglebooble.com";
+                    string goDaddyLink = linkPrefix + Helpers.GetParentPath(destinationParentId, true) + "/" +
+                        dbDestinationParentFolder.FolderName + "/" + dbSourceFolder.FolderName + "/" +
+                        dbSourceFolder.FolderName + "_" + linkId + currentFile.Substring(currentFile.Length - 4);
                     GoDaddyLink goDaddyrow = db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
                     goDaddyrow.Link = goDaddyLink;
                     db.SaveChanges();
                 }
-                dbSourceFolder.Parent = dbDestinationParentFolder.Id;
-                db.SaveChanges();
-
-                int[] subdirs = db.CategoryFolders.Where(f => f.Parent == orignFolderId).Select(f => f.Id).ToArray();
-                foreach (int subdir in subdirs)
-                {
-                    MoveFolderRecurr(subdir, orignFolderId, destinationPath);
-                }
-
-                FtpIO.RemoveDirectory(sourceFtpPath);
+                else return success;
             }
+
+            dbSourceFolder.Parent = dbDestinationParentFolder.Id;
+            db.SaveChanges();
+
+
+            List<CategoryFolder> subdirs = db.CategoryFolders.Where(f => f.Parent == orignFolderId).ToList();
+            foreach (CategoryFolder subdir in subdirs)
+            {
+                MoveFolderRecurr(subdir.Id, originPath + dbSourceFolder.FolderName + "/", orignFolderId, destinationPath + "/" + dbSourceFolder.FolderName, db);
+            }
+            success = "ok";
+            return success;
+        }
+        private string RemoveFolder(string ftpPath)
+        {
+            string success = "";
+            try
+            {
+                foreach (string subDir in FtpIO.GetDirectories(ftpPath))
+                {
+                    RemoveFolder(ftpPath + "/" + subDir);
+                    //success = FtpIO.RemoveDirectory(ftpPath + "/" + subDir);
+                }
+                success = FtpIO.RemoveDirectory(ftpPath);
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
         }
     }
 
@@ -527,24 +791,31 @@ namespace WebApi.Controllers
         public static string[] GetFiles(string ftpPath)
         {
             IList<string> ftpFiles = new List<string>();
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpPath);
-            request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
-            request.Credentials = networkCredentials;
-            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-
-            Stream responseStream = response.GetResponseStream();
-            string line = "";
-            StreamReader reader = new StreamReader(responseStream);
+            try
             {
-                while (!reader.EndOfStream)
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpPath);
+                request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
+                request.Credentials = networkCredentials;
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+                Stream responseStream = response.GetResponseStream();
+                string line = "";
+                StreamReader reader = new StreamReader(responseStream);
                 {
-                    line = reader.ReadLine();
-                    if (!line.Contains("<DIR>"))
-                        ftpFiles.Add(line.Substring(39, line.Length - 39));
+                    while (!reader.EndOfStream)
+                    {
+                        line = reader.ReadLine();
+                        if (!line.Contains("<DIR>"))
+                            ftpFiles.Add(line.Substring(39, line.Length - 39));
+                    }
                 }
+                reader.Close();
+                response.Close();
             }
-            reader.Close();
-            response.Close();
+            catch (Exception ex)
+            {
+                ftpFiles.Add(Helpers.ErrorDetails(ex));
+            }
             return ftpFiles.ToArray();
         }
 
@@ -618,12 +889,15 @@ namespace WebApi.Controllers
                 requestDir.Credentials = networkCredentials;
                 requestDir.Method = Ftp.DownloadFile;
                 FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
+                if (response.StatusCode != FtpStatusCode.CommandOK)
+                    success = response.StatusCode.ToString();
                 Stream ftpStream = response.GetResponseStream();
                 success = Upload(destination, ToByteArray(ftpStream));
+                if (success == "ok")
+                    success = DeleteFile(source);
                 ftpStream.Close();
                 response.Close();
-                DeleteFile(source);
-                success = "ok";
+                requestDir = null;
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
@@ -641,6 +915,7 @@ namespace WebApi.Controllers
                 clsStream.Write(Image, 0, Image.Length);
                 clsStream.Close();
                 clsStream.Dispose();
+                clsRequest = null;
                 success = "ok";
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
@@ -686,7 +961,7 @@ namespace WebApi.Controllers
             return success;
         }
 
-        public static string Rename(string ftpPath, string newName)
+        public static string RenameFolder(string ftpPath, string newName)
         {
             string success = "";
             try

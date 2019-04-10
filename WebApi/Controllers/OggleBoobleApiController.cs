@@ -112,6 +112,9 @@ namespace WebApi.OggleBooble
         [HttpGet]
         public CategoryImageModel GetImageLinks(int folderId)
         {
+            var timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
+
             var imageLinks = new CategoryImageModel();
             try
             {
@@ -141,6 +144,8 @@ namespace WebApi.OggleBooble
             {
                 imageLinks.Success = Helpers.ErrorDetails(ex);
             }
+            timer.Stop();
+            System.Diagnostics.Debug.WriteLine("GetImageLinks took: " + timer.Elapsed);
             return imageLinks;
         }
 
@@ -223,10 +228,9 @@ namespace WebApi.OggleBooble
     public class CarouselController : ApiController
     {
         [HttpGet]
-        public CarouselInfoModel GetLinks(string root, int headstart)
+        public CarouselInfoModel GetLinks(string root, int take)
         {
             CarouselInfoModel carouselInfo = new CarouselInfoModel();
-
             try
             {
                 var timer = new System.Diagnostics.Stopwatch();
@@ -248,11 +252,11 @@ namespace WebApi.OggleBooble
                              FolderName = f.FolderName,
                              FolderPath = g.FolderName + "/" + p.FolderName,
                              Link = l.Link.StartsWith("http") ? l.Link : l.ExternalLink
-                         }).Take(headstart).ToList();
+                         }).Take(take).ToList();
                 }
                 carouselInfo.FolderCount = carouselInfo.Links.GroupBy(l => l.FolderName).Count();
                 timer.Stop();
-                System.Diagnostics.Debug.WriteLine("Select " + headstart + " from vLinks took: " + timer.Elapsed);
+                System.Diagnostics.Debug.WriteLine("Select " + take + " from vLinks took: " + timer.Elapsed);
                 carouselInfo.Success = "ok";
             }
             catch (Exception ex)

@@ -132,7 +132,10 @@
         box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
         display: none;
     }
-
+    .repairReport {
+        max-height: 412px;
+        overflow-y: auto;
+    }
 </style>
 
 <div class="threeColumnArray">
@@ -142,13 +145,14 @@
             <div class="myH2">Dashboard</div>
             <dir class="linkContainer">
                 @*
-                    <div class="clickable" onclick="window.location.href='/stats/AdminDashboard'">Rebuild Tables</div>
-                    <div class="clickable" onclick="$('#addNewLink').show()">Add Link</div>
-                    <div class="clickable" onclick="buildFolderLinkTable()">build FolderLink Table</div>
-                    <div class="clickable" onclick="getCatTree()">Refresh Dir Tree</div>
-                    <div class="clickable" onclick="testConnection();">testConnection();</div>
-                    <div class="clickable" onclick="rebuildLinkTables()">ReBuild Link Tables</div>
-                    <div class="clickable" onclick="$('#txtNewLink').val('f:/Danni/'); ReBuildLinks()">ReBuild Links</div>
+                <div class="clickable" onclick="window.location.href='/stats/AdminDashboard'">Rebuild Tables</div>
+                <div class="clickable" onclick="$('#addNewLink').show()">Add Link</div>
+                <div class="clickable" onclick="buildFolderLinkTable()">build FolderLink Table</div>
+                <div class="clickable" onclick="getCatTree()">Refresh Dir Tree</div>
+                <div class="clickable" onclick="testConnection();">testConnection();</div>
+                <div class="clickable" onclick="rebuildLinkTables()">ReBuild Link Tables</div>
+                <div class="clickable" onclick="$('#txtNewLink').val('f:/Danni/'); ReBuildLinks()">ReBuild Links</div>
+                <div class="clickable" onclick="emergencyRepair(116)">Emergency Repair</div>
                 *@
                 <div class="clickable" onclick="rebuildCatTree()">ReBuild Dir Tree</div>
                 <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
@@ -204,6 +208,7 @@
                     <div><span>new name</span><input id="txtReName" class="roundedInput" /></div>
                     <div class="roundendButton" onclick="renameFolder()">Rename Folder</div>
                 </div>
+                <div id="renameFolderReport" class="repairReport"></div>
             </div>
 
             <div id="moveFolderCrud" class="floatingCrud">
@@ -217,10 +222,12 @@
                     <div><span>new parent</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
                     <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
                 </div>
+                <div id="moveFolderReport" class="repairReport"></div>
             </div>
 
             <div id="partialViewTreeContainer" class="floatingCrud2">
-                <div class="floatingCrudBanner">Select Folder to move<div onclick="$('#partialViewTreeContainer').fadeOut()" class="farSide">x</div>
+                <div class="floatingCrudBanner">
+                    Select Folder to move<div onclick="$('#partialViewTreeContainer').fadeOut()" class="farSide">x</div>
                     <div class="dirTree2Container">
                         @Html.Partial("_DirTree2")
                     </div>
@@ -234,11 +241,7 @@
                     <div><span>start path</span><input class="txtLinkPath roundedInput" /></div>
                     <div class="roundendButton" onclick="repairLinks()">run</div>
                 </div>
-
-                <div id="repairReport"></div>
-
-
-
+                <div id="repairLinksReport"  class="repairReport"></div>
             </div>
         </div>
     </div>
@@ -414,7 +417,7 @@
             success: function (success) {
                 $('#getDirTreeLoadingGif').hide();
                 if (!success.startsWith("ERROR")) {
-                    displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + success);
+                    displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val());
                     //$('#moveFolderCrud').fadeOut();
                     rebuildCatTree();
                 }
@@ -429,21 +432,40 @@
     }
 
     function renameFolder() {
+        var start = Date.now();
         $('#getDirTreeLoadingGif').fadeIn();
+        $('#dataifyInfo').show().html("renaming folder " + $('.txtLinkPath').val() + " to " + $('#txtReName').val());
+        $('#renameFolderReport').html("");
+
         $.ajax({
             type: "PUT",
             url: service + "/api/FtpDashboard/RenameFolder?folderId=" + dirTree1SelectedId + "&kludge=0&newFolderName=" + $('#txtReName').val(),
-            success: function (success) {
+            success: function (repairReport) {
                 $('#getDirTreeLoadingGif').hide();
-                if (!success.startsWith("ERROR")) {
-                    //$('#renameFolderCrud').fadeOut();
+                if (repairReport.Success == "ok") {
+                    var delta = (Date.now() - start);
+                    var minutes = Math.floor(delta / 60000);
+                    var seconds = ((delta % 60000) / 1000).toFixed(0);
                     displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
+                    console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                     rebuildCatTree();
-                    $('#getDirTreeLoadingGif').hide();
+                    setTimeout(function () {
+                        $('#dataifyInfo').html("Rename took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+
+                        $('#dataifyInfo').append(", Rows Processed: " + repairReport.RowsProcessed);
+                        $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);
+                        $('#dataifyInfo').append(", Images Renamed: " + repairReport.ImagesRenamed);
+                        $('#dataifyInfo').append(", Folders Renamed: " + repairReport.NewLinksAdded);
+
+                        repairReport.Errors.forEach(function (element) {
+                            $('#renameFolderReport').append("<div> errors: " + element + "</div>");
+                        });
+                        //$('#renameFolderCrud').fadeOut();
+                    }, 1200);
                 }
                 else {
                     $('#getDirTreeLoadingGif').hide();
-                    alert("renameFolder: " + success);
+                    alert("renameFolder: " + repairReport.Success);
                 }
             },
             error: function (xhr) {
@@ -568,7 +590,7 @@
         var start = Date.now();
         $('#dataifyInfo').show().html("checking and repairing links");
         $('#getDirTreeLoadingGif').fadeIn();
-        $('#repairReport').html("");
+        $('#repairLinksReport').html("");
         $.ajax({
             type: "GET",
             url: service + "/api/FtpDashBoard/RepairLinks/?startFolderId=" + dirTree1SelectedId + "&drive=" + $('#txtdestination').val(),
@@ -582,14 +604,13 @@
                         console.log("rebuildCatTree took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                         $('#dataifyInfo').html("download links from " + repairReport.FolderName + " took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
 
-                        $('#dataifyInfo').append(", RowsProcessed: " + repairReport.RowsProcessed);
-                        $('#dataifyInfo').append(", bad links: " + repairReport.BadLinks);
+                        $('#dataifyInfo').append(", Rows Processed: " + repairReport.RowsProcessed);
+                        $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);
                         $('#dataifyInfo').append(", Images Renamed: " + repairReport.ImagesRenamed);
                         $('#dataifyInfo').append(", New Links Added: " + repairReport.NewLinksAdded);
-                        $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
-                        $('#dataifyInfo').append(", directory errors: " + repairReport.DirNotFound);
-                        $('#dataifyInfo').append(", bad file names: " + repairReport.BadFileNames);
-
+                        //$('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
+                        //$('#dataifyInfo').append(", directory errors: " + repairReport.DirNotFound);
+                        //$('#dataifyInfo').append(", bad file names: " + repairReport.BadFileNames);
 
                         //$('#dataifyInfo').append(", links fixed: " + repairReport.LinksRemoved);
                         //repairReport.MissingImages.forEach(function (element) {
@@ -598,7 +619,7 @@
                         //});
 
                         repairReport.Errors.forEach(function (element) {
-                            $('#repairReport').append("<div> errors: " + element + "</div>");
+                            $('#repairLinksReport').append("<div> errors: " + element + "</div>");
                         });
 
                         //repairReport.BadLinks.forEach(function (element) {
@@ -627,5 +648,24 @@
             addImageLink();
         }
     });
+
+    function emergencyRepair(folderId) {
+        $.ajax({
+            type: "GET",
+            url: service + "api/FtpDashBoard/JodiPiperEmergency?folderId=" + folderId,
+            success: function (rtn) {
+                if (rtn == "ok") {
+                    displayStatusMessage("ok", "fix succeded");
+                }
+                else
+                    alert("emergencyRepair: " + rtn);
+            },
+            error: function (xhr) {
+                $('#getDirTreeLoadingGif').hide();
+                alert("emergencyRepair xhr error: " + getXHRErrorDetails(xhr));
+            }
+        });
+    }
+
 
 </script>

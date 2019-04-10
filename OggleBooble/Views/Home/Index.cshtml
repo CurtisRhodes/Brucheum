@@ -103,8 +103,8 @@
         <div id="divStatusMessage"></div>
         <div class="flexContainer">
             <div class="floatLeft">
-                <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('centerfolds'), $(this).is(':checked')" />Include Centerfolds</div>
-                <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('archive', $(this).is(':checked'))" />Include Archive</div>
+                <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('centerfolds', $(this).is(':checked'), 1000)" />Include Centerfolds</div>
+                <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('archive', $(this).is(':checked'), 50000)" />Include Archive</div>
             </div>
             <div class="floatLeft">
                 <div id="galleryMessage" class="indexTitle"></div>
