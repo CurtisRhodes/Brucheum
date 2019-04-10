@@ -325,14 +325,11 @@ $('.ogContextMenu div').click(function () {
             $('#copyDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
             $('#moveCopyDialog').show();
             break;
-        //case "Move Link":
-        //    $('#btnMoveImage').hide();
-        //    $('#btnCopyLink').hide();
-        //    $('#btnMoveLink').show();
-        //    $('#dialogBannerText').html("Move Image Link");
-        //    $('#copyDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
-        //    $('#moveCopyDialog').show();
-        //    break;
+        case "Remove Image":
+            if (confirm("send this image to the reject folder")) {
+                removeImage();
+            }
+            break;
         case "Remove Link":
             if (confirm("remove this link")) {
                 removeLink();
@@ -349,7 +346,7 @@ $('.ogContextMenu div').click(function () {
     }
 });
 
-function removeLink() {
+function xxremoveLink() {
     var badLink = {};
     badLink.ImageId = currentContextImageId;
     badLink.FolderId = folderId;
@@ -373,29 +370,59 @@ function removeLink() {
     });
 }
 
+function removeImage() {
+    var badLink = {};
+    badLink.ImageId = currentContextImageId;
+    badLink.FolderId = folderId;
+    $.ajax({
+        type: "DELETE",
+        url: service + "/api/FtpImagePage",
+        data: badLink,
+        success: function (success) {
+            if (success === "ok") {
+                if (viewerShowing)
+                    slide("next");
+                getImageLinks();
+            }
+            else {
+                alert("removeLink: " + success);
+            }
+        },
+        error: function (xhr) {
+            alert("delete xhr error: " + xhr.statusText);
+        }
+    });
+}
+
 function moveImage() {
     var moveImageModel = new Object();
     moveImageModel.SourceFolderId = folderId;
     moveImageModel.DestinationFolderId = newLink.CopyToFolderId;
-    moveImageModel.ImageName = imageArray[imageArrayIndex].Link;
+    if (viewerShowing)
+        moveImageModel.ImageName = imageArray[imageArrayIndex].Link;
+    else
+        moveImageModel.ImageName = $('#' + currentContextImageId + '').attr("src");
+    $('#getImagesLoadingGif').show();
 
     $.ajax({
         type: "PUT",
         url: service + "/api/FtpImagePage/MoveImage",
         data: moveImageModel,
         success: function (success) {
+            $('#getImagesLoadingGif').hide();
             if (success === "ok") {
-                displayStatusMessage("ok", "image moved to " + $('#dirTreeDropDown option:selected').text());
-                //if(currentContextImageId!=newLink.)
-                //removeLink();
+                displayStatusMessage("ok", "image moved to " + newLink.DestinationPath);
                 $('#moveCopyDialog').hide();
                 if (viewerShowing)
                     slide("next");
+
+                getImageLinks();
             }
             else
                 alert(success);
         },
         error: function (xhr) {
+            $('#getImagesLoadingGif').hide();
             alert("moveImage xhr error: " + xhr.statusText);
         }
     });
@@ -412,31 +439,7 @@ function copyLink() {
                 $('#moveCopyDialog').hide();
                 //alert("copy destination folder: " + $('#dirTreeDropDown option:selected').text());
                 displayStatusMessage("ok", "link coppyed to " + $('#dirTreeResults').html());
-                //if (andRemove) {
-                //    var badLink = {};
-                //    badLink.ImageId = newLink.ImageId;
-                //    badLink.FolderId = folderId;
-                //    $.ajax({
-                //        type: "DELETE",
-                //        url: service + "/api/ImagePage",
-                //        data: badLink,
-                //        success: function (success) {
-                //            if (success === "ok") {
-                //                getImageLinks();
-                //                if (viewerShowing)
-                //                    slide("next");
-                //            }
-                //            else {
-                //                alert("copyLink(andRemove): " + success);
-                //            }
-                //        },
-                //        error: function (xhr) {
-                //            alert("delete xhr error: " + xhr.statusText);
-                //        }
-                //    });
-                //}
-                //else
-                //    getImageLinks();
+                getImageLinks();
             }
             else {
                 alert("copyLink: " + success);
@@ -463,7 +466,7 @@ function toggleDirTree(id) {
 
 function onDirTreeClick(path, id) {
     newLink.CopyToFolderId = id.substring(2);
-    //alert("newLink.CopyToFolderId: " + newLink.CopyToFolderId);
+    newLink.DestinationPath = path.replace(/%20/g, " ");
     $('#dirTreeResults').show();
     $('#dirTreeResults').html(path.replace(/%20/g, " "));
     $('#dirTreeDropDown').hide();

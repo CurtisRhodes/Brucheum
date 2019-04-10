@@ -263,10 +263,10 @@
     }
 
     function launchCarousel(root) {
-        loadImages(root, true);
+        loadImages(root, true, 20);
     }
 
-    function loadImages(rootFolder, isChecked) {
+    function loadImages(rootFolder, isChecked, take) {
         var start = Date.now();
         var k = 0;
         var spliced = 0;
@@ -305,7 +305,7 @@
             $('#laCarousel').show();
             $.ajax({
                 type: "GET",
-                url: service + "/api/Carousel/GetLinks?root=" + rootFolder + "&headstart=50000",
+                url: service + "/api/Carousel/GetLinks?root=" + rootFolder + "&take="+take,
                 success: function (carouselInfo) {
                     if (carouselInfo.Success == "ok") {
                         $.each(carouselInfo.Links, function (idx, obj) {
@@ -327,7 +327,10 @@
                         imageIndex = Math.floor(Math.random() * numImages);
 
                         var delta = (Date.now() - start) / 1000;
-                        console.log("loadImages(" + rootFolder + ") took: " + delta.toFixed(3));
+                        console.log("loadImages(" + rootFolder + ") take: " + take + " took: " + delta.toFixed(3));
+                        if (take == 20) {
+                            loadImages(rootFolder, isChecked, 1500);
+                        }
                     }
                     else
                         alert("loadImages: " + carouselInfo.Success);
@@ -386,6 +389,7 @@
         startCarousel();
         $('#pauseButton').html("||");
     }
+
     function startCarousel() {
         showImage();
         rotate();
