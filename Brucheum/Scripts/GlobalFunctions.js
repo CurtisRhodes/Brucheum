@@ -144,7 +144,8 @@ function sendEmailFromJS(msg, body) {
                     //alert("Email says: " + sendObj.Subject);
                 }
                 else {
-                    alert("Email Fail: " + emailSuccess);
+                    $('#footerMessage').html("Email Fail: " + emailSuccess);
+                    //alert("Email Fail: " + emailSuccess);
                 }
                 rtn = emailSuccess;
             },

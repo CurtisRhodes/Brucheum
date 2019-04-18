@@ -20,20 +20,20 @@ namespace WebApi.Home
             string success = "";
             try
             {
-                SmtpClient smtpClient = new SmtpClient("smpt.gmail.com", 587)
-                {
-                    Credentials = new NetworkCredential("curtis.rhodes@gmail.com", "R@quel11"),
-                    EnableSsl = true
-                };
-                smtpClient.Send("curtis.rhodes@gmail.com", "curtis.rhodes@gmail.com", emailMessage.Subject, emailMessage.Body);
+                //SmtpClient smtpClient = new SmtpClient("smpt.gmail.com", 587)
+                //{
+                //    Credentials = new NetworkCredential("curtis.rhodes@gmail.com", "R@quel11"),
+                //    EnableSsl = true
+                //};
+                //smtpClient.Send("curtis.rhodes@gmail.com", "curtis.rhodes@gmail.com", emailMessage.Subject, emailMessage.Body);
 
                 //using (SmtpClient smtp = new SmtpClient("smtpout.secureserver.net", 25))
-                //using (SmtpClient smtp = new SmtpClient("relay-hosting.secureserver.net", 25))
-                //{
-                //    MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "CurtishRhodes@hotmail.com", emailMessage.Subject, emailMessage.Body);
-                //    smtp.Send(mailMessage);
-                //    success = "ok";
-                //}
+                using (SmtpClient smtp = new SmtpClient("relay-hosting.secureserver.net", 25))
+                {
+                    MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "CurtishRhodes@hotmail.com", emailMessage.Subject, emailMessage.Body);
+                    smtp.Send(mailMessage);
+                    success = "ok";
+                }
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
