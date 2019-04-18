@@ -73,6 +73,19 @@ body {
     float: left;
 }
 
+.hideableDropDown {
+    display: inline-block;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+}
+.dirTreeDropdownButton {
+    height: 21px;
+    cursor: pointer;
+    padding: 7px;
+    margin-top: 21px;
+}
+
 .loadingGif {
     position: absolute;
     display: none;
@@ -81,6 +94,8 @@ body {
     .loadingGif img {
         height: 45px;
     }
+
+
 
 #modalContainer {
     z-index: 6; /* Sit on top */
@@ -318,6 +333,7 @@ label {
     text-align: center;
     font-size: larger;
     padding: 10px;
+    margin-right: 3px;
 }
 
 .farSide {
@@ -349,4 +365,21 @@ label {
     left: 200px;
     display: none;
 }
+
+.ogContextMenu {
+    position: absolute;
+    background-color: #e1e1de;
+    border: solid 2px #923c76;
+    padding: 8px 10px;
+    display: none;
+    z-index: 110;
+}
+
+    .ogContextMenu div {
+        padding: 8px;
+        margin: 2px;
+        background-color: #fff;
+        border-radius: 3px;
+        cursor: pointer;
+    }
 

@@ -1,5 +1,13 @@
 ﻿<link href="~/Styles/ImagePage.css" rel="stylesheet" />
 
+<style>
+    .modelInfoContainer {
+        top: 188px;
+        z-index: 150;
+    }
+</style>
+
+
 <div id="staticableContent">
     <div class="threeColumnArray">
         <div id="leftColumn"></div>
@@ -23,7 +31,7 @@
             <div id="prev" class="viewerImageNav" onclick="slide('prev')">PREV</div>
             <img id="imgComment" class="leftSideButton" title="comment" onclick="showCommentDialog()" src="Images/comment.png" />
             <span id="expandoBannerText"></span>
-            <div onclick="$('#customViewer').hide(); viewerShowing = false;" class="farSide"><img class="closeButton" src="Images/close.png" height="35" /></div>
+            <div onclick="$('#customViewer').hide(); viewerShowing = false;" class="farSide"><img class="closeButton" src="/Images/close.png" height="35" /></div>
 
             <div id="next" class="farSide" onclick="slide('next')">NEXT</div>
             <div class="farSide" onclick="blowupImage()"><img class="popout" src="Images/expand02.png" /></div>
@@ -60,10 +68,12 @@
 
 </div>
 
+<div>@Html.Partial("_ModelInfoDialog")</div>
+
 <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
     <div>Copy Link</div>
-    <div>Move Image</div>
-    <div>Remove Image</div>
+    <div>Archive Image</div>
+    <div>Remove Link</div>
     <div>Comment</div>
     <div>About</div>
 </div>
@@ -79,7 +89,7 @@
                     @Html.Partial("_DirTree1");
                 </div>
             </div>
-            <img id="pusedoDropdown" class="dropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeResults').hide();$('#dirTreeDropDown').show()" />
+            <img id="pusedoDropdown" class="dirTreeDropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeResults').hide();$('#dirTreeDropDown').show()" />
             <div id="btnCopyLink" class="roundendButton" onclick="copyLink(false)">Copy</div>
             <div id="btnMoveLink" class="roundendButton" onclick="copyLink(true)">Move</div>
             <div id="btnMoveImage" class="roundendButton" onclick="moveImage()">Move</div>
@@ -93,15 +103,20 @@
         top: 125px;
         left: 300px;
         border: solid 2px var(--borderColor);
+        background-color: rgb(255, 238, 255);
         box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
         display: none;
         z-index: 200;
     }
-
+    .commentDialogImage {
+        max-width: 333px;
+        max-height:333px;
+    }
     .imagePageDialog {
         background-color: #cabcbc;
         font-size: 18px;
     }
+
     .metaTagListArea {
         height: 222px;
         width: 711px;
@@ -116,13 +131,16 @@
         border-radius: 3px;
         padding: 2px;
     }
+
     commentDialogImage {
         height: 99px;
         max-width: 66%;
     }
+
     .tagInput {
         width: 450px;
     }
+
     #txtCommentTitle {
         width: 100%;
     }
@@ -143,7 +161,10 @@
 </div>
 
 <div id="commentDialog" class="commentDialog">
-    <div class="floatingCrudBanner"><span id="commentDialogBanner">Write a fantasy about this image</span><div onclick="$('#commentDialog').fadeOut()" class="farSide">x</div> </div>
+    <div class="floatingCrudBanner">
+        <span id="commentDialogBanner">Write a fantasy about this image</span>
+        <div onclick="$('#commentDialog').fadeOut()" class="farSide">x</div>
+    </div>
     <div id="commentDialogContainer" class="commentDialogContainer">
         <div><img id="commentDialogImage" class="commentDialogImage" /></div>
         <div></div>
@@ -341,7 +362,7 @@
             blogCommentModel.LinkId = blogCommentModel.Link.substring(blogCommentModel.Link.lastIndexOf("_"), 36);
         else
             blogCommentModel.LinkId = currentContextImageId;
-            commentDialogImage
+        commentDialogImage
         blogCommentModel.FolderId = folderId;
         blogCommentModel.UserId = currentUser + " = " + ipAddress;
         blogCommentModel.CommentText = $('#imageCommentEditor').summernote('code');
@@ -361,9 +382,6 @@
                 alert("saveComment XHR : " + getXHRErrorDetails(jqXHR, exception));
             }
         })
-    }
-    function aboutThisImage() {
-
     }
 </script>
 <script src="~/Scripts/ImagePage.js"></script>

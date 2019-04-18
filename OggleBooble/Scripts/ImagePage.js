@@ -66,9 +66,9 @@ function getImageLinks() {
         $.ajax({
             type: "GET",
             url: service + "/api/ImagePage/GetImageLinks?folderId=" + folderId,
-            success: function (imageModel, start) {                
+            success: function (imageModel) {                
                 if (imageModel.Success === "ok") {
-                    loadImages2(imageModel);
+                    loadImages2(imageModel, start);
                 }
                 else {
                     $('#getImagesLoadingGif').hide();
@@ -100,47 +100,40 @@ function loadImages2(imageModel, start) {
         window.location.href = "imagePage?folder=" + $(this).attr("id");
     });
 
-    // add files
+    // process files
 
     imageArray = new Array();
     $('#slideShowLink').show();
     var fileCount = 0;
-    var nonLocal = false;
     var pageName = $('#expandoBannerText').html();
-
     $.each(imageModel.Files, function (idx, vwLink) {
+        $('#footerMessage').html("fileCount: " + fileCount);
         if (rootFolder === "archive") {
-            if (vwLink.LinkCount === 1) {
-                nonLocal = false;
+            if (vwLink.NoLink > 0) {
                 $('#imageContainer').append("<div class='noLinksImageFrame'><img id=" + vwLink.LinkId +
                     " idx=" + fileCount + " class='thumbImage' src='" + vwLink.Link + "'/></div>");
             }
             else {
-                nonLocal = true;
-                $('#imageContainer').append("<div class='mmultiLinkImageFrame'><img id=" + vwLink.LinkId +
+                $('#imageContainer').append("<div class='multiLinkImageFrame'><img id=" + vwLink.LinkId +
                     " idx=" + fileCount + " class='thumbImage' src='" + vwLink.Link + "'/></div>");
             }
         }
         else {
-
-            if (vwLink.Link.indexOf(pageName) > 0) {
-                nonLocal = false;
+            if (vwLink.NoLink > 0) {
                 $('#imageContainer').append("<div class='imageFrame'><img id=" + vwLink.LinkId +
                     " idx=" + fileCount + " class='thumbImage' src='" + vwLink.Link + "'/></div>");
             }
             else {
-                nonLocal = true;
-                $('#imageContainer').append("<div class='nonLocalImageFrame'><img id=" + vwLink.LinkId +
+                $('#imageContainer').append("<div class='multiLinkImageFrame'><img id=" + vwLink.LinkId +
                     " idx=" + fileCount + " class='thumbImage' src='" + vwLink.Link + "'/></div>");
             }
         }
         fileCount++;
 
         imageArray.push({
-            NonLocal: nonLocal,
             Link: vwLink.Link.replace(/ /g, "%20"),
             ImageId: vwLink.LinkId,
-            LinkCount: vwLink.LinkCount
+            Local: vwLink.NoLink > 0
         });
     });
 
@@ -194,7 +187,7 @@ function slide(direction) {
             $('#viewerImage').css("transform", "translateX(-2200px)");
             $('#viewerImage').show();
             $('#viewerImage').attr("src", imageArray[imageArrayIndex].Link);
-            if (imageArray[imageArrayIndex].NonLocal) {
+            if (imageArray[imageArrayIndex].Local) {
                 $('#viewerImage').addClass("nonLocalIndicator");
                 //$('#viewerImage').width($('#viewerImage').width() - 5);
             }
@@ -225,6 +218,9 @@ function slide(direction) {
 }
 
 function showViewer(imageId) {
+
+
+
     var thisImage = $('#' + imageId + '');
     imageArrayIndex = thisImage.attr("idx");
     viewerShowing = true;
@@ -289,7 +285,7 @@ function explodeViewer() {
         $('#customViewer').width($('#customViewer').width() + (Xincrimentor * 2));
     }
     if ($('#customViewer').width() > viewAreaWidth) {
-        $('#customViewer').width(viewAreaWidth)
+        $('#customViewer').width(viewAreaWidth);
     }
     if ($('#customViewer').position().top > viewAreaTop) {
         $('#customViewer').css("top", $('#customViewer').position().top - Yincrimentor);
@@ -317,7 +313,7 @@ $('.ogContextMenu div').click(function () {
             $('#copyDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
             $('#moveCopyDialog').show();
             break;
-        case "Move Image":
+        case "Archive Image":
             $('#btnCopyLink').hide();
             $('#btnMoveLink').hide();
             $('#btnMoveImage').show();
@@ -325,21 +321,20 @@ $('.ogContextMenu div').click(function () {
             $('#copyDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
             $('#moveCopyDialog').show();
             break;
-        case "Remove Image":
-            if (confirm("send this image to the reject folder")) {
-                removeImage();
-            }
-            break;
         case "Remove Link":
             if (confirm("remove this link")) {
-                removeLink();
+                removeImage();
+                //removeLink();
             }
             break;
         case "Comment":
             showCommentDialog();
             break;
         case "About":
-            aboutThisImage();
+            if (viewerShowing)
+                showModelInfoDialog(imageArray[imageArrayIndex].ImageId, imageArray[imageArrayIndex].Link);
+            else
+                showModelInfoDialog(currentContextImageId, $('#' + currentContextImageId + '').attr("src"));
             break;
         default:
             alert(action);
@@ -395,15 +390,14 @@ function removeImage() {
 }
 
 function moveImage() {
+    $('#getImagesLoadingGif').show();
     var moveImageModel = new Object();
     moveImageModel.SourceFolderId = folderId;
     moveImageModel.DestinationFolderId = newLink.CopyToFolderId;
     if (viewerShowing)
-        moveImageModel.ImageName = imageArray[imageArrayIndex].Link;
+        moveImageModel.GoDaddyLink = imageArray[imageArrayIndex].Link;
     else
-        moveImageModel.ImageName = $('#' + currentContextImageId + '').attr("src");
-    $('#getImagesLoadingGif').show();
-
+        moveImageModel.GoDaddyLink = $('#' + currentContextImageId + '').attr("src");
     $.ajax({
         type: "PUT",
         url: service + "/api/FtpImagePage/MoveImage",
@@ -415,7 +409,6 @@ function moveImage() {
                 $('#moveCopyDialog').hide();
                 if (viewerShowing)
                     slide("next");
-
                 getImageLinks();
             }
             else
@@ -437,9 +430,10 @@ function copyLink() {
         success: function (success) {
             if (success === "ok") {
                 $('#moveCopyDialog').hide();
-                //alert("copy destination folder: " + $('#dirTreeDropDown option:selected').text());
                 displayStatusMessage("ok", "link coppyed to " + $('#dirTreeResults').html());
                 getImageLinks();
+                if (viewerShowing)
+                    slide("next");
             }
             else {
                 alert("copyLink: " + success);
@@ -457,7 +451,7 @@ function blowupImage() {
 }
 
 function toggleDirTree(id) {
-    if ($('#' + id + '').css("display") == "none")
+    if ($('#' + id + '').css("display") === "none")
         $('#S' + id + '').html("[-] ");
     else
         $('#S' + id + '').html("[+] ");
@@ -530,8 +524,8 @@ function runSlideShow(action) {
     }
     else {
         slide('next');
-        $('#fasterSlideshow').attr("Title", "slideshow " + (10 - (slideShowSpeed / 1000)) + "x");
-        $('#slowerSlideShow').attr("Title", "slideshow " + (10 - (slideShowSpeed / 1000)) + "x");
+        $('#fasterSlideshow').attr("Title", "slideshow " + 10 - (slideShowSpeed / 1000) + "x");
+        $('#slowerSlideShow').attr("Title", "slideshow " + 10 - (slideShowSpeed / 1000) + "x");
         clearInterval(slideShow);
         slideShow = setInterval(function () {
             slide('next');

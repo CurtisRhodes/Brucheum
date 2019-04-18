@@ -22,6 +22,12 @@ namespace WebApi.Directory.Models
         public string LinkId { get; set; }
         public List<CategoryTreeModel> SubDirs { get; set; }
     }
+    public class CategoryImageLinkModel
+    {
+        public int ImageCategoryId { get; set; }
+        public string ImageLinkId { get; set; }
+        public string FolderName { get; set; }
+    }
 
     public class CategoryImageModel
     {
@@ -81,7 +87,7 @@ namespace WebApi.Directory.Models
     {
         public int SourceFolderId { get; set; }
         public int DestinationFolderId { get; set; }
-        public string ImageName { get; set; }
+        public string GoDaddyLink { get; set; }
     }
 
     public class MetaTagInfo
@@ -127,9 +133,11 @@ namespace WebApi.Directory.Models
         public int FolderId { get; set; }
         public int ParentId { get; set; }
         public string FolderName { get; set; }
+        public string ModelName { get; set; }
         public string FolderPath { get; set; }
         public string RootFolder { get; set; }
         public string Link { get; set; }
+        public string LinkId { get; set; }
     }
 
     public class CarouselInfoModel
@@ -171,9 +179,11 @@ namespace WebApi.Directory.Models
         public int LinksEdited { get; set; }
         public int NewLinksAdded { get; set; }
         public int LinksRemoved { get; set; }
+        public int ImagesDownLoaded  { get; set; }
         public int DirNotFound { get; set; }
         public int CatLinksAdded { get; set; }
         public int RowsProcessed { get; set; }
+        public int ImagesMoved { get; set; }
         public int BadFileNames { get; set; }
         public int BadLinks { get; set; }
 
@@ -198,4 +208,21 @@ namespace WebApi.Directory.Models
         public DateTime Posted { get; set; }
     }
 
+    public class NudeModelImageModel {
+        public int ModelId { get; set; }
+        public string LinkId { get; set; }
+
+    }
+    public class NudeModelInfoModel
+    {
+        public int ModelId { get; set; }
+        public string ModelName { get; set; }
+        public string Nationality { get; set; }
+        public string ExternalLinks { get; set; }
+        public string CommentText { get; set; }
+        public int FolderId { get; set; }
+        public DateTime Born { get; set; }
+        public string LinkId { get; set; }
+        public string Success { get; set; }
+    }
 }

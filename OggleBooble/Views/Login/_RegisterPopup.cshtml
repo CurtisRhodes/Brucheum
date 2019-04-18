@@ -1,27 +1,34 @@
 ﻿<link href="~/Styles/modalDialog.css" rel="stylesheet" />
-<script src="~/Scripts/Global.js"></script>
-
+<link href="~/Styles/default.css" rel="stylesheet" />
+<script src="~/Scripts/GlobalFunctions.js"></script>
 <style>
     #registerUserDialog {
         position: absolute;
-        top: 66px;
+        top: 122px;
         left: 40%;
         box-sizing: content-box;
-        color: #242729;
-        width: 280px;
-        padding: 30px;
-        border: 1px solid #e4e6e8;
+        color: #370757;
+        border: 3px solid #808080;
+        box-shadow: 10px 10px;
         background: #fff;
         z-index: 20;
+    }
+    .registerUserDialogCrudContainer {
+        padding: 5px;
     }
 
     #divShowDetails {
         cursor: pointer;
         margin-top: 10px;
     }
+
     .carets {
         height: 15px;
         width: 20px;
+    }
+    .divCloseButton {
+        display: inline-block;
+        cursor: pointer;
     }
     #divExtraDetails {
         display: none;
@@ -29,58 +36,59 @@
 </style>
 
 <div id="registerUserDialog">
-
     <div class="dialogHeader">
-        Sign in to <span>OggleBooble</span>
+        welcome to <span>OggleBooble</span>
         <div id="btnClose" class="divCloseButton">
             <img height="19" src="~/Images/powerOffRed01.png" />
         </div>
     </div>
-    <div style="clear:both"></div>
-    <div id="errUserName" class="validationError">Required</div>
-    <label>user name</label><br>
-    <input id="txtUserName" type="text" class="roundedInput" placeholder="your go by name"><br>
-    <div id="errPassword" class="validationError">Required</div>
-    <label>password</label><br>
-    <input id="clearPassword" type="password" class="roundedInput" autocomplete="off" placeholder="********"><br>
-    <label>retype password</label><br>
-    <input id="clearPasswordRetype" type="password" class="roundedInput" autocomplete="off" placeholder="********"><br>
-    <div id="divRememberMe">
-        <input id="ckRememberMe" type="checkbox" checked="checked" />Remember Me ?  (<span>uses a cookie</span>)
-    </div>
-    <div id="divShowDetails">
-        Extra Details
-        <div class="divCloseButton">
-            <img id="upDownCaret" height="19" src="~/Images/downCaret.png" />
+    <div class="registerUserDialogCrudContainer">
+        <div style="clear:both"></div>
+        <div id="errUserName" class="validationError">Required</div>
+        <label>user name</label><br>
+        <input id="txtUserName" type="text" class="roundedInput" placeholder="your go by name"><br>
+        <div id="errPassword" class="validationError">Required</div>
+        <label>password</label><br>
+        <input id="clearPassword" type="password" class="roundedInput" autocomplete="off" placeholder="********"><br>
+        <label>retype password</label><br>
+        <input id="clearPasswordRetype" type="password" class="roundedInput" autocomplete="off" placeholder="********"><br>
+        <div id="divRememberMe">
+            <input id="ckRememberMe" type="checkbox" checked="checked" />Remember Me ?  (<span>uses a cookie</span>)
         </div>
+        <div id="divShowDetails">
+            Extra Details
+            <div class="divCloseButton">
+                <img id="upDownCaret" height="19" src="~/Images/caretDown.png" />
+            </div>
+        </div>
+        <div id="divExtraDetails">
+            <label>Email (not required)</label>
+            <input id="txtEmail" type="email" class="roundedInput" placeholder="you@example.org"><br>
+            <label>FirstName (not required)</label>
+            <input id="txtFirstName" type="text" class="roundedInput"><br>
+            <label>Last Name (not required)</label>
+            <input id="txtLastName" type="text" class="roundedInput"><br>
+            <label>Phone Number (not required)</label>
+            <input id="txtPhone" type="tel" class="roundedInput"><br>
+            <label>Pin  (not required)</label>
+            <input id="txtPin" type="text" class="roundedInput" placeholder="you may use this in place of your password"><br>
+        </div>
+        <button class="roundendButton" style="float:right; margin-bottom:6px;" id="btnRegister">Submit</button>
     </div>
-    <div id="divExtraDetails">
-        <label>Email (not required)</label>
-        <input id="txtEmail" type="email" class="roundedInput" placeholder="you@example.org"><br>
-        <label>FirstName (not required)</label>
-        <input id="txtFirstName" type="text" class="roundedInput"><br>
-        <label>Last Name (not required)</label>
-        <input id="txtLastName" type="text" class="roundedInput"><br>
-        <label>Phone Number (not required)</label>
-        <input id="txtPhone" type="tel" class="roundedInput"><br>
-        <label>Pin  (not required)</label>
-        <input id="txtPin" type="text" class="roundedInput" placeholder="you may use this in place of your password"><br>
-    </div>
-    <button class="roundendButton" style="float:right" id="btnRegister">Submit</button>
-</div> 
+</div>
 
 <script>
     var service = '@ViewBag.Service';
     var user = new Object();
 
 //    $(document).ready(function () { });
- 
+
     $('#divShowDetails').click(function () {
         $('#divExtraDetails').toggle();
-        if ($('#upDownCaret').attr("src") == "/Images/downCaret.png")
-            $('#upDownCaret').attr("src", "/Images/upCaret.png");
+        if ($('#upDownCaret').attr("src") == "/Images/caretDown.png")
+            $('#upDownCaret').attr("src", "/Images/caretUp.png");
         else
-            $('#upDownCaret').attr("src", "/Images/downCaret.png");
+            $('#upDownCaret').attr("src", "/Images/caretDown.png");
     });
 
     $('#btnRegister').click(function () {

@@ -1,0 +1,216 @@
+﻿@*
+    <link rel="stylesheet" href="/resources/demos/style.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+*@
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+<style>
+    .floatingRoundedDialog {
+        display: none;
+        font-size: 28px;
+        font-family: 'Comic Sans MS';
+        border: solid thin #b200ff;
+        border-radius: 22px;
+        padding: 4px;
+        margin: 3px;
+        background-color: #efeacb;
+        color: #620e63;
+    }
+
+        .floatingRoundedDialog a {
+            margin-left: 22px;
+            font-size: 17px;
+        }
+
+            .floatingRoundedDialog a:hover {
+                font-size: 20px;
+            }
+
+    .smallTextArea {
+        height: 121px;
+        width: 434px;
+        background-color: #f7eef7;
+        padding: 5px;
+        font-size: 21px;
+    }
+
+    .modelDialogImage {
+        height: 150px;
+        width: 160px;
+        margin-left: 4px;
+    }
+
+    .floatingRoundedDialogLabel {
+        display: block;
+        text-align: right;
+        font-size: 17px;
+        font-weight: bold;
+        height: 32px;
+        padding: 14.5px 4px 0 0;
+    }
+</style>
+
+<div class="centeredDivShell modelInfoContainer">
+    <div id="centeredContainer" class="centeredDivInner">
+        <div id="modelInfoDialog" class="floatingRoundedDialog">
+            <div class="floatingCrudBanner">
+                <span id="modelInfoHeader"></span>
+                <div onclick="$('#modelInfoDialog').fadeOut();" class="farSide">x</div>
+            </div>
+            <div id="modelInfoEditArea">
+                <div class="flexContainer">
+                    <div class="floatLeft">
+                        <div class="floatingRoundedDialogLabel">model name</div>
+                        <div class="floatingRoundedDialogLabel">nationality</div>
+                        <div class="floatingRoundedDialogLabel">born</div>
+                    </div>
+                    <div class="floatLeft">
+                        <div><input id="txtModelName" class="roundedInput" /></div>
+                        <div><input id="txtNationality" class="roundedInput" /></div>
+                        <div><input id="txtBorn" class="roundedInput" /></div>
+                    </div>
+                    <div class="floatLeft">
+                        <img id="modelDialogThumbNailImage" src="~/Images/redballon.png" class="modelDialogImage" />
+                    </div>
+                </div>
+                <label>comment</label>
+                <div><textarea id="txaModelComment" class="smallTextArea"></textarea></div>
+                <label>links</label>
+                <div><textarea id="txaExternalLinks" class="smallTextArea"></textarea></div>
+            </div>
+
+            <div id="modelInfoViewOnlyArea">
+                <div>If you you know who this is<br />Please click Add</div>
+                <div><textarea id="txaImageInfo" class="smallTextArea"></textarea></div>
+            </div>
+
+            <a id="modelInfoEdit" href="javascript:toggleModelInfoEditMode()">mode</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#txtBorn").datepicker();
+    });
+
+    var nudeModelInfo = {};
+
+    function showModelInfoDialog(linkId, linkUrl) {
+        $('#footerMessage').html("linkId: " + linkId + " linkUrl: " + linkUrl);
+        nudeModelInfo.LinkId = linkId;        
+        $('#modelDialogThumbNailImage').attr("src", linkUrl);
+        $('#modelInfoDialog').fadeIn();
+        $.ajax({
+            type: "GET",
+            url: service + "/api/NudeModelInfo/Get?linkId=" + linkId,
+            success: function (nudeModel) {
+                if (nudeModel.Success == "ok") {
+                    if (nudeModel.ModelName === null) {
+                        $('#modelInfoHeader').html("unknown model");
+                        $('#modelInfoEditArea').hide();
+                        $('#modelInfoViewOnlyArea').show();
+                        $('#txaImageInfo').val(linkUrl.substring(linkUrl.lastIndexOf('/')) + "\n" + nudeModel.ExternalLinks);
+                        $('#modelInfoEdit').html("Edit");
+                    }
+                    else {
+                        nudeModelInfo.ModelId = nudeModel.ModelId;
+                        nudeModelInfo.FolderId = nudeModel.FolderId;
+                        $('#modelInfoHeader').html(nudeModel.ModelName);
+                        $('#modelInfoEditArea').show();
+                        $('#modelInfoViewOnlyArea').hide();
+                        $('#txtModelName').val(nudeModel.ModelName);
+                        $('#txtBorn').val(nudeModel.Born);
+                        $('#txaExternalLinks').val(nudeModel.ExternalLinks);
+                        if (isNullorUndefined(nudeModel.ExternalLinks))
+                            $('#txaExternalLinks').val(linkUrl.substring(linkUrl.lastIndexOf('/')));
+                        $('#txaModelComment').val(nudeModel.CommentText);
+                        $('#txtNationality').val(nudeModel.Nationality);
+                        $('#modelInfoEdit').html("Save");
+                    }
+                }
+                else
+                    alert("Get ModelInfo : " + nudeModel.Success);
+            },
+            error: function (jqXHR, exception) {
+                alert("Get ModelInfo jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
+    function validate() {
+        nudeModelInfo.ModelName = $('#txtModelName').val();
+        nudeModelInfo.Born = $('#txtBorn').val();
+        nudeModelInfo.CommentText = $('#txaModelComment').val();
+        nudeModelInfo.ExternalLinks = $('#txaExternalLinks').val();
+        nudeModelInfo.Nationality = $('#txtNationality').val();
+        return true;
+    }
+
+    function toggleModelInfoEditMode() {
+        var mode = $('#modelInfoEdit').html()
+        switch ($('#modelInfoEdit').html()) {
+            case "Edit":
+                $('#modelInfoEdit').html("Add");
+                $('#modelInfoEditArea').show();
+                $('#modelInfoViewOnlyArea').hide();
+
+                $('#txtModelName').val("");
+                $('#txtBorn').val("");
+                $('#txaExternalLinks').val("");
+                $('#txaModelComment').val("");
+                $('#txtNationality').val("");
+                break;
+            case "Add":
+                if (validate()) {
+                    nudeModelInfo.LinkId = "";
+                    $.ajax({
+                        type: "POST",
+                        url: service + "/api/NudeModelInfo",
+                        data: nudeModelInfo,
+                        success: function (success) {
+                            if (success === "ok") {
+                                displayStatusMessage("ok", "Model info added");
+                                $('#modelInfoEdit').html("Save");
+                                // add modelId to image
+
+
+                            }
+                            else
+                                alert("Add Model info: " + success);
+                        },
+                        error: function (jqXHR, exception) {
+                            alert("Add ModelInfo jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                        }
+                    });
+                }
+                break;
+            case "Save":
+                if (validate()) {
+                    nudeModelInfo.ModelId =
+
+                        $.ajax({
+                            type: "PUT",
+                            url: service + "/api/NudeModelInfo",
+                            data: nudeModelInfo,
+                            success: function (success) {
+                                if (success === "ok") {
+                                    displayStatusMessage("ok", "Model info updated");
+                                }
+                                else
+                                    alert("Edit Model info: " + success);
+                            },
+                            error: function (jqXHR, exception) {
+                                alert("Edit ModelInfo jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                            }
+                        })
+                }
+                break;
+            default:
+        }
+    }
+
+</script>

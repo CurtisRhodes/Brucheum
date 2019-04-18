@@ -21,12 +21,35 @@ namespace WebApi.OggleBooble.DataContext
         public virtual DbSet<VwLink> VwLinks { get; set; }
         public virtual DbSet<BlogComment> BlogComments { get; set; }
         public virtual DbSet<MetaTag> MetaTags { get; set; }
+        public virtual DbSet<NudeModelInfo> NudeModelInfos { get; set; }
+        public virtual DbSet<NudeModelImage> NudeModelImages { get; set; }
         public virtual DbSet<RepairReport> RepairReports { get; set; }
-
+        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
     }
+    [Table("OggleBooble.NudeModelImage")]
+    public partial class NudeModelImage
+    {
+        [Key]
+        public string LinkId { get; set; }
+        public int ModelId { get; set; }
+    }
+    [Table("OggleBooble.NudeModelInfo")]
+    public partial class NudeModelInfo
+    {
+        [Key]
+        public int ModelId { get; set; }
+        public int FolderId { get; set; }
+        public string ModelName { get; set; }
+        public string Nationality { get; set; }
+        public string ExternalLinks { get; set; }
+        public string CommentText { get; set; }
+        public DateTime? Born { get; set; }
+        public DateTime Posted { get; set; }
+    }
+
 
     [Table("OggleBooble.CategoryFolder")]
     public partial class CategoryFolder
@@ -65,6 +88,7 @@ namespace WebApi.OggleBooble.DataContext
         public int FolderId { get; set; }
         public string Link { get; set; }
         public int LinkCount { get; set; }
+        public int NoLink { get; set; }
     }
     [Table("OggleBooble.vwDirtree")]
     public partial class VwDirTree
@@ -122,7 +146,10 @@ namespace WebApi.OggleBooble.DataContext
     public partial class RepairReport
     {
         [Key]
+        [Column(Order = 0)]
         public string LinkId { get; set; }
+        [Key]
+        [Column(Order = 1)]
         public int FolderId { get; set; }
         public string ProblemType { get; set; }
         public string Problem { get; set; }
