@@ -238,9 +238,9 @@ namespace WebApi.Controllers
                             if (folderLinkFileName != expectedLinkName)
                             {
                                 GoDaddyLink goDaddyLink = db.GoDaddyLinks.Where(g => g.Id == linkId).First();
-                                    goDaddyLink.Link = expectedLinkName + "/" + expectedFileName;
-                                    db.SaveChanges();
-                                    repairReport.LinksEdited++;
+                                goDaddyLink.Link = expectedLinkName + "/" + expectedFileName;
+                                db.SaveChanges();
+                                repairReport.LinksEdited++;
                             }
                             //else
                             //    {
@@ -262,15 +262,18 @@ namespace WebApi.Controllers
                             if (db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault() != null)
                             {
                                 GoDaddyLink goDaddyLink = db.GoDaddyLinks.Where(g => g.Id == linkId).First();
-                                if (!goDaddyLink.Link.StartsWith(expectedLinkName))
+                                //if (!goDaddyLink.Link.StartsWith(expectedLinkName))
                                 {
                                     string source = ftpPath + "/" + expectedFileName;
                                     string destinationRoot = goDaddyLink.Link.Substring(7, goDaddyLink.Link.IndexOf(".") - 7);
                                     string destination = "ftp://50.62.160.105/" + destinationRoot + ".ogglebooble.com/" + goDaddyLink.Link.Substring(goDaddyLink.Link.IndexOf(".com") + 5);
-                                    FtpIO.MoveFile(source, destination);
+                                    if (source != destination)
+                                    {
+                                        FtpIO.MoveFile(source, destination);
+                                    }
                                 }
-                                else
-                                    repairReport.Errors.Add("this should not happen");
+                                //else
+                                //     repairReport.Errors.Add("this should not happen");
 
                             }
                             else
@@ -282,15 +285,14 @@ namespace WebApi.Controllers
                                 db.SaveChanges();
                                 repairReport.NewLinksAdded++;
                                 anyChangesMade = true;
-
-                                if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == folderId).Where(c => c.ImageLinkId == linkId).Where(c => c.ImageCategoryId == folderId).FirstOrDefault() == null)
-                                {
-                                    CategoryImageLink newCatLink = new CategoryImageLink() { ImageCategoryId = folderId, ImageLinkId = linkId };
-                                    db.CategoryImageLinks.Add(newCatLink);
-                                    db.SaveChanges();
-                                    repairReport.CatLinksAdded++;
-                                    anyChangesMade = true;
-                                }
+                            }
+                            if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == folderId).Where(c => c.ImageLinkId == linkId).Where(c => c.ImageCategoryId == folderId).FirstOrDefault() == null)
+                            {
+                                CategoryImageLink newCatLink = new CategoryImageLink() { ImageCategoryId = folderId, ImageLinkId = linkId };
+                                db.CategoryImageLinks.Add(newCatLink);
+                                db.SaveChanges();
+                                repairReport.CatLinksAdded++;
+                                anyChangesMade = true;
                             }
                         }
                     }

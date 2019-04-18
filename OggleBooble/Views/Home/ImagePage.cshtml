@@ -108,10 +108,12 @@
         display: none;
         z-index: 200;
     }
+
     .commentDialogImage {
         max-width: 333px;
-        max-height:333px;
+        max-height: 333px;
     }
+
     .imagePageDialog {
         background-color: #cabcbc;
         font-size: 18px;
@@ -160,19 +162,12 @@
     <div id="metaTagList" class="metaTagListArea"></div>
 </div>
 
-<div id="commentDialog" class="commentDialog">
-    <div class="floatingCrudBanner">
-        <span id="commentDialogBanner">Write a fantasy about this image</span>
-        <div onclick="$('#commentDialog').fadeOut()" class="farSide">x</div>
-    </div>
-    <div id="commentDialogContainer" class="commentDialogContainer">
-        <div><img id="commentDialogImage" class="commentDialogImage" /></div>
-        <div></div>
-        <div><input id="txtCommentTitle" class="roundedInput" placeholder="Give your comment a title" /></div>
-        <div id="imageCommentEditor">
-        </div>
-        <div class="roundendButton clickable" onclick="saveComment()">save</div>
-    </div>
+<div id="breadCrumbContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
+    <div>Open in New Tab</div>
+    <div>Archive Image</div>
+    <div>Remove Link</div>
+    <div>Comment</div>
+    <div>About</div>
 </div>
 
 <script>
@@ -187,6 +182,53 @@
         getBreadCrumbs();
         getImageLinks();
     });
+
+    function getBreadCrumbs() {
+        $.ajax({
+            type: "GET",
+            url: service + "api/DashBoard/GetBreadCrumbs?folderId=" + folderId,
+            success: function (parents) {
+                $('#headerMessage').html("");
+                for (i = parents.length - 1; i >= 0; i--) {
+                    $('#headerMessage').append("<a class='activeBreadCrumb' href='/Home/imagePage?folder=" + parents[i].FolderId + "'>" + parents[i].FolderName + "</a>");
+                }
+
+                $('.activeBreadCrumb').contextmenu(function () {
+                    //alert("id: " + $(this).attr("id"));
+                    event.preventDefault();
+                    window.event.returnValue = false;
+                    showBreadCrumbContextMenu($(this).attr("id"));
+                });
+
+                setLayout(parents[parents.length - 1].FolderName);
+                document.title = parents[0].FolderName + " OggleBooble";
+                $('#expandoBannerText').html(parents[0].FolderName);
+            },
+            error: function (jqXHR, exception) {
+                $('#getImagesLoadingGif').hide();
+                alert("getBreadCrumbs jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
+
+    function showBreadCrumbContextMenu(hrefId) {
+        currentContextImageId = imageId;
+        var thisImage = $('#' + imageId + '');
+
+        if (viewerShowing) {
+            $('#thumbImageContextMenu').css("top", event.clientY + 5);
+            $('#thumbImageContextMenu').css("left", event.clientX);
+        }
+        else {
+            var picpos = thisImage.offset();
+            var picLeft = picpos.left + thisImage.width() - $('.ogContextMenu').width() - 50;
+            $('#thumbImageContextMenu').css("top", picpos.top + 5);
+            $('#thumbImageContextMenu').css("left", picLeft);
+        }
+        $('#thumbImageContextMenu').fadeIn();
+    }
+
 
     function staticify() {
         var customHtml = $('#staticHeader').html();
@@ -332,56 +374,6 @@
         }
     }
 
-    function showCommentDialog() {
-        if (viewerShowing)
-            $('#commentDialogImage').attr("src", imageArray[imageArrayIndex].Link);
-        else
-            $('#commentDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
 
-        $('#commentDialog').fadeIn();
-
-        //$('#imageCommentEditor').summernote({
-        //    height: 200,
-        //    codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-        //    toolbar: [
-        //        ['codeview'],
-        //        ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
-        //    ]
-        //});
-    }
-    function loadComment() {
-        $('#imageCommentEditor').summernote('code', blogCommentModel.CommentText);
-
-    }
-    function saveComment() {
-        var blogCommentModel = {};
-        blogCommentModel.CommentTitle = $('#txtCommentTitle').val();
-        blogCommentModel.CommentType = "CMT";
-        blogCommentModel.Link = imageArray[imageArrayIndex].Link;
-        if (viewerShowing)
-            blogCommentModel.LinkId = blogCommentModel.Link.substring(blogCommentModel.Link.lastIndexOf("_"), 36);
-        else
-            blogCommentModel.LinkId = currentContextImageId;
-        commentDialogImage
-        blogCommentModel.FolderId = folderId;
-        blogCommentModel.UserId = currentUser + " = " + ipAddress;
-        blogCommentModel.CommentText = $('#imageCommentEditor').summernote('code');
-
-        $.ajax({
-            type: "POST",
-            url: service + "/api/OggleBlog",
-            data: blogCommentModel,
-            success: function (success) {
-                if (success == "ok") {
-                    displayStatusMessage("ok", "Entry Saved");
-                }
-                else
-                    alert("saveComment: " + success);
-            },
-            error: function (jqXHR, exception) {
-                alert("saveComment XHR : " + getXHRErrorDetails(jqXHR, exception));
-            }
-        })
-    }
 </script>
 <script src="~/Scripts/ImagePage.js"></script>

@@ -18,26 +18,6 @@ $(window).resize(function () {
         $('#footerMessage').html("resize viewer not showing");
 });
 
-function getBreadCrumbs() {
-    $.ajax({
-        type: "GET",
-        url: service + "api/DashBoard/GetBreadCrumbs?folderId=" + folderId,
-        success: function (parents) {
-            $('#headerMessage').html("");
-            for (i = parents.length - 1; i >= 0; i--) {
-                $('#headerMessage').append("<a class='activeBreadCrumb' href='/Home/imagePage?folder=" + parents[i].FolderId + "'>" + parents[i].FolderName + "</a>");
-            }
-            setLayout(parents[parents.length - 1].FolderName);
-            document.title = parents[0].FolderName + " OggleBooble";
-            $('#expandoBannerText').html(parents[0].FolderName);
-        },
-        error: function (jqXHR, exception) {
-            $('#getImagesLoadingGif').hide();
-            alert("getBreadCrumbs jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-        }
-    });
-}
-
 function showAllChildren() {
     try {
         var start = Date.now();
@@ -46,7 +26,7 @@ function showAllChildren() {
             type: "GET",
             url: service + "/api/ImagePage/GetAllImageLinks?topFolderId=" + folderId+"&showAll=true",
             success: function (imageModel) {
-                loadImages2(imageModel, start);
+                processImages(imageModel, start);
             },
             error: function (jqXHR, exception) {
                 $('#getImagesLoadingGif').hide();
@@ -86,7 +66,7 @@ function getImageLinks() {
     }
 }
 
-function loadImages2(imageModel, start) {
+function processImages(imageModel, start) {
     rootFolder = imageModel.RootFolder;
     var delta = (Date.now() - start) / 1000;
     console.log("/api/ImageFolder/GetLinks?folder=" + folderId + " took: " + delta.toFixed(3));
@@ -100,17 +80,15 @@ function loadImages2(imageModel, start) {
         window.location.href = "imagePage?folder=" + $(this).attr("id");
     });
 
-    // process files
-
+    // add files
     imageArray = new Array();
     $('#slideShowLink').show();
     var fileCount = 0;
-    var pageName = $('#expandoBannerText').html();
     $.each(imageModel.Files, function (idx, vwLink) {
         $('#footerMessage').html("fileCount: " + fileCount);
         if (rootFolder === "archive") {
-            if (vwLink.NoLink > 0) {
-                $('#imageContainer').append("<div class='noLinksImageFrame'><img id=" + vwLink.LinkId +
+            if (vwLink.LinkCount == 1) {
+                $('#imageContainer').append("<div class='imageFrame'><img id=" + vwLink.LinkId +
                     " idx=" + fileCount + " class='thumbImage' src='" + vwLink.Link + "'/></div>");
             }
             else {
@@ -136,18 +114,15 @@ function loadImages2(imageModel, start) {
             Local: vwLink.NoLink > 0
         });
     });
-
     $('.thumbImage').click(function () {
         showViewer($(this).attr("id"));
     });
-
     $('.thumbImage').contextmenu(function () {
         //alert("id: " + $(this).attr("id"));
         event.preventDefault();
         window.event.returnValue = false;
         showContextMenu($(this).attr("id"));
     });
-
     fileCount += imageModel.SubDirs.length;
     $('#fileCount').html(fileCount);
     $('#getImagesLoadingGif').hide();
@@ -155,7 +130,6 @@ function loadImages2(imageModel, start) {
         var emailSubject = currentUser + " just viewed " + folderId;
         sendEmailFromJS(emailSubject, "someday it will be someone other than " + ipAddress);
     }
-
 }
 
 function showContextMenu(imageId) {
@@ -218,9 +192,6 @@ function slide(direction) {
 }
 
 function showViewer(imageId) {
-
-
-
     var thisImage = $('#' + imageId + '');
     imageArrayIndex = thisImage.attr("idx");
     viewerShowing = true;

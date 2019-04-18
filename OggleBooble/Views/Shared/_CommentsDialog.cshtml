@@ -1,0 +1,70 @@
+﻿<div id="commentDialog" class="commentDialog">
+    <div class="floatingCrudBanner">
+        <span id="commentDialogBanner">Write a fantasy about this image</span>
+        <div onclick="$('#commentDialog').fadeOut()" class="farSide">x</div>
+    </div>
+    <div id="commentDialogContainer" class="commentDialogContainer">
+        <div><img id="commentDialogImage" class="commentDialogImage" /></div>
+        <div></div>
+        <div><input id="txtCommentTitle" class="roundedInput" placeholder="Give your comment a title" /></div>
+        <div id="imageCommentEditor">
+        </div>
+        <div class="roundendButton clickable" onclick="saveComment()">save</div>
+    </div>
+</div>
+
+<script>
+
+    function showCommentDialog() {
+        if (viewerShowing)
+            $('#commentDialogImage').attr("src", imageArray[imageArrayIndex].Link);
+        else
+            $('#commentDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
+
+        $('#commentDialog').fadeIn();
+
+        $('#imageCommentEditor').summernote({
+            height: 200,
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+            toolbar: [
+                ['codeview'],
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
+            ]
+        });
+    }
+
+    function loadComment() {
+        $('#imageCommentEditor').summernote('code', blogCommentModel.CommentText);
+    }
+
+    function saveComment() {
+        var blogCommentModel = {};
+        blogCommentModel.CommentTitle = $('#txtCommentTitle').val();
+        blogCommentModel.CommentType = "CMT";
+        blogCommentModel.Link = imageArray[imageArrayIndex].Link;
+        if (viewerShowing)
+            blogCommentModel.LinkId = blogCommentModel.Link.substring(blogCommentModel.Link.lastIndexOf("_"), 36);
+        else
+            blogCommentModel.LinkId = currentContextImageId;
+        commentDialogImage
+        blogCommentModel.FolderId = folderId;
+        blogCommentModel.UserId = currentUser + " = " + ipAddress;
+        blogCommentModel.CommentText = $('#imageCommentEditor').summernote('code');
+
+        $.ajax({
+            type: "POST",
+            url: service + "/api/OggleBlog",
+            data: blogCommentModel,
+            success: function (success) {
+                if (success == "ok") {
+                    displayStatusMessage("ok", "Entry Saved");
+                }
+                else
+                    alert("saveComment: " + success);
+            },
+            error: function (jqXHR, exception) {
+                alert("saveComment XHR : " + getXHRErrorDetails(jqXHR, exception));
+            }
+        })
+    }
+</script>

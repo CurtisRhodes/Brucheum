@@ -389,6 +389,7 @@
     <Content Include="Views\Shared\_DirTree2.cshtml" />
     <Content Include="Views\Shared\_DirTree1.cshtml" />
     <Content Include="Views\Shared\_ModelInfoDialog.cshtml" />
+    <Content Include="Views\Shared\_CommentsDialog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -406,7 +407,7 @@
     <Content Include="Views\Error\Index.cshtml" />
     <Content Include="Views\Admin\Dashboard.cshtml" />
     <Content Include="Views\Home\Videos.cshtml" />
-    <Content Include="Views\Shared\_RandomImage.cshtml" />
+    <Content Include="Views\Shared\_Carousel.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
