@@ -2,14 +2,13 @@
     ViewBag.Title = "Article List";
 }
 <link href="~/Styles/articleList.css" rel="stylesheet" />
-@*<script src="~/Scripts/ImageTools.js"></script>*@
-
+<script src="~/Scripts/3rd Party/Editor/codemirror.js"></script>
 <div class="threeColumnArray">
     <div id="leftColumn">
     </div>
     <div id="middleColumn">
         <div id="divArticleList">
-            <div id="divlistHeader" class="articleListHeader" ></div>
+            <div id="divlistHeader" class="articleListHeader"></div>
             <div id="divStatusMessage"></div>
             <div id="articleListContainer"></div>
             <div id="divMoreButton" class="roundendButton">More</div>
@@ -62,7 +61,7 @@
 
             if (filterType === "")
                 $('#divlistHeader').html("Latest Articles");
-            else 
+            else
                 $('#divlistHeader').html(filterLabel);
 
             $.ajax({
@@ -91,7 +90,7 @@
 
 
                     //alert("$('#divArticleList').height(): " + $('#divArticleList').height() + "  $('#middleColumn').height(): " + $('#middleColumn').height());
-                    
+
                     $('#middleColumn').height($('#divArticleList').height() + 100);
                     resizePage();
 
@@ -135,7 +134,7 @@
                 kludge += "<div class='articleRowItemRight'><a href=/Article/ArticleEdit?Id=" + article.Id + ">edit</a></div>";
             }
             kludge += "</div>";  // bottom row
-            kludge += "</div>";  // article detail 
+            kludge += "</div>";  // article detail
             kludge += "</div>";  // article listItem
             $('#articleListContainer').append(kludge);
             articleCount++;
