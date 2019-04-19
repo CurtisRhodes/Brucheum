@@ -48,7 +48,7 @@ function getImageLinks() {
             url: service + "/api/ImagePage/GetImageLinks?folderId=" + folderId,
             success: function (imageModel) {                
                 if (imageModel.Success === "ok") {
-                    loadImages2(imageModel, start);
+                    processImages(imageModel, start);
                 }
                 else {
                     $('#getImagesLoadingGif').hide();

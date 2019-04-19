@@ -278,11 +278,11 @@
     <Content Include="Scripts\3rd Party\Editor\xml.js" />
     <Content Include="Scripts\3rd Party\jquery.min.js" />
     <Content Include="libman.json" />
-    <None Include="Scripts\jquery-3.3.1.intellisense.js" />
-    <Content Include="Scripts\jquery-3.3.1.js" />
-    <Content Include="Scripts\jquery-3.3.1.min.js" />
-    <Content Include="Scripts\jquery-3.3.1.slim.js" />
-    <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
+    <None Include="Scripts\jQuery\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\jQuery\jquery-3.3.1.js" />
+    <Content Include="Scripts\jQuery\jquery-3.3.1.min.js" />
+    <Content Include="Scripts\jQuery\jquery-3.3.1.slim.js" />
+    <Content Include="Scripts\jQuery\jquery-3.3.1.slim.min.js" />
     <Content Include="Scripts\jquery.signalR-2.4.1.js" />
     <Content Include="Scripts\jquery.signalR-2.4.1.min.js" />
     <Content Include="Static_Pages\Images\close.png" />
@@ -318,8 +318,8 @@
     <Content Include="Images\classic\transitions2.jpg" />
     <Content Include="Scripts\adminFunctions.js" />
     <Content Include="Scripts\GlobalFunctions.js" />
-    <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
-    <Content Include="Scripts\jquery-3.3.1.min.map" />
+    <Content Include="Scripts\jQuery\jquery-3.3.1.slim.min.map" />
+    <Content Include="Scripts\jQuery\jquery-3.3.1.min.map" />
     <None Include="Scripts\jQuery\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\Helper.js" />
     <Content Include="Scripts\ImagePage.js" />

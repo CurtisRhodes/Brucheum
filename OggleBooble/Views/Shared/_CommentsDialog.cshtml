@@ -1,4 +1,36 @@
-﻿<div id="commentDialog" class="commentDialog">
+﻿
+<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.css" rel="stylesheet">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.js"></script>
+
+<style>
+    .commentDialog {
+        position: absolute;
+        top: 125px;
+        left: 300px;
+        border: solid 2px var(--borderColor);
+        background-color: rgb(255, 238, 255);
+        box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
+        /*z-index: 200;*/
+        display: none;
+    }
+
+    .commentDialogImage {
+        max-width: 333px;
+        max-height: 333px;
+    }
+
+    .flakyEditBox {
+        height: 400px;
+        width: 800px;
+        border: solid 5px #ff6a00;
+        background-color: #ebf0f5;
+    }
+</style>
+
+<div id="commentDialog" class="commentDialog">
     <div class="floatingCrudBanner">
         <span id="commentDialogBanner">Write a fantasy about this image</span>
         <div onclick="$('#commentDialog').fadeOut()" class="farSide">x</div>
@@ -7,13 +39,22 @@
         <div><img id="commentDialogImage" class="commentDialogImage" /></div>
         <div></div>
         <div><input id="txtCommentTitle" class="roundedInput" placeholder="Give your comment a title" /></div>
-        <div id="imageCommentEditor">
-        </div>
+        <div id="imageCommentEditor"></div>
         <div class="roundendButton clickable" onclick="saveComment()">save</div>
     </div>
 </div>
 
 <script>
+    $(function () {
+        $('#imageCommentEditor').summernote({
+            height: 200,
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+            toolbar: [
+                ['codeview'],
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
+            ]
+        });
+    });
 
     function showCommentDialog() {
         if (viewerShowing)
@@ -23,14 +64,6 @@
 
         $('#commentDialog').fadeIn();
 
-        $('#imageCommentEditor').summernote({
-            height: 200,
-            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-            toolbar: [
-                ['codeview'],
-                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
-            ]
-        });
     }
 
     function loadComment() {

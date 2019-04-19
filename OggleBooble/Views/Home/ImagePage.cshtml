@@ -22,6 +22,7 @@
             <div id="imageContainer" class="flexWrapContainer"></div>
             <div id="fileCount" class="countContainer"></div>
             <div id="text55"></div>
+
         </div>
         <div id="rightColumn"></div>
     </div>
@@ -66,9 +67,13 @@
         var slideShowSpeed = 0;
     </script>
 
+    @*<div>@Html.Partial("_CommentsDialog")</div>*@
+    <div>@Html.Partial("_ModelInfoDialog")</div>
 </div>
 
-<div>@Html.Partial("_ModelInfoDialog")</div>
+
+
+
 
 <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
     <div>Copy Link</div>
@@ -98,22 +103,6 @@
 </div>
 
 <style>
-    .commentDialog {
-        position: absolute;
-        top: 125px;
-        left: 300px;
-        border: solid 2px var(--borderColor);
-        background-color: rgb(255, 238, 255);
-        box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
-        display: none;
-        z-index: 200;
-    }
-
-    .commentDialogImage {
-        max-width: 333px;
-        max-height: 333px;
-    }
-
     .imagePageDialog {
         background-color: #cabcbc;
         font-size: 18px;
@@ -176,9 +165,12 @@
         if (folderId == "") {
             window.location.href = "/";
         }
+        
         // set width
         $('#imageContainer').width($('#middleColumn').width());
         $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
+
+
         getBreadCrumbs();
         getImageLinks();
     });

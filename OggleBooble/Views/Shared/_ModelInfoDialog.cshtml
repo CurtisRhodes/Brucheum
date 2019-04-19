@@ -1,11 +1,9 @@
 ﻿@*
     <link rel="stylesheet" href="/resources/demos/style.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 *@
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
 
 <style>
     .floatingRoundedDialog {
@@ -51,6 +49,7 @@
         height: 32px;
         padding: 14.5px 4px 0 0;
     }
+
     .viewOnlyMessage {
         text-align: center;
         font-size: 17px;
@@ -106,7 +105,7 @@
 
     function showModelInfoDialog(linkId, linkUrl) {
         $('#footerMessage').html("linkId: " + linkId + " linkUrl: " + linkUrl);
-        nudeModelInfo.LinkId = linkId;        
+        nudeModelInfo.LinkId = linkId;
         $('#modelDialogThumbNailImage').attr("src", linkUrl);
         $('#modelInfoDialog').fadeIn();
         $.ajax({
@@ -180,9 +179,6 @@
                             if (success === "ok") {
                                 displayStatusMessage("ok", "Model info added");
                                 $('#modelInfoEdit').html("Save");
-                                // add modelId to image
-
-
                             }
                             else
                                 alert("Add Model info: " + success);
