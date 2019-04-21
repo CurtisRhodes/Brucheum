@@ -1,9 +1,9 @@
 ﻿
-<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
-<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
-<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
-<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.css" rel="stylesheet">
-<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.js"></script>
+<link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>*@
+<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.js"></script>
 
 <style>
     .commentDialog {
@@ -28,6 +28,9 @@
         border: solid 5px #ff6a00;
         background-color: #ebf0f5;
     }
+    .commentDialogButton {
+        margin: 0 0 4px 5px;
+    }
 </style>
 
 <div id="commentDialog" class="commentDialog">
@@ -36,15 +39,17 @@
         <div onclick="$('#commentDialog').fadeOut()" class="farSide">x</div>
     </div>
     <div id="commentDialogContainer" class="commentDialogContainer">
-        <div><img id="commentDialogImage" class="commentDialogImage" /></div>
-        <div></div>
+        <div class="center"><img id="commentDialogImage" class="commentDialogImage" /></div>
         <div><input id="txtCommentTitle" class="roundedInput" placeholder="Give your comment a title" /></div>
         <div id="imageCommentEditor"></div>
-        <div class="roundendButton clickable" onclick="saveComment()">save</div>
+        <div id="commentDialogButton" class="roundendButton clickable commentDialogButton" onclick="saveComment()">save</div>
+        <div id="commentInstructions">log in to view comments</div>
     </div>
 </div>
 
 <script>
+    var blogCommentModel = {};
+
     $(function () {
         $('#imageCommentEditor').summernote({
             height: 200,
@@ -57,29 +62,33 @@
     });
 
     function showCommentDialog() {
-        if (viewerShowing)
+        loadComment();
+        if (viewerShowing) {
             $('#commentDialogImage').attr("src", imageArray[imageArrayIndex].Link);
-        else
+            //blogCommentModel.LinkId = blogCommentModel.Link.substring(blogCommentModel.Link.lastIndexOf("_"), 36);
+            blogCommentModel.LinkId = imageArray[imageArrayIndex].id;
+        }
+        else {
             $('#commentDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
-
+            blogCommentModel.LinkId = currentContextImageId;
+        }
+        // get comment 
+        loadComment()
         $('#commentDialog').fadeIn();
-
     }
 
     function loadComment() {
-        $('#imageCommentEditor').summernote('code', blogCommentModel.CommentText);
+        //$('#imageCommentEditor').summernote('code', blogCommentModel.CommentText);
+        $('#imageCommentEditor').summernote('code', "");
+        $('#txtCommentTitle').val("");
+
     }
 
     function saveComment() {
-        var blogCommentModel = {};
         blogCommentModel.CommentTitle = $('#txtCommentTitle').val();
         blogCommentModel.CommentType = "CMT";
         blogCommentModel.Link = imageArray[imageArrayIndex].Link;
-        if (viewerShowing)
-            blogCommentModel.LinkId = blogCommentModel.Link.substring(blogCommentModel.Link.lastIndexOf("_"), 36);
-        else
-            blogCommentModel.LinkId = currentContextImageId;
-        commentDialogImage
+        //commentDialogImage
         blogCommentModel.FolderId = folderId;
         blogCommentModel.UserId = currentUser + " = " + ipAddress;
         blogCommentModel.CommentText = $('#imageCommentEditor').summernote('code');

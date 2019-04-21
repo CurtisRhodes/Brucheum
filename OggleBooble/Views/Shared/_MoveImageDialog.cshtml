@@ -1,0 +1,19 @@
+﻿<div id="moveCopyDialog" class="floatingCrudDialog">
+    <div class="floatingCrudBanner"><span id="dialogBannerText">Copy Image Link</span><div onclick="$('#moveCopyDialog').fadeOut()" class="farSide">x</div> </div>
+    <div class="floatingCrudContainer flexContainer">
+        <img id="copyDialogImage" class="copyDialogImage" />
+        <div>
+            <div id="dirTreeContainer" class="copyTree">
+                <div id="dirTreeResults" class="pusedoTextBox"></div>
+                <div id="dirTreeDropDown" class="hideableDropDown">
+                    @Html.Partial("_DirTree1");
+                </div>
+            </div>
+            <img id="pusedoDropdown" class="dirTreeDropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeResults').hide();$('#dirTreeDropDown').show()" />
+            <div id="btnCopyLink" class="roundendButton" onclick="copyLink(false)">Copy</div>
+            <div id="btnMoveLink" class="roundendButton" onclick="copyLink(true)">Move</div>
+            <div id="btnMoveImage" class="roundendButton" onclick="moveImage()">Move</div>
+        </div>
+    </div>
+</div>
+

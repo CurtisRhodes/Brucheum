@@ -118,7 +118,7 @@ namespace WebApi.OggleBooble.DataContext
         public string CommentType { get; set; }
         public string Link { get; set; }
         public string LinkId { get; set; }
-        public string FolderId { get; set; }
+        public int FolderId { get; set; }
         public string UserId { get; set; }
         public string CommentText { get; set; }
         public DateTime Posted { get; set; }

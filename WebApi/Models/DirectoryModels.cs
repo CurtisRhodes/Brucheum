@@ -165,7 +165,17 @@ namespace WebApi.Directory.Models
 
     }
 
-
+    public class xxBlogCommentModel {
+        public int Id { get; set; }
+        public string CommentTitle { get; set; }
+        public string CommentType { get; set; }
+        public string Link { get; set; }
+        public string LinkId { get; set; }
+        public string FolderId { get; set; }
+        public string UserId { get; set; }
+        public string CommentText { get; set; }
+        public DateTime Posted { get; set; }
+    }
 
     public class RepairReportModel
     {
@@ -196,18 +206,6 @@ namespace WebApi.Directory.Models
         public string Success { get; set; }
     }
 
-    public class BlogCommentModel
-    {
-        public string CommentTitle { get; set; }
-        public string CommentType { get; set; }
-        public string Link { get; set; }
-        public string LinkId { get; set; }
-        public string FolderId { get; set; }
-        public string UserId { get; set; }
-        public string CommentText { get; set; }
-        public DateTime Posted { get; set; }
-    }
-
     public class NudeModelImageModel {
         public int ModelId { get; set; }
         public string LinkId { get; set; }
@@ -221,7 +219,8 @@ namespace WebApi.Directory.Models
         public string ExternalLinks { get; set; }
         public string CommentText { get; set; }
         public int FolderId { get; set; }
-        public DateTime Born { get; set; }
+        public string RootFolder { get; set; }
+        public string Born { get; set; }
         public string LinkId { get; set; }
         public string Success { get; set; }
     }

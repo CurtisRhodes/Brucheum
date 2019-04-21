@@ -362,8 +362,6 @@
     <Content Include="Styles\video\mejs-controls.svg" />
     <Content Include="Styles\video\modalDialog.css" />
     <Content Include="Views\Stats\HtmlPage1.html" />
-    <Content Include="Views\Test\Luna - Brand new pics - 62 Pics - xHamster.com.html" />
-    <Content Include="Views\Test\mia-sweet.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -378,7 +376,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\_footer.cshtml" />
-    <Content Include="Views\Test\contextTest.cshtml" />
     <Content Include="Views\Porn\Index.cshtml" />
     <Content Include="Styles\video\mejs-controls.ai" />
     <Content Include="Views\Home\Mobile.cshtml" />
@@ -390,6 +387,7 @@
     <Content Include="Views\Shared\_DirTree1.cshtml" />
     <Content Include="Views\Shared\_ModelInfoDialog.cshtml" />
     <Content Include="Views\Shared\_CommentsDialog.cshtml" />
+    <Content Include="Views\Shared\_MoveImageDialog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

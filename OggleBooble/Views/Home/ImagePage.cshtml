@@ -1,9 +1,43 @@
 ﻿<link href="~/Styles/ImagePage.css" rel="stylesheet" />
 
 <style>
-    .modelInfoContainer {
-        top: 188px;
-        z-index: 150;
+
+    .redBarIsLocalIndicator {
+        height: 14px;
+        background-color: #ff0000;
+    }
+
+    .imagePageDialog {
+        background-color: #cabcbc;
+        font-size: 18px;
+    }
+
+    .metaTagListArea {
+        height: 222px;
+        width: 711px;
+        border: solid thin #372f2f;
+    }
+
+    .metaTagItem {
+        display: inline-block;
+        color: #fff;
+        background-color: #4d86eb;
+        margin: 3px;
+        border-radius: 3px;
+        padding: 2px;
+    }
+
+    commentDialogImage {
+        height: 99px;
+        max-width: 66%;
+    }
+
+    .tagInput {
+        width: 450px;
+    }
+
+    #txtCommentTitle {
+        width: 100%;
     }
 </style>
 
@@ -47,6 +81,7 @@
             <div id="leftClickArea" onclick="slide('prev')" contextmenu="viewerContextMenu()" class="hiddeClickArea"></div>
             <div id="rightClickArea" onclick="slide('next')" contextmenu="viewerContextMenu()" class="hiddeClickArea" style="left:50%;"></div>
             <img id="viewerImage" class="expandoImage" />
+            <div id="redBar" class="redBarIsLocalIndicator"></div>
         </div>
     </div>
 
@@ -67,75 +102,25 @@
         var slideShowSpeed = 0;
     </script>
 
-    @*<div>@Html.Partial("_CommentsDialog")</div>*@
     <div>@Html.Partial("_ModelInfoDialog")</div>
-</div>
 
 
+    <div>@Html.Partial("_CommentsDialog")</div>
 
-
-
-<div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
-    <div>Copy Link</div>
-    <div>Archive Image</div>
-    <div>Remove Link</div>
-    <div>Comment</div>
-    <div>About</div>
-</div>
-
-<div id="moveCopyDialog" class="floatingCrudDialog">
-    <div class="floatingCrudBanner"><span id="dialogBannerText">Copy Image Link</span><div onclick="$('#moveCopyDialog').fadeOut()" class="farSide">x</div> </div>
-    <div class="floatingCrudContainer flexContainer">
-        <img id="copyDialogImage" class="copyDialogImage" />
-        <div>
-            <div id="dirTreeContainer" class="copyTree">
-                <div id="dirTreeResults" class="pusedoTextBox"></div>
-                <div id="dirTreeDropDown" class="hideableDropDown">
-                    @Html.Partial("_DirTree1");
-                </div>
-            </div>
-            <img id="pusedoDropdown" class="dirTreeDropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeResults').hide();$('#dirTreeDropDown').show()" />
-            <div id="btnCopyLink" class="roundendButton" onclick="copyLink(false)">Copy</div>
-            <div id="btnMoveLink" class="roundendButton" onclick="copyLink(true)">Move</div>
-            <div id="btnMoveImage" class="roundendButton" onclick="moveImage()">Move</div>
-        </div>
+    <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
+        <div id="ctxModelName">model name</div>
+        <div id="ctxSeeMore">see more of her</div>
+        <div>Copy Link</div>
+        <div>Move Image</div>
+        <div>Remove Link</div>
+        <div>Comment</div>
+        <div>About</div>
     </div>
+
 </div>
 
-<style>
-    .imagePageDialog {
-        background-color: #cabcbc;
-        font-size: 18px;
-    }
+<div>@Html.Partial("_MoveImageDialog")</div>
 
-    .metaTagListArea {
-        height: 222px;
-        width: 711px;
-        border: solid thin #372f2f;
-    }
-
-    .metaTagItem {
-        display: inline-block;
-        color: #fff;
-        background-color: #4d86eb;
-        margin: 3px;
-        border-radius: 3px;
-        padding: 2px;
-    }
-
-    commentDialogImage {
-        height: 99px;
-        max-width: 66%;
-    }
-
-    .tagInput {
-        width: 450px;
-    }
-
-    #txtCommentTitle {
-        width: 100%;
-    }
-</style>
 
 <div id="metaTagDialog" class="floatingCrudDialog imagePageDialog">
     <div class="floatingCrudBanner"><span id="metaTagFolderName"></span><div onclick="$('#metaTagDialog').fadeOut()" class="farSide">x</div> </div>
@@ -151,21 +136,13 @@
     <div id="metaTagList" class="metaTagListArea"></div>
 </div>
 
-<div id="breadCrumbContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
-    <div>Open in New Tab</div>
-    <div>Archive Image</div>
-    <div>Remove Link</div>
-    <div>Comment</div>
-    <div>About</div>
-</div>
-
 <script>
     var imageArray = new Array();
     $(document).ready(function () {
         if (folderId == "") {
             window.location.href = "/";
         }
-        
+
         // set width
         $('#imageContainer').width($('#middleColumn').width());
         $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);

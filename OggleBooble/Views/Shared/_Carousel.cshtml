@@ -77,18 +77,6 @@
         top: 188px;
     }
 
-    .modelInfoContainer {
-        top: 188px;
-    }
-
-    .catDlgBtn {
-        cursor: pointer;
-    }
-
-    .ogContextMenu p {
-        text-align: center;
-    }
-
     .carouselCategoryLabel {
         float: left;
         cursor: pointer;
@@ -115,10 +103,10 @@
         font-weight: bold;
         cursor: pointer;
     }
+
     .loadingGif img {
         height: 15px;
     }
-
 </style>
 
 <div class="centeredDivShell randomImageContainer">
@@ -159,29 +147,7 @@
 </div>
 
 <div>@Html.Partial("_ModelInfoDialog")</div>
-
-<div class="centeredDivShell moveCopyContainer">
-    <div id="centeredContainer" class="centeredDivInner">
-        <div id="moveCopyDialog" class="floatingCrudDialog">
-            <div class="floatingCrudBanner"><span id="dialogBannerText">Move Image</span><div onclick="$('#moveCopyDialog').fadeOut()" class="farSide">x</div> </div>
-            <div class="xxfloatingCrudContainer flexContainer">
-                <img id="moveImageRunningGif" class="loadingGif" src="~/Images/loader.gif" />
-
-                <img id="copyDialogImage" class="copyDialogImage" />
-                <div>
-                    <div id="dirTreeContainer" class="copyTree">
-                        <div id="dirTreeResults" class="pusedoTextBox"></div>
-                        <div id="dirTreeDropDown" class="hideableDropDown">
-                            @Html.Partial("_DirTree1");
-                        </div>
-                    </div>
-                    <img id="pusedoDropdown" class="dirTreeDropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeResults').hide();$('#dirTreeDropDown').show()" />
-                    <div id="btnMoveImage" class="roundendButton" onclick="moveImage()">Move</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<div>@Html.Partial("_MoveImageDialog")</div>
 
 <script>
     var service = '@ViewBag.Service';
@@ -220,7 +186,7 @@
     }
 
     function moveImage() {
-        moveImageModel.SourceFolderId = carouselItemArray[imageIndex].Id;
+        moveImageModel.SourceFolderId = carouselItemArray[imageIndex].FolderId;
         moveImageModel.ImageName = carouselItemArray[imageIndex].Link;
         $('#moveImageRunningGif').show();
         $.ajax({
@@ -259,12 +225,11 @@
         window.event.returnValue = false;
         pause();
 
-        //GetNudeModelName(, "ctxModelName")
         $.ajax({
-            type: "PATCH",
-            url: service + "api/NudeModelInfo?linkId=" + carouselItemArray[imageIndex].LinkId,
-            success: function (modelName) {
-                $('#ctxModelName').html(modelName);
+            type: "GET",
+            url: service + "api/NudeModelInfo?linkId=" + carouselItemArray[imageIndex].LinkId + "&folderId=" + carouselItemArray[imageIndex].FolderId,
+            success: function (modelInfoModel) {
+                $('#ctxModelName').html(modelInfoModel.ModelName);
                 if ($('#ctxModelName').html() == "unknown model")
                     $('#ctxSeeMore').hide();
                 else
@@ -287,11 +252,11 @@
         var action = $(this).html();
         switch (action) {
             case "See More":
-                window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].Id;
+                window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
                 break;
             case "About":
                 dontResume = true;
-                showModelInfoDialog(carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].Link);
+                showModelInfoDialog(carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId);
                 break;
             case "Explode":
                 window.open(imageArray[imageArrayIndex].Link, "_blank");
@@ -324,7 +289,7 @@
             pause();
             $.ajax({
                 type: "GET",
-                url: service + "/api/CategoryFolder/Get?id=" + carouselItemArray[imageIndex].Id,
+                url: service + "/api/CategoryFolder/Get?id=" + carouselItemArray[imageIndex].FolderId,
                 success: function (model) {
 
                     if (!model.FolderName.startsWith("ERROR")) {
@@ -385,7 +350,7 @@
 
     function clickViewGallery() {
         clearInterval(Carousel);
-        window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].Id;
+        window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
     }
     function clickViewParentGallery() {
         window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].ParentId;
@@ -451,11 +416,12 @@
                     if (carouselInfo.Success == "ok") {
                         $.each(carouselInfo.Links, function (idx, obj) {
                             carouselItemArray.push({
-                                Id: obj.FolderId,
+                                FolderId: obj.FolderId,
                                 RootFolder: obj.RootFolder,
                                 ParentId: obj.ParentId,
                                 FolderName: obj.FolderName,
                                 //ModelName : obj.ModelName,
+
                                 Link: obj.Link,
                                 LinkId: obj.LinkId,
                                 FolderPath: obj.FolderPath

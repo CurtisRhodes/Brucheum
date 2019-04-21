@@ -14,25 +14,30 @@ namespace WebApi.OggleBooble
     [EnableCors("*", "*", "*")]
     public class NudeModelInfoController : ApiController
     {
-        [HttpPatch]
-        public string GetModelName(string linkId)
+        [HttpGet]
+        public NudeModelInfoModel GetModelName(string linkId, int folderId)
         {
-            string modelName = "unknown model";
+            var modelInfoModel = new NudeModelInfoModel() { ModelName = "unknown model" };
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
+                    modelInfoModel.RootFolder = db.CategoryFolders.Where(f => f.Id == folderId).First().RootFolder;
+
                     NudeModelImage nudeModelImage = db.NudeModelImages.Where(i => i.LinkId == linkId).FirstOrDefault();
                     if (nudeModelImage != null)
                     {
                         NudeModelInfo nudeModelInfo = db.NudeModelInfos.Where(n => n.ModelId == nudeModelImage.ModelId).FirstOrDefault();
                         if (nudeModelInfo != null)
-                            modelName = nudeModelInfo.ModelName;
+                        {
+                            modelInfoModel.ModelName = nudeModelInfo.ModelName;
+                            modelInfoModel.FolderId = nudeModelInfo.FolderId;
+                        }
                     }
                 }
             }
-            catch (Exception ex) { modelName = Helpers.ErrorDetails(ex); }
-            return modelName;
+            catch (Exception ex) { modelInfoModel.Success = Helpers.ErrorDetails(ex); }
+            return modelInfoModel;
         }
 
         [HttpGet]
@@ -43,6 +48,7 @@ namespace WebApi.OggleBooble
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
+
                     NudeModelImage nudeModel = db.NudeModelImages.Where(i => i.LinkId == linkId).FirstOrDefault();
                     if (nudeModel != null)
                     {
@@ -54,7 +60,7 @@ namespace WebApi.OggleBooble
                         model.ExternalLinks = dbNudeModelInfo.ExternalLinks;
                         model.CommentText = dbNudeModelInfo.CommentText;
                         if (dbNudeModelInfo.Born != null)
-                            model.Born = dbNudeModelInfo.Born.Value;
+                            model.Born = dbNudeModelInfo.Born.Value.ToShortDateString();
                     }
                     else
                     {
@@ -85,7 +91,6 @@ namespace WebApi.OggleBooble
                 {
                     NudeModelInfo newNudeModelInfo = new NudeModelInfo()
                     {
-                        Born = model.Born,
                         CommentText = model.CommentText,
                         ExternalLinks = model.ExternalLinks,
                         FolderId = model.FolderId,
@@ -93,6 +98,9 @@ namespace WebApi.OggleBooble
                         ModelName = model.ModelName,
                         Posted = DateTime.Now
                     };
+
+                    if (model.Born != null)
+                        newNudeModelInfo.Born = DateTime.Parse(model.Born);
 
                     db.NudeModelInfos.Add(newNudeModelInfo);
                     db.SaveChanges();
@@ -122,7 +130,8 @@ namespace WebApi.OggleBooble
                 {
                     NudeModelInfo nudeModel = db.NudeModelInfos.Where(m => m.ModelId == model.ModelId).FirstOrDefault();
                     nudeModel.ModelName = model.ModelName;
-                    nudeModel.Born = model.Born;
+                    if (model.Born != null)
+                        nudeModel.Born = DateTime.Parse(model.Born);
                     nudeModel.Nationality = model.Nationality;
                     nudeModel.ExternalLinks = model.ExternalLinks;
                     nudeModel.CommentText = model.CommentText;
@@ -779,30 +788,35 @@ namespace WebApi.OggleBooble
         [HttpGet]
         public List<BlogComment> Get()
         {
-            List<BlogComment> entries = null;
+            List<BlogComment> blogComments = new List<BlogComment>();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    entries = db.BlogComments.ToList();
+                    //blogComments = db.BlogComments.ToList();
+                    return db.BlogComments.ToList();
+                    //foreach (BlogComment blogComment in db.BlogComments.ToList())
+                    //{
+                    //    blogComments.Add(blogComment);
+                    //}
                 }
             }
             catch (Exception ex)
             {
-                entries.Add(new BlogComment() { CommentTitle = Helpers.ErrorDetails(ex) });
+                blogComments.Add(new BlogComment() { CommentTitle = Helpers.ErrorDetails(ex) });
             }
-            return entries;
+            return blogComments;
         }
 
         [HttpGet]
-        public BlogComment Get(string title)
+        public BlogComment Get(int id)
         {
             BlogComment entry = null;
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    entry = db.BlogComments.Where(b => b.CommentTitle == title).First();
+                    entry = db.BlogComments.Where(b => b.Id == id).First();
                 }
             }
             catch (Exception ex)
@@ -841,11 +855,12 @@ namespace WebApi.OggleBooble
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    var dbEntry = db.BlogComments.Where(b => b.CommentTitle == entry.CommentTitle).First();
-                    //dbEntry.CommentTitle = entry.CommentTitle;
+                    var dbEntry = db.BlogComments.Where(b => b.Id == entry.Id).First();
+                    dbEntry.CommentTitle = entry.CommentTitle;
                     dbEntry.CommentText = entry.CommentText;
                     dbEntry.CommentType = entry.CommentType;
                     dbEntry.Link = entry.Link;
+                    
                     db.SaveChanges();
                     success = "ok";
                 }

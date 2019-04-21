@@ -3,6 +3,7 @@ var viewAreaLeft;
 var viewAreaWidth;
 var viewAreaRight;
 var newLink = {};
+var contextMenuShowMoreFolderId;
 
 $(window).resize(function () {
     $('#imageContainer').width($('#middleColumn').width());
@@ -142,15 +143,37 @@ function showContextMenu(imageId) {
     }
     else {
         var picpos = thisImage.offset();
-        var picLeft = picpos.left + thisImage.width() - $('.ogContextMenu').width() - 50;
+        var picLeft = picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50;
         $('#thumbImageContextMenu').css("top", picpos.top + 5);
         $('#thumbImageContextMenu').css("left", picLeft);
     }
+
+    $.ajax({
+        type: "GET",
+        url: service + "api/NudeModelInfo?linkId=" + imageId + "&folderId=" + folderId,
+        success: function (nudeModelInfo) {
+            $('#ctxModelName').html(nudeModelInfo.ModelName);
+            if ($('#ctxModelName').html() === "unknown model")
+                $('#ctxSeeMore').hide();
+            else {
+                contextMenuShowMoreFolderId = nudeModelInfo.FolderId;
+                if (nudeModelInfo.RootFolder === "archive")
+                    $('#ctxSeeMore').hide();
+                else
+                    $('#ctxSeeMore').show();
+            }
+        },
+        error: function (xhr) {
+            alert("GetNudeModelName xhr error: " + xhr.statusText);
+        }
+    });
+
     $('#thumbImageContextMenu').fadeIn();
 }
 
 function slide(direction) {
-    if (direction === 'next') {
+    if (direction === 'next')
+    {
         imageArrayIndex++;
         if (imageArrayIndex >= imageArray.length)
             imageArrayIndex = 0;
@@ -161,17 +184,12 @@ function slide(direction) {
             $('#viewerImage').css("transform", "translateX(-2200px)");
             $('#viewerImage').show();
             $('#viewerImage').attr("src", imageArray[imageArrayIndex].Link);
-            if (imageArray[imageArrayIndex].Local) {
-                $('#viewerImage').addClass("nonLocalIndicator");
-                //$('#viewerImage').width($('#viewerImage').width() - 5);
-            }
-            else {
-                $('#viewerImage').removeClass("nonLocalIndicator");
-                //$('#viewerImage').width($('#viewerImage').width() + 5);
-            }
+            if (imageArray[imageArrayIndex].Local) 
+                $('#redBar').show();
+            else 
+                $('#redBar').hide();
             $('#viewerImage').css("transform", "translateX(0)");
         }, 450);
-
     }
     else // if (direction === 'prev') 
     {
@@ -185,6 +203,10 @@ function slide(direction) {
             $('#viewerImage').css("transform", "translateX(2200px)");
             $('#viewerImage').show();
             $('#viewerImage').attr("src", imageArray[imageArrayIndex].Link);
+            if (imageArray[imageArrayIndex].Local)
+                $('#redBar').show();
+            else 
+                $('#redBar').hide();
             $('#viewerImage').css("transform", "translateX(0)");
         }, 450);
     }
@@ -220,6 +242,7 @@ function showViewer(imageId) {
         showContextMenu(imageArray[imageArrayIndex].ImageId);
     });
 
+    $('#redBar').hide();
     exploderInterval = setInterval(function () {
         explodeViewer();
     }, 8);
@@ -273,9 +296,12 @@ function explodeViewer() {
     $('#viewerImage').width($('#customViewer').width());
 }
 
-$('.ogContextMenu div').click(function () {
+$('#thumbImageContextMenu div').click(function () {
     var action = $(this).html();
     switch (action) {
+        case "see more of her":
+            window.location.href = "/home/ImagePage?folder=" + contextMenuShowMoreFolderId;
+            break;
         case "Copy Link":
             $('#btnMoveImage').hide();
             $('#btnCopyLink').show();
@@ -284,11 +310,11 @@ $('.ogContextMenu div').click(function () {
             $('#copyDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
             $('#moveCopyDialog').show();
             break;
-        case "Archive Image":
+        case "Move Image":
             $('#btnCopyLink').hide();
             $('#btnMoveLink').hide();
             $('#btnMoveImage').show();
-            $('#dialogBannerText').html("Move Image File");
+            $('#dialogBannerText').html("Move xImage File");
             $('#copyDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
             $('#moveCopyDialog').show();
             break;
@@ -301,14 +327,12 @@ $('.ogContextMenu div').click(function () {
         case "Comment":
             showCommentDialog();
             break;
-        case "About":
+        default:
             if (viewerShowing)
                 showModelInfoDialog(imageArray[imageArrayIndex].ImageId, imageArray[imageArrayIndex].Link);
             else
                 showModelInfoDialog(currentContextImageId, $('#' + currentContextImageId + '').attr("src"));
             break;
-        default:
-            alert(action);
     }
 });
 

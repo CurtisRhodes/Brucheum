@@ -113,6 +113,7 @@
 
 <script>
     var service = '@ViewBag.Service';
+    var blogEntry = {};
 
     $(document).ready(function () {
         $('#blogNew').hide();
@@ -120,10 +121,6 @@
         $('#imgBlogLink').attr("src", "http://boobs.ogglebooble.com/redballon.png");
     });
 
-    function loadImageLink() {
-        $('#imgBlogLink').attr("src", $('#txtLink').val());
-
-    }
     function loadBlogList() {
         try {
             $.ajax({
@@ -134,13 +131,12 @@
                     if (!entries[0].CommentTitle.startsWith("ERROR")) {
                         $.each(entries, function (idx, entry) {
                             if (entry.CommentType == $('#selCommentType').val()) {
-                                $('#blogList').append("<div id='" + entry.CommentTitle + "' class='crudListItem'>" + entry.CommentTitle + "</div>");
+                                $('#blogList').append("<div id='" + entry.Id + "' class='crudListItem'>" + entry.CommentTitle + "</div>");
                             }
                         })
 
                         $('.crudListItem').click(function () {
-                            var title = $(this).attr("id");
-                            displayBlogEntry(title);
+                            displayBlogEntry($(this).attr("id"));
                         });
                     }
                     else
@@ -155,20 +151,21 @@
             alert("loadBlogList catch: " + e);
         }
     }
-    function displayBlogEntry(title) {
+    function displayBlogEntry(id) {
         try {
             $.ajax({
                 type: "GET",
-                url: service + "/api/OggleBlog/?title=" + title,
+                url: service + "/api/OggleBlog/?id=" + id,
                 success: function (model) {
                     if (!model.CommentTitle.startsWith("ERROR")) {
+                        blogEntry.Id = id;
                         $('#txtCommentTitle').val(model.CommentTitle);
                         $('#selCommentType').val(model.CommentType);
                         $('#txtLink').val(model.Link);
                         $('#txtComment').val(model.CommentText);
                         $('#blogSave').html("Edit")
                         $('#blogNew').hide();
-                        loadImageLink();
+                        $('#imgBlogLink').attr("src", model.Link);
                     }
                     else
                         alert("displayBlogEntry: " + success)
@@ -193,6 +190,8 @@
         $('#txtLink').val("");
         $('#txtComment').val("");
         $('#imgBlogLink').attr("src", "http://boobs.ogglebooble.com/redballon.png");
+        blogEntry.Id = "";
+
     }
     function cancelBlogEntry() {
         $('#blogSave').html("Add");
@@ -201,7 +200,6 @@
     }
     function saveBlogEntry() {
         try {
-            var blogEntry = {}
             blogEntry.CommentTitle = $('#txtCommentTitle').val();
             blogEntry.CommentType = $('#selCommentType').val();
             blogEntry.Link = $('#txtLink').val();

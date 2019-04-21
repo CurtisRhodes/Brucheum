@@ -1,11 +1,13 @@
-﻿@*
-    <link rel="stylesheet" href="/resources/demos/style.css">
-*@
-
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+﻿
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+        integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+        crossorigin="anonymous"></script>
 
 <style>
+    .modelInfoContainer {
+        top: 188px;
+        z-index: 150;
+    }
     .floatingRoundedDialog {
         display: none;
         font-size: 28px;
@@ -29,9 +31,10 @@
 
     .smallTextArea {
         height: 121px;
-        width: 434px;
+        width: 100%;
         background-color: #f7eef7;
         padding: 5px;
+        margin-right:4px;
         font-size: 21px;
     }
 
@@ -49,7 +52,11 @@
         height: 32px;
         padding: 14.5px 4px 0 0;
     }
-
+    .roundedInput {
+        width: 200px;
+        font-size: 14px;
+        font-weight: normal;
+    }
     .viewOnlyMessage {
         text-align: center;
         font-size: 17px;
@@ -59,7 +66,7 @@
 
 <div class="centeredDivShell modelInfoContainer">
     <div id="centeredContainer" class="centeredDivInner">
-        <div id="modelInfoDialog" class="floatingRoundedDialog">
+        <div id="modelInfoDialog" class="floatingRoundedDialog" onmouseleave="considerClosingModelInfoDialog()">
             <div class="floatingCrudBanner">
                 <span id="modelInfoHeader"></span>
                 <div onclick="$('#modelInfoDialog').fadeOut();" class="farSide">x</div>
@@ -82,10 +89,14 @@
                 </div>
                 <label>comment</label>
                 <div><textarea id="txaModelComment" class="smallTextArea"></textarea></div>
-                <label>links</label>
-                <div><textarea id="txaExternalLinks" class="smallTextArea"></textarea></div>
+                <label>link</label>
+                <input id="txtExternalLink" class="roundedInput"/>
+                <br />
+                <label>linka</label>
+                <input id="txtExternalLinka" class="roundedInput" />
+                <span class="clickable" onclick="addModelInfoLink()" >+</span>
+                <div id="externalLinks" class="smallTextArea"></div>
             </div>
-
             <div id="modelInfoViewOnlyArea">
                 <div class="viewOnlyMessage">If you you know who this is Please click Edit</div>
                 <div><textarea id="txaImageInfo" class="smallTextArea"></textarea></div>
@@ -97,28 +108,46 @@
 </div>
 
 <script>
+    var nudeModelInfo = {};
+    var linksArray = new Array();
+    
+
     $(function () {
         $("#txtBorn").datepicker();
     });
 
-    var nudeModelInfo = {};
+    function addModelInfoLink() {
+        linksArray.push({
+            Link: $('#txtExternalLink').val(),
+            Linka: $('#txtExternalLinka').val()
+        });
+        $('#externalLinks').html("")
+        nudeModelInfo.ExternalLinks = "";
+        $.each(linksArray, function (idx, obj) {
+            $('#externalLinks').append("<a href=" + obj.Link + ">" + obj.Linka + "<a>");
+            nudeModelInfo.ExternalLinks += "<a href=" + obj.Link + ">" + obj.Linka + "<a>";
+        });
+    }
 
     function showModelInfoDialog(linkId, linkUrl) {
         $('#footerMessage').html("linkId: " + linkId + " linkUrl: " + linkUrl);
         nudeModelInfo.LinkId = linkId;
         $('#modelDialogThumbNailImage').attr("src", linkUrl);
         $('#modelInfoDialog').fadeIn();
+
         $.ajax({
             type: "GET",
             url: service + "/api/NudeModelInfo/Get?linkId=" + linkId,
             success: function (nudeModel) {
                 if (nudeModel.Success == "ok") {
+                    nudeModelInfo.LinkId = linkId;
                     if (nudeModel.ModelName === null) {
                         $('#modelInfoHeader').html("unknown model");
                         $('#modelInfoEditArea').hide();
                         $('#modelInfoViewOnlyArea').show();
                         $('#txaImageInfo').val(linkUrl.substring(linkUrl.lastIndexOf('/')) + "\n" + nudeModel.ExternalLinks);
                         $('#modelInfoEdit').html("Edit");
+
                     }
                     else {
                         nudeModelInfo.ModelId = nudeModel.ModelId;
@@ -127,10 +156,10 @@
                         $('#modelInfoEditArea').show();
                         $('#modelInfoViewOnlyArea').hide();
                         $('#txtModelName').val(nudeModel.ModelName);
-                        $('#txtBorn').val(nudeModel.Born);
-                        $('#txaExternalLinks').val(nudeModel.ExternalLinks);
-                        if (isNullorUndefined(nudeModel.ExternalLinks))
-                            $('#txaExternalLinks').val(linkUrl.substring(linkUrl.lastIndexOf('/')));
+                        $('#txtBorn').val(nudeModel.Born);                        
+
+
+                        $('#txaExternalLinks').val(linkUrl.substring(linkUrl.lastIndexOf('/')));
                         $('#txaModelComment').val(nudeModel.CommentText);
                         $('#txtNationality').val(nudeModel.Nationality);
                         $('#modelInfoEdit').html("Save");
@@ -149,7 +178,6 @@
         nudeModelInfo.ModelName = $('#txtModelName').val();
         nudeModelInfo.Born = $('#txtBorn').val();
         nudeModelInfo.CommentText = $('#txaModelComment').val();
-        nudeModelInfo.ExternalLinks = $('#txaExternalLinks').val();
         nudeModelInfo.Nationality = $('#txtNationality').val();
         return true;
     }
@@ -169,8 +197,7 @@
                 $('#txtNationality').val("");
                 break;
             case "Add":
-                if (validate()) {
-                    nudeModelInfo.LinkId = "";
+                if (validate()) {                    
                     $.ajax({
                         type: "POST",
                         url: service + "/api/NudeModelInfo",
@@ -191,8 +218,6 @@
                 break;
             case "Save":
                 if (validate()) {
-                    nudeModelInfo.ModelId =
-
                         $.ajax({
                             type: "PUT",
                             url: service + "/api/NudeModelInfo",
@@ -212,6 +237,11 @@
                 break;
             default:
         }
+    }
+
+    function considerClosingModelInfoDialog() {
+        if ($('#modelInfoEdit').html() == "Edit")
+            $('#modelInfoDialog').fadeOut();
     }
 
 </script>
