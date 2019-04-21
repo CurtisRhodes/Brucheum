@@ -26,7 +26,11 @@ namespace WebApi
 
     public class ProgressHub : Hub
     {
-
+        private static IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<ProgressHub>();
+        public static void GetStatus(string message)
+        {
+            hubContext.Clients.All.acknowledgeMessage(message);
+        }
     }
 
 

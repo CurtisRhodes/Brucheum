@@ -26,8 +26,8 @@ namespace OggleBooble
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);  
-            //app.MapSignalR("/api.curtisrhodes.com/signalr", new HubConfiguration() { EnableJSONP = true });
-            app.MapSignalR();
+            
+            //app.MapSignalR();
         }
     }
 

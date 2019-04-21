@@ -397,6 +397,9 @@
     }
 
     function ReBuildLinks() {
+     //   var chatSession=
+
+
         $.ajax({
             type: "PATCH",
             url: service + "api/DirectoryIO/RestoreLinks?path=" + $('#txtNewLink').val() + "&folderId=" + dirTree1SelectedId,

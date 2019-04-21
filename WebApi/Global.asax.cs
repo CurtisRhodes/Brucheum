@@ -40,6 +40,14 @@ namespace WebApi
 
             GlobalConfiguration.Configuration.EnsureInitialized();
 
+            //RouteTable.Routes.MapHubs();
+
+
+            //Severity Code    Description Project File Line    Suppression State
+            //   'SignalRRouteExtensions.MapHubs(RouteCollection)' is obsolete: 
+            //  'Use IAppBuilder.MapSignalR in an Owin Startup class. 
+            //    See http://go.microsoft.com/fwlink/?LinkId=320578 for more details.'   
+            //     WebApi C:\Users\curti\source\repos\Brucheum\WebApi\Global.asax.cs  43  Active
 
 
 
