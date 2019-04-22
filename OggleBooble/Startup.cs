@@ -32,6 +32,35 @@ namespace OggleBooble
     }
 
 
+    public class OggleBoobleSignalRClient
+    {
+        public string Url { get; set; }
+        public HubConnection Connection { get; set; }
+        public IHubProxy Hub { get; set; }
+
+        public OggleBoobleSignalRClient(string url)
+        {
+            Url = url;
+            Connection = new HubConnection(url, useDefaultUrl: false);
+            Hub = Connection.CreateHubProxy("ProgressHub");
+            Connection.Start().Wait();
+
+            Hub.On<string>("acknowledgeMessage", (message) =>
+            {
+                Console.WriteLine("Message received: " + message);
+            });
+        }
+        public void SayHello(string message)
+        {
+            Hub.Invoke("hello", message);
+            Console.WriteLine("hello message is called");
+        }
+        public void Stop()
+        {
+            Connection.Stop();
+        }
+    }
+
     public partial class Startup
     {
         // For more information on configuring authentication, please visit https://go.microsoft.com/fwlink/?LinkId=301864

@@ -280,10 +280,15 @@
 
     $(function () {
 
-       // $.connection.hub.url = "https://api.curtisrhodes.com/signalr";
+       // $.connection.hub.url = "https://api.curtisrhodes.com/";
 
         var progress = $.connection.progressHub;
-        console.log(progress);
+        //console.log(progress);
+
+        progress.client.postToClient = function (data) {
+            alert("postToClient" + data)
+            $('#dataifyInfo').html(data);
+        }
 
         $.connection.hub.start().done(function () {
             var connectionId = $.connection.hub.id;

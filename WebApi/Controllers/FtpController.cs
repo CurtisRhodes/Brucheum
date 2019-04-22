@@ -342,7 +342,13 @@ namespace WebApi.Controllers
                         repairReport.Errors.Add("rename Failed: " + renameSuccess);
                     }
                 }
+
                 repairReport.RowsProcessed++;
+                Global.LogMessage("RowsProcessed: "+ repairReport.RowsProcessed);
+
+                //ProgressHub.PostToClient("RowsProcessed: " + repairReport.RowsProcessed);
+
+
             }
 
             if (anyChangesMade)

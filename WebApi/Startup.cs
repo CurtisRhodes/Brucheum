@@ -8,6 +8,7 @@ using Microsoft.Owin;
 using Microsoft.Owin.Cors;
 using Microsoft.Owin.Security;
 using System.Security.Claims;
+using System.Web.Http;
 
 [assembly: OwinStartup(typeof(WebApi.Startup))]
 namespace WebApi
@@ -26,10 +27,25 @@ namespace WebApi
 
     public class ProgressHub : Hub
     {
+        public static void PostToClient(string data)
+        {
+            try
+            {
+                var chat = GlobalHost.ConnectionManager.GetHubContext("ProgressHub");
+                if (chat != null)
+                    chat.Clients.All.postToClient(data);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        private static IHubContext hubContext =
+            GlobalHost.ConnectionManager.GetHubContext<ProgressHub>();
 
+        public static void GetStatus(string message)
+        {
+            hubContext.Clients.All.acknowledgeMessage(message);
+        }
     }
-
-
 }
-
-

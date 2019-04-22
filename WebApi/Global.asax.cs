@@ -9,11 +9,19 @@ using System.Web.Routing;
 
 namespace WebApi
 {
+    public class Global
+    {
+        public delegate void DelLogMessage(string data);
+        public static DelLogMessage LogMessage;
+    }
+
     public class WebApiApplication : System.Web.HttpApplication
     {
         protected void Application_Start()
         {
             GlobalConfiguration.Configuration.EnableCors();
+
+            GlobalConfiguration.Configuration.Formatters.JsonFormatter.SupportedMediaTypes.Add(new System.Net.Http.Headers.MediaTypeHeaderValue("text/html"));
 
             AreaRegistration.RegisterAllAreas();
 
@@ -38,10 +46,10 @@ namespace WebApi
                 routeTemplate: "api/{controller}/{ArticleModel}"
             );
 
+
+            Global.LogMessage = ProgressHub.PostToClient;
+
             GlobalConfiguration.Configuration.EnsureInitialized();
-
-
-
 
             //GlobalConfiguration.Configure(WebApiConfig.Register);
             //FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
@@ -50,3 +58,4 @@ namespace WebApi
         }
     }
 }
+
