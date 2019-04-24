@@ -1,0 +1,40 @@
+﻿<link href="Css/Header.css" rel="stylesheet" />
+<header>
+    <div id="bheader" class="standardHeader">
+        <div id="divTopLeftLogo" class="bannerImageContainer">
+            <a href="Index.html"><img src="Images/GetaJob.png" class="bannerImage" /></a>
+        </div>
+        <div class="headerBodyContainer">
+            <div id="bannerTitle" class="headerTitle">
+                Get a Gig
+            </div>
+
+            <div id="menuContainer" class="menuTabContainer">
+                <div class="menuTabs" id="replaceableMenuItems">
+                    <div class="menuTab floatLeft"><a href="*">My Resume</a></div>
+                    <div class="menuTab floatLeft"><a href="*">My Skills</a></div>
+                </div>
+
+                <div id="optionLoggedIn">
+                    <div class="menuTab floatLeft"><a href="~/Admin">Admin</a></div>
+                    <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
+                    <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello GetUserName()</a></div>
+                </div>
+
+                <div id="optionNotLoggedIn">
+                    <div id="btnLayoutRegister" class="menuTab floatRight">
+                        <a href="javascript:registerPlease()">Register</a>
+                        <img id="btnHeaderRegisterSpinner" class="btnSpinnerImage" src="Images/loader.gif" />
+                    </div>
+                    <div id="btnLayoutLogin" class="menuTab floatRight">
+                        <a href="javascript:loginPlease()">Log In</a>
+                        <img id="btnHeaderLoginSpinner" class="btnSpinnerImage" src="Images/loader.gif" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<script>
+
+</script>

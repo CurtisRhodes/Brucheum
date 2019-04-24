@@ -1,0 +1,76 @@
+﻿:root {
+    --brucheumBlue: #74bac3;
+
+}
+
+#optionLoggedIn #optionNotLoggedIn {
+    display: none;
+}
+
+.standardHeader {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: #fff;
+    border-top: #40767d 3px solid;
+    border-bottom: #decd6f 3px solid;
+    display: flex;
+    z-index: 1000;
+}
+.modalContentStyle {
+    z-index: 15;
+}
+
+.bannerImageContainer {
+    float: left;
+    padding-top: 2px;
+    padding-left: 2px;
+}
+.bannerImage {
+    height: 80px;
+    cursor: pointer;
+}
+.headerBodyContainer {
+    float: left;
+    width: 100%; 
+}
+
+.headerTitle {
+    padding-left: 26px;
+    padding-top: 8px;
+    font-family: 'Lucida Calligraphy';
+    font-size: 33px;
+}
+.menuTabContainer {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 14px;
+    padding-left: 224px;
+}
+
+.menuTab {
+    margin-top: 4px;
+    margin-bottom: 11px;
+    border-radius: 5px;
+}
+    .menuTab a {
+        text-decoration: none;
+        cursor: pointer;
+        color: black;
+        padding: 8px 20px;
+        margin-right: 20px;
+    }
+    .menuTab a:hover {
+        text-decoration: underline;
+        background-color: #b7b174;
+    }
+
+.btnSpinner {
+    margin-top: 66px;
+}
+
+.btnSpinnerImage {
+    position: absolute;
+    margin-left: 20px;
+    height: 20px;
+    display: none;
+}

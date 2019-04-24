@@ -1,0 +1,65 @@
+﻿body {
+}
+.middleColumn {
+    margin-top: 110px;
+    background-image: url(../Images/globlic.jpg);
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+.wordCloudContainer {
+    position: absolute;
+    margin-left: 20px;
+    margin-top: 45px;
+}
+
+.cloudWord {
+    display: inline-block;
+    padding: 4px;
+    margin: 4px;
+    border: solid thin #5888c2;
+    border-radius: 4px;
+    background-color: #fef7f7;
+    cursor: pointer;
+}
+
+.vertical-text {
+    transform: rotate(90deg);
+    transform-origin: left top 0;
+    float: left;
+}
+.skillDialogPopupBox {
+    background-color: #fafaf3;
+    box-shadow: #555 4px 8px;
+    display: none;
+}
+
+.skillTitle {
+    /*font-family: Algerian;*/
+    font-size: 34px;
+    text-align: center;
+    padding: 2px 6px;
+    cursor: pointer;
+}
+
+.skillProficiency {
+    font-size: 17px;
+    padding: 2px 6px;
+    cursor: pointer;
+}
+
+.skillNarrative {
+    padding: 6px;
+    width: 444px;
+    overflow-y: auto;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+h2 {
+    color: #fff;
+}
+
+.rightColumnContents {
+    margin-top: 200px;
+}

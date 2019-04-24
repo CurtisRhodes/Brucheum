@@ -1,0 +1,91 @@
+﻿body {
+    background-color: #222730; /* #273235; #486167;*/
+    color: #fff;
+}
+.intelDsgnBackground {
+    margin-top: 110px;
+    background-image: url(../Images/globlic.jpg);
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+.threeColumnLayout {
+    width: 100%;
+    display: flex;
+}
+    .threeColumnLayout .leftColumn {
+        float: left;
+        min-width: 7%;
+    }
+
+    .threeColumnLayout .middleColumn {
+        float: left;
+        width: 100%;
+    }
+
+    .threeColumnLayout .rightColumn {
+        float: right;
+        min-width: 7%;
+    }
+
+.loadingGif {
+    position: absolute;
+    display: none;
+}
+
+    .loadingGif img {
+        height: 45px;
+    }
+
+.centeredDivShell {
+    position: absolute;
+    left: 50%;
+}
+
+.centeredDivInner {
+    position: relative;
+    left: -50%;
+}
+
+.floatLeft {
+    float: left;
+}
+
+.floatLeftFifty {
+    float: left;
+    width: 45%;
+    margin-right: 11px;
+}
+
+.width100 {
+    width: 100%
+}
+
+.collapsible {
+    display: none;
+    cursor: pointer;
+}
+
+.noFloat {
+    clear: both;
+}
+
+.floatRight {
+    float: right;
+}
+
+.align-right {
+    text-align: right;
+}
+
+.inline {
+    display: inline-block;
+}
+
+.hidden {
+    display: none;
+}
+
+.flexContainer {
+    display: flex;
+}

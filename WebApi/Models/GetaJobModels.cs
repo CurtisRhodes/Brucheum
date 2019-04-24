@@ -90,5 +90,6 @@ namespace WebApi.GetaJob.Models
         public string ProficiencyDescription { get; set; }
         public string FontSize { get; set; }
         public string Narrative { get; set; }
+        public string Success { get; set; }
     }
 }
