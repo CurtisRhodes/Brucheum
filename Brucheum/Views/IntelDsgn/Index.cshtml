@@ -101,9 +101,6 @@
                 url: service + "/api/DialogSnipit?blogName=" + blogTitle,
                 success: function (response) {
                     if (!response.Title.startsWith("ERROR")) {
-
-
-
                         $('#divHeaderRow').html(response.Title);
                         $('#divArticleContainerContents').html(response.Content);
                         $('#snipitContainer').fadeIn();
