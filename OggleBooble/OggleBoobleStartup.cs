@@ -28,36 +28,9 @@ namespace OggleBooble
             ConfigureAuth(app);  
             //app.MapSignalR("/api.curtisrhodes.com/signalr", new HubConfiguration() { EnableJSONP = true });
             app.MapSignalR();
-        }
-    }
+            //app.MapSignalR("/localhost:40395", new HubConfiguration() { EnableJSONP = true });
 
-
-    public class OggleBoobleSignalRClient
-    {
-        public string Url { get; set; }
-        public HubConnection Connection { get; set; }
-        public IHubProxy Hub { get; set; }
-
-        public OggleBoobleSignalRClient(string url)
-        {
-            Url = url;
-            Connection = new HubConnection(url, useDefaultUrl: false);
-            Hub = Connection.CreateHubProxy("ProgressHub");
-            Connection.Start().Wait();
-
-            Hub.On<string>("acknowledgeMessage", (message) =>
-            {
-                Console.WriteLine("Message received: " + message);
-            });
-        }
-        public void SayHello(string message)
-        {
-            Hub.Invoke("hello", message);
-            Console.WriteLine("hello message is called");
-        }
-        public void Stop()
-        {
-            Connection.Stop();
+            //app.UseCors(Configuration=>Configur)
         }
     }
 

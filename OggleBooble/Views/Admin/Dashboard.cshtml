@@ -3,7 +3,9 @@
     ViewBag.Title = "Dashboard";
 }
 <script src="~/Scripts/jQuery/jquery.signalR-2.4.0.min.js"></script>
+
 <script src="/signalr/hubs"></script>
+
 <style>
     .dashBoardContainer {
         display: flex;
@@ -102,7 +104,7 @@
         margin-top: 8px;
         background-color: #f8e8e8;
         height: 500px;
-        text-align:left;
+        text-align: left;
         overflow-y: auto;
     }
 
@@ -114,6 +116,7 @@
         min-width: 275px;
         overflow-y: auto;
     }
+
     .toggleButton {
         display: inline-block;
         font-size: 24px;
@@ -124,6 +127,7 @@
         padding: 4px;
         cursor: pointer;
     }
+
     .floatingCrud2 {
         position: absolute;
         top: 350px;
@@ -132,6 +136,7 @@
         box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
         display: none;
     }
+
     .repairReport {
         padding: 4px;
         line-height: 22px;
@@ -148,14 +153,14 @@
             <div class="myH2">Dashboard</div>
             <dir class="linkContainer">
                 @*
-                <div class="clickable" onclick="window.location.href='/stats/AdminDashboard'">Rebuild Tables</div>
-                <div class="clickable" onclick="$('#addNewLink').show()">Add Link</div>
-                <div class="clickable" onclick="buildFolderLinkTable()">build FolderLink Table</div>
-                <div class="clickable" onclick="getCatTree()">Refresh Dir Tree</div>
-                <div class="clickable" onclick="testConnection();">testConnection();</div>
-                <div class="clickable" onclick="rebuildLinkTables()">ReBuild Link Tables</div>
-                <div class="clickable" onclick="$('#txtNewLink').val('f:/Danni/'); ReBuildLinks()">ReBuild Links</div>
-                <div class="clickable" onclick="emergencyRepair(116)">Emergency Repair</div>
+                    <div class="clickable" onclick="window.location.href='/stats/AdminDashboard'">Rebuild Tables</div>
+                    <div class="clickable" onclick="$('#addNewLink').show()">Add Link</div>
+                    <div class="clickable" onclick="buildFolderLinkTable()">build FolderLink Table</div>
+                    <div class="clickable" onclick="getCatTree()">Refresh Dir Tree</div>
+                    <div class="clickable" onclick="testConnection();">testConnection();</div>
+                    <div class="clickable" onclick="rebuildLinkTables()">ReBuild Link Tables</div>
+                    <div class="clickable" onclick="$('#txtNewLink').val('f:/Danni/'); ReBuildLinks()">ReBuild Links</div>
+                    <div class="clickable" onclick="emergencyRepair(116)">Emergency Repair</div>
                 *@
                 <div class="clickable" onclick="rebuildCatTree()">ReBuild Dir Tree</div>
                 <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
@@ -244,7 +249,7 @@
                     <div><span>start path</span><input class="txtLinkPath roundedInput" /></div>
                     <div class="roundendButton" onclick="repairLinks()">run</div>
                 </div>
-                <div id="repairLinksReport"  class="repairReport"></div>
+                <div id="repairLinksReport" class="repairReport"></div>
             </div>
         </div>
     </div>
@@ -279,33 +284,22 @@
     };
 
     $(function () {
+        
+        var connection = $.hubConnection(service);
+        var progressHubProxy = connection.createHubProxy('ProgressHub');
 
-       // $.connection.hub.url = "https://api.curtisrhodes.com/";
-
-        var progress = $.connection.progressHub;
-        //console.log(progress);
-
-        progress.client.postToClient = function (data) {
-            alert("postToClient" + data)
+        progressHubProxy.on('PostToClient', function (data) {
             $('#dataifyInfo').html(data);
-        }
-
-        $.connection.hub.start().done(function () {
-            var connectionId = $.connection.hub.id;
-            console.log("connectionId: " + connectionId);
-            //alert("connectionId: " + connectionId);
         });
 
-        progress.client.addProgress = function (message, progressCount, totalItems) {
-            alert("progress.client.addProgress: " + message);
-            if (message == "...") {
-                $('#dataifyInfo').show().html("processing: " + progressCount + " of " + totalItems);
-            }
-            else {
-                $('#dataifyInfo').show().html(message);
-            }
-        };
-
+        connection.start()
+            .done(function () {
+                console.log('Now connected, connection ID=' + connection.id);
+            })
+            .fail(function () {
+                alert('Could not connect')
+                console.log('Could not connect');
+            });
     });
 
     function addVideo() {
@@ -550,7 +544,7 @@
     }
 
     function toggleDirTree(id) {
-        if ($('#' + id + '').css("display") == "none") 
+        if ($('#' + id + '').css("display") == "none")
             $('#S' + id + '').html("[-] ");
         else
             $('#S' + id + '').html("[+] ");
@@ -580,8 +574,8 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (success) {
-                    if (success === "ok") 
-                        $('#dataifyInfo').append(" ok");                    
+                    if (success === "ok")
+                        $('#dataifyInfo').append(" ok");
                     else
                         alert("Create _DirTree: " + success);
                 },
@@ -623,9 +617,9 @@
                         if (repairReport.ImagesMoved > 0)
                             $('#dataifyInfo').append(", Images Moved: " + repairReport.ImagesMoved);
                         if (repairReport.LinksRemoved > 0)
-                            $('#dataifyInfo').append(", CatLinks Added: " + repairReport.LinksRemoved);                        
+                            $('#dataifyInfo').append(", CatLinks Added: " + repairReport.LinksRemoved);
                         if (repairReport.CatLinksAdded > 0)
-                            $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);                        
+                            $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
 
 
                         //$('#dataifyInfo').append(", directory errors: " + repairReport.DirNotFound);

@@ -157,7 +157,7 @@ namespace WebApi.Controllers
         [HttpGet]
         public RepairReportModel RepairLinks(int startFolderId, string drive)
         {
-            RepairReportModel repairReport = new RepairReportModel();
+            RepairReportModel repairReport = new RepairReportModel() { isSubFolder = false };
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
@@ -188,7 +188,11 @@ namespace WebApi.Controllers
                 FtpIO.CreateDirectory(ftpPath);
                 repairReport.Errors.Add("created directory " + ftpPath);
             }
-
+            int folderRowsProcessed = 0;
+            if(repairReport.isSubFolder)
+                SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed + "  Total: " + repairReport.RowsProcessed);
+            else
+                SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed);
             List<GoDaddyLink> goDaddyLinks =
                 (from c in db.CategoryImageLinks
                  join g in db.GoDaddyLinks on c.ImageLinkId equals g.Id
@@ -344,11 +348,11 @@ namespace WebApi.Controllers
                 }
 
                 repairReport.RowsProcessed++;
-                Global.LogMessage("RowsProcessed: "+ repairReport.RowsProcessed);
-
-                //ProgressHub.PostToClient("RowsProcessed: " + repairReport.RowsProcessed);
-
-
+                folderRowsProcessed++;
+                if (repairReport.isSubFolder)
+                    SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed + "  Total: " + repairReport.RowsProcessed);
+                else
+                    SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed);
             }
 
             if (anyChangesMade)
@@ -412,19 +416,24 @@ namespace WebApi.Controllers
                             }
                         }
                         repairReport.RowsProcessed++;
+                        folderRowsProcessed++;
+                        if (repairReport.isSubFolder)
+                            SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed + "  Total: " + repairReport.RowsProcessed);
+                        else
+                            SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed);
                     }
                 }
 
                 if (files.Count() > goDaddyLinks.Count())
                 {
-
+                    repairReport.Errors.Add("Extra Links Found in " + ftpPath);
                 }
-
             }
 
             int[] subDirs = db.CategoryFolders.Where(f => f.Parent == folderId).Select(f => f.Id).ToArray();
             foreach (int subDir in subDirs)
             {
+                repairReport.isSubFolder = true;
                 RepairLinksRecurr(subDir, repairReport, db);
             }
         }

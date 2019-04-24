@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.SignalR.Client;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -9,6 +10,8 @@ namespace OggleBooble.Controllers
 {
     public class AdminController : Controller
     {
+        HubConnection hubConnection = null;
+
         private string apiService = ConfigurationManager.AppSettings["apiService"];
 
         public ActionResult Index()
@@ -17,9 +20,32 @@ namespace OggleBooble.Controllers
         }
         public ActionResult Dashboard()
         {
+            //hubConnection = new HubConnection(apiService);
+            //IHubProxy HubProxy = null;
+            //HubProxy = hubConnection.CreateHubProxy("ProgressHub");
+            //hubConnection.Start();
+            //Execute();
+            //var p = HubProxy.Invoke<string>("PostToClient", "Debendra").Result;            
+            //ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + p + "');", true);
+
             ViewBag.Service = apiService;
             return View();
         }
+
+        private void Execute()
+        {
+            hubConnection.Start().ContinueWith(task =>
+            {
+                if (task.IsFaulted)
+                {
+                    Console.WriteLine("error opening connection {0}", task.Exception.GetBaseException());
+                    return;
+                }
+                else
+                    Console.WriteLine("Connected" + hubConnection.ConnectionId);
+            }).Wait();
+        }
+
         public ActionResult Blog()
         {
             ViewBag.Service = apiService;

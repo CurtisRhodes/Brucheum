@@ -196,6 +196,7 @@ namespace WebApi.Directory.Models
         public int ImagesMoved { get; set; }
         public int BadFileNames { get; set; }
         public int BadLinks { get; set; }
+        public bool isSubFolder { get; set; }
 
         public List<string> Errors { get; set; }
         //public List<FileInfo> MissingImages { get; set; }

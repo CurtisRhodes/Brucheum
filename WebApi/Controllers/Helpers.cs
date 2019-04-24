@@ -107,8 +107,8 @@ namespace WebApi
 
         public static void SendProgress(string progressMessage, int progressCount, int totalItems)
         {
-            Microsoft.AspNet.SignalR.IHubContext hubContext = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<ProgressHub>();
-            hubContext.Clients.All.addProgress(progressMessage, progressCount, totalItems);
+            Microsoft.AspNet.SignalR.IHubContext hubContext = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<SignalRHost.ProgressHub>();
+            hubContext.Clients.All.SendProgress(progressMessage, progressCount, totalItems);
 
             //var percentage = 0;
             //if (totalItems > 0)

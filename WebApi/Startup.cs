@@ -17,6 +17,8 @@ namespace WebApi
     {
         public void Configuration(IAppBuilder app)
         {
+            //app.MapSignalR();
+
             app.Map("/signalr", map =>
             {
                 map.UseCors(CorsOptions.AllowAll);
@@ -24,28 +26,7 @@ namespace WebApi
             });
         }
     }
-
-    public class ProgressHub : Hub
-    {
-        public static void PostToClient(string data)
-        {
-            try
-            {
-                var chat = GlobalHost.ConnectionManager.GetHubContext("ProgressHub");
-                if (chat != null)
-                    chat.Clients.All.postToClient(data);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
-        private static IHubContext hubContext =
-            GlobalHost.ConnectionManager.GetHubContext<ProgressHub>();
-
-        public static void GetStatus(string message)
-        {
-            hubContext.Clients.All.acknowledgeMessage(message);
-        }
-    }
 }
+
+ 
+
