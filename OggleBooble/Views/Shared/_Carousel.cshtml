@@ -1,114 +1,6 @@
 ﻿
-<style>
-    .carouselContainer {
-        padding: 1px;
-        border: solid 2px #b200ff;
-        /*background-color: rgba(164, 168, 169, 0.75);*/
-        z-index: 10;
-        display: none;
-    }
-
-    .animatedGears {
-        display: none;
-        position: relative;
-        top: 100px;
-        left: 100px;
-    }
-
-    .floatingLabel {
-        position: absolute;
-        display: inline-block;
-        color: #fff;
-        background-color: rgba(0, 0, 0, 0.5);
-        border-radius: 5px;
-        padding: 3px;
-        font-size: 22px;
-        white-space: nowrap;
-        cursor: pointer;
-        z-index: 2;
-    }
-
-    .carouselImage {
-        /*height: 500px;*/
-        cursor: pointer;
-    }
-
-    .carouselImageContainer {
-        border: solid 5px #efeacb;
-        border-bottom: none;
-        background-color: #efeacb;
-    }
-
-    .imgBottom {
-        background-color: #efeacb;
-        text-align: center;
-    }
-
-    .floatingCrudDialog {
-        z-index: 27;
-        border-radius: 22px;
-        background-color: #83b1ad;
-    }
-
-    .catDescArea {
-        height: 323px;
-        border-radius: 22px;
-        width: 434px;
-        border: solid thin #b200ff;
-        padding: 4px;
-        margin: 3px;
-    }
-
-    .catDlgTextArea {
-        height: 323px;
-        width: 434px;
-        background-color: #f7eef7;
-        padding: 5px;
-        font-size: 21px;
-        margin: 5px;
-        border-radius: 5px;
-    }
-
-    .randomImageContainer {
-        top: 135px;
-    }
-
-    .categoryDescriptionContainer {
-        top: 188px;
-    }
-
-    .carouselCategoryLabel {
-        float: left;
-        cursor: pointer;
-        text-decoration: underline;
-        font-size: 20px;
-        margin-bottom: 4px;
-        color: #b200ff;
-    }
-
-    .speedButton {
-        z-index: 1;
-        height: 37px;
-        margin: 2px 5px 3px 0px;
-        cursor: pointer;
-    }
-
-    .pauseButton {
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: inline-block;
-        font-size: 23px;
-        color: #000;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .loadingGif img {
-        height: 15px;
-    }
-</style>
-
+<link href="~/Styles/carousel.css" rel="stylesheet" />
+<link href="~/Styles/jquery-ui.css" rel="stylesheet" />
 <div class="centeredDivShell randomImageContainer">
     <div class="centeredDivInner">
         <div id="categoryTitle" class="floatingLabel" onclick="showFolderCategoryDialog()"></div>
@@ -126,15 +18,21 @@
     </div>
 </div>
 
-<div class="centeredDivShell categoryDescriptionContainer">
-    <div id="centeredContainer" class="centeredDivInner">
-        <div id="folderCategoryDialog" class="floatingRoundedDialog">
-            <div class="floatingCrudBanner"><span id="catDlgFolderName"></span><div onclick="closeCatDialog()" class="farSide">x</div> </div>
-            <div><textarea id="catDlgDescription" class="catDlgTextArea"></textarea></div>
-            <a id="catDlgEdit" href="javascript:editCatDialog()">Edit</a>
-        </div>
-    </div>
+<div id="folderCategoryDialog" title="" onmouseleave="considerClosingCategoryDialog()">
+    <div><textarea id="catDlgDescription" class="catDlgTextArea"></textarea></div>
+    <a id="btnCatDlgEdit" href="javascript:addEditCatDialog()">CatDialog</a>
 </div>
+
+
+@*<div class="centeredDivShell categoryDescriptionContainer">
+        <div id="centeredContainer" class="centeredDivInner">
+            <div id="folderCategoryDialog" class="floatingRoundedDialog">
+                <div class="floatingCrudBanner"><span id="catDlgFolderName"></span><div onclick="closeCatDialog()" class="farSide">x</div> </div>
+                <div><textarea id="catDlgDescription" class="catDlgTextArea"></textarea></div>
+                <a id="btnCatDlgEdit" href="javascript:editCatDialog()">Edit</a>
+            </div>
+        </div>
+    </div>*@
 
 <div id="carouselContextMenu" class="ogContextMenu" onmouseleave="considerHidingContextMenu()">
     <div id="ctxModelName">model name</div>
@@ -161,65 +59,24 @@
     var carouselContainerHeight;
     var Carousel;
     var folderCategoryModel = {};
-    var moveImageModel = {};
-    var dontResume = false;
+    //var moveImageModel = {};
 
     $(document).ready(function () {
         $('#carouselImage').css("max-width", $('#middleColumn').width());
         $('#carouselImage').css("max-height", $('#middleColumn').innerHeight() - 150);
-    });
 
-    function toggleDirTree(id) {
-        if ($('#' + id + '').css("display") == "none")
-            $('#S' + id + '').html("[-] ");
-        else
-            $('#S' + id + '').html("[+] ");
-        $('#' + id + '').toggle();
-    }
-
-    function onDirTreeClick(path, id) {
-        moveImageModel.DestinationFolderId = id.substring(2);
-        moveImageModel.DestinationPath = path.replace(/%20/g, " ");
-        $('#dirTreeResults').show();
-        $('#dirTreeResults').html(path.replace(/%20/g, " "));
-        $('#dirTreeDropDown').hide();
-    }
-
-    function moveImage() {
-        moveImageModel.SourceFolderId = carouselItemArray[imageIndex].FolderId;
-        moveImageModel.ImageName = carouselItemArray[imageIndex].Link;
-        $('#moveImageRunningGif').show();
-        $.ajax({
-            type: "PUT",
-            url: service + "/api/FtpImagePage/MoveImage",
-            data: moveImageModel,
-            success: function (success) {
-                $('#moveImageRunningGif').hide();
-                if (success === "ok") {
-                    displayStatusMessage("ok", "image moved to " + newLink.DestinationPath);
-                    $('#moveCopyDialog').hide();
-                    if (viewerShowing)
-                        slide("next");
-
-                    getImageLinks();
-                }
-                else
-                    alert(success);
-            },
-            error: function (xhr) {
-                $('#moveImageRunningGif').hide();
-                alert("moveImage xhr error: " + xhr.statusText);
-            }
+        $('#folderCategoryDialog').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "456px"
         });
-    }
 
-    function considerHidingContextMenu() {
-        if (!dontResume) {
+        $('#folderCategoryDialog').on('dialogclose', function (event) {
             resume();
-            $('#carouselContextMenu').fadeOut();
-        }
-    }
-
+        });
+    });
+    
     $('.carouselImage').contextmenu(function () {
         event.preventDefault();
         window.event.returnValue = false;
@@ -255,7 +112,6 @@
                 window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
                 break;
             case "About":
-                dontResume = true;
                 showModelInfoDialog(carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId);
                 break;
             case "Explode":
@@ -270,7 +126,6 @@
                 //showCommentDialog();
                 break;
             case "Move Image":
-                dontResume = true;
                 $('#moveCopyDialog').show();
                 break;
            default:
@@ -279,36 +134,31 @@
         $('#carouselContextMenu').hide();
     });
 
-
     function showFolderCategoryDialog() {
         // 11:11 2/25/19
         // 2:20 4/10/2019
         // create a new table (or row)
         // --alter table OggleBooble.ImageFolder add CatergoryDescription nvarchar(max)
+        // 4/30/2019  --first use of jQuery dialog  
         try {
             pause();
             $.ajax({
                 type: "GET",
                 url: service + "/api/CategoryFolder/Get?id=" + carouselItemArray[imageIndex].FolderId,
                 success: function (model) {
-
                     if (!model.FolderName.startsWith("ERROR")) {
                         folderCategoryModel.Id = model.Id;
-                        folderCategoryModel.CategoryText = model.CategoryText;
-
-                        $('#catDlgFolderName').html(model.FolderName)
-                        //$('#folderCategoryDialog').css("top", $('#categoryTitle').offset().top + 50);
-                        //$('#folderCategoryDialog').css("left", $('#categoryTitle').offset().left + 50);
-
-                        if (isPornEditor == "True") {
-                            $('#catDlgDescription').val(model.CatergoryText);
-                            $('#catDlgEdit').show();
-                        }
-                        else {
-                            $('#userCatDlgTextArea').val(model.CatergoryText + " read only");
-                            $('#catDlgEdit').hide();
-                        }
-                        $('#folderCategoryDialog').fadeIn();
+                        $('#catDlgDescription').val(model.CategoryText);
+                        $('#folderCategoryDialog').dialog('option', 'title', model.FolderName);
+                        //if ((isPornEditor == "True") || (document.domain === 'localhost')) {
+                        //    $('#btnCatDlgEdit').show();
+                        //    $('#catDlgDescription').prop("readonly", false);
+                        //}
+                        //else {
+                            $('#catDlgDescription').prop("readonly", true);
+                            $('#btnCatDlgEdit').hide();
+                        //}
+                        $('#folderCategoryDialog').dialog("open");
                     }
                     else
                         alert("get CategoryFolder: " + model.FolderName);
@@ -322,7 +172,7 @@
             alert("get CategoryFolder catch: " + e);
         }
     }
-    function editCatDialog() {
+    function addEditCatDialog() {
         folderCategoryModel.CategoryText = $('#catDlgDescription').val();
         $.ajax({
             type: "PUT",
@@ -331,7 +181,7 @@
             success: function (success) {
                 if (success == "ok") {
                     displayStatusMessage("ok", "category description updated");
-                    $('#catDlgEdit').html("Edit");
+                    $('#btnCatDlgEdit').html("Edit");
                 }
                 else
                     alert("updateImageFolder: " + success);
@@ -341,11 +191,18 @@
             }
         });
     }
-    function closeCatDialog() {
-        if ($('#catDlgEdit').html() == "Edit") {
-            $('#folderCategoryDialog').fadeOut();
+
+    function considerClosingCategoryDialog() {
+        //alert("catDlgDescription: " + $('#catDlgDescription').prop("readonly"));
+        if ($('#catDlgDescription').prop("readonly")) {
             resume();
+            $('#folderCategoryDialog').dialog("close");
         }
+    }
+
+    function considerHidingContextMenu() {
+        resume();
+        $('#carouselContextMenu').fadeOut();        
     }
 
     function clickViewGallery() {

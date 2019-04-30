@@ -71,15 +71,24 @@
     <Content Include="Css\Footer.css" />
     <Content Include="Css\Common.css" />
     <Content Include="Css\Header.css" />
+    <Content Include="Css\Resume.css" />
     <Content Include="Css\SkillsCloud.css" />
     <Content Include="Footer.html" />
     <Content Include="Header.html" />
     <Content Include="Images\globlic.jpg" />
     <Content Include="Images\intel01.jpg" />
     <Content Include="Images\loader.gif" />
+    <Content Include="Images\powerOnOffSilver.png" />
+    <Content Include="Images\wordDoc.jpg" />
     <Content Include="Index.html" />
+    <Content Include="SkillsManage.html" />
+    <Content Include="Css\DataEntry.css" />
+    <Content Include="Resume.html" />
+    <Content Include="ResumeManage.html" />
+    <Content Include="Script\Resume.js" />
     <Content Include="Script\SkilllsCloud.js" />
     <Content Include="Script\Cookies.js" />
+    <Content Include="Script\SkillsEdit.js" />
     <Content Include="Script\Utils.js" />
     <Content Include="Skills.html" />
     <Content Include="Web.config" />
@@ -88,6 +97,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Docs\Curtis Rhodes Resume 2017.doc" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

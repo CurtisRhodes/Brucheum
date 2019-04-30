@@ -1,46 +1,5 @@
 ﻿<link href="~/Styles/ImagePage.css" rel="stylesheet" />
-
-<style>
-
-    .redBarIsLocalIndicator {
-        height: 14px;
-        background-color: #ff0000;
-    }
-
-    .imagePageDialog {
-        background-color: #cabcbc;
-        font-size: 18px;
-    }
-
-    .metaTagListArea {
-        height: 222px;
-        width: 711px;
-        border: solid thin #372f2f;
-    }
-
-    .metaTagItem {
-        display: inline-block;
-        color: #fff;
-        background-color: #4d86eb;
-        margin: 3px;
-        border-radius: 3px;
-        padding: 2px;
-    }
-
-    commentDialogImage {
-        height: 99px;
-        max-width: 66%;
-    }
-
-    .tagInput {
-        width: 450px;
-    }
-
-    #txtCommentTitle {
-        width: 100%;
-    }
-</style>
-
+<link href="~/Styles/jquery-ui.css" rel="stylesheet" />
 
 <div id="staticableContent">
     <div class="threeColumnArray">
@@ -104,7 +63,6 @@
 
     <div>@Html.Partial("_ModelInfoDialog")</div>
 
-
     <div>@Html.Partial("_CommentsDialog")</div>
 
     <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
@@ -149,8 +107,35 @@
 
 
         getBreadCrumbs();
+
         getImageLinks();
     });
+
+    function showStatic() {        
+        var pageName = $('#expandoBannerText').html() + ".html";
+
+        $.ajax({
+            type: "GET",
+            url: "GetStaticPage&fileName=" + pageName,
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (success) {
+                if (success !== "") {
+
+
+                    alert("CreateStaticFile returned: " + success);
+                }
+                else
+                    alert("/api//File returned: " + success);
+            },
+            error: function (jqXHR, exception) {
+                alert("CreateStaticFile error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+
+    }
+
 
     function getBreadCrumbs() {
         $.ajax({
@@ -166,7 +151,10 @@
                     //alert("id: " + $(this).attr("id"));
                     event.preventDefault();
                     window.event.returnValue = false;
-                    showBreadCrumbContextMenu($(this).attr("id"));
+
+
+
+                    //showBreadCrumbContextMenu($(this).attr("id"));
                 });
 
                 setLayout(parents[parents.length - 1].FolderName);
@@ -181,22 +169,11 @@
     }
 
 
-    function showBreadCrumbContextMenu(hrefId) {
-        currentContextImageId = imageId;
-        var thisImage = $('#' + imageId + '');
-
-        if (viewerShowing) {
-            $('#thumbImageContextMenu').css("top", event.clientY + 5);
-            $('#thumbImageContextMenu').css("left", event.clientX);
-        }
-        else {
-            var picpos = thisImage.offset();
-            var picLeft = picpos.left + thisImage.width() - $('.ogContextMenu').width() - 50;
-            $('#thumbImageContextMenu').css("top", picpos.top + 5);
-            $('#thumbImageContextMenu').css("left", picLeft);
-        }
-        $('#thumbImageContextMenu').fadeIn();
-    }
+    //function showBreadCrumbContextMenu(hrefId) {
+    //    $('#breadCrumbContextMenu').css("top", event.clientY + 5);
+    //    $('#breadCrumbContextMenu').css("left", event.clientX);
+    //    $('#breadCrumbContextMenu').fadeIn();
+    //}
 
 
     function staticify() {

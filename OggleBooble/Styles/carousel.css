@@ -1,0 +1,130 @@
+﻿.carouselContainer {
+    padding: 1px;
+    border: solid 2px #b200ff;
+    /*background-color: rgba(164, 168, 169, 0.75);*/
+    z-index: 10;
+    display: none;
+}
+
+.animatedGears {
+    display: none;
+    position: relative;
+    top: 100px;
+    left: 100px;
+}
+
+.floatingLabel {
+    position: absolute;
+    display: inline-block;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    padding: 3px;
+    font-size: 22px;
+    white-space: nowrap;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.carouselImage {
+    /*height: 500px;*/
+    cursor: pointer;
+}
+
+.carouselImageContainer {
+    border: solid 5px #efeacb;
+    border-bottom: none;
+    background-color: #efeacb;
+}
+
+.imgBottom {
+    background-color: #efeacb;
+    text-align: center;
+}
+
+.floatingCrudDialog {
+    z-index: 27;
+    border-radius: 22px;
+    background-color: #83b1ad;
+}
+
+.catDescArea {
+    height: 323px;
+    border-radius: 22px;
+    width: 434px;
+    border: solid thin #b200ff;
+    padding: 4px;    
+    margin: 3px;
+}
+
+.catDlgTextArea {
+    height: 323px;
+    width: 400px;
+    background-color: #f7eef7;
+    padding: 5px;
+    font-size: 21px;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+.randomImageContainer {
+    top: 135px;
+}
+
+.categoryDescriptionContainer {
+    top: 188px;
+}
+
+.carouselCategoryLabel {
+    float: left;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 20px;
+    margin-bottom: 4px;
+    color: #b200ff;
+}
+
+.speedButton {
+    z-index: 1;
+    height: 37px;
+    margin: 2px 5px 3px 0px;
+    cursor: pointer;
+}
+
+.pauseButton {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    font-size: 23px;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.loadingGif img {
+    height: 15px;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

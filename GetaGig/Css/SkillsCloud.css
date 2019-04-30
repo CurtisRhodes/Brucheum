@@ -1,5 +1,4 @@
-﻿body {
-}
+﻿
 .middleColumn {
     margin-top: 110px;
     background-image: url(../Images/globlic.jpg);
@@ -50,7 +49,9 @@
 
 .skillNarrative {
     padding: 6px;
+    color: #000 !important;
     width: 444px;
+    max-height: 400px;
     overflow-y: auto;
     font-size: 14px;
     cursor: pointer;

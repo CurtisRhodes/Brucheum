@@ -1,0 +1,65 @@
+﻿:root {
+    --brucheumBlue: #74bac3;
+    --stationary: #e8f6fb;
+    --tanMud: #bbb489;
+}
+
+.resumeContainer {
+    background-color: var(--stationary);
+    color: #000;
+    max-height: 877px;
+    overflow-y: auto;
+}
+
+.resumeDateRow {
+    margin-top: 11px;
+    margin-bottom: 4px;
+    font-size: 18px;
+    font-family: Arial;
+    border-bottom: solid thin black;
+    width: 100%;
+}
+
+.resumeDateRowLeft {
+    margin-left: 22px;
+    width: 45%;
+    display: inline-block;
+}
+
+.resumeDateRowCenter {
+    display: inline-block;
+}
+
+.resumeDateRowRight {
+    display: inline-block;
+    float: right;
+    margin-right: 22px;
+}
+
+.resumeJobContents {
+    height: 100px;
+    overflow-y: auto;
+    text-align: justify;
+    margin-top: 7px;
+    margin-left: 22px;
+    margin-right: 22px;
+}
+
+#resumeSectionContainer {
+    padding-bottom: 6px;
+    margin-bottom: 26px;
+    width: 80%;
+    margin-left: 10%;
+}
+
+.docImage {
+    width: 55px;
+}
+
+.highlightResumeItem {
+    background-color: #a786bb;
+}
+
+.width50px {
+    width: 33px;
+}

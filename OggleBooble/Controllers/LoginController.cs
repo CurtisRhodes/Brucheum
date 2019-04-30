@@ -17,7 +17,9 @@ namespace OggleBooble.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
-        public LoginController() { }
+        public LoginController()
+        {
+        }
         public LoginController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;

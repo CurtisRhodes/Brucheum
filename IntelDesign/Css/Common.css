@@ -1,6 +1,5 @@
 ﻿body {
     background-color: #222730; /* #273235; #486167;*/
-    color: #fff;
 }
 .intelDsgnBackground {
     margin-top: 110px;
@@ -88,4 +87,36 @@
 
 .flexContainer {
     display: flex;
+}
+.severityOk {
+    background-color: rgba(80, 206, 83, 0.71);
+}
+
+.severityWarning {
+    background-color: #e6de3b;
+}
+
+.severityError {
+    background-color: #c64e4e;
+}
+.adminButton {
+    display: inline-block;
+    text-decoration: none;
+    color: #fff;
+    margin-left: 3px;
+    margin-top: 37px;
+    padding: 9px;
+}
+
+    .adminButton:hover {
+        background-color: #555;
+        border-radius: 3px;
+    }
+
+h2 {
+    color: #fff;
+}
+
+.rightColumnContents {
+    margin-top: 200px;
 }

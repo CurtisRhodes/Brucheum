@@ -278,6 +278,7 @@
     <Content Include="Scripts\3rd Party\jquery.min.js" />
     <Content Include="libman.json" />
     <None Include="Scripts\jQuery\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\Cookies.js" />
     <Content Include="Scripts\jQuery\jquery-3.3.1.js" />
     <Content Include="Scripts\jQuery\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jQuery\jquery-3.3.1.slim.js" />
@@ -291,6 +292,7 @@
     <Content Include="Static_Pages\Images\slideshow.png" />
     <Content Include="Static_Pages\Images\slideshowFaster.png" />
     <Content Include="Static_Pages\Images\slideshowSlower.png" />
+    <Content Include="Styles\carousel.css" />
     <Content Include="Styles\editor\bootstrap.css" />
     <Content Include="Styles\editor\cobalt.css" />
     <Content Include="Styles\editor\codemirror.css" />
@@ -299,7 +301,14 @@
     <Content Include="Styles\editor\monokai.css" />
     <Content Include="Styles\editor\quill.snow.css" />
     <Content Include="Styles\editor\summernote.css" />
+    <Content Include="Styles\images\ui-icons_444444_256x240.png" />
+    <Content Include="Styles\images\ui-icons_555555_256x240.png" />
+    <Content Include="Styles\images\ui-icons_777620_256x240.png" />
+    <Content Include="Styles\images\ui-icons_777777_256x240.png" />
+    <Content Include="Styles\images\ui-icons_cc0000_256x240.png" />
+    <Content Include="Styles\images\ui-icons_ffffff_256x240.png" />
     <Content Include="Styles\jquery-ui.css" />
+    <Content Include="Styles\jqueryDialog.css" />
     <Content Include="Views\Admin\Images\redballon.png" />
     <Content Include="Images\csLips.png" />
     <Content Include="Images\csLips02.png" />

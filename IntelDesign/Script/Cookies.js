@@ -1,4 +1,5 @@
-﻿$(function () {
+﻿function ckeckForCookie() {
+
     var username = getCookie("username");
     if (username !== "") {
         $('#optionNotLoggedIn').hide();
@@ -9,13 +10,15 @@
         $('#spnUserName').html("You");
         $('#optionNotLoggedIn').show();
         $('#optionLoggedIn').hide();
-     //   alert("not loggedIn: " + $('#optionNotLoggedIn'));
+        //   alert("not loggedIn: " + $('#optionNotLoggedIn'));
         //username = prompt("Please enter your name:", "");
         //if (username != "" && username != null) {
         //    setCookie("username", username, 365);
         //}
+
+
     }
-});
+}
 
 function getCookie(cname) {
     var name = cname + "=";
@@ -23,10 +26,10 @@ function getCookie(cname) {
     var ca = decodedCookie.split(';');
     for (var i = 0; i < ca.length; i++) {
         var c = ca[i];
-        while (c.charAt(0) == ' ') {
+        while (c.charAt(0) === ' ') {
             c = c.substring(1);
         }
-        if (c.indexOf(name) == 0) {
+        if (c.indexOf(name) === 0) {
             return c.substring(name.length, c.length);
         }
     }
@@ -40,14 +43,3 @@ function setCookie(cname, cvalue, exdays) {
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
 
-function checkCookie() {
-    var username = getCookie("username");
-    if (username != "") {
-        alert("Welcome again " + username);
-    } else {
-        username = prompt("Please enter your name:", "");
-        if (username != "" && username != null) {
-            setCookie("username", username, 365);
-        }
-    }
-}

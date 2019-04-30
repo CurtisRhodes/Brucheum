@@ -1,0 +1,95 @@
+﻿
+.crudContainer {
+    font-size: 14px;
+    display: inline-block;
+    margin: 11px;
+    background-color: #eee;
+    border: solid 1.5px #bbb;
+    border-radius: 4px;
+    padding-bottom: 4px;
+}
+/*summernote*/
+.editorContainer {
+    display: inline-flex;
+    color: #555;
+    background-color: #c166bf;
+    border-radius: 5px;
+    z-index: 0;
+    width: 100%;
+    margin-bottom: 5px;
+}
+.validationError {
+    display: inline-block;
+    display: none;
+    color: red;
+    font-style: italic;
+}
+
+.crudRowLabel {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.crudRow {
+    margin: 5px;
+}
+
+.crudContainerTitle {
+    text-align: center;
+    background-color: #74bac3;
+    padding: 3px;
+}
+
+#txtSkillName {
+    width: 301px;
+}
+
+.positionSkillsSpinner {
+    padding-top: 11px;
+    padding-left: 27px;
+    height: 32px;
+}
+
+.crudLabel {
+    min-width: 45px;
+    margin-right: 4px;
+    margin-left: 7px;
+    display: inline-block;
+}
+
+.crudList {
+    padding: 4px;
+    overflow: auto;
+}
+
+.crudListItem {
+    padding: 4px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    background-color: #74bac3;
+    border-radius: 4px;
+}
+
+.ddOption {
+    padding: 4px 3px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    white-space: nowrap;
+}
+
+.roundedInput {
+    /*height: 32px;*/
+    padding: 2px;
+    color: #555;
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+.crudDropDown {
+    /*height: 28px;
+    margin: 6px;*/
+    padding: 3px 6px;
+    color: #555;
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}

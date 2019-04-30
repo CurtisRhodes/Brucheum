@@ -155,6 +155,10 @@
     function postLogin() {
         try {
             if (validate()) {
+
+                checkCookie($('#txtUserName').val())
+
+
                 $('#btnLoginSpinnerImage').show();
                 loggingIn = true;
                 loginVM.UserName = $('#txtUserName').val();

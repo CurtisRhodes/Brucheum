@@ -1,22 +1,4 @@
 ﻿
-function setOBCookie(key, value) {
-    var expires = new Date();
-    expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
-    document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
-}
-
-function getOBCookie(key, defaultValue) {
-    var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-    if (keyValue == null) {
-        //alert("still no cookie");
-        setOBCookie(key, defaultValue);
-        keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-        return keyValue[2];
-    }
-    else
-        return keyValue[2];
-}
-
 function displayStatusMessage(msgCode, message) {
 
     var severityClassName;

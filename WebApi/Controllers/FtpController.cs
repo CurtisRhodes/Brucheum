@@ -39,6 +39,12 @@ namespace WebApi.Controllers
                     string sourceFtpPath = "ftp://50.62.160.105/" + dbSourceFolder.RootFolder + ".ogglebooble.com/"
                         + Helpers.GetParentPath(model.SourceFolderId, true) + dbSourceFolder.FolderName;
 
+
+                    if (!FtpIO.DirectoryExists(destinationFtpPath))
+                        FtpIO.CreateDirectory(destinationFtpPath);
+
+
+
                     if (sourceFtpPath == destinationFtpPath) 
                         success = "ok";
                     else
@@ -704,6 +710,8 @@ namespace WebApi.Controllers
                                     goDaddyLink.Link = expectedLinkName;
                                     db.SaveChanges();
                                     renameReport.LinksEdited++;
+
+                                    SignalRHost.ProgressHub.PostToClient("Renaminging files in: " + folder.FolderName +  "  LinksEdited: " + renameReport.LinksEdited);
                                 }
                             }
                             else
@@ -737,6 +745,7 @@ namespace WebApi.Controllers
             string expectedLinkName = "";
             string goDaddyPrefix = "http://" + folder.RootFolder + ".ogglebooble.com/";
             string[] files = FtpIO.GetFiles(ftpPath);
+            int folderRows = 0;
             foreach (string fileName in files)
             {
                 linkId = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
@@ -749,6 +758,9 @@ namespace WebApi.Controllers
                         goDaddyLink.Link = expectedLinkName;
                         db.SaveChanges();
                         renameReport.LinksEdited++;
+
+                        SignalRHost.ProgressHub.PostToClient("Renaminging files in: " + folder.FolderName + " " + ++folderRows + "  LinksEdited: " + renameReport.LinksEdited);
+
                     }
                 }
                 else
@@ -802,9 +814,13 @@ namespace WebApi.Controllers
 
             string linkId = "";
             string[] folderContents = FtpIO.GetFiles(sourceFtpPath);
+            int folderRows = 0;
             foreach (string currentFile in folderContents)
             {
                 linkId = currentFile.Substring(currentFile.LastIndexOf("_") + 1, 36);
+
+                SignalRHost.ProgressHub.PostToClient("Moving files in: " + dbSourceFolder.FolderName + " " + ++folderRows);
+
                 success = FtpIO.MoveFile(sourceFtpPath + "/" + currentFile, destinationFtpPath + "/" + currentFile);
                 if (success == "ok")
                 {
@@ -831,6 +847,8 @@ namespace WebApi.Controllers
             success = "ok";
             return success;
         }
+
+
         private string RemoveFolder(string ftpPath)
         {
             string success = "";

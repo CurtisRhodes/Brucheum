@@ -88,7 +88,7 @@ function processImages(imageModel, start) {
     $.each(imageModel.Files, function (idx, vwLink) {
         $('#footerMessage').html("fileCount: " + fileCount);
         if (rootFolder === "archive") {
-            if (vwLink.LinkCount == 1) {
+            if (vwLink.LinkCount === 1) {
                 $('#imageContainer').append("<div class='imageFrame'><img id=" + vwLink.LinkId +
                     " idx=" + fileCount + " class='thumbImage' src='" + vwLink.Link + "'/></div>");
             }
@@ -300,7 +300,7 @@ $('#thumbImageContextMenu div').click(function () {
     var action = $(this).html();
     switch (action) {
         case "see more of her":
-            window.location.href = "/home/ImagePage?folder=" + contextMenuShowMoreFolderId;
+            window.location.href = "/home/ImagePage?folder=" + contextMenuShowMoreFolderId + " _target='blank'";
             break;
         case "Copy Link":
             $('#btnMoveImage').hide();
@@ -314,7 +314,7 @@ $('#thumbImageContextMenu div').click(function () {
             $('#btnCopyLink').hide();
             $('#btnMoveLink').hide();
             $('#btnMoveImage').show();
-            $('#dialogBannerText').html("Move xImage File");
+            $('#dialogBannerText').html("Move Image File");
             $('#copyDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
             $('#moveCopyDialog').show();
             break;
