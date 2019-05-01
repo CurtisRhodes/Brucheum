@@ -3,7 +3,7 @@
 
 }
 
-#optionLoggedIn #optionNotLoggedIn {
+#optionLoggedIn, #optionNotLoggedIn {
     display: none;
 }
 
@@ -44,7 +44,7 @@
 .menuTabContainer {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-size: 14px;
-    padding-left: 224px;
+    padding-left: 124px;
 }
 
 .menuTab {

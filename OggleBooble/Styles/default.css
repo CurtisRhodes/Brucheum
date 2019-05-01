@@ -154,7 +154,7 @@ label {
 }
 
 .severityOk {
-    background-color: rgba(88, 139, 108, 0.75);
+    background-color: rgba(80, 206, 83, 0.71);
 }
 
 .severityWarning {
@@ -223,7 +223,7 @@ label {
     display: inline-block;
 }
 
-.hidden {
+.oggleHidden {
     display: none;
 }
 
@@ -271,24 +271,6 @@ label {
 }
 #modalContainer {
     z-index: 6; /* Sit on top */
-}
-
-.severityOk {
-    background-color: rgba(80, 206, 83, 0.71);
-}
-
-.severityWarning {
-    background-color: #e6de3b;
-}
-
-.severityError {
-    background-color: #c64e4e;
-}
-
-.validationError {
-    display: none;
-    color: red;
-    font-style: italic;
 }
 
 .streach {

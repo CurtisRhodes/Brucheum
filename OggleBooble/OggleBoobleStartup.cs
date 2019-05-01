@@ -26,10 +26,8 @@ namespace OggleBooble
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);  
-            //app.MapSignalR("/api.curtisrhodes.com/signalr", new HubConfiguration() { EnableJSONP = true });
             app.MapSignalR();
             //app.MapSignalR("/localhost:40395", new HubConfiguration() { EnableJSONP = true });
-
             //app.UseCors(Configuration=>Configur)
         }
     }
@@ -94,13 +92,9 @@ namespace OggleBooble
             //    ClientSecret = ""
             //});
         }
-
-
-
-
     }
 
-    public class EmailService : IIdentityMessageService
+    public class EmailService : IIdentityMessageService 
     {
         public Task SendAsync(IdentityMessage message)
         {

@@ -1,4 +1,5 @@
-﻿function includeHTML() {
+﻿
+function includeHTML() {
     var z, i, elmnt, file, xhttp;
     /* Loop through a collection of all HTML elements: */
     z = document.getElementsByTagName("*");
@@ -31,7 +32,6 @@ $(window).resize(function () {
 });
 
 function resizePage() {
-
     // set page width
     var winW = $(window).width();
     var lcW = $('.leftColumn').width();
@@ -40,27 +40,40 @@ function resizePage() {
 
     //set page height
     var winH = $(window).height();
-    var hdrH = $('#bheader').height();
-    if (isNullorUndefined(hdrH)) {
-        $('.middleColumn').height(winH - 120);
-        $('#footerMessage').html("xx");
-        //$('#footerMessage').html(" mcH: (" + $('.middleColumn').height() + ") hdrH(?)  winH: (" + winH + ")");
+    $('.middleColumn').height(winH - 134);
+}
+
+function displayStatusMessage(msgCode, message) {
+
+    var severityClassName;
+    switch (msgCode) {
+        case "ok":
+            severityClassName = "severityOk";
+            break;
+        case "warning":
+            severityClassName = "severityWarning";
+            break;
+        case "error":
+            severityClassName = "severityError";
+            break;
+        default:
+            severityClassName = msgCode;
+    }
+    //.severityOk {background - color: rgba(88, 139, 108, 0.75);    }
+    //.severityWarning {        background - color: #e6de3b;    }
+    //.severityError {        background - color: #c64e4e;    }
+
+    $('#divStatusMessage').removeClass();
+    $('#divStatusMessage').addClass(severityClassName);
+    $('#divStatusMessage').html(message);
+    $('#divStatusMessage').show();
+
+    if (msgCode === "ok") {
+        setTimeout(function () { $('#divStatusMessage').hide("slow"); }, 2500);
     }
     else {
-        $('.middleColumn').height(winH - hdrH);
-        $('#footerMessage').html(" mcH: (" + $('.middleColumn').height() + ") hdrH(" + hdrH + " < winH (" + winH + ")");
+        setTimeout(function () { $('#divStatusMessage').hide("slow"); }, 15000);
     }
-
-
-    //alert("$('.middleColumn').height: " + $('.middleColumn').height());
-    //alert(" mcH: (" + mcH + ") hdrH(" + hdrH + " < winH (" + winH + ")")
-    //if (mcH + hdrH < winH) {
-    //    $('.middleColumn').height(winH - hdrH);
-    //    mcH = $('.middleColumn').height();
-    //}
-    //else {
-    //    $('#footerMessage').html("winH: " + winH + "  mcH: " + mcH);
-    //}
 }
 
 function getXHRErrorDetails(jqXHR) {

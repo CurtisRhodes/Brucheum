@@ -109,6 +109,17 @@ namespace OggleBooble
             catch (Exception e) { success = Helpers.ErrorDetails(e); }
             return Json(success, JsonRequestBehavior.AllowGet);
         }
+
+        public string GetStaticPage(string fileName )
+        {
+            string rtn = "";
+            string fullPath = Server.MapPath("~/Static_Pages") + "\\" + fileName;
+            if ( System.IO.File.Exists(fullPath))
+            {
+                rtn = fullPath;
+            }
+            return rtn;
+        }
     }
     public class staticPageModel
     {

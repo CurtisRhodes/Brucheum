@@ -357,14 +357,26 @@ namespace WebApi.Resume
             var resumeElements = new List<ResumeElementModel>();
             using (var db = new ResumeContext())
             {
-                var dbElements = db.ResumeElements.Where(e => e.ResumeId == resumeId).ToList(); ;
+                var dbElements = db.ResumeElements.Where(e => e.ResumeId == resumeId).ToList();
                 foreach (ResumeElement element in dbElements)
                 {
                     var m = new ResumeElementModel();
                     if (element.ElementType == "2")
-                        m.ElementName = db.LostJobs.Where(j => j.Id == element.ElementId).FirstOrDefault().Employer;
+                    {
+                        LostJob lostJob = db.LostJobs.Where(j => j.Id == element.ElementId).FirstOrDefault();
+                        if (lostJob != null)
+                            m.ElementName = lostJob.Employer;
+                        else
+                            m.ElementName = "??";
+                    }
                     else
-                        m.ElementName = db.ResumeSections.Where(s => s.Id == element.ElementId).FirstOrDefault().SectionTitle;
+                    {
+                        ResumeSection x = db.ResumeSections.Where(s => s.Id == element.ElementId).FirstOrDefault();
+                        if (x != null)
+                            m.ElementName = x.SectionTitle;
+                        else
+                            m.ElementName = "?";
+                    }
                     m.ElementId = element.ElementId.ToString();
                     m.ElementType = element.ElementType;
                     m.SortOrder = element.SortOrder;
@@ -413,14 +425,17 @@ namespace WebApi.Resume
             string success = "";
             try
             {
-                var resumeElement = new ResumeElement();
-                resumeElement.ElementId = Guid.NewGuid().ToString();
-                resumeElement.ResumeId = elementModel.ResumeId;
-                resumeElement.ElementType = elementModel.ElementType;
-                resumeElement.SortOrder = elementModel.SortOrder;
+                var test = elementModel.ElementId.Replace("'", "");
+
                 using (var db = new ResumeContext())
                 {
-                    db.ResumeElements.Add(resumeElement);
+                    db.ResumeElements.Add(new ResumeElement()
+                    {
+                        ElementId = elementModel.ElementId.Replace("'", ""),
+                        ElementType = elementModel.ElementType,
+                        SortOrder = elementModel.SortOrder,
+                        ResumeId = elementModel.ResumeId
+                    });
                     db.SaveChanges();
                     success = "ok";
                 }
@@ -437,7 +452,7 @@ namespace WebApi.Resume
             {
                 using (var db = new ResumeContext())
                 {
-                    var element = db.ResumeElements.Where(e => e.ElementId.ToString() == editedElement.ElementId && e.ResumeId == editedElement.ResumeId).FirstOrDefault();
+                    var element = db.ResumeElements.Where(e => e.ElementId == editedElement.ElementId && e.ResumeId == editedElement.ResumeId).FirstOrDefault();
                     if (element == null)
                         success = "record not found";
                     else
@@ -451,6 +466,31 @@ namespace WebApi.Resume
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
+
+        [HttpDelete]
+        public string Delete(ResumeElementModel deleteElement)
+        {
+            string success = "";
+            try
+            {
+                using (var db = new ResumeContext())
+                {
+                    var element = db.ResumeElements.Where(e => e.ElementId.ToString() == deleteElement.ElementId && e.ResumeId == deleteElement.ResumeId).FirstOrDefault();
+                    if (element == null)
+                        success = "record not found";
+                    else
+                    {
+                        db.ResumeElements.Remove(element);
+                        db.SaveChanges();
+                        success = "ok";
+                    }
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+
     }
 
 }

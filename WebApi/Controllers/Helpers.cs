@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
@@ -105,16 +107,22 @@ namespace WebApi
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public static void SendProgress(string progressMessage, int progressCount, int totalItems)
+        public static string GetIPAddress()
         {
-            Microsoft.AspNet.SignalR.IHubContext hubContext = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<SignalRHost.ProgressHub>();
-            hubContext.Clients.All.SendProgress(progressMessage, progressCount, totalItems);
+            String address = "";
+            WebRequest request = WebRequest.Create("http://checkip.dyndns.org/");
+            using (WebResponse response = request.GetResponse())
+            {
+                using (StreamReader stream = new StreamReader(response.GetResponseStream()))
+                {
+                    address = stream.ReadToEnd();
+                }
+                int first = address.IndexOf("Address: ") + 9;
+                int last = address.LastIndexOf("</body>");
+                address = address.Substring(first, last - first);
 
-            //var percentage = 0;
-            //if (totalItems > 0)
-            //    percentage = (progressCount * 100) / totalItems;
-            //hubContext.Clients.All.AddProgress(progressMessage, percentage + "%");
-
+                return address;
+            }
         }
 
         public static string GetParentPath(int folderId, bool withoutRoot)

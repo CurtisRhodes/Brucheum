@@ -195,6 +195,8 @@ namespace WebApi.OggleBooble
                     model.FolderName = dbCategoryFolder.FolderName;
                     model.RootFolder = dbCategoryFolder.RootFolder;
                     model.CategoryText = dbCategoryFolder.CategoryText;
+                    if (dbCategoryFolder.CategoryText == null)
+                        model.CategoryText = dbCategoryFolder.FolderName;
                 }
             }
             catch (Exception ex)

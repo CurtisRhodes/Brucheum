@@ -7,38 +7,36 @@
     <link rel="icon" href="brain02.ico" type="image/x-icon">
 
     <script src="Script/Utils.js"></script>
-    <script src="Script/SkilllsCloud.js"></script>
     <script src="Script/Cookies.js"></script>
+    <script src="Script/Resume.js"></script>
     <link href="Css/Common.css" rel="stylesheet" />
-    <link href="Css/SkillsCloud.css" rel="stylesheet" />
+    <link href="Css/Resume.css" rel="stylesheet" />
 
     <style>
+        .threeColumnArray {
+        }
     </style>
-
-
-
 </head>
 <body>
     <div w3-include-html="Header.html"></div>
     <div class="threeColumnLayout">
         <div class="leftColumn"></div>
         <div class="middleColumn intelDsgnBackground">
-            <h2>My Skills</h2>
-            <div id="skillsloadingGif" class="loadingGif"><img src="Images/loader.gif" /></div>
-            <div id="skillsCloud" class="wordCloudContainer"></div>
-
-            <div class="centeredDivShell">
-                <div id="skillDetails" class="centeredDivInner skillDialogPopupBox" onmouseout="$(this).fadeOut()" onclick="$(this).fadeOut()">
-                    <div id="skillName" class="skillTitle"></div>
-                    <div id="skillProficiency" class="skillProficiency"></div>
-                    <div id="skillNarrative" class="skillNarrative"></div>
-                </div>
+            <div id="resumeSectionContainer" class="resumeContainer">
+                <div id="resumeLoadingGif" class="loadingGif"><img src="Images/loader.gif" /></div>
+                <div id="resumeTopSection"></div>
+                <div id="resumeJobSection"></div>
+                <div id="resumeBottomSection"></div>
             </div>
         </div>
         <div class="rightColumn">
             <div class="rightColumnContents">
+                <a class="resumeDocLink" href="Docs/Curtis Rhodes Resume 2017.doc">
+                    <img id="prntResume" class="docImage" title="download print copy" src="Images/wordDoc.jpg" />
+                </a>
                 <div>
-                    <a class="adminButton" href="SkillsManage.html">manage</a>
+                    <a class="adminButton" href="ResumeManage.html">manage</a>
+                    <div><div class="adminButton" onclick="docify()">docify</div></div>
                 </div>
             </div>
         </div>
@@ -47,21 +45,23 @@
 
 
     <script>
-        //var service = "http://localhost:40395/";
-        var service = "https://api.curtisrhodes.com/";
+        var service = "http://localhost:40395/";
+        //var service = "https://api.curtisrhodes.com/";
 
         $(document).ready(function () {
-            //setLayout("Intelligent Design");
-            loadSkillCloud();
-
             var emailSubject = "OH MY GOD: ";
             //sendEmailFromJS(emailSubject, "someone just looked at your skills page");
 
             //hitSession = logPageHit(service, currentUser, ipAddress, "SKILLs", "nothing");
             includeHTML();
 
+            var resDefault = "ABEC149E-1A81-4591-86EA-3DE7575A4B4E";
+            var currentUser = "ee229ec2-8657-4dc5-9af4-b68e8041677a";
+            buildResume(resDefault);
+
+            getAvailableResumes(currentUser);
+
             resizePage();
-            $('#skillsCloud').width($('.middleColumn').width() - 40);
             setTimeout(function () {
                 ckeckForCookie();
             }, 400);
@@ -69,11 +69,9 @@
         });
 
         $(window).resize(function () {
-            $('#skillsCloud').width($('.middleColumn').width() - 40);
-            $('#footerMessage').html("skillsCloud width: " + $('#skillsCloud').width());
         });
+
+
     </script>
-
-
 </body>
 </html>

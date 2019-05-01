@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Resume</title>
+    <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <link rel="icon" href="brain02.ico" type="image/x-icon">
+    <script src="Script/Utils.js"></script>
+    <script src="Script/Resume.js"></script>
+    <script src="Script/Cookies.js"></script>
+    <link href="Css/Common.css" rel="stylesheet" />
+    <link href="Css/DataEntry.css" rel="stylesheet" />
+    <link href="Css/Resume.css" rel="stylesheet" />
+    <style>
+        .resizeContainer {
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div w3-include-html="Header.html"></div>
+    <div class="threeColumnLayout">
+        <div class="leftColumn"></div>
+        <div class="middleColumn intelDsgnBackground">
+            <div class="flexContainer">
+                <div class="floatLeft">
+                    <div id="resumeSelectedElementsContainer" class="crudContainer">
+                        <div class="crudContainerTitle" id="selectedResumeItemsTitle">Resume Elements</div>
+                        <div class="crudArea">
+                            <div class="crudRow">
+                                <div class="crudLabel inline">Resume</div>
+                                <div id="elementDDsLoadingGif" class="loadingGif"> <img src="Images/loader.gif" /></div>
+                                <select id="ddResumes" class="roundedInput inline" onchange="loadSelectedResumeElements($(this).val())"></select>
+                            </div>
+                            <div id="editSelectedElementsCrudRow" class="crudRow">
+                                <div class="crudLabel inline">Order</div>
+                                <input id="txtResumeSelectedElementOrder" class="roundedInput inline width50px" />
+                                <!--
+                                    <div class="crudLabel inline">Item</div>
+                                    <input id="txtSelectedElement" class="roundedInput inline" readonly="readonly" />
+                                -->
+                                <button id="btnResumeSelectedElementAddEdit" class="roundendButton" onclick="updateResumeElement()">Edit Sort Order</button>
+                                <button id="btnResumeSelectedElementDelete" class="roundendButton" onclick="removeSelectedElement()">Remove</button>
+                                <input id="hiddenSelectedElementId" type="hidden" />
+                            </div>
+                        </div>
+                        <div id="resumeSelectedElementsLoadingGif" class="loadingGif"><img src="Images/loader.gif" /></div>                        
+                        <div id="resumeSelectedElementsList" class="crudList"></div>
+                    </div>
+                </div>
+                <div class="floatLeft">
+                    <div id="resumeAvailableElementsContainer" class="crudContainer resizeContainer">
+                        <div class="crudContainerTitle">Resume Items</div>                        
+                        <div class="crudArea" id="availableElementsCrudSection">
+                            <div class="crudRow">
+                                <div class="crudRowLabel">Section</div>
+                                <select id="ddSectionType" class="roundedInput inline"> <!--// onchange="setDropDownElementType()">-->
+                                    <option class='ddOption' value='1'>Top</option>
+                                    <option class='ddOption' value='2'>Job</option>
+                                    <option class='ddOption' value='3'>Bottom</option>
+                                </select>
+                                <div class="crudLabel inline">Order</div>
+                                <input id="txtResumeAvailableElementOrder" class="roundedInput inline width50px" />
+                                <div class="crudLabel inline">Item</div>
+                                <input id="txtAvailableElement" class="roundedInput inline" readonly="readonly" />
+                                <input id="hiddenAvailableElementId" type="hidden" />
+                            </div>
+                            <div>
+                                <button id="btnAddItemToResume" class="roundendButton" onclick="addItemsToResume()">Add Item to resume</button>
+                                <button id="btnEditResumeItem" class="roundendButton" onclick="addItemsToResume()">Edit Resume Item</button>
+                                <button class="roundendButton" onclick="addItemsToResume()">Add New  Resume Item</button>
+
+                            </div>
+                        </div>
+                        <div id="resumeAvaibleElementsLoadingGif" class="loadingGif"><img src="Images/loader.gif" /></div>
+                        <div id="resumeAvailableElementsList" class="crudList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="rightColumn"></div>
+    </div>
+    <div w3-include-html="Footer.html"></div>
+
+
+    <script>
+        var service = "http://localhost:40395/";
+        //var service = "https://api.curtisrhodes.com/";
+
+        $(document).ready(function () {
+            includeHTML();
+
+            $('#resumeAvailableElementsContainer').hide();
+            $('#editSelectedElementsCrudRow').hide();
+            $('#btnAddItemToResume').prop('disabled', true);
+            $('#btnEditResumeItem').prop('disabled', true);
+            $('#btnResumeNew').hide();
+
+            var personName = "personName";
+            var currentUser = "ee229ec2-8657-4dc5-9af4-b68e8041677a";
+
+            $('#selectedResumeItemsTitle').html(personName + " Resumes");
+            loadDropDownLists(currentUser);
+
+
+            resizePage();
+            $('.resizeContainer').css('max-height', $('.middleColumn').height() - 50);
+
+            setTimeout(function () {
+                ckeckForCookie();
+            }, 400);
+
+        });
+        var resumeSelectedElementModel = {};
+        var resumeAvailableElementModel = {};
+
+
+        $(window).resize(function () {
+            $('.resizeContainer').css('max-height', $('.middleColumn').height() - 50);
+        });
+    </script>
+
+</body>
+</html>
