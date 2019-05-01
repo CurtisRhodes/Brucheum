@@ -300,7 +300,8 @@ $('#thumbImageContextMenu div').click(function () {
     var action = $(this).html();
     switch (action) {
         case "see more of her":
-            window.location.href = "/home/ImagePage?folder=" + contextMenuShowMoreFolderId + " _target='blank'";
+            //window.location.href = "/home/ImagePage?folder=" + contextMenuShowMoreFolderId + " _target='blank'";
+            window.open("/home/ImagePage?folder=" + contextMenuShowMoreFolderId, "_blank");
             break;
         case "Copy Link":
             $('#btnMoveImage').hide();
