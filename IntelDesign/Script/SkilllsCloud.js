@@ -1,4 +1,4 @@
-﻿function loadSkillCloud() {
+﻿function loadSkillCloud(service) {
     try {
         $('#skillsloadingGif').show();
         $.ajax({
@@ -41,11 +41,12 @@
                 //}
             },
             error: function (jqXHR, exception) {
-                alert("loadSkillsList XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                $('#skillsloadingGif').hide();
+                alert("loadSkillsList XHR error: " + getXHRErrorDetails(jqXHR, exception) + "   " + service);
             }
         });
     } catch (e) {
-        alert("get jobs CATCH: " + e)
+        alert("get jobs CATCH: " + e);
     }
 }
 

@@ -82,6 +82,7 @@
     <Content Include="Script\Cookies.js" />
     <Content Include="Script\Utils.js" />
     <Content Include="Skills.html" />
+    <Content Include="SkillsEdit.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
