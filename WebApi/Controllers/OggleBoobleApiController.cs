@@ -647,6 +647,7 @@ namespace WebApi.OggleBooble
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
+                    metaTagInfo.FolderName = db.CategoryFolders.Where(f => f.Id == folderId).First().FolderName;
                     var dbMetaTags = db.MetaTags.Where(m => m.FolderId == folderId).ToList();
                     foreach (MetaTag tag in dbMetaTags)
                     {
@@ -671,6 +672,10 @@ namespace WebApi.OggleBooble
         [HttpPost]
         public string Insert(MetaTagModel model)
         {
+            if (model.TagValue == null)
+            {
+                return "ok";
+            }
             string success = "";
             try
             {

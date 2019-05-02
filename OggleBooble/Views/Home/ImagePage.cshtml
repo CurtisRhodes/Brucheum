@@ -9,13 +9,13 @@
             <div id="divStatusMessage"></div>
             <div id="xx" class="adminRow">
                 <div class="floatRight clickable" onclick="staticify()">staticify</div>
-                <div class="floatRight clickable" onclick="showAllChildren()" style="margin-right:10px; margin-bottom:3px;">combine</div>
+                <div class="floatRight clickable" onclick="showAllChildren()">combine</div>
+                <div class="floatRight clickable" onclick="showMetaTagDialog()">meta tags</div>
             </div>
             <img id="getImagesLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
             <div id="imageContainer" class="flexWrapContainer"></div>
             <div id="fileCount" class="countContainer"></div>
             <div id="text55"></div>
-
         </div>
         <div id="rightColumn"></div>
     </div>
@@ -50,8 +50,8 @@
         <div>Comment</div>
         <div>Explode</div>
         <div id="ctxCopy">Copy Link</div>
-        <div id="ctxMove">Move Image</div>
         <div id="ctxRemove">Remove Link</div>
+        <div id="ctxMove">Archive</div>
         <div>About</div>
     </div>
 
@@ -78,21 +78,7 @@
 
 <div>@Html.Partial("_MoveImageDialog")</div>
 <div>@Html.Partial("_CategoryDialog")</div>
-
-
-<div id="metaTagDialog" class="floatingCrudDialog imagePageDialog">
-    <div class="floatingCrudBanner"><span id="metaTagFolderName"></span><div onclick="$('#metaTagDialog').fadeOut()" class="farSide">x</div> </div>
-    <label>Type</label>
-    <select id="selMetaType" class="roundedInput">
-        <option value="KEY">KeyWord</option>
-        <option value="TIT">Title</option>
-        <option value="DES">Description</option>
-    </select>
-    <label>Tag</label>
-    <input id="txtMetaTag" class="roundedInput tagInput" onblur="addMetaTag()" />
-    <div class="metaTagItem clickable" onclick="addMetaTag()">...</div>
-    <div id="metaTagList" class="metaTagListArea"></div>
-</div>
+<div>@Html.Partial("_MetaTagDialog")</div>
 
 <script>
     var imageArray = new Array();
@@ -100,14 +86,11 @@
         if (folderId == "") {
             window.location.href = "/";
         }
-
         // set width
         $('#imageContainer').width($('#middleColumn').width());
         $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
 
-
         getBreadCrumbs();
-
         getImageLinks();
 
         if ((isPornEditor == "True") || (document.domain === 'localhost')) {
@@ -118,6 +101,10 @@
             $('#ctxRemove').hide();
         }
     });
+
+    function showMetaTagDialog() {
+        openMetaTagDialog(folderId)
+    }
 
     function XXshowStatic() {
         var pageName = $('#expandoBannerText').html() + ".html";
@@ -153,12 +140,9 @@
                 for (i = parents.length - 1; i >= 0; i--) {
                     $('#headerMessage').append("<a class='activeBreadCrumb' href='/Home/imagePage?folder=" + parents[i].FolderId + "'>" + parents[i].FolderName + "</a>");
                 }
-
                 $('.activeBreadCrumb').contextmenu(function () {
-                    alert("id: " + $(this).attr("id")+" folderId: "+folderId);
                     event.preventDefault();
                     window.event.returnValue = false;
-
                     showCategoryDialog(folderId);
                     //showBreadCrumbContextMenu($(this).attr("id"));
                 });
@@ -218,105 +202,6 @@
             }
         });
     };
-
-    var currentMetaTagEditId = "";
-    var metaTagModel = {};
-    function showMetaTagDialog() {
-        // 6:12 AM 3/28/19
-        $('#metaTagFolderName').html($('#expandoBannerText').html())
-        $('#metaTagDialog').fadeIn();
-        getMetaTags();
-
-    }
-    function loadMetaTagForEditing(id) {
-        currentMetaTagEditId = id;
-        $.ajax({
-            type: "GET",
-            url: service + "/api/MetaTag/GetOne?tagId=" + id + "&folderId=" + folderId,
-            success: function (model) {
-                if (!model.TagValue.startsWith("ERROR")) {
-                    currentMetaTagEditId = model.TagId;
-                    $('#txtMetaTag').val(model.TagValue);
-                    $('#selMetaType').val(model.TagType);
-                }
-            },
-            error: function (jqXHR, exception) {
-                alert("addMetaTag XHR : " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
-    }
-
-    function getMetaTags() {
-        try {
-            $.ajax({
-                type: "GET",
-                url: service + "/api/MetaTag/GetMetaTags?folderId=" + folderId,
-                success: function (metaTagInfo) {
-                    //$('#metaTagFolderName').html(metaTagInfo.FolderName)
-                    if (metaTagInfo.Success == "ok") {
-                        $('#metaTagList').html("");
-                        $.each(metaTagInfo.MetaTags, function (idx, metaTag) {
-                            $('#metaTagList').append("<div id='" + metaTag.TagId + "' class='metaTagItem'  >" + metaTag.TagValue + "</div>");
-                        })
-                        $('.metaTagItem').click(function () {
-                            loadMetaTagForEditing($(this).attr("id"));
-                        })
-                    }
-                    else
-                        alert("metaTagDialog: " + metaTagInfo.Success);
-                },
-                error: function (jqXHR, exception) {
-                    alert("getMetaTags XHR : " + getXHRErrorDetails(jqXHR, exception));
-                }
-            });
-        }
-        catch (e) {
-            alert("showCategoryDialog catch: " + e);
-        }
-    }
-
-    function addMetaTag() {
-        metaTagModel.FolderId = folderId;
-        metaTagModel.TagType = $('#selMetaType').val();
-        metaTagModel.TagValue = $('#txtMetaTag').val();
-        if (currentMetaTagEditId != "") {
-            metaTagModel.TagId = currentMetaTagEditId;
-            $.ajax({
-                type: "PUT",
-                url: service + "/api/MetaTag",
-                data: metaTagModel,
-                success: function (success) {
-                    if (success == "ok") {
-                        currentMetaTagEditId = "";
-                        metaTagModel.TagId = "";
-                        $('#txtMetaTag').val("");
-                        getMetaTags();
-                    }
-                },
-                error: function (jqXHR, exception) {
-                    alert("edit MetaTag XHR : " + getXHRErrorDetails(jqXHR, exception));
-                }
-            });
-        }
-        else {
-            $.ajax({
-                type: "POST",
-                url: service + "/api/MetaTag",
-                data: metaTagModel,
-                success: function (success) {
-                    if (success == "ok") {
-                        currentMetaTagEditId = "";
-                        $('#txtMetaTag').val("");
-                        getMetaTags();
-                    }
-                },
-                error: function (jqXHR, exception) {
-                    alert("add MetaTag XHR : " + getXHRErrorDetails(jqXHR, exception));
-                }
-            })
-        }
-    }
-
 
 </script>
 <script src="~/Scripts/ImagePage.js"></script>

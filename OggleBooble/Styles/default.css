@@ -75,12 +75,6 @@ body {
     float: left;
 }
 
-.hideableDropDown {
-    display: inline-block;
-    max-height: 300px;
-    overflow-y: auto;
-    display: none;
-}
 .dirTreeDropdownButton {
     height: 21px;
     cursor: pointer;

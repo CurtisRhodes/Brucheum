@@ -296,19 +296,19 @@ function explodeViewer() {
 }
 
 $('#thumbImageContextMenu div').click(function () {
-    var link = $('#' + currentContextImageId + '').attr("src");
+    var goDaddylink = $('#' + currentContextImageId + '').attr("src");
     if (viewerShowing)
-        link = imageArray[imageArrayIndex].Link;
+        goDaddylink = imageArray[imageArrayIndex].Link;
     var action = $(this).html();
     switch (action) {
         case "see more of her":
             window.open("/home/ImagePage?folder=" + contextMenuShowMoreFolderId, "_blank");
             break;
         case "Copy Link":
-            showMoveCopyDialog("Copy", link, folderId, $('#' + currentContextImageId + '').attr("src"));
+            showMoveCopyDialog("Copy", goDaddylink, folderId, $('#' + currentContextImageId + '').attr("src"));
             break;
-        case "Move Image":
-           showMoveCopyDialog("Move", link, folderId, $('#' + currentContextImageId + '').attr("src"));
+        case "Archive":
+            showMoveCopyDialog("Move", goDaddylink, folderId, $('#' + currentContextImageId + '').attr("src"));
             break;
         case "Remove Link":
             if (confirm("remove this link")) {
@@ -316,10 +316,7 @@ $('#thumbImageContextMenu div').click(function () {
             }
             break;
         case "Explode":
-            if (viewerShowing)
-                window.open(imageArray[imageArrayIndex].Link, "_blank");
-            else
-                window.open(currentContextImageId, "_blank");
+            window.open(goDaddylink, "_blank");
             break;
         case "Comment":
             showCommentDialog();

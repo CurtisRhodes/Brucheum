@@ -1,0 +1,195 @@
+﻿<link href="~/Styles/jquery-ui.css" rel="stylesheet" />
+
+<style>
+    .imagePageDialog {
+        background-color: #cabcbc;
+        font-size: 18px;
+    }
+
+    .metaTagListArea {
+        height: 222px;
+        /*width: 711px;
+    border: solid thin #372f2f;*/
+    }
+
+    .metaTagItem {
+        display: inline-block;
+        color: #fff;        
+        margin: 3px;
+        border-radius: 3px;
+        padding: 3px;
+        cursor: pointer;
+    }
+    .metaTagKEY {
+        background-color: #4d86eb;
+    }
+    .metaTagGEY {
+        background-color: #a39f9f;
+    }
+    .metaTagTIT {
+        background-color: #e2d06a;
+        color: #000;
+    }
+    .metaTagDES {
+        background-color: #dc9e72;
+    }
+
+    label {
+        width: 45px;
+    }
+
+    .tagInput {
+        width: 301px;
+        margin-top: 4px;
+    }
+
+    .metaTagListArea {
+        height: 350px;
+        width: 400px;
+        overflow-y: auto;
+        background-color: var(--oggleBackground);
+        padding: 9px;
+        margin: 8px;
+        border-radius: 22px;
+    }
+
+    .tabAndGoIcon {
+        display: inline;
+        font-size: 22px;
+        cursor: pointer;
+    }
+</style>
+
+
+<div id="metaTagDialog" title="">
+    <label>Type</label>
+    <select id="selMetaType" class="roundedInput">
+        <option value="KEY">KeyWord</option>
+        <option value="GEY">Global KeyWord</option>
+        <option value="TIT">Title</option>
+        <option value="DES">Description</option>
+    </select>
+    <br />
+    <label>Tag</label>
+    <input id="txtMetaTag" class="roundedInput tagInput" onblur="addMetaTag()" />
+    @*<div class="tabAndGoIcon" onclick="addMetaTag()">+</div>*@
+    <div id="metaTagList" class="metaTagListArea"></div>
+</div>
+
+<script>
+    $(function () {
+        $('#metaTagDialog').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "456px"
+        });
+    });
+
+    var currentMetaTagEditId = "";
+    var metaTagModel = {};
+
+    function openMetaTagDialog(folderId) {
+        // 6:12 AM 3/28/19
+
+        $('#metaTagDialog').dialog("open");
+        getMetaTags(folderId);
+    }
+
+    function loadMetaTagForEditing(id) {
+        currentMetaTagEditId = id;
+        $.ajax({
+            type: "GET",
+            url: service + "/api/MetaTag/GetOne?tagId=" + id + "&folderId=" + folderId,
+            success: function (model) {
+                if (!model.TagValue.startsWith("ERROR")) {
+                    currentMetaTagEditId = model.TagId;
+                    $('#txtMetaTag').val(model.TagValue);
+                    $('#selMetaType').val(model.TagType);
+                }
+            },
+            error: function (jqXHR, exception) {
+                alert("addMetaTag XHR : " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
+    function getMetaTags(folderId) {
+        try {
+            $.ajax({
+                type: "GET",
+                url: service + "/api/MetaTag/GetMetaTags?folderId=" + folderId,
+                success: function (metaTagInfo) {
+                    if (metaTagInfo.Success == "ok") {
+
+                        $('#metaTagDialog').dialog('option', 'title', "Meta Tags for " + metaTagInfo.FolderName);
+
+                        $('#metaTagList').html("");
+                        $.each(metaTagInfo.MetaTags, function (idx, metaTag) {
+
+                            $('#metaTagList').append("<div id='" + metaTag.TagId + "' class='metaTagItem  metaTag" + metaTag.TagType + "'  >" + metaTag.TagValue + "</div>");
+                        })
+                        $('.metaTagItem').click(function () {
+                            loadMetaTagForEditing($(this).attr("id"));
+                        })
+                    }
+                    else
+                        alert("metaTagDialog: " + metaTagInfo.Success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("getMetaTags XHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
+        catch (e) {
+            alert("showCategoryDialog catch: " + e);
+        }
+    }
+
+    function addMetaTag() {
+        metaTagModel.FolderId = folderId;
+        metaTagModel.TagType = $('#selMetaType').val();
+        metaTagModel.TagValue = $('#txtMetaTag').val();
+
+
+
+        if (currentMetaTagEditId != "") {
+            metaTagModel.TagId = currentMetaTagEditId;
+            $.ajax({
+                type: "PUT",
+                url: service + "/api/MetaTag",
+                data: metaTagModel,
+                success: function (success) {
+                    if (success == "ok") {
+                        currentMetaTagEditId = "";
+                        metaTagModel.TagId = "";
+                        $('#txtMetaTag').val("");
+                        getMetaTags(folderId);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    alert("edit MetaTag XHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: service + "/api/MetaTag",
+                data: metaTagModel,
+                success: function (success) {
+                    if (success == "ok") {
+                        currentMetaTagEditId = "";
+                        $('#txtMetaTag').val("");
+                        getMetaTags(folderId);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    alert("add MetaTag XHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            })
+        }
+    }
+
+
+</script>

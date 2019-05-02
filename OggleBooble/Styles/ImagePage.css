@@ -4,33 +4,14 @@
     background-color: #ff0000;
 }
 
-.imagePageDialog {
-    background-color: #cabcbc;
-    font-size: 18px;
-}
-
-.metaTagListArea {
-    height: 222px;
-    width: 711px;
-    border: solid thin #372f2f;
-}
-
-.metaTagItem {
-    display: inline-block;
-    color: #fff;
-    background-color: #4d86eb;
-    margin: 3px;
-    border-radius: 3px;
-    padding: 2px;
-}
 
 commentDialogImage {
     height: 99px;
     max-width: 66%;
 }
 
-.tagInput {
-    width: 450px;
+.adminRow div {
+    margin: 3px; 
 }
 
 #txtCommentTitle {
