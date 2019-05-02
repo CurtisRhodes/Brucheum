@@ -551,12 +551,12 @@ namespace WebApi.Controllers
                         using (WebClient wc = new WebClient())
                         {
 #if DEBUG
-                            string danniPath = "F:/Danni/";
-                            DirectoryInfo dirInfo = new DirectoryInfo(danniPath + newLink.Path);
-                            if (!dirInfo.Exists)
-                                dirInfo.Create();
                             try
                             {
+                                string danniPath = "F:/Danni/";
+                                DirectoryInfo dirInfo = new DirectoryInfo(danniPath + newLink.Path);
+                                if (!dirInfo.Exists)
+                                    dirInfo.Create();
                                 wc.DownloadFile(new Uri(newLink.Link), danniPath + newLink.Path + "/" + newFileName);
                             }
                             catch (Exception ex)
@@ -574,12 +574,12 @@ namespace WebApi.Controllers
                                 return "wc. download didnt work " + ex.Message;
                             }
                         }
-
                         FtpWebRequest webRequest = null;
                         try
                         {
+                            string destPath = newLink.Path.Substring(0, newLink.Path.IndexOf("/"));
                             // todo  write the image as a file to x.ogglebooble  4/1/19
-                            string ftpPath = "ftp://50.62.160.105/" + dbCategory.RootFolder + ".OGGLEBOOBLE.COM/" + trimPath;
+                            string ftpPath = "ftp://50.62.160.105/" + destPath + ".OGGLEBOOBLE.COM/" + trimPath;
                             if (!FtpIO.DirectoryExists(ftpPath))
                                 FtpIO.CreateDirectory(ftpPath);
 
