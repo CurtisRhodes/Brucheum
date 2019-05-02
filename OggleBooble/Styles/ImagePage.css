@@ -147,19 +147,6 @@ commentDialogImage {
     display: inline-block;
 }
 
-.copyDialogImage {
-    float: left;
-    height: 100px;
-    margin-right: 7px;
-}
-
-.pusedoTextBox {
-    display: inline-block;
-    border: solid thin #000;
-    min-width: 266px;
-    padding-top: 4px;
-    min-height: 30px;
-}
 
 .expandoImageViewer {
     display: inline-block;

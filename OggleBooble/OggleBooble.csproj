@@ -394,8 +394,9 @@
     <Content Include="Views\Shared\_DirTree2.cshtml" />
     <Content Include="Views\Shared\_DirTree1.cshtml" />
     <Content Include="Views\Shared\_ModelInfoDialog.cshtml" />
-    <Content Include="Views\Shared\_CommentsDialog.cshtml" />
     <Content Include="Views\Shared\_MoveImageDialog.cshtml" />
+    <Content Include="Views\Shared\_CategoryDialog.cshtml" />
+    <Content Include="Views\Shared\_ImageCommentDialog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

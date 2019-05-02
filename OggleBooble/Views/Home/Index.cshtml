@@ -139,7 +139,18 @@
     }
 
     function onDirTreeClick(path, id) {
-        window.location.href = "/home/ImagePage?folder=" + id.substring(2);
+        if (id.startsWith("t1")) {
+            window.location.href = "/home/ImagePage?folder=" + id.substring(2);
+        }
+        if (id.startsWith("t2")) {
+            alert("t2 from index");
+
+            newLink.CopyToFolderId = id.substring(2);
+            newLink.DestinationPath = path.replace(/%20/g, " ");
+            $('#dirTreeResults').show();
+            $('#dirTreeResults').html(path.replace(/%20/g, " "));
+            $('#dirTreeDropDown').hide();
+        }
     }
 
     function showMessage(title) {

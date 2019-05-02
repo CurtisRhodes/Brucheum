@@ -28,6 +28,7 @@
         border: solid 5px #ff6a00;
         background-color: #ebf0f5;
     }
+
     .commentDialogButton {
         margin: 0 0 4px 5px;
     }
@@ -61,7 +62,7 @@
         });
     });
 
-    function showCommentDialog() {
+    function showImageCommentDialog(src, linkId) {
         loadComment();
         if (viewerShowing) {
             $('#commentDialogImage').attr("src", imageArray[imageArrayIndex].Link);
@@ -72,7 +73,7 @@
             $('#commentDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
             blogCommentModel.LinkId = currentContextImageId;
         }
-        // get comment 
+        // get comment
         loadComment()
         $('#commentDialog').fadeIn();
     }
@@ -99,6 +100,9 @@
             data: blogCommentModel,
             success: function (success) {
                 if (success == "ok") {
+
+
+
                     displayStatusMessage("ok", "Entry Saved");
                 }
                 else
@@ -110,3 +114,4 @@
         })
     }
 </script>
+

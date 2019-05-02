@@ -1,8 +1,9 @@
 ﻿
 :root {
     --brucheumBlue: #74bac3;
-    --oggleBackground: #fef; /*#b081b1*/
+    --oggleBackground: #fef; /*  #f7eef7   #b081b1 #f8e8e8 */
     --borderColor: #555;
+    --ogglePurple: #79078f;
 }
 
 
@@ -10,6 +11,7 @@ body {
     background-color: var(--oggleBackground);
     font-family: Verdana;
     box-sizing: border-box;
+    margin-top: 100px !important;
 }
 .blogCrudArea {
     border: solid thin var(--borderColor);
@@ -299,7 +301,7 @@ label {
 
 .floatingCrudContainer {
     padding: 10px;
-    background-color: #f8e8e8;
+    background-color: var(--oggleBackground);
 }
 .floatingCrudDialog {
     position: absolute;
@@ -365,3 +367,9 @@ label {
         cursor: pointer;
     }
 
+.dialogEditButton {
+    text-decoration: underline;
+    font-family: 'Comic Sans MS';
+    margin-left: 20px;
+    color: var(--ogglePurple);
+}

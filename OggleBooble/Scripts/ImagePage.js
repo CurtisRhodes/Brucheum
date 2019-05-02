@@ -2,7 +2,6 @@
 var viewAreaLeft;
 var viewAreaWidth;
 var viewAreaRight;
-var newLink = {};
 var contextMenuShowMoreFolderId;
 
 $(window).resize(function () {
@@ -297,33 +296,30 @@ function explodeViewer() {
 }
 
 $('#thumbImageContextMenu div').click(function () {
+    var link = $('#' + currentContextImageId + '').attr("src");
+    if (viewerShowing)
+        link = imageArray[imageArrayIndex].Link;
     var action = $(this).html();
     switch (action) {
         case "see more of her":
-            //window.location.href = "/home/ImagePage?folder=" + contextMenuShowMoreFolderId + " _target='blank'";
             window.open("/home/ImagePage?folder=" + contextMenuShowMoreFolderId, "_blank");
             break;
         case "Copy Link":
-            $('#btnMoveImage').hide();
-            $('#btnCopyLink').show();
-            $('#btnMoveLink').hide();
-            $('#dialogBannerText').html("Copy Image Link");
-            $('#copyDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
-            $('#moveCopyDialog').show();
+            showMoveCopyDialog("Copy", link, folderId, $('#' + currentContextImageId + '').attr("src"));
             break;
         case "Move Image":
-            $('#btnCopyLink').hide();
-            $('#btnMoveLink').hide();
-            $('#btnMoveImage').show();
-            $('#dialogBannerText').html("Move Image File");
-            $('#copyDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
-            $('#moveCopyDialog').show();
+           showMoveCopyDialog("Move", link, folderId, $('#' + currentContextImageId + '').attr("src"));
             break;
         case "Remove Link":
             if (confirm("remove this link")) {
                 removeImage();
-                //removeLink();
             }
+            break;
+        case "Explode":
+            if (viewerShowing)
+                window.open(imageArray[imageArrayIndex].Link, "_blank");
+            else
+                window.open(currentContextImageId, "_blank");
             break;
         case "Comment":
             showCommentDialog();
@@ -335,7 +331,24 @@ $('#thumbImageContextMenu div').click(function () {
                 showModelInfoDialog(currentContextImageId, $('#' + currentContextImageId + '').attr("src"));
             break;
     }
+
 });
+
+$('#moveCopyDialog').on('dialogclose', function (event) {
+    if (viewerShowing)
+        slide("next");
+    getImageLinks();
+});
+
+function showCommentDialog() {
+    var linkId = currentContextImageId;
+    var src = $('#' + currentContextImageId + '').attr("src");
+    if (viewerShowing) {
+        src = imageArray[imageArrayIndex].Link;
+        linkId = imageArray[imageArrayIndex].id;
+    }
+    showImageCommentDialog(src, linkId);
+}
 
 function xxremoveLink() {
     var badLink = {};
@@ -385,81 +398,9 @@ function removeImage() {
     });
 }
 
-function moveImage() {
-    $('#getImagesLoadingGif').show();
-    var moveImageModel = new Object();
-    moveImageModel.SourceFolderId = folderId;
-    moveImageModel.DestinationFolderId = newLink.CopyToFolderId;
-    if (viewerShowing)
-        moveImageModel.GoDaddyLink = imageArray[imageArrayIndex].Link;
-    else
-        moveImageModel.GoDaddyLink = $('#' + currentContextImageId + '').attr("src");
-    $.ajax({
-        type: "PUT",
-        url: service + "/api/FtpImagePage/MoveImage",
-        data: moveImageModel,
-        success: function (success) {
-            $('#getImagesLoadingGif').hide();
-            if (success === "ok") {
-                displayStatusMessage("ok", "image moved to " + newLink.DestinationPath);
-                $('#moveCopyDialog').hide();
-                if (viewerShowing)
-                    slide("next");
-                getImageLinks();
-            }
-            else
-                alert(success);
-        },
-        error: function (xhr) {
-            $('#getImagesLoadingGif').hide();
-            alert("moveImage xhr error: " + xhr.statusText);
-        }
-    });
-}
-
-function copyLink() {
-    newLink.ImageId = currentContextImageId;
-    $.ajax({
-        type: "PUT",
-        url: service + "/api/ImagePage",
-        data: newLink,
-        success: function (success) {
-            if (success === "ok") {
-                $('#moveCopyDialog').hide();
-                displayStatusMessage("ok", "link coppyed to " + $('#dirTreeResults').html());
-                getImageLinks();
-                if (viewerShowing)
-                    slide("next");
-            }
-            else {
-                alert("copyLink: " + success);
-            }
-        },
-        error: function (xhr) {
-            alert("copyLink(andRemove) xhr error: " + xhr.statusText);
-        }
-    });
-}
-
 function blowupImage() {
     //alert("blowupImage: " + imageArray[imageArrayIndex].Link);
     window.open(imageArray[imageArrayIndex].Link, "_blank");
-}
-
-function toggleDirTree(id) {
-    if ($('#' + id + '').css("display") === "none")
-        $('#S' + id + '').html("[-] ");
-    else
-        $('#S' + id + '').html("[+] ");
-    $('#' + id + '').toggle();
-}
-
-function onDirTreeClick(path, id) {
-    newLink.CopyToFolderId = id.substring(2);
-    newLink.DestinationPath = path.replace(/%20/g, " ");
-    $('#dirTreeResults').show();
-    $('#dirTreeResults').html(path.replace(/%20/g, " "));
-    $('#dirTreeDropDown').hide();
 }
 
 $(document).keydown(function (event) {

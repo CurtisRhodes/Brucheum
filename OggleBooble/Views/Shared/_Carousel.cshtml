@@ -1,6 +1,4 @@
-﻿
-<link href="~/Styles/carousel.css" rel="stylesheet" />
-<link href="~/Styles/jquery-ui.css" rel="stylesheet" />
+﻿<link href="~/Styles/carousel.css" rel="stylesheet" />
 <div class="centeredDivShell randomImageContainer">
     <div class="centeredDivInner">
         <div id="categoryTitle" class="floatingLabel" onclick="showFolderCategoryDialog()"></div>
@@ -18,22 +16,6 @@
     </div>
 </div>
 
-<div id="folderCategoryDialog" title="" onmouseleave="considerClosingCategoryDialog()">
-    <div><textarea id="catDlgDescription" class="catDlgTextArea"></textarea></div>
-    <a id="btnCatDlgEdit" href="javascript:addEditCatDialog()">CatDialog</a>
-</div>
-
-
-@*<div class="centeredDivShell categoryDescriptionContainer">
-        <div id="centeredContainer" class="centeredDivInner">
-            <div id="folderCategoryDialog" class="floatingRoundedDialog">
-                <div class="floatingCrudBanner"><span id="catDlgFolderName"></span><div onclick="closeCatDialog()" class="farSide">x</div> </div>
-                <div><textarea id="catDlgDescription" class="catDlgTextArea"></textarea></div>
-                <a id="btnCatDlgEdit" href="javascript:editCatDialog()">Edit</a>
-            </div>
-        </div>
-    </div>*@
-
 <div id="carouselContextMenu" class="ogContextMenu" onmouseleave="considerHidingContextMenu()">
     <div id="ctxModelName">model name</div>
     <div id="ctxSeeMore">See More</div>
@@ -46,6 +28,8 @@
 
 <div>@Html.Partial("_ModelInfoDialog")</div>
 <div>@Html.Partial("_MoveImageDialog")</div>
+<div>@Html.Partial("_CategoryDialog")</div>
+<div>@Html.Partial("_ImageCommentDialog")</div>
 
 <script>
     var service = '@ViewBag.Service';
@@ -58,25 +42,14 @@
     var imageIndex = 0;
     var carouselContainerHeight;
     var Carousel;
-    var folderCategoryModel = {};
     //var moveImageModel = {};
 
     $(document).ready(function () {
         $('#carouselImage').css("max-width", $('#middleColumn').width());
         $('#carouselImage').css("max-height", $('#middleColumn').innerHeight() - 150);
 
-        $('#folderCategoryDialog').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            width: "456px"
-        });
-
-        $('#folderCategoryDialog').on('dialogclose', function (event) {
-            resume();
-        });
     });
-    
+
     $('.carouselImage').contextmenu(function () {
         event.preventDefault();
         window.event.returnValue = false;
@@ -112,99 +85,50 @@
                 window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
                 break;
             case "About":
-                showModelInfoDialog(carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId);
+                showModelInfoDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
                 break;
             case "Explode":
-                window.open(imageArray[imageArrayIndex].Link, "_blank");
+                window.open(carouselItemArray[imageIndex].Link, "_blank");
                 break;
             case "Tags":
                 alert("TODO: show add tags dialog")
                 // show add tags dialog
                 break;
             case "Comment":
-                alert("TODO: show Comments dialog")
-                //showCommentDialog();
+                showImageCommentDialog(carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId);
                 break;
             case "Move Image":
-                $('#moveCopyDialog').show();
+                pause();
+                $('#carouselContextMenu').fadeOut();
+                showMoveCopyDialog("Move", carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].Link);
                 break;
            default:
                 alert(action);
         }
         $('#carouselContextMenu').hide();
     });
+    
+    function considerHidingContextMenu() {
+        $('#carouselContextMenu').fadeOut();
+        if (!$('#moveCopyDialog').dialog('isOpen')) {
+            resume();
+        }
+    }
 
     function showFolderCategoryDialog() {
-        // 11:11 2/25/19
-        // 2:20 4/10/2019
-        // create a new table (or row)
-        // --alter table OggleBooble.ImageFolder add CatergoryDescription nvarchar(max)
-        // 4/30/2019  --first use of jQuery dialog  
-        try {
-            pause();
-            $.ajax({
-                type: "GET",
-                url: service + "/api/CategoryFolder/Get?id=" + carouselItemArray[imageIndex].FolderId,
-                success: function (model) {
-                    if (!model.FolderName.startsWith("ERROR")) {
-                        folderCategoryModel.Id = model.Id;
-                        $('#catDlgDescription').val(model.CategoryText);
-                        $('#folderCategoryDialog').dialog('option', 'title', model.FolderName);
-                        //if ((isPornEditor == "True") || (document.domain === 'localhost')) {
-                        //    $('#btnCatDlgEdit').show();
-                        //    $('#catDlgDescription').prop("readonly", false);
-                        //}
-                        //else {
-                            $('#catDlgDescription').prop("readonly", true);
-                            $('#btnCatDlgEdit').hide();
-                        //}
-                        $('#folderCategoryDialog').dialog("open");
-                    }
-                    else
-                        alert("get CategoryFolder: " + model.FolderName);
-                },
-                error: function (jqXHR, exception) {
-                    alert("get CategoryFolder XHR : " + getXHRErrorDetails(jqXHR, exception));
-                }
-            });
-        }
-        catch (e) {
-            alert("get CategoryFolder catch: " + e);
-        }
+        pause();
+        showCategoryDialog(carouselItemArray[imageIndex].FolderId);
     }
-    function addEditCatDialog() {
-        folderCategoryModel.CategoryText = $('#catDlgDescription').val();
-        $.ajax({
-            type: "PUT",
-            url: service + "/api/CategoryFolder/Update?field=description",
-            data: folderCategoryModel,
-            success: function (success) {
-                if (success == "ok") {
-                    displayStatusMessage("ok", "category description updated");
-                    $('#btnCatDlgEdit').html("Edit");
-                }
-                else
-                    alert("updateImageFolder: " + success);
-            },
-            error: function (jqXHR, exception) {
-                alert("updateImageFolder XHR : " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
-    }
-
-    function considerClosingCategoryDialog() {
-        //alert("catDlgDescription: " + $('#catDlgDescription').prop("readonly"));
-        if ($('#catDlgDescription').prop("readonly")) {
-            resume();
-            $('#folderCategoryDialog').dialog("close");
-        }
-    }
-
-    function considerHidingContextMenu() {
+    $('#folderCategoryDialog').on('dialogopen', function (event) {
+        pause();
+    });
+    $('#folderCategoryDialog').on('dialogclose', function (event) {
         resume();
-        $('#carouselContextMenu').fadeOut();        
-    }
-
+    });
+    $('#moveCopyDialog').on('dialogclose', function (event) {
+        resume();
+    });
+    
     function clickViewGallery() {
         clearInterval(Carousel);
         window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;

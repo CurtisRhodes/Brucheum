@@ -1,19 +1,131 @@
-﻿<div id="moveCopyDialog" class="floatingCrudDialog">
-    <div class="floatingCrudBanner"><span id="dialogBannerText">Copy Image Link</span><div onclick="$('#moveCopyDialog').fadeOut()" class="farSide">x</div> </div>
-    <div class="floatingCrudContainer flexContainer">
-        <img id="copyDialogImage" class="copyDialogImage" />
-        <div>
-            <div id="dirTreeContainer" class="copyTree">
-                <div id="dirTreeResults" class="pusedoTextBox"></div>
-                <div id="dirTreeDropDown" class="hideableDropDown">
-                    @Html.Partial("_DirTree1");
-                </div>
-            </div>
-            <img id="pusedoDropdown" class="dirTreeDropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeResults').hide();$('#dirTreeDropDown').show()" />
-            <div id="btnCopyLink" class="roundendButton" onclick="copyLink(false)">Copy</div>
-            <div id="btnMoveLink" class="roundendButton" onclick="copyLink(true)">Move</div>
-            <div id="btnMoveImage" class="roundendButton" onclick="moveImage()">Move</div>
+﻿<link href="~/Styles/jquery-ui.css" rel="stylesheet" />
+
+<img id="moveCopyDialogLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
+
+<div id="moveCopyDialog" title="">
+    <img id="copyDialogImage" class="copyDialogImage" />
+    <div id="dirTreeContainer" class="copyTree">
+        <div id="dirTreeResults" class="pusedoTextBox"></div>
+        <div id="dirTreeDropDown" class="hideableDropDown">
+            @Html.Partial("_DirTree2");
         </div>
     </div>
+    <img id="pusedoDropdown" class="dirTreeDropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeResults').hide();$('#dirTreeDropDown').show()" />
+    <div id="btnCopyLink" class="roundendButton" onclick="copyLink(false)">Copy</div>
+    <div id="btnMoveLink" class="roundendButton" onclick="copyLink(true)">Move</div>
+    <div id="btnMoveImage" class="roundendButton" onclick="moveImage()">Move</div>
 </div>
 
+<style>
+    .copyDialogImage {
+        float: left;
+        height: 100px;
+        margin-right: 7px;
+    }
+    .pusedoTextBox {
+        display: inline-block;
+        border: solid thin #000;
+        min-width: 266px;
+        padding-top: 4px;
+        min-height: 30px;
+    }
+</style>
+
+<script>
+    var moveCopyDialogLink = "";
+    var newLink = {};
+
+    $(function () {
+        $('#moveCopyDialog').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "456px"
+        });
+        $('#btnMoveLink').hide();
+    });
+
+    function showMoveCopyDialog(mode, link, folderId, imageSource) {
+        moveCopyDialogLink = link;
+        moveCopyDialogFolderId = folderId;
+        if (mode === "Copy") {
+            $('#btnMoveImage').hide();
+            $('#btnCopyLink').show();
+            $('#moveCopyDialog').dialog('option', 'title', "Copy Image Link");
+        }
+        else {
+            $('#btnMoveImage').show();
+            $('#btnCopyLink').hide();
+            $('#moveCopyDialog').dialog('option', 'title', "Move Image Link");
+        }
+        $('#copyDialogImage').attr("src", imageSource);
+        $('#moveCopyDialog').dialog("open");
+    }
+
+    function moveImage() {
+        $('#moveCopyDialogLoadingGif').show();
+        var moveImageModel = new Object();
+        moveImageModel.SourceFolderId = moveCopyDialogFolderId;
+        moveImageModel.DestinationFolderId = newLink.CopyToFolderId;
+        moveImageModel.GoDaddyLink = moveCopyDialogLink;
+        $.ajax({
+            type: "PUT",
+            url: service + "/api/FtpImagePage/MoveImage",
+            data: moveImageModel,
+            success: function (success) {
+                $('#moveCopyDialogLoadingGif').hide();
+                if (success === "ok") {
+                    displayStatusMessage("ok", "image moved to " + newLink.DestinationPath);
+                    $('#moveCopyDialog').dialog("close");
+                }
+                else
+                    alert(success);
+            },
+            error: function (xhr) {
+                $('#moveCopyDialogLoadingGif').hide();
+                alert("moveImage xhr error: " + xhr.statusText);
+            }
+        });
+    }
+
+    function copyLink(andRemove) {
+        newLink.ImageId = moveCopyDialogLink;
+        $.ajax({
+            type: "PUT",
+            url: service + "/api/ImagePage",
+            data: newLink,
+            success: function (success) {
+                if (success === "ok") {
+                    displayStatusMessage("ok", "link coppyed to " + $('#dirTreeResults').html());
+                    $('#moveCopyDialog').dialog("close");
+                }
+                else {
+                    alert("copyLink: " + success);
+                }
+            },
+            error: function (xhr) {
+                alert("copyLink(andRemove) xhr error: " + xhr.statusText);
+            }
+        });
+    }
+
+    function toggleDirTree(id) {
+        if ($('#' + id + '').css("display") === "none")
+            $('#S' + id + '').html("[-] ");
+        else
+            $('#S' + id + '').html("[+] ");
+        $('#' + id + '').toggle();
+    }
+
+    function onDirTreeClick(path, id) {
+        if (id.startsWith("t2")) {           
+            newLink.CopyToFolderId = id.substring(2);
+            newLink.DestinationPath = path.replace(/%20/g, " ");
+            $('#dirTreeResults').show();
+            $('#dirTreeResults').html(path.replace(/%20/g, " "));
+            $('#dirTreeDropDown').hide();
+        }
+        else
+            alert("onDirTreeClick id: " + id);
+    }
+</script>

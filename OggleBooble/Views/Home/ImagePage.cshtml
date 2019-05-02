@@ -44,11 +44,25 @@
         </div>
     </div>
 
+    <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
+        <div id="ctxModelName">model name</div>
+        <div id="ctxSeeMore">see more of her</div>
+        <div>Comment</div>
+        <div>Explode</div>
+        <div id="ctxCopy">Copy Link</div>
+        <div id="ctxMove">Move Image</div>
+        <div id="ctxRemove">Remove Link</div>
+        <div>About</div>
+    </div>
+
+    <div>@Html.Partial("_ModelInfoDialog")</div>
+    <div>@Html.Partial("_ImageCommentDialog")</div>
     <script>
         var service = '@ViewBag.Service';
         var folderId = '@ViewBag.Folder';
         var currentUser = '@User.Identity.Name';
         var ipAddress = '@ViewBag.IpAddress';
+        var isPornEditor = '@ViewBag.IsPornEditor';
         var page = 0;
         var rootFolder = "";
         var mySubDirs = new Array();
@@ -60,24 +74,10 @@
         var slideShow;
         var slideShowSpeed = 0;
     </script>
-
-    <div>@Html.Partial("_ModelInfoDialog")</div>
-
-    <div>@Html.Partial("_CommentsDialog")</div>
-
-    <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
-        <div id="ctxModelName">model name</div>
-        <div id="ctxSeeMore">see more of her</div>
-        <div>Copy Link</div>
-        <div>Move Image</div>
-        <div>Remove Link</div>
-        <div>Comment</div>
-        <div>About</div>
-    </div>
-
 </div>
 
 <div>@Html.Partial("_MoveImageDialog")</div>
+<div>@Html.Partial("_CategoryDialog")</div>
 
 
 <div id="metaTagDialog" class="floatingCrudDialog imagePageDialog">
@@ -109,9 +109,17 @@
         getBreadCrumbs();
 
         getImageLinks();
+
+        if ((isPornEditor == "True") || (document.domain === 'localhost')) {
+        }
+        else {
+            $('#ctxCopy').hide();
+            $('#ctxMove').hide();
+            $('#ctxRemove').hide();
+        }
     });
 
-    function showStatic() {        
+    function XXshowStatic() {
         var pageName = $('#expandoBannerText').html() + ".html";
 
         $.ajax({
@@ -136,7 +144,6 @@
 
     }
 
-
     function getBreadCrumbs() {
         $.ajax({
             type: "GET",
@@ -148,15 +155,13 @@
                 }
 
                 $('.activeBreadCrumb').contextmenu(function () {
-                    //alert("id: " + $(this).attr("id"));
+                    alert("id: " + $(this).attr("id")+" folderId: "+folderId);
                     event.preventDefault();
                     window.event.returnValue = false;
 
-
-
+                    showCategoryDialog(folderId);
                     //showBreadCrumbContextMenu($(this).attr("id"));
                 });
-
                 setLayout(parents[parents.length - 1].FolderName);
                 document.title = parents[0].FolderName + " OggleBooble";
                 $('#expandoBannerText').html(parents[0].FolderName);
@@ -167,14 +172,6 @@
             }
         });
     }
-
-
-    //function showBreadCrumbContextMenu(hrefId) {
-    //    $('#breadCrumbContextMenu').css("top", event.clientY + 5);
-    //    $('#breadCrumbContextMenu').css("left", event.clientX);
-    //    $('#breadCrumbContextMenu').fadeIn();
-    //}
-
 
     function staticify() {
         var customHtml = $('#staticHeader').html();

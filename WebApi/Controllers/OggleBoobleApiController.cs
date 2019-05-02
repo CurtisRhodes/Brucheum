@@ -48,7 +48,6 @@ namespace WebApi.OggleBooble
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-
                     NudeModelImage nudeModel = db.NudeModelImages.Where(i => i.LinkId == linkId).FirstOrDefault();
                     if (nudeModel != null)
                     {
@@ -62,13 +61,12 @@ namespace WebApi.OggleBooble
                         if (dbNudeModelInfo.Born != null)
                             model.Born = dbNudeModelInfo.Born.Value.ToShortDateString();
                     }
-                    else
+                    if (model.ExternalLinks == null)
                     {
-                        List<CategoryImageLinkModel> linkModels  = new CategoryImageLinkController().Get(linkId);
-
+                        List<CategoryImageLinkModel> linkModels = new CategoryImageLinkController().Get(linkId);
                         foreach (CategoryImageLinkModel linkModel in linkModels)
                         {
-                            model.ExternalLinks += "-- " + linkModel.FolderName + "\n";
+                            model.ExternalLinks += "<a href='~/home/ImagePage?folder=" + linkModel.ImageCategoryId + "'>" + linkModel.FolderName + "</a><br/>";
                         }
                     }
                 }
@@ -208,7 +206,7 @@ namespace WebApi.OggleBooble
 
 
         [HttpPut]
-        public string Update(CategoryFolderModel folderModel, string field)
+        public string Update(CategoryFolderModel folderModel)
         {
             string success = "";
             try
@@ -216,8 +214,8 @@ namespace WebApi.OggleBooble
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     var dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderModel.Id).First();
-                    if (field == "description")
-                        dbCategoryFolder.CategoryText = folderModel.CategoryText;
+                    //if (field == "description")
+                    dbCategoryFolder.CategoryText = folderModel.CategoryText;
                     //dbImageFolder.FolderPath = model.FolderPath;
                     //dbImageFolder.FolderName = model.FolderName;
                     //dbImageFolder.Parent = model.Parent;
@@ -479,7 +477,7 @@ namespace WebApi.OggleBooble
             var timer = new System.Diagnostics.Stopwatch();
             timer.Start();
             var dirTree = new CategoryTreeModel() { CategoryId = 0 };
-            List<VwDirTree> vwDirTree = null;
+            List<VwDirTree> vwDirTree = new List<VwDirTree>();
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
                 // wowdid this speed things up

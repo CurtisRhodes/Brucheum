@@ -1,0 +1,122 @@
+﻿<link href="~/Styles/jquery-ui.css" rel="stylesheet" />
+
+<div id="folderCategoryDialog" title="" onmouseleave="considerClosingCategoryDialog()">
+    <div><textarea id="catDlgDescription" class="catDlgTextArea"></textarea></div>
+    <a id="btnCatDlgEdit" class="dialogEditButton" href="javascript:toggleEditCatDialog()">Edit</a>
+</div>
+
+<style>
+    .ui-dialog {
+        top: 44px;
+        left: 100px;
+    }
+
+    .ui-dialog .ui-dialog-titlebar {
+        text-align: center;
+        background-color: #f7eef7;
+        color: var(--ogglePurple);
+    }
+
+    .ui-corner-all {
+        border-radius: 22px;
+    }
+    .ui-widget textarea {
+        font-family: 'Comic Sans MS';
+        color: #79078f;
+        font-size: 18px;
+        font-weight: normal;
+    }
+
+    .catDlgTextArea {
+        height: 350px;
+        width: 400px;
+        overflow-y: auto;
+        background-color: #f7eef7;
+        padding: 9px;
+        margin: 8px;
+        border-radius: 22px;
+    }
+</style>
+
+<script>
+    var folderCategoryModel = {};
+
+    $(function () {
+        $('#folderCategoryDialog').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "456px"
+        });
+    });
+
+    function showCategoryDialog(folderId) {
+        // 11:11 2/25/19
+        // 2:20 4/10/2019
+        // create a new table (or row)
+        // --alter table OggleBooble.ImageFolder add CatergoryDescription nvarchar(max)
+        // 4/30/2019  --first use of jQuery dialog
+        try {
+            $.ajax({
+                type: "GET",
+                url: service + "/api/CategoryFolder/Get?id=" + folderId,
+                success: function (model) {
+                    if (!model.FolderName.startsWith("ERROR")) {
+                        folderCategoryModel.Id = model.Id;
+                        $('#catDlgDescription').val(model.CategoryText);
+                        $('#folderCategoryDialog').dialog('option', 'title', model.FolderName);
+                        $('#catDlgDescription').prop("readonly", true);
+                        if ((isPornEditor == "True") || (document.domain === 'localhost')) {
+                            $('#btnCatDlgEdit').show();
+                        }
+                        else {
+                            $('#btnCatDlgEdit').hide();
+                        }
+                        $('#folderCategoryDialog').dialog("open");
+                    }
+                    else
+                        alert("get CategoryFolder: " + model.FolderName);
+                },
+                error: function (jqXHR, exception) {
+                    alert("get CategoryFolder XHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
+        catch (e) {
+            alert("get CategoryFolder catch: " + e);
+        }
+    }
+
+    function toggleEditCatDialog() {
+        if ($("#btnCatDlgEdit").html() === "Edit") {
+            $('#catDlgDescription').prop("readonly", false);
+            $("#btnCatDlgEdit").html("Save");
+        }
+        else {
+            folderCategoryModel.CategoryText = $('#catDlgDescription').val();
+            $.ajax({
+                type: "PUT",
+                url: service + "/api/CategoryFolder",
+                data: folderCategoryModel,
+                success: function (success) {
+                    if (success == "ok") {
+                        displayStatusMessage("ok", "category description updated");
+                        $('#btnCatDlgEdit').html("Edit");
+                        $('#catDlgDescription').prop("readonly", true);
+                    }
+                    else
+                        alert("updateImageFolder: " + success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("updateImageFolder XHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
+    }
+
+    function considerClosingCategoryDialog() {
+        if ($('#catDlgDescription').prop("readonly")) {
+            $('#folderCategoryDialog').dialog("close");
+        }
+    }
+</script>

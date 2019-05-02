@@ -101,7 +101,7 @@ namespace WebApi.Controllers
                     }
 
                     // only fully move link if from archive
-                    if (dbSourceFolder.RootFolder == "archive")
+                    if ((dbSourceFolder.RootFolder == "archive") && (dbDestinationFolder.RootFolder == "archive"))
                     {
                         CategoryImageLink oldCatImageLink = db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == linkId).First();
                         db.CategoryImageLinks.Remove(oldCatImageLink);
