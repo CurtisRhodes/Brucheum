@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace WebApi.Resume.Models
+namespace WebApi.Models
 {
     public class LostJobModel
     {
         public LostJobModel()
         {
-            JobSkills = new List<GetaJob.Models.JobSkillModel>();
+            JobSkills = new List<JobSkillModel>();
         }
         public string Id { get; set; }
         public string ElementId { get; set; }
@@ -23,7 +23,7 @@ namespace WebApi.Resume.Models
         public string Summary { get; set; }
         public string ReasonForLeaving { get; set; }
         public string SecretNarative { get; set; }
-        public IList<GetaJob.Models.JobSkillModel> JobSkills { get; set; }
+        public IList<JobSkillModel> JobSkills { get; set; }
         public int SortOrder { get; set; }
     }
 

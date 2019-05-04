@@ -5,10 +5,10 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using WebApi.Blogs.Models;
-using WebApi.WebSite.DataContext;
+using WebApi.Models;
+using WebApi.DataContext;
 
-namespace WebApi.Blogs
+namespace WebApi
 {
     [EnableCors("*", "*", "*")]
     public class BlogController : ApiController

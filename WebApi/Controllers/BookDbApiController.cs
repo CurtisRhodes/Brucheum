@@ -5,10 +5,10 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using WebApi.Book.DataContext;
-using WebApi.Book.Models;
+using WebApi.DataContext;
+using WebApi.Models;
 
-namespace WebApi.Book
+namespace WebApi
 {
     [EnableCors("*", "*", "*")]
     public class BookDbController : ApiController

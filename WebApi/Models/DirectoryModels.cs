@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
-using WebApi.OggleBooble.DataContext;
+using WebApi.DataContext;
 
-namespace WebApi.Directory.Models
+namespace WebApi.Models
 {
     public class CategoryTreeModel
     {
@@ -52,7 +52,9 @@ namespace WebApi.Directory.Models
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
         public int FileCount { get; set; }
+        public string FolderImage { get; set; }
         public string CategoryText { get; set; }
+        public string Success { get; set; }
     }
 
     public class GalleryItem
@@ -220,9 +222,11 @@ namespace WebApi.Directory.Models
         public string ExternalLinks { get; set; }
         public string CommentText { get; set; }
         public int FolderId { get; set; }
-        public string RootFolder { get; set; }
+        //public string FolderName { get; set; }
+        //public string RootFolder { get; set; }
         public string Born { get; set; }
         public string LinkId { get; set; }
+        public string Link { get; set; }
         public string Success { get; set; }
     }
 }

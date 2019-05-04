@@ -4,10 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using WebApi.Articles.Models;
-using WebApi.WebSite.DataContext;
+using WebApi.Models;
+using WebApi.DataContext;
 
-namespace WebApi.Articles
+namespace WebApi
 {
     [System.Web.Http.Cors.EnableCors("*", "*", "*")] 
     public class DbArticleController : ApiController
@@ -276,7 +276,7 @@ namespace WebApi.Articles
                     newComment.CreateDate = comment.CreateDate.ToShortDateString();
                     newComment.success = "ok";
 
-                    newComment.success = new Home.GodaddyEmailController().Post(new Home.Models.EmailMessageModel()
+                    newComment.success = new GodaddyEmailController().Post(new EmailMessageModel()
                     {
                         Subject = "Somebody Actually Made A comment",
                         Body = comment.UserName + " said: " + comment.CommentText

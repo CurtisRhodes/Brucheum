@@ -2,7 +2,7 @@
 var viewAreaLeft;
 var viewAreaWidth;
 var viewAreaRight;
-var contextMenuShowMoreFolderId;
+var nudeModelFolderId;
 
 $(window).resize(function () {
     $('#imageContainer').width($('#middleColumn').width());
@@ -114,15 +114,21 @@ function processImages(imageModel, start) {
             Local: vwLink.NoLink > 0
         });
     });
+
+
     $('.thumbImage').click(function () {
+        //alert("id: " + $(this).attr("id"));
         showViewer($(this).attr("id"));
     });
+
     $('.thumbImage').contextmenu(function () {
         //alert("id: " + $(this).attr("id"));
         event.preventDefault();
         window.event.returnValue = false;
         showContextMenu($(this).attr("id"));
+
     });
+
     fileCount += imageModel.SubDirs.length;
     $('#fileCount').html(fileCount);
     $('#getImagesLoadingGif').hide();
@@ -135,7 +141,6 @@ function processImages(imageModel, start) {
 function showContextMenu(imageId) {
     currentContextImageId = imageId;
     var thisImage = $('#' + imageId + '');
-
     if (viewerShowing) {
         $('#thumbImageContextMenu').css("top", event.clientY + 5);
         $('#thumbImageContextMenu').css("left", event.clientX);
@@ -146,7 +151,6 @@ function showContextMenu(imageId) {
         $('#thumbImageContextMenu').css("top", picpos.top + 5);
         $('#thumbImageContextMenu').css("left", picLeft);
     }
-
     $.ajax({
         type: "GET",
         url: service + "api/NudeModelInfo?linkId=" + imageId + "&folderId=" + folderId,
@@ -155,7 +159,7 @@ function showContextMenu(imageId) {
             if ($('#ctxModelName').html() === "unknown model")
                 $('#ctxSeeMore').hide();
             else {
-                contextMenuShowMoreFolderId = nudeModelInfo.FolderId;
+                nudeModelFolderId = nudeModelInfo.FolderId;
                 if (nudeModelInfo.RootFolder === "archive")
                     $('#ctxSeeMore').hide();
                 else
@@ -257,8 +261,8 @@ function explodeViewer() {
     viewAreaWidth = Number($('#imageContainer').width());
     viewAreaRight = viewAreaWidth + viewAreaLeft;
 
-    if ((Number($('#customViewer').width()) >= viewAreaWidth) &&
-        (Number($('#customViewer').height()) >= viewAreaHeight)) {
+    if (Number($('#customViewer').width()) >= viewAreaWidth &&
+        Number($('#customViewer').height()) >= viewAreaHeight) {
         clearInterval(exploderInterval);
         $('#customViewer').css("top", viewAreaTop + "px");
         $('#customViewer').css("left", " " + viewAreaLeft + "px");
@@ -296,36 +300,57 @@ function explodeViewer() {
 }
 
 $('#thumbImageContextMenu div').click(function () {
-    var goDaddylink = $('#' + currentContextImageId + '').attr("src");
-    if (viewerShowing)
-        goDaddylink = imageArray[imageArrayIndex].Link;
     var action = $(this).html();
     switch (action) {
         case "see more of her":
-            window.open("/home/ImagePage?folder=" + contextMenuShowMoreFolderId, "_blank");
+            window.open("/home/ImagePage?folder=" + nudeModelFolderId, "_blank");
             break;
         case "Copy Link":
-            showMoveCopyDialog("Copy", goDaddylink, folderId, $('#' + currentContextImageId + '').attr("src"));
+            if (viewerShowing)
+                showMoveCopyDialog("Copy", imageArray[imageArrayIndex].ImageId, folderId, $('#' + currentContextImageId + '').attr("src"));
+            else
+                showMoveCopyDialog("Copy", currentContextImageId, folderId, $('#' + currentContextImageId + '').attr("src"));
             break;
         case "Archive":
-            showMoveCopyDialog("Move", goDaddylink, folderId, $('#' + currentContextImageId + '').attr("src"));
+            if (viewerShowing)
+                showMoveCopyDialog("Move", imageArray[imageArrayIndex].Link, folderId, $('#' + currentContextImageId + '').attr("src"));
+            else
+                showMoveCopyDialog("Move", $('#' + currentContextImageId + '').attr("src"), folderId, $('#' + currentContextImageId + '').attr("src"));
             break;
         case "Remove Link":
             if (confirm("remove this link")) {
                 removeImage();
             }
             break;
+        case "Set as Folder Image":
+            if (viewerShowing)
+                setFolderImage(imageArray[imageArrayIndex].ImageId, folderId, "folder");
+            else
+                setFolderImage(currentContextImageId, folderId, "folder");
+            break;
+        case "Set as Category Image":
+            if (viewerShowing)
+                setFolderImage(imageArray[imageArrayIndex].ImageId, folderId, "parent");
+            else
+                setFolderImage(currentContextImageId, folderId, "parent");
+            break;
         case "Explode":
-            window.open(goDaddylink, "_blank");
+            if (viewerShowing)
+                window.open(imageArray[imageArrayIndex].Link, "_blank");
+            else
+                window.open($('#' + currentContextImageId + '').attr("src"), "_blank");
             break;
         case "Comment":
             showCommentDialog();
             break;
         default:
-            if (viewerShowing)
-                showModelInfoDialog(imageArray[imageArrayIndex].ImageId, imageArray[imageArrayIndex].Link);
+            //showImageCommentDialog(src, linkId, folderId)
+            if (viewerShowing) {
+                alert("src: " + imageArray[imageArrayIndex].Link + "  linkId: " + imageArray[imageArrayIndex].ImageId + "  folderId: " + folderId);
+                showModelInfoDialog(imageArray[imageArrayIndex].Link, imageArray[imageArrayIndex].ImageId, folderId);
+            }
             else
-                showModelInfoDialog(currentContextImageId, $('#' + currentContextImageId + '').attr("src"));
+                showModelInfoDialog($('#' + currentContextImageId + '').attr("src"), currentContextImageId, folderId);
             break;
     }
 
@@ -344,29 +369,24 @@ function showCommentDialog() {
         src = imageArray[imageArrayIndex].Link;
         linkId = imageArray[imageArrayIndex].id;
     }
-    showImageCommentDialog(src, linkId);
+    showImageCommentDialog(src, linkId, folderId, folderName);
 }
 
-function xxremoveLink() {
-    var badLink = {};
-    badLink.ImageId = currentContextImageId;
-    badLink.FolderId = folderId;
+function setFolderImage(linkId, folderId, level){
     $.ajax({
-        type: "DELETE",
-        url: service + "/api/ImagePage",
-        data: badLink,
+        type: "PUT",
+        url: service + "/api/CategoryFolder/setFolderImage?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level,
         success: function (success) {
             if (success === "ok") {
                 if (viewerShowing)
                     slide("next");
-                getImageLinks();
             }
             else {
-                alert("removeLink: " + success);
+                alert("setFolderImage: " + success);
             }
         },
         error: function (xhr) {
-            alert("delete xhr error: " + xhr.statusText);
+            alert("setFolderImage xhr error: " + xhr.statusText);
         }
     });
 }

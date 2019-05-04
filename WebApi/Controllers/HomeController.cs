@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using WebApi.Home.Models;
+using WebApi.Models;
 
-namespace WebApi.Home
+namespace WebApi
 {
     public class HomeController : Controller
     {
@@ -71,10 +71,11 @@ namespace WebApi.Home
             return View();
         }
     }
+
 }
-namespace WebApi.Home.Models
-{
-    public class ResponseModel
+
+namespace WebApi.Models
+{    public class ResponseModel
     {
         public string Response { get; set; }
     }

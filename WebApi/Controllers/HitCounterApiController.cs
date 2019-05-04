@@ -6,11 +6,10 @@ using System.Net.Mail;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Results;
-using WebApi.Articles.Models;
-using WebApi.Home.Models;
-using WebApi.WebSite.DataContext;
+using WebApi.Models;
+using WebApi.DataContext;
 
-namespace WebApi.Home
+namespace WebApi
 {
     [EnableCors("*", "*", "*")]
     public class RefController : ApiController

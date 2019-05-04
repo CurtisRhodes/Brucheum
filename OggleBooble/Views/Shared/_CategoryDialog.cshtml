@@ -39,7 +39,7 @@
 </style>
 
 <script>
-    var folderCategoryModel = {};
+    var categoryFolderId = "";
 
     $(function () {
         $('#folderCategoryDialog').dialog({
@@ -59,12 +59,14 @@
         try {
             $.ajax({
                 type: "GET",
-                url: service + "/api/CategoryFolder/Get?id=" + folderId,
-                success: function (model) {
-                    if (!model.FolderName.startsWith("ERROR")) {
-                        folderCategoryModel.Id = model.Id;
-                        $('#catDlgDescription').val(model.CategoryText);
-                        $('#folderCategoryDialog').dialog('option', 'title', model.FolderName);
+                url: service + "/api/CategoryFolder/?id=" + folderId,
+                success: function (categoryFolderModel) {
+                    if (categoryFolderModel.Success == "ok") {
+                        categoryFolderId = folderId;
+                        $('#catDlgDescription').val(categoryFolderModel.CategoryText);
+
+                        $('#folderCategoryDialog').dialog('option', 'title', categoryFolderModel.FolderName);
+
                         $('#catDlgDescription').prop("readonly", true);
                         if ((isPornEditor == "True") || (document.domain === 'localhost')) {
                             $('#btnCatDlgEdit').show();
@@ -75,15 +77,15 @@
                         $('#folderCategoryDialog').dialog("open");
                     }
                     else
-                        alert("get CategoryFolder: " + model.FolderName);
+                        alert("get NudeModelInfo: " + categoryFolderModel.Success);
                 },
                 error: function (jqXHR, exception) {
-                    alert("get CategoryFolder XHR : " + getXHRErrorDetails(jqXHR, exception));
+                    alert("get NudeModelInfo XHR : " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         }
         catch (e) {
-            alert("get CategoryFolder catch: " + e);
+            alert("get NudeModelInfo catch: " + e);
         }
     }
 
@@ -93,11 +95,9 @@
             $("#btnCatDlgEdit").html("Save");
         }
         else {
-            folderCategoryModel.CategoryText = $('#catDlgDescription').val();
             $.ajax({
                 type: "PUT",
-                url: service + "/api/CategoryFolder",
-                data: folderCategoryModel,
+                url: service + "/api/NudeModelInfo/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" + $('#catDlgDescription').val(),
                 success: function (success) {
                     if (success == "ok") {
                         displayStatusMessage("ok", "category description updated");
@@ -105,10 +105,10 @@
                         $('#catDlgDescription').prop("readonly", true);
                     }
                     else
-                        alert("updateImageFolder: " + success);
+                        alert("EditFolderCategory: " + success);
                 },
                 error: function (jqXHR, exception) {
-                    alert("updateImageFolder XHR : " + getXHRErrorDetails(jqXHR, exception));
+                    alert("EditFolderCategory XHR : " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         }

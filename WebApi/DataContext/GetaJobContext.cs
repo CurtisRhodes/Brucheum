@@ -1,4 +1,4 @@
-namespace WebApi.GetaJob.DataContext
+namespace WebApi.DataContext
 { 
     using System;
     using System.Data.Entity;

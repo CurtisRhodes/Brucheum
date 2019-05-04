@@ -176,48 +176,48 @@ namespace WebApi.Xml
             return articleList;
         }
 
-        [HttpPatch]
-        public IList<Articles.Models.DbArticleModel> ConvertForDb()
-        {
-            var articleList = new List<Articles.Models.DbArticleModel>();
-            try
-            {
-                XmlDocument xdoc = new XmlDocument();
-                xdoc.Load(fileName);
-                XmlNodeList entries = xdoc.SelectNodes("//Article");
-                foreach (XmlNode entry in entries)
-                {
-                    var dbMmodel = new Articles.Models.DbArticleModel();
-                    dbMmodel.Id = entry.Attributes["Id"].InnerText;
-                    dbMmodel.Title = entry.Attributes["Title"].InnerText;
-                    dbMmodel.ByLineRef = entry.Attributes["ByLine"].InnerText;
-                    dbMmodel.ImageName = entry.Attributes["ImageName"].InnerText;
-                    dbMmodel.CategoryRef = entry.Attributes["Category"].InnerText;
-                    dbMmodel.Updated = DateTime.Parse(entry.Attributes["LastUpdated"].InnerText);
-                    dbMmodel.Created = DateTime.Parse(entry.Attributes["DateCreated"].InnerText);
-                    dbMmodel.LastUpdated = Convert.ToDateTime(entry.Attributes["LastUpdated"].InnerText).ToShortDateString();
-                    dbMmodel.Created = Convert.ToDateTime(entry.Attributes["DateCreated"].InnerText);
-                    //dbMmodel.SortDate = Convert.ToDateTime(entry.Attributes["DateCreated"].InnerText).ToString("yyyyMMdd");
-                    dbMmodel.Summary = entry.ChildNodes[0].InnerText;
-                    dbMmodel.Contents = entry.ChildNodes[1].InnerText;
-                    if (entry.ChildNodes[2] != null)
-                    {
-                        IList<string> tags = new List<string>();
-                        foreach (XmlNode tag in entry.ChildNodes[2])
-                        {
-                            if ((tag.InnerText != null) && (tag.InnerText != "tag1"))
-                                dbMmodel.Tags.Add(new Articles.Models.DbArticleTagModel() { TagName = tag.InnerText });
-                        }
-                    }
-                    articleList.Add(dbMmodel);
-                }
-            }
-            catch (Exception e)
-            {
-                articleList.Append(new Articles.Models.DbArticleModel() { Title = "ERROR", Summary = e.Message });
-            }
-            return articleList;
-        }
+        //[HttpPatch]
+        //public IList<DbArticleModel> ConvertForDb()
+        //{
+        //    var articleList = new List<Article.DbArticleModel>();
+        //    try
+        //    {
+        //        XmlDocument xdoc = new XmlDocument();
+        //        xdoc.Load(fileName);
+        //        XmlNodeList entries = xdoc.SelectNodes("//Article");
+        //        foreach (XmlNode entry in entries)
+        //        {
+        //            var dbMmodel = new Articles.Models.DbArticleModel();
+        //            dbMmodel.Id = entry.Attributes["Id"].InnerText;
+        //            dbMmodel.Title = entry.Attributes["Title"].InnerText;
+        //            dbMmodel.ByLineRef = entry.Attributes["ByLine"].InnerText;
+        //            dbMmodel.ImageName = entry.Attributes["ImageName"].InnerText;
+        //            dbMmodel.CategoryRef = entry.Attributes["Category"].InnerText;
+        //            dbMmodel.Updated = DateTime.Parse(entry.Attributes["LastUpdated"].InnerText);
+        //            dbMmodel.Created = DateTime.Parse(entry.Attributes["DateCreated"].InnerText);
+        //            dbMmodel.LastUpdated = Convert.ToDateTime(entry.Attributes["LastUpdated"].InnerText).ToShortDateString();
+        //            dbMmodel.Created = Convert.ToDateTime(entry.Attributes["DateCreated"].InnerText);
+        //            //dbMmodel.SortDate = Convert.ToDateTime(entry.Attributes["DateCreated"].InnerText).ToString("yyyyMMdd");
+        //            dbMmodel.Summary = entry.ChildNodes[0].InnerText;
+        //            dbMmodel.Contents = entry.ChildNodes[1].InnerText;
+        //            if (entry.ChildNodes[2] != null)
+        //            {
+        //                IList<string> tags = new List<string>();
+        //                foreach (XmlNode tag in entry.ChildNodes[2])
+        //                {
+        //                    if ((tag.InnerText != null) && (tag.InnerText != "tag1"))
+        //                        dbMmodel.Tags.Add(new Articles.Models.DbArticleTagModel() { TagName = tag.InnerText });
+        //                }
+        //            }
+        //            articleList.Add(dbMmodel);
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        articleList.Append(new Articles.Models.DbArticleModel() { Title = "ERROR", Summary = e.Message });
+        //    }
+        //    return articleList;
+        //}
 
 
 

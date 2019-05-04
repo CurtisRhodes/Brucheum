@@ -7,14 +7,7 @@
 
 <style>
     .commentDialog {
-        position: absolute;
-        top: 125px;
-        left: 300px;
-        border: solid 2px var(--borderColor);
-        background-color: rgb(255, 238, 255);
-        box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
-        /*z-index: 200;*/
-        display: none;
+        background-color: var(--oggleBackground);
     }
 
     .commentDialogImage {
@@ -22,36 +15,42 @@
         max-height: 333px;
     }
 
-    .flakyEditBox {
-        height: 400px;
-        width: 800px;
-        border: solid 5px #ff6a00;
-        background-color: #ebf0f5;
+    .loginComment {
+        margin-left: 44px;
+        cursor: pointer;
     }
 
     .commentDialogButton {
         margin: 0 0 4px 5px;
     }
+
+    .commentTitleText {
+        margin: 2px 0;
+        font-size: 22px;
+        color: var(--ogglePurple);
+        width: 100%;
+    }
 </style>
 
-<div id="commentDialog" class="commentDialog">
-    <div class="floatingCrudBanner">
-        <span id="commentDialogBanner">Write a fantasy about this image</span>
-        <div onclick="$('#commentDialog').fadeOut()" class="farSide">x</div>
-    </div>
-    <div id="commentDialogContainer" class="commentDialogContainer">
-        <div class="center"><img id="commentDialogImage" class="commentDialogImage" /></div>
-        <div><input id="txtCommentTitle" class="roundedInput" placeholder="Give your comment a title" /></div>
-        <div id="imageCommentEditor"></div>
-        <div id="commentDialogButton" class="roundendButton clickable commentDialogButton" onclick="saveComment()">save</div>
-        <div id="commentInstructions">log in to view comments</div>
-    </div>
+<div id="imageCommentDialog" title="Write a fantasy about this image" class="commentDialog">
+    <div class="center"><img id="commentDialogImage" class="commentDialogImage" /></div>
+    <div><input id="txtCommentTitle" class="roundedInput commentTitleText" placeholder="Give your comment a title" /></div>
+    <div id="imageCommentEditor"></div>
+    <div id="commentDialogButton" class="roundendButton clickable commentDialogButton inline" onclick="saveComment()">save</div>
+    <div id="commentInstructions" class="loginComment inline">log in to view comments</div>
 </div>
 
 <script>
-    var blogCommentModel = {};
+    var nudeModelInfoModel = {};
 
     $(function () {
+        $('#imageCommentDialog').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "615"
+        });
+
         $('#imageCommentEditor').summernote({
             height: 200,
             codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
@@ -62,23 +61,24 @@
         });
     });
 
-    function showImageCommentDialog(src, linkId) {
-        loadComment();
-        if (viewerShowing) {
-            $('#commentDialogImage').attr("src", imageArray[imageArrayIndex].Link);
-            //blogCommentModel.LinkId = blogCommentModel.Link.substring(blogCommentModel.Link.lastIndexOf("_"), 36);
-            blogCommentModel.LinkId = imageArray[imageArrayIndex].id;
-        }
-        else {
-            $('#commentDialogImage').attr("src", $('#' + currentContextImageId + '').attr("src"));
-            blogCommentModel.LinkId = currentContextImageId;
-        }
+    function showImageCommentDialog(src, linkId, folderId, folderName) {
+        nudeModelInfoModel.LinkId = linkId;
+        nudeModelInfoModel.Link = src;
+        nudeModelInfoModel.FolderId = folderId;
+        nudeModelInfoModel.FolderName = folderName;
+
+        $('#commentDialogImage').attr("src", src);
+
         // get comment
         loadComment()
-        $('#commentDialog').fadeIn();
+
+        $('#imageCommentDialog').dialog("open");
+        //$('#imageCommentDialog').fadeIn();
     }
 
     function loadComment() {
+        ///TODO
+        /// retreive user's previous comments
         //$('#imageCommentEditor').summernote('code', blogCommentModel.CommentText);
         $('#imageCommentEditor').summernote('code', "");
         $('#txtCommentTitle').val("");
@@ -86,23 +86,17 @@
     }
 
     function saveComment() {
-        blogCommentModel.CommentTitle = $('#txtCommentTitle').val();
-        blogCommentModel.CommentType = "CMT";
-        blogCommentModel.Link = imageArray[imageArrayIndex].Link;
-        //commentDialogImage
-        blogCommentModel.FolderId = folderId;
-        blogCommentModel.UserId = currentUser + " = " + ipAddress;
-        blogCommentModel.CommentText = $('#imageCommentEditor').summernote('code');
+        nudeModelInfoModel.CommentTitle = $('#txtCommentTitle').val();
+        nudeModelInfoModel.CommentType = "CMT";        
+        nudeModelInfoModel.UserId = currentUser + " = " + ipAddress;
+        nudeModelInfoModel.CommentText = $('#imageCommentEditor').summernote('code');
 
         $.ajax({
             type: "POST",
             url: service + "/api/OggleBlog",
-            data: blogCommentModel,
+            data: nudeModelInfoModel,
             success: function (success) {
                 if (success == "ok") {
-
-
-
                     displayStatusMessage("ok", "Entry Saved");
                 }
                 else

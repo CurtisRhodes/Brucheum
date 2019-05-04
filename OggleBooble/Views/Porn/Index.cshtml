@@ -1,59 +1,4 @@
 ﻿<style>
-    /*#leftColumn, #middleColumn, #rightColumn {
-        background-color: #e2c2ab;
-        font-family: Comic Sans MS;
-    }
-
-    a {
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .boobleClassic {
-        height: 225px;
-    }
-
-    .majorCategoryRow {
-        padding-top: 120px;
-        display: flex;
-        margin-bottom: 100px;
-        width: 100%;
-        display: none;
-    }
-
-    .majorCategoryRowLinkItem {
-        float: left;
-        margin-left: 60px;
-    }
-
-    .containerImage {
-        float: left;
-        margin-left: 60px;
-    }
-
-    .sectionTitle {
-        display: block;
-        text-align: center;
-    }
-
-    .bottomLinks {
-        clear: left;
-        padding-left: 222px;
-        padding-bottom: 8px;
-    }
-
-    .indexTitle {
-        display: block;
-        width: 100%;
-        text-align: center;
-        color: #490157;
-        font-family: 'Lucida Calligraphy';
-        font-size: 33px;
-        margin-bottom: 8px;
-    }
-
-    */
-
     .comicList {
         margin-top: 123px;
     }
@@ -109,6 +54,6 @@
         $('#' + id + '').toggle();
     }
     function onDirTreeClick(path, id) {
-        window.location.href = "/home/ImagePage?folder=" + id;
+        window.location.href = "/home/ImagePage?folder=" + id.substring(2);
     }
 </script>

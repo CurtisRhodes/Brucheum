@@ -1,4 +1,4 @@
-namespace WebApi.OggleBooble.DataContext
+namespace WebApi.DataContext
 {
     using System;
     using System.Data.Entity;
@@ -59,7 +59,7 @@ namespace WebApi.OggleBooble.DataContext
         public int Parent { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
-        public string CategoryText { get; set; }
+        public string FolderImage { get; set; }
     }
     [Table("OggleBooble.GoDaddyLink")]
     public partial class GoDaddyLink
@@ -97,6 +97,7 @@ namespace WebApi.OggleBooble.DataContext
         public int Id { get; set; }
         public int Parent { get; set; }
         public string FolderName { get; set; }
+        public string FolderImage { get; set; }
         public int SubDirCount { get; set; }
         public int FileCount { get; set; }
     }

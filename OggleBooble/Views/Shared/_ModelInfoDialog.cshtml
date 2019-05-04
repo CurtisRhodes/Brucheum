@@ -41,7 +41,7 @@
 
     .modelDialogImage {
         height: 150px;
-        width: 160px;
+        min-width: 160px;
         margin-left: 4px;
     }
 
@@ -55,7 +55,7 @@
     }
 
     .roundedInput {
-        width: 200px;
+        width: 220px;
         font-size: 14px;
         font-weight: normal;
     }
@@ -66,7 +66,7 @@
         padding: 2px;
     }
     label {
-        width: 124px;
+        width: 91px !important;
     }
     .addLinkIcon {
         cursor:pointer;
@@ -85,7 +85,7 @@
     <div id="modelInfoEditArea">
         <div class="flexContainer">
             <div class="floatLeft">
-                <label>model name</label><input id="txtModelName" class="roundedInput inline" /><br />
+                <label>name</label><input id="txtModelName" class="roundedInput inline" /><br />
                 <label>nationality</label><input id="txtNationality" class="roundedInput inline" /><br />
                 <label>born</label><input id="txtBorn" class="roundedInput inline" />
             </div>
@@ -103,15 +103,13 @@
     </div>
     <div id="modelInfoViewOnlyArea">
         <div class="viewOnlyMessage">If you you know who this is Please click Edit</div>
-        <div id="txaImageInfo" class="smallTextArea"></div>
+        <div id="unknownModelLinks" class="smallTextArea"></div>
     </div>
-    <a id="modelInfoEdit" class="dialogEditButton" href="javascript:toggleModelInfoEditMode()">edit</a>
+    <a id="modelInfoEdit" class="dialogEditButton" href="javascript:toggleModelInfoEditMode()">Edit</a>
 </div>
 
 <script>
-    var nudeModelInfo = {};
-    var linksArray = new Array();
-
+    var nudeModelInfoModel = {};
 
     $(function () {
         $("#txtBorn").datepicker();
@@ -120,7 +118,7 @@
             autoOpen: false,
             show: { effect: "fade" },
             hide: { effect: "blind" },       
-            width: "600"
+            width: "615"
         });
     });
 
@@ -128,54 +126,60 @@
         $('#externalLinks').append("<a href=" + $('#txtLinkHref').val() + ">" + $('#txtLinkLabel').val() + "</a><br/>");
     }
 
-    function showModelInfoDialog(linkId, linkUrl) {
-        $('#footerMessage').html("linkId: " + linkId + " linkUrl: " + linkUrl);
-        nudeModelInfo.LinkId = linkId;
-        $('#modelDialogThumbNailImage').attr("src", linkUrl);
-        $('#txtLinkHref').val('');
-        $('#txtLinkLabel').val('');
-        $('#txtModelName').val('');
-        $('#txtBorn').val('');
-        $('#txaModelComment').val('');
-        $('#txtNationality').val('');
-        $('#externalLinks').html('');
+    //showImageCommentDialog(src, linkId, folderId, folderName)
+
+    function showModelInfoDialog(src, linkId, folderId) {
+        nudeModelInfoModel.LinkId = linkId;
+        nudeModelInfoModel.Link = src;
+        nudeModelInfoModel.FolderId = folderId;
+
+
+        $('#footerMessage').html("linkId: " + linkId + " url: " + nudeModelInfoModel.Link);
+        $('#modelDialogThumbNailImage').attr("src", nudeModelInfoModel.Link);
+        clearGets();
         $('#modelInfoDialog').dialog("open");
         //$('#modelInfoDialog').fadeIn();
 
         $.ajax({
             type: "GET",
-            url: service + "/api/NudeModelInfo/Get?linkId=" + linkId,
+            url: service + "/api/NudeModelImage/Get?linkId=" + linkId,
             success: function (nudeModel) {
                 if (nudeModel.Success == "ok") {
-                    nudeModelInfo.LinkId = linkId;
                     if (nudeModel.ModelName === null) {
                         //$('#modelInfoHeader').html("unknown model");
                         $('#modelInfoDialog').dialog('option', 'title', "unknown model");
                         $('#modelInfoEditArea').hide();
                         $('#modelInfoViewOnlyArea').show();
-                        if (linkUrl != null) {
-                            alert("linkUrl: " + linkUrl)
-                            $('#txaImageInfo').html(linkUrl);
-                            //$('#txaImageInfo').html(linkUrl.substring(linkUrl.lastIndexOf('/')) + "<br/>");
-                        }
-                        $('#txaImageInfo').append(nudeModel.ExternalLinks)
+                        $('#unknownModelLinks').html(nudeModelInfoModel.Link.substring(nudeModelInfoModel.Link.lastIndexOf('/') + 1) + "<br/>");
+                        $('#unknownModelLinks').append(nudeModel.ExternalLinks)
                         $('#modelInfoEdit').html("Edit");
                     }
                     else {
-                        nudeModelInfo.ModelId = nudeModel.ModelId;
-                        nudeModelInfo.FolderId = nudeModel.FolderId;
+                        nudeModelInfoModel.ModelId = nudeModel.ModelId;
+                        if (nudeModelInfoModel.FolderId != nudeModel.FolderId) {
+                            alert(nudeModelInfoModel.FolderId + " = " + nudeModel.FolderId);
+                            nudeModelInfoModel.FolderId = nudeModel.FolderId;
+                        }
                         //$('#modelInfoHeader').html(nudeModel.ModelName);
                         $('#modelInfoDialog').dialog('option', 'title', nudeModel.ModelName);
                         $('#modelInfoEditArea').show();
                         $('#modelInfoViewOnlyArea').hide();
                         $('#txtModelName').val(nudeModel.ModelName);
                         $('#txtBorn').val(nudeModel.Born);
-                        //$('#txaExternalLinks').val(linkUrl.substring(linkUrl.lastIndexOf('/')));
                         $('#txaModelComment').val(nudeModel.CommentText);
                         $('#txtNationality').val(nudeModel.Nationality);
-                        $('#modelInfoEdit').html("Save");
+
+                        ///ToDO
+                        /// if pornAdmin e;se readonly
+                        if ((isPornEditor == "True") || (document.domain === 'localhost')) {
+                            $('#modelInfoEdit').html("Save");
+                        }
+                        else
+                            $('#modelInfoEdit').hide();
+
+
                     }
-                    nudeModelInfo.ExternalLinks = nudeModel.ExternalLinks;
+                    nudeModelInfoModel.ExternalLinks = nudeModel.ExternalLinks;
                     $('#externalLinks').html(nudeModel.ExternalLinks);
 
                 }
@@ -188,20 +192,29 @@
         });
     }
 
+    function clearGets() {
+        $('#txtLinkHref').val('');
+        $('#txtLinkLabel').val('');
+        $('#txtModelName').val('');
+        $('#txtBorn').val('');
+        $('#txaModelComment').val('');
+        $('#txtNationality').val('');
+        $('#externalLinks').html('');
+    }
+
     function validate() {
-        nudeModelInfo.ModelName = $('#txtModelName').val();
-        nudeModelInfo.Born = $('#txtBorn').val();
-        nudeModelInfo.CommentText = $('#txaModelComment').val();
-        nudeModelInfo.Nationality = $('#txtNationality').val();
-        nudeModelInfo.ExternalLinks = $('#externalLinks').html();
+        nudeModelInfoModel.ModelName = $('#txtModelName').val();
+        nudeModelInfoModel.Born = $('#txtBorn').val();
+        nudeModelInfoModel.CommentText = $('#txaModelComment').val();
+        nudeModelInfoModel.Nationality = $('#txtNationality').val();
+        nudeModelInfoModel.ExternalLinks = $('#externalLinks').html();
         return true;
     }
 
     function toggleModelInfoEditMode() {
-
         switch ($('#modelInfoEdit').html()) {
             case "Edit":
-                $('#modelInfoEdit').html("Save");
+                $('#modelInfoEdit').html("Add");
                 $('#modelInfoEditArea').show();
                 $('#modelInfoViewOnlyArea').hide();
                 break;
@@ -210,7 +223,7 @@
                     $.ajax({
                         type: "POST",
                         url: service + "/api/NudeModelInfo",
-                        data: nudeModelInfo,
+                        data: nudeModelInfoModel,
                         success: function (success) {
                             if (success === "ok") {
                                 displayStatusMessage("ok", "Model info added");
@@ -230,7 +243,7 @@
                     $.ajax({
                         type: "PUT",
                         url: service + "/api/NudeModelInfo",
-                        data: nudeModelInfo,
+                        data: nudeModelInfoModel,
                         success: function (success) {
                             if (success === "ok") {
                                 displayStatusMessage("ok", "Model info updated");

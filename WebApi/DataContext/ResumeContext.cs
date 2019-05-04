@@ -1,4 +1,4 @@
-namespace WebApi.Resume.DataContext
+namespace WebApi.DataContext
 {
     using System;
     using System.Data.Entity;
@@ -11,7 +11,7 @@ namespace WebApi.Resume.DataContext
     {
         public ResumeContext() : base("name=GoDaddy") { }
 
-        public virtual DbSet<GetaJob.DataContext.JobSkill> JobSkills { get; set; }
+        public virtual DbSet<JobSkill> JobSkills { get; set; }
         public virtual DbSet<LostJob> LostJobs { get; set; }
         public virtual DbSet<Resume> Resumes { get; set; }
         public virtual DbSet<ResumeElement> ResumeElements { get; set; }
@@ -61,7 +61,7 @@ namespace WebApi.Resume.DataContext
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public LostJob()
         {
-            JobSkills = new HashSet<GetaJob.DataContext.JobSkill>();
+            JobSkills = new HashSet<JobSkill>();
         }
 
         public string Id { get; set; }
@@ -103,7 +103,7 @@ namespace WebApi.Resume.DataContext
         public string SecretNarative { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<GetaJob.DataContext.JobSkill> JobSkills { get; set; }
+        public virtual ICollection<JobSkill> JobSkills { get; set; }
     }
     [Table("resume.ResumeElement")]
     public partial class ResumeElement

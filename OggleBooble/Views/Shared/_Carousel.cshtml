@@ -19,11 +19,11 @@
 <div id="carouselContextMenu" class="ogContextMenu" onmouseleave="considerHidingContextMenu()">
     <div id="ctxModelName">model name</div>
     <div id="ctxSeeMore">See More</div>
-    <div>About</div>
     <div>Explode</div>
     <div>Comment</div>
     <div>Tags</div>
-    <div id="ctxMove">Move Image</div>
+    <div id="ctxMove">Archive</div>
+    <div>About</div>
 </div>
 
 <div>@Html.Partial("_ModelInfoDialog")</div>
@@ -84,9 +84,9 @@
             case "See More":
                 window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
                 break;
-            case "About":
-                showModelInfoDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
-                break;
+            //case "About":
+            //    showModelInfoDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
+            //    break;
             case "Explode":
                 window.open(carouselItemArray[imageIndex].Link, "_blank");
                 break;
@@ -95,23 +95,32 @@
                 // show add tags dialog
                 break;
             case "Comment":
-                showImageCommentDialog(carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId);
+                pause();
+                showImageCommentDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].FolderName);
                 break;
-            case "Move Image":
+            case "Archive":
                 pause();
                 $('#carouselContextMenu').fadeOut();
+                //showImageCommentDialog(src, linkId, folderId)
                 showMoveCopyDialog("Move", carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].Link);
                 break;
-           default:
-                alert(action);
+            default:
+                //showModelInfoDialog(carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].Link);
+                showModelInfoDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId);
+                //alert("case: " + action);
         }
         $('#carouselContextMenu').hide();
     });
     
     function considerHidingContextMenu() {
         $('#carouselContextMenu').fadeOut();
-        if (!$('#moveCopyDialog').dialog('isOpen')) {
-            resume();
+
+        if (!$('#modelInfoDialog').dialog('isOpen')) {
+            if (!$('#imageCommentDialog').dialog('isOpen')) {
+                if (!$('#moveCopyDialog').dialog('isOpen')) {
+                    resume();
+                }
+            }
         }
     }
 
@@ -125,6 +134,14 @@
     $('#folderCategoryDialog').on('dialogclose', function (event) {
         resume();
     });
+    $('#modelInfoDialog').on('dialogclose', function (event) {
+        resume();
+    });
+    
+    $('#imageCommentDialog').on('dialogclose', function (event) {
+        resume();
+    });
+
     $('#moveCopyDialog').on('dialogclose', function (event) {
         resume();
     });

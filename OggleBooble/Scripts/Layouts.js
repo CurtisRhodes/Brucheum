@@ -9,7 +9,7 @@ function setLayout(layoutName) {
             //$('head title').html("girls sucking dick");
             $('#divTopLeftLogo').html("<a href='/porn'><img src='/images/csLips02.png' class='bannerImage'/></a>");
             $('#bannerTitle').html("The Church of My Cock");
-            $('#headerSubTitle').html("physical behavior catergorized");
+            $('#headerSubTitle').html("naughty behavior catergorized");
             break;
         case 'mobileBoobs':
             $('#divTopLeftLogo').html("<a href='/home'><img src='/images/redballon.png' class='littlelogo' /></a>");

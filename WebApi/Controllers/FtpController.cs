@@ -8,11 +8,11 @@ using System.Text.RegularExpressions;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using WebApi;
-using WebApi.Directory.Models;
-using WebApi.OggleBooble.DataContext;
+using WebApi.Models;
+using WebApi.DataContext;
 using static System.Net.WebRequestMethods;
 
-namespace WebApi.Controllers
+namespace WebApi
 {
     [EnableCors("*", "*", "*")]
     public class FtpImagePageController : ApiController
@@ -45,10 +45,10 @@ namespace WebApi.Controllers
 
 
 
-                    if (sourceFtpPath == destinationFtpPath) 
+                    if (sourceFtpPath == destinationFtpPath)
                         success = "ok";
                     else
-                       success = FtpIO.MoveFile(sourceFtpPath + "/" + sourceFileName, destinationFtpPath + "/" + newFileName);
+                        success = FtpIO.MoveFile(sourceFtpPath + "/" + sourceFileName, destinationFtpPath + "/" + newFileName);
 
                     if (success == "ok")
                     {
@@ -57,18 +57,19 @@ namespace WebApi.Controllers
                         string localServerPath = "F:/Danni/";
                         string localSourcePath = localServerPath + Helpers.GetParentPath(model.SourceFolderId, false) + "/" + dbSourceFolder.FolderName;
                         DirectoryInfo dirInfo = new DirectoryInfo(localSourcePath);
-                        if (dirInfo.Exists)
+                        FileInfo fileInfo = dirInfo.GetFiles(dbSourceFolder.FolderName + "_" + linkId + extension).FirstOrDefault();
+                        if (fileInfo != null)
                         {
-                            FileInfo fileInfo = dirInfo.GetFiles(dbSourceFolder.FolderName + "_" + linkId + extension).FirstOrDefault();
-                            if (fileInfo != null)
+                            try
                             {
-                                try
-                                {
-                                    string localDestinationPath = localServerPath + Helpers.GetParentPath(model.DestinationFolderId, false) + "/" + dbDestinationFolder.FolderName;
-                                    fileInfo.MoveTo(localDestinationPath + "/" + newFileName);
-                                }
-                                catch (Exception) { }
+                                string localDestinationPath = localServerPath + Helpers.GetParentPath(model.DestinationFolderId, false) + "/" + dbDestinationFolder.FolderName;
+                                if (!System.IO.Directory.Exists(localDestinationPath))
+                                    System.IO.Directory.CreateDirectory(localDestinationPath);
+
+
+                                fileInfo.MoveTo(localDestinationPath + "/" + newFileName);
                             }
+                            catch (Exception) { }
                         }
 #endif
                         //2. update GoDaddyLink 
@@ -106,14 +107,17 @@ namespace WebApi.Controllers
                         CategoryImageLink oldCatImageLink = db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == linkId).First();
                         db.CategoryImageLinks.Remove(oldCatImageLink);
 
-                        NudeModelImage nudeModelImage = db.NudeModelImages.Where(n => n.LinkId == linkId).FirstOrDefault();
-                        if (nudeModelImage != null)
-                            db.NudeModelImages.Remove(nudeModelImage);
+                        //NudeModelImage nudeModelImage = db.NudeModelImages.Where(n => n.LinkId == linkId).FirstOrDefault();
+                        //if (nudeModelImage != null)
+                        //    db.NudeModelImages.Remove(nudeModelImage);
                         db.SaveChanges();
                     }
                 }
             }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
             return success;
         }
 
@@ -144,8 +148,17 @@ namespace WebApi.Controllers
                         FtpIO.MoveFile(ftpPath, rejectPath);
                         goDaddyLink.Link = "http://archive.OGGLEBOOBLE.COM/rejects/" + dbFolder.RootFolder + fileName;
                         db.SaveChanges();
+                        try
+                        {
+                            var junkFolder = db.CategoryFolders.Where(f => f.Parent == 908 && f.FolderName == dbFolder.RootFolder).First();
+                            db.CategoryImageLinks.Add(new CategoryImageLink() { ImageCategoryId = junkFolder.Id, ImageLinkId = badLink.ImageId });
+                            db.SaveChanges();
+                        }
+                        catch (Exception ex)
+                        {
+                            success = ex.Message;
+                        }
                     }
-
                     CategoryImageLink dbBadLink = db.CategoryImageLinks.Where(c => c.ImageCategoryId == badLink.FolderId).Where(c => c.ImageLinkId == badLink.ImageId).First();
                     db.CategoryImageLinks.Remove(dbBadLink);
                     db.SaveChanges();

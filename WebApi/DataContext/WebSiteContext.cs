@@ -1,4 +1,4 @@
-namespace WebApi.WebSite.DataContext
+namespace WebApi.DataContext
 {
     using System;
     using System.Data.Entity;

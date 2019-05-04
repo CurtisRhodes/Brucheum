@@ -5,10 +5,10 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using WebApi.Resume.DataContext;
-using WebApi.Resume.Models;
+using WebApi.DataContext;
+using WebApi.Models;
 
-namespace WebApi.Resume
+namespace WebApi
 {
     [EnableCors("*", "*", "*")]
     public class LostJobController : ApiController
@@ -19,7 +19,7 @@ namespace WebApi.Resume
             var lostJob = new LostJobModel();
             try
             {
-                using (var db = new Resume.DataContext.ResumeContext())
+                using (var db = new ResumeContext())
                 {
                     var dbJob = db.LostJobs.Where(j => j.Id == jobId).FirstOrDefault();
                     if (dbJob != null)
@@ -72,7 +72,7 @@ namespace WebApi.Resume
         }
 
         [HttpPost]
-        public string Post(Resume.DataContext.LostJob newJob)
+        public string Post(LostJob newJob)
         {
             string success = "";
             try

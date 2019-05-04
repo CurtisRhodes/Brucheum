@@ -9,10 +9,10 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using WebApi.Directory.Models;
-using WebApi.OggleBooble.DataContext;
+using WebApi.Models;
+using WebApi.DataContext;
 
-namespace WebApi.Controllers
+namespace WebApi
 {
     [EnableCors("*", "*", "*")]
     public class DirectoryIOController : ApiController

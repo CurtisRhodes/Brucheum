@@ -3,14 +3,14 @@
 <img id="moveCopyDialogLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
 
 <div id="moveCopyDialog" title="">
-    <img id="copyDialogImage" class="copyDialogImage" />
-    <div id="dirTreeContainer" class="copyTree">
+    <div>
+        <div class="inline"><img id="copyDialogImage" class="copyDialogImage" /></div>
         <div id="dirTreeResults" class="pusedoTextBox"></div>
-        <div id="dirTreeDropDown" class="hideableDropDown">
-            @Html.Partial("_DirTree2");
-        </div>
+        <div class="inline"><img class="dirTreeDropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeDropDown').show()" /></div>
     </div>
-    <img id="pusedoDropdown" class="dirTreeDropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeResults').hide();$('#dirTreeDropDown').show()" />
+    <div id="dirTreeDropDown" class="hideableDropDown">
+        @Html.Partial("_DirTree2");
+    </div>
     <div id="btnCopyLink" class="roundendButton" onclick="copyLink(false)">Copy</div>
     <div id="btnMoveLink" class="roundendButton" onclick="copyLink(true)">Move</div>
     <div id="btnMoveImage" class="roundendButton" onclick="moveImage()">Move</div>
@@ -18,9 +18,9 @@
 
 <style>
     .copyDialogImage {
-        float: left;
         height: 100px;
         margin-right: 7px;
+        display: inline;
     }
     .pusedoTextBox {
         display: inline-block;
@@ -28,6 +28,11 @@
         min-width: 266px;
         padding-top: 4px;
         min-height: 30px;
+    }
+    .dirTreeDropdownButton {
+        height: 40px;
+        cursor: pointer;
+        margin-left: 1px;
     }
     .hideableDropDown {
         display: inline-block;
@@ -39,20 +44,22 @@
 
 <script>
     var moveCopyDialogLink = "";
-    var newLink = {};
-
+    var copyLinkModel = {};
+    var destinationPath = "";
     $(function () {
         $('#moveCopyDialog').dialog({
             autoOpen: false,
             show: { effect: "fade" },
             hide: { effect: "blind" },
-            width: "456px"
+            width: "520px"
         });
         $('#btnMoveLink').hide();
     });
 
     function showMoveCopyDialog(mode, link, folderId, imageSource) {
         moveCopyDialogLink = link;
+
+        copyLinkModel.ImageId = link;
         moveCopyDialogFolderId = folderId;
         if (mode === "Copy") {
             $('#btnMoveImage').hide();
@@ -72,7 +79,7 @@
         $('#moveCopyDialogLoadingGif').show();
         var moveImageModel = new Object();
         moveImageModel.SourceFolderId = moveCopyDialogFolderId;
-        moveImageModel.DestinationFolderId = newLink.CopyToFolderId;
+        moveImageModel.DestinationFolderId = copyLinkModel.CopyToFolderId;
         moveImageModel.GoDaddyLink = moveCopyDialogLink;
         $.ajax({
             type: "PUT",
@@ -81,7 +88,7 @@
             success: function (success) {
                 $('#moveCopyDialogLoadingGif').hide();
                 if (success === "ok") {
-                    displayStatusMessage("ok", "image moved to " + newLink.DestinationPath);
+                    displayStatusMessage("ok", "image moved to " + destinationPath);
                     $('#moveCopyDialog').dialog("close");
                 }
                 else
@@ -95,11 +102,10 @@
     }
 
     function copyLink(andRemove) {
-        newLink.ImageId = moveCopyDialogLink;
         $.ajax({
             type: "PUT",
             url: service + "/api/ImagePage",
-            data: newLink,
+            data: copyLinkModel,
             success: function (success) {
                 if (success === "ok") {
                     displayStatusMessage("ok", "link coppyed to " + $('#dirTreeResults').html());
@@ -124,10 +130,9 @@
     }
 
     function onDirTreeClick(path, id) {
-        if (id.startsWith("t2")) {           
-            newLink.CopyToFolderId = id.substring(2);
-            newLink.DestinationPath = path.replace(/%20/g, " ");
-            $('#dirTreeResults').show();
+        if (id.startsWith("t2")) {
+            copyLinkModel.CopyToFolderId = id.substring(2);
+            destinationPath = path.replace(/%20/g, " ");
             $('#dirTreeResults').html(path.replace(/%20/g, " "));
             $('#dirTreeDropDown').hide();
         }

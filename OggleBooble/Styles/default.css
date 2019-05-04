@@ -75,23 +75,13 @@ body {
     float: left;
 }
 
-.dirTreeDropdownButton {
-    height: 21px;
-    cursor: pointer;
-    padding: 7px;
-    margin-top: 21px;
-}
-
 .loadingGif {
     position: absolute;
     display: none;
 }
-
     .loadingGif img {
         height: 45px;
     }
-
-
 
 #modalContainer {
     z-index: 6; /* Sit on top */

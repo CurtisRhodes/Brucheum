@@ -6,10 +6,10 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using WebApi.GetaJob.DataContext;
-using WebApi.GetaJob.Models;
+using WebApi.DataContext;
+using WebApi.Models;
 
-namespace WebApi.GetaJob
+namespace WebApi
 {
 
     [EnableCors("*", "*", "*")]

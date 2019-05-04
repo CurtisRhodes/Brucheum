@@ -7,9 +7,9 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using WebApi.Home.Models;
+using WebApi.Models;
 
-namespace WebApi.Home
+namespace WebApi
 {
     [EnableCors("*", "*", "*")]
     public class GodaddyEmailController : ApiController

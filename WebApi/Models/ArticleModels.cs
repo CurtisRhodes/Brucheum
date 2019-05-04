@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace WebApi.Articles.Models
+namespace WebApi.Models
 {
     public class DbArticleTagModel {
         public int Id { get; set; }
