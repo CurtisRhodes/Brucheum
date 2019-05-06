@@ -51,7 +51,7 @@ function getImageLinks() {
                     processImages(imageModel, start);
                 }
                 else {
-                    $('#getImagesLoadingGif').hide();
+                    $('#get ImagesLoadingGif').hide();
                     alert("getImageLinks: " + imageModel.Success);
                 }
             },
@@ -80,38 +80,47 @@ function processImages(imageModel, start) {
         window.location.href = "imagePage?folder=" + $(this).attr("id");
     });
 
+    //[Table("OggleBooble.vwLinks")]
+    //public partial class VwLink {
+    //    public string LinkId { get; set; }
+    //    public int FolderId { get; set; }
+    //    public string Link { get; set; }
+    //    public int LinkCount { get; set; }
+    //    public int NoLink { get; set; }
+    //}
+
     // add files
     imageArray = new Array();
     $('#slideShowLink').show();
     var fileCount = 0;
-    $.each(imageModel.Files, function (idx, vwLink) {
+    $.each(imageModel.Files, function (idx, imageModelFile) {
         $('#footerMessage').html("fileCount: " + fileCount);
         if (rootFolder === "archive") {
             if (vwLink.LinkCount === 1) {
-                $('#imageContainer').append("<div class='imageFrame'><img id=" + vwLink.LinkId +
-                    " idx=" + fileCount + " class='thumbImage' src='" + vwLink.Link + "'/></div>");
+                $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
+                    " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
             }
             else {
                 $('#imageContainer').append("<div class='multiLinkImageFrame'><img id=" + vwLink.LinkId +
-                    " idx=" + fileCount + " class='thumbImage' src='" + vwLink.Link + "'/></div>");
+                    " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
             }
         }
         else {
-            if (vwLink.NoLink > 0) {
-                $('#imageContainer').append("<div class='imageFrame'><img id=" + vwLink.LinkId +
-                    " idx=" + fileCount + " class='thumbImage' src='" + vwLink.Link + "'/></div>");
+            if (imageModelFile.NoLink > 0) {
+                $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
+                    " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
             }
             else {
-                $('#imageContainer').append("<div class='multiLinkImageFrame'><img id=" + vwLink.LinkId +
-                    " idx=" + fileCount + " class='thumbImage' src='" + vwLink.Link + "'/></div>");
+                $('#imageContainer').append("<div class='multiLinkImageFrame'><img id=" + imageModelFile.LinkId +
+                    " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
             }
         }
         fileCount++;
 
         imageArray.push({
-            Link: vwLink.Link.replace(/ /g, "%20"),
-            ImageId: vwLink.LinkId,
-            Local: vwLink.NoLink > 0
+            Link: imageModelFile.Link.replace(/ /g, "%20"),
+            ImageId: imageModelFile.LinkId,
+            Local: imageModelFile.NoLink > 0
         });
     });
 
@@ -132,10 +141,10 @@ function processImages(imageModel, start) {
     fileCount += imageModel.SubDirs.length;
     $('#fileCount').html(fileCount);
     $('#getImagesLoadingGif').hide();
-    if (ipAddress !== "68.203.92.166") {
-        var emailSubject = currentUser + " just viewed " + folderId;
-        sendEmailFromJS(emailSubject, "someday it will be someone other than " + ipAddress);
-    }
+    // if (ipAddress !== "68.203.92.166") {
+    var emailSubject = currentUser + " just viewed " + folderId;
+    sendEmailFromJS(emailSubject, "someday it will be someone other than " + ipAddress);
+    // }
 }
 
 function showContextMenu(imageId) {
@@ -261,15 +270,15 @@ function explodeViewer() {
     viewAreaWidth = Number($('#imageContainer').width());
     viewAreaRight = viewAreaWidth + viewAreaLeft;
 
-    if (Number($('#customViewer').width()) >= viewAreaWidth &&
-        Number($('#customViewer').height()) >= viewAreaHeight) {
-        clearInterval(exploderInterval);
-        $('#customViewer').css("top", viewAreaTop + "px");
-        $('#customViewer').css("left", " " + viewAreaLeft + "px");
-        $('#viewerImage').height($('#customViewer').height() - 50);
-        $('#viewerImage').width($('#customViewer').width());
-        //$('#magnifyingGlass').show();
-        //alert("done");
+    if (Number($('#customViewer').width()) >= viewAreaWidth) //&& Number($('#customViewer').height()) >= viewAreaHeight) {
+    {
+        if (Number($('#customViewer').height()) <= viewAreaHeight) {
+            clearInterval(exploderInterval);
+            $('#customViewer').css("top", viewAreaTop + "px");
+            $('#customViewer').css("left", " " + viewAreaLeft + "px");
+            $('#viewerImage').height($('#customViewer').height() - 50);
+            $('#viewerImage').width($('#customViewer').width());
+        }
     }
 
     if ($('#customViewer').height() < viewAreaHeight) {
@@ -287,8 +296,6 @@ function explodeViewer() {
     if ($('#customViewer').position().top > viewAreaTop) {
         $('#customViewer').css("top", $('#customViewer').position().top - Yincrimentor);
     }
-
-
     var imageRight = Number($('#customViewer').width() + $('#customViewer').position().left);
     if (imageRight > viewAreaRight) {
         //alert("imageRight(" + imageRight + ") > viewAreaRight (" + viewAreaRight + ")  delta: " + (imageRight - viewAreaRight));
@@ -311,16 +318,21 @@ $('#thumbImageContextMenu div').click(function () {
             else
                 showMoveCopyDialog("Copy", currentContextImageId, folderId, $('#' + currentContextImageId + '').attr("src"));
             break;
-        case "Archive":
+        case "Move Link":
             if (viewerShowing)
                 showMoveCopyDialog("Move", imageArray[imageArrayIndex].Link, folderId, $('#' + currentContextImageId + '').attr("src"));
             else
                 showMoveCopyDialog("Move", $('#' + currentContextImageId + '').attr("src"), folderId, $('#' + currentContextImageId + '').attr("src"));
             break;
+        case "Archive":
+            if (viewerShowing)
+                showMoveCopyDialog("Archive", imageArray[imageArrayIndex].Link, folderId, $('#' + currentContextImageId + '').attr("src"));
+            else
+                showMoveCopyDialog("Archive", $('#' + currentContextImageId + '').attr("src"), folderId, $('#' + currentContextImageId + '').attr("src"));
+            break;
         case "Remove Link":
-            if (confirm("remove this link")) {
-                removeImage();
-            }
+            if (confirm("remove this link")) 
+                removeImage();            
             break;
         case "Set as Folder Image":
             if (viewerShowing)
@@ -341,19 +353,18 @@ $('#thumbImageContextMenu div').click(function () {
                 window.open($('#' + currentContextImageId + '').attr("src"), "_blank");
             break;
         case "Comment":
-            showCommentDialog();
+            if (viewerShowing)
+                showImageCommentDialog(imageArray[imageArrayIndex].Link, imageArray[imageArrayIndex].ImageId, folderId, folderName);
+            else
+                showImageCommentDialog($('#' + currentContextImageId + '').attr("src"), currentContextImageId, folderId, folderName);
             break;
         default:
-            //showImageCommentDialog(src, linkId, folderId)
-            if (viewerShowing) {
-                alert("src: " + imageArray[imageArrayIndex].Link + "  linkId: " + imageArray[imageArrayIndex].ImageId + "  folderId: " + folderId);
-                showModelInfoDialog(imageArray[imageArrayIndex].Link, imageArray[imageArrayIndex].ImageId, folderId);
-            }
+            if (viewerShowing) 
+                showModelInfoDialog(imageArray[imageArrayIndex].Link, imageArray[imageArrayIndex].ImageId, folderId);            
             else
                 showModelInfoDialog($('#' + currentContextImageId + '').attr("src"), currentContextImageId, folderId);
             break;
     }
-
 });
 
 $('#moveCopyDialog').on('dialogclose', function (event) {
@@ -363,13 +374,6 @@ $('#moveCopyDialog').on('dialogclose', function (event) {
 });
 
 function showCommentDialog() {
-    var linkId = currentContextImageId;
-    var src = $('#' + currentContextImageId + '').attr("src");
-    if (viewerShowing) {
-        src = imageArray[imageArrayIndex].Link;
-        linkId = imageArray[imageArrayIndex].id;
-    }
-    showImageCommentDialog(src, linkId, folderId, folderName);
 }
 
 function setFolderImage(linkId, folderId, level){
@@ -415,7 +419,7 @@ function removeImage() {
     });
 }
 
-function blowupImage() {
+function openImageInNewWindow() {
     //alert("blowupImage: " + imageArray[imageArrayIndex].Link);
     window.open(imageArray[imageArrayIndex].Link, "_blank");
 }
@@ -492,7 +496,4 @@ function addComment() {
     /// show a comment tree with way to say something.
     /// write an entire fantasy 
     /// describe the fantasy this image evokes
-    
-
-
 }

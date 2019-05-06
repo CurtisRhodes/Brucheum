@@ -7,6 +7,19 @@ using WebApi.DataContext;
 
 namespace WebApi.Models
 {
+    public class ImageLinksModel
+    {
+        public ImageLinksModel()
+        {
+            Files = new List<VwLink>();
+            SubDirs = new List<CategoryTreeModel>();
+        }
+        public int FoldrerId { get; set; }
+        public List<VwLink> Files { get; set; }
+        public List<CategoryTreeModel> SubDirs { get; set; }
+        public string Success { get; set; }
+    }
+
     public class CategoryTreeModel
     {
         public CategoryTreeModel()
@@ -44,7 +57,6 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
-
     public class CategoryFolderModel
     {
         public int Id { get; set; }
@@ -74,22 +86,13 @@ namespace WebApi.Models
         public int FolderId { get; set; }
         public string ImageId { get; set; }
     }
-    public class CopyLinkModel
-    {
-        public int CopyToFolderId { get; set; }
-        public string ImageId { get; set; }
-    }
 
-    public class MoveFolderModel
-    {
-        public int FolderToMoveId { get; set; }
-        public int NewParentId { get; set; }
-    }
-    public class MoveImageModel
+    public class MoveCopyImageModel
     {
         public int SourceFolderId { get; set; }
         public int DestinationFolderId { get; set; }
-        public string GoDaddyLink { get; set; }
+        public string Link { get; set; }
+        public string Mode { get; set; }
     }
 
     public class MetaTagInfo

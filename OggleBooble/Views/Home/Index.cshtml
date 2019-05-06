@@ -128,35 +128,15 @@
         launchCarousel('boobs');
     });
 
-    function toggleDirTree(id) {
-        //alert($('#' + id + '').css("display"));
-        if ($('#' + id + '').css("display") == "none") {
-            $('#S' + id + '').html("[-] ");
-        }
-        else
-            $('#S' + id + '').html("[+] ");
-        $('#' + id + '').toggle();
-    }
-
     function onDirTreeClick(path, id) {
         if (id.startsWith("t1")) {
             window.location.href = "/home/ImagePage?folder=" + id.substring(2);
         }
         if (id.startsWith("t2")) {
             //alert("t2 from index");
-
-            copyLinkModel.CopyToFolderId = id.substring(2);
-            destinationPath = path.replace(/%20/g, " ");
+            imageModel.DestinationFolderId = id.substring(2);
             $('#dirTreeResults').html(path.replace(/%20/g, " "));
             $('#dirTreeDropDown').hide();
-
-
-
-            //newLink.CopyToFolderId = id.substring(2);
-            //newLink.DestinationPath = path.replace(/%20/g, " ");
-            //$('#dirTreeResults').show();
-            //$('#dirTreeResults').html(path.replace(/%20/g, " "));
-            //$('#dirTreeDropDown').hide();
         }
     }
 

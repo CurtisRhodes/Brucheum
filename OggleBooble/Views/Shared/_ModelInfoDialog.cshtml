@@ -204,6 +204,7 @@
 
     function validate() {
         nudeModelInfoModel.ModelName = $('#txtModelName').val();
+        $('#modelInfoDialog').dialog('option', 'title', nudeModelInfoModel.ModelName);
         nudeModelInfoModel.Born = $('#txtBorn').val();
         nudeModelInfoModel.CommentText = $('#txaModelComment').val();
         nudeModelInfoModel.Nationality = $('#txtNationality').val();
@@ -227,6 +228,7 @@
                         success: function (success) {
                             if (success === "ok") {
                                 displayStatusMessage("ok", "Model info added");
+
                                 $('#modelInfoEdit').html("Save");
                             }
                             else

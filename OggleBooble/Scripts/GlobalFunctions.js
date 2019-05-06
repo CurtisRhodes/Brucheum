@@ -1,4 +1,6 @@
 ﻿
+
+
 function displayStatusMessage(msgCode, message) {
 
     var severityClassName;
@@ -37,9 +39,12 @@ function clearModal() {
     $('#modalContent').html();
 }
 
-function PublicAlert(message) {
-    //var messHtml="
-
+function toggleDirTree(id) {
+    if ($('#' + id + '').css("display") === "none")
+        $('#S' + id + '').html("[-] ");
+    else
+        $('#S' + id + '').html("[+] ");
+    $('#' + id + '').toggle();
 }
 
 function beautify(stankyString) {

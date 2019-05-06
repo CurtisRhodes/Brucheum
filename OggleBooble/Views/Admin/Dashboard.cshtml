@@ -376,7 +376,7 @@
         newFolder.FolderName = $('#txtNewFolderTitle').val();
         newFolder.Parent = dirTree1SelectedId;
         $.ajax({
-            type: "PATCH",
+            type: "PUT",
             url: service + "/api/DashBoard/CreateFolder",
             data: newFolder,
             success: function (success) {
@@ -543,13 +543,6 @@
         });
     }
 
-    function toggleDirTree(id) {
-        if ($('#' + id + '').css("display") == "none")
-            $('#S' + id + '').html("[-] ");
-        else
-            $('#S' + id + '').html("[+] ");
-        $('#' + id + '').toggle();
-    }
     function onDirTreeClick(path, id) {
         if (id.startsWith("t1")) {
             $('.txtLinkPath').val(path.substring(6).replace(/%20/g, " "));

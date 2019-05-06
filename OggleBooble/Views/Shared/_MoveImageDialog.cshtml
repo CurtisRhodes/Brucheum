@@ -11,9 +11,7 @@
     <div id="dirTreeDropDown" class="hideableDropDown">
         @Html.Partial("_DirTree2");
     </div>
-    <div id="btnCopyLink" class="roundendButton" onclick="copyLink(false)">Copy</div>
-    <div id="btnMoveLink" class="roundendButton" onclick="copyLink(true)">Move</div>
-    <div id="btnMoveImage" class="roundendButton" onclick="moveImage()">Move</div>
+    <div id="btnGo" class="roundendButton" onclick="performAction()">Copy</div>
 </div>
 
 <style>
@@ -43,9 +41,8 @@
 </style>
 
 <script>
-    var moveCopyDialogLink = "";
-    var copyLinkModel = {};
-    var destinationPath = "";
+    var imageModel = {};
+
     $(function () {
         $('#moveCopyDialog').dialog({
             autoOpen: false,
@@ -57,55 +54,49 @@
     });
 
     function showMoveCopyDialog(mode, link, folderId, imageSource) {
-        moveCopyDialogLink = link;
-
-        copyLinkModel.ImageId = link;
-        moveCopyDialogFolderId = folderId;
-        if (mode === "Copy") {
-            $('#btnMoveImage').hide();
-            $('#btnCopyLink').show();
-            $('#moveCopyDialog').dialog('option', 'title', "Copy Image Link");
-        }
-        else {
-            $('#btnMoveImage').show();
-            $('#btnCopyLink').hide();
-            $('#moveCopyDialog').dialog('option', 'title', "Move Image Link");
-        }
+        imageModel.Mode = mode;
+        imageModel.Link = link;
+        imageModel.SourceFolderId = folderId;
+        $('#btnGo').html(mode);
+        $('#moveCopyDialog').dialog('option', 'title', mode + " Image Link");
         $('#copyDialogImage').attr("src", imageSource);
         $('#moveCopyDialog').dialog("open");
     }
 
-    function moveImage() {
+    function performAction() {
         $('#moveCopyDialogLoadingGif').show();
-        var moveImageModel = new Object();
-        moveImageModel.SourceFolderId = moveCopyDialogFolderId;
-        moveImageModel.DestinationFolderId = copyLinkModel.CopyToFolderId;
-        moveImageModel.GoDaddyLink = moveCopyDialogLink;
+        if (imageModel.Mode == "Copy")
+            copyLink();
+        else
+            ftpMove();
+    }
+
+    function ftpMove() {
         $.ajax({
             type: "PUT",
             url: service + "/api/FtpImagePage/MoveImage",
-            data: moveImageModel,
+            data: imageModel,
             success: function (success) {
                 $('#moveCopyDialogLoadingGif').hide();
                 if (success === "ok") {
-                    displayStatusMessage("ok", "image moved to " + destinationPath);
+                    displayStatusMessage("ok", "image moved to " + $('#dirTreeResults').html());
                     $('#moveCopyDialog').dialog("close");
                 }
                 else
-                    alert(success);
+                    alert("ftp Move" + success);
             },
             error: function (xhr) {
                 $('#moveCopyDialogLoadingGif').hide();
-                alert("moveImage xhr error: " + xhr.statusText);
+                alert("ftp Move xhr error: " + xhr.statusText);
             }
         });
     }
 
-    function copyLink(andRemove) {
+    function copyLink() {
         $.ajax({
             type: "PUT",
             url: service + "/api/ImagePage",
-            data: copyLinkModel,
+            data: imageModel,
             success: function (success) {
                 if (success === "ok") {
                     displayStatusMessage("ok", "link coppyed to " + $('#dirTreeResults').html());
@@ -121,18 +112,9 @@
         });
     }
 
-    function toggleDirTree(id) {
-        if ($('#' + id + '').css("display") === "none")
-            $('#S' + id + '').html("[-] ");
-        else
-            $('#S' + id + '').html("[+] ");
-        $('#' + id + '').toggle();
-    }
-
     function onDirTreeClick(path, id) {
         if (id.startsWith("t2")) {
-            copyLinkModel.CopyToFolderId = id.substring(2);
-            destinationPath = path.replace(/%20/g, " ");
+            imageModel.DestinationFolderId = id.substring(2);
             $('#dirTreeResults').html(path.replace(/%20/g, " "));
             $('#dirTreeDropDown').hide();
         }

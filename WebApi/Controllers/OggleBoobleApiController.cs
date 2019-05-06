@@ -8,6 +8,13 @@ using WebApi.DataContext;
 //using System.IO;
 //using System.Net;
 //using System.Text;
+//Turn off the computer
+
+//    Press power on your computer and immediately and repeatedly press "esc" to get to the start-up menu
+//    Press F10 to go to the “BIOS Setup”
+//    Once in the “BIOS Setup” press the arrow keys to "System Configurations"
+//    Scroll Down to “Action Keys Mode”
+//    Disable “Action Keys Modes”
 
 namespace WebApi
 {
@@ -52,16 +59,18 @@ namespace WebApi
                     // first check if she exists
                     CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == nudeModelInfoModel.FolderId).First();
                     CategoryFolder dbParent = db.CategoryFolders.Where(f => f.FolderName == "posers identified").First();
-                    CategoryFolder poser = new CategoryFolder() { FolderName = nudeModelInfoModel.ModelName, RootFolder = dbParent.RootFolder, Parent = dbParent.Id };
+
+                    CategoryFolder poser = new CategoryFolder()
+                    {
+                        FolderName = nudeModelInfoModel.ModelName,
+                        RootFolder = dbParent.RootFolder,
+                        Parent = dbParent.Id
+                    };
                     db.CategoryFolders.Add(poser);
                     db.SaveChanges();
-
                     string sourceOriginPath = Helpers.GetParentPath(nudeModelInfoModel.FolderId, true);
                     string ftpSource = "ftp://50.62.160.105/" + dbSourceFolder.RootFolder + ".ogglebooble.com/" + sourceOriginPath + dbSourceFolder.FolderName + "/" + nudeModelInfoModel.Link.Substring(nudeModelInfoModel.Link.LastIndexOf("/"));
                     string expectedFileName = nudeModelInfoModel.ModelName + "_" + nudeModelInfoModel.LinkId + ".jpg";
-
-                    
-
                     string ftpDestinationPath = "ftp://50.62.160.105/archive.ogglebooble.com/posers identified/" + nudeModelInfoModel.ModelName;
 
                     if (!FtpIO.DirectoryExists(ftpDestinationPath))
@@ -70,7 +79,7 @@ namespace WebApi
                     success = FtpIO.MoveFile(ftpSource, ftpDestinationPath + "/" + expectedFileName);
 
                     NudeModelInfo newNudeModelInfo = new NudeModelInfo()
-                    {                        
+                    {
                         CommentText = nudeModelInfoModel.CommentText,
                         ExternalLinks = nudeModelInfoModel.ExternalLinks,
                         FolderId = poser.Id,
@@ -112,14 +121,16 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    NudeModelInfo nudeModel = db.NudeModelInfos.Where(m => m.ModelId == model.ModelId).FirstOrDefault();
-                    nudeModel.ModelName = model.ModelName;
+                    NudeModelImage nudeModelImage = db.NudeModelImages.Where(n => n.LinkId == model.LinkId).First();
+                    NudeModelInfo nudeModelInfo = db.NudeModelInfos.Where(m => m.ModelId == nudeModelImage.ModelId).First();
+
+                    nudeModelInfo.ModelName = model.ModelName;
                     if (model.Born != null)
-                        nudeModel.Born = DateTime.Parse(model.Born);
-                    nudeModel.Nationality = model.Nationality;
-                    nudeModel.ExternalLinks = model.ExternalLinks;
-                    nudeModel.CommentText = model.CommentText;
-                    nudeModel.FolderId = model.FolderId;
+                        nudeModelInfo.Born = DateTime.Parse(model.Born);
+                    nudeModelInfo.Nationality = model.Nationality;
+                    nudeModelInfo.ExternalLinks = model.ExternalLinks;
+                    nudeModelInfo.CommentText = model.CommentText;
+                   // nudeModelInfo.FolderId = model.FolderId;
                     db.SaveChanges();
                     success = "ok";
                 }
@@ -160,7 +171,7 @@ namespace WebApi
             return success;
         }
     }
-    
+
     [EnableCors("*", "*", "*")]
     public class NudeModelImageController : ApiController
     {
@@ -234,7 +245,7 @@ namespace WebApi
 
     [EnableCors("*", "*", "*")]
     public class CategoryFolderController : ApiController
-    {        
+    {
         // used by _CategoryDialog
         [HttpGet]
         public CategoryFolderModel Get(int id)
@@ -337,11 +348,11 @@ namespace WebApi
 
         // used by ImagePage
         [HttpGet]
-        public CategoryImageModel GetImageLinks(int folderId)
+        public ImageLinksModel GetImageLinks(int folderId)
         {
             var timer = new System.Diagnostics.Stopwatch();
             timer.Start();
-            var imageLinks = new CategoryImageModel();
+            var imageLinks = new ImageLinksModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
@@ -360,6 +371,7 @@ namespace WebApi
                         imageLinks.SubDirs.Add(new CategoryTreeModel()
                         {
                             LinkId = Guid.NewGuid().ToString(),
+                            //DanniPath = folderId,
                             CategoryId = childFolder.Id,
                             DirectoryName = childFolder.FolderName,
                             Length = Math.Max(childFolder.FileCount, childFolder.SubDirCount),
@@ -410,48 +422,29 @@ namespace WebApi
 
         // imagePage copy
         [HttpPut]
-        public string CopyImageLink(CopyLinkModel newLink)
+        public string CopyImageLink(MoveCopyImageModel model)
         {
             string success = "";
             try
             {
+                string linkId = model.Link.Substring(model.Link.LastIndexOf("_") + 1, 36);
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    CategoryImageLink existingLink = db.CategoryImageLinks.Where(l => l.ImageCategoryId == newLink.CopyToFolderId).Where(l => l.ImageLinkId == newLink.ImageId).FirstOrDefault();
+                    CategoryImageLink existingLink = db.CategoryImageLinks
+                        .Where(l => l.ImageCategoryId == model.DestinationFolderId)
+                        .Where(l => l.ImageLinkId == linkId).FirstOrDefault();
                     if (existingLink != null)
                         success = "Link already exists";
                     else
                     {
                         db.CategoryImageLinks.Add(new CategoryImageLink()
                         {
-                            ImageCategoryId = newLink.CopyToFolderId,
-                            ImageLinkId = newLink.ImageId
+                            ImageCategoryId = model.DestinationFolderId,
+                            ImageLinkId = model.Link
                         });
                         db.SaveChanges();
                         success = "ok";
                     }
-                }
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
-
-        // impagePage remove
-        [HttpDelete]
-        public string DeleteImageLink(DeleteLinkModel badLink)
-        {
-            string success = "";
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    var dbBadLink = db.CategoryImageLinks.Where(c => c.ImageCategoryId == badLink.FolderId && c.ImageLinkId == badLink.ImageId).First();
-                    db.CategoryImageLinks.Remove(dbBadLink);
-
-                    ///TODO:   move image to reject folder
-
-                    db.SaveChanges();
-                    success = "ok";
                 }
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
@@ -502,7 +495,7 @@ namespace WebApi
             }
             return carouselInfo;
         }
-                
+
         int folderCount = 0;
         int fileCount = 0;
         [HttpGet]
@@ -627,69 +620,14 @@ namespace WebApi
             }
             return success;
         }
-
-        // dashboard
-         private string OldMoveFolder(MoveFolderModel model)
-        {
-            string success = "";
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    var dbFolderToMove = db.CategoryFolders.Where(f => f.Id == model.FolderToMoveId).First();
-
-                    var dbNewParent = db.CategoryFolders.Where(f => f.Id == model.NewParentId).First();
-                    //var newFolderPath = dbNewParent.FolderPath + "/" + dbFolderToMove.FolderName;
-
-                    dbFolderToMove.Parent = model.NewParentId;
-                    //dbFolderToMove.FolderPath = newFolderPath;
-
-                    //List<ImageFolder> subdirs = db.ImageFolders.Where(f => f.Parent == model.FolderToMoveId).ToList();
-                    //foreach (ImageFolder subdir in subdirs)
-                    //{
-                    //    subdir.FolderPath = newFolderPath + "/" + subdir.FolderName;
-                    //}
-                    db.SaveChanges();
-                    success = dbNewParent.FolderName;
-                }
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-
-        // dashboard
-        private string OldRenameFolder(int folderId, string newName)
-        {
-            string success = "";
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    var dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                    dbFolder.FolderName = newName;
-                    ////todo: rename images here 
-                    db.SaveChanges();
-                    success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
     }
-
     [EnableCors("*", "*", "*")]
     public class MetaTagController : ApiController
     {
         [HttpGet]
-        public MetaTagModel GetOne(int tagId,int folderId)
+        public MetaTagModel GetOne(int tagId, int folderId)
         {
-           var metaTag = new MetaTagModel();
+            var metaTag = new MetaTagModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
@@ -796,7 +734,7 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                   MetaTag metaTag= db.MetaTags.Where(m => m.TagId == tagId).FirstOrDefault();
+                    MetaTag metaTag = db.MetaTags.Where(m => m.TagId == tagId).FirstOrDefault();
                     db.MetaTags.Remove(metaTag);
 
                     db.SaveChanges();
@@ -928,7 +866,7 @@ namespace WebApi
                     dbEntry.CommentText = entry.CommentText;
                     dbEntry.CommentType = entry.CommentType;
                     dbEntry.Link = entry.Link;
-                    
+
                     db.SaveChanges();
                     success = "ok";
                 }
@@ -953,12 +891,13 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     links = (from c in db.CategoryImageLinks
-                                   join f in db.CategoryFolders on c.ImageCategoryId equals f.Id
-                                   where c.ImageLinkId == linkId
-                                   select new CategoryImageLinkModel() {
-                                       ImageCategoryId = f.Id,
-                                       FolderName = f.FolderName
-                                   }).ToList();
+                             join f in db.CategoryFolders on c.ImageCategoryId equals f.Id
+                             where c.ImageLinkId == linkId
+                             select new CategoryImageLinkModel()
+                             {
+                                 ImageCategoryId = f.Id,
+                                 FolderName = f.FolderName
+                             }).ToList();
                 }
             }
             catch (Exception ex)
@@ -968,6 +907,6 @@ namespace WebApi
             return links;
         }
     }
-}
 
+}
 
