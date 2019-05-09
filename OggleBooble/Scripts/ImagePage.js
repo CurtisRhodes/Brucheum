@@ -76,15 +76,6 @@ function processImages(imageModel, start) {
         window.location.href = "imagePage?folder=" + $(this).attr("id");
     });
 
-    //[Table("OggleBooble.vwLinks")]
-    //public partial class VwLink {
-    //    public string LinkId { get; set; }
-    //    public int FolderId { get; set; }
-    //    public string Link { get; set; }
-    //    public int LinkCount { get; set; }
-    //    public int NoLink { get; set; }
-    //}
-
     // add files
     imageArray = new Array();
     $('#slideShowLink').show();
