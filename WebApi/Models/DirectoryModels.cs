@@ -206,11 +206,6 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
-    public class NudeModelImageModel {
-        public int ModelId { get; set; }
-        public string LinkId { get; set; }
-
-    }
     public class NudeModelInfoModel
     {
         public string FolderImage { get; set; }

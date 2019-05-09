@@ -83,7 +83,7 @@ namespace WebApi.DataContext
         public int FolderId { get; set; }
         public string Link { get; set; }
         public int LinkCount { get; set; }
-        public int NoLink { get; set; }
+        public int IsDirectLink { get; set; }
     }
     [Table("OggleBooble.vwDirtree")]
     public partial class VwDirTree

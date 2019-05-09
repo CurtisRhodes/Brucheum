@@ -56,10 +56,15 @@
         // create a new table (or row)
         // --alter table OggleBooble.ImageFolder add CatergoryDescription nvarchar(max)
         // 4/30/2019  --first use of jQuery dialog
+
         try {
+
+            //alert("url: " + service + "/api/NudeModelInfo/?linkId=" + folderId);
+
+
             $.ajax({
                 type: "GET",
-                url: service + "/api/NudeModelInfo/?linkId=" + folderId,
+                url: service + "/api/NudeModelInfo/Get?linkId=" + folderId,
                 success: function (categoryFolderModel) {
                     if (categoryFolderModel.Success == "ok") {
                         categoryFolderId = folderId;

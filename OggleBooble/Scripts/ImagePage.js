@@ -102,7 +102,7 @@ function processImages(imageModel, start) {
             }
         }
         else {
-            if (imageModelFile.NoLink > 0) {
+            if (imageModelFile.IsDirectLink > 0) {
                 $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
                     " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
             }
@@ -116,7 +116,7 @@ function processImages(imageModel, start) {
         imageArray.push({
             Link: imageModelFile.Link.replace(/ /g, "%20"),
             ImageId: imageModelFile.LinkId,
-            Local: imageModelFile.NoLink > 0
+            Local: imageModelFile.IsDirectLink > 0
         });
     });
 
