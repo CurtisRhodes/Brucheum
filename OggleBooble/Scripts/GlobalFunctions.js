@@ -112,7 +112,6 @@ function getXHRErrorDetails(jqXHR) {
 }
 
 function sendEmailFromJS(subject, messsage) {
-    //alert("sendEmailFromJS 1");
     var rtn = "";
     try {
         $.ajax({
@@ -120,8 +119,7 @@ function sendEmailFromJS(subject, messsage) {
             url: "/Email/SendEmail?subject=" + subject + "&message=" + messsage,
             success: function (emailSuccess) {
                 if (emailSuccess === "ok") {
-                    //displayStatusMessage("ok", "email sent");
-                    //alert("Email says: " + emailMessage.Subject);
+                    displayStatusMessage("ok", "email sent");
                 }
                 else {
                     console.log("Email Fail: " + emailSuccess);

@@ -370,9 +370,6 @@ $('#moveCopyDialog').on('dialogclose', function (event) {
     getImageLinks();
 });
 
-function showCommentDialog() {
-}
-
 function setFolderImage(linkId, folderId, level){
     $.ajax({
         type: "PUT",
