@@ -251,6 +251,15 @@
                 </div>
                 <div id="repairLinksReport" class="repairReport"></div>
             </div>
+
+            <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
+                <div onclick="openFolder()">Open Folder</div>
+                <div onclick="showCategoryDetails()">Show Category Info</div>
+                <div onclick="showInfoDialog()">Show Model Info</div>
+            </div>
+            <div>@Html.Partial("_CategoryDialog")</div>
+            <div>@Html.Partial("_ModelInfoDialog")</div>
+
         </div>
     </div>
     <div id="rightColumn"></div>
@@ -264,6 +273,8 @@
     var totalFolders = 0;
     var dirTree1SelectedId = 0;
     var partialViewSelectedItemId = 0;
+    var dashboardContextMenuLinkId = "";
+    var dashboardContextMenuFolderId = "";
 
     $(document).ready(function () {
         resizePage("resize from document ready");
@@ -486,12 +497,10 @@
             totalPics = 0;
             totalFolders = 0;
             tab = 0;
-
             $.ajax({
                 type: "GET",
                 url: service + "/api/DashBoard/RebuildCatTree",
                 success: function (categoryTreeModel) {
-
                     recurrGetCatTree(categoryTreeModel, 'tempTree1', 't1');
 
                     $('#dirTreeContainer').html($('#tempTree1').html());
@@ -527,20 +536,41 @@
     function recurrGetCatTree(dir, container, treeId) {
         tab += tabIndent;
         $.each(dir.SubDirs, function (idx, subDir) {
-
-
             $('#' + container + '').append("<div class='clickable' style='text-indent:" + tab + "px'>"
                 + "<span id=S" + treeId + subDir.LinkId + " onclick=toggleDirTree('" + treeId + subDir.LinkId + "')>[-] </span>"
-                + "<span onclick=onDirTreeClick('" + subDir.DanniPath + "','" + treeId + subDir.CategoryId + "')>" + subDir.DirectoryName +
-                "</span><span class='fileCount'>  : " + subDir.Length + "</span></div>");
+                + "<span onclick=onDirTreeClick('" + subDir.DanniPath + "','" + treeId + subDir.CategoryId + "') "
+                + "oncontextmenu=showDirTreeContextMenu('" + subDir.LinkId + "','" + subDir.CategoryId + "')>"
+                + subDir.DirectoryName + "</span><span class='fileCount'>  : " + subDir.Length + "</span></div>");
             $('#' + container + '').append("<div id=" + treeId + subDir.LinkId + " class='zzcollapsable'></div>");
-
-
             totalPics += subDir.Length;
             totalFolders++;
             recurrGetCatTree(subDir, treeId + subDir.LinkId, treeId);
             tab -= tabIndent;
         });
+    }
+
+    function showDirTreeContextMenu(linkId, folderId) {
+        dashboardContextMenuLinkId = linkId;
+        dashboardContextMenuFolderId = folderId;
+        event.preventDefault();
+        window.event.returnValue = false;
+        $('#dashboardContextMenu').css("top", event.clientY + 5);
+        $('#dashboardContextMenu').css("left", event.clientX);
+        $('#dashboardContextMenu').fadeIn();
+        //<div onclick="showModelInfoDialog(src, linkId, folderId)">Show Dialog</div>
+        //var src = "/home/ImagePage?folder=" + linkId;
+    }
+    function openFolder() {
+        window.open("/home/ImagePage?folder=" + dashboardContextMenuFolderId, "_blank");
+    }
+
+    function showCategoryDetails() {
+        showCategoryDialog(dashboardContextMenuFolderId);
+    }
+
+
+    function showInfoDialog() {
+        showModelInfoDialog("", dashboardContextMenuLinkId, dashboardContextMenuFolderId);
     }
 
     function onDirTreeClick(path, id) {

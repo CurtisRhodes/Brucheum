@@ -33,8 +33,7 @@
             <div id="largeFixedHeader" class="headerBodyContainer">
                 <div id="headerTopRow">
                     <div id="bannerTitle" class="headerTitle">OggleBooble</div>
-                    <div id="headerSubTitle" class="headerSubTitle">
-                        Big
+                    <div id="headerSubTitle" class="headerSubTitle"> Big
                         <span class="clickable" onclick="window.location.href='/Home/ImagePage?folder=2'">titties</span> organized by
                         <span class="clickable" onclick="window.location.href='/Home/ImagePage?folder=136'">poses</span> ,
                         <span class="clickable" onclick="window.location.href='/Home/ImagePage?folder=199'">shapes</span> and
@@ -46,8 +45,8 @@
                     </div>
                     <div id="menuContainer" class="menuTabContainer">
                         <div id="replaceableMenuItems"></div>
-                        <div id="divPornEditor" class="oggleHidden inline floatLeft">
-                            <div class="menuTab floatLeft"><a href="javascript:showMetaTagDialog()">Add Meta Tags</a></div>
+                        <div id="divPornEditor" class="oggleHidden inline floatLeft"> 
+                            <div class="menuTab floatLeft"><a href="~/Admin/MetaTagEdit">Add Meta Tags</a></div>
                             <div class="menuTab floatLeft"><a href="~/Admin/Dashboard">Admin</a></div>
                             <div class="menuTab floatLeft"><a href="~/Admin/Blog">Blog</a></div>
                         </div>
@@ -101,14 +100,9 @@
                 }
             }
 
-            if (document.domain === 'localhost')
+            if ('@User.IsInRole("Porn Editor")' === 'True' || (document.domain === 'localhost')) {
                 $('#divPornEditor').show();
-
-
-            //if (User.IsInRole("Porn Editor")) {
-            //    $('#divPornEditor').show()
-
-            //}
+            }
 
             //toggleTittyMenu(getOBCookie("ShapeOrPosesMenu", "shapes"));
             $('body').css("margin-top", $('#oggleBoobleHeader').height() + 30);

@@ -52,9 +52,9 @@ namespace WebApi
                         try
                         {
                             string localServerPath = "F:/Danni/";
-                        string localSourcePath = localServerPath + Helpers.GetParentPath(model.SourceFolderId, false) + "/" + dbSourceFolder.FolderName;
-                        DirectoryInfo dirInfo = new DirectoryInfo(localSourcePath);
-                        FileInfo fileInfo = dirInfo.GetFiles(dbSourceFolder.FolderName + "_" + linkId + extension).FirstOrDefault();
+                            string localSourcePath = localServerPath + Helpers.GetParentPath(model.SourceFolderId, false) + "/" + dbSourceFolder.FolderName;
+                            DirectoryInfo dirInfo = new DirectoryInfo(localSourcePath);
+                            FileInfo fileInfo = dirInfo.GetFiles(dbSourceFolder.FolderName + "_" + linkId + extension).FirstOrDefault();
                             if (fileInfo != null)
                             {
                                 string localDestinationPath = localServerPath + Helpers.GetParentPath(model.DestinationFolderId, false) + "/" + dbDestinationFolder.FolderName;
@@ -65,8 +65,10 @@ namespace WebApi
                                 fileInfo.MoveTo(localDestinationPath + "/" + newFileName);
                             }
                         }
-                            catch (Exception) { }
-                        
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine("move file on local drive : " + Helpers.ErrorDetails(ex));
+                        }
 #endif
                         //2. update GoDaddyLink 
                         string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
@@ -83,23 +85,14 @@ namespace WebApi
                             db.CategoryImageLinks.Add(newCatImageLink);
                             db.SaveChanges();
                         }
-                    }
-                    if (db.NudeModelImages.Where(n => n.LinkId == linkId).FirstOrDefault() == null)
-                    {
-                        int modelId = Helpers.GetModelId(dbDestinationFolder.Id);
-                        if (modelId != 0)
+                        if (model.Mode == "Move")
                         {
-                            db.NudeModelImages.Add(new NudeModelImage() { LinkId = linkId, ModelId = modelId });
+                            CategoryImageLink oldCatImageLink = db.CategoryImageLinks
+                                 .Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == linkId).First();
+
+                            db.CategoryImageLinks.Remove(oldCatImageLink);
                             db.SaveChanges();
                         }
-                    }
-                    if (model.Mode == "Move")
-                    {
-                        CategoryImageLink oldCatImageLink = db.CategoryImageLinks
-                             .Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == linkId).First();
-
-                        db.CategoryImageLinks.Remove(oldCatImageLink);
-                        db.SaveChanges();
                     }
                 }
             }
@@ -410,12 +403,6 @@ namespace WebApi
                                     else
                                     {
                                         repairReport.Errors.Add(goDaddyLink.Id + " " + goDaddyLink.Link.Substring(goDaddyLink.Link.LastIndexOf("/") + 1) + " " + downLoadSuccess);
-                                        NudeModelImage nudeModelImage = db.NudeModelImages.Where(n => n.LinkId == goDaddyLink.Id).FirstOrDefault();
-                                        if (nudeModelImage != null)
-                                        {
-                                            db.NudeModelImages.Remove(nudeModelImage);
-                                            db.SaveChanges();
-                                        }
                                         db.GoDaddyLinks.Remove(goDaddyLink);
                                         db.SaveChanges();
                                         repairReport.LinksRemoved++;
@@ -633,14 +620,6 @@ namespace WebApi
                             Link = goDaddyLink + trimPath + "/" + newFileName
                         });
 
-                        if (dbCategory.RootFolder == "archive")
-                        {
-                            int modelId = Helpers.GetModelId(newLink.FolderId);
-                            if (modelId != 0)
-                            {
-                                db.NudeModelImages.Add(new NudeModelImage() { LinkId = imageLinkId, ModelId = modelId});
-                            }
-                        }
                         db.SaveChanges();
                     }
                     try
@@ -1040,7 +1019,9 @@ namespace WebApi
                 response.Close();
                 requestDir = null;
             }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex) {
+                success = Helpers.ErrorDetails(ex);
+            }
             return success;
         }
 

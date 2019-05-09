@@ -124,7 +124,7 @@ function sendEmailFromJS(subject, messsage) {
                     //alert("Email says: " + emailMessage.Subject);
                 }
                 else {
-                    alert("Email Fail: " + emailSuccess);
+                    console.log("Email Fail: " + emailSuccess);
                 }
                 rtn = emailSuccess;
             },

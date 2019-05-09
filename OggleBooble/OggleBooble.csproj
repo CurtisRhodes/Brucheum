@@ -471,6 +471,7 @@
     <Content Include="Views\Shared\_CategoryDialog.cshtml" />
     <Content Include="Views\Shared\_ImageCommentDialog.cshtml" />
     <Content Include="Views\Shared\_MetaTagDialog.cshtml" />
+    <Content Include="Views\Admin\MetaTagEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

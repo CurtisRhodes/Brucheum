@@ -98,18 +98,29 @@
 
         <div class="inline">href</div><input id="txtLinkHref" class="roundedInput inline" />
         <div class="inline">label</div><input id="txtLinkLabel" class="roundedInput" />
-        <span class="addLinkIcon" onclick="addModelInfoLink()">+</span>
+        <span class="addLinkIcon" onclick="addModelInfoHref()">+</span>
         <div id="externalLinks" class="smallTextArea"></div>
     </div>
     <div id="modelInfoViewOnlyArea">
         <div class="viewOnlyMessage">If you you know who this is Please click Edit</div>
         <div id="unknownModelLinks" class="smallTextArea"></div>
     </div>
-    <a id="modelInfoEdit" class="dialogEditButton" href="javascript:toggleModelInfoEditMode()">Edit</a>
+    <a id="modelInfoEdit" class="dialogEditButton" href="javascript:toggleMode()">Edit</a>
 </div>
 
 <script>
     var nudeModelInfoModel = {};
+    function showModelInfoDialog(src, linkId, folderId) {
+        nudeModelInfoModel.LinkId = linkId;
+        nudeModelInfoModel.FolderId = folderId;
+
+        $('#footerMessage').html("linkId: " + linkId + " url: " + nudeModelInfoModel.Link);
+        $('#modelDialogThumbNailImage').attr("src", nudeModelInfoModel.Link);
+        clearGets();
+        $('#modelInfoDialog').dialog("open");
+        //$('#modelInfoDialog').fadeIn();
+        getNudeModelInfo(linkId)
+    }
 
     $(function () {
         $("#txtBorn").datepicker();
@@ -122,27 +133,10 @@
         });
     });
 
-    function addModelInfoLink() {
-        $('#externalLinks').append("<a href=" + $('#txtLinkHref').val() + ">" + $('#txtLinkLabel').val() + "</a><br/>");
-    }
-
-    //showImageCommentDialog(src, linkId, folderId, folderName)
-
-    function showModelInfoDialog(src, linkId, folderId) {
-        nudeModelInfoModel.LinkId = linkId;
-        nudeModelInfoModel.Link = src;
-        nudeModelInfoModel.FolderId = folderId;
-
-
-        $('#footerMessage').html("linkId: " + linkId + " url: " + nudeModelInfoModel.Link);
-        $('#modelDialogThumbNailImage').attr("src", nudeModelInfoModel.Link);
-        clearGets();
-        $('#modelInfoDialog').dialog("open");
-        //$('#modelInfoDialog').fadeIn();
-
+    function getNudeModelInfo(linkId) {
         $.ajax({
             type: "GET",
-            url: service + "/api/NudeModelImage/Get?linkId=" + linkId,
+            url: service + "/api/NudeModelInfo/Get?linkId=" + linkId,
             success: function (nudeModel) {
                 if (nudeModel.Success == "ok") {
                     if (nudeModel.ModelName === null) {
@@ -170,26 +164,43 @@
                         $('#txtNationality').val(nudeModel.Nationality);
 
                         ///ToDO
-                        /// if pornAdmin e;se readonly
+                        /// if pornAdmin else readonly
                         if ((isPornEditor == "True") || (document.domain === 'localhost')) {
                             $('#modelInfoEdit').html("Save");
                         }
                         else
                             $('#modelInfoEdit').hide();
-
-
                     }
                     nudeModelInfoModel.ExternalLinks = nudeModel.ExternalLinks;
                     $('#externalLinks').html(nudeModel.ExternalLinks);
-
                 }
                 else
-                    alert("Get ModelInfo : " + nudeModel.Success);
+                    alert("Get Model Info : " + nudeModel.Success);
             },
             error: function (jqXHR, exception) {
-                alert("Get ModelInfo jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                alert("Get Model Info jqXHR : " + getXHRErrorDetails(jqXHR, exception));
             }
         });
+    }
+
+    function addModelInfoHref() {
+        $('#externalLinks').apppend("<a href=" + $('#txtLinkHref').val() + ">" + $('#txtLinkLabel').val() + "</a><br/>");
+    }
+
+    function toggleMode() {
+        switch ($('#modelInfoEdit').html()) {
+            case "Edit":
+                $('#modelInfoEdit').html("Add");
+                $('#modelInfoEditArea').show();
+                $('#modelInfoViewOnlyArea').hide();
+                break;
+            case "Add":
+                addNewNudeModelInfo();
+                break;
+            case "Save":
+                break;
+            default:
+        }
     }
 
     function clearGets() {
@@ -212,62 +223,51 @@
         return true;
     }
 
-    function toggleModelInfoEditMode() {
-        switch ($('#modelInfoEdit').html()) {
-            case "Edit":
-                $('#modelInfoEdit').html("Add");
-                $('#modelInfoEditArea').show();
-                $('#modelInfoViewOnlyArea').hide();
-                break;
-            case "Add":
-                if (validate()) {
-                    $.ajax({
-                        type: "POST",
-                        url: service + "/api/NudeModelInfo",
-                        data: nudeModelInfoModel,
-                        success: function (success) {
-                            if (success === "ok") {
-                                displayStatusMessage("ok", "Model info added");
+    function addNewNudeModelInfo() {
+        if (validate()) {
+            $.ajax({
+                type: "POST",
+                url: service + "/api/NudeModelInfo",
+                data: nudeModelInfoModel,
+                success: function (success) {
+                    if (success === "ok") {
+                        displayStatusMessage("ok", "Model info added");
 
-                                $('#modelInfoEdit').html("Save");
-                            }
-                            else
-                                alert("Add Model info: " + success);
-                        },
-                        error: function (jqXHR, exception) {
-                            alert("Add ModelInfo jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-                        }
-                    });
+                        $('#modelInfoEdit').html("Save");
+                    }
+                    else
+                        alert("Add Model info: " + success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("Add ModelInfo jqXHR : " + getXHRErrorDetails(jqXHR, exception));
                 }
-                break;
-            case "Save":
-                if (validate()) {
-                    $.ajax({
-                        type: "PUT",
-                        url: service + "/api/NudeModelInfo",
-                        data: nudeModelInfoModel,
-                        success: function (success) {
-                            if (success === "ok") {
-                                displayStatusMessage("ok", "Model info updated");
-                            }
-                            else
-                                alert("Edit Model info: " + success);
-                        },
-                        error: function (jqXHR, exception) {
-                            alert("Edit ModelInfo jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-                        }
-                    })
+            });
+        }
+    }
+
+    function updateNudeModelInfo() {
+        if (validate()) {
+            $.ajax({
+                type: "PUT",
+                url: service + "/api/NudeModelInfo",
+                data: nudeModelInfoModel,
+                success: function (success) {
+                    if (success === "ok") {
+                        displayStatusMessage("ok", "Model info updated");
+                    }
+                    else
+                        alert("Edit Model info: " + success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("Edit ModelInfo jqXHR : " + getXHRErrorDetails(jqXHR, exception));
                 }
-                break;
-            default:
+            })
         }
     }
 
     function considerClosingModelInfoDialog() {
         if ($('#modelInfoEdit').html() == "Edit")
             $('#modelInfoDialog').dialog("close");
-
-        //$('#modelInfoDialog').fadeOut();
     }
 
 </script>

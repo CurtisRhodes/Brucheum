@@ -59,7 +59,7 @@
         try {
             $.ajax({
                 type: "GET",
-                url: service + "/api/CategoryFolder/?id=" + folderId,
+                url: service + "/api/NudeModelInfo/?linkId=" + folderId,
                 success: function (categoryFolderModel) {
                     if (categoryFolderModel.Success == "ok") {
                         categoryFolderId = folderId;
@@ -97,7 +97,7 @@
         else {
             $.ajax({
                 type: "PUT",
-                url: service + "/api/NudeModelInfo/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" + $('#catDlgDescription').val(),
+                url: service + "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" + $('#catDlgDescription').val(),
                 success: function (success) {
                     if (success == "ok") {
                         displayStatusMessage("ok", "category description updated");

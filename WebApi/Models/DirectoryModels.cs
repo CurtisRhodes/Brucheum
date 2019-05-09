@@ -35,12 +35,6 @@ namespace WebApi.Models
         public string LinkId { get; set; }
         public List<CategoryTreeModel> SubDirs { get; set; }
     }
-    public class CategoryImageLinkModel
-    {
-        public int ImageCategoryId { get; set; }
-        public string ImageLinkId { get; set; }
-        public string FolderName { get; set; }
-    }
 
     public class CategoryImageModel
     {
@@ -219,14 +213,14 @@ namespace WebApi.Models
     }
     public class NudeModelInfoModel
     {
+        public string FolderImage { get; set; }
         public int ModelId { get; set; }
         public string ModelName { get; set; }
         public string Nationality { get; set; }
+        public string Measurements { get; set; }
         public string ExternalLinks { get; set; }
         public string CommentText { get; set; }
         public int FolderId { get; set; }
-        //public string FolderName { get; set; }
-        //public string RootFolder { get; set; }
         public string Born { get; set; }
         public string LinkId { get; set; }
         public string Link { get; set; }

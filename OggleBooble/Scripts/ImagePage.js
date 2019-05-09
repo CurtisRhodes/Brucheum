@@ -1,8 +1,4 @@
-﻿var viewAreaTop;
-var viewAreaLeft;
-var viewAreaWidth;
-var viewAreaRight;
-var nudeModelFolderId;
+﻿var nudeModelFolderId;
 
 $(window).resize(function () {
     $('#imageContainer').width($('#middleColumn').width());
@@ -141,10 +137,11 @@ function processImages(imageModel, start) {
     fileCount += imageModel.SubDirs.length;
     $('#fileCount').html(fileCount);
     $('#getImagesLoadingGif').hide();
-    // if (ipAddress !== "68.203.92.166") {
-    var emailSubject = currentUser + " just viewed " + folderId;
-    sendEmailFromJS(emailSubject, "someday it will be someone other than " + ipAddress);
-    // }
+    if (document.domain !== 'localhost') {
+        //if (ipAddress !== "68.203.92.166") {
+        var emailSubject = currentUser + " just viewed " + folderId;
+        sendEmailFromJS(emailSubject, "someday it will be someone other than " + ipAddress);
+    }
 }
 
 function showContextMenu(imageId) {
@@ -162,7 +159,7 @@ function showContextMenu(imageId) {
     }
     $.ajax({
         type: "GET",
-        url: service + "api/NudeModelInfo?linkId=" + imageId + "&folderId=" + folderId,
+        url: service + "api/NudeModelInfo?linkId=" + imageId,
         success: function (nudeModelInfo) {
             $('#ctxModelName').html(nudeModelInfo.ModelName);
             if ($('#ctxModelName').html() === "unknown model")
@@ -242,11 +239,8 @@ function showViewer(imageId) {
     $('#customViewer').height(150);
     $('#customViewer').show();
     $('#viewerImage').attr("src", thisImage.attr("src"));
-
-    viewAreaTop = Number($('#middleColumn').position().top + 10);
-    viewAreaLeft = Number($('#middleColumn').position().left);
-    viewAreaWidth = Number($('#middleColumn').width());
-    viewAreaRight = viewAreaWidth + viewAreaLeft;
+    //thisImage.height($('#middleColumn').height() - 150);
+    $('#viewerImage').height($('#customViewer').height());
 
     $('.hiddeClickArea').contextmenu(function () {
         event.preventDefault();
@@ -255,31 +249,35 @@ function showViewer(imageId) {
     });
 
     $('#redBar').hide();
-    exploderInterval = setInterval(function () {
-        explodeViewer();
+    var Xincrimentor = 15;
+    var Yincrimentor = 10;
+    resizePage();
+    $('#customViewer').width(10);
+    //$('#viewerImage').attr("left", thisImage.attr("left"));
+
+    exploderInterval = setInterval(function () {        
+        explodeViewer(Xincrimentor, Yincrimentor);
     }, 8);
 }
 
-function explodeViewer() {
-    var Xincrimentor = 15;
-    var Yincrimentor = 10;
-
+function explodeViewer(Xincrimentor, Yincrimentor) {
     var viewAreaHeight = $('#middleColumn').height() - 150;
-    viewAreaTop = Number($('#imageContainer').position().top);
-    viewAreaLeft = Number($('#imageContainer').position().left);
-    viewAreaWidth = Number($('#imageContainer').width());
-    viewAreaRight = viewAreaWidth + viewAreaLeft;
+    $('#viewerImage').height($('#customViewer').height() - 50);
+    $('#viewerImage').width($('#customViewer').width());
+    $('#viewerImage').css("top", Number($('#customViewer').position().top + 50) + "px");
 
-    if (Number($('#customViewer').width()) >= viewAreaWidth) //&& Number($('#customViewer').height()) >= viewAreaHeight) {
-    {
-        if (Number($('#customViewer').height()) <= viewAreaHeight) {
-            clearInterval(exploderInterval);
-            $('#customViewer').css("top", viewAreaTop + "px");
-            $('#customViewer').css("left", " " + viewAreaLeft + "px");
+    if (Number($('#customViewer').width()) >= Number($('#middleColumn').width())) {             //&& Number($('#customViewer').height()) >= viewAreaHeight) {    
+        if (Number($('#customViewer').height()) >= viewAreaHeight) {
+            //if ($('#viewerImage').height() >= $('#customViewer').height() - 50) {
+            //alert("clearInterval");
+            //clearInterval(exploderInterval);
+            $('#customViewer').css("top", Number($('#middleColumn').position().top + 15) + "px");
             $('#viewerImage').height($('#customViewer').height() - 50);
             $('#viewerImage').width($('#customViewer').width());
+            $('#viewerImage').css("left", $('#middleColumn').position().left);
         }
     }
+
 
     if ($('#customViewer').height() < viewAreaHeight) {
         $('#customViewer').height($('#customViewer').height() + Yincrimentor);
@@ -287,23 +285,31 @@ function explodeViewer() {
     if ($('#customViewer').height() > viewAreaHeight) {
         $('#customViewer').height(viewAreaHeight);
     }
-    if ($('#customViewer').width() < viewAreaWidth) {
+
+    if ($('#customViewer').width() < Number($('#middleColumn').width())) {
         $('#customViewer').width($('#customViewer').width() + (Xincrimentor * 2));
-    }
-    if ($('#customViewer').width() > viewAreaWidth) {
-        $('#customViewer').width(viewAreaWidth);
-    }
-    if ($('#customViewer').position().top > viewAreaTop) {
-        $('#customViewer').css("top", $('#customViewer').position().top - Yincrimentor);
-    }
-    var imageRight = Number($('#customViewer').width() + $('#customViewer').position().left);
-    if (imageRight > viewAreaRight) {
-        //alert("imageRight(" + imageRight + ") > viewAreaRight (" + viewAreaRight + ")  delta: " + (imageRight - viewAreaRight));
-        $('#customViewer').css("left", $('#customViewer').position().left - (imageRight - viewAreaRight));
+        if (Number($('#customViewer').width() + $('#customViewer').position().left) > Number($('#middleColumn').width())) {
+            $('#customViewer').css("left", " " + Number($('#middleColumn').width() - $('#customViewer').width()) + "px");
+        }
+        if ($('#customViewer').position().left < $('#middleColumn').position().left) {
+            $('#customViewer').css("left", $('#middleColumn').position().left);
+        } 
     }
 
-    $('#viewerImage').height($('#customViewer').height() - 50);
-    $('#viewerImage').width($('#customViewer').width());
+    if ($('#customViewer').position().top + 15 > Number($('#middleColumn').position().top)) {
+        $('#customViewer').css("top", $('#customViewer').position().top - Yincrimentor);
+    }
+    else {
+        $('#customViewer').css("top", Number($('#middleColumn').position().top + 15) + "px");
+        //alert("ss" + $('#customViewer').position().top + 35);
+    }
+
+
+    //$('#viewerImage').height($('#customViewer').height() - 50);
+    //$('#viewerImage').width($('#customViewer').width());
+    //$('#viewerImage').css("top", Number($('#customViewer').position().top + 50) + "px");
+
+    //$('#viewerImage').css('left', Number($('#imageContainer').width()/2 - ($('#customViewer').width() / 2));
 }
 
 $('#thumbImageContextMenu div').click(function () {
@@ -379,7 +385,7 @@ function showCommentDialog() {
 function setFolderImage(linkId, folderId, level){
     $.ajax({
         type: "PUT",
-        url: service + "/api/CategoryFolder/setFolderImage?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level,
+        url: service + "/api/CategoryFolder/?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level,
         success: function (success) {
             if (success === "ok") {
                 if (viewerShowing)

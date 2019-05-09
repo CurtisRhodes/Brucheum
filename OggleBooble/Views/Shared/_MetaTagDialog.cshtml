@@ -134,15 +134,15 @@
                         })
                     }
                     else
-                        alert("metaTagDialog: " + metaTagInfo.Success);
+                        alert("get MetaTags: " + metaTagInfo.Success);
                 },
                 error: function (jqXHR, exception) {
-                    alert("getMetaTags XHR : " + getXHRErrorDetails(jqXHR, exception));
+                    alert("get MetaTags XHR : " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         }
         catch (e) {
-            alert("showCategoryDialog catch: " + e);
+            alert("get MetaTags catch: " + e);
         }
     }
 
