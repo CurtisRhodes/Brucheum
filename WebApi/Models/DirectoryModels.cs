@@ -15,6 +15,7 @@ namespace WebApi.Models
             SubDirs = new List<CategoryTreeModel>();
         }
         public int FoldrerId { get; set; }
+        public string Origin { get; set; }
         public List<VwLink> Files { get; set; }
         public List<CategoryTreeModel> SubDirs { get; set; }
         public string Success { get; set; }
@@ -58,7 +59,7 @@ namespace WebApi.Models
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
         public int FileCount { get; set; }
-        public string FolderImage { get; set; }
+        public string Link { get; set; }
         public string CategoryText { get; set; }
         public string Success { get; set; }
     }
@@ -67,6 +68,14 @@ namespace WebApi.Models
     {
         public int FolderId { get; set; }
         public string FolderName { get; set; }
+    }
+
+    public class CategoryCommentModel
+    {
+        public int FolderId { get; set; }
+        public string FolderName { get; set; }
+        public string CommentText { get; set; }
+        public string Success { get; set; }
     }
 
     public class AddLinkModel
@@ -208,17 +217,18 @@ namespace WebApi.Models
 
     public class NudeModelInfoModel
     {
-        public string FolderImage { get; set; }
         public int ModelId { get; set; }
+        public int FolderId { get; set; }
+        public string Link { get; set; }
+        public string LinkId { get; set; }
         public string ModelName { get; set; }
         public string Nationality { get; set; }
         public string Measurements { get; set; }
         public string ExternalLinks { get; set; }
         public string CommentText { get; set; }
-        public int FolderId { get; set; }
         public string Born { get; set; }
-        public string LinkId { get; set; }
-        public string Link { get; set; }
+        public string FolderImage { get; set; }
+        public string RootFolder { get; set; }
         public string Success { get; set; }
     }
 }

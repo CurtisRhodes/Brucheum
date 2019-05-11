@@ -277,25 +277,22 @@
     var dashboardContextMenuFolderId = "";
 
     $(document).ready(function () {
-        resizePage("resize from document ready");
+        window.addEventListener("resize", resizeThisPage);
         resizeThisPage();
     });
 
     function resizeThisPage() {
+        resizePage();
         var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);
         if (workAreaHeight > $('#middleColumn').height()) {
-
-        $('#middleColumn').height(workAreaHeight);
-            //alert("workAreaHeight: " + workAreaHeight)
+            $('#middleColumn').height(workAreaHeight);
         }
         $('#divDashboardContainer').height($('#middleColumn').height() - 200);
-
         $('.floatingCrud').width($('.workarea').width() - 100);
         $('#footerMessage').html(""); //image height: " + $('#imgLinkPreview').height());
-    };
+    }
 
     $(function () {
-        
         var connection = $.hubConnection(service);
         var progressHubProxy = connection.createHubProxy('ProgressHub');
 
@@ -560,6 +557,7 @@
         //<div onclick="showModelInfoDialog(src, linkId, folderId)">Show Dialog</div>
         //var src = "/home/ImagePage?folder=" + linkId;
     }
+
     function openFolder() {
         window.open("/home/ImagePage?folder=" + dashboardContextMenuFolderId, "_blank");
     }
@@ -567,7 +565,6 @@
     function showCategoryDetails() {
         showCategoryDialog(dashboardContextMenuFolderId);
     }
-
 
     function showInfoDialog() {
         showModelInfoDialog("", dashboardContextMenuLinkId, dashboardContextMenuFolderId);
@@ -702,6 +699,10 @@
             }
         });
     }
+
+
+
+
 
 
 </script>

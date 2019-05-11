@@ -42,7 +42,7 @@
     var imageIndex = 0;
     var carouselContainerHeight;
     var Carousel;
-    //var moveImageModel = {};
+    var nudeModelFolderId;
 
     $(document).ready(function () {
         $('#carouselImage').css("max-width", $('#middleColumn').width());
@@ -54,16 +54,27 @@
         event.preventDefault();
         window.event.returnValue = false;
         pause();
-
+        $('#ctxModelName').html("");
         $.ajax({
             type: "GET",
-            url: service + "api/NudeModelInfo?linkId=" + carouselItemArray[imageIndex].LinkId + "&folderId=" + carouselItemArray[imageIndex].FolderId,
-            success: function (modelInfoModel) {
-                $('#ctxModelName').html(modelInfoModel.ModelName);
-                if ($('#ctxModelName').html() == "unknown model")
+            url: service + "api/NudeModelInfo/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId, // + "&folderId=" + carouselItemArray[imageIndex].FolderId,
+            success: function (nudeModelInfo) {
+                if (nudeModelInfo === null) {
+                    $('#ctxModelName').html("unknown model");
                     $('#ctxSeeMore').hide();
-                else
-                    $('#ctxSeeMore').show();
+                }
+                else {
+                    if (nudeModelInfo.Success === "ok") {
+                        nudeModelFolderId = nudeModelInfo.FolderId;
+                        $('#ctxModelName').html(nudeModelInfo.ModelName);
+                        if (nudeModelInfo.RootFolder === "archive")
+                            $('#ctxSeeMore').hide();
+                        else
+                            $('#ctxSeeMore').show();
+                    }
+                    else
+                        alert("GetModelName: " + nudeModelInfo.Success);
+                }
             },
             error: function (xhr) {
                 alert("GetNudeModelName xhr error: " + xhr.statusText);
@@ -82,7 +93,8 @@
         var action = $(this).html();
         switch (action) {
             case "See More":
-                window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
+                window.open("/home/ImagePage?folder=" + nudeModelFolderId, "_blank");
+                //window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
                 break;
             //case "About":
             //    showModelInfoDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
@@ -128,12 +140,15 @@
         pause();
         showCategoryDialog(carouselItemArray[imageIndex].FolderId);
     }
+
     $('#folderCategoryDialog').on('dialogopen', function (event) {
         pause();
     });
+
     $('#folderCategoryDialog').on('dialogclose', function (event) {
         resume();
     });
+
     $('#modelInfoDialog').on('dialogclose', function (event) {
         resume();
     });
@@ -150,6 +165,7 @@
         clearInterval(Carousel);
         window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
     }
+
     function clickViewParentGallery() {
         window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].ParentId;
     }
@@ -266,6 +282,7 @@
         $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName);
         resizePage();
     }
+
     function onImageNotLoaded() {
         alert("bk image " + carouselItemArray[imageIndex].Link+" not found")
     }

@@ -22,10 +22,22 @@ namespace WebApi.DataContext
         public virtual DbSet<BlogComment> BlogComments { get; set; }
         public virtual DbSet<MetaTag> MetaTags { get; set; }
         public virtual DbSet<NudeModelInfo> NudeModelInfos { get; set; }
-        
+        public virtual DbSet<NudeModelImage> NudeModelImages { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
+    }
+
+    [Table("OggleBooble.NudeModelImage")]
+    public partial class NudeModelImage
+    {
+        [Key]
+        [Column(Order = 0)]
+        public int ModelId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string LinkId { get; set; }
     }
 
     [Table("OggleBooble.NudeModelInfo")]
@@ -38,11 +50,10 @@ namespace WebApi.DataContext
         [Column(Order = 1)]
         public int FolderId { get; set; }
         public string Nationality { get; set; }
-        public string Measurments { get; set; }
+        public string Measurements { get; set; }
         public string ExternalLinks { get; set; }
         public string CommentText { get; set; }
         public string Born { get; set; }
-        public DateTime Posted { get; set; }
     }
 
 
@@ -78,12 +89,11 @@ namespace WebApi.DataContext
     [Table("OggleBooble.vwLinks")]
     public partial class VwLink
     {
+        public int FolderId { get; set; }
         [Key]
         public string LinkId { get; set; }
-        public int FolderId { get; set; }
         public string Link { get; set; }
         public int LinkCount { get; set; }
-        public int IsDirectLink { get; set; }
     }
     [Table("OggleBooble.vwDirtree")]
     public partial class VwDirTree

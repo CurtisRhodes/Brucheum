@@ -4,6 +4,7 @@
     --oggleBackground: #fef; /*  #f7eef7   #b081b1 #f8e8e8 */
     --borderColor: #555;
     --ogglePurple: #79078f;
+    --normalFont: 17px;
 }
 
 
@@ -12,6 +13,7 @@ body {
     font-family: Verdana;
     box-sizing: border-box;
     margin-top: 100px !important;
+    font-size: var(--normalFont);
 }
 .blogCrudArea {
     border: solid thin var(--borderColor);

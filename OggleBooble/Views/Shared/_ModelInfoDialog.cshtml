@@ -10,7 +10,7 @@
 
     .floatingRoundedDialog {
         display: none;
-        font-size: 20px;
+        font-size: 17px;
         font-family: 'Comic Sans MS';
         border: solid thin #b200ff;
         border-radius: 22px;
@@ -53,8 +53,7 @@
         height: 32px;
         padding: 14.5px 4px 0 0;
     }
-
-    .roundedInput {
+    .modelDialogInput {
         width: 220px;
         font-size: 14px;
         font-weight: normal;
@@ -66,11 +65,16 @@
         padding: 2px;
     }
     label {
-        width: 91px !important;
+        width: 105px !important;
     }
     .addLinkIcon {
         cursor:pointer;
         font-size: 28px;
+    }
+    .hrefLabel {
+        font-size: 16px;
+        display: inline-block;
+        margin-right: 4px;
     }
 </style>
 
@@ -86,8 +90,9 @@
         <div class="flexContainer">
             <div class="floatLeft">
                 <label>name</label><input id="txtModelName" class="roundedInput inline" /><br />
-                <label>nationality</label><input id="txtNationality" class="roundedInput inline" /><br />
-                <label>born</label><input id="txtBorn" class="roundedInput inline" />
+                <label>nationality</label><input id="txtNationality" class="roundedInput modelDialogInput inline" /><br />
+                <label>born</label><input id="txtBorn" class="roundedInput modelDialogInput inline" />
+                <label>measurements</label><input id="txtMeasurements" class="roundedInput modelDialogInput inline" /><br />
             </div>
             <div class="floatLeft">
                 <img id="modelDialogThumbNailImage" src="~/Images/redballon.png" class="modelDialogImage" />
@@ -96,8 +101,8 @@
         <label>comment</label>
         <div><textarea id="txaModelComment" class="smallTextArea"></textarea></div>
 
-        <div class="inline">href</div><input id="txtLinkHref" class="roundedInput inline" />
-        <div class="inline">label</div><input id="txtLinkLabel" class="roundedInput" />
+        <div class="hrefLabel">href</div><input id="txtLinkHref" class="roundedInput inline" />
+        <div class="hrefLabel">label</div><input id="txtLinkLabel" class="roundedInput" />
         <span class="addLinkIcon" onclick="addModelInfoHref()">+</span>
         <div id="externalLinks" class="smallTextArea"></div>
     </div>
@@ -110,16 +115,16 @@
 
 <script>
     var nudeModelInfoModel = {};
+
     function showModelInfoDialog(src, linkId, folderId) {
         nudeModelInfoModel.LinkId = linkId;
         nudeModelInfoModel.FolderId = folderId;
 
         $('#footerMessage').html("linkId: " + linkId + " url: " + nudeModelInfoModel.Link);
-        $('#modelDialogThumbNailImage').attr("src", nudeModelInfoModel.Link);
         clearGets();
         $('#modelInfoDialog').dialog("open");
         //$('#modelInfoDialog').fadeIn();
-        getNudeModelInfo(linkId)
+        getNudeModelInfo(linkId, folderId)
     }
 
     $(function () {
@@ -133,28 +138,32 @@
         });
     });
 
-    function getNudeModelInfo(linkId) {
+    function getNudeModelInfo(linkId, folderId) {
         $.ajax({
             type: "GET",
-            url: service + "/api/NudeModelInfo/Get?linkId=" + linkId,
+            url: service + "/api/NudeModelInfo/Get?linkId=" + linkId + "&folderId=" + folderId,
             success: function (nudeModel) {
                 if (nudeModel.Success == "ok") {
-                    if (nudeModel.ModelName === null) {
-                        //$('#modelInfoHeader').html("unknown model");
+                    $('#externalLinks').html(nudeModel.ExternalLinks);
+                    nudeModelInfoModel.Link = nudeModel.Link;
+
+                    if (nudeModel.ModelName == "unidentified") {
+                        $('#modelDialogThumbNailImage').attr("src", nudeModel.Link);                    
                         $('#modelInfoDialog').dialog('option', 'title', "unknown model");
+                        $('#unknownModelLinks').html(linkId.substring(linkId.lastIndexOf('/') + 1) + "<br/>");
+                        $('#unknownModelLinks').append(nudeModel.ExternalLinks)
                         $('#modelInfoEditArea').hide();
                         $('#modelInfoViewOnlyArea').show();
-                        $('#unknownModelLinks').html(nudeModelInfoModel.Link.substring(nudeModelInfoModel.Link.lastIndexOf('/') + 1) + "<br/>");
-                        $('#unknownModelLinks').append(nudeModel.ExternalLinks)
                         $('#modelInfoEdit').html("Edit");
                     }
                     else {
+
+                        if (nudeModel.FolderImage == null) 
+                            $('#modelDialogThumbNailImage').attr("src", nudeModel.Link);
+                        else 
+                            $('#modelDialogThumbNailImage').attr("src", nudeModel.FolderImage);
+
                         nudeModelInfoModel.ModelId = nudeModel.ModelId;
-                        if (nudeModelInfoModel.FolderId != nudeModel.FolderId) {
-                            alert(nudeModelInfoModel.FolderId + " = " + nudeModel.FolderId);
-                            nudeModelInfoModel.FolderId = nudeModel.FolderId;
-                        }
-                        //$('#modelInfoHeader').html(nudeModel.ModelName);
                         $('#modelInfoDialog').dialog('option', 'title', nudeModel.ModelName);
                         $('#modelInfoEditArea').show();
                         $('#modelInfoViewOnlyArea').hide();
@@ -162,20 +171,12 @@
                         $('#txtBorn').val(nudeModel.Born);
                         $('#txaModelComment').val(nudeModel.CommentText);
                         $('#txtNationality').val(nudeModel.Nationality);
-
-                        ///ToDO
-                        /// if pornAdmin else readonly
-                        if ((isPornEditor == "True") || (document.domain === 'localhost')) {
-                            $('#modelInfoEdit').html("Save");
-                        }
-                        else
-                            $('#modelInfoEdit').hide();
+                        $('#txtMeasurements').val(nudeModel.Measurements);
+                        $('#modelInfoEdit').html("Save");
                     }
-                    nudeModelInfoModel.ExternalLinks = nudeModel.ExternalLinks;
-                    $('#externalLinks').html(nudeModel.ExternalLinks);
                 }
                 else
-                    alert("Get Model Info : " + nudeModel.Success);
+                    alert("Get nude model Info : " + nudeModel.Success);
             },
             error: function (jqXHR, exception) {
                 alert("Get Model Info jqXHR : " + getXHRErrorDetails(jqXHR, exception));
@@ -198,6 +199,7 @@
                 addNewNudeModelInfo();
                 break;
             case "Save":
+                updateNudeModelInfo();
                 break;
             default:
         }
@@ -217,8 +219,9 @@
         nudeModelInfoModel.ModelName = $('#txtModelName').val();
         $('#modelInfoDialog').dialog('option', 'title', nudeModelInfoModel.ModelName);
         nudeModelInfoModel.Born = $('#txtBorn').val();
+        nudeModelInfoModel.Nationality = $('#txtNationality').val();      
+        nudeModelInfoModel.Measurements = $('#txtMeasurements').val();
         nudeModelInfoModel.CommentText = $('#txaModelComment').val();
-        nudeModelInfoModel.Nationality = $('#txtNationality').val();
         nudeModelInfoModel.ExternalLinks = $('#externalLinks').html();
         return true;
     }

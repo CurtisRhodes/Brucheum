@@ -56,21 +56,16 @@
         // create a new table (or row)
         // --alter table OggleBooble.ImageFolder add CatergoryDescription nvarchar(max)
         // 4/30/2019  --first use of jQuery dialog
-
         try {
-
-            //alert("url: " + service + "/api/NudeModelInfo/?linkId=" + folderId);
-
-
             $.ajax({
                 type: "GET",
-                url: service + "/api/NudeModelInfo/Get?linkId=" + folderId,
-                success: function (categoryFolderModel) {
-                    if (categoryFolderModel.Success == "ok") {
+                url: service + "api/CategoryComment/Get?folderId=" + folderId,
+                success: function (categoryComment) {
+                    if (categoryComment.Success == "ok") {
                         categoryFolderId = folderId;
-                        $('#catDlgDescription').val(categoryFolderModel.CategoryText);
+                        $('#catDlgDescription').val(categoryComment.CommentText);
 
-                        $('#folderCategoryDialog').dialog('option', 'title', categoryFolderModel.FolderName);
+                        $('#folderCategoryDialog').dialog('option', 'title', categoryComment.FolderName);
 
                         $('#catDlgDescription').prop("readonly", true);
                         if ((isPornEditor == "True") || (document.domain === 'localhost')) {
@@ -82,10 +77,10 @@
                         $('#folderCategoryDialog').dialog("open");
                     }
                     else
-                        alert("get NudeModelInfo: " + categoryFolderModel.Success);
+                        alert("get Category Comment: " + categoryComment.Success);
                 },
                 error: function (jqXHR, exception) {
-                    alert("get NudeModelInfo XHR : " + getXHRErrorDetails(jqXHR, exception));
+                    alert("get Category Comment XHR : " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         }

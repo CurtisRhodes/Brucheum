@@ -29,8 +29,9 @@ commentDialogImage {
 }
 
 .nonLocalImageFrame {
-    margin: 2px;
-    border: dashed 3px #ff00dc;
+    padding: 1px;
+    margin: 1px;
+    border: dashed 3px #988470;
 }
 .noLinksImageFrame {
     margin: 1px;

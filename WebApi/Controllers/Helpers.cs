@@ -141,5 +141,37 @@ namespace WebApi
             }
             return modelId;
         }
+
+        public static bool IsSlut(int folderId)
+        {
+            bool isaSlut = false;
+            using (OggleBoobleContext db = new OggleBoobleContext())
+            {
+                CategoryFolder slutParentFolder = db.CategoryFolders.Where(f => f.FolderName == "sluts").FirstOrDefault();
+                if (slutParentFolder != null)
+                {
+                    CategoryFolder slutFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    if (slutFolder != null)
+                    {
+                        if (slutFolder.Parent == slutParentFolder.Id)
+                        {
+                            isaSlut = true;
+                        }
+                    }
+                }
+            }
+            return isaSlut;
+        }
+
+
+        public static int GetNextModelId()
+        {
+            int maxId = 0;
+            using (OggleBoobleContext db = new OggleBoobleContext())
+            {
+                maxId = db.Database.SqlQuery<int>("select max(ModelId) from OggleBooble.NudeModelImage").First();
+            }
+            return maxId + 1;
+        }
     }
 }

@@ -98,6 +98,7 @@
             url: service + "/api/ImagePage",
             data: imageModel,
             success: function (success) {
+                $('#moveCopyDialogLoadingGif').hide();
                 if (success === "ok") {
                     displayStatusMessage("ok", "link coppyed to " + $('#dirTreeResults').html());
                     $('#moveCopyDialog').dialog("close");
@@ -107,6 +108,7 @@
                 }
             },
             error: function (xhr) {
+                $('#moveCopyDialogLoadingGif').hide();
                 alert("copyLink(andRemove) xhr error: " + xhr.statusText);
             }
         });
