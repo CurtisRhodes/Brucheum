@@ -42,7 +42,8 @@ function getImageLinks() {
         $.ajax({
             type: "GET",
             url: service + "/api/ImagePage/GetImageLinks?folderId=" + folderId,
-            success: function (imageModel) {                
+            success: function (imageModel) {  
+                rootFolder = imageModel.Origin;
                 if (imageModel.Success === "ok") {
                     processImages(imageModel, start);
                 }
@@ -106,7 +107,7 @@ function processImages(imageModel, start) {
         imageArray.push({
             Link: imageModelFile.Link.replace(/ /g, "%20"),
             LinkId: imageModelFile.LinkId,
-            Local: imageModelFile.LinkCount == 1
+            Local: imageModelFile.LinkCount === 1
         });
     });
 
@@ -291,7 +292,7 @@ function showContextMenu(imageId) {
                 if (nudeModelInfo.Success === "ok") {
                     nudeModelFolderId = nudeModelInfo.FolderId;
                     $('#ctxModelName').html(nudeModelInfo.ModelName);                    
-                    if (nudeModelInfo.RootFolder === "archive")
+                    if (rootFolder === "archive")
                         $('#ctxSeeMore').hide();
                     else
                         $('#ctxSeeMore').show();
