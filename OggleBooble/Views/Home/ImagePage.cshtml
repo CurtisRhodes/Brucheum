@@ -13,53 +13,34 @@
                 <div class="floatRight clickable" onclick="showMetaTagDialog()">meta tags</div>
             </div>
             <img id="getImagesLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
-            <div id="imageContainer" class="flexWrapContainer"></div>
+            <div id="imageContainer" class="flexWrapContainer">
+
+
+            </div>
             <div id="fileCount" class="countContainer"></div>
             <div id="text55"></div>
         </div>
         <div id="rightColumn"></div>
     </div>
 
-    <div id="customViewer" class="expandoImageViewer">
-        <div id="expandoViewerBanner" class="floatingCrudBanner">
-            <div id="prev" class="viewerImageNav" onclick="slide('prev')">PREV</div>
-            <img id="imgComment" class="leftSideButton" title="comment" onclick="showCommentDialog()" src="Images/comment.png" />
-            <span id="expandoBannerText"></span>
-            <div onclick="$('#customViewer').hide(); viewerShowing = false;" class="farSide"><img class="closeButton" src="/Images/close.png" height="35" /></div>
-
-            <div id="next" class="farSide" onclick="slide('next')">NEXT</div>
-            <div class="farSide" onclick="blowupImage()"><img class="popout" src="Images/expand02.png" /></div>
-            <div class="slideShowContainer">
-                <div class="farSide" onclick="runSlideShow('faster')"><img id="fasterSlideshow" title="faster slideshow" class="popout" src="Images/slideshowFaster.png" /></div>
-                <div class="farSide" onclick="runSlideShow('start')"><img id="showSlideshow" title="start slideshow" class="popout" src="Images/slideshow.png" /></div>
-                <div class="farSide" onclick="runSlideShow('slower')"><img id="slowerSlideShow" title="slower slideshow" class="popout" src="Images/slideshowSlower.png" /></div>
-            </div>
-        </div>
-        @*<img id="magnifyingGlass" class="magnifyingGlass" src="~/Images/Loupe.png" onclick="blowupImage()" /></div>*@
-        <div class="expandoImageDiv">
-            <div id="leftClickArea" onclick="slide('prev')" contextmenu="viewerContextMenu()" class="hiddeClickArea"></div>
-            <div id="rightClickArea" onclick="slide('next')" contextmenu="viewerContextMenu()" class="hiddeClickArea" style="left:50%;"></div>
-            <img id="viewerImage" class="expandoImage" />
-            <div id="redBar" class="redBarIsLocalIndicator"></div>
-        </div>
-    </div>
-
     <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
-        <div id="ctxModelName">model name</div>
-        <div id="ctxSeeMore">see more of her</div>
-        <div>Comment</div>
-        <div>Explode</div>
-        <div class="adminLink">Archive</div>
-        <div class="adminLink">Copy Link</div>
-        <div class="adminLink">Move Link</div>
-        <div class="adminLink">Remove Link</div>
-        <div class="adminLink">Set as Folder Image</div>
-        <div class="adminLink">Set as Category Image</div>
+        <div id="ctxModelName" onclick="contextMenuAction('show')">model name</div>
+        <div id="ctxSeeMore" onclick="contextMenuAction('jump')">see more of her</div>
+        <div onclick="contextMenuAction('comment')">Comment</div>
+        <div onclick="contextMenuAction('explode')">Explode</div>
+        <div class="adminLink" onclick="contextMenuAction('archive')">Archive</div>
+        <div class="adminLink" onclick="contextMenuAction('copy')">Copy Link</div>
+        <div class="adminLink" onclick="contextMenuAction('move')">Move Link</div>
+        <div class="adminLink" onclick="contextMenuAction('remove')">Remove Link</div>
+        <div class="adminLink" onclick="contextMenuAction('setF')">Set as Folder Image</div>
+        <div class="adminLink" onclick="contextMenuAction('setC')">Set as Category Image</div>
         <div>About</div>
     </div>
 
     <div>@Html.Partial("_ModelInfoDialog")</div>
     <div>@Html.Partial("_ImageCommentDialog")</div>
+
+
     <script>
         var service = '@ViewBag.Service';
         var folderId = '@ViewBag.Folder';
@@ -72,17 +53,15 @@
         var mySubDirs = new Array();
         var thumbImageHeight = 200;
         var currentContextImageId;
-        var imageArrayIndex = 0;
-        var exploderInterval;
         var viewerShowing = false;
         var slideShow;
-        var slideShowSpeed = 0;
     </script>
 </div>
 
 <div>@Html.Partial("_MoveImageDialog")</div>
 <div>@Html.Partial("_CategoryDialog")</div>
 <div>@Html.Partial("_MetaTagDialog")</div>
+<div>@Html.Partial("_ImageViewer")</div>
 
 <script>
     var imageArray = new Array();
@@ -110,7 +89,7 @@
     }
 
     function XXshowStatic() {
-        var pageName = $('#expandoBannerText').html() + ".html";
+        var pageName = folderName + ".html";
 
         $.ajax({
             type: "GET",
@@ -152,7 +131,6 @@
                 setLayout(parents[parents.length - 1].FolderName);
                 document.title = parents[0].FolderName + " OggleBooble";
                 folderName = parents[0].FolderName;
-                $('#expandoBannerText').html(folderName);
             },
             error: function (jqXHR, exception) {
                 $('#getImagesLoadingGif').hide();
@@ -166,7 +144,7 @@
         customHtml += $('#staticableContent').html();
         customHtml += $('#staticFooter').html();
         var data = new Object();
-        data.Filename = $('#expandoBannerText').html() + ".html";
+        data.Filename = folderName + ".html";
         data.html = customHtml;
 
         //data.ImageArray = JSON.parse(imageArray);

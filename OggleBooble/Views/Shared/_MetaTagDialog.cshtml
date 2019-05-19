@@ -61,7 +61,7 @@
 </style>
 
 
-<div id="metaTagDialog" title="">
+<div id="metaTagDialog" class="oggleHidden" title="">
     <label>Type</label>
     <select id="selMetaType" class="roundedInput">
         <option value="KEY">KeyWord</option>
@@ -92,6 +92,7 @@
     function openMetaTagDialog(folderId) {
         // 6:12 AM 3/28/19
 
+        $('#metaTagDialog').show();
         $('#metaTagDialog').dialog("open");
         getMetaTags(folderId);
     }

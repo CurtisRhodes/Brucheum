@@ -327,6 +327,7 @@
     <Compile Include="OggleBoobleStartup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="favicon.png" />
     <Content Include="Global.asax" />
     <Content Include="Home\Images\close.png" />
     <Content Include="Home\Images\comment.png" />
@@ -349,7 +350,6 @@
     <Content Include="Scripts\3rd Party\Editor\summernote.js" />
     <Content Include="Scripts\3rd Party\Editor\xml.js" />
     <Content Include="Scripts\3rd Party\jquery.min.js" />
-    <Content Include="libman.json" />
     <None Include="Scripts\jQuery\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\Cookies.js" />
     <Content Include="Scripts\jQuery\jquery-3.3.1.js" />
@@ -464,14 +464,13 @@
     <Content Include="Views\Admin\Admin.cshtml" />
     <Content Include="Views\Admin\Blog.cshtml" />
     <Content Include="Views\Shared\_Editor.cshtml" />
-    <Content Include="Views\Shared\_DirTree2.cshtml" />
-    <Content Include="Views\Shared\_DirTree1.cshtml" />
     <Content Include="Views\Shared\_ModelInfoDialog.cshtml" />
     <Content Include="Views\Shared\_MoveImageDialog.cshtml" />
     <Content Include="Views\Shared\_CategoryDialog.cshtml" />
     <Content Include="Views\Shared\_ImageCommentDialog.cshtml" />
     <Content Include="Views\Shared\_MetaTagDialog.cshtml" />
     <Content Include="Views\Admin\MetaTagEdit.cshtml" />
+    <Content Include="Views\Shared\_ImageViewer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

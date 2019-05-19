@@ -8,6 +8,7 @@
 <style>
     .commentDialog {
         background-color: var(--oggleBackground);
+        z-index: 120;
     }
 
     .commentDialogImage {
@@ -30,9 +31,10 @@
         color: var(--ogglePurple);
         width: 100%;
     }
+
 </style>
 
-<div id="imageCommentDialog" title="Write a fantasy about this image" class="commentDialog">
+<div id="imageCommentDialog" class="oggleHidden commentDialog" title="Write a fantasy about this image">
     <div class="center"><img id="commentDialogImage" class="commentDialogImage" /></div>
     <div><input id="txtCommentTitle" class="roundedInput commentTitleText" placeholder="Give your comment a title" /></div>
     <div id="imageCommentEditor"></div>
@@ -72,6 +74,7 @@
         // get comment
         loadComment()
 
+        $('#imageCommentDialog').show();
         $('#imageCommentDialog').dialog("open");
         //$('#imageCommentDialog').fadeIn();
     }

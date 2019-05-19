@@ -42,12 +42,6 @@
     text-align: center;
 }
 
-.floatingCrudDialog {
-    z-index: 27;
-    border-radius: 22px;
-    background-color: #83b1ad;
-}
-
 .randomImageContainer {
     top: 135px;
 }

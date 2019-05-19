@@ -1,21 +1,5 @@
-﻿
-.redBarIsLocalIndicator {
-    height: 14px;
-    background-color: #ff0000;
-}
-
-
-commentDialogImage {
-    height: 99px;
-    max-width: 66%;
-}
-
-.adminRow div {
+﻿.adminRow div {
     margin: 3px; 
-}
-
-#txtCommentTitle {
-    width: 100%;
 }
 
 .imageFrame {
@@ -93,60 +77,14 @@ commentDialogImage {
     font-family: 'Comic Sans MS';
 }
 
-.divPage {
-    float: left;
-    padding: 3px;
-    border: solid thin black;
-    margin-right: 6px;
-    cursor: pointer;
-    background-color: #fef;
-}
-
 .countContainer {
     width: 100%;
     text-align: right;
 }
 
-.testMessage {
-    margin-top: 15px;
-}
-
-.floatingCrudDialog {
-    z-index: 120;
-}
-
-.hiddeClickArea {
-    position: absolute;
-    width: 50%;
-    display: inline-block;
-    top: 100px;
-    height: 100%;
-    z-index: 100;
-}
-
 .roundendButton {
     margin-top: 6px;
     display: inline-block;
-}
-
-
-.expandoImageViewer {
-    display: inline-block;
-    position: absolute;
-    border: solid 6px lime;
-    min-height: 200px;
-    background-color: #999;
-    display: none;
-    overflow: hidden;
-}
-
-.expandoImage {
-    object-fit: contain;
-    transition: all .75s ease-in-out;
-}
-
-.expandoImageDiv {
-    float: left;
 }
 
 .viewerImageNav {
@@ -160,30 +98,3 @@ commentDialogImage {
     padding-left: 10px;
 }
 
-.magnifyingGlass {
-    cursor: pointer;
-    position: absolute;
-    display: none;
-    height: 70px;
-    z-index: 4;
-}
-
-.popout {
-    height: 27px;
-    margin-right: 8px;
-}
-
-.slideShowContainer {
-    display: inline-block;
-    float: right;
-    margin-right: 17px;
-}
-
-.leftSideButton {
-    float: left;
-    display: inline-block;
-    margin-left: 50px;
-    margin-bottom: 2px;
-    height: 30px;
-    cursor: pointer;
-}
