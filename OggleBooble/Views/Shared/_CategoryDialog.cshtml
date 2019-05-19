@@ -1,12 +1,12 @@
 ﻿<link href="~/Styles/jquery-ui.css" rel="stylesheet" />
 
-<div id="folderCategoryDialog" title="" onmouseleave="considerClosingCategoryDialog()">
+<div id="folderCategoryDialog" class="oggleHidden" title="" onmouseleave="considerClosingCategoryDialog()">
     <div><textarea id="catDlgDescription" class="catDlgTextArea"></textarea></div>
     <a id="btnCatDlgEdit" class="dialogEditButton" href="javascript:toggleEditCatDialog()">Edit</a>
 </div>
 
 <style>
-    .ui-dialog {
+    #folderCategoryDialog .ui-dialog {
         top: 44px;
         left: 100px;
     }
@@ -74,6 +74,8 @@
                         else {
                             $('#btnCatDlgEdit').hide();
                         }
+
+                        $('#folderCategoryDialog').show();
                         $('#folderCategoryDialog').dialog("open");
                     }
                     else

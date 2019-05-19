@@ -102,8 +102,8 @@
         <div><textarea id="txaModelComment" class="smallTextArea"></textarea></div>
 
         <div class="hrefLabel">href</div><input id="txtLinkHref" class="roundedInput inline" />
-        <div class="hrefLabel">label</div><input id="txtLinkLabel" class="roundedInput" />
-        <span class="addLinkIcon" onclick="addModelInfoHref()">+</span>
+        <div class="hrefLabel">label</div><input id="txtLinkLabel" class="roundedInput" onblur="addHref()" />
+        <span class="addLinkIcon" onclick="addHref()">+</span>
         <div id="externalLinks" class="smallTextArea"></div>
     </div>
     <div id="modelInfoViewOnlyArea">
@@ -184,8 +184,8 @@
         });
     }
 
-    function addModelInfoHref() {
-        $('#externalLinks').apppend("<a href=" + $('#txtLinkHref').val() + ">" + $('#txtLinkLabel').val() + "</a><br/>");
+    function addHref() {
+        $('#externalLinks').append("<a href=" + $('#txtLinkHref').val() + ">" + $('#txtLinkLabel').val() + "</a><br/>");
     }
 
     function toggleMode() {

@@ -1,4 +1,5 @@
-﻿var currentUser = "ee229ec2-8657-4dc5-9af4-b68e8041677a";
+﻿
+var currentUser = "ee229ec2-8657-4dc5-9af4-b68e8041677a";
 
 function buildResume(resumeId) {
     $('#resumeLoadingGif').show();
@@ -18,7 +19,7 @@ function buildResume(resumeId) {
                 $('#resumeJobSection').append(kluge);
 
                 $('#resumeJobSection').append("<div class='resumeJobContents'>" + lostJob.Summary + "</dev>");
-            })
+            });
             $('#resumeBottomSection').html('');
             $.each(loadedResume.BottomSections, function (idx, bottomSection) {
                 $('#resumeBottomSection').append("<div class='sectionContents'>" + bottomSection.SectionContents + "</dev>");
@@ -28,7 +29,6 @@ function buildResume(resumeId) {
             resizePage();
         }
     });
-
 }
 
 function getAvailableResumes(currentUser) {
@@ -62,29 +62,6 @@ function removeSelectedElement() {
     });
 }
 
-//function setDropDownElementType() {
-//    if ($('#ddSectionType').val() == "2") {
-//        $('#ddResumeSections').hide();
-//        $('#ddLostJobs').show();
-//    }
-//    else {
-//        $('#ddLostJobs').hide();
-//        $('#ddResumeSections').show();
-//    }
-//}
-
-//function mediateResumeAddEditButton() {
-//    if ($('#btnResumeAddEdit').html() == "Add")
-//        insertResume();
-//    else
-//        updateResume();
-//}
-
-//function mediateResumeNewButton() {
-//    $('#btnResumeAddEdit').html("Add");
-//    $('#btnResumeNew').hide();
-//}
-
 function loadSelectedResumeElements(resumeId) {    
     $('#resumeSelectedElementsLoadingGif').show();
     //alert("loadSelectedResumeElements(" + resumeId + ")");
@@ -109,7 +86,6 @@ function loadSelectedResumeElements(resumeId) {
             });
 
             $('.resumeSelectedElementItem').click(function () {
-
                 if ($(this).hasClass('highlightResumeItem')) {
                     $('.resumeSelectedElementItem').removeClass('highlightResumeItem');
                     $('#editSelectedElementsCrudRow').hide();
@@ -118,10 +94,8 @@ function loadSelectedResumeElements(resumeId) {
                     $('.resumeSelectedElementItem').removeClass('highlightResumeItem');
                     $(this).addClass('highlightResumeItem');
                     $('#hiddenAvailableElementId').val($(this).attr('id'));
-                    $('#txtResumeSelectedElementOrder').val($(this).attr('eleOrder'));
-                    
+                    $('#txtResumeSelectedElementOrder').val($(this).attr('eleOrder'));                    
                     $('#editSelectedElementsCrudRow').show();
-
                 }
             });
 
@@ -203,7 +177,7 @@ function updateResumeElement() {
             else
                 alert("updateResume: " + success);
         }
-    })
+    });
 }
 
 function loadDropDownLists(currentUser) {
@@ -223,24 +197,4 @@ function loadDropDownLists(currentUser) {
             alert("loadDropDownLists XHR error: " + getXHRErrorDetails(jqXHR, exception));
         }
     });
-    //$.ajax({
-    //    type: "GET",
-    //    url: service + "/api/LostJob?personId=" + currentUser,
-    //    success: function (jobs) {
-    //        $('#ddLostJobs').html("");
-    //        $.each(jobs, function (idx, job) {
-    //            $('#ddLostJobs').append("<option class='ddOption' value='" + job.ElementId + "'>" + job.StartYear + ", " + job.Employer + "</option>");
-    //        });
-    //    }
-    //});
-    //$.ajax({
-    //    type: "GET",
-    //    url: service + "/api/ResumeSection?personId=" + currentUser,
-    //    success: function (sections) {
-    //        $.each(sections, function (idx, section) {
-    //            $('#ddResumeSections').append("<option class='ddOption' value='" + section.ElementId + "'>" + section.SectionTitle + "</option>");
-    //        });
-    //        $('#elementDDsLoadingGif').hide();
-    //    }
-    //});
 }

@@ -2,19 +2,25 @@
 
 <img id="moveCopyDialogLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
 
-<div id="moveCopyDialog" title="">
-    <div>
+
+<div class="moveCopyDialogContainer">
+    <div id="moveCopyDialog" title="">
         <div class="inline"><img id="copyDialogImage" class="copyDialogImage" /></div>
         <div id="dirTreeResults" class="pusedoTextBox"></div>
         <div class="inline"><img class="dirTreeDropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeDropDown').show()" /></div>
+        <br />
+        <div id="dirTreeDropDown" class="hideableDropDown">
+            @Html.Partial("_DirTree2");
+        </div>
+        <div id="btnGo" class="roundendButton" onclick="performAction()">Copy</div>
     </div>
-    <div id="dirTreeDropDown" class="hideableDropDown">
-        @Html.Partial("_DirTree2");
-    </div>
-    <div id="btnGo" class="roundendButton" onclick="performAction()">Copy</div>
 </div>
 
 <style>
+    .moveCopyDialogContainer {
+        z-index: 1120 !important;
+        display: none;
+    }
     .copyDialogImage {
         height: 100px;
         margin-right: 7px;
@@ -48,7 +54,7 @@
             autoOpen: false,
             show: { effect: "fade" },
             hide: { effect: "blind" },
-            width: "520px"
+            width: "650"
         });
         $('#btnMoveLink').hide();
     });
@@ -60,6 +66,7 @@
         $('#btnGo').html(mode);
         $('#moveCopyDialog').dialog('option', 'title', mode + " Image Link");
         $('#copyDialogImage').attr("src", imageSource);
+        $('#moveCopyDialogContainer').show();
         $('#moveCopyDialog').dialog("open");
     }
 

@@ -100,20 +100,27 @@ namespace OggleBooble
 
         public static string GetIPAddress()
         {
-            String address = "";
-            WebRequest request = WebRequest.Create("http://checkip.dyndns.org/");
-            using (WebResponse response = request.GetResponse())
+            string address = "no access";
+            try
             {
-                using (StreamReader stream = new StreamReader(response.GetResponseStream()))
+                WebRequest request = WebRequest.Create("http://checkip.dyndns.org/");
+                using (WebResponse response = request.GetResponse())
                 {
-                    address = stream.ReadToEnd();
-                }
-                int first = address.IndexOf("Address: ") + 9;
-                int last = address.LastIndexOf("</body>");
-                address = address.Substring(first, last - first);
+                    using (StreamReader stream = new StreamReader(response.GetResponseStream()))
+                    {
+                        address = stream.ReadToEnd();
+                    }
+                    int first = address.IndexOf("Address: ") + 9;
+                    int last = address.LastIndexOf("</body>");
+                    address = address.Substring(first, last - first);
 
-                return address;
+                }
             }
+            catch (Exception ex)
+            {
+                address = Helpers.ErrorDetails(ex);
+            }
+            return address;
         }
 
         public static string ErrorDetails(Exception ex)

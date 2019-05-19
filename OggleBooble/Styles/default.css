@@ -289,14 +289,6 @@ label {
     padding: 10px;
     background-color: var(--oggleBackground);
 }
-.floatingCrudDialog {
-    position: absolute;
-    top: 250px;
-    left: 200px;
-    border: solid 2px var(--borderColor);
-    box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
-    display: none;
-}
 
 .floatingCrudBanner {
     background-color: #cfcfcf;
@@ -342,7 +334,7 @@ label {
     border: solid 2px #923c76;
     padding: 8px 10px;
     display: none;
-    z-index: 110;
+    z-index: 120;
 }
 
     .ogContextMenu div {
