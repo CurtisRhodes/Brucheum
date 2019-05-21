@@ -64,27 +64,39 @@
         box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
         display: none;
         z-index: 20;
+        margin-left: 30px;
+        margin-right: 30px;
     }
-    #pornWarning {
-        display:none;
-    }
+
 </style>
 
-<div id="pornWarning" class="modalMessage" onclick="window.location.href = '/porn';">
-    <div style="margin:2px 100px 20px 100px;color:white"> 
-    <div style="font-size:45px;color:red;text-align:center">WARNING</div>    
-    <div style="color:yellow;font-size:35px;text-align:center;margin:4px 14px;"> This site shows pictures of girls with dicks in their mouths. </div>
-    <div style="color:#fefefe;padding:10px;font-size:28px;text-align:center;"> If you are offended by pictures and gifs and links to videos of females sucking on dicks please do not enter this site.</div> 
-    <p>  <input type="checkbox" /> I certify that I am a hetosexual white male over 42 years old <br /> <input type="checkbox" /> I am over 21 and have to jerk off several times a day <br />
-        <input type="checkbox" /> I am a religious conservative dismayed by the downfall of society. I still want to see   
-        <div style="color:#fefefe;padding:10px;font-size:28px;text-align:center;"> This site only shows images of females sucking on dick. </div> 
-    <p> If you are male homosexual cocksucker this site may not be for you.  <br /> If you are a gay cocksucker check here. <input type="checkbox" />  
-        <div style="color:#fefefe;padding:10px;font-size:28px;text-align:center;"> All images of cocksuckers on this site have cock fully in their mouths. No partial licks or tips are shown except in certain categories </div> 
-        <input type="checkbox" /> I certify that I am a female cocksucker. You're especially welcome here <br /> 
-        <input type="checkbox" /> I am a female who refuses to give head and am disgusted by the terrible sluts who do so, but I want to revel in their humiliation.   
-        <div style="color:#fefefe;padding:10px;font-size:28px;text-align:center;"> This site also contains images of different categories of pussy shots, breast fondeling, cum shots, penetration, naughty and kininky behavior, as well as thousands of felmale cocksuckers, mostly on their knees. </div>  
-        <div style="font-size:45px;color:red;text-align:center">EXIT SITE</div>   
+<div id="pornWarning" class="modalMessage" >
+    <div style="margin:2px 100px 20px 100px;color:white">
+        <div style="font-size:45px;color:red;text-align:center">WARNING</div>
+        <div style="color:yellow;font-size:35px;text-align:center;margin:4px 14px;"> This site shows pictures of girls with dicks in their mouths. </div>
+        <div style="color:#fefefe;padding:10px;font-size:28px;text-align:center;">
+            If you are offended by pictures and gifs and links to videos
+            of females sucking on dicks please do not enter this site.
         </div>
+        <p>
+            <input type="checkbox" onchange="letemPorn()" /> I certify that I am a hetosexual white male over 42 years old <br />
+            <input type="checkbox" onchange="letemPorn()" /> I am over 21 and have to jerk off several times a day <br />
+            <input type="checkbox" onchange="letemPorn()" /> I am a religious conservative dismayed by the downfall of society. I still want to see
+            <div style="color:#fefefe;padding:10px;font-size:28px;text-align:center;"> This site only shows images of females sucking on dick. </div>
+        <p>
+            If you are male homosexual cocksucker this site may not be for you.  <br /> If you are a gay cocksucker check here. <input type="checkbox" />
+            <div style="color:#fefefe;padding:10px;font-size:28px;text-align:center;">
+                All images of cocksuckers on this site have cock fully in their mouths.
+                No partial licks or tips are shown except in certain categories
+            </div>
+            <input type="checkbox" onchange="letemPorn()" /> I certify that I am a female cocksucker. You're especially welcome here <br />
+            <input type="checkbox" onchange="letemPorn()" /> I am a female who refuses to give head and am disgusted by the terrible sluts who do so, but I want to revel in their humiliation.
+            <div style="color:#fefefe;padding:10px;font-size:28px;text-align:center;">
+                This site also contains images of different categories of pussy shots, breast fondeling, cum shots, penetration, naughty and kininky behavior,
+                as well as thousands of felmale cocksuckers, mostly on their knees.
+            </div>
+            <div style="font-size:45px;color:red;text-align:center">EXIT SITE</div>
+    </div>
 </div>
 
 <div class="threeColumnArray">
@@ -103,8 +115,8 @@
         <div id="divStatusMessage"></div>
         <div class="flexContainer">
             <div class="floatLeft">
-                <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('centerfolds', $(this).is(':checked'), 1000)" />Include Centerfolds</div>
-                <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('archive', $(this).is(':checked'), 50000)" />Include Archive</div>
+                <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('centerfolds', $(this).is(':checked'), 1000)" /> Include Centerfolds</div>
+                <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('archive', $(this).is(':checked'), 50000)" /> Include Archive</div>
             </div>
             <div class="floatLeft">
                 <div id="galleryMessage" class="indexTitle"></div>
@@ -117,7 +129,6 @@
     <div id="rightColumn"></div>
 </div>
 
-
 <div id="boobIndexdirTreeContainer" class="floatingDirTree">
     <div class="floatingCrudBanner">View A Category <div onclick="$('#boobIndexdirTreeContainer').fadeOut()" class="farSide">x</div> </div>
     @Html.Partial("_DirTree1")
@@ -127,6 +138,10 @@
     $(document).ready(function () {
         launchCarousel('boobs');
     });
+
+    function letemPorn() {
+        window.location.href = '/porn'
+    }
 
     function onDirTreeClick(path, id) {
         if (id.startsWith("t1")) {
@@ -169,7 +184,7 @@
             alert("showMessage: " + e);
         }
     }
-    
+
     function goToPornSite() {
         clearModal();
     }

@@ -19,109 +19,71 @@ using WebApi.DataContext;
 namespace WebApi
 {
     [EnableCors("*", "*", "*")]
-    public class NudeModelInfoController : ApiController
+    public class FolderDetailController : ApiController
     {
         [HttpGet]
-        public NudeModelInfoModel GetModelName(string linkId)
+        public FolderDetailModel GetModelName(string linkId)
         {
-            NudeModelInfoModel nudeModelInfo = null;
+            FolderDetailModel nudeModelInfo = null;
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     nudeModelInfo =
-                        (from ni in db.NudeModelImages
-                         join n in db.NudeModelInfos on ni.ModelId equals n.ModelId
-                         join f in db.CategoryFolders on n.FolderId equals f.Id
-                         where ni.LinkId == linkId
-                         select new NudeModelInfoModel()
+                        (from g in db.GoDaddyLinks
+                         join f in db.CategoryFolders on g.FolderId equals f.Id
+                         where g.Id == linkId
+                         select new FolderDetailModel()
                          {
-                             ModelName = f.FolderName,
-                             FolderId = n.FolderId,
-                             RootFolder = f.RootFolder,
+                             FolderName = f.FolderName,
+                             FolderId = f.Id,
                              Success = "ok"
                          }).FirstOrDefault();
                 }
             }
             catch (Exception ex) {
                 if (nudeModelInfo == null)
-                    nudeModelInfo = new NudeModelInfoModel() ;
+                    nudeModelInfo = new FolderDetailModel() ;
                 nudeModelInfo.Success=Helpers.ErrorDetails(ex); }
             return nudeModelInfo;
         }
 
         [HttpGet]
-        public NudeModelInfoModel Get(string linkId, int folderId)
+        public FolderDetailModel Get(int folderId)
         {
-            var nudemodelInfo = new NudeModelInfoModel();
+            FolderDetailModel model = new FolderDetailModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    NudeModelImage dbNudeModelImage = db.NudeModelImages.Where(i => i.LinkId == linkId).FirstOrDefault();
-                    if (dbNudeModelImage == null)
-                    {
-                        nudemodelInfo.ModelName = "unidentified";
-                        GoDaddyLink dbGoDaddyLink = db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
-                        if (dbGoDaddyLink != null)
-                            nudemodelInfo.Link = dbGoDaddyLink.Link;
+                    FolderDetail folderDetail = db.FolderDetails.Where(xn => xn.FolderId == folderId).FirstOrDefault();
+                    CategoryFolder f = db.CategoryFolders.Where(xf => xf.Id == folderId).FirstOrDefault();
 
-                        List<NudeModelInfoModel> dbInternalLinks =
-                            (from c in db.CategoryImageLinks
-                             join f in db.CategoryFolders on c.ImageCategoryId equals f.Id
-                             where c.ImageLinkId == linkId
-                             select new NudeModelInfoModel() { LinkId = c.ImageLinkId, ModelName = f.FolderName }).ToList();                            
-                            
-                        foreach (NudeModelInfoModel internalLink in dbInternalLinks)
-                        {
-                            //nudemodelInfo.ExternalLinks += "<a class='xxx' href='/Home/imagePage?folder=" + categoryImage.ImageCategoryId + "'>" + parents[i].FolderName + "</a>");
-                            nudemodelInfo.ExternalLinks += "<a class='xxx' href='/Home/imagePage?folder=" + internalLink.LinkId + "'>" + internalLink.ModelName + "</a>";
-                        }
-                        nudemodelInfo.Success = "ok";
-                    }
-                    else
+                    model.FolderId = folderDetail.FolderId;
+                    model.FolderName = f.FolderName;
+                    model.Measurements = folderDetail.Measurements;
+                    model.Nationality = folderDetail.Nationality;
+                    model.ExternalLinks = folderDetail.ExternalLinks;
+                    model.FolderImageLink = folderDetail.FolderImage;
+                    model.Born = folderDetail.Born;
+                    //nudemodelInfo.Link = g.Link;
+                    //nudemodelInfo.LinkId = g.Id;
+                    model.CommentText = folderDetail.CommentText;
+                    model.Success = "ok";
+                    if (model.FolderImageLink == null)
                     {
-                        nudemodelInfo =
-                            (from i in db.NudeModelImages
-                             join n in db.NudeModelInfos on i.ModelId equals n.ModelId
-                             join f in db.CategoryFolders on n.FolderId equals f.Id
-                             join g in db.GoDaddyLinks on i.LinkId equals g.Id
-                             where i.LinkId == linkId
-                             select new NudeModelInfoModel()
-                             {
-                                 ModelName = f.FolderName,
-                                 Measurements = n.Measurements,
-                                 Nationality = n.Nationality,
-                                 ExternalLinks = n.ExternalLinks,
-                                 FolderImage = f.FolderImage,
-                                 ModelId = n.ModelId,
-                                 Born = n.Born,
-                                 Link = g.Link,
-                                 LinkId = g.Id,
-                                 CommentText = n.CommentText,
-                                 FolderId = n.FolderId,
-                                 Success = "ok"
-                             }).FirstOrDefault();
-                        if (nudemodelInfo == null)
-                        {
-                            nudemodelInfo = new NudeModelInfoModel() { Success = "query ERROR" };
-                        }
-                        else
-                        {
-                            if (nudemodelInfo.FolderImage != null)
-                            {
-                                nudemodelInfo.FolderImage = db.GoDaddyLinks.Where(f => f.Id == nudemodelInfo.FolderImage).First().Link;
-                            }
-                        }
+                        folderDetail.FolderImage = db.GoDaddyLinks.Where(g=> g.FolderId == folderId).First().Id;
+                        db.SaveChanges();
                     }
+                    model.Src = db.GoDaddyLinks.Where(g => g.Id == folderDetail.FolderImage).First().Link;
                 }
             }
-            catch (Exception ex) { nudemodelInfo.Success = Helpers.ErrorDetails(ex); }
-            return nudemodelInfo;
+            catch (Exception ex) { model.Success = Helpers.ErrorDetails(ex); }
+            return model;
         }
 
         [HttpPost]
-        public string Insert(NudeModelInfoModel model)
+        public string Insert(FolderDetailModel model)
         {
             string success = "";
             try
@@ -133,19 +95,19 @@ namespace WebApi
                     CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.FolderId).First();
                     CategoryFolder dbParent = db.CategoryFolders.Where(f => f.FolderName == "posers identified").First();
 
-                    CategoryFolder dbExistingCategoryFolder = db.CategoryFolders.Where(f => f.Parent == dbParent.Id && f.FolderName.ToUpper() == model.ModelName.ToUpper()).FirstOrDefault();
+                    CategoryFolder dbExistingCategoryFolder = db.CategoryFolders.Where(f => f.Parent == dbParent.Id && f.FolderName.ToUpper() == model.FolderName.ToUpper()).FirstOrDefault();
                     if (dbExistingCategoryFolder != null)
                     {
                         folderId = dbExistingCategoryFolder.Id;
-                        NudeModelInfo dbExistingNudeModelInfo = db.NudeModelInfos.Where(n => n.FolderId == folderId).FirstOrDefault();
-                        if (dbExistingNudeModelInfo != null)
-                            modelId = dbExistingNudeModelInfo.ModelId;
+                        FolderDetail dbExistingFolderDetail = db.FolderDetails.Where(n => n.FolderId == folderId).FirstOrDefault();
+                        if (dbExistingFolderDetail != null)
+                            modelId = dbExistingFolderDetail.ModelId;
                     }
                     else
                     {
                         CategoryFolder poser = new CategoryFolder()
                         {
-                            FolderName = model.ModelName,
+                            FolderName = model.FolderName,
                             RootFolder = dbParent.RootFolder,
                             Parent = dbParent.Id
                         };
@@ -153,25 +115,25 @@ namespace WebApi
                         db.SaveChanges();
                         folderId = poser.Id;
                     }
-                    string extension = model.Link.Substring(model.Link.LastIndexOf("."));
+                    string extension = model.Src.Substring(model.Src.LastIndexOf("."));
                     string sourceOriginPath = Helpers.GetParentPath(model.FolderId, true);
-                    string ftpSource = "ftp://50.62.160.105/" + dbSourceFolder.RootFolder + ".ogglebooble.com/" + sourceOriginPath + dbSourceFolder.FolderName + "/" + dbSourceFolder.FolderName + "_" + model.LinkId + extension;
-                    string expectedFileName = model.ModelName + "_" + model.LinkId + extension;
-                    string ftpDestinationPath = "ftp://50.62.160.105/archive.ogglebooble.com/posers identified/" + model.ModelName;
+                    string ftpSource = "ftp://50.62.160.105/" + dbSourceFolder.RootFolder + ".ogglebooble.com/" + sourceOriginPath + dbSourceFolder.FolderName + "/" + dbSourceFolder.FolderName + "_" + model.ImageLinkId + extension;
+                    string expectedFileName = model.FolderName + "_" + model.ImageLinkId + extension;
+                    string ftpDestinationPath = "ftp://50.62.160.105/archive.ogglebooble.com/posers identified/" + model.FolderName;
 
                     if (!FtpIO.DirectoryExists(ftpDestinationPath))
                         FtpIO.CreateDirectory(ftpDestinationPath);
 
                     success = FtpIO.MoveFile(ftpSource, ftpDestinationPath + "/" + expectedFileName);
 
-                    GoDaddyLink goDaddyLink = db.GoDaddyLinks.Where(g => g.Id == model.LinkId).First();
-                    goDaddyLink.Link = "http://archive.ogglebooble.com/posers identified/" + model.ModelName + "/" + expectedFileName;
-                    db.CategoryImageLinks.Add(new CategoryImageLink() { ImageCategoryId = folderId, ImageLinkId = model.LinkId });
+                    GoDaddyLink goDaddyLink = db.GoDaddyLinks.Where(g => g.Id == model.ImageLinkId).First();
+                    goDaddyLink.Link = "http://archive.ogglebooble.com/posers identified/" + model.FolderName + "/" + expectedFileName;
+                    db.CategoryImageLinks.Add(new CategoryImageLink() { ImageCategoryId = folderId, ImageLinkId = model.ImageLinkId });
                     db.SaveChanges();
 
                     if (modelId == 0)
                         modelId = Helpers.GetNextModelId();
-                    db.NudeModelInfos.Add(new NudeModelInfo()
+                    db.FolderDetails.Add(new FolderDetail()
                     {
                         ModelId = modelId,
                         CommentText = model.CommentText,
@@ -180,11 +142,6 @@ namespace WebApi
                         Nationality = model.Nationality,
                         Measurements = model.Measurements,
                         Born = model.Born
-                    });
-                    db.NudeModelImages.Add(new NudeModelImage()
-                    {
-                        ModelId = modelId,
-                        LinkId = model.LinkId
                     });
                     db.SaveChanges();
                     success = "ok";
@@ -198,20 +155,20 @@ namespace WebApi
         }
 
         [HttpPut]
-        public string Update(NudeModelInfoModel model)
+        public string Update(FolderDetailModel model)
         {
             string success = "";
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    NudeModelInfo nudeModelInfo = db.NudeModelInfos.Where(m => m.ModelId == model.ModelId).First();
+                    FolderDetail dbFolderDetail = db.FolderDetails.Where(d => d.FolderId == model.FolderId).First();
 
-                    nudeModelInfo.Born = model.Born;
-                    nudeModelInfo.Nationality = model.Nationality;
-                    nudeModelInfo.ExternalLinks = model.ExternalLinks;
-                    nudeModelInfo.CommentText = model.CommentText;
-                    nudeModelInfo.Measurements = model.Measurements;
+                    dbFolderDetail.Born = model.Born;
+                    dbFolderDetail.Nationality = model.Nationality;
+                    dbFolderDetail.ExternalLinks = model.ExternalLinks;
+                    dbFolderDetail.CommentText = model.CommentText;
+                    dbFolderDetail.Measurements = model.Measurements;
                     //nudeModelInfo.FolderId = model.FolderId;
                     db.SaveChanges();
                     success = "ok";
@@ -223,7 +180,6 @@ namespace WebApi
             }
             return success;
         }
-
     }
 
     [EnableCors("*", "*", "*")]
@@ -239,9 +195,9 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     categoryComment.FolderName = db.CategoryFolders.Where(f => f.Id == folderId).First().FolderName;
-                    NudeModelInfo dbNudeModelInfo = db.NudeModelInfos.Where(n => n.FolderId == folderId).FirstOrDefault();
-                    if (dbNudeModelInfo != null)
-                        categoryComment.CommentText = dbNudeModelInfo.CommentText;
+                    FolderDetail dbFolderDetail = db.FolderDetails.Where(n => n.FolderId == folderId).FirstOrDefault();
+                    if (dbFolderDetail != null)
+                        categoryComment.CommentText = dbFolderDetail.CommentText;
 
                     categoryComment.Success = "ok";
                 }
@@ -261,14 +217,14 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    NudeModelInfo dbNudeModelInfo = db.NudeModelInfos.Where(m => m.FolderId == folderId).FirstOrDefault();
-                    if (dbNudeModelInfo == null)
+                    FolderDetail dbFolderDetail = db.FolderDetails.Where(m => m.FolderId == folderId).FirstOrDefault();
+                    if (dbFolderDetail == null)
                     {
-                        db.NudeModelInfos.Add(new NudeModelInfo() { FolderId = folderId, ModelId = 0, CommentText = commentText });
+                        db.FolderDetails.Add(new FolderDetail() { FolderId = folderId, ModelId = 0, CommentText = commentText });
                     }
                     else
                     {
-                        dbNudeModelInfo.CommentText = commentText;
+                        dbFolderDetail.CommentText = commentText;
                     }
                     db.SaveChanges();
                     success = "ok";
@@ -285,6 +241,27 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class CategoryFolderController : ApiController
     {
+        [HttpGet]
+        public CategoryFolderModel GetParent(int folderId)
+        {
+            CategoryFolderModel categoryFolder = new CategoryFolderModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    CategoryFolder x = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                    CategoryFolder p = db.CategoryFolders.Where(f => f.Id == x.Parent).First();
+                    categoryFolder.FolderName = p.FolderName;
+                    categoryFolder.Id = p.Id;
+                }
+            }
+            catch (Exception ex)
+            {
+                categoryFolder.Success = Helpers.ErrorDetails(ex);
+            }
+            return categoryFolder;
+        }
+
         [HttpPut]
         public string UpdateFolderImage(string linkId, int folderId, string level)
         {
@@ -293,14 +270,30 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    CategoryFolder dbCategoryFolder = null;
-                    dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                     if (level == "folder")
-                        dbCategoryFolder.FolderImage = linkId;
+                    {
+                        FolderDetail nudeModelInfo = db.FolderDetails.Where(n => n.FolderId == folderId).FirstOrDefault();
+                        if (nudeModelInfo == null)
+                        {
+                            db.FolderDetails.Add(new FolderDetail() { FolderId = folderId, FolderImage = linkId });
+                        }
+                        else
+                        {
+                            nudeModelInfo.FolderImage = linkId;
+                        }
+                    }
                     else
                     {
-                        CategoryFolder dbCategoryParentFolder = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
-                        dbCategoryParentFolder.FolderImage = linkId;
+                        int parent = db.CategoryFolders.Where(f => f.Id == folderId).First().Parent;
+                        FolderDetail nudeModelInfo = db.FolderDetails.Where(n => n.FolderId == parent).FirstOrDefault();
+                        if (nudeModelInfo == null)
+                        {
+                            db.FolderDetails.Add(new FolderDetail() { FolderId = parent, FolderImage = linkId });
+                        }
+                        else
+                        {
+                            nudeModelInfo.FolderImage = linkId;
+                        }
                     }
                     db.SaveChanges();
                     success = "ok";
@@ -498,7 +491,6 @@ namespace WebApi
                              FolderId = f.Id,
                              ParentId = p.Id,
                              LinkId = l.Id,
-                             //ModelName = db.NudeModelInfos.Where(n => n.FolderId == f.Id).FirstOrDefault() == null ? "unknown" : db.NudeModelInfos.Where(n => n.FolderId == f.Id).First().ModelName,
                              FolderName = f.FolderName,
                              FolderPath = g.FolderName + "/" + p.FolderName,
                              Link = l.Link.StartsWith("http") ? l.Link : l.ExternalLink

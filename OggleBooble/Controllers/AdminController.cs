@@ -14,6 +14,10 @@ namespace OggleBooble.Controllers
 
         private string apiService = ConfigurationManager.AppSettings["apiService"];
 
+        public ActionResult MetaTagEdit()
+        {
+            return View();
+        }
         public ActionResult Index()
         {
             return View("Admin");

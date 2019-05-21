@@ -7,7 +7,18 @@
 <script src="/signalr/hubs"></script>
 
 <style>
+    .linkContainer {
+        display: inline;
+        margin-bottom: 4px;
+        font-size: 12px;
+    }
+    .linkContainer div {
+        display: inline;
+        color: #585a38;
+        margin-right: 22px;
+    }
     .dashBoardContainer {
+        margin-top: 11px;
         display: flex;
         border: solid 2px #111;
     }
@@ -85,17 +96,6 @@
         font-size: 22px;
     }
 
-    .linkContainer {
-        margin-bottom: 4px;
-        font-size: 12px;
-    }
-
-        .linkContainer div {
-            display: inline;
-            color: #585a38;
-            margin-right: 22px;
-        }
-
     .clickable {
         white-space: nowrap;
     }
@@ -144,15 +144,20 @@
         overflow-y: auto;
         background-color: #faf8e3;
     }
+    .dashboardProgessBar {
+        color: aqua;
+        background-color: bisque;
+    }
+
+
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
-        <div id="dashboardTop">
-            <div class="myH2">Dashboard</div>
+
+        @*<div id="dashboardTop">
             <dir class="linkContainer">
-                @*
                     <div class="clickable" onclick="window.location.href='/stats/AdminDashboard'">Rebuild Tables</div>
                     <div class="clickable" onclick="$('#addNewLink').show()">Add Link</div>
                     <div class="clickable" onclick="buildFolderLinkTable()">build FolderLink Table</div>
@@ -161,7 +166,7 @@
                     <div class="clickable" onclick="rebuildLinkTables()">ReBuild Link Tables</div>
                     <div class="clickable" onclick="$('#txtNewLink').val('f:/Danni/'); ReBuildLinks()">ReBuild Links</div>
                     <div class="clickable" onclick="emergencyRepair(116)">Emergency Repair</div>
-                *@
+
                 <div class="clickable" onclick="rebuildCatTree()">ReBuild Dir Tree</div>
                 <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
                 <div class="clickable" onclick="$('#newFolderCrud').fadeIn()">Create New Folder</div>
@@ -169,7 +174,7 @@
                 <div class="clickable" onclick="$('#renameFolderCrud').fadeIn()">ReName Folder</div>
                 <div class="clickable" onclick="$('#repairLinksCrud').fadeIn()">Repair Links</div>
             </dir>
-        </div>
+        </div>*@
 
         <img id="getDirTreeLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
         <div id="divDashboardContainer" class="dashBoardContainer">
@@ -182,6 +187,7 @@
                     <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
                 </div>
                 <img id="imgLinkPreview" class="linkImage" />
+                <div id="progressBar" class="dashboardProgessBar"></div>
                 <div id="dataifyInfo" class="infoLine"></div>
             </div>
 
@@ -277,6 +283,15 @@
     var dashboardContextMenuFolderId = "";
 
     $(document).ready(function () {
+        $('#headerMessage').html(`Dashboard <dir class='linkContainer'>
+        <div class="clickable" onclick="rebuildCatTree()">ReBuild Dir Tree</div>
+        <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
+        <div class="clickable" onclick="$('#newFolderCrud').fadeIn()">Create New Folder</div>
+        <div class="clickable" onclick="$('#moveFolderCrud').fadeIn()">Move Folder</div>
+        <div class="clickable" onclick="$('#renameFolderCrud').fadeIn()">ReName Folder</div>
+        <div class="clickable" onclick="collapseChildFolder()">Collapse Folder</div>
+        <div class="clickable" onclick="$('#repairLinksCrud').fadeIn()">Repair Links</div></dir>`);
+
         window.addEventListener("resize", resizeThisPage);
         resizeThisPage();
     });
@@ -294,10 +309,15 @@
 
     $(function () {
         var connection = $.hubConnection(service);
+
         var progressHubProxy = connection.createHubProxy('ProgressHub');
 
         progressHubProxy.on('PostToClient', function (data) {
             $('#dataifyInfo').html(data);
+        });
+
+        progressHubProxy.on('ShowProgressBar', function (goal, progress) {
+            $('#progressBar').progressbar({ value: progress, max: goal });
         });
 
         connection.start()
@@ -359,19 +379,21 @@
             newLink.Link = $('#txtNewLink').val();
             newLink.FolderId = dirTree1SelectedId;
             newLink.Path = $('.txtLinkPath').val();
+            $('#getDirTreeLoadingGif').fadeIn();
             $.ajax({
                 type: "POST",
                 url: service + "/api/FtpDashBoard",
                 data: newLink,
                 success: function (success) {
+                    $('#getDirTreeLoadingGif').hide();
                     if (success == "ok")
                         displayStatusMessage("ok", "image link added");
-
                     else {
                         alert("addImageLink: " + success);
                     }
                 },
                 error: function (xhr) {
+                    $('#getDirTreeLoadingGif').hide();
                     alert("addImageLink xhr error: " + getXHRErrorDetails(xhr));
                 }
             });
@@ -385,7 +407,7 @@
         newFolder.Parent = dirTree1SelectedId;
         $.ajax({
             type: "PUT",
-            url: service + "/api/DashBoard/CreateFolder",
+            url: service + "/api/FtpDashBoard/CreateFolder",
             data: newFolder,
             success: function (success) {
                 $('#getDirTreeLoadingGif').hide();
@@ -401,6 +423,31 @@
                 alert("CreateVirtualFolder xhr error: " + getXHRErrorDetails(xhr));
             }
         });
+    }
+
+    function collapseChildFolder() {
+        if (confirm("collapse " + $('.txtLinkPath').val())) {
+            $('#getDirTreeLoadingGif').fadeIn();
+            $('#dataifyInfo').show().html("collapse Child Folder");
+            $.ajax({
+                type: "GET",
+                url: service + "/api/FtpImagePage/CollapseFolder?folderId=" + dirTree1SelectedId,
+                success: function (success) {
+                    $('#getDirTreeLoadingGif').hide();
+                    if (success == "ok") {
+                        displayStatusMessage("ok", "collapse succeded");
+                        rebuildCatTree();
+                        $('#progressBar').progressbar("destroy");
+                    }
+                    else
+                        alert("collapseChildFolder: " + success);
+                },
+                error: function (xhr) {
+                    $('#getDirTreeLoadingGif').hide();
+                    alert("collapseChildFolder xhr error: " + getXHRErrorDetails(xhr));
+                }
+            })
+        }
     }
 
     function ReBuildLinks() {
@@ -553,9 +600,7 @@
         window.event.returnValue = false;
         $('#dashboardContextMenu').css("top", event.clientY + 5);
         $('#dashboardContextMenu').css("left", event.clientX);
-        $('#dashboardContextMenu').fadeIn();
-        //<div onclick="showModelInfoDialog(src, linkId, folderId)">Show Dialog</div>
-        //var src = "/home/ImagePage?folder=" + linkId;
+        $('#dashboardContextMenu').fadeIn();    
     }
 
     function openFolder() {
@@ -567,7 +612,7 @@
     }
 
     function showInfoDialog() {
-        showModelInfoDialog("", dashboardContextMenuLinkId, dashboardContextMenuFolderId);
+        showModelInfoDialog(dashboardContextMenuFolderId);
     }
 
     function onDirTreeClick(path, id) {
@@ -699,10 +744,5 @@
             }
         });
     }
-
-
-
-
-
 
 </script>

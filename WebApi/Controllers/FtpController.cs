@@ -17,6 +17,63 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class FtpImagePageController : ApiController
     {
+        [HttpGet]
+        public string CollapseFolder(int folderId)
+        {
+            string success = "";
+            CategoryFolderModel categoryFolder = new CategoryFolderModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    int parent = db.CategoryFolders.Where(f => f.Id == folderId).First().Parent;
+                    List<MoveCopyImageModel> links = (from l in db.CategoryImageLinks
+                             join g in db.GoDaddyLinks on l.ImageLinkId equals g.Id
+                             where l.ImageCategoryId == folderId
+                             select new MoveCopyImageModel() {
+                                 DestinationFolderId = parent,
+                                 Mode = "Move",
+                                 SourceFolderId = folderId,
+                                 Link = g.Link
+                             }).ToList();
+                    int i = 0;
+                    int linkCount = links.Count;
+                    foreach (MoveCopyImageModel model in links)
+                    {
+                        success = MoveImage(model);
+                        if (success != "ok")
+                            System.Diagnostics.Debug.WriteLine("move file on local drive : " + success);
+                        //    return success;
+                        SignalRHost.ProgressHub.ShowProgressBar(linkCount, ++i);
+                        SignalRHost.ProgressHub.PostToClient("Moving: " + i + " of " + linkCount);
+                    }
+
+                    CategoryFolder emptyFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+
+                    string originPath = Helpers.GetParentPath(emptyFolder.Id, true);
+                    string ftpPath = "ftp://50.62.160.105/" + emptyFolder.RootFolder + ".ogglebooble.com/" + originPath + emptyFolder.FolderName;
+                    success = FtpIO.RemoveDirectory(ftpPath);
+                    if(success!="ok")
+                        System.Diagnostics.Debug.WriteLine("failed to remove FTP folder : " + success);
+
+                    FolderDetail dbNnudeModelInfo = db.FolderDetails.Where(n => n.FolderId == folderId).FirstOrDefault();
+                    if (dbNnudeModelInfo != null)
+                    {
+                        db.FolderDetails.Remove(dbNnudeModelInfo);
+                        db.SaveChanges();
+                    }
+                    db.CategoryFolders.Remove(emptyFolder);
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
         [HttpPut]
         public string MoveImage(MoveCopyImageModel model)
         {
@@ -44,12 +101,6 @@ namespace WebApi
                     string sourceFtpPath = "ftp://50.62.160.105/" + dbSourceFolder.RootFolder + ".ogglebooble.com/"
                         + Helpers.GetParentPath(model.SourceFolderId, true) + dbSourceFolder.FolderName;
 
-                    // remove https
-                    var x = model.Link.Substring(model.Link.IndexOf(".com") + 4);
-                    var y = x.Substring(0, x.LastIndexOf("/"));
-
-
-
                     if (!FtpIO.DirectoryExists(destinationFtpPath))
                         FtpIO.CreateDirectory(destinationFtpPath);
 
@@ -61,21 +112,25 @@ namespace WebApi
                         try
                         {
                             string localServerPath = "F:/Danni/";
-                            string localSourcePath = localServerPath + Helpers.GetParentPath(model.SourceFolderId, false) + "/" + dbSourceFolder.FolderName;
+                            string localSourcePath = localServerPath + Helpers.GetParentPath(model.SourceFolderId, false) + dbSourceFolder.FolderName;
                             DirectoryInfo dirInfo = new DirectoryInfo(localSourcePath);
-                            FileInfo fileInfo = dirInfo.GetFiles(dbSourceFolder.FolderName + "_" + linkId + extension).FirstOrDefault();
-                            if (fileInfo != null)
+                            if (dirInfo.Exists)
                             {
-                                string localDestinationPath = localServerPath + Helpers.GetParentPath(model.DestinationFolderId, false) + "/" + dbDestinationFolder.FolderName;
-                                if (!System.IO.Directory.Exists(localDestinationPath))
-                                    System.IO.Directory.CreateDirectory(localDestinationPath);
-                                fileInfo.MoveTo(localDestinationPath + "/" + newFileName);
+                                FileInfo fileInfo = dirInfo.GetFiles(dbSourceFolder.FolderName + "_" + linkId + extension).FirstOrDefault();
+                                if (fileInfo != null)
+                                {
+                                    string localDestinationPath = localServerPath + Helpers.GetParentPath(model.DestinationFolderId, false) + "/" + dbDestinationFolder.FolderName;
+                                    if (!System.IO.Directory.Exists(localDestinationPath))
+                                        System.IO.Directory.CreateDirectory(localDestinationPath);
+                                    fileInfo.MoveTo(localDestinationPath + "/" + newFileName);
+                                }
                             }
                         }
                         catch (Exception ex)
                         {
                             System.Diagnostics.Debug.WriteLine("move file on local drive : " + Helpers.ErrorDetails(ex));
                         }
+                    
 #endif
                         //2. update GoDaddyLink 
                         string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
@@ -83,6 +138,7 @@ namespace WebApi
                             dbDestinationFolder.FolderName + "/" + dbDestinationFolder.FolderName + "_" + linkId + extension;
                         GoDaddyLink goDaddyrow = db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
                         goDaddyrow.Link = goDaddyLink;
+                        goDaddyrow.FolderId = dbDestinationFolder.Id;
                         db.SaveChanges();
 
                         //3 create new link for new location if necessary
@@ -91,29 +147,6 @@ namespace WebApi
                             CategoryImageLink newCatImageLink = new CategoryImageLink() { ImageCategoryId = model.DestinationFolderId, ImageLinkId = linkId };
                             db.CategoryImageLinks.Add(newCatImageLink);
                             db.SaveChanges();
-                        }
-
-                        // 4 set nudemodel ifo links if necessary
-                        if (dbDestinationFolder.RootFolder == "archive")
-                        {
-                            NudeModelInfo dbNudeModelInfo = db.NudeModelInfos.Where(n => n.FolderId == dbDestinationFolder.Id).FirstOrDefault();
-                            if (dbNudeModelInfo == null)
-                            {   // try for parent
-                                dbNudeModelInfo = db.NudeModelInfos.Where(n => n.FolderId == dbDestinationFolder.Parent).FirstOrDefault();
-                                if (dbNudeModelInfo != null)
-                                {
-
-                                    dbNudeModelInfo = new NudeModelInfo() { FolderId = dbDestinationFolder.Id, ModelId = dbNudeModelInfo.ModelId };
-                                    db.NudeModelInfos.Add(dbNudeModelInfo);
-                                    db.SaveChanges();
-                                }
-                            }
-                            NudeModelImage existingNudeModelImage = db.NudeModelImages.Where(n => n.LinkId == linkId && n.ModelId == dbNudeModelInfo.ModelId).FirstOrDefault();
-                            if (existingNudeModelImage == null)
-                            {
-                                db.NudeModelImages.Add(new NudeModelImage() { LinkId = linkId, ModelId = dbNudeModelInfo.ModelId });
-                                db.SaveChanges();
-                            }
                         }
                     }
 
@@ -590,7 +623,7 @@ namespace WebApi
                             }
                             catch (Exception ex)
                             {
-                                return "wc. download didnt work " + ex.Message;
+                                success = "wc. download didnt work " + ex.Message;
                             }
                         }
                         FtpWebRequest webRequest = null;
@@ -640,29 +673,14 @@ namespace WebApi
                         }
 
                         var goDaddyLink = "http://" + dbCategory.RootFolder + ".ogglebooble.com/";
-                        var goDaddyLinkTest = goDaddyLink + trimPath + "/" + newFileName;
+                        //var goDaddyLinkTest = goDaddyLink + trimPath + "/" + newFileName;
                         db.GoDaddyLinks.Add(new GoDaddyLink()
                         {
                             Id = imageLinkId,
+                            FolderId = newLink.FolderId,
                             ExternalLink = newLink.Link,
                             Link = goDaddyLink + trimPath + "/" + newFileName
                         });
-                        // add nudeModelImage
-                        if (dbCategory.RootFolder == "archive" || Helpers.IsSlut(newLink.FolderId))
-                        {
-                            int modelId = 0;
-                            NudeModelInfo dbNudeModelInfo = db.NudeModelInfos.Where(n => n.FolderId == newLink.FolderId).FirstOrDefault();
-                            if (dbNudeModelInfo == null)
-                            {
-                                modelId = Helpers.GetNextModelId();
-                                db.NudeModelInfos.Add(new NudeModelInfo { ModelId = modelId, FolderId = newLink.FolderId });
-                            }
-                            else
-                            {
-                                modelId = dbNudeModelInfo.ModelId;
-                            }
-                            db.NudeModelImages.Add(new NudeModelImage() { LinkId = newLink.Link, ModelId = modelId });
-                        }
 
                         db.SaveChanges();
                     }
@@ -838,29 +856,6 @@ namespace WebApi
             success = FtpIO.CreateDirectory(destinationFtpPath);
             if (success == "ok")
             {
-                bool addNudeMoleInfo = false;
-                int modelId = 0;
-                if (dbDestinationParentFolder.RootFolder == "archive" || Helpers.IsSlut(dbDestinationParentFolder.Id))
-                {
-                    if (dbSourceFolder.RootFolder == "archive")
-                    {
-                        // folder Id remains the same. Only its parent id is changed
-                    }
-                    else
-                    {
-                        NudeModelInfo nudeModelInfo = db.NudeModelInfos.Where(n => n.FolderId == dbSourceFolder.Id).FirstOrDefault();
-                        if (nudeModelInfo == null)
-                        {
-                            modelId = Helpers.GetNextModelId();
-                            db.NudeModelInfos.Add(new NudeModelInfo()
-                            {
-                                ModelId = modelId,
-                                FolderId = dbSourceFolder.Id
-                            });
-                            addNudeMoleInfo = true;
-                        }
-                    }
-                }
                 string linkId = "";
                 string[] folderContents = FtpIO.GetFiles(sourceFtpPath);
                 int folderRows = 0;
@@ -880,11 +875,11 @@ namespace WebApi
                             dbSourceFolder.FolderName + "_" + linkId + currentFile.Substring(currentFile.Length - 4);
                         GoDaddyLink goDaddyrow = db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
                         goDaddyrow.Link = goDaddyLink;
-
-                        if (addNudeMoleInfo)
-                        {
-                            db.NudeModelImages.Add(new NudeModelImage() { LinkId = linkId, ModelId = modelId });
-                        }
+                        //goDaddyrow.FolderId=
+                        //if (addNudeMoleInfo)
+                        //{
+                        //    db.NudeModelImages.Add(new NudeModelImage() { LinkId = linkId, ModelId = modelId });
+                        //}
                         db.SaveChanges();
                     }
                     else return success;
@@ -943,12 +938,12 @@ namespace WebApi
                     db.SaveChanges();
                     int newFolderId = newFolder.Id;
 
-                    string destinationFtpPath = "ftp://50.62.160.105/" + rootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(newFolderId, true);
+                    string destinationFtpPath = "ftp://50.62.160.105/" + rootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(newFolderId, true) + model.FolderName;
                     success = FtpIO.CreateDirectory(destinationFtpPath);
 
                     if (rootFolder == "archive" || Helpers.IsSlut(newFolder.Id))
                     {
-                        db.NudeModelInfos.Add(new NudeModelInfo() { ModelId = Helpers.GetNextModelId(), FolderId = newFolder.Id });
+                        db.FolderDetails.Add(new FolderDetail() { ModelId = Helpers.GetNextModelId(), FolderId = newFolder.Id });
                         db.SaveChanges();
                     }
                 }

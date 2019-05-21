@@ -21,41 +21,12 @@ namespace WebApi.DataContext
         public virtual DbSet<VwLink> VwLinks { get; set; }
         public virtual DbSet<BlogComment> BlogComments { get; set; }
         public virtual DbSet<MetaTag> MetaTags { get; set; }
-        public virtual DbSet<NudeModelInfo> NudeModelInfos { get; set; }
-        public virtual DbSet<NudeModelImage> NudeModelImages { get; set; }
+        public virtual DbSet<FolderDetail> FolderDetails { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
     }
-
-    [Table("OggleBooble.NudeModelImage")]
-    public partial class NudeModelImage
-    {
-        [Key]
-        [Column(Order = 0)]
-        public int ModelId { get; set; }
-        [Key]
-        [Column(Order = 1)]
-        public string LinkId { get; set; }
-    }
-
-    [Table("OggleBooble.NudeModelInfo")]
-    public partial class NudeModelInfo
-    {
-        [Key]
-        [Column(Order = 0)]
-        public int ModelId { get; set; }
-        [Key]
-        [Column(Order = 1)]
-        public int FolderId { get; set; }
-        public string Nationality { get; set; }
-        public string Measurements { get; set; }
-        public string ExternalLinks { get; set; }
-        public string CommentText { get; set; }
-        public string Born { get; set; }
-    }
-
 
     [Table("OggleBooble.CategoryFolder")]
     public partial class CategoryFolder
@@ -65,8 +36,8 @@ namespace WebApi.DataContext
         public int Parent { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
-        public string FolderImage { get; set; }
     }
+
     [Table("OggleBooble.GoDaddyLink")]
     public partial class GoDaddyLink
     {
@@ -74,6 +45,7 @@ namespace WebApi.DataContext
         public string Id { get; set; }
         public string Link { get; set; }
         public string ExternalLink { get; set; }
+        public int FolderId { get; set; }
 
     }
     [Table("OggleBooble.CategoryImageLink")]
@@ -86,6 +58,24 @@ namespace WebApi.DataContext
         [Column(Order = 1)]
         public string ImageLinkId { get; set; }
     }
+
+    [Table("OggleBooble.FolderDetail")]
+    public partial class FolderDetail
+    {
+        [Key]
+        [Column(Order = 0)]
+        public int ModelId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public int FolderId { get; set; }
+        public string Nationality { get; set; }
+        public string Measurements { get; set; }
+        public string ExternalLinks { get; set; }
+        public string CommentText { get; set; }
+        public string Born { get; set; }
+        public string FolderImage { get; set; }
+    }
+
     [Table("OggleBooble.vwLinks")]
     public partial class VwLink
     {

@@ -18,12 +18,11 @@
 
 <div id="carouselContextMenu" class="ogContextMenu" onmouseleave="considerHidingContextMenu()">
     <div id="ctxModelName">model name</div>
-    <div id="ctxSeeMore">See More</div>
-    <div>Explode</div>
-    <div>Comment</div>
+    <div id="ctxSeeMore" onclick="window.open('/home/ImagePage?folder=' + nudeModelFolderId, '_blank')" >See More</div>
+    <div onclick="explodeSimple()" >Explode</div>
+    <div onclick="writeFantancy()">Comment</div>
     <div>Tags</div>
-    <div id="ctxMove">Archive</div>
-    <div>About</div>
+    <div id="ctxMove" onclick="archiveImage()" >Archive</div>
 </div>
 
 <div>@Html.Partial("_ModelInfoDialog")</div>
@@ -89,40 +88,19 @@
         $('#carouselContextMenu').fadeIn();
     });
 
-    $('#carouselContextMenu div').click(function () {
-        var action = $(this).html();
-        switch (action) {
-            case "See More":
-                window.open("/home/ImagePage?folder=" + nudeModelFolderId, "_blank");
-                //window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
-                break;
-            //case "About":
-            //    showModelInfoDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
-            //    break;
-            case "Explode":
-                window.open(carouselItemArray[imageIndex].Link, "_blank");
-                break;
-            case "Tags":
-                alert("TODO: show add tags dialog")
-                // show add tags dialog
-                break;
-            case "Comment":
-                pause();
-                showImageCommentDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].FolderName);
-                break;
-            case "Archive":
-                pause();
-                $('#carouselContextMenu').fadeOut();
-                //showImageCommentDialog(src, linkId, folderId)
-                showMoveCopyDialog("Move", carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].Link);
-                break;
-            default:
-                //showModelInfoDialog(carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].Link);
-                showModelInfoDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId);
-                //alert("case: " + action);
-        }
-        $('#carouselContextMenu').hide();
-    });
+    function explodeSimple() {
+        window.open(carouselItemArray[imageIndex].Link, "_blank");
+    }
+    function writeFantancy() {
+        pause();
+        $('#carouselContextMenu').fadeOut();
+        showImageCommentDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].FolderName);
+    }
+    function archiveImage() {
+        pause();
+        $('#carouselContextMenu').fadeOut();
+        showMoveCopyDialog("Move", carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].Link);
+    }
     
     function considerHidingContextMenu() {
         $('#carouselContextMenu').fadeOut();
@@ -225,7 +203,7 @@
             $('#laCarousel').show();
             $.ajax({
                 type: "GET",
-                url: service + "/api/Carousel/GetLinks?root=" + rootFolder + "&take="+take,
+                url: service + "/api/Carousel/GetLinks?root=" + rootFolder + "&take=" + take,
                 success: function (carouselInfo) {
                     if (carouselInfo.Success == "ok") {
                         $.each(carouselInfo.Links, function (idx, obj) {

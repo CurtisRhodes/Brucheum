@@ -1,4 +1,4 @@
-﻿var nudeModelFolderId;
+﻿var folderDetailsid;
 
 $(window).resize(function () {
 
@@ -114,7 +114,48 @@ function processImages(imageModel, start) {
         //alert("id: " + $(this).attr("id"));
         event.preventDefault();
         window.event.returnValue = false;
-        showContextMenu($(this).attr("id"));
+        showContextMenu();
+        var imageLinkId = $(this).attr("id")
+        var thisImage = $('#' + imageLinkId + '');
+        if (viewerShowing) {
+            $('#thumbImageContextMenu').css("top", event.clientY + 5);
+            $('#thumbImageContextMenu').css("left", event.clientX);
+        }
+        else {
+            var picpos = thisImage.offset();
+            var picLeft = picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50;
+            $('#thumbImageContextMenu').css("top", picpos.top + 5);
+            $('#thumbImageContextMenu').css("left", picLeft);
+        }
+        $.ajax({
+            type: "GET",
+            url: service + "api/FolderDetail/GetModelName?linkId=" + imageLinkId,
+            success: function (folderDetails) {
+                if (folderDetails.Success === "ok") {
+                    if (folderDetails.FolderId == folderId) {
+                        $('#ctxModelName').html("unknown model");
+                        $('#ctxSeeMore').hide();
+                    }
+                    else {
+                        //alert("folderDetails.FolderId: " + folderDetails.FolderId + "  folderId: " + folderId);
+                        folderDetailsid = folderDetails.FolderId;
+                        $('#ctxModelName').html(folderDetails.FolderName);
+                        if (rootFolder === "archive")
+                            $('#ctxSeeMore').hide();
+                        else
+                            $('#ctxSeeMore').show();
+                    }
+                }
+                else
+                    alert("GetModelName: " + folderDetails.Success);
+            },
+            error: function (xhr) {
+                alert("GetModelName xhr error: " + xhr.statusText);
+            }
+        });
+
+        $('#thumbImageContextMenu').css('z-index', "200");
+        $('#thumbImageContextMenu').fadeIn();
 
     });
 
@@ -128,59 +169,17 @@ function processImages(imageModel, start) {
     }
 }
 
-function showContextMenu(imageId) {
-    currentContextImageId = imageId;
-    var thisImage = $('#' + imageId + '');
-    if (viewerShowing) {
-        $('#thumbImageContextMenu').css("top", event.clientY + 5);
-        $('#thumbImageContextMenu').css("left", event.clientX);
-    }
-    else {
-        var picpos = thisImage.offset();
-        var picLeft = picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50;
-        $('#thumbImageContextMenu').css("top", picpos.top + 5);
-        $('#thumbImageContextMenu').css("left", picLeft);
-    }
-    $.ajax({
-        type: "GET",
-        url: service + "api/NudeModelInfo/GetModelName?linkId=" + imageId,
-        success: function (nudeModelInfo) {
-            if (nudeModelInfo === null) {
-                $('#ctxModelName').html("unknown model");
-                $('#ctxSeeMore').hide();
-            }
-            else {
-                if (nudeModelInfo.Success === "ok") {
-                    nudeModelFolderId = nudeModelInfo.FolderId;
-                    $('#ctxModelName').html(nudeModelInfo.ModelName);                    
-                    if (rootFolder === "archive")
-                        $('#ctxSeeMore').hide();
-                    else
-                        $('#ctxSeeMore').show();
-                }
-                else
-                    alert("GetModelName: " + nudeModelInfo.Success);
-            }
-        },
-        error: function (xhr) {
-            alert("GetNudeModelName xhr error: " + xhr.statusText);
-        }
-    });
-
-    $('#thumbImageContextMenu').css('z-index', "200");
-    $('#thumbImageContextMenu').fadeIn();
-}
 
 function contextMenuAction(action) {
     switch (action) {
         case "show":
             if (viewerShowing)
-                showModelInfoDialog(imageArray[imageArrayIndex].Link, imageArray[imageArrayIndex].LinkId, folderId);
+                showModelInfoDialog(imageArray[imageArrayIndex].LinkId, folderId);
             else
-                showModelInfoDialog($('#' + currentContextImageId + '').attr("src"), currentContextImageId, folderId);
+                showModelInfoDialog(folderId);
             break;
         case "jump":
-            window.open("/home/ImagePage?folder=" + nudeModelFolderId, "_blank");
+            window.open("/home/ImagePage?folder=" + folderDetailsid, "_blank");
             break;
         case "comment":
             if (viewerShowing)

@@ -116,32 +116,6 @@ namespace WebApi
                 return parentPath;
         }
 
-        public static int GetModelId(int folderId)
-        {
-            int modelId = 0;
-            using (OggleBoobleContext db = new OggleBoobleContext())
-            {
-                NudeModelInfo info = db.NudeModelInfos.Where(n => n.FolderId == folderId).FirstOrDefault();
-                if (info == null)
-                {
-                    int parent = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault().Parent;
-                    info = db.NudeModelInfos.Where(n => n.FolderId == parent).FirstOrDefault();
-                    if (info == null)
-                    {
-                        parent = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault().Parent;
-                        info = db.NudeModelInfos.Where(n => n.FolderId == parent).FirstOrDefault();
-                        if (info != null)
-                            modelId = info.ModelId;
-                    }
-                    else
-                        modelId = info.ModelId;
-                }
-                else
-                    modelId = info.ModelId;
-            }
-            return modelId;
-        }
-
         public static bool IsSlut(int folderId)
         {
             bool isaSlut = false;

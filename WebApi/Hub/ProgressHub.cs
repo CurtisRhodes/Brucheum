@@ -25,5 +25,18 @@ namespace SignalRHost
                 Console.WriteLine(ex.Message);
             }
         }
+        public static void ShowProgressBar(int goal, int progress)
+        {
+            try
+            {
+                var chat = GlobalHost.ConnectionManager.GetHubContext("ProgressHub");
+                if (chat != null)
+                    chat.Clients.All.ShowProgressBar(goal, progress);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
     }
 }

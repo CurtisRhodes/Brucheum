@@ -48,7 +48,6 @@
     /*
     */
 }
-
 .headerTitle {
     display: inline-block;
     color: #490157;
@@ -68,11 +67,12 @@
     font-size: 28px;
 }
 .headerMessageArea {
+    display: inline-block;
     width: 100%;
-    text-align: center;
     color: #490157;
     font-family: Verdana;
-    font-size: 28px;
+    font-size: 22px;
+    margin-left: 101px;
 }
 
 .menuTabContainer {

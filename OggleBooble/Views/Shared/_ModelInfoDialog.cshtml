@@ -89,7 +89,7 @@
     <div id="modelInfoEditArea">
         <div class="flexContainer">
             <div class="floatLeft">
-                <label>name</label><input id="txtModelName" class="roundedInput inline" /><br />
+                <label>name</label><input id="txtFolderName" class="roundedInput modelDialogInput inline" /><br />
                 <label>nationality</label><input id="txtNationality" class="roundedInput modelDialogInput inline" /><br />
                 <label>born</label><input id="txtBorn" class="roundedInput modelDialogInput inline" />
                 <label>measurements</label><input id="txtMeasurements" class="roundedInput modelDialogInput inline" /><br />
@@ -114,17 +114,14 @@
 </div>
 
 <script>
-    var nudeModelInfoModel = {};
+    var FolderDetailModel = {};
 
-    function showModelInfoDialog(src, linkId, folderId) {
-        nudeModelInfoModel.LinkId = linkId;
-        nudeModelInfoModel.FolderId = folderId;
-
-        $('#footerMessage').html("linkId: " + linkId + " url: " + nudeModelInfoModel.Link);
+    function showModelInfoDialog(folderId) {        
+        FolderDetailModel.FolderId = folderId;        
         clearGets();
         $('#modelInfoDialog').dialog("open");
         //$('#modelInfoDialog').fadeIn();
-        getNudeModelInfo(linkId, folderId)
+        getFolderDetails(folderId)
     }
 
     $(function () {
@@ -138,45 +135,45 @@
         });
     });
 
-    function getNudeModelInfo(linkId, folderId) {
+    function getFolderDetails(folderId) {
         $.ajax({
             type: "GET",
-            url: service + "/api/NudeModelInfo/Get?linkId=" + linkId + "&folderId=" + folderId,
-            success: function (nudeModel) {
-                if (nudeModel.Success == "ok") {
-                    $('#externalLinks').html(nudeModel.ExternalLinks);
-                    nudeModelInfoModel.Link = nudeModel.Link;
+            url: service + "/api/FolderDetail/Get?folderId=" + folderId,
+            success: function (folderDetails) {
+                if (folderDetails.Success == "ok") {
+                    $('#externalLinks').html(folderDetails.ExternalLinks);
+                    FolderDetailModel.Src = folderDetails.Src;
 
-                    if (nudeModel.ModelName == "unidentified") {
-                        $('#modelDialogThumbNailImage').attr("src", nudeModel.Link);                    
+                    if (folderDetails.FolderName == "unidentified") {
+                        $('#modelDialogThumbNailImage').attr("src", folderDetails.Src);                    
                         $('#modelInfoDialog').dialog('option', 'title', "unknown model");
                         $('#unknownModelLinks').html(linkId.substring(linkId.lastIndexOf('/') + 1) + "<br/>");
-                        $('#unknownModelLinks').append(nudeModel.ExternalLinks)
+                        $('#unknownModelLinks').append(folderDetails.ExternalLinks)
                         $('#modelInfoEditArea').hide();
                         $('#modelInfoViewOnlyArea').show();
                         $('#modelInfoEdit').html("Edit");
                     }
                     else {
 
-                        if (nudeModel.FolderImage == null) 
-                            $('#modelDialogThumbNailImage').attr("src", nudeModel.Link);
+                        if (folderDetails.FolderImage == null) 
+                            $('#modelDialogThumbNailImage').attr("src", folderDetails.Src);
                         else 
-                            $('#modelDialogThumbNailImage').attr("src", nudeModel.FolderImage);
+                            $('#modelDialogThumbNailImage').attr("src", folderDetails.FolderImage);
 
-                        nudeModelInfoModel.ModelId = nudeModel.ModelId;
-                        $('#modelInfoDialog').dialog('option', 'title', nudeModel.ModelName);
+                        FolderDetailModel.ModelId = folderDetails.ModelId;
+                        $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
                         $('#modelInfoEditArea').show();
                         $('#modelInfoViewOnlyArea').hide();
-                        $('#txtModelName').val(nudeModel.ModelName);
-                        $('#txtBorn').val(nudeModel.Born);
-                        $('#txaModelComment').val(nudeModel.CommentText);
-                        $('#txtNationality').val(nudeModel.Nationality);
-                        $('#txtMeasurements').val(nudeModel.Measurements);
+                        $('#txtFolderName').val(folderDetails.FolderName);
+                        $('#txtBorn').val(folderDetails.Born);
+                        $('#txaModelComment').val(folderDetails.CommentText);
+                        $('#txtNationality').val(folderDetails.Nationality);
+                        $('#txtMeasurements').val(folderDetails.Measurements);
                         $('#modelInfoEdit').html("Save");
                     }
                 }
                 else
-                    alert("Get nude model Info : " + nudeModel.Success);
+                    alert("Get FolderDetail model Info : " + folderDetails.Success);
             },
             error: function (jqXHR, exception) {
                 alert("Get Model Info jqXHR : " + getXHRErrorDetails(jqXHR, exception));
@@ -186,6 +183,8 @@
 
     function addHref() {
         $('#externalLinks').append("<a href=" + $('#txtLinkHref').val() + ">" + $('#txtLinkLabel').val() + "</a><br/>");
+        $('#txtLinkHref').val('');
+        $('#txtLinkLabel').val('')
     }
 
     function toggleMode() {
@@ -196,10 +195,10 @@
                 $('#modelInfoViewOnlyArea').hide();
                 break;
             case "Add":
-                addNewNudeModelInfo();
+                addNewFolderDetail();
                 break;
             case "Save":
-                updateNudeModelInfo();
+                updateFolderDetail();
                 break;
             default:
         }
@@ -208,7 +207,7 @@
     function clearGets() {
         $('#txtLinkHref').val('');
         $('#txtLinkLabel').val('');
-        $('#txtModelName').val('');
+        $('#txtFolderName').val('');
         $('#txtBorn').val('');
         $('#txaModelComment').val('');
         $('#txtNationality').val('');
@@ -216,22 +215,22 @@
     }
 
     function validate() {
-        nudeModelInfoModel.ModelName = $('#txtModelName').val();
-        $('#modelInfoDialog').dialog('option', 'title', nudeModelInfoModel.ModelName);
-        nudeModelInfoModel.Born = $('#txtBorn').val();
-        nudeModelInfoModel.Nationality = $('#txtNationality').val();      
-        nudeModelInfoModel.Measurements = $('#txtMeasurements').val();
-        nudeModelInfoModel.CommentText = $('#txaModelComment').val();
-        nudeModelInfoModel.ExternalLinks = $('#externalLinks').html();
+        FolderDetailModel.FolderName = $('#txtFolderName').val();
+        $('#modelInfoDialog').dialog('option', 'title', FolderDetailModel.FolderName);
+        FolderDetailModel.Born = $('#txtBorn').val();
+        FolderDetailModel.Nationality = $('#txtNationality').val();      
+        FolderDetailModel.Measurements = $('#txtMeasurements').val();
+        FolderDetailModel.CommentText = $('#txaModelComment').val();
+        FolderDetailModel.ExternalLinks = $('#externalLinks').html();
         return true;
     }
 
-    function addNewNudeModelInfo() {
+    function addNewFolderDetail() {
         if (validate()) {
             $.ajax({
                 type: "POST",
-                url: service + "/api/NudeModelInfo",
-                data: nudeModelInfoModel,
+                url: service + "/api/FolderDetail",
+                data: FolderDetailModel,
                 success: function (success) {
                     if (success === "ok") {
                         displayStatusMessage("ok", "Model info added");
@@ -248,12 +247,12 @@
         }
     }
 
-    function updateNudeModelInfo() {
+    function updateFolderDetail() {
         if (validate()) {
             $.ajax({
                 type: "PUT",
-                url: service + "/api/NudeModelInfo",
-                data: nudeModelInfoModel,
+                url: service + "/api/FolderDetail",
+                data: FolderDetailModel,
                 success: function (success) {
                     if (success === "ok") {
                         displayStatusMessage("ok", "Model info updated");

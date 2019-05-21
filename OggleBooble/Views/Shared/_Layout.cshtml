@@ -48,9 +48,9 @@
                     <div id="menuContainer" class="menuTabContainer">
                         <div id="replaceableMenuItems"></div>
                         <div id="divPornEditor" class="oggleHidden inline floatLeft"> 
-                            <div class="menuTab floatLeft"><a href="~/Admin/MetaTagEdit">Add Meta Tags</a></div>
-                            <div class="menuTab floatLeft"><a href="~/Admin/Dashboard">Admin</a></div>
-                            <div class="menuTab floatLeft"><a href="~/Admin/Blog">Blog</a></div>
+                            <div class="menuTab floatLeft"><a href="/Admin/MetaTagEdit">Add Meta Tags</a></div>
+                            <div class="menuTab floatLeft"><a href="/Admin/Dashboard">Admin</a></div>
+                            <div class="menuTab floatLeft"><a href="/Admin/Blog">Blog</a></div>
                         </div>
                         <div id="divLogedIn" class="oggleHidden inline floatRight">
                             <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
@@ -86,24 +86,22 @@
     <script>
         $(document).ready(function () {
 
-
             if ('@Request.IsAuthenticated' === 'True') {
                 $('#divLogedIn').show()
             }
             else {
                 var isOk = checkCookie("userName")
                 if (isOk == "ok") {
-                    //    // login
                     $('#divLogedIn').show();
                 }
                 else {
                     $('#divNotLogedIn').show();
-                   // alert("checkCookie: " + isOk);
                 }
             }
 
             if ('@User.IsInRole("Porn Editor")' === 'True' || (document.domain === 'localhost')) {
                 $('#divPornEditor').show();
+                $('#divNotLogedIn').hide();
             }
 
             //toggleTittyMenu(getOBCookie("ShapeOrPosesMenu", "shapes"));
