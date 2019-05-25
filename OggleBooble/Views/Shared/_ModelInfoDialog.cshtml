@@ -91,8 +91,8 @@
             <div class="floatLeft">
                 <label>name</label><input id="txtFolderName" class="roundedInput modelDialogInput inline" /><br />
                 <label>nationality</label><input id="txtNationality" class="roundedInput modelDialogInput inline" /><br />
-                <label>born</label><input id="txtBorn" class="roundedInput modelDialogInput inline" />
-                <label>measurements</label><input id="txtMeasurements" class="roundedInput modelDialogInput inline" /><br />
+                <label>born</label><input id="txtBorn" class="roundedInput modelDialogInput inline" /><br />
+                <label>measurements</label><input id="txtMeasurements" class="roundedInput modelDialogInput inline" />
             </div>
             <div class="floatLeft">
                 <img id="modelDialogThumbNailImage" src="~/Images/redballon.png" class="modelDialogImage" />
@@ -116,12 +116,12 @@
 <script>
     var FolderDetailModel = {};
 
-    function showModelInfoDialog(folderId) {        
+    function showModelInfoDialog(modelName, folderId) {        
         FolderDetailModel.FolderId = folderId;        
         clearGets();
         $('#modelInfoDialog').dialog("open");
         //$('#modelInfoDialog').fadeIn();
-        getFolderDetails(folderId)
+        getFolderDetails(modelName, folderId)
     }
 
     $(function () {
@@ -135,40 +135,40 @@
         });
     });
 
-    function getFolderDetails(folderId) {
+    function getFolderDetails(modelName, folderId) {
         $.ajax({
             type: "GET",
-            url: service + "/api/FolderDetail/Get?folderId=" + folderId,
+            url: service + "/api/CategoryFolderDetail/Get?folderId=" + folderId,
             success: function (folderDetails) {
                 if (folderDetails.Success == "ok") {
-                    $('#externalLinks').html(folderDetails.ExternalLinks);
                     FolderDetailModel.Src = folderDetails.Src;
 
-                    if (folderDetails.FolderName == "unidentified") {
+                    if (modelName == "unknown model") {
                         $('#modelDialogThumbNailImage').attr("src", folderDetails.Src);                    
                         $('#modelInfoDialog').dialog('option', 'title', "unknown model");
-                        $('#unknownModelLinks').html(linkId.substring(linkId.lastIndexOf('/') + 1) + "<br/>");
+                        //$('#unknownModelLinks').html(linkId.substring(linkId.lastIndexOf('/') + 1) + "<br/>");
                         $('#unknownModelLinks').append(folderDetails.ExternalLinks)
                         $('#modelInfoEditArea').hide();
                         $('#modelInfoViewOnlyArea').show();
                         $('#modelInfoEdit').html("Edit");
                     }
                     else {
-
+                        //alert(modelName + " == unknown model:  " + (modelName == "unknown model"));
                         if (folderDetails.FolderImage == null) 
                             $('#modelDialogThumbNailImage').attr("src", folderDetails.Src);
                         else 
                             $('#modelDialogThumbNailImage').attr("src", folderDetails.FolderImage);
-
-                        FolderDetailModel.ModelId = folderDetails.ModelId;
+                        
                         $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
                         $('#modelInfoEditArea').show();
                         $('#modelInfoViewOnlyArea').hide();
+                        //$('#txtFolderName').val(modelName);
                         $('#txtFolderName').val(folderDetails.FolderName);
                         $('#txtBorn').val(folderDetails.Born);
                         $('#txaModelComment').val(folderDetails.CommentText);
                         $('#txtNationality').val(folderDetails.Nationality);
                         $('#txtMeasurements').val(folderDetails.Measurements);
+                        $('#externalLinks').html(folderDetails.ExternalLinks);
                         $('#modelInfoEdit').html("Save");
                     }
                 }
@@ -229,7 +229,7 @@
         if (validate()) {
             $.ajax({
                 type: "POST",
-                url: service + "/api/FolderDetail",
+                url: service + "/api/CategoryFolderDetail",
                 data: FolderDetailModel,
                 success: function (success) {
                     if (success === "ok") {
@@ -251,7 +251,7 @@
         if (validate()) {
             $.ajax({
                 type: "PUT",
-                url: service + "/api/FolderDetail",
+                url: service + "/api/CategoryFolderDetail",
                 data: FolderDetailModel,
                 success: function (success) {
                     if (success === "ok") {

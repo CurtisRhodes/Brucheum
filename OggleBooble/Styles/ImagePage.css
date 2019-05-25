@@ -7,6 +7,10 @@
     border: solid .05px #676b8a;
 }
 
+.adminLink {
+    background-color: #c1bf8d !important;
+}
+
 .multiLinkImageFrame {
     margin: 2px;
     border: dashed 3px #08fb08;

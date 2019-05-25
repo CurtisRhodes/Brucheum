@@ -23,7 +23,10 @@ function resizePage(debug) {
 
     ////set page height
     var hdrH = $('#bheader').height();
-    var winH = $(window).height();
+    var winH = $(window).height() - 10;
+
+    //alert("winH: " + winH);
+
     $('#middleColumn').height(winH - hdrH);
 
     //if (debug !== undefined) {

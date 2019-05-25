@@ -12,11 +12,13 @@
         margin-bottom: 4px;
         font-size: 12px;
     }
-    .linkContainer div {
-        display: inline;
-        color: #585a38;
-        margin-right: 22px;
-    }
+
+        .linkContainer div {
+            display: inline;
+            color: #585a38;
+            margin-right: 22px;
+        }
+
     .dashBoardContainer {
         margin-top: 11px;
         display: flex;
@@ -144,12 +146,11 @@
         overflow-y: auto;
         background-color: #faf8e3;
     }
+
     .dashboardProgessBar {
         color: aqua;
         background-color: bisque;
     }
-
-
 </style>
 
 <div class="threeColumnArray">
@@ -157,24 +158,24 @@
     <div id="middleColumn">
 
         @*<div id="dashboardTop">
-            <dir class="linkContainer">
-                    <div class="clickable" onclick="window.location.href='/stats/AdminDashboard'">Rebuild Tables</div>
-                    <div class="clickable" onclick="$('#addNewLink').show()">Add Link</div>
-                    <div class="clickable" onclick="buildFolderLinkTable()">build FolderLink Table</div>
-                    <div class="clickable" onclick="getCatTree()">Refresh Dir Tree</div>
-                    <div class="clickable" onclick="testConnection();">testConnection();</div>
-                    <div class="clickable" onclick="rebuildLinkTables()">ReBuild Link Tables</div>
-                    <div class="clickable" onclick="$('#txtNewLink').val('f:/Danni/'); ReBuildLinks()">ReBuild Links</div>
-                    <div class="clickable" onclick="emergencyRepair(116)">Emergency Repair</div>
+                <dir class="linkContainer">
+                        <div class="clickable" onclick="window.location.href='/stats/AdminDashboard'">Rebuild Tables</div>
+                        <div class="clickable" onclick="$('#addNewLink').show()">Add Link</div>
+                        <div class="clickable" onclick="buildFolderLinkTable()">build FolderLink Table</div>
+                        <div class="clickable" onclick="getCatTree()">Refresh Dir Tree</div>
+                        <div class="clickable" onclick="testConnection();">testConnection();</div>
+                        <div class="clickable" onclick="rebuildLinkTables()">ReBuild Link Tables</div>
+                        <div class="clickable" onclick="$('#txtNewLink').val('f:/Danni/'); ReBuildLinks()">ReBuild Links</div>
+                        <div class="clickable" onclick="emergencyRepair(116)">Emergency Repair</div>
 
-                <div class="clickable" onclick="rebuildCatTree()">ReBuild Dir Tree</div>
-                <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
-                <div class="clickable" onclick="$('#newFolderCrud').fadeIn()">Create New Folder</div>
-                <div class="clickable" onclick="$('#moveFolderCrud').fadeIn();">Move Folder</div>
-                <div class="clickable" onclick="$('#renameFolderCrud').fadeIn()">ReName Folder</div>
-                <div class="clickable" onclick="$('#repairLinksCrud').fadeIn()">Repair Links</div>
-            </dir>
-        </div>*@
+                    <div class="clickable" onclick="rebuildCatTree()">ReBuild Dir Tree</div>
+                    <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
+                    <div class="clickable" onclick="$('#newFolderCrud').fadeIn()">Create New Folder</div>
+                    <div class="clickable" onclick="$('#moveFolderCrud').fadeIn();">Move Folder</div>
+                    <div class="clickable" onclick="$('#renameFolderCrud').fadeIn()">ReName Folder</div>
+                    <div class="clickable" onclick="$('#repairLinksCrud').fadeIn()">Repair Links</div>
+                </dir>
+            </div>*@
 
         <img id="getDirTreeLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
         <div id="divDashboardContainer" class="dashBoardContainer">
@@ -263,16 +264,17 @@
                 <div onclick="showCategoryDetails()">Show Category Info</div>
                 <div onclick="showInfoDialog()">Show Model Info</div>
             </div>
-            <div>@Html.Partial("_CategoryDialog")</div>
-            <div>@Html.Partial("_ModelInfoDialog")</div>
 
         </div>
     </div>
     <div id="rightColumn"></div>
 </div>
+<div>@Html.Partial("_CategoryDialog")</div>
+<div>@Html.Partial("_ModelInfoDialog")</div>
 
 <script>
     var service = '@ViewBag.Service';
+    var isPornEditor = '@ViewBag.IsPornEditor';
     var tabIndent = 22;
     var tab = 0;
     var totalPics = 0;
@@ -302,9 +304,9 @@
         if (workAreaHeight > $('#middleColumn').height()) {
             $('#middleColumn').height(workAreaHeight);
         }
-        $('#divDashboardContainer').height($('#middleColumn').height() - 200);
+        $('#divDashboardContainer').height($('#middleColumn').height() - 150);
         $('.floatingCrud').width($('.workarea').width() - 100);
-        $('#footerMessage').html(""); //image height: " + $('#imgLinkPreview').height());
+        $('#footerMessage').html("$('#middleColumn').height(): "+$('#middleColumn').height()); //image height: " + $('#imgLinkPreview').height());
     }
 
     $(function () {
@@ -429,6 +431,7 @@
         if (confirm("collapse " + $('.txtLinkPath').val())) {
             $('#getDirTreeLoadingGif').fadeIn();
             $('#dataifyInfo').show().html("collapse Child Folder");
+            //$('#progressBar').progressbar("enable");
             $.ajax({
                 type: "GET",
                 url: service + "/api/FtpImagePage/CollapseFolder?folderId=" + dirTree1SelectedId,
@@ -466,8 +469,10 @@
     }
 
     function moveFolder() {
-        //alert("partialViewSelectedItemId: " + partialViewSelectedItemId + "  dirTree1SelectedId: " + dirTree1SelectedId)
+        $('#dataifyInfo').show().html("Preparing to Move Folder");
         $('#getDirTreeLoadingGif').fadeIn();
+        $('#moveFolderCrud').fadeOut();
+        //$('#progressBar').progressbar("enable");
         $.ajax({
             type: "PUT",
             url: service + "/api/FtpDashboard/MoveFolder?orignFolderId=" + partialViewSelectedItemId + "&destinationParentId=" + dirTree1SelectedId,
@@ -475,8 +480,8 @@
                 $('#getDirTreeLoadingGif').hide();
                 if (!success.startsWith("ERROR")) {
                     displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val());
-                    //$('#moveFolderCrud').fadeOut();
                     rebuildCatTree();
+                    $('#progressBar').progressbar("destroy");
                 }
                 else
                     alert("Move Folder: " + success);
@@ -582,8 +587,8 @@
         $.each(dir.SubDirs, function (idx, subDir) {
             $('#' + container + '').append("<div class='clickable' style='text-indent:" + tab + "px'>"
                 + "<span id=S" + treeId + subDir.LinkId + " onclick=toggleDirTree('" + treeId + subDir.LinkId + "')>[-] </span>"
-                + "<span onclick=onDirTreeClick('" + subDir.DanniPath + "','" + treeId + subDir.CategoryId + "') "
-                + "oncontextmenu=showDirTreeContextMenu('" + subDir.LinkId + "','" + subDir.CategoryId + "')>"
+                + "<span onclick=onDirTreeClick('" + subDir.DanniPath + "','" + treeId + subDir.FolderId + "') "
+                + "oncontextmenu=showDirTreeContextMenu('" + subDir.LinkId + "','" + subDir.FolderId + "')>"
                 + subDir.DirectoryName + "</span><span class='fileCount'>  : " + subDir.Length + "</span></div>");
             $('#' + container + '').append("<div id=" + treeId + subDir.LinkId + " class='zzcollapsable'></div>");
             totalPics += subDir.Length;
@@ -600,7 +605,7 @@
         window.event.returnValue = false;
         $('#dashboardContextMenu').css("top", event.clientY + 5);
         $('#dashboardContextMenu').css("left", event.clientX);
-        $('#dashboardContextMenu').fadeIn();    
+        $('#dashboardContextMenu').fadeIn();
     }
 
     function openFolder() {
@@ -612,12 +617,14 @@
     }
 
     function showInfoDialog() {
-        showModelInfoDialog(dashboardContextMenuFolderId);
+      //function showImageCommentDialog(src, linkId, folderId, folderName) {
+      //function showModelInfoDialog(modelName, folderId) {        
+        showModelInfoDialog($('.txtLinkPath').val(), dashboardContextMenuFolderId);
     }
 
     function onDirTreeClick(path, id) {
         if (id.startsWith("t1")) {
-            $('.txtLinkPath').val(path.substring(6).replace(/%20/g, " "));
+            $('.txtLinkPath').val(path.substring(6).replace(/%20/g, " "))
             dirTree1SelectedId = id.substring(2);
         }
         if (id.startsWith("t2")) {

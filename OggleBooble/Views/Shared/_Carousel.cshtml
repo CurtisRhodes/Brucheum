@@ -17,12 +17,12 @@
 </div>
 
 <div id="carouselContextMenu" class="ogContextMenu" onmouseleave="considerHidingContextMenu()">
-    <div id="ctxModelName">model name</div>
-    <div id="ctxSeeMore" onclick="window.open('/home/ImagePage?folder=' + nudeModelFolderId, '_blank')" >See More</div>
-    <div onclick="explodeSimple()" >Explode</div>
-    <div onclick="writeFantancy()">Comment</div>
-    <div>Tags</div>
-    <div id="ctxMove" onclick="archiveImage()" >Archive</div>
+    <div id="ctxModelName" onclick="carouselContextMenuAction('showDialog')" >model name</div>
+    <div id="ctxSeeMore" onclick="carouselContextMenuAction('seeMore')">See More</div>
+    <div onclick="carouselContextMenuAction('explode')" >Explode</div>
+    <div onclick="carouselContextMenuAction('comment')">Comment</div>
+    <div onclick="carouselContextMenuAction('tags')">Tags</div>
+    <div id="ctxMove" onclick="carouselContextMenuAction('archive')" >Archive</div>
 </div>
 
 <div>@Html.Partial("_ModelInfoDialog")</div>
@@ -41,7 +41,8 @@
     var imageIndex = 0;
     var carouselContainerHeight;
     var Carousel;
-    var nudeModelFolderId;
+    var selectedImageArchiveFolderId;
+
 
     $(document).ready(function () {
         $('#carouselImage').css("max-width", $('#middleColumn').width());
@@ -56,24 +57,25 @@
         $('#ctxModelName').html("");
         $.ajax({
             type: "GET",
-            url: service + "api/NudeModelInfo/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId, // + "&folderId=" + carouselItemArray[imageIndex].FolderId,
-            success: function (nudeModelInfo) {
-                if (nudeModelInfo === null) {
-                    $('#ctxModelName').html("unknown model");
-                    $('#ctxSeeMore').hide();
-                }
-                else {
-                    if (nudeModelInfo.Success === "ok") {
-                        nudeModelFolderId = nudeModelInfo.FolderId;
-                        $('#ctxModelName').html(nudeModelInfo.ModelName);
-                        if (nudeModelInfo.RootFolder === "archive")
-                            $('#ctxSeeMore').hide();
-                        else
-                            $('#ctxSeeMore').show();
+            url: service + "api/CategoryFolderDetail/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId,
+            success: function (imageDetails) {
+
+                //alert("folderDetails.RootFolder: " + imageDetails.RootFolder);
+
+                if (imageDetails.Success === "ok") {
+                    if (imageDetails.RootFolder == "archive") {
+                        selectedImageArchiveFolderId = imageDetails.FolderId;
+                        $('#ctxModelName').html(imageDetails.FolderName);
+                        $('#ctxSeeMore').show();
                     }
-                    else
-                        alert("GetModelName: " + nudeModelInfo.Success);
+                    else {
+                        //$('#ctxModelName').html(imageDetails.RootFolder);
+                        $('#ctxModelName').html("unknown model");
+                        $('#ctxSeeMore').hide();
+                    }
                 }
+                else
+                    alert("GetModelName: " + imageDetails.Success);
             },
             error: function (xhr) {
                 alert("GetNudeModelName xhr error: " + xhr.statusText);
@@ -88,18 +90,35 @@
         $('#carouselContextMenu').fadeIn();
     });
 
-    function explodeSimple() {
-        window.open(carouselItemArray[imageIndex].Link, "_blank");
-    }
-    function writeFantancy() {
-        pause();
-        $('#carouselContextMenu').fadeOut();
-        showImageCommentDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].FolderName);
-    }
-    function archiveImage() {
-        pause();
-        $('#carouselContextMenu').fadeOut();
-        showMoveCopyDialog("Move", carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].Link);
+    function carouselContextMenuAction(ctxMenuAction) {
+        switch (ctxMenuAction) {
+            case "seeMore":
+                window.open('/home/ImagePage?folder=' + selectedImageArchiveFolderId, '_blank');
+                break;
+            case "explode":
+                window.open(carouselItemArray[imageIndex].Link, "_blank");
+                break;
+            case "comment":
+                pause();
+                $('#carouselContextMenu').fadeOut();
+                showImageCommentDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].FolderName);
+                break;
+            case "showDialog":
+                pause();
+                showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId);
+                break;
+            case "tags":
+                openMetaTagDialog(carouselItemArray[imageIndex].FolderId);
+                break;
+            case "archive":
+                //alert("archive   link: " + carouselItemArray[imageIndex].Link + "  folder: " + carouselItemArray[imageIndex].FolderId);
+                pause();
+                $('#carouselContextMenu').fadeOut();
+                showMoveCopyDialog("Archive", carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId);
+                break;
+            default:
+                alert("invalid: " + ctxMenuAction);
+        }
     }
     
     function considerHidingContextMenu() {

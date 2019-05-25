@@ -24,14 +24,7 @@ namespace OggleBooble.Controllers
         }
         public ActionResult Dashboard()
         {
-            //hubConnection = new HubConnection(apiService);
-            //IHubProxy HubProxy = null;
-            //HubProxy = hubConnection.CreateHubProxy("ProgressHub");
-            //hubConnection.Start();
-            //Execute();
-            //var p = HubProxy.Invoke<string>("PostToClient", "Debendra").Result;            
-            //ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + p + "');", true);
-
+            ViewBag.IsPornEditor = User.IsInRole("Porn Editor");
             ViewBag.Service = apiService;
             return View();
         }

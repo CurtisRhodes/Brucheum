@@ -28,7 +28,7 @@ namespace WebApi
                 {
                     int parent = db.CategoryFolders.Where(f => f.Id == folderId).First().Parent;
                     List<MoveCopyImageModel> links = (from l in db.CategoryImageLinks
-                             join g in db.GoDaddyLinks on l.ImageLinkId equals g.Id
+                             join g in db.ImageLinks on l.ImageLinkId equals g.Id
                              where l.ImageCategoryId == folderId
                              select new MoveCopyImageModel() {
                                  DestinationFolderId = parent,
@@ -56,10 +56,10 @@ namespace WebApi
                     if(success!="ok")
                         System.Diagnostics.Debug.WriteLine("failed to remove FTP folder : " + success);
 
-                    FolderDetail dbNnudeModelInfo = db.FolderDetails.Where(n => n.FolderId == folderId).FirstOrDefault();
-                    if (dbNnudeModelInfo != null)
+                    CategoryFolderDetail dbFolderDetail = db.CategoryFolderDetails.Where(n => n.FolderId == folderId).FirstOrDefault();
+                    if (dbFolderDetail != null)
                     {
-                        db.FolderDetails.Remove(dbNnudeModelInfo);
+                        db.CategoryFolderDetails.Remove(dbFolderDetail);
                         db.SaveChanges();
                     }
                     db.CategoryFolders.Remove(emptyFolder);
@@ -132,13 +132,13 @@ namespace WebApi
                         }
                     
 #endif
-                        //2. update GoDaddyLink 
+                        //2. update ImageLink 
                         string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
                         string goDaddyLink = linkPrefix + Helpers.GetParentPath(model.DestinationFolderId, true) +
                             dbDestinationFolder.FolderName + "/" + dbDestinationFolder.FolderName + "_" + linkId + extension;
-                        GoDaddyLink goDaddyrow = db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                        ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
                         goDaddyrow.Link = goDaddyLink;
-                        goDaddyrow.FolderId = dbDestinationFolder.Id;
+                        goDaddyrow.FolderLocation = dbDestinationFolder.Id;
                         db.SaveChanges();
 
                         //3 create new link for new location if necessary
@@ -181,7 +181,7 @@ namespace WebApi
                     {
                         ///  move image to reject folder
                         CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == badLink.FolderId).FirstOrDefault();
-                        GoDaddyLink goDaddyLink = db.GoDaddyLinks.Where(g => g.Id == badLink.ImageId).FirstOrDefault();
+                        ImageLink goDaddyLink = db.ImageLinks.Where(g => g.Id == badLink.ImageId).FirstOrDefault();
                         string fileName = goDaddyLink.Link.Substring(goDaddyLink.Link.LastIndexOf("/") + 1);
 
                         //string ext = goDaddyLink.Link.Substring(goDaddyLink.Link.Length - 4);
@@ -191,6 +191,8 @@ namespace WebApi
 
                         string folderPath = Helpers.GetParentPath(badLink.FolderId, true);
                         string ftpPath = "ftp://50.62.160.105/" + dbFolder.RootFolder + ".OGGLEBOOBLE.COM/" + folderPath + "/" + dbFolder.FolderName + "/" + fileName;
+
+
                         string rejectPath = "ftp://50.62.160.105/archive.OGGLEBOOBLE.COM/rejects/" + dbFolder.RootFolder + "/" + fileName;
                         FtpIO.MoveFile(ftpPath, rejectPath);
                         goDaddyLink.Link = "http://archive.OGGLEBOOBLE.COM/rejects/" + dbFolder.RootFolder + fileName;
@@ -259,9 +261,9 @@ namespace WebApi
                 SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed + "  Total: " + repairReport.RowsProcessed);
             else
                 SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed);
-            List<GoDaddyLink> goDaddyLinks =
+            List<ImageLink> goDaddyLinks =
                 (from c in db.CategoryImageLinks
-                 join g in db.GoDaddyLinks on c.ImageLinkId equals g.Id
+                 join g in db.ImageLinks on c.ImageLinkId equals g.Id
                  where c.ImageCategoryId == folderId
                  select (g)).ToList();
 
@@ -309,10 +311,10 @@ namespace WebApi
                                     if (source != destination)
                                     {
                                         FtpIO.MoveFile(source, destination);
-                                        GoDaddyLink extraLink = db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                                        ImageLink extraLink = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
                                         if (extraLink != null)
                                         {
-                                            db.GoDaddyLinks.Remove(extraLink);
+                                            db.ImageLinks.Remove(extraLink);
                                             db.SaveChanges();
                                         }
                                         repairReport.ImagesMoved++;
@@ -320,11 +322,11 @@ namespace WebApi
                                 }
                             }
 
-                            if (db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault() == null)
+                            if (db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault() == null)
                             {
                                 // no godaddyLink found // add row
-                                GoDaddyLink newLink = new GoDaddyLink() { Id = linkId, Link = expectedLinkName + "/" + expectedFileName, ExternalLink = linkId };
-                                db.GoDaddyLinks.Add(newLink);
+                                ImageLink newLink = new ImageLink() { Id = linkId, Link = expectedLinkName + "/" + expectedFileName, ExternalLink = linkId };
+                                db.ImageLinks.Add(newLink);
                                 db.SaveChanges();
                                 repairReport.NewLinksAdded++;
                                 anyChangesMade = true;
@@ -354,13 +356,13 @@ namespace WebApi
                     if (renameSuccess == "ok")
                     {
                         repairReport.ImagesRenamed++;
-                        GoDaddyLink oldGoDaddyLink = goDaddyLinks.Where(g => g.Link == expectedLinkName + "/" + expectedFileName).FirstOrDefault();
-                        if (oldGoDaddyLink != null)
+                        ImageLink oldImageLink = goDaddyLinks.Where(g => g.Link == expectedLinkName + "/" + expectedFileName).FirstOrDefault();
+                        if (oldImageLink != null)
                         {
-                            if (oldGoDaddyLink.Link != expectedLinkName + "/" + expectedFileName)
+                            if (oldImageLink.Link != expectedLinkName + "/" + expectedFileName)
                             {
                                 // update godaddy link
-                                oldGoDaddyLink.Link = expectedLinkName + "/" + expectedFileName;
+                                oldImageLink.Link = expectedLinkName + "/" + expectedFileName;
                                 db.SaveChanges();
                                 repairReport.LinksEdited++;
                             }
@@ -368,7 +370,7 @@ namespace WebApi
                         else
                         {
                             // link not found in this folder's links
-                            GoDaddyLink goDaddyLink   = db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                            ImageLink goDaddyLink   = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
                             if (goDaddyLink != null)
                             {
                                 if (goDaddyLink.Link != expectedLinkName + "/" + expectedFileName)
@@ -380,13 +382,13 @@ namespace WebApi
                             }
                             else
                             {
-                                var newGoDaddyLink = new GoDaddyLink()
+                                var newImageLink = new ImageLink()
                                 {
                                     Id = linkId,
                                     Link = expectedLinkName + "/" + expectedFileName,
                                     ExternalLink = linkId
                                 };
-                                db.GoDaddyLinks.Add(newGoDaddyLink);
+                                db.ImageLinks.Add(newImageLink);
                                 db.SaveChanges();
                                 repairReport.NewLinksAdded++;
                                 anyChangesMade = true;
@@ -424,7 +426,7 @@ namespace WebApi
             {
                 goDaddyLinks =
                     (from c in db.CategoryImageLinks
-                     join g in db.GoDaddyLinks on c.ImageLinkId equals g.Id
+                     join g in db.ImageLinks on c.ImageLinkId equals g.Id
                      where c.ImageCategoryId == folderId
                      select (g)).ToList();
             }
@@ -432,7 +434,7 @@ namespace WebApi
             {
                 if (goDaddyLinks.Count() > files.Count())
                 {
-                    foreach (GoDaddyLink goDaddyLink in goDaddyLinks)
+                    foreach (ImageLink goDaddyLink in goDaddyLinks)
                     {
                         bool found = false;
                         if (goDaddyLink.Link.Length < 4)
@@ -454,7 +456,7 @@ namespace WebApi
                                 List<CategoryImageLink> links = db.CategoryImageLinks.Where(l => l.ImageLinkId == goDaddyLink.Id).ToList();
                                 if (links.Count == 0)
                                 {
-                                    db.GoDaddyLinks.Remove(goDaddyLink);
+                                    db.ImageLinks.Remove(goDaddyLink);
                                     db.SaveChanges();
                                     repairReport.LinksRemoved++;
                                 }
@@ -467,7 +469,7 @@ namespace WebApi
                                     else
                                     {
                                         repairReport.Errors.Add(goDaddyLink.Id + " " + goDaddyLink.Link.Substring(goDaddyLink.Link.LastIndexOf("/") + 1) + " " + downLoadSuccess);
-                                        db.GoDaddyLinks.Remove(goDaddyLink);
+                                        db.ImageLinks.Remove(goDaddyLink);
                                         db.SaveChanges();
                                         repairReport.LinksRemoved++;
                                     }
@@ -508,9 +510,9 @@ namespace WebApi
                     var trimPath = "/pipers/Jodie Piper/";
                     CategoryFolder dbCategory = db.CategoryFolders.Where(f => f.Id == folderId).First();
                     trimPath = Helpers.GetParentPath(folderId, true) + dbCategory.FolderName;
-                    List<GoDaddyLink> folderLinks =
+                    List<ImageLink> folderLinks =
                     (from c in db.CategoryImageLinks
-                     join g in db.GoDaddyLinks on c.ImageLinkId equals g.Id
+                     join g in db.ImageLinks on c.ImageLinkId equals g.Id
                      where c.ImageCategoryId == folderId
                      select (g)).ToList();
 
@@ -519,7 +521,7 @@ namespace WebApi
                     string ftpPath = "ftp://50.62.160.105/" + dbCategory.RootFolder + ".OGGLEBOOBLE.COM/" + trimPath;
                     using (WebClient wc = new WebClient())
                     {
-                        foreach (GoDaddyLink g in folderLinks)
+                        foreach (ImageLink g in folderLinks)
                         {
                             extension = g.ExternalLink.Substring(g.ExternalLink.Length - 4);
                             wc.DownloadFile(new Uri(g.ExternalLink), appDataPath + "tempImage" + extension);
@@ -590,7 +592,7 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     string imageLinkId = Guid.NewGuid().ToString();
-                    var existingLink = db.GoDaddyLinks.Where(l => l.ExternalLink == newLink.Link).FirstOrDefault();
+                    var existingLink = db.ImageLinks.Where(l => l.ExternalLink == newLink.Link).FirstOrDefault();
                     if (existingLink != null)
                         imageLinkId = existingLink.Id;
                     else
@@ -629,7 +631,7 @@ namespace WebApi
                         FtpWebRequest webRequest = null;
                         try
                         {
-                            string destPath = newLink.Path.Substring(0, newLink.Path.IndexOf("/"));
+                            string destPath = newLink.Path.Substring(0, newLink.Path.IndexOf("."));
                             // todo  write the image as a file to x.ogglebooble  4/1/19
                             string ftpPath = "ftp://50.62.160.105/" + destPath + ".OGGLEBOOBLE.COM/" + trimPath;
                             if (!FtpIO.DirectoryExists(ftpPath))
@@ -674,10 +676,10 @@ namespace WebApi
 
                         var goDaddyLink = "http://" + dbCategory.RootFolder + ".ogglebooble.com/";
                         //var goDaddyLinkTest = goDaddyLink + trimPath + "/" + newFileName;
-                        db.GoDaddyLinks.Add(new GoDaddyLink()
+                        db.ImageLinks.Add(new ImageLink()
                         {
                             Id = imageLinkId,
-                            FolderId = newLink.FolderId,
+                            FolderLocation = newLink.FolderId,
                             ExternalLink = newLink.Link,
                             Link = goDaddyLink + trimPath + "/" + newFileName
                         });
@@ -744,7 +746,7 @@ namespace WebApi
                         }
                         if (renameReport.Success == "ono")
                         {
-                            GoDaddyLink goDaddyLink = db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                            ImageLink goDaddyLink = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
                             if (goDaddyLink != null)
                             {
                                 expectedLinkName = goDaddyPrefix + folderPath + newFolderName + "/" + expectedFileName;
@@ -792,7 +794,7 @@ namespace WebApi
             foreach (string fileName in files)
             {
                 linkId = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
-                GoDaddyLink goDaddyLink = db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                ImageLink goDaddyLink = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
                 if (goDaddyLink != null)
                 {
                     expectedLinkName = goDaddyPrefix + newFolderPath + "/" + folder.FolderName + "/" + fileName;
@@ -852,18 +854,24 @@ namespace WebApi
             string destinationFtpPath = "ftp://50.62.160.105/" + dbDestinationParentFolder.RootFolder + ".ogglebooble.com/" +
                 Helpers.GetParentPath(destinationParentId, true) + dbDestinationParentFolder.FolderName + "/" + dbSourceFolder.FolderName;
 
+            string createDirectory = "";
+            if (FtpIO.DirectoryExists(destinationFtpPath))
+                createDirectory = "ok";
+            else
+                createDirectory = FtpIO.CreateDirectory(destinationFtpPath);
 
-            success = FtpIO.CreateDirectory(destinationFtpPath);
-            if (success == "ok")
+            if (createDirectory == "ok")
             {
                 string linkId = "";
                 string[] folderContents = FtpIO.GetFiles(sourceFtpPath);
                 int folderRows = 0;
+                int fileCount = folderContents.Length;
                 foreach (string currentFile in folderContents)
                 {
                     linkId = currentFile.Substring(currentFile.LastIndexOf("_") + 1, 36);
 
-                    SignalRHost.ProgressHub.PostToClient("Moving files in: " + dbSourceFolder.FolderName + " " + ++folderRows);
+                    SignalRHost.ProgressHub.PostToClient("Moving files from: " + dbSourceFolder.FolderName + " to " + dbDestinationParentFolder.FolderName +  "  " + folderRows);
+                    
 
                     success = FtpIO.MoveFile(sourceFtpPath + "/" + currentFile, destinationFtpPath + "/" + currentFile);
                     if (success == "ok")
@@ -873,13 +881,11 @@ namespace WebApi
                         string goDaddyLink = linkPrefix + Helpers.GetParentPath(destinationParentId, true) + "/" +
                             dbDestinationParentFolder.FolderName + "/" + dbSourceFolder.FolderName + "/" +
                             dbSourceFolder.FolderName + "_" + linkId + currentFile.Substring(currentFile.Length - 4);
-                        GoDaddyLink goDaddyrow = db.GoDaddyLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                        ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
                         goDaddyrow.Link = goDaddyLink;
-                        //goDaddyrow.FolderId=
-                        //if (addNudeMoleInfo)
-                        //{
-                        //    db.NudeModelImages.Add(new NudeModelImage() { LinkId = linkId, ModelId = modelId });
-                        //}
+
+                        SignalRHost.ProgressHub.ShowProgressBar(fileCount, ++folderRows);
+
                         db.SaveChanges();
                     }
                     else return success;
@@ -941,9 +947,9 @@ namespace WebApi
                     string destinationFtpPath = "ftp://50.62.160.105/" + rootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(newFolderId, true) + model.FolderName;
                     success = FtpIO.CreateDirectory(destinationFtpPath);
 
-                    if (rootFolder == "archive" || Helpers.IsSlut(newFolder.Id))
+                    //if (rootFolder == "archive" || Helpers.IsSlut(newFolder.Id))
                     {
-                        db.FolderDetails.Add(new FolderDetail() { ModelId = Helpers.GetNextModelId(), FolderId = newFolder.Id });
+                        db.CategoryFolderDetails.Add(new CategoryFolderDetail() {  FolderId = newFolder.Id });
                         db.SaveChanges();
                     }
                 }

@@ -1,11 +1,5 @@
-﻿var folderDetailsid;
-
-$(window).resize(function () {
-
-
-    $('#imageContainer').width($('#middleColumn').width());
-    $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
-});
+﻿var selectedImageArchiveFolderId;
+var currentContextLinkId;
 
 function showAllChildren() {
     try {
@@ -39,9 +33,10 @@ function getImageLinks() {
                 rootFolder = imageModel.Origin;
                 if (imageModel.Success === "ok") {
                     processImages(imageModel, start);
+                    $('#getImagesLoadingGif').hide();
                 }
                 else {
-                    $('#get ImagesLoadingGif').hide();
+                    $('#getImagesLoadingGif').hide();
                     alert("getImageLinks: " + imageModel.Success);
                 }
             },
@@ -62,17 +57,26 @@ function processImages(imageModel, start) {
     // add folders to html view
     $('#imageContainer').html('');
     $.each(imageModel.SubDirs, function (idx, subDir) {
-        $('#imageContainer').append("<div id='" + subDir.CategoryId + "' class='folderFirsty'><img class='thumbImage' src='" +
+        $('#imageContainer').append("<div id='" + subDir.FolderId + "' class='folderFirsty'><img class='thumbImage' src='" +
             subDir.FirstImage + "'/><div class='fname'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div>");
     });
     $('.folderFirsty').click(function () {
         window.location.href = "imagePage?folder=" + $(this).attr("id");
     });
 
-    // add files
+    //$('#slideShowLink').show();
+
+    // add files to array
     imageArray = new Array();
-    $('#slideShowLink').show();
+    $.each(imageModel.Files, function (idx, imageModelFile) {
+        imageArray.push({
+            Link: imageModelFile.Link.replace(/ /g, "%20"),
+            LinkId: imageModelFile.LinkId,
+            Local: imageModelFile.LinkCount === 1
+        });
+    });
     var fileCount = 0;
+
     $.each(imageModel.Files, function (idx, imageModelFile) {
         $('#footerMessage').html("fileCount: " + fileCount);
         if (imageModel.Origin === "archive") {
@@ -97,53 +101,56 @@ function processImages(imageModel, start) {
         }
         fileCount++;
 
-        imageArray.push({
-            Link: imageModelFile.Link.replace(/ /g, "%20"),
-            LinkId: imageModelFile.LinkId,
-            Local: imageModelFile.LinkCount === 1
-        });
     });
+
+    fileCount += imageModel.SubDirs.length;
+    $('#fileCount').html(fileCount);
+    $('#getImagesLoadingGif').hide();
+
 
 
     $('.thumbImage').click(function () {
-        //alert("id: " + $(this).attr("id"));
-        showViewer($(this).attr("id"));
+        viewerShowing = true;
+        LaunchViewer(imageArray, $(this).attr("idx"));
     });
 
     $('.thumbImage').contextmenu(function () {
         //alert("id: " + $(this).attr("id"));
         event.preventDefault();
         window.event.returnValue = false;
-        showContextMenu();
-        var imageLinkId = $(this).attr("id")
-        var thisImage = $('#' + imageLinkId + '');
-        if (viewerShowing) {
-            $('#thumbImageContextMenu').css("top", event.clientY + 5);
-            $('#thumbImageContextMenu').css("left", event.clientX);
-        }
-        else {
-            var picpos = thisImage.offset();
-            var picLeft = picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50;
-            $('#thumbImageContextMenu').css("top", picpos.top + 5);
-            $('#thumbImageContextMenu').css("left", picLeft);
-        }
+        //showContextMenu();
+        currentContextLinkId = $(this).attr("id");
+        var thisImage = $('#' + currentContextLinkId + '');
+        var picpos = thisImage.offset();
+        var picLeft = picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50;
+        $('#thumbImageContextMenu').css("top", picpos.top + 5);
+        $('#thumbImageContextMenu').css("left", picLeft);
+        //}
         $.ajax({
             type: "GET",
-            url: service + "api/FolderDetail/GetModelName?linkId=" + imageLinkId,
+            url: service + "api/CategoryFolderDetail/GetModelName?linkId=" + currentContextLinkId,
             success: function (folderDetails) {
                 if (folderDetails.Success === "ok") {
+                    selectedImageArchiveFolderId = folderDetails.FolderId;
                     if (folderDetails.FolderId == folderId) {
-                        $('#ctxModelName').html("unknown model");
+                        // model not found elsewhere 
                         $('#ctxSeeMore').hide();
+                        if (folderDetails.RootFolder == "archive") {
+                            $('#ctxModelName').html(folderDetails.FolderName);
+                            $('#ctxArchive').hide();
+                        }
+                        else {
+                            $('#ctxModelName').html("unknown model");
+                            $('#ctxArchive').show();
+                        }
                     }
                     else {
-                        //alert("folderDetails.FolderId: " + folderDetails.FolderId + "  folderId: " + folderId);
-                        folderDetailsid = folderDetails.FolderId;
                         $('#ctxModelName').html(folderDetails.FolderName);
-                        if (rootFolder === "archive")
-                            $('#ctxSeeMore').hide();
+                        $('#ctxSeeMore').show();
+                        if (folderDetails.RootFolder == "archive")
+                            $('#ctxArchive').hide();
                         else
-                            $('#ctxSeeMore').show();
+                            $('#ctxArchive').show();
                     }
                 }
                 else
@@ -159,73 +166,45 @@ function processImages(imageModel, start) {
 
     });
 
-    fileCount += imageModel.SubDirs.length;
-    $('#fileCount').html(fileCount);
-    $('#getImagesLoadingGif').hide();
-    if (document.domain !== 'localhost') {
-        //if (ipAddress !== "68.203.92.166") {
-        var emailSubject = currentUser + " just viewed " + folderId;
-        sendEmailFromJS(emailSubject, "someday it will be someone other than " + ipAddress);
-    }
+    //if (document.domain !== 'localhost') {
+    //if (ipAddress !== "68.203.92.166") {
+    //var emailSubject = currentUser + " just viewed " + folderId;
+    //sendEmailFromJS(emailSubject, "someday it will be someone other than " + ipAddress);
+    //}
 }
-
 
 function contextMenuAction(action) {
     switch (action) {
         case "show":
-            if (viewerShowing)
-                showModelInfoDialog(imageArray[imageArrayIndex].LinkId, folderId);
-            else
-                showModelInfoDialog(folderId);
+            showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId);
             break;
         case "jump":
-            window.open("/home/ImagePage?folder=" + folderDetailsid, "_blank");
+            window.open("/home/ImagePage?folder=" + selectedImageArchiveFolderId, "_blank");
             break;
         case "comment":
-            if (viewerShowing)
-                showImageCommentDialog(imageArray[imageArrayIndex].Link, imageArray[imageArrayIndex].LinkId, folderId, folderName);
-            else
-                showImageCommentDialog($('#' + currentContextImageId + '').attr("src"), currentContextImageId, folderId, folderName);
+            showImageCommentDialog($('#' + currentContextLinkId + '').attr("src"), currentContextLinkId, folderId, folderName);
             break;
         case "explode":
-            if (viewerShowing)
-                window.open(imageArray[imageArrayIndex].Link, "_blank");
-            else
-                window.open($('#' + currentContextImageId + '').attr("src"), "_blank");
+            window.open($('#' + currentContextLinkId + '').attr("src"), "_blank");
             break;
         case "archive":
-            if (viewerShowing)
-                showMoveCopyDialog("Archive", imageArray[imageArrayIndex].Link, folderId, $('#' + currentContextImageId + '').attr("src"));
-            else
-                showMoveCopyDialog("Archive", $('#' + currentContextImageId + '').attr("src"), folderId, $('#' + currentContextImageId + '').attr("src"));
+            showMoveCopyDialog("Archive", $('#' + currentContextLinkId + '').attr("src"), currentContextLinkId, folderId);
             break;
         case "copy":
-            if (viewerShowing)
-                showMoveCopyDialog("Copy", imageArray[imageArrayIndex].LinkId, folderId, $('#' + currentContextImageId + '').attr("src"));
-            else
-                showMoveCopyDialog("Copy", currentContextImageId, folderId, $('#' + currentContextImageId + '').attr("src"));
+            showMoveCopyDialog("Copy", $('#' + currentContextLinkId + '').attr("src"), currentContextLinkId, folderId);
             break;
         case "move":
-            if (viewerShowing)
-                showMoveCopyDialog("Move", imageArray[imageArrayIndex].Link, folderId, $('#' + currentContextImageId + '').attr("src"));
-            else
-                showMoveCopyDialog("Move", $('#' + currentContextImageId + '').attr("src"), folderId, $('#' + currentContextImageId + '').attr("src"));
+            showMoveCopyDialog("Move", $('#' + currentContextLinkId + '').attr("src"), currentContextLinkId, folderId);
             break;
         case "remove":
             if (confirm("remove this link"))
-                removeImage();            
+                removeImage();
             break;
         case "setF":
-            if (viewerShowing)
-                setFolderImage(imageArray[imageArrayIndex].LinkId, folderId, "folder");
-            else
-                setFolderImage(currentContextImageId, folderId, "folder");
+            setFolderImage(currentContextLinkId, folderId, "folder");
             break;
         case "setC":
-            if (viewerShowing)
-                setFolderImage(imageArray[imageArrayIndex].LinkId, folderId, "parent");
-            else
-                setFolderImage(currentContextImageId, folderId, "parent");
+            setFolderImage(currentContextLinkId, folderId, "parent");
             break;
         default:
             alert(action);
@@ -237,7 +216,6 @@ $('#moveCopyDialog').on('dialogclose', function (event) {
         slide("next");
     getImageLinks();
 });
-
 $('#modelInfoDialog').on('dialogclose', function (event) {
     if (viewerShowing)
         slide("next");
@@ -267,7 +245,7 @@ function setFolderImage(linkId, folderId, level){
 
 function removeImage() {
     var badLink = {};
-    badLink.ImageId = currentContextImageId;
+    badLink.ImageId = currentContextLinkId;
     badLink.FolderId = folderId;
     $.ajax({
         type: "DELETE",
@@ -290,10 +268,7 @@ function removeImage() {
 }
 
 function openImageInNewWindow() {
-    if (viewerShowing) 
-        window.open(imageArray[imageArrayIndex].Link, "_blank");
-    else
-        window.open($('#' + currentContextImageId + '').attr("src"), "_blank");
+    window.open($('#' + currentContextLinkId + '').attr("src"), "_blank");
 }
 
 function addComment() {
@@ -302,3 +277,16 @@ function addComment() {
     /// write an entire fantasy 
     /// describe the fantasy this image evokes
 }
+
+$(window).resize(function () {
+    $('#imageContainer').width($('#middleColumn').width());
+    $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
+    if (viewerShowing) {
+        showImageViewer();
+        $('#footerMessage').html("image page resize");
+    }
+});
+
+
+
+

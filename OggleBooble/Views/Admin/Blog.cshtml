@@ -67,6 +67,13 @@
     <div id="middleColumn">
         <div id="divStatusMessage"></div>
         <h2>Blog</h2>
+
+        <div id="blogDisplayArea">
+
+
+        </div>
+
+
         <div class="blogCrudContainer">
             <div class="blogCrudArea">
                 <div class="floatLeft">
@@ -101,6 +108,7 @@
     </div>
     <div id="rightColumn"></div>
 </div>
+
 
 <div id="oggleBlogEntry" class="floatingCrud">
     <div class="floatingCrudBanner">Blog Entry<div onclick="$('#oggleBlogEntry').fadeOut()" class="farSide">x</div> </div>
@@ -151,6 +159,52 @@
             alert("loadBlogList catch: " + e);
         }
     }
+
+    /// 11:19  May 24 20019
+    ///  sometimes even I have to take a moment to figure out what I want to do.
+    /// start with a display of blog entries
+    //<option value="CMT">Comment</option>     image comment
+    //<option value="WRN">Warning</option>     site content  // Let me extplain, porn warning, 
+    //<option value="BLG">BlogEntry</option>   opinions  
+    //<option value="BLG">BlogEntry</option>   opinions  philosphy of porn
+    //<option value="GMT">MetaTag</option>     programmer notes
+
+
+    function getBlogEntries()
+    {
+        try {
+            $.ajax({
+                type: "GET",
+                url: service + "/api/OggleBlog/?id=" + id,
+                success: function (model) {
+
+
+                    //if (!model.CommentTitle.startsWith("ERROR")) {
+                    //    blogEntry.Id = id;
+                    //    $('#txtCommentTitle').val(model.CommentTitle);
+                    //    $('#selCommentType').val(model.CommentType);
+                    //    $('#txtLink').val(model.Link);
+                    //    $('#txtComment').val(model.CommentText);
+                    //    $('#blogSave').html("Edit")
+                    //    $('#blogNew').hide();
+                    //    $('#imgBlogLink').attr("src", model.Link);
+                    //}
+                    //else
+                    //    alert("displayBlogEntry: " + success)
+                },
+                error: function (xhr) {
+                    $('#getDirTreeLoadingGif').hide();
+                    alert("displayBlogEntry xhr: " + xhr.statusText);
+                }
+            });
+        } catch (e) {
+            alert("displayBlogEntry catch: " + e);
+        }
+    }
+
+
+
+
     function displayBlogEntry(id) {
         try {
             $.ajax({

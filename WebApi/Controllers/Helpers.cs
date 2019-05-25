@@ -116,36 +116,43 @@ namespace WebApi
                 return parentPath;
         }
 
-        public static bool IsSlut(int folderId)
+        public static string GetFirstImage(int parentFolder)
         {
-            bool isaSlut = false;
+            string goodLink = "";
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
-                CategoryFolder slutParentFolder = db.CategoryFolders.Where(f => f.FolderName == "sluts").FirstOrDefault();
-                if (slutParentFolder != null)
+                goodLink = (from l in db.ImageLinks
+                            join c in db.CategoryImageLinks on l.Id equals c.ImageLinkId
+                            where c.ImageCategoryId == parentFolder
+                            select l.Link.StartsWith("http") ? l.Link : l.ExternalLink).FirstOrDefault();
+                if (goodLink == null)
                 {
-                    CategoryFolder slutFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    if (slutFolder != null)
+                    var categoryFolders = db.CategoryFolders.Where(f => f.Parent == parentFolder).ToList();
+                    foreach (CategoryFolder subFolder in categoryFolders)
                     {
-                        if (slutFolder.Parent == slutParentFolder.Id)
+                        goodLink = (from l in db.ImageLinks
+                                    join c in db.CategoryImageLinks on l.Id equals c.ImageLinkId
+                                    where c.ImageCategoryId == subFolder.Id
+                                    select l.Link).FirstOrDefault();
+                        if (goodLink == null)
                         {
-                            isaSlut = true;
+                            var subSubFolders = db.CategoryFolders.Where(f => f.Parent == subFolder.Id).ToList();
+                            foreach (CategoryFolder subSubFolder in subSubFolders)
+                            {
+                                goodLink = (from l in db.ImageLinks
+                                            join c in db.CategoryImageLinks on l.Id equals c.ImageLinkId
+                                            where c.ImageCategoryId == subSubFolder.Id
+                                            select l.Link).FirstOrDefault();
+                                if (goodLink != null)
+                                    break;
+                            }
                         }
+                        if (goodLink != null)
+                            break;
                     }
                 }
             }
-            return isaSlut;
-        }
-
-
-        public static int GetNextModelId()
-        {
-            int maxId = 0;
-            using (OggleBoobleContext db = new OggleBoobleContext())
-            {
-                maxId = db.Database.SqlQuery<int>("select max(ModelId) from OggleBooble.NudeModelImage").First();
-            }
-            return maxId + 1;
+            return goodLink;
         }
     }
 }

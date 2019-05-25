@@ -13,16 +13,18 @@ namespace WebApi.DataContext
             : base("GoDaddy") { }
 
         public virtual DbSet<CategoryFolder> CategoryFolders { get; set; }
-        public virtual DbSet<GoDaddyLink> GoDaddyLinks { get; set; }
+        public virtual DbSet<ImageLink> ImageLinks { get; set; }
         public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
 
         public virtual DbSet<VwDirTree> VwDirTrees { get; set; }        
         public virtual DbSet<VideoLink> VideoLinks { get; set; }
         public virtual DbSet<VwLink> VwLinks { get; set; }
         public virtual DbSet<BlogComment> BlogComments { get; set; }
-        public virtual DbSet<MetaTag> MetaTags { get; set; }
-        public virtual DbSet<FolderDetail> FolderDetails { get; set; }
+        public virtual DbSet<CategoryFolderDetail> CategoryFolderDetails { get; set; }
 
+        public virtual DbSet<MetaTag> MetaTags { get; set; }
+        public virtual DbSet<ImageMetaTag> ImageMetaTags { get; set; }
+        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
@@ -38,14 +40,14 @@ namespace WebApi.DataContext
         public string RootFolder { get; set; }
     }
 
-    [Table("OggleBooble.GoDaddyLink")]
-    public partial class GoDaddyLink
+    [Table("OggleBooble.ImageLink")]
+    public partial class ImageLink
     {
         [Key]
         public string Id { get; set; }
-        public string Link { get; set; }
         public string ExternalLink { get; set; }
-        public int FolderId { get; set; }
+        public string Link { get; set; }
+        public int FolderLocation { get; set; }
 
     }
     [Table("OggleBooble.CategoryImageLink")]
@@ -59,14 +61,11 @@ namespace WebApi.DataContext
         public string ImageLinkId { get; set; }
     }
 
-    [Table("OggleBooble.FolderDetail")]
-    public partial class FolderDetail
+    [Table("OggleBooble.CategoryFolderDetail")]
+    public partial class CategoryFolderDetail
     {
         [Key]
-        [Column(Order = 0)]
-        public int ModelId { get; set; }
-        [Key]
-        [Column(Order = 1)]
+        public int pkId { get; set; }
         public int FolderId { get; set; }
         public string Nationality { get; set; }
         public string Measurements { get; set; }
@@ -105,6 +104,7 @@ namespace WebApi.DataContext
         public string Image { get; set; }
         public string Title { get; set; }
     }
+
     [Table("OggleBooble.BlogComment")]
     public partial class BlogComment
     {
@@ -119,6 +119,7 @@ namespace WebApi.DataContext
         public string CommentText { get; set; }
         public DateTime Posted { get; set; }
     }
+
     [Table("OggleBooble.ImageVote")]
     public partial class ImageVote
     {
@@ -134,8 +135,14 @@ namespace WebApi.DataContext
     {
         [Key]
         public int TagId { get; set; }
-        public int FolderId { get; set; }
-        public string TagType { get; set; }
-        public string TagValue { get; set; }
+        public string Tag { get; set; }
+    }
+    [Table("OggleBooble.ImageMetaTag")]
+    public partial class ImageMetaTag
+    {
+        [Key]
+        public int pkId { get; set; }
+        public int TagId { get; set; }
+        public string LinkId { get; set; }
     }
 }

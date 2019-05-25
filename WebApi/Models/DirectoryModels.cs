@@ -27,7 +27,7 @@ namespace WebApi.Models
         {
             SubDirs = new List<CategoryTreeModel>();
         }
-        public int CategoryId { get; set; }
+        public int FolderId { get; set; }
         public int ParentId { get; set; }
         public long Length { get; set; }
         public string DirectoryName { get; set; }
@@ -131,7 +131,7 @@ namespace WebApi.Models
         public int ParentId { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
-        public string GoDaddyLink { get; set; }
+        public string ImageLink { get; set; }
         public string ExternalLink { get; set; }
         //public string FileName { get; set; }
         //public string Link { get; set; }
@@ -190,8 +190,6 @@ namespace WebApi.Models
         public RepairReportModel()
         {
             Errors = new List<string>();
-            //MissingImages = new List<FileInfo>();
-            //BadLinks = new List<GoDaddyLink>();
         }
         public int ImagesRenamed { get; set; }
         public int LinksEdited { get; set; }
@@ -207,15 +205,18 @@ namespace WebApi.Models
         public bool isSubFolder { get; set; }
 
         public List<string> Errors { get; set; }
-        //public List<FileInfo> MissingImages { get; set; }
-        //public List<GoDaddyLink> BadLinks { get; set; }
-        //public string[] ErrorsArray { get; set; }
-        //public string[] MissingImagesArray { get; set; }
-        //public string[] BadLinksArray { get; set; }
         public string Success { get; set; }
     }
 
-    public class FolderDetailModel
+    public class ImageDetailModel
+    {
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public int FolderId { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class CategoryFolderDetailModel
     {
         public int FolderId { get; set; }
         public string Src { get; set; }

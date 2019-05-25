@@ -64,6 +64,11 @@
     });
 
     function showImageCommentDialog(src, linkId, folderId, folderName) {
+
+
+
+
+
         nudeModelInfoModel.LinkId = linkId;
         nudeModelInfoModel.Link = src;
         nudeModelInfoModel.FolderId = folderId;
@@ -72,7 +77,7 @@
         $('#commentDialogImage').attr("src", src);
 
         // get comment
-        loadComment()
+        loadComment();
 
         $('#imageCommentDialog').show();
         $('#imageCommentDialog').dialog("open");
@@ -88,6 +93,13 @@
 
     }
 
+    function mediateAddEditImageComment()
+    {
+            //<div id="commentDialogButton" class="roundendButton clickable commentDialogButton inline" onclick="saveComment()">save</div>
+
+    }
+
+
     function saveComment() {
         nudeModelInfoModel.CommentTitle = $('#txtCommentTitle').val();
         nudeModelInfoModel.CommentType = "CMT";        
@@ -101,6 +113,9 @@
             success: function (success) {
                 if (success == "ok") {
                     displayStatusMessage("ok", "Entry Saved");
+
+
+
                 }
                 else
                     alert("saveComment: " + success);
