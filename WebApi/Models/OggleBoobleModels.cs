@@ -43,6 +43,27 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
+    public class BlogCommentModel
+    {
+        public int Id { get; set; }
+        public string CommentTitle { get; set; }
+        public string CommentType { get; set; }
+        public string Link { get; set; }
+        public string LinkId { get; set; }
+        public int FolderId { get; set; }
+        public string UserId { get; set; }
+        public string CommentText { get; set; }
+        public string Posted { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class VideoLinkModel
+    {
+        public string Link { get; set; }
+        public string Image { get; set; }
+        public string Title { get; set; }
+    }
+
     public class CategoryFolderModel
     {
         public int Id { get; set; }

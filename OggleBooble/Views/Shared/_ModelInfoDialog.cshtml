@@ -1,7 +1,5 @@
-﻿@*<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
-    integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
-    crossorigin="anonymous"></script>*@
-
+﻿
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <style>
     .modelInfoContainer {
         top: 188px;
@@ -48,11 +46,11 @@
     .floatingRoundedDialogLabel {
         display: block;
         text-align: right;
-
         font-size: 17px;
         height: 32px;
         padding: 14.5px 4px 0 0;
     }
+
     .modelDialogInput {
         width: 220px;
         font-size: 14px;
@@ -64,13 +62,16 @@
         font-size: 17px;
         padding: 2px;
     }
+
     label {
         width: 105px !important;
     }
+
     .addLinkIcon {
-        cursor:pointer;
+        cursor: pointer;
         font-size: 28px;
     }
+
     .hrefLabel {
         font-size: 16px;
         display: inline-block;
@@ -116,8 +117,8 @@
 <script>
     var FolderDetailModel = {};
 
-    function showModelInfoDialog(modelName, folderId) {        
-        FolderDetailModel.FolderId = folderId;        
+    function showModelInfoDialog(modelName, folderId) {
+        FolderDetailModel.FolderId = folderId;
         clearGets();
         $('#modelInfoDialog').dialog("open");
         //$('#modelInfoDialog').fadeIn();
@@ -130,7 +131,7 @@
         $('#modelInfoDialog').dialog({
             autoOpen: false,
             show: { effect: "fade" },
-            hide: { effect: "blind" },       
+            hide: { effect: "blind" },
             width: "615"
         });
     });
@@ -144,7 +145,7 @@
                     FolderDetailModel.Src = folderDetails.Src;
 
                     if (modelName == "unknown model") {
-                        $('#modelDialogThumbNailImage').attr("src", folderDetails.Src);                    
+                        $('#modelDialogThumbNailImage').attr("src", folderDetails.Src);
                         $('#modelInfoDialog').dialog('option', 'title', "unknown model");
                         //$('#unknownModelLinks').html(linkId.substring(linkId.lastIndexOf('/') + 1) + "<br/>");
                         $('#unknownModelLinks').append(folderDetails.ExternalLinks)
@@ -154,11 +155,11 @@
                     }
                     else {
                         //alert(modelName + " == unknown model:  " + (modelName == "unknown model"));
-                        if (folderDetails.FolderImage == null) 
+                        if (folderDetails.FolderImage == null)
                             $('#modelDialogThumbNailImage').attr("src", folderDetails.Src);
-                        else 
+                        else
                             $('#modelDialogThumbNailImage').attr("src", folderDetails.FolderImage);
-                        
+
                         $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
                         $('#modelInfoEditArea').show();
                         $('#modelInfoViewOnlyArea').hide();
@@ -218,7 +219,7 @@
         FolderDetailModel.FolderName = $('#txtFolderName').val();
         $('#modelInfoDialog').dialog('option', 'title', FolderDetailModel.FolderName);
         FolderDetailModel.Born = $('#txtBorn').val();
-        FolderDetailModel.Nationality = $('#txtNationality').val();      
+        FolderDetailModel.Nationality = $('#txtNationality').val();
         FolderDetailModel.Measurements = $('#txtMeasurements').val();
         FolderDetailModel.CommentText = $('#txaModelComment').val();
         FolderDetailModel.ExternalLinks = $('#externalLinks').html();

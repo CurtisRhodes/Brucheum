@@ -137,11 +137,9 @@ function processImages(imageModel, start) {
     $('#fileCount').html(fileCount);
     $('#getImagesLoadingGif').hide();
 
-
-
     $('.thumbImage').click(function () {
         viewerShowing = true;
-        LaunchViewer(imageArray, $(this).attr("idx"), folderId);
+        LaunchViewer(imageArray, $(this).attr("idx"), folderId, currentUser);
     });
 
     $('.thumbImage').contextmenu(function () {
@@ -213,7 +211,8 @@ function contextMenuAction(action) {
             window.open("/album?folder=" + selectedImageArchiveFolderId, "_blank");
             break;
         case "comment":
-            showImageCommentDialog($('#' + currentContextLinkId + '').attr("src"), currentContextLinkId, folderId, folderName);
+            //var currentUser = '@User.Identity.Name';
+            showImageCommentDialog($('#' + currentContextLinkId + '').attr("src"), currentContextLinkId, folderId, folderName, currentUser);
             break;
         case "explode":
             window.open($('#' + currentContextLinkId + '').attr("src"), "_blank");

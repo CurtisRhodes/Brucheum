@@ -1,13 +1,4 @@
 ﻿
-@*
-<link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
-<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
-*@
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.js"></script>
-
 <style>
     .commentDialog {
         background-color: var(--oggleBackgroundColor);
@@ -34,19 +25,19 @@
         color: var(--ogglePurple);
         width: 100%;
     }
-
 </style>
 
 <div id="imageCommentDialog" class="oggleHidden commentDialog" title="Write a fantasy about this image">
+    <div id="divStatusMessage"></div>
     <div class="center"><img id="commentDialogImage" class="commentDialogImage" /></div>
     <div><input id="txtCommentTitle" class="roundedInput commentTitleText" placeholder="Give your comment a title" /></div>
     <div id="imageCommentEditor"></div>
-    <div id="txtSaveFantasy" class="roundendButton clickable commentDialogButton inline" onclick="saveComment()">save</div>
+    <div id="divSaveFantasy" class="roundendButton clickable commentDialogButton inline" onclick="saveComment()">save</div>
     <div id="commentInstructions" class="loginComment inline">log in to view comments</div>
 </div>
 
 <script>
-    var nudeModelInfoModel = {};
+    var folderDetailModel = {};
 
     $(function () {
         $('#imageCommentDialog').dialog({
@@ -59,70 +50,98 @@
         $('#imageCommentEditor').summernote({
             height: 200,
             codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-            toolbar: [['codeview']]
+            toolbar: [
+                ['codeview'],
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
+            ]
         });
     });
 
-    function showImageCommentDialog(src, linkId, folderId, folderName) {
-        nudeModelInfoModel.LinkId = linkId;
-        nudeModelInfoModel.Link = src;
-        nudeModelInfoModel.FolderId = folderId;
-        nudeModelInfoModel.FolderName = folderName;
-
+    function showImageCommentDialog(src, linkId, folderId, folderName, userId) {
+        folderDetailModel.LinkId = linkId;
+        folderDetailModel.Link = src;
+        folderDetailModel.FolderId = folderId;
+        folderDetailModel.FolderName = folderName;
+        folderDetailModel.UserId = userId;
+        folderDetailModel.CommentType = "CMT";
         $('#commentDialogImage').attr("src", src);
-
-        // get comment
+        $('#imageCommentEditor').summernote('code', "");
+        $('#txtCommentTitle').val("");
+        $('#divSaveFantasy').html("save");
+        folderDetailModel.Id = 0;
         loadComment();
-
         $('#imageCommentDialog').show();
         $('#imageCommentDialog').dialog("open");
-        //$('#imageCommentDialog').fadeIn();
     }
 
     function loadComment() {
-        ///TODO
         /// retreive user's previous comments
-        //$('#imageCommentEditor').summernote('code', blogCommentModel.CommentText);
-        $('#imageCommentEditor').summernote('code', "");
-        $('#txtCommentTitle').val("");
-
+        $.ajax({
+            type: "GET",
+            url: service + "/api/OggleBlog?linkId=" + folderDetailModel.LinkId + "&userId=" + folderDetailModel.UserId,
+            success: function (comment) {
+                if (comment.Success == "ok") {
+                    if (comment.Id != 0) {
+                        $('#imageCommentEditor').summernote('code', comment.CommentText);
+                        $('#txtCommentTitle').val(comment.CommentTitle);
+                        folderDetailModel.Id = comment.Id;
+                        $('#divSaveFantasy').html("edit");
+                    }
+                }
+                else
+                    alert("saveComment: " + comment.Success);
+            },
+            error: function (jqXHR, exception) {
+                alert("loadComment XHR : " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
     }
-
-    function mediateAddEditImageComment()
-    {
-            //<div id="commentDialogButton" class="roundendButton clickable commentDialogButton inline" onclick="saveComment()">save</div>
-
-    }
-
 
     function saveComment() {
-        nudeModelInfoModel.CommentTitle = $('#txtCommentTitle').val();
-        nudeModelInfoModel.CommentType = "CMT";        
-        nudeModelInfoModel.UserId = currentUser + " = " + ipAddress;
-        nudeModelInfoModel.CommentText = $('#imageCommentEditor').summernote('code');
-
-        if ($('#txtSaveFantasy').html() == "save") {
-            $.ajax({
-                type: "POST",
-                url: service + "/api/OggleBlog",
-                data: nudeModelInfoModel,
-                success: function (successModel) {
-                    if (successModel.Success == "ok") {
-                        displayStatusMessage("ok", "Entry Saved");
-                        nudeModelInfoModel.Id = successModel.ReturnValue;
-                    }
-                    else
-                        alert("saveComment: " + success);
-                },
-                error: function (jqXHR, exception) {
-                    alert("saveComment XHR : " + getXHRErrorDetails(jqXHR, exception));
-                }
-            })
-        }
-        else {
-
-
-        }
+        folderDetailModel.CommentTitle = $('#txtCommentTitle').val();
+        folderDetailModel.CommentText = $('#imageCommentEditor').summernote('code');
+        if ($('#divSaveFantasy').html() == "save")
+            addImageComment();
+        else
+            editImageComment();
     }
+
+    function addImageComment() {
+        $.ajax({
+            type: "POST",
+            url: service + "/api/OggleBlog",
+            data: folderDetailModel,
+            success: function (successModel) {
+                if (successModel.Success == "ok") {
+                    displayStatusMessage("ok", "Entry Added");
+                    $('#divSaveFantasy').html("edit");
+                    folderDetailModel.Id = successModel.ReturnValue;
+                }
+                else
+                    alert("saveComment: " + successModel.Success);
+            },
+            error: function (jqXHR, exception) {
+                alert("saveComment XHR : " + getXHRErrorDetails(jqXHR, exception));
+            }
+        })
+    }
+    function editImageComment() {
+        $.ajax({
+            type: "PUT",
+            url: service + "/api/OggleBlog",
+            data: folderDetailModel,
+            success: function (success) {
+                if (success == "ok") {
+                    displayStatusMessage("ok", "Entry Updated");
+                }
+                else
+                    alert("editImageComment: " + success);
+            },
+            error: function (jqXHR, exception) {
+                alert("editImageComment XHR : " + getXHRErrorDetails(jqXHR, exception));
+            }
+        })
+    }
+
 </script>
 

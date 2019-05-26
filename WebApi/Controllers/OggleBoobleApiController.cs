@@ -779,33 +779,52 @@ namespace WebApi
     public class OggleBlogController : ApiController
     {
         [HttpGet]
-        public List<BlogComment> Get(string entryType)
+        public List<BlogCommentModel> Get(string blogId)
         {
-            List<BlogComment> blogComments = new List<BlogComment>();
+            List<BlogCommentModel> blogComments = new List<BlogCommentModel>();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    return db.BlogComments.ToList();
+                    List<BlogComment> dbBlogComments = db.BlogComments.Where(b => b.CommentType == blogId).ToList();
+                    foreach (BlogComment dbBlogComment in dbBlogComments)
+                    {
+                        blogComments.Add(new BlogCommentModel()
+                        {
+                            Id = dbBlogComment.Id,
+                            CommentTitle = dbBlogComment.CommentTitle
+                            //CommentText = dbBlogComment.CommentText,
+                            //Link = dbBlogComment.Link,
+                        });
+                    }
                 }
             }
             catch (Exception ex)
             {
-                blogComments.Add(new BlogComment() { CommentTitle = Helpers.ErrorDetails(ex) });
+                blogComments.Add(new BlogCommentModel() { CommentTitle = Helpers.ErrorDetails(ex) });
             }
             return blogComments;
         }
 
         [HttpGet]
-        public BlogComment Get(int id)
+        public BlogCommentModel Get(string linkId, string userId)
         {
-            BlogComment entry = null;
+            BlogCommentModel entry = new BlogCommentModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    entry = db.BlogComments.Where(b => b.Id == id).First();
+                    BlogComment dbBlogComment = db.BlogComments.Where(b => b.LinkId == linkId).Where(b => b.UserId == userId).FirstOrDefault();
+                    if (dbBlogComment != null)
+                    {
+                        entry.CommentTitle = dbBlogComment.CommentTitle;
+                        entry.CommentText = dbBlogComment.CommentText;
+                        entry.Id = dbBlogComment.Id;
+                    }
+                    else
+                        entry.Id = 0;
                 }
+                entry.Success = "ok";
             }
             catch (Exception ex)
             {

@@ -124,12 +124,13 @@
     var sourceFolderId;
     var imageViewerArray;
     var imageViewerIndex;
+    var imageViewerIndexCurrentUser;
 
-
-    function LaunchViewer(imageArray, imageIndex, folderId) {
-        sourceFolderId = folderId;
+    function LaunchViewer(imageArray, imageIndex, folderId, currentUser) {
         imageViewerArray = imageArray;
         imageViewerIndex = imageIndex;
+        sourceFolderId = folderId;
+        imageViewerIndexCurrentUser = currentUser;
         viewerH = 50;
         viewerW = 50;
         windowW = $(window).width();
@@ -292,7 +293,7 @@
     }
 
     function showCommentDialog() {
-        showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, folderId, folderName);
+        showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, folderId, folderName, imageViewerIndexCurrentUser);
     }
 
     $('.hiddeClickArea').contextmenu(function () {
@@ -352,7 +353,7 @@
                 window.open("/album?folder?folder=" + imageViewerSelectedImageArchiveFolderId, "_blank");
                 break;
             case "comment":
-                showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, imageViewerSelectedImageArchiveFolderId, folderName);
+                showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, imageViewerSelectedImageArchiveFolderId, folderName, imageViewerIndexCurrentUser);
                 closeViewer();
                 break;
             case "explode":

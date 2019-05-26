@@ -63,14 +63,6 @@ namespace WebApi.Models
         public string Mode { get; set; }
     }
 
-
-    public class VideoLinkModel
-    {
-        public string Link { get; set; }
-        public string Image { get; set; }
-        public string Title { get; set; }
-    }
-
     public class RepairLinkModel
     {
         public string LinkId { get; set; }
