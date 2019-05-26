@@ -213,6 +213,7 @@
     <Compile Include="DataContext\GetaJobContext.cs" />
     <Compile Include="Models\BlogModels.cs" />
     <Compile Include="Models\DirectoryModels.cs" />
+    <Compile Include="Models\OggleBoobleModels.cs" />
     <Compile Include="Models\ResumeModels.cs" />
     <Compile Include="Models\GetaJobModels.cs" />
     <Compile Include="Models\ArticleModels.cs" />

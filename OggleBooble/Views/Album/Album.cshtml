@@ -1,0 +1,154 @@
+﻿<link href="~/Styles/album.css" rel="stylesheet" />
+<link href="~/Styles/jquery-ui.css" rel="stylesheet" />
+
+<div>@Html.Partial("_MoveImageDialog")</div>
+<div>@Html.Partial("_CategoryDialog")</div>
+<div>@Html.Partial("_ImageViewer")</div>
+
+<div id="staticableContent">
+    <div class="threeColumnArray">
+        <div id="leftColumn"></div>
+        <div id="middleColumn">
+            <div id="divBreadCrumbs"></div>
+            <div id="divStatusMessage"></div>
+            @*<div id="xx" class="adminRow">
+                    <div class="floatRight clickable" onclick="staticify()">staticify</div>
+                    <div class="floatRight clickable" onclick="showAllChildren()">combine</div>
+                    <div class="floatRight clickable" onclick="showMetaTagDialog()">meta tags</div>
+                </div>*@
+            <img id="getImagesLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
+            <div id="imageContainer" class="flexWrapContainer">
+
+
+            </div>
+            <div id="fileCount" class="countContainer"></div>
+            <div id="text55"></div>
+        </div>
+        <div id="rightColumn"></div>
+    </div>
+
+    <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
+        <div id="ctxModelName" onclick="contextMenuAction('show')">model name</div>
+        <div id="ctxSeeMore" onclick="contextMenuAction('jump')">see more of her</div>
+        <div onclick="contextMenuAction('comment')">Comment</div>
+        <div onclick="contextMenuAction('explode')">open in new tab</div>
+        <div id="ctxArchive" class="adminLink" onclick="contextMenuAction('archive')">Archive</div>
+        <div class="adminLink" onclick="contextMenuAction('copy')">Copy Link</div>
+        <div class="adminLink" onclick="contextMenuAction('move')">Move Link</div>
+        <div class="adminLink" onclick="contextMenuAction('remove')">Remove Link</div>
+        <div class="adminLink" onclick="contextMenuAction('setF')">Set as Folder Image</div>
+        <div class="adminLink" onclick="contextMenuAction('setC')">Set as Category Image</div>
+    </div>
+
+    <div>@Html.Partial("_ModelInfoDialog")</div>
+    <div>@Html.Partial("_ImageCommentDialog")</div>
+
+
+    <script>
+        var service = '@ViewBag.Service';
+        var folderId = '@ViewBag.Folder';
+        var folderName = "";
+        var currentUser = '@User.Identity.Name';
+        var ipAddress = '@ViewBag.IpAddress';
+        var isPornEditor = '@ViewBag.IsPornEditor';
+        var page = 0;
+        var rootFolder = "";
+        var mySubDirs = new Array();
+        var thumbImageHeight = 200;
+        var viewerShowing = false;
+        var slideShow;
+    </script>
+</div>
+
+<script src="~/Scripts/Album.js"></script>
+<script>
+    var imageArray = new Array();
+    $(document).ready(function () {
+        if (folderId == "") {
+            window.location.href = "/";
+        }
+        // set width
+        $('#imageContainer').width($('#middleColumn').width());
+        $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
+
+        getBreadCrumbs();
+        getImageLinks();
+
+        if ((isPornEditor == "True") || (document.domain === 'localhost')) {
+            $('.adminLink').show();
+        }
+        else {
+            $('.adminLink').hide();
+        }
+        resizePage();
+    });
+
+    function showMetaTagDialog() {
+        openMetaTagDialog(folderId)
+    }
+
+    function XXshowStatic() {
+        var pageName = folderName + ".html";
+
+        $.ajax({
+            type: "GET",
+            url: "GetStaticPage&fileName=" + pageName,
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (success) {
+                if (success !== "") {
+
+
+                    alert("CreateStaticFile returned: " + success);
+                }
+                else
+                    alert("/api//File returned: " + success);
+            },
+            error: function (jqXHR, exception) {
+                alert("CreateStaticFile error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+
+    }
+
+    function staticify() {
+        var customHtml = $('#staticHeader').html();
+        customHtml += $('#staticableContent').html();
+        customHtml += $('#staticFooter').html();
+        var data = new Object();
+        data.Filename = folderName + ".html";
+        data.html = customHtml;
+
+        data.ImageArray = "[";
+        for (i = 0; i < imageArray.length; i++) {
+            data.ImageArray += "{ Link:'" + imageArray[i].Link + "', ImageId:'" + imageArray[i].ImageId + "'}";
+            if (i < imageArray.length - 1)
+                data.ImageArray += ",";
+        }
+        data.ImageArray += "]";
+
+        //alert("data.ImageArray: " + data.ImageArray);
+
+        $.ajax({
+            type: "POST",
+            url: "CreateImagePageStaticFile",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (success) {
+                if (success === "ok") {
+                    alert("CreateStaticFile returned: " + success);
+                    //$('#lnkPermalink').show();
+                    //$('#lnkStaticify').hide();
+                }
+                else
+                    alert("/api//File returned: " + success);
+            },
+            error: function (jqXHR, exception) {
+                alert("CreateStaticFile error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    };
+
+</script>

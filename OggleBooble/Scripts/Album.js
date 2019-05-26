@@ -1,5 +1,38 @@
-﻿var selectedImageArchiveFolderId;
+﻿
+var selectedImageArchiveFolderId;
 var currentContextLinkId;
+var forgetShowingCatDialog;
+
+function getBreadCrumbs() {
+    $.ajax({
+        type: "GET",
+        url: service + "api/DashBoard/GetBreadCrumbs?folderId=" + folderId,
+        success: function (parents) {
+            $('#headerMessage').html("");
+            for (i = parents.length - 1; i >= 0; i--) {
+                $('#headerMessage').append("<a class='activeBreadCrumb' " +
+                    "onmouseover='slowlyShowCatDialog(" + parents[i].FolderId + ");forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;' " +    
+                    "href='/album?folder=" + parents[i].FolderId + "'>" + parents[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
+            }
+            setLayout(parents[parents.length - 1].FolderName);
+            document.title = parents[0].FolderName + " OggleBooble";
+            folderName = parents[0].FolderName;
+        },
+        error: function (jqXHR, exception) {
+            $('#getImagesLoadingGif').hide();
+            alert("getBreadCrumbs jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+}
+
+function slowlyShowCatDialog(breadCrumbFolderId) {
+
+    setTimeout(function () {
+        if (forgetShowingCatDialog === false)
+            showCategoryDialog(breadCrumbFolderId);
+    }, 600);
+
+}
 
 function showAllChildren() {
     try {
@@ -57,11 +90,8 @@ function processImages(imageModel, start) {
     // add folders to html view
     $('#imageContainer').html('');
     $.each(imageModel.SubDirs, function (idx, subDir) {
-        $('#imageContainer').append("<div id='" + subDir.FolderId + "' class='folderFirsty'><img class='thumbImage' src='" +
-            subDir.FirstImage + "'/><div class='fname'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div>");
-    });
-    $('.folderFirsty').click(function () {
-        window.location.href = "imagePage?folder=" + $(this).attr("id");
+        $('#imageContainer').append("<div class='folderImageFrame' onclick=window.location.href='album?folder=" + subDir.FolderId + "'><img class='folderImage' src='" +
+            subDir.FirstImage + "'/><div class='folderImageFrameName'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div>");
     });
 
     //$('#slideShowLink').show();
@@ -111,7 +141,7 @@ function processImages(imageModel, start) {
 
     $('.thumbImage').click(function () {
         viewerShowing = true;
-        LaunchViewer(imageArray, $(this).attr("idx"));
+        LaunchViewer(imageArray, $(this).attr("idx"), folderId);
     });
 
     $('.thumbImage').contextmenu(function () {
@@ -128,7 +158,7 @@ function processImages(imageModel, start) {
         //}
         $.ajax({
             type: "GET",
-            url: service + "api/CategoryFolderDetail/GetModelName?linkId=" + currentContextLinkId,
+            url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + currentContextLinkId,
             success: function (folderDetails) {
                 if (folderDetails.Success === "ok") {
                     selectedImageArchiveFolderId = folderDetails.FolderId;
@@ -179,7 +209,8 @@ function contextMenuAction(action) {
             showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId);
             break;
         case "jump":
-            window.open("/home/ImagePage?folder=" + selectedImageArchiveFolderId, "_blank");
+
+            window.open("/album?folder=" + selectedImageArchiveFolderId, "_blank");
             break;
         case "comment":
             showImageCommentDialog($('#' + currentContextLinkId + '').attr("src"), currentContextLinkId, folderId, folderName);
@@ -188,13 +219,13 @@ function contextMenuAction(action) {
             window.open($('#' + currentContextLinkId + '').attr("src"), "_blank");
             break;
         case "archive":
-            showMoveCopyDialog("Archive", $('#' + currentContextLinkId + '').attr("src"), currentContextLinkId, folderId);
+            showMoveCopyDialog("Archive", $('#' + currentContextLinkId + '').attr("src"), folderId);
             break;
         case "copy":
-            showMoveCopyDialog("Copy", $('#' + currentContextLinkId + '').attr("src"), currentContextLinkId, folderId);
+            showMoveCopyDialog("Copy", $('#' + currentContextLinkId + '').attr("src"), folderId);
             break;
         case "move":
-            showMoveCopyDialog("Move", $('#' + currentContextLinkId + '').attr("src"), currentContextLinkId, folderId);
+            showMoveCopyDialog("Move", $('#' + currentContextLinkId + '').attr("src"), folderId);
             break;
         case "remove":
             if (confirm("remove this link"))
@@ -282,7 +313,7 @@ $(window).resize(function () {
     $('#imageContainer').width($('#middleColumn').width());
     $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
     if (viewerShowing) {
-        showImageViewer();
+        resizeViewer();
         $('#footerMessage').html("image page resize");
     }
 });

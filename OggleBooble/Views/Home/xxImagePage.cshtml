@@ -120,14 +120,15 @@
             success: function (parents) {
                 $('#headerMessage').html("");
                 for (i = parents.length - 1; i >= 0; i--) {
-                    $('#headerMessage').append("<a class='activeBreadCrumb' href='/Home/imagePage?folder=" + parents[i].FolderId + "'>" + parents[i].FolderName + "</a>");
+                    $('#headerMessage').append("<a class='activeBreadCrumb' onmouseover='showCategoryDialog(" + parents[i].FolderId + ")');" +
+                        "' href='/Home/imagePage?folder=" + parents[i].FolderId + "'>" + parents[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                 }
-                $('.activeBreadCrumb').contextmenu(function () {
-                    event.preventDefault();
-                    window.event.returnValue = false;
-                    showCategoryDialog(folderId);
-                    //showBreadCrumbContextMenu($(this).attr("id"));
-                });
+                //$('.activeBreadCrumb').contextmenu(function () {
+                //    event.preventDefault();
+                //    window.event.returnValue = false;
+                //    showCategoryDialog($(this).attr("Id"));
+                //    //showBreadCrumbContextMenu($(this).attr("id"));
+                //});
                 setLayout(parents[parents.length - 1].FolderName);
                 document.title = parents[0].FolderName + " OggleBooble";
                 folderName = parents[0].FolderName;
@@ -147,13 +148,6 @@
         data.Filename = folderName + ".html";
         data.html = customHtml;
 
-        //data.ImageArray = JSON.parse(imageArray);
-        //data.ImageArray = JSON.stringify(imageArray);
-        //imageArray.push({
-        //    Index: fileCount,
-        //    Link: obj.FileName.replace(/ /g, "%20"),
-        //    ImageId: obj.ImageId
-        //});
         data.ImageArray = "[";
         for (i = 0; i < imageArray.length; i++) {
             data.ImageArray += "{ Link:'" + imageArray[i].Link + "', ImageId:'" + imageArray[i].ImageId + "'}";

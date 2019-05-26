@@ -1,13 +1,16 @@
 ﻿
+@*
 <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
-@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
 <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+*@
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.js"></script>
 
 <style>
     .commentDialog {
-        background-color: var(--oggleBackground);
+        background-color: var(--oggleBackgroundColor);
         z-index: 120;
     }
 
@@ -38,7 +41,7 @@
     <div class="center"><img id="commentDialogImage" class="commentDialogImage" /></div>
     <div><input id="txtCommentTitle" class="roundedInput commentTitleText" placeholder="Give your comment a title" /></div>
     <div id="imageCommentEditor"></div>
-    <div id="commentDialogButton" class="roundendButton clickable commentDialogButton inline" onclick="saveComment()">save</div>
+    <div id="txtSaveFantasy" class="roundendButton clickable commentDialogButton inline" onclick="saveComment()">save</div>
     <div id="commentInstructions" class="loginComment inline">log in to view comments</div>
 </div>
 
@@ -56,19 +59,11 @@
         $('#imageCommentEditor').summernote({
             height: 200,
             codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-            toolbar: [
-                ['codeview'],
-                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
-            ]
+            toolbar: [['codeview']]
         });
     });
 
     function showImageCommentDialog(src, linkId, folderId, folderName) {
-
-
-
-
-
         nudeModelInfoModel.LinkId = linkId;
         nudeModelInfoModel.Link = src;
         nudeModelInfoModel.FolderId = folderId;
@@ -106,24 +101,28 @@
         nudeModelInfoModel.UserId = currentUser + " = " + ipAddress;
         nudeModelInfoModel.CommentText = $('#imageCommentEditor').summernote('code');
 
-        $.ajax({
-            type: "POST",
-            url: service + "/api/OggleBlog",
-            data: nudeModelInfoModel,
-            success: function (success) {
-                if (success == "ok") {
-                    displayStatusMessage("ok", "Entry Saved");
-
-
-
+        if ($('#txtSaveFantasy').html() == "save") {
+            $.ajax({
+                type: "POST",
+                url: service + "/api/OggleBlog",
+                data: nudeModelInfoModel,
+                success: function (successModel) {
+                    if (successModel.Success == "ok") {
+                        displayStatusMessage("ok", "Entry Saved");
+                        nudeModelInfoModel.Id = successModel.ReturnValue;
+                    }
+                    else
+                        alert("saveComment: " + success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("saveComment XHR : " + getXHRErrorDetails(jqXHR, exception));
                 }
-                else
-                    alert("saveComment: " + success);
-            },
-            error: function (jqXHR, exception) {
-                alert("saveComment XHR : " + getXHRErrorDetails(jqXHR, exception));
-            }
-        })
+            })
+        }
+        else {
+
+
+        }
     }
 </script>
 

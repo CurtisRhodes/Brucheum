@@ -8,7 +8,7 @@
 }
 
 .adminLink {
-    background-color: #c1bf8d !important;
+    color: blue;
 }
 
 .multiLinkImageFrame {
@@ -26,13 +26,21 @@
     padding: 1px;
     border: dashed 2px #d19154;
 }
-.nonLocalIndicator {
-    border-right: dotted 24px #ff00dc;
+
+.folderImageFrame {
+    border: solid 4px var(--thumbnailBorderColor);
+    margin: 4px;
+    height: 222px;
 }
 
+.folderImageFrameName {
+    text-align:center;
+    background-color:var(--thumbnailBorderColor);
+    padding-bottom: .1px;
+}
 
-.threeColumnArray {
-    background-color: #fef; /*#b081b1*/
+.nonLocalIndicator {
+    border-right: dotted 24px #ff00dc;
 }
 
 .flexWrapContainer {
@@ -45,6 +53,11 @@
     display: flex;
     flex-wrap: wrap;
     overflow-y: scroll;
+}
+
+.folderImage {
+    height: 200px;
+    cursor: pointer;
 }
 
 .thumbImage {
@@ -64,21 +77,9 @@
     height: 140px;
 }
 
-.folderFirsty {
-    border: solid 4px #ff00dc;
-    margin: 4px;
-    height: 222px;
-}
-
 :after {
     border: solid 1px #ff00dc;
     margin: 2px;
-}
-
-.fname {
-    background-color: #ff00dc;
-    text-align: center;
-    font-family: 'Comic Sans MS';
 }
 
 .countContainer {

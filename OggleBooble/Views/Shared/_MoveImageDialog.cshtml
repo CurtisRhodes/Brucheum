@@ -58,23 +58,10 @@
         $('#btnMoveLink').hide();
     });
     
-    function showMoveCopyDialog(mode, link, linkId, folderId) {
-
-        //alert("mode: " + mode + " link: " + link + "  folder: " + folderId);
-
+    function showMoveCopyDialog(mode, link, folderId) {
         MoveCopyImageDialogModel.Mode = mode;
         MoveCopyImageDialogModel.Link = link;
-        MoveCopyImageDialogModel.LinkId = linkId;
         MoveCopyImageDialogModel.SourceFolderId = folderId;
-
-        //public int SourceFolderId { get; set; }
-        //public int DestinationFolderId { get; set; }
-        //public string Link { get; set; }
-        //public string Mode { get; set; }
-
-
-
-        //MoveCopyImageDialogModel.
         $('#btnGo').html(mode);
         $('#moveCopyDialog').dialog('option', 'title', mode + " Image Link");
         $('#copyDialogImage').attr("src", link);
@@ -102,8 +89,9 @@
                     displayStatusMessage("ok", "image moved to " + $('#dirTreeResults').html());
                     $('#moveCopyDialog').dialog("close");
                 }
-                else
-                    alert("ftp Move" + success);
+                else {
+                    alert("ftp Move " + success);
+                }
             },
             error: function (xhr) {
                 $('#moveCopyDialogLoadingGif').hide();

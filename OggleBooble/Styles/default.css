@@ -1,19 +1,26 @@
 ﻿
 :root {
     --brucheumBlue: #74bac3;
-    --oggleBackground: #fef; /*  #f7eef7   #b081b1 #f8e8e8 */
+    --oggleBackgroundColor: #fef; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
     --borderColor: #555;
     --ogglePurple: #79078f;
     --normalFont: 17px;
+    --ogglgeTitleColor: #7f2c8f;
+    --ogglgeSubTitleColor: #490157;
+    --thumbnailBorderColor: #ff00dc;
+    --ogglgeHeaderBarColor: #00ffff; /*#c79bbe*/
+    --oggleHeaderBoarderTop: #40767d 3px solid;
+    --oggleHeaderBackgroundColor: #74bac3;
+    --oggleHeaderBoarderBottom: #decd6f 11px solid;
 }
 
-
 body {
-    background-color: var(--oggleBackground);
+    background-color: var(--oggleBackgroundColor);
     font-family: Verdana;
     box-sizing: border-box;
     margin-top: 100px !important;
     font-size: var(--normalFont);
+
 }
 .blogCrudArea {
     border: solid thin var(--borderColor);
@@ -110,7 +117,7 @@ body {
 }
 
 .customMessageTitleBar {
-    background-color: #c79bbe;
+    background-color: var(--ogglgeHeaderBarColor);
     color: black;
     width: 100%;
     display: inline-flex;
@@ -150,7 +157,7 @@ label {
 }
 
 .severityError {
-    background-color: #c64e4e;
+    background-color: #941717;
 }
 
 .validationError {
@@ -272,7 +279,7 @@ label {
     padding: 3px 6px;
     font-size: 19px;
     color: #555;
-    background-color: #ddd;
+    background-color: var(--oggleBackgroundColor);
     border: 1px solid #ccc;
     border-radius: 3px;
 }
@@ -287,11 +294,11 @@ label {
 
 .floatingCrudContainer {
     padding: 10px;
-    background-color: var(--oggleBackground);
+    background-color: var(--oggleBackgroundColor);
 }
 
 .floatingCrudBanner {
-    background-color: #cfcfcf;
+    background-color: var(--ogglgeHeaderBarColor);
     text-align: center;
     font-size: larger;
     padding: 10px;
@@ -322,7 +329,7 @@ label {
     max-height: 666px;
     overflow: auto;
     position: absolute;
-    background-color: #fef; /*#b081b1*/
+    background-color: var(--oggleBackgroundColor);
     top: 100px;
     left: 200px;
     display: none;
@@ -330,7 +337,7 @@ label {
 
 .ogContextMenu {
     position: absolute;
-    background-color: #e1e1de;
+    background-color: var(--oggleBackgroundColor);
     border: solid 2px #923c76;
     padding: 8px 10px;
     display: none;

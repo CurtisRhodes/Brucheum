@@ -21,9 +21,7 @@ namespace WebApi.DataContext
         public virtual DbSet<VwLink> VwLinks { get; set; }
         public virtual DbSet<BlogComment> BlogComments { get; set; }
         public virtual DbSet<CategoryFolderDetail> CategoryFolderDetails { get; set; }
-
         public virtual DbSet<MetaTag> MetaTags { get; set; }
-        public virtual DbSet<ImageMetaTag> ImageMetaTags { get; set; }
         
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -120,29 +118,12 @@ namespace WebApi.DataContext
         public DateTime Posted { get; set; }
     }
 
-    [Table("OggleBooble.ImageVote")]
-    public partial class ImageVote
-    {
-        [Key]
-        public string Id { get; set; }
-        public string SelectedImageId { get; set; }
-        public string RegectedImageId { get; set; }
-        public DateTime Created { get; set; }
-        public string Voter { get; set; }
-    }
     [Table("OggleBooble.MetaTag")]
     public partial class MetaTag
     {
         [Key]
         public int TagId { get; set; }
+        public string TagType { get; set; }
         public string Tag { get; set; }
-    }
-    [Table("OggleBooble.ImageMetaTag")]
-    public partial class ImageMetaTag
-    {
-        [Key]
-        public int pkId { get; set; }
-        public int TagId { get; set; }
-        public string LinkId { get; set; }
     }
 }

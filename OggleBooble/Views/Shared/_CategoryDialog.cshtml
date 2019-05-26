@@ -1,10 +1,5 @@
 ﻿<link href="~/Styles/jquery-ui.css" rel="stylesheet" />
 
-<div id="folderCategoryDialog" class="oggleHidden" title="" onmouseleave="considerClosingCategoryDialog()">
-    <div><textarea id="catDlgDescription" class="catDlgTextArea"></textarea></div>
-    <a id="btnCatDlgEdit" class="dialogEditButton" href="javascript:toggleEditCatDialog()">Edit</a>
-</div>
-
 <style>
     #folderCategoryDialog .ui-dialog {
         top: 44px;
@@ -13,13 +8,14 @@
 
     .ui-dialog .ui-dialog-titlebar {
         text-align: center;
-        background-color: #f7eef7;
-        color: var(--ogglePurple);
+        background-color: var(--ogglgeHeaderBarColor);
+        color: var(--ogglgeTitleColor);
     }
 
     .ui-corner-all {
         border-radius: 22px;
     }
+
     .ui-widget textarea {
         font-family: 'Comic Sans MS';
         color: #79078f;
@@ -31,12 +27,30 @@
         height: 350px;
         width: 400px;
         overflow-y: auto;
-        background-color: #f7eef7;
+        background-color: var(--oggleBackgroundColor);
         padding: 9px;
         margin: 8px;
         border-radius: 22px;
     }
+
+    .metaTagRow {
+        display: none;
+    }
 </style>
+
+<div id="folderCategoryDialog" class="oggleHidden" title="" onmouseleave="considerClosingCategoryDialog()">
+
+    <div id="metatabRow" class="metaTagRow">
+        <input id="txtMetatag" onblur="addMetaTag" />
+    </div>
+
+    <div><textarea id="catDlgDescription" class="catDlgTextArea"></textarea></div>
+    <a id="btnCatDlgEdit" class="dialogEditButton" href="javascript:toggleEditCatDialog()">Edit</a>
+    <a id="btnCatDlgEdit" class="dialogEditButton" href="javascript:addMetaTags()">add meta tags</a>
+
+</div>
+
+<div>@Html.Partial("_MetaTagDialog")</div>
 
 <script>
     var categoryFolderId = "";
@@ -114,6 +128,10 @@
                 }
             });
         }
+    }
+
+    function addMetaTags() {
+        openMetaTagDialog(categoryFolderId)
     }
 
     function considerClosingCategoryDialog() {

@@ -57,7 +57,7 @@
         $('#ctxModelName').html("");
         $.ajax({
             type: "GET",
-            url: service + "api/CategoryFolderDetail/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId,
+            url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId,
             success: function (imageDetails) {
 
                 //alert("folderDetails.RootFolder: " + imageDetails.RootFolder);
@@ -93,7 +93,7 @@
     function carouselContextMenuAction(ctxMenuAction) {
         switch (ctxMenuAction) {
             case "seeMore":
-                window.open('/home/ImagePage?folder=' + selectedImageArchiveFolderId, '_blank');
+                window.open('/album?folder?folder=' + selectedImageArchiveFolderId, '_blank');
                 break;
             case "explode":
                 window.open(carouselItemArray[imageIndex].Link, "_blank");
@@ -114,7 +114,7 @@
                 //alert("archive   link: " + carouselItemArray[imageIndex].Link + "  folder: " + carouselItemArray[imageIndex].FolderId);
                 pause();
                 $('#carouselContextMenu').fadeOut();
-                showMoveCopyDialog("Archive", carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId);
+                showMoveCopyDialog("Archive", carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
                 break;
             default:
                 alert("invalid: " + ctxMenuAction);
@@ -160,11 +160,11 @@
     
     function clickViewGallery() {
         clearInterval(Carousel);
-        window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
+        window.location.href = "/album?folder=" + carouselItemArray[imageIndex].FolderId;
     }
 
     function clickViewParentGallery() {
-        window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].ParentId;
+        window.location.href = "/album?folder=" + carouselItemArray[imageIndex].ParentId;
     }
 
     function clickSpeed(speed) {

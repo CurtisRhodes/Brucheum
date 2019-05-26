@@ -1,9 +1,6 @@
-﻿@{
-    ViewBag.Title = "Home Page";
-}
+﻿
 <style>
     #leftColumn, #middleColumn, #rightColumn {
-        background-color: #fef; /*#b081b1*/
         font-family: Comic Sans MS;
     }
 
@@ -55,48 +52,56 @@
         margin-bottom: 8px;
     }
 
-    .modalMessage {
+    .pornWarning {
         position: absolute;
-        background-color: #666;
-        top: 250px;
-        color: #c3c2ae;
+        top: 20px;
         border: solid 2px var(--borderColor);
         box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
+        padding: 12px;
+        margin-left: 230px;
+        margin-right: 230px;
+        background-color: #777;
+        font-size: 20px;
+        z-index: 220;
         display: none;
-        z-index: 20;
-        margin-left: 30px;
-        margin-right: 30px;
+        color:#000;
+        font-weight:bold;
+    }
+
+    .whiteWarning {
+        color: #fefefe;
+        padding: 10px;
+        font-size: 28px;
+        text-align: center;
     }
 
 </style>
 
-<div id="pornWarning" class="modalMessage" >
-    <div style="margin:2px 100px 20px 100px;color:white">
-        <div style="font-size:45px;color:red;text-align:center">WARNING</div>
-        <div style="color:yellow;font-size:35px;text-align:center;margin:4px 14px;"> This site shows pictures of girls with dicks in their mouths. </div>
-        <div style="color:#fefefe;padding:10px;font-size:28px;text-align:center;">
-            If you are offended by pictures and gifs and links to videos
-            of females sucking on dicks please do not enter this site.
-        </div>
-        <p>
-            <input type="checkbox" onchange="letemPorn()" /> I certify that I am a hetosexual white male over 42 years old <br />
-            <input type="checkbox" onchange="letemPorn()" /> I am over 21 and have to jerk off several times a day <br />
-            <input type="checkbox" onchange="letemPorn()" /> I am a religious conservative dismayed by the downfall of society. I still want to see
-            <div style="color:#fefefe;padding:10px;font-size:28px;text-align:center;"> This site only shows images of females sucking on dick. </div>
-        <p>
-            If you are male homosexual cocksucker this site may not be for you.  <br /> If you are a gay cocksucker check here. <input type="checkbox" />
-            <div style="color:#fefefe;padding:10px;font-size:28px;text-align:center;">
-                All images of cocksuckers on this site have cock fully in their mouths.
-                No partial licks or tips are shown except in certain categories
-            </div>
-            <input type="checkbox" onchange="letemPorn()" /> I certify that I am a female cocksucker. You're especially welcome here <br />
-            <input type="checkbox" onchange="letemPorn()" /> I am a female who refuses to give head and am disgusted by the terrible sluts who do so, but I want to revel in their humiliation.
-            <div style="color:#fefefe;padding:10px;font-size:28px;text-align:center;">
-                This site also contains images of different categories of pussy shots, breast fondeling, cum shots, penetration, naughty and kininky behavior,
-                as well as thousands of felmale cocksuckers, mostly on their knees.
-            </div>
-            <div style="font-size:45px;color:red;text-align:center">EXIT SITE</div>
+<div id="pornWarning" class="pornWarning">
+    <div style="font-size:45px;color:red;text-align:center">WARNING</div>
+    <div style="color:yellow;font-size:35px;text-align:center;margin:4px 14px;"> This site shows pictures of girls with dicks in their mouths. </div>
+    <div class="whiteWarning">
+        If you are offended by pictures and gifs and links to videos
+        of females sucking on dicks please do not enter this site.
     </div>
+    <p>
+        <input type="checkbox" onchange="letemPorn()" /> I certify that I am a hetosexual white male over 42 years old <br />
+        <input type="checkbox" onchange="letemPorn()" /> I am over 21 and have to jerk off several times a day <br />
+        <input type="checkbox" onchange="letemPorn()" /> I am a religious conservative dismayed by the downfall of society. I still want to see
+        <div style="color:#fefefe;padding:10px;font-size:28px;text-align:center;"> This site shows images of females sucking on dick. </div>
+    <p>
+        If you are male homosexual cocksucker this site may not be for you.  <br /> If you are a gay cocksucker check here. <input type="checkbox" />
+        <div class="whiteWarning">
+            All images of cocksuckers on this site have cock fully in their mouths.
+            No partial licks or tips are shown except in certain categories
+        </div>
+        <input type="checkbox" onchange="letemPorn()" /> I certify that I am a female cocksucker. You're especially welcome here <br />
+        <input type="checkbox" onchange="letemPorn()" /> I am a female who refuses to give head and am disgusted by the terrible sluts who do so, but I want to revel in their humiliation.
+        <div class="whiteWarning">
+            This site also contains images of different categories of pussy shots, breast fondeling, cum shots, penetration, naughty and kininky behavior,
+            as well as thousands of felmale cocksuckers, mostly on their knees.
+        </div>
+        <div style="font-size:45px;color:red;text-align:center">EXIT SITE</div>
 </div>
 
 <div class="threeColumnArray">
@@ -145,7 +150,7 @@
 
     function onDirTreeClick(path, id) {
         if (id.startsWith("t1")) {
-            window.location.href = "/home/ImagePage?folder=" + id.substring(2);
+            window.location.href = "/album?folder?folder=" + id.substring(2);
         }
         if (id.startsWith("t2")) {
             //alert("t2 from index");

@@ -5,16 +5,19 @@
     width: 100%;
     z-index: 100;
 }
-.classicColors{
-    background-color: #74bac3;
-    border-top: #40767d 3px solid;
-    border-bottom: #decd6f 11px solid;
+
+.classicColors {
+    background-color: var(--oggleHeaderBackgroundColor);
+    border-top: var(--oggleHeaderBoarderTop);
+    border-bottom: var(--oggleHeaderBoarderBottom);
 }
+
 .pornColors {
     background-color: #ffcccc;
     border-top: #40767d 3px solid;
     border-bottom: #decd6f 11px solid;
 }
+
 .renderBody {
     clear: both;
     display: block;
@@ -49,6 +52,7 @@
     */
 }
 .headerTitle {
+
     display: inline-block;
     color: #490157;
     padding-left: 26px;
@@ -61,15 +65,20 @@
 .headerSubTitle {
     display: inline-block;
     font-family: Comic Sans MS;
-    color: #7f2c8f;
+    color: var(--ogglgeTitleColor);
     vertical-align: top;
     margin-top: 7px;
     font-size: 28px;
 }
+
+    .headerSubTitle a {
+        color: var(--ogglgeTitleColor);
+    }
+
 .headerMessageArea {
     display: inline-block;
     width: 100%;
-    color: #490157;
+    color: var(--ogglgeSubTitleColor);
     font-family: Verdana;
     font-size: 22px;
     margin-left: 101px;

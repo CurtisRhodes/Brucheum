@@ -259,6 +259,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\AlbumController.cs" />
     <Compile Include="Controllers\Helpers.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -274,12 +275,11 @@
   <ItemGroup>
     <Content Include="favicon.png" />
     <Content Include="Global.asax" />
-    <Content Include="Home\Images\close.png" />
-    <Content Include="Home\Images\comment.png" />
-    <Content Include="Home\Images\expand02.png" />
-    <Content Include="Home\Images\slideshow.png" />
-    <Content Include="Home\Images\slideshowFaster.png" />
-    <Content Include="Home\Images\slideshowSlower.png" />
+    <Content Include="Images\comment.png" />
+    <Content Include="Images\expand02.png" />
+    <Content Include="Images\slideshow.png" />
+    <Content Include="Images\slideshowFaster.png" />
+    <Content Include="Images\slideshowSlower.png" />
     <Content Include="Images\blueCircleLeft.png" />
     <Content Include="Images\blueCircleRight.png" />
     <Content Include="Images\caretDown.png" />
@@ -287,7 +287,6 @@
     <Content Include="Images\redballon.png" />
     <Content Include="Images\speedDialFaster.png" />
     <Content Include="Images\speedDialSlower.png" />
-    <Content Include="Scripts\3rd Party\Editor\bootstrap.js" />
     <Content Include="Scripts\3rd Party\Editor\codemirror.js" />
     <Content Include="Scripts\3rd Party\Editor\codemirror08.js" />
     <Content Include="Scripts\3rd Party\Editor\formatting.js" />
@@ -311,7 +310,6 @@
     <Content Include="Static_Pages\Images\slideshowFaster.png" />
     <Content Include="Static_Pages\Images\slideshowSlower.png" />
     <Content Include="Styles\carousel.css" />
-    <Content Include="Styles\editor\bootstrap.css" />
     <Content Include="Styles\editor\cobalt.css" />
     <Content Include="Styles\editor\codemirror.css" />
     <Content Include="Styles\editor\codeMirror08.css" />
@@ -348,7 +346,7 @@
     <Content Include="Scripts\jQuery\jquery-3.3.1.min.map" />
     <None Include="Scripts\jQuery\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\Helper.js" />
-    <Content Include="Scripts\ImagePage.js" />
+    <Content Include="Scripts\Album.js" />
     <Content Include="Scripts\jQuery\jquery-1.6.4.js" />
     <Content Include="Scripts\jQuery\jquery-1.6.4.min.js" />
     <Content Include="Scripts\jQuery\jquery.signalR-2.4.0.js" />
@@ -373,14 +371,13 @@
     <Content Include="Images\classic\penetration.jpg" />
     <Content Include="Images\classic\porntransitions.jpg" />
     <Content Include="Images\classic\poses.jpg" />
-    <Content Include="Home\Images\redballon.png" />
     <Content Include="Images\rightArrow.png" />
     <Content Include="Images\classic\sluts.jpg" />
     <Content Include="Images\classic\tittyfuck.jpg" />
     <Content Include="Images\classic\transitions.jpg" />
     <Content Include="Styles\fixedHeader.css" />
     <Content Include="Styles\footer.css" />
-    <Content Include="Styles\ImagePage.css" />
+    <Content Include="Styles\album.css" />
     <Content Include="Styles\modalDialog.css" />
     <Content Include="Styles\video\mediaelementplayer-legacy.css" />
     <Content Include="Styles\video\mediaelementplayer.css" />
@@ -408,7 +405,6 @@
     <Content Include="Views\Shared\_Slideshow.cshtml" />
     <Content Include="Views\Admin\Admin.cshtml" />
     <Content Include="Views\Admin\Blog.cshtml" />
-    <Content Include="Views\Shared\_Editor.cshtml" />
     <Content Include="Views\Shared\_ModelInfoDialog.cshtml" />
     <Content Include="Views\Shared\_MoveImageDialog.cshtml" />
     <Content Include="Views\Shared\_CategoryDialog.cshtml" />
@@ -418,13 +414,15 @@
     <Content Include="Views\Shared\_ImageViewer.cshtml" />
     <Content Include="Views\Shared\_DirTree2.cshtml" />
     <Content Include="Views\Shared\_DirTree1.cshtml" />
+    <Content Include="Views\Album\Album.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Home\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packagesconfig.txt" />
-    <Content Include="Views\Home\ImagePage.cshtml" />
+    <Content Include="Views\Home\xxImagePage.cshtml" />
     <Content Include="Views\Home\Viewer.cshtml" />
     <Content Include="Views\Home\Transitions.cshtml" />
     <None Include="Properties\PublishProfiles\OggleBoobleGoDaddy.pubxml" />

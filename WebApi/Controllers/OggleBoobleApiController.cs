@@ -12,12 +12,12 @@ using WebApi.DataContext;
 namespace WebApi
 {
     [EnableCors("*", "*", "*")]
-    public class CategoryFolderDetailController : ApiController
+    public class ImageCategoryDetailController : ApiController
     {
         [HttpGet]
-        public ImageDetailModel GetModelName(string linkId)
+        public GetModelNameModel GetModelName(string linkId)
         {
-            ImageDetailModel imageDetail = new ImageDetailModel();
+            GetModelNameModel imageDetail = new GetModelNameModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
@@ -565,74 +565,110 @@ namespace WebApi
     public class MetaTagController : ApiController
     {
         [HttpGet]
-        public MetaTagModel GetOne(int tagId, int folderId)
+        public MetaTagResultsModel Get(string tagType)
         {
-            var metaTag = new MetaTagModel();
+            MetaTagResultsModel metaTagResults = new MetaTagResultsModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    var dbMetaTag = db.MetaTags.Where(m => m.TagId == tagId).FirstOrDefault();
-                    metaTag.FolderId = dbMetaTag.FolderId;
-                    metaTag.TagId = dbMetaTag.TagId;
-                    metaTag.TagType = dbMetaTag.TagType;
-                    metaTag.TagValue = dbMetaTag.TagValue;
+                    if (tagType.Length == 36) // we are looking at a single image
+                    {
+                        ImageLink dbImageLink = db.ImageLinks.Where(l => l.Id == tagType).FirstOrDefault();
+                        if (dbImageLink != null)
+                        {
+                            metaTagResults.Source = db.CategoryFolders.Where(f => f.Id == dbImageLink.FolderLocation).First().FolderName;
+                            string rootFolder = db.CategoryFolders.Where(f => f.Id == dbImageLink.FolderLocation).First().RootFolder;
+                            List<MetaTag> rootTags = db.MetaTags.Where(m => m.TagType == rootFolder).ToList();
+                            foreach (MetaTag rootTag in rootTags)
+                            {
+                                metaTagResults.MetaTags.Add(new MetaTagModel() { TagId = rootTag.TagId, Tag = rootTag.Tag, TagType = "Root" });
+                            }
+
+                            List<MetaTag> folderTags = db.MetaTags.Where(m => m.TagType == dbImageLink.FolderLocation.ToString()).ToList();
+                            foreach (MetaTag folderTag in folderTags)
+                            {
+                                metaTagResults.MetaTags.Add(new MetaTagModel() { TagId = folderTag.TagId, Tag = folderTag.Tag, TagType = "Folder" });
+                            }
+                            List<MetaTag> dbMetaTags = db.MetaTags.Where(m => m.TagType == tagType).ToList();
+                            foreach (MetaTag dbMetaTag in dbMetaTags)
+                            {
+                                metaTagResults.MetaTags.Add(new MetaTagModel() { TagId = dbMetaTag.TagId, Tag = dbMetaTag.Tag, TagType = "Image" });
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (tagType.Length > 3) // must be a root
+                        {
+                            metaTagResults.Source = tagType;
+                            List<MetaTag> dbMetaTags = db.MetaTags.Where(m => m.TagType == tagType).ToList();
+                            foreach (MetaTag dbMetaTag in dbMetaTags)
+                            {
+                                metaTagResults.MetaTags.Add(new MetaTagModel() { TagId = dbMetaTag.TagId, Tag = dbMetaTag.Tag, TagType = "Root" });
+                            }
+                        }
+                        else // must be a folder
+                        {
+                            CategoryFolder folder = db.CategoryFolders.Where(f => f.Id.ToString() == tagType).FirstOrDefault();
+                            if (folder != null)
+                            {
+                                metaTagResults.Source = folder.FolderName;
+                                List<MetaTag> dbRootTags = db.MetaTags.Where(m => m.TagType == folder.RootFolder).ToList();
+                                foreach (MetaTag dbMetaTag in dbRootTags)
+                                {
+                                    metaTagResults.MetaTags.Add(new MetaTagModel() { TagId = dbMetaTag.TagId, Tag = dbMetaTag.Tag, TagType = "Root" });
+                                }
+                                List<MetaTag> dbFolderTags = db.MetaTags.Where(m => m.TagType == folder.Id.ToString()).ToList();
+                                foreach (MetaTag dbMetaTag in dbFolderTags)
+                                {
+                                    metaTagResults.MetaTags.Add(new MetaTagModel() { TagId = dbMetaTag.TagId, Tag = dbMetaTag.Tag, TagType = "Folder" });
+                                }
+                            }
+                        }
+
+                    }
+                    metaTagResults.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                metaTag.TagValue = Helpers.ErrorDetails(ex);
+                metaTagResults.Success = Helpers.ErrorDetails(ex);
+            }
+            return metaTagResults;
+        }
+
+        [HttpGet]
+        public MetaTagModel Get(int tagId, string kludge)
+        {
+            MetaTagModel metaTag = new MetaTagModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    MetaTag dbMetaTag = db.MetaTags.Where(m => m.TagId == tagId).First();
+                    metaTag.TagId = dbMetaTag.TagId;
+                    metaTag.Tag = dbMetaTag.Tag;
+                    metaTag.TagType = dbMetaTag.TagType;
+                }
+            }
+            catch (Exception ex)
+            {
+                metaTag.Tag = Helpers.ErrorDetails(ex);
             }
             return metaTag;
-        }
-        [HttpGet]
-        public MetaTagInfo GetMetaTags(int folderId)
-        {
-            MetaTagInfo metaTagInfo = new MetaTagInfo();
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    metaTagInfo.FolderName = db.CategoryFolders.Where(f => f.Id == folderId).First().FolderName;
-                    var dbMetaTags = db.MetaTags.Where(m => m.FolderId == folderId).ToList();
-                    foreach (MetaTag tag in dbMetaTags)
-                    {
-                        metaTagInfo.MetaTags.Add(new MetaTagModel()
-                        {
-                            FolderId = folderId,
-                            TagId = tag.TagId,
-                            TagType = tag.TagType,
-                            TagValue = tag.TagValue
-                        });
-                    }
-                }
-                metaTagInfo.Success = "ok";
-            }
-            catch (Exception ex)
-            {
-                metaTagInfo.Success = Helpers.ErrorDetails(ex);
-            }
-            return metaTagInfo;
         }
 
         [HttpPost]
         public string Insert(MetaTagModel model)
         {
-            if (model.TagValue == null)
-            {
-                return "ok";
-            }
+            if (model.Tag == null) { return "ok"; }
             string success = "";
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    db.MetaTags.Add(new MetaTag()
-                    {
-                        FolderId = model.FolderId,
-                        TagType = model.TagType,
-                        TagValue = model.TagValue
-                    });
+                    db.MetaTags.Add(new MetaTag() { Tag = model.Tag, TagType = model.TagType });
                     db.SaveChanges();
                     success = "ok";
                 }
@@ -642,8 +678,8 @@ namespace WebApi
                 success = Helpers.ErrorDetails(ex);
             }
             return success;
-
         }
+
         [HttpPut]
         public string Update(MetaTagModel model)
         {
@@ -653,10 +689,15 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     MetaTag metaTag = db.MetaTags.Where(m => m.TagId == model.TagId).FirstOrDefault();
-                    metaTag.TagType = model.TagType;
-                    metaTag.TagValue = model.TagValue;
-                    db.SaveChanges();
-                    success = "ok";
+                    if (metaTag == null)
+                        success = "not found";
+                    else
+                    {
+                        metaTag.TagType = model.TagType;
+                        metaTag.Tag = model.Tag;
+                        db.SaveChanges();
+                        success = "ok";
+                    }
                 }
             }
             catch (Exception ex)
@@ -666,6 +707,7 @@ namespace WebApi
             return success;
 
         }
+
         [HttpDelete]
         public string Delete(int tagId)
         {
@@ -773,9 +815,9 @@ namespace WebApi
         }
 
         [HttpPost]
-        public string Insert(BlogComment entry)
+        public SuccessModel Insert(BlogComment entry)
         {
-            string success = "";
+            SuccessModel success = new SuccessModel();
             try
             {
                 entry.Posted = DateTime.Now;
@@ -783,12 +825,13 @@ namespace WebApi
                 {
                     db.BlogComments.Add(entry);
                     db.SaveChanges();
-                    success = "ok";
+                    success.Success= "ok";
+                    success.ReturnValue = entry.Id.ToString();
                 }
             }
             catch (Exception e)
             {
-                success = Helpers.ErrorDetails(e);
+                success.Success = Helpers.ErrorDetails(e);
             }
             return success;
         }

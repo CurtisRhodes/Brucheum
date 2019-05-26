@@ -19,7 +19,7 @@
     .fullScreenViewer {
         position: absolute;
         display: none;
-        background-color: var(--oggleBackground);
+        background-color: var(--oggleBackgroundColor);
         z-index: 110;
     }
 
@@ -31,7 +31,7 @@
     }
 
     .imageViewerHeaderRow {
-        background-color: #00ffff;
+        background-color: var(--ogglgeHeaderBarColor);
         width: 100%;
         padding-top: 3px;
         margin-bottom: -5px;
@@ -121,32 +121,21 @@
     var Yincrimentor = 10;
     var exploderSpeed = 15;
     var imageViewerSelectedImageArchiveFolderId;
+    var sourceFolderId;
     var imageViewerArray;
     var imageViewerIndex;
 
 
-    function LaunchViewer(imageArray, imageIndex) {
+    function LaunchViewer(imageArray, imageIndex, folderId) {
+        sourceFolderId = folderId;
         imageViewerArray = imageArray;
         imageViewerIndex = imageIndex;
-        showImageViewer();
-    }
-
-    function showImageViewer() {
         viewerH = 50;
         viewerW = 50;
         windowW = $(window).width();
         windowH = $(window).height();
         $('#imageViewerDialog').height(viewerH);
-
-        //var thisImage = $('#' + imageViewerArray[imageViewerIndex].Link + '');
-        //var picpos = thisImage.offset();
-        //viewerT = Math.round(picpos.top);
-        //viewerL = Math.round(picpos.left);
-
-        //$('#viewerImage').attr("src", thisImage.attr("src"));
         $('#viewerImage').attr("src", imageViewerArray[imageViewerIndex].Link);
-
-
         $('#viewerImage').removeClass('redSides');
         $('#viewerButtonsRow').hide();
         resizePage();
@@ -196,8 +185,8 @@
             if (imageViewerArray[imageViewerIndex].Local)
                 $('#viewerImage').addClass('redSides');
             clearInterval(exploderInterval);
-            $('#imageViewerDialog').css('top', viewerT);
-            $('#imageViewerDialog').css('left', viewerL);
+            $('#imageViewerDialog').css('top', 0);
+            $('#imageViewerDialog').css('left', 0);
 
             $('#leftClickArea').css('left', 0);
             $('#rightClickArea').css('left', viewerW / 2);
@@ -225,6 +214,9 @@
             $('#viewerImage').css("-webkit-transform", "translateX(-1100px)");
             $('#viewerImage').css("transform", "translateX(-1100px)");
         }
+
+
+
         setTimeout(function () {
             $('#viewerImage').hide();
             if (direction === 'next') {
@@ -238,7 +230,6 @@
                 $('#viewerImage').css("transform", "translateX(2200px)");
             }
 
-
             $('#viewerImage').attr("src", imageViewerArray[imageViewerIndex].Link);
             $('#viewerImageContainer').css('left', ($(window).width() - $('#viewerImage').width()) / 2);
             if (imageViewerArray[imageViewerIndex].Local)
@@ -250,7 +241,9 @@
             $('#viewerImage').css("transform", "translateX(0)");
         }, 450);
 
-        $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
+        //$('#viewerImageContainer').css('left', 0);
+        //$('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
+        $('#footerMessage').html("direction: " + direction);
     }
 
     function runSlideShow(action) {
@@ -312,7 +305,7 @@
         $('#imageViewerContextMenu').css("left", event.clientX);
         $.ajax({
             type: "GET",
-            url: service + "api/CategoryFolderDetail/GetModelName?linkId=" + imageViewerArray[imageViewerIndex].LinkId,
+            url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + imageViewerArray[imageViewerIndex].LinkId,
             success: function (folderDetails) {
                 if (folderDetails.Success === "ok") {
                     imageViewerSelectedImageArchiveFolderId = folderDetails.FolderId;
@@ -352,29 +345,32 @@
     function imageViewerContextMenuAction(action) {
         switch (action) {
             case "show":
-                showModelInfoDialog(imageViewerArray[imageViewerIndex].LinkId, folderId);
+                showModelInfoDialog(imageViewerArray[imageViewerIndex].LinkId, imageViewerSelectedImageArchiveFolderId);
                 closeViewer();
                 break;
             case "jump":
-                window.open("/home/ImagePage?folder=" + imageViewerSelectedImageArchiveFolderId, "_blank");
+                window.open("/album?folder?folder=" + imageViewerSelectedImageArchiveFolderId, "_blank");
                 break;
             case "comment":
-                showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, folderId, folderName);
+                showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, imageViewerSelectedImageArchiveFolderId, folderName);
                 closeViewer();
                 break;
             case "explode":
                 window.open(imageViewerArray[imageViewerIndex].Link, "_blank");
                 break;
             case "archive":
-                showMoveCopyDialog("Archive", imageViewerArray[imageViewerIndex].Link, folderId);
+                $('#imageViewerContextMenu').fadeOut();
+                showMoveCopyDialog("Archive", imageViewerArray[imageViewerIndex].Link, sourceFolderId);
                 closeViewer();
                 break;
             case "copy":
-                showMoveCopyDialog("Copy", imageViewerArray[imageViewerIndex].Link, folderId);
+                $('#imageViewerContextMenu').fadeOut();
+                showMoveCopyDialog("Copy", imageViewerArray[imageViewerIndex].Link, sourceFolderId);
                 closeViewer();
                 break;
             case "move":
-                showMoveCopyDialog("Move", imageViewerArray[imageViewerIndex].Link, folderId);
+                $('#imageViewerContextMenu').fadeOut();
+                showMoveCopyDialog("Move", imageViewerArray[imageViewerIndex].Link, sourceFolderId);
                 closeViewer();
                 break;
             case "remove":
@@ -382,10 +378,10 @@
                     removeImage();
                 break;
             case "setF":
-                setFolderImage(imageViewerArray[imageViewerIndex].LinkId, folderId, "folder");
+                setFolderImage(imageViewerArray[imageViewerIndex].LinkId, sourceFolderId, "folder");
                 break;
             case "setC":
-                setFolderImage(imageViewerArray[imageViewerIndex].LinkId, folderId, "parent");
+                setFolderImage(imageViewerArray[imageViewerIndex].LinkId, sourceFolderId, "parent");
                 break;
             default:
                 alert(action);
@@ -397,9 +393,13 @@
         viewerShowing = false;
     }
 
-    //$(window).resize(function () {
-    //    showImageViewer(imageViewerArray[imageViewerIndex].LinkId);
-    //});
+    function resizeViewer() {
+        //$('#leftClickArea').css('left', 0);
+        //$('#rightClickArea').css('left', $(window).width() / 2);
+
+        $('#imageViewerDialog').width($(window).width());
+        $('#imageViewerDialog').height($(window).height());
+    }
 
     $(document).keydown(function (event) {
         if (viewerShowing) {
@@ -417,6 +417,8 @@
                 case 13:                        // enter
                 case 38:                        // up arrow
                 case 39:                        // right arrow
+                    event.preventDefault();
+                    window.event.returnValue = false;
                     slide('next');
                     break;
                 //case 122:                       // F11 

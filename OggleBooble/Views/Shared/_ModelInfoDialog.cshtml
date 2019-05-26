@@ -138,7 +138,7 @@
     function getFolderDetails(modelName, folderId) {
         $.ajax({
             type: "GET",
-            url: service + "/api/CategoryFolderDetail/Get?folderId=" + folderId,
+            url: service + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
             success: function (folderDetails) {
                 if (folderDetails.Success == "ok") {
                     FolderDetailModel.Src = folderDetails.Src;
@@ -229,7 +229,7 @@
         if (validate()) {
             $.ajax({
                 type: "POST",
-                url: service + "/api/CategoryFolderDetail",
+                url: service + "/api/ImageCategoryDetail",
                 data: FolderDetailModel,
                 success: function (success) {
                     if (success === "ok") {
@@ -251,7 +251,7 @@
         if (validate()) {
             $.ajax({
                 type: "PUT",
-                url: service + "/api/CategoryFolderDetail",
+                url: service + "/api/ImageCategoryDetail",
                 data: FolderDetailModel,
                 success: function (success) {
                     if (success === "ok") {
