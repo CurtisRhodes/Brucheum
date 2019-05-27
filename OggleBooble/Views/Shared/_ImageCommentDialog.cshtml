@@ -77,7 +77,7 @@
     function loadComment() {
         /// retreive user's previous comments
         $.ajax({
-            type: "GET",
+            type: "PATCH",
             url: service + "/api/OggleBlog?linkId=" + folderDetailModel.LinkId + "&userId=" + folderDetailModel.UserId,
             success: function (comment) {
                 if (comment.Success == "ok") {
@@ -125,6 +125,7 @@
             }
         })
     }
+
     function editImageComment() {
         $.ajax({
             type: "PUT",

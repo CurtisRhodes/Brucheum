@@ -58,10 +58,9 @@
                     </div>
                     <div id="menuContainer" class="menuTabContainer">
                         <div id="replaceableMenuItems"></div>
-                        <div id="divPornEditor" class="oggleHidden inline floatLeft"> 
-                            <div class="menuTab floatLeft"><a href="/Admin/MetaTagEdit">Add Meta Tags</a></div>
+                        <div class="menuTab floatLeft"><a href="/Admin/Blog">Blog</a></div>
+                        <div id="divPornEditor" class="oggleHidden inline floatLeft">
                             <div class="menuTab floatLeft"><a href="/Admin/Dashboard">Admin</a></div>
-                            <div class="menuTab floatLeft"><a href="/Admin/Blog">Blog</a></div>
                         </div>
                         <div id="divLogedIn" class="oggleHidden inline floatRight">
                             <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
@@ -99,35 +98,44 @@
 
             if ('@Request.IsAuthenticated' === 'True') {
                 $('#divLogedIn').show()
+                $('#divNotLogedIn').hide();
+                if ('@User.IsInRole("Porn Editor")' === 'True') 
+                    $('#divPornEditor').show();
             }
-            else {
-                var isOk = checkCookie("userName")
-                if (isOk == "ok") {
-                    $('#divLogedIn').show();
-                }
-                else {
-                    $('#divNotLogedIn').show();
-                }
+            else
+                $('#divNotLogedIn').show();
+
+            if (document.domain === 'localhost') {
+                $('#divPornEditor').show();
             }
 
-            if ('@User.IsInRole("Porn Editor")' === 'True' || (document.domain === 'localhost')) {
-                $('#divPornEditor').show();
+            if (checkCookie("userName") == "ok") {
+                $('#divLogedIn').show();
                 $('#divNotLogedIn').hide();
             }
 
+            var isOk = checkCookie("userName")
+            if (isOk == "ok") {
+                $('#divLogedIn').show();
+                $('#divNotLogedIn').hide();
+            }
+            else {
+                $('#divNotLogedIn').show();
+            }
+
             //toggleTittyMenu(getOBCookie("ShapeOrPosesMenu", "shapes"));
-            $('body').css("margin-top", $('#oggleBoobleHeader').height() + 30);
+            //$('body').css("margin-top", $('#oggleBoobleHeader').height() + 30);
         });
 
-    function toggleTittyMenu(sepectedTittyMenu) {
-        //alert("tittyMenu: " + sepectedTittyMenu);
-        $('.tittymenu').hide();
-        if (sepectedTittyMenu == "poses")
-            $('#tittyPosesLinks').show();
-        else
-            $('#tittyShapeLinks').show();
-        setOBCookie('ShapeOrPosesMenu', sepectedTittyMenu);
-    }
+        //function toggleTittyMenu(sepectedTittyMenu) {
+        //    //alert("tittyMenu: " + sepectedTittyMenu);
+        //    $('.tittymenu').hide();
+        //    if (sepectedTittyMenu == "poses")
+        //        $('#tittyPosesLinks').show();
+        //    else
+        //        $('#tittyShapeLinks').show();
+        //    setOBCookie('ShapeOrPosesMenu', sepectedTittyMenu);
+        //}
     </script>
 </body>
 </html>

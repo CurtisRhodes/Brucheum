@@ -2,7 +2,8 @@
 :root {
     --brucheumBlue: #74bac3;
     --oggleBackgroundColor: #fef; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
-    --borderColor: #555;
+    --oggleContainerBackgroundColor: #e3cedd; /*#f8e8e8 */
+    --oggleBorderColor: #555;
     --ogglePurple: #79078f;
     --normalFont: 17px;
     --ogglgeTitleColor: #7f2c8f;
@@ -23,7 +24,7 @@ body {
 
 }
 .blogCrudArea {
-    border: solid thin var(--borderColor);
+    border: solid thin var(--oggleBorderColor);
     padding: 5px;
 }
 
@@ -287,7 +288,7 @@ label {
     position: absolute;
     top: 250px;
     left: 200px;
-    border: solid 2px var(--borderColor);
+    border: solid 2px var(--oggleBorderColor);
     box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
     display: none;
 }
@@ -316,7 +317,7 @@ label {
 }
 
     .leftColumnList div {
-        font-size: 21px;
+        font-size: 17px;
         cursor: pointer;
         color: #9a4ea9;
         margin-left: 14px;

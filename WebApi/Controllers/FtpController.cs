@@ -704,7 +704,7 @@ namespace WebApi
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex) + " try 5";
+                success = Helpers.ErrorDetails(ex) + "please try again";
             }
             return success;
         }

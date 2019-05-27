@@ -779,22 +779,51 @@ namespace WebApi
     public class OggleBlogController : ApiController
     {
         [HttpGet]
-        public List<BlogCommentModel> Get(string blogId)
+        public BlogCommentModel Get(int blogId)
+        {
+            BlogCommentModel entry = new BlogCommentModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    BlogComment dbBlogComment = db.BlogComments.Where(b => b.Id == blogId).FirstOrDefault();
+                    if (dbBlogComment != null)
+                    {
+                        entry.CommentTitle = dbBlogComment.CommentTitle;
+                        entry.CommentText = dbBlogComment.CommentText;
+                        entry.CommentType = dbBlogComment.CommentType;
+                        entry.Link = dbBlogComment.Link;
+                        entry.Id = dbBlogComment.Id;
+                    }
+                    else
+                        entry.Id = 0;
+                }
+                entry.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                entry.CommentTitle = Helpers.ErrorDetails(ex);
+            }
+            return entry;
+        }
+
+        [HttpGet]
+        public List<BlogCommentModel> GetBlogList(string commentType)
         {
             List<BlogCommentModel> blogComments = new List<BlogCommentModel>();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    List<BlogComment> dbBlogComments = db.BlogComments.Where(b => b.CommentType == blogId).ToList();
+                    List<BlogComment> dbBlogComments = db.BlogComments.Where(b => b.CommentType == commentType).ToList();
                     foreach (BlogComment dbBlogComment in dbBlogComments)
                     {
                         blogComments.Add(new BlogCommentModel()
                         {
                             Id = dbBlogComment.Id,
-                            CommentTitle = dbBlogComment.CommentTitle
-                            //CommentText = dbBlogComment.CommentText,
-                            //Link = dbBlogComment.Link,
+                            CommentTitle = dbBlogComment.CommentTitle,
+                            CommentText = dbBlogComment.CommentText,
+                            Link = dbBlogComment.Link
                         });
                     }
                 }
@@ -806,8 +835,8 @@ namespace WebApi
             return blogComments;
         }
 
-        [HttpGet]
-        public BlogCommentModel Get(string linkId, string userId)
+        [HttpPatch]
+        public BlogCommentModel GetImageComment(string linkId, string userId)
         {
             BlogCommentModel entry = new BlogCommentModel();
             try

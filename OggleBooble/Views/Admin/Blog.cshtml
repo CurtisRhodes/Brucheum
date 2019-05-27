@@ -2,24 +2,17 @@
     ViewBag.Title = "Blog";
 }
 
+<link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/start/jquery-ui.min.css" rel="stylesheet">
 <style>
-    .crudList {
-        float: left;
-        border: solid 3px #555;
-        height: 700px;
-        width: 300px;
-    }
 
-    .blogCrudContainer {
-        display: inline-block;
-        border: solid 3px gold;
-        margin-left: 122px;
-    }
-
-    .blogCrudArea {
+    .blogEditArea {
         display: flex;
+        display: inline-block;
+        margin-top: 10px;
+        padding: 4px;
+        background-color: var(--oggleContainerBackgroundColor);
     }
-
+    
     .crudLabel {
         min-width: 45px;
         margin-right: 4px;
@@ -31,333 +24,306 @@
         width: 500px;
     }
 
-    /*.blogEntryTextArea {
-        height: 500px;
-        width: 800px;
-        padding: 4px;
-        font-size: 15px;
-        margin: 7px;
-    }*/
-
     .leftImage {
-        border: solid .05px #555;
+        border: solid .05px var(--oggleBorderColor);
         height: 130px;
         min-width: 120px;
         margin-left: 10px;
     }
 
-    .crudListItem {
-        border: solid .05px rgba(154, 122, 122, 0.50);
-        padding: 5px;
-        margin: 5px;
-        background-color: #f1ceb5;
-        width: 285px;
-        cursor: pointer;
-    }
-
-    .blogSelectList {
-        height: 400px;
+    .blogItemContainer {
+        height: 100%;
+        margin-left: 10px;
         overflow-y: auto;
     }
 
+    .blogListItem {
+        font-size: 13px;
+        padding: 4px 2px;
+        margin: 1px;
+        background-color: var(--oggleBackgroundColor);
+        cursor: pointer;
+    }
+
+    .panel {
+        margin-bottom: 5px;
+        background-color: var(--oggleBackgroundColor);
+    }
+
+    .blogArticle {
+        border: solid 2px var(--oggleBorderColor);
+        margin: 3px 23px;
+    }
+    .blogArticleTitle {
+        font-size: 24px;
+        text-align: center;
+    }
+    .blogArticleImage {
+        height: 222px;
+    }
+    .blogArticleBody {
+        padding: 4px;
+        font-size: 17px;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    }
+
+    .blogArticleJog {
+        border: solid thin red;
+        margin: 3px 23px;
+    }
+    .blogArticleJogImage {
+        height: 175px;
+        margin-right: 6px;
+    }
+    .blogArticleJogBody {
+        height: 100px;
+        overflow-y: auto;
+    }
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn">
         <div class="leftColumnList">
-            <div onclick="window.location.blogSelectList='/Admin'">Admin</div>
-            <div onclick="$('#oggleBlogEntry').fadeIn()">New Entry</div>
+            <div onclick="showBlogDisplay('CMT')">Show Entries</div>
+            <div onclick="showBlogEditor()">New Entry</div>
         </div>
     </div>
     <div id="middleColumn">
         <div id="divStatusMessage"></div>
-        <div id="blogDisplayArea"></div>
+        <div id="blogDisplayArea">
 
-        <div id="blogListDialog" title="blog entries">
-            <div id="blogList" class="crudList blogSelectList"></div>
+            <div id="blogArticleJogContainer" >
+            </div>
+
+            @*<div id="blogArticleContainer">
+                <div class="blogArticle">
+                    <div class="blogArticleTitle">The Title of My Blog Article</div>
+                    <div class="center"><img class="blogArticleImage" src="http://archive.jpg" /></div>
+                    <div class="blogArticleBody">
+                    </div>
+                </div>
+            </div>*@
+
         </div>
-
+        <div id="blogEditArea" class="blogEditArea">
+            <div class="floatLeft">
+                <div>
+                    <div class="flexContainer">
+                        <div class="floatLeft">
+                            <div style="display:block">
+                                <div class="crudRow">
+                                    <div class="crudLabel inline">Title</div>
+                                    <input id="txtCommentTitle" class="roundedInput" />
+                                </div>
+                                <div class="crudRow">
+                                    <div class="crudLabel inline">Type</div>
+                                    <select id="selCommentType" class="roundedInput" onchange="selectCommentTypeChange();">
+                                        <option value="CMT">Image Comment</option>
+                                        <option value="PGM">Programmer Notes</option>
+                                        <option value="BLG">BlogEntry</option>
+                                        <option value="CON">Site Content</option>
+                                    </select>
+                                </div>
+                                <div class="crudRow">
+                                    <div class="crudLabel inline">Link</div>
+                                    <input id="txtLink" class="roundedInput" onblur="$('#imgBlogLink').attr('src', $('#txtLink').val());" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="floatLeft">
+                            <img id="imgBlogLink" class="leftImage" />
+                        </div>
+                    </div>
+                </div>
+                <div class="crudRow">
+                    <div class="crudLabel">Comment</div>
+                    <div id="blogEditor" class="blogEntryTextArea"></div>
+                    <div>
+                        <div id="btnAddEdit" class="roundendButton" onclick="saveBlogEntry()">Add</div>
+                        <div id="btnNewCancel" class="roundendButton" onclick="NewCancel()">New</div>
+                    </div>
+                </div>
+            </div>
+            <div class="floatLeft">
+                <div id="blogList" class="blogItemContainer"></div>
+            </div>
+        </div>
     </div>
     <div id="rightColumn"></div>
 </div>
 
-
-
-@*<div id="oggleBlogEntry" class="floatingCrud">
-    <div class="floatingCrudBanner">
-        Blog Entry
-        <div onclick="$('#oggleBlogEntry').fadeOut()" class="farSide">x</div>
-    </div>
-    <div class="floatingCrudContainer">
-        <div><span>title</span><input id="txtBlogEntryTitle" class="roundedInput" /></div>
-        <div><textarea id="txtBlogEntryComment" class="blogEntryTextArea"></textarea></div>
-        <div class="roundendButton" onclick="saveBlogEntry()">Create</div>
-    </div>
-</div>*@
-
-
-
-@*<div id="blogEditDialog" class="oggleHidden" title="Write a fantasy about this image">
-    <div>
-        <div class="crudRow">
-            <div class="crudLabel inline">Title</div>
-            <input id="txtCommentTitle" class="roundedInput" />
-        </div>
-        <div class="crudRow">
-            <div class="crudLabel inline">Type</div>
-            <select id="selCommentType" class="roundedInput" onchange="loadBlogList(); clearGets()">
-                <option value="CMT">Image Comment</option>
-                <option value="PGM">Programmer Notes</option>
-                <option value="BLG">BlogEntry</option>
-                <option value="CON">Site Content</option>
-            </select>
-        </div>
-        <div class="crudRow">
-            <div class="crudLabel inline">Link</div>
-            <input id="txtLink" class="roundedInput" onblur="$('#imgBlogLink').attr('src', $('#txtLink').val());" />
-        </div>
-    </div>
-    <div class="floatLeft">
-        <img id="imgBlogLink" class="leftImage" />
-    </div>
-    <div class="crudRow">
-        <div class="crudLabel">Comment</div>
-        <div id="blogEditor" class="blogEntryTextArea"></div>
-        <div>
-            <div id="blogSave" class="roundendButton" onclick="saveBlogEntry()">Add</div>
-            <div id="blogNew" class="roundendButton" onclick="newBlogEntry()">New</div>
-            <div id="blogCancel" class="roundendButton" onclick="cancelBlogEntry()">Cancel</div>
-        </div>
-
-    </div>
-*@
-
-
-
 <script>
     var service = '@ViewBag.Service';
-    var blogEntry = {};
+    var blogObject = {};
 
-    $(function () {
+    /// 11:19  May 24 20019
+    ///  sometimes even I have to take a moment to figure out what I want to do.
+    /// start with a display of blog entries
+    $(document).ready(function () {
 
-        /*.blogEntryTextArea {
-        height: 500px;
-        width: 800px;
-        padding: 4px;
-        font-size: 15px;
-        margin: 7px;
-        }*/
-        $('#blogEditDialog').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" }
-        });
-
-        $('#blogListDialog').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            top: "10",
-            left: "700",
-            height: "500",
-            width: "800"
-        });
-        
-
-
+        showBlogDisplay('CMT');
 
         $('#blogEditor').summernote({
-            height: 200,
+            height: 310,
+            width: 900,
             codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
             toolbar: [
                 ['codeview'],
                 ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
             ]
         });
+        $('.blogItemContainer').height($('.blogEditArea').height());
     });
 
-
-    $(document).ready(function () {
-
-        $('#blogNew').hide();
+    function showBlogEditor() {
+        $('#blogDisplayArea').hide();
+        $('#blogEditArea').show();
         $('#imgBlogLink').attr("src", "http://boobs.ogglebooble.com/redballon.png");
-
-        $('#blogListDialog').dialog("open");
-
-        
-        //$('#blogEditDialog').show();
-        //$('#blogEditDialog').dialog("open");
-
         loadBlogList("CMT");
+    }
 
-    });
+    function showBlogDisplay(commentType) {
+        $.ajax({
+            type: "GET",
+            url: service + "/api/OggleBlog/GetBlogList?commentType=" + commentType,
+            success: function (blogComments) {
+                $('#blogArticleJogContainer').html("");
+                if (blogComments.length == 0)
+                    $('#blogArticleJogContainer').html("-- --");
+                else {
+                    if (!blogComments[0].CommentTitle.startsWith("ERROR")) {
+                        $.each(blogComments, function (idx, entry) {
+                            $('#blogArticleJogContainer').append(`
+                                <div class="blogArticleJog">
+                                    <div class="flexContainer">
+                                        <div class="floatLeft">
+                                            <img class="blogArticleJogImage" src="`+ entry.Link + `" />
+                                        </div>
+                                        <div class="floatLeft">
+                                            <div class="blogArticleTitle ">`+ entry.CommentTitle + `</div>
+                                            <div class="blogArticleJogBody">`+ entry.CommentText + `</div>
+                                            <span class="clickable" onclick="expandArticle()">...</span>
+                                        </div>
+                                    </div>
+                                </div>`);
+                        });
+                    }
+                    else
+                        alert("display Blog: " + blogComments[0].CommentTitle)
+                }
+            },
+            error: function (xhr) {
+                $('#getDirTreeLoadingGif').hide();
+                alert("display BlogEntry xhr: " + xhr.statusText);
+            }
+        });
+        $('#blogDisplayArea').show();
+        $('#blogEditArea').hide();
+    }
 
+    function selectCommentTypeChange() {
+        loadBlogList($('#selCommentType').val());
+    }
 
-    /// 11:19  May 24 20019
-    ///  sometimes even I have to take a moment to figure out what I want to do.
-    /// start with a display of blog entries
-    //<option value="CMT">Comment</option>     image comment
-    //<option value="WRN">Warning</option>     site content  // Let me extplain, porn warning,
-    //<option value="BLG">BlogEntry</option>   opinions
-    //<option value="BLG">BlogEntry</option>   opinions  philosphy of porn
-    //<option value="GMT">MetaTag</option>     programmer notes
-
-    function getBlogs() {
+    function loadBlogList(commentType) {
         try {
             $.ajax({
                 type: "GET",
-                url: service + "/api/OggleBlog/?id=" + id,
-                success: function (model) {
-
-
-                    //if (!model.CommentTitle.startsWith("ERROR")) {
-                    //    blogEntry.Id = id;
-                    //    $('#txtCommentTitle').val(model.CommentTitle);
-                    //    $('#selCommentType').val(model.CommentType);
-                    //    $('#txtLink').val(model.Link);
-                    //    $('#txtComment').val(model.CommentText);
-                    //    $('#blogSave').html("Edit")
-                    //    $('#blogNew').hide();
-                    //    $('#imgBlogLink').attr("src", model.Link);
-                    //}
-                    //else
-                    //    alert("displayBlogEntry: " + success)
+                url: service + "/api/OggleBlog/GetBlogList?commentType=" + commentType,
+                success: function (blogComments) {
+                    $('#blogList').html("");
+                    if (blogComments.length == 0) {
+                        $('#blogList').append("<div class='blogListItem'>--- ---</div>");
+                    }
+                    else {
+                        if (!blogComments[0].CommentTitle.startsWith("ERROR")) {
+                            $.each(blogComments, function (idx, entry) {
+                                $('#blogList').append("<div class='blogListItem' onclick=loadBlogEntry('" + entry.Id + "') >" + entry.CommentTitle + "</div>");
+                            });
+                            $('#btnAddEdit').html("Add");
+                            $('#btnNewCancel').hide();
+                        }
+                        else
+                            alert("load BlogList: " + blogComments[0].CommentTitle)
+                    }
                 },
                 error: function (xhr) {
                     $('#getDirTreeLoadingGif').hide();
-                    alert("displayBlogEntry xhr: " + xhr.statusText);
+                    alert("load BlogList xhr: " + xhr.statusText);
                 }
             });
         } catch (e) {
-            alert("displayBlogEntry catch: " + e);
+            alert("load BlogList catch: " + e);
         }
     }
-    function getaBlogEntry()
-    {
-        try {
-            $.ajax({
-                type: "GET",
-                url: service + "/api/OggleBlog/?id=" + id,
-                success: function (model) {
 
-
-                    //if (!model.CommentTitle.startsWith("ERROR")) {
-                    //    blogEntry.Id = id;
-                    //    $('#txtCommentTitle').val(model.CommentTitle);
-                    //    $('#selCommentType').val(model.CommentType);
-                    //    $('#txtLink').val(model.Link);
-                    //    $('#txtComment').val(model.CommentText);
-                    //    $('#blogSave').html("Edit")
-                    //    $('#blogNew').hide();
-                    //    $('#imgBlogLink').attr("src", model.Link);
-                    //}
-                    //else
-                    //    alert("displayBlogEntry: " + success)
-                },
-                error: function (xhr) {
-                    $('#getDirTreeLoadingGif').hide();
-                    alert("displayBlogEntry xhr: " + xhr.statusText);
-                }
-            });
-        } catch (e) {
-            alert("displayBlogEntry catch: " + e);
-        }
-    }
-    function loadBlogList(blogId) {
+    function loadBlogEntry(blogId) {
         try {
             $.ajax({
                 type: "GET",
                 url: service + "/api/OggleBlog?blogId=" + blogId,
-                success: function (entries) {
-                    $('#blogList').html("");
-                    if (!entries[0].CommentTitle.startsWith("ERROR")) {
-                        $.each(entries, function (idx, entry) {
-                            if (entry.CommentType == $('#selCommentType').val()) {
-                                $('#blogList').append("<div class='crudListItem' onclick=loadBlogEntry('" + entry.Id + "') >" + entry.CommentTitle + "</div>");
-                            }
-                        });
-                    }
-                    else
-                        alert("loadBlogList: " + success)
-                },
-                error: function (xhr) {
-                    $('#getDirTreeLoadingGif').hide();
-                    alert("loadBlogList xhr: " + xhr.statusText);
-                }
-            });
-        } catch (e) {
-            alert("loadBlogList catch: " + e);
-        }
-    }
-    function loadBlogEntry(id) {
-        try {
-            $.ajax({
-                type: "GET",
-                url: service + "/api/OggleBlog/?id=" + id,
                 success: function (model) {
-                    if (!model.CommentTitle.startsWith("ERROR")) {
-                        blogEntry.Id = id;
+                    if (model.Success == "ok") {
+                        blogObject.Id = model.Id;
                         $('#txtCommentTitle').val(model.CommentTitle);
                         $('#selCommentType').val(model.CommentType);
                         $('#txtLink').val(model.Link);
-                        $('#txtComment').val(model.CommentText);
-                        $('#blogSave').html("Edit")
-                        $('#blogNew').hide();
+                        $('#blogEditor').summernote('code', model.CommentText);
                         $('#imgBlogLink').attr("src", model.Link);
+
+                        $('#btnAddEdit').html("Edit");
+                        $('#btnNewCancel').show();
                     }
                     else
-                        alert("displayBlogEntry: " + success)
+                        alert("displayBlogEntry: " + model.Success)
                 },
                 error: function (xhr) {
                     $('#getDirTreeLoadingGif').hide();
-                    alert("displayBlogEntry xhr: " + xhr.statusText);
+                    alert("display BlogEntry xhr: " + xhr.statusText);
                 }
             });
         } catch (e) {
-            alert("displayBlogEntry catch: " + e);
+            alert("display BlogEntry catch: " + e);
         }
     }
-    function newBlogEntry() {
-        $('#blogSave').html("Add");
-        $('#blogNew').hide();
-        clearGets();
+
+    function NewCancel() {
+        $('#btnNewCancel').hide();
+        $('#btnAddEdit').html("Add");
+       clearGets();
     }
+
     function clearGets() {
         $('#txtCommentTitle').val("");
         //$('#selCommentType').val("");
         $('#txtLink').val("");
-        $('#txtComment').val("");
+        $('#blogEditor').summernote('code', "");
         $('#imgBlogLink').attr("src", "http://boobs.ogglebooble.com/redballon.png");
-        blogEntry.Id = "";
+        blogObject.Id = "";
+    }
 
-    }
-    function cancelBlogEntry() {
-        $('#blogSave').html("Add");
-        $('#blogNew').hide();
-        clearGets();
-    }
     function saveBlogEntry() {
         try {
-            blogEntry.CommentTitle = $('#txtCommentTitle').val();
-            blogEntry.CommentType = $('#selCommentType').val();
-            blogEntry.Link = $('#txtLink').val();
-            blogEntry.CommentText = $('#txtComment').val();
-            //  UserId nvarchar(128),
+            blogObject.CommentTitle = $('#txtCommentTitle').val();
+            blogObject.CommentType = $('#selCommentType').val();
+            blogObject.Link = $('#txtLink').val();
+            blogObject.CommentText = $('#blogEditor').summernote('code');
 
-            if ($('#blogSave').html() == "Add") {
+            if ($('#btnAddEdit').html() == "Add") {
                 $.ajax({
                     type: "POST",
                     url: service + "/api/OggleBlog",
-                    data: blogEntry,
-                    success: function (success) {
-                        if (success == "ok") {
+                    data: blogObject,
+                    success: function (successModel) {
+                        if (successModel.Success == "ok") {
                             displayStatusMessage("ok", "Entry Saved")
-                            $('#blogSave').html("Edit")
-                            $('#blogNew').show();s
-                            loadBlogList();
+                            $('#btnAddEdit').html("Edit")
+                            $('#btnNewCancel').show();
+                            loadBlogList(blogObject.CommentType);
+                            blogObject.Id = successModel.ReturnValue;
                         }
                         else
-                            alert("saveBlogEntry: " + success)
+                            alert("saveBlogEntry: " + successModel.Success)
                     },
                     error: function (xhr) {
                         $('#getDirTreeLoadingGif').hide();
@@ -369,14 +335,13 @@
                 $.ajax({
                     type: "PUT",
                     url: service + "/api/OggleBlog",
-                    data: blogEntry,
+                    data: blogObject,
                     success: function (success) {
                         if (success == "ok") {
                             displayStatusMessage("ok", "Entry Updated")
-                            loadBlogList();
                         }
                         else
-                            alert("saveBlogEntry: " + success)
+                            alert("update blogEntry: " + success)
                     },
                     error: function (xhr) {
                         $('#getDirTreeLoadingGif').hide();

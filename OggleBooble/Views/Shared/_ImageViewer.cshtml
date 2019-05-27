@@ -350,7 +350,7 @@
                 closeViewer();
                 break;
             case "jump":
-                window.open("/album?folder?folder=" + imageViewerSelectedImageArchiveFolderId, "_blank");
+                window.open("/album?folder=" + imageViewerSelectedImageArchiveFolderId, "_blank");
                 break;
             case "comment":
                 showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, imageViewerSelectedImageArchiveFolderId, folderName, imageViewerIndexCurrentUser);

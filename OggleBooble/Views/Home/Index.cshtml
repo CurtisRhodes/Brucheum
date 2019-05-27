@@ -55,7 +55,7 @@
     .pornWarning {
         position: absolute;
         top: 20px;
-        border: solid 2px var(--borderColor);
+        border: solid 2px var(--oggleBorderColor);
         box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
         padding: 12px;
         margin-left: 230px;
@@ -150,7 +150,7 @@
 
     function onDirTreeClick(path, id) {
         if (id.startsWith("t1")) {
-            window.location.href = "/album?folder?folder=" + id.substring(2);
+            window.location.href = "/album?folder=" + id.substring(2);
         }
         if (id.startsWith("t2")) {
             //alert("t2 from index");

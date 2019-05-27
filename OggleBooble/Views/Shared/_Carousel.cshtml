@@ -93,7 +93,7 @@
     function carouselContextMenuAction(ctxMenuAction) {
         switch (ctxMenuAction) {
             case "seeMore":
-                window.open('/album?folder?folder=' + selectedImageArchiveFolderId, '_blank');
+                window.open('/album?folder=' + selectedImageArchiveFolderId, '_blank');
                 break;
             case "explode":
                 window.open(carouselItemArray[imageIndex].Link, "_blank");
