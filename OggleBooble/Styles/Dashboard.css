@@ -1,0 +1,150 @@
+﻿.linkContainer {
+    display: inline;
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+
+    .linkContainer div {
+        display: inline;
+        color: #585a38;
+        margin-right: 22px;
+    }
+
+.dashBoardContainer {
+    margin-top: 11px;
+    display: flex;
+    border: solid 2px #111;
+}
+
+.workarea {
+    float: left;
+    width: 100%;
+    background-color: #eee;
+}
+
+.collapsable {
+    display: block;
+}
+
+.fileCount {
+    display: inline;
+    color: blue;
+    font-size: smaller;
+}
+
+.smallLoadingGif {
+    top: 100px;
+    display: none;
+    height: 55px;
+}
+
+.loadingGif {
+    left: 150px;
+    top: 200px;
+    height: 140px;
+}
+
+.addLinkCrudArea {
+    font-size: 16px;
+    border: solid .5px #555;
+    padding: 6px;
+}
+
+.linkImage {
+    /*
+            float:right;
+        height: 430px;
+        min-width: 520px;
+
+        */
+    max-width: 80%;
+    border: solid .5px #555;
+}
+
+.roundedInput {
+    display: inline-block;
+    width: 95%;
+    margin-right: 6px;
+    font-size: 22px;
+}
+
+.roundendButton {
+    margin-top: 6px;
+    display: inline-block;
+}
+
+.infoLine {
+    position: absolute;
+    bottom: 44px;
+    display: none;
+    padding: 4px;
+    margin-left: 3px;
+    border: solid .5px #555;
+    height: 32px;
+    min-width: 610px;
+    background-color: #f8e8e8;
+    vertical-align: bottom;
+}
+
+#dashboardTop {
+}
+
+.myH2 {
+    font-family: Verdana;
+    margin-top: 1px;
+    font-size: 22px;
+}
+
+.clickable {
+    white-space: nowrap;
+}
+
+.dirTree2Container {
+    margin-top: 8px;
+    background-color: #f8e8e8;
+    height: 500px;
+    text-align: left;
+    overflow-y: auto;
+}
+
+.treeContainer {
+    margin-top: 8px;
+    float: right;
+    border-left: solid .5px #555;
+    min-height: 106px;
+    min-width: 275px;
+    overflow-y: auto;
+}
+
+.toggleButton {
+    display: inline-block;
+    font-size: 24px;
+    background-color: #07C;
+    color: #fff;
+    margin: 2px 4px;
+    border-radius: 8px;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.floatingCrud2 {
+    position: absolute;
+    top: 350px;
+    left: 400px;
+    border: solid 2px var(--oggleBorderColor);
+    box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
+    display: none;
+}
+
+.repairReport {
+    padding: 4px;
+    line-height: 22px;
+    max-height: 412px;
+    overflow-y: auto;
+    background-color: #faf8e3;
+}
+
+.dashboardProgessBar {
+    color: aqua;
+    background-color: bisque;
+}

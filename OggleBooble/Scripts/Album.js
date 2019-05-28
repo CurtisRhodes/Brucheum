@@ -12,7 +12,7 @@ function getBreadCrumbs() {
             for (i = parents.length - 1; i >= 0; i--) {
                 $('#headerMessage').append("<a class='activeBreadCrumb' " +
                     "onmouseover='slowlyShowCatDialog(" + parents[i].FolderId + ");forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;' " +    
-                    "href='/album?folder=" + parents[i].FolderId + "'>" + parents[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
+                    " onclick='forgetShowingCatDialog=true;' href='/album?folder=" + parents[i].FolderId + "'>" + parents[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
             }
             setLayout(parents[parents.length - 1].FolderName);
             document.title = parents[0].FolderName + " OggleBooble";
@@ -109,25 +109,32 @@ function processImages(imageModel, start) {
 
     $.each(imageModel.Files, function (idx, imageModelFile) {
         $('#footerMessage').html("fileCount: " + fileCount);
-        if (imageModel.Origin === "archive") {
-            if (imageModelFile.LinkCount === 1) {
-                $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
-                    " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+
+        if (isPornEditor) {
+            if (imageModel.Origin === "archive") {
+                if (imageModelFile.LinkCount === 1) {
+                    $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
+                        " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+                }
+                else {
+                    $('#imageContainer').append("<div class='multiLinkImageFrame'><img id=" + imageModelFile.LinkId +
+                        " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+                }
             }
             else {
-                $('#imageContainer').append("<div class='multiLinkImageFrame'><img id=" + imageModelFile.LinkId +
-                    " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+                if (imageModelFile.LinkCount > 1) {
+                    $('#imageContainer').append("<div class='nonLocalImageFrame'><img id=" + imageModelFile.LinkId +
+                        " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+                }
+                else {
+                    $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
+                        " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+                }
             }
         }
         else {
-            if (imageModelFile.LinkCount > 1) {
-                $('#imageContainer').append("<div class='nonLocalImageFrame'><img id=" + imageModelFile.LinkId +
-                    " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
-            }
-            else {
-                $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
-                    " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
-            }
+            $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
+                " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
         }
         fileCount++;
 

@@ -905,15 +905,23 @@ namespace WebApi
         
         private string RemoveFolder(string ftpPath)
         {
-            string success = "";
+            string success = "ok";
             try
             {
                 foreach (string subDir in FtpIO.GetDirectories(ftpPath))
                 {
-                    RemoveFolder(ftpPath + "/" + subDir);
-                    //success = FtpIO.RemoveDirectory(ftpPath + "/" + subDir);
+                    if (success == "ok")
+                    {
+                        RemoveFolder(ftpPath + "/" + subDir);
+                        success = FtpIO.RemoveDirectory(ftpPath + "/" + subDir);
+                        if (success != "ok")
+                        {
+                            break;
+                        }
+                    }
                 }
-                success = FtpIO.RemoveDirectory(ftpPath);
+                if (success == "ok")
+                    success = FtpIO.RemoveDirectory(ftpPath);
             }
             catch (Exception ex)
             {

@@ -88,10 +88,8 @@ body {
 .loadingGif {
     position: absolute;
     display: none;
+    height: 45px;
 }
-    .loadingGif img {
-        height: 45px;
-    }
 
 #modalContainer {
     z-index: 6; /* Sit on top */

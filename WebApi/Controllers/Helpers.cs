@@ -106,7 +106,7 @@ namespace WebApi
                 while (parentId > 1)
                 {
                     var parentDb = db.CategoryFolders.Where(f => f.Id == parentId).First();
-                    parentPath = parentDb.FolderName + "/" + parentPath;
+                    parentPath = parentDb.FolderName.Replace(".OGGLEBOOBLE.COM", "") + "/" + parentPath;
                     parentId = parentDb.Parent;
                 }
             }

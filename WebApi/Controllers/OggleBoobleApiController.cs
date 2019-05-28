@@ -380,7 +380,7 @@ namespace WebApi
                         db.CategoryImageLinks.Add(new CategoryImageLink()
                         {
                             ImageCategoryId = model.DestinationFolderId,
-                            ImageLinkId = model.Link
+                            ImageLinkId = linkId
                         });
                         db.SaveChanges();
                         success = "ok";

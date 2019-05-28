@@ -294,14 +294,9 @@
     <Content Include="Scripts\3rd Party\Editor\summernote.js" />
     <Content Include="Scripts\3rd Party\Editor\xml.js" />
     <None Include="packages.config" />
-    <None Include="Scripts\jQuery\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\Cookies.js" />
-    <Content Include="Scripts\jQuery\jquery-3.3.1.js" />
-    <Content Include="Scripts\jQuery\jquery-3.3.1.min.js" />
-    <Content Include="Scripts\jQuery\jquery-3.3.1.slim.js" />
-    <Content Include="Scripts\jQuery\jquery-3.3.1.slim.min.js" />
-    <Content Include="Scripts\jquery.signalR-2.4.1.js" />
-    <Content Include="Scripts\jquery.signalR-2.4.1.min.js" />
+    <Content Include="Scripts\3rd Party\jquery.signalR-2.4.1.min.js" />
+    <Content Include="Scripts\DirTree.js" />
     <Content Include="Static_Pages\Images\close.png" />
     <Content Include="Static_Pages\Images\comment.png" />
     <Content Include="Static_Pages\Images\expand02.png" />
@@ -310,6 +305,7 @@
     <Content Include="Static_Pages\Images\slideshowFaster.png" />
     <Content Include="Static_Pages\Images\slideshowSlower.png" />
     <Content Include="Styles\carousel.css" />
+    <Content Include="Styles\Dashboard.css" />
     <Content Include="Styles\editor\cobalt.css" />
     <Content Include="Styles\editor\codemirror.css" />
     <Content Include="Styles\editor\codeMirror08.css" />
@@ -342,18 +338,10 @@
     <Content Include="Images\classic\transitions2.jpg" />
     <Content Include="Scripts\adminFunctions.js" />
     <Content Include="Scripts\GlobalFunctions.js" />
-    <Content Include="Scripts\jQuery\jquery-3.3.1.slim.min.map" />
-    <Content Include="Scripts\jQuery\jquery-3.3.1.min.map" />
-    <None Include="Scripts\jQuery\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\Helper.js" />
     <Content Include="Scripts\Album.js" />
-    <Content Include="Scripts\jQuery\jquery-1.6.4.js" />
-    <Content Include="Scripts\jQuery\jquery-1.6.4.min.js" />
-    <Content Include="Scripts\jQuery\jquery.signalR-2.4.0.js" />
-    <Content Include="Scripts\jQuery\jquery.signalR-2.4.0.min.js" />
     <Content Include="Scripts\Layouts.js" />
     <Content Include="Scripts\ResizeThreeColumnPage.js" />
-    <Content Include="Scripts\very-array.js" />
     <Content Include="Scripts\video\mediaelement-and-player.js" />
     <Content Include="Scripts\video\mediaelement.js" />
     <Content Include="Styles\default.css" />
@@ -415,6 +403,7 @@
     <Content Include="Views\Shared\_DirTree2.cshtml" />
     <Content Include="Views\Shared\_DirTree1.cshtml" />
     <Content Include="Views\Album\Album.cshtml" />
+    <Content Include="Views\Shared\_DirTree.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
