@@ -10,7 +10,6 @@
         display: inline-block;
         margin-top: 10px;
         padding: 4px;
-        background-color: var(--oggleContainerBackgroundColor);
     }
     
     .crudLabel {
@@ -29,6 +28,14 @@
         height: 130px;
         min-width: 120px;
         margin-left: 10px;
+    }
+
+
+    .blogArticleJogContainer {
+        overflow-y: auto;
+
+    
+    
     }
 
     .blogItemContainer {
@@ -61,12 +68,6 @@
     .blogArticleImage {
         height: 222px;
     }
-    .blogArticleBody {
-        padding: 4px;
-        font-size: 17px;
-        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    }
-
     .blogArticleJog {
         border: solid thin red;
         margin: 3px 23px;
@@ -76,7 +77,13 @@
         margin-right: 6px;
     }
     .blogArticleJogBody {
-        height: 100px;
+        padding: 4px;
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        background-color: var(--oggleContainerBackgroundColor);
+        font-size: 17px;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
         overflow-y: auto;
     }
 </style>
@@ -92,7 +99,7 @@
         <div id="divStatusMessage"></div>
         <div id="blogDisplayArea">
 
-            <div id="blogArticleJogContainer" >
+            <div id="blogArticleJogContainer" class="blogArticleJogContainer" >
             </div>
 
             @*<div id="blogArticleContainer">
@@ -136,7 +143,6 @@
                     </div>
                 </div>
                 <div class="crudRow">
-                    <div class="crudLabel">Comment</div>
                     <div id="blogEditor" class="blogEntryTextArea"></div>
                     <div>
                         <div id="btnAddEdit" class="roundendButton" onclick="saveBlogEntry()">Add</div>
@@ -172,14 +178,29 @@
                 ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
             ]
         });
-        $('.blogItemContainer').height($('.blogEditArea').height());
+
+        window.addEventListener("resize", resizeBlogPage);
+        resizeBlogPage();
     });
+
+    function resizeBlogPage() {
+        resizePage();
+        var headerClearance = 143;
+        $('#blogArticleJogContainer').height($('#middleColumn').height() - headerClearance);
+        $('#rightColumn').width($('#leftColumn').width());
+        $('#blogList').height($('#middleColumn').height() - headerClearance);
+        $('#blogEditArea').height($('#middleColumn').height() - headerClearance);
+        $('#blogEditor').width($('#middleColumn').width() - $('#blogList').width());
+        $('.blogItemContainer').height($('.blogEditArea').height());
+    }
 
     function showBlogEditor() {
         $('#blogDisplayArea').hide();
         $('#blogEditArea').show();
-        $('#imgBlogLink').attr("src", "http://boobs.ogglebooble.com/redballon.png");
         loadBlogList("CMT");
+        $('#btnAddEdit').html("Add");
+        $('#btnNewCancel').hide();
+        clearGets();
     }
 
     function showBlogDisplay(commentType) {
@@ -199,10 +220,13 @@
                                         <div class="floatLeft">
                                             <img class="blogArticleJogImage" src="`+ entry.Link + `" />
                                         </div>
-                                        <div class="floatLeft">
+                                        <div class="blogArticleJogBody">
                                             <div class="blogArticleTitle ">`+ entry.CommentTitle + `</div>
-                                            <div class="blogArticleJogBody">`+ entry.CommentText + `</div>
-                                            <span class="clickable" onclick="expandArticle()">...</span>
+                                            <div >`+ entry.CommentText + `</div>
+                                            <div>
+                                                <span class="clickable" onclick="expandArticle()">...</span>
+                                                <div class="floatRight clickable" onclick="editArticle('`+ entry.Id + `','` + commentType + `')">edit</div>  
+                                            </div>
                                         </div>
                                     </div>
                                 </div>`);
@@ -219,6 +243,13 @@
         });
         $('#blogDisplayArea').show();
         $('#blogEditArea').hide();
+    }
+
+    function editArticle(blogId, commentType) {
+        $('#blogDisplayArea').fadeOut();
+        loadBlogList(commentType);
+        loadBlogEntry(blogId);
+        $('#blogEditArea').fadeIn();
     }
 
     function selectCommentTypeChange() {
@@ -240,8 +271,6 @@
                             $.each(blogComments, function (idx, entry) {
                                 $('#blogList').append("<div class='blogListItem' onclick=loadBlogEntry('" + entry.Id + "') >" + entry.CommentTitle + "</div>");
                             });
-                            $('#btnAddEdit').html("Add");
-                            $('#btnNewCancel').hide();
                         }
                         else
                             alert("load BlogList: " + blogComments[0].CommentTitle)
@@ -271,7 +300,7 @@
                         $('#blogEditor').summernote('code', model.CommentText);
                         $('#imgBlogLink').attr("src", model.Link);
 
-                        $('#btnAddEdit').html("Edit");
+                        $('#btnAddEdit').html("Save");
                         $('#btnNewCancel').show();
                     }
                     else
@@ -295,7 +324,6 @@
 
     function clearGets() {
         $('#txtCommentTitle').val("");
-        //$('#selCommentType').val("");
         $('#txtLink').val("");
         $('#blogEditor').summernote('code', "");
         $('#imgBlogLink').attr("src", "http://boobs.ogglebooble.com/redballon.png");
@@ -317,7 +345,7 @@
                     success: function (successModel) {
                         if (successModel.Success == "ok") {
                             displayStatusMessage("ok", "Entry Saved")
-                            $('#btnAddEdit').html("Edit")
+                            $('#btnAddEdit').html("Save")
                             $('#btnNewCancel').show();
                             loadBlogList(blogObject.CommentType);
                             blogObject.Id = successModel.ReturnValue;
@@ -339,6 +367,7 @@
                     success: function (success) {
                         if (success == "ok") {
                             displayStatusMessage("ok", "Entry Updated")
+                            loadBlogList(blogObject.CommentType);
                         }
                         else
                             alert("update blogEntry: " + success)

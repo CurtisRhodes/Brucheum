@@ -110,7 +110,7 @@
             <div onclick="window.location.href='/home/transitions?folder=boobs'">Transitions</div>
             <div onclick="window.location.href='/test/contextTest'">Boobs Rater</div>
             <div onclick="window.location.href='/test/contextTest'">Let me Expalin</div>
-            <div onclick="$('#boobIndexdirTreeContainer').toggle()">Category List</div>
+            <div onclick="$('#boobCatTreeContainer').dialog('open');">Category List</div>
             <div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>
             @*<div onclick="$('#oggleBlogEntry').fadeIn()">Blog</div>*@
             <div onclick="$('#pornWarning').show();">Nasty Porn</div>
@@ -134,30 +134,46 @@
     <div id="rightColumn"></div>
 </div>
 
-<div id="boobIndexdirTreeContainer" class="floatingDirTree">
-    <div class="floatingCrudBanner">View A Category <div onclick="$('#boobIndexdirTreeContainer').fadeOut()" class="farSide">x</div> </div>
-    @Html.Partial("_DirTree1")
-</div>
+<div id="boobCatTreeContainer" class="oggleHidden" title="boobs"></div>
 
 <script>
     $(document).ready(function () {
-        launchCarousel('boobs');
+        var service = '@ViewBag.Service';
+        $('#boobCatTreeContainer').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: 400,
+            height: 600
+        });
+
+        $.when(buildDirTree($('#boobCatTreeContainer'), "boobCatTreeContainer", 2)).done(function () {
+            launchCarousel('boobs');
+        });
+
+        //window.addEventListener("resize", resizeBoobsIndexPage);
+        //resizeBoobsIndexPage();
     });
+
+    //function resizeBoobsIndexPage() {
+    //    $('#carouselImage').css("max-width", $('#middleColumn').width());
+    //    $('#carouselImage').css("max-height", $('#middleColumn').innerHeight() - 180);
+    //}
 
     function letemPorn() {
         window.location.href = '/porn'
     }
 
-    function onDirTreeClick(path, id) {
-        if (id.startsWith("t1")) {
-            window.location.href = "/album?folder=" + id.substring(2);
+    function boobCatTreeContainerClick(path, id, treeId) {
+
+        alert("boobCatTreeContainerClick treeId: " + treeId);
+
+        if (treeId == "boobCatTreeContainer") {
+            window.location.href = "/album?folder=" + id;
+            $('#boobCatTreeContainer').hide();
         }
-        if (id.startsWith("t2")) {
-            //alert("t2 from index");
-            imageModel.DestinationFolderId = id.substring(2);
-            $('#dirTreeResults').html(path.replace(/%20/g, " "));
-            $('#dirTreeDropDown').hide();
-        }
+        else
+            alert("dirTreeClick treeId: " + treeId);
     }
 
     function showMessage(title) {

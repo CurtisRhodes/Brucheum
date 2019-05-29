@@ -2,7 +2,7 @@
 :root {
     --brucheumBlue: #74bac3;
     --oggleBackgroundColor: #fef; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
-    --oggleContainerBackgroundColor: #e3cedd; /*#f8e8e8 */
+    --oggleContainerBackgroundColor: #d4d1bb; /* #e3cedd #f8e8e8 */
     --oggleBorderColor: #555;
     --ogglePurple: #79078f;
     --normalFont: 17px;
@@ -318,8 +318,7 @@ label {
         font-size: 17px;
         cursor: pointer;
         color: #9a4ea9;
-        margin-left: 14px;
-        margin-bottom: 23px;
+        margin: 12px 9px;
         white-space: nowrap;
     }
 

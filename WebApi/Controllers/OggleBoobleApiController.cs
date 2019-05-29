@@ -409,7 +409,7 @@ namespace WebApi
                         (from c in db.CategoryImageLinks
                          join f in db.CategoryFolders on c.ImageCategoryId equals f.Id
                          join p in db.CategoryFolders on f.Parent equals p.Id
-                         join g in db.CategoryFolders on p.Parent equals g.Id
+                        // join g in db.CategoryFolders on p.Parent equals g.Id
                          join l in db.ImageLinks on c.ImageLinkId equals l.Id
                          where f.RootFolder == root
                          select new CarouselItemModel()
@@ -419,7 +419,7 @@ namespace WebApi
                              ParentId = p.Id,
                              LinkId = l.Id,
                              FolderName = f.FolderName,
-                             FolderPath = g.FolderName + "/" + p.FolderName,
+                             FolderPath = p.FolderName,
                              Link = l.Link.StartsWith("http") ? l.Link : l.ExternalLink
                          }).Take(take).ToList();
                 }
@@ -472,11 +472,11 @@ namespace WebApi
     {
         // dashboard -- returns a fully loaded dir tree
         [HttpGet]
-        public CategoryTreeModel RebuildCatTree()
+        public CategoryTreeModel RebuildCatTree(int root)
         {
             var timer = new System.Diagnostics.Stopwatch();
             timer.Start();
-            var dirTree = new CategoryTreeModel() { FolderId = 0 };
+            var dirTree = new CategoryTreeModel() { FolderId = root };
             List<VwDirTree> vwDirTree = new List<VwDirTree>();
             using (OggleBoobleContext db = new OggleBoobleContext())
             {

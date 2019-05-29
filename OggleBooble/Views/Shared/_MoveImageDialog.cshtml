@@ -1,17 +1,12 @@
-﻿<link href="~/Styles/jquery-ui.css" rel="stylesheet" />
-
+﻿
 <img id="moveCopyDialogLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
-
-
 <div class="moveCopyDialogContainer">
     <div id="moveCopyDialog" title="">
         <div class="inline"><img id="copyDialogImage" class="copyDialogImage" /></div>
         <div id="dirTreeResults" class="pusedoTextBox"></div>
-        <div class="inline"><img class="dirTreeDropdownButton" src="~/Images/caretDown.png" onclick="$('#dirTreeDropDown').show()" /></div>
+        <div class="inline"><img class="moveDialogDirTreeButton" src="~/Images/caretDown.png" onclick="$('#moveDialogDirTree').show()" /></div>
         <br />
-        <div id="dirTreeDropDown" class="hideableDropDown">
-            @Html.Partial("_DirTree2");
-        </div>
+        <div id="moveDialogDirTree" class="hideableDropDown"></div>
         <div id="btnGo" class="roundendButton" onclick="performAction()">Copy</div>
     </div>
 </div>
@@ -20,11 +15,13 @@
     .moveCopyDialogContainer {
         display: none;
     }
+
     .copyDialogImage {
         height: 100px;
         margin-right: 7px;
         display: inline;
     }
+
     .pusedoTextBox {
         display: inline-block;
         border: solid thin #000;
@@ -32,11 +29,23 @@
         padding-top: 4px;
         min-height: 30px;
     }
-    .dirTreeDropdownButton {
+
+    .moveDialogDirTreeButton {
         height: 40px;
         cursor: pointer;
         margin-left: 1px;
     }
+    .moveDialogDirTree {
+        margin-top: 22px;
+        margin-left: 50px;
+        padding: 3px 6px;
+        font-size: 19px;
+        color: #555;
+        background-color: var(--oggleBackgroundColor);
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
+
     .hideableDropDown {
         display: inline-block;
         max-height: 600px;
@@ -55,9 +64,8 @@
             hide: { effect: "blind" },
             width: "650"
         });
-        $('#btnMoveLink').hide();
     });
-    
+
     function showMoveCopyDialog(mode, link, folderId) {
         MoveCopyImageDialogModel.Mode = mode;
         MoveCopyImageDialogModel.Link = link;
@@ -67,6 +75,7 @@
         $('#copyDialogImage').attr("src", link);
         $('#moveCopyDialogContainer').show();
         $('#moveCopyDialog').dialog("open");
+        buildDirTree($('#moveDialogDirTree'), "moveDialogDirTree", 0);
     }
 
     function performAction() {
@@ -122,14 +131,16 @@
         });
     }
 
-    function onDirTreeClick(path, id) {
-        if (id.startsWith("t2")) {
-            MoveCopyImageDialogModel.DestinationFolderId = id.substring(2);
-            $('#dirTreeResults').html(path.replace(/%20/g, " "));
-            $('#dirTreeDropDown').hide();
+    function moveDialogDirTreeClick(path, id, treeId) {
+        if (treeId == "moveDialogDirTree") {
+            MoveCopyImageDialogModel.DestinationFolderId = id;
+            $('#moveDialogDirTree').hide();
+            if (path.length > path.indexOf(".COM") + 4)
+                $('#dirTreeResults').html(path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " "));
+            else
+                $('#dirTreeResults').html(path);
         }
         else
-            alert("onDirTreeClick id: " + id);
-        }
-
+            alert("moveDialogDirTreeClick treeId: " + treeId);
+    }
 </script>

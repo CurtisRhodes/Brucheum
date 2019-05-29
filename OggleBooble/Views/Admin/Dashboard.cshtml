@@ -5,7 +5,6 @@
 <script src="~/Scripts/3rd Party/jquery.signalR-2.4.1.min.js"></script>
 <script src="/signalr/hubs"></script>
 <link href="~/Styles/Dashboard.css" rel="stylesheet" />
-<script src="~/Scripts/DirTree.js"></script>
 
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
@@ -51,7 +50,6 @@
             <div id="renameFolderCrud" class="floatingCrud">
                 <div class="floatingCrudBanner">Rename Folder<div onclick="$('#renameFolderCrud').fadeOut()" class="farSide">x</div> </div>
                 <div class="floatingCrudContainer">
-                    @*<div><span>folder to rename</span><select id="selRenameFolder" class="dirTreeDropDown">@Html.Partial("_DirOptions");</select></div>*@
                     <div><span>folder to rename</span><input id="txtFolderToRename" class="txtLinkPath roundedInput" readonly="readonly" /></div>
                     <div><span>new name</span><input id="txtReName" class="roundedInput" /></div>
                     <div class="roundendButton" onclick="renameFolder()">Rename Folder</div>
@@ -124,11 +122,11 @@
 
         setSignalR();
 
-        window.addEventListener("resize", resizeThisPage);
-        resizeThisPage();
+        window.addEventListener("resize", resizeDashboardPage);
+        resizeDashboardPage();
     });
 
-    function resizeThisPage() {
+    function resizeDashboardPage() {
         resizePage();
         var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);
         if (workAreaHeight > $('#middleColumn').height()) {
@@ -166,7 +164,10 @@
     {
         $('#dirTreeContainer').html("");
         $('#getDirTreeLoadingGif').show();
-        buildDirTree($('#dirTreeContainer'), "dashboardMain");
+
+        $.when(buildDirTree($('#dirTreeContainer'), "dashboardMain", 0)).done(function () {
+            $('#getDirTreeLoadingGif').hide();
+        });
     }
 
     function addVideo() {
@@ -196,8 +197,6 @@
         } catch (e) {
             alert("addVideo Catch : " + e);
         }
-
-
     }
 
     function previewLinkImage() {
@@ -298,7 +297,7 @@
             hide: { effect: "blind" },
             width: "615"
         });
-        buildDirTree($('#folderToMoveTreeContainer'), "moveFolderTree");
+        buildDirTree($('#folderToMoveTreeContainer'), "moveFolderTree", 0);
         $('#moveFolderCrud').show();
         //$('#moveFolderCrud').dialog("open");
     }
@@ -439,7 +438,7 @@
         });
     }
 
-    function dirTreeClick(path, id, treeId) {
+    function dashboardMainClick(path, id, treeId) {
         var displayPath = "";
         if (path.length > path.indexOf(".COM") + 4) {
             dashboardMainSelectedPath = path.substring(6).replace(/%20/g, " ");
@@ -460,6 +459,7 @@
             $('#partialViewTreeContainer').fadeOut()
         }
     }
+
     $(document).keydown(function (event) {
         // Number 13 is the "Enter" key on the keyboard
         if (event.keyCode === 13) {

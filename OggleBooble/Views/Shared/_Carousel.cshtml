@@ -26,7 +26,6 @@
 </div>
 
 <div>@Html.Partial("_ModelInfoDialog")</div>
-<div>@Html.Partial("_MoveImageDialog")</div>
 <div>@Html.Partial("_CategoryDialog")</div>
 <div>@Html.Partial("_ImageCommentDialog")</div>
 
@@ -45,10 +44,14 @@
 
 
     $(document).ready(function () {
-        $('#carouselImage').css("max-width", $('#middleColumn').width());
-        $('#carouselImage').css("max-height", $('#middleColumn').innerHeight() - 150);
-
+        window.addEventListener("resize", resizeCarousel);
+        resizeCarousel();
     });
+
+    function resizeCarousel() {
+        $('#carouselImage').css("max-width", $('#middleColumn').width());
+        $('#carouselImage').css("max-height", $('#middleColumn').innerHeight() - 180);
+    }
 
     $('.carouselImage').contextmenu(function () {
         event.preventDefault();
@@ -124,7 +127,6 @@
     
     function considerHidingContextMenu() {
         $('#carouselContextMenu').fadeOut();
-
         if (!$('#modelInfoDialog').dialog('isOpen')) {
             if (!$('#imageCommentDialog').dialog('isOpen')) {
                 if (!$('#moveCopyDialog').dialog('isOpen')) {

@@ -21,27 +21,14 @@ namespace OggleBooble
             return View();
         }
 
-        //public ActionResult ImagePage(string folder)
+        //public ActionResult Viewer(string folder, string startFile)
         //{
-        //    if (folder == null)
-        //        return RedirectToAction("Index");
-
-        //    ViewBag.Title = folder.Substring(folder.LastIndexOf("/") + 1);
-        //    ViewBag.IsPornEditor = User.IsInRole("Porn Editor");
+        //    ViewBag.Title = "Slideshow";
         //    ViewBag.Service = apiService;
-        //    ViewBag.IpAddress = Helpers.GetIPAddress();
         //    ViewBag.Folder = folder;
+        //    ViewBag.StartFile = startFile;
         //    return View();
         //}
-
-        public ActionResult Viewer(string folder, string startFile)
-        {
-            ViewBag.Title = "Slideshow";
-            ViewBag.Service = apiService;
-            ViewBag.Folder = folder;
-            ViewBag.StartFile = startFile;
-            return View();
-        }
 
         public ActionResult Transitions(string folder)
         {

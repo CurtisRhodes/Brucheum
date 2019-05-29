@@ -313,10 +313,13 @@
     <Content Include="Styles\editor\monokai.css" />
     <Content Include="Styles\editor\quill.snow.css" />
     <Content Include="Styles\editor\summernote.css" />
+    <Content Include="Styles\images\ui-bg_glass_35_dddddd_1x400.png" />
+    <Content Include="Styles\images\ui-bg_inset-soft_50_c9c9c9_1x100.png" />
     <Content Include="Styles\images\ui-icons_444444_256x240.png" />
     <Content Include="Styles\images\ui-icons_555555_256x240.png" />
     <Content Include="Styles\images\ui-icons_777620_256x240.png" />
     <Content Include="Styles\images\ui-icons_777777_256x240.png" />
+    <Content Include="Styles\images\ui-icons_999999_256x240.png" />
     <Content Include="Styles\images\ui-icons_cc0000_256x240.png" />
     <Content Include="Styles\images\ui-icons_ffffff_256x240.png" />
     <Content Include="Styles\jquery-ui.css" />
@@ -400,10 +403,7 @@
     <Content Include="Views\Shared\_MetaTagDialog.cshtml" />
     <Content Include="Views\Admin\MetaTagEdit.cshtml" />
     <Content Include="Views\Shared\_ImageViewer.cshtml" />
-    <Content Include="Views\Shared\_DirTree2.cshtml" />
-    <Content Include="Views\Shared\_DirTree1.cshtml" />
     <Content Include="Views\Album\Album.cshtml" />
-    <Content Include="Views\Shared\_DirTree.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
