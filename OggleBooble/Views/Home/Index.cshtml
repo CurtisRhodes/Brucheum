@@ -9,100 +9,13 @@
         cursor: pointer;
     }
 
-    .boobleClassic {
-        height: 225px;
-    }
-
-    .majorCategoryRow {
-        padding-top: 120px;
-        display: flex;
-        margin-bottom: 100px;
-        width: 100%;
-        display: none;
-    }
-
-    .majorCategoryRowLinkItem {
-        float: left;
-        margin-left: 60px;
-    }
-
-    .containerImage {
-        float: left;
-        margin-left: 60px;
-    }
-
-    .sectionTitle {
-        display: block;
-        text-align: center;
-    }
-
-    .bottomLinks {
-        clear: left;
-        padding-left: 222px;
-        padding-bottom: 8px;
-    }
-
-    .indexTitle {
-        display: block;
-        width: 100%;
-        text-align: center;
-        color: #490157;
-        font-family: 'Lucida Calligraphy';
-        font-size: 33px;
-        margin-bottom: 8px;
-    }
-
     .pornWarning {
-        position: absolute;
-        top: 20px;
-        border: solid 2px var(--oggleBorderColor);
-        box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
-        padding: 12px;
-        margin-left: 230px;
-        margin-right: 230px;
-        background-color: #777;
-        font-size: 20px;
-        z-index: 220;
-        display: none;
-        color:#000;
-        font-weight:bold;
-    }
-
-    .whiteWarning {
-        color: #fefefe;
-        padding: 10px;
-        font-size: 28px;
-        text-align: center;
+        position: fixed;
+        z-index: 200;
     }
 
 </style>
 
-<div id="pornWarning" class="pornWarning">
-    <div style="font-size:45px;color:red;text-align:center">WARNING</div>
-    <div style="color:yellow;font-size:35px;text-align:center;margin:4px 14px;"> This site shows pictures of girls with dicks in their mouths. </div>
-    <div class="whiteWarning">
-        If you are offended by pictures and gifs and links to videos
-        of females sucking on dicks please do not enter this site.
-    </div>
-    <p>
-        <input type="checkbox" onchange="letemPorn()" /> I certify that I am a hetosexual white male over 42 years old <br />
-        <input type="checkbox" onchange="letemPorn()" /> I am over 21 and have to jerk off several times a day <br />
-        <input type="checkbox" onchange="letemPorn()" /> I am a religious conservative dismayed by the downfall of society. I still want to see
-        <div style="color:#fefefe;padding:10px;font-size:28px;text-align:center;"> This site shows images of females sucking on dick. </div>
-    <p>
-        If you are male homosexual cocksucker this site may not be for you.  <br /> If you are a gay cocksucker check here. <input type="checkbox" />
-        <div class="whiteWarning">
-            All images of cocksuckers on this site have cock fully in their mouths.
-            No partial licks or tips are shown except in certain categories
-        </div>
-        <input type="checkbox" onchange="letemPorn()" /> I certify that I am a female cocksucker. You're especially welcome here <br />
-        <input type="checkbox" onchange="letemPorn()" /> I am a female who refuses to give head and am disgusted by the terrible sluts who do so, but I want to revel in their humiliation.
-        <div class="whiteWarning">
-            This site also contains images of different categories of pussy shots, breast fondeling, cum shots, penetration, naughty and kininky behavior,
-            as well as thousands of felmale cocksuckers, mostly on their knees.
-        </div>
-        <div style="font-size:45px;color:red;text-align:center">EXIT SITE</div>
-</div>
 
 <div class="threeColumnArray">
     <div id="leftColumn">
@@ -113,10 +26,11 @@
             <div onclick="$('#boobCatTreeContainer').dialog('open');">Category List</div>
             <div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>
             @*<div onclick="$('#oggleBlogEntry').fadeIn()">Blog</div>*@
-            <div onclick="$('#pornWarning').show();">Nasty Porn</div>
+            <div onclick="showSiteContent($('#pornWarning'), 35)">Nasty Porn</div>
         </div>
     </div>
     <div id="middleColumn">
+        <div id="pornWarning" class="pornWarning"></div>
         <div id="divStatusMessage"></div>
         <div class="flexContainer">
             <div class="floatLeft">
@@ -124,7 +38,6 @@
                 <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('archive', $(this).is(':checked'), 50000)" /> Include Archive</div>
             </div>
             <div class="floatLeft">
-                <div id="galleryMessage" class="indexTitle"></div>
                 <div id="carousel">
                     @Html.Partial("_Carousel", "boobs")
                 </div>
@@ -165,44 +78,33 @@
     }
 
     function boobCatTreeContainerClick(path, id, treeId) {
-
-        alert("boobCatTreeContainerClick treeId: " + treeId);
-
         if (treeId == "boobCatTreeContainer") {
             window.location.href = "/album?folder=" + id;
-            $('#boobCatTreeContainer').hide();
+            $('#boobCatTreeContainer').dialog('close')
         }
         else
             alert("dirTreeClick treeId: " + treeId);
     }
 
-    function showMessage(title) {
+    function showSiteContent(dest, blogId) {
         try {
+            pause();
             $.ajax({
                 type: "GET",
-                url: service + "/api/OggleBlog/?title=" + title,
-                success: function (model) {
-                    if (!model.CommentTitle.startsWith("ERROR")) {
-                        pause();
-                        $('#modalContent').html($('#warningMessage').html(model.CommentText).show());
-                        $('#modalContainer').show();
-
-                        //top: 250px;
-                        //left: 200px;
-                        $('#warningMessage').css("left", (($(window).width() / 2) - ($('#warningMessage').width() / 2)));
-
+                url: service + "api/OggleBlog/?blogId=" + blogId,
+                success: function (entry) {
+                    if (entry.Success == "ok") {
+                        dest.html(entry.CommentText);
                     }
                     else
-                        alert("showMessage: " + success)
+                        dest.html(entry.Success);
                 },
                 error: function (xhr) {
-                    $('#getDirTreeLoadingGif').hide();
-                    alert("showMessage xhr: " + xhr.statusText);
+                    alert("showSiteContent xhr: " + getXHRErrorDetails(xhr));
                 }
             });
-
         } catch (e) {
-            alert("showMessage: " + e);
+            alert("showSiteContent: " +  e);
         }
     }
 

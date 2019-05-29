@@ -794,15 +794,15 @@ namespace WebApi
                         entry.CommentType = dbBlogComment.CommentType;
                         entry.Link = dbBlogComment.Link;
                         entry.Id = dbBlogComment.Id;
+                        entry.Success = "ok";
                     }
                     else
-                        entry.Id = 0;
+                        entry.Success = "blogId " + blogId + " not found";
                 }
-                entry.Success = "ok";
             }
             catch (Exception ex)
             {
-                entry.CommentTitle = Helpers.ErrorDetails(ex);
+                entry.Success = Helpers.ErrorDetails(ex);
             }
             return entry;
         }

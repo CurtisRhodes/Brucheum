@@ -1,23 +1,8 @@
-﻿<style>
-    .comicList {
-        margin-top: 123px;
-    }
-
-        .comicList div {
-            font-size: 21px;
-            cursor: pointer;
-            color: #9a4ea9;
-            margin-left: 14px;
-            margin-bottom: 23px;
-            white-space: nowrap;
-        }
-
-
-</style>
+﻿
 <script src="~/Scripts/Layouts.js"></script>
 <div class="threeColumnArray">
     <div id="leftColumn">
-        <div class="comicList">
+        <div class="leftColumnList">
             <div onclick="window.location.href='/'">Oggle Booble</div>
             <div onclick="window.location.href='/test/contextTest'">Transitions</div>
             <div onclick="window.location.href='/test/contextTest'">Let me Expalin</div>
@@ -27,7 +12,6 @@
         </div>
     </div>
     <div id="middleColumn">
-        <div id="galleryMessage" class="indexTitle"></div>
         <div id="carousel">
             @Html.Partial("_Carousel", "porn")
         </div>

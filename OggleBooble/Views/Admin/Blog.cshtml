@@ -10,6 +10,12 @@
         display: inline-block;
         margin-top: 10px;
         padding: 4px;
+        display: none;
+    }
+
+    .blogDisplayArea {
+        margin-top: 10px;
+        display: none;
     }
     
     .crudLabel {
@@ -30,88 +36,79 @@
         margin-left: 10px;
     }
 
-
     .blogArticleJogContainer {
         overflow-y: auto;
-
-    
-    
     }
 
     .blogItemContainer {
         height: 100%;
         margin-left: 10px;
         overflow-y: auto;
+        background-color: var(--oggleContainerBackgroundColor);
     }
 
     .blogListItem {
         font-size: 13px;
         padding: 4px 2px;
-        margin: 1px;
-        background-color: var(--oggleBackgroundColor);
+        margin: 3px;
         cursor: pointer;
-    }
-
-    .panel {
-        margin-bottom: 5px;
         background-color: var(--oggleBackgroundColor);
     }
 
-    .blogArticle {
-        border: solid 2px var(--oggleBorderColor);
-        margin: 3px 23px;
+    .blogArticleJogBody {
+        display: inline-block;
+        background-color: var(--oggleContainerBackgroundColor);
+        width: 100%;
+    }
+    .blogArticleImage {
+        height: 222px;
     }
     .blogArticleTitle {
         font-size: 24px;
         text-align: center;
     }
-    .blogArticleImage {
-        height: 222px;
-    }
     .blogArticleJog {
-        border: solid thin red;
-        margin: 3px 23px;
+        margin-bottom: 4px;
     }
     .blogArticleJogImage {
-        height: 175px;
-        margin-right: 6px;
+        height: 185px;
     }
-    .blogArticleJogBody {
+    .blogArticleText {
         padding: 4px;
         display: inline-block;
         width: 100%;
-        height: 100%;
-        background-color: var(--oggleContainerBackgroundColor);
+        height: 124px;
+        overflow-y: hidden;
         font-size: 17px;
         font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-        overflow-y: auto;
     }
+    .blogArticleBottomRow {
+        margin: 0 8px;
+    }
+
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn">
         <div class="leftColumnList">
-            <div onclick="showBlogDisplay('CMT')">Show Entries</div>
-            <div onclick="showBlogEditor()">New Entry</div>
+            <div id="leftColumnShowBlog"  onclick="showBlogDisplay('CMT')">Show Blog</div>
+            <div id="leftColumnShowEditor" onclick="showBlogEditor()">New Entry</div>
         </div>
     </div>
     <div id="middleColumn">
         <div id="divStatusMessage"></div>
-        <div id="blogDisplayArea">
 
-            <div id="blogArticleJogContainer" class="blogArticleJogContainer" >
-            </div>
+        <div id="blogDisplayArea" class="blogDisplayArea">
+            <select id="blogDisplayCommentTypeSelect" class="roundedInput" onchange="blogDisplayCommentTypeChange();">
+                <option value="CMT">Comment on an Image</option>
+                <option value="PGM">Programmer Notes</option>
+                <option value="BLG">Blog Entry</option>
+                <option value="CON">Site Content</option>
+            </select>
 
-            @*<div id="blogArticleContainer">
-                <div class="blogArticle">
-                    <div class="blogArticleTitle">The Title of My Blog Article</div>
-                    <div class="center"><img class="blogArticleImage" src="http://archive.jpg" /></div>
-                    <div class="blogArticleBody">
-                    </div>
-                </div>
-            </div>*@
-
+            <div id="blogArticleJogContainer" class="blogArticleJogContainer"></div>
         </div>
+        
         <div id="blogEditArea" class="blogEditArea">
             <div class="floatLeft">
                 <div>
@@ -124,10 +121,10 @@
                                 </div>
                                 <div class="crudRow">
                                     <div class="crudLabel inline">Type</div>
-                                    <select id="selCommentType" class="roundedInput" onchange="selectCommentTypeChange();">
-                                        <option value="CMT">Image Comment</option>
+                                    <select id="selCommentType" class="roundedInput" onchange="loadBlogArticles($(this).val())">
+                                        <option value="CMT">Comment on an Image</option>
                                         <option value="PGM">Programmer Notes</option>
-                                        <option value="BLG">BlogEntry</option>
+                                        <option value="BLG">Blog Entry</option>
                                         <option value="CON">Site Content</option>
                                     </select>
                                 </div>
@@ -167,7 +164,8 @@
     /// start with a display of blog entries
     $(document).ready(function () {
 
-        showBlogDisplay('CMT');
+        $('#blogDisplayCommentTypeSelect').val('PGM')
+        showBlogDisplay('PGM');
 
         $('#blogEditor').summernote({
             height: 310,
@@ -179,31 +177,36 @@
             ]
         });
 
+            
+        $('#footerMessage').html("loading");
+
         window.addEventListener("resize", resizeBlogPage);
-        resizeBlogPage();
     });
 
-    function resizeBlogPage() {
-        resizePage();
-        var headerClearance = 143;
-        $('#blogArticleJogContainer').height($('#middleColumn').height() - headerClearance);
-        $('#rightColumn').width($('#leftColumn').width());
-        $('#blogList').height($('#middleColumn').height() - headerClearance);
-        $('#blogEditArea').height($('#middleColumn').height() - headerClearance);
-        $('#blogEditor').width($('#middleColumn').width() - $('#blogList').width());
-        $('.blogItemContainer').height($('.blogEditArea').height());
+    function blogDisplayCommentTypeChange() {
+        loadBlogArticles($('#blogDisplayCommentTypeSelect').val());
     }
 
     function showBlogEditor() {
-        $('#blogDisplayArea').hide();
-        $('#blogEditArea').show();
-        loadBlogList("CMT");
+        $('#leftColumnShowEditor').hide();
+        $('#leftColumnShowBlog').show();
+        $('#blogDisplayArea').fadeOut();
+        $('#blogEditArea').fadeIn();
+        loadBlogList($('#blogDisplayCommentTypeSelect').val());
         $('#btnAddEdit').html("Add");
         $('#btnNewCancel').hide();
         clearGets();
     }
+    
+    function showBlogDisplay() {
+        $('#leftColumnShowEditor').show();
+        $('#leftColumnShowBlog').hide();
+        $('#blogDisplayArea').fadeIn();
+        $('#blogEditArea').fadeOut();
+        loadBlogArticles($('#blogDisplayCommentTypeSelect').val());
+    }
 
-    function showBlogDisplay(commentType) {
+    function loadBlogArticles(commentType) {
         $.ajax({
             type: "GET",
             url: service + "/api/OggleBlog/GetBlogList?commentType=" + commentType,
@@ -221,9 +224,9 @@
                                             <img class="blogArticleJogImage" src="`+ entry.Link + `" />
                                         </div>
                                         <div class="blogArticleJogBody">
-                                            <div class="blogArticleTitle ">`+ entry.CommentTitle + `</div>
-                                            <div >`+ entry.CommentText + `</div>
-                                            <div>
+                                            <div class="blogArticleTitle">`+ entry.CommentTitle + `</div>
+                                            <div class="blogArticleText">`+ entry.CommentText + `</div>
+                                            <div class="blogArticleBottomRow">
                                                 <span class="clickable" onclick="expandArticle()">...</span>
                                                 <div class="floatRight clickable" onclick="editArticle('`+ entry.Id + `','` + commentType + `')">edit</div>  
                                             </div>
@@ -231,14 +234,14 @@
                                     </div>
                                 </div>`);
                         });
+                        resizeBlogPage();
                     }
                     else
                         alert("display Blog: " + blogComments[0].CommentTitle)
                 }
             },
-            error: function (xhr) {
-                $('#getDirTreeLoadingGif').hide();
-                alert("display BlogEntry xhr: " + xhr.statusText);
+            error: function (jqXHR, exception) {
+                alert("showBlogDisplay jqXHR : " + getXHRErrorDetails(jqXHR, exception));
             }
         });
         $('#blogDisplayArea').show();
@@ -246,6 +249,8 @@
     }
 
     function editArticle(blogId, commentType) {
+        $('#leftColumnShowEditor').hide();
+        $('#leftColumnShowBlog').show();
         $('#blogDisplayArea').fadeOut();
         loadBlogList(commentType);
         loadBlogEntry(blogId);
@@ -275,10 +280,10 @@
                         else
                             alert("load BlogList: " + blogComments[0].CommentTitle)
                     }
+                    resizeBlogPage();
                 },
-                error: function (xhr) {
-                    $('#getDirTreeLoadingGif').hide();
-                    alert("load BlogList xhr: " + xhr.statusText);
+                error: function (jqXHR, exception) {
+                    alert("loadBlogList jqXHR : " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         } catch (e) {
@@ -306,9 +311,8 @@
                     else
                         alert("displayBlogEntry: " + model.Success)
                 },
-                error: function (xhr) {
-                    $('#getDirTreeLoadingGif').hide();
-                    alert("display BlogEntry xhr: " + xhr.statusText);
+                error: function (jqXHR, exception) {
+                    alert("loadBlogEntry jqXHR : " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         } catch (e) {
@@ -353,9 +357,8 @@
                         else
                             alert("saveBlogEntry: " + successModel.Success)
                     },
-                    error: function (xhr) {
-                        $('#getDirTreeLoadingGif').hide();
-                        alert("saveBlogEntry xhr: " + xhr.statusText);
+                    error: function (jqXHR, exception) {
+                        alert("insertBlogEntry jqXHR : " + getXHRErrorDetails(jqXHR, exception));
                     }
                 });
             }
@@ -372,9 +375,8 @@
                         else
                             alert("update blogEntry: " + success)
                     },
-                    error: function (xhr) {
-                        $('#getDirTreeLoadingGif').hide();
-                        alert("saveBlogEntry xhr: " + xhr.statusText);
+                    error: function (jqXHR, exception) {
+                        alert("putBlogEntry jqXHR : " + getXHRErrorDetails(jqXHR, exception));
                     }
                 });
             }
@@ -382,6 +384,30 @@
             alert("saveBlogEntry catch: " + e);
         }
     }
+
+    function resizeBlogPage() {
+        resizePage();
+        var headerClearance = 143;
+        $('#blogArticleJogContainer').height($('#middleColumn').height() - headerClearance);
+        $('#rightColumn').width($('#leftColumn').width());
+        $('#blogList').height($('#middleColumn').height() - headerClearance);
+
+
+
+        $('.note-editable').height($('#middleColumn').height() - 400);
+
+        //$('.blogItemContainer').height($('.blogEditArea').height());
+
+        $('#footerMessage').html("$('#middleColumn').height(): " + $('#middleColumn').height());
+        $('#footerMessage').append("   $('#note-editable').width(): " + $('.note-editable').width());
+
+
+        $('.note-editor').width($('#middleColumn').width() - $('#blogList').width() - 30);
+        //$('#footerMessage').html("$('#middleColumn').width(): " + $('#middleColumn').width());
+        //$('#footerMessage').append("   $('#blogList').width(): " + $('#blogList').width());
+        //$('#footerMessage').append("   $('note-editor').width(): " + $('.note-editor').width());
+    }
+
 
 </script>
 

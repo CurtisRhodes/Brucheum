@@ -112,6 +112,7 @@
                 showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId);
                 break;
             case "tags":
+                pause();
                 openMetaTagDialog(carouselItemArray[imageIndex].FolderId);
                 break;
             case "archive":
@@ -129,9 +130,7 @@
         $('#carouselContextMenu').fadeOut();
         if (!$('#modelInfoDialog').dialog('isOpen')) {
             if (!$('#imageCommentDialog').dialog('isOpen')) {
-                if (!$('#moveCopyDialog').dialog('isOpen')) {
-                    resume();
-                }
+                resume();
             }
         }
     }
@@ -157,7 +156,7 @@
         resume();
     });
 
-    $('#moveCopyDialog').on('dialogclose', function (event) {
+    $('#metaTagDialog').on('dialogclose', function (event) {
         resume();
     });
     
