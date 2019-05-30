@@ -3,7 +3,7 @@
     --brucheumBlue: #74bac3;
     --oggleBackgroundColor: #fef; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
     --oggleContainerBackgroundColor: #d4d1bb; /* #e3cedd #f8e8e8 */
-    --oggleBorderColor: #555;
+    --oggleBorderColor: #7f2c8f;
     --ogglePurple: #79078f;
     --normalFont: 17px;
     --ogglgeTitleColor: #7f2c8f;
@@ -356,3 +356,16 @@ label {
     margin-left: 20px;
     color: var(--ogglePurple);
 }
+
+.floatingImage {
+    position:absolute;
+    display: none;
+}
+    .floatingImage img {
+        border: solid thin var(--oggleBorderColor);
+        height: 100px;
+        width: 100px;
+    }
+
+
+

@@ -299,12 +299,8 @@ namespace WebApi
 
                     foreach (VwDirTree subDir in subDirs)
                     {
-                        if (subDir.FolderImage == null)
+                        if (subDir.Link == null)
                             folderImage = Helpers.GetFirstImage(subDir.Id);
-                        else
-                        {
-                            folderImage = db.ImageLinks.Where(g => g.Id == subDir.FolderImage).First().Link;
-                        }
 
                         imageLinks.SubDirs.Add(new CategoryTreeModel()
                         {
@@ -313,7 +309,7 @@ namespace WebApi
                             FolderId = subDir.Id,
                             DirectoryName = subDir.FolderName,
                             Length = Math.Max(subDir.FileCount, subDir.SubDirCount),
-                            FirstImage = folderImage
+                            Link = subDir.Link
                         });
                     }
 
@@ -500,6 +496,7 @@ namespace WebApi
                     FolderId = childFolder.Id,
                     ParentId = childFolder.Parent,
                     DirectoryName = childFolder.FolderName,
+                    Link = childFolder.Link,
                     Length = Math.Max(childFolder.FileCount, childFolder.SubDirCount),
                     DanniPath = (path + "/" + childFolder.FolderName).Replace(" ", "%20")
                 };

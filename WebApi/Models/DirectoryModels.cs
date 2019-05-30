@@ -24,7 +24,7 @@ namespace WebApi.Models
         public long Length { get; set; }
         public string DirectoryName { get; set; }
         public string DanniPath { get; set; }
-        public string FirstImage { get; set; }
+        public string Link { get; set; }
         public string LinkId { get; set; }
         public List<CategoryTreeModel> SubDirs { get; set; }
     }

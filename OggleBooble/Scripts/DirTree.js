@@ -41,11 +41,18 @@ function buildDirTree(dest, treeId, startNode) {
 
 function recurrBuildDirTree(dir, treeId) {
     dirTreeTab += dirTreeTabIndent;
+    var imgSrc = "";
     $.each(dir.SubDirs, function (idx, subDir) {
+        if (isNullorUndefined(subDir.Link)) 
+            imgSrc = "http://boobs.ogglebooble.com/redballon.png";        
+        else
+            imgSrc = subDir.Link;
+
         dirTreeContainer += "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
             + "<span id=S" + subDir.LinkId + " onclick=toggleDirTree('" + subDir.LinkId + "')>[-] </span>"
             + "<span onclick=" + treeId + "Click('" + subDir.DanniPath + "','" + subDir.FolderId + "','" + treeId + "') "
-            + "oncontextmenu=showDirTreeContextMenu('" + subDir.LinkId + "','" + subDir.FolderId + "')>"
+            + "oncontextmenu=showDirTreeContextMenu('" + subDir.LinkId + "','" + subDir.FolderId + "') "
+            + "onmouseover=showFolderImage('" + encodeURI(imgSrc) + "') onmouseout=$('#dirTreeImageContainer').hide() >"
             + subDir.DirectoryName.replace(".OGGLEBOOBLE.COM", "") + "</span><span class='fileCount'>  : " + subDir.Length + "</span></div>"
             + "<div id=" + subDir.LinkId + ">";
         totalPics += subDir.Length;
@@ -55,3 +62,12 @@ function recurrBuildDirTree(dir, treeId) {
         dirTreeTab -= dirTreeTabIndent;
     });
 }
+
+function showFolderImage(link) {
+    $('#dirTreeImageContainer').css("top", event.clientY - 100);
+    $('#dirTreeImageContainer').css("left", event.clientX + 10);
+    $('#dirTreeImage').attr("src", link);
+    $('#dirTreeImageContainer').show();
+    $('#footerMessage').html(link);
+}
+

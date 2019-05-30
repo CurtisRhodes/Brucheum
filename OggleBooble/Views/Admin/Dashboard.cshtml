@@ -163,10 +163,10 @@
     function buildDirTrees()
     {
         $('#dirTreeContainer').html("");
-        $('#getDirTreeLoadingGif').show();
-
-        $.when(buildDirTree($('#dirTreeContainer'), "dashboardMain", 0)).done(function () {
-            $('#getDirTreeLoadingGif').hide();
+        $('#getdirtreeloadinggif').show();
+        $.when(buildDirTree($('#dirTreeContainer'), "dashboardMain", 0)).done(function ()
+        {
+            $('#getdirtreeloadinggif').hide();
         });
     }
 
@@ -204,7 +204,7 @@
 
         $('#imgLinkPreview').one("load", function () {
             $('#footerMessage').html("image height: " + $('#imgLinkPreview').height());
-            resizeThisPage();
+            resizeDashboardPage();
         });
     }
 
@@ -225,11 +225,13 @@
                 data: newLink,
                 success: function (success) {
                     $('#dashBoardLoadingGif').hide();
-                    if (success == "ok")
+                    if (success == "ok") {
                         displayStatusMessage("ok", "image link added");
-                    else {
-                        alert("addImageLink: " + success);
+                        $('#txtNewLink').val("");
+                        resizeDashboardPage();
                     }
+                    else
+                        alert("addImageLink: " + success);
                 },
                 error: function (xhr) {
                     $('#dashBoardLoadingGif').hide();

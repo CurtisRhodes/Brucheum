@@ -89,7 +89,7 @@ namespace WebApi.DataContext
         public int Id { get; set; }
         public int Parent { get; set; }
         public string FolderName { get; set; }
-        public string FolderImage { get; set; }
+        public string Link { get; set; }
         public int SubDirCount { get; set; }
         public int FileCount { get; set; }
     }

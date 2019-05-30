@@ -91,7 +91,7 @@ function processImages(imageModel, start) {
     $('#imageContainer').html('');
     $.each(imageModel.SubDirs, function (idx, subDir) {
         $('#imageContainer').append("<div class='folderImageFrame' onclick=window.location.href='album?folder=" + subDir.FolderId + "'><img class='folderImage' src='" +
-            subDir.FirstImage + "'/><div class='folderImageFrameName'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div>");
+            subDir.Link + "'/><div class='folderImageFrameName'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div>");
     });
 
     //$('#slideShowLink').show();
@@ -167,10 +167,10 @@ function processImages(imageModel, start) {
             success: function (folderDetails) {
                 if (folderDetails.Success === "ok") {
                     selectedImageArchiveFolderId = folderDetails.FolderId;
-                    if (folderDetails.FolderId == folderId) {
+                    if (folderDetails.FolderId === folderId) {
                         // model not found elsewhere 
                         $('#ctxSeeMore').hide();
-                        if (folderDetails.RootFolder == "archive") {
+                        if (folderDetails.RootFolder === "archive") {
                             $('#ctxModelName').html(folderDetails.FolderName);
                             $('#ctxArchive').hide();
                         }
@@ -182,7 +182,7 @@ function processImages(imageModel, start) {
                     else {
                         $('#ctxModelName').html(folderDetails.FolderName);
                         $('#ctxSeeMore').show();
-                        if (folderDetails.RootFolder == "archive")
+                        if (folderDetails.RootFolder === "archive")
                             $('#ctxArchive').hide();
                         else
                             $('#ctxArchive').show();
