@@ -59,8 +59,7 @@
 
             <div id="moveFolderCrud" class="oggleHidden" title="Move Folder">                
                 <div>
-                    <span>folder to move</span>
-                    <div onclick="$('#partialViewTreeContainer').toggle()" class="toggleButton">...</div>
+                    <span>move folder </span><div onclick="$('#partialViewTreeContainer').toggle()" class="toggleButton">...</div>
                     <input id="txtFolderToMove" class="txtPartialDirTreePath roundedInput" readonly="readonly" />
                 </div>
                 <div><span>new parent</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
@@ -72,7 +71,7 @@
                 <div id="folderToMoveTreeContainer" class="dirTree2Container"></div>
             </div>
 
-            <div id="repairLinksCrud" class="floatingCrud">
+            @*<div id="repairLinksCrud" class="floatingCrud">
                 <div class="floatingCrudBanner">Verify Links<div onclick="$('#repairLinksCrud').fadeOut()" class="farSide">x</div> </div>
                 <div class="floatingCrudContainer">
                     <div><span>destination</span><input id="txtdestination" value="F:/Danni/" class="roundedInput" /></div>
@@ -80,7 +79,7 @@
                     <div class="roundendButton" onclick="repairLinks()">run</div>
                 </div>
                 <div id="repairLinksReport" class="repairReport"></div>
-            </div>
+            </div>*@
 
             <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
                 <div onclick="openFolder()">Open Folder</div>
@@ -110,15 +109,18 @@
     $(document).ready(function () {
 
         $('#headerMessage').html(`Dashboard <dir class='linkContainer'>
-        <div class="clickable" onclick="buildDirTrees()">ReBuild Dir Tree</div>
+        <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
         <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
         <div class="clickable" onclick="$('#newFolderCrud').fadeIn()">Create New Folder</div>
-        <div class="clickable" onclick="showMoveforderDialog()">Move Folder</div>
+        <div class="clickable" onclick="showMovefolderDialog()">Move Folder</div>
         <div class="clickable" onclick="$('#renameFolderCrud').fadeIn()">ReName Folder</div>
         <div class="clickable" onclick="collapseChildFolder()">Collapse Folder</div>
-        <div class="clickable" onclick="$('#repairLinksCrud').fadeIn()">Repair Links</div></dir>`);
+        <div class="clickable" onclick="repairLinks()">Repair Links</div></dir>`);
 
-        buildDirTrees();
+
+//                <div class="clickable" onclick="$('#repairLinksCrud').fadeIn()">Repair Links</div></dir>`);
+
+        buildDirectoryTree();
 
         setSignalR();
 
@@ -160,12 +162,11 @@
             });
     }
 
-    function buildDirTrees()
+    function buildDirectoryTree()
     {
         $('#dirTreeContainer').html("");
         $('#getdirtreeloadinggif').show();
-        $.when(buildDirTree($('#dirTreeContainer'), "dashboardMain", 0)).done(function ()
-        {
+        $.when(buildDirTree($('#dirTreeContainer'), "dashboardMain", 0)).done(function () {
             $('#getdirtreeloadinggif').hide();
         });
     }
@@ -254,7 +255,7 @@
                 $('#dashBoardLoadingGif').hide();
                 if (success == "ok") {
                     displayStatusMessage("ok", "new folder created");
-                    buildDirTrees();
+                    buildDirectoryTree();
                 }
                 else
                     alert("CreateVirtualFolder: " + success);
@@ -278,7 +279,7 @@
                     $('#dashBoardLoadingGif').hide();
                     if (success == "ok") {
                         displayStatusMessage("ok", "collapse succeded");
-                        buildDirTrees();
+                        buildDirectoryTree();
                         $('#progressBar').progressbar("destroy");
                     }
                     else
@@ -292,7 +293,7 @@
         }
     }
 
-    function showMoveforderDialog() {
+    function showMovefolderDialog() {
         $('#moveFolderCrud').dialog({
             //autoOpen: false,
             show: { effect: "fade" },
@@ -440,6 +441,20 @@
         });
     }
 
+
+    function moveFolderTreeClick(path, id, treeId) {
+        var displayPath = "";
+        if (path.length > path.indexOf(".COM") + 4) {
+            displayPath = path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " ");
+        }
+        else {
+            displayPath = path;
+        }
+        partialViewSelectedItemId = id;
+        $('.txtPartialDirTreePath').val(displayPath);
+        $('#partialViewTreeContainer').fadeOut();
+    }
+
     function dashboardMainClick(path, id, treeId) {
         var displayPath = "";
         if (path.length > path.indexOf(".COM") + 4) {
@@ -450,16 +465,8 @@
             displayPath = path;
             dashboardMainSelectedPath = "/";
         }
-        //alert("treeId: " + treeId + "  path: " + path);
-        if (treeId == "dashboardMain") {
-            dashboardMainSelectedTreeId = id;
-            $('.txtLinkPath').val(displayPath);
-        }
-        if (treeId == "moveFolderTree") {
-            partialViewSelectedItemId = id;
-            $('.txtPartialDirTreePath').val(displayPath);
-            $('#partialViewTreeContainer').fadeOut()
-        }
+        dashboardMainSelectedTreeId = id;
+        $('.txtLinkPath').val(displayPath);
     }
 
     $(document).keydown(function (event) {

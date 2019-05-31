@@ -64,6 +64,7 @@
             hide: { effect: "blind" },
             width: "650"
         });
+        buildDirTree($('#moveDialogDirTree'), "moveDialogDirTree", 0);
     });
 
     function showMoveCopyDialog(mode, link, folderId) {
@@ -75,7 +76,6 @@
         $('#copyDialogImage').attr("src", link);
         $('#moveCopyDialogContainer').show();
         $('#moveCopyDialog').dialog("open");
-        buildDirTree($('#moveDialogDirTree'), "moveDialogDirTree", 0);
     }
 
     function performAction() {
