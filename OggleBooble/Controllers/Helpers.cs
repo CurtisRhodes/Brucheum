@@ -125,7 +125,7 @@ namespace OggleBooble
 
         public static string ErrorDetails(Exception ex)
         {
-            var exceptionType = ex.GetBaseException();
+            //var exceptionType = ex.GetBaseException();
             string msg = "ERROR: " + ex.Message;
             while (ex.InnerException != null)
             {

@@ -9,7 +9,7 @@ namespace OggleBooble.Controllers
 {
     public class StatsController : Controller
     {
-        private string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
+        private readonly string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
 
         public ActionResult Index()
         {
@@ -31,9 +31,9 @@ namespace OggleBooble.Controllers
         }
     }
 
-    public class staticPageModel
+    public class StaticPageModel
     {
-        public string html { get; set; }
-        public string filename { get; set; }
+        public string Html { get; set; }
+        public string Filename { get; set; }
     }
 }

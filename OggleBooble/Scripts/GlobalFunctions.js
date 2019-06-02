@@ -27,6 +27,27 @@ function closeFullscreen() {
   }
 }
 
+function showSiteContent(dest, blogId) {
+    try {
+        pause();
+        $.ajax({
+            type: "GET",
+            url: service + "api/OggleBlog/?blogId=" + blogId,
+            success: function (entry) {
+                if (entry.Success == "ok") {
+                    dest.html(entry.CommentText);
+                }
+                else
+                    dest.html(entry.Success);
+            },
+            error: function (xhr) {
+                alert("showSiteContent xhr: " + getXHRErrorDetails(xhr));
+            }
+        });
+    } catch (e) {
+        alert("showSiteContent: " + e);
+    }
+}
 
 function displayStatusMessage(msgCode, message) {
 

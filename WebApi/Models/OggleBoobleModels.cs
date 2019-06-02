@@ -43,6 +43,17 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
+    public class BlogCommentModelContainer
+    {
+        public BlogCommentModelContainer()
+        {
+            blogComments = new List<BlogCommentModel>();
+        }
+        public List<BlogCommentModel> blogComments { get; set; }
+        public string LinkC { get; set; }
+        public string Success { get; set; }
+    }
+
     public class BlogCommentModel
     {
         public int Id { get; set; }
@@ -90,7 +101,7 @@ namespace WebApi.Models
         public string FolderImageLink { get; set; }
         public string Success { get; set; }
     }
-
+    
     public class MetaTagResultsModel
     {
         public MetaTagResultsModel()

@@ -10,9 +10,8 @@ namespace OggleBooble.Controllers
 {
     public class AdminController : Controller
     {
-        HubConnection hubConnection = null;
-
-        private string apiService = ConfigurationManager.AppSettings["apiService"];
+        private readonly HubConnection hubConnection = null;
+        private readonly string apiService = ConfigurationManager.AppSettings["apiService"];
 
         public ActionResult MetaTagEdit()
         {
@@ -49,16 +48,16 @@ namespace OggleBooble.Controllers
             return View();
         }
         [HttpPost]
-        public JsonResult BuildPartialView(staticPageModel staticPage)
+        public JsonResult BuildPartialView(StaticPageModel staticPage)
         {
             string success = "";
             try
             {
-                string filePath = System.Web.HttpContext.Current.Server.MapPath("~/Views/Shared/" + staticPage.filename);
-                
+                string filePath = System.Web.HttpContext.Current.Server.MapPath("~/Views/Shared/" + staticPage.Filename);
+
                 using (var staticFile = System.IO.File.Open(filePath, System.IO.FileMode.Create))
                 {
-                    Byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(staticPage.html);
+                    Byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(staticPage.Html);
                     staticFile.Write(byteArray, 0, byteArray.Length);
                 }
                 success = "ok";

@@ -9,9 +9,19 @@
         cursor: pointer;
     }
 
-    .pornWarning {
+    .pornWarningContainer {
         position: fixed;
         z-index: 200;
+        margin: 0 20px;
+    }
+
+    .promoContainer {
+        position: absolute;
+        top: 200px;
+        left: 1000px;
+        border: solid 3px #4b0d41;
+        height: 500px;
+        width: 300px;
     }
 
 </style>
@@ -26,11 +36,11 @@
             <div onclick="$('#boobCatTreeContainer').dialog('open');">Category List</div>
             <div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>
             @*<div onclick="$('#oggleBlogEntry').fadeIn()">Blog</div>*@
-            <div onclick="showSiteContent($('#pornWarning'), 35)">Nasty Porn</div>
+            <div onclick="showPortnWarning()">Nasty Porn</div>
         </div>
     </div>
     <div id="middleColumn">
-        <div id="pornWarning" class="pornWarning"></div>
+        <div id="pornWarning" class="oggleHidden pornWarningContainer"></div>
         <div id="divStatusMessage"></div>
         <div class="flexContainer">
             <div class="floatLeft">
@@ -43,6 +53,7 @@
                 </div>
             </div>
         </div>
+        <div id="promoContainer" class="promoContainer"></div>
     </div>
     <div id="rightColumn"></div>
 </div>
@@ -64,17 +75,21 @@
             launchCarousel('boobs');
         });
 
-        //window.addEventListener("resize", resizeBoobsIndexPage);
-        //resizeBoobsIndexPage();
     });
 
-    //function resizeBoobsIndexPage() {
-    //    $('#carouselImage').css("max-width", $('#middleColumn').width());
-    //    $('#carouselImage').css("max-height", $('#middleColumn').innerHeight() - 180);
-    //}
-
-    function letemPorn() {
-        window.location.href = '/porn'
+    function showPortnWarning() {
+        if ($('#pornWarning').html() == "")
+            showSiteContent($('#pornWarning'), 35)
+        $('#pornWarning').show();
+    }
+    function letemPorn(response) {
+        // record hit
+        if (response == "ok") {
+            window.location.href = '/porn'
+        }
+        else {
+            $('#pornWarning').hide()
+        }
     }
 
     function boobCatTreeContainerClick(path, id, treeId) {
@@ -85,32 +100,5 @@
         else
             alert("dirTreeClick treeId: " + treeId);
     }
-
-    function showSiteContent(dest, blogId) {
-        try {
-            pause();
-            $.ajax({
-                type: "GET",
-                url: service + "api/OggleBlog/?blogId=" + blogId,
-                success: function (entry) {
-                    if (entry.Success == "ok") {
-                        dest.html(entry.CommentText);
-                    }
-                    else
-                        dest.html(entry.Success);
-                },
-                error: function (xhr) {
-                    alert("showSiteContent xhr: " + getXHRErrorDetails(xhr));
-                }
-            });
-        } catch (e) {
-            alert("showSiteContent: " +  e);
-        }
-    }
-
-    function goToPornSite() {
-        clearModal();
-    }
-
 
 </script>

@@ -80,7 +80,6 @@
 
     function performAction() {
         //alert("performAction: " + MoveCopyImageDialogModel.Mode);
-        $('#moveCopyDialogLoadingGif').show();
         if (MoveCopyImageDialogModel.Mode == "Copy")
             copyLink();
         else
@@ -88,6 +87,7 @@
     }
 
     function ftpMove() {
+        $('#moveCopyDialogLoadingGif').show();
         $.ajax({
             type: "PUT",
             url: service + "/api/FtpImagePage/MoveImage",
@@ -110,6 +110,7 @@
     }
 
     function copyLink() {
+        $('#moveCopyDialogLoadingGif').show();
         $.ajax({
             type: "PUT",
             url: service + "/api/ImagePage",

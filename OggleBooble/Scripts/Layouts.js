@@ -3,7 +3,7 @@ function setLayout(layoutName) {
     //use "menuContainer" to remove logon tabs  #replaceableMenuItems to keep them
     switch (layoutName) {
 
-        case 'Porn':
+        case 'porn':
             $('#oggleBoobleHeader').removeClass('classicColors').addClass('pornColors');
             $('.threeColumnArray').css("background-color", "#e2c2ab");
             //$('head title').html("girls sucking dick");

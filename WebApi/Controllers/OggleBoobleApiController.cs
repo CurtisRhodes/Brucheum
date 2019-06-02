@@ -158,20 +158,26 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class CategoryCommentController : ApiController
     {
-        // used by _CategoryDialog
         [HttpGet]
-        public CategoryCommentModel GetCommentText(int folderId)
+        public CategoryCommentModel Get(int folderId)
         {
             CategoryCommentModel categoryComment = new CategoryCommentModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    categoryComment.FolderName = db.CategoryFolders.Where(f => f.Id == folderId).First().FolderName;
-                    CategoryFolderDetail dbFolderDetail = db.CategoryFolderDetails.Where(n => n.FolderId == folderId).FirstOrDefault();
-                    if (dbFolderDetail != null)
-                        categoryComment.CommentText = dbFolderDetail.CommentText;
-
+                    categoryComment =
+                        (from f in db.CategoryFolders
+                         join d in db.CategoryFolderDetails on f.Id equals d.FolderId
+                         join l in db.ImageLinks on d.FolderImage equals l.Id
+                         where f.Id == folderId
+                         select new CategoryCommentModel()
+                         {
+                             FolderId = f.Id,
+                             Link = l.Link,
+                             FolderName = f.FolderName,
+                             CommentText = d.CommentText
+                         }).FirstOrDefault();
                     categoryComment.Success = "ok";
                 }
             }
@@ -180,6 +186,36 @@ namespace WebApi
                 categoryComment.Success = Helpers.ErrorDetails(ex);
             }
             return categoryComment;
+        }
+
+        [HttpGet]
+        public CategoryCommentContainer GetCategoryComments()
+        {
+            CategoryCommentContainer categoryCommentContainer = new CategoryCommentContainer();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    categoryCommentContainer.CategoryComments =
+                    (from f in db.CategoryFolders
+                     join d in db.CategoryFolderDetails on f.Id equals d.FolderId
+                     join l in db.ImageLinks on d.FolderImage equals l.Id
+                     select new CategoryCommentModel()
+                     {
+                         FolderId = f.Id,
+                         Link = l.Link,
+                         FolderName = f.FolderName,
+                         CommentText = d.CommentText
+                     }).ToList();
+
+                    categoryCommentContainer.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                categoryCommentContainer.Success = Helpers.ErrorDetails(ex);
+            }
+            return categoryCommentContainer;
         }
 
         [HttpPut]
@@ -509,22 +545,43 @@ namespace WebApi
         }
 
         [HttpGet]
-        public List<GalleryItem> GetBreadCrumbs(int folderId)
+        public BreadCrumbModel GetBreadCrumbs(int folderId)
         {
-            var parents = new List<GalleryItem>();
-            using (OggleBoobleContext db = new OggleBoobleContext())
+            BreadCrumbModel breadCrumbModel = new BreadCrumbModel();
+            try
             {
-                var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                parents.Add(new GalleryItem() { FolderId = thisFolder.Id, FolderName = thisFolder.FolderName });
-                var parent = thisFolder.Parent;
-                while (parent > 1)
+                using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    var parentDb = db.CategoryFolders.Where(f => f.Id == parent).First();
-                    parents.Add(new GalleryItem() { FolderId = parentDb.Id, FolderName = parentDb.FolderName });
-                    parent = parentDb.Parent;
+                    var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                    breadCrumbModel.BreadCrumbs.Add(new BreadCrumbItemModel()
+                    {
+                        FolderId = thisFolder.Id,
+                        FolderName = thisFolder.FolderName,
+                        IsInitialFolder = true
+                    });
+                    breadCrumbModel.RootFolder = thisFolder.RootFolder;
+                    breadCrumbModel.FolderName = thisFolder.FolderName;
+
+                    var parent = thisFolder.Parent;
+                    while (parent > 1)
+                    {
+                        var parentDb = db.CategoryFolders.Where(f => f.Id == parent).First();
+                        breadCrumbModel.BreadCrumbs.Add(new BreadCrumbItemModel()
+                        {
+                            FolderId = parentDb.Id,
+                            FolderName = parentDb.FolderName,
+                            IsInitialFolder = false
+                        });
+                        parent = parentDb.Parent;
+                    }
+                    breadCrumbModel.Success = "ok";
                 }
             }
-            return parents;
+            catch (Exception ex)
+            {
+                breadCrumbModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return breadCrumbModel;
         }
 
         // dashboard
@@ -805,31 +862,49 @@ namespace WebApi
         }
 
         [HttpGet]
-        public List<BlogCommentModel> GetBlogList(string commentType)
+        public BlogCommentModelContainer GetBlogList(string commentType)
         {
-            List<BlogCommentModel> blogComments = new List<BlogCommentModel>();
+            BlogCommentModelContainer blogCommentsContainer = new BlogCommentModelContainer();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    List<BlogComment> dbBlogComments = db.BlogComments.Where(b => b.CommentType == commentType).ToList();
-                    foreach (BlogComment dbBlogComment in dbBlogComments)
+                    if (commentType == "FLD")
                     {
-                        blogComments.Add(new BlogCommentModel()
-                        {
-                            Id = dbBlogComment.Id,
-                            CommentTitle = dbBlogComment.CommentTitle,
-                            CommentText = dbBlogComment.CommentText,
-                            Link = dbBlogComment.Link
-                        });
+                        blogCommentsContainer.blogComments =
+                        (from f in db.CategoryFolders
+                         join d in db.CategoryFolderDetails on f.Id equals d.FolderId
+                         join l in db.ImageLinks on d.FolderImage equals l.Id
+                         select new BlogCommentModel()
+                         {
+                             FolderId = d.FolderId,
+                             Link = l.Link,
+                             CommentTitle = f.FolderName,
+                             CommentText = d.CommentText
+                         }).ToList();
                     }
+                    else
+                    {
+                        List<BlogComment> dbBlogCommentsContainer = db.BlogComments.Where(b => b.CommentType == commentType).ToList();
+                        foreach (BlogComment dbBlogComment in dbBlogCommentsContainer)
+                        {
+                            blogCommentsContainer.blogComments.Add(new BlogCommentModel()
+                            {
+                                Id = dbBlogComment.Id,
+                                CommentTitle = dbBlogComment.CommentTitle,
+                                CommentText = dbBlogComment.CommentText,
+                                Link = dbBlogComment.Link
+                            });
+                        }
+                    }
+                    blogCommentsContainer.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                blogComments.Add(new BlogCommentModel() { CommentTitle = Helpers.ErrorDetails(ex) });
+                blogCommentsContainer.Success = Helpers.ErrorDetails(ex);
             }
-            return blogComments;
+            return blogCommentsContainer;
         }
 
         [HttpPatch]

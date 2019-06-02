@@ -13,7 +13,7 @@ namespace OggleBooble.Controllers
     public class LoginController : Controller
     {
         #region constructors
-        //private string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
+        //private readonly string apiService = System.Configuration.ConfigurationManager.AppSettings["apiService"];
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 

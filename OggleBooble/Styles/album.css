@@ -24,19 +24,19 @@
 .noLinksImageFrame {
     margin: 1px;
     padding: 1px;
+    margin-bottom: 4px;
     border: dashed 2px #d19154;
 }
 
-.folderImageFrame {
-    border: solid 4px var(--thumbnailBorderColor);
+.folderImageOutterFrame {
+    border: solid 6px var(--thumbnailBorderColor);
+    border-radius: 4px;
     margin: 4px;
-    height: 222px;
 }
 
 .folderImageFrameName {
-    text-align:center;
-    background-color:var(--thumbnailBorderColor);
-    padding-bottom: .1px;
+    text-align: center;
+    background-color: var(--thumbnailBorderColor);
 }
 
 .nonLocalIndicator {

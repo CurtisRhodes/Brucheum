@@ -29,10 +29,32 @@ namespace WebApi.Models
         public List<CategoryTreeModel> SubDirs { get; set; }
     }
 
-    public class GalleryItem
+    public class BreadCrumbModel {
+        public BreadCrumbModel()
+        {
+            BreadCrumbs = new List<BreadCrumbItemModel>();
+        }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public List<BreadCrumbItemModel> BreadCrumbs { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class BreadCrumbItemModel
     {
         public int FolderId { get; set; }
         public string FolderName { get; set; }
+        public bool IsInitialFolder { get; set; }
+    }
+
+    public class CategoryCommentContainer
+    {
+        public CategoryCommentContainer()
+        {
+            CategoryComments = new List<CategoryCommentModel>(); 
+        }
+        public List<CategoryCommentModel> CategoryComments { get; set; }
+        public string Success { get; set; }
     }
 
     public class CategoryCommentModel
@@ -40,6 +62,7 @@ namespace WebApi.Models
         public int FolderId { get; set; }
         public string FolderName { get; set; }
         public string CommentText { get; set; }
+        public string Link { get; set; }
         public string Success { get; set; }
     }
 
@@ -99,9 +122,9 @@ namespace WebApi.Models
 
     public class FtpFolder
     {
-        public DateTime modified { get; set; }
+        public DateTime Modified { get; set; }
         public string Name { get; set; }
-        public long size { get; set; }
+        public long Size { get; set; }
 
     }
     public class FtpFileInfo
@@ -110,18 +133,6 @@ namespace WebApi.Models
         public string Permissions { get; set; }
         public string Path { get; set; }
 
-    }
-
-    public class xxBlogCommentModel {
-        public int Id { get; set; }
-        public string CommentTitle { get; set; }
-        public string CommentType { get; set; }
-        public string Link { get; set; }
-        public string LinkId { get; set; }
-        public string FolderId { get; set; }
-        public string UserId { get; set; }
-        public string CommentText { get; set; }
-        public DateTime Posted { get; set; }
     }
 
     public class RepairReportModel

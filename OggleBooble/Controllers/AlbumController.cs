@@ -9,7 +9,7 @@ namespace OggleBooble.Controllers
 {
     public class AlbumController : Controller
     {
-        private string apiService = ConfigurationManager.AppSettings["apiService"];
+        private readonly string apiService = ConfigurationManager.AppSettings["apiService"];
 
         public ActionResult Index(string folder)
         {

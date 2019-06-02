@@ -13,7 +13,7 @@ namespace OggleBooble
 {
     public class HomeController : Controller
     {
-        private string apiService = ConfigurationManager.AppSettings["apiService"];
+        private readonly string apiService = ConfigurationManager.AppSettings["apiService"];
         public ActionResult Index()
         {
             ViewBag.IsPornEditor = User.IsInRole("Porn Editor");
@@ -57,7 +57,7 @@ namespace OggleBooble
         }
 
         [HttpPost]
-        public JsonResult CreateImagePageStaticFile(staticPageModel staticPage)
+        public JsonResult CreateImagePageStaticFile(StaticPageModel staticPage)
         {
             string success = "";
             try
@@ -108,7 +108,7 @@ namespace OggleBooble
             return rtn;
         }
     }
-    public class staticPageModel
+    public class StaticPageModel
     {
         public string Html { get; set; }
         public string Filename { get; set; }
@@ -119,7 +119,7 @@ namespace OggleBooble
     {
         public ViewResult Index()
         {
-            Exception x = HttpContext.Server.GetLastError();
+            //Exception x = HttpContext.Server.GetLastError();
             Exception ex = (Exception)Session["LastError"];
             string errorMessage = "unknown error";
             string stackTrace = "";
@@ -142,9 +142,9 @@ namespace OggleBooble
 
     public class TestController : Controller
     {
-        private string apiService = ConfigurationManager.AppSettings["apiService"];
+        private readonly string apiService = ConfigurationManager.AppSettings["apiService"];
 
-        public ActionResult contextTest()
+        public ActionResult ContextTest()
         {
             ViewBag.Service = apiService;
             return View();

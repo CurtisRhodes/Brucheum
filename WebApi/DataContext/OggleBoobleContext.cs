@@ -63,7 +63,7 @@ namespace WebApi.DataContext
     public partial class CategoryFolderDetail
     {
         [Key]
-        public int pkId { get; set; }
+        public int PkId { get; set; }
         public int FolderId { get; set; }
         public string Nationality { get; set; }
         public string Measurements { get; set; }
