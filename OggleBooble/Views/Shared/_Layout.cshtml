@@ -115,6 +115,16 @@
                     $('#divPornEditor').show();
             }
             else {
+
+
+
+
+
+
+
+
+
+
                 $('#divLogedIn').hide();
                 $('#divNotLogedIn').show();
             }
@@ -124,10 +134,14 @@
             }
 
             var isOk = checkCookie("userName")
-            if (isOk == "ok") {
-                $('#cookieIndicator').html("C");
+            if (isOk == "ok") {                  
+                $('#cookieIndicator').html(getCookie());
                 $('#divLogedIn').show();
                 $('#divNotLogedIn').hide();
+            }
+            else {
+                setCookie("userName", 365);
+                $('#cookieIndicator').html("S");
             }
 
             //toggleTittyMenu(getOBCookie("ShapeOrPosesMenu", "shapes"));

@@ -2,13 +2,13 @@
 :root {
     --brucheumBlue: #74bac3;
     --oggleBackgroundColor: #fef; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
-    --oggleContainerBackgroundColor: #d4d1bb; /* #e3cedd #f8e8e8 */
-    --oggleBorderColor: #7f2c8f;
+    --oggleContainerBackgroundColor: #e6b9d9; /*  #f8e8e8 */
+    --oggleBorderColor: #f1cff7;
     --ogglePurple: #79078f;
     --normalFont: 17px;
     --ogglgeTitleColor: #7f2c8f;
     --ogglgeSubTitleColor: #490157;
-    --thumbnailBorderColor: #74bac3;  /* hot pink #ff00dc   */
+    --thumbnailBorderColor: #74bac3; /* hot pink #ff00dc   */
     --ogglgeHeaderBarColor: #00ffff; /*#c79bbe*/
     --oggleHeaderBoarderTop: #40767d 3px solid;
     --oggleHeaderBackgroundColor: #74bac3;

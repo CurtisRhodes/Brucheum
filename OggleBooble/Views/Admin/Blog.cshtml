@@ -88,20 +88,45 @@
         margin: 0 8px;
     }
 
+    .singleBlogEntryContainer {
+        background-color: var(--oggleContainerBackgroundColor);
+        display: block;
+        border: solid thin black;
+    }
+    .blogPageSubHeader {
+        text-align: center;
+        font-size: 25px;
+        
+        margin: 11px;
+    }
+    .blogPageImageContainer {
+        text-align: center;
+    }
+    .largeCenteredImage {
+        max-height: 233px;
+    }
+    .blogPageBodyText {
+        margin-top: 7px;
+        padding: 4px;
+        text-align: justify;
+    }
+
 </style>
 
 <div class="threeColumnArray">
     <div id="leftColumn">
         <div class="leftColumnList">
-            <div id="leftColumnShowBlog"  onclick="showBlogDisplay()">Show Blog</div>
-            <div id="leftColumnShowEditor" onclick="showBlogEditor()">New Entry</div>
+            <div id="leftColumnShowBlog" onclick="showBlogDisplay()">Show Blog</div>
+            <div id="leftColumnEditorNew" onclick="showBlogEditor()">New Entry</div>
+            <div id="leftColumnEditor">Edit</div>
+            <div id="leftColumnShowPage">Show Page</div>
         </div>
     </div>
     <div id="middleColumn">
         <div id="divStatusMessage"></div>
         <img id="blogLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
 
-        <div id="blogDisplayArea" class="blogDisplayArea">
+        <div id="blogListArea" class="blogDisplayArea">
             <select id="blogDisplayCommentTypeSelect" class="roundedInput" onchange="loadBlogArticles($(this).val())">
                 <option value="CMT">Comment on an Image</option>
                 <option value="PGM">Programmer Notes</option>
@@ -156,6 +181,12 @@
             </div>
         </div>
 
+        <div id="blogPageArea" class="singleBlogEntryContainer">
+            <div id="blogPageTitle" class="blogPageSubHeader"></div>
+            <div class="blogPageImageContainer"><img id="blogPageImage" class="largeCenteredImage"/></div>
+            <div id="blogPageBody" class="blogPageBodyText"></div>
+        </div>
+
     </div>
     <div id="rightColumn"></div>
 </div>
@@ -169,8 +200,8 @@
     /// start with a display of blog entries
     $(document).ready(function () {
 
-        $('#blogDisplayCommentTypeSelect').val('PGM')
-        showBlogDisplay('PGM');
+        $('#blogDisplayCommentTypeSelect').val('BLG')
+        showBlogDisplay('BLG');
 
         $('#blogEditor').summernote({
             height: 310,
@@ -181,17 +212,34 @@
                 ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
             ]
         });
-
             
         $('#footerMessage').html("loading");
 
+        $('#leftColumnEditor').hide();
+        //$('#leftColumnShowPage').hide();
         window.addEventListener("resize", resizeBlogPage);
     });
 
-    function showBlogEditor() {
-        $('#leftColumnShowEditor').hide();
+    function editItem(blogId, commentType) {
+        $('#leftColumnEditor').hide();
+        $('#leftColumnEditorNew').hide();
         $('#leftColumnShowBlog').show();
-        $('#blogDisplayArea').fadeOut();
+        $('#leftColumnShowPage').show();
+        $('#blogPageArea').fadeOut();
+        $('#blogListArea').hide();
+        $('#blogEditArea').fadeIn();
+        loadBlogList(commentType);
+        loadBlogEntry(blogId, commentType);
+    }
+
+    function showBlogEditor() {
+        $('#leftColumnEditor').hide();
+        $('#leftColumnEditorNew').hide();
+        $('#leftColumnShowBlog').show();
+        $('#leftColumnShowPage').show();
+
+        $('#blogPageArea').hide();
+        $('#blogListArea').fadeOut();
         $('#blogEditArea').fadeIn();
         loadBlogList($('#blogDisplayCommentTypeSelect').val());
         $('#btnAddEdit').html("Add");
@@ -200,11 +248,81 @@
     }
     
     function showBlogDisplay() {
-        $('#leftColumnShowEditor').show();
+        $('#leftColumnEditorNew').show();
+        $('#leftColumnEditor').hide();
         $('#leftColumnShowBlog').hide();
-        $('#blogDisplayArea').fadeIn();
+        $('#leftColumnShowPage').hide();
+        $('#blogPageArea').hide();
+        $('#blogListArea').fadeIn();
         $('#blogEditArea').fadeOut();
         loadBlogArticles($('#blogDisplayCommentTypeSelect').val());
+    }
+
+    function showBlogPage(blogId, commentType) {
+        try {
+            if (commentType == "FLD") {
+                $.ajax({
+                    type: "GET",
+                    url: service + "/api/CategoryComment/Get?folderId=" + blogId,
+                    success: function (categoryCommentModel) {
+                        if (categoryCommentModel.Success == "ok") {
+                            blogObject.Id = categoryCommentModel.FolderId;
+                            $('#blogPageTitle').html(categoryCommentModel.FolderName);
+                            $('#blogPageImage').attr("src", categoryCommentModel.Link);
+                            $('#blogPageBody').html(categoryCommentModel.CommentText);
+
+                            if ($('#blogPageBody').height() > $('#middleColumn').height()) {
+                                $('#middleColumn').height($('#blogPageBody').height() + $('#bheader').height());
+                                resizePage();
+                            }
+                        }
+                        else
+                            alert("showBlogPage FLD: " + categoryCommentModel.Success)
+                    },
+                    error: function (jqXHR, exception) {
+                        alert("showBlogPage FLD jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    type: "GET",
+                    url: service + "/api/OggleBlog?blogId=" + blogId,
+                    success: function (model) {
+                        if (model.Success == "ok") {
+                            blogObject.Id = model.Id;
+                            $('#blogPageTitle').html(model.CommentTitle);
+                            $('#blogPageBody').html(model.CommentText);
+                            $('#blogPageImage').attr("src", model.Link);
+
+                            if ($('#blogPageBody').height() > $('#middleColumn').height()) {
+                                $('#middleColumn').height($('#blogPageBody').height() + $('#bheader').height());
+                                resizePage();
+                            }
+                        }
+                        else
+                            alert("displayBlogEntry: " + model.Success)
+                    },
+                    error: function (jqXHR, exception) {
+                        alert("loadBlogEntry jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                    }
+                });
+            }
+
+            $('#leftColumnEditor').click(function () {
+                editArticle(blogId, commentType)
+            });
+
+            $('#blogListArea').fadeOut();
+            $('#blogPageArea').fadeIn();
+            $('#blogEditArea').hide();
+            $('#leftColumnEditor').show();
+            $('#leftColumnEditorNew').hide();
+            $('#leftColumnShowBlog').show();
+
+        } catch (e) {
+            alert("display BlogEntry catch: " + e);
+        }
     }
 
     function loadBlogArticles(commentType) {
@@ -260,7 +378,7 @@
                             <div class="blogArticleJog"> 
                                 <div class="flexContainer">
                                     <div class="floatLeft">
-                                        <img class="blogArticleJogImage" src="`+ blogComment.Link + `" onclick="editArticle('`+ blogComment.Id + `','` + commentType + `')" />
+                                        <img class="blogArticleJogImage" src="`+ blogComment.Link + `" onclick="showBlogPage('`+ blogComment.Id + `','` + commentType + `')" />
                                     </div>
                                     <div class="blogArticleJogBody">
                                         <div class="blogArticleTitle">`+ blogComment.CommentTitle + `</div>
@@ -290,14 +408,17 @@
             $('#blogLoadingGif').hide();
             alert("display Blog: CATCH " + e);
         }
-        $('#blogDisplayArea').show();
+        $('#blogListArea').show();
+        $('#blogPageArea').hide();
         $('#blogEditArea').hide();
     }
 
     function editArticle(blogId, commentType) {
-        $('#leftColumnShowEditor').hide();
+        $('#leftColumnEditorNew').hide();
+        $('#leftColumnEditor').hide();
+        $('#blogPageArea').hide();
         $('#leftColumnShowBlog').show();
-        $('#blogDisplayArea').fadeOut();
+        $('#blogListArea').fadeOut();
         loadBlogList(commentType);
         loadBlogEntry(blogId, commentType);
         $('#blogEditArea').fadeIn();
@@ -517,15 +638,13 @@
         $('#blogArticleJogContainer').height($('#middleColumn').height() - headerClearance);
         $('#rightColumn').width($('#leftColumn').width());
         $('#blogList').height($('#middleColumn').height() - headerClearance);
-
-
-
-        $('.note-editable').height($('#middleColumn').height() - 400);
+        
+       $('.note-editable').height($('#middleColumn').height() - 400);
 
         //$('.blogItemContainer').height($('.blogEditArea').height());
 
-        $('#footerMessage').html("$('#middleColumn').height(): " + $('#middleColumn').height());
-        $('#footerMessage').append("   $('#note-editable').width(): " + $('.note-editable').width());
+        //$('#footerMessage').html("$('#middleColumn').height(): " + $('#middleColumn').height());
+        //$('#footerMessage').append("   $('#note-editable').width(): " + $('.note-editable').width());
 
 
         $('.note-editor').width($('#middleColumn').width() - $('#blogList').width() - 30);
@@ -533,6 +652,7 @@
         //$('#footerMessage').append("   $('#blogList').width(): " + $('#blogList').width());
         //$('#footerMessage').append("   $('note-editor').width(): " + $('.note-editor').width());
     }
+
 
 
     function createStaticBlogPage(blogId) {

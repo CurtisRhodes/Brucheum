@@ -26,8 +26,8 @@ function loadImages(rootFolder, isChecked, take) {
                 if (carouselItemArray[idx].RootFolder === rootFolder) {
                     if (idx < carouselItemArray.length) {
                         if (removedFolders.find(function () { return carouselItemArray[idx].FolderName }) === undefined) {
-                            alert("not found " + carouselItemArray[idx].FolderName)
-                            removedFolders.push(carouselItemArray[idx].FolderName)
+                            alert("not found " + carouselItemArray[idx].FolderName);
+                            removedFolders.push(carouselItemArray[idx].FolderName);
                         }
                     }
                     else {

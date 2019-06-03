@@ -15,10 +15,9 @@ function getBreadCrumbs() {
                     }
                     else {
                         // title: I do not remember having been Invited)
-
                         if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder) {
                             $('#headerMessage').append("<a class='inactiveBreadCrumb' " +
-                                "onclick=showCategoryDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + ");>" +
+                                "onmouseover=showCategoryDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + ");>" +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                         else {

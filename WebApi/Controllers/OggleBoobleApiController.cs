@@ -884,7 +884,7 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    categoryComment =
+                    CategoryCommentModel dbCategoryComment =
                         (from f in db.CategoryFolders
                          join d in db.CategoryFolderDetails on f.Id equals d.FolderId
                          join l in db.ImageLinks on d.FolderImage equals l.Id
@@ -896,7 +896,14 @@ namespace WebApi
                              FolderName = f.FolderName,
                              CommentText = d.CommentText
                          }).FirstOrDefault();
-                    categoryComment.Success = "ok";
+
+                    if (dbCategoryComment != null)
+                    {
+                        categoryComment = dbCategoryComment;
+                        categoryComment.Success = "ok";
+                    }
+                    else
+                        categoryComment.Success = "not found";
                 }
             }
             catch (Exception ex)

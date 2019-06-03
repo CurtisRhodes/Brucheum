@@ -92,8 +92,10 @@
                         $('#folderCategoryDialog').show();
                         $('#folderCategoryDialog').dialog("open");
                     }
-                    else
-                        alert("get Category Comment: " + categoryComment.Success);
+                    else {
+                        if (categoryComment.Success !== "not found")
+                            alert("get Category Comment: " + categoryComment.Success);
+                    }
                 },
                 error: function (jqXHR, exception) {
                     alert("get Category Comment XHR : " + getXHRErrorDetails(jqXHR, exception));

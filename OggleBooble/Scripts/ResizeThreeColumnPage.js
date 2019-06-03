@@ -22,12 +22,18 @@ function resizePage(debug) {
     $('#middleColumn').width(winW - lcW - rcW);
 
     ////set page height
+
     var hdrH = $('#bheader').height();
     var winH = $(window).height() - 10;
 
     //alert("winH: " + winH);
 
-    $('#middleColumn').height(winH - hdrH);
+    if ($('#middleColumn').height() < winH - hdrH)
+        $('#middleColumn').height(winH - hdrH);
+    else {
+        $('.threeColumnArray').height($('#middleColumn').height() + hdrH + 450);
+        $('#footerMessage').html("h: " + $('.threeColumnArray').height());
+    }
 
     //if (debug !== undefined) {
     //    $('#footerMessage').append("resize debug: " + debug);
