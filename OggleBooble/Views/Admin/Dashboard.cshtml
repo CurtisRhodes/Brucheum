@@ -38,13 +38,10 @@
                 </div>
             </div>
 
-            <div id="newFolderCrud" class="floatingCrud">
-                <div class="floatingCrudBanner">Create New Folder<div onclick="$('#newFolderCrud').fadeOut()" class="farSide">x</div> </div>
-                <div class="floatingCrudContainer">
-                    <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
-                    <div><span>parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                    <div class="roundendButton" onclick="createNewFolder()">Create Folder</div>
-                </div>
+            <div id="newFolderCrud" class="oggleHidden" title="Create New Folder">
+                <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
+                <div><span>parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                <div class="roundendButton" onclick="createNewFolder()">Create Folder</div>
             </div>
 
             <div id="renameFolderCrud" class="floatingCrud">
@@ -59,16 +56,15 @@
 
             <div id="moveFolderCrud" class="oggleHidden" title="Move Folder">                
                 <div>
-                    <span>move folder </span><div onclick="$('#partialViewTreeContainer').toggle()" class="toggleButton">...</div>
+                    <span>move folder </span><div onclick="$('#partialViewTreeContainer').dialog('open');" class="toggleButton">...</div>
                     <input id="txtFolderToMove" class="txtPartialDirTreePath roundedInput" readonly="readonly" />
                 </div>
                 <div><span>new parent</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
                 <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
             </div>
 
-            <div id="partialViewTreeContainer" class="floatingCrud2">
-                <div class="floatingCrudBanner">Select Folder to move<div onclick="$('#partialViewTreeContainer').fadeOut()" class="farSide">x</div></div>
-                <div id="folderToMoveTreeContainer" class="dirTree2Container"></div>
+            <div id="partialViewTreeContainer" title="Select Folder to move" >
+                <div id="folderToMoveTreeContainer" class="moveDirTreeContainer"></div>
             </div>
 
             @*<div id="repairLinksCrud" class="floatingCrud">
@@ -111,14 +107,11 @@
         $('#headerMessage').html(`Dashboard <dir class='linkContainer'>
         <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
         <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
-        <div class="clickable" onclick="$('#newFolderCrud').fadeIn()">Create New Folder</div>
+        <div class="clickable" onclick="showCreateNewFolder()">Create New Folder</div>
         <div class="clickable" onclick="showMovefolderDialog()">Move Folder</div>
         <div class="clickable" onclick="$('#renameFolderCrud').fadeIn()">ReName Folder</div>
         <div class="clickable" onclick="collapseChildFolder()">Collapse Folder</div>
         <div class="clickable" onclick="repairLinks()">Repair Links</div></dir>`);
-
-
-//                <div class="clickable" onclick="$('#repairLinksCrud').fadeIn()">Repair Links</div></dir>`);
 
         buildDirectoryTree();
 
@@ -242,6 +235,15 @@
         }
     }
 
+    function showCreateNewFolder() {
+        $('#newFolderCrud').show();
+        $('#newFolderCrud').dialog({
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "615"
+        });
+    }
+
     function createNewFolder() {
         $('#dashBoardLoadingGif').fadeIn();
         var newFolder = {};
@@ -256,6 +258,7 @@
                 if (success == "ok") {
                     displayStatusMessage("ok", "new folder created");
                     buildDirectoryTree();
+                    $('#newFolderCrud').dialog("close");
                 }
                 else
                     alert("CreateVirtualFolder: " + success);
@@ -298,8 +301,17 @@
             //autoOpen: false,
             show: { effect: "fade" },
             hide: { effect: "blind" },
-            width: "615"
+            width: "400"
         });
+        var target = $('#moveFolderCrud');
+        $('#partialViewTreeContainer').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            position: ({ my: 'right', at: 'left', of: $('#moveFolderCrud') }),
+            width: "430"
+        });
+
         buildDirTree($('#folderToMoveTreeContainer'), "moveFolderTree", 0);
         $('#moveFolderCrud').show();
         //$('#moveFolderCrud').dialog("open");
@@ -378,12 +390,15 @@
 
     function repairLinks() {
         var start = Date.now();
+
+        alert("dashboardMainSelectedTreeId: "+dashboardMainSelectedTreeId)
+
         $('#dataifyInfo').show().html("checking and repairing links");
         $('#dashBoardLoadingGif').fadeIn();
         $('#repairLinksReport').html("");
         $.ajax({
             type: "GET",
-            url: service + "/api/FtpDashBoard/RepairLinks/?startFolderId=" + dashboardMainSelectedTreeId + "&drive=" + $('#txtdestination').val(),
+            url: service + "/api/FtpDashBoard/RepairLinks/?startFolderId=" + dashboardMainSelectedTreeId + "&drive=XX",
             success: function (repairReport) {
                 $('#dashBoardLoadingGif').hide();
                 if (repairReport.Success == "ok") {
@@ -432,7 +447,7 @@
                     }
                 }
                 else
-                    alert("downloadLinks: " + repairReport.Success);
+                    alert("repairLinks: " + repairReport.Success);
             },
             error: function (xhr) {
                 $('#dashBoardLoadingGif').hide();
@@ -452,7 +467,7 @@
         }
         partialViewSelectedItemId = id;
         $('.txtPartialDirTreePath').val(displayPath);
-        $('#partialViewTreeContainer').fadeOut();
+        $('#partialViewTreeContainer').dialog("close");
     }
 
     function dashboardMainClick(path, id, treeId) {

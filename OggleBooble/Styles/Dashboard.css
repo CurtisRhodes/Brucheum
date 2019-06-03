@@ -99,10 +99,10 @@
     white-space: nowrap;
 }
 
-.dirTree2Container {
-    margin-top: 8px;
+.moveDirTreeContainer {
     background-color: #f8e8e8;
     height: 500px;
+    padding-right: 5px;
     text-align: left;
     overflow-y: auto;
 }
@@ -125,15 +125,6 @@
     border-radius: 8px;
     padding: 4px;
     cursor: pointer;
-}
-
-.floatingCrud2 {
-    position: absolute;
-    top: 350px;
-    left: 400px;
-    border: solid 2px var(--oggleBorderColor);
-    box-shadow: rgba(128, 128, 128, 0.55) 5px 6px;
-    display: none;
 }
 
 .repairReport {

@@ -34,7 +34,7 @@ function showSiteContent(dest, blogId) {
             type: "GET",
             url: service + "api/OggleBlog/?blogId=" + blogId,
             success: function (entry) {
-                if (entry.Success == "ok") {
+                if (entry.Success === "ok") {
                     dest.html(entry.CommentText);
                 }
                 else

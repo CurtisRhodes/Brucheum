@@ -5,6 +5,7 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using WebApi.Models;
 using WebApi.DataContext;
+using System.Xml;
 //using System.IO;
 //using System.Net;
 //using System.Text;
@@ -151,98 +152,6 @@ namespace WebApi
                 }
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
-    }
-
-    [EnableCors("*", "*", "*")]
-    public class CategoryCommentController : ApiController
-    {
-        [HttpGet]
-        public CategoryCommentModel Get(int folderId)
-        {
-            CategoryCommentModel categoryComment = new CategoryCommentModel();
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    categoryComment =
-                        (from f in db.CategoryFolders
-                         join d in db.CategoryFolderDetails on f.Id equals d.FolderId
-                         join l in db.ImageLinks on d.FolderImage equals l.Id
-                         where f.Id == folderId
-                         select new CategoryCommentModel()
-                         {
-                             FolderId = f.Id,
-                             Link = l.Link,
-                             FolderName = f.FolderName,
-                             CommentText = d.CommentText
-                         }).FirstOrDefault();
-                    categoryComment.Success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                categoryComment.Success = Helpers.ErrorDetails(ex);
-            }
-            return categoryComment;
-        }
-
-        [HttpGet]
-        public CategoryCommentContainer GetCategoryComments()
-        {
-            CategoryCommentContainer categoryCommentContainer = new CategoryCommentContainer();
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    categoryCommentContainer.CategoryComments =
-                    (from f in db.CategoryFolders
-                     join d in db.CategoryFolderDetails on f.Id equals d.FolderId
-                     join l in db.ImageLinks on d.FolderImage equals l.Id
-                     select new CategoryCommentModel()
-                     {
-                         FolderId = f.Id,
-                         Link = l.Link,
-                         FolderName = f.FolderName,
-                         CommentText = d.CommentText
-                     }).ToList();
-
-                    categoryCommentContainer.Success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                categoryCommentContainer.Success = Helpers.ErrorDetails(ex);
-            }
-            return categoryCommentContainer;
-        }
-
-        [HttpPut]
-        public string EditFolderCategory(int folderId, string commentText)
-        {
-            string success = "";
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    CategoryFolderDetail dbCategoryFolderDetail = db.CategoryFolderDetails.Where(m => m.FolderId == folderId).FirstOrDefault();
-                    if (dbCategoryFolderDetail == null)
-                    {
-                        db.CategoryFolderDetails.Add(new CategoryFolderDetail() { FolderId = folderId, CommentText = commentText });
-                    }
-                    else
-                    {
-                        dbCategoryFolderDetail.CommentText = commentText;
-                    }
-                    db.SaveChanges();
-                    success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
             return success;
         }
     }
@@ -467,36 +376,35 @@ namespace WebApi
             return carouselInfo;
         }
 
-        int folderCount = 0;
-        int fileCount = 0;
-        [HttpGet]
-        public int[] GetCounts(string root)
+        [HttpPost]
+        public string XMLPost(CarouselInfoModel model)
         {
-            folderCount = 0;
-            using (OggleBoobleContext db = new OggleBoobleContext())
+            try
             {
-                //var ccc = 
-                var dbRootId = db.CategoryFolders.Where(f => f.FolderName == root).First().Id;
-                GetFolderCountRecurr(dbRootId, db);
-                //if (root == "boobs")
-                //    folderCount = db.ImageFolders.Where(f => (f.FolderPath.Contains("boobs")) && (!f.FolderPath.Contains("archive"))).Count();
-                //if (root == "porn")
-                //    folderCount = db.ImageFolders.Where(f => (f.FolderPath.Contains("porn")) && (!f.FolderPath.Contains("sluts"))).Count();
+                string fileName = "";
+                XmlDocument xdoc = new XmlDocument();
+                xdoc.Load(fileName);
+                XmlNode xmlNode = null;
+                string id = Guid.NewGuid().ToString();
+                //model.Links.
+                foreach (CarouselItemModel i in model.Links)
+                {
+                    xmlNode = xdoc.CreateElement("Article");
+                    XmlAttribute articleId = xdoc.CreateAttribute("Id"); articleId.Value = id; xmlNode.Attributes.Append(articleId);
+                    XmlAttribute title = xdoc.CreateAttribute("Title"); title.Value = i.FolderName; xmlNode.Attributes.Append(title);
+                    XmlAttribute byLine = xdoc.CreateAttribute("ByLine"); byLine.Value = i.Link; xmlNode.Attributes.Append(byLine);
+                    XmlAttribute linkId = xdoc.CreateAttribute("LinkId"); linkId.Value = i.LinkId; xmlNode.Attributes.Append(linkId);
+                    xdoc.DocumentElement.AppendChild(xmlNode);
+                }
+                xdoc.Save(fileName);
+                xdoc = null;
+                return id;
             }
-            int[] x = { folderCount, fileCount };
-            return x;
-        }
-        private void GetFolderCountRecurr(int rootId, OggleBoobleContext db)
-        {
-            var childDirs = db.CategoryFolders.Where(f => f.Parent == rootId).ToList();
-            folderCount += childDirs.Count();
-            foreach (CategoryFolder subFolder in childDirs)
+            catch (Exception e)
             {
-                fileCount += db.CategoryImageLinks.Where(c => c.ImageCategoryId == rootId).Count();
-                GetFolderCountRecurr(subFolder.Id, db);
+                return "ERROR: " + e.Message;
             }
         }
-
     }
 
     [EnableCors("*", "*", "*")]
@@ -869,33 +777,16 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    if (commentType == "FLD")
+                    List<BlogComment> dbBlogCommentsContainer = db.BlogComments.Where(b => b.CommentType == commentType).ToList();
+                    foreach (BlogComment dbBlogComment in dbBlogCommentsContainer)
                     {
-                        blogCommentsContainer.blogComments =
-                        (from f in db.CategoryFolders
-                         join d in db.CategoryFolderDetails on f.Id equals d.FolderId
-                         join l in db.ImageLinks on d.FolderImage equals l.Id
-                         select new BlogCommentModel()
-                         {
-                             FolderId = d.FolderId,
-                             Link = l.Link,
-                             CommentTitle = f.FolderName,
-                             CommentText = d.CommentText
-                         }).ToList();
-                    }
-                    else
-                    {
-                        List<BlogComment> dbBlogCommentsContainer = db.BlogComments.Where(b => b.CommentType == commentType).ToList();
-                        foreach (BlogComment dbBlogComment in dbBlogCommentsContainer)
+                        blogCommentsContainer.blogComments.Add(new BlogCommentModel()
                         {
-                            blogCommentsContainer.blogComments.Add(new BlogCommentModel()
-                            {
-                                Id = dbBlogComment.Id,
-                                CommentTitle = dbBlogComment.CommentTitle,
-                                CommentText = dbBlogComment.CommentText,
-                                Link = dbBlogComment.Link
-                            });
-                        }
+                            Id = dbBlogComment.Id,
+                            CommentTitle = dbBlogComment.CommentTitle,
+                            CommentText = dbBlogComment.CommentText,
+                            Link = dbBlogComment.Link
+                        });
                     }
                     blogCommentsContainer.Success = "ok";
                 }
@@ -981,5 +872,99 @@ namespace WebApi
             return success;
         }
     }
+
+    [EnableCors("*", "*", "*")]
+    public class CategoryCommentController : ApiController
+    {
+        [HttpGet]
+        public CategoryCommentModel Get(int folderId)
+        {
+            CategoryCommentModel categoryComment = new CategoryCommentModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    categoryComment =
+                        (from f in db.CategoryFolders
+                         join d in db.CategoryFolderDetails on f.Id equals d.FolderId
+                         join l in db.ImageLinks on d.FolderImage equals l.Id
+                         where f.Id == folderId
+                         select new CategoryCommentModel()
+                         {
+                             FolderId = f.Id,
+                             Link = l.Link,
+                             FolderName = f.FolderName,
+                             CommentText = d.CommentText
+                         }).FirstOrDefault();
+                    categoryComment.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                categoryComment.Success = Helpers.ErrorDetails(ex);
+            }
+            return categoryComment;
+        }
+
+        [HttpGet]
+        public CategoryCommentContainer GetCategoryComments()
+        {
+            CategoryCommentContainer categoryCommentContainer = new CategoryCommentContainer();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    categoryCommentContainer.CategoryComments =
+                    (from f in db.CategoryFolders
+                     join d in db.CategoryFolderDetails on f.Id equals d.FolderId
+                     join l in db.ImageLinks on d.FolderImage equals l.Id
+                     select new CategoryCommentModel()
+                     {
+                         FolderId = f.Id,
+                         Link = l.Link,
+                         FolderName = f.FolderName,
+                         CommentText = d.CommentText
+                     }).ToList();
+
+                    categoryCommentContainer.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                categoryCommentContainer.Success = Helpers.ErrorDetails(ex);
+            }
+            return categoryCommentContainer;
+        }
+
+        [HttpPut]
+        public string EditFolderCategory(int folderId, string commentText)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    CategoryFolderDetail dbCategoryFolderDetail = db.CategoryFolderDetails.Where(m => m.FolderId == folderId).FirstOrDefault();
+                    if (dbCategoryFolderDetail == null)
+                    {
+                        db.CategoryFolderDetails.Add(new CategoryFolderDetail() { FolderId = folderId, CommentText = commentText });
+                    }
+                    else
+                    {
+                        dbCategoryFolderDetail.CommentText = commentText;
+                    }
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+    }
+
+
 }
 

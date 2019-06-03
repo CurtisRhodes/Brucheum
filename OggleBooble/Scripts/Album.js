@@ -1,5 +1,4 @@
-﻿
-var selectedImageArchiveFolderId;
+﻿var selectedImageArchiveFolderId;
 var currentContextLinkId;
 var forgetShowingCatDialog;
 
@@ -11,7 +10,7 @@ function getBreadCrumbs() {
             if (breadCrumbModel.Success === "ok") {
                 $('#headerMessage').html("");
                 for (i = breadCrumbModel.BreadCrumbs.length - 1; i >= 0; i--) {
-                    if (breadCrumbModel.BreadCrumbs[i] == null) {
+                    if (breadCrumbModel.BreadCrumbs[i] === null) {
                         breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
                     }
                     else {
@@ -20,7 +19,7 @@ function getBreadCrumbs() {
                         if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder) {
                             $('#headerMessage').append("<a class='inactiveBreadCrumb' " +
                                 "onclick=showCategoryDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + ");>" +
-                                breadCrumbModel.BreadCrumbs[i].FolderName + "</a>");
+                                breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                         else {
                             // a woman commited suicide when pictures of her "came out"

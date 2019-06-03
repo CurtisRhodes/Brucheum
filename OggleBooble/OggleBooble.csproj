@@ -294,6 +294,7 @@
     <Content Include="Scripts\3rd Party\Editor\summernote.js" />
     <Content Include="Scripts\3rd Party\Editor\xml.js" />
     <None Include="packages.config" />
+    <Content Include="Scripts\Carousel.js" />
     <Content Include="Scripts\Cookies.js" />
     <Content Include="Scripts\3rd Party\jquery.signalR-2.4.1.min.js" />
     <Content Include="Scripts\DirTree.js" />

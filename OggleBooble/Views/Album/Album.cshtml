@@ -12,11 +12,6 @@
         <div id="middleColumn">
             <div id="divBreadCrumbs"></div>
             <div id="divStatusMessage"></div>
-            @*<div id="xx" class="adminRow">
-                    <div class="floatRight clickable" onclick="staticify()">staticify</div>
-                    <div class="floatRight clickable" onclick="showAllChildren()">combine</div>
-                    <div class="floatRight clickable" onclick="showMetaTagDialog()">meta tags</div>
-                </div>*@
             <img id="getImagesLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
             <div id="imageContainer" class="flexWrapContainer">
 
@@ -68,19 +63,21 @@
         if (folderId == "") {
             window.location.href = "/";
         }
+
         // set width
         $('#imageContainer').width($('#middleColumn').width());
         $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
 
+        if ((isPornEditor == "True") || (document.domain === 'localhost')) {
+            $('#headerMessage').html(`Dashboard <dir class='linkContainer'>
+            <div class="clickable" onclick="staticify()">staticify</div>
+            <div class="clickable" onclick="showAllChildren()>Add Video Link</div>
+            <div class="clickable" onclick="repairLinks()">add meta tags</div></dir>`);
+        }
+
         getBreadCrumbs();
         getImageLinks();
 
-        if ((isPornEditor == "True") || (document.domain === 'localhost')) {
-            $('.adminLink').show();
-        }
-        else {
-            $('.adminLink').hide();
-        }
         resizePage();
     });
 
