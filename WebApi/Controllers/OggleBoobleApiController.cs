@@ -45,31 +45,38 @@ namespace WebApi
             CategoryFolderDetailModel model = new CategoryFolderDetailModel();
             try
             {
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                if (folderId == 0)
                 {
-                    CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(xn => xn.FolderId == folderId).FirstOrDefault();
-                    //CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                    if (categoryFolderDetails == null)
-                        model.FolderName = "";
-                    else
-                    {
-                        model.Measurements = categoryFolderDetails.Measurements;
-                        model.Nationality = categoryFolderDetails.Nationality;
-                        model.ExternalLinks = categoryFolderDetails.ExternalLinks;
-                        model.FolderImageLink = categoryFolderDetails.FolderImage;
-                        model.CommentText = categoryFolderDetails.CommentText;
-                        model.Born = categoryFolderDetails.Born;
-                        model.FolderName = db.CategoryFolders.Where(f => f.Id == folderId).First().FolderName;
-                        model.FolderId = categoryFolderDetails.FolderId;
-                    }
-
-
-                    model.Success = "ok";
-                    if (model.FolderImageLink == null)
-                        model.Src = Helpers.GetFirstImage(folderId);
-                    else
-                        model.Src = db.ImageLinks.Where(g => g.Id == categoryFolderDetails.FolderImage).First().Link;
+                    model.FolderName = "Unknown";
                 }
+                else
+                {
+                    using (OggleBoobleContext db = new OggleBoobleContext())
+                    {
+                        CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(xn => xn.FolderId == folderId).FirstOrDefault();
+                        //CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                        if (categoryFolderDetails == null)
+                            model.FolderName = "";
+                        else
+                        {
+                            model.Measurements = categoryFolderDetails.Measurements;
+                            model.Nationality = categoryFolderDetails.Nationality;
+                            model.ExternalLinks = categoryFolderDetails.ExternalLinks;
+                            model.FolderImageLink = categoryFolderDetails.FolderImage;
+                            model.CommentText = categoryFolderDetails.CommentText;
+                            model.Born = categoryFolderDetails.Born;
+                            model.FolderName = db.CategoryFolders.Where(f => f.Id == folderId).First().FolderName;
+                            model.FolderId = categoryFolderDetails.FolderId;
+                        }
+
+
+                        if (model.FolderImageLink == null)
+                            model.Src = Helpers.GetFirstImage(folderId);
+                        else
+                            model.Src = db.ImageLinks.Where(g => g.Id == categoryFolderDetails.FolderImage).First().Link;
+                    }
+                }
+                model.Success = "ok";
             }
             catch (Exception ex) { model.Success = Helpers.ErrorDetails(ex); }
             return model;

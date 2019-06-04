@@ -16,8 +16,8 @@
             <div class="workarea">
                 <div id="divStatusMessage"></div>
                 <div id="addNewLink" class="addLinkCrudArea">
-                    <div>link<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
-                    <div>path<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
+                    <div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
+                    <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
                     <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
                 </div>
                 <img id="imgLinkPreview" class="linkImage" />
@@ -25,8 +25,9 @@
                 <div id="dataifyInfo" class="infoLine"></div>
             </div>
 
+            <div id="dirTreeContainer" class="treeContainer">
+            </div>
             <img id="getDirTreeLoadingGif" class="smallLoadingGif" src="~/Images/loader.gif" />
-            <div id="dirTreeContainer" class="treeContainer"></div>
 
             <div id="videoCrud" class="floatingCrud">
                 <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
@@ -38,54 +39,42 @@
                 </div>
             </div>
 
-            <div id="newFolderCrud" class="oggleHidden" title="Create New Folder">
-                <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
-                <div><span>parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div class="roundendButton" onclick="createNewFolder()">Create Folder</div>
-            </div>
-
-            <div id="renameFolderCrud" class="floatingCrud">
-                <div class="floatingCrudBanner">Rename Folder<div onclick="$('#renameFolderCrud').fadeOut()" class="farSide">x</div> </div>
-                <div class="floatingCrudContainer">
-                    <div><span>folder to rename</span><input id="txtFolderToRename" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                    <div><span>new name</span><input id="txtReName" class="roundedInput" /></div>
-                    <div class="roundendButton" onclick="renameFolder()">Rename Folder</div>
-                </div>
-                <div id="renameFolderReport" class="repairReport"></div>
-            </div>
-
-            <div id="moveFolderCrud" class="oggleHidden" title="Move Folder">                
-                <div>
-                    <span>move folder </span><div onclick="$('#partialViewTreeContainer').dialog('open');" class="toggleButton">...</div>
-                    <input id="txtFolderToMove" class="txtPartialDirTreePath roundedInput" readonly="readonly" />
-                </div>
-                <div><span>new parent</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
-            </div>
-
-            <div id="partialViewTreeContainer" title="Select Folder to move" >
-                <div id="folderToMoveTreeContainer" class="moveDirTreeContainer"></div>
-            </div>
-
-            @*<div id="repairLinksCrud" class="floatingCrud">
-                <div class="floatingCrudBanner">Verify Links<div onclick="$('#repairLinksCrud').fadeOut()" class="farSide">x</div> </div>
-                <div class="floatingCrudContainer">
-                    <div><span>destination</span><input id="txtdestination" value="F:/Danni/" class="roundedInput" /></div>
-                    <div><span>start path</span><input class="txtLinkPath roundedInput" /></div>
-                    <div class="roundendButton" onclick="repairLinks()">run</div>
-                </div>
-                <div id="repairLinksReport" class="repairReport"></div>
-            </div>*@
-
-            <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
-                <div onclick="openFolder()">Open Folder</div>
-                <div onclick="showCategoryDetails()">Show Category Info</div>
-                <div onclick="showInfoDialog()">Show Model Info</div>
-            </div>
-
         </div>
     </div>
     <div id="rightColumn"></div>
+
+    <div id="renameFolderCrud" class="oggleHidden" title="Rename Folder">
+        <div><span>folder to rename</span><input id="txtFolderToRename" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+        <div><span>new name</span><input id="txtReName" class="roundedInput" /></div>
+        <div class="roundendButton" onclick="renameFolder()">Rename Folder</div>
+        <div id="renameFolderReport" class="repairReport"></div>
+    </div>
+
+    <div id="moveFolderCrud" class="oggleHidden" title="Move Folder">
+        <div>
+            <span>move folder </span><div onclick="$('#partialViewTreeContainer').dialog('open');" class="toggleButton">...</div>
+            <input id="txtFolderToMove" class="txtPartialDirTreePath roundedInput" readonly="readonly" />
+        </div>
+        <div><span>new parent</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+        <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
+    </div>
+
+    <div id="partialViewTreeContainer" title="Select Folder to move">
+        <div id="folderToMoveTreeContainer" class="moveDirTreeContainer"></div>
+    </div>
+
+    <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
+        <div onclick="openFolder()">Open Folder</div>
+        <div onclick="showCategoryDetails()">Show Category Info</div>
+        <div onclick="showInfoDialog()">Show Model Info</div>
+    </div>
+
+    <div id="newFolderCrud" class="oggleHidden" title="Create New Folder">
+        <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
+        <div><span>parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
+        <div class="roundendButton" onclick="createNewFolder()">Create Folder</div>
+    </div>
+
 </div>
 <div>@Html.Partial("_CategoryDialog")</div>
 <div>@Html.Partial("_ModelInfoDialog")</div>
@@ -109,7 +98,7 @@
         <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
         <div class="clickable" onclick="showCreateNewFolder()">Create New Folder</div>
         <div class="clickable" onclick="showMovefolderDialog()">Move Folder</div>
-        <div class="clickable" onclick="$('#renameFolderCrud').fadeIn()">ReName Folder</div>
+        <div class="clickable" onclick="showRenameFolderDialog()">ReName Folder</div>
         <div class="clickable" onclick="collapseChildFolder()">Collapse Folder</div>
         <div class="clickable" onclick="repairLinks()">Repair Links</div></dir>`);
 
@@ -158,9 +147,9 @@
     function buildDirectoryTree()
     {
         $('#dirTreeContainer').html("");
-        $('#getdirtreeloadinggif').show();
+        $('#getDirTreeLoadingGif').show();
         $.when(buildDirTree($('#dirTreeContainer'), "dashboardMain", 0)).done(function () {
-            $('#getdirtreeloadinggif').hide();
+            $('#getDirTreeLoadingGif').hide();
         });
     }
 
@@ -243,7 +232,6 @@
             width: "615"
         });
     }
-
     function createNewFolder() {
         $('#dashBoardLoadingGif').fadeIn();
         var newFolder = {};
@@ -330,7 +318,7 @@
                 $('#moveFolderCrud').dialog("close");
                 if (!success.startsWith("ERROR")) {
                     displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val());
-                    buildDirTrees();
+                    buildDirectoryTree();
                     $('#progressBar').progressbar("destroy");
                 }
                 else
@@ -343,6 +331,14 @@
         });
     }
 
+    function showRenameFolderDialog() {        
+        $('#renameFolderCrud').dialog({
+            //autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "400"
+        });
+    }
     function renameFolder() {
         var start = Date.now();
         $('#dashBoardLoadingGif').fadeIn();
@@ -354,13 +350,15 @@
             url: service + "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&kludge=0&newFolderName=" + $('#txtReName').val(),
             success: function (repairReport) {
                 $('#dashBoardLoadingGif').hide();
+                $('#renameFolderCrud').dialog("close");
+                $('#renameFolderCrud').hide();
                 if (repairReport.Success == "ok") {
                     var delta = (Date.now() - start);
                     var minutes = Math.floor(delta / 60000);
                     var seconds = ((delta % 60000) / 1000).toFixed(0);
                     displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
                     console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-                    buildDirTrees();
+                    buildDirectoryTree();
                     setTimeout(function () {
                         $('#dataifyInfo').html("Rename took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
 
@@ -390,9 +388,6 @@
 
     function repairLinks() {
         var start = Date.now();
-
-        alert("dashboardMainSelectedTreeId: "+dashboardMainSelectedTreeId)
-
         $('#dataifyInfo').show().html("checking and repairing links");
         $('#dashBoardLoadingGif').fadeIn();
         $('#repairLinksReport').html("");
@@ -456,7 +451,6 @@
         });
     }
 
-
     function moveFolderTreeClick(path, id, treeId) {
         var displayPath = "";
         if (path.length > path.indexOf(".COM") + 4) {
@@ -484,7 +478,7 @@
         $('.txtLinkPath').val(displayPath);
     }
 
-    $(document).keydown(function (event) {
+    $('.workarea').keydown(function (event) {
         // Number 13 is the "Enter" key on the keyboard
         if (event.keyCode === 13) {
             // Cancel the default action, if needed

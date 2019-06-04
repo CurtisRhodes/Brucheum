@@ -115,16 +115,7 @@
                     $('#divPornEditor').show();
             }
             else {
-
-
-
-
-
-
-
-
-
-
+                //  check cookie
                 $('#divLogedIn').hide();
                 $('#divNotLogedIn').show();
             }
@@ -133,16 +124,16 @@
                 $('#divPornEditor').show();
             }
 
-            var isOk = checkCookie("userName")
-            if (isOk == "ok") {                  
-                $('#cookieIndicator').html(getCookie());
-                $('#divLogedIn').show();
-                $('#divNotLogedIn').hide();
-            }
-            else {
-                setCookie("userName", 365);
-                $('#cookieIndicator').html("S");
-            }
+            //var isOk = checkCookie("userName")
+            //if (isOk == "ok") {                  
+            //    $('#cookieIndicator').html(getCookie());
+            //    $('#divLogedIn').show();
+            //    $('#divNotLogedIn').hide();
+            //}
+            //else {
+            //    setCookie("userName", 365);
+            //    $('#cookieIndicator').html("S");
+            //}
 
             //toggleTittyMenu(getOBCookie("ShapeOrPosesMenu", "shapes"));
             //$('body').css("margin-top", $('#oggleBoobleHeader').height() + 30);

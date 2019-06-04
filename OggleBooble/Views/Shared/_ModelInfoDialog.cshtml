@@ -142,9 +142,7 @@
             url: service + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
             success: function (folderDetails) {
                 if (folderDetails.Success == "ok") {
-                    FolderDetailModel.Src = folderDetails.Src;
-
-                    if (modelName == "unknown model") {
+                    if (folderDetails.FolderName == "Unknown") {
                         $('#modelDialogThumbNailImage').attr("src", folderDetails.Src);
                         $('#modelInfoDialog').dialog('option', 'title', "unknown model");
                         //$('#unknownModelLinks').html(linkId.substring(linkId.lastIndexOf('/') + 1) + "<br/>");
@@ -154,7 +152,6 @@
                         $('#modelInfoEdit').html("Edit");
                     }
                     else {
-                        //alert(modelName + " == unknown model:  " + (modelName == "unknown model"));
                         if (folderDetails.FolderImage == null)
                             $('#modelDialogThumbNailImage').attr("src", folderDetails.Src);
                         else
@@ -163,7 +160,6 @@
                         $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
                         $('#modelInfoEditArea').show();
                         $('#modelInfoViewOnlyArea').hide();
-                        //$('#txtFolderName').val(modelName);
                         $('#txtFolderName').val(folderDetails.FolderName);
                         $('#txtBorn').val(folderDetails.Born);
                         $('#txaModelComment').val(folderDetails.CommentText);

@@ -33,9 +33,11 @@
 }
 
 .smallLoadingGif {
+   position: relative; 
     top: 100px;
+    left: -210px;
+    height: 100px;
     display: none;
-    height: 55px;
 }
 
 .loadingGif {
@@ -109,7 +111,7 @@
 
 .treeContainer {
     margin-top: 8px;
-    float: right;
+    display: inline-block;
     border-left: solid .5px #555;
     min-height: 106px;
     min-width: 275px;

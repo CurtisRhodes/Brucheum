@@ -17,7 +17,7 @@ function getBreadCrumbs() {
                         // title: I do not remember having been Invited)
                         if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder) {
                             $('#headerMessage').append("<a class='inactiveBreadCrumb' " +
-                                "onmouseover=showCategoryDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + ");>" +
+                                "onmouseover='slowlyShowCatDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + "); forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;' >" +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                         else {
@@ -47,12 +47,10 @@ function getBreadCrumbs() {
 }
 
 function slowlyShowCatDialog(breadCrumbFolderId) {
-
     setTimeout(function () {
         if (forgetShowingCatDialog === false)
             showCategoryDialog(breadCrumbFolderId);
     }, 600);
-
 }
 
 function showAllChildren() {
@@ -181,26 +179,17 @@ function processImages(imageLinksModel, start) {
                 url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + currentContextLinkId,
                 success: function (folderDetails) {
                     if (folderDetails.Success === "ok") {
-                        selectedImageArchiveFolderId = folderDetails.FolderId;
-                        if (folderDetails.FolderId === folderId) {
-                            // model not found elsewhere 
-                            $('#ctxSeeMore').hide();
-                            if (folderDetails.RootFolder === "archive") {
-                                $('#ctxModelName').html(folderDetails.FolderName);
-                                $('#ctxArchive').hide();
-                            }
-                            else {
-                                $('#ctxModelName').html("unknown model");
-                                $('#ctxArchive').show();
-                            }
+                        if (folderDetails.RootFolder === "archive") {
+                            selectedImageArchiveFolderId = folderDetails.FolderId;
+                            $('#ctxModelName').html(folderDetails.FolderName);
+                            $('#ctxArchive').hide();
+                            $('#ctxSeeMore').show();
                         }
                         else {
-                            $('#ctxModelName').html(folderDetails.FolderName);
-                            $('#ctxSeeMore').show();
-                            if (folderDetails.RootFolder === "archive")
-                                $('#ctxArchive').hide();
-                            else
-                                $('#ctxArchive').show();
+                            selectedImageArchiveFolderId = 0;
+                            $('#ctxModelName').html("unknown model");
+                            $('#ctxArchive').show();
+                            $('#ctxSeeMore').hide();
                         }
                     }
                     else
@@ -210,12 +199,9 @@ function processImages(imageLinksModel, start) {
                     alert("GetModelName xhr error: " + xhr.statusText);
                 }
             });
-
             $('#thumbImageContextMenu').css('z-index', "200");
             $('#thumbImageContextMenu').fadeIn();
-
         });
-
     });
 
     var delta = (Date.now() - start) / 1000;

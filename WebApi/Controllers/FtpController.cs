@@ -771,7 +771,7 @@ namespace WebApi
                                     db.SaveChanges();
                                     renameReport.LinksEdited++;
 
-                                    SignalRHost.ProgressHub.PostToClient("Renaminging files in: " + folder.FolderName +  "  LinksEdited: " + renameReport.LinksEdited);
+                                    SignalRHost.ProgressHub.PostToClient("Renaminging files in: " + folder.FolderName +  "  Links Edited: " + renameReport.LinksEdited);
                                 }
                             }
                             else

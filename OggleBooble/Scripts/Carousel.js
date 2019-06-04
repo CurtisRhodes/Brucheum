@@ -92,53 +92,129 @@ function loadImages(rootFolder, isChecked, take) {
     }
 }
 
-function resizeCarousel() {
-    $('#carouselImage').css("max-width", $('#middleColumn').width());
-    $('#carouselImage').css("max-height", $('#middleColumn').innerHeight() - 180);
+
+function showFolderCategoryDialog() {
+    pause();
+    showCategoryDialog(carouselItemArray[imageIndex].FolderId);
+    $('#folderCategoryDialog').on('dialogclose', function (event) {
+        resume();
+    });
 }
 
-$('.carouselImage').contextmenu(function () {
-    event.preventDefault();
-    window.event.returnValue = false;
-    pause();
-    $('#ctxModelName').html("");
-    $.ajax({
-        type: "GET",
-        url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId,
-        success: function (imageDetails) {
+function clickViewGallery() {
+    clearInterval(Carousel);
+    window.location.href = "/album?folder=" + carouselItemArray[imageIndex].FolderId;
+}
 
-            //alert("folderDetails.RootFolder: " + imageDetails.RootFolder);
+function clickViewParentGallery() {
+    window.location.href = "/album?folder=" + carouselItemArray[imageIndex].ParentId;
+}
 
-            if (imageDetails.Success === "ok") {
-                if (imageDetails.RootFolder === "archive") {
-                    selectedImageArchiveFolderId = imageDetails.FolderId;
-                    $('#ctxModelName').html(imageDetails.FolderName);
-                    $('#ctxSeeMore').show();
+function clickSpeed(speed) {
+    if (speed === "faster")
+        rotationSpeed = Math.max(rotationSpeed - 800, 800);
+    if (speed === 'slower')
+        rotationSpeed += 800;
+    imageIndex = Math.floor(Math.random() * numImages);
+    $('.carouselImage').attr('src', carouselItemArray[imageIndex].Link);
+    clearInterval(Carousel);
+    rotate();
+}
+
+function showImage() {
+    $('.carouselImage').fadeOut(intervalSpeed);
+    setTimeout(function () {
+        imageIndex = Math.floor(Math.random() * numImages);
+        $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
+        $('#thisCarouselImage').on('load', onImageLoaded());
+    }, intervalSpeed);
+    // $('#carouselImage').on('error', onImageNotLoaded());
+    $('#footerMessage').html("inamge: " + (imageIndex + 1).toLocaleString() + " of " + numImages.toLocaleString() + " images in " + numFolders + " galleries  ");
+}
+
+function onImageLoaded() {
+    $('#thisCarouselImage').fadeIn(intervalSpeed);
+    $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath);
+    $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName);
+    $('#thisCarouselImage').contextmenu(function () {
+        event.preventDefault();
+        window.event.returnValue = false;
+        pause();
+        $('#ctxModelName').html("");
+        $.ajax({
+            type: "GET",
+            url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId,
+            success: function (imageDetails) {
+
+                //alert("folderDetails.RootFolder: " + imageDetails.RootFolder);
+
+                if (imageDetails.Success === "ok") {
+                    if (imageDetails.RootFolder === "archive") {
+                        // this is a known model
+                        selectedImageArchiveFolderId = imageDetails.FolderId;
+                        $('#ctxModelName').html(imageDetails.FolderName);
+                        $('#ctxSeeMore').show();
+                    }
+                    else {
+                        selectedImageArchiveFolderId = 0;
+                        $('#ctxModelName').html("unknown model");
+                        $('#ctxSeeMore').hide();
+                    }
                 }
-                else {
-                    //$('#ctxModelName').html(imageDetails.RootFolder);
-                    $('#ctxModelName').html("unknown model");
-                    $('#ctxSeeMore').hide();
-                }
+                else
+                    alert("GetModelName: " + imageDetails.Success);
+            },
+            error: function (xhr) {
+                alert("GetNudeModelName xhr error: " + xhr.statusText);
             }
-            else
-                alert("GetModelName: " + imageDetails.Success);
-        },
-        error: function (xhr) {
-            alert("GetNudeModelName xhr error: " + xhr.statusText);
-        }
+        });
+        if (isPornEditor)
+            $('#ctxMove').show();
+        else
+            $('#ctxMove').hide();
+        $('#carouselContextMenu').css("top", event.clientY + 5);
+        $('#carouselContextMenu').css("left", event.clientX);
+        $('#carouselContextMenu').fadeIn();
     });
-    if (isPornEditor)
-        $('#ctxMove').show();
-    else
-        $('#ctxMove').hide();
-    $('#carouselContextMenu').css("top", event.clientY + 5);
-    $('#carouselContextMenu').css("left", event.clientX);
-    $('#carouselContextMenu').fadeIn();
+    resizePage();
+}
+
+//<div id="ctxModelName" onclick="carouselContextMenuAction('showDialog')">model name</div>
+//<div id="ctxSeeMore" onclick="carouselContextMenuAction('seeMore')">See More</div>
+//<div onclick="carouselContextMenuAction('explode')">Explode</div>
+//<div onclick="carouselContextMenuAction('comment')">Comment</div>
+//<div onclick="carouselContextMenuAction('tags')">Tags</div>
+//<div id="ctxMove" onclick="carouselContextMenuAction('archive')">Archive</div>
+
+$('#folderCategoryDialog').on('dialogopen', function (event) {
+    pause();
 });
+
+$('#folderCategoryDialog').on('dialogclose', function (event) {
+    alert("$('#folderCategoryDialog').on('dialogclose'");
+    resume();
+});
+
+
+$('#imageCommentDialog').on('dialogclose', function (event) {
+    resume();
+});
+
+$('#metaTagDialog').on('dialogclose', function (event) {
+    resume();
+});
+
 
 function carouselContextMenuAction(ctxMenuAction) {
     switch (ctxMenuAction) {
+        case "showDialog":
+            $('#carouselContextMenu').fadeOut();
+            pause();
+            showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId);
+            $('#modelInfoDialog').on('dialogclose', function (event) {
+                resume();
+            });
+            break;
         case "seeMore":
             window.open('/album?folder=' + selectedImageArchiveFolderId, '_blank');
             break;
@@ -146,21 +222,19 @@ function carouselContextMenuAction(ctxMenuAction) {
             window.open(carouselItemArray[imageIndex].Link, "_blank");
             break;
         case "comment":
+            $('#carouselContextMenu').fadeOut();
             pause();
             $('#carouselContextMenu').fadeOut();
             showImageCommentDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].LinkId,
                 carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].FolderName);
             break;
-        case "showDialog":
-            pause();
-            showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId);
-            break;
         case "tags":
+            $('#carouselContextMenu').fadeOut();
             pause();
             openMetaTagDialog(carouselItemArray[imageIndex].FolderId);
             break;
         case "archive":
-            //alert("archive   link: " + carouselItemArray[imageIndex].Link + "  folder: " + carouselItemArray[imageIndex].FolderId);
+            $('#carouselContextMenu').fadeOut();
             pause();
             $('#carouselContextMenu').fadeOut();
             showMoveCopyDialog("Archive", carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
@@ -179,67 +253,9 @@ function considerHidingContextMenu() {
     }
 }
 
-function showFolderCategoryDialog() {
-    pause();
-    showCategoryDialog(carouselItemArray[imageIndex].FolderId);
-}
-
-$('#folderCategoryDialog').on('dialogopen', function (event) {
-    pause();
-});
-
-$('#folderCategoryDialog').on('dialogclose', function (event) {
-    resume();
-});
-
-$('#modelInfoDialog').on('dialogclose', function (event) {
-    resume();
-});
-
-$('#imageCommentDialog').on('dialogclose', function (event) {
-    resume();
-});
-
-$('#metaTagDialog').on('dialogclose', function (event) {
-    resume();
-});
-
-function clickViewGallery() {
-    clearInterval(Carousel);
-    window.location.href = "/album?folder=" + carouselItemArray[imageIndex].FolderId;
-}
-
-function clickViewParentGallery() {
-    window.location.href = "/album?folder=" + carouselItemArray[imageIndex].ParentId;
-}
-
-function clickSpeed(speed) {
-    if (speed === "faster")
-        rotationSpeed = Math.max(rotationSpeed - 800, 800);
-    if (speed === 'slower')
-        rotationSpeed += 800;
-    imageIndex = Math.floor(Math.random() * numImages);
-    $('#carouselImage').attr('src', carouselItemArray[imageIndex].Link);
-    clearInterval(Carousel);
-    rotate();
-}
-
-function showImage() {
-    $('#carouselImage').fadeOut(intervalSpeed);
-    setTimeout(function () {
-        imageIndex = Math.floor(Math.random() * numImages);
-        $('#carouselImage').attr('src', carouselItemArray[imageIndex].Link);
-        $('#carouselImage').on('load', onImageLoaded());
-    }, intervalSpeed);
-    // $('#carouselImage').on('error', onImageNotLoaded());
-    $('#footerMessage').html("inamge: " + (imageIndex + 1).toLocaleString() + " of " + numImages.toLocaleString() + " images in " + numFolders + " galleries  ");
-}
-
-function onImageLoaded() {
-    $('#carouselImage').fadeIn(intervalSpeed);
-    $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath);
-    $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName);
-    resizePage();
+function resizeCarousel() {
+    $('.carouselImage').css("max-width", $('#middleColumn').width());
+    $('.carouselImage').css("max-height", $('#middleColumn').innerHeight() - 180);
 }
 
 function onImageNotLoaded() {
