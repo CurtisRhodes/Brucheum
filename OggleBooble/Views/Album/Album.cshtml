@@ -1,7 +1,7 @@
 ﻿<link href="~/Styles/album.css" rel="stylesheet" />
 <link href="~/Styles/jquery-ui.css" rel="stylesheet" />
 <link href="~/Styles/fixedHeader.css" rel="stylesheet" />
-
+<script src="~/Scripts/Album.js"></script>
 <div>@Html.Partial("_MoveImageDialog")</div>
 <div>@Html.Partial("_CategoryDialog")</div>
 <div>@Html.Partial("_ImageViewer")</div>
@@ -39,6 +39,14 @@
     <div>@Html.Partial("_ModelInfoDialog")</div>
     <div>@Html.Partial("_ImageCommentDialog")</div>
 
+    <div id="removeLinkDialog" title="Remove Image" class="oggleHidden">
+        <div><input type="radio" value="DUP" name="rdoRejectImageReasons"/>  dupe</div>
+        <div><input type="radio" value="LOW" name="rdoRejectImageReasons"/>  low quality</div>
+        <div>
+            <span class="roundendButton" onclick="onRemoveImageClick('ok')" >ok</span>   
+            <span class="roundendButton" onclick="onRemoveImageClick('cancel')">cancel</span>
+        </div>
+    </div>
 
     <script>
         var service = '@ViewBag.Service';
@@ -47,16 +55,9 @@
         var currentUser = '@User.Identity.Name';
         var ipAddress = '@ViewBag.IpAddress';
         var isPornEditor = '@ViewBag.IsPornEditor';
-        var page = 0;
-        var rootFolder = "";
-        var mySubDirs = new Array();
-        var thumbImageHeight = 200;
-        var viewerShowing = false;
-        var slideShow;
     </script>
 </div>
 
-<script src="~/Scripts/Album.js"></script>
 <script>
     var imageArray = new Array();
     $(document).ready(function () {
@@ -80,10 +81,6 @@
 
         resizePage();
     });
-
-    function showMetaTagDialog() {
-        openMetaTagDialog(folderId)
-    }
 
     function XXshowStatic() {
         var pageName = folderName + ".html";

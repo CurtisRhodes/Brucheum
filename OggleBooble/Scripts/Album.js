@@ -1,6 +1,12 @@
 ﻿var selectedImageArchiveFolderId;
 var currentContextLinkId;
 var forgetShowingCatDialog;
+var page = 0;
+var rootFolder = "";
+var mySubDirs = new Array();
+var thumbImageHeight = 200;
+var viewerShowing = false;
+var slideShow;
 
 function getBreadCrumbs() {
     $.ajax({
@@ -238,8 +244,7 @@ function contextMenuAction(action) {
             showMoveCopyDialog("Move", $('#' + currentContextLinkId + '').attr("src"), folderId);
             break;
         case "remove":
-            if (confirm("remove this link"))
-                removeImage();
+            removeImage();
             break;
         case "setF":
             setFolderImage(currentContextLinkId, folderId, "folder");
@@ -285,27 +290,84 @@ function setFolderImage(linkId, folderId, level){
 }
 
 function removeImage() {
-    var badLink = {};
-    badLink.ImageId = currentContextLinkId;
-    badLink.FolderId = folderId;
     $.ajax({
-        type: "DELETE",
-        url: service + "/api/FtpImagePage",
-        data: badLink,
+        type: "GET",
+        url: service + "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + currentContextLinkId,
         success: function (success) {
             if (success === "ok") {
-                if (viewerShowing)
-                    slide("next");
-                getImageLinks();
+                $.ajax({
+                    type: "DELETE",
+                    url: service + "api/FtpImageRemove/RemoveImageLink?folderId=" + folderId + "&imageId=" + currentContextLinkId,
+                    success: function (success) {
+                        if (success === "ok") {
+                            if (viewerShowing)
+                                slide("next");
+                            getImageLinks();
+                        }
+                        else
+                            alert("removeLink: " + success);
+                    },
+                    error: function (xhr) {
+                        alert("delete xhr error: " + xhr.statusText);
+                    }
+                });
             }
             else {
-                alert("removeLink: " + success);
+                if (success === "only link")
+                    showDeleteDialog();
+                else
+                    alert(success);
             }
         },
         error: function (xhr) {
             alert("delete xhr error: " + xhr.statusText);
         }
     });
+}
+
+function showDeleteDialog() {
+    $('#removeLinkDialog').show();
+    $('#removeLinkDialog').dialog({
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        width: "300"
+    });
+}
+
+function onRemoveImageClick(btn) {
+    if (btn === "ok") {
+        var rejectLinkModel = {};
+        rejectLinkModel.Id = currentContextLinkId;
+        rejectLinkModel.PreviousLocation = folderId;
+        rejectLinkModel.RejectionReason = $('input[name=rdoRejectImageReasons]:checked').val();
+        rejectLinkModel.ExternalLink = $('#' + currentContextLinkId + '').attr("src");
+
+        $.ajax({
+            type: "PUT",
+            url: service + "/api/FtpImageRemove/MoveReject",
+            data: rejectLinkModel,
+            success: function (success) {
+                $('#removeLinkDialog').dialog('close');
+                $('#removeLinkDialog').hide();
+                if (success === "ok") {
+                    if (viewerShowing)
+                        slide("next");
+                    getImageLinks();
+                }
+                else
+                    alert("removeLink: " + success);
+            },
+            error: function (xhr) {
+                $('#removeLinkDialog').dialog('close');
+                $('#removeLinkDialog').hide();
+                alert("delete xhr error: " + xhr.statusText);
+            }
+        });
+    }
+    else {
+        $('#removeLinkDialog').dialog('close');
+        $('#removeLinkDialog').hide();
+    }
 }
 
 function openImageInNewWindow() {
@@ -327,7 +389,3 @@ $(window).resize(function () {
         $('#footerMessage').html("image page resize");
     }
 });
-
-
-
-

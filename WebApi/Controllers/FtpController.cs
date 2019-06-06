@@ -15,6 +15,93 @@ using static System.Net.WebRequestMethods;
 namespace WebApi
 {
     [EnableCors("*", "*", "*")]
+    public class FtpImageRemoveController : ApiController
+    {
+        [HttpGet]
+        public string CheckLinkCount(string imageLinkId)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    int linkCount = db.CategoryImageLinks.Where(c => c.ImageLinkId == imageLinkId).Count();
+                    //List<CategoryImageLink> links = db.CategoryImageLinks.Where(c => c.ImageLinkId == imageLinkId).ToList();
+                    if (linkCount > 1)
+                        success = "ok";
+                    else
+                    {
+                        //successModel.ReturnValue = db.ImageLinks.Where(g => g.FolderLocation == links[0].ImageCategoryId).First().Id;
+                        success = "only link";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+        [HttpPut]
+        public string MoveReject(RejectLinkModel badLink)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    ///  move image to reject folder
+                    CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == badLink.PreviousLocation).FirstOrDefault();
+                    ImageLink goDaddyLink = db.ImageLinks.Where(g => g.Id == badLink.Id).FirstOrDefault();
+                    string fileName = goDaddyLink.Link.Substring(goDaddyLink.Link.LastIndexOf("/") + 1);
+                    string folderPath = Helpers.GetParentPath(badLink.PreviousLocation, true);
+                    string ftpPath = "ftp://50.62.160.105/" + dbFolder.RootFolder + ".OGGLEBOOBLE.COM/" + folderPath + "/" + dbFolder.FolderName + "/" + fileName;
+                    string rejectPath = "ftp://50.62.160.105/library.Curtisrhodes.com/working folders/rejects/" + dbFolder.RootFolder + "/" + fileName;
+                    FtpDirectory.MoveFile(ftpPath, rejectPath);
+
+                    db.CategoryImageLinks.Remove(db.CategoryImageLinks.Where(l => l.ImageLinkId == badLink.Id).First());
+                    db.ImageLinks.Remove(db.ImageLinks.Where(g => g.Id == badLink.Id).First());
+                    db.SaveChanges();
+
+                    db.RejectLinks.Add(new RejectLink()
+                    {
+                        Id = badLink.Id,
+                        ExternalLink = badLink.ExternalLink,
+                        PreviousLocation = badLink.PreviousLocation,
+                        RejectionReason = badLink.RejectionReason
+                    });
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        [HttpDelete]
+        public string RemoveImageLink(int folderId, string imageId)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    CategoryImageLink dbBadLink = db.CategoryImageLinks.Where(c => c.ImageCategoryId == folderId).Where(c => c.ImageLinkId == imageId).First();
+                    db.CategoryImageLinks.Remove(dbBadLink);
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+    }
+
+
+
+
+    [EnableCors("*", "*", "*")]
     public class FtpImagePageController : ApiController
     {
         [HttpGet]
@@ -52,7 +139,7 @@ namespace WebApi
 
                     string originPath = Helpers.GetParentPath(emptyFolder.Id, true);
                     string ftpPath = "ftp://50.62.160.105/" + emptyFolder.RootFolder + ".ogglebooble.com/" + originPath + emptyFolder.FolderName;
-                    success = FtpIO.RemoveDirectory(ftpPath);
+                    success = FtpDirectory.RemoveDirectory(ftpPath);
                     if(success!="ok")
                         System.Diagnostics.Debug.WriteLine("failed to remove FTP folder : " + success);
 
@@ -101,10 +188,10 @@ namespace WebApi
                     string sourceFtpPath = "ftp://50.62.160.105/" + dbSourceFolder.RootFolder + ".ogglebooble.com/"
                         + Helpers.GetParentPath(model.SourceFolderId, true) + dbSourceFolder.FolderName;
 
-                    if (!FtpIO.DirectoryExists(destinationFtpPath))
-                        FtpIO.CreateDirectory(destinationFtpPath);
+                    if (!FtpDirectory.DirectoryExists(destinationFtpPath))
+                        FtpDirectory.CreateDirectory(destinationFtpPath);
 
-                    success = FtpIO.MoveFile(sourceFtpPath + "/" + sourceFileName, destinationFtpPath + "/" + newFileName);
+                    success = FtpDirectory.MoveFile(sourceFtpPath + "/" + sourceFileName, destinationFtpPath + "/" + newFileName);
                     if (success == "ok")
                     {
 #if DEBUG
@@ -168,55 +255,6 @@ namespace WebApi
             return success;
         }
 
-        [HttpDelete]
-        public string RemoveImage(DeleteLinkModel badLink)
-        {
-            string success = "";
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    int linkCount = db.CategoryImageLinks.Where(c => c.ImageLinkId == badLink.ImageId).ToList().Count;
-                    if (linkCount == 1)
-                    {
-                        ///  move image to reject folder
-                        CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == badLink.FolderId).FirstOrDefault();
-                        ImageLink goDaddyLink = db.ImageLinks.Where(g => g.Id == badLink.ImageId).FirstOrDefault();
-                        string fileName = goDaddyLink.Link.Substring(goDaddyLink.Link.LastIndexOf("/") + 1);
-
-                        //string ext = goDaddyLink.Link.Substring(goDaddyLink.Link.Length - 4);
-                        //string expectedFileName = dbFolder.FolderName + "_" + badLink.ImageId + ext;
-                        //if (fileName != expectedFileName)
-                        //    success = "oh well";
-
-                        string folderPath = Helpers.GetParentPath(badLink.FolderId, true);
-                        string ftpPath = "ftp://50.62.160.105/" + dbFolder.RootFolder + ".OGGLEBOOBLE.COM/" + folderPath + "/" + dbFolder.FolderName + "/" + fileName;
-
-
-                        string rejectPath = "ftp://50.62.160.105/archive.OGGLEBOOBLE.COM/rejects/" + dbFolder.RootFolder + "/" + fileName;
-                        FtpIO.MoveFile(ftpPath, rejectPath);
-                        goDaddyLink.Link = "http://archive.OGGLEBOOBLE.COM/rejects/" + dbFolder.RootFolder + fileName;
-                        db.SaveChanges();
-                        try
-                        {
-                            var junkFolder = db.CategoryFolders.Where(f => f.Parent == 908 && f.FolderName == dbFolder.RootFolder).First();
-                            db.CategoryImageLinks.Add(new CategoryImageLink() { ImageCategoryId = junkFolder.Id, ImageLinkId = badLink.ImageId });
-                            db.SaveChanges();
-                        }
-                        catch (Exception ex)
-                        {
-                            success = ex.Message;
-                        }
-                    }
-                    CategoryImageLink dbBadLink = db.CategoryImageLinks.Where(c => c.ImageCategoryId == badLink.FolderId).Where(c => c.ImageLinkId == badLink.ImageId).First();
-                    db.CategoryImageLinks.Remove(dbBadLink);
-                    db.SaveChanges();
-                    success = "ok";
-                }
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
     }
 
     [EnableCors("*", "*", "*")]
@@ -250,10 +288,10 @@ namespace WebApi
             string ftpPath = "ftp://50.62.160.105/" + dbCategoryFolder.RootFolder + ".ogglebooble.com/"
                 + Helpers.GetParentPath(folderId, true) + dbCategoryFolder.FolderName;
 
-            if (!FtpIO.DirectoryExists(ftpPath))
+            if (!FtpDirectory.DirectoryExists(ftpPath))
             {
                 repairReport.DirNotFound++;
-                FtpIO.CreateDirectory(ftpPath);
+                FtpDirectory.CreateDirectory(ftpPath);
                 repairReport.Errors.Add("created directory " + ftpPath);
             }
             int folderRowsProcessed = 0;
@@ -267,14 +305,14 @@ namespace WebApi
                  where c.ImageCategoryId == folderId
                  select (g)).ToList();
 
-            string[] files = FtpIO.GetFiles(ftpPath);
+            string[] files = FtpDirectory.GetFiles(ftpPath);
             if (files.Length == 0)
                 repairReport.Errors.Add(ftpPath + " no files");
             else
             {
                 if (files[0].StartsWith("ERROR"))
                 {
-                    repairReport.Errors.Add("FtpIO.GetFiles(" + ftpPath + ") " + files[0]);
+                    repairReport.Errors.Add("FtpDirectory.GetFiles(" + ftpPath + ") " + files[0]);
                 }
                 else
                 {
@@ -307,10 +345,10 @@ namespace WebApi
                                         {
                                             string ftpPathWhereImageSayItShouldBe = "ftp://50.62.160.105/" + categoryFolderWhereImageSayItShouldBe.RootFolder + ".ogglebooble.com/"
                                                 + Helpers.GetParentPath(categoryFolderWhereImageSayItShouldBe.Id, true) + categoryFolderWhereImageSayItShouldBe.FolderName;
-                                            string[] ArrayWhereImageSayItShouldBe = FtpIO.GetFiles(ftpPathWhereImageSayItShouldBe);
+                                            string[] ArrayWhereImageSayItShouldBe = FtpDirectory.GetFiles(ftpPathWhereImageSayItShouldBe);
                                             if (ArrayWhereImageSayItShouldBe.Contains(categoryFolderWhereImageSayItShouldBe.FolderName + "_" + linkId + ext))
                                             {
-                                                FtpIO.DeleteFile(ftpPath + categoryFolderWhereImageSayItShouldBe.FolderName + "_" + linkId + ext);
+                                                FtpDirectory.DeleteFile(ftpPath + categoryFolderWhereImageSayItShouldBe.FolderName + "_" + linkId + ext);
                                                 repairReport.LinksRemoved++;
                                             }
                                         }
@@ -321,7 +359,7 @@ namespace WebApi
                                                 + Helpers.GetParentPath(categoryFolderWhereImageSayItShouldBe.Id, true) + categoryFolderWhereImageSayItShouldBe.FolderName;
                                             if (source != destination)
                                             {
-                                                FtpIO.MoveFile(source, destination);
+                                                FtpDirectory.MoveFile(source, destination);
                                                 ImageLink extraLink = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
                                                 if (extraLink != null)
                                                 {
@@ -363,7 +401,7 @@ namespace WebApi
                         if (!fileNameInExpectedForm)
                         {
                             // rename file
-                            string renameSuccess = FtpIO.MoveFile(ftpPath + "/" + fileName, ftpPath + "/" + expectedFileName);
+                            string renameSuccess = FtpDirectory.MoveFile(ftpPath + "/" + fileName, ftpPath + "/" + expectedFileName);
                             if (renameSuccess == "ok")
                             {
                                 repairReport.ImagesRenamed++;
@@ -541,8 +579,8 @@ namespace WebApi
                             extension = g.ExternalLink.Substring(g.ExternalLink.Length - 4);
                             wc.DownloadFile(new Uri(g.ExternalLink), appDataPath + "tempImage" + extension);
 
-                            if (!FtpIO.DirectoryExists(ftpPath))
-                                FtpIO.CreateDirectory(ftpPath);
+                            if (!FtpDirectory.DirectoryExists(ftpPath))
+                                FtpDirectory.CreateDirectory(ftpPath);
 
                             FtpWebRequest webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + dbCategory.FolderName + "_" + g.Id + extension);
                             webRequest.Credentials = new NetworkCredential("curtisrhodes", "R@quel77");
@@ -649,8 +687,8 @@ namespace WebApi
                             string destPath = newLink.Path.Substring(0, newLink.Path.IndexOf("."));
                             // todo  write the image as a file to x.ogglebooble  4/1/19
                             string ftpPath = "ftp://50.62.160.105/" + destPath + ".OGGLEBOOBLE.COM/" + trimPath;
-                            if (!FtpIO.DirectoryExists(ftpPath))
-                                FtpIO.CreateDirectory(ftpPath);
+                            if (!FtpDirectory.DirectoryExists(ftpPath))
+                                FtpDirectory.CreateDirectory(ftpPath);
 
                             webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
                             webRequest.Credentials = new NetworkCredential("curtisrhodes", "R@quel77");
@@ -742,17 +780,20 @@ namespace WebApi
                     string goDaddyPrefix = "http://" + folder.RootFolder + ".ogglebooble.com/";
                     string folderPath = Helpers.GetParentPath(folderId, true);
 
-                    string[] files = FtpIO.GetFiles(ftpPath);
+                    string[] files = FtpDirectory.GetFiles(ftpPath);
                     foreach (string fileName in files)
                     {
                         linkId = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
                         ext = fileName.Substring(fileName.Length - 4);
-                        expectedFileName = newFolderName + "_" + linkId + ext;
+                        expectedFileName = newFolderName.Trim() + "_" + linkId + ext;
                         if (fileName != expectedFileName)
                         {
-                            var success = FtpIO.MoveFile(ftpPath + "/" + fileName, ftpPath + "/" + expectedFileName);
+                            var success = FtpDirectory.MoveFile(ftpPath + "/" + fileName, ftpPath + "/" + expectedFileName);
                             if (success == "ok")
+                            {
                                 renameReport.ImagesRenamed++;
+                                SignalRHost.ProgressHub.PostToClient("Renaminging files in: " + folder.FolderName + "  " + renameReport.ImagesRenamed);
+                            }
                             else
                             {
                                 renameReport.Errors.Add("unable to rename " + fileName + " Message: " + success);
@@ -764,7 +805,7 @@ namespace WebApi
                             ImageLink goDaddyLink = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
                             if (goDaddyLink != null)
                             {
-                                expectedLinkName = goDaddyPrefix + folderPath + newFolderName + "/" + expectedFileName;
+                                expectedLinkName = goDaddyPrefix + folderPath + newFolderName.Trim() + "/" + expectedFileName;
                                 if (goDaddyLink.Link != expectedLinkName)
                                 {
                                     goDaddyLink.Link = expectedLinkName;
@@ -787,7 +828,7 @@ namespace WebApi
                             RenameChildFolderLinks(subDir, folderPath + "/" + newFolderName, renameReport, db);
                         }
                     }
-                    renameReport.Success = FtpIO.RenameFolder(ftpPath, newFolderName);
+                    renameReport.Success = FtpDirectory.RenameFolder(ftpPath, newFolderName);
                     folder.FolderName = newFolderName;
                     db.SaveChanges();
                 }
@@ -804,7 +845,7 @@ namespace WebApi
             string linkId = "";
             string expectedLinkName = "";
             string goDaddyPrefix = "http://" + folder.RootFolder + ".ogglebooble.com/";
-            string[] files = FtpIO.GetFiles(ftpPath);
+            string[] files = FtpDirectory.GetFiles(ftpPath);
             int folderRows = 0;
             foreach (string fileName in files)
             {
@@ -871,15 +912,15 @@ namespace WebApi
                 Helpers.GetParentPath(destinationParentId, true) + dbDestinationParentFolder.FolderName + "/" + dbSourceFolder.FolderName;
 
             string createDirectory = "";
-            if (FtpIO.DirectoryExists(destinationFtpPath))
+            if (FtpDirectory.DirectoryExists(destinationFtpPath))
                 createDirectory = "ok";
             else
-                createDirectory = FtpIO.CreateDirectory(destinationFtpPath);
+                createDirectory = FtpDirectory.CreateDirectory(destinationFtpPath);
 
             if (createDirectory == "ok")
             {
                 string linkId = "";
-                string[] folderContents = FtpIO.GetFiles(sourceFtpPath);
+                string[] folderContents = FtpDirectory.GetFiles(sourceFtpPath);
                 int folderRows = 0;
                 int fileCount = folderContents.Length;
                 foreach (string currentFile in folderContents)
@@ -889,7 +930,7 @@ namespace WebApi
                     SignalRHost.ProgressHub.PostToClient("Moving files from: " + dbSourceFolder.FolderName + " to " + dbDestinationParentFolder.FolderName +  "  " + folderRows);
                     
 
-                    success = FtpIO.MoveFile(sourceFtpPath + "/" + currentFile, destinationFtpPath + "/" + currentFile);
+                    success = FtpDirectory.MoveFile(sourceFtpPath + "/" + currentFile, destinationFtpPath + "/" + currentFile);
                     if (success == "ok")
                     {
                         // update godaddy link
@@ -925,12 +966,12 @@ namespace WebApi
             string success = "ok";
             try
             {
-                foreach (string subDir in FtpIO.GetDirectories(ftpPath))
+                foreach (string subDir in FtpDirectory.GetDirectories(ftpPath))
                 {
                     if (success == "ok")
                     {
                         RemoveFolder(ftpPath + "/" + subDir);
-                        success = FtpIO.RemoveDirectory(ftpPath + "/" + subDir);
+                        success = FtpDirectory.RemoveDirectory(ftpPath + "/" + subDir);
                         if (success != "ok")
                         {
                             break;
@@ -938,7 +979,7 @@ namespace WebApi
                     }
                 }
                 if (success == "ok")
-                    success = FtpIO.RemoveDirectory(ftpPath);
+                    success = FtpDirectory.RemoveDirectory(ftpPath);
             }
             catch (Exception ex)
             {
@@ -962,15 +1003,15 @@ namespace WebApi
                     CategoryFolder newFolder = new CategoryFolder()
                     {
                         Parent = model.Parent,
-                        FolderName = model.FolderName,
+                        FolderName = model.FolderName.Trim(),
                         RootFolder = rootFolder
                     };
                     db.CategoryFolders.Add(newFolder);
                     db.SaveChanges();
                     int newFolderId = newFolder.Id;
 
-                    string destinationFtpPath = "ftp://50.62.160.105/" + rootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(newFolderId, true) + model.FolderName;
-                    success = FtpIO.CreateDirectory(destinationFtpPath);
+                    string destinationFtpPath = "ftp://50.62.160.105/" + rootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(newFolderId, true) + model.FolderName.Trim();
+                    success = FtpDirectory.CreateDirectory(destinationFtpPath);
 
                     //if (rootFolder == "archive" || Helpers.IsSlut(newFolder.Id))
                     {
@@ -987,272 +1028,4 @@ namespace WebApi
         }
     }
 
-    public class FtpIO
-    {
-        static readonly NetworkCredential networkCredentials = new NetworkCredential("curtisrhodes", "R@quel77");
-
-        public static string[] GetDirectories(string ftpPath)
-        {
-            IList<string> dirs = new List<string>();
-            try
-            {
-                FtpWebRequest ftpRequest = (FtpWebRequest)WebRequest.Create(new Uri(ftpPath));
-                ftpRequest.Credentials = new NetworkCredential("curtisrhodes", "R@quel77");
-                ftpRequest.Method = Ftp.ListDirectory;
-                FtpWebResponse response = (FtpWebResponse)ftpRequest.GetResponse();
-                StreamReader streamReader = new StreamReader(response.GetResponseStream());
-
-                string line = streamReader.ReadLine();
-                while (!string.IsNullOrEmpty(line))
-                {
-                    dirs.Add(line);
-                    line = streamReader.ReadLine();
-                }
-                streamReader.Close();
-            }
-            catch (Exception ex)
-            {
-                dirs.Add(Helpers.ErrorDetails(ex));
-            }
-            return dirs.ToArray();
-        }
-
-        private void GetDirectoryDetails(string ftpPath)
-        {
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpPath);
-            request.Credentials = new NetworkCredential("curtisrhodes", "R@quel77");
-            request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
-            StreamReader reader = new StreamReader(request.GetResponse().GetResponseStream());
-
-            string pattern = @"^(\d+-\d+-\d+\s+\d+:\d+(?:AM|PM))\s+(<DIR>|\d+)\s+(.+)$";
-            Regex regex = new Regex(pattern);
-            IFormatProvider culture = System.Globalization.CultureInfo.GetCultureInfo("en-us");
-            while (!reader.EndOfStream)
-            {
-                string line = reader.ReadLine();
-                Match match = regex.Match(line);
-                DateTime modified =
-                   DateTime.ParseExact(
-                       match.Groups[1].Value, "MM-dd-yy  hh:mmtt", culture, System.Globalization.DateTimeStyles.None);
-                long size = (match.Groups[2].Value != "<DIR>") ? long.Parse(match.Groups[2].Value) : 0;
-                string name = match.Groups[3].Value;
-
-
-
-                Console.WriteLine(
-                    "{0,-16} size = {1,9}  modified = {2}",
-                    name, size, modified.ToString("yyyy-MM-dd HH:mm"));
-            }
-        }
-
-        public static string[] GetFiles(string ftpPath)
-        {
-            IList<string> ftpFiles = new List<string>();
-            try
-            {
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpPath);
-                request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
-                request.Credentials = networkCredentials;
-                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-
-                Stream responseStream = response.GetResponseStream();
-                string line = "";
-                StreamReader reader = new StreamReader(responseStream);
-                {
-                    while (!reader.EndOfStream)
-                    {
-                        line = reader.ReadLine();
-                        if (!line.Contains("<DIR>"))
-                            ftpFiles.Add(line.Substring(39, line.Length - 39));
-                    }
-                }
-                reader.Close();
-                response.Close();
-            }
-            catch (Exception ex)
-            {
-                ftpFiles.Add(Helpers.ErrorDetails(ex));
-            }
-            return ftpFiles.ToArray();
-        }
-
-        public static string MoveFolder(string source, string destination)
-        {
-            string success = "";
-            try
-            {
-                FtpWebRequest requestDir = (FtpWebRequest)WebRequest.Create(source);
-                requestDir.Credentials = networkCredentials;
-                requestDir.UseBinary = true;
-                requestDir.UsePassive = false;
-                requestDir.KeepAlive = false;
-                requestDir.Proxy = null;
-                requestDir.Method = Ftp.Rename;
-                requestDir.RenameTo = destination;
-                FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
-                response.Close();
-                success = "ok";
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
-
-        public static bool DirectoryExists(string ftpPath)
-        {
-            try
-            {
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpPath);
-                request.Credentials = networkCredentials;
-                request.Method = Ftp.ListDirectory;
-                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public static string CreateDirectory(string ftpPath)
-        {
-            string success = "";
-            try
-            {
-                FtpWebRequest requestDir = (FtpWebRequest)WebRequest.Create(new Uri(ftpPath));
-                requestDir.Credentials = networkCredentials;
-                requestDir.Method = Ftp.MakeDirectory;
-                requestDir.UsePassive = true;
-                requestDir.UseBinary = true;
-                requestDir.KeepAlive = false;
-                FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
-                Stream ftpStream = response.GetResponseStream();
-                ftpStream.Close();
-                response.Close();
-                success = "ok";
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-
-        public static string MoveFile(string source, string destination)
-        {
-            string success = "";
-            try
-            {
-                FtpWebRequest requestDir = (FtpWebRequest)WebRequest.Create(source);
-                requestDir.Credentials = networkCredentials;
-                requestDir.Method = Ftp.DownloadFile;
-                FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
-                if (response.StatusCode != FtpStatusCode.CommandOK)
-                    success = response.StatusCode.ToString();
-                Stream ftpStream = response.GetResponseStream();
-                success = Upload(destination, ToByteArray(ftpStream));
-                if (success == "ok")
-                    success = DeleteFile(source);
-                ftpStream.Close();
-                response.Close();
-                requestDir = null;
-            }
-            catch (Exception ex) {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-
-        public static string Upload(string FileName, byte[] Image)
-        {
-            string success = "";
-            try
-            {
-                FtpWebRequest clsRequest = (FtpWebRequest)WebRequest.Create(FileName);
-                clsRequest.Credentials = networkCredentials;
-                clsRequest.Method = Ftp.UploadFile;
-                Stream clsStream = clsRequest.GetRequestStream();
-                clsStream.Write(Image, 0, Image.Length);
-                clsStream.Close();
-                clsStream.Dispose();
-                clsRequest = null;
-                success = "ok";
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
-
-        public static string DeleteFile(string fileToDelete)
-        {
-            string success = "";
-            try
-            {
-                FtpWebRequest requestDir = (FtpWebRequest)WebRequest.Create(fileToDelete);
-                requestDir.Credentials = networkCredentials;
-                requestDir.Method = Ftp.DeleteFile;
-                FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
-                Stream ftpStream = response.GetResponseStream();
-                success = "ok";
-            }
-            catch (Exception ex)
-
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-
-        public static string RemoveDirectory(string ftpPath)
-        {
-            string success = "";
-            try
-            {
-                FtpWebRequest requestDir = (FtpWebRequest)WebRequest.Create(ftpPath);
-                requestDir.Credentials = networkCredentials;
-                requestDir.Method = Ftp.RemoveDirectory;
-                FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
-                Stream ftpStream = response.GetResponseStream();
-                success = "ok";
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-
-        public static string RenameFolder(string ftpPath, string newName)
-        {
-            string success = "";
-            try
-            {
-                FtpWebRequest requestDir = (FtpWebRequest)WebRequest.Create(ftpPath);
-                requestDir.Credentials = networkCredentials;
-                requestDir.Method = Ftp.Rename;
-                requestDir.RenameTo = newName;
-                FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
-                Stream ftpStream = response.GetResponseStream();
-                ftpStream.Close();
-                response.Close();
-                success = "ok";
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-
-        static Byte[] ToByteArray(Stream stream)
-        {
-            MemoryStream ms = new MemoryStream();
-            byte[] chunk = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = stream.Read(chunk, 0, chunk.Length)) > 0)
-            {
-                ms.Write(chunk, 0, bytesRead);
-            }
-
-            return ms.ToArray();
-        }
-    }
 }

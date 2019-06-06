@@ -72,10 +72,12 @@ namespace WebApi.Models
         public string Link { get; set; }
         public string Path { get; set; }
     }
-    public class DeleteLinkModel
+    public class RejectLinkModel
     {
-        public int FolderId { get; set; }
-        public string ImageId { get; set; }
+        public string Id { get; set; }
+        public int PreviousLocation { get; set; }
+        public string RejectionReason { get; set; }
+        public string ExternalLink { get; set; }
     }
 
     public class MoveCopyImageModel

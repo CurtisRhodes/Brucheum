@@ -192,6 +192,7 @@
     <Compile Include="Controllers\BookDbApiController.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
     <Compile Include="Controllers\FtpController.cs" />
+    <Compile Include="Controllers\FtpDirectory.cs" />
     <Compile Include="Controllers\HitCounterApiController.cs" />
     <Compile Include="Controllers\EmailController.cs" />
     <Compile Include="Controllers\GetaJobApiController.cs" />

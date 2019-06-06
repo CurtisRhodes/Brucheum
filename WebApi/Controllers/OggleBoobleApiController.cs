@@ -110,10 +110,10 @@ namespace WebApi
                     string expectedFileName = model.FolderName + "_" + model.ImageLinkId + extension;
                     string ftpDestinationPath = "ftp://50.62.160.105/archive.ogglebooble.com/posers identified/" + model.FolderName;
 
-                    if (!FtpIO.DirectoryExists(ftpDestinationPath))
-                        FtpIO.CreateDirectory(ftpDestinationPath);
+                    if (!FtpDirectory.DirectoryExists(ftpDestinationPath))
+                        FtpDirectory.CreateDirectory(ftpDestinationPath);
 
-                    success = FtpIO.MoveFile(ftpSource, ftpDestinationPath + "/" + expectedFileName);
+                    success = FtpDirectory.MoveFile(ftpSource, ftpDestinationPath + "/" + expectedFileName);
 
                     ImageLink goDaddyLink = db.ImageLinks.Where(g => g.Id == model.ImageLinkId).First();
                     goDaddyLink.Link = "http://archive.ogglebooble.com/posers identified/" + model.FolderName + "/" + expectedFileName;
@@ -499,9 +499,7 @@ namespace WebApi
             return breadCrumbModel;
         }
 
-        // dashboard
-        [HttpPut]
-        public string CreateFolder(CategoryFolderModel model)
+        string XXCreateFolder(CategoryFolderModel model)
         {
             string success = "";
             try

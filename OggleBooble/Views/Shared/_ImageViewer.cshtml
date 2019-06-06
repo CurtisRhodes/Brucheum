@@ -375,8 +375,8 @@
                 closeViewer();
                 break;
             case "remove":
-                if (confirm("remove this link"))
-                    removeImage();
+                removeImage();
+                closeViewer();
                 break;
             case "setF":
                 setFolderImage(imageViewerArray[imageViewerIndex].LinkId, sourceFolderId, "folder");

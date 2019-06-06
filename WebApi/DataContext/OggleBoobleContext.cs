@@ -22,11 +22,24 @@ namespace WebApi.DataContext
         public virtual DbSet<BlogComment> BlogComments { get; set; }
         public virtual DbSet<CategoryFolderDetail> CategoryFolderDetails { get; set; }
         public virtual DbSet<MetaTag> MetaTags { get; set; }
-        
+        public virtual DbSet<RejectLink> RejectLinks { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
     }
+
+    [Table("OggleBooble.RejectLink")]
+    public partial class RejectLink
+    {
+        [Key]
+        public string Id { get; set; }
+        public int PreviousLocation { get; set; }
+        public string RejectionReason { get; set; }
+        public string ExternalLink { get; set; }
+    }
+
+
 
     [Table("OggleBooble.CategoryFolder")]
     public partial class CategoryFolder
