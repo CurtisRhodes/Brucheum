@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;
 using System.Net;
@@ -16,6 +17,22 @@ namespace OggleBooble
         private readonly string apiService = ConfigurationManager.AppSettings["apiService"];
         public ActionResult Index()
         {
+            string userName = "";
+            if (User.Identity.IsAuthenticated)
+            {
+                userName = User.Identity.Name;
+            }
+            else
+            {
+                userName = Request.UserHostAddress;
+                //userName = Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+                if (string.IsNullOrEmpty(userName))
+                {
+                    userName = Request.ServerVariables["REMOTE_ADDR"];
+                }
+
+            }
+            ViewBag.UserName = userName;
             ViewBag.IsPornEditor = User.IsInRole("Porn Editor");
             ViewBag.Service = apiService;
             return View();

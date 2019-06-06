@@ -29,7 +29,6 @@ function closeFullscreen() {
 
 function showSiteContent(dest, blogId) {
     try {
-        pause();
         $.ajax({
             type: "GET",
             url: service + "api/OggleBlog/?blogId=" + blogId,
@@ -85,14 +84,6 @@ function displayStatusMessage(msgCode, message) {
 function clearModal() {
     $('#modalContainer').hide();
     $('#modalContent').html();
-}
-
-function toggleDirTree(id) {
-    if ($('#' + id + '').css("display") === "none")
-        $('#S' + id + '').html("[-] ");
-    else
-        $('#S' + id + '').html("[+] ");
-    $('#' + id + '').toggle();
 }
 
 function beautify(stankyString) {

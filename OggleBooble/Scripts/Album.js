@@ -163,17 +163,15 @@ function processImages(imageLinksModel, start) {
         });
 
         $('.thumbImage').contextmenu(function () {
-            //alert("id: " + $(this).attr("id"));
             event.preventDefault();
             window.event.returnValue = false;
-            //showContextMenu();
             currentContextLinkId = $(this).attr("id");
             var thisImage = $('#' + currentContextLinkId + '');
             var picpos = thisImage.offset();
             var picLeft = picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50;
             $('#thumbImageContextMenu').css("top", picpos.top + 5);
             $('#thumbImageContextMenu').css("left", picLeft);
-            //}
+
             $.ajax({
                 type: "GET",
                 url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + currentContextLinkId,
@@ -225,7 +223,6 @@ function contextMenuAction(action) {
             window.open("/album?folder=" + selectedImageArchiveFolderId, "_blank");
             break;
         case "comment":
-            //var currentUser = '@User.Identity.Name';
             showImageCommentDialog($('#' + currentContextLinkId + '').attr("src"), currentContextLinkId, folderId, folderName, currentUser);
             break;
         case "explode":

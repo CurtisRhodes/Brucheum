@@ -341,7 +341,6 @@ label {
     display: none;
     z-index: 120;
 }
-
     .ogContextMenu div {
         padding: 8px;
         margin: 2px;
@@ -357,12 +356,12 @@ label {
     color: var(--ogglePurple);
 }
 
-.floatingImage {
-    position:absolute;
+.floatingDirTreeImage {
+    position: absolute;
     display: none;
     z-index: 200;
 }
-    .floatingImage img {
+    .floatingDirTreeImage img {
         border: solid thin var(--oggleBorderColor);
         height: 100px;
         width: 100px;

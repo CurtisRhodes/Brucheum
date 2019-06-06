@@ -50,6 +50,7 @@ function loadImages(rootFolder, isChecked, take) {
     }
     else {
         $('#laCarousel').show();
+        $('#categoryTitle').hide();
         $.ajax({
             type: "GET",
             url: service + "/api/Carousel/GetLinks?root=" + rootFolder + "&take=" + take,
@@ -66,6 +67,8 @@ function loadImages(rootFolder, isChecked, take) {
                             FolderPath: obj.FolderPath
                         });
                     });
+
+                    $('#categoryTitle').show();
 
                     if (numImages === 0) {
                         showImage();
@@ -122,6 +125,7 @@ function clickSpeed(speed) {
 }
 
 function showImage() {
+
     $('.carouselImage').fadeOut(intervalSpeed);
     setTimeout(function () {
         imageIndex = Math.floor(Math.random() * numImages);
@@ -129,11 +133,15 @@ function showImage() {
         $('#thisCarouselImage').on('load', onImageLoaded());
     }, intervalSpeed);
     // $('#carouselImage').on('error', onImageNotLoaded());
-    $('#footerMessage').html("inamge: " + (imageIndex + 1).toLocaleString() + " of " + numImages.toLocaleString() + " images in " + numFolders + " galleries  ");
+
+
+    //$('#footerMessage').html("inamge: " + (imageIndex + 1).toLocaleString() + " of " + numImages.toLocaleString() + " images in " + numFolders + " galleries  ");
+
+
 }
 
 function onImageLoaded() {
-    $('#thisCarouselImage').fadeIn(intervalSpeed);
+
     $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath);
     $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName);
     $('#thisCarouselImage').contextmenu(function () {
@@ -145,9 +153,6 @@ function onImageLoaded() {
             type: "GET",
             url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId,
             success: function (imageDetails) {
-
-                //alert("folderDetails.RootFolder: " + imageDetails.RootFolder);
-
                 if (imageDetails.Success === "ok") {
                     if (imageDetails.RootFolder === "archive") {
                         // this is a known model
@@ -176,6 +181,7 @@ function onImageLoaded() {
         $('#carouselContextMenu').css("left", event.clientX);
         $('#carouselContextMenu').fadeIn();
     });
+    $('#thisCarouselImage').fadeIn(intervalSpeed);
     resizePage();
 }
 

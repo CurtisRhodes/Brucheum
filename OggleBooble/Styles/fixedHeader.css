@@ -72,6 +72,8 @@
 
     .headerSubTitle a {
         color: var(--ogglgeTitleColor);
+        text-decoration: none;
+        cursor: pointer;
     }
 
 .headerMessageArea {

@@ -1,18 +1,16 @@
-﻿var dirTreeTotalPics = 0;
-var dirTreeTotalFolders = 0;
-var dirTreeContainer = "";
+﻿var dirTreeContainer = "";
+var dirTreeTab, totalPics, totalFolders;
 var dirTreeTabIndent = 22;
-var dirTreeTab = 0;
+var dirDepth = 3;
 
 function buildDirTree(dest, treeId, startNode) {  
     try {
         var start = Date.now();
+        var totalFolders = 0;
         totalPics = 0;
         totalFolders = 0;
         dirTreeTab = 0;
         dirTreeContainer = "";
-        //var service = "http://localhost:40395/";
-        //var service = "https://api.curtisrhodes.com/";
         $.ajax({
             type: "GET",
             url: service + "api/DashBoard/RebuildCatTree?root=" + startNode,
@@ -42,25 +40,44 @@ function buildDirTree(dest, treeId, startNode) {
 function recurrBuildDirTree(dir, treeId) {
     dirTreeTab += dirTreeTabIndent;
     var imgSrc = "";
+    var displayMode = "";
+    var expandClass = "";
     $.each(dir.SubDirs, function (idx, subDir) {
-        if (isNullorUndefined(subDir.Link)) 
-            imgSrc = "http://boobs.ogglebooble.com/redballon.png";        
+        if (isNullorUndefined(subDir.Link))
+            imgSrc = "http://boobs.ogglebooble.com/redballon.png";
         else
             imgSrc = subDir.Link;
 
+        expandMode = "-";
+        expandClass = "";
+        if (dirTreeTab / dirTreeTabIndent > dirDepth) {
+            expandClass = "oggleHidden";
+            if (subDir.SubDirs.length > 0)
+                expandMode = "+";
+        }
+
         dirTreeContainer += "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
-            + "<span id=S" + subDir.LinkId + " onclick=toggleDirTree('" + subDir.LinkId + "')>[-] </span>"
+            + "<span id=S" + subDir.LinkId + " onclick=toggleDirTree('" + subDir.LinkId + "') >[" + expandMode + "] </span>"
             + "<span onclick=" + treeId + "Click('" + subDir.DanniPath + "','" + subDir.FolderId + "','" + treeId + "') "
             + "oncontextmenu=showDirTreeContextMenu('" + subDir.LinkId + "','" + subDir.FolderId + "') "
             + "onmouseover=showFolderImage('" + encodeURI(imgSrc) + "') onmouseout=$('#dirTreeImageContainer').hide() >"
             + subDir.DirectoryName.replace(".OGGLEBOOBLE.COM", "") + "</span><span class='fileCount'>  : " + subDir.Length + "</span></div>"
-            + "<div id=" + subDir.LinkId + ">";
+            + "<div class='" + expandClass + "' id=" + subDir.LinkId + ">";
+
         totalPics += subDir.Length;
         totalFolders++;
         recurrBuildDirTree(subDir, treeId);
         dirTreeContainer += "</div>";
         dirTreeTab -= dirTreeTabIndent;
     });
+}
+
+function toggleDirTree(id) {
+    if ($('#' + id + '').css("display") === "none")
+        $('#S' + id + '').html("[-] ");
+    else
+        $('#S' + id + '').html("[+] ");
+    $('#' + id + '').toggle();
 }
 
 function showFolderImage(link) {

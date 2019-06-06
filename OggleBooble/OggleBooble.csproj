@@ -408,7 +408,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Home\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packagesconfig.txt" />

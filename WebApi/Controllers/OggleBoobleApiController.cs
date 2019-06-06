@@ -921,7 +921,7 @@ namespace WebApi
         }
 
         [HttpGet]
-        public CategoryCommentContainer GetCategoryComments()
+        public CategoryCommentContainer GetCategoryComments(string categoryType)
         {
             CategoryCommentContainer categoryCommentContainer = new CategoryCommentContainer();
             try
@@ -932,6 +932,7 @@ namespace WebApi
                     (from f in db.CategoryFolders
                      join d in db.CategoryFolderDetails on f.Id equals d.FolderId
                      join l in db.ImageLinks on d.FolderImage equals l.Id
+                     //where d.
                      select new CategoryCommentModel()
                      {
                          FolderId = f.Id,
@@ -978,7 +979,5 @@ namespace WebApi
             return success;
         }
     }
-
-
 }
 

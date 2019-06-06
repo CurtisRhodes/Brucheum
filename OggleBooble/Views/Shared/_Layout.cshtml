@@ -19,7 +19,6 @@
     <script src="~/Scripts/GlobalFunctions.js"></script>
     <script src="~/Scripts/ResizeThreeColumnPage.js"></script>
     <script src="~/Scripts/Layouts.js"></script>
-    <script src="~/Scripts/Cookies.js"></script>
     <script src="~/Scripts/DirTree.js"></script>
     <link href="~/Styles/Default.css" rel="stylesheet" />
     <link href="~/Styles/fixedHeader.css" rel="stylesheet" />
@@ -39,28 +38,21 @@
             </div>
             <div id="largeFixedHeader" class="headerBodyContainer">
                 <div id="headerTopRow">
-                    
                     <div id="bannerTitle" class="headerTitle">OggleBooble</div>
-
-                    <div id="headerSubTitle" class="headerSubTitle">Big
-                        <a href="/album?folder=2">titties</a> organized by
+                    <div id="headerSubTitle" class="headerSubTitle">Big 
+                        <a href="/album?folder=2">tits</a> and 
+                        <a href="/album?folder=996">ass</a> organized by
                         <a href="/album?folder=136">poses</a>
                         <a href="/album?folder=199">shapes</a> and
                         <a href="/album?folder=136">sizes</a>
-                        @*<span class="clickable" onclick="window.location.href='/album?folder=2'">titties</span> organized by
-                        <span class="clickable" onclick="window.location.href='/album?folder=136'">poses</span> ,
-                        <span class="clickable" onclick="window.location.href='/album?folder=199'">shapes</span> and
-                        <span class="clickable" onclick="window.location.href='/album?folder=241'">sizes</span>
-                        *@
                     </div>
                 </div>
                 <div id="headerBottomRow" class="flexContainer">
-                    <div id="headerMessage" class="headerMessageArea">
-                    </div>
+                    <div id="headerMessage" class="headerMessageArea"></div>
                     <div id="menuContainer" class="menuTabContainer">
                         <div id="replaceableMenuItems"></div>
                         <div class="menuTab floatLeft"><a href="/Admin/Blog">Blog</a></div>
-                        <div id="cookieIndicator" class="menuTab floatLeft">0</div>
+                        <div id="cookieIndicator" class="menuTab floatLeft"></div>
 
                         <div id="divPornEditor" class="oggleHidden inline floatLeft">
                             <div class="menuTab floatLeft"><a href="/Admin/Dashboard">Admin</a></div>
@@ -68,7 +60,9 @@
 
                         <div id="divLogedIn" class="oggleHidden inline floatRight">
                             <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
-                            <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
+                            <div class="menuTab floatRight" title="modify profile">
+                                <a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a>
+                            </div>
                         </div>
 
                         <div id="divNotLogedIn" class="oggleHidden inline floatRight">
@@ -81,9 +75,6 @@
                                 <img id="btnHeaderLoginSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
                             </div>
                         </div>
-
-
-
                     </div>
                 </div>
             </div>
@@ -98,7 +89,7 @@
         <div id="modalContent" class="modalContentStyle"></div>
     </div>
 
-    <div id="dirTreeImageContainer" class="floatingImage">
+    <div id="dirTreeImageContainer" class="floatingDirTreeImage">
         <img id="dirTreeImage" />
     </div>
 
@@ -115,7 +106,22 @@
                     $('#divPornEditor').show();
             }
             else {
+
+                //$('#cookieIndicator').html("S");
+
                 //  check cookie
+                //var documentCookie = document.cookie;
+                //if (documentCookie == null) {
+                //    // create a cookie
+                //    $.ajax({
+                //        type: "GET",
+                //        url:
+                //    })
+                //  var expires = new Date();
+                // expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+                // document.cookie = "username=John Doe; expires=Thu, 18 Dec 2013 12:00:00 UTC"; 
+                // document.cookie = 'User=' + value + ';expires=' + expires.toUTCString();
+                //var decodedCookie = decodeURIComponent(document.cookie);
                 $('#divLogedIn').hide();
                 $('#divNotLogedIn').show();
             }
@@ -123,6 +129,8 @@
             if (document.domain === 'localhost') {
                 $('#divPornEditor').show();
             }
+
+
 
             //var isOk = checkCookie("userName")
             //if (isOk == "ok") {                  

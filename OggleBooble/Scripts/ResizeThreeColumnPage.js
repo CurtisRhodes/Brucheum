@@ -32,7 +32,7 @@ function resizePage(debug) {
         $('#middleColumn').height(winH - hdrH);
     else {
         $('.threeColumnArray').height($('#middleColumn').height() + hdrH + 450);
-        $('#footerMessage').html("h: " + $('.threeColumnArray').height());
+        //$('#footerMessage').html("h: " + $('.threeColumnArray').height());
     }
 
     //if (debug !== undefined) {

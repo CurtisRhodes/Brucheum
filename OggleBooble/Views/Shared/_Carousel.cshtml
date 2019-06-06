@@ -14,9 +14,6 @@
                 </div>
             </div>
         </div>
-
-        <div id="promoContainer" class="promoContainer"></div>
-
     </div>
 </div>
 
@@ -41,28 +38,7 @@
         window.addEventListener("resize", resizeCarousel);
         resizeCarousel();
 
-        $('.promoContainer').hide();
-        loadPromoMessages()
-
     });
 
-    function loadPromoMessages() {
-        $.ajax({
-            type: "GET",
-            url: service + "api/",
-            url: service + "/api/CategoryComment/GetCategoryComments",
-            success: function (categoryCommentContainer) {
-                commentArray = new Array();
-                $.each(categoryCommentContainer.CategoryComments, function (idx, categoryComment) {
-                    commentArray.push({
-                        FolderId: categoryComment.Id,
-                        Link: categoryComment.Link,
-                        CommentTitle: categoryComment.FolderName,
-                        CommentText: categoryComment.CommentText
-                    });
-                });
-            }
-        });
-    }
 
 </script>

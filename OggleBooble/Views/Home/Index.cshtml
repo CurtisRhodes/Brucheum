@@ -1,16 +1,38 @@
-﻿
-<style>
-    #leftColumn, #middleColumn, #rightColumn {
+﻿<style>
+    /*#leftColumn, #middleColumn, #rightColumn {
         font-family: Comic Sans MS;
+    }*/
+
+    .pornWarningContainer {
+        position: fixed;
+        z-index: 200;
+        margin: 0 20px;
+        display: none;
     }
 
-    a {
-        text-decoration: none;
-        cursor: pointer;
+    .ogglePromoContainer {
+        position: absolute;
+        top: 250px;
+        left: 1200px;
+
+        border: solid 3px #4b0d41;
+        height: 500px;
+        width: 500px;
+        display: none;
+    }
+
+    .ogglePromoTitle {
+        font-size: 22px;
+        text-align: center;
+        background-color: var(--ogglgeHeaderBarColor);
+    }
+    .ogglePromoText {
+        padding:6px;
+        text-align: justify;
+        background-color: var(--oggleContainerBackgroundColor);
     }
 
 </style>
-
 
 <div class="threeColumnArray">
     <div id="leftColumn">
@@ -28,25 +50,39 @@
         <div id="pornWarning" class="oggleHidden pornWarningContainer"></div>
         <div id="divStatusMessage"></div>
         <div class="flexContainer">
+
             <div class="floatLeft">
                 <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('centerfolds', $(this).is(':checked'), 1000)" /> Include Centerfolds</div>
                 <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('archive', $(this).is(':checked'), 50000)" /> Include Archive</div>
             </div>
+
             <div class="floatLeft">
                 <div id="carousel">
                     @Html.Partial("_Carousel", "boobs")
                 </div>
             </div>
+
         </div>
     </div>
     <div id="rightColumn"></div>
 </div>
 
+<div id="promoContainer" class="ogglePromoContainer">
+    <div id="promoContainerTitle" class="ogglePromoTitle"></div>
+    <div id="promoContainerText" class="ogglePromoText"></div>
+</div>
+
 <div id="boobCatTreeContainer" class="oggleHidden" title="boobs"></div>
 
 <script>
+    var promoIdx = 0;
+    var promoMessagesArray = new Array();
+    var promoMessageRotator;
+    var promoMessageRotationSpeed = 5000;
+
     $(document).ready(function () {
         var service = '@ViewBag.Service';
+        var vbUserName = '@ViewBag.UserName';
         $('#boobCatTreeContainer').dialog({
             autoOpen: false,
             show: { effect: "fade" },
@@ -55,17 +91,103 @@
             height: 600
         });
 
-        $.when(buildDirTree($('#boobCatTreeContainer'), "boobCatTreeContainer", 2)).done(function () {
-            launchCarousel('boobs');
-        });
+        $.when(launchCarousel('boobs')).done(function () {
 
+            $.when(loadPromoMessages("CON")).done(function () {
+                //promoMessageRotator = setInterval(function () {
+                //    showPromoMessages();
+                //}, promoMessageRotationSpeed);
+
+                if ('@User.Identity.Name' == "") {
+                    var documentCookie = document.cookie;
+                    if (documentCookie == null) {
+                        var expires = new Date();
+                        expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+                        document.cookie = 'User=' + vbUserName + ';expires=' + expires.toUTCString();
+                        $('#footerMessage').html("new cookie set");
+                    }
+                    else {
+                        $('#footerMessage').html("cookie found");
+                        var cookieValue = getCookie("User");
+                        $('#footerMessage').append("   hello: [" + cookieValue + "]");
+                    }
+                }
+                else {
+                    alert("User.Identity.Name: " + '@User.Identity.Name');
+                    vbUserName = '@User.Identity.Name';
+                }
+            });
+        });
     });
 
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) === 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+    function loadPromoMessages(commentType) {
+        $.ajax({
+            type: "GET",
+            url: service + "/api/OggleBlog/GetBlogList?commentType=" + commentType,
+            success: function (blogCommentsContainer) {
+                if (blogCommentsContainer.Success == "ok") {
+                    $.each(blogCommentsContainer.blogComments, function (idx, blogComment) {
+                        promoMessagesArray.push({
+                            FolderId: blogComment.Id,
+                            Link: blogComment.Link,
+                            CommentTitle: blogComment.CommentTitle,
+                            CommentText: blogComment.CommentText
+                        });
+                    });
+                }
+                else {
+                    $('#blogLoadingGif').hide();
+                    alert("loadPromoMessages: " + blogCommentsContainer.Success)
+                }
+            },
+            error: function (jqXHR, exception) {
+                $('#blogLoadingGif').hide();
+                alert("loadPromoMessages jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
+    function showPromoMessages() {
+        //alert("showPromoMessages()")
+        var currentItem = promoMessagesArray[promoIdx];
+        $('#promoContainer').fadeIn();
+
+        $('#promoContainerTitle').html(currentItem.CommentTitle);
+        $('#promoContainerText').html(currentItem.CommentText);
+
+        setTimeout(function () {
+            $('#promoContainer').fadeOut();
+        }, 2500);
+
+        promoIdx++;
+        if (promoIdx === promoMessagesArray.length)
+            promoIdx = 0;
+    }
+
     function showPortnWarning() {
+        if (typeof pause === 'function')
+            pause();
         if ($('#pornWarning').html() == "")
             showSiteContent($('#pornWarning'), 35)
         $('#pornWarning').show();
     }
+
     function letemPorn(response) {
         // record hit
         if (response == "ok") {
