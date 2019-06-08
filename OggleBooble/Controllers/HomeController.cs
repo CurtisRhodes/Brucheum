@@ -17,6 +17,29 @@ namespace OggleBooble
         private readonly string apiService = ConfigurationManager.AppSettings["apiService"];
         public ActionResult Index()
         {
+            //Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            //DateTime buildDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2);
+
+
+            //$('#footerVersion').htm();
+
+
+
+
+
+            //version.
+            //= ("1.1.*.*");    build: 6.06.339
+            //[assembly: AssemblyVersion("1.0.0.0")]
+            //[assembly: AssemblyFileVersion("1.0.0.0")]
+
+            //< major version >.< minor version >.< build number >.< revision >
+
+            ///The default build number increments daily. 
+            ///The default revision number is the number of seconds since midnight local time
+            ///(without taking into account time zone adjustments for daylight saving time), divided by 2.
+
+
+
             string userName = "";
             if (User.Identity.IsAuthenticated)
             {
@@ -32,6 +55,7 @@ namespace OggleBooble
                 }
 
             }
+            ViewBag.BuildInfo = System.Reflection.Assembly.GetExecutingAssembly().GetAssemblyInfo();
             ViewBag.UserName = userName;
             ViewBag.IsPornEditor = User.IsInRole("Porn Editor");
             ViewBag.Service = apiService;

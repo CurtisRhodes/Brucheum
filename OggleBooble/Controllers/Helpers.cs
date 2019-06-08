@@ -4,13 +4,40 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Web;
 
 namespace OggleBooble
 {
-    public class Helpers
+    public static class Helpers
     {
+        public static string GetAssemblyInfo(this Assembly assembly, TimeZoneInfo target = null)
+        {
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            //DateTime buildDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2);
+
+            var filePath = assembly.Location;
+            const int c_PeHeaderOffset = 60;
+            const int c_LinkerTimestampOffset = 8;
+
+            var buffer = new byte[2048];
+
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                stream.Read(buffer, 0, 2048);
+
+            var offset = BitConverter.ToInt32(buffer, c_PeHeaderOffset);
+            var secondsSince1970 = BitConverter.ToInt32(buffer, offset + c_LinkerTimestampOffset);
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            var linkTimeUtc = epoch.AddSeconds(secondsSince1970);
+
+            var tz = target ?? TimeZoneInfo.Local;
+            var lastBuildTime = TimeZoneInfo.ConvertTimeFromUtc(linkTimeUtc, tz);
+
+            return "build: " + version + "  " + lastBuildTime;
+        }
+
         public static string SessionStartHit()
         {
             var success = "onNo";

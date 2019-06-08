@@ -236,12 +236,27 @@ function contextMenuAction(action) {
             break;
         case "archive":
             showMoveCopyDialog("Archive", $('#' + currentContextLinkId + '').attr("src"), folderId);
+            $('#moveCopyDialog').on('dialogclose', function (event) {
+                if (viewerShowing)
+                    slide("next");
+                getImageLinks();
+            });
             break;
         case "copy":
             showMoveCopyDialog("Copy", $('#' + currentContextLinkId + '').attr("src"), folderId);
+            $('#moveCopyDialog').on('dialogclose', function (event) {
+                if (viewerShowing)
+                    slide("next");
+                getImageLinks();
+            });
             break;
         case "move":
             showMoveCopyDialog("Move", $('#' + currentContextLinkId + '').attr("src"), folderId);
+            $('#moveCopyDialog').on('dialogclose', function (event) {
+                if (viewerShowing)
+                    slide("next");
+                getImageLinks();
+            });
             break;
         case "remove":
             removeImage();
@@ -256,17 +271,6 @@ function contextMenuAction(action) {
             alert(action);
     }
 }
-
-$('#moveCopyDialog').on('dialogclose', function (event) {
-    if (viewerShowing)
-        slide("next");
-    getImageLinks();
-});
-$('#modelInfoDialog').on('dialogclose', function (event) {
-    if (viewerShowing)
-        slide("next");
-    getImageLinks();
-});
 
 function setFolderImage(linkId, folderId, level){
     $.ajax({
