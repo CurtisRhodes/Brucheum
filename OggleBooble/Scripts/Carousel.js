@@ -216,7 +216,7 @@ function carouselContextMenuAction(ctxMenuAction) {
         case "showDialog":
             $('#carouselContextMenu').fadeOut();
             pause();
-            showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId);
+            showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId, carouselItemArray[imageIndex].Link);
             $('#modelInfoDialog').on('dialogclose', function (event) {
                 resume();
             });

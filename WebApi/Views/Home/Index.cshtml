@@ -2,14 +2,13 @@
 @model WebApi.Models.ResponseModel
 
 
-<div class="jumbotron">
-    <h1>Burcheum API</h1>
-    <p class="lead">This is a Web Service. Not intended to be accessed directly</p>
-    v 6.03.2019.0
+    <div class="jumbotron">
+        <h1>Burcheum API</h1>
+        <p class="lead">This is a Web Service. Not intended to be accessed directly</p>
+        <div id="divLastBuild"></div>
 
-
-    <div id="msgArea">@Model.Response</div>
-</div>
+        <div id="msgArea">@Model.LastBuild</div>
+    </div>
 <div class="row">
     <div class="col-md-4">
         <h2>Journal Service</h2>
@@ -18,7 +17,7 @@
     </div>
     <div class="col-md-4">
         <h2>Images Service</h2>
-        <p>Upload (post) and retrieve (get) Images. This took way too long. No longer needed</p>
+        <p>Upload (post) and retrieve (get) Images. No longer needed</p>
         <p><button onclick="location.href='@Url.Action("ImageTest")';return false;">Test</button></p>
 
     </div>
@@ -30,6 +29,8 @@
         <p></p>
 
 
+
+        <div id="msgArea">@Model.EmailSuccess</div>
         <form action="~/Home/EmailTest" method="post">
             <p><button type="submit">Test Email</button></p>
         </form>

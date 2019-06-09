@@ -117,12 +117,12 @@
 <script>
     var FolderDetailModel = {};
 
-    function showModelInfoDialog(modelName, folderId) {
+    function showModelInfoDialog(modelName, folderId, currentSrc ) {
         FolderDetailModel.FolderId = folderId;
         clearGets();
         $('#modelInfoDialog').dialog("open");
         //$('#modelInfoDialog').fadeIn();
-        getFolderDetails(modelName, folderId)
+        getFolderDetails(modelName, folderId, currentSrc);
     }
 
     $(function () {
@@ -136,14 +136,15 @@
         });
     });
 
-    function getFolderDetails(modelName, folderId) {
+    function getFolderDetails(modelName, folderId, currentSrc) {
         $.ajax({
             type: "GET",
             url: service + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
             success: function (folderDetails) {
                 if (folderDetails.Success == "ok") {
                     if (folderDetails.FolderName == "Unknown") {
-                        $('#modelDialogThumbNailImage').attr("src", folderDetails.Src);
+                        FolderDetailModel.FolderImage = currentSrc;
+                        $('#modelDialogThumbNailImage').attr("src", currentSrc);
                         $('#modelInfoDialog').dialog('option', 'title', "unknown model");
                         //$('#unknownModelLinks').html(linkId.substring(linkId.lastIndexOf('/') + 1) + "<br/>");
                         $('#unknownModelLinks').append(folderDetails.ExternalLinks)
@@ -152,11 +153,14 @@
                         $('#modelInfoEdit').html("Edit");
                     }
                     else {
-                        if (folderDetails.FolderImage == null)
-                            $('#modelDialogThumbNailImage').attr("src", folderDetails.Src);
-                        else
+                        if (folderDetails.FolderImage == null) {
+                            FolderDetailModel.FolderImage = currentSrc;
+                            $('#modelDialogThumbNailImage').attr("src", currentSrc);
+                        }
+                        else {
+                            alert("this should not happen");
                             $('#modelDialogThumbNailImage').attr("src", folderDetails.FolderImage);
-
+                        }
                         $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
                         $('#modelInfoEditArea').show();
                         $('#modelInfoViewOnlyArea').hide();

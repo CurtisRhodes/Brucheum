@@ -223,7 +223,7 @@ function processImages(imageLinksModel, start) {
 function contextMenuAction(action) {
     switch (action) {
         case "show":
-            showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId);
+            showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId, $('#' + currentContextLinkId + '').attr("src"));
             break;
         case "jump":
             window.open("/album?folder=" + selectedImageArchiveFolderId, "_blank");

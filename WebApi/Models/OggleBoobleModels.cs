@@ -90,7 +90,6 @@ namespace WebApi.Models
     public class CategoryFolderDetailModel
     {
         public int FolderId { get; set; }
-        public string Src { get; set; }
         public string FolderName { get; set; }
         public string Nationality { get; set; }
         public string Measurements { get; set; }
@@ -99,6 +98,7 @@ namespace WebApi.Models
         public string Born { get; set; }
         public string ImageLinkId { get; set; }
         public string FolderImageLink { get; set; }
+        public string FolderImage { get; set; }
         public string Success { get; set; }
     }
     

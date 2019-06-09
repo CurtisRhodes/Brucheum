@@ -98,9 +98,6 @@ namespace WebApi
         }
     }
 
-
-
-
     [EnableCors("*", "*", "*")]
     public class FtpImagePageController : ApiController
     {

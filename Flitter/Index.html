@@ -9,32 +9,6 @@
     <script src="Scripts/Common.js"></script>
 
     <style>
-        .flitterPannelsContainer {
-            display: flex;
-            border: solid thin green;
-        }
-        .flitterPannel {
-            position: relative;
-            margin-right: 4px;
-        }
-        .flitterPannelLeftColumn {         
-            float: left;
-            height: 100%;
-            background: #c3dbf8;
-            
-        }
-        .flitterPannelContentArea {
-            float: left;
-            height: 500px;
-            background: #fefefe;            
-        }
-        .flitterPannelIcon {
-            height: 50px;
-            width: 50px;
-            display: block;
-            margin-bottom:2px;
-            cursor: pointer;
-        }
     </style>
 
 </head>
@@ -43,8 +17,6 @@
     <div class="threeColumnLayout">
         <div class="leftColumn"></div>
         <div class="middleColumn">
-            <h2>Flitter</h2>
-
             <div class="flitterPannelsContainer">
 
                 <div id="pannelZero" class="flitterPannel">
@@ -57,14 +29,14 @@
                     <div class="flitterPannelContentArea">
 
                         <div id="divSettings" class="settingsConsole">
-
-
-
+                            <div class="settingsConsoleHeader">SETTINGS</div>
+                            <div id="divSettingsContainer" class="settingsConsoleInputsContainer"></div>
+                            <div><button onclick="updateXML()">Save</button></div>
                         </div>
 
 
-
                     </div>
+
                 </div>
 
                 <div id="pannelOne" class="flitterPannel">
@@ -88,6 +60,7 @@
         $(document).ready(function () {
             includeHTML();
             resizePage();
+            $('#divSettings').hide();
             setFlitterPanels()
         });
 
@@ -100,26 +73,59 @@
         }
 
         function pannelZeroSettings() {
-            // getXmlSettings
+            getXmlSettings();
+            //<notebooks>
+            //  <notebook name="Birds"></notebook>
+            //  <notebook name="Hot Talkers"></notebook>
+            //  <notebook name="Books"></notebook>
+            //  <notebook name="Tennis"></notebook>
+            //</notebooks>
+            if ($('#pannelZeroCollapse').attr('state') == "closed") {
+                $('#pannelZeroCollapse').attr('state', 'open');
+                $('#pannelZeroCollapse').attr("src", "Images/happyMan.png");
+                $('#pannelZero .flitterPannelContentArea').animate({ 'width': '500' }, { duration: 500, specialEasing: { width: 'linear' } });
+            }
+
+            $('#divSettings').fadeIn(1000);
 
         }
 
         function pannelZeroToggle() {
-
             if ($('#pannelZeroCollapse').attr('state') == "closed") {
                 $('#pannelZeroCollapse').attr('state', 'open');
                 $('#pannelZeroCollapse').attr("src", "Images/happyMan.png");
-                $('#pannelZero .flitterPannelContentArea').css('width', '500');
+                $('#pannelZero .flitterPannelContentArea').animate({ 'width': '500' }, { duration: 500, specialEasing: { width: 'linear' } });
             }
             else {
+                $('#divSettings').hide();
                 $('#pannelZeroCollapse').attr('state', 'closed');
                 $('#pannelZeroCollapse').attr("src", "Images/man-arms-folded.png");
-                $('#pannelZero .flitterPannelContentArea').css('width', '0');
+                //$('#pannelZero .flitterPannelContentArea').css('width', '0');
+                $('#pannelZero .flitterPannelContentArea').animate({ 'width': '0' }, { duration: 500, specialEasing: { width: 'linear' } });
             }
-
             $('#pannelOne .flitterPannelContentArea').html($('#pannelZeroCollapse').attr('state'));
         }
 
+        function getXmlSettings() {
+            $.ajax({
+                type: "GET",
+                url: 'Data/flitterSettings.xml',
+                dataType: "XML",
+                success: function (xml) {
+                    $('#divSettingsContainer').html("");
+                    $(xml).find("setting").each(function () {
+                        $('#divSettingsContainer').append("<div class='flitterSetting'><div class=flitterLabel>" + $(this).attr('name') + "</div><input value=" + $(this).attr('value') + " /></div>");
+                    });
+                }, error: function (xhr) {
+                    alert("getXmlSettings xhr error: " + getXHRErrorDetails(xhr));
+                }
+            });
+        }
+
+        function updateXML() {
+            pannelZeroToggle();
+        }
     </script>
+
 </body>
 </html>

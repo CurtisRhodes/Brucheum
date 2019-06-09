@@ -2,7 +2,7 @@
 :root {
     --brucheumBlue: #74bac3;
     --oggleBackgroundColor: #fef; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
-    --oggleContainerBackgroundColor: #e6b9d9; /*  #f8e8e8 */
+    --oggleContainerBackgroundColor: #fefefe; /*  #f8e8e8 */
     --oggleBorderColor: #f1cff7;
     --ogglePurple: #79078f;
     --normalFont: 17px;
@@ -42,6 +42,35 @@ body {
         min-width: 7%;
     }
 
+.flitterPannelsContainer {
+    display: flex;
+    border: solid thin green;
+}
+
+.flitterPannel {
+    position: relative;
+    margin-right: 4px;
+}
+
+    .flitterPannel .flitterPannelLeftColumn {
+        float: left;
+        height: 100%;
+        background: #c3dbf8;
+    }
+
+    .flitterPannel .flitterPannelContentArea {
+        float: left;
+        height: 500px;
+        background: var(--oggleContainerBackgroundColor);
+    }
+
+    .flitterPannel .flitterPannelIcon {
+        height: 50px;
+        width: 50px;
+        display: block;
+        margin-bottom: 2px;
+        cursor: pointer;
+    }
 
 header {
     position: fixed;
@@ -186,4 +215,36 @@ footer {
     margin-left: 20px;
     height: 20px;
     display: none;
+}
+
+
+.settingsConsole {
+    margin-top: 33px;
+    margin-left: 24px;
+    display: inline-block;
+    border: solid 2px black;
+    background: var(--oggleContainerBackgroundColor);
+}
+
+.settingsConsoleHeader {
+    border: none;
+    text-align: center;
+    background: var(--brucheumBlue);
+}
+
+.settingsConsoleInputsContainer {
+    display: inline-block;
+    border: none;
+    padding: 4px;
+}
+
+.flitterLabel {
+    display: inline-block;
+    width: 160px;
+    text-align: right;
+    padding: 4px;
+}
+
+.flitterButton {
+    padding: 4px;
 }

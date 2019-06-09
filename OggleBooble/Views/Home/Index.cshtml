@@ -83,6 +83,10 @@
     $(document).ready(function () {
         var service = '@ViewBag.Service';
         var vbUserName = '@ViewBag.UserName';
+        var lastBuild = '@ViewBag.BuildInfo';
+
+        $('#footerLastBuild').html("last build: " + lastBuild);
+
         $('#boobCatTreeContainer').dialog({
             autoOpen: false,
             show: { effect: "fade" },

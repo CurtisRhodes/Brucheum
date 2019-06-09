@@ -9,16 +9,18 @@ namespace WebApi
 {
     public class HomeController : Controller
     {
+        ResponseModel pageResponse = new ResponseModel();
+
         public ActionResult Index()
         {
-            var vm = new ResponseModel();
-            return View(vm);
+            pageResponse.LastBuild = "last build: " + GetBuildInfo();
+            return View(pageResponse);
         }
+
         public ActionResult ImageTest()
         {
             return View();
         }
-
 
         public ActionResult JournalTest()
         {
@@ -29,15 +31,10 @@ namespace WebApi
         [HttpPost]
         public ActionResult EmailTest()
         {
+            pageResponse.LastBuild = "last build: " + GetBuildInfo();
             var emailMessage = new EmailMessageModel() { Subject = "Test Email", Body = "may you have a good day" };
-
-            string success = new GodaddyEmailController().Post(emailMessage);
-
-            //string success = new EmailController().SendWithHotMail(emailMessage);
-
-            ResponseModel vm = new ResponseModel() { Response = success };
-            return View("Index", vm);
-
+            pageResponse.EmailSuccess = new GodaddyEmailController().Post(emailMessage);
+            return View("Index", pageResponse);
         }
 
         public ActionResult ArticleTest(string Id)
@@ -45,6 +42,17 @@ namespace WebApi
             //ViewBag.Id = Id;
             //ViewBag.Categories = GetArticleCategories();
             return View();
+        }
+
+        private string GetBuildInfo()
+        {
+            string lastBuild = "11:11";
+            string path = System.Web.HttpContext.Current.Server.MapPath("~/bin/WebApi.dll");
+            if (System.IO.File.Exists(path))
+            {
+                lastBuild = System.IO.File.GetLastWriteTime(path).ToShortDateString();
+            }
+            return lastBuild;
         }
     }
 
@@ -74,9 +82,13 @@ namespace WebApi
 
 }
 
+
 namespace WebApi.Models
 {    public class ResponseModel
     {
+        public string EmailSuccess { get; set; }
+        public string LastBuild { get; set; }
+        public string Success { get; set; }
         public string Response { get; set; }
     }
     public class EmailMessageModel

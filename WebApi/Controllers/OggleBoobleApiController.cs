@@ -68,12 +68,10 @@ namespace WebApi
                             model.FolderName = db.CategoryFolders.Where(f => f.Id == folderId).First().FolderName;
                             model.FolderId = categoryFolderDetails.FolderId;
                         }
-
-
                         if (model.FolderImageLink == null)
-                            model.Src = Helpers.GetFirstImage(folderId);
+                            model.FolderImage = Helpers.GetFirstImage(folderId);
                         else
-                            model.Src = db.ImageLinks.Where(g => g.Id == categoryFolderDetails.FolderImage).First().Link;
+                            model.FolderImage = db.ImageLinks.Where(g => g.Id == categoryFolderDetails.FolderImage).First().Link;
                     }
                 }
                 model.Success = "ok";
@@ -90,8 +88,8 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    int folderId = 0;                    
-                    CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.FolderId).First();
+                    int newFolderId = 0; 
+                    //CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.FolderId).First();
                     CategoryFolder dbParent = db.CategoryFolders.Where(f => f.FolderName == "posers identified").First();
 
                     CategoryFolder poser = new CategoryFolder()
@@ -102,12 +100,15 @@ namespace WebApi
                     };
                     db.CategoryFolders.Add(poser);
                     db.SaveChanges();
-                    folderId = poser.Id;
+                    newFolderId = poser.Id;
 
-                    string extension = model.Src.Substring(model.Src.LastIndexOf("."));
-                    string sourceOriginPath = Helpers.GetParentPath(model.FolderId, true);
-                    string ftpSource = "ftp://50.62.160.105/" + dbSourceFolder.RootFolder + ".ogglebooble.com/" + sourceOriginPath + dbSourceFolder.FolderName + "/" + dbSourceFolder.FolderName + "_" + model.ImageLinkId + extension;
-                    string expectedFileName = model.FolderName + "_" + model.ImageLinkId + extension;
+                    string extension = model.FolderImage.Substring(model.FolderImage.LastIndexOf("."));
+                    //string sourceOriginPath = Helpers.GetParentPath(dbParent.Id, true);
+                    string linkId = model.FolderImage.Substring(model.FolderImage.LastIndexOf("_") + 1, 36);
+                    //string ftpSource = "ftp://50.62.160.105/" + dbParent.RootFolder + ".ogglebooble.com/" + sourceOriginPath + "posers identified/" + model.FolderName + "_" + linkId + extension;
+
+                    string ftpSource = model.FolderImage.Replace("http://", "ftp://50.62.160.105/");
+                    string expectedFileName = model.FolderName + "_" + linkId + extension;
                     string ftpDestinationPath = "ftp://50.62.160.105/archive.ogglebooble.com/posers identified/" + model.FolderName;
 
                     if (!FtpDirectory.DirectoryExists(ftpDestinationPath))
@@ -115,16 +116,18 @@ namespace WebApi
 
                     success = FtpDirectory.MoveFile(ftpSource, ftpDestinationPath + "/" + expectedFileName);
 
-                    ImageLink goDaddyLink = db.ImageLinks.Where(g => g.Id == model.ImageLinkId).First();
-                    goDaddyLink.Link = "http://archive.ogglebooble.com/posers identified/" + model.FolderName + "/" + expectedFileName;
-                    db.CategoryImageLinks.Add(new CategoryImageLink() { ImageCategoryId = folderId, ImageLinkId = model.ImageLinkId });
+                    ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == linkId).First();
+                    goDaddyrow.Link = "http://archive.ogglebooble.com/posers identified/" + model.FolderName + "/" + expectedFileName;
+                    goDaddyrow.FolderLocation = newFolderId;
+
+                    db.CategoryImageLinks.Add(new CategoryImageLink() { ImageCategoryId = newFolderId, ImageLinkId = linkId });
                     db.SaveChanges();
 
                     db.CategoryFolderDetails.Add(new CategoryFolderDetail()
                     {
                         CommentText = model.CommentText,
                         ExternalLinks = model.ExternalLinks,
-                        FolderId = folderId,
+                        FolderId = newFolderId,
                         Nationality = model.Nationality,
                         Measurements = model.Measurements,
                         Born = model.Born
