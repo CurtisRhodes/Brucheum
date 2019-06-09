@@ -34,7 +34,6 @@
             display: block;
             margin-bottom:2px;
             cursor: pointer;
-            border: solid thin black;
         }
     </style>
 
@@ -52,8 +51,8 @@
                     <div class="flitterPannelLeftColumn">
                         <img id="pannelZeroCollapse" state="closed" onclick="pannelZeroToggle()" class="flitterPannelIcon" src="Images/man-arms-folded.png" />
                         <img id="pannelZeroCollapse" onclick="pannelZeroSettings()" class="flitterPannelIcon" src="Images/settingGear.png" />
-                        <img class="flitterPannelIcon" src="Images/happyMan.gif" />
-                        <img class="flitterPannelIcon" src="Images/happyMan.gif" />
+                        <img class="flitterPannelIcon" src="Images/happyMan.png" />
+                        <img class="flitterPannelIcon" src="Images/happyMan.png" />
                     </div>
                     <div class="flitterPannelContentArea">
 
@@ -109,12 +108,12 @@
 
             if ($('#pannelZeroCollapse').attr('state') == "closed") {
                 $('#pannelZeroCollapse').attr('state', 'open');
-                $('#pannelZeroCollapse').attr("src", "Images/happyMan.gif");
+                $('#pannelZeroCollapse').attr("src", "Images/happyMan.png");
                 $('#pannelZero .flitterPannelContentArea').css('width', '500');
             }
             else {
                 $('#pannelZeroCollapse').attr('state', 'closed');
-                $('#pannelZeroCollapse').attr("src", "Images/man-arms-folded.jpg");
+                $('#pannelZeroCollapse').attr("src", "Images/man-arms-folded.png");
                 $('#pannelZero .flitterPannelContentArea').css('width', '0');
             }
 
