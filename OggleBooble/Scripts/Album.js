@@ -9,9 +9,13 @@ var viewerShowing = false;
 var slideShow;
 
 function getBreadCrumbs() {
+
+    //alert("url: " + service + "/api/BreadCrumbs/Get?folderId=" + folderId);
+
+
     $.ajax({
         type: "GET",
-        url: service + "api/DashBoard/GetBreadCrumbs?folderId=" + folderId,
+        url: service + "/api/BreadCrumbs/Get?folderId=" + folderId,
         success: function (breadCrumbModel) {
             if (breadCrumbModel.Success === "ok") {
                 $('#headerMessage').html("");
@@ -161,7 +165,7 @@ function processImages(imageLinksModel, start) {
                 " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
         }
 
-        $('#footerMessage').html("fileCount: " + fileCount++);
+        $('#footerMessage').html("fileCount: " + ++fileCount);
 
         $('.thumbImage').click(function () {
             viewerShowing = true;
@@ -183,14 +187,13 @@ function processImages(imageLinksModel, start) {
                 url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + currentContextLinkId,
                 success: function (folderDetails) {
                     if (folderDetails.Success === "ok") {
+                        selectedImageArchiveFolderId = folderDetails.FolderId;
                         if (folderDetails.RootFolder === "archive") {
-                            selectedImageArchiveFolderId = folderDetails.FolderId;
                             $('#ctxModelName').html(folderDetails.FolderName);
                             $('#ctxArchive').hide();
                             $('#ctxSeeMore').show();
                         }
                         else {
-                            selectedImageArchiveFolderId = 0;
                             $('#ctxModelName').html("unknown model");
                             $('#ctxArchive').show();
                             $('#ctxSeeMore').hide();
@@ -223,18 +226,26 @@ function processImages(imageLinksModel, start) {
 function contextMenuAction(action) {
     switch (action) {
         case "show":
+            $("#thumbImageContextMenu").fadeOut();
             showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId, $('#' + currentContextLinkId + '').attr("src"));
+            $('#modelInfoDialog').on('dialogclose', function (event) {
+                //alert("$('#folderCategoryDialog').on('dialogclose'");
+                $('#modelInfoDialog').hide();
+                getImageLinks();
+            });
             break;
         case "jump":
             window.open("/album?folder=" + selectedImageArchiveFolderId, "_blank");
             break;
         case "comment":
+            $("#thumbImageContextMenu").fadeOut();
             showImageCommentDialog($('#' + currentContextLinkId + '').attr("src"), currentContextLinkId, folderId, folderName, currentUser);
             break;
         case "explode":
             window.open($('#' + currentContextLinkId + '').attr("src"), "_blank");
             break;
         case "archive":
+            $("#thumbImageContextMenu").fadeOut();
             showMoveCopyDialog("Archive", $('#' + currentContextLinkId + '').attr("src"), folderId);
             $('#moveCopyDialog').on('dialogclose', function (event) {
                 if (viewerShowing)
@@ -243,6 +254,7 @@ function contextMenuAction(action) {
             });
             break;
         case "copy":
+            $("#thumbImageContextMenu").fadeOut();
             showMoveCopyDialog("Copy", $('#' + currentContextLinkId + '').attr("src"), folderId);
             $('#moveCopyDialog').on('dialogclose', function (event) {
                 if (viewerShowing)
@@ -251,6 +263,7 @@ function contextMenuAction(action) {
             });
             break;
         case "move":
+            $("#thumbImageContextMenu").fadeOut();
             showMoveCopyDialog("Move", $('#' + currentContextLinkId + '').attr("src"), folderId);
             $('#moveCopyDialog').on('dialogclose', function (event) {
                 if (viewerShowing)
@@ -259,6 +272,7 @@ function contextMenuAction(action) {
             });
             break;
         case "remove":
+            $("#thumbImageContextMenu").fadeOut();
             removeImage();
             break;
         case "setF":
@@ -267,15 +281,36 @@ function contextMenuAction(action) {
         case "setC":
             setFolderImage(currentContextLinkId, folderId, "parent");
             break;
+        case "links":
+            break;
+        case "props":
+            showProps($('#' + currentContextLinkId + '').attr("src"));
+            break;
         default:
-            alert(action);
+            alert("contextMenuAction action: " + action);
     }
+}
+
+function showProps(fileName) {
+
+    //var ftpFile = fileName.replace("http://", "ftp://50.62.160.105/");
+    //$('#divTestBox').html("");
+    //$('' + ftpFile + '').each(function () {
+    //    $.each(this.attributes, function () {
+    //        if (this.specified) {
+    //            console.log(this.name, this.value);
+    //            $('#divTestBox').append("div>" + this.name + ": " + this.value + "</div>");
+    //        }
+    //    });
+    //    $('#divTestBox').show();
+    //});
+
 }
 
 function setFolderImage(linkId, folderId, level){
     $.ajax({
         type: "PUT",
-        url: service + "/api/CategoryFolder/?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level,
+        url: service + "/api/ImageCategoryDetail/?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level,
         success: function (success) {
             if (success === "ok") {
                 displayStatusMessage("ok", level + " image set");
@@ -294,6 +329,9 @@ function setFolderImage(linkId, folderId, level){
 }
 
 function removeImage() {
+
+    alert("removeImage: " + currentContextLinkId);
+
     $.ajax({
         type: "GET",
         url: service + "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + currentContextLinkId,
@@ -378,13 +416,6 @@ function openImageInNewWindow() {
     window.open($('#' + currentContextLinkId + '').attr("src"), "_blank");
 }
 
-function addComment() {
-    /// show a blog data entry 
-    /// show a comment tree with way to say something.
-    /// write an entire fantasy 
-    /// describe the fantasy this image evokes
-}
-
 $(window).resize(function () {
     $('#imageContainer').width($('#middleColumn').width());
     $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
@@ -393,3 +424,5 @@ $(window).resize(function () {
         $('#footerMessage').html("image page resize");
     }
 });
+
+

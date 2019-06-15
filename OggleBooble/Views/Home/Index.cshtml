@@ -38,9 +38,9 @@
     <div id="leftColumn">
         <div class="leftColumnList">
             <div onclick="window.location.href='/home/transitions?folder=boobs'">Transitions</div>
-            <div onclick="window.location.href='/test/contextTest'">Boobs Rater</div>
+            <div onclick="window.location.href='/home/BoobsRanker'">Boobs Rater</div>
             <div onclick="window.location.href='/test/contextTest'">Let me Expalin</div>
-            <div onclick="$('#boobCatTreeContainer').dialog('open');">Category List</div>
+            <div onclick="showCatListDialog()">Category List</div>
             <div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>
             @*<div onclick="$('#oggleBlogEntry').fadeIn()">Blog</div>*@
             <div onclick="showPortnWarning()">Nasty Porn</div>
@@ -96,33 +96,43 @@
         });
 
         $.when(launchCarousel('boobs')).done(function () {
-
-            $.when(loadPromoMessages("CON")).done(function () {
-                //promoMessageRotator = setInterval(function () {
-                //    showPromoMessages();
-                //}, promoMessageRotationSpeed);
-
-                if ('@User.Identity.Name' == "") {
-                    var documentCookie = document.cookie;
-                    if (documentCookie == null) {
-                        var expires = new Date();
-                        expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
-                        document.cookie = 'User=' + vbUserName + ';expires=' + expires.toUTCString();
-                        $('#footerMessage').html("new cookie set");
-                    }
-                    else {
-                        $('#footerMessage').html("cookie found");
-                        var cookieValue = getCookie("User");
-                        $('#footerMessage').append("   hello: [" + cookieValue + "]");
-                    }
-                }
-                else {
-                    alert("User.Identity.Name: " + '@User.Identity.Name');
-                    vbUserName = '@User.Identity.Name';
-                }
-            });
+            //alert("launchCarousel('boobs')).done")
+            //loadPromoMessages("CON");
+            cookieKlude(vbUserName);
         });
     });
+
+
+    function cookieKlude(vbUserName) {
+        //alert("cookieKlude(1)")
+        if ('@User.Identity.Name' !== "") {
+            var documentCookie = document.cookie;
+            if (documentCookie == null) {
+                var expires = new Date();
+                expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+                document.cookie = 'User=' + '@User.Identity.Name' + ';expires=' + expires.toUTCString();
+                $('#footerMessage').html("new cookie set for: " + vbUserName);
+            }
+            else {
+                var cookieValue = getCookie('@User.Identity.Name');
+                if (cookieValue != "")
+                    $('#footerMessage').append("   hello: [" + cookieValue + "]");
+            }
+        }
+        else {
+            //alert("getCookie(" + vbUserName + ")");
+            var cc = getCookie("User");
+            if (cc == "") {
+                var expires = new Date();
+                expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+                document.cookie = 'User=' + vbUserName + ';expires=' + expires.toUTCString();
+                $('#footerMessage').html("new cookie set for: " + vbUserName);
+            }
+            else {
+                $('#footerMessage').html("cookie found for: " + vbUserName);
+            }
+        }
+    }
 
     function getCookie(cname) {
         var name = cname + "=";
@@ -200,6 +210,11 @@
         else {
             $('#pornWarning').hide()
         }
+    }
+
+    function showCatListDialog() {
+        buildDirTree($('#boobCatTreeContainer'), "boobCatTreeContainer", 2);
+        $('#boobCatTreeContainer').dialog('open');
     }
 
     function boobCatTreeContainerClick(path, id, treeId) {

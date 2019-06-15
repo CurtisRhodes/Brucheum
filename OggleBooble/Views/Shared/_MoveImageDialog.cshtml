@@ -7,7 +7,7 @@
         <div class="inline"><img class="moveDialogDirTreeButton" src="~/Images/caretDown.png" onclick="$('#moveDialogDirTree').show()" /></div>
         <br />
         <div id="moveDialogDirTree" class="hideableDropDown"></div>
-        <div id="btnGo" class="roundendButton" onclick="performAction()">Copy</div>
+        <div id="btnGo" class="roundendButton" onclick="ftpMoveCopy()">Copy</div>
     </div>
 </div>
 
@@ -55,7 +55,7 @@
 </style>
 
 <script>
-    var MoveCopyImageDialogModel = {};
+    var MoveCopyImageModel = {};
 
     $(function () {
         $('#moveCopyDialog').dialog({
@@ -67,10 +67,14 @@
         buildDirTree($('#moveDialogDirTree'), "moveDialogDirTree", 0);
     });
 
+    //showMoveCopyDialog("Archive", $('#' + currentContextLinkId + '').attr("src"), folderId);	F:\Devl\OggleBooble\Scripts\Album.js	241	13
+    //showMoveCopyDialog("Copy", $('#' + currentContextLinkId + '').attr("src"), folderId);	F:\Devl\OggleBooble\Scripts\Album.js	250	13
+    //showMoveCopyDialog("Move", $('#' + currentContextLinkId + '').attr("src"), folderId);	F:\Devl\OggleBooble\Scripts\Album.js	259	13
+
     function showMoveCopyDialog(mode, link, folderId) {
-        MoveCopyImageDialogModel.Mode = mode;
-        MoveCopyImageDialogModel.Link = link;
-        MoveCopyImageDialogModel.SourceFolderId = folderId;
+        MoveCopyImageModel.Mode = mode;
+        MoveCopyImageModel.Link = link;
+        MoveCopyImageModel.SourceFolderId = folderId;
         $('#btnGo').html(mode);
         $('#moveCopyDialog').dialog('option', 'title', mode + " Image Link");
         $('#copyDialogImage').attr("src", link);
@@ -78,24 +82,17 @@
         $('#moveCopyDialog').dialog("open");
     }
 
-    function performAction() {
-        //alert("performAction: " + MoveCopyImageDialogModel.Mode);
-        if (MoveCopyImageDialogModel.Mode == "Copy")
-            copyLink();
-        else
-            ftpMove();
-    }
-
-    function ftpMove() {
+    function ftpMoveCopy() {
         $('#moveCopyDialogLoadingGif').show();
         $.ajax({
             type: "PUT",
-            url: service + "/api/FtpImagePage/MoveImage",
-            data: MoveCopyImageDialogModel,
+            url: service + "/api/MoveImage/MoveImage",
+            data: MoveCopyImageModel,
             success: function (success) {
                 $('#moveCopyDialogLoadingGif').hide();
                 if (success === "ok") {
                     displayStatusMessage("ok", "image moved to " + $('#dirTreeResults').html());
+                    displayStatusMessage("ok", "link coppyed to " + $('#dirTreeResults').html());
                     $('#moveCopyDialog').dialog("close");
                 }
                 else {
@@ -109,32 +106,9 @@
         });
     }
 
-    function copyLink() {
-        $('#moveCopyDialogLoadingGif').show();
-        $.ajax({
-            type: "PUT",
-            url: service + "/api/ImagePage",
-            data: MoveCopyImageDialogModel,
-            success: function (success) {
-                $('#moveCopyDialogLoadingGif').hide();
-                if (success === "ok") {
-                    displayStatusMessage("ok", "link coppyed to " + $('#dirTreeResults').html());
-                    $('#moveCopyDialog').dialog("close");
-                }
-                else {
-                    alert("copyLink: " + success);
-                }
-            },
-            error: function (xhr) {
-                $('#moveCopyDialogLoadingGif').hide();
-                alert("copyLink(andRemove) xhr error: " + xhr.statusText);
-            }
-        });
-    }
-
     function moveDialogDirTreeClick(path, id, treeId) {
         if (treeId == "moveDialogDirTree") {
-            MoveCopyImageDialogModel.DestinationFolderId = id;
+            MoveCopyImageModel.DestinationFolderId = id;
             $('#moveDialogDirTree').hide();
             if (path.length > path.indexOf(".COM") + 4)
                 $('#dirTreeResults').html(path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " "));

@@ -346,7 +346,7 @@
     function imageViewerContextMenuAction(action) {
         switch (action) {
             case "show":
-                showModelInfoDialog(imageViewerArray[imageViewerIndex].LinkId, imageViewerSelectedImageArchiveFolderId, imageViewerArray[imageViewerIndex].Link);
+                showModelInfoDialog($('#ctxImageViewerModelName').html(), imageViewerSelectedImageArchiveFolderId, imageViewerArray[imageViewerIndex].Link);
                 closeViewer();
                 break;
             case "jump":

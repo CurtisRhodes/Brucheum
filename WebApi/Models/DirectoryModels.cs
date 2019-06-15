@@ -26,6 +26,10 @@ namespace WebApi.Models
         public string DanniPath { get; set; }
         public string Link { get; set; }
         public string LinkId { get; set; }
+        public int SubDirCount { get; set; }
+        public int FileCount { get; set; }
+        public int TotalFiles { get; set; }
+        public int GrandTotalFiles { get; set; }
         public List<CategoryTreeModel> SubDirs { get; set; }
     }
 

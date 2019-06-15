@@ -7,9 +7,9 @@ using System.Text.RegularExpressions;
 using System.Web;
 using static System.Net.WebRequestMethods;
 
-namespace WebApi
+namespace WebApi.Ftp
 {
-    public class FtpDirectory
+    public class FtpUtilies
     {
         static readonly NetworkCredential networkCredentials = new NetworkCredential("curtisrhodes", "R@quel77");
 
@@ -20,7 +20,7 @@ namespace WebApi
             {
                 FtpWebRequest ftpRequest = (FtpWebRequest)WebRequest.Create(new Uri(ftpPath));
                 ftpRequest.Credentials = new NetworkCredential("curtisrhodes", "R@quel77");
-                ftpRequest.Method = Ftp.ListDirectory;
+                ftpRequest.Method = WebRequestMethods.Ftp.ListDirectory;
                 FtpWebResponse response = (FtpWebResponse)ftpRequest.GetResponse();
                 StreamReader streamReader = new StreamReader(response.GetResponseStream());
 
@@ -109,7 +109,7 @@ namespace WebApi
                 requestDir.UsePassive = false;
                 requestDir.KeepAlive = false;
                 requestDir.Proxy = null;
-                requestDir.Method = Ftp.Rename;
+                requestDir.Method = WebRequestMethods.Ftp.Rename;
                 requestDir.RenameTo = destination;
                 FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
                 response.Close();
@@ -125,7 +125,7 @@ namespace WebApi
             {
                 FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpPath);
                 request.Credentials = networkCredentials;
-                request.Method = Ftp.ListDirectory;
+                request.Method = WebRequestMethods.Ftp.ListDirectory;
                 FtpWebResponse response = (FtpWebResponse)request.GetResponse();
                 return true;
             }
@@ -142,7 +142,7 @@ namespace WebApi
             {
                 FtpWebRequest requestDir = (FtpWebRequest)WebRequest.Create(new Uri(ftpPath));
                 requestDir.Credentials = networkCredentials;
-                requestDir.Method = Ftp.MakeDirectory;
+                requestDir.Method = WebRequestMethods.Ftp.MakeDirectory;
                 requestDir.UsePassive = true;
                 requestDir.UseBinary = true;
                 requestDir.KeepAlive = false;
@@ -166,7 +166,7 @@ namespace WebApi
             {
                 FtpWebRequest requestDir = (FtpWebRequest)WebRequest.Create(source);
                 requestDir.Credentials = networkCredentials;
-                requestDir.Method = Ftp.DownloadFile;
+                requestDir.Method = WebRequestMethods.Ftp.DownloadFile;
                 FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
                 if (response.StatusCode != FtpStatusCode.CommandOK)
                     success = response.StatusCode.ToString();
@@ -192,7 +192,7 @@ namespace WebApi
             {
                 FtpWebRequest clsRequest = (FtpWebRequest)WebRequest.Create(FileName);
                 clsRequest.Credentials = networkCredentials;
-                clsRequest.Method = Ftp.UploadFile;
+                clsRequest.Method = WebRequestMethods.Ftp.UploadFile;
                 Stream clsStream = clsRequest.GetRequestStream();
                 clsStream.Write(Image, 0, Image.Length);
                 clsStream.Close();
@@ -211,7 +211,7 @@ namespace WebApi
             {
                 FtpWebRequest requestDir = (FtpWebRequest)WebRequest.Create(fileToDelete);
                 requestDir.Credentials = networkCredentials;
-                requestDir.Method = Ftp.DeleteFile;
+                requestDir.Method = WebRequestMethods.Ftp.DeleteFile;
                 FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
                 Stream ftpStream = response.GetResponseStream();
                 success = "ok";
@@ -231,7 +231,7 @@ namespace WebApi
             {
                 FtpWebRequest requestDir = (FtpWebRequest)WebRequest.Create(ftpPath);
                 requestDir.Credentials = networkCredentials;
-                requestDir.Method = Ftp.RemoveDirectory;
+                requestDir.Method = WebRequestMethods.Ftp.RemoveDirectory;
                 FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
                 Stream ftpStream = response.GetResponseStream();
                 success = "ok";
@@ -250,7 +250,7 @@ namespace WebApi
             {
                 FtpWebRequest requestDir = (FtpWebRequest)WebRequest.Create(ftpPath);
                 requestDir.Credentials = networkCredentials;
-                requestDir.Method = Ftp.Rename;
+                requestDir.Method = WebRequestMethods.Ftp.Rename;
                 requestDir.RenameTo = newName;
                 FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
                 Stream ftpStream = response.GetResponseStream();

@@ -376,7 +376,6 @@
     <Content Include="Styles\video\mejs-controls.png" />
     <Content Include="Styles\video\mejs-controls.svg" />
     <Content Include="Styles\video\modalDialog.css" />
-    <Content Include="Views\Stats\HtmlPage1.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

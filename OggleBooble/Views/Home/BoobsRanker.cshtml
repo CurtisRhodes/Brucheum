@@ -2,16 +2,25 @@
     ViewBag.Title = "Boobs Ranker";
 }
 
+<style>
+    .rankerImageContainer {
+
+
+    }
+
+</style>
+
+
 <div class="threeColumnArray">
     <div id="leftColumn"></div>
     <div id="middleColumn">
         <h2>Boobs Ranker</h2>
-        <div id="doubleImageContainer">
-
-
-
-
+        
+        <div id="doubleImageContainer" class="rankerImageContainer">
+            <div id="rankerImageLeft" class="rankerImageContainer"></div>
+            <div id="rankerImageRight" class="rankerImageContainer"></div>
         </div>
+
     </div>
     <div id="rightColumn"></div>
 </div>
@@ -19,7 +28,20 @@
 
 <script>
 
-    function getLotsOfImages() {
+    $(document).ready(function () {
+        loadRanker()
+    });
+
+    function loadRanker() {
+
+
+
+
+    }
+
+
+    function spinRanker() {
+
 
 
 

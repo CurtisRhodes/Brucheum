@@ -59,8 +59,11 @@ namespace WebApi.DataContext
         public string ExternalLink { get; set; }
         public string Link { get; set; }
         public int FolderLocation { get; set; }
-
+        public int? Width { get; set; }
+        public int? Height { get; set; }
+        public long? Size { get; set; }
     }
+
     [Table("OggleBooble.CategoryImageLink")]
     public partial class CategoryImageLink
     {
@@ -103,8 +106,10 @@ namespace WebApi.DataContext
         public int Parent { get; set; }
         public string FolderName { get; set; }
         public string Link { get; set; }
-        public int SubDirCount { get; set; }
+        //public int SubDirCount { get; set; }
         public int FileCount { get; set; }
+        public int TotalFiles { get; set; }
+        public int GrandTotalFiles { get; set; }
     }
 
     [Table("OggleBooble.VideoLink")]

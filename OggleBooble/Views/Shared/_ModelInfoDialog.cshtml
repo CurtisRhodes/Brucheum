@@ -6,28 +6,6 @@
         z-index: 150;
     }
 
-    .floatingRoundedDialog {
-        display: none;
-        font-size: 17px;
-        font-family: 'Comic Sans MS';
-        border: solid thin #b200ff;
-        border-radius: 22px;
-        padding: 4px;
-        margin: 3px;
-        background-color: #efeacb;
-        color: #620e63;
-        z-index: 111;
-    }
-
-        .floatingRoundedDialog a {
-            margin-left: 22px;
-            font-size: 17px;
-        }
-
-            .floatingRoundedDialog a:hover {
-                font-size: 20px;
-            }
-
     .smallTextArea {
         height: 121px;
         width: 100%;
@@ -41,14 +19,6 @@
         height: 150px;
         min-width: 160px;
         margin-left: 4px;
-    }
-
-    .floatingRoundedDialogLabel {
-        display: block;
-        text-align: right;
-        font-size: 17px;
-        height: 32px;
-        padding: 14.5px 4px 0 0;
     }
 
     .modelDialogInput {
@@ -79,15 +49,8 @@
     }
 </style>
 
-@*<div class="centeredDivShell modelInfoContainer">
-    <div id="centeredContainer" class="centeredDivInner">*@
-
-<div id="modelInfoDialog" class="floatingRoundedDialog" onmouseleave="considerClosingModelInfoDialog()">
-    @*<div class="floatingCrudBanner">
-            <span id="modelInfoHeader"></span>
-            <div onclick="$('#modelInfoDialog').fadeOut();" class="farSide">x</div>
-        </div>*@
-    <div id="modelInfoEditArea">
+<div id="modelInfoDialog" class="oggleHidden" onmouseleave="considerClosingModelInfoDialog()">
+    <div id="modelInfoEditArea" class="oggleHidden">
         <div class="flexContainer">
             <div class="floatLeft">
                 <label>name</label><input id="txtFolderName" class="roundedInput modelDialogInput inline" /><br />
@@ -101,13 +64,12 @@
         </div>
         <label>comment</label>
         <div><textarea id="txaModelComment" class="smallTextArea"></textarea></div>
-
         <div class="hrefLabel">href</div><input id="txtLinkHref" class="roundedInput inline" />
-        <div class="hrefLabel">label</div><input id="txtLinkLabel" class="roundedInput" onblur="addHref()" />
-        <span class="addLinkIcon" onclick="addHref()">+</span>
+        <div class="hrefLabel">label</div><input id="txtLinkLabel" class="roundedInput" onblur="addHrefToExternalLinks()" />
+        <span class="addLinkIcon" onclick="addHrefToExternalLinks()">+</span>
         <div id="externalLinks" class="smallTextArea"></div>
     </div>
-    <div id="modelInfoViewOnlyArea">
+    <div id="modelInfoViewOnlyArea" class="oggleHidden">
         <div class="viewOnlyMessage">If you you know who this is Please click Edit</div>
         <div id="unknownModelLinks" class="smallTextArea"></div>
     </div>
@@ -120,8 +82,6 @@
     function showModelInfoDialog(modelName, folderId, currentSrc ) {
         FolderDetailModel.FolderId = folderId;
         clearGets();
-        $('#modelInfoDialog').dialog("open");
-        //$('#modelInfoDialog').fadeIn();
         getFolderDetails(modelName, folderId, currentSrc);
     }
 
@@ -137,52 +97,68 @@
     });
 
     function getFolderDetails(modelName, folderId, currentSrc) {
-        $.ajax({
-            type: "GET",
-            url: service + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
-            success: function (folderDetails) {
-                if (folderDetails.Success == "ok") {
-                    if (folderDetails.FolderName == "Unknown") {
-                        FolderDetailModel.FolderImage = currentSrc;
-                        $('#modelDialogThumbNailImage').attr("src", currentSrc);
-                        $('#modelInfoDialog').dialog('option', 'title', "unknown model");
-                        //$('#unknownModelLinks').html(linkId.substring(linkId.lastIndexOf('/') + 1) + "<br/>");
-                        $('#unknownModelLinks').append(folderDetails.ExternalLinks)
-                        $('#modelInfoEditArea').hide();
-                        $('#modelInfoViewOnlyArea').show();
-                        $('#modelInfoEdit').html("Edit");
-                    }
-                    else {
-                        if (folderDetails.FolderImage == null) {
+        if (modelName == "unknown model") {
+            FolderDetailModel.FolderImage = currentSrc;
+            $('#modelDialogThumbNailImage').attr("src", currentSrc);
+            $('#modelInfoDialog').show();
+            $('#modelInfoDialog').dialog('option', 'title', "unknown model");
+            //$('#unknownModelLinks').append(folderDetails.ExternalLinks)
+            $('#modelInfoEditArea').hide();
+            $('#modelInfoViewOnlyArea').show();
+            $('#modelInfoEdit').html("Edit");
+        }
+        else {
+            $.ajax({
+                type: "GET",
+                url: service + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
+                success: function (folderDetails) {
+                    if (folderDetails.Success == "ok") {
+                        if (folderDetails.FolderName == "Unknown") {
                             FolderDetailModel.FolderImage = currentSrc;
                             $('#modelDialogThumbNailImage').attr("src", currentSrc);
+                            $('#modelInfoDialog').dialog('option', 'title', "unknown model");
+                            //$('#unknownModelLinks').html(linkId.substring(linkId.lastIndexOf('/') + 1) + "<br/>");
+                            $('#unknownModelLinks').append(folderDetails.ExternalLinks)
+                            $('#modelInfoEditArea').hide();
+                            $('#modelInfoViewOnlyArea').show();
+                            $('#modelInfoEdit').html("Edit");
                         }
                         else {
-                            alert("this should not happen");
+                            $('#modelInfoViewOnlyArea').hide();
+                            if (folderDetails.FolderImage == null) {
+                                FolderDetailModel.FolderImage = currentSrc;
+                            }
+                            else {
+                                //alert("MODEL NAME: " + modelName);
+                            }
                             $('#modelDialogThumbNailImage').attr("src", folderDetails.FolderImage);
+                            $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
+                            $('#modelInfoEditArea').show();
+                            $('#modelInfoViewOnlyArea').hide();
+                            $('#txtFolderName').val(folderDetails.FolderName);
+                            $('#txtBorn').val(folderDetails.Born);
+                            $('#txaModelComment').val(folderDetails.CommentText);
+                            $('#txtNationality').val(folderDetails.Nationality);
+                            $('#txtMeasurements').val(folderDetails.Measurements);
+                            $('#externalLinks').html(folderDetails.ExternalLinks);
+                            $('#modelInfoEdit').html("Save");
+                            $('#modelInfoEditArea').show();
                         }
-                        $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
-                        $('#modelInfoEditArea').show();
-                        $('#modelInfoViewOnlyArea').hide();
-                        $('#txtFolderName').val(folderDetails.FolderName);
-                        $('#txtBorn').val(folderDetails.Born);
-                        $('#txaModelComment').val(folderDetails.CommentText);
-                        $('#txtNationality').val(folderDetails.Nationality);
-                        $('#txtMeasurements').val(folderDetails.Measurements);
-                        $('#externalLinks').html(folderDetails.ExternalLinks);
-                        $('#modelInfoEdit').html("Save");
                     }
+                    else
+                        alert("Get FolderDetail model Info : " + folderDetails.Success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("Get Model Info jqXHR : " + getXHRErrorDetails(jqXHR, exception));
                 }
-                else
-                    alert("Get FolderDetail model Info : " + folderDetails.Success);
-            },
-            error: function (jqXHR, exception) {
-                alert("Get Model Info jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
+            });
+        }
+
+        $('#modelInfoDialog').dialog("open");
+        //$('#modelInfoDialog').fadeIn();
     }
 
-    function addHref() {
+    function addHrefToExternalLinks() {
         $('#externalLinks').append("<a href=" + $('#txtLinkHref').val() + ">" + $('#txtLinkLabel').val() + "</a><br/>");
         $('#txtLinkHref').val('');
         $('#txtLinkLabel').val('')
@@ -196,7 +172,7 @@
                 $('#modelInfoViewOnlyArea').hide();
                 break;
             case "Add":
-                addNewFolderDetail();
+                createPosersIdentifiedFolder();
                 break;
             case "Save":
                 updateFolderDetail();
@@ -226,26 +202,82 @@
         return true;
     }
 
-    function addNewFolderDetail() {
+
+    function createPosersIdentifiedFolder() {
+        var defaultParentFolder = 917;
         if (validate()) {
+            // step 1:  Create new Ftmp Folder
             $.ajax({
                 type: "POST",
-                url: service + "/api/ImageCategoryDetail",
-                data: FolderDetailModel,
-                success: function (success) {
-                    if (success === "ok") {
-                        displayStatusMessage("ok", "Model info added");
+                url: service + "/api/FtpDashBoard/CreateFolder?parentId=" + defaultParentFolder + "&newFolderName=" + FolderDetailModel.FolderName,
+                success: function (successModel) {
+                    $('#dashBoardLoadingGif').hide();
+                    if (successModel.Success == "ok") {
+                        // step 2: Move Image 
+                        displayStatusMessage("ok", "new folder created");
+                        //linkId = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
+                        var MoveCopyImageModel = {
+                            Mode: "Archive",
+                            Link: FolderDetailModel.FolderImage,
+                            SourceFolderId : FolderDetailModel.FolderId,
+                            DestinationFolderId : successModel.ReturnValue
+                        };
 
-                        $('#modelInfoEdit').html("Save");
+                        $.ajax({
+                            type: "PUT",
+                            url: service + "/api/MoveImage/MoveImage",
+                            data: MoveCopyImageModel,
+                            success: function (success) {
+                                if (success === "ok") {
+                                    displayStatusMessage("ok", "image moved to newfolder");
+
+
+
+                                }
+                                else {
+                                    alert("ftp Move " + success);
+                                }
+                            },
+                            error: function (xhr) {
+                                $('#moveCopyDialogLoadingGif').hide();
+                                alert("ftp Move xhr error: " + xhr.statusText);
+                            }
+                        });
                     }
                     else
-                        alert("Add Model info: " + success);
+                        alert("CreateVirtualFolder: " + successModel.Success);
                 },
-                error: function (jqXHR, exception) {
-                    alert("Add ModelInfo jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                error: function (xhr) {
+                    $('#dashBoardLoadingGif').hide();
+                    alert("CreateVirtualFolder xhr error: " + getXHRErrorDetails(xhr));
                 }
             });
         }
+
+            //// 2. actually create
+            //string extension = model.FolderImage.Substring(model.FolderImage.LastIndexOf("."));
+            ////string sourceOriginPath = Helpers.GetParentPath(dbParent.Id, true);
+            //string linkId = model.FolderImage.Substring(model.FolderImage.LastIndexOf("_") + 1, 36);
+            ////string ftpSource = "ftp://50.62.160.105/" + dbParent.RootFolder + ".ogglebooble.com/" + sourceOriginPath + "posers identified/" + model.FolderName + "_" + linkId + extension;
+
+            //string ftpSource = model.FolderImage.Replace("http://", "ftp://50.62.160.105/");
+            //string expectedFileName = model.FolderName + "_" + linkId + extension;
+            //string ftpDestinationPath = "ftp://50.62.160.105/archive.ogglebooble.com/posers identified/" + model.FolderName;
+
+            //if (!FtpUtilies.DirectoryExists(ftpDestinationPath))
+            //    FtpUtilies.CreateDirectory(ftpDestinationPath);
+
+            //success = FtpUtilies.MoveFile(ftpSource, ftpDestinationPath + "/" + expectedFileName);
+
+            //ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == linkId).First();
+            //goDaddyrow.Link = "http://archive.ogglebooble.com/posers identified/" + model.FolderName + "/" + expectedFileName;
+            //goDaddyrow.FolderLocation = newFolderId;
+
+            //db.CategoryImageLinks.Add(new CategoryImageLink() { ImageCategoryId = newFolderId, ImageLinkId = linkId });
+            //db.SaveChanges();
+
+
+            // 2. add new category folder row and folder detail row
     }
 
     function updateFolderDetail() {
@@ -267,6 +299,7 @@
             })
         }
     }
+
 
     function considerClosingModelInfoDialog() {
         if ($('#modelInfoEdit').html() == "Edit")

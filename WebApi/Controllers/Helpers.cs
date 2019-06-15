@@ -1,15 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using WebApi.DataContext;
 
 namespace WebApi
 {
-    public class Helpers
+    public enum FolderAttributeCode
     {
+        Title = 40091,
+        Comment = 40092,
+        UserComment = 37510,
+        Author = 40093,
+        Keywords = 40094,
+        Subject = 40095,
+        Copyright = 33432,
+        Software = 11,
+        ImageId = 32781,
+        DateTime = 36867,
+        SubjetLocation = 41492
+    }
+
+    public static class Helpers
+    {
+        public static Image SetMetaValue(this Image image, FolderAttributeCode property, string value)
+        {
+            PropertyItem prop = image.PropertyItems[0];
+            int iLen = value.Length + 1;
+            byte[] bTxt = new Byte[iLen];
+            for (int i = 0; i < iLen - 1; i++)
+                bTxt[i] = (byte)value[i];
+            bTxt[iLen - 1] = 0x00;
+            prop.Id = (int)property;
+            prop.Type = 2;
+            prop.Value = bTxt;
+            prop.Len = iLen;
+            return image;
+        }
+
+        public static string GetMetaValue(this Image image, int propertyId)
+        {
+            PropertyItem[] propItems = image.PropertyItems;
+            var prop = propItems.FirstOrDefault(p => p.Id == propertyId);
+            if (prop != null)
+            {
+                return Encoding.UTF8.GetString(prop.Value);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public static string ErrorDetails(Exception ex)
         {
             string msg = "ERROR: " + ex.Message;
@@ -69,13 +116,13 @@ namespace WebApi
             }
         }
 
-        private static Random random = new Random();
-        public string GetRandomString(int length = 12)
-        {
-            const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, length)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
-        }
+        //private static Random random = new Random();
+        //public string GetRandomString(int length = 12)
+        //{
+        //    const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        //    return new string(Enumerable.Repeat(chars, length)
+        //      .Select(s => s[random.Next(s.Length)]).ToArray());
+        //}
 
         public static string GetIPAddress()
         {
@@ -95,7 +142,25 @@ namespace WebApi
             }
         }
 
-        public static string GetParentPath(int folderId, bool withoutRoot)
+        public static string GetLocalParentPath(int folderId)
+        {
+            string parentPath = "";
+            using (OggleBoobleContext db = new OggleBoobleContext())
+            {
+                //var thisFolder = db.ImageFolders.Where(f => f.Id == folderId).First();
+                //parentPath = thisFolder.FolderName;
+                int parentId = db.CategoryFolders.Where(f => f.Id == folderId).Select(f => f.Parent).First();
+                while (parentId > 1)
+                {
+                    var parentDb = db.CategoryFolders.Where(f => f.Id == parentId).First();
+                    parentPath = parentDb.FolderName + "/" + parentPath;
+                    parentId = parentDb.Parent;
+                }
+            }
+            return parentPath;
+        }
+
+        public static string GetFtpParentPathWithoutRoot(int folderId)
         {
             string parentPath = "";
             using (OggleBoobleContext db = new OggleBoobleContext())
@@ -110,10 +175,7 @@ namespace WebApi
                     parentId = parentDb.Parent;
                 }
             }
-            if (withoutRoot)
-                return parentPath.Substring(parentPath.IndexOf("/") + 1);
-            else
-                return parentPath;
+            return parentPath.Substring(parentPath.IndexOf("/") + 1);
         }
 
         public static string GetFirstImage(int parentFolder)

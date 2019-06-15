@@ -64,9 +64,9 @@
     </div>
 
     <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
-        <div onclick="openFolder()">Open Folder</div>
-        <div onclick="showCategoryDetails()">Show Category Info</div>
-        <div onclick="showInfoDialog()">Show Model Info</div>
+        <div onclick="dashboardContextMenuOpenFolder()">Open Folder</div>
+        <div onclick="dashboardContextMenuShowCategoryDetails()">Show Category Info</div>
+        <div onclick="dashboardContextMenuShowInfoDialog()">Show Model Info</div>
     </div>
 
     <div id="newFolderCrud" class="oggleHidden" title="Create New Folder">
@@ -100,6 +100,7 @@
         <div class="clickable" onclick="showMovefolderDialog()">Move Folder</div>
         <div class="clickable" onclick="showRenameFolderDialog()">ReName Folder</div>
         <div class="clickable" onclick="collapseChildFolder()">Collapse Folder</div>
+        <div class="clickable" onclick="loadProperties()">Load Properties</div>
         <div class="clickable" onclick="repairLinks()">Repair Links</div></dir>`);
 
         buildDirectoryTree();
@@ -115,10 +116,13 @@
         var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);
         if (workAreaHeight > $('#middleColumn').height()) {
             $('#middleColumn').height(workAreaHeight);
+            $('#footerMessage').html("middleColumn.height: " + $('#middleColumn').height()); //image height: " + $('#imgLinkPreview').height());
         }
+        else
+            $('#footerMessage').html("_");
+
         $('#divDashboardContainer').height($('#middleColumn').height() - 150);
         $('.floatingCrud').width($('.workarea').width() - 100);
-        //$('#footerMessage').html("$('#middleColumn').height(): "+$('#middleColumn').height()); //image height: " + $('#imgLinkPreview').height());
     }
 
     function setSignalR() {
@@ -148,9 +152,7 @@
     {
         $('#dirTreeContainer').html("");
         $('#getDirTreeLoadingGif').show();
-        $.when(buildDirTree($('#dirTreeContainer'), "dashboardMain", 0)).done(function () {
-            $('#getDirTreeLoadingGif').hide();
-        });
+        buildDirTree($('#dirTreeContainer'), "dashboardMain", 0);
     }
 
     function addVideo() {
@@ -232,17 +234,15 @@
             width: "615"
         });
     }
+
     function createNewFolder() {
-
-
         $('#dashBoardLoadingGif').fadeIn();
         var newFolder = {};
         newFolder.FolderName = $('#txtNewFolderTitle').val();
         newFolder.Parent = dashboardMainSelectedTreeId;
         $.ajax({
-            type: "PUT",
-            url: service + "/api/FtpDashBoard/CreateFolder",
-            data: newFolder,
+            type: "POST",
+            url: service + "/api/FtpDashBoard/CreateFolder?parentId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtNewFolderTitle').val(),
             success: function (success) {
                 $('#dashBoardLoadingGif').hide();
                 if (success == "ok") {
@@ -260,20 +260,43 @@
         });
     }
 
+    function loadProperties() {
+        $('#dataifyInfo').show().html("adding size info");
+        $.ajax({
+            type: "PATCH",
+            url: service + "api/FtpDashBoard/GetFileProps?folderId=" + dashboardMainSelectedTreeId,
+            success: function (success) {
+                $('#getImagesLoadingGif').hide();
+                if (success == "ok") {
+                    displayStatusMessage("ok", "done");
+                    $('#dataifyInfo').hide();
+                }
+                else
+                    alert("GetFileProps: " + success);
+            },
+            error: function (jqXHR, exception) {
+                $('#getImagesLoadingGif').hide();
+                alert("GetFileProps jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
     function collapseChildFolder() {
         if (confirm("collapse " + $('.txtLinkPath').val())) {
             $('#dashBoardLoadingGif').fadeIn();
             $('#dataifyInfo').show().html("collapse Child Folder");
             //$('#progressBar').progressbar("enable");
+            $('#progressBar').show();
             $.ajax({
                 type: "GET",
-                url: service + "/api/FtpImagePage/CollapseFolder?folderId=" + dashboardMainSelectedTreeId,
+                url: service + "/api/MoveImage/CollapseFolder?folderId=" + dashboardMainSelectedTreeId,
                 success: function (success) {
                     $('#dashBoardLoadingGif').hide();
                     if (success == "ok") {
                         displayStatusMessage("ok", "collapse succeded");
                         buildDirectoryTree();
-                        $('#progressBar').progressbar("destroy");
+                        $('#progressBar').hide();
+                        //$('#progressBar').progressbar("destroy");
                     }
                     else
                         alert("collapseChildFolder: " + success);
@@ -308,9 +331,7 @@
     }
     function moveFolder() {
         $('#dataifyInfo').show().html("Preparing to Move Folder");
-        //$('#dashBoardLoadingGif').fadeIn();
-        //$('#moveFolderCrud').fadeOut();
-        //$('#progressBar').progressbar("enable");
+        $('#progressBar').show();
         $.ajax({
             type: "PUT",
             url: service + "/api/FtpDashboard/MoveFolder?orignFolderId=" + partialViewSelectedItemId + "&destinationParentId=" + dashboardMainSelectedTreeId,
@@ -321,7 +342,9 @@
                 if (!success.startsWith("ERROR")) {
                     displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val());
                     buildDirectoryTree();
-                    $('#progressBar').progressbar("destroy");
+                    $('#progressBar').hide();
+
+                    //$('#progressBar').progressbar("destroy");
                 }
                 else
                     alert("Move Folder: " + success);
@@ -395,7 +418,7 @@
         $('#repairLinksReport').html("");
         $.ajax({
             type: "GET",
-            url: service + "/api/FtpDashBoard/RepairLinks/?startFolderId=" + dashboardMainSelectedTreeId + "&drive=XX",
+            url: service + "/api/RepairLinks/RepairLinks/?startFolderId=" + dashboardMainSelectedTreeId + "&drive=XX",
             success: function (repairReport) {
                 $('#dashBoardLoadingGif').hide();
                 if (repairReport.Success == "ok") {
@@ -497,13 +520,13 @@
         $('#dashboardContextMenu').css("left", event.clientX);
         $('#dashboardContextMenu').fadeIn();
     }
-    function openFolder() {
+    function dashboardContextMenuOpenFolder() {
         window.open("/album?folder=" + dashboardContextMenuFolderId, "_blank");
     }
-    function showCategoryDetails() {
+    function dashboardContextMenuShowCategoryDetails() {
         showCategoryDialog(dashboardContextMenuFolderId);
     }
-    function showInfoDialog() {
+    function dashboardContextMenuShowInfoDialog() {
         showModelInfoDialog($('.txtLinkPath').val(), dashboardContextMenuFolderId, "http://boobs.ogglebooble.com/redballon.png");
     }
 

@@ -31,7 +31,7 @@ function resizePage(debug) {
     if ($('#middleColumn').height() < winH - hdrH)
         $('#middleColumn').height(winH - hdrH);
     else {
-        $('.threeColumnArray').height($('#middleColumn').height() + hdrH + 450);
+        $('.threeColumnArray').height($('#middleColumn').height() + hdrH + 40);
         //$('#footerMessage').html("h: " + $('.threeColumnArray').height());
     }
 

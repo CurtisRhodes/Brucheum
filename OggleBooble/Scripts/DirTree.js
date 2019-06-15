@@ -13,7 +13,7 @@ function buildDirTree(dest, treeId, startNode) {
         dirTreeContainer = "";
         $.ajax({
             type: "GET",
-            url: service + "api/DashBoard/RebuildCatTree?root=" + startNode,
+            url: service + "api/CatTree/Get?root=" + startNode,
             success: function (categoryTreeModel) {
 
                 if (treeId === "dashboardMain")
@@ -23,9 +23,10 @@ function buildDirTree(dest, treeId, startNode) {
                 var delta = (Date.now() - start) / 1000;
                 console.log("rebuildCatTree took: " + delta.toFixed(3));
 
-                if (treeId === "dashboardMain") 
+                if (treeId === "dashboardMain") {
                     $('#dataifyInfo').html("rebuildCatTree took: " + delta.toFixed(3) + " total folders: " + totalFolders + " total pics: " + totalPics);
-
+                    $('#getDirTreeLoadingGif').hide();
+                }
                 dest.html(dirTreeContainer);
             },
             error: function (xhr) {
@@ -85,6 +86,6 @@ function showFolderImage(link) {
     $('#dirTreeImageContainer').css("left", event.clientX + 10);
     $('#dirTreeImage').attr("src", link);
     $('#dirTreeImageContainer').show();
-    $('#footerMessage').html(link);
+    //$('#footerMessage').html(link);
 }
 

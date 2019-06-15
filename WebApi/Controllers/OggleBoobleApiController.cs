@@ -80,6 +80,7 @@ namespace WebApi
             return model;
         }
 
+        // create new folder in Posers Identified
         [HttpPost]
         public string Insert(CategoryFolderDetailModel model)
         {
@@ -89,9 +90,7 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     int newFolderId = 0; 
-                    //CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.FolderId).First();
                     CategoryFolder dbParent = db.CategoryFolders.Where(f => f.FolderName == "posers identified").First();
-
                     CategoryFolder poser = new CategoryFolder()
                     {
                         FolderName = model.FolderName,
@@ -101,27 +100,6 @@ namespace WebApi
                     db.CategoryFolders.Add(poser);
                     db.SaveChanges();
                     newFolderId = poser.Id;
-
-                    string extension = model.FolderImage.Substring(model.FolderImage.LastIndexOf("."));
-                    //string sourceOriginPath = Helpers.GetParentPath(dbParent.Id, true);
-                    string linkId = model.FolderImage.Substring(model.FolderImage.LastIndexOf("_") + 1, 36);
-                    //string ftpSource = "ftp://50.62.160.105/" + dbParent.RootFolder + ".ogglebooble.com/" + sourceOriginPath + "posers identified/" + model.FolderName + "_" + linkId + extension;
-
-                    string ftpSource = model.FolderImage.Replace("http://", "ftp://50.62.160.105/");
-                    string expectedFileName = model.FolderName + "_" + linkId + extension;
-                    string ftpDestinationPath = "ftp://50.62.160.105/archive.ogglebooble.com/posers identified/" + model.FolderName;
-
-                    if (!FtpDirectory.DirectoryExists(ftpDestinationPath))
-                        FtpDirectory.CreateDirectory(ftpDestinationPath);
-
-                    success = FtpDirectory.MoveFile(ftpSource, ftpDestinationPath + "/" + expectedFileName);
-
-                    ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == linkId).First();
-                    goDaddyrow.Link = "http://archive.ogglebooble.com/posers identified/" + model.FolderName + "/" + expectedFileName;
-                    goDaddyrow.FolderLocation = newFolderId;
-
-                    db.CategoryImageLinks.Add(new CategoryImageLink() { ImageCategoryId = newFolderId, ImageLinkId = linkId });
-                    db.SaveChanges();
 
                     db.CategoryFolderDetails.Add(new CategoryFolderDetail()
                     {
@@ -163,31 +141,6 @@ namespace WebApi
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
-        }
-    }
-
-    [EnableCors("*", "*", "*")]
-    public class CategoryFolderController : ApiController
-    {
-        [HttpGet]
-        public CategoryFolderModel GetParent(int folderId)
-        {
-            CategoryFolderModel categoryFolder = new CategoryFolderModel();
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    CategoryFolder x = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                    CategoryFolder p = db.CategoryFolders.Where(f => f.Id == x.Parent).First();
-                    categoryFolder.FolderName = p.FolderName;
-                    categoryFolder.Id = p.Id;
-                }
-            }
-            catch (Exception ex)
-            {
-                categoryFolder.Success = Helpers.ErrorDetails(ex);
-            }
-            return categoryFolder;
         }
 
         [HttpPut]
@@ -249,22 +202,22 @@ namespace WebApi
                     CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                     imageLinks.Origin = dbCategoryFolder.RootFolder;
 
-                    List<VwDirTree> subDirs  = db.VwDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.FolderName).ToList();
+                    List<VwDirTree> vwTrees = db.VwDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.FolderName).ToList();
                     string folderImage = null;
 
-                    foreach (VwDirTree subDir in subDirs)
+                    foreach (VwDirTree vwTree in vwTrees)
                     {
-                        if (subDir.Link == null)
-                            folderImage = Helpers.GetFirstImage(subDir.Id);
+                        if (vwTree.Link == null)
+                            folderImage = Helpers.GetFirstImage(vwTree.Id);
 
                         imageLinks.SubDirs.Add(new CategoryTreeModel()
                         {
                             LinkId = Guid.NewGuid().ToString(),
                             //DanniPath = folderId,
-                            FolderId = subDir.Id,
-                            DirectoryName = subDir.FolderName,
-                            Length = Math.Max(subDir.FileCount, subDir.SubDirCount),
-                            Link = subDir.Link
+                            FolderId = vwTree.Id,
+                            DirectoryName = vwTree.FolderName,
+                            Length = vwTree.FileCount + vwTree.TotalFiles + vwTree.GrandTotalFiles,
+                            Link = vwTree.Link
                         });
                     }
 
@@ -310,36 +263,50 @@ namespace WebApi
                 imageLinks.Files.AddRange(db.VwLinks.Where(v => v.FolderId == childFolderId).ToList());
             }
         }
+    }
 
-        // imagePage copy
-        [HttpPut]
-        public string CopyImageLink(MoveCopyImageModel model)
+
+    [EnableCors("*", "*", "*")]
+    public class BreadCrumbsController : ApiController
+    {
+        [HttpGet]
+        public BreadCrumbModel Get(int folderId)
         {
-            string success = "";
+            BreadCrumbModel breadCrumbModel = new BreadCrumbModel();
             try
             {
-                string linkId = model.Link.Substring(model.Link.LastIndexOf("_") + 1, 36);
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    CategoryImageLink existingLink = db.CategoryImageLinks
-                        .Where(l => l.ImageCategoryId == model.DestinationFolderId)
-                        .Where(l => l.ImageLinkId == linkId).FirstOrDefault();
-                    if (existingLink != null)
-                        success = "Link already exists";
-                    else
+                    var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                    breadCrumbModel.BreadCrumbs.Add(new BreadCrumbItemModel()
                     {
-                        db.CategoryImageLinks.Add(new CategoryImageLink()
+                        FolderId = thisFolder.Id,
+                        FolderName = thisFolder.FolderName,
+                        IsInitialFolder = true
+                    });
+                    breadCrumbModel.RootFolder = thisFolder.RootFolder;
+                    breadCrumbModel.FolderName = thisFolder.FolderName;
+
+                    var parent = thisFolder.Parent;
+                    while (parent > 1)
+                    {
+                        var parentDb = db.CategoryFolders.Where(f => f.Id == parent).First();
+                        breadCrumbModel.BreadCrumbs.Add(new BreadCrumbItemModel()
                         {
-                            ImageCategoryId = model.DestinationFolderId,
-                            ImageLinkId = linkId
+                            FolderId = parentDb.Id,
+                            FolderName = parentDb.FolderName,
+                            IsInitialFolder = false
                         });
-                        db.SaveChanges();
-                        success = "ok";
+                        parent = parentDb.Parent;
                     }
+                    breadCrumbModel.Success = "ok";
                 }
             }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
+            catch (Exception ex)
+            {
+                breadCrumbModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return breadCrumbModel;
         }
     }
 
@@ -418,7 +385,7 @@ namespace WebApi
     }
 
     [EnableCors("*", "*", "*")]
-    public class DashBoardController : ApiController
+    public class CatTreeController : ApiController
     {
         // dashboard -- returns a fully loaded dir tree
         [HttpGet]
@@ -442,64 +409,24 @@ namespace WebApi
         }
         private void GetCatTreeRecurr(CategoryTreeModel parent, List<VwDirTree> vwDirTree, string path)
         {
-            var childFolders = vwDirTree.Where(f => f.Parent == parent.FolderId).OrderBy(f => f.FolderName).ToList();
-            foreach (VwDirTree childFolder in childFolders)
+            var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).OrderBy(f => f.FolderName).ToList();
+            foreach (VwDirTree vwTree in vwTrees)
             {
                 var subChild = new CategoryTreeModel()
                 {
-                    FolderId = childFolder.Id,
-                    ParentId = childFolder.Parent,
-                    DirectoryName = childFolder.FolderName,
-                    Link = childFolder.Link,
-                    Length = Math.Max(childFolder.FileCount, childFolder.SubDirCount),
-                    DanniPath = (path + "/" + childFolder.FolderName).Replace(" ", "%20")
+                    FolderId = vwTree.Id,
+                    ParentId = vwTree.Parent,
+                    DirectoryName = vwTree.FolderName,
+                    Link = vwTree.Link,
+                    Length = vwTree.FileCount + vwTree.TotalFiles + vwTree.GrandTotalFiles,
+                    DanniPath = (path + "/" + vwTree.FolderName).Replace(" ", "%20")
                 };
                 subChild.LinkId = subChild.GetHashCode().ToString();
 
                 parent.SubDirs.Add(subChild);
 
-                GetCatTreeRecurr(subChild, vwDirTree, (path + "/" + childFolder.FolderName).Replace(" ", "%20"));
+                GetCatTreeRecurr(subChild, vwDirTree, (path + "/" + vwTree.FolderName).Replace(" ", "%20"));
             }
-        }
-
-        [HttpGet]
-        public BreadCrumbModel GetBreadCrumbs(int folderId)
-        {
-            BreadCrumbModel breadCrumbModel = new BreadCrumbModel();
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                    breadCrumbModel.BreadCrumbs.Add(new BreadCrumbItemModel()
-                    {
-                        FolderId = thisFolder.Id,
-                        FolderName = thisFolder.FolderName,
-                        IsInitialFolder = true
-                    });
-                    breadCrumbModel.RootFolder = thisFolder.RootFolder;
-                    breadCrumbModel.FolderName = thisFolder.FolderName;
-
-                    var parent = thisFolder.Parent;
-                    while (parent > 1)
-                    {
-                        var parentDb = db.CategoryFolders.Where(f => f.Id == parent).First();
-                        breadCrumbModel.BreadCrumbs.Add(new BreadCrumbItemModel()
-                        {
-                            FolderId = parentDb.Id,
-                            FolderName = parentDb.FolderName,
-                            IsInitialFolder = false
-                        });
-                        parent = parentDb.Parent;
-                    }
-                    breadCrumbModel.Success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                breadCrumbModel.Success = Helpers.ErrorDetails(ex);
-            }
-            return breadCrumbModel;
         }
 
         string XXCreateFolder(CategoryFolderModel model)
@@ -743,6 +670,17 @@ namespace WebApi
             }
             return success;
         }
+
+        //string[] GetTransitions(string folder)
+        //{
+        //    string danni = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Danni/transitions") + "/" + folder;
+        //    FileInfo[] files = new DirectoryInfo(danni).GetFiles();
+        //    List<string> images = new List<string>();
+        //    foreach (FileInfo img in files)
+        //        images.Add(img.Name);
+        //    return images.ToArray();
+        //}
+
     }
 
     [EnableCors("*", "*", "*")]

@@ -119,4 +119,23 @@ namespace WebApi.Models
         public string TagType { get; set; }
         public string Tag { get; set; }
     }
+
+    public class FilePropertiesResultsModel
+    {
+        public FilePropertiesResultsModel()
+        {
+            FileProperties = new List<FilePropertiesModel>();
+        }
+        public List<FilePropertiesModel> FileProperties { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class FilePropertiesModel
+    {
+        public string Name { get; set; }
+        public string Value { get; set; }
+    }
+
+
+
 }

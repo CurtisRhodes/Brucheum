@@ -6,12 +6,22 @@
 <div>@Html.Partial("_CategoryDialog")</div>
 <div>@Html.Partial("_ImageViewer")</div>
 
+<style>
+    .attrBox {
+        position: absolute;
+        border: solid thin black;
+        display: none;
+    }
+</style>
+
+
 <div id="staticableContent">
     <div class="threeColumnArray">
         <div id="leftColumn"></div>
         <div id="middleColumn">
             <div id="divBreadCrumbs"></div>
             <div id="divStatusMessage"></div>
+            <div id="divTestBox" class="attrBox"></div>
             <img id="getImagesLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
             <div id="imageContainer" class="flexWrapContainer">
 
@@ -32,6 +42,8 @@
         <div class="adminLink" onclick="contextMenuAction('copy')">Copy Link</div>
         <div class="adminLink" onclick="contextMenuAction('move')">Move Link</div>
         <div class="adminLink" onclick="contextMenuAction('remove')">Remove Link</div>
+        <div class="adminLink" onclick="contextMenuAction('links')">Show Links</div>
+        <div class="adminLink" onclick="contextMenuAction('props')">Properties</div>
         <div class="adminLink" onclick="contextMenuAction('setF')">Set as Folder Image</div>
         <div class="adminLink" onclick="contextMenuAction('setC')">Set as Category Image</div>
     </div>
@@ -40,10 +52,10 @@
     <div>@Html.Partial("_ImageCommentDialog")</div>
 
     <div id="removeLinkDialog" title="Remove Image" class="oggleHidden">
-        <div><input type="radio" value="DUP" name="rdoRejectImageReasons"/>  dupe</div>
-        <div><input type="radio" value="LOW" name="rdoRejectImageReasons"/>  low quality</div>
+        <div><input type="radio" value="DUP" name="rdoRejectImageReasons" />  dupe</div>
+        <div><input type="radio" value="LOW" name="rdoRejectImageReasons" />  low quality</div>
         <div>
-            <span class="roundendButton" onclick="onRemoveImageClick('ok')" >ok</span>   
+            <span class="roundendButton" onclick="onRemoveImageClick('ok')">ok</span>
             <span class="roundendButton" onclick="onRemoveImageClick('cancel')">cancel</span>
         </div>
     </div>
@@ -61,6 +73,7 @@
 <script>
     var imageArray = new Array();
     $(document).ready(function () {
+
         if (folderId == "") {
             window.location.href = "/";
         }
@@ -69,12 +82,12 @@
         $('#imageContainer').width($('#middleColumn').width());
         $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
 
-        if ((isPornEditor == "True") || (document.domain === 'localhost')) {
-            $('#headerMessage').html(`Dashboard <dir class='linkContainer'>
-            <div class="clickable" onclick="staticify()">staticify</div>
-            <div class="clickable" onclick="showAllChildren()>Add Video Link</div>
-            <div class="clickable" onclick="repairLinks()">add meta tags</div></dir>`);
-        }
+        //if ((isPornEditor == "True") || (document.domain === 'localhost')) {
+        //    $('#headerMessage').html(`Dashboard <dir class='linkContainer'>
+        //<div class="clickable" onclick="staticify()">staticify</div>
+        //<div class="clickable" onclick="showAllChildren()>Add Video Link</div>
+        //<div class="clickable" onclick="repairLinks()">add meta tags</div></dir>`);
+        //};
 
         getBreadCrumbs();
         getImageLinks();

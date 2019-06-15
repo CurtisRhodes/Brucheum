@@ -265,7 +265,7 @@ function resizeCarousel() {
 }
 
 function onImageNotLoaded() {
-    alert("bk image " + carouselItemArray[imageIndex].Link + " not found")
+    alert("bk image " + carouselItemArray[imageIndex].Link + " not found");
 }
 
 function rotate() {
