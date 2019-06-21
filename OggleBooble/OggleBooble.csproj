@@ -259,7 +259,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\AlbumController.cs" />
     <Compile Include="Controllers\Helpers.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -298,6 +297,8 @@
     <Content Include="Scripts\Cookies.js" />
     <Content Include="Scripts\3rd Party\jquery.signalR-2.4.1.min.js" />
     <Content Include="Scripts\DirTree.js" />
+    <Content Include="Scripts\ImageViewer.js" />
+    <Content Include="Styles\imageViewer.css" />
     <Content Include="Static_Pages\Images\close.png" />
     <Content Include="Static_Pages\Images\comment.png" />
     <Content Include="Static_Pages\Images\expand02.png" />
@@ -343,7 +344,7 @@
     <Content Include="Scripts\adminFunctions.js" />
     <Content Include="Scripts\GlobalFunctions.js" />
     <Content Include="Scripts\Helper.js" />
-    <Content Include="Scripts\Album.js" />
+    <Content Include="Scripts\ImagePage.js" />
     <Content Include="Scripts\Layouts.js" />
     <Content Include="Scripts\ResizeThreeColumnPage.js" />
     <Content Include="Scripts\video\mediaelement-and-player.js" />
@@ -369,7 +370,7 @@
     <Content Include="Images\classic\transitions.jpg" />
     <Content Include="Styles\fixedHeader.css" />
     <Content Include="Styles\footer.css" />
-    <Content Include="Styles\album.css" />
+    <Content Include="Styles\imagePage.css" />
     <Content Include="Styles\modalDialog.css" />
     <Content Include="Styles\video\mediaelementplayer-legacy.css" />
     <Content Include="Styles\video\mediaelementplayer.css" />
@@ -403,7 +404,7 @@
     <Content Include="Views\Shared\_MetaTagDialog.cshtml" />
     <Content Include="Views\Admin\MetaTagEdit.cshtml" />
     <Content Include="Views\Shared\_ImageViewer.cshtml" />
-    <Content Include="Views\Album\Album.cshtml" />
+    <Content Include="Views\Home\ImagePage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

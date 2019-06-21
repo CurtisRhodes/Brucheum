@@ -76,7 +76,7 @@
         cursor: pointer;
     }
 
-.headerMessageArea {
+.breadCrumbArea {
     display: inline-block;
     width: 100%;
     color: var(--ogglgeSubTitleColor);

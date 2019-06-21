@@ -16,7 +16,7 @@ function setLayout(layoutName) {
             //$('head title').html("Mobile Boobs");
             $('#bannerTitle').css("font-size", "15px");
             $('#headerSubTitle').html(" ");
-            $('#headerMessage').html(" ");
+            $('#breadcrumbContainer').html(" ");
             $('#menuContainer').html(" ");
             break;
         case 'mobilePorn':
@@ -26,7 +26,7 @@ function setLayout(layoutName) {
             $('#bannerTitle').css("font-size", "15px").html("cocksuckers");
             //$('head title').html("Mobile Porn");
             $('#headerSubTitle').html(" ");
-            $('#headerMessage').html(" ");
+            $('#breadcrumbContainer').html(" ");
             $('#menuContainer').html(" ");
 
 

@@ -263,6 +263,35 @@ namespace WebApi
                 imageLinks.Files.AddRange(db.VwLinks.Where(v => v.FolderId == childFolderId).ToList());
             }
         }
+
+        [HttpPatch]
+        public LinksModel GetLinks(string linkId)
+        {
+            var links = new LinksModel();            
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+
+                    links.Links =
+                        (from l in db.CategoryImageLinks
+                         join f in db.CategoryFolders on l.ImageCategoryId equals f.Id
+                         join p in db.CategoryFolders on f.Parent equals p.Id
+                         where l.ImageLinkId == linkId
+                         select (new LinkModel()
+                         {
+                             FolderId = f.Id,
+                             PathName = p.FolderName + "/" + f.FolderName
+                         })).ToList();
+                }
+                links.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                links.Success = Helpers.ErrorDetails(ex);
+            }
+            return links;
+        }
     }
 
 

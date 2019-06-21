@@ -1,6 +1,4 @@
-﻿import { Server } from "tls";
-
-var selectedImageArchiveFolderId;
+﻿var selectedImageArchiveFolderId;
 var currentContextLinkId;
 var forgetShowingCatDialog;
 var page = 0;
@@ -11,16 +9,12 @@ var viewerShowing = false;
 var slideShow;
 
 function getBreadCrumbs() {
-
-    //alert("url: " + service + "/api/BreadCrumbs/Get?folderId=" + folderId);
-
-
     $.ajax({
         type: "GET",
         url: service + "/api/BreadCrumbs/Get?folderId=" + folderId,
         success: function (breadCrumbModel) {
             if (breadCrumbModel.Success === "ok") {
-                $('#headerMessage').html("");
+                $('#breadcrumbContainer').html("");
                 for (i = breadCrumbModel.BreadCrumbs.length - 1; i >= 0; i--) {
                     if (breadCrumbModel.BreadCrumbs[i] === null) {
                         breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
@@ -28,17 +22,17 @@ function getBreadCrumbs() {
                     else {
                         // title: I do not remember having been Invited)
                         if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder) {
-                            $('#headerMessage').append("<a class='inactiveBreadCrumb' " +
+                            $('#breadcrumbContainer').append("<a class='inactiveBreadCrumb' " +
                                 "onmouseover='slowlyShowCatDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + "); forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;' >" +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                         else {
                             // a woman commited suicide when pictures of her "came out"
-                            $('#headerMessage').append("<a class='activeBreadCrumb' " +
+                            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' " +
                                 //"onmouseover='slowlyShowCatDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + ");" +
                                 //"forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;' " +
-                                //" onclick='forgetShowingCatDialog=true;' href='/album?folder=" +
-                                "href='/album?folder=" + breadCrumbModel.BreadCrumbs[i].FolderId + "'>" +
+                                //" onclick='forgetShowingCatDialog=true;' href='/ImagePage?folder=" +
+                                "href='ImagePage?folder=" + breadCrumbModel.BreadCrumbs[i].FolderId + "'>" +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                     }
@@ -74,7 +68,7 @@ function logPageHit() {
         data: hitCounterModel,
         success: function (success) {
             if (success == "ok") {
-                sendEmailFromJS("someone just visited " + folderName + " album Page", "someday it will be someone other than you");
+                sendEmailFromJS("someone just visited " + folderName + " ImagePage Page", "someday it will be someone other than you");
             }
             else
                 alert("logPageHit: " + success);
@@ -152,7 +146,7 @@ function processImages(imageLinksModel, start) {
     //  SUBFOLDERS
     $('#imageContainer').html('');
     $.each(imageLinksModel.SubDirs, function (idx, subDir) {
-        $('#imageContainer').append("<div class='folderImageOutterFrame'><div class='folderImageFrame' onclick=window.location.href='album?folder=" + subDir.FolderId + "'>" +
+        $('#imageContainer').append("<div class='folderImageOutterFrame'><div class='folderImageFrame' onclick=window.location.href='ImagePage?folder=" + subDir.FolderId + "'>" +
             "<img class='folderImage' src='" + subDir.Link + "'/>" +
             "<div class='folderImageFrameName'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div></div>");
     });
@@ -271,7 +265,7 @@ function contextMenuAction(action) {
             });
             break;
         case "jump":
-            window.open("/album?folder=" + selectedImageArchiveFolderId, "_blank");
+            window.open("/ImagePage?folder=" + selectedImageArchiveFolderId, "_blank");
             break;
         case "comment":
             $("#thumbImageContextMenu").fadeOut();
@@ -329,24 +323,27 @@ function contextMenuAction(action) {
 function showLinks() {
 
     $.ajax({
-        type: "GET",
-        url: service + "api/",
-        success: function (success) {
-            if (success == "ok") {
-                sendEmailFromJS("someone just visited " + folderName + " album Page", "someday it will be someone other than you");
+        type: "PATCH",
+        url: service + "api/ImagePage?linkId=" + currentContextLinkId,
+        success: function (linksModel) {
+            if (linksModel.Success === "ok") {
+                $('#linkInfo').show();
+                $('#linkInfoContainer').html("");
+                $.each(linksModel.Links, function (idx, obj) {
+                    $('#linkInfoContainer').append("<div id='" + obj.FolderId + "' class='linkInfoItem' onclick=openLink('" + obj.FolderId + "')'>" + obj.PathName + "</div>");
+                });
             }
             else
-                alert("logPageHit: " + success);
+                alert("showLinks: " + linksModel.Success);
         },
         error: function (jqXHR, exception) {
-            alert("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
+            alert("showLinks error: " + getXHRErrorDetails(jqXHR, exception));
         }
     });
-    
+}
 
-    $('#linkInfo').html("");
-
-
+function openLink(folderId) {
+    window.open("/ImagePage?folder=" + folderId + ", '_blank'");
 }
 
 function showProps(fileName) {
@@ -479,5 +476,3 @@ $(window).resize(function () {
         $('#footerMessage').html("image page resize");
     }
 });
-
-

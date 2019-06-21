@@ -36,6 +36,20 @@ namespace OggleBooble
         //    return View();
         //}
 
+        public ActionResult ImagePage(string folder)
+        {
+            if (folder == null)
+                return RedirectToAction("Index");
+
+            ViewBag.Title = folder.Substring(folder.LastIndexOf("/") + 1);
+            ViewBag.IsPornEditor = User.IsInRole("Porn Editor");
+            ViewBag.Service = apiService;
+            ViewBag.IpAddress = Helpers.GetIPAddress();
+            ViewBag.Folder = folder;
+            return View();
+        }
+
+
         private string GetUserInfo() {
             string userName = "";
             if (User.Identity.IsAuthenticated)
@@ -98,11 +112,14 @@ namespace OggleBooble
                 //$('head').append('<meta property="og:description" content="' + beautify(summary.substr(0, 300)) + '" />');
                 //$('head').append("<meta property='og:image' content='https://api.curtisrhodes.com/app_data/images/" + articleImageName + "'/>");
 
-                var head = "<head><script src='https://code.jquery.com/jquery-latest.min.js' type = 'text/javascript'></script>" +
+                var head = "<head><script src='https://code.jquery.com/jquery-latest.min.js' type='text/javascript'></script>" +
+                    "<script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>" +
                     "<script src = '../Scripts/GlobalFunctions.js'></script>" +
                     "<script src = '../Scripts/ResizeThreeColumnPage.js'></script>" +
+                    //"<script src = '../Scripts/ImagePage.js'></script>" +
                     "<link href = '../Styles/Default.css' rel= 'stylesheet' />" +
                     "<link href = '../Styles/fixedHeader.css' rel= 'stylesheet' />" +
+                    "<link href = '../Styles/imageViewer.css' rel='stylesheet' />" +
                     "<link href = '../Styles/footer.css' rel= 'stylesheet' />" +
                     "<link href = '../Styles/ImagePage.css' rel= 'stylesheet' />" +
                     "<meta name = 'Title' content = " + staticPage.Filename + " property= 'og:title' />" +
@@ -113,9 +130,18 @@ namespace OggleBooble
 
                  string staticContent =
                     "<!DOCTYPE html><html>" + head + "<body style='margin-top:105px'>" + staticPage.Html
-                     + "<script src='../Scripts/ImagePage.js'></script>"
-                     + "<script>$('.thumbImage').click(function() { showViewer($(this).attr('id'));});"
-                     + " var imageArray=" + staticPage.ImageArray + "</script></body></html>";
+                     + "<script> $('.thumbImage').click(function() { alert('thumbImage click');  viewerShowing=true; LaunchViewer(imageArray,$(this).attr('idx'),'" + staticPage.FolderId + "','cc'); });"                    
+                     + " var imageArray=" + staticPage.ImageArray 
+                     + "</script><script src='../Scripts/ImageViewer.js'></script></body></html>";
+
+
+                //        $('.thumbImage').click(function() {
+                //    viewerShowing = true;
+                //    LaunchViewer(imageArray, $(this).attr("idx"), folderId, currentUser);
+                //});
+
+
+
 
                 string filePath = Server.MapPath("~/Static_Pages");
                 using (var staticFile = System.IO.File.Open(filePath + "/" + staticPage.Filename, FileMode.Create))
@@ -144,6 +170,7 @@ namespace OggleBooble
     {
         public string Html { get; set; }
         public string Filename { get; set; }
+        public string FolderId { get; set; }
         public string ImageArray { get; set; }
     }
 

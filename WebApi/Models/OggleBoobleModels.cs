@@ -6,6 +6,23 @@ using WebApi.DataContext;
 
 namespace WebApi.Models
 {
+    public class LinksModel
+    {
+        public LinksModel()
+        {
+            Links = new List<LinkModel>();
+        }
+        public List<LinkModel> Links { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class LinkModel
+    {
+        public int FolderId { get; set; }
+        public string PathName { get; set; }
+    }
+
+
     public class ImageLinksModel
     {
         public ImageLinksModel()

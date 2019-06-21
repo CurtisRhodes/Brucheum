@@ -106,11 +106,11 @@ function showFolderCategoryDialog() {
 
 function clickViewGallery() {
     clearInterval(Carousel);
-    window.location.href = "/album?folder=" + carouselItemArray[imageIndex].FolderId;
+    window.location.href = "Home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
 }
 
 function clickViewParentGallery() {
-    window.location.href = "/album?folder=" + carouselItemArray[imageIndex].ParentId;
+    window.location.href = "Home/ImagePage?folder=" + carouselItemArray[imageIndex].ParentId;
 }
 
 function clickSpeed(speed) {
@@ -222,7 +222,7 @@ function carouselContextMenuAction(ctxMenuAction) {
             });
             break;
         case "seeMore":
-            window.open('/album?folder=' + selectedImageArchiveFolderId, '_blank');
+            window.open('/ImagePage?folder=' + selectedImageArchiveFolderId, '_blank');
             break;
         case "explode":
             window.open(carouselItemArray[imageIndex].Link, "_blank");
