@@ -237,7 +237,11 @@ function carouselContextMenuAction(ctxMenuAction) {
         case "tags":
             $('#carouselContextMenu').fadeOut();
             pause();
-            openMetaTagDialog(carouselItemArray[imageIndex].FolderId);
+            //alert("carouselItemArray[imageIndex].FolderId: " + carouselItemArray[imageIndex].FolderId);
+            openMetaTagDialog(carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].LinkId);
+            $('#metaTagDialog').on('dialogclose', function (event) {
+                resume();
+            });
             break;
         case "archive":
             $('#carouselContextMenu').fadeOut();
@@ -251,10 +255,14 @@ function carouselContextMenuAction(ctxMenuAction) {
 }
 
 function considerHidingContextMenu() {
+
     $('#carouselContextMenu').fadeOut();
-    if (!$('#modelInfoDialog').dialog('isOpen')) {
-        if (!$('#imageCommentDialog').dialog('isOpen')) {
-            resume();
+
+    if (!$('#metaTagDialog').dialog('isOpen')) {
+        if (!$('#modelInfoDialog').dialog('isOpen')) {
+            if (!$('#imageCommentDialog').dialog('isOpen')) {
+                resume();
+            }
         }
     }
 }

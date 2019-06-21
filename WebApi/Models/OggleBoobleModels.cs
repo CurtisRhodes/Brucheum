@@ -74,6 +74,34 @@ namespace WebApi.Models
         public string Image { get; set; }
         public string Title { get; set; }
     }
+        
+    public class RankerVoteModel
+    {
+        public string PkId { get; set; }
+        public string Winner { get; set; }
+        public string Looser { get; set; }
+        public string UserName { get; set; }
+        public DateTime VoteDate { get; set; }
+    }
+
+    public class ImageRankerModelContainer
+    {
+        public ImageRankerModelContainer()
+        {
+            RankerLinks = new List<ImageRankerModel>();
+        }
+        public List<ImageRankerModel> RankerLinks { get; set; }
+        public string Success { get; set; }
+    }
+    
+    public class ImageRankerModel
+    {
+        public int FolderId { get; set; }
+        public string LinkId { get; set; }
+        public string Link { get; set; }
+        public string RootFolder { get; set; }
+        public string Orientation { get; set; }
+    }
 
     public class CategoryFolderModel
     {
@@ -116,7 +144,8 @@ namespace WebApi.Models
     public class MetaTagModel
     {
         public int TagId { get; set; }
-        public string TagType { get; set; }
+        public int FolderId { get; set; }
+        public string LinkId { get; set; }
         public string Tag { get; set; }
     }
 

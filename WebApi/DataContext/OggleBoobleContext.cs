@@ -23,7 +23,8 @@ namespace WebApi.DataContext
         public virtual DbSet<CategoryFolderDetail> CategoryFolderDetails { get; set; }
         public virtual DbSet<MetaTag> MetaTags { get; set; }
         public virtual DbSet<RejectLink> RejectLinks { get; set; }
-
+        public virtual DbSet<RankerVote> RankerVotes { get; set; }
+        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
@@ -96,6 +97,8 @@ namespace WebApi.DataContext
         [Key]
         public string LinkId { get; set; }
         public string Link { get; set; }
+        public string RootFolder { get; set; }
+        public string Orientation { get; set; }
         public int LinkCount { get; set; }
     }
     [Table("OggleBooble.vwDirtree")]
@@ -106,7 +109,7 @@ namespace WebApi.DataContext
         public int Parent { get; set; }
         public string FolderName { get; set; }
         public string Link { get; set; }
-        //public int SubDirCount { get; set; }
+        public int SubDirCount { get; set; }
         public int FileCount { get; set; }
         public int TotalFiles { get; set; }
         public int GrandTotalFiles { get; set; }
@@ -141,7 +144,19 @@ namespace WebApi.DataContext
     {
         [Key]
         public int TagId { get; set; }
-        public string TagType { get; set; }
+        public int FolderId { get; set; }
+        public string LinkId { get; set; }
         public string Tag { get; set; }
+    }
+
+    [Table("OggleBooble.RankerVote")]
+    public partial class RankerVote
+    {
+        [Key]
+        public string PkId { get; set; }
+        public string Winner { get; set; }
+        public string Looser { get; set; }
+        public string UserId { get; set; }
+        public DateTime VoteDate { get; set; }
     }
 }

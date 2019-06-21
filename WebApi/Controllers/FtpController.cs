@@ -599,7 +599,7 @@ namespace WebApi
                         if (success == "ok")
                         {
                             // update godaddy link
-                            string goDaddyLink = linkPrefix + dbDestinationParentFolder.FolderName + "/" + dbSourceFolder.FolderName + "/" +
+                            string goDaddyLink = linkPrefix + "/" + dbDestinationParentFolder.FolderName + "/" + dbSourceFolder.FolderName + "/" +
                                 dbSourceFolder.FolderName + "_" + linkId + currentFile.Substring(currentFile.Length - 4);
                             ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
                             goDaddyrow.Link = goDaddyLink;

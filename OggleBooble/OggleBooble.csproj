@@ -410,7 +410,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packagesconfig.txt" />
-    <Content Include="Views\Home\xxImagePage.cshtml" />
     <Content Include="Views\Home\Viewer.cshtml" />
     <Content Include="Views\Home\Transitions.cshtml" />
     <None Include="Properties\PublishProfiles\OggleBoobleGoDaddy.pubxml" />

@@ -82,7 +82,7 @@
 
     $(document).ready(function () {
         var service = '@ViewBag.Service';
-        var vbUserName = '@ViewBag.UserName';
+        var userName = '@ViewBag.UserName';
         var lastBuild = '@ViewBag.BuildInfo';
 
         $('#footerLastBuild').html("last build: " + lastBuild);
@@ -95,60 +95,20 @@
             height: 600
         });
 
+        ckeckCookie(userName);
+
         $.when(launchCarousel('boobs')).done(function () {
             //alert("launchCarousel('boobs')).done")
             //loadPromoMessages("CON");
-            cookieKlude(vbUserName);
+            $('#footerMessage').html("getCookie: " + getCookie("User"));
+
+            //if ('User.Identity.Name' !== "") { }
+
+
         });
     });
 
 
-    function cookieKlude(vbUserName) {
-        //alert("cookieKlude(1)")
-        if ('@User.Identity.Name' !== "") {
-            var documentCookie = document.cookie;
-            if (documentCookie == null) {
-                var expires = new Date();
-                expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
-                document.cookie = 'User=' + '@User.Identity.Name' + ';expires=' + expires.toUTCString();
-                $('#footerMessage').html("new cookie set for: " + vbUserName);
-            }
-            else {
-                var cookieValue = getCookie('@User.Identity.Name');
-                if (cookieValue != "")
-                    $('#footerMessage').append("   hello: [" + cookieValue + "]");
-            }
-        }
-        else {
-            //alert("getCookie(" + vbUserName + ")");
-            var cc = getCookie("User");
-            if (cc == "") {
-                var expires = new Date();
-                expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
-                document.cookie = 'User=' + vbUserName + ';expires=' + expires.toUTCString();
-                $('#footerMessage').html("new cookie set for: " + vbUserName);
-            }
-            else {
-                $('#footerMessage').html("cookie found for: " + vbUserName);
-            }
-        }
-    }
-
-    function getCookie(cname) {
-        var name = cname + "=";
-        var decodedCookie = decodeURIComponent(document.cookie);
-        var ca = decodedCookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) === ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) === 0) {
-                return c.substring(name.length, c.length);
-            }
-        }
-        return "";
-    }
 
     function loadPromoMessages(commentType) {
         $.ajax({

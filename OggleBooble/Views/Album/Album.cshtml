@@ -43,7 +43,8 @@
         <div class="adminLink" onclick="contextMenuAction('move')">Move Link</div>
         <div class="adminLink" onclick="contextMenuAction('remove')">Remove Link</div>
         <div class="adminLink" onclick="contextMenuAction('links')">Show Links</div>
-        <div class="adminLink" onclick="contextMenuAction('props')">Properties</div>
+        <div class="adminLink" onclick="contextMenuAction('showLinks')">show Links</div>
+        <div id="linkInfo"></div>
         <div class="adminLink" onclick="contextMenuAction('setF')">Set as Folder Image</div>
         <div class="adminLink" onclick="contextMenuAction('setC')">Set as Category Image</div>
     </div>
@@ -92,8 +93,16 @@
         getBreadCrumbs();
         getImageLinks();
 
+        if ((isPornEditor == "True") || (document.domain === 'localhost')) {
+            $('.adminLink').show();
+        }
+        else {
+            $('.adminLink').hide();
+        }
+
         resizePage();
     });
+
 
     function XXshowStatic() {
         var pageName = folderName + ".html";

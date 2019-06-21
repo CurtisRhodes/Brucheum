@@ -20,17 +20,8 @@ namespace OggleBooble
 
             GetBuildInfo();
 
-            string userName = "";
-            if (User.Identity.IsAuthenticated)
-            {
-                userName = User.Identity.Name;
-            }
-            else
-            {
-                userName = Helpers.GetIPAddress();
-            }
             ViewBag.BuildInfo = GetBuildInfo();
-            ViewBag.UserName = userName;
+            ViewBag.UserName = GetUserInfo();
             ViewBag.IsPornEditor = User.IsInRole("Porn Editor");
             ViewBag.Service = apiService;
             return View();
@@ -45,6 +36,18 @@ namespace OggleBooble
         //    return View();
         //}
 
+        private string GetUserInfo() {
+            string userName = "";
+            if (User.Identity.IsAuthenticated)
+            {
+                userName = User.Identity.Name;
+            }
+            else
+            {
+                userName = Helpers.GetIPAddress();
+            }
+            return userName;
+        }
 
         private string GetBuildInfo()
         {
@@ -58,7 +61,6 @@ namespace OggleBooble
         }
 
 
-
         public ActionResult Transitions(string folder)
         {
             ViewBag.Folder = folder;
@@ -68,6 +70,7 @@ namespace OggleBooble
 
         public ActionResult BoobsRanker()
         {
+            ViewBag.UserName = GetUserInfo();
             ViewBag.Service = apiService;
             return View();
         }

@@ -1,6 +1,29 @@
 ﻿
+function ckeckCookie(userName) {
+    var documentCookie = document.cookie;
+    if (documentCookie === null) {
+        var expires = new Date();
+        expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+        document.cookie = 'User=' + userName + ';expires=' + expires.toUTCString();
+        $('#footerMessage').html("new cookie set for: " + userName);
+    }
+    else {
+        var cc = getCookie("User");
+        if (cc === "") {
+            expires = new Date();
+            expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+            document.cookie = 'User=' + userName + ';expires=' + expires.toUTCString();
+            $('#footerMessage').html("cookie RESET for: " + userName);
+        }
+        else {
+            $('#footerMessage').html("cookie found for: " + userName);
+        }
+    }
+}
 
 function getCookie(cname) {
+    if (cname === null)
+        cname = "User";
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
     var ca = decodedCookie.split(';');
@@ -13,48 +36,5 @@ function getCookie(cname) {
             return c.substring(name.length, c.length);
         }
     }
-    return "";
-}
-
-//function checkCookie(cname) {
-//    var cookie = getCookie(cname);
-//    if (cookie !== "") {
-//        var decodedCookie = decodeURIComponent(document.cookie);
-//        var ca = decodedCookie.split(';');
-//        for (var i = 0; i < ca.length; i++) {
-//            var c = ca[i];
-//            while (c.charAt(0) === ' ') {
-//                c = c.substring(1);
-//            }
-//            if (c.indexOf(name) === 0) {
-//                return c.substring(name.length, c.length);
-//            }
-//        }
-//    }
-//}
-
-function setCookie(cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-    var expires = "expires=" + d.toUTCString();
-    document.cookie = "OggleUser=" + cvalue + ";" + expires + ";path=/";
-}
-
-
-function setOBCookie(key, value) {
-    var expires = new Date();
-    expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
-    document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
-}
-
-function getOBCookie(key, defaultValue) {
-    var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-    if (keyValue === null) {
-        //alert("still no cookie");
-        setOBCookie(key, defaultValue);
-        keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-        return keyValue[2];
-    }
-    else
-        return keyValue[2];
+    return decodedCookie;
 }

@@ -243,15 +243,15 @@
         $.ajax({
             type: "POST",
             url: service + "/api/FtpDashBoard/CreateFolder?parentId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtNewFolderTitle').val(),
-            success: function (success) {
+            success: function (successModel) {
                 $('#dashBoardLoadingGif').hide();
-                if (success == "ok") {
+                if (successModel.Success == "ok") {
                     displayStatusMessage("ok", "new folder created");
                     buildDirectoryTree();
                     $('#newFolderCrud').dialog("close");
                 }
                 else
-                    alert("CreateVirtualFolder: " + success);
+                    alert("CreateVirtualFolder: " + successModel.Success);
             },
             error: function (xhr) {
                 $('#dashBoardLoadingGif').hide();

@@ -158,9 +158,10 @@ function sendEmailFromJS(subject, messsage) {
             url: "/Email/SendEmail?subject=" + subject + "&message=" + messsage,
             success: function (emailSuccess) {
                 if (emailSuccess === "ok") {
-                    displayStatusMessage("ok", "email sent");
+                    //displayStatusMessage("ok", "email sent");
                 }
                 else {
+                    //displayStatusMessage("error", emailSuccess);
                     console.log("Email Fail: " + emailSuccess);
                 }
                 rtn = emailSuccess;

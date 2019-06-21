@@ -71,12 +71,12 @@ namespace OggleBooble
             return success;
         }
 
-        public static void PageHit(string page, string details)
+        public static void LogPageHit(string page, string details)
         {
-            if (IsBeingLogged(page))
+            //if (IsBeingLogged(page))
             {
                 string ipAddress = GetIPAddress();
-                if (ipAddress != "68.203.92.166")  // my development machine
+                //if (ipAddress != "68.203.92.166")  // my development machine
                 { 
                     using (HttpClient client = new HttpClient())
                     {

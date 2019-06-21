@@ -1,4 +1,6 @@
-﻿var selectedImageArchiveFolderId;
+﻿import { Server } from "tls";
+
+var selectedImageArchiveFolderId;
 var currentContextLinkId;
 var forgetShowingCatDialog;
 var page = 0;
@@ -45,6 +47,7 @@ function getBreadCrumbs() {
                 setLayout(breadCrumbModel.RootFolder);
                 document.title = breadCrumbModel.FolderName + " OggleBooble";
                 folderName = breadCrumbModel.FolderName;
+                logPageHit();
             }
             else
                 alert("getBreadCrumbs " + breadCrumbModel.Success);
@@ -54,6 +57,33 @@ function getBreadCrumbs() {
             alert("getBreadCrumbs jqXHR : " + getXHRErrorDetails(jqXHR, exception));
         }
     });
+}
+
+function logPageHit() {
+
+    var hitCounterModel = {
+        IpAddress: ipAddress,
+        AppName: "OggleBooble",
+        PageName: folderName,
+        Details: currentUser
+    };
+
+    $.ajax({
+        type: "POST",
+        url: service + "api/HitCounter/LogPageHit",
+        data: hitCounterModel,
+        success: function (success) {
+            if (success == "ok") {
+                sendEmailFromJS("someone just visited " + folderName + " album Page", "someday it will be someone other than you");
+            }
+            else
+                alert("logPageHit: " + success);
+        },
+        error: function (jqXHR, exception) {
+            alert("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+
 }
 
 function slowlyShowCatDialog(breadCrumbFolderId) {
@@ -187,16 +217,22 @@ function processImages(imageLinksModel, start) {
                 url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + currentContextLinkId,
                 success: function (folderDetails) {
                     if (folderDetails.Success === "ok") {
+
                         selectedImageArchiveFolderId = folderDetails.FolderId;
+
+
                         if (folderDetails.RootFolder === "archive") {
                             $('#ctxModelName').html(folderDetails.FolderName);
-                            $('#ctxArchive').hide();
                             $('#ctxSeeMore').show();
+                            $('#ctxArchive').hide();
                         }
                         else {
                             $('#ctxModelName').html("unknown model");
-                            $('#ctxArchive').show();
                             $('#ctxSeeMore').hide();
+                            if ((isPornEditor === "True") || (document.domain === 'localhost'))
+                                $('#ctxArchive').show();
+                            else
+                                $('#ctxArchive').hide();
                         }
                     }
                     else
@@ -229,7 +265,7 @@ function contextMenuAction(action) {
             $("#thumbImageContextMenu").fadeOut();
             showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId, $('#' + currentContextLinkId + '').attr("src"));
             $('#modelInfoDialog').on('dialogclose', function (event) {
-                //alert("$('#folderCategoryDialog').on('dialogclose'");
+                alert("$('#modelInfoDialog').on('dialogclose'");
                 $('#modelInfoDialog').hide();
                 getImageLinks();
             });
@@ -281,14 +317,36 @@ function contextMenuAction(action) {
         case "setC":
             setFolderImage(currentContextLinkId, folderId, "parent");
             break;
-        case "links":
-            break;
-        case "props":
-            showProps($('#' + currentContextLinkId + '').attr("src"));
+        case "showLinks":
+            showLinks();
+            //showProps($('#' + currentContextLinkId + '').attr("src"));
             break;
         default:
             alert("contextMenuAction action: " + action);
     }
+}
+
+function showLinks() {
+
+    $.ajax({
+        type: "GET",
+        url: service + "api/",
+        success: function (success) {
+            if (success == "ok") {
+                sendEmailFromJS("someone just visited " + folderName + " album Page", "someday it will be someone other than you");
+            }
+            else
+                alert("logPageHit: " + success);
+        },
+        error: function (jqXHR, exception) {
+            alert("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+    
+
+    $('#linkInfo').html("");
+
+
 }
 
 function showProps(fileName) {
@@ -329,9 +387,6 @@ function setFolderImage(linkId, folderId, level){
 }
 
 function removeImage() {
-
-    alert("removeImage: " + currentContextLinkId);
-
     $.ajax({
         type: "GET",
         url: service + "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + currentContextLinkId,

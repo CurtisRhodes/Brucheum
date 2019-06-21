@@ -6,25 +6,37 @@
         font-size: 18px;
     }
 
-    .metaTagFolder {
-        background-color: #4d86eb;
-    }
-
     .metaTagItem {
         display: inline-block;
-        color: #fff;        
+        color: #fff;
         margin: 3px;
-        border-radius: 3px;
-        padding: 3px;
+        border: solid .23px #444;
+        border-radius: 8px;
+        padding: 3px 5px;
         cursor: pointer;
     }
-    .metaTagRoot {
-        background-color: #a39f9f;
+
+    .metaTagLinkColor {
+        background-color: blue;
     }
 
-    .metaTagImage {
-        background-color: #e2d06a;
-        color: #000;
+    .metaTagFolderColor {
+        background-color: #fcbb20;
+        color: #111;
+    }
+
+    .metaTagParent1Color {
+        background-color: #f6fca3;  /*yellow*/
+        color: #111;
+    }
+
+    .metaTagParent2Color {
+        background-color: mediumspringgreen;
+        color: #111;
+    }
+
+    .metaTagParent3Color {
+        background-color: orangered;
     }
 
     label {
@@ -36,7 +48,17 @@
         margin-top: 4px;
     }
 
-    .metaTagListArea {
+    .metaTagAvailableListArea {
+        height: 350px;
+        width: 200px;
+        overflow-y: auto;
+        background-color: var(--oggleBackgroundColor);
+        padding: 9px;
+        margin: 8px;
+        border-radius: 22px;
+    }
+
+    .metaTagAssignedArea {
         height: 350px;
         width: 400px;
         overflow-y: auto;
@@ -58,7 +80,16 @@
     <label>Tag</label>
     <input id="txtMetaTag" class="roundedInput tagInput" onblur="blurMetaTag()" />
     @*<div class="tabAndGoIcon" onclick="addMetaTag()">+</div>*@
-    <div id="metaTagList" class="metaTagListArea"></div>
+
+    <div class="flexContainer">
+        <div class="floatLeft">
+            <div id="metaTagsAssignedList" class="metaTagAssignedArea"></div>
+        </div>
+        <div class="floatLeft">
+            <div id="metaTagsAvailableList" class="metaTagAvailableListArea"></div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -73,36 +104,69 @@
         });
     });
 
-    function openMetaTagDialog(tagType) {
+    function openMetaTagDialog(folderId, linkId) {
         // 6:12 AM 3/28/19,  5/25/19
-        metaTagModel.TagType = tagType;
-        metaTagModel.TagId = 0;
+        metaTagModel.FolderId = folderId;
+        metaTagModel.LinkId = linkId;
         $('#metaTagDialog').show();
         $('#metaTagDialog').dialog("open");
-        getMetaTags(tagType);
+        getMetaTags(folderId, linkId);
     }
 
     function blurMetaTag() {
-        if (metaTagModel.TagId != 0)
+        //alert("blurMetaTag metaTagModel.TagId: " + metaTagModel.TagId);
+        if (metaTagModel.TagId != undefined)
             editMetaTag();
         else
-            addMetaTag();        
+            addMetaTag();
     }
 
-    function getMetaTags(tagType) {
+    function getMetaTags(folderId, linkId) {
+        var metagLevelColor, parent1, parent2;
         try {
             $.ajax({
                 type: "GET",
-                url: service + "/api/MetaTag/Get?tagType=" + tagType,
+                url: service + "/api/MetaTag/GetTags?folderId=" + folderId + "&linkId=" + linkId,
                 success: function (metaTagResults) {
                     if (metaTagResults.Success == "ok") {
                         $('#metaTagDialog').dialog('option', 'title', "Meta Tags for " + metaTagResults.Source);
-                        $('#metaTagList').html("");
-
+                        $('#metaTagsAssignedList').html("");
                         $.each(metaTagResults.MetaTags, function (idx, metaTag) {
-                            $('#metaTagList').append("<div class='metaTagItem metaTag" + metaTag.TagType +
-                                "' onclick=loadMetaTagForEditing('" + metaTag.TagId + "','" + metaTag.TagType + "') >" + metaTag.Tag + "</div>");
-                        })
+
+                            //alert("linkId: " + linkId);
+
+                            if (metaTag.LinkId != null) {
+                                metagLevelColor = "metaTagLinkColor";                            }
+                            else {
+                                if (metaTag.FolderId == folderId)
+                                    metagLevelColor = "metaTagFolderColor";
+                                else {
+                                    //alert("metaTag.FolderId: " + metaTag.FolderId + " folderId: " + folderId);
+                                    if (parent1 === undefined) {
+                                        parent1 = metaTag.FolderId;
+                                        metagLevelColor = "metaTagParent1Color";
+                                    }
+                                    else {
+                                        if (metaTag.FolderId == parent1)
+                                            metagLevelColor = "metaTagParent1Color";
+                                        else {
+                                            if (parent2 == undefined) {
+                                                parent2 = metaTag.FolderId;
+                                                metagLevelColor = "metaTagParent2Color";
+                                            }
+                                            else {
+                                                if (metaTag.FolderId == parent2)
+                                                    metagLevelColor = "metaTagParent2Color";
+                                                else
+                                                    metagLevelColor = "metaTagParent3Color";
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            $('#metaTagsAssignedList').append("<div class='metaTagItem " + metagLevelColor +
+                                "' onclick=loadMetaTagForEditing('" + metaTag.TagId + "') >" + metaTag.Tag + "</div>");
+                        });
                     }
                     else
                         alert("get MetaTags: " + metaTagResults.Success);
@@ -117,30 +181,26 @@
         }
     }
 
-    function loadMetaTagForEditing(tagId, tagType) {
-
-        alert("loadMetaTagForEditing(tagId: " + tagId + ", tagType: " + tagType);
-
-        if (metaTagModel.TagType = tagType) {
-            $.ajax({
-                type: "GET",
-                url: service + "/api/MetaTag/GetOne?tagId=" + tagId + "&kludge=kludge",
-                success: function (model) {
-                    if (!model.Tag.startsWith("ERROR")) {
-                        metaTagModel.TagId = model.TagId;
-                        metaTagModel.TagType = model.TagType;
-                        $('#txtMetaTag').val(model.Tag);
-                    }
-                },
-                error: function (jqXHR, exception) {
-                    alert("addMetaTag XHR : " + getXHRErrorDetails(jqXHR, exception));
+    function loadMetaTagForEditing(tagId) {
+        //if (metaTagModel.FolderId = folderId) {
+        $.ajax({
+            type: "GET",
+            url: service + "/api/MetaTag/GetOne?tagId=" + tagId,
+            success: function (model) {
+                if (!model.Tag.startsWith("ERROR")) {
+                    $('#txtMetaTag').val(model.Tag);
+                    metaTagModel.TagId = tagId;
                 }
-            });
-        }
+            },
+            error: function (jqXHR, exception) {
+                alert("addMetaTag XHR : " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
     }
 
     function validateMetaTag() {
         if (isNullorUndefined($('#txtMetaTag').val())) {
+            metaTagModel.TagId = undefined;
             return false;
         }
         else {
@@ -157,9 +217,9 @@
                 data: metaTagModel,
                 success: function (success) {
                     if (success == "ok") {
-                        metaTagModel.TagId = 0;
+                        metaTagModel.TagId = undefined;
                         $('#txtMetaTag').val("");
-                        getMetaTags(metaTagModel.TagType);
+                        getMetaTags(metaTagModel.FolderId);
                     }
                 },
                 error: function (jqXHR, exception) {
@@ -173,13 +233,13 @@
         if (validateMetaTag()) {
             $.ajax({
                 type: "POST",
-                url: service + "/api/MetaTag",
+                url: service + "api/MetaTag",
                 data: metaTagModel,
                 success: function (success) {
                     if (success == "ok") {
-                        metaTagModel.TagId = 0;
+                        metaTagModel.TagId = undefined;
                         $('#txtMetaTag').val("");
-                        getMetaTags(metaTagModel.TagType);
+                        getMetaTags(metaTagModel.FolderId, metaTagModel.LinkId);
                     }
                 },
                 error: function (jqXHR, exception) {
