@@ -5,8 +5,6 @@ var page = 0;
 var rootFolder = "";
 var mySubDirs = new Array();
 var thumbImageHeight = 200;
-var viewerShowing = false;
-var slideShow;
 
 function getBreadCrumbs() {
     $.ajax({
@@ -117,7 +115,7 @@ function getImageLinks() {
             url: service + "/api/ImagePage/GetImageLinks?folderId=" + folderId,
             success: function (imageLinksModel) {
                 if (imageLinksModel.Success === "ok") {
-                    rootFolder = imageLinksModel.Origin;
+                    rootFolder = imageLinksModel.RootFolder;
                     if (imageLinksModel.Success === "ok") {
                         processImages(imageLinksModel, start);
                         $('#getImagesLoadingGif').hide();
@@ -163,7 +161,7 @@ function processImages(imageLinksModel, start) {
         });
 
         if (isPornEditor) {
-            if (imageLinksModel.Origin === "archive") {
+            if (imageLinksModel.RootFolder === "archive") {
                 if (imageModelFile.LinkCount === 1) {
                     $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
                         " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
@@ -193,7 +191,8 @@ function processImages(imageLinksModel, start) {
 
         $('.thumbImage').click(function () {
             viewerShowing = true;
-            LaunchViewer(imageArray, $(this).attr("idx"), folderId, currentUser);
+            launchViewer(imageArray, $(this).attr("idx"), folderId, imageLinksModel.FolderName,  currentUser);
+            //launchViewer(imageArray, imageIndex, folderId, folderName, currentUser)
         });
 
         $('.thumbImage').contextmenu(function () {
@@ -265,7 +264,7 @@ function contextMenuAction(action) {
             });
             break;
         case "jump":
-            window.open("/ImagePage?folder=" + selectedImageArchiveFolderId, "_blank");
+            window.open("ImagePage?folder=" + selectedImageArchiveFolderId, "_blank");
             break;
         case "comment":
             $("#thumbImageContextMenu").fadeOut();
@@ -321,7 +320,6 @@ function contextMenuAction(action) {
 }
 
 function showLinks() {
-
     $.ajax({
         type: "PATCH",
         url: service + "api/ImagePage?linkId=" + currentContextLinkId,

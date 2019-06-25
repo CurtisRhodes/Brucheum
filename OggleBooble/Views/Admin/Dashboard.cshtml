@@ -43,6 +43,14 @@
     </div>
     <div id="rightColumn"></div>
 
+
+    <div id="createStaticPagesCrud" class="oggleHidden" title="Create Static Pages">
+        <div><input id="txtStaticParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+        <div class="roundendButton" onclick="createStaticPages()">Go</div>
+    </div>
+
+
+
     <div id="renameFolderCrud" class="oggleHidden" title="Rename Folder">
         <div><span>folder to rename</span><input id="txtFolderToRename" class="txtLinkPath roundedInput" readonly="readonly" /></div>
         <div><span>new name</span><input id="txtReName" class="roundedInput" /></div>
@@ -100,7 +108,7 @@
         <div class="clickable" onclick="showMovefolderDialog()">Move Folder</div>
         <div class="clickable" onclick="showRenameFolderDialog()">ReName Folder</div>
         <div class="clickable" onclick="collapseChildFolder()">Collapse Folder</div>
-        <div class="clickable" onclick="loadProperties()">Load Properties</div>
+        <div class="clickable" onclick="showCreateStaticPages()">Create Static Pages</div>
         <div class="clickable" onclick="repairLinks()">Repair Links</div></dir>`);
 
         buildDirectoryTree();
@@ -154,6 +162,40 @@
         $('#getDirTreeLoadingGif').show();
         buildDirTree($('#dirTreeContainer'), "dashboardMain", 0);
     }
+
+    function showCreateStaticPages() {
+        $('#createStaticPagesCrud').show();
+        $('#createStaticPagesCrud').dialog({
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "615"
+        });
+    }
+    function createStaticPages() {
+        $('#createStaticPagesCrud').dialog("close");
+        $('#createStaticPagesCrud').hide();
+        //$('#dashBoardLoadingGif').fadeIn();
+        $('#progressBar').show();
+        $.ajax({
+            type: "GET",
+            url: service + "api/StaticPage/Buld?parentFolder=" + dashboardMainSelectedTreeId + "&userName=xxx",
+            success: function (success) {
+                $('#progressBar').hide();
+                $('#dashBoardLoadingGif').hide();
+                if (success == "ok") {
+                    displayStatusMessage("ok", "done");
+                    $('#txtNewLink').val("");
+                }
+                else
+                    alert("createStaticPages: " + success);
+            },
+            error: function (xhr) {
+                $('#dashBoardLoadingGif').hide();
+                alert("createStaticPages xhr error: " + getXHRErrorDetails(xhr));
+            }
+        });
+    }
+
 
     function addVideo() {
         try {
@@ -521,7 +563,7 @@
         $('#dashboardContextMenu').fadeIn();
     }
     function dashboardContextMenuOpenFolder() {
-        window.open("/ImagePage?folder=" + dashboardContextMenuFolderId, "_blank");
+        window.open("/home/ImagePage?folder=" + dashboardContextMenuFolderId, "_blank");
     }
     function dashboardContextMenuShowCategoryDetails() {
         showCategoryDialog(dashboardContextMenuFolderId);

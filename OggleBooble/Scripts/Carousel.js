@@ -1,12 +1,16 @@
 ﻿var numImages = 0;
 var numFolders = 0;
 var rotationSpeed = 5123;
-var intervalSpeed = 800;
+var intervalSpeed = 1100;
 var carouselItemArray = new Array();
 var imageIndex = 0;
 var carouselContainerHeight;
-var Carousel;
+var CarouselInterval;
 var selectedImageArchiveFolderId;
+var metaTagDialogIsOpen = false;
+var modelInfoDialogIsOpen = false;
+var imageCommentDialogIsOpen = false;
+var folderCategoryDialogIsOpen = false;
 
 function launchCarousel(root) {
     $('#footerMessage').html("loading carousel");
@@ -71,13 +75,16 @@ function loadImages(rootFolder, isChecked, take) {
                     $('#categoryTitle').show();
 
                     if (numImages === 0) {
-                        showImage();
-                        rotate();
+                        imageIndex = 0;
+                        $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
+                        $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath);
+                        $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName);
+                        startCarousel();
+                        $('#footerMessage').html("starting carousel");
                     }
 
                     numImages += carouselInfo.Links.length;
                     numFolders += carouselInfo.FolderCount;
-                    imageIndex = Math.floor(Math.random() * numImages);
 
                     var delta = (Date.now() - start) / 1000;
                     console.log("loadImages(" + rootFolder + ") take: " + take + " took: " + delta.toFixed(3));
@@ -98,19 +105,21 @@ function loadImages(rootFolder, isChecked, take) {
 
 function showFolderCategoryDialog() {
     pause();
+    folderCategoryDialogIsOpen = true;
     showCategoryDialog(carouselItemArray[imageIndex].FolderId);
     $('#folderCategoryDialog').on('dialogclose', function (event) {
+        folderCategoryDialogIsOpen = false;
         resume();
     });
 }
 
 function clickViewGallery() {
-    clearInterval(Carousel);
-    window.location.href = "Home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
+    clearInterval(CarouselInterval);
+    window.location.href = "ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
 }
 
 function clickViewParentGallery() {
-    window.location.href = "Home/ImagePage?folder=" + carouselItemArray[imageIndex].ParentId;
+    window.location.href = "ImagePage?folder=" + carouselItemArray[imageIndex].ParentId;
 }
 
 function clickSpeed(speed) {
@@ -120,31 +129,123 @@ function clickSpeed(speed) {
         rotationSpeed += 800;
     imageIndex = Math.floor(Math.random() * numImages);
     $('.carouselImage').attr('src', carouselItemArray[imageIndex].Link);
-    clearInterval(Carousel);
-    rotate();
+    clearInterval(CarouselInterval);
+    startCarousel();
 }
 
-function showImage() {
-
-    $('.carouselImage').fadeOut(intervalSpeed);
-    setTimeout(function () {
-        imageIndex = Math.floor(Math.random() * numImages);
-        $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
-        $('#thisCarouselImage').on('load', onImageLoaded());
-    }, intervalSpeed);
-    // $('#carouselImage').on('error', onImageNotLoaded());
-
-
-    //$('#footerMessage').html("inamge: " + (imageIndex + 1).toLocaleString() + " of " + numImages.toLocaleString() + " images in " + numFolders + " galleries  ");
-
-
+function carouselContextMenuAction(ctxMenuAction) {
+    switch (ctxMenuAction) {
+        case "showDialog":
+            $('#carouselContextMenu').fadeOut();
+            modelInfoDialogIsOpen = true;
+            pause();
+            showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId, carouselItemArray[imageIndex].Link);
+            $('#modelInfoDialog').on('dialogclose', function (event) {
+                modelInfoDialogIsOpen = false;
+                resume();
+            });
+            break;
+        case "seeMore":
+            window.open('/ImagePage?folder=' + selectedImageArchiveFolderId, '_blank');
+            break;
+        case "explode":
+            window.open(carouselItemArray[imageIndex].Link, "_blank");
+            break;
+        case "comment":
+            $('#carouselContextMenu').fadeOut();
+            imageCommentDialogIsOpen = true;
+            pause();
+            $('#carouselContextMenu').fadeOut();
+            showImageCommentDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].LinkId,
+                carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].FolderName);
+            $('#imageCommentDialog').on('dialogclose', function (event) {
+                imageCommentDialogIsOpen = false;
+                resume();
+            });
+            break;
+        case "tags":
+            $('#carouselContextMenu').fadeOut();
+            pause();
+            metaTagDialogIsOpen = true;
+            //alert("carouselItemArray[imageIndex].FolderId: " + carouselItemArray[imageIndex].FolderId);
+            openMetaTagDialog(carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].LinkId);
+            $('#metaTagDialog').on('dialogclose', function (event) {
+                metaTagDialogIsOpen = false;
+                resume();
+            });
+            break;
+        case "archive":
+            $('#carouselContextMenu').fadeOut();
+            pause();
+            $('#carouselContextMenu').fadeOut();
+            showMoveCopyDialog("Archive", carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
+            break;
+        default:
+            alert("invalid: " + ctxMenuAction);
+    }
 }
 
-function onImageLoaded() {
+function considerHidingContextMenu() {
+    $('#carouselContextMenu').fadeOut();
+    if (!metaTagDialogIsOpen) {
+        if (!modelInfoDialogIsOpen) {
+            if (!imageCommentDialogIsOpen) {
+                if (!folderCategoryDialogIsOpen) {
+                    resume();
+                }
+            }
+        }
+    }
+}
 
-    $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath);
-    $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName);
-    $('#thisCarouselImage').contextmenu(function () {
+function resizeCarousel() {
+    $('.carouselImage').css("max-width", $('#middleColumn').width());
+    $('.carouselImage').css("max-height", $('#middleColumn').innerHeight() - 180);
+}
+
+function togglePause() {
+    if ($('#pauseButton').html() === "||")
+        pause();
+    else
+        resume();
+}
+
+function pause() {
+    clearInterval(CarouselInterval);
+    $('#pauseButton').html(">");
+}
+
+function resume() {
+    clearInterval(CarouselInterval);
+    startCarousel();
+    $('#pauseButton').html("||");
+}
+
+function startCarousel() {
+    CarouselInterval = setInterval(function () {
+        setTimeout(function () {
+            $('#categoryTitle').fadeOut(intervalSpeed).hide();
+            $('#thisCarouselImage').fadeOut(500, "linear", function () {
+
+                imageIndex = Math.floor(Math.random() * numImages);
+
+                try {
+                    $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link).fadeIn(3000);
+                } catch (e) {
+                    alert(e);
+                }
+
+                $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath).fadeIn(intervalSpeed);
+                $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
+
+                $('#footerMessage').html("image: " + imageIndex + " of " + numImages);
+
+            });
+        }, intervalSpeed);
+    }, rotationSpeed);
+}
+
+function carouselContextMenu() {
         event.preventDefault();
         window.event.returnValue = false;
         pause();
@@ -180,134 +281,8 @@ function onImageLoaded() {
         $('#carouselContextMenu').css("top", event.clientY + 5);
         $('#carouselContextMenu').css("left", event.clientX);
         $('#carouselContextMenu').fadeIn();
-    });
-    $('#thisCarouselImage').fadeIn(intervalSpeed);
-    resizePage();
-}
-
-//<div id="ctxModelName" onclick="carouselContextMenuAction('showDialog')">model name</div>
-//<div id="ctxSeeMore" onclick="carouselContextMenuAction('seeMore')">See More</div>
-//<div onclick="carouselContextMenuAction('explode')">Explode</div>
-//<div onclick="carouselContextMenuAction('comment')">Comment</div>
-//<div onclick="carouselContextMenuAction('tags')">Tags</div>
-//<div id="ctxMove" onclick="carouselContextMenuAction('archive')">Archive</div>
-
-$('#folderCategoryDialog').on('dialogopen', function (event) {
-    pause();
-});
-
-$('#folderCategoryDialog').on('dialogclose', function (event) {
-    alert("$('#folderCategoryDialog').on('dialogclose'");
-    resume();
-});
-
-
-$('#imageCommentDialog').on('dialogclose', function (event) {
-    resume();
-});
-
-$('#metaTagDialog').on('dialogclose', function (event) {
-    resume();
-});
-
-
-function carouselContextMenuAction(ctxMenuAction) {
-    switch (ctxMenuAction) {
-        case "showDialog":
-            $('#carouselContextMenu').fadeOut();
-            pause();
-            showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId, carouselItemArray[imageIndex].Link);
-            $('#modelInfoDialog').on('dialogclose', function (event) {
-                resume();
-            });
-            break;
-        case "seeMore":
-            window.open('/ImagePage?folder=' + selectedImageArchiveFolderId, '_blank');
-            break;
-        case "explode":
-            window.open(carouselItemArray[imageIndex].Link, "_blank");
-            break;
-        case "comment":
-            $('#carouselContextMenu').fadeOut();
-            pause();
-            $('#carouselContextMenu').fadeOut();
-            showImageCommentDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].LinkId,
-                carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].FolderName);
-            break;
-        case "tags":
-            $('#carouselContextMenu').fadeOut();
-            pause();
-            //alert("carouselItemArray[imageIndex].FolderId: " + carouselItemArray[imageIndex].FolderId);
-            openMetaTagDialog(carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].LinkId);
-            $('#metaTagDialog').on('dialogclose', function (event) {
-                resume();
-            });
-            break;
-        case "archive":
-            $('#carouselContextMenu').fadeOut();
-            pause();
-            $('#carouselContextMenu').fadeOut();
-            showMoveCopyDialog("Archive", carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
-            break;
-        default:
-            alert("invalid: " + ctxMenuAction);
-    }
-}
-
-function considerHidingContextMenu() {
-
-    $('#carouselContextMenu').fadeOut();
-
-    if (!$('#metaTagDialog').dialog('isOpen')) {
-        if (!$('#modelInfoDialog').dialog('isOpen')) {
-            if (!$('#imageCommentDialog').dialog('isOpen')) {
-                resume();
-            }
-        }
-    }
-}
-
-function resizeCarousel() {
-    $('.carouselImage').css("max-width", $('#middleColumn').width());
-    $('.carouselImage').css("max-height", $('#middleColumn').innerHeight() - 180);
 }
 
 function onImageNotLoaded() {
     alert("bk image " + carouselItemArray[imageIndex].Link + " not found");
 }
-
-function rotate() {
-    Carousel = setInterval(function () {
-        showImage();
-    }, rotationSpeed);
-}
-
-function togglePause() {
-    if ($('#pauseButton').html() === "||")
-        pause();
-    else
-        resume();
-}
-
-function pause() {
-    clearInterval(Carousel);
-    $('#pauseButton').html(">");
-}
-
-function resume() {
-    clearInterval(Carousel);
-    startCarousel();
-    $('#pauseButton').html("||");
-}
-
-function startCarousel() {
-    showImage();
-    rotate();
-}
-
-function writeXML() {
-
-
-}
-
-

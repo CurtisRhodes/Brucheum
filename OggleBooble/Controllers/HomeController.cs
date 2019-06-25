@@ -27,15 +27,6 @@ namespace OggleBooble
             return View();
         }
 
-        //public ActionResult Viewer(string folder, string startFile)
-        //{
-        //    ViewBag.Title = "Slideshow";
-        //    ViewBag.Service = apiService;
-        //    ViewBag.Folder = folder;
-        //    ViewBag.StartFile = startFile;
-        //    return View();
-        //}
-
         public ActionResult ImagePage(string folder)
         {
             if (folder == null)
@@ -48,7 +39,6 @@ namespace OggleBooble
             ViewBag.Folder = folder;
             return View();
         }
-
 
         private string GetUserInfo() {
             string userName = "";
@@ -73,7 +63,6 @@ namespace OggleBooble
             }
             return lastBuild;
         }
-
 
         public ActionResult Transitions(string folder)
         {
@@ -116,7 +105,7 @@ namespace OggleBooble
                     "<script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>" +
                     "<script src = '../Scripts/GlobalFunctions.js'></script>" +
                     "<script src = '../Scripts/ResizeThreeColumnPage.js'></script>" +
-                    //"<script src = '../Scripts/ImagePage.js'></script>" +
+                    "<script src = '../Scripts/staticPage.js'></script>" +
                     "<link href = '../Styles/Default.css' rel= 'stylesheet' />" +
                     "<link href = '../Styles/fixedHeader.css' rel= 'stylesheet' />" +
                     "<link href = '../Styles/imageViewer.css' rel='stylesheet' />" +
@@ -128,27 +117,25 @@ namespace OggleBooble
                     "<meta name = 'Keywords' content = '" + articleTagString + "' />" +
                     "</head>";
 
-                 string staticContent =
+                string staticContent =
                     "<!DOCTYPE html><html>" + head + "<body style='margin-top:105px'>" + staticPage.Html
-                     + "<script> $('.thumbImage').click(function() { alert('thumbImage click');  viewerShowing=true; LaunchViewer(imageArray,$(this).attr('idx'),'" + staticPage.FolderId + "','cc'); });"                    
-                     + " var imageArray=" + staticPage.ImageArray 
+                     + "<script> $('.thumbImage').click(function() { LaunchViewer(imageArray,$(this).attr('idx'),'" + staticPage.FolderId + "','cc'); });"
+                     + " var imageArray=" + staticPage.ImageArray
                      + "</script><script src='../Scripts/ImageViewer.js'></script></body></html>";
 
-
-                //        $('.thumbImage').click(function() {
-                //    viewerShowing = true;
-                //    LaunchViewer(imageArray, $(this).attr("idx"), folderId, currentUser);
-                //});
-
-
-
+                //string filePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Static_Pages");
+                //string filePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Static_Pages");
+                //string filePath = Server.MapPath("~/Static_Pages");
+                //string filePath = "ftp://50.62.160.105/library.curtisrhodes.com/" + staticPage.Filename;
+                //string filePath = "http://library.curtisrhodes.com/" + staticPage.Filename;
 
                 string filePath = Server.MapPath("~/Static_Pages");
                 using (var staticFile = System.IO.File.Open(filePath + "/" + staticPage.Filename, FileMode.Create))
                 {
-                    Byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(staticContent);
+                    Byte[] byteArray = Encoding.ASCII.GetBytes(staticContent);
                     staticFile.Write(byteArray, 0, byteArray.Length);
                 }
+
                 success = "ok";
             }
             catch (Exception e) { success = Helpers.ErrorDetails(e); }

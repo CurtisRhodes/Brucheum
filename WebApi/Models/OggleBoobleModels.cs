@@ -31,7 +31,8 @@ namespace WebApi.Models
             SubDirs = new List<CategoryTreeModel>();
         }
         public int FoldrerId { get; set; }
-        public string Origin { get; set; }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
         public List<VwLink> Files { get; set; }
         public List<CategoryTreeModel> SubDirs { get; set; }
         public string Success { get; set; }
@@ -155,6 +156,7 @@ namespace WebApi.Models
         }
         public List<MetaTagModel> MetaTags { get; set; }
         public string Source { get; set; }
+        public string Description { get; set; }
         public string Success { get; set; }
     }
 
@@ -182,6 +184,11 @@ namespace WebApi.Models
         public string Value { get; set; }
     }
 
-
-
+    public class StaticPageModel
+    {
+        public string Html { get; set; }
+        public string Filename { get; set; }
+        public string FolderId { get; set; }
+        public string ImageArray { get; set; }
+    }
 }

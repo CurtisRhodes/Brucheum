@@ -201,6 +201,7 @@
     <Compile Include="Controllers\ImagesController.cs" />
     <Compile Include="Controllers\BlogXmlController.cs" />
     <Compile Include="Controllers\ResumeApiController.cs" />
+    <Compile Include="Controllers\StaticPageController.cs" />
     <Compile Include="Controllers\xAspNetController.cs" />
     <Compile Include="Controllers\OggleBoobleApiController.cs" />
     <Compile Include="DataContext\ResumeContext.cs" />

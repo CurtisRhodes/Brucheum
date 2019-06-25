@@ -5,7 +5,7 @@
         <div id="categoryTitle" class="floatingLabel" onmouseover="showFolderCategoryDialog()"></div>
         <div id="laCarousel" class="carouselContainer">
             <div class="carouselImageContainer">
-                <img id="thisCarouselImage" class="carouselImage" src="~/Images/ingranaggi3.gif" onclick="clickViewGallery()" />
+                <img id="thisCarouselImage" oncontextmenu="carouselContextMenu()" class="carouselImage" src="~/Images/ingranaggi3.gif" onclick="clickViewGallery()" />
                 <div class="imgBottom">
                     <img class="speedButton floatLeft" src="~/Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
                     <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>

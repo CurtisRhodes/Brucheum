@@ -1,12 +1,12 @@
 ﻿<link href="~/Styles/imagePage.css" rel="stylesheet" />
 <link href="~/Styles/jquery-ui.css" rel="stylesheet" />
 <link href="~/Styles/fixedHeader.css" rel="stylesheet" />
-<script src="~/Scripts/ImagePage.js"></script>
 <div>@Html.Partial("_MoveImageDialog")</div>
 <div>@Html.Partial("_CategoryDialog")</div>
 <div>@Html.Partial("_ImageViewer")</div>
 <div>@Html.Partial("_ModelInfoDialog")</div>
 <div>@Html.Partial("_ImageCommentDialog")</div>
+<script src="~/Scripts/ImagePage.js"></script>
 
 <style>
     .attrBox {
@@ -26,62 +26,54 @@
 </style>
 
 
-<div id="staticableContent">
-
-
-
-    <div class="threeColumnArray">
-        <div id="leftColumn"></div>
-        <div id="middleColumn">
-            <div id="divBreadCrumbs"></div>
-            <div id="divStatusMessage"></div>
-            <div id="divTestBox" class="attrBox"></div>
-            <img id="getImagesLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
-            <div id="imageContainer" class="flexWrapContainer"></div>
-            <div id="fileCount" class="countContainer"></div>
-            <div id="text55"></div>
-        </div>
-        <div id="rightColumn"></div>
+<div class="threeColumnArray">
+    <div id="leftColumn"></div>
+    <div id="middleColumn">
+        <div id="divBreadCrumbs"></div>
+        <div id="divStatusMessage"></div>
+        <div id="divTestBox" class="attrBox"></div>
+        <img id="getImagesLoadingGif" class="loadingGif" src="~/Images/loader.gif" />
+        <div id="imageContainer" class="flexWrapContainer"></div>
+        <div id="fileCount" class="countContainer"></div>
+        <div id="text55"></div>
     </div>
-
-    <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut(); $('#linkInfo').hide();">
-        <div id="ctxModelName" onclick="contextMenuAction('show')">model name</div>
-        <div id="ctxSeeMore" onclick="contextMenuAction('jump')">see more of her</div>
-        <div onclick="contextMenuAction('comment')">Comment</div>
-        <div onclick="contextMenuAction('explode')">open in new tab</div>
-        <div id="ctxArchive" class="adminLink" onclick="contextMenuAction('archive')">Archive</div>
-        <div class="adminLink" onclick="contextMenuAction('copy')">Copy Link</div>
-        <div class="adminLink" onclick="contextMenuAction('move')">Move Link</div>
-        <div class="adminLink" onclick="contextMenuAction('remove')">Remove Link</div>
-        <div class="adminLink" onclick="contextMenuAction('showLinks')">Show Links</div>
-        <div id="linkInfo" class="innerContextMenuInfo">
-            <div id="linkInfoContainer"></div>
-            @*<div onclick="$('#linkInfo').hide()">OK</div>*@
-        </div>
-        <div class="adminLink" onclick="contextMenuAction('setF')">Set as Folder Image</div>
-        <div class="adminLink" onclick="contextMenuAction('setC')">Set as Category Image</div>
-    </div>
-
-    <div id="removeLinkDialog" title="Remove Image" class="oggleHidden">
-        <div><input type="radio" value="DUP" name="rdoRejectImageReasons" />  dupe</div>
-        <div><input type="radio" value="LOW" name="rdoRejectImageReasons" />  low quality</div>
-        <div>
-            <span class="roundendButton" onclick="onRemoveImageClick('ok')">ok</span>
-            <span class="roundendButton" onclick="onRemoveImageClick('cancel')">cancel</span>
-        </div>
-    </div>
-
-    <script>
-        var service = '@ViewBag.Service';
-        var folderId = '@ViewBag.Folder';
-        var folderName = "";
-        var currentUser = '@User.Identity.Name';
-        var ipAddress = '@ViewBag.IpAddress';
-        var isPornEditor = '@ViewBag.IsPornEditor';
-    </script>
+    <div id="rightColumn"></div>
 </div>
 
+<div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut(); $('#linkInfo').hide();">
+    <div id="ctxModelName" onclick="contextMenuAction('show')">model name</div>
+    <div id="ctxSeeMore" onclick="contextMenuAction('jump')">see more of her</div>
+    <div onclick="contextMenuAction('comment')">Comment</div>
+    <div onclick="contextMenuAction('explode')">open in new tab</div>
+    <div id="ctxArchive" class="adminLink" onclick="contextMenuAction('archive')">Archive</div>
+    <div class="adminLink" onclick="contextMenuAction('copy')">Copy Link</div>
+    <div class="adminLink" onclick="contextMenuAction('move')">Move Link</div>
+    <div class="adminLink" onclick="contextMenuAction('remove')">Remove Link</div>
+    <div class="adminLink" onclick="contextMenuAction('showLinks')">Show Links</div>
+    <div id="linkInfo" class="innerContextMenuInfo">
+        <div id="linkInfoContainer"></div>
+    </div>
+    <div class="adminLink" onclick="contextMenuAction('setF')">Set as Folder Image</div>
+    <div class="adminLink" onclick="contextMenuAction('setC')">Set as Category Image</div>
+</div>
+
+<div id="removeLinkDialog" title="Remove Image" class="oggleHidden">
+    <div><input type="radio" value="DUP" name="rdoRejectImageReasons" />  dupe</div>
+    <div><input type="radio" value="LOW" name="rdoRejectImageReasons" />  low quality</div>
+    <div>
+        <span class="roundendButton" onclick="onRemoveImageClick('ok')">ok</span>
+        <span class="roundendButton" onclick="onRemoveImageClick('cancel')">cancel</span>
+    </div>
+</div>
+
+
 <script>
+    var service = '@ViewBag.Service';
+    var folderId = '@ViewBag.Folder';
+    var folderName = "";
+    var currentUser = '@User.Identity.Name';
+    var ipAddress = '@ViewBag.IpAddress';
+    var isPornEditor = '@ViewBag.IsPornEditor';
     var imageArray = new Array();
     $(document).ready(function () {
 
@@ -99,7 +91,7 @@
         if ((isPornEditor == "True") || (document.domain === 'localhost')) {
             $('.adminLink').show();
 
-            $('#replaceableMenuItems').append("<a onclick='javascript:staticify()'>staticify</a>");
+            //$('#replaceableMenuItems').append("<a onclick='javascript:staticify()'>staticify</a>");
             //<div class="clickable" onclick="staticify()">staticify</div>
             //<div class="clickable" onclick="showAllChildren()>Add Video Link</div>
             //<div class="clickable" onclick="repairLinks()">add meta tags</div></dir>`);
@@ -155,7 +147,7 @@
 
         data.ImageArray = "[";
         for (i = 0; i < imageArray.length; i++) {
-            data.ImageArray += "{ Link:'" + imageArray[i].Link + "',Idx:'" + i + "', ImageId:'" + imageArray[i].ImageId + "'}";
+            data.ImageArray += "{ Link:'" + imageArray[i].Link + "',Idx:'" + i + "', LinkId:'" + imageArray[i].LinkId + "'}";
             if (i < imageArray.length - 1)
                 data.ImageArray += ",";
         }

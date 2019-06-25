@@ -294,10 +294,12 @@
     <Content Include="Scripts\3rd Party\Editor\xml.js" />
     <None Include="packages.config" />
     <Content Include="Scripts\Carousel.js" />
+    <Content Include="Scripts\CommentDialog.js" />
     <Content Include="Scripts\Cookies.js" />
     <Content Include="Scripts\3rd Party\jquery.signalR-2.4.1.min.js" />
     <Content Include="Scripts\DirTree.js" />
     <Content Include="Scripts\ImageViewer.js" />
+    <Content Include="Scripts\StaticPage.js" />
     <Content Include="Styles\imageViewer.css" />
     <Content Include="Static_Pages\Images\close.png" />
     <Content Include="Static_Pages\Images\comment.png" />

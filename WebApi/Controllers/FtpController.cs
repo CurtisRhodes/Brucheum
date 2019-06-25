@@ -373,9 +373,6 @@ namespace WebApi
                                     fHeight = image.Height;
                                 }
                             }
-
-
-
                             DirectoryInfo directory = new DirectoryInfo(appDataPath);
                             FileInfo tempFile = directory.GetFiles("tempImage" + extension).FirstOrDefault();
                             if (tempFile != null)

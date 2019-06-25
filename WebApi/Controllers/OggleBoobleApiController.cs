@@ -89,7 +89,7 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    int newFolderId = 0; 
+                    int newFolderId = 0;
                     CategoryFolder dbParent = db.CategoryFolders.Where(f => f.FolderName == "posers identified").First();
                     CategoryFolder poser = new CategoryFolder()
                     {
@@ -200,7 +200,9 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                    imageLinks.Origin = dbCategoryFolder.RootFolder;
+
+                    imageLinks.RootFolder = dbCategoryFolder.RootFolder;
+                    imageLinks.FolderName = dbCategoryFolder.FolderName;
 
                     List<VwDirTree> vwTrees = db.VwDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.FolderName).ToList();
                     string folderImage = null;
@@ -267,7 +269,7 @@ namespace WebApi
         [HttpPatch]
         public LinksModel GetLinks(string linkId)
         {
-            var links = new LinksModel();            
+            var links = new LinksModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
@@ -356,7 +358,7 @@ namespace WebApi
                         (from c in db.CategoryImageLinks
                          join f in db.CategoryFolders on c.ImageCategoryId equals f.Id
                          join p in db.CategoryFolders on f.Parent equals p.Id
-                        // join g in db.CategoryFolders on p.Parent equals g.Id
+                         // join g in db.CategoryFolders on p.Parent equals g.Id
                          join l in db.ImageLinks on c.ImageLinkId equals l.Id
                          where f.RootFolder == root
                          select new CarouselItemModel()
@@ -508,14 +510,16 @@ namespace WebApi
                                                  where l.Id == linkId
                                                  select f.FolderName).First() + "(image)";
 
-                        //if()
-
                         List<MetaTag> metaTags = db.MetaTags.Where(m => m.LinkId == linkId).ToList();
                         foreach (MetaTag metaTag in metaTags)
                             metaTagResults.MetaTags.Add(new MetaTagModel() { TagId = metaTag.TagId, LinkId = linkId, Tag = metaTag.Tag });
                     }
                     else
                         metaTagResults.Source = db.CategoryFolders.Where(f => f.Id == folderId).Select(f => f.FolderName).First();
+
+                    CategoryFolderDetail categoryFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                    if (categoryFolderDetail != null)
+                        metaTagResults.Description = categoryFolderDetail.CommentText;
 
                     GetMetaTasRecurr(metaTagResults, folderId, db);
                 }
@@ -528,7 +532,7 @@ namespace WebApi
             return metaTagResults;
         }
 
-        private void GetMetaTasRecurr(MetaTagResultsModel metaTagResults, int folderId ,OggleBoobleContext db)
+        private void GetMetaTasRecurr(MetaTagResultsModel metaTagResults, int folderId, OggleBoobleContext db)
         {
             List<MetaTag> metaTags = db.MetaTags.Where(m => m.FolderId == folderId).ToList();
             foreach (MetaTag metaTag in metaTags)
@@ -791,7 +795,7 @@ namespace WebApi
                 {
                     db.BlogComments.Add(entry);
                     db.SaveChanges();
-                    success.Success= "ok";
+                    success.Success = "ok";
                     success.ReturnValue = entry.Id.ToString();
                 }
             }
@@ -984,8 +988,6 @@ namespace WebApi
             return success;
         }
     }
-
-
 
 }
 
