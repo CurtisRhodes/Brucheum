@@ -32,55 +32,53 @@
 
 </head>
 <body>
-    <div id="staticHeader">
-        <div id="oggleBoobleHeader" class="fixedHeader flexContainer classicColors">
-            <div id="divTopLeftLogo" class="bannerImageContainer">
-                <a href="~/Home/Index"><img id="logo" class="bannerImage" src="/Images/redballon.png" /></a>
-            </div>
-            <div id="largeFixedHeader" class="headerBodyContainer">
-                <div id="headerTopRow">
-                    <div id="bannerTitle" class="headerTitle">OggleBooble</div>
-                    <div id="headerSubTitle" class="headerSubTitle">Big 
-                        <a href="~/Home/ImagePage?folder=2">tits</a> and 
-                        <a href="~/Home/ImagePage?folder=996">ass</a> organized by
-                        <a href="~/Home/ImagePage?folder=136">poses</a>
-                        <a href="~/Home/ImagePage?folder=199">shapes</a> and
-                        <a href="~/Home/ImagePage?folder=136">sizes</a>
-                    </div>
+    <div id="oggleBoobleHeader" class="fixedHeader flexContainer classicColors">
+        <div id="divTopLeftLogo" class="bannerImageContainer">
+            <a href="~/Home/Index"><img id="logo" class="bannerImage" src="/Images/redballon.png" /></a>
+        </div>
+        <div id="largeFixedHeader" class="headerBodyContainer">
+            <div id="headerTopRow">
+                <div id="bannerTitle" class="headerTitle">OggleBooble</div>
+                <div id="headerSubTitle" class="headerSubTitle">Big 
+                    <a href="~/Home/ImagePage?folder=2">tits</a> and 
+                    <a href="~/Home/ImagePage?folder=996">ass</a> organized by
+                    <a href="~/Home/ImagePage?folder=136">poses</a>
+                    <a href="~/Home/ImagePage?folder=199">shapes</a> and
+                    <a href="~/Home/ImagePage?folder=136">sizes</a>
                 </div>
-                <div id="headerBottomRow" class="flexContainer">
-                    <div id="breadcrumbContainer" class="breadCrumbArea">
-                        <div id="headerMessage"></div>
+            </div>
+            <div id="headerBottomRow" class="flexContainer">
+                <div id="breadcrumbContainer" class="breadCrumbArea">
+                    <div id="headerMessage"></div>
+                </div>
+
+                <div id="menuContainer" class="menuTabContainer">
+
+                    <div id="dynamicOnly" class="floatLeft">
+                        <div id="replaceableMenuItems" class="menuTab floatLeft">
+                            <a href="/Admin/Blog">Blog</a>
+                        </div>
+                        <div id="cookieIndicator" class="menuTab floatLeft">
+                        </div>
+
+                        <div id="divPornEditor" class="oggleHidden inline floatLeft">
+                            <div class="menuTab floatLeft"><a href="/Admin/Dashboard">Admin</a></div>
+                        </div>
                     </div>
 
-                    <div id="menuContainer" class="menuTabContainer">
 
-                        <div id="dynamicOnly" class="floatLeft">
-                            <div id="replaceableMenuItems" class="menuTab floatLeft">
-                                <a href="/Admin/Blog">Blog</a>
-                            </div>
-                            <div id="cookieIndicator" class="menuTab floatLeft">
-                            </div>
-
-                            <div id="divPornEditor" class="oggleHidden inline floatLeft">
-                                <div class="menuTab floatLeft"><a href="/Admin/Dashboard">Admin</a></div>
-                            </div>
+                    <div id="divLogedIn" class="oggleHidden inline floatRight">
+                        <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
+                        <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
+                    </div>
+                    <div id="divNotLogedIn" class="oggleHidden inline floatRight">
+                        <div id="btnLayoutRegister" class="menuTab floatRight">
+                            <a href="javascript:registerPlease()">Register</a>
+                            <img id="btnHeaderRegisterSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
                         </div>
-
-
-                        <div id="divLogedIn" class="oggleHidden inline floatRight">
-                            <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
-                            <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
-                        </div>
-                        <div id="divNotLogedIn" class="oggleHidden inline floatRight">
-                            <div id="btnLayoutRegister" class="menuTab floatRight">
-                                <a href="javascript:registerPlease()">Register</a>
-                                <img id="btnHeaderRegisterSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
-                            </div>
-                            <div id="btnLayoutLogin" class="menuTab floatRight">
-                                <a href="javascript:loginPlease()">Log In</a>
-                                <img id="btnHeaderLoginSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
-                            </div>
+                        <div id="btnLayoutLogin" class="menuTab floatRight">
+                            <a href="javascript:loginPlease()">Log In</a>
+                            <img id="btnHeaderLoginSpinner" class="btnSpinnerImage" src="~/Images/loader.gif" />
                         </div>
                     </div>
                 </div>

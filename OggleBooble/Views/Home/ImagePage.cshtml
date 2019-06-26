@@ -70,7 +70,7 @@
 <script>
     var service = '@ViewBag.Service';
     var folderId = '@ViewBag.Folder';
-    var folderName = "";
+    var folderName = "xx";
     var currentUser = '@User.Identity.Name';
     var ipAddress = '@ViewBag.IpAddress';
     var isPornEditor = '@ViewBag.IsPornEditor';
@@ -85,7 +85,7 @@
         $('#imageContainer').width($('#middleColumn').width());
         $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
 
-        getBreadCrumbs();
+
         getImageLinks();
 
         if ((isPornEditor == "True") || (document.domain === 'localhost')) {
@@ -97,9 +97,45 @@
             //<div class="clickable" onclick="repairLinks()">add meta tags</div></dir>`);
 
         }
-        else {
-            $('.adminLink').hide();
-        }
+
+        getBreadCrumbs();
+
+        var waiter = setInterval(function () {
+            if (folderName !== "xx") {
+                clearInterval(waiter);
+                //folderName = "faith";
+
+                //window.open("/home/ImagePage?folder=" + dashboardContextMenuFolderId, "_blank");
+
+                try {
+                window.location.href = "http://pages.ogglebooble.com/" + folderName + ".html";
+
+                } catch (e) {
+                    alert(folderName + ".html " + e);
+                    $('#footerMessage').html("no staic");
+                }
+
+
+
+                //$.ajax({
+                //    url: "TryStaticContent?folderName=" + folderName,
+                //    type: "GET",
+                //    //url: "http://pages.ogglebooble.com/" + folderName + ".html",
+                //    //type: "HEAD",
+                //    success: function (succss) {
+                //        if (succss == "ok")
+                //            $('#footerMessage').html("bye");
+                //        else
+                //            alert(success);
+                //    },
+                //    error: function () {
+                //        $('.adminLink').hide();
+                //        $('#footerMessage').html("no staic");
+                //        //alert("http://pages.ogglebooble.com/" + folderName + ".html  NOT FOUND");
+                //    }
+                //});
+            }
+        }, 300);
 
         resizePage();
     });

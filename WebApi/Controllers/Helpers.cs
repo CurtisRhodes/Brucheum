@@ -124,6 +124,18 @@ namespace WebApi
         //      .Select(s => s[random.Next(s.Length)]).ToArray());
         //}
 
+        public static string Beautify(string stankyString)
+        {
+            return stankyString.Replace("'", "''")
+                .Replace("&#10;", "");
+            //.replace(/ &quot;/ g, "\"")
+            //.replace(/ &#39;/g, "'")
+            //.replace(/ &nbsp;/ g, " ")
+            //.replace(/\n / g, "");
+        }
+
+
+
         public static string GetIPAddress()
         {
             String address = "";

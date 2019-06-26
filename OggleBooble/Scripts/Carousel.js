@@ -11,6 +11,8 @@ var metaTagDialogIsOpen = false;
 var modelInfoDialogIsOpen = false;
 var imageCommentDialogIsOpen = false;
 var folderCategoryDialogIsOpen = false;
+var service = "https://api.curtisrhodes.com/";
+
 
 function launchCarousel(root) {
     $('#footerMessage').html("loading carousel");
@@ -89,7 +91,7 @@ function loadImages(rootFolder, isChecked, take) {
                     var delta = (Date.now() - start) / 1000;
                     console.log("loadImages(" + rootFolder + ") take: " + take + " took: " + delta.toFixed(3));
                     if (take === 20) {
-                        loadImages(rootFolder, isChecked, 1500);
+                        loadImages(rootFolder, isChecked, 15000);
                     }
                 }
                 else
@@ -115,11 +117,13 @@ function showFolderCategoryDialog() {
 
 function clickViewGallery() {
     clearInterval(CarouselInterval);
-    window.location.href = "ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
+    window.location.href = "home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
+    //window.location.href = "http://pages.ogglebooble.com/" + carouselItemArray[imageIndex].FolderName + ".html";
 }
 
 function clickViewParentGallery() {
     window.location.href = "ImagePage?folder=" + carouselItemArray[imageIndex].ParentId;
+    //window.location.href = "http://pages.ogglebooble.com/" + carouselItemArray[imageIndex].FolderName + ".html";
 }
 
 function clickSpeed(speed) {

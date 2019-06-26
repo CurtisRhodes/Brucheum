@@ -13,59 +13,91 @@ namespace WebApi.Controllers
     [EnableCors("*", "*", "*")]
     public class StaticPageController : ApiController
     {
+        private int totalFiles = 0;
+        private int filesProcessed = 0;
+        private string _userName = "";
+
         [HttpGet]
         public string Build(int parentFolder, string userName)
         {
             string success = "";
-            using (OggleBoobleContext db = new OggleBoobleContext())
             {
                 try
                 {
-                    List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == parentFolder).ToList();
-                    categoryFolders.Add(db.CategoryFolders.Where(f => f.Id == parentFolder).First());
-                    int fileCount = 0;
-                    foreach (CategoryFolder categoryFolder in categoryFolders)
+                    _userName = userName;
+                    using (OggleBoobleContext db = new OggleBoobleContext())
                     {
-                        SignalRHost.ProgressHub.PostToClient("Creating static files: " + categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "") + ".html  " + ++fileCount + "  of: " + categoryFolders.Count);
-                        SignalRHost.ProgressHub.ShowProgressBar(categoryFolders.Count, fileCount);
-                        string staticContent =
-                            "<!DOCTYPE html>\n<html>\n" + HeadHtml(categoryFolder.Id, categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "")) +
-                            "<body style='margin-top:105px'>\n" +
-                            HeaderHtml(categoryFolder.Id) +
-                            BodyHtml(categoryFolder.Id, userName) + CommentDialog() +
-                            "<script>var staticPageFolderId=" + categoryFolder.Id + "; var staticPageFolderName='" +
-                            categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "") + "'; var staticPageCurrentUser='" + userName + "'; </script>\n" +
-                            "<script src = 'script/staticPage.js'></script>\n" +
-                            ImageViewer() + FooterHtml() +
-                            "\n</body>\n</html>";
+                        SignalRHost.ProgressHub.PostToClient("Creating static files");
+                        VwDirTree vwDirTree =db.VwDirTrees.Where(v => v.Id == parentFolder).First();
+                        totalFiles = Math.Max(vwDirTree.GrandTotalFiles, vwDirTree.TotalFiles);
+                        SignalRHost.ProgressHub.ShowProgressBar(0, totalFiles);
 
-                        // todo  write the image as a file to x.ogglebooble  4/1/19
-                        string filePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data");
-
-                        using (var staticFile = System.IO.File.Open(filePath + "/temp.html", System.IO.FileMode.Create))
-                        {
-                            Byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(staticContent);
-                            staticFile.Write(byteArray, 0, byteArray.Length);
-                        }
-                        FtpWebRequest webRequest = null;
-                        string ftpPath = "ftp://50.62.160.105/pages.OGGLEBOOBLE.COM/";
-                        webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "") + ".html");
-                        webRequest.Credentials = new NetworkCredential("curtisrhodes", "R@quel77");
-                        webRequest.Method = WebRequestMethods.Ftp.UploadFile;
-                        using (System.IO.Stream requestStream = webRequest.GetRequestStream())
-                        {
-                            byte[] fileContents = System.IO.File.ReadAllBytes(filePath + "/temp.html");
-                            webRequest.ContentLength = fileContents.Length;
-                            requestStream.Write(fileContents, 0, fileContents.Length);
-                            requestStream.Flush();
-                            requestStream.Close();
-                        }
+                        string folderName = db.CategoryFolders.Where(f=>f.Id==parentFolder).First().FolderName.Replace(".OGGLEBOOBLE.COM", "");
+                        success = ProcessFolder(parentFolder, folderName, db);
                     }
-                    success = "ok";
                 }
                 catch (Exception e) { success = Helpers.ErrorDetails(e); }
                 return success;
             }
+        }
+
+        private string ProcessFolder(int folderId, string folderName, OggleBoobleContext db)
+        {
+            string success = "";
+            try
+            {
+                string staticContent =
+                    "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, folderName) +
+                    "<body style='margin-top:105px'>\n" +
+                    HeaderHtml(folderId) +
+                    BodyHtml(folderId, _userName) + CommentDialog() +
+                    "<script>var staticPageFolderId=" + folderId + "; var staticPageFolderName='" +
+                    folderName + "'; var staticPageCurrentUser='" + _userName + "'; </script>\n" +
+                    "<script src = 'script/staticPage.js'></script>\n" +
+                    ImageViewer() + FooterHtml() +
+                    "\n</body>\n</html>";
+
+                // todo  write the image as a file to x.ogglebooble  4/1/19
+                string filePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data");
+
+                using (var staticFile = System.IO.File.Open(filePath + "/temp.html", System.IO.FileMode.Create))
+                {
+                    Byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(staticContent);
+                    staticFile.Write(byteArray, 0, byteArray.Length);
+                }
+                FtpWebRequest webRequest = null;
+                string ftpPath = "ftp://50.62.160.105/pages.OGGLEBOOBLE.COM/";
+                webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + folderName + ".html");
+                webRequest.Credentials = new NetworkCredential("curtisrhodes", "R@quel77");
+                webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                using (System.IO.Stream requestStream = webRequest.GetRequestStream())
+                {
+                    byte[] fileContents = System.IO.File.ReadAllBytes(filePath + "/temp.html");
+                    webRequest.ContentLength = fileContents.Length;
+                    requestStream.Write(fileContents, 0, fileContents.Length);
+                    requestStream.Flush();
+                    requestStream.Close();
+                }
+                success = "ok";
+
+
+                List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+                //int fileCount = 0;
+                foreach (CategoryFolder dbCategoryFolder in categoryFolders)
+                {
+                    //string folderName = db.CategoryFolders.Where(f => f.Id == parentFolder).First().FolderName.Replace(".OGGLEBOOBLE.COM", "");
+
+                    ProcessFolder(dbCategoryFolder.Id, dbCategoryFolder.FolderName, db);
+
+                    VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == folderId).First();
+                    filesProcessed += Math.Max(vwDirTree.TotalFiles, vwDirTree.FileCount);
+                    SignalRHost.ProgressHub.ShowProgressBar(filesProcessed, totalFiles);
+                    SignalRHost.ProgressHub.PostToClient("Creating static files: " + dbCategoryFolder.FolderName + ".html");
+                    //+ ++fileCount + "  of: " + categoryFolders.Count); ;
+                }
+            }
+            catch (Exception e) { success = Helpers.ErrorDetails(e); }
+            return success;
         }
 
         private string HeadHtml(int folderId, string pageName)
@@ -74,7 +106,7 @@ namespace WebApi.Controllers
             MetaTagResultsModel metaTagResults = new MetaTagController().GetTags(folderId, "undefined");
             foreach (MetaTagModel metaTag in metaTagResults.MetaTags)
             {
-                articleTagString += ",\n" + metaTag.Tag;
+                articleTagString += "," + metaTag.Tag;
             }
 
             //$('head').append('<meta property="og:description" content="' + beautify(summary.substr(0, 300)) + '" />');
@@ -89,8 +121,8 @@ namespace WebApi.Controllers
                 "<script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js'></script>\n" +
                 "<link href='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css' rel='stylesheet'>\n" +
                 "<script src='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js'></script>\n" +
-                "<title>"+ pageName + "</title>" +
-                "<link rel=”icon” type=”image/png” href =”favicon.png” />"+
+                "<title>"+ pageName + " - OggleBooble</title>" +
+                "<link rel='icon' type='image/png' href='favicon.png' />"+
                 "<script src='script/GlobalFunctions.js'></script>\n" +
                 "<script src='script/ResizeThreeColumnPage.js'></script>\n" +
                 "<script src='script/ImageViewer.js'></script>\n" +
@@ -157,7 +189,7 @@ namespace WebApi.Controllers
             return
             "<div class='fixedHeader flexContainer classicColors' id='oggleBoobleHeader'>\n" +
                 "<div class='bannerImageContainer' id='divTopLeftLogo'>\n" +
-                    "<a href='/Home/Index'><img class='bannerImage' id='logo' src='images/redballon.png'></a>\n" +
+                    "<a href='http://pages.ogglebooble.com/'><img class='bannerImage' id='logo' src='images/redballon.png'></a>\n" +
                 "</div>\n" +
                     "<div class='headerBodyContainer' id='largeFixedHeader'>\n" +
                         "<div id='headerTopRow'>\n" +
@@ -165,9 +197,9 @@ namespace WebApi.Controllers
                             "<div class='headerSubTitle' id='headerSubTitle'>Big " +
                                 "<a href='tits.html'>tits</a> and " +
                                 "<a href='ass.html'>ass</a> organized by" +
-                                "<a href='poses.html'>poses</a> " +
-                                "<a href='shapes.html'>shapes</a> and " +
-                                "<a href='sizes.html'>sizes</a> " +
+                                "<a href='poses.html'> poses</a> " +
+                                "<a href='shapes.html'> shapes</a> and " +
+                                "<a href='sizes.html'> sizes</a> " +
                             "</div>\n" +
                         "</div>\n" +
                         "<div class='flexContainer' id='headerBottomRow'>\n" +

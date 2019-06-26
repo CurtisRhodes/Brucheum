@@ -39,6 +39,9 @@ function getBreadCrumbs() {
                 setLayout(breadCrumbModel.RootFolder);
                 document.title = breadCrumbModel.FolderName + " OggleBooble";
                 folderName = breadCrumbModel.FolderName;
+
+                //alert("breadCrumbsFolderName: " + breadCrumbsFolderName);
+
                 logPageHit();
             }
             else

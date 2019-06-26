@@ -572,7 +572,7 @@ namespace WebApi
                 Helpers.GetFtpParentPathWithoutRoot(destinationParentId) + dbDestinationParentFolder.FolderName + "/" + dbSourceFolder.FolderName;
 
 
-            string linkPrefix = "http://" + dbDestinationParentFolder.RootFolder + ".ogglebooble.com" + Helpers.GetFtpParentPathWithoutRoot(destinationParentId);
+            string linkPrefix = "http://" + dbDestinationParentFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetFtpParentPathWithoutRoot(destinationParentId);
             string createDirectory = "";
             if (FtpUtilies.DirectoryExists(destinationFtpPath))
                 createDirectory = "ok";

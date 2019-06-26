@@ -300,6 +300,7 @@
     <Content Include="Scripts\DirTree.js" />
     <Content Include="Scripts\ImageViewer.js" />
     <Content Include="Scripts\StaticPage.js" />
+    <Content Include="Static_Pages\Index.html" />
     <Content Include="Styles\imageViewer.css" />
     <Content Include="Static_Pages\Images\close.png" />
     <Content Include="Static_Pages\Images\comment.png" />

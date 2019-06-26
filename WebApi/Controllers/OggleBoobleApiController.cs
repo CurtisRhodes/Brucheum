@@ -296,7 +296,6 @@ namespace WebApi
         }
     }
 
-
     [EnableCors("*", "*", "*")]
     public class BreadCrumbsController : ApiController
     {
@@ -519,8 +518,10 @@ namespace WebApi
 
                     CategoryFolderDetail categoryFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
                     if (categoryFolderDetail != null)
-                        metaTagResults.Description = categoryFolderDetail.CommentText;
-
+                    {
+                        if (categoryFolderDetail.CommentText != null)
+                            metaTagResults.Description = Helpers.Beautify(categoryFolderDetail.CommentText);
+                    }
                     GetMetaTasRecurr(metaTagResults, folderId, db);
                 }
                 metaTagResults.Success = "ok";
@@ -535,6 +536,12 @@ namespace WebApi
         private void GetMetaTasRecurr(MetaTagResultsModel metaTagResults, int folderId, OggleBoobleContext db)
         {
             List<MetaTag> metaTags = db.MetaTags.Where(m => m.FolderId == folderId).ToList();
+            metaTagResults.MetaTags.Add(new MetaTagModel()
+            {
+                FolderId = folderId,
+                Tag = db.CategoryFolders.Where(f => f.Id == folderId).First().FolderName
+            });
+
             foreach (MetaTag metaTag in metaTags)
                 metaTagResults.MetaTags.Add(new MetaTagModel() { TagId = metaTag.TagId, FolderId = metaTag.FolderId, Tag = metaTag.Tag });
 

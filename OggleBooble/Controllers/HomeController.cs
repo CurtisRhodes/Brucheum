@@ -91,6 +91,20 @@ namespace OggleBooble
             return View();
         }
 
+        [HttpGet]
+        public string TryStaticContent(string folderName)
+        {
+            string success = "";
+            try
+            {
+                //Response.Redirect("http://pages.ogglebooble.com/" + folderName + ".html", true);
+                success = "ok";
+            }
+            catch (Exception e) { success = Helpers.ErrorDetails(e); }
+            return success;
+        }
+
+
         [HttpPost]
         public JsonResult CreateImagePageStaticFile(StaticPageModel staticPage)
         {
