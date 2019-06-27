@@ -90,8 +90,8 @@ namespace WebApi.Controllers
                     ProcessFolder(dbCategoryFolder.Id, dbCategoryFolder.FolderName, db);
 
                     VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == folderId).First();
-                    filesProcessed += Math.Max(vwDirTree.TotalFiles, vwDirTree.FileCount);
-                    SignalRHost.ProgressHub.ShowProgressBar(filesProcessed, totalFiles);
+                    //filesProcessed += Math.Max(vwDirTree.TotalFiles, vwDirTree.FileCount);
+                    SignalRHost.ProgressHub.ShowProgressBar(++filesProcessed, totalFiles);
                     SignalRHost.ProgressHub.PostToClient("Creating static files: " + dbCategoryFolder.FolderName + ".html");
                     //+ ++fileCount + "  of: " + categoryFolders.Count); ;
                 }
