@@ -427,7 +427,7 @@ namespace WebApi
             List<VwDirTree> vwDirTree = new List<VwDirTree>();
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
-                // wowdid this speed things up
+                // wow did this speed things up
                 vwDirTree = db.VwDirTrees.ToList();
                 //GetCatTreeRecurr(danni, db);
             }
@@ -446,6 +446,7 @@ namespace WebApi
                 {
                     FolderId = vwTree.Id,
                     ParentId = vwTree.Parent,
+                    RootFolder = vwTree.RootFolder,
                     DirectoryName = vwTree.FolderName,
                     Link = vwTree.Link,
                     SubDirCount = vwTree.SubDirCount,

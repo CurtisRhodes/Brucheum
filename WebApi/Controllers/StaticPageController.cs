@@ -30,10 +30,11 @@ namespace WebApi.Controllers
                         SignalRHost.ProgressHub.PostToClient("Creating static files");
                         VwDirTree vwDirTree =db.VwDirTrees.Where(v => v.Id == parentFolder).First();
                         totalFiles = Math.Max(vwDirTree.GrandTotalFiles, vwDirTree.TotalFiles);
-                        SignalRHost.ProgressHub.ShowProgressBar(0, totalFiles);
+                        SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
 
-                        string folderName = db.CategoryFolders.Where(f=>f.Id==parentFolder).First().FolderName.Replace(".OGGLEBOOBLE.COM", "");
-                        success = ProcessFolder(parentFolder, folderName, db);
+                        CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == parentFolder).First();
+                        string folderName = categoryFolder.RootFolder + "/" + categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
+                        success = ProcessFolder(parentFolder, categoryFolder.RootFolder, folderName, db);
                     }
                 }
                 catch (Exception e) { success = Helpers.ErrorDetails(e); }
@@ -41,7 +42,7 @@ namespace WebApi.Controllers
             }
         }
 
-        private string ProcessFolder(int folderId, string folderName, OggleBoobleContext db)
+        private string ProcessFolder(int folderId, string rootFolder, string folderName, OggleBoobleContext db)
         {
             string success = "";
             try
@@ -50,17 +51,17 @@ namespace WebApi.Controllers
                     "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, folderName) +
                     "<body style='margin-top:105px'>\n" +
                     HeaderHtml(folderId) +
-                    BodyHtml(folderId, _userName) + CommentDialog() +
+                    BodyHtml(folderId, rootFolder, _userName) + CommentDialog() +
                     "<script>var staticPageFolderId=" + folderId + "; var staticPageFolderName='" +
                     folderName + "'; var staticPageCurrentUser='" + _userName + "'; </script>\n" +
-                    "<script src = 'script/staticPage.js'></script>\n" +
+                    "<script src='http://pages.ogglebooble.com/script/staticPage.js'></script>\n" +
                     ImageViewer() + FooterHtml() +
                     "\n</body>\n</html>";
 
                 // todo  write the image as a file to x.ogglebooble  4/1/19
-                string filePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data");
+                string tempFilePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data");
 
-                using (var staticFile = System.IO.File.Open(filePath + "/temp.html", System.IO.FileMode.Create))
+                using (var staticFile = System.IO.File.Open(tempFilePath + "/temp.html", System.IO.FileMode.Create))
                 {
                     Byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(staticContent);
                     staticFile.Write(byteArray, 0, byteArray.Length);
@@ -72,7 +73,7 @@ namespace WebApi.Controllers
                 webRequest.Method = WebRequestMethods.Ftp.UploadFile;
                 using (System.IO.Stream requestStream = webRequest.GetRequestStream())
                 {
-                    byte[] fileContents = System.IO.File.ReadAllBytes(filePath + "/temp.html");
+                    byte[] fileContents = System.IO.File.ReadAllBytes(tempFilePath + "/temp.html");
                     webRequest.ContentLength = fileContents.Length;
                     requestStream.Write(fileContents, 0, fileContents.Length);
                     requestStream.Flush();
@@ -82,18 +83,20 @@ namespace WebApi.Controllers
 
 
                 List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+                //totalFiles += filesProcessed;
+
+                //filesProcessed += ;
                 //int fileCount = 0;
                 foreach (CategoryFolder dbCategoryFolder in categoryFolders)
                 {
-                    //string folderName = db.CategoryFolders.Where(f => f.Id == parentFolder).First().FolderName.Replace(".OGGLEBOOBLE.COM", "");
-
-                    ProcessFolder(dbCategoryFolder.Id, dbCategoryFolder.FolderName, db);
-
-                    VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == folderId).First();
+                    VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == dbCategoryFolder.Id).First();
                     //filesProcessed += Math.Max(vwDirTree.TotalFiles, vwDirTree.FileCount);
-                    SignalRHost.ProgressHub.ShowProgressBar(++filesProcessed, totalFiles);
+                    filesProcessed += vwDirTree.FileCount;
+                    SignalRHost.ProgressHub.ShowProgressBar(totalFiles, filesProcessed);
                     SignalRHost.ProgressHub.PostToClient("Creating static files: " + dbCategoryFolder.FolderName + ".html");
                     //+ ++fileCount + "  of: " + categoryFolders.Count); ;
+
+                    ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName, db);
                 }
             }
             catch (Exception e) { success = Helpers.ErrorDetails(e); }
@@ -102,15 +105,12 @@ namespace WebApi.Controllers
 
         private string HeadHtml(int folderId, string pageName)
         {
-            var articleTagString = "naked women";
+            var articleTagString = "";
             MetaTagResultsModel metaTagResults = new MetaTagController().GetTags(folderId, "undefined");
             foreach (MetaTagModel metaTag in metaTagResults.MetaTags)
             {
                 articleTagString += "," + metaTag.Tag;
             }
-
-            //$('head').append('<meta property="og:description" content="' + beautify(summary.substr(0, 300)) + '" />');
-            //$('head').append("<meta property='og:image' content='https://api.curtisrhodes.com/app_data/images/" + articleImageName + "'/>");
 
             return "<head>\n" +
                 "<script src='https://code.jquery.com/jquery-latest.min.js' type='text/javascript'></script>\n" +
@@ -122,20 +122,20 @@ namespace WebApi.Controllers
                 "<link href='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css' rel='stylesheet'>\n" +
                 "<script src='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js'></script>\n" +
                 "<title>"+ pageName + " - OggleBooble</title>" +
-                "<link rel='icon' type='image/png' href='favicon.png' />"+
-                "<script src='script/GlobalFunctions.js'></script>\n" +
-                "<script src='script/ResizeThreeColumnPage.js'></script>\n" +
-                "<script src='script/ImageViewer.js'></script>\n" +
-                "<script src='script/CommentDialog.js'></script>\n" +
-                "<link href='css/default.css'     rel='stylesheet'/>\n" +
-                "<link href='css/fixedHeader.css' rel='stylesheet'/>\n" +
-                "<link href='css/imageViewer.css' rel='stylesheet'/>\n" +
-                "<link href='css/footer.css'      rel='stylesheet'/>\n" +
-                "<link href='css/ImagePage.css'   rel='stylesheet'/>\n" +
+                "<link rel='icon' type='image/png' href='pages.ogglebooble.com/images/favicon.png' />" +
+                "<script src='http://pages.ogglebooble.com/script/GlobalFunctions.js' type='text/javascript'></script>\n" +
+                "<script src='http://pages.ogglebooble.com/script/ResizeThreeColumnPage.js' type='text/javascript'></script>\n" +
+                "<script src='http://pages.ogglebooble.com/script/ImageViewer.js' type='text/javascript'></script>\n" +
+                "<script src='http://pages.ogglebooble.com/script/CommentDialog.js' type='text/javascript'></script>\n" +
+                "<link href='http://pages.ogglebooble.com/css/default.css'     rel='stylesheet'/>\n" +
+                "<link href='http://pages.ogglebooble.com/css/fixedHeader.css' rel='stylesheet'/>\n" +
+                "<link href='http://pages.ogglebooble.com/css/imageViewer.css' rel='stylesheet'/>\n" +
+                "<link href='http://pages.ogglebooble.com/css/footer.css'      rel='stylesheet'/>\n" +
+                "<link href='http://pages.ogglebooble.com/css/ImagePage.css'   rel='stylesheet'/>\n" +
                 "<meta name='Title' content='" + pageName + "' property='og:title'/>\n" +
                 "<meta name='description' content='" + metaTagResults.Description + "'/>\n" +
                 "<meta property='og:type' content='website' />\n" +
-                "<meta property='og:url' content='pages.OggleBooble.com/" + pageName + ".html'/>\n" +
+                "<meta property='og:url' content='https://pages.OggleBooble.com/" + pageName + ".html'/>\n" +
                 "<meta name='Keywords' content='" + articleTagString + "'/>\n" +
                 "</head>";
         }
@@ -143,10 +143,15 @@ namespace WebApi.Controllers
         private string HeaderHtml(int folderId)
         {
             string breadCrumbs = "";
+            string headerSubtitle = "";
+            string colorClass = "";
+            string bannerLogo = "";
+            string homeLink = "";
             BreadCrumbModel breadCrumbModel = new BreadCrumbModel();
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
                 var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                string root = thisFolder.RootFolder;
                 breadCrumbModel.BreadCrumbs.Add(new BreadCrumbItemModel()
                 {
                     FolderId = thisFolder.Id,
@@ -184,23 +189,34 @@ namespace WebApi.Controllers
                             breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>";
                     }
                 }
-            }
 
-            return
-            "<div class='fixedHeader flexContainer classicColors' id='oggleBoobleHeader'>\n" +
+                if (thisFolder.RootFolder == "porn" || thisFolder.RootFolder == "sluts")
+                {
+                    headerSubtitle = "naughty behavior catergorized";
+                    colorClass = "pornColors";
+                    bannerLogo = "http://pages.ogglebooble.com/images/csLips02.png";
+                    homeLink = "http://pages.ogglebooble.com/porn.html";
+                }
+                else {
+                    headerSubtitle = "Big <a href='http://pages.ogglebooble.com/boobs/boobs.html'>tits</a> and " +
+                     "<a href='http://pages.ogglebooble.com/boobs/nice ass.html'>ass</a> organized by" +
+                     "<a href='http://pages.ogglebooble.com/boobs/poses.html'> poses</a> " +
+                     "<a href='http://pages.ogglebooble.com/boobs/shapes.html'> shapes</a> and " +
+                     "<a href='http://pages.ogglebooble.com/boobs/sizes.html'> sizes</a> ";
+                    colorClass = "classicColors";
+                    bannerLogo = "http://pages.ogglebooble.com/images/redballon.png";
+                    homeLink = "http://pages.ogglebooble.com/";
+                }
+
+            }
+            return "<div class='fixedHeader flexContainer " + colorClass + "' id='oggleBoobleHeader'>\n" +
                 "<div class='bannerImageContainer' id='divTopLeftLogo'>\n" +
-                    "<a href='http://pages.ogglebooble.com/'><img class='bannerImage' id='logo' src='images/redballon.png'></a>\n" +
+                    "<a href='" + homeLink + "'><img class='bannerImage' id='logo' src='" + bannerLogo + "'></a>\n" +
                 "</div>\n" +
                     "<div class='headerBodyContainer' id='largeFixedHeader'>\n" +
                         "<div id='headerTopRow'>\n" +
-                            "<div class='headerTitle' id='bannerTitle'>OggleBooble</div>" +
-                            "<div class='headerSubTitle' id='headerSubTitle'>Big " +
-                                "<a href='tits.html'>tits</a> and " +
-                                "<a href='ass.html'>ass</a> organized by" +
-                                "<a href='poses.html'> poses</a> " +
-                                "<a href='shapes.html'> shapes</a> and " +
-                                "<a href='sizes.html'> sizes</a> " +
-                            "</div>\n" +
+                            "<div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
+                            "<div class='headerSubTitle' id='headerSubTitle'>" + headerSubtitle + "</div>\n" +
                         "</div>\n" +
                         "<div class='flexContainer' id='headerBottomRow'>\n" +
                             "<div class='breadCrumbArea' id='breadcrumbContainer'>" + breadCrumbs + "</div>\n" +
@@ -220,11 +236,11 @@ namespace WebApi.Controllers
                                 "<div class='oggleHidden inline floatRight' id='divNotLogedIn' style='display: block;'>\n" +
                                     "<div class='menuTab floatRight' id='btnLayoutRegister'>\n" +
                                         "<a href='javascript:registerPlease()'>Register</a>\n" +
-                                        "<img class='btnSpinnerImage' id='btnHeaderRegisterSpinner' src='images/loader.gif'>\n" +
+                                        "<img class='btnSpinnerImage' id='btnHeaderRegisterSpinner' src='http://pages.ogglebooble.com/images/loader.gif'>\n" +
                                     "</div>\n" +
                                 "<div class='menuTab floatRight' id='btnLayoutLogin'>\n" +
                                     "<a href='javascript:loginPlease()'>Log In</a>\n" +
-                                    "<img class='btnSpinnerImage' id='btnHeaderLoginSpinner' src='images/loader.gif'>\n" +
+                                    "<img class='btnSpinnerImage' id='btnHeaderLoginSpinner' src='http://pages.ogglebooble.com/images/loader.gif'>\n" +
                                 "</div>\n" +
                             "</div>\n" +
                         "</div>\n" +
@@ -233,7 +249,7 @@ namespace WebApi.Controllers
             "</div>";
         }
 
-        private string BodyHtml(int folderId, string currentUser)
+        private string BodyHtml(int folderId, string rootFolder, string currentUser)
         {
             string bodyHtml = "<div class='threeColumnArray'>\n" +
                     "<div id='leftColumn'></div>\n" +
@@ -285,17 +301,17 @@ namespace WebApi.Controllers
              "\n<div id = 'imageViewerDialog' class='fullScreenViewer'>\n" +
                "<div id = 'viewerButtonsRow' class='imageViewerHeaderRow'>\n" +
                   "<div class='viewerButtonsRowSection'>\n" +
-                    "<img id = 'imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='Images/comment.png' />" +
+                    "<img id = 'imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='http://pages.ogglebooble.com/images/comment.png' />" +
                   "</div>\n" +
                   "<span id = 'imageViewerHeaderTitle' class='imageViewerTitle'></span>" +
                   "<div class='viewerButtonsRowSection'>" +
                     "<div class='floatRight' style='margin-left: 44px;' onclick=\"$('#imageViewerDialog').effect('blind', {mode:'hide', direction:'vertical' }, 500); viewerShowing = 'false';\">" +
-                      "<img src = '/Images/close.png' />" +
+                      "<img src = 'http://pages.ogglebooble.com/images/close.png' />" +
                     "</div>\n" +
-                     "<div class='floatRight' onclick=\"runSlideShow('faster')\"><img id='fasterSlideshow' title='faster slideshow' src='/Images/slideshowFaster.png' /></div>\n" +
-                      "<div class='floatRight' onclick=\"runSlideShow('start')\"><img id='showSlideshow' title='start slideshow' src='/Images/slideshow.png' /></div>\n" +
-                      "<div class='floatRight' onclick=\"runSlideShow('slower')\"><img id='slowerSlideShow' title='slower slideshow' src='Images/slideshowSlower.png' /></div>\n" +
-                     "<div class='floatRight' onclick=\"blowupImage()\"><img class='popoutBox' src='/Images/expand02.png' /></div>\n" +
+                     "<div class='floatRight' onclick=\"runSlideShow('faster')\"><img id='fasterSlideshow' title='faster slideshow' src='http://pages.ogglebooble.com/images/slideshowFaster.png' /></div>\n" +
+                      "<div class='floatRight' onclick=\"runSlideShow('start')\"><img id='showSlideshow' title='start slideshow' src='http://pages.ogglebooble.com/images/slideshow.png' /></div>\n" +
+                      "<div class='floatRight' onclick=\"runSlideShow('slower')\"><img id='slowerSlideShow' title='slower slideshow' src='http://pages.ogglebooble.com/images/slideshowSlower.png' /></div>\n" +
+                     "<div class='floatRight' onclick=\"blowupImage()\"><img class='popoutBox' src='http://pages.ogglebooble.com/images/expand02.png' /></div>\n" +
                   "</div>\n" +
                "</div>\n" +
                "<div id = 'leftClickArea' onclick='slide(\"prev\")' class='hiddeClickArea'></div>" +

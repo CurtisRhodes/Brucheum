@@ -568,6 +568,10 @@ namespace WebApi
 
             string sourceFtpPath = "ftp://50.62.160.105/" + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName;
 
+            if (dbDestinationParentFolder.FolderName.Contains("OGGLEBOOBLE.COM"))
+                dbDestinationParentFolder.FolderName = "";
+
+
             string destinationFtpPath = "ftp://50.62.160.105/" + dbDestinationParentFolder.RootFolder + ".ogglebooble.com/" +
                 Helpers.GetFtpParentPathWithoutRoot(destinationParentId) + dbDestinationParentFolder.FolderName + "/" + dbSourceFolder.FolderName;
 

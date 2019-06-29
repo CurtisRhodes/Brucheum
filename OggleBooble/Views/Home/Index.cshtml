@@ -1,20 +1,17 @@
-﻿<style>
+﻿@{
+    ViewBag.Title = "Welcome";
+}
+
+<style>
     /*#leftColumn, #middleColumn, #rightColumn {
         font-family: Comic Sans MS;
     }*/
 
-    .pornWarningContainer {
-        position: fixed;
-        z-index: 200;
-        margin: 0 20px;
-        display: none;
-    }
-
+ 
     .ogglePromoContainer {
         position: absolute;
         top: 250px;
         left: 1200px;
-
         border: solid 3px #4b0d41;
         height: 500px;
         width: 500px;
@@ -26,12 +23,12 @@
         text-align: center;
         background-color: var(--ogglgeHeaderBarColor);
     }
+
     .ogglePromoText {
-        padding:6px;
+        padding: 6px;
         text-align: justify;
         background-color: var(--oggleContainerBackgroundColor);
     }
-
 </style>
 
 <div class="threeColumnArray">
@@ -39,15 +36,15 @@
         <div class="leftColumnList">
             <div onclick="window.location.href='/home/transitions?folder=boobs'">Transitions</div>
             <div onclick="window.location.href='/home/BoobsRanker'">Boobs Rater</div>
-            <div onclick="window.location.href='/test/contextTest'">Let me Expalin</div>
+            <div onclick="showCustomMessage(38)">Let me Expalin</div>
             <div onclick="showCatListDialog()">Category List</div>
             <div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>
             @*<div onclick="$('#oggleBlogEntry').fadeIn()">Blog</div>*@
-            <div onclick="showPortnWarning()">Nasty Porn</div>
+            <div onclick="showCustomMessage(35)">Nasty Porn</div>
         </div>
     </div>
     <div id="middleColumn">
-        <div id="pornWarning" class="oggleHidden pornWarningContainer"></div>
+        <div id="customMessage" class="oggleHidden customMessageContainer"></div>
         <div id="divStatusMessage"></div>
         <div class="flexContainer">
 
@@ -85,21 +82,20 @@
         var userName = '@ViewBag.UserName';
         var lastBuild = '@ViewBag.BuildInfo';
 
-        $('#footerLastBuild').html("last build: " + lastBuild + " 00");
+        $('#footerLastBuild').html("last build: " + lastBuild + " 010");
 
         $('#boobCatTreeContainer').dialog({
             autoOpen: false,
             show: { effect: "fade" },
             hide: { effect: "blind" },
-            width: 400,
+            position: ({ my: 'left top', at: 'left top', of: $('#middleColumn') }),
+            width: 411,
             height: 600
         });
 
         launchCarousel('boobs');
 
     });
-
-
 
     function loadPromoMessages(commentType) {
         $.ajax({
@@ -145,13 +141,28 @@
             promoIdx = 0;
     }
 
-    function showPortnWarning() {
-        if (typeof pause === 'function')
+    function showCustomMessage(blogId) {
+        if (typeof pause === 'function') {
             pause();
-        if ($('#pornWarning').html() == "")
-            showSiteContent($('#pornWarning'), 35)
-        $('#pornWarning').show();
+        }
+        $.ajax({
+            type: "GET",
+            url: service + "api/OggleBlog/?blogId=" + blogId,
+            success: function (entry) {
+                if (entry.Success === "ok") {
+                    $('#customMessage').html(entry.CommentText).show();
+                }
+                else
+                    alert(entry.Success);
+            },
+            error: function (xhr) {
+                alert("showSiteContent xhr: " + getXHRErrorDetails(xhr));
+            }
+        });
+        //if ($('#pornWarning').html() == "")
     }
+
+
 
     function letemPorn(response) {
         // record hit
@@ -169,8 +180,12 @@
     }
 
     function boobCatTreeContainerClick(path, id, treeId) {
+
+            //alert("dirTreeClick treeId: " + treeId);
+
+
         if (treeId == "boobCatTreeContainer") {
-            window.location.href = "/ImagePage?folder=" + id;
+            window.location.href = "ImagePage?folder=" + id;
             $('#boobCatTreeContainer').dialog('close')
         }
         else

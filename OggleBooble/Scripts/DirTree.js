@@ -66,7 +66,10 @@ function recurrBuildDirTree(dir, treeId) {
 
         dirTreeContainer += "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
             + "<span id=S" + subDir.LinkId + " onclick=toggleDirTree('" + subDir.LinkId + "') >[" + expandMode + "] </span>"
+
             + "<span onclick=" + treeId + "Click('" + subDir.DanniPath + "','" + subDir.FolderId + "','" + treeId + "') "
+            //+ "<span onclick=" + treeId + "Click('" + subDir.RootFolder + "/" + subDir.DirectoryName.replace(/ /g, "%20") + "','" + subDir.FolderId + "','" + treeId + "') "
+
             + "oncontextmenu=showDirTreeContextMenu('" + subDir.LinkId + "','" + subDir.FolderId + "') "
             + "onmouseover=showFolderImage('" + encodeURI(imgSrc) + "') onmouseout=$('#dirTreeImageContainer').hide() >"
             + subDir.DirectoryName.replace(".OGGLEBOOBLE.COM", "") + "</span><span class='fileCount'>  : " + subDir.Length.toLocaleString() + subDirtxt + "</span></div>"

@@ -134,6 +134,7 @@
     }
 
     function setSignalR() {
+
         var connection = $.hubConnection(service);
 
         var progressHubProxy = connection.createHubProxy('ProgressHub');
@@ -146,9 +147,14 @@
             $('#progressBar').progressbar({ value: progress, max: goal });
         });
 
-        connection.start()
+
+        connection.start({ jsonp: true })
             .done(function () {
+
+
                 console.log('Now connected, connection ID=' + connection.id);
+
+
             })
             .fail(function () {
                 alert('signalr Could not connect')
@@ -185,6 +191,8 @@
                 if (success == "ok") {
                     displayStatusMessage("ok", "done");
                     $('#txtNewLink').val("");
+                    $('#progressBar').hide();
+                    $('#dataifyInfo').hide();
                 }
                 else
                     alert("createStaticPages: " + success);
@@ -195,7 +203,6 @@
             }
         });
     }
-
 
     function addVideo() {
         try {

@@ -64,3 +64,21 @@
     padding: 0;
     text-align: center;
 }
+
+.attrBox {
+    position: absolute;
+    border: solid thin black;
+    display: none;
+}
+
+.innerContextMenuInfo {
+    display: none;
+}
+
+.linkInfoItem {
+    text-decoration: underline;
+    color: blue;
+}
+
+
+

@@ -272,7 +272,7 @@
     <Compile Include="OggleBoobleStartup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="favicon.png" />
+    <Content Include="Images\favicon.png" />
     <Content Include="Global.asax" />
     <Content Include="Images\comment.png" />
     <Content Include="Images\expand02.png" />
@@ -299,7 +299,9 @@
     <Content Include="Scripts\3rd Party\jquery.signalR-2.4.1.min.js" />
     <Content Include="Scripts\DirTree.js" />
     <Content Include="Scripts\ImageViewer.js" />
+    <Content Include="Scripts\MoveCopyArchive.js" />
     <Content Include="Scripts\StaticPage.js" />
+    <Content Include="Static_Pages\Porn.html" />
     <Content Include="Static_Pages\Index.html" />
     <Content Include="Styles\imageViewer.css" />
     <Content Include="Static_Pages\Images\close.png" />
@@ -329,6 +331,7 @@
     <Content Include="Styles\images\ui-icons_ffffff_256x240.png" />
     <Content Include="Styles\jquery-ui.css" />
     <Content Include="Styles\jqueryDialog.css" />
+    <Content Include="Styles\moveCopyArchiveDialog.css" />
     <Content Include="Views\Admin\Images\redballon.png" />
     <Content Include="Images\csLips.png" />
     <Content Include="Images\csLips02.png" />
@@ -363,7 +366,7 @@
     <Content Include="Images\classic\naughty.jpg" />
     <Content Include="Images\nicetits.ico" />
     <Content Include="Images\classic\nicetits.jpg" />
-    <Content Include="favicon.ico" />
+    <Content Include="Images\favicon.ico" />
     <Content Include="Images\classic\penetration.jpg" />
     <Content Include="Images\classic\porntransitions.jpg" />
     <Content Include="Images\classic\poses.jpg" />
@@ -401,7 +404,6 @@
     <Content Include="Views\Admin\Admin.cshtml" />
     <Content Include="Views\Admin\Blog.cshtml" />
     <Content Include="Views\Shared\_ModelInfoDialog.cshtml" />
-    <Content Include="Views\Shared\_MoveImageDialog.cshtml" />
     <Content Include="Views\Shared\_CategoryDialog.cshtml" />
     <Content Include="Views\Shared\_ImageCommentDialog.cshtml" />
     <Content Include="Views\Shared\_MetaTagDialog.cshtml" />
@@ -431,7 +433,7 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <ApplicationIcon>Images\favicon.ico</ApplicationIcon>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />

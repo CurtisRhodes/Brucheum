@@ -23,6 +23,14 @@ body {
     font-size: var(--normalFont);
 
 }
+
+.customMessageContainer {
+    position: fixed;
+    z-index: 200;
+    margin: 20px;
+    display: none;
+}
+
 .blogCrudArea {
     border: solid thin var(--oggleBorderColor);
     padding: 5px;

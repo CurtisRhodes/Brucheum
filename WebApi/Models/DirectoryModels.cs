@@ -24,6 +24,7 @@ namespace WebApi.Models
         public long Length { get; set; }
         public string DirectoryName { get; set; }
         public string DanniPath { get; set; }
+        public string RootFolder { get; set; }
         public string Link { get; set; }
         public string LinkId { get; set; }
         public int SubDirCount { get; set; }

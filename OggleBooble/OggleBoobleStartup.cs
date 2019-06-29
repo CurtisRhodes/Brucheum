@@ -25,8 +25,9 @@ namespace OggleBooble
     {
         public void Configuration(IAppBuilder app)
         {
-            ConfigureAuth(app);  
-            app.MapSignalR();
+            ConfigureAuth(app);
+
+            app.MapSignalR(new HubConfiguration() { EnableJSONP = true }  );
             //app.MapSignalR("/localhost:40395", new HubConfiguration() { EnableJSONP = true });
             //app.UseCors(Configuration=>Configur)
         }

@@ -81,6 +81,7 @@ function loadImages(rootFolder, isChecked, take) {
                         $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
                         $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath);
                         $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName);
+                        resizeCarousel();
                         startCarousel();
                         $('#footerMessage').html("starting carousel");
                     }
@@ -104,7 +105,6 @@ function loadImages(rootFolder, isChecked, take) {
     }
 }
 
-
 function showFolderCategoryDialog() {
     pause();
     folderCategoryDialogIsOpen = true;
@@ -117,8 +117,9 @@ function showFolderCategoryDialog() {
 
 function clickViewGallery() {
     clearInterval(CarouselInterval);
-    window.location.href = "home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
-    //window.location.href = "http://pages.ogglebooble.com/" + carouselItemArray[imageIndex].FolderName + ".html";
+
+    window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
+    //window.location.href = "http://pages.ogglebooble.com/" + carouselItemArray[imageIndex].RootFolder + "/" + carouselItemArray[imageIndex].FolderName + ".html";
 }
 
 function clickViewParentGallery() {
@@ -241,7 +242,7 @@ function startCarousel() {
 
                 $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath).fadeIn(intervalSpeed);
                 $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
-
+                resizeCarousel();
                 $('#footerMessage').html("image: " + imageIndex + " of " + numImages);
 
             });
