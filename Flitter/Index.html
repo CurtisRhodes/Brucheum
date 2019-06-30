@@ -34,7 +34,6 @@
                             <div><button onclick="updateXML()">Save</button></div>
                         </div>
 
-
                     </div>
 
                 </div>
@@ -47,7 +46,6 @@
                     <div class="flitterPannelLeftColumn"></div>
                     <div class="flitterPannelContentArea"></div>
                 </div>
-
             </div>
 
         </div>
@@ -65,11 +63,8 @@
         });
 
         function setFlitterPanels() {
-
             $('#pannelOne .flitterPannelContentArea').css('padding', '24');
             $('#pannelOne .flitterPannelContentArea').html("Left: " + $('#pannelOne').css('left'));
-
-
         }
 
         function pannelZeroSettings() {
@@ -89,6 +84,11 @@
             $('#divSettings').fadeIn(1000);
 
         }
+
+    function getFileProperties() {
+
+    }
+
 
         function pannelZeroToggle() {
             if ($('#pannelZeroCollapse').attr('state') == "closed") {

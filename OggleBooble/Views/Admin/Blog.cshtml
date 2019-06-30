@@ -132,6 +132,7 @@
                 <option value="PGM">Programmer Notes</option>
                 <option value="BLG">Blog Entry</option>
                 <option value="FLD">Folder Comments</option>
+                <option value="PRO">Promo Message</option>
                 <option value="CON">Site Content</option>
             </select>
             <div id="blogArticleJogContainer" class="blogArticleJogContainer"></div>
@@ -148,12 +149,13 @@
                                     <input id="txtCommentTitle" class="roundedInput" />
                                 </div>
                                 <div class="crudRow">
-                                    <div class="crudLabel inline">Type</div>
+                                    <div class="crudLabel inline">Typeo</div>
                                     <select id="selBlogEditCommentType" class="roundedInput" onchange="loadBlogList($(this).val())">
                                         <option value="CMT">Comment on an Image</option>
                                         <option value="PGM">Programmer Notes</option>
                                         <option value="FLD">Folder Comments</option>
                                         <option value="BLG">Blog Entry</option>
+                                        <option value="PRO">Promo Message</option>
                                         <option value="CON">Site Content</option>
                                     </select>
                                 </div>
@@ -374,6 +376,15 @@
                         if (blogCommentsContainer.Success == "ok") {
                             $('#blogArticleJogContainer').html("");
                             $.each(blogCommentsContainer.blogComments, function (idx, blogComment) {
+
+                                //if (commentType == "PRO")
+                                //    alert("categoryComment.Link: " + categoryComment.Link);
+                                if (blogComment.Link == undefined) {
+                                    blogComment.Link = "http://boobs.ogglebooble.com/redballon.png";
+                                }
+
+
+
                                 $('#blogArticleJogContainer').append(`
                             <div class="blogArticleJog"> 
                                 <div class="flexContainer">
