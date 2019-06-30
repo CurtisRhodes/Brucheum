@@ -32,8 +32,8 @@ namespace WebApi
         public ActionResult EmailTest()
         {
             pageResponse.LastBuild = "last build: " + GetBuildInfo();
-            var emailMessage = new EmailMessageModel() { Subject = "Test Email", Body = "may you have a good day" };
-            pageResponse.EmailSuccess = new GodaddyEmailController().Post(emailMessage);
+            //var emailMessage = new EmailMessageModel() { Subject = "Test Email", Body = "may you have a good day" };
+            pageResponse.EmailSuccess = new GodaddyEmailController().SendEmail("Test Email", "may you have a good day");
             return View("Index", pageResponse);
         }
 

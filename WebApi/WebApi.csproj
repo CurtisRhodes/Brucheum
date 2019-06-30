@@ -190,7 +190,7 @@
     <Compile Include="Controllers\BlogApiController.cs" />
     <Compile Include="Controllers\BookXmlController.cs" />
     <Compile Include="Controllers\BookDbApiController.cs" />
-    <Compile Include="Controllers\DirectoryController.cs" />
+    <Compile Include="Controllers\RepairLinksController.cs" />
     <Compile Include="Controllers\FtpController.cs" />
     <Compile Include="Controllers\FtpUtilies.cs" />
     <Compile Include="Controllers\HitCounterApiController.cs" />

@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Dashboard";
 }
 <script src="~/Scripts/3rd Party/jquery.signalR-2.4.1.min.js"></script>
@@ -103,12 +102,11 @@
 
         $('#headerMessage').html(`Dashboard <dir class='linkContainer'>
         <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
-        <div class="clickable" onclick="$('#videoCrud').fadeIn()">Add Video Link</div>
         <div class="clickable" onclick="showCreateNewFolder()">Create New Folder</div>
         <div class="clickable" onclick="showMovefolderDialog()">Move Folder</div>
         <div class="clickable" onclick="showRenameFolderDialog()">ReName Folder</div>
         <div class="clickable" onclick="collapseChildFolder()">Collapse Folder</div>
-        <div class="clickable" onclick="showCreateStaticPages()">Create Static Pages</div>
+        <div class="clickable" onclick="createStaticPages()">Create Static Pages</div>
         <div class="clickable" onclick="repairLinks()">Repair Links</div></dir>`);
 
         buildDirectoryTree();
@@ -178,8 +176,8 @@
         });
     }
     function createStaticPages() {
-        $('#createStaticPagesCrud').dialog("close");
-        $('#createStaticPagesCrud').hide();
+        //$('#createStaticPagesCrud').dialog("close");
+        //$('#createStaticPagesCrud').hide();
         //$('#dashBoardLoadingGif').fadeIn();
         $('#progressBar').show();
         $.ajax({

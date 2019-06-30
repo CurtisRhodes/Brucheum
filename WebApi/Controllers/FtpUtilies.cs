@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -11,7 +12,9 @@ namespace WebApi.Ftp
 {
     public class FtpUtilies
     {
-        static readonly NetworkCredential networkCredentials = new NetworkCredential("curtisrhodes", "R@quel77");
+        static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
+        static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
+        static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
 
         public static string[] GetDirectories(string ftpPath)
         {
@@ -19,7 +22,7 @@ namespace WebApi.Ftp
             try
             {
                 FtpWebRequest ftpRequest = (FtpWebRequest)WebRequest.Create(new Uri(ftpPath));
-                ftpRequest.Credentials = new NetworkCredential("curtisrhodes", "R@quel77");
+                ftpRequest.Credentials = networkCredentials;
                 ftpRequest.Method = WebRequestMethods.Ftp.ListDirectory;
                 FtpWebResponse response = (FtpWebResponse)ftpRequest.GetResponse();
                 StreamReader streamReader = new StreamReader(response.GetResponseStream());
@@ -41,10 +44,10 @@ namespace WebApi.Ftp
 
         private void GetDirectoryDetails(string ftpPath)
         {
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpPath);
-            request.Credentials = new NetworkCredential("curtisrhodes", "R@quel77");
-            request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
-            StreamReader reader = new StreamReader(request.GetResponse().GetResponseStream());
+            FtpWebRequest ftpRequest = (FtpWebRequest)WebRequest.Create(ftpPath);
+            ftpRequest.Credentials = networkCredentials;
+            ftpRequest.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
+            StreamReader reader = new StreamReader(ftpRequest.GetResponse().GetResponseStream());
 
             string pattern = @"^(\d+-\d+-\d+\s+\d+:\d+(?:AM|PM))\s+(<DIR>|\d+)\s+(.+)$";
             Regex regex = new Regex(pattern);

@@ -68,8 +68,8 @@ function logPageHit() {
         url: service + "api/HitCounter/LogPageHit",
         data: hitCounterModel,
         success: function (success) {
-            if (success == "ok") {
-                sendEmailFromJS("someone just visited " + folderName + " ImagePage Page", "someday it will be someone other than you");
+            if (success === "ok") {
+                sendEmail("someone just visited " + folderName + " ImagePage Page", "someday it will be someone other than you");
             }
             else
                 alert("logPageHit: " + success);

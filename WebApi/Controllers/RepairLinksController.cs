@@ -12,12 +12,17 @@ using System.Web.Http.Cors;
 using WebApi.Models;
 using WebApi.DataContext;
 using WebApi.Ftp;
+using System.Configuration;
 
 namespace WebApi
 {
     [EnableCors("*", "*", "*")]
     public class RepairLinksController : ApiController
     {
+        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+        static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
+        static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
+
         [HttpGet]
         public RepairReportModel RepairLinks(int startFolderId, string drive)
         {
@@ -43,7 +48,7 @@ namespace WebApi
         private void RepairLinksRecurr(int folderId, RepairReportModel repairReport, OggleBoobleContext db)
         {
             CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-            string ftpPath = "ftp://50.62.160.105/" + dbCategoryFolder.RootFolder + ".ogglebooble.com/"
+            string ftpPath = ftpHost + "/" + dbCategoryFolder.RootFolder + ".ogglebooble.com/"
                 + Helpers.GetFtpParentPathWithoutRoot(folderId) + dbCategoryFolder.FolderName;
 
             if (!FtpUtilies.DirectoryExists(ftpPath))
@@ -101,7 +106,7 @@ namespace WebApi
                                         CategoryFolder categoryFolderWhereImageSayItShouldBe = db.CategoryFolders.Where(f => f.FolderName == folderNameWhereImageSayItShouldBe).FirstOrDefault();
                                         if (categoryFolderWhereImageSayItShouldBe != null)
                                         {
-                                            string ftpPathWhereImageSayItShouldBe = "ftp://50.62.160.105/" + categoryFolderWhereImageSayItShouldBe.RootFolder + ".ogglebooble.com/"
+                                            string ftpPathWhereImageSayItShouldBe = ftpHost + categoryFolderWhereImageSayItShouldBe.RootFolder + ".ogglebooble.com/"
                                                 + Helpers.GetFtpParentPathWithoutRoot(categoryFolderWhereImageSayItShouldBe.Id) + categoryFolderWhereImageSayItShouldBe.FolderName;
                                             string[] ArrayWhereImageSayItShouldBe = FtpUtilies.GetFiles(ftpPathWhereImageSayItShouldBe);
                                             if (ArrayWhereImageSayItShouldBe.Contains(categoryFolderWhereImageSayItShouldBe.FolderName + "_" + linkId + ext))
@@ -113,7 +118,7 @@ namespace WebApi
                                         else
                                         {  // move file 
                                             string source = ftpPath + "/" + fileName;
-                                            string destination = "ftp://50.62.160.105/" + categoryFolderWhereImageSayItShouldBe.RootFolder + ".ogglebooble.com/"
+                                            string destination = ftpHost + categoryFolderWhereImageSayItShouldBe.RootFolder + ".ogglebooble.com/"
                                                 + Helpers.GetFtpParentPathWithoutRoot(categoryFolderWhereImageSayItShouldBe.Id) + categoryFolderWhereImageSayItShouldBe.FolderName;
                                             if (source != destination)
                                             {
@@ -323,7 +328,7 @@ namespace WebApi
                 }
 
                 FtpWebRequest webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
-                webRequest.Credentials = new NetworkCredential("curtisrhodes", "R@quel77");
+                webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
                 webRequest.Method = WebRequestMethods.Ftp.UploadFile;
                 using (Stream requestStream = webRequest.GetRequestStream())
                 {

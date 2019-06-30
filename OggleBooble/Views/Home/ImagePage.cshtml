@@ -95,20 +95,19 @@
             //<div class="clickable" onclick="repairLinks()">add meta tags</div></dir>`);
 
         }
-        else {
-            var waiter = setInterval(function () {
-                if (folderName !== "xx") {
-                    clearInterval(waiter);
-                    try {
-                        window.location.href = "http://pages.ogglebooble.com/" + folderName + ".html";
-
-                    } catch (e) {
-                        alert(folderName + ".html " + e);
-                        $('#footerMessage').html("no staic");
-                    }
-                }
-            }, 300);
-        }
+        //else {
+        //    var waiter = setInterval(function () {
+        //        if (folderName !== "xx") {
+        //            clearInterval(waiter);
+        //            try {
+        //                window.location.href = "http://pages.ogglebooble.com/" + folderName + ".html";
+        //            } catch (e) {
+        //                alert(folderName + ".html " + e);
+        //                $('#footerMessage').html("no staic");
+        //            }
+        //        }
+        //    }, 300);
+        //}
         resizePage();
     });
 

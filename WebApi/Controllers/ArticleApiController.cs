@@ -276,11 +276,7 @@ namespace WebApi
                     newComment.CreateDate = comment.CreateDate.ToShortDateString();
                     newComment.success = "ok";
 
-                    newComment.success = new GodaddyEmailController().Post(new EmailMessageModel()
-                    {
-                        Subject = "Somebody Actually Made A comment",
-                        Body = comment.UserName + " said: " + comment.CommentText
-                    });
+                    newComment.success = new GodaddyEmailController().SendEmail("Somebody Actually Made A comment", comment.UserName + " said: " + comment.CommentText);
                 }
             }
             catch (Exception ex)

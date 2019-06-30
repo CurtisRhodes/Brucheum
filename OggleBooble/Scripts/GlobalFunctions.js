@@ -150,12 +150,12 @@ function getXHRErrorDetails(jqXHR) {
     return msg;
 }
 
-function sendEmailFromJS(subject, messsage) {
+function sendEmail(subject, messsage) {
     var rtn = "";
     try {
         $.ajax({
             type: "GET",
-            url: "/Email/SendEmail?subject=" + subject + "&message=" + messsage,
+            url: "https://api.curtisrhodes.com/api/GodaddyEmail/SendEmail?subject='" + subject + "'&message='" + messsage + "'",
             success: function (emailSuccess) {
                 if (emailSuccess === "ok") {
                     //displayStatusMessage("ok", "email sent");
@@ -167,13 +167,13 @@ function sendEmailFromJS(subject, messsage) {
                 rtn = emailSuccess;
             },
             error: function (jqXHR, exception) {
-                alert("sendEmailFromJS XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                alert("sendEmail XHR error: " + getXHRErrorDetails(jqXHR, exception));
                 rtn = getXHRErrorDetails(jqXHR, exception);
             }
         });
     } catch (e) {
         rtn = e;
-        alert("sendEmailFromJS CATCH: " + rtn);
+        alert("sendEmail CATCH: " + rtn);
     }
     return rtn;
 }

@@ -133,11 +133,7 @@ namespace WebApi
                         db.Visitors.Add(visitor);
                         db.SaveChanges();
 
-                        success = new GodaddyEmailController().Post(new EmailMessageModel()
-                        {
-                            Subject = "CONGRATULATIONS: someone just visited your site",
-                            Body = "ip: " + ipAddress + " visited: " + app
-                        });
+                        success = new GodaddyEmailController().SendEmail("CONGRATULATIONS: someone just visited your site", "ip: " + ipAddress + " visited: " + app);
                         ////emailSuccess = Helpers.SendEmail("CONGRATULATIONS: someone just visited your site", "ip: " + ipAddress + " visited: " + app);
                         //if (emailSuccess != "ok")
                         //    success = "true but " + emailSuccess;
@@ -157,11 +153,7 @@ namespace WebApi
 
                         if (ipAddress != "50.62.160.105")  // could be something at Godaddy
                         {
-                            success = new GodaddyEmailController().Post(new EmailMessageModel()
-                            {
-                                Subject = "Site Visit",
-                                Body = "ip: " + ipAddress + " visited: " + app
-                            });
+                            success = new GodaddyEmailController().SendEmail("Site Visit", "ip: " + ipAddress + " visited: " + app);
                         }
                     }
                 }

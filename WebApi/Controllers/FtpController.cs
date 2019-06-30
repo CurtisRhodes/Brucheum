@@ -12,12 +12,15 @@ using WebApi.Models;
 using WebApi.DataContext;
 using static System.Net.WebRequestMethods;
 using WebApi.Ftp;
+using System.Configuration;
 
 namespace WebApi
 {
     [EnableCors("*", "*", "*")]
     public class FtpImageRemoveController : ApiController
     {
+        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+
         [HttpGet]
         public string CheckLinkCount(string imageLinkId)
         {
@@ -57,8 +60,8 @@ namespace WebApi
                     ImageLink goDaddyLink = db.ImageLinks.Where(g => g.Id == badLink.Id).FirstOrDefault();
                     string fileName = goDaddyLink.Link.Substring(goDaddyLink.Link.LastIndexOf("/") + 1);
                     string folderPath = Helpers.GetFtpParentPathWithoutRoot(badLink.PreviousLocation);
-                    string ftpPath = "ftp://50.62.160.105/" + dbFolder.RootFolder + ".OGGLEBOOBLE.COM/" + folderPath + "/" + dbFolder.FolderName + "/" + fileName;
-                    string rejectPath = "ftp://50.62.160.105/library.Curtisrhodes.com/working folders/rejects/" + dbFolder.RootFolder + "/" + fileName;
+                    string ftpPath = ftpHost + dbFolder.RootFolder + ".OGGLEBOOBLE.COM/" + folderPath + "/" + dbFolder.FolderName + "/" + fileName;
+                    string rejectPath = ftpHost+ "/library.Curtisrhodes.com/working folders/rejects/" + dbFolder.RootFolder + "/" + fileName;
                     FtpUtilies.MoveFile(ftpPath, rejectPath);
 
                     db.CategoryImageLinks.Remove(db.CategoryImageLinks.Where(l => l.ImageLinkId == badLink.Id).First());
@@ -102,6 +105,8 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class MoveImageController : ApiController
     {
+        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+
         [HttpPut]
         public string MoveImage(MoveCopyImageModel model)
         {
@@ -137,7 +142,7 @@ namespace WebApi
                         CategoryFolder dbDestinationFolder = db.CategoryFolders.Where(f => f.Id == model.DestinationFolderId).FirstOrDefault();
                                                 
                         string extension = model.Link.Substring(model.Link.LastIndexOf("."));
-                        string destinationFtpPath = "ftp://50.62.160.105/" + dbDestinationFolder.RootFolder + ".ogglebooble.com/" +
+                             string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" +
                              Helpers.GetFtpParentPathWithoutRoot(model.DestinationFolderId) + dbDestinationFolder.FolderName;
                         string newFileName = dbDestinationFolder.FolderName + "_" + linkId + extension;
 
@@ -145,7 +150,7 @@ namespace WebApi
 
 
 
-                        string sourceFtpPath = "ftp://50.62.160.105/" + dbSourceFolder.RootFolder + ".ogglebooble.com/"
+                        string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/"
                             + Helpers.GetFtpParentPathWithoutRoot(model.SourceFolderId) + dbSourceFolder.FolderName;
 
                         if (!FtpUtilies.DirectoryExists(destinationFtpPath))
@@ -254,7 +259,7 @@ namespace WebApi
                     CategoryFolder emptyFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
 
                     string originPath = Helpers.GetFtpParentPathWithoutRoot(emptyFolder.Id);
-                    string ftpPath = "ftp://50.62.160.105/" + emptyFolder.RootFolder + ".ogglebooble.com/" + originPath + emptyFolder.FolderName;
+                    string ftpPath = ftpHost + emptyFolder.RootFolder + ".ogglebooble.com/" + originPath + emptyFolder.FolderName;
                     success = FtpUtilies.RemoveDirectory(ftpPath);
                     if (success != "ok")
                         System.Diagnostics.Debug.WriteLine("failed to remove FTP folder : " + success);
@@ -281,6 +286,8 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class FtpDashBoardController : ApiController
     {
+        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+
         [HttpPost]
         public string AddImageLink(AddLinkModel newLink)
         {
@@ -331,7 +338,7 @@ namespace WebApi
                         {
                             string destPath = newLink.Path.Substring(0, newLink.Path.IndexOf("."));
                             // todo  write the image as a file to x.ogglebooble  4/1/19
-                            string ftpPath = "ftp://50.62.160.105/" + destPath + ".OGGLEBOOBLE.COM/" + trimPath;
+                            string ftpPath = ftpHost + destPath + ".OGGLEBOOBLE.COM/" + trimPath;
                             if (!FtpUtilies.DirectoryExists(ftpPath))
                                 FtpUtilies.CreateDirectory(ftpPath);
 
@@ -433,7 +440,7 @@ namespace WebApi
                     CategoryFolder folder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
 
                     string folderPath = Helpers.GetFtpParentPathWithoutRoot(folderId);
-                    string ftpPath = "ftp://50.62.160.105/" + folder.RootFolder + ".ogglebooble.com/" + folderPath + folder.FolderName;
+                    string ftpPath = ftpHost + folder.RootFolder + ".ogglebooble.com/" + folderPath + folder.FolderName;
                     string linkId = "";
                     string ext = "";
                     string expectedFileName = "";
@@ -501,7 +508,7 @@ namespace WebApi
         }
         private void RenameChildFolderLinks(CategoryFolder folder, string newFolderPath, RepairReportModel renameReport, OggleBoobleContext db)
         {
-            string ftpPath = "ftp://50.62.160.105/" + folder.RootFolder + ".ogglebooble.com/" + Helpers.GetFtpParentPathWithoutRoot(folder.Id) + folder.FolderName;
+            string ftpPath = ftpHost + folder.RootFolder + ".ogglebooble.com/" + Helpers.GetFtpParentPathWithoutRoot(folder.Id) + folder.FolderName;
             string linkId = "";
             string expectedLinkName = "";
             string goDaddyPrefix = "http://" + folder.RootFolder + ".ogglebooble.com/";
@@ -549,7 +556,7 @@ namespace WebApi
                     success = MoveFolderRecurr(orignFolderId, originPath, destinationParentId, dbSourceFolder.FolderName, db);
                     if (success == "ok")
                     {
-                        string sourceFtpPath = "ftp://50.62.160.105/" + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName;
+                        string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName;
                         success = RemoveFolder(sourceFtpPath);
                     }
                 }
@@ -566,13 +573,13 @@ namespace WebApi
             CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == orignFolderId).FirstOrDefault();
             CategoryFolder dbDestinationParentFolder = db.CategoryFolders.Where(f => f.Id == destinationParentId).FirstOrDefault();
 
-            string sourceFtpPath = "ftp://50.62.160.105/" + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName;
+            string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName;
 
             if (dbDestinationParentFolder.FolderName.Contains("OGGLEBOOBLE.COM"))
                 dbDestinationParentFolder.FolderName = "";
 
 
-            string destinationFtpPath = "ftp://50.62.160.105/" + dbDestinationParentFolder.RootFolder + ".ogglebooble.com/" +
+            string destinationFtpPath = ftpHost + dbDestinationParentFolder.RootFolder + ".ogglebooble.com/" +
                 Helpers.GetFtpParentPathWithoutRoot(destinationParentId) + dbDestinationParentFolder.FolderName + "/" + dbSourceFolder.FolderName;
 
 
@@ -680,7 +687,7 @@ namespace WebApi
                     db.SaveChanges();
                     successModel.ReturnValue = newFolder.Id.ToString();
 
-                    string destinationFtpPath = "ftp://50.62.160.105/" + rootFolder + ".ogglebooble.com/" + Helpers.GetFtpParentPathWithoutRoot(newFolder.Id) + newFolderName.Trim();
+                    string destinationFtpPath = ftpHost + rootFolder + ".ogglebooble.com/" + Helpers.GetFtpParentPathWithoutRoot(newFolder.Id) + newFolderName.Trim();
 
                     successModel.Success = FtpUtilies.CreateDirectory(destinationFtpPath);
                     if (successModel.Success == "ok")

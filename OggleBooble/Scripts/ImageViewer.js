@@ -181,8 +181,8 @@ function blowupImage() {
 }
 
 function showImageViewerCommentDialog() {
+    closeViewer();
     showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, imageViewerFolderName, imageViewerIndexCurrentUser);
-
 }
 
 $('.hiddeClickArea').contextmenu(function () {

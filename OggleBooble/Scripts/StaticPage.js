@@ -66,22 +66,16 @@ function resizeStaticPage() {
     }
 
 function staticPageContextMenu(linkId, link) {
+    //alert("staticPageContextMenu: linkId: " + linkId);
     event.preventDefault();
     window.event.returnValue = false;
     staticPageLinkId = linkId;
     staticPageLink = link;
-
-
-
-
     var thisImage = $('#' + staticPageLinkId + '');
     var picpos = thisImage.offset();
     var picLeft = picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50;
     $('#thumbImageContextMenu').css("top", picpos.top + 5);
     $('#thumbImageContextMenu').css("left", picLeft);
-
-
-
     $.ajax({
         type: "GET",
         url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + staticPageLinkId,
@@ -96,10 +90,7 @@ function staticPageContextMenu(linkId, link) {
                 else {
                     $('#staticPagectxModelName').html("unknown model");
                     $('#ctxSeeMore').hide();
-                    if ((isPornEditor === "True") || (document.domain === 'localhost'))
-                        $('#ctxArchive').show();
-                    else
-                        $('#ctxArchive').hide();
+                    $('#ctxArchive').hide();
                 }
             }
             else

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -13,6 +14,9 @@ namespace WebApi.Controllers
     [EnableCors("*", "*", "*")]
     public class StaticPageController : ApiController
     {
+        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+        private readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
+        private readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
         private int totalFiles = 0;
         private int filesProcessed = 0;
         private string _userName = "";
@@ -67,9 +71,9 @@ namespace WebApi.Controllers
                     staticFile.Write(byteArray, 0, byteArray.Length);
                 }
                 FtpWebRequest webRequest = null;
-                string ftpPath = "ftp://50.62.160.105/pages.OGGLEBOOBLE.COM/";
+                string ftpPath = ftpHost+ "/pages.OGGLEBOOBLE.COM/";
                 webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + folderName + ".html");
-                webRequest.Credentials = new NetworkCredential("curtisrhodes", "R@quel77");
+                webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
                 webRequest.Method = WebRequestMethods.Ftp.UploadFile;
                 using (System.IO.Stream requestStream = webRequest.GetRequestStream())
                 {
@@ -121,7 +125,8 @@ namespace WebApi.Controllers
                 "<script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js'></script>\n" +
                 "<link href='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css' rel='stylesheet'>\n" +
                 "<script src='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js'></script>\n" +
-                "<title>"+ pageName + " - OggleBooble</title>" +
+                "<link href='http://pages.ogglebooble.com/css/jqueryui.css' rel='stylesheet' />\n"+
+                "<title>" + pageName + " - OggleBooble</title>" +
                 "<link rel='icon' type='image/png' href='pages.ogglebooble.com/images/favicon.png' />" +
                 "<script src='http://pages.ogglebooble.com/script/GlobalFunctions.js' type='text/javascript'></script>\n" +
                 "<script src='http://pages.ogglebooble.com/script/ResizeThreeColumnPage.js' type='text/javascript'></script>\n" +
@@ -363,8 +368,8 @@ namespace WebApi.Controllers
                       "<div class='footerCol'>\n" +
                           "<div><a href='#'>About us</a></div>\n" +
                           "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
-                          "<div><a href='ogglebooble.com/Admin/Blog'>Blog</a></div>\n" +
-                          "<div><a href='archive.html'>Archive</a></div>\n" +
+                          "<div><a href='http://ogglebooble.com/Admin/Blog'>Blog</a></div>\n" +
+                          "<div><a href='http://pages.ogglebooble.com/archive/archive.html'>Archive</a></div>\n" +
                       "</div>\n" +
                 "</div>\n" +
                 "<div class='footerVersionMessage' id='footerLastBuild'></div>\n" +

@@ -14,8 +14,8 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class GodaddyEmailController : ApiController
     {
-        [HttpPost]
-        public string Post(EmailMessageModel emailMessage)
+        [HttpGet]
+        public string SendEmail(string subject, string message)
         {
             string success = "";
             try
@@ -26,11 +26,10 @@ namespace WebApi
                 //    EnableSsl = true
                 //};
                 //smtpClient.Send("curtis.rhodes@gmail.com", "curtis.rhodes@gmail.com", emailMessage.Subject, emailMessage.Body);
-
                 //using (SmtpClient smtp = new SmtpClient("smtpout.secureserver.net", 25))
                 using (SmtpClient smtp = new SmtpClient("relay-hosting.secureserver.net", 25))
                 {
-                    MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "CurtishRhodes@hotmail.com", emailMessage.Subject, emailMessage.Body);
+                    MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "CurtishRhodes@hotmail.com", subject, message);
                     smtp.Send(mailMessage);
                     success = "ok";
                 }
