@@ -69,7 +69,9 @@ function logPageHit() {
         data: hitCounterModel,
         success: function (success) {
             if (success === "ok") {
-                sendEmail("someone just visited " + folderName + " ImagePage Page", "someday it will be someone other than you");
+
+
+                //sendEmail("someone just visited " + folderName + " ImagePage Page", "someday it will be someone other than you");
             }
             else
                 alert("logPageHit: " + success);
@@ -164,30 +166,45 @@ function processImages(imageLinksModel, start) {
         });
 
         if (isPornEditor) {
-            if (imageLinksModel.RootFolder === "archive") {
-                if (imageModelFile.LinkCount === 1) {
-                    $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
-                        " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
-                }
-                else {
-                    $('#imageContainer').append("<div class='multiLinkImageFrame'><img id=" + imageModelFile.LinkId +
-                        " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
-                }
+            if (imageLinksModel.RootFolder === 'centerfolds') {
+                $('#footerMessage').html("centerfolds");
+                $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
+                    " idx=" + fileCount + " class='thumbImage centerfold' src='" + imageModelFile.Link + "'/></div>");
             }
             else {
-                if (imageModelFile.LinkCount > 1) {
-                    $('#imageContainer').append("<div class='nonLocalImageFrame'><img id=" + imageModelFile.LinkId +
-                        " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+                if (imageLinksModel.RootFolder === "archive") {
+                    if (imageModelFile.LinkCount === 1) {
+                        $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
+                            " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+                    }
+                    else {
+                        $('#imageContainer').append("<div class='multiLinkImageFrame'><img id=" + imageModelFile.LinkId +
+                            " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+                    }
                 }
                 else {
-                    $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
-                        " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+                    if (imageModelFile.LinkCount > 1) {
+                        $('#imageContainer').append("<div class='nonLocalImageFrame'><img id=" + imageModelFile.LinkId +
+                            " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+                    }
+                    else {
+                        $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
+                            " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+                    }
                 }
             }
         }
         else {
-            $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
-                " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+            if (imageLinksModel.RootFolder === 'centerfolds') {
+                $('#footerMessage').html("centerfolds");
+                $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
+                    " idx=" + fileCount + " class='centerfold' src='" + imageModelFile.Link + "'/></div>");
+            }
+            else {
+
+                $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
+                    " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+            }
         }
 
         $('#footerMessage').html("fileCount: " + ++fileCount);

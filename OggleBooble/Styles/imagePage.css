@@ -60,6 +60,11 @@
     cursor: pointer;
 }
 
+.centerfold {
+    height: 500px;
+    cursor: pointer;
+}
+
 .thumbImage {
     height: 200px;
     cursor: pointer;

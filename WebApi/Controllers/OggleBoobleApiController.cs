@@ -867,10 +867,10 @@ namespace WebApi
                     if (dbCategoryComment != null)
                     {
                         categoryComment = dbCategoryComment;
-                        categoryComment.Success = "ok";
                     }
-                    else
-                        categoryComment.Success = "not found";
+                    //else
+                    //    categoryComment.Success = "not found";
+                    categoryComment.Success = "ok";
                 }
             }
             catch (Exception ex)

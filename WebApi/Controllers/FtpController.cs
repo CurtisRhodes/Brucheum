@@ -450,7 +450,7 @@ namespace WebApi
                     string expectedFileName = "";
                     string expectedLinkName = "";
                     string goDaddyPrefix = "http://" + folder.RootFolder + ".ogglebooble.com/";
-
+                                                         
                     string[] files = FtpUtilies.GetFiles(ftpPath);
                     foreach (string fileName in files)
                     {
@@ -518,6 +518,7 @@ namespace WebApi
             string goDaddyPrefix = "http://" + folder.RootFolder + ".ogglebooble.com/";
             string[] files = FtpUtilies.GetFiles(ftpPath);
             int folderRows = 0;
+
             foreach (string fileName in files)
             {
                 linkId = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
@@ -537,7 +538,6 @@ namespace WebApi
                 }
                 else
                     renameReport.Errors.Add("missing link: " + linkId);
-
                 renameReport.RowsProcessed++;
             }
             List<CategoryFolder> subDirs = db.CategoryFolders.Where(f => f.Parent == folder.Id).ToList();
@@ -600,28 +600,45 @@ namespace WebApi
                 string[] folderContents = FtpUtilies.GetFiles(sourceFtpPath);
                 int folderRows = 0;
                 int fileCount = folderContents.Length;
-                foreach (string currentFile in folderContents)
+                ImageLink goDaddyrow = null;
+                string newGoDaddyLink = "";
+                foreach (string fileName in folderContents)
                 {
                     try
                     {
-                        linkId = currentFile.Substring(currentFile.LastIndexOf("_") + 1, 36);
-                        SignalRHost.ProgressHub.PostToClient("Moving files from: " + dbSourceFolder.FolderName + " to " + dbDestinationParentFolder.FolderName + "  " + folderRows + " of " + fileCount);
-
-                        success = FtpUtilies.MoveFile(sourceFtpPath + "/" + currentFile, destinationFtpPath + "/" + currentFile);
+                        success = FtpUtilies.MoveFile(sourceFtpPath + "/" + fileName, destinationFtpPath + "/" + fileName);
                         if (success == "ok")
                         {
                             // update godaddy link
-                            string goDaddyLink = linkPrefix + "/" + dbDestinationParentFolder.FolderName + "/" + dbSourceFolder.FolderName + "/" +
-                                dbSourceFolder.FolderName + "_" + linkId + currentFile.Substring(currentFile.Length - 4);
-                            ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
-                            goDaddyrow.Link = goDaddyLink;
-
-                            SignalRHost.ProgressHub.ShowProgressBar(fileCount, ++folderRows);
-
-                            db.SaveChanges();
+                            if (fileName.StartsWith("Playboy"))
+                            {
+                                goDaddyrow = db.ImageLinks.Where(l => l.Link.Contains(fileName)).FirstOrDefault();
+                                if (goDaddyrow != null)
+                                {
+                                    newGoDaddyLink = linkPrefix + dbDestinationParentFolder.FolderName + "/" + dbSourceFolder.FolderName + "/" + fileName;
+                                    goDaddyrow.Link = newGoDaddyLink;
+                                    db.SaveChanges();
+                                }
+                            }
+                            else
+                            {
+                                linkId = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
+                                goDaddyrow = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                                if (goDaddyrow != null)
+                                {
+                                    newGoDaddyLink = linkPrefix + dbDestinationParentFolder.FolderName + "/" + dbSourceFolder.FolderName + "/" +
+                                        dbSourceFolder.FolderName + "_" + linkId + fileName.Substring(fileName.Length - 4);
+                                    goDaddyrow.Link = newGoDaddyLink;
+                                    db.SaveChanges();
+                                }
+                            }
                         }
                         else
                             success = "x";
+
+                        SignalRHost.ProgressHub.ShowProgressBar(fileCount, ++folderRows);
+                        SignalRHost.ProgressHub.PostToClient("Moving files from: " + dbSourceFolder.FolderName + " to " + dbDestinationParentFolder.FolderName + "  " +
+                            folderRows + " of " + fileCount);
                     }
                     catch (Exception ex)
                     {
@@ -649,18 +666,10 @@ namespace WebApi
             {
                 foreach (string subDir in FtpUtilies.GetDirectories(ftpPath))
                 {
-                    if (success == "ok")
-                    {
-                        RemoveFolder(ftpPath + "/" + subDir);
-                        success = FtpUtilies.RemoveDirectory(ftpPath + "/" + subDir);
-                        if (success != "ok")
-                        {
-                            break;
-                        }
-                    }
+                    RemoveFolder(ftpPath + "/" + subDir);
+                    FtpUtilies.RemoveDirectory(ftpPath + "/" + subDir);
                 }
-                if (success == "ok")
-                    success = FtpUtilies.RemoveDirectory(ftpPath);
+                FtpUtilies.RemoveDirectory(ftpPath);
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
     ViewBag.Title = "Dashboard";
 }
 <script src="~/Scripts/3rd Party/jquery.signalR-2.4.1.min.js"></script>
@@ -538,14 +539,30 @@
 
     function dashboardMainClick(path, id, treeId) {
         var displayPath = "";
-        if (path.length > path.indexOf(".COM") + 4) {
-            dashboardMainSelectedPath = path.substring(6).replace(/%20/g, " ");
-            displayPath = path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " ");
+        if (path.length > Number(path.indexOf(".COM")) + 10) {
+            if (Number(path.indexOf(".COM")) > 0) {
+                dashboardMainSelectedPath = path.substring(6).replace(/%20/g, " ");
+                displayPath = path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " ");
+            }
+            else {
+                dashboardMainSelectedPath = path.substring(6).replace(/%20/g, " ");
+                displayPath = path.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "");
+                //displayPath = path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " ");
+                //alert("dashboardMainSelectedPath: " + dashboardMainSelectedPath+ " displayPath: " + displayPath);
+            }
         }
         else {
-            displayPath = path;
+            alert("path: " + path);
+            displayPath = path.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "");
             dashboardMainSelectedPath = "/";
         }
+        if (path == "/Root") {
+            displayPath = "root";
+        }
+
+
+
+
         dashboardMainSelectedTreeId = id;
         $('.txtLinkPath').val(displayPath);
     }
