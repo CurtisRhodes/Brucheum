@@ -10,10 +10,9 @@
     .ogglePromoContainer {
         position: absolute;
         top: 250px;
-        left: 1200px;
+        right: 80px;
         border: solid 3px #4b0d41;
-        height: 500px;
-        width: 500px;
+        width: 300px;
         display: none;
     }
 
@@ -63,7 +62,7 @@
     <div id="rightColumn"></div>
 </div>
 
-<div id="promoContainer" class="ogglePromoContainer">
+<div id="promoContainer" class="ogglePromoContainer" onclick="killPrommessages()">
     <div id="promoContainerTitle" class="ogglePromoTitle"></div>
     <div id="promoContainerText" class="ogglePromoText"></div>
 </div>
@@ -74,14 +73,14 @@
     var promoIdx = 0;
     var promoMessagesArray = new Array();
     var promoMessageRotator;
-    var promoMessageRotationSpeed = 5000;
+    var promoMessageRotationSpeed = 8000;
 
     $(document).ready(function () {
         var service = '@ViewBag.Service';
         var userName = '@ViewBag.UserName';
         var lastBuild = '@ViewBag.BuildInfo';
 
-        $('#footerLastBuild').html("last build: " + lastBuild + " 010");
+        $('#footerLastBuild').html("last build: " + lastBuild + "");
 
         $('#boobCatTreeContainer').dialog({
             autoOpen: false,
@@ -94,12 +93,14 @@
 
         launchCarousel('boobs');
 
+        launchPromoMessages();
+
     });
 
-    function loadPromoMessages(commentType) {
+    function launchPromoMessages() {
         $.ajax({
             type: "GET",
-            url: service + "/api/OggleBlog/GetBlogList?commentType=" + commentType,
+            url: service + "/api/OggleBlog/GetBlogList?commentType=PRO",
             success: function (blogCommentsContainer) {
                 if (blogCommentsContainer.Success == "ok") {
                     $.each(blogCommentsContainer.blogComments, function (idx, blogComment) {
@@ -110,6 +111,7 @@
                             CommentText: blogComment.CommentText
                         });
                     });
+                    showPromoMessages();
                 }
                 else {
                     $('#blogLoadingGif').hide();
@@ -124,20 +126,27 @@
     }
 
     function showPromoMessages() {
-        //alert("showPromoMessages()")
-        var currentItem = promoMessagesArray[promoIdx];
         $('#promoContainer').fadeIn();
-
+        var currentItem = promoMessagesArray[promoIdx];
         $('#promoContainerTitle').html(currentItem.CommentTitle);
         $('#promoContainerText').html(currentItem.CommentText);
 
-        setTimeout(function () {
-            $('#promoContainer').fadeOut();
-        }, 2500);
+        promoMessageRotator = setInterval(function () {
 
-        promoIdx++;
-        if (promoIdx === promoMessagesArray.length)
-            promoIdx = 0;
+            if (promoIdx === promoMessagesArray.length) {
+                promoIdx = 0;
+            }
+            currentItem = promoMessagesArray[promoIdx];
+            $('#promoContainerTitle').html(currentItem.CommentTitle);
+            $('#promoContainerText').html(currentItem.CommentText);
+            promoIdx++;
+        }, promoMessageRotationSpeed);
+    }
+
+    function killPrommessages()
+    {
+        clearInterval(promoMessageRotator);
+        setInterval(function () { showPromoMessages() }, 30000);
     }
 
     function showCustomMessage(blogId) {
@@ -161,8 +170,6 @@
         //if ($('#pornWarning').html() == "")
     }
 
-
-
     function letemPorn(response) {
         // record hit
         if (response == "ok") {
@@ -179,10 +186,6 @@
     }
 
     function boobCatTreeContainerClick(path, id, treeId) {
-
-            //alert("dirTreeClick treeId: " + treeId);
-
-
         if (treeId == "boobCatTreeContainer") {
             window.location.href = "ImagePage?folder=" + id;
             $('#boobCatTreeContainer').dialog('close')

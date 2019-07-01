@@ -188,12 +188,6 @@ function showImageViewerCommentDialog() {
 $('.hiddeClickArea').contextmenu(function () {
     event.preventDefault();
     window.event.returnValue = false;
-
-    //alert("linkId=" + imageViewerArray[imageViewerIndex].LinkId);
-
-    //showContextMenu();
-    //imageViewerCurrentContextLinkId = $(this).attr("id");
-    //var thisImage = $('#' + imageViewerCurrentContextLinkId + '');
     $('#imageViewerContextMenu').css("top", event.clientY + 5);
     $('#imageViewerContextMenu').css("left", event.clientX);
    
@@ -233,12 +227,9 @@ $('.hiddeClickArea').contextmenu(function () {
         },
         error: function (jqXHR, exception) {
             $('#blogLoadingGif').hide();
-            alert("showBlogDisplay jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+            alert("GetModelName jqXHR : " + getXHRErrorDetails(jqXHR, exception));
         }
     });
-
-    //$('#thumbImageContextMenu').css('z-index', "200");
-
 });
 
 function imageViewerContextMenuAction(action) {
