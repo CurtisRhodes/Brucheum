@@ -287,6 +287,9 @@ namespace WebApi
     public class FtpDashBoardController : ApiController
     {
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+        static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
+        static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
+        static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
 
         [HttpPost]
         public string AddImageLink(AddLinkModel newLink)
@@ -343,7 +346,8 @@ namespace WebApi
                                 FtpUtilies.CreateDirectory(ftpPath);
 
                             webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
-                            webRequest.Credentials = new NetworkCredential("curtisrhodes", "R@quel77");
+                            //webRequest.Credentials = new NetworkCredential("curtisrhodes", "R@quel77");
+                            webRequest.Credentials = networkCredentials;
                             webRequest.Method = WebRequestMethods.Ftp.UploadFile;
                         }
                         catch (Exception ex)
