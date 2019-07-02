@@ -35,6 +35,26 @@ body {
     border: solid thin var(--oggleBorderColor);
     padding: 5px;
 }
+.ogglePromoContainer {
+    position: absolute;
+    top: 250px;
+    right: 80px;
+    border: solid 3px #4b0d41;
+    width: 300px;
+    display: none;
+}
+
+.ogglePromoTitle {
+    font-size: 22px;
+    text-align: center;
+    background-color: var(--ogglgeHeaderBarColor);
+}
+
+.ogglePromoText {
+    padding: 6px;
+    text-align: justify;
+    background-color: var(--oggleContainerBackgroundColor);
+}
 
 .threeColumnArray {
     width: 100%;
