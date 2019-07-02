@@ -106,7 +106,7 @@
         <div class="clickable" onclick="showCreateNewFolder()">Create New Folder</div>
         <div class="clickable" onclick="showMovefolderDialog()">Move Folder</div>
         <div class="clickable" onclick="showRenameFolderDialog()">ReName Folder</div>
-        <div class="clickable" onclick="collapseChildFolder()">Collapse Folder</div>
+        <div class="clickable" onclick="loadProperties()">loadProperties</div>
         <div class="clickable" onclick="createStaticPages()">Create Static Pages</div>
         <div class="clickable" onclick="repairLinks()">Repair Links</div></dir>`);
 
@@ -552,7 +552,6 @@
             }
         }
         else {
-            alert("path: " + path);
             displayPath = path.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "");
             dashboardMainSelectedPath = "/";
         }

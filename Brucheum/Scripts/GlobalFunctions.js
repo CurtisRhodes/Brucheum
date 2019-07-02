@@ -121,42 +121,30 @@ function logoutPlease() {
     }
 }
 
-function sendEmailFromJS(msg, body) {
-
-    //alert("sendEmailFromJS 1");
+function sendEmail(subject, messsage) {
     var rtn = "";
     try {
-        var emailMessage = new Object();
-        emailMessage.Subject = msg;
-        emailMessage.Body = body;
-
-        var service = "https://api.curtisrhodes.com/";
-        //service = "http://localhost:40395/";
-
-        //alert("url: " + service + "api/GodaddyEmail");
         $.ajax({
-            type: "POST",
-            url: service + "api/GodaddyEmail",
-            data: emailMessage,
+            type: "GET",
+            url: "https://api.curtisrhodes.com/api/GodaddyEmail/SendEmail?subject='" + subject + "'&message='" + messsage + "'",
             success: function (emailSuccess) {
                 if (emailSuccess === "ok") {
-                    displayStatusMessage("ok", "email sent");
-                    //alert("Email says: " + sendObj.Subject);
+                    //displayStatusMessage("ok", "email sent");
                 }
                 else {
-                    $('#footerMessage').html("Email Fail: " + emailSuccess);
-                    //alert("Email Fail: " + emailSuccess);
+                    //displayStatusMessage("error", emailSuccess);
+                    console.log("Email Fail: " + emailSuccess);
                 }
                 rtn = emailSuccess;
             },
             error: function (jqXHR, exception) {
-                alert("sendEmailFromJS XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                alert("sendEmail XHR error: " + getXHRErrorDetails(jqXHR, exception));
                 rtn = getXHRErrorDetails(jqXHR, exception);
             }
         });
     } catch (e) {
         rtn = e;
-        alert("sendEmailFromJS CATCH: " + rtn);
+        alert("sendEmail CATCH: " + rtn);
     }
     return rtn;
 }
@@ -179,10 +167,10 @@ function logPageHit(service, userName, ipAddress, page, details) {
                 success: function (success) {
                     if (!success.startsWith("ERROR")) {
 
-                        sendEmailFromJS("Page Hit", ipAddress + " visited " + page + " " + details);
+                        sendEmail("Page Hit", ipAddress + " visited " + page + " " + details);
                         //displayStatusMessage("ok", "Page Hit " + page + " / " + details);
 
-                        //sendEmailFromJS("Page Hit", String.Format("{0} visited {1} {2} may you have a good day",
+                        //sendEmail("Page Hit", String.Format("{0} visited {1} {2} may you have a good day",
                         //    hit.IPAddress, hit.PageName, hit.Details));
 
                         return success;
@@ -211,7 +199,7 @@ function logPageVisitEnd(hitSession) {
             url: service + "/api/HitCounter/?hitId=" + hitSession,
             success: function (success) {
                 if (success === "ok") {
-                    //sendEmailFromJS("Page Hit", ipAddress + " visited " + page + " " + details);
+                    //sendEmail("Page Hit", ipAddress + " visited " + page + " " + details);
                     displayStatusMessage("ok", "Page Hit " + page + " / " + details);
                     alert("Recorded End Visit");
                     return success;

@@ -418,7 +418,7 @@ namespace WebApi
                             ImageLinkId = imageLinkId
                         });
                         db.SaveChanges();
-                        success += "ok";
+                        success = "ok";
                     }
                     catch (Exception)
                     {
@@ -656,6 +656,8 @@ namespace WebApi
                 }
                 success = "ok";
             }
+            else
+                success = createDirectory;
             return success;
         }
 
@@ -666,10 +668,17 @@ namespace WebApi
             {
                 foreach (string subDir in FtpUtilies.GetDirectories(ftpPath))
                 {
-                    RemoveFolder(ftpPath + "/" + subDir);
-                    FtpUtilies.RemoveDirectory(ftpPath + "/" + subDir);
+                    if (subDir.Contains("ERROR"))
+                        break;
+                    else
+                    {
+                        RemoveFolder(ftpPath + "/" + subDir);
+                        if (!subDir.Contains("ERROR"))
+                            FtpUtilies.RemoveDirectory(ftpPath + "/" + subDir);
+                    }
                 }
-                FtpUtilies.RemoveDirectory(ftpPath);
+                if (!ftpPath.Contains("ERROR"))
+                    FtpUtilies.RemoveDirectory(ftpPath);
             }
             catch (Exception ex)
             {

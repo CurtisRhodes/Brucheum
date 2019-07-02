@@ -45,6 +45,36 @@ namespace WebApi
             }
             return repairReport;
         }
+
+
+        private string EnsureCorrectFileName(string suspectFileName, string folderName, string ftpPath)
+        {
+            string correctFileName = "";
+            string ext = suspectFileName.Substring(suspectFileName.Length - 4);
+            if (!ext.StartsWith("."))
+                correctFileName = "Unexpected extension";
+            else
+            {
+                if ((suspectFileName.LastIndexOf("_") > 0) && (suspectFileName.Substring(suspectFileName.LastIndexOf("_")).Length > 40))
+                {
+                    correctFileName = suspectFileName;
+                }
+                else
+                {
+                    correctFileName = folderName + Guid.NewGuid().ToString() + ext;
+
+
+
+                    FtpUtilies.MoveFile(ftpPath + suspectFileName, ftpPath + correctFileName);
+                }
+            }
+
+            return correctFileName;
+        }
+
+
+
+
         private void RepairLinksRecurr(int folderId, RepairReportModel repairReport, OggleBoobleContext db)
         {
             CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
@@ -58,10 +88,15 @@ namespace WebApi
                 repairReport.Errors.Add("created directory " + ftpPath);
             }
             int folderRowsProcessed = 0;
+
+
+
+
             if (repairReport.isSubFolder)
                 SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed + "  Total: " + repairReport.RowsProcessed);
             else
                 SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed);
+
             List<ImageLink> goDaddyLinks =
                 (from c in db.CategoryImageLinks
                  join g in db.ImageLinks on c.ImageLinkId equals g.Id
@@ -82,6 +117,8 @@ namespace WebApi
 
                     string goDaddyPrefix = "http://" + dbCategoryFolder.RootFolder + ".ogglebooble.com/";
                     string expectedLinkName = goDaddyPrefix + Helpers.GetFtpParentPathWithoutRoot(folderId) + dbCategoryFolder.FolderName;
+
+
                     string expectedFileName = "";
                     string linkId = "";
                     string ext = "";
@@ -90,6 +127,12 @@ namespace WebApi
 
                     foreach (string fileName in files)
                     {
+
+
+
+                        //EnsureCorrectFileName(fileName, ftpPath);
+
+
                         if ((fileName.LastIndexOf("_") > 0) && (fileName.Substring(fileName.LastIndexOf("_")).Length > 40))
                         {
                             fileNameInExpectedForm = true;

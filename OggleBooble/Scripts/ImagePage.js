@@ -233,8 +233,7 @@ function processImages(imageLinksModel, start) {
 
                         selectedImageArchiveFolderId = folderDetails.FolderId;
 
-
-                        if (folderDetails.RootFolder === "archive") {
+                        if (folderDetails.RootFolder === "archive" || folderDetails.RootFolder === "playboy") {
                             $('#ctxModelName').html(folderDetails.FolderName);
                             $('#ctxSeeMore').show();
                             $('#ctxArchive').hide();
@@ -278,7 +277,6 @@ function contextMenuAction(action) {
             $("#thumbImageContextMenu").fadeOut();
             showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId, $('#' + currentContextLinkId + '').attr("src"));
             $('#modelInfoDialog').on('dialogclose', function (event) {
-                alert("$('#modelInfoDialog').on('dialogclose'");
                 $('#modelInfoDialog').hide();
                 getImageLinks();
             });
@@ -402,6 +400,7 @@ function setFolderImage(linkId, folderId, level){
 }
 
 function removeImage() {
+    //    alert("currentContextLinkId: " + currentContextLinkId);
     $.ajax({
         type: "GET",
         url: service + "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + currentContextLinkId,

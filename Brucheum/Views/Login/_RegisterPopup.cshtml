@@ -109,7 +109,7 @@
                         alert("Register  error: " + xhr.statusText);
                     }
                 });
-                sendEmailFromJS("CONGRATULATIONS: " + regVM.UserName + " just Registered onto The Brucheum", "someday it will be someone other than you");
+                sendEmail("CONGRATULATIONS: " + regVM.UserName + " just Registered onto The Brucheum", "someday it will be someone other than you");
             }
         } catch (e) {
             $('#btnRegisterSpinnerImage').hide();
