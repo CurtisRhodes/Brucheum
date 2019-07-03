@@ -93,9 +93,10 @@
     var spinCount = 0;
     var leftimageIndex, rightimageIndex;
 
+
     $(document).ready(function () {
 
-        loadBoobsRanker('Quick');
+        loadBoobsRanker();
 
         //userName = getCookie();
         $('#footerMessage').html("hello: " + userName);
@@ -115,18 +116,13 @@
         }, 1100);
     }
 
-    function loadBoobsRanker(quickLoad) {
+    function loadBoobsRanker() {
         $('#boobsRankerLoadingGif').show();
 
-        var count = 0;
-        if (quickLoad == "Quick") {
-        $('#footerMessage').html("hello: " + userName+"  Quick");
-            count = 300;
-        }
 
         $.ajax({
             type: "GET",
-            url: service + "api/BoobsRanker/Get?folderId=0&count=" + count,
+            url: service + "api/BoobsRanker",
             success: function (container) {
                 $('#boobsRankerLoadingGif').hide();
                 if (container.Success = "ok") {
@@ -134,22 +130,8 @@
                         rankerLinksArray[idx] = new Image();
                         rankerLinksArray[idx].src = obj.Link;
                         rankerLinksArray[idx].Id = obj.LinkId;
-
-                        //$('#preLoad').append("<img id='" + obj.LinkId + "' src='" + obj.Link + "'/>");
-                        //rankerLinksArray.push({
-                        //    Link: obj.Link.replace(/ /g, "%20"),
-                        //    LinkId: obj.LinkId,
-                        //    FolderId: obj.FolderId
-                        //});
                     });
-
-                    if (quickLoad == "Quick") {
-                        spinTheSlots(10000);
-                        loadBoobsRanker('Full');
-                    }
-                    else
-                        $('#footerMessage').html("hello: " + userName + "  Full " + rankerLinksArray.length);
-
+                    spinTheSlots();
                 }
                 else
                     alert("BoobsRanker: " + container.Success);
@@ -182,7 +164,8 @@
             if (i > spinRate) {
                 clearInterval(slotTimer);
                 startCountDown();
-                $('#footerMessage').html("images: " + rankerLinksArray.length + "   spin: " + ++spinCount);
+                //$('#footerMessage').html("images: " + rankerLinksArray.length + "   spin: " + ++spinCount);
+                $('#footerMessage').html("   spin: " + ++spinCount);
             }
             //$('#testMessage').html(i++);
             i++;

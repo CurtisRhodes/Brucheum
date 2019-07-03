@@ -132,7 +132,7 @@ function explodeViewer() {
         }, 450);
         //$('#viewerImageContainer').css('left', 0);
         //$('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
-        $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
+        $('#footerMessage').html("2image: " + imageViewerIndex + " of: " + imageViewerArray.length);
     }
 
 function runSlideShow(action) {

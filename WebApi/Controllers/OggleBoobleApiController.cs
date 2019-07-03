@@ -944,7 +944,7 @@ namespace WebApi
     public class BoobsRankerController : ApiController
     {
         [HttpGet]
-        public ImageRankerModelContainer LoadImages(int folderId, int count)
+        public ImageRankerModelContainer LoadImages()
         {
             ImageRankerModelContainer imageRankerModelContainer = new ImageRankerModelContainer();
             try
@@ -960,7 +960,7 @@ namespace WebApi
                              FolderId = i.FolderId,
                              LinkId = i.LinkId,
                              Link = i.Link
-                         }).Take(count).ToList();
+                         }).Take(500).ToList();
                     imageRankerModelContainer.Success = "ok";
                 }
             }

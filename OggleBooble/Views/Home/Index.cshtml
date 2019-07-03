@@ -21,7 +21,7 @@
         <div class="flexContainer">
 
             <div class="floatLeft">
-                <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('centerfolds', $(this).is(':checked'), 1000)" /> Include Centerfolds</div>
+                <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('playboy', $(this).is(':checked'), 1000)" /> Include Centerfolds</div>
                 <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('archive', $(this).is(':checked'), 50000)" /> Include Archive</div>
             </div>
 
@@ -48,13 +48,14 @@
     var promoMessagesArray = new Array();
     var promoMessageRotator;
     var promoMessageRotationSpeed = 8000;
+    var service = '@ViewBag.Service';
+    var userName = '@ViewBag.UserName';
+    var ipAddress = '@ViewBag.IpAddress';
+    var lastBuild = '@ViewBag.BuildInfo';
 
     $(document).ready(function () {
-        var service = '@ViewBag.Service';
-        var userName = '@ViewBag.UserName';
-        var lastBuild = '@ViewBag.BuildInfo';
 
-        $('#footerLastBuild').html("last build: " + lastBuild + "");
+        $('#footerLastBuild').html("last build: " + lastBuild + "3");
 
         $('#boobCatTreeContainer').dialog({
             autoOpen: false,
@@ -69,7 +70,40 @@
 
         launchPromoMessages();
 
+        logVisit();
+
     });
+
+    function logVisit() {
+
+        var visitModel = {
+            UserName : userName,
+            IpAddress : ipAddress,
+            AppName : "OggleBooble"
+        };
+
+        $('#footerMessage').html("logging visit");
+        //alert("ipAddress: " + ipAddress);
+        $.ajax({
+            type: "POST",
+            url: service + "api/HitCounter",
+            data: { UserName : userName, IpAddress : ipAddress, AppName : "OggleBooble" },
+            //data: visitModel,
+            success: function (successModel) {
+                if (successModel.Success == "ok") {
+
+                    $('#headerMessage').html(successModel.ReturnValue);
+                }
+                else
+                    alert(successModel.Success);
+            },
+            error: function (jqXHR, exception) {
+                $('#blogLoadingGif').hide();
+                alert("HitCounter/LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
 
     function launchPromoMessages() {
         $.ajax({

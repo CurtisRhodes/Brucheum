@@ -22,29 +22,50 @@ namespace WebApi.AspNet.DataContext
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AspNetRole>()
-                .HasMany(e => e.AspNetUsers)
-                .WithMany(e => e.AspNetRoles)
-                .Map(m => m.ToTable("AspNetUserRoles", "asp").MapLeftKey("RoleId").MapRightKey("UserId"));
+            //modelBuilder.Entity<AspNetRole>()
+            //    .HasMany(e => e.AspNetUsers)
+            //    .WithMany(e => e.AspNetRoles)
+            //    .Map(m => m.ToTable("AspNetUserRoles", "asp").MapLeftKey("RoleId").MapRightKey("UserId"));
 
-            modelBuilder.Entity<AspNetUser>()
-                .HasMany(e => e.AspNetUserClaims)
-                .WithOptional(e => e.AspNetUser)
-                .HasForeignKey(e => e.UserId);
+            //modelBuilder.Entity<AspNetUser>()
+            //    .HasMany(e => e.AspNetUserClaims)
+            //    .WithOptional(e => e.AspNetUser)
+            //    .HasForeignKey(e => e.UserId);
 
-            modelBuilder.Entity<AspNetUser>()
-                .HasMany(e => e.AspNetUserLogins)
-                .WithRequired(e => e.AspNetUser)
-                .HasForeignKey(e => e.UserId)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<AspNetUser>()
+            //    .HasMany(e => e.AspNetUserLogins)
+            //    .WithRequired(e => e.AspNetUser)
+            //    .HasForeignKey(e => e.UserId)
+            //    .WillCascadeOnDelete(false);
         }
     }
 
     [Table("asp.AspNetUsers")]
     public partial class AspNetUser
     {
+        [Key]
+        public string Id { get; set; }
+        public string UserName { get; set; }
+        public string IPAddress { get; set; }
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string PhoneNumber { get; set; }
+        public bool EmailConfirmed { get; set; }
+        public bool PhoneNumberConfirmed { get; set; }
+        public bool TwoFactorEnabled { get; set; }
+        public DateTime? LockoutEndDateUtc { get; set; }
+        public bool LockoutEnabled { get; set; }
+        public int AccessFailedCount { get; set; }
+        public string PasswordHash { get; set; }
+        public string SecurityStamp { get; set; }
+    }
+
+    [Table("asp.xxAspNetUsers")]
+    public partial class xxAspNetUser
+    {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public AspNetUser()
+        public xxAspNetUser()
         {
             AspNetUserClaims = new HashSet<AspNetUserClaim>();
             AspNetUserLogins = new HashSet<AspNetUserLogin>();
@@ -101,14 +122,10 @@ namespace WebApi.AspNet.DataContext
     public partial class AspNetUserClaim
     {
         public int Id { get; set; }
-
         [StringLength(128)]
         public string UserId { get; set; }
-
         public string ClaimType { get; set; }
-
         public string ClaimValue { get; set; }
-
         public virtual AspNetUser AspNetUser { get; set; }
     }
 
@@ -118,11 +135,9 @@ namespace WebApi.AspNet.DataContext
         [Key]
         [Column(Order = 0)]
         public string LoginProvider { get; set; }
-
         [Key]
         [Column(Order = 1)]
         public string ProviderKey { get; set; }
-
         [Key]
         [Column(Order = 2)]
         public string UserId { get; set; }

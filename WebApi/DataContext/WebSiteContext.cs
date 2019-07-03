@@ -26,23 +26,23 @@ namespace WebApi.DataContext
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Ref>()
-                .Property(e => e.RefType)
-                .IsFixedLength();
+            //modelBuilder.Entity<Ref>()
+            //    .Property(e => e.RefType)
+            //    .IsFixedLength();
 
-            modelBuilder.Entity<Ref>()
-                .Property(e => e.RefCode)
-                .IsFixedLength();
+            //modelBuilder.Entity<Ref>()
+            //    .Property(e => e.RefCode)
+            //    .IsFixedLength();
 
-            modelBuilder.Entity<Article>()
-                .HasMany(e => e.ArticleTags)
-                .WithRequired(e => e.Article)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<Article>()
+            //    .HasMany(e => e.ArticleTags)
+            //    .WithRequired(e => e.Article)
+            //    .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<Blog>()
-                .HasMany(e => e.BlogEntries)
-                .WithRequired(e => e.Blog)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<Blog>()
+            //    .HasMany(e => e.BlogEntries)
+            //    .WithRequired(e => e.Blog)
+            //    .WillCascadeOnDelete(false);
         }
     }
 
@@ -50,15 +50,10 @@ namespace WebApi.DataContext
     public partial class Visitor
     {
         [Key]
-        [Column(Order = 0)]
-        [StringLength(50)]
+        public string Id { get; set; }
+        public string UserName { get; set; }
         public string IPAddress { get; set; }
-
-        [Key]
-        [Column(Order = 1)]
-        [StringLength(50)]
-        public string App { get; set; }
-
+        public string AppName { get; set; }
         public DateTime CreateDate { get; set; }
     }
 
@@ -67,14 +62,10 @@ namespace WebApi.DataContext
     {
         [Key]
         public int VisitId { get; set; }
-
-        [StringLength(50)]
+        public string VisitorId { get; set; }
+        public string UserName { get; set; }
         public string IPAddress { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string App { get; set; }
-
+        public string AppName { get; set; }
         public DateTime VisitDate { get; set; }
     }
 

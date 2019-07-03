@@ -41,8 +41,8 @@ function getBreadCrumbs() {
                 folderName = breadCrumbModel.FolderName;
 
                 //alert("breadCrumbsFolderName: " + breadCrumbsFolderName);
-
-                logPageHit();
+                if (ipAddress !== "68.203.90.183")
+                    logPageHit();
             }
             else
                 alert("getBreadCrumbs " + breadCrumbModel.Success);
@@ -64,14 +64,13 @@ function logPageHit() {
     };
 
     $.ajax({
-        type: "POST",
+        type: "PUT",
         url: service + "api/HitCounter/LogPageHit",
         data: hitCounterModel,
         success: function (success) {
             if (success === "ok") {
 
-
-                //sendEmail("someone just visited " + folderName + " ImagePage Page", "someday it will be someone other than you");
+                sendEmail(currentUser+ " just visited " + folderName + " ImagePage Page", "someday it will be someone other than you");
             }
             else
                 alert("logPageHit: " + success);

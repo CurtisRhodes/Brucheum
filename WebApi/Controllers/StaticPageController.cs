@@ -37,7 +37,7 @@ namespace WebApi.Controllers
                         SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
 
                         CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == parentFolder).First();
-                        string folderName = categoryFolder.RootFolder + "/" + categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
+                        string folderName = categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
                         success = ProcessFolder(parentFolder, categoryFolder.RootFolder, folderName, db);
                     }
                 }
@@ -72,7 +72,7 @@ namespace WebApi.Controllers
                 }
                 FtpWebRequest webRequest = null;
                 string ftpPath = ftpHost+ "/pages.OGGLEBOOBLE.COM/";
-                webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + folderName + ".html");
+                webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + rootFolder + "/" + folderName + ".html");
                 webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
                 webRequest.Method = WebRequestMethods.Ftp.UploadFile;
                 using (System.IO.Stream requestStream = webRequest.GetRequestStream())
@@ -125,8 +125,7 @@ namespace WebApi.Controllers
                 "<script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js'></script>\n" +
                 "<link href='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css' rel='stylesheet'>\n" +
                 "<script src='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js'></script>\n" +
-                "<link href='http://pages.ogglebooble.com/css/jqueryui.css' rel='stylesheet' />\n"+
-                "<title>" + pageName + " - OggleBooble</title>" +
+                "<link href='http://pages.ogglebooble.com/css/jqueryui.css' rel='stylesheet' />\n" +
                 "<link rel='icon' type='image/png' href='pages.ogglebooble.com/images/favicon.png' />" +
                 "<script src='http://pages.ogglebooble.com/script/GlobalFunctions.js' type='text/javascript'></script>\n" +
                 "<script src='http://pages.ogglebooble.com/script/ResizeThreeColumnPage.js' type='text/javascript'></script>\n" +
@@ -137,8 +136,9 @@ namespace WebApi.Controllers
                 "<link href='http://pages.ogglebooble.com/css/imageViewer.css' rel='stylesheet'/>\n" +
                 "<link href='http://pages.ogglebooble.com/css/footer.css'      rel='stylesheet'/>\n" +
                 "<link href='http://pages.ogglebooble.com/css/ImagePage.css'   rel='stylesheet'/>\n" +
+                "<title>" + pageName + " - OggleBooble</title>" +
                 "<meta name='Title' content='" + pageName + "' property='og:title'/>\n" +
-                "<meta name='description' content='" + metaTagResults.Description + "'/>\n" +
+                "<meta name='description' content='" + Uri.EscapeUriString(metaTagResults.Description) + "'/>\n" +
                 "<meta property='og:type' content='website' />\n" +
                 "<meta property='og:url' content='https://pages.OggleBooble.com/" + pageName + ".html'/>\n" +
                 "<meta name='Keywords' content='" + articleTagString + "'/>\n" +
@@ -287,8 +287,7 @@ namespace WebApi.Controllers
                 }
             }
 
-            bodyHtml += "</div>\n<div id='fileCount' class='countContainer'>" + idx + "</div></div>\n" +
-                    "<script>resizePage();</script>\n" +                    
+            bodyHtml += "<script>resizePage();</script>\n" +                    
                     "<div id='thumbImageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut();'>\n" +
                         "<div id='staticPagectxModelName' onclick='contextMenuActionShow()'>model name</div>\n" +
                         "<div id='ctxSeeMore' onclick='contextMenuActionJump()'>see more of her</div>\n" +

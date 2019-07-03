@@ -15,7 +15,7 @@ var service = "https://api.curtisrhodes.com/";
 
 
 function launchCarousel(root) {
-    $('#footerMessage').html("loading carousel");
+    $('#footerMessage').html("launching carousel");
     loadImages(root, true, 20);
 }
 

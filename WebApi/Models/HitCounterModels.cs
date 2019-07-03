@@ -17,11 +17,19 @@ namespace WebApi.Models
         public string Subject { get; set; }
         public string Body { get; set; }
     }
+        
     public class HitCounterModel
     {
         public string IpAddress { get; set; }
-        public string AppName { get; set; }
-        public string PageName { get; set; }
         public string Details { get; set; }
+        public string PageName { get; set; }
+        public string AppName { get; set; }
+    }
+
+    public class LogVisitModel
+    {
+        public string IpAddress { get; set; }
+        public string UserName { get; set; }
+        public string AppName { get; set; }
     }
 }

@@ -8,6 +8,7 @@ using System.Web.Http.Cors;
 using System.Web.Http.Results;
 using WebApi.Models;
 using WebApi.DataContext;
+using WebApi.AspNet.DataContext;
 
 namespace WebApi
 {
@@ -108,61 +109,89 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class HitCounterController : ApiController
     {
-        [HttpGet]
-        public string LogVisit(string ipAddress, string app)
+        [HttpPost]
+        public SuccessModel LogVisit(LogVisitModel logVisitModel)
         {
-            string success = "";
+            SuccessModel success = new SuccessModel();
             try
             {
+                string visitorId = Guid.NewGuid().ToString();
+                if (logVisitModel.UserName != null)
+                {
+                    using (AspNetContext db = new AspNetContext())
+                    {
+                        AspNetUser aspNetUser = db.AspNetUsers.Where(u => u.UserName == logVisitModel.UserName).FirstOrDefault();
+                        if (aspNetUser != null)
+                        {
+                            success.ReturnValue = "Welcome back " + aspNetUser.UserName;
+                            visitorId = aspNetUser.Id;
+                        }
+                    }
+                }
+
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    Visitor existing = db.Visitors.Where(v => v.IPAddress == ipAddress && v.App == app).FirstOrDefault();
+                    Visitor existing = db.Visitors.Where(v => v.IPAddress == logVisitModel.IpAddress && v.UserName == logVisitModel.UserName && v.AppName == logVisitModel.AppName).FirstOrDefault();
 
-                    // ERROR: The entity or complex type 'WebApi.Visitor' cannot be constructed in a LINQ to Entities query.
-                    // Visitor aVisitor = (from visitors in db.Visitors
-                    //                        where visitors.IPAddress == ipAddress && visitors.App == app
-                    //                        select new Visitor() { IPAddress = visitors.IPAddress }).FirstOrDefault();
                     if (existing == null)
                     {
                         // WE HAVE A NEW VISITOR
                         Visitor visitor = new Visitor();
-                        visitor.App = app;
-                        visitor.IPAddress = ipAddress;
+                        visitor.Id = visitorId;
+                        visitor.UserName = logVisitModel.UserName;
+                        visitor.AppName = logVisitModel.AppName;
+                        visitor.IPAddress = logVisitModel.IpAddress;
                         visitor.CreateDate = DateTime.Now;
 
                         db.Visitors.Add(visitor);
                         db.SaveChanges();
-
-                        success = new GodaddyEmailController().SendEmail("CONGRATULATIONS: someone just visited your site", "ip: " + ipAddress + " visited: " + app);
-                        ////emailSuccess = Helpers.SendEmail("CONGRATULATIONS: someone just visited your site", "ip: " + ipAddress + " visited: " + app);
-                        //if (emailSuccess != "ok")
-                        //    success = "true but " + emailSuccess;
-                        //else
-                        //    success = "ok";
+                        success.ReturnValue = "Welcome new visitor!";
+                        new GodaddyEmailController().SendEmail("CONGRATULATIONS: someone just visited your site", "ip: " + logVisitModel.IpAddress + " visited: " + logVisitModel.AppName);
                     }
                     else
                     {
-                        // add  Vist
-                        Visit visit = new Visit();
-                        visit.IPAddress = ipAddress;
-                        visit.App = app;
-                        visit.VisitDate = DateTime.Now;
-
-                        db.Visits.Add(visit);
-                        db.SaveChanges();
-
-                        if (ipAddress != "50.62.160.105")  // could be something at Godaddy
+                        bool logVisit = true;
+                        Visit lastVisit = db.Visits.Where(v => v.IPAddress == logVisitModel.IpAddress).FirstOrDefault();
+                        if (lastVisit != null)
                         {
-                            success = new GodaddyEmailController().SendEmail("Site Visit", "ip: " + ipAddress + " visited: " + app);
+                            if ((DateTime.Now - lastVisit.VisitDate).TotalHours < 5)
+                            {
+                                logVisit = false;
+                            }
+                        }
+                        if (logVisit)
+                        {
+                            Visit visit = new Visit();
+                            visit.VisitorId = visitorId;
+                            visit.UserName = logVisitModel.UserName;
+                            visit.IPAddress = logVisitModel.IpAddress;
+                            visit.AppName = logVisitModel.AppName;
+                            visit.VisitDate = DateTime.Now;
+
+                            db.Visits.Add(visit);
+                            db.SaveChanges();
+                            success.ReturnValue = "Welcome back " + logVisitModel.IpAddress;
+                            if (logVisitModel.IpAddress != "50.62.160.105")  // could be something at Godaddy
+                            {
+                                new GodaddyEmailController().SendEmail("Site Visit", "ip: " + logVisitModel.IpAddress + " visited: " + logVisitModel.AppName);
+                            }
+                        }
+                        else
+                        {
+                            if (logVisitModel.UserName != null)
+                                success.ReturnValue = "Welcome back " + logVisitModel.UserName;
+                            else
+                                success.ReturnValue = "Welcome back. Please log in";
                         }
                     }
                 }
+                success.Success = "ok";
             }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { success.Success = Helpers.ErrorDetails(ex); }
             return success;
         }
 
-        [HttpPost]
+        [HttpPut]
         public string LogPageHit(HitCounterModel hitCounterModel)
         {
             string success = "";
@@ -186,7 +215,7 @@ namespace WebApi
             return success;
         }
 
-        [HttpPut]
+        [HttpPatch]
         public string EndVisit(int hitId)
         {
             var success = "on no";
@@ -207,8 +236,93 @@ namespace WebApi
             return success;
         }
     }
- 
- }
+
+    [EnableCors("*", "*", "*")]
+    public class HttpClientController : ApiController
+    {
+        [HttpPost]
+        public IHttpActionResult LogVisit(LogVisitModel logVisitModel)
+        {
+            SuccessModel success = new SuccessModel();
+            try
+            {
+                string visitorId = Guid.NewGuid().ToString();
+                if (logVisitModel.UserName != null)
+                {
+                    using (AspNetContext db = new AspNetContext())
+                    {
+                        AspNetUser aspNetUser = db.AspNetUsers.Where(u => u.UserName == logVisitModel.UserName).FirstOrDefault();
+                        if (aspNetUser != null)
+                        {
+                            success.ReturnValue = "Welcome back " + aspNetUser.UserName;
+                            visitorId = aspNetUser.Id;
+                        }
+                    }
+                }
+
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    Visitor existing = db.Visitors.Where(v => v.IPAddress == logVisitModel.IpAddress && v.UserName == logVisitModel.UserName && v.AppName == logVisitModel.AppName).FirstOrDefault();
+
+                    if (existing == null)
+                    {
+                        // WE HAVE A NEW VISITOR
+                        Visitor visitor = new Visitor();
+                        visitor.Id = visitorId;
+                        visitor.UserName = logVisitModel.UserName;
+                        visitor.AppName = logVisitModel.AppName;
+                        visitor.IPAddress = logVisitModel.IpAddress;
+                        visitor.CreateDate = DateTime.Now;
+
+                        db.Visitors.Add(visitor);
+                        db.SaveChanges();
+                        success.ReturnValue = "Welcome new visitor!";
+                        new GodaddyEmailController().SendEmail("CONGRATULATIONS: someone just visited your site", "ip: " + logVisitModel.IpAddress + " visited: " + logVisitModel.AppName);
+                    }
+                    else
+                    {
+                        bool logVisit = true;
+                        Visit lastVisit = db.Visits.Where(v => v.IPAddress == logVisitModel.IpAddress).FirstOrDefault();
+                        if (lastVisit != null)
+                        {
+                            if ((DateTime.Now - lastVisit.VisitDate).TotalHours < 5)
+                            {
+                                logVisit = false;
+                            }
+                        }
+                        if (logVisit)
+                        {
+                            Visit visit = new Visit();
+                            visit.VisitorId = visitorId;
+                            visit.UserName = logVisitModel.UserName;
+                            visit.IPAddress = logVisitModel.IpAddress;
+                            visit.AppName = logVisitModel.AppName;
+                            visit.VisitDate = DateTime.Now;
+
+                            db.Visits.Add(visit);
+                            db.SaveChanges();
+                            success.ReturnValue = "Welcome back " + logVisitModel.IpAddress;
+                            if (logVisitModel.IpAddress != "50.62.160.105")  // could be something at Godaddy
+                            {
+                                new GodaddyEmailController().SendEmail("Site Visit", "ip: " + logVisitModel.IpAddress + " visited: " + logVisitModel.AppName);
+                            }
+                        }
+                        else
+                        {
+                            if (logVisitModel.UserName != null)
+                                success.ReturnValue = "Welcome back " + logVisitModel.UserName;
+                            else
+                                success.ReturnValue = "Welcome back. Please log in";
+                        }
+                    }
+                }
+                success.Success = "ok";
+            }
+            catch (Exception ex) { success.Success = Helpers.ErrorDetails(ex); }
+            return Ok(success);
+        }
+    }
+}
 
 
 
