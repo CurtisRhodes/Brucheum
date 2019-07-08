@@ -218,6 +218,7 @@ namespace WebApi
                             //DanniPath = folderId,
                             FolderId = vwTree.Id,
                             DirectoryName = vwTree.FolderName,
+                            ParentId = vwTree.Parent,
                             Length = vwTree.FileCount + vwTree.TotalFiles + vwTree.GrandTotalFiles,
                             Link = vwTree.Link
                         });

@@ -314,7 +314,7 @@
             type: "PATCH",
             url: service + "api/FtpDashBoard/GetFileProps?folderId=" + dashboardMainSelectedTreeId,
             success: function (success) {
-                $('#getImagesLoadingGif').hide();
+                $('#imagePageLoadingGif').hide();
                 if (success == "ok") {
                     displayStatusMessage("ok", "done");
                     $('#dataifyInfo').hide();
@@ -323,7 +323,7 @@
                     alert("GetFileProps: " + success);
             },
             error: function (jqXHR, exception) {
-                $('#getImagesLoadingGif').hide();
+                $('#imagePageLoadingGif').hide();
                 alert("GetFileProps jqXHR : " + getXHRErrorDetails(jqXHR, exception));
             }
         });

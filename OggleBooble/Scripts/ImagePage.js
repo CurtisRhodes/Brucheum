@@ -40,15 +40,15 @@ function getBreadCrumbs() {
                 document.title = breadCrumbModel.FolderName + " OggleBooble";
                 folderName = breadCrumbModel.FolderName;
 
-                //alert("breadCrumbsFolderName: " + breadCrumbsFolderName);
-                if (ipAddress !== "68.203.90.183")
+                if (ipAddress !== ("68.203.90.183" || "50.62.160.105")) {
                     logPageHit();
+                }
             }
             else
                 alert("getBreadCrumbs " + breadCrumbModel.Success);
         },
         error: function (jqXHR, exception) {
-            $('#getImagesLoadingGif').hide();
+            $('#imagePageLoadingGif').hide();
             alert("getBreadCrumbs jqXHR : " + getXHRErrorDetails(jqXHR, exception));
         }
     });
@@ -69,8 +69,12 @@ function logPageHit() {
         data: hitCounterModel,
         success: function (success) {
             if (success === "ok") {
-
-                sendEmail(currentUser+ " just visited " + folderName + " ImagePage Page", "someday it will be someone other than you");
+                if (!isNullorUndefined(currentUser)) {
+                    alert("currentUser: " + currentUser);
+                    sendEmail(currentUser + " just visited " + folderName, currentUser + " just visited " + folderName + " gallery");
+                }
+                else
+                    sendEmail(ipAddress + " just visited " + folderName, "unknown user just visited " + folderName + " gallery");
             }
             else
                 alert("logPageHit: " + success);
@@ -92,7 +96,7 @@ function slowlyShowCatDialog(breadCrumbFolderId) {
 function showAllChildren() {
     try {
         var start = Date.now();
-        $('#getImagesLoadingGif').show();
+        $('#imagePageLoadingGif').show();
         $.ajax({
             type: "GET",
             url: service + "/api/ImagePage/GetAllImageLinks?topFolderId=" + folderId+"&showAll=true",
@@ -100,12 +104,12 @@ function showAllChildren() {
                 processImages(imageModel, start);
             },
             error: function (jqXHR, exception) {
-                $('#getImagesLoadingGif').hide();
+                $('#imagePageLoadingGif').hide();
                 alert("showAllChildren jqXHR : " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     } catch (e) {
-        $('#getImagesLoadingGif').hide();
+        $('#imagePageLoadingGif').hide();
         alert("showAllChildren CATCH: " + e);
     }
 }
@@ -113,7 +117,7 @@ function showAllChildren() {
 function getImageLinks() {
     try {
         var start = Date.now();
-        $('#getImagesLoadingGif').show();
+        $('#imagePageLoadingGif').show();
         $.ajax({
             type: "GET",
             url: service + "/api/ImagePage/GetImageLinks?folderId=" + folderId,
@@ -122,10 +126,10 @@ function getImageLinks() {
                     rootFolder = imageLinksModel.RootFolder;
                     if (imageLinksModel.Success === "ok") {
                         processImages(imageLinksModel, start);
-                        $('#getImagesLoadingGif').hide();
+                        $('#imagePageLoadingGif').hide();
                     }
                     else {
-                        $('#getImagesLoadingGif').hide();
+                        $('#imagePageLoadingGif').hide();
                         alert("getImageLinks: " + imageLinksModel.Success);
                     }
                 }
@@ -133,7 +137,7 @@ function getImageLinks() {
                     alert("getImageLinks: " + imageLinksModel.Success);
             },
             error: function (jqXHR, exception) {
-                $('#getImagesLoadingGif').hide();
+                $('#imagePageLoadingGif').hide();
                 alert("getImageLinks jqXHR : " + getXHRErrorDetails(jqXHR, exception));
             }
         });
@@ -194,7 +198,7 @@ function processImages(imageLinksModel, start) {
             }
         }
         else {
-            if (imageLinksModel.RootFolder === 'centerfolds') {
+            if (imageLinksModel.ParentId === 1131) {
                 $('#footerMessage').html("centerfolds");
                 $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
                     " idx=" + fileCount + " class='centerfold' src='" + imageModelFile.Link + "'/></div>");
@@ -319,7 +323,7 @@ function contextMenuAction(action) {
             break;
         case "remove":
             $("#thumbImageContextMenu").fadeOut();
-            removeImage();
+            removeImage(currentContextLinkId);
             break;
         case "setF":
             setFolderImage(currentContextLinkId, folderId, "folder");
@@ -345,7 +349,7 @@ function showLinks() {
                 $('#linkInfo').show();
                 $('#linkInfoContainer').html("");
                 $.each(linksModel.Links, function (idx, obj) {
-                    $('#linkInfoContainer').append("<div id='" + obj.FolderId + "' class='linkInfoItem' onclick=openLink('" + obj.FolderId + "')'>" + obj.PathName + "</div>");
+                    $('#linkInfoContainer').append("<div id='" + obj.FolderId + "' class='linkInfoItem' onclick='openLink(\"" + obj.FolderId + "\")'>" + obj.PathName + "</div>");
                 });
             }
             else
@@ -358,6 +362,8 @@ function showLinks() {
 }
 
 function openLink(folderId) {
+
+    alert("openLink(xxx" + folderId + ")");
     window.open("/ImagePage?folder=" + folderId + ", '_blank'");
 }
 
@@ -398,7 +404,7 @@ function setFolderImage(linkId, folderId, level){
     });
 }
 
-function removeImage() {
+function removeImage(currentContextLinkId) {
     //    alert("currentContextLinkId: " + currentContextLinkId);
     $.ajax({
         type: "GET",

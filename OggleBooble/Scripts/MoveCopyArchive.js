@@ -23,13 +23,13 @@ function showMoveCopyDialog(mode, link, folderId) {
 }
 
 function ftpMoveCopy() {
-    $('#moveCopyDialogLoadingGif').show();
+    $('#imagePageLoadingGif').show();
     $.ajax({
         type: "PUT",
         url: service + "/api/MoveImage/MoveImage",
         data: MoveCopyImageModel,
         success: function (success) {
-            $('#moveCopyDialogLoadingGif').hide();
+            $('#imagePageLoadingGif').hide();
             if (success === "ok") {
                 displayStatusMessage("ok", "image moved to " + $('#dirTreeResults').html());
                 displayStatusMessage("ok", "link coppyed to " + $('#dirTreeResults').html());
@@ -44,7 +44,7 @@ function ftpMoveCopy() {
             }
         },
         error: function (xhr) {
-            $('#moveCopyDialogLoadingGif').hide();
+            $('#imagePageLoadingGif').hide();
             alert("ftp Move xhr error: " + xhr.statusText);
         }
     });

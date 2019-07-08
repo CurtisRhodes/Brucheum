@@ -111,7 +111,7 @@ namespace WebApi
         public string MoveImage(MoveCopyImageModel model)
         {
             if (model.SourceFolderId == model.DestinationFolderId)
-                return "ok";
+                return "Source and Destination the same";
             string success = "";
             try
             {
@@ -138,38 +138,39 @@ namespace WebApi
                     }
                     else
                     {
-                        CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.SourceFolderId).FirstOrDefault();
-                        CategoryFolder dbDestinationFolder = db.CategoryFolders.Where(f => f.Id == model.DestinationFolderId).FirstOrDefault();
-                                                
+                        int sourceFolderId = db.ImageLinks.Where(l => l.Id == linkId).First().FolderLocation;
+                        CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == sourceFolderId).First();
+                        CategoryFolder dbDestinationFolder = db.CategoryFolders.Where(f => f.Id == model.DestinationFolderId).First();
                         string extension = model.Link.Substring(model.Link.LastIndexOf("."));
-                             string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" +
-                             Helpers.GetFtpParentPathWithoutRoot(model.DestinationFolderId) + dbDestinationFolder.FolderName;
-                        string newFileName = dbDestinationFolder.FolderName + "_" + linkId + extension;
 
-                        string sourceFileName = model.Link.Substring(model.Link.LastIndexOf("/") + 1);
-
-
-
-                        string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/"
-                            + Helpers.GetFtpParentPathWithoutRoot(model.SourceFolderId) + dbSourceFolder.FolderName;
-
-                        if (!FtpUtilies.DirectoryExists(destinationFtpPath))
-                            FtpUtilies.CreateDirectory(destinationFtpPath);
-
-                        success = FtpUtilies.MoveFile(sourceFtpPath + "/" + sourceFileName, destinationFtpPath + "/" + newFileName);
-                        if (success == "ok")
+                        if (sourceFolderId == model.SourceFolderId)
                         {
-#if DEBUG
-                            // move file on local drive 
-                            try
+                            string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" +
+                            Helpers.GetFtpParentPathWithoutRoot(model.DestinationFolderId) + dbDestinationFolder.FolderName;
+
+                            string newFileName = dbDestinationFolder.FolderName + "_" + linkId + extension;
+
+                            string sourceFileName = model.Link.Substring(model.Link.LastIndexOf("/") + 1);
+
+                            string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/"
+                                + Helpers.GetFtpParentPathWithoutRoot(model.SourceFolderId) + dbSourceFolder.FolderName;
+
+                            if (!FtpUtilies.DirectoryExists(destinationFtpPath))
+                                FtpUtilies.CreateDirectory(destinationFtpPath);
+
+                            success = FtpUtilies.MoveFile(sourceFtpPath + "/" + sourceFileName, destinationFtpPath + "/" + newFileName);
+                            if (success == "ok")
                             {
-                                string localServerPath = "F:/Danni/";
-                                string localSourcePath = localServerPath + Helpers.GetLocalParentPath(model.SourceFolderId) + dbSourceFolder.FolderName;
-                                DirectoryInfo dirInfo = new DirectoryInfo(localSourcePath);
-                                if (!dirInfo.Exists)
+                                // move file on local drive 
+                                try
                                 {
-                                    Directory.CreateDirectory(localSourcePath);
-                                }
+                                    string localServerPath = "F:/Danni/";
+                                    string localSourcePath = localServerPath + Helpers.GetLocalParentPath(model.SourceFolderId) + dbSourceFolder.FolderName;
+                                    DirectoryInfo dirInfo = new DirectoryInfo(localSourcePath);
+                                    if (!dirInfo.Exists)
+                                    {
+                                        Directory.CreateDirectory(localSourcePath);
+                                    }
 
                                     FileInfo fileInfo = dirInfo.GetFiles(dbSourceFolder.FolderName + "_" + linkId + extension).FirstOrDefault();
                                     if (fileInfo != null)
@@ -179,31 +180,30 @@ namespace WebApi
                                             System.IO.Directory.CreateDirectory(localDestinationPath);
                                         fileInfo.MoveTo(localDestinationPath + "/" + newFileName);
                                     }
-                                
-                            }
-                            catch (Exception ex)
-                            {
-                                System.Diagnostics.Debug.WriteLine("move file on local drive : " + Helpers.ErrorDetails(ex));
-                            }
-
-#endif
-                            //2. update ImageLink 
-                            string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
-                            string goDaddyLink = linkPrefix + Helpers.GetFtpParentPathWithoutRoot(model.DestinationFolderId) +
-                                dbDestinationFolder.FolderName + "/" + dbDestinationFolder.FolderName + "_" + linkId + extension;
-                            ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
-                            goDaddyrow.Link = goDaddyLink;
-                            goDaddyrow.FolderLocation = dbDestinationFolder.Id;
-                            db.SaveChanges();
-
-                            //3 create new link for new location if necessary
-                            if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Where(c => c.ImageLinkId == linkId).FirstOrDefault() == null)
-                            {
-                                CategoryImageLink newCatImageLink = new CategoryImageLink() { ImageCategoryId = model.DestinationFolderId, ImageLinkId = linkId };
-                                db.CategoryImageLinks.Add(newCatImageLink);
-                                db.SaveChanges();
+                                }
+                                catch (Exception ex)
+                                {
+                                    System.Diagnostics.Debug.WriteLine("move file on local drive : " + Helpers.ErrorDetails(ex));
+                                }
                             }
                         }
+                        //2. update ImageLink 
+                        string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
+                        string goDaddyLink = linkPrefix + Helpers.GetFtpParentPathWithoutRoot(model.DestinationFolderId) +
+                            dbDestinationFolder.FolderName + "/" + dbDestinationFolder.FolderName + "_" + linkId + extension;
+                        ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                        goDaddyrow.Link = goDaddyLink;
+                        goDaddyrow.FolderLocation = dbDestinationFolder.Id;
+                        db.SaveChanges();
+
+                        //3 create new link for new location if necessary
+                        if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Where(c => c.ImageLinkId == linkId).FirstOrDefault() == null)
+                        {
+                            CategoryImageLink newCatImageLink = new CategoryImageLink() { ImageCategoryId = model.DestinationFolderId, ImageLinkId = linkId };
+                            db.CategoryImageLinks.Add(newCatImageLink);
+                            db.SaveChanges();
+                        }
+
 
                         if (model.Mode == "Move")
                         {

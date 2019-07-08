@@ -31,7 +31,7 @@ function loadImages(rootFolder, isChecked, take) {
             try {
                 if (carouselItemArray[idx].RootFolder === rootFolder) {
                     if (idx < carouselItemArray.length) {
-                        if (removedFolders.find(function () { return carouselItemArray[idx].FolderName }) === undefined) {
+                        if (removedFolders.find(function () { return carouselItemArray[idx].FolderName; }) === undefined) {
                             alert("not found " + carouselItemArray[idx].FolderName);
                             removedFolders.push(carouselItemArray[idx].FolderName);
                         }
@@ -117,13 +117,13 @@ function showFolderCategoryDialog() {
 
 function clickViewGallery() {
     clearInterval(CarouselInterval);
-
+    alert("clickViewGallery");
     window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
     //window.location.href = "http://pages.ogglebooble.com/" + carouselItemArray[imageIndex].RootFolder + "/" + carouselItemArray[imageIndex].FolderName + ".html";
 }
 
 function clickViewParentGallery() {
-    window.location.href = "ImagePage?folder=" + carouselItemArray[imageIndex].ParentId;
+    window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].ParentId;
     //window.location.href = "http://pages.ogglebooble.com/" + carouselItemArray[imageIndex].FolderName + ".html";
 }
 

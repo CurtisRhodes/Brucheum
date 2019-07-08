@@ -27,7 +27,7 @@ function doubleLoad() {
                     console.log("YES imageArray[] loaded: " + imageArray.length);
                 }
                 else {
-                    $('#getImagesLoadingGif').hide();
+                    $('#imagePageLoadingGif').hide();
                     alert("getImageLinks: " + imageLinksModel.Success);
                 }
             }

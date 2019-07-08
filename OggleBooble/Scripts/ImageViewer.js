@@ -264,7 +264,7 @@ function imageViewerContextMenuAction(action) {
             closeViewer();
             break;
         case "remove":
-            removeImage();
+            removeImage(imageViewerArray[imageViewerIndex].LinkId);
             closeViewer();
             break;
         case "setF":
