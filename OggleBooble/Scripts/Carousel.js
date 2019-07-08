@@ -117,7 +117,7 @@ function showFolderCategoryDialog() {
 
 function clickViewGallery() {
     clearInterval(CarouselInterval);
-    alert("clickViewGallery");
+    //alert("clickViewGallery");
     window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
     //window.location.href = "http://pages.ogglebooble.com/" + carouselItemArray[imageIndex].RootFolder + "/" + carouselItemArray[imageIndex].FolderName + ".html";
 }

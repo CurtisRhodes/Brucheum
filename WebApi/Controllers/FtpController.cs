@@ -117,12 +117,14 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    string linkId = model.Link.Substring(model.Link.LastIndexOf("_") + 1, 36);
+                    //string linkId = model.Link.Substring(model.Link.LastIndexOf("_") + 1, 36);
+                    ImageLink dbImageLink = db.ImageLinks.Where(l => l.Link == model.Link).First();
+                    //string linkId = db.ImageLinks.Where(l => l.Link == model.Link).First().Id;
                     if (model.Mode == "Copy")
                     {
                         CategoryImageLink existingLink = db.CategoryImageLinks
                             .Where(l => l.ImageCategoryId == model.DestinationFolderId)
-                            .Where(l => l.ImageLinkId == linkId).FirstOrDefault();
+                            .Where(l => l.ImageLinkId == dbImageLink.Id).FirstOrDefault();
                         if (existingLink != null)
                             success = "Link already exists";
                         else
@@ -130,30 +132,37 @@ namespace WebApi
                             db.CategoryImageLinks.Add(new CategoryImageLink()
                             {
                                 ImageCategoryId = model.DestinationFolderId,
-                                ImageLinkId = linkId
+                                ImageLinkId = dbImageLink.Id
                             });
                             db.SaveChanges();
                             success = "ok";
                         }
                     }
-                    else
+                    else  // Archive Move
                     {
-                        int sourceFolderId = db.ImageLinks.Where(l => l.Id == linkId).First().FolderLocation;
-                        CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == sourceFolderId).First();
+                        CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == dbImageLink.FolderLocation).First();
                         CategoryFolder dbDestinationFolder = db.CategoryFolders.Where(f => f.Id == model.DestinationFolderId).First();
                         string extension = model.Link.Substring(model.Link.LastIndexOf("."));
-
-                        if (sourceFolderId == model.SourceFolderId)
+                        if (dbImageLink.FolderLocation == model.SourceFolderId)
                         {
+
                             string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" +
                             Helpers.GetFtpParentPathWithoutRoot(model.DestinationFolderId) + dbDestinationFolder.FolderName;
 
-                            string newFileName = dbDestinationFolder.FolderName + "_" + linkId + extension;
+                            string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" +
+                                Helpers.GetFtpParentPathWithoutRoot(model.SourceFolderId) + dbSourceFolder.FolderName;
 
-                            string sourceFileName = model.Link.Substring(model.Link.LastIndexOf("/") + 1);
 
-                            string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/"
-                                + Helpers.GetFtpParentPathWithoutRoot(model.SourceFolderId) + dbSourceFolder.FolderName;
+                            string newFileName = dbDestinationFolder.FolderName + "_" + dbImageLink.Id + extension;
+                            string sourceFileName = "";
+                            //if (model.Link.Contains("Playboy centerfold"))
+                            //{
+                            //    // rename 
+                            //    sourceFileName = model.Link;
+                            //}
+                            //else
+
+                            sourceFileName = model.Link.Substring(model.Link.LastIndexOf("/") + 1);
 
                             if (!FtpUtilies.DirectoryExists(destinationFtpPath))
                                 FtpUtilies.CreateDirectory(destinationFtpPath);
@@ -172,7 +181,7 @@ namespace WebApi
                                         Directory.CreateDirectory(localSourcePath);
                                     }
 
-                                    FileInfo fileInfo = dirInfo.GetFiles(dbSourceFolder.FolderName + "_" + linkId + extension).FirstOrDefault();
+                                    FileInfo fileInfo = dirInfo.GetFiles(dbSourceFolder.FolderName + "_" + dbImageLink.Id + extension).FirstOrDefault();
                                     if (fileInfo != null)
                                     {
                                         string localDestinationPath = localServerPath + Helpers.GetLocalParentPath(model.DestinationFolderId) + "/" + dbDestinationFolder.FolderName;
@@ -190,16 +199,16 @@ namespace WebApi
                         //2. update ImageLink 
                         string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
                         string goDaddyLink = linkPrefix + Helpers.GetFtpParentPathWithoutRoot(model.DestinationFolderId) +
-                            dbDestinationFolder.FolderName + "/" + dbDestinationFolder.FolderName + "_" + linkId + extension;
-                        ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                            dbDestinationFolder.FolderName + "/" + dbDestinationFolder.FolderName + "_" + dbImageLink.Id + extension;
+                        ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == dbImageLink.Id).FirstOrDefault();
                         goDaddyrow.Link = goDaddyLink;
                         goDaddyrow.FolderLocation = dbDestinationFolder.Id;
                         db.SaveChanges();
 
                         //3 create new link for new location if necessary
-                        if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Where(c => c.ImageLinkId == linkId).FirstOrDefault() == null)
+                        if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Where(c => c.ImageLinkId == dbImageLink.Id).FirstOrDefault() == null)
                         {
-                            CategoryImageLink newCatImageLink = new CategoryImageLink() { ImageCategoryId = model.DestinationFolderId, ImageLinkId = linkId };
+                            CategoryImageLink newCatImageLink = new CategoryImageLink() { ImageCategoryId = model.DestinationFolderId, ImageLinkId = dbImageLink.Id };
                             db.CategoryImageLinks.Add(newCatImageLink);
                             db.SaveChanges();
                         }
@@ -209,7 +218,7 @@ namespace WebApi
                         {
                             // remove current link
                             CategoryImageLink oldCatImageLink = db.CategoryImageLinks
-                                 .Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == linkId).First();
+                                 .Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == dbImageLink.Id).First();
 
                             db.CategoryImageLinks.Remove(oldCatImageLink);
                             db.SaveChanges();
@@ -740,13 +749,6 @@ namespace WebApi
                     string[] files = Directory.GetFiles(danniPath);
                     var linkId = "";
                     var extension = "";
-
-                    //int iFolderName = dbCategoryFolder.FolderName.Length + 1;
-                    //byte[] bFolderName = new Byte[iFolderName];
-                    //for (int i = 0; i < iFolderName - 1; i++)
-                    //    bFolderName[i] = (byte)dbCategoryFolder.FolderName[i];
-                    //bFolderName[iFolderName - 1] = 0x00;
-                    //string tempFolder = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
                     int knt = 0;
                     string fullFileName = "";
                     foreach (string rawFileName in files)
@@ -755,8 +757,14 @@ namespace WebApi
 
                         linkId = fullFileName.Substring(fullFileName.LastIndexOf("_") + 1, 36);
                         extension = fullFileName.Substring(fullFileName.Length - 4);
+
+
                         SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  : " + ++knt + " of " + files.Count());
-                        if (System.IO.File.Exists(fullFileName))
+
+
+
+
+                            if (System.IO.File.Exists(fullFileName))
                         {
                             using (var fileStream = new FileStream(fullFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                             {
@@ -764,39 +772,14 @@ namespace WebApi
                                 {
                                     using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
                                     {
-                                        //image.SetMetaValue(MetaProperty.Subject, dbCategoryFolder.FolderName);
-                                        //image.SetMetaValue(MetaProperty.ImageId, linkId);
-
-                                        //var propItemId = (PropertyItem)FormatterServices.GetUninitializedObject(typeof(PropertyItem));
-                                        //propItemId.Id = (int)MetaProperty.Subject;
-                                        //int iLinkId = linkId.Length + 1;
-                                        //byte[] bLinkId = new Byte[iLinkId];
-                                        //for (int i = 0; i < iLinkId - 1; i++)
-                                        //    bLinkId[i] = (byte)linkId[i];
-                                        //bLinkId[iLinkId - 1] = 0x00;
-                                        //propItemId.Id = (int)MetaProperty.ImageId;
-                                        //propItemId.Value = bLinkId;
-                                        //propItemId.Type = 2;
-                                        //propItemId.Len = iLinkId;
-                                        //image.SetPropertyItem(propItemId);
-
-                                        //var propIemSubject = (PropertyItem)FormatterServices.GetUninitializedObject(typeof(PropertyItem));
-                                        //propIemSubject.Id = (int)MetaProperty.Subject;
-                                        //propIemSubject.Value = bFolderName;
-                                        //propIemSubject.Type = 2;
-                                        //propIemSubject.Len = iFolderName;
-                                        //image.SetPropertyItem(propIemSubject);
-
-
-                                        //foreach (int propertyId in image.PropertyIdList)
-                                        //{
-                                        //    var x = image.GetMetaValue(propertyId);
-                                        //}
-
-
-                                        //image.Save(tempFolder + "tempImage" + extension);
-
-                                        ImageLink dbImageLink = db.ImageLinks.Where(l => l.Id == linkId).FirstOrDefault();
+                                        ImageLink dbImageLink = null;
+                                        if (fullFileName.Contains("Playboy centerfold"))
+                                            dbImageLink = db.ImageLinks.Where(l => l.Link.Contains(fullFileName.Substring(10))).FirstOrDefault();
+                                        else
+                                        {
+                                            linkId = fullFileName.Substring(fullFileName.LastIndexOf("_") + 1, 36);
+                                            dbImageLink = db.ImageLinks.Where(l => l.Id == linkId).FirstOrDefault();
+                                        }
                                         if (dbImageLink != null)
                                         {
                                             dbImageLink.Size = fileStream.Length;
@@ -813,27 +796,6 @@ namespace WebApi
                                 }
 
                             }
-
-                            //string dirPath = fullFileName.Substring(0, fullFileName.LastIndexOf("/"));
-                            //string fileName = fullFileName.Substring(fullFileName.LastIndexOf("/") + 1);
-                            //DirectoryInfo thisDirectory = new DirectoryInfo(dirPath);
-                            //DirectoryInfo tempDirectory = new DirectoryInfo(tempFolder);
-                            //FileInfo tempFile = tempDirectory.GetFiles("tempImage" + extension).FirstOrDefault();
-
-                            //FileInfo oldFile = thisDirectory.GetFiles(fileName).FirstOrDefault();
-                            //if (oldFile != null)
-                            //{
-                            //    oldFile.Delete();
-                            //    //tempFile.MoveTo(fullFileName);
-
-                            //    using (var fileStream = new FileStream(tempFolder + "tempImage" + extension, FileMode.Open, FileAccess.Read, FileShare.Read))
-                            //    {
-                            //        using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
-                            //        {
-                            //            image.Save(fullFileName);
-                            //        }
-                            //    }
-                            //}
                         }
                     }
 

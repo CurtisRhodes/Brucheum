@@ -118,8 +118,6 @@
 
     function loadBoobsRanker() {
         $('#boobsRankerLoadingGif').show();
-
-
         $.ajax({
             type: "GET",
             url: service + "api/BoobsRanker",
@@ -203,7 +201,7 @@
                         setTimeout(function () {
                             spinTheSlots();
                             $('#rankerBox' + selectedSide).removeClass("bigRedBorder");
-                        }, 2500);
+                        }, 1500);
 
                     }
                     else
