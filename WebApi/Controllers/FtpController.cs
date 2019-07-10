@@ -143,7 +143,7 @@ namespace WebApi
                         CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == dbImageLink.FolderLocation).First();
                         CategoryFolder dbDestinationFolder = db.CategoryFolders.Where(f => f.Id == model.DestinationFolderId).First();
                         string extension = model.Link.Substring(model.Link.LastIndexOf("."));
-                        if (dbImageLink.FolderLocation == model.SourceFolderId)
+                        //if (dbImageLink.FolderLocation == model.SourceFolderId)
                         {
 
                             string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" +

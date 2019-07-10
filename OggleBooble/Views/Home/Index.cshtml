@@ -36,7 +36,7 @@
     <div id="rightColumn"></div>
 </div>
 
-<div id="promoContainer" class="ogglePromoContainer" onclick="killPrommessages()">
+<div id="promoContainer" class="ogglePromoContainer" onclick="killPromoMessages()">
     <div id="promoContainerTitle" class="ogglePromoTitle"></div>
     <div id="promoContainerText" class="ogglePromoText"></div>
 </div>
@@ -104,7 +104,6 @@
         });
     }
 
-
     function launchPromoMessages() {
         $.ajax({
             type: "GET",
@@ -151,7 +150,7 @@
         }, promoMessageRotationSpeed);
     }
 
-    function killPrommessages()
+    function killPromoMessages()
     {
         clearInterval(promoMessageRotator);
         setInterval(function () { showPromoMessages() }, 30000);

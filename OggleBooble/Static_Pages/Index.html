@@ -87,8 +87,7 @@
             <div id="headerTopRow">
                 <div id="bannerTitle" class="headerTitle">OggleBooble</div>
                 <div id="headerSubTitle" class="headerSubTitle">
-                    Big
-                    <a href="http://pages.ogglebooble.com/boobs/boobs.html"> tits</a> and
+                    <a href="http://pages.ogglebooble.com/boobs/boobs.html">big tits</a> and
                     <a href="http://pages.ogglebooble.com/boobs/nice ass.html"> ass</a> organized by
                     <a href="http://pages.ogglebooble.com/boobs/poses.html"> poses</a>
                     <a href="http://pages.ogglebooble.com/boobs/shapes.html"> shapes</a> and
@@ -99,9 +98,7 @@
                 <div id="breadcrumbContainer" class="breadCrumbArea">
                     <div id="headerMessage"></div>
                 </div>
-
                 <div id="menuContainer" class="menuTabContainer">
-
                     <div id="divLogedIn" class="oggleHidden inline floatRight">
                         <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
                         <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
@@ -134,6 +131,7 @@
         </div>
         <div id='middleColumn'>
             <div id='pornWarning' class='oggleHidden pornWarningContainer'></div>
+            <div id='customMessage' class='oggleHidden customMessageContainer'></div>
             <div id='divStatusMessage'></div>
             <div class='flexContainer'>
 
@@ -200,6 +198,8 @@
                 height: 600
             });
             launchCarousel('boobs');
+            launchPromoMessages();
+            logVisit();
         });
 
         function showPortnWarning() {
@@ -227,35 +227,114 @@
 
         function boobCatTreeContainerClick(path, id, treeId) {
             if (treeId == "boobCatTreeContainer") {
-                window.location.href = path + "html";
+                window.location.href = path + ".html";
                 $('#boobCatTreeContainer').dialog('close')
             }
             else
                 alert("dirTreeClick treeId: " + treeId);
         }
 
-    function showCustomMessage(blogId) {
-        if (typeof pause === 'function') {
-            pause();
-        }
-        $.ajax({
-            type: "GET",
-            url: service + "api/OggleBlog/?blogId=" + blogId,
-            success: function (entry) {
-                if (entry.Success === "ok") {
-                    $('#customMessage').html(entry.CommentText).show();
-                }
-                else
-                    alert(entry.Success);
-            },
-            error: function (xhr) {
-                alert("showSiteContent xhr: " + getXHRErrorDetails(xhr));
+        function showCustomMessage(blogId) {
+            if (typeof pause === 'function') {
+                pause();
             }
-        });
-        //if ($('#pornWarning').html() == "")
+            $.ajax({
+                type: "GET",
+                url: service + "api/OggleBlog/?blogId=" + blogId,
+                success: function (entry) {
+                    if (entry.Success === "ok") {
+                        $('#customMessage').html(entry.CommentText).show();
+                    }
+                    else
+                        alert(entry.Success);
+                },
+                error: function (xhr) {
+                    alert("showSiteContent xhr: " + getXHRErrorDetails(xhr));
+                }
+            });
+            //if ($('#pornWarning').html() == "")
     }
 
+        function logVisit() {
 
+            var visitModel = {
+                UserName: userName,
+                IpAddress: ipAddress,
+                AppName: "OggleBooble"
+            };
+
+            $('#footerMessage').html("logging visit");
+            //alert("ipAddress: " + ipAddress);
+            $.ajax({
+                type: "POST",
+                url: service + "api/HitCounter",
+                data: { UserName: userName, IpAddress: ipAddress, AppName: "OggleBooble" },
+                //data: visitModel,
+                success: function (successModel) {
+                    if (successModel.Success == "ok") {
+
+                        $('#headerMessage').html(successModel.ReturnValue);
+                    }
+                    else
+                        alert(successModel.Success);
+                },
+                error: function (jqXHR, exception) {
+                    $('#blogLoadingGif').hide();
+                    alert("HitCounter/LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
+
+        function launchPromoMessages() {
+            $.ajax({
+                type: "GET",
+                url: service + "/api/OggleBlog/GetBlogList?commentType=PRO",
+                success: function (blogCommentsContainer) {
+                    if (blogCommentsContainer.Success == "ok") {
+                        $.each(blogCommentsContainer.blogComments, function (idx, blogComment) {
+                            promoMessagesArray.push({
+                                FolderId: blogComment.Id,
+                                Link: blogComment.Link,
+                                CommentTitle: blogComment.CommentTitle,
+                                CommentText: blogComment.CommentText
+                            });
+                        });
+                        showPromoMessages();
+                    }
+                    else {
+                        $('#blogLoadingGif').hide();
+                        alert("loadPromoMessages: " + blogCommentsContainer.Success)
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    $('#blogLoadingGif').hide();
+                    alert("loadPromoMessages jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
+
+        function showPromoMessages() {
+            $('#promoContainer').fadeIn();
+            var currentItem = promoMessagesArray[promoIdx];
+            $('#promoContainerTitle').html(currentItem.CommentTitle);
+            $('#promoContainerText').html(currentItem.CommentText);
+
+            promoMessageRotator = setInterval(function () {
+
+                if (promoIdx === promoMessagesArray.length) {
+                    promoIdx = 0;
+                }
+                currentItem = promoMessagesArray[promoIdx];
+                $('#promoContainerTitle').html(currentItem.CommentTitle);
+                $('#promoContainerText').html(currentItem.CommentText);
+                promoIdx++;
+            }, promoMessageRotationSpeed);
+        }
+
+        function killPromoMessages() {
+            clearInterval(promoMessageRotator);
+            setInterval(function () { showPromoMessages() }, 30000);
+            }
 
     </script>
 </body>

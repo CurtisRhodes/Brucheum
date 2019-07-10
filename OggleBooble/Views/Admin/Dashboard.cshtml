@@ -168,25 +168,18 @@
         buildDirTree($('#dirTreeContainer'), "dashboardMain", 0);
     }
 
-    function showCreateStaticPages() {
-        $('#createStaticPagesCrud').show();
-        $('#createStaticPagesCrud').dialog({
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            width: "615"
-        });
-    }
     function createStaticPages() {
         //$('#createStaticPagesCrud').dialog("close");
         //$('#createStaticPagesCrud').hide();
         //$('#dashBoardLoadingGif').fadeIn();
+        $('#dataifyInfo').show();
         $('#progressBar').show();
         $.ajax({
             type: "GET",
             url: service + "api/StaticPage/Buld?parentFolder=" + dashboardMainSelectedTreeId + "&userName=xxx",
             success: function (success) {
                 $('#progressBar').hide();
-                $('#dashBoardLoadingGif').hide();
+                //$('#dashBoardLoadingGif').hide();
                 if (success == "ok") {
                     displayStatusMessage("ok", "done");
                     $('#txtNewLink').val("");

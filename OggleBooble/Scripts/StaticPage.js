@@ -1,17 +1,26 @@
 ﻿
 var service = "https://api.curtisrhodes.com/";
 var imageArray = new Array();
-var staticPageLinkId;
-var staticPageLink;
+var selectedImageLinkId;
+var selectedImage;
+var staticPageFolderName;
+var fullPageName;
 
 $(document).ready(function () {
-    doubleLoad();
-
+    loadImageLinks();
     window.addEventListener("resize", resizeStaticPage);
     resizeStaticPage();
+    $('#staticCatTreeContainer').dialog({
+        autoOpen: false,
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        position: ({ my: 'left top', at: 'left top', of: $('#middleColumn') }),
+        width: 400,
+        height: 600
+    });
 });
 
-function doubleLoad() {
+function loadImageLinks() {
     $.ajax({
         type: "GET",
         url: service + "/api/ImagePage/GetImageLinks?folderId=" + staticPageFolderId,
@@ -48,53 +57,53 @@ function resizeStaticPage() {
     if (viewerShowing) {
         resizeViewer();
     }
-    console.log("resize static page");
-    $('#footerMessage').html("8");
+    //console.log("resize static page");
+    //$('#footerMessage').html("8");
 }
 
-    function imgClick(imageIndex) {
-        //alert("imageArray[]: " + imageArray.length + " folderId: " + staticPageFolderId + " folderName: " + staticPageFolderName);
-        viewerShowing = true;
-        launchViewer(imageArray, imageIndex, staticPageFolderId, staticPageFolderName, staticPageCurrentUser);
-    }
+function imgClick(imageIndex) {
+    //alert("imageArray[]: " + imageArray.length + " folderId: " + staticPageFolderId + " folderName: " + staticPageFolderName);
+    viewerShowing = true;
+    launchViewer(imageArray, imageIndex, staticPageFolderId, staticPageFolderName, staticPageCurrentUser);
+}
 
-    function slowlyShowCatDialog(breadCrumbFolderId) {
-        setTimeout(function () {
-            if (forgetShowingCatDialog === false)
-                showCategoryDialog(breadCrumbFolderId);
-        }, 600);
-    }
+function slowlyShowCatDialog(breadCrumbFolderId) {
+    setTimeout(function () {
+        if (forgetShowingCatDialog === false)
+            showCategoryDialog(breadCrumbFolderId);
+    }, 600);
+}
 
 function staticPageContextMenu(linkId, link) {
     //alert("staticPageContextMenu: linkId: " + linkId);
     event.preventDefault();
     window.event.returnValue = false;
-    staticPageLinkId = linkId;
-    staticPageLink = link;
-    var thisImage = $('#' + staticPageLinkId + '');
+    selectedImageLinkId = linkId;
+    selectedImage = link;
+    var thisImage = $('#' + selectedImageLinkId + '');
     var picpos = thisImage.offset();
-    var picLeft = picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50;
+    var picLeft = Math.max(0, picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50);
     $('#thumbImageContextMenu').css("top", picpos.top + 5);
     $('#thumbImageContextMenu').css("left", picLeft);
     $.ajax({
         type: "GET",
-        url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + staticPageLinkId,
-        success: function (folderDetails) {
-            if (folderDetails.Success === "ok") {
-                selectedImageArchiveFolderId = folderDetails.FolderId;
-                if (folderDetails.RootFolder === "archive") {
-                    $('#staticPagectxModelName').html(folderDetails.FolderName);
-                    $('#ctxSeeMore').show();
-                    $('#ctxArchive').hide();
+        url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + selectedImageLinkId,
+        success: function (modelDetails) {
+            if (modelDetails.Success === "ok") {
+                fullPageName = modelDetails.RootFolder + "/" + modelDetails.FolderName;
+                $('#staticPagectxModelName').html("unknown model");
+                if (modelDetails.RootFolder === "archive") {
+                    $('#staticPagectxModelName').html(modelDetails.FolderName);
                 }
-                else {
-                    $('#staticPagectxModelName').html("unknown model");
-                    $('#ctxSeeMore').hide();
-                    $('#ctxArchive').hide();
+                $('#ctxSeeMore').hide();
+                if (modelDetails.RootFolder !== staticPageRootFolder) {
+                    if (modelDetails.RootFolder === "archive") {
+                        $('#ctxSeeMore').show();
+                    }
                 }
             }
             else
-                alert("GetModelName: " + folderDetails.Success);
+                alert("GetModelName: " + modelDetails.Success);
         },
         error: function (xhr) {
             alert("GetModelName xhr error: " + xhr.statusText);
@@ -104,21 +113,57 @@ function staticPageContextMenu(linkId, link) {
     $('#thumbImageContextMenu').fadeIn();
 }
 
-    function contextMenuActionShow() {
-        alert("contextMenuActionShow");
-    }
-
+function contextMenuActionShow() {
+    //showModelInfoDialog(modelName, folderId, currentSrc)
+    showModelInfoDialog($('#staticPagectxModelName').html(), staticPageFolderId, selectedImage);
+}
 function contextMenuActionJump() {
-    alert("Jump");
+    window.open("http://pages.ogglebooble.com/" + fullPageName + ".html", "_blank");
+    ///porn/sluts.html
 }
 function contextMenuActionComment() {
-    
-    showImageCommentDialog(staticPageLink, staticPageLinkId, staticPageFolderId, staticPageFolderName, staticPageCurrentUser);
-
+    showImageCommentDialog(selectedImage, selectedImageLinkId, staticPageFolderId, staticPageFolderName, staticPageCurrentUser);
 }
-
-
-
 function contextMenuActionExplode() {
-    alert("Explode");
+    //alert("selectedImage: " + selectedImage);
+    window.open(selectedImage, '_blank');
 }
+
+function showCatListDialog(root) {
+    buildDirTree($('#staticCatTreeContainer'), "staticCatTreeContainer", root);
+    $('#staticCatTreeContainer').dialog('open');
+}
+
+function staticCatTreeContainerClick(path, id, treeId) {
+    if (treeId === "staticCatTreeContainer") {
+        window.location.href = path + "html";
+        $('#staticCatTreeContainer').dialog('close');
+    }
+    else
+        alert("dirTreeClick treeId: " + treeId);
+}
+
+
+function showCustomMessage(blogId) {
+    if (typeof pause === 'function') {
+        pause();
+    }
+    $.ajax({
+        type: "GET",
+        url: service + "api/OggleBlog/?blogId=" + blogId,
+        success: function (entry) {
+            if (entry.Success === "ok") {
+                $('#customMessage').html(entry.CommentText).show();
+            }
+            else
+                alert(entry.Success);
+        },
+        error: function (xhr) {
+            alert("showSiteContent xhr: " + getXHRErrorDetails(xhr));
+        }
+    });
+    //if ($('#pornWarning').html() == "")
+}
+
+
+

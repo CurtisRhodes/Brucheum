@@ -24,13 +24,13 @@
     <link href='http://pages.ogglebooble.com/css/footer.css' rel='stylesheet' />
     <link href='http://pages.ogglebooble.com/css/ImagePage.css' rel='stylesheet' />
     <link href='http://pages.ogglebooble.com/css/carousel.css' rel='stylesheet' />
+    <link href='http://pages.ogglebooble.com/css/jqueryUI.css' rel='stylesheet' />
 
-    <meta name='Title' content='OggleBooble' property='og:title' />
+    <meta name='Title' content='porn' property='og:title' />
     <meta name='description' content='" + metaTagResults.Description + "' />
     <meta property='og:type' content='website' />
     <meta property='og:url' content='pages.OggleBooble.com/" + pageName + ".html' />
-    <meta name="Keywords" content="naked women,nice tits,boobs,big boobs,tits,naked girls,only high quality images,poses,
-            girls showing off their tits,big tits,naked ladies,breasts,nude,boobs,free">
+    <meta name="Keywords" content="cocksuckers,blowjobs,naked girls,only high quality images,poses,free">
     <meta name='Keywords' content='" This website is different from most other naked lady sites. Here the pictures are organized by poses"' />
     <style>
         /*#leftColumn, #middleColumn, #rightColumn {
@@ -76,7 +76,10 @@
             <div id="headerTopRow">
                 <div id="bannerTitle" class="headerTitle">OggleBooble Porn</div>
                 <div id="headerSubTitle" class="headerSubTitle">
-                    naughty behavior catergorized
+                    <a href="http://pages.ogglebooble.com/porn/cock suckers.html">blowjobs</a>,
+                    <a href="http://pages.ogglebooble.com/porn/cum shots.html"> cum shots</a>,
+                    <a href="http://pages.ogglebooble.com/porn/kinky.html"> kinky</a>, and other
+                    <a href="http://pages.ogglebooble.com/porn/naughty.html"> naughty behavior</a> categorized
                 </div>
             </div>
             <div id="headerBottomRow" class="flexContainer">
@@ -85,20 +88,12 @@
                 </div>
 
                 <div id="menuContainer" class="menuTabContainer">
-
                     <div id="dynamicOnly" class="floatLeft">
-                        <div id="replaceableMenuItems" class="menuTab floatLeft">
-                            <a href="/Admin/Blog">Blog</a>
-                        </div>
-                        <div id="cookieIndicator" class="menuTab floatLeft">
-                        </div>
-
+                        <div id="cookieIndicator" class="menuTab floatLeft"></div>
                         <div id="divPornEditor" class="oggleHidden inline floatLeft">
                             <div class="menuTab floatLeft"><a href="/Admin/Dashboard">Admin</a></div>
                         </div>
                     </div>
-
-
                     <div id="divLogedIn" class="oggleHidden inline floatRight">
                         <div class="menuTab floatRight"><a href="javascript:logoutPlease()">Log Out</a></div>
                         <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello  @User.Identity.GetUserName()</a></div>
@@ -123,22 +118,19 @@
     <div class='threeColumnArray'>
         <div id='leftColumn'>
             <div class='leftColumnList'>
+                <div onclick='window.location.href="http://pages.ogglebooble.com/Index.html"'>OggleBooble</div>
                 <div onclick='window.location.href="https://ogglebooble.com/home/BoobsRanker"'>Boobs Rater</div>
-                <div onclick='window.location.href="/test/contextTest"'>Let me Expalin</div>
                 <div onclick='showCatListDialog()'>Category List</div>
-                <div onclick='showPortnWarning()'>Nasty Porn</div>
+                <div onclick='https://ogglebooble.com/home/Videos'>Blowjob Videos</div>
             </div>
         </div>
         <div id='middleColumn'>
             <div id='pornWarning' class='oggleHidden pornWarningContainer'></div>
             <div id='divStatusMessage'></div>
             <div class='flexContainer'>
-
                 <div class='floatLeft'>
-                    <div class='galleryCheckBox'><input type='checkbox' onchange="loadImages(' centerfolds', $(this).is(':checked'), 1000)" /> Include Centerfolds</div>
-                    <div class='galleryCheckBox'><input type='checkbox' onchange="loadImages('archive', $(this).is(':checked'), 50000)" /> Include Archive</div>
+                    <div class='galleryCheckBox'><input type='checkbox' onchange="loadImages('sluts', $(this).is(':checked'), 50000)" /> Include Archive</div>
                 </div>
-
                 <div class='floatLeft'>
                     <div class='centeredDivShell randomImageContainer'>
                         <div class='centeredDivInner'>
@@ -157,12 +149,11 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
         <div id='rightColumn'></div>
     </div>
-    <div id="pornCatTreeContainer" title="porn"></div>
+    <div id="pornCatTreeContainer" class="oggleHidden categoryListContainer" title="porn"></div>
     <footer>
         <div class="flexContainer">
             <div class="footerCol">
@@ -192,17 +183,33 @@
     </footer>
 
     <script>
-    $(document).ready(function () {
+        $(document).ready(function () {
 
-        $('.threeColumnArray').css("background-color", "#e2c2ab");
+            $('.threeColumnArray').css("background-color", "#e2c2ab");
+            $('#pornCatTreeContainer').dialog({
+                autoOpen: false,
+                show: { effect: "fade" },
+                hide: { effect: "blind" },
+                position: ({ my: 'left top', at: 'left top', of: $('#middleColumn') }),
+                width: 400,
+                height: 600
+            });
+            launchCarousel('porn');
+        });
 
-        launchCarousel('porn');
+        function showCatListDialog() {
+            buildDirTree($('#pornCatTreeContainer'), "pornCatTreeContainer", 242);
+            $('#pornCatTreeContainer').dialog('open');
+        }
 
-        buildDirTree($('#pornCatTreeContainer'), "pornCatTreeContainer", 242);
-
-    });
-
-
+        function pornCatTreeContainerClick(path, id, treeId) {
+            if (treeId == "pornCatTreeContainer") {
+                window.location.href = path + ".html";
+                $('#pornCatTreeContainer').dialog('close')
+            }
+            else
+                alert("dirTreeClick treeId: " + treeId);
+        }
     </script>
 </body>
 </html>

@@ -523,6 +523,8 @@ namespace WebApi
                     {
                         if (categoryFolderDetail.CommentText != null)
                             metaTagResults.Description = Helpers.Beautify(categoryFolderDetail.CommentText);
+                        else
+                            metaTagResults.Description = "free images of " + metaTagResults.Source;
                     }
                     GetMetaTasRecurr(metaTagResults, folderId, db);
                 }

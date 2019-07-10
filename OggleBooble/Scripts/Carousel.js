@@ -12,6 +12,7 @@ var modelInfoDialogIsOpen = false;
 var imageCommentDialogIsOpen = false;
 var folderCategoryDialogIsOpen = false;
 var service = "https://api.curtisrhodes.com/";
+var forgetShowingCatDialog;
 
 
 function launchCarousel(root) {
@@ -105,10 +106,15 @@ function loadImages(rootFolder, isChecked, take) {
     }
 }
 
-function showFolderCategoryDialog() {
-    pause();
-    folderCategoryDialogIsOpen = true;
-    showCategoryDialog(carouselItemArray[imageIndex].FolderId);
+function slowlyShowFolderCategoryDialog() {
+
+    setTimeout(function () {
+        if (forgetShowingCatDialog === false) {
+            pause();
+            folderCategoryDialogIsOpen = true;
+            showCategoryDialog(carouselItemArray[imageIndex].FolderId);
+        }
+    }, 600);
     $('#folderCategoryDialog').on('dialogclose', function (event) {
         folderCategoryDialogIsOpen = false;
         resume();

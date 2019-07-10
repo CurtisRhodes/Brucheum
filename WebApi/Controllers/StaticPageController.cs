@@ -19,7 +19,6 @@ namespace WebApi.Controllers
         private readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
         private int totalFiles = 0;
         private int filesProcessed = 0;
-        private string _userName = "";
 
         [HttpGet]
         public string Build(int parentFolder, string userName)
@@ -28,17 +27,16 @@ namespace WebApi.Controllers
             {
                 try
                 {
-                    _userName = userName;
                     using (OggleBoobleContext db = new OggleBoobleContext())
                     {
                         SignalRHost.ProgressHub.PostToClient("Creating static files");
-                        VwDirTree vwDirTree =db.VwDirTrees.Where(v => v.Id == parentFolder).First();
+                        VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == parentFolder).First();
                         totalFiles = Math.Max(vwDirTree.GrandTotalFiles, vwDirTree.TotalFiles);
                         SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
 
                         CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == parentFolder).First();
                         string folderName = categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
-                        success = ProcessFolder(parentFolder, categoryFolder.RootFolder, folderName, db);
+                        success = ProcessFolder(parentFolder, categoryFolder.RootFolder, folderName, userName, db);
                     }
                 }
                 catch (Exception e) { success = Helpers.ErrorDetails(e); }
@@ -46,20 +44,27 @@ namespace WebApi.Controllers
             }
         }
 
-        private string ProcessFolder(int folderId, string rootFolder, string folderName, OggleBoobleContext db)
+        private string ProcessFolder(int folderId, string rootFolder, string folderName, string userName, OggleBoobleContext db)
         {
             string success = "";
             try
             {
+                string pageTitle = folderName;
+                if (folderName.LastIndexOf('/') > 0)
+                {
+                    pageTitle = folderName.Substring(folderName.LastIndexOf('/') + 1);
+                }
+
                 string staticContent =
-                    "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, folderName) +
-                    "<body style='margin-top:105px'>\n" +
+                    "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, pageTitle) +
+                    "\n<body style='margin-top:105px'>\n" +
                     HeaderHtml(folderId) +
-                    BodyHtml(folderId, rootFolder, _userName) + CommentDialog() +
-                    "<script>var staticPageFolderId=" + folderId + "; var staticPageFolderName='" +
-                    folderName + "'; var staticPageCurrentUser='" + _userName + "'; </script>\n" +
+                    BodyHtml(folderId, rootFolder, userName) + CommentDialog() + CategoryDialog() + ModelInfoDialog() +
+                    "<div id='staticCatTreeContainer' class='oggleHidden categoryListContainer' title=" + rootFolder + "></div>" +
+                    "<script>var staticPageFolderId=" + folderId + "; var staticPageFolderName='" + folderName +
+                    "'; var staticPageRootFolder='" + rootFolder + "'; var staticPageCurrentUser ='" + userName + "'; </script>\n" +
                     "<script src='http://pages.ogglebooble.com/script/staticPage.js'></script>\n" +
-                    ImageViewer() + FooterHtml() +
+                    ImageViewer() + FooterHtml(rootFolder) +
                     "\n</body>\n</html>";
 
                 // todo  write the image as a file to x.ogglebooble  4/1/19
@@ -71,8 +76,8 @@ namespace WebApi.Controllers
                     staticFile.Write(byteArray, 0, byteArray.Length);
                 }
                 FtpWebRequest webRequest = null;
-                string ftpPath = ftpHost+ "/pages.OGGLEBOOBLE.COM/";
-                webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + rootFolder + "/" + folderName + ".html");
+                string ftpPath = ftpHost + "/pages.OGGLEBOOBLE.COM/";
+                webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + rootFolder + "/" + pageTitle + ".html");
                 webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
                 webRequest.Method = WebRequestMethods.Ftp.UploadFile;
                 using (System.IO.Stream requestStream = webRequest.GetRequestStream())
@@ -100,7 +105,7 @@ namespace WebApi.Controllers
                     SignalRHost.ProgressHub.PostToClient("Creating static files: " + dbCategoryFolder.FolderName + ".html");
                     //+ ++fileCount + "  of: " + categoryFolders.Count); ;
 
-                    ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName, db);
+                    ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName, userName, db);
                 }
             }
             catch (Exception e) { success = Helpers.ErrorDetails(e); }
@@ -131,9 +136,13 @@ namespace WebApi.Controllers
                 "<script src='http://pages.ogglebooble.com/script/ResizeThreeColumnPage.js' type='text/javascript'></script>\n" +
                 "<script src='http://pages.ogglebooble.com/script/ImageViewer.js' type='text/javascript'></script>\n" +
                 "<script src='http://pages.ogglebooble.com/script/CommentDialog.js' type='text/javascript'></script>\n" +
+                "<script src='http://pages.ogglebooble.com/script/CategoryDialog.js' type='text/javascript'></script>\n" +
+                "<script src='http://pages.ogglebooble.com/script/ModelInfoDialog.js' type='text/javascript'></script>\n" +
                 "<link href='http://pages.ogglebooble.com/css/default.css'     rel='stylesheet'/>\n" +
                 "<link href='http://pages.ogglebooble.com/css/fixedHeader.css' rel='stylesheet'/>\n" +
                 "<link href='http://pages.ogglebooble.com/css/imageViewer.css' rel='stylesheet'/>\n" +
+                "<link href='http://pages.ogglebooble.com/css/categoryDialog.css' rel='stylesheet'/>\n" +
+                "<link href='http://pages.ogglebooble.com/css/modelInfoDialog.css' rel='stylesheet'/>\n" +
                 "<link href='http://pages.ogglebooble.com/css/footer.css'      rel='stylesheet'/>\n" +
                 "<link href='http://pages.ogglebooble.com/css/ImagePage.css'   rel='stylesheet'/>\n" +
                 "<title>" + pageName + " - OggleBooble</title>" +
@@ -197,12 +206,16 @@ namespace WebApi.Controllers
 
                 if (thisFolder.RootFolder == "porn" || thisFolder.RootFolder == "sluts")
                 {
-                    headerSubtitle = "naughty behavior catergorized";
+                    headerSubtitle = "<a href='http://pages.ogglebooble.com/porn/cock suckers.html'> blowjobs </a>," +
+                    "<a href='http://pages.ogglebooble.com/porn/cum shots.html'> cum shots</a>," +
+                    "<a href='http://pages.ogglebooble.com/porn/kinky.html'> kinky </ a >, and other" +
+                    "<a href='http://pages.ogglebooble.com/porn/naughty.html'> naughty behavior</a> categorized";
                     colorClass = "pornColors";
                     bannerLogo = "http://pages.ogglebooble.com/images/csLips02.png";
                     homeLink = "http://pages.ogglebooble.com/porn.html";
                 }
-                else {
+                else
+                {
                     headerSubtitle = "Big <a href='http://pages.ogglebooble.com/boobs/boobs.html'>tits</a> and " +
                      "<a href='http://pages.ogglebooble.com/boobs/nice ass.html'>ass</a> organized by" +
                      "<a href='http://pages.ogglebooble.com/boobs/poses.html'> poses</a> " +
@@ -212,7 +225,6 @@ namespace WebApi.Controllers
                     bannerLogo = "http://pages.ogglebooble.com/images/redballon.png";
                     homeLink = "http://pages.ogglebooble.com/";
                 }
-
             }
             return "<div class='fixedHeader flexContainer " + colorClass + "' id='oggleBoobleHeader'>\n" +
                 "<div class='bannerImageContainer' id='divTopLeftLogo'>\n" +
@@ -259,8 +271,8 @@ namespace WebApi.Controllers
             string bodyHtml = "<div class='threeColumnArray'>\n" +
                     "<div id='leftColumn'></div>\n" +
                     "<div id='middleColumn'>\n" +
-                        "<div id='divStatusMessage'></div>\n" +
-                        "<div id='imageContainer' class='flexWrapContainer'>\n";
+                    "<div id='divStatusMessage'></div>\n" +
+                    "<div id='imageContainer' class='flexWrapContainer'>\n";
 
             var idx = 0;
             using (OggleBoobleContext db = new OggleBoobleContext())
@@ -287,7 +299,7 @@ namespace WebApi.Controllers
                 }
             }
 
-            bodyHtml += "<script>resizePage();</script>\n" +                    
+            bodyHtml += "<script>resizePage();</script>\n" +
                     "<div id='thumbImageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut();'>\n" +
                         "<div id='staticPagectxModelName' onclick='contextMenuActionShow()'>model name</div>\n" +
                         "<div id='ctxSeeMore' onclick='contextMenuActionJump()'>see more of her</div>\n" +
@@ -296,6 +308,9 @@ namespace WebApi.Controllers
                     "</div>\n" +
                 "<div id='rightColumn'></div>\n" +
              "</div>";
+
+
+
             return bodyHtml;
         }
 
@@ -325,7 +340,7 @@ namespace WebApi.Controllers
                "</div>" +
              "</div>\n" +
 
-             //staticPageContextMenu
+            //staticPageContextMenu
 
             "<div id='imageViewerContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut();'>\n" +
                 "<div id='ctxImageViewerModelName' onclick='imageViewerContextMenuAction(\"show\")'>model name</div>\n" +
@@ -344,39 +359,104 @@ namespace WebApi.Controllers
                 "<div id='imageCommentEditor' tabindex='2'></div>\n" +
                 "<div id='divSaveFantasy' class='roundendButton clickable commentDialogButton inline' onclick='saveComment()'>save</div>\n" +
                 "<div id='commentInstructions' class='loginComment inline'>log in to view comments</div>\n" +
-              "</div>\n" + 
+              "</div>\n" +
             "</div>\n";
         }
 
-        private string FooterHtml()
+        private string CategoryDialog()
         {
-            return "\n<footer>\n" +
-                "<div class='flexContainer'>\n" +
-                      "<div class='footerCol'>\n" +
-                          "<div><a href='/Home/Index'>Let Me Explain</a></div>\n" +
-                          "<div><a href='/Book/MyBooks'>Category List</a></div>\n" +
-                          "<div><a href='#'></a></div>\n" +
-                          "<div><a href='/porn'>Nasty Porn</a></div>\n" +
-                      "</div>\n" +
-                      "<div class='footerCol'>\n" +
-                          "<div><a href='/Home/Index'>Boobs Rater</a></div>\n" +
-                          "<div><a href='/Home/ImagePage?folder=908'>Rejects</a></div>\n" +
-                          "<div><a href='/home/Videos'>Nasty Videos</a></div>\n" +
-                          "<div><a href='http://pages.ogglebooble.com/playboy/playboy.html'>Centerfolds</a></div>\n" +
-                      "</div>\n" +
-                      "<div class='footerCol'>\n" +
-                          "<div><a href='#'>About us</a></div>\n" +
-                          "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
-                          "<div><a href='http://ogglebooble.com/Admin/Blog'>Blog</a></div>\n" +
-                          "<div><a href='http://pages.ogglebooble.com/archive/archive.html'>Archive</a></div>\n" +
-                      "</div>\n" +
-                "</div>\n" +
-                "<div class='footerVersionMessage' id='footerLastBuild'></div>\n" +
-                "<div class='footerFooter'>" +
-                      "<div id='footerMessage'></div>" +
-                      "<div id='copyright'>&copy; 2019 - <a href='/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>" +
-                "</div>\n" +
-            "</footer>";
+            return "<div id='folderCategoryDialog' class='oggleHidden' title='' onmouseleave='considerClosingCategoryDialog()'>\n" +
+            "    <div><textarea id='catDlgDescription' class='catDlgTextArea'></textarea></div>\n" +
+            "</div>\n";
+        }
+
+        private string ModelInfoDialog()
+        {
+            return "<div id = 'modelInfoDialog' class='oggleHidden' onmouseleave='considerClosingModelInfoDialog()'>\n" +
+                        "    <div id = 'modelInfoEditArea' class='oggleHidden'>\n" +
+                        "        <div class='flexContainer'>\n" +
+                        "            <div class='floatLeft'>\n" +
+                        "                <label>name</label><input id = 'txtFolderName' class='roundedInput modelDialogInput inline' /><br />\n" +
+                        "                <label>nationality</label><input id = 'txtNationality' class='roundedInput modelDialogInput inline' /><br />\n" +
+                        "                <label>born</label><input id = 'txtBorn' class='roundedInput modelDialogInput inline' /><br />\n" +
+                        "                <label>measurements</label><input id = 'txtMeasurements' class='roundedInput modelDialogInput inline' />\n" +
+                        "            </div>\n" +
+                        "            <div class='floatLeft'>\n" +
+                        "                <img id = 'modelDialogThumbNailImage' src='http://pages.ogglebooble.com/images/redballon.png' class='modelDialogImage' />\n" +
+                        "            </div>\n" +
+                        "        </div>\n" +
+                        "        <label>comment</label>\n" +
+                        "        <div><textarea id = 'txaModelComment' class='smallTextArea'></textarea></div>\n" +
+                        "        <div class='hrefLabel'>href</div><input id = 'txtLinkHref' class='roundedInput inline' />\n" +
+                        "        <div class='hrefLabel'>label</div><input id = 'txtLinkLabel' class='roundedInput' onblur='addHrefToExternalLinks()' />\n" +
+                        "        <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
+                        "        <div id = 'externalLinks' class='smallTextArea'></div>\n" +
+                        "    </div>\n" +
+                        "    <div id = 'modelInfoViewOnlyArea' class='oggleHidden'>\n" +
+                        "        <div class='viewOnlyMessage'>If you you know who this is Please click Edit</div>\n" +
+                        "        <div id = 'unknownModelLinks' class='smallTextArea'></div>\n" +
+                        "    </div>\n" +
+                        "    <a id = 'modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Edit</a>\n" +
+                        "</div>\n";
+        }
+
+
+    private string FooterHtml(string rootFolder)
+        {
+            if (rootFolder == "porn" || rootFolder == "sluts")
+            {
+                return "\n<footer>\n" +
+                    "<div class='flexContainer'>\n" +
+                          "<div class='footerCol'>\n" +
+                              "<div><a href='/Home/Index'>Let Me Explain</a></div>\n" +
+                              "<div><a href='showCatListDialog(242)'>Category List</a></div>\n" +
+                              "<div><a href='/porn'>Oggle Booble</a></div>\n" +
+                          "</div>\n" +
+                          "<div class='footerCol'>\n" +
+                              "<div><a href='/Home/Index'>Boobs Rater</a></div>\n" +
+                              "<div><a href='/Home/ImagePage?folder=908'>Rejects</a></div>\n" +
+                              "<div><a href='/home/Videos'>Nasty Videos</a></div>\n" +
+                          "</div>\n" +
+                          "<div class='footerCol'>\n" +
+                              "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
+                              "<div><a href='http://ogglebooble.com/Admin/Blog'>Blog</a></div>\n" +
+                              "<div><a href='http://pages.ogglebooble.com/porn/sluts.html'>Archive</a></div>\n" +
+                          "</div>\n" +
+                    "</div>\n" +
+                    "<div class='footerVersionMessage' id='footerLastBuild'></div>\n" +
+                    "<div class='footerFooter'>" +
+                          "<div id='footerMessage'></div>" +
+                          "<div id='copyright'>&copy; 2019 - <a href='/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>" +
+                    "</div>\n" +
+                "</footer>";
+            }
+            else
+                return "\n<footer>\n" +
+                    "<div class='flexContainer'>\n" +
+                        "<div class='footerCol'>\n" +
+                            "<div><a href='/Home/Index'>Let Me Explain</a></div>\n" +
+                            "<div><a href='showCatListDialog(242)'>Category List</a></div>\n" +
+                            "<div><a href='http://pages.ogglebooble.com/porn.html'>Nasty Porn</a></div>\n" +
+                          "</div>\n" +
+                          "<div class='footerCol'>\n" +
+                              "<div><a href='/Home/Index'>Boobs Rater</a></div>\n" +
+                              "<div><a href='/Home/ImagePage?folder=908'>Rejects</a></div>\n" +
+                              "<div><a href='/home/Videos'>Nasty Videos</a></div>\n" +
+                              "<div><a href='http://pages.ogglebooble.com/playboy/playboy.html'>Centerfolds</a></div>\n" +
+                          "</div>\n" +
+                          "<div class='footerCol'>\n" +
+                              "<div><a href='#'>About us</a></div>\n" +
+                              "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
+                              "<div><a href='http://ogglebooble.com/Admin/Blog'>Blog</a></div>\n" +
+                              "<div><a href='http://pages.ogglebooble.com/archive/archive.html'>Archive</a></div>\n" +
+                          "</div>\n" +
+                    "</div>\n" +
+                    "<div class='footerVersionMessage' id='footerLastBuild'></div>\n" +
+                    "<div class='footerFooter'>" +
+                          "<div id='footerMessage'></div>" +
+                          "<div id='copyright'>&copy; 2019 - <a href='/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>" +
+                    "</div>\n" +
+                "</footer>";
         }
     }
 }

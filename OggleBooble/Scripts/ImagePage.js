@@ -231,27 +231,22 @@ function processImages(imageLinksModel, start) {
             $.ajax({
                 type: "GET",
                 url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + currentContextLinkId,
-                success: function (folderDetails) {
-                    if (folderDetails.Success === "ok") {
-
-                        selectedImageArchiveFolderId = folderDetails.FolderId;
-
-                        if (folderDetails.RootFolder === "archive" || folderDetails.RootFolder === "playboy") {
-                            $('#ctxModelName').html(folderDetails.FolderName);
-                            $('#ctxSeeMore').show();
-                            $('#ctxArchive').hide();
+                success: function (modelDetails) {
+                    if (modelDetails.Success === "ok") {
+                        selectedImageArchiveFolderId = modelDetails.FolderId;
+                        $('#ctxModelName').html("unknown model");
+                        if (modelDetails.RootFolder === "archive") {
+                            $('#ctxModelName').html(modelDetails.FolderName);
                         }
-                        else {
-                            $('#ctxModelName').html("unknown model");
-                            $('#ctxSeeMore').hide();
-                            if ((isPornEditor === "True") || (document.domain === 'localhost'))
-                                $('#ctxArchive').show();
-                            else
-                                $('#ctxArchive').hide();
+                        $('#ctxSeeMore').hide();
+                        if (modelDetails.RootFolder !== rootFolder) {
+                            if (modelDetails.RootFolder === "archive") {
+                                $('#ctxSeeMore').show();
+                            }
                         }
                     }
                     else
-                        alert("GetModelName: " + folderDetails.Success);
+                        alert("GetModelName: " + modelDetails.Success);
                 },
                 error: function (xhr) {
                     alert("GetModelName xhr error: " + xhr.statusText);
@@ -362,9 +357,7 @@ function showLinks() {
 }
 
 function openLink(folderId) {
-
-    alert("openLink(xxx" + folderId + ")");
-    window.open("/ImagePage?folder=" + folderId + ", '_blank'");
+    window.open("/home/ImagePage?folder=" + folderId, "_blank");
 }
 
 function showProps(fileName) {
