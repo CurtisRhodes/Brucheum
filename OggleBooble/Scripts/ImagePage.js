@@ -40,8 +40,10 @@ function getBreadCrumbs() {
                 document.title = breadCrumbModel.FolderName + " OggleBooble";
                 folderName = breadCrumbModel.FolderName;
 
-                if (ipAddress !== ("68.203.90.183" || "50.62.160.105")) {
-                    logPageHit();
+                if (ipAddress !== "68.203.90.183") {
+                    if (ipAddress !== "50.62.160.105") {
+                        logPageHit();
+                    }
                 }
             }
             else
@@ -280,7 +282,7 @@ function contextMenuAction(action) {
             });
             break;
         case "jump":
-            window.open("ImagePage?folder=" + selectedImageArchiveFolderId, "_blank");
+            window.open("/home/ImagePage?folder=" + selectedImageArchiveFolderId, "_blank");
             break;
         case "comment":
             $("#thumbImageContextMenu").fadeOut();

@@ -82,32 +82,13 @@
         $('#imageContainer').width($('#middleColumn').width());
         $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
 
-
         getImageLinks();
         getBreadCrumbs();
 
-        if ((isPornEditor == "True") || (document.domain === 'localhost')) {
+        $('.adminLink').hide();
+        if ((isPornEditor == "True") || (document.domain === 'localhost'))
             $('.adminLink').show();
 
-            //$('#replaceableMenuItems').append("<a onclick='javascript:staticify()'>staticify</a>");
-            //<div class="clickable" onclick="staticify()">staticify</div>
-            //<div class="clickable" onclick="showAllChildren()>Add Video Link</div>
-            //<div class="clickable" onclick="repairLinks()">add meta tags</div></dir>`);
-
-        }
-        //else {
-        //    var waiter = setInterval(function () {
-        //        if (folderName !== "xx") {
-        //            clearInterval(waiter);
-        //            try {
-        //                window.location.href = "http://pages.ogglebooble.com/" + folderName + ".html";
-        //            } catch (e) {
-        //                alert(folderName + ".html " + e);
-        //                $('#footerMessage').html("no staic");
-        //            }
-        //        }
-        //    }, 300);
-        //}
         resizePage();
     });
 
