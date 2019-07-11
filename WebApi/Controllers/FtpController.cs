@@ -119,7 +119,7 @@ namespace WebApi
                 {
                     //string linkId = model.Link.Substring(model.Link.LastIndexOf("_") + 1, 36);
                     ImageLink dbImageLink = db.ImageLinks.Where(l => l.Link == model.Link).First();
-                    //string linkId = db.ImageLinks.Where(l => l.Link == model.Link).First().Id;
+                    string linkId = db.ImageLinks.Where(l => l.Link == model.Link).First().Id;
                     if (model.Mode == "Copy")
                     {
                         CategoryImageLink existingLink = db.CategoryImageLinks
@@ -140,7 +140,7 @@ namespace WebApi
                     }
                     else  // Archive Move
                     {
-                        CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == dbImageLink.FolderLocation).First();
+                        CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.SourceFolderId).First();
                         CategoryFolder dbDestinationFolder = db.CategoryFolders.Where(f => f.Id == model.DestinationFolderId).First();
                         string extension = model.Link.Substring(model.Link.LastIndexOf("."));
                         //if (dbImageLink.FolderLocation == model.SourceFolderId)
@@ -196,32 +196,35 @@ namespace WebApi
                                 }
                             }
                         }
-                        //2. update ImageLink 
-                        string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
-                        string goDaddyLink = linkPrefix + Helpers.GetFtpParentPathWithoutRoot(model.DestinationFolderId) +
-                            dbDestinationFolder.FolderName + "/" + dbDestinationFolder.FolderName + "_" + dbImageLink.Id + extension;
-                        ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == dbImageLink.Id).FirstOrDefault();
-                        goDaddyrow.Link = goDaddyLink;
-                        goDaddyrow.FolderLocation = dbDestinationFolder.Id;
-                        db.SaveChanges();
-
-                        //3 create new link for new location if necessary
-                        if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Where(c => c.ImageLinkId == dbImageLink.Id).FirstOrDefault() == null)
+                        if (success == "ok")
                         {
-                            CategoryImageLink newCatImageLink = new CategoryImageLink() { ImageCategoryId = model.DestinationFolderId, ImageLinkId = dbImageLink.Id };
-                            db.CategoryImageLinks.Add(newCatImageLink);
+                            //2. update ImageLink 
+                            string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
+                            string goDaddyLink = linkPrefix + Helpers.GetFtpParentPathWithoutRoot(model.DestinationFolderId) +
+                                dbDestinationFolder.FolderName + "/" + dbDestinationFolder.FolderName + "_" + dbImageLink.Id + extension;
+                            ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == dbImageLink.Id).FirstOrDefault();
+                            goDaddyrow.Link = goDaddyLink;
+                            goDaddyrow.FolderLocation = dbDestinationFolder.Id;
                             db.SaveChanges();
-                        }
+
+                            //3 create new link for new location if necessary
+                            if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Where(c => c.ImageLinkId == dbImageLink.Id).FirstOrDefault() == null)
+                            {
+                                CategoryImageLink newCatImageLink = new CategoryImageLink() { ImageCategoryId = model.DestinationFolderId, ImageLinkId = dbImageLink.Id };
+                                db.CategoryImageLinks.Add(newCatImageLink);
+                                db.SaveChanges();
+                            }
 
 
-                        if (model.Mode == "Move")
-                        {
-                            // remove current link
-                            CategoryImageLink oldCatImageLink = db.CategoryImageLinks
-                                 .Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == dbImageLink.Id).First();
+                            if (model.Mode == "Move")
+                            {
+                                // remove current link
+                                CategoryImageLink oldCatImageLink = db.CategoryImageLinks
+                                     .Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == dbImageLink.Id).First();
 
-                            db.CategoryImageLinks.Remove(oldCatImageLink);
-                            db.SaveChanges();
+                                db.CategoryImageLinks.Remove(oldCatImageLink);
+                                db.SaveChanges();
+                            }
                         }
                     }
                 }

@@ -42,6 +42,8 @@ function getBreadCrumbs() {
 
                 if (ipAddress !== "68.203.90.183") {
                     if (ipAddress !== "50.62.160.105") {
+                        alert("ipAddress: " + ipAddress);
+
                         logPageHit();
                     }
                 }

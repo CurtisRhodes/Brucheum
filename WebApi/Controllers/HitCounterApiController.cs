@@ -131,22 +131,31 @@ namespace WebApi
 
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    Visitor existing = db.Visitors.Where(v => v.IPAddress == logVisitModel.IpAddress && v.UserName == logVisitModel.UserName && v.AppName == logVisitModel.AppName).FirstOrDefault();
-
-                    if (existing == null)
+                    Visitor dexisting = db.Visitors.Where(v => v.IPAddress == logVisitModel.IpAddress && v.UserName == logVisitModel.UserName).FirstOrDefault();
+                    if (dexisting == null)
                     {
-                        // WE HAVE A NEW VISITOR
-                        Visitor visitor = new Visitor();
-                        visitor.Id = visitorId;
-                        visitor.UserName = logVisitModel.UserName;
-                        visitor.AppName = logVisitModel.AppName;
-                        visitor.IPAddress = logVisitModel.IpAddress;
-                        visitor.CreateDate = DateTime.Now;
+                        Visitor existing = db.Visitors.Where(v => v.IPAddress == logVisitModel.IpAddress).FirstOrDefault();
+                        if (existing == null)
+                        {
+                            // WE HAVE A NEW VISITOR
+                            Visitor visitor = new Visitor();
+                            visitor.Id = visitorId;
+                            visitor.UserName = logVisitModel.UserName;
+                            visitor.AppName = logVisitModel.AppName;
+                            visitor.IPAddress = logVisitModel.IpAddress;
+                            visitor.CreateDate = DateTime.Now;
 
-                        db.Visitors.Add(visitor);
-                        db.SaveChanges();
-                        success.ReturnValue = "Welcome new visitor!";
-                        new GodaddyEmailController().SendEmail("CONGRATULATIONS: someone just visited your site", "ip: " + logVisitModel.IpAddress + " visited: " + logVisitModel.AppName);
+                            db.Visitors.Add(visitor);
+                            db.SaveChanges();
+                            success.ReturnValue = "Welcome new visitor!";
+                            new GodaddyEmailController().SendEmail("CONGRATULATIONS: someone new just visited your site", "ip: " + logVisitModel.IpAddress + " visited: " + logVisitModel.AppName);
+                        }
+                        else
+                        {
+                            existing.UserName = logVisitModel.UserName;
+                            db.SaveChanges();
+                            success.ReturnValue = "Thanks for logging in "+ logVisitModel.UserName;
+                        }
                     }
                     else
                     {

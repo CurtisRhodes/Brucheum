@@ -400,8 +400,7 @@ namespace WebApi.Controllers
                         "</div>\n";
         }
 
-
-    private string FooterHtml(string rootFolder)
+        private string FooterHtml(string rootFolder)
         {
             if (rootFolder == "porn" || rootFolder == "sluts")
             {
@@ -441,11 +440,9 @@ namespace WebApi.Controllers
                           "<div class='footerCol'>\n" +
                               "<div><a href='/Home/Index'>Boobs Rater</a></div>\n" +
                               "<div><a href='/Home/ImagePage?folder=908'>Rejects</a></div>\n" +
-                              "<div><a href='/home/Videos'>Nasty Videos</a></div>\n" +
                               "<div><a href='http://pages.ogglebooble.com/playboy/playboy.html'>Centerfolds</a></div>\n" +
                           "</div>\n" +
                           "<div class='footerCol'>\n" +
-                              "<div><a href='#'>About us</a></div>\n" +
                               "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
                               "<div><a href='http://ogglebooble.com/Admin/Blog'>Blog</a></div>\n" +
                               "<div><a href='http://pages.ogglebooble.com/archive/archive.html'>Archive</a></div>\n" +
