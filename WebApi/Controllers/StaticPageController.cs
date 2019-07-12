@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using WebApi.DataContext;
@@ -26,15 +27,18 @@ namespace WebApi.Controllers
             string success = "";
             {
                 try
-                {
+                { 
                     using (OggleBoobleContext db = new OggleBoobleContext())
                     {
                         SignalRHost.ProgressHub.PostToClient("Creating static files");
                         VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == parentFolder).First();
                         totalFiles = Math.Max(vwDirTree.GrandTotalFiles, vwDirTree.TotalFiles);
                         SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
-
                         CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == parentFolder).First();
+                        SignalRHost.ProgressHub.PostToClient("Creating index page");
+
+                        CreateIndexPage(categoryFolder.RootFolder, userName);
+
                         string folderName = categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
                         success = ProcessFolder(parentFolder, categoryFolder.RootFolder, folderName, userName, db);
                     }
@@ -44,29 +48,11 @@ namespace WebApi.Controllers
             }
         }
 
-        private string ProcessFolder(int folderId, string rootFolder, string folderName, string userName, OggleBoobleContext db)
+        private string WriteFileToDisk(string staticContent, string rootFolder, string pageTitle)
         {
             string success = "";
             try
             {
-                string pageTitle = folderName;
-                if (folderName.LastIndexOf('/') > 0)
-                {
-                    pageTitle = folderName.Substring(folderName.LastIndexOf('/') + 1);
-                }
-
-                string staticContent =
-                    "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, pageTitle) +
-                    "\n<body style='margin-top:105px'>\n" +
-                    HeaderHtml(folderId) +
-                    BodyHtml(folderId, rootFolder, userName) + CommentDialog() + CategoryDialog() + ModelInfoDialog() +
-                    "<div id='staticCatTreeContainer' class='oggleHidden categoryListContainer' title=" + rootFolder + "></div>" +
-                    "<script>var staticPageFolderId=" + folderId + "; var staticPageFolderName='" + folderName +
-                    "'; var staticPageRootFolder='" + rootFolder + "'; var staticPageCurrentUser ='" + userName + "'; </script>\n" +
-                    "<script src='http://pages.ogglebooble.com/script/staticPage.js'></script>\n" +
-                    ImageViewer() + FooterHtml(rootFolder) +
-                    "\n</body>\n</html>";
-
                 // todo  write the image as a file to x.ogglebooble  4/1/19
                 string tempFilePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data");
 
@@ -89,23 +75,49 @@ namespace WebApi.Controllers
                     requestStream.Close();
                 }
                 success = "ok";
+            }
+            catch (Exception e) { success = Helpers.ErrorDetails(e); }
+            return success;
+        }
 
-
-                List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
-                //totalFiles += filesProcessed;
-
-                //filesProcessed += ;
-                //int fileCount = 0;
-                foreach (CategoryFolder dbCategoryFolder in categoryFolders)
+        private string ProcessFolder(int folderId, string rootFolder, string folderName, string userName, OggleBoobleContext db)
+        {
+            string success = "";
+            try
+            {
+                string pageTitle = folderName;
+                if (folderName.LastIndexOf('/') > 0)
                 {
-                    VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == dbCategoryFolder.Id).First();
-                    //filesProcessed += Math.Max(vwDirTree.TotalFiles, vwDirTree.FileCount);
-                    filesProcessed += vwDirTree.FileCount;
-                    SignalRHost.ProgressHub.ShowProgressBar(totalFiles, filesProcessed);
-                    SignalRHost.ProgressHub.PostToClient("Creating static files: " + dbCategoryFolder.FolderName + ".html");
-                    //+ ++fileCount + "  of: " + categoryFolders.Count); ;
+                    pageTitle = folderName.Substring(folderName.LastIndexOf('/') + 1);
+                }
 
-                    ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName, userName, db);
+                string staticContent =
+                    "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, pageTitle) +
+                    "\n<body style='margin-top:105px'>\n" +
+                    HeaderHtml(folderId) +
+                    BodyHtml(folderId, rootFolder, userName) + CommentDialog() + CategoryDialog() + ModelInfoDialog() +
+                    "<div id='staticCatTreeContainer' class='oggleHidden categoryListContainer' title=" + rootFolder + "></div>" +
+                    "<script>var staticPageFolderId=" + folderId + "; var staticPageFolderName='" + folderName +
+                    "'; var staticPageRootFolder='" + rootFolder + "'; var staticPageCurrentUser ='" + userName + "'; </script>\n" +
+                    "<script src='http://pages.ogglebooble.com/script/staticPage.js'></script>\n" +
+                    "<script> $(document).ready(function () { window.addEventListener('resize', resizeStaticPage);resizeStaticPage();loadImageLinks()});</script>\n" +
+                    ImageViewer() + FooterHtml(rootFolder) + "\n</body>\n</html>";
+
+                success = WriteFileToDisk(staticContent, rootFolder, pageTitle);
+                if (success == "ok")
+                {
+                    List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+                    foreach (CategoryFolder dbCategoryFolder in categoryFolders)
+                    {
+                        VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == dbCategoryFolder.Id).First();
+                        //filesProcessed += Math.Max(vwDirTree.TotalFiles, vwDirTree.FileCount);
+                        filesProcessed += vwDirTree.FileCount;
+                        SignalRHost.ProgressHub.ShowProgressBar(totalFiles, filesProcessed);
+                        SignalRHost.ProgressHub.PostToClient("Creating static files: " + dbCategoryFolder.FolderName + ".html");
+                        //+ ++fileCount + "  of: " + categoryFolders.Count); ;
+
+                        ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName, userName, db);
+                    }
                 }
             }
             catch (Exception e) { success = Helpers.ErrorDetails(e); }
@@ -138,6 +150,7 @@ namespace WebApi.Controllers
                 "<script src='http://pages.ogglebooble.com/script/CommentDialog.js' type='text/javascript'></script>\n" +
                 "<script src='http://pages.ogglebooble.com/script/CategoryDialog.js' type='text/javascript'></script>\n" +
                 "<script src='http://pages.ogglebooble.com/script/ModelInfoDialog.js' type='text/javascript'></script>\n" +
+                "<script src='http://pages.ogglebooble.com/script/DirTree.js'></script>\n" +
                 "<link href='http://pages.ogglebooble.com/css/default.css'     rel='stylesheet'/>\n" +
                 "<link href='http://pages.ogglebooble.com/css/fixedHeader.css' rel='stylesheet'/>\n" +
                 "<link href='http://pages.ogglebooble.com/css/imageViewer.css' rel='stylesheet'/>\n" +
@@ -228,7 +241,7 @@ namespace WebApi.Controllers
             }
             return "<div class='fixedHeader flexContainer " + colorClass + "' id='oggleBoobleHeader'>\n" +
                 "<div class='bannerImageContainer' id='divTopLeftLogo'>\n" +
-                    "<a href='" + homeLink + "'><img class='bannerImage' id='logo' src='" + bannerLogo + "'></a>\n" +
+                    "<a href='" + homeLink + "'><img class='bannerImage' id='logo' src='" + bannerLogo + "'/></a>\n" +
                 "</div>\n" +
                     "<div class='headerBodyContainer' id='largeFixedHeader'>\n" +
                         "<div id='headerTopRow'>\n" +
@@ -253,11 +266,11 @@ namespace WebApi.Controllers
                                 "<div class='oggleHidden inline floatRight' id='divNotLogedIn' style='display: block;'>\n" +
                                     "<div class='menuTab floatRight' id='btnLayoutRegister'>\n" +
                                         "<a href='javascript:registerPlease()'>Register</a>\n" +
-                                        "<img class='btnSpinnerImage' id='btnHeaderRegisterSpinner' src='http://pages.ogglebooble.com/images/loader.gif'>\n" +
+                                        "<img class='btnSpinnerImage' id='btnHeaderRegisterSpinner' src='http://pages.ogglebooble.com/images/loader.gif'/>\n" +
                                     "</div>\n" +
                                 "<div class='menuTab floatRight' id='btnLayoutLogin'>\n" +
                                     "<a href='javascript:loginPlease()'>Log In</a>\n" +
-                                    "<img class='btnSpinnerImage' id='btnHeaderLoginSpinner' src='http://pages.ogglebooble.com/images/loader.gif'>\n" +
+                                    "<img class='btnSpinnerImage' id='btnHeaderLoginSpinner' src='http://pages.ogglebooble.com/images/loader.gif'/>\n" +
                                 "</div>\n" +
                             "</div>\n" +
                         "</div>\n" +
@@ -308,9 +321,6 @@ namespace WebApi.Controllers
                     "</div>\n" +
                 "<div id='rightColumn'></div>\n" +
              "</div>";
-
-
-
             return bodyHtml;
         }
 
@@ -325,7 +335,7 @@ namespace WebApi.Controllers
                   "<span id = 'imageViewerHeaderTitle' class='imageViewerTitle'></span>" +
                   "<div class='viewerButtonsRowSection'>" +
                     "<div class='floatRight' style='margin-left: 44px;' onclick=\"$('#imageViewerDialog').effect('blind', {mode:'hide', direction:'vertical' }, 500); viewerShowing = 'false';\">" +
-                      "<img src = 'http://pages.ogglebooble.com/images/close.png' />" +
+                      "<img src='http://pages.ogglebooble.com/images/close.png' />" +
                     "</div>\n" +
                      "<div class='floatRight' onclick=\"runSlideShow('faster')\"><img id='fasterSlideshow' title='faster slideshow' src='http://pages.ogglebooble.com/images/slideshowFaster.png' /></div>\n" +
                       "<div class='floatRight' onclick=\"runSlideShow('start')\"><img id='showSlideshow' title='start slideshow' src='http://pages.ogglebooble.com/images/slideshow.png' /></div>\n" +
@@ -408,13 +418,13 @@ namespace WebApi.Controllers
                     "<div class='flexContainer'>\n" +
                           "<div class='footerCol'>\n" +
                               "<div><a href='/Home/Index'>Let Me Explain</a></div>\n" +
-                              "<div><a href='showCatListDialog(242)'>Category List</a></div>\n" +
-                              "<div><a href='/porn'>Oggle Booble</a></div>\n" +
+                              "<div onclick='showCatListDialog(242)'>Category List</div>\n" +
+                              "<div><a href='http://pages.ogglebooble.com'>Oggle Booble</a></div>\n" +
                           "</div>\n" +
                           "<div class='footerCol'>\n" +
-                              "<div><a href='/Home/Index'>Boobs Rater</a></div>\n" +
+                              "<div><a href='http://ogglebooble.com/Home/BoobsRanker'>Boobs Rater</a></div>\n" +
                               "<div><a href='/Home/ImagePage?folder=908'>Rejects</a></div>\n" +
-                              "<div><a href='/home/Videos'>Nasty Videos</a></div>\n" +
+                              "<div><a href='http://ogglebooble.com/Home/Videos'>Nasty Videos</a></div>\n" +
                           "</div>\n" +
                           "<div class='footerCol'>\n" +
                               "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
@@ -422,7 +432,7 @@ namespace WebApi.Controllers
                               "<div><a href='http://pages.ogglebooble.com/porn/sluts.html'>Archive</a></div>\n" +
                           "</div>\n" +
                     "</div>\n" +
-                    "<div class='footerVersionMessage' id='footerLastBuild'></div>\n" +
+                    "<div class='footerVersionMessage'>built " + DateTime.Now.ToShortDateString() + "</div>\n" +
                     "<div class='footerFooter'>" +
                           "<div id='footerMessage'></div>" +
                           "<div id='copyright'>&copy; 2019 - <a href='/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>" +
@@ -433,13 +443,13 @@ namespace WebApi.Controllers
                 return "\n<footer>\n" +
                     "<div class='flexContainer'>\n" +
                         "<div class='footerCol'>\n" +
-                            "<div><a href='/Home/Index'>Let Me Explain</a></div>\n" +
-                            "<div><a href='showCatListDialog(242)'>Category List</a></div>\n" +
+                            "<div id='explain'></div>\n" +
+                            "<div onclick='showCatListDialog(2)'>Category List</div>\n" +
                             "<div><a href='http://pages.ogglebooble.com/porn.html'>Nasty Porn</a></div>\n" +
                           "</div>\n" +
                           "<div class='footerCol'>\n" +
-                              "<div><a href='/Home/Index'>Boobs Rater</a></div>\n" +
-                              "<div><a href='/Home/ImagePage?folder=908'>Rejects</a></div>\n" +
+                              "<div><a href='http://ogglebooble.com/Home/BoobsRanker'>Boobs Rater</a></div>\n" +
+                              "<div id='Rejects'></div>\n" +
                               "<div><a href='http://pages.ogglebooble.com/playboy/playboy.html'>Centerfolds</a></div>\n" +
                           "</div>\n" +
                           "<div class='footerCol'>\n" +
@@ -448,12 +458,119 @@ namespace WebApi.Controllers
                               "<div><a href='http://pages.ogglebooble.com/archive/archive.html'>Archive</a></div>\n" +
                           "</div>\n" +
                     "</div>\n" +
-                    "<div class='footerVersionMessage' id='footerLastBuild'></div>\n" +
+                    "<div class='footerVersionMessage'>built " + DateTime.Now.ToShortDateString() + "</div>\n" +
                     "<div class='footerFooter'>" +
                           "<div id='footerMessage'></div>" +
                           "<div id='copyright'>&copy; 2019 - <a href='/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>" +
                     "</div>\n" +
                 "</footer>";
+        }
+
+        private string IndexPageHtml()
+        {
+            return "<div class='threeColumnArray'>\n" +
+                "    <div id='leftColumn'>\n" +
+                "        <div class='leftColumnList'>\n" +
+                "            <div onclick='window.location.href='/home/transitions?folder=\"boobs\"'>Transitions</div>\n" +
+                "            <div onclick='window.location.href=\"/home/BoobsRanker\"'>Boobs Rater</div>\n" +
+                "            <div onclick='showCustomMessage(38)'>Let me Expalin</div>\n" +
+                "            <div onclick='showCatListDialog()'>Category List</div>\n" +
+                "            <div onclick='window.location.href='/admin/blog'>Blog</div>\n" +
+                "            <div onclick='window.location.href='/home/Mobile?folder=boobs'>Mobile</div>\n" +
+                "            <div onclick='showCustomMessage(35)'>Nasty Porn</div>\n" +
+                "        </div>\n" +
+                "    </div>\n" +
+                "    <div id='middleColumn'>\n" +
+                "        <div id='customMessage' class='oggleHidden customMessageContainer'></div>\n" +
+                "        <div id='divStatusMessage'></div>\n" +
+                "        <div class='flexContainer'>\n" +
+                "            <div class='floatLeft'>\n" +
+                "                <div class='galleryCheckBox'><input type='checkbox' onchange='loadImages('playboy', $(this).is(':checked'), 1000)' /> Include Centerfolds</div>\n" +
+                "                <div class='galleryCheckBox'><input type='checkbox' onchange='loadImages('archive', $(this).is(':checked'), 50000)' /> Include Archive</div>\n" +
+                "            </div>\n" +
+                "            <div class='floatLeft'>\n" +
+                "               <div class='centeredDivShell randomImageContainer'>\n" +
+                "                   <div class='centeredDivInner'>\n" +
+                "                       <div id='categoryTitle' class='floatingLabel' onmouseover='slowlyShowFolderCategoryDialog();" +
+                "                           forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;'></div>\n" +
+                "                       <div id='laCarousel' class='carouselContainer'>\n" +
+                "                           <div id='laCarouselImageContainer' class='carouselImageContainer'>\n" +
+                "                               <img id='thisCarouselImage' oncontextmenu='carouselContextMenu()'" +
+                "                                   class='carouselImage' src='http://pages.ogglebooble.com/images/ingranaggi3.gif' onclick='clickViewGallery()' />\n" +
+                "                           </div>\n" +
+                "                           <div class='imgBottom'>\n" +
+                "                                    <img class='speedButton floatLeft' src=''http://pages.ogglebooble.com/images/speedDialSlower.png' title='slower' onclick='clickSpeed('slower')' />\n" +
+                "                                    <div id='pauseButton' class='pauseButton' onclick='togglePause()'>||</div>\n" +
+                "                                    <div id='categoryLabel' class='carouselCategoryLabel' onclick='clickViewParentGallery()'></div>\n" +
+                "                                    <img class='speedButton floatRight' src=''http://pages.ogglebooble.com/images/speedDialFaster.png' title='faster' onclick='clickSpeed('faster')' />\n" +
+                "                           </div>\n" +
+                "                       </div>\n" +
+                "                   </div>\n" +
+                "               </div>\n" +
+                "            </div>\n" +
+                "        </div>\n" +
+                "    </div>\n" +
+                "    <div id='rightColumn'></div>\n" +
+                "</div>\n";
+        }
+
+        private string CreateIndexPage(string xxrootFolder, string userName)
+        {
+            string success = "";
+            string rootFolder = "boobs";
+            try
+            {
+                StringBuilder sb = new StringBuilder("<div class='oggleHidden'>");
+                List<VwLink> vwLinks = null;
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    var timer = new System.Diagnostics.Stopwatch();
+                    timer.Start();
+                    vwLinks = db.VwLinks.Where(l => l.RootFolder == rootFolder).ToList();
+                    timer.Stop();
+                    System.Diagnostics.Debug.WriteLine("get VwLinks took: " + timer.Elapsed);
+                }
+                for (int i = 0; i < vwLinks.Count; i++)
+                {
+                    sb.Append("<img id='image" + i + "' linkId='" + vwLinks[i].LinkId + "' src='" + vwLinks[i].Link + "'/>\n");
+                }
+                sb.Append("</div>");
+
+                int folderId = 2;
+
+                string pageTitle = "Index2";
+                string staticContent =
+                    "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, pageTitle) +
+                    "\n<body style='margin-top:105px'>\n" +
+                    HeaderHtml(folderId) + IndexPageHtml() + sb.ToString() +
+                    "<script>var staticPageFolderId=" + folderId + "; var numImages = '" + vwLinks.Count +
+                    "'; var staticPageRootFolder='" + rootFolder + "'; var staticPageCurrentUser ='" + userName + "'; </script>\n" +
+                    "<script src='http://pages.ogglebooble.com/script/staticPage.js'></script>\n" +
+                    "<script> $(document).ready(function () {startCarousel();});</script>\n" +
+                    FooterHtml(rootFolder) + "\n</body>\n</html>";
+
+                success = WriteFileToDisk(staticContent, "", pageTitle);
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        private string BuildCarouselArray(string rootFolder)
+        {
+            StringBuilder sb = new StringBuilder("<div class='oggleHidden'>");
+            List<VwLink> vwLinks = null;
+            using (OggleBoobleContext db = new OggleBoobleContext())
+            {
+                vwLinks = db.VwLinks.Where(l => l.RootFolder == rootFolder).ToList();
+            }
+            for (int i = 0; i < vwLinks.Count; i++)
+            {
+                sb.Append("<img id='image" + i + "' class='carouselImage' linkId='" + vwLinks[i].LinkId + "' src='" + vwLinks[i].Link + "'/>");
+                //" <img id='thisCarouselImage' oncontextmenu='carouselContextMenu()'" +
+                //"  class='' src='ttp://pages.ogglebooble.com/images/ingranaggi3.gif' onclick='clickViewGallery()' />\n" +
+            }
+            sb.Append("</div>"); 
+            return sb.ToString();
         }
     }
 }

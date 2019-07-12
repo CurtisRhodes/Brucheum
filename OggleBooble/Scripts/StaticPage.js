@@ -1,5 +1,17 @@
-﻿
+﻿var rotationSpeed = 5123;
+var intervalSpeed = 1100;
+var carouselItemArray = new Array();
+var imageIndex = 0;
+var carouselContainerHeight;
+var CarouselInterval;
+var selectedImageArchiveFolderId;
+var metaTagDialogIsOpen = false;
+var modelInfoDialogIsOpen = false;
+var imageCommentDialogIsOpen = false;
+var folderCategoryDialogIsOpen = false;
 var service = "https://api.curtisrhodes.com/";
+var forgetShowingCatDialog;
+
 var imageArray = new Array();
 var selectedImageLinkId;
 var selectedImage;
@@ -7,17 +19,8 @@ var staticPageFolderName;
 var fullPageName;
 
 $(document).ready(function () {
-    loadImageLinks();
     window.addEventListener("resize", resizeStaticPage);
     resizeStaticPage();
-    $('#staticCatTreeContainer').dialog({
-        autoOpen: false,
-        show: { effect: "fade" },
-        hide: { effect: "blind" },
-        position: ({ my: 'left top', at: 'left top', of: $('#middleColumn') }),
-        width: 400,
-        height: 600
-    });
 });
 
 function loadImageLinks() {
@@ -131,7 +134,13 @@ function contextMenuActionExplode() {
 
 function showCatListDialog(root) {
     buildDirTree($('#staticCatTreeContainer'), "staticCatTreeContainer", root);
-    $('#staticCatTreeContainer').dialog('open');
+    $('#staticCatTreeContainer').dialog({
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        position: ({ my: 'left top', at: 'left top', of: $('#middleColumn') }),
+        width: 400,
+        height: 600
+    });
 }
 
 function staticCatTreeContainerClick(path, id, treeId) {
@@ -142,7 +151,6 @@ function staticCatTreeContainerClick(path, id, treeId) {
     else
         alert("dirTreeClick treeId: " + treeId);
 }
-
 
 function showCustomMessage(blogId) {
     if (typeof pause === 'function') {
@@ -165,5 +173,64 @@ function showCustomMessage(blogId) {
     //if ($('#pornWarning').html() == "")
 }
 
+function startCarousel() {
+    CarouselInterval = setInterval(function () {
+        setTimeout(function () {
+            $('#categoryTitle').fadeOut(intervalSpeed).hide();
+            $('#laCarouselImageContainer').fadeOut(500, "linear", function () {
+
+                imageIndex = Math.floor(Math.random() * numImages);
+
+                try {
+                    $('#laCarouselImageContainer').html($('#image' + imageIndex)).fadeIn(3000);
+                } catch (e) {
+                    alert(e);
+                }
+
+                //$('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath).fadeIn(intervalSpeed);
+                //$('#categoryTitle').html(carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
+                resizeCarousel();
+                $('#footerMessage').html("image: " + imageIndex + " of " + numImages);
+
+            });
+        }, intervalSpeed);
+    }, rotationSpeed);
+}
+
+function considerHidingContextMenu() {
+    $('#carouselContextMenu').fadeOut();
+    if (!metaTagDialogIsOpen) {
+        if (!modelInfoDialogIsOpen) {
+            if (!imageCommentDialogIsOpen) {
+                if (!folderCategoryDialogIsOpen) {
+                    resume();
+                }
+            }
+        }
+    }
+}
+
+function resizeCarousel() {
+    $('.carouselImage').css("max-width", $('#middleColumn').width());
+    $('.carouselImage').css("max-height", $('#middleColumn').innerHeight() - 180);
+}
+
+function togglePause() {
+    if ($('#pauseButton').html() === "||")
+        pause();
+    else
+        resume();
+}
+
+function pause() {
+    clearInterval(CarouselInterval);
+    $('#pauseButton').html(">");
+}
+
+function resume() {
+    clearInterval(CarouselInterval);
+    startCarousel();
+    $('#pauseButton').html("||");
+}
 
 
