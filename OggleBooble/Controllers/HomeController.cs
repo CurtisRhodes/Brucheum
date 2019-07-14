@@ -26,11 +26,17 @@ namespace OggleBooble
         private readonly string apiService = ConfigurationManager.AppSettings["apiService"];
         public ActionResult Index()
         {
-            if (Session["userName"] == null) {
-                Session["userName"] = User.Identity.Name;
-                Session["IpAddress"] = Helpers.GetIPAddress();
+            string ipAddress = Helpers.GetIPAddress();
+            if (Session["userName"] == null)
+            {
+                if (User.Identity.Name == null)
+                    Session["userName"] = ipAddress;
+                else
+                    Session["userName"] = User.Identity.Name;
+                Session["IpAddress"] = ipAddress;
                 //LogVisit();
             }
+
             GetBuildInfo();
 
             ViewBag.BuildInfo = GetBuildInfo();
@@ -62,7 +68,7 @@ namespace OggleBooble
 
         public ActionResult BoobsRanker()
         {
-            ViewBag.UserName = User.Identity.Name;
+            ViewBag.UserName = Session["userName"];
             ViewBag.Service = apiService;
             return View();
         }
@@ -95,8 +101,8 @@ namespace OggleBooble
         private async Task<string> LogVisit()
         {
             string success = "";
-            //string apiUrl = "https://api.curtisrhodes.com/";
-            string apiUrl = "http://localhost:40395/";
+            string apiUrl = "https://api.curtisrhodes.com/";
+            //string apiUrl = "http://localhost:40395/";
             using (HttpClient client = new HttpClient())
             {
                 client.BaseAddress = new Uri(apiUrl);

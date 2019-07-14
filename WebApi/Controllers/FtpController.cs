@@ -118,8 +118,8 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     //string linkId = model.Link.Substring(model.Link.LastIndexOf("_") + 1, 36);
-                    ImageLink dbImageLink = db.ImageLinks.Where(l => l.Link == model.Link).First();
-                    string linkId = db.ImageLinks.Where(l => l.Link == model.Link).First().Id;
+                    ImageLink dbImageLink = db.ImageLinks.Where(l => l.Link == model.Link.Replace("%20"," ")).First();
+                    string linkId = dbImageLink.Id;
                     if (model.Mode == "Copy")
                     {
                         CategoryImageLink existingLink = db.CategoryImageLinks

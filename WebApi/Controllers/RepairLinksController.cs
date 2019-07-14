@@ -45,8 +45,6 @@ namespace WebApi
             }
             return repairReport;
         }
-
-
         private string EnsureCorrectFileName(string suspectFileName, string folderName, string ftpPath)
         {
             string correctFileName = "";
@@ -71,10 +69,6 @@ namespace WebApi
 
             return correctFileName;
         }
-
-
-
-
         private void RepairLinksRecurr(int folderId, RepairReportModel repairReport, OggleBoobleContext db)
         {
             CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
@@ -88,9 +82,6 @@ namespace WebApi
                 repairReport.Errors.Add("created directory " + ftpPath);
             }
             int folderRowsProcessed = 0;
-
-
-
 
             if (repairReport.isSubFolder)
                 SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed + "  Total: " + repairReport.RowsProcessed);
@@ -357,6 +348,16 @@ namespace WebApi
                 }
             }
         }
+
+        private void UnListedImages()
+        {
+            string ftpFolderPath = ftpHost;
+
+
+
+        }
+
+
 
         private string DownLoadImage(string ftpPath, string link, string newFileName)
         {

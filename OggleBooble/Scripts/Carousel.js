@@ -1,7 +1,7 @@
 ﻿var numImages = 0;
 var numFolders = 0;
-var rotationSpeed = 5123;
-var intervalSpeed = 1100;
+var rotationSpeed = 7000;
+var intervalSpeed = 600;
 var carouselItemArray = new Array();
 var imageIndex = 0;
 var carouselContainerHeight;
@@ -13,14 +13,14 @@ var imageCommentDialogIsOpen = false;
 var folderCategoryDialogIsOpen = false;
 var service = "https://api.curtisrhodes.com/";
 var forgetShowingCatDialog;
-
+var initialTake = 100;
 
 function launchCarousel(root) {
     $('#footerMessage').html("launching carousel");
-    loadImages(root, true, 20);
+    loadImages(root, true, 0, initialTake);
 }
 
-function loadImages(rootFolder, isChecked, take) {
+function loadImages(rootFolder, isChecked, skip, take) {
     var start = Date.now();
     var k = 0;
     var spliced = 0;
@@ -60,7 +60,7 @@ function loadImages(rootFolder, isChecked, take) {
         $('#categoryTitle').hide();
         $.ajax({
             type: "GET",
-            url: service + "/api/Carousel/GetLinks?root=" + rootFolder + "&take=" + take,
+            url: service + "/api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take,
             success: function (carouselInfo) {
                 if (carouselInfo.Success === "ok") {
                     $.each(carouselInfo.Links, function (idx, obj) {
@@ -78,23 +78,29 @@ function loadImages(rootFolder, isChecked, take) {
                     $('#categoryTitle').show();
 
                     if (numImages === 0) {
-                        imageIndex = 0;
-                        $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
-                        $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath);
-                        $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName);
-                        resizeCarousel();
+                        //imageIndex = 0;
+                        //$('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
+                        //$('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath);
+                        //$('#categoryTitle').html(carouselItemArray[imageIndex].FolderName);
+                        //resizeCarousel();
                         startCarousel();
                         $('#footerMessage').html("starting carousel");
                     }
 
-                    numImages += carouselInfo.Links.length;
+                    numImages = carouselInfo.Links.length;
                     numFolders += carouselInfo.FolderCount;
 
                     var delta = (Date.now() - start) / 1000;
-                    console.log("loadImages(" + rootFolder + ") take: " + take + " took: " + delta.toFixed(3));
-                    if (take === 20) {
-                        loadImages(rootFolder, isChecked, 15000);
+
+                    //setTimeout(function () {
+                    if (take === initialTake) {
+                        console.log("loadImages(" + rootFolder + ") take: " + initialTake + " took: " + delta.toFixed(3));
+                        loadImages(rootFolder, isChecked, initialTake, 80000);
                     }
+                    else
+                        console.log("loadImages(" + rootFolder + ") take: " + Number(carouselInfo.Links.length - initialTake) + " took: " + delta.toFixed(3));
+                    //}, 20000);
+
                 }
                 else
                     alert("loadImages: " + carouselInfo.Success);
@@ -125,7 +131,6 @@ function clickViewGallery() {
     clearInterval(CarouselInterval);
     //alert("clickViewGallery");
     window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
-    //window.location.href = "http://pages.ogglebooble.com/" + carouselItemArray[imageIndex].RootFolder + "/" + carouselItemArray[imageIndex].FolderName + ".html";
 }
 
 function clickViewParentGallery() {
@@ -211,7 +216,8 @@ function considerHidingContextMenu() {
 
 function resizeCarousel() {
     $('.carouselImage').css("max-width", $('#middleColumn').width());
-    $('.carouselImage').css("max-height", $('#middleColumn').innerHeight() - 180);
+    //$('.carouselImage').css("height", $('#middleColumn').innerHeight() - 180);
+    $('.carouselImage').css("height", $('#middleColumn').height() - 180);
 }
 
 function togglePause() {
@@ -233,28 +239,29 @@ function resume() {
 }
 
 function startCarousel() {
+    intervalBody();
     CarouselInterval = setInterval(function () {
-        setTimeout(function () {
-            $('#categoryTitle').fadeOut(intervalSpeed).hide();
-            $('#thisCarouselImage').fadeOut(500, "linear", function () {
-
-                imageIndex = Math.floor(Math.random() * numImages);
-
-                try {
-                    $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link).fadeIn(3000);
-                } catch (e) {
-                    alert(e);
-                }
-
-                $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath).fadeIn(intervalSpeed);
-                $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
-                resizeCarousel();
-                $('#footerMessage').html("image: " + imageIndex + " of " + numImages);
-
-            });
-        }, intervalSpeed);
+        //setTimeout(function () {
+        intervalBody();
+        //}, intervalSpeed);
     }, rotationSpeed);
 }
+
+function intervalBody() {
+    $('#categoryTitle').fadeOut(intervalSpeed);
+    $('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
+        imageIndex = Math.floor(Math.random() * numImages);
+        $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
+        setTimeout(function () {
+            $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
+            $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath);
+            $('#laCarousel').fadeIn(intervalSpeed);
+        }, 400);
+        resizeCarousel();
+        $('#footerMessage').html("image: " + imageIndex + " of " + numImages);
+    });
+}
+
 
 function carouselContextMenu() {
         event.preventDefault();

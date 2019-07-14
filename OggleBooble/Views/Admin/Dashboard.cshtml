@@ -44,12 +44,10 @@
     <div id="rightColumn"></div>
 
 
-    <div id="createStaticPagesCrud" class="oggleHidden" title="Create Static Pages">
+    <div id="createStaticPagesCrud" class="oggleHidden" title="Create Static Index Pages">
         <div><input id="txtStaticParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
         <div class="roundendButton" onclick="createStaticPages()">Go</div>
     </div>
-
-
 
     <div id="renameFolderCrud" class="oggleHidden" title="Rename Folder">
         <div><span>folder to rename</span><input id="txtFolderToRename" class="txtLinkPath roundedInput" readonly="readonly" /></div>
@@ -108,7 +106,8 @@
         <div class="clickable" onclick="showRenameFolderDialog()">ReName Folder</div>
         <div class="clickable" onclick="loadProperties()">loadProperties</div>
         <div class="clickable" onclick="createStaticPages()">Create Static Pages</div>
-        <div class="clickable" onclick="repairLinks()">Repair Links</div></dir>`);
+        <div class="clickable" onclick="createStaticIndexPages()">Create Static Index Pages</div>
+        <div class="clickable" onclick="repairLinks()">Repair Links</div></dir>`);        
 
         buildDirectoryTree();
 
@@ -149,11 +148,7 @@
 
         connection.start({ jsonp: true })
             .done(function () {
-
-
                 console.log('Now connected, connection ID=' + connection.id);
-
-
             })
             .fail(function () {
                 alert('signalr Could not connect')
@@ -176,7 +171,7 @@
         $('#progressBar').show();
         $.ajax({
             type: "GET",
-            url: service + "api/StaticPage/Buld?parentFolder=" + dashboardMainSelectedTreeId + "&userName=xxx",
+            url: service + "api/StaticPage/Buld?parentFolder=" + dashboardMainSelectedTreeId + "&userName=xxx&service=" + service,
             success: function (success) {
                 $('#progressBar').hide();
                 //$('#dashBoardLoadingGif').hide();
@@ -196,6 +191,42 @@
         });
     }
 
+    function createStaticIndexPages() {
+        $('#dataifyInfo').show().html("Building Index page");
+        $.ajax({
+            type: "GET",
+            url: service + "api/StaticPage/CreateIndexPage?rootFolder=boobs&userName=xxx&service=" + service + "&pageTitle=Index&metaTagFolderId=2",
+            success: function (success) {
+                //$('#dashBoardLoadingGif').hide();
+                if (success == "ok") {
+                    $('#dataifyInfo').show().html("Building porn Index page");
+                    $.ajax({
+                        type: "GET",
+                        url: service + "api/StaticPage/CreateIndexPage?rootFolder=porn&userName=xxx&service=" + service + "&pageTitle=porn&metaTagFolderId=242",
+                        success: function (success) {
+                            //$('#dashBoardLoadingGif').hide();
+                            if (success == "ok") {
+                                displayStatusMessage("ok", "done building Index pages");
+                                $('#dataifyInfo').hide();
+                            }
+                            else
+                                alert("createStaticPages: " + success);
+                        },
+                        error: function (xhr) {
+                            $('#dashBoardLoadingGif').hide();
+                            alert("createStaticPages xhr error: " + getXHRErrorDetails(xhr));
+                        }
+                    });
+                }
+                else
+                    alert("createStaticPages: " + success);
+            },
+            error: function (xhr) {
+                $('#dashBoardLoadingGif').hide();
+                alert("createStaticPages xhr error: " + getXHRErrorDetails(xhr));
+            }
+        });
+    }
     function addVideo() {
         try {
             $('#dashBoardLoadingGif').show();

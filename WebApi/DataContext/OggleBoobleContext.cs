@@ -95,7 +95,9 @@ namespace WebApi.DataContext
     {
         public int FolderId { get; set; }
         [Key]
-        public string LinkId { get; set; }
+        public string LinkId { get; set; }        
+        public string FolderName { get; set; }
+        public string ParentName { get; set; }
         public string Link { get; set; }
         public string RootFolder { get; set; }
         public string Orientation { get; set; }

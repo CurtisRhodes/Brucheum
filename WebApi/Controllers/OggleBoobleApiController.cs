@@ -345,7 +345,7 @@ namespace WebApi
     public class CarouselController : ApiController
     {
         [HttpGet]
-        public CarouselInfoModel GetLinks(string root, int take)
+        public CarouselInfoModel GetLinks(string root, int skip, int take)
         {
             CarouselInfoModel carouselInfo = new CarouselInfoModel();
             try
@@ -370,8 +370,10 @@ namespace WebApi
                              FolderName = f.FolderName,
                              FolderPath = p.FolderName,
                              Link = l.Link.StartsWith("http") ? l.Link : l.ExternalLink
-                         }).Take(take).ToList();
+                         }).OrderBy(l=>l.LinkId).Skip(skip).Take(take).ToList();
                 }
+
+
                 carouselInfo.FolderCount = carouselInfo.Links.GroupBy(l => l.FolderName).Count();
                 timer.Stop();
                 System.Diagnostics.Debug.WriteLine("Select " + take + " from vLinks took: " + timer.Elapsed);
@@ -522,7 +524,7 @@ namespace WebApi
                     if (categoryFolderDetail != null)
                     {
                         if (categoryFolderDetail.CommentText != null)
-                            metaTagResults.Description = Helpers.Beautify(categoryFolderDetail.CommentText);
+                            metaTagResults.Description = Uri.EscapeDataString(categoryFolderDetail.CommentText); //Helpers.Beautify(categoryFolderDetail.CommentText);
                         else
                             metaTagResults.Description = "free images of " + metaTagResults.Source;
                     }
@@ -536,7 +538,6 @@ namespace WebApi
             }
             return metaTagResults;
         }
-
         private void GetMetaTasRecurr(MetaTagResultsModel metaTagResults, int folderId, OggleBoobleContext db)
         {
             List<MetaTag> metaTags = db.MetaTags.Where(m => m.FolderId == folderId).ToList();
@@ -553,7 +554,6 @@ namespace WebApi
             if (parent > 1)
                 GetMetaTasRecurr(metaTagResults, parent, db);
         }
-
 
         [HttpGet]
         public MetaTagModel Get(int tagId)

@@ -308,6 +308,7 @@
     <Content Include="Scripts\ImageViewer.js" />
     <Content Include="Scripts\ModelInfoDialog.js" />
     <Content Include="Scripts\MoveCopyArchive.js" />
+    <Content Include="Scripts\StaticIndexPage.js" />
     <Content Include="Scripts\StaticPage.js" />
     <Content Include="Static_Pages\Porn.html" />
     <Content Include="Static_Pages\Index.html" />
@@ -340,6 +341,7 @@
     <Content Include="Styles\images\ui-icons_ffffff_256x240.png" />
     <Content Include="Styles\jquery-ui.css" />
     <Content Include="Styles\jqueryDialog.css" />
+    <Content Include="Styles\loginDialog.css" />
     <Content Include="Styles\modelInfoDialog.css" />
     <Content Include="Styles\moveCopyArchiveDialog.css" />
     <Content Include="Views\Admin\Images\redballon.png" />

@@ -9,7 +9,6 @@ var metaTagDialogIsOpen = false;
 var modelInfoDialogIsOpen = false;
 var imageCommentDialogIsOpen = false;
 var folderCategoryDialogIsOpen = false;
-var service = "https://api.curtisrhodes.com/";
 var forgetShowingCatDialog;
 
 var imageArray = new Array();
@@ -17,11 +16,6 @@ var selectedImageLinkId;
 var selectedImage;
 var staticPageFolderName;
 var fullPageName;
-
-$(document).ready(function () {
-    window.addEventListener("resize", resizeStaticPage);
-    resizeStaticPage();
-});
 
 function loadImageLinks() {
     $.ajax({
@@ -56,6 +50,8 @@ function resizeStaticPage() {
     resizePage();
     $('#imageContainer').width($('#middleColumn').width());
     $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
+
+
 
     if (viewerShowing) {
         resizeViewer();
@@ -101,7 +97,8 @@ function staticPageContextMenu(linkId, link) {
                 $('#ctxSeeMore').hide();
                 if (modelDetails.RootFolder !== staticPageRootFolder) {
                     if (modelDetails.RootFolder === "archive") {
-                        $('#ctxSeeMore').show();
+                        if (staticPageRootFolder !== "archive")
+                            $('#ctxSeeMore').show();
                     }
                 }
             }
@@ -118,7 +115,7 @@ function staticPageContextMenu(linkId, link) {
 
 function contextMenuActionShow() {
     //showModelInfoDialog(modelName, folderId, currentSrc)
-    showModelInfoDialog($('#staticPagectxModelName').html(), staticPageFolderId, selectedImage);
+    showModelInfoDialog($('#staticPagectxModelName').html(), selectedImageArchiveFolderId, selectedImage);
 }
 function contextMenuActionJump() {
     window.open("http://pages.ogglebooble.com/" + fullPageName + ".html", "_blank");
@@ -173,64 +170,82 @@ function showCustomMessage(blogId) {
     //if ($('#pornWarning').html() == "")
 }
 
-function startCarousel() {
-    CarouselInterval = setInterval(function () {
-        setTimeout(function () {
-            $('#categoryTitle').fadeOut(intervalSpeed).hide();
-            $('#laCarouselImageContainer').fadeOut(500, "linear", function () {
+function staticPageShowRegisterDialog(){
+    if (!isNullorUndefined($('#btnLayoutLogin').offset())) {
+        var loff = $('#btnLayoutLogin').offset().left;
+        $('#btnHeaderLoginSpinner').css("left", loff + 30);
+        //$('#btnHeaderLoginSpinner').show();
+    }
 
-                imageIndex = Math.floor(Math.random() * numImages);
+    $('#modalContent').html($('#registerUserDialog').fadeIn());
+    $('#modalContainer').show();
+    $('#btnHeaderRegisterSpinner').hide();
 
-                try {
-                    $('#laCarouselImageContainer').html($('#image' + imageIndex)).fadeIn(3000);
-                } catch (e) {
-                    alert(e);
-                }
 
-                //$('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath).fadeIn(intervalSpeed);
-                //$('#categoryTitle').html(carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
-                resizeCarousel();
-                $('#footerMessage').html("image: " + imageIndex + " of " + numImages);
+    //$('#registerUserDialog').fadein();
 
-            });
-        }, intervalSpeed);
-    }, rotationSpeed);
+
+    //$.ajax({
+    //    type: "get",
+    //    url: "/Login/Register",
+    //    datatype: "json",
+    //    success: function (data) {
+    //        $('#modalContent').html(data);
+    //        $('#modalContainer').show();
+    //        $('#btnHeaderRegisterSpinner').hide();
+    //    },
+    //    error: function (jqXHR, exception) {
+    //        alert("RegisterPopup XHR error: " + getXHRErrorDetails(jqXHR, exception));
+    //    }
+    //});
 }
 
-function considerHidingContextMenu() {
-    $('#carouselContextMenu').fadeOut();
-    if (!metaTagDialogIsOpen) {
-        if (!modelInfoDialogIsOpen) {
-            if (!imageCommentDialogIsOpen) {
-                if (!folderCategoryDialogIsOpen) {
-                    resume();
+$('#btnRegister').click(function () {
+    if (validate()) {
+        try {
+            unBind();
+            $.ajax({
+                type: "POST",
+                url: service + "/api/Login/",
+                data: user,
+                datatype: "json",
+                success: function (response) {
+                    if (response.success === "ok") {
+                        //alert("Log In Success!");
+                        clearModal();
+                        //var userId = response.UserId;
+                        $.ajax({
+                            type: "get",
+                            url: "/Login/SetOggleBoobleCookie?userName=" + userName + "&userId=" + userId + "&useCookie=true",
+                            datatype: "json",
+                            success: function (success) {
+                                if (success === "ok")
+                                    //$("#divlogin").load(location.href + " #divlogin");
+                                    location.reload(true);
+                                //clearModal();
+                                else
+                                    alert("SetOggleBoobleCookie error: " + success);
+                            },
+                            error: function (xhr) {
+                                displayStatusMessage("alert-danger", "error: " + xhr.statusText);
+                                alert("SetBrucheumCookie  error: " + xhr.statusText);
+                            }
+                        });
+                    }
+                    else {
+                        alert("Register post: " + response.success);
+                        //displayStatusMessage("alert-danger", response, false);
+                    }
+                },
+                error: function () {
+                    alert("Login Post failed");
                 }
-            }
+            });
+        } catch (e) {
+            alert("Login Post error: " + e);
         }
     }
-}
+});
 
-function resizeCarousel() {
-    $('.carouselImage').css("max-width", $('#middleColumn').width());
-    $('.carouselImage').css("max-height", $('#middleColumn').innerHeight() - 180);
-}
-
-function togglePause() {
-    if ($('#pauseButton').html() === "||")
-        pause();
-    else
-        resume();
-}
-
-function pause() {
-    clearInterval(CarouselInterval);
-    $('#pauseButton').html(">");
-}
-
-function resume() {
-    clearInterval(CarouselInterval);
-    startCarousel();
-    $('#pauseButton').html("||");
-}
 
 

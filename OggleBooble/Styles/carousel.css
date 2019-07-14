@@ -35,6 +35,7 @@
     border: solid 5px #efeacb;
     border-bottom: none;
     background-color: #efeacb;
+    cursor: pointer;
 }
 
 .imgBottom {
