@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Dashboard";
 }
 <script src="~/Scripts/3rd Party/jquery.signalR-2.4.1.min.js"></script>
@@ -167,11 +166,11 @@
         //$('#createStaticPagesCrud').dialog("close");
         //$('#createStaticPagesCrud').hide();
         //$('#dashBoardLoadingGif').fadeIn();
-        $('#dataifyInfo').show();
+        $('#dataifyInfo').show().html("creating static pages for "+ dashboardMainSelectedPath);
         $('#progressBar').show();
         $.ajax({
             type: "GET",
-            url: service + "api/StaticPage/Buld?parentFolder=" + dashboardMainSelectedTreeId + "&userName=xxx&service=" + service,
+            url: service + "api/StaticPage/Buld?parentFolder=" + dashboardMainSelectedTreeId + "&userName=xxx",
             success: function (success) {
                 $('#progressBar').hide();
                 //$('#dashBoardLoadingGif').hide();
@@ -195,7 +194,7 @@
         $('#dataifyInfo').show().html("Building Index page");
         $.ajax({
             type: "GET",
-            url: service + "api/StaticPage/CreateIndexPage?rootFolder=boobs&userName=xxx&service=" + service + "&pageTitle=Index&metaTagFolderId=2",
+            url: service + "api/StaticPage/CreateIndexPage?rootFolder=boobs&userName=xxx&pageTitle=Index&metaTagFolderId=2",
             success: function (success) {
                 //$('#dashBoardLoadingGif').hide();
                 if (success == "ok") {
@@ -227,6 +226,7 @@
             }
         });
     }
+
     function addVideo() {
         try {
             $('#dashBoardLoadingGif').show();

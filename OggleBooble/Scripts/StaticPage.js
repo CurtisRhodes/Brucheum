@@ -1,4 +1,5 @@
-﻿var rotationSpeed = 5123;
+﻿var service = "https://api.curtisrhodes.com/";
+var rotationSpeed = 5123;
 var intervalSpeed = 1100;
 var carouselItemArray = new Array();
 var imageIndex = 0;
@@ -16,6 +17,22 @@ var selectedImageLinkId;
 var selectedImage;
 var staticPageFolderName;
 var fullPageName;
+
+$(document).ready(function () {
+
+    var cookie = getCookie("User");
+
+    if (cookie !== "") {
+        alert("cookie: " + cookie);
+        $('#divNotLogedIn').hide();
+        $('#divLogedIn').show();
+        $('#helloUser').html("hello: " + cookie);
+    }
+
+    logVisit(cookie);
+
+});
+
 
 function loadImageLinks() {
     $.ajax({
@@ -134,7 +151,7 @@ function showCatListDialog(root) {
     $('#staticCatTreeContainer').dialog({
         show: { effect: "fade" },
         hide: { effect: "blind" },
-        position: ({ my: 'left top', at: 'left top', of: $('#middleColumn') }),
+        position: { my: 'left top', at: 'left top', of: $('#middleColumn') },
         width: 400,
         height: 600
     });
@@ -147,6 +164,27 @@ function staticCatTreeContainerClick(path, id, treeId) {
     }
     else
         alert("dirTreeClick treeId: " + treeId);
+}
+
+function logVisit(userName) {
+    $('#footerMessage').html("logging visit");
+    //alert("ipAddress: " + ipAddress);
+    $.ajax({
+        type: "POST",
+        url: service + "api/HitCounter",
+        data: { UserName: userName, IpAddress: "xxx", AppName: "static OggleBooble" },
+        //data: visitModel,
+        success: function (successModel) {
+            if (successModel.Success === "ok") {
+                $('#headerMessage').html(successModel.ReturnValue);
+            }
+            else
+                alert(successModel.Success);
+        },
+        error: function (jqXHR, exception) {
+            alert("HitCounter/LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
 }
 
 function showCustomMessage(blogId) {
@@ -167,85 +205,81 @@ function showCustomMessage(blogId) {
             alert("showSiteContent xhr: " + getXHRErrorDetails(xhr));
         }
     });
-    //if ($('#pornWarning').html() == "")
 }
 
-function staticPageShowRegisterDialog(){
-    if (!isNullorUndefined($('#btnLayoutLogin').offset())) {
-        var loff = $('#btnLayoutLogin').offset().left;
-        $('#btnHeaderLoginSpinner').css("left", loff + 30);
-        //$('#btnHeaderLoginSpinner').show();
-    }
+function staticPageShowLoginDialog() {
 
-    $('#modalContent').html($('#registerUserDialog').fadeIn());
-    $('#modalContainer').show();
-    $('#btnHeaderRegisterSpinner').hide();
+    if (typeof pause === 'function') 
+        pause();
 
+    $('#loginDialog').fadeIn();
 
-    //$('#registerUserDialog').fadein();
-
-
-    //$.ajax({
-    //    type: "get",
-    //    url: "/Login/Register",
-    //    datatype: "json",
-    //    success: function (data) {
-    //        $('#modalContent').html(data);
-    //        $('#modalContainer').show();
-    //        $('#btnHeaderRegisterSpinner').hide();
-    //    },
-    //    error: function (jqXHR, exception) {
-    //        alert("RegisterPopup XHR error: " + getXHRErrorDetails(jqXHR, exception));
-    //    }
-    //});
+    //if (!isNullorUndefined($('#btnLayoutLogin').offset())) {
+    //    var loff = $('#btnLayoutLogin').offset().left;
+    //    $('#btnHeaderLoginSpinner').css("left", loff + 30);
+    //    $('#btnHeaderLoginSpinner').show();
+    //}
+    //$('#modalContent').html($('#loginDialog').fadeIn());
+    //$('#modalContainer').show();
+    //$('#btnHeaderRegisterSpinner').hide();
 }
 
-$('#btnRegister').click(function () {
-    if (validate()) {
-        try {
-            unBind();
-            $.ajax({
-                type: "POST",
-                url: service + "/api/Login/",
-                data: user,
-                datatype: "json",
-                success: function (response) {
-                    if (response.success === "ok") {
-                        //alert("Log In Success!");
-                        clearModal();
-                        //var userId = response.UserId;
-                        $.ajax({
-                            type: "get",
-                            url: "/Login/SetOggleBoobleCookie?userName=" + userName + "&userId=" + userId + "&useCookie=true",
-                            datatype: "json",
-                            success: function (success) {
-                                if (success === "ok")
-                                    //$("#divlogin").load(location.href + " #divlogin");
-                                    location.reload(true);
-                                //clearModal();
-                                else
-                                    alert("SetOggleBoobleCookie error: " + success);
-                            },
-                            error: function (xhr) {
-                                displayStatusMessage("alert-danger", "error: " + xhr.statusText);
-                                alert("SetBrucheumCookie  error: " + xhr.statusText);
-                            }
-                        });
-                    }
-                    else {
-                        alert("Register post: " + response.success);
-                        //displayStatusMessage("alert-danger", response, false);
-                    }
-                },
-                error: function () {
-                    alert("Login Post failed");
-                }
-            });
-        } catch (e) {
-            alert("Login Post error: " + e);
+function postLogin() {
+
+    expires = new Date();
+    expires.setTime(expires.getTime() + 1 * 24 * 60 * 60 * 1000);
+    document.cookie = 'User=' + userName + ';expires=' + expires.toUTCString();
+
+    $('#registerUserDialog').fadeOut();
+}
+
+function getCookie(cname) {
+    if (cname === null)
+        cname = "User";
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
         }
     }
-});
+    return decodedCookie;
+}
+
+function staticPageShowRegisterDialog() {
+
+    $('#registerUserDialog').fadeIn();
+
+    //if (!isNullorUndefined($('#btnLayoutLogin').offset())) {
+    //    var loff = $('#btnLayoutLogin').offset().left;
+    //    $('#btnHeaderLoginSpinner').css("left", loff + 30);
+    //    $('#btnHeaderLoginSpinner').show();
+    //}
+    //$('#modalContent').html($('#registerUserDialog').fadeIn());
+    //$('#modalContainer').show();
+    //$('#btnHeaderRegisterSpinner').hide();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

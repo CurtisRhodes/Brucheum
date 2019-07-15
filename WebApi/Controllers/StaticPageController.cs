@@ -23,7 +23,7 @@ namespace WebApi.Controllers
         private int filesProcessed = 0;
 
         [HttpGet]
-        public string Build(int parentFolder, string userName, string service)
+        public string Build(int parentFolder, string userName)
         {
             string success = "";
             {
@@ -42,7 +42,7 @@ namespace WebApi.Controllers
                         //CreateIndexPage(categoryFolder.RootFolder, userName);
 
                         string folderName = categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
-                        success = ProcessFolder(parentFolder, categoryFolder.RootFolder, folderName, userName, db, service);
+                        success = ProcessFolder(parentFolder, categoryFolder.RootFolder, folderName, userName, db);
                     }
                 }
                 catch (Exception e) { success = Helpers.ErrorDetails(e); }
@@ -82,7 +82,7 @@ namespace WebApi.Controllers
             return success;
         }
 
-        private string ProcessFolder(int folderId, string rootFolder, string folderName, string userName, OggleBoobleContext db, string service)
+        private string ProcessFolder(int folderId, string rootFolder, string folderName, string userName, OggleBoobleContext db)
         {
             string success = "";
             try
@@ -98,13 +98,12 @@ namespace WebApi.Controllers
                     "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, pageTitle) +
                     "\n<body style='margin-top:105px'>\n" +
                     HeaderHtml(folderId) +
-                    BodyHtml(folderId, rootFolder, userName) + CommentDialog() + CategoryDialog() + ModelInfoDialog() +
+                    GalleryPageBodyHtml(folderId, rootFolder) + CommentDialog() + CategoryDialog() + ModelInfoDialog() +
                     "<div id='staticCatTreeContainer' class='oggleHidden categoryListContainer' title=" + rootFolder + "></div>" +
-                    "<script>var staticPageFolderId=" + folderId + "; var staticPageFolderName='" + folderName + "' var service='" + service + "'; " +
+                    "<script>var staticPageFolderId=" + folderId + "; var staticPageFolderName='" + folderName + "'; " +
                     "var staticPageRootFolder='" + rootFolder + "'; var staticPageCurrentUser ='" + userName + "'; </script>\n" +
-                    "<script src='http://pages.ogglebooble.com/script/staticPage.js'></script>\n" +
                     "<script> $(document).ready(function () { window.addEventListener('resize', resizeStaticPage);resizeStaticPage();loadImageLinks()});</script>\n" +
-                    ImageViewer() + RegisterDialog() + FooterHtml(rootFolder) + "\n</body>\n</html>";
+                    ImageViewer() + LoginDialog() + RegisterDialog() + FooterHtml(rootFolder) + "\n</body>\n</html>";
 
                 success = WriteFileToDisk(staticContent, rootFolder, pageTitle);
                 if (success == "ok")
@@ -117,7 +116,7 @@ namespace WebApi.Controllers
                         filesProcessed += vwDirTree.FileCount;
                         SignalRHost.ProgressHub.ShowProgressBar(totalFiles, filesProcessed);
 
-                        ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName, userName, db, service);
+                        ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName, userName, db);
                     }
                 }
             }
@@ -144,7 +143,7 @@ namespace WebApi.Controllers
                 "   <link href='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css' rel='stylesheet'>\n" +
                 "   <script src='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js'></script>\n" +
                 "   <link href='http://pages.ogglebooble.com/css/jqueryui.css' rel='stylesheet' />\n" +
-                "   <link rel='icon' type='image/png' href='pages.ogglebooble.com/images/favicon.png' />" +
+                "   <link rel='icon' type='image/png' href='http://pages.ogglebooble.com/images/favicon.png' />" +
                 "   <script src='http://pages.ogglebooble.com/script/GlobalFunctions.js' type='text/javascript'></script>\n" +
                 "   <script src='http://pages.ogglebooble.com/script/ResizeThreeColumnPage.js' type='text/javascript'></script>\n" +
                 "   <script src='http://pages.ogglebooble.com/script/ImageViewer.js' type='text/javascript'></script>\n" +
@@ -152,6 +151,7 @@ namespace WebApi.Controllers
                 "   <script src='http://pages.ogglebooble.com/script/CategoryDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='http://pages.ogglebooble.com/script/ModelInfoDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='http://pages.ogglebooble.com/script/DirTree.js'></script>\n" +
+                "   <script src='http://pages.ogglebooble.com/script/StaticPage.js'></script>\n" +
                 "   <link href='http://pages.ogglebooble.com/css/default.css'     rel='stylesheet'/>\n" +
                 "   <link href='http://pages.ogglebooble.com/css/fixedHeader.css' rel='stylesheet'/>\n" +
                 "   <link href='http://pages.ogglebooble.com/css/imageViewer.css' rel='stylesheet'/>\n" +
@@ -160,11 +160,12 @@ namespace WebApi.Controllers
                 "   <link href='http://pages.ogglebooble.com/css/modelInfoDialog.css' rel='stylesheet'/>\n" +
                 "   <link href='http://pages.ogglebooble.com/css/footer.css'      rel='stylesheet'/>\n" +
                 "   <link href='http://pages.ogglebooble.com/css/ImagePage.css'   rel='stylesheet'/>\n" +
+                "   <link href='http://pages.ogglebooble.com/css/loginDialog.css'   rel='stylesheet'/>\n" +
                 "   <title>" + pageName + " - OggleBooble</title>" +
                 "   <meta name='Title' content='" + pageName + "' property='og:title'/>\n" +
                 "   <meta name='description' content='" + Uri.EscapeUriString(metaTagResults.Description) + "'/>\n" +
                 "   <meta property='og:type' content='website' />\n" +
-                "   <meta property='og:url' content='https://pages.OggleBooble.com/" + pageName + ".html'/>\n" +
+                "   <meta property='og:url' content='http://pages.OggleBooble.com/" + pageName + ".html'/>\n" +
                 "   <meta name='Keywords' content='" + articleTagString + "'/>\n" +
                 "</head>";
         }
@@ -223,7 +224,7 @@ namespace WebApi.Controllers
                 {
                     headerSubtitle = "<a href='http://pages.ogglebooble.com/porn/cock suckers.html'> blowjobs </a>," +
                     "<a href='http://pages.ogglebooble.com/porn/cum shots.html'> cum shots</a>," +
-                    "<a href='http://pages.ogglebooble.com/porn/kinky.html'> kinky </ a >, and other" +
+                    "<a href='http://pages.ogglebooble.com/porn/kinky.html'> kinky </a>, and other" +
                     "<a href='http://pages.ogglebooble.com/porn/naughty.html'> naughty behavior</a> categorized";
                     colorClass = "pornColors";
                     bannerLogo = "http://pages.ogglebooble.com/images/csLips02.png";
@@ -263,7 +264,7 @@ namespace WebApi.Controllers
                                 "</div>\n" +
                                 "<div class='oggleHidden inline floatRight' id='divLogedIn' style='display: none;'>\n" +
                                     "<div class='menuTab floatRight'><a href='javascript:logoutPlease()'>Log Out</a></div>\n" +
-                                    "<div title='modify profile' class='menuTab floatRight'><a href='javascript:profilePease()'>Hello  </a></div>\n" +
+                                    "<div id='helloUser' title='modify profile' class='menuTab floatRight'><a href='javascript:profilePease()'>Hello  </a></div>\n" +
                                 "</div>\n" +
                                 "<div class='oggleHidden inline floatRight' id='divNotLogedIn' style='display: block;'>\n" +
                                     "<div class='menuTab floatRight' id='btnLayoutRegister'>\n" +
@@ -271,7 +272,7 @@ namespace WebApi.Controllers
                                         "<img class='btnSpinnerImage' id='btnHeaderRegisterSpinner' src='http://pages.ogglebooble.com/images/loader.gif'/>\n" +
                                     "</div>\n" +
                                 "<div class='menuTab floatRight' id='btnLayoutLogin'>\n" +
-                                    "<a href='javascript:loginPlease()'>Log In</a>\n" +
+                                    "<a href='javascript:staticPageShowLoginDialog()'>Log In</a>\n" +
                                     "<img class='btnSpinnerImage' id='btnHeaderLoginSpinner' src='http://pages.ogglebooble.com/images/loader.gif'/>\n" +
                                 "</div>\n" +
                             "</div>\n" +
@@ -281,7 +282,7 @@ namespace WebApi.Controllers
             "</div>";
         }
 
-        private string BodyHtml(int folderId, string rootFolder, string currentUser)
+        private string GalleryPageBodyHtml(int folderId, string rootFolder)
         {
             string bodyHtml = 
             "<div class='threeColumnArray'>\n" +
@@ -290,7 +291,10 @@ namespace WebApi.Controllers
                     "<div id='divStatusMessage'></div>\n" +
                     "<div id='imageContainer' class='flexWrapContainer'>\n";
 
-            var idx = 0;
+            string imageFolderFrame = "folderImageFrameName";
+            if (rootFolder == "porn")
+                imageFolderFrame = "pornFolderImageFrame";
+
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
                 //  SUBFOLDERS
@@ -301,10 +305,11 @@ namespace WebApi.Controllers
                     bodyHtml += "<div class='folderImageOutterFrame'>" +
                         "<div class='folderImageFrame' onclick='window.location.href=\"" + subDir.FolderName + ".html\"'>" +
                                 "<img class='folderImage' src='" + subDir.Link + "'/>" +
-                                "<div class='folderImageFrameName'>" + subDir.FolderName + " (" + subDirFileCount + ")</div></div></div>\n";
+                                "<div class='"+ imageFolderFrame + "'>" + subDir.FolderName + " (" + subDirFileCount + ")</div></div></div>\n";
                 }
                 // IMAGES 
                 List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).ToList();
+                int idx = 0;
                 foreach (VwLink vwLink in vwLinks)
                 {
                     bodyHtml += "<div class='imageFrame'><img id='" + vwLink.LinkId + "' idx='" + idx +
@@ -428,13 +433,13 @@ namespace WebApi.Controllers
                               "<div><a href='http://pages.ogglebooble.com'>Oggle Booble</a></div>\n" +
                           "</div>\n" +
                           "<div class='footerCol'>\n" +
-                              "<div><a href='http://ogglebooble.com/Home/BoobsRanker'>Boobs Rater</a></div>\n" +
+                              "<div><a href='https://ogglebooble.com/Home/BoobsRanker'>Boobs Rater</a></div>\n" +
                               "<div><a href='/Home/ImagePage?folder=908'>Rejects</a></div>\n" +
-                              "<div><a href='http://ogglebooble.com/Home/Videos'>Nasty Videos</a></div>\n" +
+                              "<div><a href='https://ogglebooble.com/Home/Videos'>Nasty Videos</a></div>\n" +
                           "</div>\n" +
                           "<div class='footerCol'>\n" +
                               "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
-                              "<div><a href='http://ogglebooble.com/Admin/Blog'>Blog</a></div>\n" +
+                              "<div><a href='https://ogglebooble.com/Admin/Blog'>Blog</a></div>\n" +
                               "<div><a href='http://pages.ogglebooble.com/porn/sluts.html'>Archive</a></div>\n" +
                           "</div>\n" +
                     "</div>\n" +
@@ -454,13 +459,13 @@ namespace WebApi.Controllers
                             "<div><a href='http://pages.ogglebooble.com/porn.html'>Nasty Porn</a></div>\n" +
                           "</div>\n" +
                           "<div class='footerCol'>\n" +
-                              "<div><a href='http://ogglebooble.com/Home/BoobsRanker'>Boobs Rater</a></div>\n" +
+                              "<div><a href='https://ogglebooble.com/Home/BoobsRanker'>Boobs Rater</a></div>\n" +
                               "<div id='Rejects'></div>\n" +
                               "<div><a href='http://pages.ogglebooble.com/playboy/playboy.html'>Centerfolds</a></div>\n" +
                           "</div>\n" +
                           "<div class='footerCol'>\n" +
                               "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
-                              "<div><a href='http://ogglebooble.com/Admin/Blog'>Blog</a></div>\n" +
+                              "<div><a href='https://ogglebooble.com/Admin/Blog'>Blog</a></div>\n" +
                               "<div><a href='http://pages.ogglebooble.com/archive/archive.html'>Archive</a></div>\n" +
                           "</div>\n" +
                     "</div>\n" +
@@ -476,7 +481,7 @@ namespace WebApi.Controllers
         {
             return
             "<div id='registerUserDialog' class='oggleHidden'>\n" +
-            "    < div class='dialogHeader'>\n" +
+            "    <div class='dialogHeader'>\n" +
             "        welcome to<span>OggleBooble</span>\n" +
             "        <div id = 'btnClose' class='divCloseButton'>\n" +
             "            <img height = '19' src='http://pages.ogglebooble.com/images/powerOffRed01.png'/>\n" +
@@ -484,7 +489,7 @@ namespace WebApi.Controllers
             "    </div>\n" +
             "    <div class='registerUserDialogCrudContainer'>\n" +
             "        <div style = 'clear:both' ></div>\n" +
-            "        < div id='errUserName' class='validationError'>Required</div>\n" +
+            "        <div id='errUserName' class='validationError'>Required</div>\n" +
             "        <label>user name</label><br>\n" +
             "        <input id = 'txtUserName' type='text' class='roundedInput' placeholder='your go by name'><br>\n" +
             "        <div id = 'errPassword' class='validationError'>Required</div>\n" +
@@ -493,7 +498,7 @@ namespace WebApi.Controllers
             "        <label>retype password</label><br>\n" +
             "        <input id = 'clearPasswordRetype' type= 'password' class='roundedInput' autocomplete='off' placeholder='********'><br>\n" +
             "        <div id = 'divRememberMe' >\n" +
-            "            < input id='ckRememberMe' type='checkbox' checked='checked' />Remember Me ?  (<span>uses a cookie</span>)\n" +
+            "            <input id='ckRememberMe' type='checkbox' checked='checked' />Remember Me ?  (<span>uses a cookie</span>)\n" +
             "        </div>\n" +
             "        <div id = 'divShowDetails'>Extra Details\n" +
             "            <div class='divCloseButton'>\n" +
@@ -517,17 +522,88 @@ namespace WebApi.Controllers
             "</div>\n";
         }
 
+        private string LoginDialog() {
+            return
+            "<div id='loginDialog' class='modalDialog'>\n" +
+            "    <div id='divStatusMessage'></div>\n" +
+            "    <div class='dialogHeader'>\n" +
+            "        Log In to <span>OggleBooble</span>\n" +
+            "        <div onclick='$(\"#loginDialog\").hide();' class='dialogCloseButton'>\n" +
+            "            <img height='19' src='http://pages.ogglebooble.com/images/powerOffRed01.png' />\n" +
+            "        </div>\n" +
+            "    </div>\n" +
+            "    <div class='dialogBody'>\n" +
+            "        <div id='errSummary' class='validationError'></div>\n" +
+            "        <div id='errUserName' class='validationError'>Required</div>\n" +
+            "        <label>User Name</label><br>\n" +
+            "        <input id='txtUserName' type='text' class='roundedInput'><br>\n" +
+            "        <div id='errPassword' class='validationError'>Required</div>\n" +
+            "        <label>Password</label><br>\n" +
+            "        <input id='clearPassword' type='password' class='roundedInput' autocomplete='off' placeholder='********'><br>\n" +
+            "        <button id='btnLoginPopupLogin' class='roundendButton' onclick='postLogin()'>\n" +
+            "            <img id='btnLoginSpinnerImage' class='btnSpinnerImage' src='http://pages.ogglebooble.com/images/loader.gif' />\n" +
+            "            Log in\n" +
+            "        </button>\n" +
+            "        <div class='ckRemember'>\n" +
+            "            <input id='ckRememberMe' type='checkbox' checked='checked' />  Remember Me ?  (<span>uses a cookie</span>)\n" +
+            "        </div>\n" +
+            "        <div class='forgot'>\n" +
+            "            <a id='forgot-pw' href='/users/account-recovery'>forgot password ?</a>\n" +
+            "        </div>\n" +
+
+            "        <div>\n" +
+            "            <div class='clickable inline' onclick='transferToRegisterPopup()'>Register</div>\n" +
+            "            <div onclick='$(\"#loginDialog\").hide();' class='clickable inline'>Cancel</div>\n" +
+            "        </div>\n" +
+            "    </div>\n" +
+            "    <div style='clear:both'></div>\n" +
+            "    <div class='or-container'>\n" +
+            "        <hr class='or-hr' />\n" +
+            "        <div class='or'>or</div>\n" +
+            "    </div>\n" +
+            "    <div>\n" +
+            "        <div class='externalLogin'>\n" +
+            "            <div class='fb-login-button' data-max-rows='1' data-size='medium' data-button-type='login_with'\n" +
+            "                 data-show-faces='false' data-auto-logout-link='false' data-use-continue-as='false'\n" +
+            "                 scope='public_profile,email' onlogin='checkFaceBookLoginState();'>\n" +
+            "                login with facebook\n" +
+            "            </div>\n" +
+
+            "            @*<FB:login-button scope='public_profile,email' onlogin='checkFaceBookLoginState();'>\n" +
+            "                    <svg class='svg-icon iconFacebook' width='18' height='18' viewBox='0 0 18 18'>\n" +
+            "                        <path d='M1.88 1C1.4 1 1 1.4 1 1.88v14.24c0 .48.4.88.88.88h7.67v-6.2H7.46V8.4h2.09V6.61c0-2.07 1.26-3.2 3.1-3.2.88 0 1.64.07 1.87.1v2.16h-1.29c-1 0-1.19.48-1.19 1.18V8.4h2.39l-.31 2.42h-2.08V17h4.08c.48 0 .88-.4.88-.88V1.88c0-.48-.4-.88-.88-.88H1.88z' fill='#3C5A96'></path>\n" +
+            "                    </svg>\n" +
+            "                    Facebook\n" +
+            "                </FB:login-button>*@\n" +
+            "        </div>\n" +
+            "        <div class='externalLogin google-login' data-provider='google' data-oauthserver='https://accounts.google.com/o/oauth2/auth' data-oauthversion='2.0'>\n" +
+            "            <svg aria-hidden='true' class='svg-icon native iconGoogle' width='18' height='18' viewBox='0 0 18 18'>\n" +
+            "                <g>\n" +
+            "                    <path d='M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z' fill='#4285F4'></path>\n" +
+            "                    <path d='M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z' fill='#34A853'></path>\n" +
+            "                    <path d='M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z' fill='#FBBC05'></path>\n" +
+            "                    <path d='M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z' fill='#EA4335'></path>\n" +
+            "                </g>\n" +
+            "            </svg>\n" +
+            "            Google\n" +
+            "        </div>\n" +
+            "    </div>\n" +
+            "</div>\n";
+
+
+        }
+
         private string IndexPageHtml()
         {
             return "<div class='threeColumnArray'>\n" +
                 "    <div id='leftColumn'>\n" +
                 "        <div class='leftColumnList'>\n" +
-                "            <div onclick='window.location.href=\"http://ogglebooble.com/Home/Tramsitions\"'>Transitions</div>\n" +
-                "            <div onclick='window.location.href=\"http://ogglebooble.com/Home/BoobsRanker\"'>Boobs Rater</div>\n" +
+                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/Tramsitions\"'>Transitions</div>\n" +
+                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/BoobsRanker\"'>Boobs Rater</div>\n" +
                 "            <div onclick='showCustomMessage(38)'>Let me Expalin</div>\n" +
                 "            <div onclick='showCatListDialog()'>Category List</div>\n" +
-                "            <div onclick='window.location.href=\"http://ogglebooble.com/Admin/Blog\"'>Blog</div>\n" +
-                "            <div onclick='window.location.href=\"http://ogglebooble.com/Home/Mobile?folder=boobs\"'>Mobile</div>\n" +
+                "            <div onclick='window.location.href=\"https://ogglebooble.com/Admin/Blog\"'>Blog</div>\n" +
+                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/Mobile?folder=boobs\"'>Mobile</div>\n" +
                 "            <div onclick='showCustomMessage(35)'>Nasty Porn</div>\n" +
                 "        </div>\n" +
                 "    </div>\n" +
@@ -561,6 +637,10 @@ namespace WebApi.Controllers
                 "        </div>\n" +
                 "    </div>\n" +
                 "    <div id='rightColumn'></div>\n" +
+                "</div>\n" +
+                "<div id='promoContainer' class='ogglePromoContainer' onclick='killPromoMessages()'>\n" +
+                "    <div id='promoContainerTitle' class='ogglePromoTitle'></div>\n" +
+                "    <div id='promoContainerText' class='ogglePromoText'></div>\n" +
                 "</div>\n";
         }
 
@@ -570,11 +650,11 @@ namespace WebApi.Controllers
                 "    <div id='leftColumn'>\n" +
                 "        <div class='leftColumnList'>\n" +
                 "            <div onclick='window.location.href=\"http://pages.ogglebooble.com/index.html\"'>OggleBooble</div>\n" +
-                "            <div onclick='window.location.href=\"http://ogglebooble.com/Home/BoobsRanker\"'>Boobs Rater</div>\n" +
+                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/BoobsRanker\"'>Boobs Rater</div>\n" +
                 "            <div onclick='showCatListDialog()'>Category List</div>\n" +
-                "            <div onclick='window.location.href=\"http://ogglebooble.com/Admin/Blog\"'>Blog</div>\n" +
-                "            <div onclick='window.location.href=\"http://ogglebooble.com/Home/Mobile?folder=boobs\"'>Mobile</div>\n" +
-                "            <div onclick='window.location.href=\"http://ogglebooble.com/Home/Videos\"'>Videos</div>\n" +
+                "            <div onclick='window.location.href=\"https://ogglebooble.com/Admin/Blog\"'>Blog</div>\n" +
+                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/Mobile?folder=boobs\"'>Mobile</div>\n" +
+                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/Videos\"'>Videos</div>\n" +
                 "        </div>\n" +
                 "    </div>\n" +
                 "    <div id='middleColumn'>\n" +
@@ -610,7 +690,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public string CreateIndexPage(string rootFolder, string userName, string service, string pageTitle, int metaTagFolderId)
+        public string CreateIndexPage(string rootFolder, string userName, string pageTitle, int metaTagFolderId)
         {
             string success = "";
             try
@@ -642,11 +722,10 @@ namespace WebApi.Controllers
                     staticContent += PornIndexPageHtml();
 
                 staticContent += sb.ToString() +
-                    "<script>var staticPageFolderId=" + metaTagFolderId + "; var staticPageRootFolder='" + rootFolder +
-                    "'; var service='" + service + "' var staticPageCurrentUser ='" + userName + "'; </script>\n" +
-                    "<script src='http://pages.ogglebooble.com/script/staticPage.js'></script>\n" +
+                    "<script>var staticPageFolderId=" + metaTagFolderId + "; var staticPageRootFolder='" + rootFolder + "'; " +
+                    "var staticPageCurrentUser ='" + userName + "'; </script>\n" +
                     "<script src='http://pages.ogglebooble.com/script/staticIndexPage.js'></script>\n" +
-                    FooterHtml(rootFolder) + "\n</body>\n</html>";
+                    LoginDialog() + RegisterDialog() + FooterHtml(rootFolder) + "\n</body>\n</html>";
 
                 success = WriteFileToDisk(staticContent, "", pageTitle);
             }

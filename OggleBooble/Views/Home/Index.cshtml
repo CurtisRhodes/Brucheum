@@ -21,8 +21,8 @@
         <div class="flexContainer">
 
             <div class="floatLeft">
-                <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('playboy', $(this).is(':checked'), 1000)" /> Include Centerfolds</div>
-                <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('archive', $(this).is(':checked'), 50000)" /> Include Archive</div>
+                <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('playboy', $(this).is(':checked'), 0, 1000)" /> Include Centerfolds</div>
+                <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('archive', $(this).is(':checked'), 0, 50000)" /> Include Archive</div>
             </div>
 
             <div class="floatLeft">
@@ -70,39 +70,8 @@
 
         launchPromoMessages();
 
-        logVisit();
 
     });
-
-    function logVisit() {
-
-        var visitModel = {
-            UserName : userName,
-            IpAddress : ipAddress,
-            AppName : "OggleBooble"
-        };
-
-        $('#footerMessage').html("logging visit");
-        //alert("ipAddress: " + ipAddress);
-        $.ajax({
-            type: "POST",
-            url: service + "api/HitCounter",
-            data: { UserName : userName, IpAddress : ipAddress, AppName : "OggleBooble" },
-            //data: visitModel,
-            success: function (successModel) {
-                if (successModel.Success == "ok") {
-
-                    $('#headerMessage').html(successModel.ReturnValue);
-                }
-                else
-                    alert(successModel.Success);
-            },
-            error: function (jqXHR, exception) {
-                $('#blogLoadingGif').hide();
-                alert("HitCounter/LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
-    }
 
     function launchPromoMessages() {
         $.ajax({

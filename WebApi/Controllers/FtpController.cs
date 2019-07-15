@@ -711,25 +711,32 @@ namespace WebApi
                     if (rootFolder == "root")
                         rootFolder = newFolderName;
 
-                    CategoryFolder newFolder = new CategoryFolder()
+                    string destinationFtpPath = ftpHost + rootFolder + ".ogglebooble.com/" + Helpers.GetFtpParentPathWithoutRoot(parentId) + newFolderName.Trim();
+
+                    if (FtpUtilies.DirectoryExists(destinationFtpPath))
+                        successModel.Success = "folder already exists";
+                    else
                     {
-                        Parent = parentId,
-                        FolderName = newFolderName.Trim(),
-                        RootFolder = rootFolder
-                    };
-                    db.CategoryFolders.Add(newFolder);
-                    db.SaveChanges();
-                    successModel.ReturnValue = newFolder.Id.ToString();
+                        successModel.Success = FtpUtilies.CreateDirectory(destinationFtpPath);
+                        if (successModel.Success == "ok")
+                        {
+                            CategoryFolder newFolder = new CategoryFolder()
+                            {
+                                Parent = parentId,
+                                FolderName = newFolderName.Trim(),
+                                RootFolder = rootFolder
+                            };
+                            db.CategoryFolders.Add(newFolder);
+                            db.SaveChanges();
+                            successModel.ReturnValue = newFolder.Id.ToString();
 
-                    string destinationFtpPath = ftpHost + rootFolder + ".ogglebooble.com/" + Helpers.GetFtpParentPathWithoutRoot(newFolder.Id) + newFolderName.Trim();
-
-                    successModel.Success = FtpUtilies.CreateDirectory(destinationFtpPath);
-                    if (successModel.Success == "ok")
-                    {
-                        db.CategoryFolderDetails.Add(new CategoryFolderDetail() { FolderId = newFolder.Id });
-                        db.SaveChanges();
-                    }
-
+                            if (successModel.Success == "ok")
+                            {
+                                db.CategoryFolderDetails.Add(new CategoryFolderDetail() { FolderId = newFolder.Id });
+                                db.SaveChanges();
+                            }
+                        }
+                    }                    
                 }
             }
             catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }

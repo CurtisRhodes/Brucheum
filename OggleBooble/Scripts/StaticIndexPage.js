@@ -2,11 +2,15 @@
 var totalRows = 0;
 var arrayLength;
 var imageIndex;
-var service = "http://localhost:40395/";
+var service = "https://api.curtisrhodes.com/";
+var promoIdx = 0;
+var promoMessagesArray = new Array();
+var promoMessageRotator;
+var promoMessageRotationSpeed = 8000;
 
 $(document).ready(function () {
     loadHardCoded();
-    //loadMoreImages();
+    launchPromoMessages();
 });
 
 function loadHardCoded() {   
@@ -85,13 +89,13 @@ function getMoreImages(skip, take) {
                 console.log("getMoreImages took: " + delta.toFixed(3));
             },
             error: function (jqXHR, exception) {
-                alert("LoginPopup XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                alert("AddMoreImages XHR error: " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     }, 10000);
 
     var allowthemtoLoadIntervar = setInterval(function () {
-        arrayLength += 500;
+        arrayLength += 250;
         arrayLength = Math.min(arrayLength, carouselArray.length);
         if (arrayLength === carouselArray.length)
             clearInterval(allowthemtoLoadIntervar);
@@ -158,4 +162,49 @@ function resume() {
     clearInterval(CarouselInterval);
     startCarousel();
     $('#pauseButton').html("||");
+}
+
+function launchPromoMessages() {
+    $.ajax({
+        type: "GET",
+        url: service + "/api/OggleBlog/GetBlogList?commentType=PRO",
+        success: function (blogCommentsContainer) {
+            if (blogCommentsContainer.Success === "ok") {
+                $.each(blogCommentsContainer.blogComments, function (idx, blogComment) {
+                    promoMessagesArray.push({
+                        FolderId: blogComment.Id,
+                        Link: blogComment.Link,
+                        CommentTitle: blogComment.CommentTitle,
+                        CommentText: blogComment.CommentText
+                    });
+                });
+                showPromoMessages();
+            }
+            else {
+                $('#blogLoadingGif').hide();
+                alert("loadPromoMessages: " + blogCommentsContainer.Success);
+            }
+        },
+        error: function (jqXHR, exception) {
+            $('#blogLoadingGif').hide();
+            alert("loadPromoMessages jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+}
+function showPromoMessages() {
+    $('#promoContainer').fadeIn();
+    var currentItem = promoMessagesArray[promoIdx];
+    $('#promoContainerTitle').html(currentItem.CommentTitle);
+    $('#promoContainerText').html(currentItem.CommentText);
+
+    promoMessageRotator = setInterval(function () {
+
+        if (promoIdx === promoMessagesArray.length) {
+            promoIdx = 0;
+        }
+        currentItem = promoMessagesArray[promoIdx];
+        $('#promoContainerTitle').html(currentItem.CommentTitle);
+        $('#promoContainerText').html(currentItem.CommentText);
+        promoIdx++;
+    }, promoMessageRotationSpeed);
 }

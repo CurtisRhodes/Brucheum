@@ -8,13 +8,13 @@ $(function () {
         position: ({ my: 'right top', at: 'right top', of: $('#middleColumn') }),
         width: "650"
     });
-    buildDirTree($('#moveDialogDirTree'), "moveDialogDirTree", 0);
 });
 
 function showMoveCopyDialog(mode, link, folderId) {
     MoveCopyImageModel.Mode = mode;
     MoveCopyImageModel.Link = link;
     MoveCopyImageModel.SourceFolderId = folderId;
+    buildDirTree($('#moveDialogDirTree'), "moveDialogDirTree", 0);
     $('#btnGo').html(mode);
     $('#moveCopyDialog').dialog('option', 'title', mode + " Image Link");
     $('#copyDialogImage').attr("src", link);

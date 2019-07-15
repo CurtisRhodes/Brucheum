@@ -60,6 +60,8 @@ function getBreadCrumbs() {
 
 function logPageHit() {
 
+    if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
+    
     var hitCounterModel = {
         IpAddress: ipAddress,
         AppName: "OggleBooble",
@@ -202,63 +204,53 @@ function processImages(imageLinksModel, start) {
             }
         }
         else {
-            if (imageLinksModel.ParentId === 1131) {
-                $('#footerMessage').html("centerfolds");
-                $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
-                    " idx=" + fileCount + " class='centerfold' src='" + imageModelFile.Link + "'/></div>");
-            }
-            else {
-
-                $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
-                    " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
-            }
+            $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
+                " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
         }
-
-        $('#footerMessage').html("fileCount: " + ++fileCount);
-
         $('.thumbImage').click(function () {
             viewerShowing = true;
-            launchViewer(imageArray, $(this).attr("idx"), folderId, imageLinksModel.FolderName,  currentUser);
+            alert("click");
+            launchViewer(imageArray, $(this).attr("idx"), folderId, imageLinksModel.FolderName, currentUser);
             //launchViewer(imageArray, imageIndex, folderId, folderName, currentUser)
         });
+    });
+    $('#footerMessage').html("fileCount: " + ++fileCount);
 
-        $('.thumbImage').contextmenu(function () {
-            event.preventDefault();
-            window.event.returnValue = false;
-            currentContextLinkId = $(this).attr("id");
-            var thisImage = $('#' + currentContextLinkId + '');
-            var picpos = thisImage.offset();
-            var picLeft = picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50;
-            $('#thumbImageContextMenu').css("top", picpos.top + 5);
-            $('#thumbImageContextMenu').css("left", picLeft);
-
-            $.ajax({
-                type: "GET",
-                url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + currentContextLinkId,
-                success: function (modelDetails) {
-                    if (modelDetails.Success === "ok") {
-                        selectedImageArchiveFolderId = modelDetails.FolderId;
-                        $('#ctxModelName').html("unknown model");
+    $('.thumbImage').contextmenu(function () {
+        event.preventDefault();
+        window.event.returnValue = false;
+        currentContextLinkId = $(this).attr("id");
+        var thisImage = $('#' + currentContextLinkId + '');
+        var picpos = thisImage.offset();
+        var picLeft = picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50;
+        $('#thumbImageContextMenu').css("top", picpos.top + 5);
+        $('#thumbImageContextMenu').css("left", picLeft);
+        $.ajax({
+            type: "GET",
+            url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + currentContextLinkId,
+            success: function (modelDetails) {
+                if (modelDetails.Success === "ok") {
+                    selectedImageArchiveFolderId = modelDetails.FolderId;
+                    $('#ctxModelName').html("unknown model");
+                    if (modelDetails.RootFolder === "archive") {
+                        $('#ctxModelName').html(modelDetails.FolderName);
+                    }
+                    $('#ctxSeeMore').hide();
+                    if (modelDetails.RootFolder !== rootFolder) {
                         if (modelDetails.RootFolder === "archive") {
-                            $('#ctxModelName').html(modelDetails.FolderName);
-                        }
-                        $('#ctxSeeMore').hide();
-                        if (modelDetails.RootFolder !== rootFolder) {
-                            if (modelDetails.RootFolder === "archive") {
-                                $('#ctxSeeMore').show();
-                            }
+                            $('#ctxSeeMore').show();
                         }
                     }
-                    else
-                        alert("GetModelName: " + modelDetails.Success);
-                },
-                error: function (xhr) {
-                    alert("GetModelName xhr error: " + xhr.statusText);
                 }
-            });
-            $('#thumbImageContextMenu').css('z-index', "200");
-            $('#thumbImageContextMenu').fadeIn();
+                else
+                    alert("GetModelName: " + modelDetails.Success);
+            },
+            error: function (xhr) {
+                alert("GetModelName xhr error: " + xhr.statusText);
+            }
         });
+        $('#thumbImageContextMenu').css('z-index', "200");
+        $('#thumbImageContextMenu').fadeIn();
     });
 
     var delta = (Date.now() - start) / 1000;
@@ -267,10 +259,10 @@ function processImages(imageLinksModel, start) {
     $('#getImagesLoadingGif').hide();
 
     //if (document.domain !== 'localhost') {
-    //if (ipAddress !== "68.203.92.166") {
-    //var emailSubject = currentUser + " just viewed " + folderId;
-    //sendEmailFromJS(emailSubject, "someday it will be someone other than " + ipAddress);
-    //}
+        //if (ipAddress !== "68.203.92.166") {
+            //var emailSubject = currentUser + " just viewed " + folderId;
+            //sendEmailFromJS(emailSubject, "someday it will be someone other than " + ipAddress);
+        //}
 }
 
 function contextMenuAction(action) {

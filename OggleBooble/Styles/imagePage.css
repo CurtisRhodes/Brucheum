@@ -39,6 +39,11 @@
     background-color: var(--thumbnailBorderColor);
 }
 
+.pornFolderImageFrame {
+    text-align: center;
+    background-color: #ffcccc;    
+}
+
 .nonLocalIndicator {
     border-right: dotted 24px #ff00dc;
 }

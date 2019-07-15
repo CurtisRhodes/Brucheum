@@ -41,8 +41,8 @@ function loadComment() {
         type: "PATCH",
         url: service + "/api/OggleBlog?linkId=" + folderDetailModel.LinkId + "&userId=" + folderDetailModel.UserId,
         success: function (comment) {
-            if (comment.Success == "ok") {
-                if (comment.Id != 0) {
+            if (comment.Success === "ok") {
+                if (comment.Id !== 0) {
                     $('#imageCommentEditor').summernote('code', comment.CommentText);
                     $('#txtCommentTitle').val(comment.CommentTitle);
                     folderDetailModel.Id = comment.Id;
@@ -61,7 +61,7 @@ function loadComment() {
 function saveComment() {
     folderDetailModel.CommentTitle = $('#txtCommentTitle').val();
     folderDetailModel.CommentText = $('#imageCommentEditor').summernote('code');
-    if ($('#divSaveFantasy').html() == "save")
+    if ($('#divSaveFantasy').html() === "save")
         addImageComment();
     else
         editImageComment();
@@ -73,7 +73,7 @@ function addImageComment() {
         url: service + "/api/OggleBlog",
         data: folderDetailModel,
         success: function (successModel) {
-            if (successModel.Success == "ok") {
+            if (successModel.Success === "ok") {
                 displayStatusMessage("ok", "Entry Added");
                 $('#divSaveFantasy').html("edit");
                 folderDetailModel.Id = successModel.ReturnValue;
@@ -93,7 +93,7 @@ function editImageComment() {
         url: service + "/api/OggleBlog",
         data: folderDetailModel,
         success: function (success) {
-            if (success == "ok") {
+            if (success === "ok") {
                 displayStatusMessage("ok", "Entry Updated");
             }
             else

@@ -96,6 +96,8 @@ function loadImages(rootFolder, isChecked, skip, take) {
                     if (take === initialTake) {
                         console.log("loadImages(" + rootFolder + ") take: " + initialTake + " took: " + delta.toFixed(3));
                         loadImages(rootFolder, isChecked, initialTake, 80000);
+                        logVisit();
+
                     }
                     else
                         console.log("loadImages(" + rootFolder + ") take: " + Number(carouselInfo.Links.length - initialTake) + " took: " + delta.toFixed(3));
@@ -110,6 +112,25 @@ function loadImages(rootFolder, isChecked, skip, take) {
             }
         });
     }
+}
+function logVisit() {
+    $('#footerMessage').html("logging visit");
+    //alert("ipAddress: " + ipAddress);
+    $.ajax({
+        type: "POST",
+        url: service + "api/HitCounter?userName=" + userName + "&appName=" + userName,
+        success: function (successModel) {
+            if (successModel.Success === "ok") {
+                $('#headerMessage').html(successModel.ReturnValue);
+            }
+            else
+                alert(successModel.Success);
+        },
+        error: function (jqXHR, exception) {
+            $('#blogLoadingGif').hide();
+            alert("HitCounter/LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
 }
 
 function slowlyShowFolderCategoryDialog() {
@@ -239,6 +260,7 @@ function resume() {
 }
 
 function startCarousel() {
+    $('#footerMessage').html("startCarousel");
     intervalBody();
     CarouselInterval = setInterval(function () {
         //setTimeout(function () {

@@ -310,17 +310,8 @@
     <Content Include="Scripts\MoveCopyArchive.js" />
     <Content Include="Scripts\StaticIndexPage.js" />
     <Content Include="Scripts\StaticPage.js" />
-    <Content Include="Static_Pages\Porn.html" />
-    <Content Include="Static_Pages\Index.html" />
     <Content Include="Styles\categoryDialog.css" />
     <Content Include="Styles\imageViewer.css" />
-    <Content Include="Static_Pages\Images\close.png" />
-    <Content Include="Static_Pages\Images\comment.png" />
-    <Content Include="Static_Pages\Images\expand02.png" />
-    <Content Include="Static_Pages\Images\redballon.png" />
-    <Content Include="Static_Pages\Images\slideshow.png" />
-    <Content Include="Static_Pages\Images\slideshowFaster.png" />
-    <Content Include="Static_Pages\Images\slideshowSlower.png" />
     <Content Include="Styles\carousel.css" />
     <Content Include="Styles\Dashboard.css" />
     <Content Include="Styles\editor\cobalt.css" />

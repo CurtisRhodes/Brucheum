@@ -96,7 +96,7 @@ namespace WebApi.Ftp
             }
             catch (Exception ex)
             {
-                //ftpFiles.Add(Helpers.ErrorDetails(ex));
+                ftpFiles.Add(Helpers.ErrorDetails(ex));
             }
             return ftpFiles.ToArray();
         }
