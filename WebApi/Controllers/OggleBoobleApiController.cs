@@ -524,7 +524,7 @@ namespace WebApi
                     if (categoryFolderDetail != null)
                     {
                         if (categoryFolderDetail.CommentText != null)
-                            metaTagResults.Description = Uri.EscapeDataString(categoryFolderDetail.CommentText); //Helpers.Beautify(categoryFolderDetail.CommentText);
+                            metaTagResults.Description = Helpers.Beautify(categoryFolderDetail.CommentText);
                         else
                             metaTagResults.Description = "free images of " + metaTagResults.Source;
                     }

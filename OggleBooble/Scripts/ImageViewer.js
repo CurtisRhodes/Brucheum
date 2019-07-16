@@ -20,6 +20,10 @@ var viewerShowing = false;
 
 
 function launchViewer(imageArray, imageIndex, folderId, folderName, currentUser) {
+
+    //alert("launchViewer" + imageIndex + " " + folderName);
+
+
     imageViewerArray = imageArray;
     imageViewerIndex = imageIndex;
     imageViewerFolderId = folderId;

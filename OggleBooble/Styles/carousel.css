@@ -7,10 +7,7 @@
 }
 
 .animatedGears {
-    display: none;
-    position: relative;
-    top: 100px;
-    left: 100px;
+    height: 300px;
 }
 
 .floatingLabel {

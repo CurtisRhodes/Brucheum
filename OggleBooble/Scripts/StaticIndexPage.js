@@ -11,6 +11,16 @@ var promoMessageRotationSpeed = 8000;
 $(document).ready(function () {
     loadHardCoded();
     launchPromoMessages();
+
+    var cookie = getCookie("User");
+
+    if (cookie !== "") {
+        $('#divNotLogedIn').hide();
+        $('#divLogedIn').show();
+        $('#helloUser').html("hello: " + cookie);
+    }
+
+    logVisit(cookie);
 });
 
 function loadHardCoded() {   
@@ -34,6 +44,9 @@ function loadHardCoded() {
 }
 
 function startCarousel() {
+
+    $('.carouselContainer').show();
+
 
     imageIndex = Math.floor(Math.random() * arrayLength);
     $('#laCarouselImageContainer').html(carouselArray[imageIndex]).fadeIn(3000);
@@ -69,7 +82,6 @@ function startCarousel() {
 }
 
 function getMoreImages(skip, take) {
-
     setTimeout(function () {
         var start = Date.now();
         $.ajax({
@@ -208,3 +220,54 @@ function showPromoMessages() {
         promoIdx++;
     }, promoMessageRotationSpeed);
 }
+
+function logVisit(userName) {
+    $('#footerMessage').html("logging visit");
+    $.ajax({
+        type: "GET",
+        url: service + "api/StaticPage/StaticPageGetIPAddress",
+        success: function (ipaddress) {
+
+            if (ipaddress === "68.203.90.183" || ipaddress === "50.62.160.105") return "ok";
+
+            alert("ipAddress: " + ipAddress);
+
+            $.ajax({
+                type: "POST",
+                url: service + "api/HitCounter?userName=" + userName + "&appName=Static OggleBooble",
+                data: { UserName: userName, IpAddress: ipaddress, AppName: "static OggleBooble" },
+                //data: visitModel,
+                success: function (successModel) {
+                    if (successModel.Success === "ok") {
+                        $('#headerMessage').html(successModel.ReturnValue);
+                    }
+                    else
+                        alert(successModel.Success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("HitCounter/LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        },
+        error: function (jqXHR, exception) {
+            alert("StaticPageGetIPAddress XHR error: " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+}
+
+function letemPorn(response) {
+    // record hit
+    //alert("letemPorn: " + response);
+    if (response === "ok") {
+        window.location.href = 'http://pages.ogglebooble.com/sluts/sluts.html';
+    }
+    else {
+        $('#customMessage').hide();
+        if (typeof resume === 'function') {
+            resume();
+        }
+    }
+}
+
+
+

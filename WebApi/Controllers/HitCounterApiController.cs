@@ -117,11 +117,11 @@ namespace WebApi
             {
                 string ipAddress = Helpers.GetIPAddress();
 
-                if ((ipAddress == "68.203.90.183") || (ipAddress == "50.62.160.105"))
-                {
-                    success.Success = "ok";
-                    return success;
-                }
+                //if ((ipAddress == "68.203.90.183") || (ipAddress == "50.62.160.105"))
+                //{
+                //    success.Success = "ok";
+                //    return success;
+                //}
 
                 string visitorId = Guid.NewGuid().ToString();
                 using (AspNetContext db = new AspNetContext())
@@ -129,6 +129,7 @@ namespace WebApi
                     AspNetUser aspNetUser = db.AspNetUsers.Where(u => u.UserName == userName).FirstOrDefault();
                     if (aspNetUser != null)
                     {
+
                         success.ReturnValue = "Welcome back " + aspNetUser.UserName;
                         visitorId = aspNetUser.Id;
                     }
@@ -165,7 +166,7 @@ namespace WebApi
                     else
                     {
                         bool logVisit = true;
-                        Visit lastVisit = db.Visits.Where(v => v.IPAddress == ipAddress).FirstOrDefault();
+                        Visit lastVisit = db.Visits.Where(v => v.IPAddress == ipAddress && v.UserName == userName).FirstOrDefault();
                         if (lastVisit != null)
                         {
                             if ((DateTime.Now - lastVisit.VisitDate).TotalHours < 5)

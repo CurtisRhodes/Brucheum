@@ -1,4 +1,5 @@
 ﻿var service = "https://api.curtisrhodes.com/";
+//var service = "http://localhost:40395/";
 var rotationSpeed = 5123;
 var intervalSpeed = 1100;
 var carouselItemArray = new Array();
@@ -11,11 +12,11 @@ var modelInfoDialogIsOpen = false;
 var imageCommentDialogIsOpen = false;
 var folderCategoryDialogIsOpen = false;
 var forgetShowingCatDialog;
-
+var isPornEditor = false;
 var imageArray = new Array();
 var selectedImageLinkId;
 var selectedImage;
-var staticPageFolderName;
+//var staticPageFolderName;
 var fullPageName;
 
 $(document).ready(function () {
@@ -23,16 +24,67 @@ $(document).ready(function () {
     var cookie = getCookie("User");
 
     if (cookie !== "") {
-        alert("cookie: " + cookie);
         $('#divNotLogedIn').hide();
         $('#divLogedIn').show();
         $('#helloUser').html("hello: " + cookie);
     }
 
-    logVisit(cookie);
+    logPageHit(cookie);
 
 });
 
+function logPageHit(cookie) {
+
+    if (typeof staticPageFolderName !== "undefined") {
+
+        $('#footerMessage').html("logging page hit");
+        $.ajax({
+            type: "GET",
+            url: service + "api/StaticPage/StaticPageGetIPAddress",
+            success: function (ipAddress) {
+
+                if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
+
+                if (cookie === "")
+                    cookie = "unknown";
+
+                var hitCounterModel = {
+                    IpAddress: ipAddress,
+                    AppName: "static OggleBooble",
+                    PageName: staticPageFolderName,
+                    Details: cookie
+                };
+
+                $.ajax({
+                    type: "PUT",
+                    url: service + "api/HitCounter/LogPageHit",
+                    data: hitCounterModel,
+                    success: function (success) {
+                        if (success === "ok") {
+                            if (!isNullorUndefined(cookie)) {
+                                //alert("currentUser: " + cookie);
+                                sendEmail(cookie + " just visited " + staticPageFolderName, cookie + " just visited " + staticPageFolderName + " gallery");
+                            }
+                            else
+                                sendEmail(ipAddress + " just visited " + staticPageFolderName, "unknown user just visited " + staticPageFolderName + " gallery");
+                        }
+                        else
+                            alert("logPageHit: " + success);
+
+                        $('#footerMessage').html(staticPageFolderName);
+                    },
+                    error: function (jqXHR, exception) {
+                        alert("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
+                    }
+                });
+
+            },
+            error: function (jqXHR, exception) {
+                alert("StaticPageGetIPAddress XHR error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+}
 
 function loadImageLinks() {
     $.ajax({
@@ -166,26 +218,6 @@ function staticCatTreeContainerClick(path, id, treeId) {
         alert("dirTreeClick treeId: " + treeId);
 }
 
-function logVisit(userName) {
-    $('#footerMessage').html("logging visit");
-    //alert("ipAddress: " + ipAddress);
-    $.ajax({
-        type: "POST",
-        url: service + "api/HitCounter",
-        data: { UserName: userName, IpAddress: "xxx", AppName: "static OggleBooble" },
-        //data: visitModel,
-        success: function (successModel) {
-            if (successModel.Success === "ok") {
-                $('#headerMessage').html(successModel.ReturnValue);
-            }
-            else
-                alert(successModel.Success);
-        },
-        error: function (jqXHR, exception) {
-            alert("HitCounter/LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-        }
-    });
-}
 
 function showCustomMessage(blogId) {
     if (typeof pause === 'function') {
@@ -228,9 +260,13 @@ function postLogin() {
 
     expires = new Date();
     expires.setTime(expires.getTime() + 1 * 24 * 60 * 60 * 1000);
-    document.cookie = 'User=' + userName + ';expires=' + expires.toUTCString();
 
+    document.cookie = 'User=' + $('#txtUserName').val() + ';expires=' + expires.toUTCString();
     $('#registerUserDialog').fadeOut();
+
+    // add user to a table
+
+
 }
 
 function getCookie(cname) {

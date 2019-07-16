@@ -5,6 +5,7 @@ var page = 0;
 var rootFolder = "";
 var mySubDirs = new Array();
 var thumbImageHeight = 200;
+var viewerShowing = false;
 
 function getBreadCrumbs() {
     $.ajax({
@@ -42,11 +43,12 @@ function getBreadCrumbs() {
 
                 if (ipAddress !== "68.203.90.183") {
                     if (ipAddress !== "50.62.160.105") {
-                        alert("ipAddress: " + ipAddress);
-
+                        //alert("ipAddress: " + ipAddress);
                         logPageHit();
                     }
                 }
+                buildDirTree($('#moveDialogDirTree'), "moveDialogDirTree", 0);
+
             }
             else
                 alert("getBreadCrumbs " + breadCrumbModel.Success);
@@ -174,49 +176,25 @@ function processImages(imageLinksModel, start) {
             Local: imageModelFile.LinkCount === 1
         });
 
+        var imageFrameClass = "imageFrame";
         if (isPornEditor) {
-            if (imageLinksModel.RootFolder === 'centerfolds') {
-                $('#footerMessage').html("centerfolds");
-                $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
-                    " idx=" + fileCount + " class='thumbImage centerfold' src='" + imageModelFile.Link + "'/></div>");
+            if (imageLinksModel.RootFolder === "archive") {
+                if (imageModelFile.LinkCount > 1) {
+                    imageFrameClass = "multiLinkImageFrame";
+                }
             }
             else {
-                if (imageLinksModel.RootFolder === "archive") {
-                    if (imageModelFile.LinkCount === 1) {
-                        $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
-                            " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
-                    }
-                    else {
-                        $('#imageContainer').append("<div class='multiLinkImageFrame'><img id=" + imageModelFile.LinkId +
-                            " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
-                    }
-                }
-                else {
-                    if (imageModelFile.LinkCount > 1) {
-                        $('#imageContainer').append("<div class='nonLocalImageFrame'><img id=" + imageModelFile.LinkId +
-                            " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
-                    }
-                    else {
-                        $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
-                            " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
-                    }
+                if (imageModelFile.LinkCount > 1) {
+                    imageFrameClass = "nonLocalImageFrame";
                 }
             }
         }
-        else {
-            $('#imageContainer').append("<div class='imageFrame'><img id=" + imageModelFile.LinkId +
-                " idx=" + fileCount + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
-        }
-        $('.thumbImage').click(function () {
-            viewerShowing = true;
-            alert("click");
-            launchViewer(imageArray, $(this).attr("idx"), folderId, imageLinksModel.FolderName, currentUser);
-            //launchViewer(imageArray, imageIndex, folderId, folderName, currentUser)
-        });
+        $('#imageContainer').append("<div class='" + imageFrameClass + "'><img id=" + imageModelFile.LinkId +
+            " onclick='galleryImageClick(" + fileCount + ",\"" + imageLinksModel.FolderName + "\")' idx=" + fileCount++ + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
     });
-    $('#footerMessage').html("fileCount: " + ++fileCount);
 
     $('.thumbImage').contextmenu(function () {
+        //alert("contextmenu");
         event.preventDefault();
         window.event.returnValue = false;
         currentContextLinkId = $(this).attr("id");
@@ -232,12 +210,12 @@ function processImages(imageLinksModel, start) {
                 if (modelDetails.Success === "ok") {
                     selectedImageArchiveFolderId = modelDetails.FolderId;
                     $('#ctxModelName').html("unknown model");
-                    if (modelDetails.RootFolder === "archive") {
+                    if (modelDetails.RootFolder !== "boobs") {
                         $('#ctxModelName').html(modelDetails.FolderName);
                     }
                     $('#ctxSeeMore').hide();
                     if (modelDetails.RootFolder !== rootFolder) {
-                        if (modelDetails.RootFolder === "archive") {
+                        if (modelDetails.RootFolder !== "boobs") {
                             $('#ctxSeeMore').show();
                         }
                     }
@@ -258,11 +236,12 @@ function processImages(imageLinksModel, start) {
     $('#fileCount').html(imageLinksModel.Files.length + imageLinksModel.SubDirs.length);
     $('#getImagesLoadingGif').hide();
 
-    //if (document.domain !== 'localhost') {
-        //if (ipAddress !== "68.203.92.166") {
-            //var emailSubject = currentUser + " just viewed " + folderId;
-            //sendEmailFromJS(emailSubject, "someday it will be someone other than " + ipAddress);
-        //}
+}
+
+function galleryImageClick(imageIndex, folderName) {
+    //alert("galleryImageClick  " + imageIndex + " " + folderName);
+    viewerShowing = true;
+    launchViewer(imageArray, imageIndex, folderId, folderName, currentUser);
 }
 
 function contextMenuAction(action) {

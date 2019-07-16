@@ -17,6 +17,7 @@ var initialTake = 100;
 
 function launchCarousel(root) {
     $('#footerMessage').html("launching carousel");
+    $('.carouselImage').css("height", "350px");
     loadImages(root, true, 0, initialTake);
 }
 
@@ -114,11 +115,19 @@ function loadImages(rootFolder, isChecked, skip, take) {
     }
 }
 function logVisit() {
+
+    if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
+    alert("ipAddress: " + ipAddress);
+
     $('#footerMessage').html("logging visit");
-    //alert("ipAddress: " + ipAddress);
+
+    if (userName === "") {
+        userName = "unknown";
+    }
+
     $.ajax({
         type: "POST",
-        url: service + "api/HitCounter?userName=" + userName + "&appName=" + userName,
+        url: service + "api/HitCounter?userName=" + userName + "&appName=Ogglebooble",
         success: function (successModel) {
             if (successModel.Success === "ok") {
                 $('#headerMessage').html(successModel.ReturnValue);
@@ -238,7 +247,7 @@ function considerHidingContextMenu() {
 function resizeCarousel() {
     $('.carouselImage').css("max-width", $('#middleColumn').width());
     //$('.carouselImage').css("height", $('#middleColumn').innerHeight() - 180);
-    $('.carouselImage').css("height", $('#middleColumn').height() - 180);
+    $('.carouselImage').css("height", $('#middleColumn').height() - 210);
 }
 
 function togglePause() {
