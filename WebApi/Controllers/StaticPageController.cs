@@ -632,13 +632,13 @@ namespace WebApi.Controllers
                 "                           forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;'></div>\n" +
                 "                       <div id='laCarousel' class='carouselContainer'>\n" +
                 "                           <div id='laCarouselImageContainer' class='carouselImageContainer'>\n" +
-                "                               <img class='carouselImage' src='images/ingranaggi3.gif' />\n" +
+                "                               <img class='carouselImage' oncontextmenu='carouselContextMenu()' src='/images/ingranaggi3.gif'/>\n" +
                 "                           </div>\n" +
                 "                           <div class='imgBottom'>\n" +
-                "                                    <img class='speedButton floatLeft' src='images/speedDialSlower.png' title='slower' onclick='clickSpeed(\"slower\")' />\n" +
+                "                                    <img class='speedButton floatLeft' src='/images/speedDialSlower.png' title='slower' onclick='clickSpeed(\"slower\")' />\n" +
                 "                                    <div id='pauseButton' class='pauseButton' onclick='togglePause()'>||</div>\n" +
                 "                                    <div id='categoryLabel' class='carouselCategoryLabel' onclick='clickViewParentGallery()'></div>\n" +
-                "                                    <img class='speedButton floatRight' src='images/speedDialFaster.png' title='faster' onclick='clickSpeed(\"faster\")' />\n" +
+                "                                    <img class='speedButton floatRight' src='/images/speedDialFaster.png' title='faster' onclick='clickSpeed(\"faster\")' />\n" +
                 "                           </div>\n" +
                 "                       </div>\n" +
                 "                   </div>\n" +
@@ -651,8 +651,21 @@ namespace WebApi.Controllers
                 "<div id='promoContainer' class='ogglePromoContainer' onclick='killPromoMessages()'>\n" +
                 "    <div id='promoContainerTitle' class='ogglePromoTitle'></div>\n" +
                 "    <div id='promoContainerText' class='ogglePromoText'></div>\n" +
+                "</div>\n" +
+                "<div id='carouselContextMenu' class='ogContextMenu' onmouseleave='considerHidingContextMenu()'>\n" +
+                "    <div id='ctxModelName' onclick='carouselContextMenuAction('showDialog')'>model name</div>\n" +
+                "    <div id='ctxSeeMore' onclick='carouselContextMenuAction('seeMore')'>See More</div>\n" +
+                "    <div onclick='carouselContextMenuAction('explode')'>Explode</div>\n" +
+                "    <div onclick='carouselContextMenuAction('comment')'>Comment</div>\n" +
+                "    <div onclick='carouselContextMenuAction('tags')'>Tags</div>\n" +
+                "    <div id='ctxMove' onclick='carouselContextMenuAction('archive')'>Archive</div>\n" +
                 "</div>\n";
+
+
+
+            //  
         }
+
 
         private string PornIndexPageHtml()
         {

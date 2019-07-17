@@ -6,7 +6,9 @@ var service = "https://api.curtisrhodes.com/";
 var promoIdx = 0;
 var promoMessagesArray = new Array();
 var promoMessageRotator;
-var promoMessageRotationSpeed = 8000;
+var promoMessageRotationSpeed = 13000;
+var httpLocation = "https://ogglebooble.com/static";
+var selectedImageArchiveFolderId;
 
 $(document).ready(function () {
     loadHardCoded();
@@ -19,7 +21,6 @@ $(document).ready(function () {
         $('#divLogedIn').show();
         $('#helloUser').html("hello: " + cookie);
     }
-
     logVisit(cookie);
 });
 
@@ -34,7 +35,6 @@ function loadHardCoded() {
         carouselArray[idx].RootFolder = $(this).attr("rootFolder");
         carouselArray[idx].FolderId = $(this).attr("folderId");
         carouselArray[idx++].FolderName = $(this).attr("folderName");
-
     });
     var delta = (Date.now() - start) / 1000;
     console.log("loadHardCoded took: " + delta.toFixed(3));
@@ -44,10 +44,7 @@ function loadHardCoded() {
 }
 
 function startCarousel() {
-
     $('.carouselContainer').show();
-
-
     imageIndex = Math.floor(Math.random() * arrayLength);
     $('#laCarouselImageContainer').html(carouselArray[imageIndex]).fadeIn(3000);
     $('#categoryLabel').html(carouselArray[imageIndex].FolderName).fadeIn(intervalSpeed);
@@ -56,7 +53,7 @@ function startCarousel() {
     $('#laCarouselImageContainer img').css("max-width", $('#middleColumn').width());
     $('#laCarouselImageContainer img').css("max-height", $('#middleColumn').innerHeight() - 180);
     $('#laCarouselImageContainer img').click(function () {
-        window.location.href = "http://pages.ogglebooble.com/" + carouselArray[imageIndex].RootFolder + "/" + carouselArray[imageIndex].FolderName + ".html";
+        window.location.href = httpLocation + carouselArray[imageIndex].RootFolder + "/" + carouselArray[imageIndex].FolderName + ".html";
     });
 
     CarouselInterval = setInterval(function () {
@@ -68,12 +65,14 @@ function startCarousel() {
                 $('#laCarouselImageContainer').html(carouselArray[imageIndex]).fadeIn(3000);
                 $('#categoryTitle').html(carouselArray[imageIndex].FolderName).fadeIn(intervalSpeed);
                 $('#categoryLabel').html(carouselArray[imageIndex].ParentName);
+                $('#categoryLabel').click(function () {
+                    window.location.href = httpLocation + carouselArray[imageIndex].RootFolder + "/" + carouselArray[imageIndex].ParentName + ".html";
+                });
 
                 $('#laCarouselImageContainer img').css("max-width", $('#middleColumn').width());
                 $('#laCarouselImageContainer img').css("max-height", $('#middleColumn').innerHeight() - 180);
                 $('#laCarouselImageContainer img').click(function () {
-                    //alert("" + carouselArray[imageIndex].Id);
-                    window.location.href = "http://pages.ogglebooble.com/" + carouselArray[imageIndex].RootFolder + "/" + carouselArray[imageIndex].FolderName + ".html";
+                    window.location.href = httpLocation + carouselArray[imageIndex].RootFolder + "/" + carouselArray[imageIndex].FolderName + ".html";
                 });
                 $('#footerMessage').html("image: " + imageIndex + " of " + arrayLength);
             });
@@ -91,6 +90,7 @@ function getMoreImages(skip, take) {
                 $.each(vwLinks, function (idx, obj) {
                     carouselArray[skip + idx] = new Image();
                     carouselArray[skip + idx].src = obj.Link;
+                    carouselArray[skip + idx].LinkId = obj.LinkId;
                     carouselArray[skip + idx].ParentName = obj.ParentName;
                     carouselArray[skip + idx].RootFolder = obj.RootFolder;
                     carouselArray[skip + idx].FolderId = obj.FolderId;
@@ -114,6 +114,95 @@ function getMoreImages(skip, take) {
     }, 30000);
 }
 
+function carouselContextMenu() {
+    event.preventDefault();
+    window.event.returnValue = false;
+    pause();
+    $('#ctxModelName').html("");
+    $.ajax({
+        type: "GET",
+        url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + carouselArray[imageIndex].LinkId,
+        success: function (imageDetails) {
+            if (imageDetails.Success === "ok") {
+                if (imageDetails.RootFolder !== "boobs") {
+                    // this is a known model
+                    selectedImageArchiveFolderId = imageDetails.FolderId;
+                    $('#ctxModelName').html(imageDetails.FolderName);
+                    $('#ctxSeeMore').show();
+                }
+                else {
+                    selectedImageArchiveFolderId = 0;
+                    $('#ctxModelName').html("unknown model");
+                    $('#ctxSeeMore').hide();
+                }
+            }
+            else
+                alert("GetModelName: " + imageDetails.Success);
+        },
+        error: function (xhr) {
+            alert("GetNudeModelName xhr error: " + xhr.statusText);
+        }
+    });
+    if (isPornEditor)
+        $('#ctxMove').show();
+    else
+        $('#ctxMove').hide();
+    $('#carouselContextMenu').css("top", event.clientY + 5);
+    $('#carouselContextMenu').css("left", event.clientX);
+    $('#carouselContextMenu').fadeIn();
+}
+
+function carouselContextMenuAction(ctxMenuAction) {
+    switch (ctxMenuAction) {
+        case "showDialog":
+            $('#carouselContextMenu').fadeOut();
+            modelInfoDialogIsOpen = true;
+            pause();
+            showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId, carouselArray[imageIndex].Link);
+            $('#modelInfoDialog').on('dialogclose', function (event) {
+                modelInfoDialogIsOpen = false;
+                resume();
+            });
+            break;
+        case "seeMore":
+            window.open(httpLocation + selectedImageArchiveFolderId, '_blank');
+            break;
+        case "explode":
+            window.open(carouselArray[imageIndex].Link, "_blank");
+            break;
+        case "comment":
+            $('#carouselContextMenu').fadeOut();
+            imageCommentDialogIsOpen = true;
+            pause();
+            $('#carouselContextMenu').fadeOut();
+            showImageCommentDialog(carouselArray[imageIndex].Link, carouselArray[imageIndex].LinkId,
+                carouselArray[imageIndex].FolderId, carouselArray[imageIndex].FolderName);
+            $('#imageCommentDialog').on('dialogclose', function (event) {
+                imageCommentDialogIsOpen = false;
+                resume();
+            });
+            break;
+        case "tags":
+            $('#carouselContextMenu').fadeOut();
+            pause();
+            metaTagDialogIsOpen = true;
+            //alert("carouselArray[imageIndex].FolderId: " + carouselArray[imageIndex].FolderId);
+            openMetaTagDialog(carouselArray[imageIndex].FolderId, carouselArray[imageIndex].LinkId);
+            $('#metaTagDialog').on('dialogclose', function (event) {
+                metaTagDialogIsOpen = false;
+                resume();
+            });
+            break;
+        case "archive":
+            $('#carouselContextMenu').fadeOut();
+            pause();
+            $('#carouselContextMenu').fadeOut();
+            showMoveCopyDialog("Archive", carouselArray[imageIndex].Link, carouselArray[imageIndex].FolderId);
+            break;
+        default:
+            alert("invalid: " + ctxMenuAction);
+    }
+}
 function considerHidingContextMenu() {
     $('#carouselContextMenu').fadeOut();
     if (!metaTagDialogIsOpen) {
@@ -146,16 +235,9 @@ function slowlyShowFolderCategoryDialog() {
     });
 }
 
-function clickViewGallery() {
-    clearInterval(CarouselInterval);
-    //alert("clickViewGallery");
-    window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].FolderId;
-    //window.location.href = "http://pages.ogglebooble.com/" + carouselItemArray[imageIndex].RootFolder + "/" + carouselItemArray[imageIndex].FolderName + ".html";
-}
-
 function clickViewParentGallery() {
-    window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].ParentId;
-    //window.location.href = "http://pages.ogglebooble.com/" + carouselItemArray[imageIndex].FolderName + ".html";
+    window.location.href = "/home/ImagePage?folder=" + carouselArray[imageIndex].ParentId;
+    //window.location.href = "http://pages.ogglebooble.com/" + carouselArray[imageIndex].FolderName + ".html";
 }
 
 function togglePause() {
@@ -268,6 +350,3 @@ function letemPorn(response) {
         }
     }
 }
-
-
-

@@ -17,7 +17,7 @@ var initialTake = 100;
 
 function launchCarousel(root) {
     $('#footerMessage').html("launching carousel");
-    $('.carouselImage').css("height", "350px");
+    $('.carouselImage').css("height", "150px");
     loadImages(root, true, 0, initialTake);
 }
 
@@ -150,7 +150,7 @@ function slowlyShowFolderCategoryDialog() {
             folderCategoryDialogIsOpen = true;
             showCategoryDialog(carouselItemArray[imageIndex].FolderId);
         }
-    }, 600);
+    }, 1100);
     $('#folderCategoryDialog').on('dialogclose', function (event) {
         folderCategoryDialogIsOpen = false;
         resume();
