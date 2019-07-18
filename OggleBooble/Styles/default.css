@@ -38,9 +38,10 @@ body {
 .ogglePromoContainer {
     position: absolute;
     top: 250px;
-    right: 80px;
+    right: 40px;
     border: solid 3px #4b0d41;
     width: 300px;
+    cursor: pointer;
     display: none;
 }
 

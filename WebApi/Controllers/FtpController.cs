@@ -320,7 +320,8 @@ namespace WebApi
                         CategoryFolder dbCategory = db.CategoryFolders.Where(f => f.Id == newLink.FolderId).First();
                         string extension = newLink.Link.Substring(newLink.Link.Length - 4);
                         string newFileName = dbCategory.FolderName + "_" + imageLinkId + extension;
-                        var trimPath = newLink.Path.Substring(newLink.Path.IndexOf("/") + 1);
+                        //var trimPath = newLink.Path.Substring(newLink.Path.IndexOf("Root/") + 1);
+                        var trimPath = newLink.Path.Replace("/Root/", "");
                         var appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
                         using (WebClient wc = new WebClient())
                         {
@@ -328,10 +329,10 @@ namespace WebApi
                             try
                             {
                                 string danniPath = "F:/Danni/";
-                                DirectoryInfo dirInfo = new DirectoryInfo(danniPath + newLink.Path);
+                                DirectoryInfo dirInfo = new DirectoryInfo(danniPath + trimPath);
                                 if (!dirInfo.Exists)
                                     dirInfo.Create();
-                                wc.DownloadFile(new Uri(newLink.Link), danniPath + newLink.Path + "/" + newFileName);
+                                wc.DownloadFile(new Uri(newLink.Link), danniPath + trimPath + "/" + newFileName);
                             }
                             catch (Exception ex)
                             {
@@ -351,14 +352,12 @@ namespace WebApi
                         FtpWebRequest webRequest = null;
                         try
                         {
-                            string destPath = newLink.Path.Substring(0, newLink.Path.IndexOf("."));
                             // todo  write the image as a file to x.ogglebooble  4/1/19
-                            string ftpPath = ftpHost + destPath + ".OGGLEBOOBLE.COM/" + trimPath;
+                            string ftpPath = ftpHost + trimPath;
                             if (!FtpUtilies.DirectoryExists(ftpPath))
                                 FtpUtilies.CreateDirectory(ftpPath);
 
                             webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
-                            //webRequest.Credentials = new NetworkCredential("curtisrhodes", "R@quel77");
                             webRequest.Credentials = networkCredentials;
                             webRequest.Method = WebRequestMethods.Ftp.UploadFile;
                         }
@@ -407,7 +406,7 @@ namespace WebApi
                             System.Diagnostics.Debug.WriteLine("delete didn't work " + ex.Message);
                         }
 
-                        var goDaddyLink = "http://" + dbCategory.RootFolder + ".ogglebooble.com/";
+                        //var goDaddyLink = "http://" + dbCategory.RootFolder + ".ogglebooble.com/";
                         //var goDaddyLinkTest = goDaddyLink + trimPath + "/" + newFileName;
 
                         db.ImageLinks.Add(new ImageLink()
@@ -418,7 +417,8 @@ namespace WebApi
                             Width = fWidth,
                             Height = fHeight,
                             Size = fSize,
-                            Link = goDaddyLink + trimPath + "/" + newFileName
+                            Link = "http://" + trimPath + "/" + newFileName
+                            //Link = goDaddyLink + trimPath + "/" + newFileName
                         });
                         db.SaveChanges();
                     }

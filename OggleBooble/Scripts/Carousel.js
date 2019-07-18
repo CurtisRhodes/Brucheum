@@ -114,6 +114,7 @@ function loadImages(rootFolder, isChecked, skip, take) {
         });
     }
 }
+
 function logVisit() {
 
     if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";

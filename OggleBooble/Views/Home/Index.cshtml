@@ -121,6 +121,7 @@
 
     function killPromoMessages()
     {
+        $('#promoContainer').fadeOut();
         clearInterval(promoMessageRotator);
         setInterval(function () { showPromoMessages() }, 30000);
     }

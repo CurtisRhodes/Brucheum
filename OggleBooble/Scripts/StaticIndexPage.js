@@ -9,6 +9,12 @@ var promoMessageRotator;
 var promoMessageRotationSpeed = 13000;
 var httpLocation = "https://ogglebooble.com/static";
 var selectedImageArchiveFolderId;
+var rotationSpeed = 5123;
+var intervalSpeed = 800;
+var throttleSpeed = 6200;
+var throttleSize = 500;
+var allowthemtoLoadIntervar;
+var loadingImages = false;
 
 $(document).ready(function () {
     loadHardCoded();
@@ -28,7 +34,7 @@ function loadHardCoded() {
     //sb.Append("<img id='image" + i + "' folderName='" + vwLinks[i].FolderName + "'  linkId='" + vwLinks[i].LinkId + "' src='" + vwLinks[i].Link + "'/>\n");
     var start = Date.now();
     var idx = 0;
-    $('#carouselImageContainer').children("img").each(function () {
+    $('#hardcodedImagesContainer').children("img").each(function () {
         carouselArray[idx] = new Image();
         carouselArray[idx].src = $(this).attr("src");
         carouselArray[idx].ParentName = $(this).attr("parentName");
@@ -40,49 +46,53 @@ function loadHardCoded() {
     console.log("loadHardCoded took: " + delta.toFixed(3));
     arrayLength = carouselArray.length;
     startCarousel();
-    getMoreImages(arrayLength, 10000);
+    throttleImages();
 }
 
 function startCarousel() {
     $('.carouselContainer').show();
-    imageIndex = Math.floor(Math.random() * arrayLength);
-    $('#laCarouselImageContainer').html(carouselArray[imageIndex]).fadeIn(3000);
-    $('#categoryLabel').html(carouselArray[imageIndex].FolderName).fadeIn(intervalSpeed);
-    $('#categoryTitle').html(carouselArray[imageIndex].FolderName).fadeIn(intervalSpeed);
-    $('#categoryLabel').html(carouselArray[imageIndex].ParentName);
-    $('#laCarouselImageContainer img').css("max-width", $('#middleColumn').width());
-    $('#laCarouselImageContainer img').css("max-height", $('#middleColumn').innerHeight() - 180);
-    $('#laCarouselImageContainer img').click(function () {
-        window.location.href = httpLocation + carouselArray[imageIndex].RootFolder + "/" + carouselArray[imageIndex].FolderName + ".html";
-    });
-
+    $('#laCarouselImageContainer').show();
+    itnervalBody();
     CarouselInterval = setInterval(function () {
-        setTimeout(function () {
-            $('#categoryTitle').fadeOut(intervalSpeed).hide();
-            $('#laCarouselImageContainer').fadeOut(500, "linear", function () {
-                imageIndex = Math.floor(Math.random() * arrayLength);
-
-                $('#laCarouselImageContainer').html(carouselArray[imageIndex]).fadeIn(3000);
-                $('#categoryTitle').html(carouselArray[imageIndex].FolderName).fadeIn(intervalSpeed);
-                $('#categoryLabel').html(carouselArray[imageIndex].ParentName);
-                $('#categoryLabel').click(function () {
-                    window.location.href = httpLocation + carouselArray[imageIndex].RootFolder + "/" + carouselArray[imageIndex].ParentName + ".html";
-                });
-
-                $('#laCarouselImageContainer img').css("max-width", $('#middleColumn').width());
-                $('#laCarouselImageContainer img').css("max-height", $('#middleColumn').innerHeight() - 180);
-                $('#laCarouselImageContainer img').click(function () {
-                    window.location.href = httpLocation + carouselArray[imageIndex].RootFolder + "/" + carouselArray[imageIndex].FolderName + ".html";
-                });
-                $('#footerMessage').html("image: " + imageIndex + " of " + arrayLength);
-            });
-        }, intervalSpeed);
+        itnervalBody();
     }, rotationSpeed);
 }
 
+function itnervalBody() {
+    if (loadingImages)
+        console.log("loadingImages");
+    else {
+        $('#categoryTitle').fadeOut(intervalSpeed);
+        $('#laCarouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
+            imageIndex = Math.floor(Math.random() * arrayLength);
+            $('#laCarouselImageContainer img').attr("src", carouselArray[imageIndex].src);
+            $('#laCarouselImageContainer').fadeIn(intervalSpeed);
+            $('#categoryTitle').html(carouselArray[imageIndex].FolderName).fadeIn(intervalSpeed);
+            $('#categoryLabel').html(carouselArray[imageIndex].ParentName);
+            $('#categoryLabel').click(function () {
+                window.location.href = httpLocation + carouselArray[imageIndex].RootFolder + "/" + carouselArray[imageIndex].ParentName + ".html";
+            });
+            $('#laCarouselImageContainer img').click(function () {
+                window.location.href = httpLocation + "/" + carouselArray[imageIndex].RootFolder + "/" + carouselArray[imageIndex].FolderName + ".html";
+            });
+            $('#laCarouselImageContainer img').css("max-width", $('#middleColumn').width());
+            $('#laCarouselImageContainer img').css("max-height", $('#middleColumn').innerHeight() - 180);
+            $('#footerMessage').html("image: " + imageIndex + " of " + arrayLength);
+        });
+    }
+}
+
+function throttleImages() {
+    allowthemtoLoadIntervar = setInterval(function () {
+        console.log("getMoreImages(" + arrayLength + "," + throttleSize + ")");
+        getMoreImages(arrayLength, throttleSize);
+    }, throttleSpeed);
+}
+
 function getMoreImages(skip, take) {
-    setTimeout(function () {
-        var start = Date.now();
+    //setTimeout(function () {
+    var start = Date.now();
+    loadingImages = true;
         $.ajax({
             type: "PUT",
             url: service + "api/StaticPage/AddMoreImages?rootFolder=" + staticPageRootFolder + "&skip=" + skip + "&take=" + take,
@@ -96,25 +106,26 @@ function getMoreImages(skip, take) {
                     carouselArray[skip + idx].FolderId = obj.FolderId;
                     carouselArray[skip + idx].FolderName = obj.FolderName;
                 });
-
+                arrayLength += take;
+                //arrayLength = Math.min(arrayLength, carouselArray.length);
+                if (arrayLength > carouselArray.length) {
+                    arrayLength = carouselArray.length;
+                    console.log("CLEAR INTERVAL arrayLength: " + arrayLength + "  carouselArray.length: " + carouselArray.length);
+                    clearInterval(allowthemtoLoadIntervar);
+                }
                 var delta = (Date.now() - start) / 1000;
                 console.log("getMoreImages took: " + delta.toFixed(3));
+                loadingImages = false;
             },
             error: function (jqXHR, exception) {
                 alert("AddMoreImages XHR error: " + getXHRErrorDetails(jqXHR, exception));
             }
         });
-    }, 10000);
+    //}, 10000);
 
-    var allowthemtoLoadIntervar = setInterval(function () {
-        arrayLength += 250;
-        arrayLength = Math.min(arrayLength, carouselArray.length);
-        if (arrayLength === carouselArray.length)
-            clearInterval(allowthemtoLoadIntervar);
-    }, 30000);
 }
 
-function carouselContextMenu() {
+function showContextMenu() {
     event.preventDefault();
     window.event.returnValue = false;
     pause();
@@ -151,7 +162,6 @@ function carouselContextMenu() {
     $('#carouselContextMenu').css("left", event.clientX);
     $('#carouselContextMenu').fadeIn();
 }
-
 function carouselContextMenuAction(ctxMenuAction) {
     switch (ctxMenuAction) {
         case "showDialog":
@@ -168,7 +178,7 @@ function carouselContextMenuAction(ctxMenuAction) {
             window.open(httpLocation + selectedImageArchiveFolderId, '_blank');
             break;
         case "explode":
-            window.open(carouselArray[imageIndex].Link, "_blank");
+            window.open(carouselArray[imageIndex].src, "_blank");
             break;
         case "comment":
             $('#carouselContextMenu').fadeOut();
@@ -214,25 +224,6 @@ function considerHidingContextMenu() {
             }
         }
     }
-}
-
-function slowlyShowFolderCategoryDialog() {
-
-    setTimeout(function () {
-
-        if (forgetShowingCatDialog === false) {
-            pause();
-
-            //alert("FolderId: " + carouselArray[imageIndex].FolderId);
-
-            folderCategoryDialogIsOpen = true;
-            showCategoryDialog(carouselArray[imageIndex].FolderId);
-        }
-    }, 600);
-    $('#folderCategoryDialog').on('dialogclose', function (event) {
-        folderCategoryDialogIsOpen = false;
-        resume();
-    });
 }
 
 function clickViewParentGallery() {
@@ -302,6 +293,11 @@ function showPromoMessages() {
         promoIdx++;
     }, promoMessageRotationSpeed);
 }
+function killPromoMessages() {
+    $('#promoContainer').fadeOut();
+    clearInterval(promoMessageRotator);
+    setInterval(function () { showPromoMessages(); }, 300000);
+}
 
 function logVisit(userName) {
     $('#footerMessage').html("logging visit");
@@ -339,9 +335,8 @@ function logVisit(userName) {
 
 function letemPorn(response) {
     // record hit
-    //alert("letemPorn: " + response);
     if (response === "ok") {
-        window.location.href = 'http://pages.ogglebooble.com/sluts/sluts.html';
+        window.location.href = httpLocation + "/porn.html";
     }
     else {
         $('#customMessage').hide();
@@ -350,3 +345,4 @@ function letemPorn(response) {
         }
     }
 }
+
