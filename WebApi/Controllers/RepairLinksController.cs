@@ -168,7 +168,12 @@ namespace WebApi
                                         }
                                     }
 
-                                    if (db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault() == null)
+                                    if (linkId == "9ec2b80b-d808-46e1-a1da-8e4f116e5693")
+                                        anyChangesMade = true;
+
+
+                                    ImageLink goDaddyLinkExists = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                                    if (goDaddyLinkExists == null)
                                     {
                                         // no godaddyLink found // add row
                                         ImageLink newLink = new ImageLink() { Id = linkId, Link = expectedLinkName + "/" + expectedFileName, ExternalLink = "unknown" + linkId, FolderLocation = folderId };

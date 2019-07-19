@@ -7,7 +7,7 @@
         <div class="leftColumnList">
             <div onclick="window.location.href='/home/transitions?folder=boobs'">Transitions</div>
             <div onclick="window.location.href='/home/BoobsRanker'">Boobs Rater</div>
-            <div onclick="showCustomMessage(38)">Let me Expalin</div>
+            <div onclick="showCustomMessage(38)">Let me Explain</div>
             <div onclick="showCatListDialog()">Category List</div>
             <div onclick="window.location.href='/admin/blog'">Blog</div>
             <div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>
@@ -36,9 +36,12 @@
     <div id="rightColumn"></div>
 </div>
 
-<div id="promoContainer" class="ogglePromoContainer" onclick="killPromoMessages()">
+
+<div id="promoContainer" class="ogglePromoContainer">
     <div id="promoContainerTitle" class="ogglePromoTitle"></div>
     <div id="promoContainerText" class="ogglePromoText"></div>
+    <div onclick="killPromoMessages()" class="tinyDots" onmouseover="$('#killPromoPrompt').show()" onmouseout="$('#killPromoPrompt').hide()">...</div>
+    <div id="killPromoPrompt" class="ogglePromoKillMessage">had enough promo messages?</div>
 </div>
 
 <div id="boobCatTreeContainer" class="oggleHidden" title="boobs"></div>
@@ -69,7 +72,6 @@
         launchCarousel('boobs');
 
         launchPromoMessages();
-
 
     });
 

@@ -1,5 +1,6 @@
 ﻿var service = "https://api.curtisrhodes.com/";
 //var service = "http://localhost:40395/";
+var httpLocation = "https://ogglebooble.com/static/";
 var carouselItemArray = new Array();
 var imageIndex = 0;
 var carouselContainerHeight;
@@ -14,7 +15,7 @@ var isPornEditor = false;
 var imageArray = new Array();
 var selectedImageLinkId;
 var selectedImage;
-//var staticPageFolderName;
+var modelFolderId;
 var fullPageName;
 
 $(document).ready(function () {
@@ -133,12 +134,6 @@ function imgClick(imageIndex) {
     launchViewer(imageArray, imageIndex, staticPageFolderId, staticPageFolderName, staticPageCurrentUser);
 }
 
-function slowlyShowCatDialog(breadCrumbFolderId) {
-    setTimeout(function () {
-        if (forgetShowingCatDialog === false)
-            showCategoryDialog(breadCrumbFolderId);
-    }, 600);
-}
 
 function staticPageContextMenu(linkId, link) {
     //alert("staticPageContextMenu: linkId: " + linkId);
@@ -157,6 +152,7 @@ function staticPageContextMenu(linkId, link) {
         success: function (modelDetails) {
             if (modelDetails.Success === "ok") {
                 fullPageName = modelDetails.RootFolder + "/" + modelDetails.FolderName;
+                modelFolderId = modelDetails.FolderId;
                 $('#staticPagectxModelName').html("unknown model");
                 if (modelDetails.RootFolder !== "boobs") {
                     $('#staticPagectxModelName').html(modelDetails.FolderName);
@@ -181,11 +177,10 @@ function staticPageContextMenu(linkId, link) {
 
 function contextMenuActionShow() {
     //showModelInfoDialog(modelName, folderId, currentSrc)
-    showModelInfoDialog($('#staticPagectxModelName').html(), selectedImageArchiveFolderId, selectedImage);
+    showModelInfoDialog($('#staticPagectxModelName').html(), modelFolderId, selectedImage);
 }
 function contextMenuActionJump() {
-    window.open("http://pages.ogglebooble.com/" + fullPageName + ".html", "_blank");
-    ///porn/sluts.html
+    window.open(httpLocation + fullPageName + ".html", "_blank");
 }
 function contextMenuActionComment() {
     showImageCommentDialog(selectedImage, selectedImageLinkId, staticPageFolderId, staticPageFolderName, staticPageCurrentUser);
@@ -215,9 +210,59 @@ function showCustomMessage(blogId) {
     });
 }
 
+
+function showCatListDialog(root) {
+    buildDirTree($('#staticCatTreeContainer'), "staticCatTreeContainer", root);
+    $('#staticCatTreeContainer').dialog({
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        position: { my: 'left top', at: 'left top', of: $('#middleColumn') },
+        width: 400,
+        height: 600
+    });
+}
+function staticCatTreeContainerClick(path, id, treeId) {
+    if (treeId === "staticCatTreeContainer") {
+        window.location.href = "https://ogglebooble.com/static/" + staticPageRootFolder + "/" + path.substring(path.lastIndexOf("/") + 1) + ".html";
+        $('#staticCatTreeContainer').dialog('close');
+    }
+    else
+        alert("dirTreeClick treeId: " + treeId);
+}
+
+function slowlyShowFolderCategoryDialog() {
+    setTimeout(function () {
+        if (forgetShowingCatDialog === false) {
+            pause();
+            folderCategoryDialogIsOpen = true;
+            showCategoryDialog(carouselArray[imageIndex].FolderId);
+        }
+    }, 1600);
+    $('#folderCategoryDialog').on('dialogclose', function (event) {
+        folderCategoryDialogIsOpen = false;
+        resume();
+    });
+}
+function slowlyShowCatDialog(breadCrumbFolderId) {
+    setTimeout(function () {
+        if (forgetShowingCatDialog === false)
+            showCategoryDialog(breadCrumbFolderId);
+    }, 600);
+}
+
+
+
+
+
+
+
+
+
+
+
 function staticPageShowLoginDialog() {
 
-    if (typeof pause === 'function') 
+    if (typeof pause === 'function')
         pause();
 
     $('#loginDialog').fadeIn();
@@ -264,70 +309,11 @@ function getCookie(cname) {
 }
 
 function staticPageShowRegisterDialog() {
-
     $('#registerUserDialog').fadeIn();
-
-    //if (!isNullorUndefined($('#btnLayoutLogin').offset())) {
-    //    var loff = $('#btnLayoutLogin').offset().left;
-    //    $('#btnHeaderLoginSpinner').css("left", loff + 30);
-    //    $('#btnHeaderLoginSpinner').show();
-    //}
-    //$('#modalContent').html($('#registerUserDialog').fadeIn());
-    //$('#modalContainer').show();
-    //$('#btnHeaderRegisterSpinner').hide();
 }
-
-function showCatListDialog(root) {
-    buildDirTree($('#staticCatTreeContainer'), "staticCatTreeContainer", root);
-    $('#staticCatTreeContainer').dialog({
-        show: { effect: "fade" },
-        hide: { effect: "blind" },
-        position: { my: 'left top', at: 'left top', of: $('#middleColumn') },
-        width: 400,
-        height: 600
-    });
+function logoutSimple() {
+    document.cookie = "cookiename= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
 }
-function staticCatTreeContainerClick(path, id, treeId) {
-    if (treeId === "staticCatTreeContainer") {
-
-        //alert("path: " + path.substring(path.lastIndexOf("/") + 1));
-
-        window.location.href = "https://ogglebooble.com/static/" + staticPageRootFolder + "/" + path.substring(path.lastIndexOf("/") + 1) + ".html";
-        $('#staticCatTreeContainer').dialog('close');
-    }
-    else
-        alert("dirTreeClick treeId: " + treeId);
-}
-
-
-
-
-function slowlyShowFolderCategoryDialog() {
-    setTimeout(function () {
-        if (forgetShowingCatDialog === false) {
-            pause();
-
-            //alert("FolderId: " + carouselArray[imageIndex].FolderId);
-
-            folderCategoryDialogIsOpen = true;
-            showCategoryDialog(carouselArray[imageIndex].FolderId);
-        }
-    }, 600);
-    $('#folderCategoryDialog').on('dialogclose', function (event) {
-        folderCategoryDialogIsOpen = false;
-        resume();
-    });
-}
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -15,7 +15,7 @@
 .pornColors {
     background-color: #ffcccc;
     border-top: #40767d 3px solid;
-    border-bottom: #decd6f 11px solid;
+    border-bottom: #decd6f 11px solid; 
 }
 
 .renderBody {
@@ -24,7 +24,6 @@
     /*position: sticky;*/
     border-top: solid 5px #511783;
 }
-
 
 .bannerImageContainer {
     float: left;

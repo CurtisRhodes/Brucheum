@@ -22,7 +22,6 @@ namespace WebApi.Models
         public string PathName { get; set; }
     }
 
-
     public class ImageLinksModel
     {
         public ImageLinksModel()

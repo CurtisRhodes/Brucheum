@@ -6,7 +6,13 @@ function setLayout(layoutName) {
         case 'porn':
             $('#oggleBoobleHeader').removeClass('classicColors').addClass('pornColors');
             $('.threeColumnArray').css("background-color", "#e2c2ab");
-            //$('head title').html("girls sucking dick");
+            $('#divTopLeftLogo').html("<a href='/porn'><img src='/images/csLips02.png' class='bannerImage'/></a>");
+            $('#bannerTitle').html("The Church of My Cock");
+            $('#headerSubTitle').html("naughty behavior catergorized");
+            break;
+        case 'sluts':
+            $('#oggleBoobleHeader').removeClass('classicColors').addClass('pornColors');
+            $('.threeColumnArray').css("background-color", "#e2c2ab");
             $('#divTopLeftLogo').html("<a href='/porn'><img src='/images/csLips02.png' class='bannerImage'/></a>");
             $('#bannerTitle').html("The Church of My Cock");
             $('#headerSubTitle').html("naughty behavior catergorized");

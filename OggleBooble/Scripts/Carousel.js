@@ -166,7 +166,6 @@ function clickViewGallery() {
 
 function clickViewParentGallery() {
     window.location.href = "/home/ImagePage?folder=" + carouselItemArray[imageIndex].ParentId;
-    //window.location.href = "http://pages.ogglebooble.com/" + carouselItemArray[imageIndex].FolderName + ".html";
 }
 
 function clickSpeed(speed) {

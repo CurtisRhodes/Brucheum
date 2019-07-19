@@ -21,6 +21,7 @@ namespace WebApi.Controllers
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
         private readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         private readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
+        private int initialTake = 145;
         private int totalFiles = 0;
         private int filesProcessed = 0;
 
@@ -273,7 +274,7 @@ namespace WebApi.Controllers
                                     "</div>\n" +
                                 "</div>\n" +
                                 "<div class='oggleHidden inline floatRight' id='divLogedIn' style='display: none;'>\n" +
-                                    "<div class='menuTab floatRight'><a href='javascript:logoutPlease()'>Log Out</a></div>\n" +
+                                    "<div class='menuTab floatRight'><a href='javascript:logoutSimple()'>Log Out</a></div>\n" +
                                     "<div id='helloUser' title='modify profile' class='menuTab floatRight'><a href='javascript:profilePease()'>Hello  </a></div>\n" +
                                 "</div>\n" +
                                 "<div class='oggleHidden inline floatRight' id='divNotLogedIn' style='display: block;'>\n" +
@@ -337,7 +338,7 @@ namespace WebApi.Controllers
                         "<div id='staticPagectxModelName' onclick='contextMenuActionShow()'>model name</div>\n" +
                         "<div id='ctxSeeMore' onclick='contextMenuActionJump()'>see more of her</div>\n" +
                         "<div onclick='contextMenuActionComment()'>comment</div>\n" +
-                        "<div onclick='contextMenuActionExplode()'>open in new tab</div>\n" +
+                        "<div onclick='contextMenuActionExplode()'>explode</div>\n" +
                     "</div>\n" +
                 "</div>\n" +
                 "<div id='rightColumn'></div>\n" +
@@ -608,9 +609,9 @@ namespace WebApi.Controllers
             return "<div class='threeColumnArray'>\n" +
                 "    <div id='leftColumn'>\n" +
                 "        <div class='leftColumnList'>\n" +
-                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/Tramsitions\"'>Transitions</div>\n" +
+                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/Transitions?folder=boobs\"'>Transitions</div>\n" +
                 "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/BoobsRanker\"'>Boobs Rater</div>\n" +
-                "            <div onclick='showCustomMessage(38)'>Let me Expalin</div>\n" +
+                "            <div onclick='showCustomMessage(38)'>Let me Explain</div>\n" +
                 "            <div onclick='showCatListDialog(2)'>Category List</div>\n" +
                 "            <div onclick='window.location.href=\"https://ogglebooble.com/Admin/Blog\"'>Blog</div>\n" +
                 "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/Mobile?folder=boobs\"'>Mobile</div>\n" +
@@ -669,10 +670,9 @@ namespace WebApi.Controllers
                 "    <div id='leftColumn'>\n" +
                 "        <div class='leftColumnList'>\n" +
                 "            <div onclick='window.location.href=\"" + httpLocation + "\"'>OggleBooble</div>\n" +
+                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/Transitions?folder=porn\"'>Transitions</div>\n" +
                 "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/BoobsRanker\"'>Boobs Rater</div>\n" +
                 "            <div onclick='showCatListDialog(242)'>Category List</div>\n" +
-                "            <div onclick='window.location.href=\"https://ogglebooble.com/Admin/Blog\"'>Blog</div>\n" +
-                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/Mobile?folder=boobs\"'>Mobile</div>\n" +
                 "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/Videos\"'>Videos</div>\n" +
                 "        </div>\n" +
                 "    </div>\n" +
@@ -721,7 +721,7 @@ namespace WebApi.Controllers
                 timer.Start();
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    vwLinks = db.VwLinks.Where(l => l.RootFolder == rootFolder).OrderBy(l => l.Link).Take(145).ToList();
+                    vwLinks = db.VwLinks.Where(l => l.RootFolder == rootFolder).OrderBy(l => l.LinkId).Take(initialTake).ToList();
                 }
                 for (int i = 0; i < vwLinks.Count; i++)
                 {
@@ -762,7 +762,7 @@ namespace WebApi.Controllers
             List<VwLink> vwLinks = null;
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
-                vwLinks = db.VwLinks.Where(l => l.RootFolder == rootFolder).OrderBy(l => l.Link).Skip(skip).Take(take).ToList();
+                vwLinks = db.VwLinks.Where(l => l.RootFolder == rootFolder).OrderBy(l => l.LinkId).Skip(skip).Take(take).ToList();
             }
             return vwLinks;
         }

@@ -28,17 +28,32 @@
     border: dashed 2px #d19154;
 }
 
+/*border: solid 6px */
+
+.pornFolderImageOutterFrame {
+    border: solid 6px #966211;
+    border-radius: 4px;
+    margin: 4px;
+}
 .folderImageOutterFrame {
     border: solid 6px var(--thumbnailBorderColor);
     border-radius: 4px;
     margin: 4px;
+}
+.subDirLabel {
+    text-align: center;
+    background-color: var(--thumbnailBorderColor);
+}
+.pornSubDirLabel {
+    text-align: center;
+    background-color: #966211;
+    color: #ececec;
 }
 
 .folderImageFrameName {
     text-align: center;
     background-color: var(--thumbnailBorderColor);
 }
-
 .pornFolderImageFrame {
     text-align: center;
     background-color: #ffcccc;    

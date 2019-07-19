@@ -157,14 +157,31 @@ function getImageLinks() {
 
 function processImages(imageLinksModel, start) {
 
+    var imageFrameClass = "folderImageOutterFrame";
+    var subDirLabel = "subDirLabel";
+    if ((imageLinksModel.RootFolder === "porn") || (imageLinksModel.RootFolder === "sluts")) {
+        imageFrameClass = "pornFolderImageOutterFrame";
+        subDirLabel = "pornSubDirLabel";        
+    }
+
+    //alert("RootFolder==porn: " + ((imageLinksModel.RootFolder === "porn") || (imageLinksModel.RootFolder === "sluts")));
+
     //  SUBFOLDERS
     $('#imageContainer').html('');
     $.each(imageLinksModel.SubDirs, function (idx, subDir) {
-        $('#imageContainer').append("<div class='folderImageOutterFrame'><div class='folderImageFrame' onclick=window.location.href='ImagePage?folder=" + subDir.FolderId + "'>" +
+        $('#imageContainer').append("<div class='" + imageFrameClass + "' onclick=window.location.href='ImagePage?folder=" + subDir.FolderId + "'>" +
             "<img class='folderImage' src='" + subDir.Link + "'/>" +
-            "<div class='folderImageFrameName'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div></div>");
+            "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div>");
     });
 
+    //$.each(imageLinksModel.SubDirs, function (idx, subDir) {
+    //    $('#imageContainer').append("<div class='" + imageFrameClass + "'><div class='" + imageFrameClass + "' onclick=window.location.href='ImagePage?folder=" + subDir.FolderId + "'>" +
+    //        "<img class='folderImage' src='" + subDir.Link + "'/>" +
+    //        "<div class='" + imageFrameClass + "'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div></div>");
+    //});
+
+
+    
     // IMAGES 
     imageArray = new Array();
     var fileCount = 0;
@@ -177,6 +194,7 @@ function processImages(imageLinksModel, start) {
         });
 
         var imageFrameClass = "imageFrame";
+
         if (isPornEditor) {
             if (imageLinksModel.RootFolder === "archive") {
                 if (imageModelFile.LinkCount > 1) {
@@ -189,8 +207,10 @@ function processImages(imageLinksModel, start) {
                 }
             }
         }
+
         $('#imageContainer').append("<div class='" + imageFrameClass + "'><img id=" + imageModelFile.LinkId +
             " onclick='galleryImageClick(" + fileCount + ",\"" + imageLinksModel.FolderName + "\")' idx=" + fileCount++ + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+
     });
 
     $('.thumbImage').contextmenu(function () {

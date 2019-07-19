@@ -66,13 +66,17 @@
     var folder = '@ViewBag.Folder';
 
     var transformEngine;
-    var pic1 = "/Images/babes.jpg";
+    var pic1 = "http://archive.ogglebooble.com/favorites/Alison%20Angel/Alison%20Angel_01be2cba-301a-487b-8cbb-990492b7179f.jpg";
     var pic2 = "/Images/nicetits.jpg";
     var mode = "play";
     var picArray = [];
     var curIndex = 0;
 
     $(document).ready(function () {
+        if (folder == "boobs")
+            $('#floatingMessage').html("Want to see her tits?")
+        else
+            $('#floatingMessage').html("Want to see her go down?")
         LoadPicArray(folder);
     });
     
@@ -94,17 +98,16 @@
     ///  11:11 11:11
     // 1/14/19
     function LoadPicArray(folder) {
-        var imageFolder = "https://api.curtisrhodes.com/app_data/Danni/transitions";
 
         try {
             $.ajax({
-                type: "get",
-                url: service + "api/Directory/?folder=" + folder,
+                type: "GET",
+                url: service + "api/Transitions?folderName=" + folder,
                 success: function (data) {
                     picArray = data;
-
-                    $('#imgNakedGirl').attr("src", service + "/App_Data/Danni/transitions/" + folder + "/" + picArray[0]);
-                    pic2 = service + "/App_Data/Danni/transitions/" + folder + "/" + picArray[1];
+                    $('#imgNakedGirl').attr("src", picArray[0]);
+                    pic2 = picArray[1];
+                    //pic2 = service + "/App_Data/Danni/transitions/" + folder + "/" + picArray[1];
                     $('#floatingMessage').css("left", ($('#imageContainer').width() / 2));
                 },
                 error: function (jqXHR, exception) {
@@ -120,10 +123,15 @@
         curIndex += 2;
         if (curIndex >= picArray.length)
             curIndex = 0;
-        pic1 = service + "/App_Data/Danni/transitions/" + folder + "/" + picArray[curIndex];
-        pic2 = service + "/App_Data/Danni/transitions/" + folder + "/" + picArray[curIndex + 1];
+        //pic1 = service + "/App_Data/Danni/transitions/" + folder + "/" + picArray[curIndex];
+        //pic2 = service + "/App_Data/Danni/transitions/" + folder + "/" + picArray[curIndex + 1];
+        pic1 = picArray[curIndex];
+        pic2 = picArray[curIndex + 1];
         $('#imgNakedGirl').attr("src", pic1)
-        $('#floatingMessage').html("Want to see her tits?")
+        if (folder == "boobs")
+            $('#floatingMessage').html("Want to see her tits?")
+        else
+            $('#floatingMessage').html("Want to see her go down?")
 
         //alert("pic1: " + pic1)
 

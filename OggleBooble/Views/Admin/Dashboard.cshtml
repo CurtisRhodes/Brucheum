@@ -57,10 +57,10 @@
 
     <div id="moveFolderCrud" class="oggleHidden" title="Move Folder">
         <div>
-            <span>move folder </span><div onclick="$('#partialViewTreeContainer').dialog('open');" class="toggleButton">...</div>
+            <span>new parent </span><div onclick="$('#partialViewTreeContainer').dialog('open');" class="toggleButton">...</div>
             <input id="txtFolderToMove" class="txtPartialDirTreePath roundedInput" readonly="readonly" />
         </div>
-        <div><span>new parent</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+        <div><span>move folder</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
         <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
     </div>
 
@@ -406,7 +406,7 @@
         $('#progressBar').show();
         $.ajax({
             type: "PUT",
-            url: service + "/api/FtpDashboard/MoveFolder?orignFolderId=" + partialViewSelectedItemId + "&destinationParentId=" + dashboardMainSelectedTreeId,
+            url: service + "/api/FtpDashboard/MoveFolder?orignFolderId=" + dashboardMainSelectedTreeId + "&destinationParentId=" + partialViewSelectedItemId,
             success: function (success) {
                 //$('#dashBoardLoadingGif').hide();
                 $('#moveFolderCrud').hide();

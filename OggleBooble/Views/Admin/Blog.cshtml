@@ -149,7 +149,7 @@
                                     <input id="txtCommentTitle" class="roundedInput" />
                                 </div>
                                 <div class="crudRow">
-                                    <div class="crudLabel inline">Typeo</div>
+                                    <div class="crudLabel inline">Type</div>
                                     <select id="selBlogEditCommentType" class="roundedInput" onchange="loadBlogList($(this).val())">
                                         <option value="CMT">Comment on an Image</option>
                                         <option value="PGM">Programmer Notes</option>
@@ -271,7 +271,7 @@
                             blogObject.Id = categoryCommentModel.FolderId;
                             $('#blogPageTitle').html(categoryCommentModel.FolderName);
                             $('#blogPageImage').attr("src", categoryCommentModel.Link);
-                            $('#blogPageBody').html(categoryCommentModel.CommentText);
+                            $('#blogPageBody').html("fls");
 
                             if ($('#blogPageBody').height() > $('#middleColumn').height()) {
                                 $('#middleColumn').height($('#blogPageBody').height() + $('#bheader').height());

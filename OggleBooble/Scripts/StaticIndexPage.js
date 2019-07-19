@@ -1,20 +1,20 @@
-﻿var carouselArray = [];
-var totalRows = 0;
-var arrayLength;
-var imageIndex;
-var service = "https://api.curtisrhodes.com/";
-var promoIdx = 0;
+﻿var service = "https://api.curtisrhodes.com/";
+var carouselArray = [];
 var promoMessagesArray = new Array();
 var promoMessageRotator;
+var allowthemtoLoadIntervar;
+var totalRows = 0;
+var arrayLength;
+var imageIndex = 0;
+var promoIdx = 0;
 var promoMessageRotationSpeed = 13000;
 var httpLocation = "https://ogglebooble.com/static";
 var selectedImageArchiveFolderId;
+var loadingImages = false;
 var rotationSpeed = 5123;
 var intervalSpeed = 800;
-var throttleSpeed = 6200;
-var throttleSize = 500;
-var allowthemtoLoadIntervar;
-var loadingImages = false;
+var throttleSpeed = 15200;
+var throttleSize = 2500;
 
 $(document).ready(function () {
     loadHardCoded();
@@ -31,7 +31,6 @@ $(document).ready(function () {
 });
 
 function loadHardCoded() {   
-    //sb.Append("<img id='image" + i + "' folderName='" + vwLinks[i].FolderName + "'  linkId='" + vwLinks[i].LinkId + "' src='" + vwLinks[i].Link + "'/>\n");
     var start = Date.now();
     var idx = 0;
     $('#hardcodedImagesContainer').children("img").each(function () {
@@ -39,6 +38,7 @@ function loadHardCoded() {
         carouselArray[idx].src = $(this).attr("src");
         carouselArray[idx].ParentName = $(this).attr("parentName");
         carouselArray[idx].RootFolder = $(this).attr("rootFolder");
+        carouselArray[idx].LinkId = $(this).attr("linkId");
         carouselArray[idx].FolderId = $(this).attr("folderId");
         carouselArray[idx++].FolderName = $(this).attr("folderName");
     });
@@ -59,12 +59,12 @@ function startCarousel() {
 }
 
 function itnervalBody() {
-    if (loadingImages)
+    if (loadingImages) {
         console.log("loadingImages");
+    }
     else {
         $('#categoryTitle').fadeOut(intervalSpeed);
         $('#laCarouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
-            imageIndex = Math.floor(Math.random() * arrayLength);
             $('#laCarouselImageContainer img').attr("src", carouselArray[imageIndex].src);
             $('#laCarouselImageContainer').fadeIn(intervalSpeed);
             $('#categoryTitle').html(carouselArray[imageIndex].FolderName).fadeIn(intervalSpeed);
@@ -78,6 +78,10 @@ function itnervalBody() {
             $('#laCarouselImageContainer img').css("max-width", $('#middleColumn').width());
             $('#laCarouselImageContainer img').css("max-height", $('#middleColumn').innerHeight() - 180);
             $('#footerMessage').html("image: " + imageIndex + " of " + arrayLength);
+            imageIndex = Math.floor(Math.random() * arrayLength);
+            //imageIndex++;// = Math.floor(Math.random() * arrayLength);
+            //if (imageIndex > carouselArray.length)
+            //    imageIndex = 0;
         });
     }
 }
@@ -107,14 +111,13 @@ function getMoreImages(skip, take) {
                     carouselArray[skip + idx].FolderName = obj.FolderName;
                 });
                 arrayLength += take;
-                //arrayLength = Math.min(arrayLength, carouselArray.length);
                 if (arrayLength > carouselArray.length) {
                     arrayLength = carouselArray.length;
                     console.log("CLEAR INTERVAL arrayLength: " + arrayLength + "  carouselArray.length: " + carouselArray.length);
                     clearInterval(allowthemtoLoadIntervar);
                 }
                 var delta = (Date.now() - start) / 1000;
-                console.log("getMoreImages took: " + delta.toFixed(3));
+                console.log("getMoreImages skip: " + skip + " take: " + take + " took: " + delta.toFixed(3));
                 loadingImages = false;
             },
             error: function (jqXHR, exception) {
@@ -122,12 +125,12 @@ function getMoreImages(skip, take) {
             }
         });
     //}, 10000);
-
 }
 
 function showContextMenu() {
     event.preventDefault();
     window.event.returnValue = false;
+    //alert("carouselArray[" + imageIndex + "].LinkId: " + carouselArray[imageIndex].LinkId);
     pause();
     $('#ctxModelName').html("");
     $.ajax({
@@ -227,6 +230,7 @@ function considerHidingContextMenu() {
 }
 
 function clickViewParentGallery() {
+    alert("clickViewParentGallery()")
     window.location.href = "/home/ImagePage?folder=" + carouselArray[imageIndex].ParentId;
     //window.location.href = "http://pages.ogglebooble.com/" + carouselArray[imageIndex].FolderName + ".html";
 }
@@ -345,4 +349,5 @@ function letemPorn(response) {
         }
     }
 }
+
 
