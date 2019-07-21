@@ -14,6 +14,8 @@ namespace OggleBooble.Controllers
         public ActionResult Index()
         {
             ViewBag.Service = apiService;
+            ViewBag.IpAddress = Helpers.GetIPAddress();
+            //ViewBag.IpAddress = Session["IpAddress"];
             return View();
         }
     }

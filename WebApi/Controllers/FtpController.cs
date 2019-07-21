@@ -117,113 +117,121 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    //string linkId = model.Link.Substring(model.Link.LastIndexOf("_") + 1, 36);
-                    ImageLink dbImageLink = db.ImageLinks.Where(l => l.Link == model.Link.Replace("%20"," ")).First();
-                    string linkId = dbImageLink.Id;
-                    if (model.Mode == "Copy")
+                    string link = model.Link.Replace("%20", " ");
+
+                    ImageLink dbImageLink = db.ImageLinks.Where(l => l.Link.Replace("%20", " ") == link.Replace("%20", " ")).FirstOrDefault();
+                    if (dbImageLink == null)
                     {
-                        CategoryImageLink existingLink = db.CategoryImageLinks
-                            .Where(l => l.ImageCategoryId == model.DestinationFolderId)
-                            .Where(l => l.ImageLinkId == dbImageLink.Id).FirstOrDefault();
-                        if (existingLink != null)
-                            success = "Link already exists";
-                        else
-                        {
-                            db.CategoryImageLinks.Add(new CategoryImageLink()
-                            {
-                                ImageCategoryId = model.DestinationFolderId,
-                                ImageLinkId = dbImageLink.Id
-                            });
-                            db.SaveChanges();
-                            success = "ok";
-                        }
+                        success = "link [" + link + "] not found";
                     }
-                    else  // Archive Move
+                    else
                     {
-                        CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.SourceFolderId).First();
-                        CategoryFolder dbDestinationFolder = db.CategoryFolders.Where(f => f.Id == model.DestinationFolderId).First();
-                        string extension = model.Link.Substring(model.Link.LastIndexOf("."));
-                        //if (dbImageLink.FolderLocation == model.SourceFolderId)
+                        string linkId = dbImageLink.Id;
+                        if (model.Mode == "Copy")
                         {
+                            CategoryImageLink existingLink = db.CategoryImageLinks
+                                .Where(l => l.ImageCategoryId == model.DestinationFolderId)
+                                .Where(l => l.ImageLinkId == dbImageLink.Id).FirstOrDefault();
+                            if (existingLink != null)
+                                success = "Link already exists";
+                            else
+                            {
+                                db.CategoryImageLinks.Add(new CategoryImageLink()
+                                {
+                                    ImageCategoryId = model.DestinationFolderId,
+                                    ImageLinkId = dbImageLink.Id
+                                });
+                                db.SaveChanges();
+                                success = "ok";
+                            }
+                        }
+                        else  // Archive Move
+                        {
+                            CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.SourceFolderId).First();
+                            CategoryFolder dbDestinationFolder = db.CategoryFolders.Where(f => f.Id == model.DestinationFolderId).First();
+                            string extension = model.Link.Substring(model.Link.LastIndexOf("."));
+                            //if (dbImageLink.FolderLocation == model.SourceFolderId)
+                            {
 
-                            string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" +
-                            Helpers.GetFtpParentPathWithoutRoot(model.DestinationFolderId) + dbDestinationFolder.FolderName;
+                                string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" +
+                                Helpers.GetFtpParentPathWithoutRoot(model.DestinationFolderId) + dbDestinationFolder.FolderName;
 
-                            string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" +
-                                Helpers.GetFtpParentPathWithoutRoot(model.SourceFolderId) + dbSourceFolder.FolderName;
+                                string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" +
+                                    Helpers.GetFtpParentPathWithoutRoot(model.SourceFolderId) + dbSourceFolder.FolderName;
 
 
-                            string newFileName = dbDestinationFolder.FolderName + "_" + dbImageLink.Id + extension;
-                            string sourceFileName = "";
-                            //if (model.Link.Contains("Playboy centerfold"))
-                            //{
-                            //    // rename 
-                            //    sourceFileName = model.Link;
-                            //}
-                            //else
+                                string newFileName = dbDestinationFolder.FolderName + "_" + dbImageLink.Id + extension;
+                                string sourceFileName = "";
+                                //if (model.Link.Contains("Playboy centerfold"))
+                                //{
+                                //    // rename 
+                                //    sourceFileName = model.Link;
+                                //}
+                                //else
 
-                            sourceFileName = model.Link.Substring(model.Link.LastIndexOf("/") + 1);
+                                sourceFileName = model.Link.Substring(model.Link.LastIndexOf("/") + 1);
 
-                            if (!FtpUtilies.DirectoryExists(destinationFtpPath))
-                                FtpUtilies.CreateDirectory(destinationFtpPath);
+                                if (!FtpUtilies.DirectoryExists(destinationFtpPath))
+                                    FtpUtilies.CreateDirectory(destinationFtpPath);
 
-                            success = FtpUtilies.MoveFile(sourceFtpPath + "/" + sourceFileName, destinationFtpPath + "/" + newFileName);
+                                success = FtpUtilies.MoveFile(sourceFtpPath + "/" + sourceFileName, destinationFtpPath + "/" + newFileName);
+                                if (success == "ok")
+                                {
+                                    // move file on local drive 
+                                    try
+                                    {
+                                        string localServerPath = "F:/Danni/";
+                                        string localSourcePath = localServerPath + Helpers.GetLocalParentPath(model.SourceFolderId) + dbSourceFolder.FolderName;
+                                        DirectoryInfo dirInfo = new DirectoryInfo(localSourcePath);
+                                        if (!dirInfo.Exists)
+                                        {
+                                            Directory.CreateDirectory(localSourcePath);
+                                        }
+
+                                        FileInfo fileInfo = dirInfo.GetFiles(dbSourceFolder.FolderName + "_" + dbImageLink.Id + extension).FirstOrDefault();
+                                        if (fileInfo != null)
+                                        {
+                                            string localDestinationPath = localServerPath + Helpers.GetLocalParentPath(model.DestinationFolderId) + "/" + dbDestinationFolder.FolderName;
+                                            if (!System.IO.Directory.Exists(localDestinationPath))
+                                                System.IO.Directory.CreateDirectory(localDestinationPath);
+                                            fileInfo.MoveTo(localDestinationPath + "/" + newFileName);
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        System.Diagnostics.Debug.WriteLine("move file on local drive : " + Helpers.ErrorDetails(ex));
+                                    }
+                                }
+                            }
                             if (success == "ok")
                             {
-                                // move file on local drive 
-                                try
-                                {
-                                    string localServerPath = "F:/Danni/";
-                                    string localSourcePath = localServerPath + Helpers.GetLocalParentPath(model.SourceFolderId) + dbSourceFolder.FolderName;
-                                    DirectoryInfo dirInfo = new DirectoryInfo(localSourcePath);
-                                    if (!dirInfo.Exists)
-                                    {
-                                        Directory.CreateDirectory(localSourcePath);
-                                    }
-
-                                    FileInfo fileInfo = dirInfo.GetFiles(dbSourceFolder.FolderName + "_" + dbImageLink.Id + extension).FirstOrDefault();
-                                    if (fileInfo != null)
-                                    {
-                                        string localDestinationPath = localServerPath + Helpers.GetLocalParentPath(model.DestinationFolderId) + "/" + dbDestinationFolder.FolderName;
-                                        if (!System.IO.Directory.Exists(localDestinationPath))
-                                            System.IO.Directory.CreateDirectory(localDestinationPath);
-                                        fileInfo.MoveTo(localDestinationPath + "/" + newFileName);
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    System.Diagnostics.Debug.WriteLine("move file on local drive : " + Helpers.ErrorDetails(ex));
-                                }
-                            }
-                        }
-                        if (success == "ok")
-                        {
-                            //2. update ImageLink 
-                            string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
-                            string goDaddyLink = linkPrefix + Helpers.GetFtpParentPathWithoutRoot(model.DestinationFolderId) +
-                                dbDestinationFolder.FolderName + "/" + dbDestinationFolder.FolderName + "_" + dbImageLink.Id + extension;
-                            ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == dbImageLink.Id).FirstOrDefault();
-                            goDaddyrow.Link = goDaddyLink;
-                            goDaddyrow.FolderLocation = dbDestinationFolder.Id;
-                            db.SaveChanges();
-
-                            //3 create new link for new location if necessary
-                            if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Where(c => c.ImageLinkId == dbImageLink.Id).FirstOrDefault() == null)
-                            {
-                                CategoryImageLink newCatImageLink = new CategoryImageLink() { ImageCategoryId = model.DestinationFolderId, ImageLinkId = dbImageLink.Id };
-                                db.CategoryImageLinks.Add(newCatImageLink);
+                                //2. update ImageLink 
+                                string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
+                                string goDaddyLink = linkPrefix + Helpers.GetFtpParentPathWithoutRoot(model.DestinationFolderId) +
+                                    dbDestinationFolder.FolderName + "/" + dbDestinationFolder.FolderName + "_" + dbImageLink.Id + extension;
+                                ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == dbImageLink.Id).FirstOrDefault();
+                                goDaddyrow.Link = goDaddyLink;
+                                goDaddyrow.FolderLocation = dbDestinationFolder.Id;
                                 db.SaveChanges();
-                            }
+
+                                //3 create new link for new location if necessary
+                                if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Where(c => c.ImageLinkId == dbImageLink.Id).FirstOrDefault() == null)
+                                {
+                                    CategoryImageLink newCatImageLink = new CategoryImageLink() { ImageCategoryId = model.DestinationFolderId, ImageLinkId = dbImageLink.Id };
+                                    db.CategoryImageLinks.Add(newCatImageLink);
+                                    db.SaveChanges();
+                                }
 
 
-                            if (model.Mode == "Move")
-                            {
-                                // remove current link
-                                CategoryImageLink oldCatImageLink = db.CategoryImageLinks
-                                     .Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == dbImageLink.Id).First();
+                                if (model.Mode == "Move")
+                                {
+                                    // remove current link
+                                    CategoryImageLink oldCatImageLink = db.CategoryImageLinks
+                                         .Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == dbImageLink.Id).First();
 
-                                db.CategoryImageLinks.Remove(oldCatImageLink);
-                                db.SaveChanges();
+                                    db.CategoryImageLinks.Remove(oldCatImageLink);
+                                    db.SaveChanges();
+                                }
                             }
                         }
                     }
@@ -321,7 +329,7 @@ namespace WebApi
                         string extension = newLink.Link.Substring(newLink.Link.Length - 4);
                         string newFileName = dbCategory.FolderName + "_" + imageLinkId + extension;
                         //var trimPath = newLink.Path.Substring(newLink.Path.IndexOf("Root/") + 1);
-                        var trimPath = newLink.Path.Replace("/Root/", "");
+                        var trimPath = newLink.Path.Replace("/Root/", "").Replace("%20", " ");
                         var appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
                         using (WebClient wc = new WebClient())
                         {
@@ -471,35 +479,43 @@ namespace WebApi
                         expectedFileName = newFolderName.Trim() + "_" + linkId + ext;
                         if (fileName != expectedFileName)
                         {
-                            var success = FtpUtilies.MoveFile(ftpPath + "/" + fileName, ftpPath + "/" + expectedFileName);
-                            if (success == "ok")
+                            if (fileName.ToUpper() == expectedFileName.ToUpper())
                             {
-                                renameReport.ImagesRenamed++;
-                                SignalRHost.ProgressHub.PostToClient("Renaminging files in: " + folder.FolderName + "  " + renameReport.ImagesRenamed);
                             }
                             else
                             {
-                                renameReport.Errors.Add("unable to rename " + fileName + " Message: " + success);
-                                renameReport.Success = "unable to rename ";
-                            }
-                        }
-                        if (renameReport.Success == "ono")
-                        {
-                            ImageLink goDaddyLink = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
-                            if (goDaddyLink != null)
-                            {
-                                expectedLinkName = goDaddyPrefix + folderPath + newFolderName.Trim() + "/" + expectedFileName;
-                                if (goDaddyLink.Link != expectedLinkName)
+                                var success = FtpUtilies.MoveFile(ftpPath + "/" + fileName, ftpPath + "/" + expectedFileName);
+                                if (success == "ok")
                                 {
-                                    goDaddyLink.Link = expectedLinkName;
-                                    db.SaveChanges();
-                                    renameReport.LinksEdited++;
-
-                                    SignalRHost.ProgressHub.PostToClient("Renaminging files in: " + folder.FolderName + "  Links Edited: " + renameReport.LinksEdited);
+                                    renameReport.ImagesRenamed++;
+                                    //SignalRHost.ProgressHub.PostToClient("Renaminging files in: " + folder.FolderName + "  " + renameReport.ImagesRenamed);
+                                    //SignalRHost.ProgressHub.PostToClient("Renaminging files in: " + folder.FolderName + " " + renameReport.ImagesRenamed + "  LinksEdited: " + renameReport.LinksEdited);
+                                }
+                                else
+                                {
+                                    renameReport.Errors.Add("unable to rename " + fileName + " Message: " + success);
+                                    renameReport.Success = "unable to rename ";
                                 }
                             }
-                            else
-                                renameReport.Errors.Add("missing link: " + linkId);
+
+                            if (renameReport.Success == "ono")
+                            {
+                                ImageLink goDaddyLink = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                                if (goDaddyLink != null)
+                                {
+                                    expectedLinkName = goDaddyPrefix + folderPath + newFolderName.Trim() + "/" + expectedFileName;
+                                    if (goDaddyLink.Link != expectedLinkName)
+                                    {
+                                        goDaddyLink.Link = expectedLinkName;
+                                        db.SaveChanges();
+                                        renameReport.LinksEdited++;
+
+                                        SignalRHost.ProgressHub.PostToClient("Renaminging files in: " + folder.FolderName + "  Images Renamed: " + renameReport.ImagesRenamed + " of: " + files.Count());
+                                    }
+                                }
+                                else
+                                    renameReport.Errors.Add("missing link: " + linkId);
+                            }
                         }
                         renameReport.RowsProcessed++;
                     }
@@ -711,7 +727,7 @@ namespace WebApi
                     if (rootFolder == "root")
                         rootFolder = newFolderName;
 
-                    string destinationFtpPath = ftpHost + rootFolder + ".ogglebooble.com/" + Helpers.GetFtpParentPathWithoutRoot(parentId) + newFolderName.Trim();
+                    string destinationFtpPath = ftpHost + rootFolder + ".ogglebooble.com/" + Helpers.GetFtpParentPathWithoutRoot(parentId) + "/" + newFolderName.Trim();
 
                     if (FtpUtilies.DirectoryExists(destinationFtpPath))
                         successModel.Success = "folder already exists";

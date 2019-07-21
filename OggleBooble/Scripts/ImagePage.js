@@ -294,6 +294,7 @@ function contextMenuAction(action) {
             });
             break;
         case "copy":
+            //alert("src: " + $('#' + currentContextLinkId + '').attr("src") + " folderId: " + folderId);
             $("#thumbImageContextMenu").fadeOut();
             showMoveCopyDialog("Copy", $('#' + currentContextLinkId + '').attr("src"), folderId);
             $('#moveCopyDialog').on('dialogclose', function (event) {

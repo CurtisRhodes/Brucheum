@@ -187,7 +187,12 @@ namespace WebApi
                             db.SaveChanges();
                             success.ReturnValue = "Welcome back " + ipAddress;
 
-                            new GodaddyEmailController().SendEmail("Site Visit", "ip: " + ipAddress + " visited: " + appName);
+                            if ((ipAddress == "68.203.90.183") || (ipAddress == "50.62.160.105"))
+                            {
+                                success.ReturnValue = "dev [" + userName + "]";
+                            }
+                            else
+                                new GodaddyEmailController().SendEmail("Site Visit", "ip: " + ipAddress + " visited: " + appName);
                         }
                         else
                         {
