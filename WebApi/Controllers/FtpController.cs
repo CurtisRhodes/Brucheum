@@ -154,10 +154,10 @@ namespace WebApi
                             {
 
                                 string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" +
-                                Helpers.GetFtpParentPathWithoutRoot(model.DestinationFolderId) + dbDestinationFolder.FolderName;
+                                Helpers.GetFtpParentPathWithoutRoot(model.DestinationFolderId);  // + dbDestinationFolder.FolderName;
 
                                 string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" +
-                                    Helpers.GetFtpParentPathWithoutRoot(model.SourceFolderId) + dbSourceFolder.FolderName;
+                                    Helpers.GetFtpParentPathWithoutRoot(model.SourceFolderId); // + dbSourceFolder.FolderName;
 
 
                                 string newFileName = dbDestinationFolder.FolderName + "_" + dbImageLink.Id + extension;

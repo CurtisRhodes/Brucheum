@@ -41,12 +41,12 @@ function getBreadCrumbs() {
                 document.title = breadCrumbModel.FolderName + " OggleBooble";
                 folderName = breadCrumbModel.FolderName;
 
-                if (ipAddress !== "68.203.90.183") {
-                    if (ipAddress !== "50.62.160.105") {
-                        //alert("ipAddress: " + ipAddress);
-                        logPageHit();
-                    }
-                }
+                //if (ipAddress !== "68.203.90.183") {
+                //    if (ipAddress !== "50.62.160.105") {
+                //        //alert("ipAddress: " + ipAddress);
+                logPageHit();
+                //    }
+                //}
                 buildDirTree($('#moveDialogDirTree'), "moveDialogDirTree", 0);
 
             }
