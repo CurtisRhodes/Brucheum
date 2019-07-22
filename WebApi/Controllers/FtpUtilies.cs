@@ -176,7 +176,9 @@ namespace WebApi.Ftp
                 Stream ftpStream = response.GetResponseStream();
                 success = Upload(destination, ToByteArray(ftpStream));
                 if (success == "ok")
+                {
                     success = DeleteFile(source);
+                }
                 ftpStream.Close();
                 response.Close();
                 requestDir = null;
@@ -217,10 +219,10 @@ namespace WebApi.Ftp
                 requestDir.Method = WebRequestMethods.Ftp.DeleteFile;
                 FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
                 Stream ftpStream = response.GetResponseStream();
+                ftpStream.Close();
                 success = "ok";
             }
             catch (Exception ex)
-
             {
                 success = Helpers.ErrorDetails(ex);
             }
@@ -237,6 +239,7 @@ namespace WebApi.Ftp
                 requestDir.Method = WebRequestMethods.Ftp.RemoveDirectory;
                 FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
                 Stream ftpStream = response.GetResponseStream();
+                ftpStream.Close();
                 success = "ok";
             }
             catch (Exception ex)

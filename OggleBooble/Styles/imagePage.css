@@ -31,11 +31,13 @@
 /*border: solid 6px */
 
 .pornFolderImageOutterFrame {
+    background-color: #333;
     border: solid 6px #966211;
     border-radius: 4px;
     margin: 4px;
 }
 .folderImageOutterFrame {
+    background-color: #333;
     border: solid 6px var(--thumbnailBorderColor);
     border-radius: 4px;
     margin: 4px;
@@ -78,6 +80,8 @@
 .folderImage {
     height: 200px;
     cursor: pointer;
+    display: block;
+    margin: auto;
 }
 
 .centerfold {

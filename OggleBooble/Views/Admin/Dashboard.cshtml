@@ -406,7 +406,7 @@
         $('#progressBar').show();
         $.ajax({
             type: "PUT",
-            url: service + "/api/FtpDashboard/MoveFolder?orignFolderId=" + dashboardMainSelectedTreeId + "&destinationParentId=" + partialViewSelectedItemId,
+            url: service + "/api/FtpDashboard/MoveFolder?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + partialViewSelectedItemId,
             success: function (success) {
                 //$('#dashBoardLoadingGif').hide();
                 $('#moveFolderCrud').hide();
