@@ -172,22 +172,24 @@ namespace WebApi
             return parentPath;
         }
 
-        public static string GetFtpParentPathWithoutRoot(int folderId)
+        public static string GetParentPath(int folderId)
         {
             string parentPath = "";
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
                 var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                parentPath = thisFolder.FolderName;
+                parentPath = ""; //thisFolder.FolderName;
                 int parentId = thisFolder.Parent; // db.CategoryFolders.Where(f => f.Id == folderId).Select(f => f.Parent).First();
                 while (parentId > 1)
                 {
                     var parentDb = db.CategoryFolders.Where(f => f.Id == parentId).First();
-                    parentPath = parentDb.FolderName.Replace(".OGGLEBOOBLE.COM", "") + "/" + parentPath;
+                    if (!parentDb.FolderName.Contains(".OGGLEBOOBLE.COM"))
+                        parentPath = parentDb.FolderName + "/" + parentPath;
+                    //parentPath = parentDb.FolderName.Replace(".OGGLEBOOBLE.COM", "") + "/" + parentPath;
                     parentId = parentDb.Parent;
                 }
             }
-            return parentPath.Substring(parentPath.IndexOf("/") + 1);
+            return parentPath;//.Substring(parentPath.IndexOf("/") + 1);
         }
 
         public static string GetFirstImage(int parentFolder)
