@@ -178,7 +178,7 @@ namespace WebApi
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
                 var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                parentPath = thisFolder.FolderName;
+                parentPath = thisFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
                 int parentId = thisFolder.Parent; // db.CategoryFolders.Where(f => f.Id == folderId).Select(f => f.Parent).First();
                 while (parentId > 1)
                 {

@@ -23,12 +23,16 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    int folderId = db.ImageLinks.Where(g => g.Id == linkId).First().FolderLocation;
-                    CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-
-                    imageDetail.FolderId = folderId;
-                    imageDetail.FolderName = dbCategoryFolder.FolderName;
-                    imageDetail.RootFolder = dbCategoryFolder.RootFolder;
+                    imageDetail = (from l in db.ImageLinks
+                                   join f in db.CategoryFolders on l.FolderLocation equals f.Id
+                                   where l.Id == linkId
+                                   select new GetModelNameModel()
+                                   {
+                                       FolderId = f.Id,
+                                       Link = l.Link,
+                                       FolderName = f.FolderName,
+                                       RootFolder = f.RootFolder
+                                   }).FirstOrDefault();
                     imageDetail.Success = "ok";
                 }
             }
@@ -200,7 +204,6 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-
                     imageLinks.RootFolder = dbCategoryFolder.RootFolder;
                     imageLinks.FolderName = dbCategoryFolder.FolderName;
 
@@ -223,10 +226,8 @@ namespace WebApi
                             Link = vwTree.Link
                         });
                     }
-
                     //string expectedLink = "";
-
-                    imageLinks.Files = db.VwLinks.Where(v => v.FolderId == folderId).ToList();
+                    imageLinks.Files = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.LinkId).ToList();
                 }
                 imageLinks.Success = "ok";
             }

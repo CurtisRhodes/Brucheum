@@ -718,8 +718,11 @@ namespace WebApi
                     string rootFolder = db.CategoryFolders.Where(f => f.Id == parentId).First().RootFolder;
                     if (rootFolder == "root")
                         rootFolder = newFolderName;
+                    string parentPath = Helpers.GetFtpParentPathWithoutRoot(parentId);
+                    if (parentPath == "sluts")
+                        parentPath = "";
 
-                    string destinationFtpPath = ftpHost + rootFolder + ".ogglebooble.com/" + Helpers.GetFtpParentPathWithoutRoot(parentId) + "/" + newFolderName.Trim();
+                    string destinationFtpPath = ftpHost + rootFolder + ".ogglebooble.com/" + parentPath + "/" + newFolderName.Trim();
 
                     if (FtpUtilies.DirectoryExists(destinationFtpPath))
                         successModel.Success = "folder already exists";

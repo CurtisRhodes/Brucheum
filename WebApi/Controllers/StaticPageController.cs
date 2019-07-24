@@ -38,12 +38,12 @@ namespace WebApi.Controllers
                         VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == parentFolder).First();
                         totalFiles = Math.Max(vwDirTree.GrandTotalFiles, vwDirTree.TotalFiles);
                         SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
+
+
+
                         CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == parentFolder).First();
-
-
                         //SignalRHost.ProgressHub.PostToClient("Creating index page");
                         //CreateIndexPage(categoryFolder.RootFolder, userName);
-
                         string folderName = categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
                         success = ProcessFolder(parentFolder, categoryFolder.RootFolder, folderName, userName, db);
                     }
@@ -96,22 +96,21 @@ namespace WebApi.Controllers
             try
             {
                 SignalRHost.ProgressHub.PostToClient("Creating static files: " + folderName + ".html");
+
                 string pageTitle = folderName;
                 if (folderName.LastIndexOf('/') > 0)
-                {
                     pageTitle = folderName.Substring(folderName.LastIndexOf('/') + 1);
-                }
 
                 string staticContent =
                     "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, pageTitle) +
                     "\n<body style='margin-top:105px'>\n" +
-                    HeaderHtml(folderId) +
-                    GalleryPageBodyHtml(folderId, rootFolder) + CommentDialog() + CategoryDialog() + ModelInfoDialog() +
+                    HeaderHtml(folderId) + GalleryPageBodyHtml(folderId, rootFolder) + CommentDialog() + CategoryDialog() + ModelInfoDialog() +
                     "<div id='staticCatTreeContainer' class='oggleHidden categoryListContainer' title=" + rootFolder + "></div>" +
                     "<script>var staticPageFolderId=" + folderId + "; var staticPageFolderName='" + folderName + "'; " +
-                    "var staticPageRootFolder='" + rootFolder + "'; var staticPageCurrentUser ='" + userName + "'; </script>\n" +
-                    "<script> $(document).ready(function () { window.addEventListener('resize', resizeStaticPage);resizeStaticPage();loadImageLinks()});</script>\n" +
-                    ImageViewer() + LoginDialog() + RegisterDialog() + FooterHtml(rootFolder) + "\n</body>\n</html>";
+                    "var staticPageRootFolder='" + rootFolder + "'; var staticPageCurrentUser ='" + userName + "'; logPageHit();</script>\n" +
+                    ImageViewer() + LoginDialog() + RegisterDialog() + FooterHtml(rootFolder) +
+                    "<script src='/scripts/StaticPage.js'></script>\n" +
+                    "\n</body>\n</html>";
 
                 success = WriteFileToDisk(staticContent, rootFolder, pageTitle);
                 if (success == "ok")
@@ -140,8 +139,6 @@ namespace WebApi.Controllers
             {
                 articleTagString += "," + metaTag.Tag;
             }
-
-
             return "<head>\n" +
                 "   <meta charset='utf-8'>\n" +
                 "   <script src='https://code.jquery.com/jquery-latest.min.js' type='text/javascript'></script>\n" +
@@ -161,7 +158,6 @@ namespace WebApi.Controllers
                 "   <script src='/scripts/CategoryDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='/scripts/ModelInfoDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='/scripts/DirTree.js'></script>\n" +
-                "   <script src='/scripts/StaticPage.js'></script>\n" +
                 "   <link href='/styles/default.css'     rel='stylesheet'/>\n" +
                 "   <link href='/styles/fixedHeader.css' rel='stylesheet'/>\n" +
                 "   <link href='/styles/imageViewer.css' rel='stylesheet'/>\n" +
@@ -279,11 +275,11 @@ namespace WebApi.Controllers
                                 "</div>\n" +
                                 "<div class='oggleHidden inline floatRight' id='divNotLogedIn' style='display: block;'>\n" +
                                     "<div class='menuTab floatRight' id='btnLayoutRegister'>\n" +
-                                        "<a href='javascript:staticPageShowRegisterDialog()'>Register</a>\n" +
+                                        "<a href='javascript:showRegisterDialog()'>Register</a>\n" +
                                         "<img class='btnSpinnerImage' id='btnHeaderRegisterSpinner' src='/images/loader.gif'/>\n" +
                                     "</div>\n" +
                                 "<div class='menuTab floatRight' id='btnLayoutLogin'>\n" +
-                                    "<a href='javascript:staticPageShowLoginDialog()'>Log In</a>\n" +
+                                    "<a href='javascript:showLoginDialog()'>Log In</a>\n" +
                                     "<img class='btnSpinnerImage' id='btnHeaderLoginSpinner' src='/images/loader.gif'/>\n" +
                                 "</div>\n" +
                             "</div>\n" +
@@ -315,19 +311,21 @@ namespace WebApi.Controllers
                     int subDirFileCount = subDir.FileCount + subDir.TotalFiles + subDir.GrandTotalFiles;
                     bodyHtml += "<div class='folderImageOutterFrame'>" +
                         "<div class='folderImageFrame' onclick='window.location.href=\"" + subDir.FolderName + ".html\"'>" +
-                                "<img class='folderImage' src='" + subDir.Link + "'/>" +
-                                "<div class='"+ imageFolderFrame + "'>" + subDir.FolderName + " (" + subDirFileCount + ")</div></div></div>\n";
+                        "<img class='folderImage' src='" + subDir.Link + "'/>" +
+                        "<div class='"+ imageFolderFrame + "'>" + subDir.FolderName + " (" + subDirFileCount + ")</div></div></div>\n";
                 }
                 // IMAGES 
-                List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).ToList();
+                //List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).ToList();
+                List<ImageLink> links = db.ImageLinks.Where(l => l.FolderLocation == folderId).OrderBy(l => l.Id).ToList();
                 int idx = 0;
-                foreach (VwLink vwLink in vwLinks)
+                foreach (ImageLink link in links)
                 {
-                    bodyHtml += "<div class='imageFrame'><img id='" + vwLink.LinkId + "' idx='" + idx +
-                        "' oncontextmenu='staticPageContextMenu(\"" + vwLink.LinkId + "\",\"" + vwLink.Link + "\")' " +
-                        " onclick='imgClick(\"" + idx + "\")' " +
-                        " class='thumbImage' src='" + vwLink.Link + "'/></div>\n";
-                    idx++;
+                    bodyHtml += "<div class='imageFrame'><img id='" + link.Id + "' class='thumbImage' " +
+                         "oncontextmenu='ctxSAP()' onclick='imgClick(" + idx++ + ")' src='" + link.Link + "'/></div>\n";
+
+                    //bodyHtml += "<div class='imageFrame'><img id='"+ link.Id + "'+ idx=" + idx +
+                    //    "' oncontextmenu='ctxSAP(\"" + link.Id + "\")' onclick='imgClick(" + idx++ + ")' " +
+                    //    " class='thumbImage' src='" + link.Link + "'/></div>\n";
                 }
             }
 
@@ -535,19 +533,19 @@ namespace WebApi.Controllers
 
         private string LoginDialog() {
             return
-            "<div id='loginDialog' class='modalDialog'>\n" +
-            "    <div id='divStatusMessage'></div>\n" +
-            "    <div class='dialogHeader'>\n" +
-            "        Log In to <span>OggleBooble</span>\n" +
-            "        <div onclick='$(\"#loginDialog\").hide();' class='dialogCloseButton'>\n" +
-            "            <img height='19' src='/images/powerOffRed01.png' />\n" +
-            "        </div>\n" +
-            "    </div>\n" +
+            "<div id='loginDialog' title='Log In to <span>OggleBooble</span>'>\n" +
+            //"    <div id='divStatusMessage'></div>\n" +
+            //"    <div class='dialogHeader'>\n" +
+            //"        Log In to <span>OggleBooble</span>\n" +
+            //"        <div onclick='$(\"#loginDialog\").hide();' class='dialogCloseButton'>\n" +
+            //"            <img height='19' src='/images/powerOffRed01.png' />\n" +
+            //"        </div>\n" +
+            //"    </div>\n" +
             "    <div class='dialogBody'>\n" +
             "        <div id='errSummary' class='validationError'></div>\n" +
             "        <div id='errUserName' class='validationError'>Required</div>\n" +
             "        <label>User Name</label><br>\n" +
-            "        <input id='txtUserName' type='text' class='roundedInput'><br>\n" +
+            "        <input id='txtUserName' class='roundedInput'><br>\n" +
             "        <div id='errPassword' class='validationError'>Required</div>\n" +
             "        <label>Password</label><br>\n" +
             "        <input id='clearPassword' type='password' class='roundedInput' autocomplete='off' placeholder='********'><br>\n" +
@@ -568,24 +566,23 @@ namespace WebApi.Controllers
             "        </div>\n" +
             "    </div>\n" +
             "    <div style='clear:both'></div>\n" +
-            "    <div class='or-container'>\n" +
-            "        <hr class='or-hr' />\n" +
+            //"    <div class='or-container'>\n" +
+            //"        <hr class='or-hr' />\n" +
             "        <div class='or'>or</div>\n" +
-            "    </div>\n" +
-            "    <div>\n" +
+            //"    </div>\n" +
+            //"    <div>\n" +
             "        <div class='externalLogin'>\n" +
             "            <div class='fb-login-button' data-max-rows='1' data-size='medium' data-button-type='login_with'\n" +
             "                 data-show-faces='false' data-auto-logout-link='false' data-use-continue-as='false'\n" +
             "                 scope='public_profile,email' onlogin='checkFaceBookLoginState();'>\n" +
-            "                login with facebook\n" +
+            //"                login with facebook\n" +
             "            </div>\n" +
-
-            "            @*<FB:login-button scope='public_profile,email' onlogin='checkFaceBookLoginState();'>\n" +
+            "            <FB:login-button scope='public_profile,email' onlogin='checkFaceBookLoginState();'>\n" +
             "                    <svg class='svg-icon iconFacebook' width='18' height='18' viewBox='0 0 18 18'>\n" +
             "                        <path d='M1.88 1C1.4 1 1 1.4 1 1.88v14.24c0 .48.4.88.88.88h7.67v-6.2H7.46V8.4h2.09V6.61c0-2.07 1.26-3.2 3.1-3.2.88 0 1.64.07 1.87.1v2.16h-1.29c-1 0-1.19.48-1.19 1.18V8.4h2.39l-.31 2.42h-2.08V17h4.08c.48 0 .88-.4.88-.88V1.88c0-.48-.4-.88-.88-.88H1.88z' fill='#3C5A96'></path>\n" +
             "                    </svg>\n" +
             "                    Facebook\n" +
-            "                </FB:login-button>*@\n" +
+            "                </FB:login-button>\n" +
             "        </div>\n" +
             "        <div class='externalLogin google-login' data-provider='google' data-oauthserver='https://accounts.google.com/o/oauth2/auth' data-oauthversion='2.0'>\n" +
             "            <svg aria-hidden='true' class='svg-icon native iconGoogle' width='18' height='18' viewBox='0 0 18 18'>\n" +
@@ -747,7 +744,8 @@ namespace WebApi.Controllers
                     "var staticPageCurrentUser ='" + userName + "'; </script>\n" +
                     "<script src='/scripts/staticIndexPage.js'></script>\n" +
                     hardcodedImages.ToString() +
-                    LoginDialog() + RegisterDialog() + FooterHtml(rootFolder) + "\n</body>\n</html>";
+                    LoginDialog() + RegisterDialog() + FooterHtml(rootFolder)+
+                    "<script src='/scripts/StaticPage.js'></script>\n</body>\n</html>";
 
                 success = WriteFileToDisk(staticContent, "", pageTitle);
             }
