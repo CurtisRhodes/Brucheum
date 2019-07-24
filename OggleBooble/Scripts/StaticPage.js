@@ -18,32 +18,20 @@ var selectedImage;
 var modelFolderId;
 var fullPageName;
 
-$(document).ready(function () {
-
+function logPageHit() {
     var cookie = getCookie("User");
-
     if (cookie !== "") {
         $('#divNotLogedIn').hide();
         $('#divLogedIn').show();
         $('#helloUser').html("hello: " + cookie);
     }
-
-    logPageHit(cookie);
-
-});
-
-function logPageHit(cookie) {
-
     if (typeof staticPageFolderName !== "undefined") {
-
         $('#footerMessage').html("logging page hit");
         $.ajax({
             type: "GET",
             url: service + "api/StaticPage/StaticPageGetIPAddress",
             success: function (ipAddress) {
-
-                if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
-
+               // if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
                 if (cookie === "")
                     cookie = "unknown";
 
@@ -76,42 +64,12 @@ function logPageHit(cookie) {
                         alert("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
                     }
                 });
-
             },
             error: function (jqXHR, exception) {
                 alert("StaticPageGetIPAddress XHR error: " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     }
-}
-
-function loadImageLinks() {
-    $.ajax({
-        type: "GET",
-        url: service + "/api/ImagePage/GetImageLinks?folderId=" + staticPageFolderId,
-        success: function (imageLinksModel) {
-            if (imageLinksModel.Success === "ok") {
-                if (imageLinksModel.Success === "ok") {
-                    $.each(imageLinksModel.Files, function (idx, imageModelFile) {
-                        imageArray.push({
-                            Link: imageModelFile.Link.replace(/ /g, "%20"),
-                            LinkId: imageModelFile.LinkId
-                        });
-                    });
-                    console.log("YES imageArray[] loaded: " + imageArray.length);
-                }
-                else {
-                    $('#imagePageLoadingGif').hide();
-                    alert("getImageLinks: " + imageLinksModel.Success);
-                }
-            }
-            else
-                alert("GetImageLinks: " + imageLinksModel.Success);
-        },
-        error: function (xhr) {
-            alert("GetImageLinks xhr error: " + xhr.statusText);
-        }
-    });
 }
 
 function resizeStaticPage() {
@@ -131,16 +89,24 @@ function resizeStaticPage() {
 function imgClick(imageIndex) {
     //alert("imageArray[]: " + imageArray.length + " folderId: " + staticPageFolderId + " folderName: " + staticPageFolderName);
     viewerShowing = true;
+
+    // get image array from DOM
+    $('#imageContainer').children().each(function() {
+        //alert("LinkId: " + $(this).find("img").attr("id") + "  src: " + $(this).children("img").attr("src"));
+        imageArray.push({
+            LinkId: $(this).find("img").attr("id"),
+            Link: $(this).find("img").attr("src")
+        });
+    });
     launchViewer(imageArray, imageIndex, staticPageFolderId, staticPageFolderName, staticPageCurrentUser);
+    resizeViewer();
 }
 
-
-function staticPageContextMenu(linkId, link) {
+function ctxSAP(linkId) {
     //alert("staticPageContextMenu: linkId: " + linkId);
     event.preventDefault();
     window.event.returnValue = false;
     selectedImageLinkId = linkId;
-    selectedImage = link;
     var thisImage = $('#' + selectedImageLinkId + '');
     var picpos = thisImage.offset();
     var picLeft = Math.max(0, picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50);
@@ -151,6 +117,7 @@ function staticPageContextMenu(linkId, link) {
         url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + selectedImageLinkId,
         success: function (modelDetails) {
             if (modelDetails.Success === "ok") {
+                selectedImage = modelDetails.Link;
                 fullPageName = modelDetails.RootFolder + "/" + modelDetails.FolderName;
                 modelFolderId = modelDetails.FolderId;
                 $('#staticPagectxModelName').html("unknown model");
@@ -210,7 +177,6 @@ function showCustomMessage(blogId) {
     });
 }
 
-
 function showCatListDialog(root) {
     buildDirTree($('#staticCatTreeContainer'), "staticCatTreeContainer", root);
     $('#staticCatTreeContainer').dialog({
@@ -253,41 +219,33 @@ function slowlyShowCatDialog(breadCrumbFolderId) {
 
 
 
+function showLoginDialog() {
 
-
-
-
-
-
-
-function staticPageShowLoginDialog() {
+    $('#loginDialog').dialog({
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        //position: { my: 'left top', at: 'left top', of: $('#middleColumn') },
+        width: 400,
+        height: 600
+    });
 
     if (typeof pause === 'function')
         pause();
-
-    $('#loginDialog').fadeIn();
-
-    //if (!isNullorUndefined($('#btnLayoutLogin').offset())) {
-    //    var loff = $('#btnLayoutLogin').offset().left;
-    //    $('#btnHeaderLoginSpinner').css("left", loff + 30);
-    //    $('#btnHeaderLoginSpinner').show();
-    //}
-    //$('#modalContent').html($('#loginDialog').fadeIn());
-    //$('#modalContainer').show();
-    //$('#btnHeaderRegisterSpinner').hide();
 }
 
 function postLogin() {
 
+    alert("postLogin: " + $('#txtUserName').val());
+
     expires = new Date();
     expires.setTime(expires.getTime() + 1 * 24 * 60 * 60 * 1000);
+    document.cookie = 'User=' + $('#txtUserName').val() + '; expires=' + expires.toUTCString();
 
-    document.cookie = 'User=' + $('#txtUserName').val() + ';expires=' + expires.toUTCString();
-    $('#registerUserDialog').fadeOut();
+    $('#loginDialog').dialog('close');
+    $('#divNotLogedIn').hide();
+    $('#divLogedIn').show();
 
     // add user to a table
-
-
 }
 
 function getCookie(cname) {
@@ -311,9 +269,14 @@ function getCookie(cname) {
 function staticPageShowRegisterDialog() {
     $('#registerUserDialog').fadeIn();
 }
+
 function logoutSimple() {
+    //alert("logoutSimple");
     document.cookie = "cookiename= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+    $('#divNotLogedIn').show();
+    $('#divLogedIn').hide();
 }
+
 
 
 

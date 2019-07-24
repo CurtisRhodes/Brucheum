@@ -39,6 +39,7 @@ namespace WebApi.Models
 
     public class GetModelNameModel
     {
+        public string Link { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
         public int FolderId { get; set; }

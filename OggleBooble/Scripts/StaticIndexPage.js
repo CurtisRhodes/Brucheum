@@ -230,7 +230,7 @@ function considerHidingContextMenu() {
 }
 
 function clickViewParentGallery() {
-    alert("clickViewParentGallery()")
+    alert("clickViewParentGallery()");
     window.location.href = "/home/ImagePage?folder=" + carouselArray[imageIndex].ParentId;
     //window.location.href = "http://pages.ogglebooble.com/" + carouselArray[imageIndex].FolderName + ".html";
 }
