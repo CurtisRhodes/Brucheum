@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>album</title>
+    <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <link rel="icon" href="/Images/happyMan.gif" type="image/x-icon">
+    <link href="Css/Flitter.css" rel="stylesheet" />
+    <script src="Scripts/Common.js"></script>
+</head>
+<body>
+    <div w3-include-html="FlitterHeader.html"></div>
+    <div class="threeColumnLayout">
+        <div class="leftColumn"></div>
+        <div class="middleColumn">
+
+            <h2 id="test1"></h2>
+
+        </div>
+        <div class="rightColumn"></div>
+    </div>
+    <div w3-include-html="FlitterFooter.html"></div>
+
+
+
+    <script>
+        $(document).ready(function () {
+            includeHTML();
+            resizePage();
+            params = getParams();
+
+            $('#test1').html(params.folderId);
+
+
+        });
+
+        function getSettings() { }
+
+
+
+
+
+
+
+
+
+
+
+        function getAlbumImages(folderId) {
+            try {
+                var start = Date.now();
+                $('#imagePageLoadingGif').show();
+                $.ajax({
+                    type: "GET",
+                    url: service + "/api/ImagePage/GetImageLinks?folderId=" + folderId,
+                    success: function (imageLinksModel) {
+                        if (imageLinksModel.Success === "ok") {
+                            rootFolder = imageLinksModel.RootFolder;
+                            if (imageLinksModel.Success === "ok") {
+                                processImages(imageLinksModel, start);
+                                $('#imagePageLoadingGif').hide();
+                            }
+                            else {
+                                $('#imagePageLoadingGif').hide();
+                                alert("getImageLinks: " + imageLinksModel.Success);
+                            }
+                        }
+                        else
+                            alert("getImageLinks: " + imageLinksModel.Success);
+                    },
+                    error: function (jqXHR, exception) {
+                        $('#imagePageLoadingGif').hide();
+                        alert("getImageLinks jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                    }
+                });
+            } catch (e) {
+                $('#getImagesLoadingGif').hide();
+                alert("GetLinkFolders CATCH: " + e);
+            }
+        }
+
+        function processImages(imageLinksModel, start) {
+
+            var imageFrameClass = "folderImageOutterFrame";
+            var subDirLabel = "subDirLabel";
+            if ((imageLinksModel.RootFolder === "porn") || (imageLinksModel.RootFolder === "sluts")) {
+                imageFrameClass = "pornFolderImageOutterFrame";
+                subDirLabel = "pornSubDirLabel";
+            }
+            //  SUBFOLDERS
+            $('#imageContainer').html('');
+            $.each(imageLinksModel.SubDirs, function (idx, subDir) {
+                $('#imageContainer').append("<div class='" + imageFrameClass + "' onclick=window.location.href='ImagePage?folder=" + subDir.FolderId + "'>" +
+                    "<img class='folderImage' src='" + subDir.Link + "'/>" +
+                    "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div>");
+            });
+
+            // IMAGES 
+            imageArray = new Array();
+            var fileCount = 0;
+            $.each(imageLinksModel.Files, function (idx, imageModelFile) {
+                // add files to array
+                imageArray.push({
+                    Link: imageModelFile.Link.replace(/ /g, "%20"),
+                    LinkId: imageModelFile.LinkId,
+                    Local: imageModelFile.LinkCount === 1
+                });
+
+                var imageFrameClass = "imageFrame";
+
+                if (isPornEditor) {
+                    if (imageLinksModel.RootFolder === "archive") {
+                        if (imageModelFile.LinkCount > 1) {
+                            imageFrameClass = "multiLinkImageFrame";
+                        }
+                    }
+                    else {
+                        if (imageModelFile.LinkCount > 1) {
+                            imageFrameClass = "nonLocalImageFrame";
+                        }
+                    }
+                }
+
+                $('#imageContainer').append("<div class='" + imageFrameClass + "'><img id=" + imageModelFile.LinkId +
+                    " onclick='galleryImageClick(" + fileCount + ",\"" + imageLinksModel.FolderName + "\")' idx=" + fileCount++ + " class='thumbImage' src='" + imageModelFile.Link + "'/></div>");
+
+            });
+
+            $('.thumbImage').contextmenu(function () {
+                //alert("contextmenu");
+                event.preventDefault();
+                window.event.returnValue = false;
+                currentContextLinkId = $(this).attr("id");
+                var thisImage = $('#' + currentContextLinkId + '');
+                var picpos = thisImage.offset();
+                var picLeft = picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50;
+                $('#thumbImageContextMenu').css("top", picpos.top + 5);
+                $('#thumbImageContextMenu').css("left", picLeft);
+                $.ajax({
+                    type: "GET",
+                    url: service + "api/ImageCategoryDetail/GetModelName?linkId=" + currentContextLinkId,
+                    success: function (modelDetails) {
+                        if (modelDetails.Success === "ok") {
+                            selectedImageArchiveFolderId = modelDetails.FolderId;
+                            $('#ctxModelName').html("unknown model");
+                            if (modelDetails.RootFolder !== "boobs") {
+                                $('#ctxModelName').html(modelDetails.FolderName);
+                            }
+                            $('#ctxSeeMore').hide();
+                            if (modelDetails.RootFolder !== rootFolder) {
+                                if (modelDetails.RootFolder !== "boobs") {
+                                    $('#ctxSeeMore').show();
+                                }
+                            }
+                        }
+                        else
+                            alert("GetModelName: " + modelDetails.Success);
+                    },
+                    error: function (xhr) {
+                        alert("GetModelName xhr error: " + xhr.statusText);
+                    }
+                });
+                $('#thumbImageContextMenu').css('z-index', "200");
+                $('#thumbImageContextMenu').fadeIn();
+            });
+
+            var delta = (Date.now() - start) / 1000;
+            console.log("/api/ImageFolder/GetLinks?folder=" + folderId + " took: " + delta.toFixed(3));
+            $('#fileCount').html(imageLinksModel.Files.length + imageLinksModel.SubDirs.length);
+            $('#getImagesLoadingGif').hide();
+
+        }
+
+        function getParams() {
+            var params = {},
+                pairs = document.URL.split('?').pop().split('&');
+            for (var i = 0, p; i < pairs.length; i++) {
+                p = pairs[i].split('=');
+                params[p[0]] = p[1];
+            }
+            return params;
+        }
+    </script>
+</body>
+</html>

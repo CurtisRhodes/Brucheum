@@ -240,7 +240,7 @@ namespace WebApi.Controllers
                 else
                 {
                     headerSubtitle = "<a href='" + httpLocation + "/boobs/boobs.html'>big tits</a> and " +
-                     "<a href='" + httpLocation + "/boobs/nice ass.html'>ass</a> organized by" +
+                     "<a href='" + httpLocation + "/boobs/rear view.html'>ass</a> organized by" +
                      "<a href='" + httpLocation + "/boobs/poses.html'> poses</a> " +
                      "<a href='" + httpLocation + "/boobs/shapes.html'> shapes</a> and " +
                      "<a href='" + httpLocation + "/boobs/sizes.html'> sizes</a> ";
@@ -255,7 +255,7 @@ namespace WebApi.Controllers
                 "</div>\n" +
                     "<div class='headerBodyContainer' id='largeFixedHeader'>\n" +
                         "<div id='headerTopRow'>\n" +
-                            "<div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
+                            "<div class='headerTitle' id='bannerTitle'>OggleBooble2</div>\n" +
                             "<div class='headerSubTitle' id='headerSubTitle'>" + headerSubtitle + "</div>\n" +
                         "</div>\n" +
                         "<div class='flexContainer' id='headerBottomRow'>\n" +
@@ -545,7 +545,9 @@ namespace WebApi.Controllers
             "        <div id='errSummary' class='validationError'></div>\n" +
             "        <div id='errUserName' class='validationError'>Required</div>\n" +
             "        <label>User Name</label><br>\n" +
-            "        <input id='txtUserName' class='roundedInput'><br>\n" +
+
+            "        <input id='txtLoginUserName' class='roundedInput'><br>\n" +
+
             "        <div id='errPassword' class='validationError'>Required</div>\n" +
             "        <label>Password</label><br>\n" +
             "        <input id='clearPassword' type='password' class='roundedInput' autocomplete='off' placeholder='********'><br>\n" +
@@ -706,6 +708,9 @@ namespace WebApi.Controllers
                 "</div>\n";
         }
 
+
+
+
         [HttpGet]
         public string CreateIndexPage(string rootFolder, string userName, string pageTitle, int metaTagFolderId)
         {
@@ -795,4 +800,6 @@ namespace WebApi.Controllers
             }
         }
     }
+
 }
+

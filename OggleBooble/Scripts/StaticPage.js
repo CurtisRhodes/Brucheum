@@ -18,6 +18,21 @@ var selectedImage;
 var modelFolderId;
 var fullPageName;
 
+
+$(document).ready(function () {
+
+    logPageHit();
+
+    $('#loginDialog').dialog({
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        autoOpen: false
+        //position: { my: 'left top', at: 'left top', of: $('#middleColumn') },
+        //width: 400,
+        //height: 600
+    });
+});
+
 function logPageHit() {
     var cookie = getCookie("User");
     if (cookie !== "") {
@@ -221,13 +236,9 @@ function slowlyShowCatDialog(breadCrumbFolderId) {
 
 function showLoginDialog() {
 
-    $('#loginDialog').dialog({
-        show: { effect: "fade" },
-        hide: { effect: "blind" },
-        //position: { my: 'left top', at: 'left top', of: $('#middleColumn') },
-        width: 400,
-        height: 600
-    });
+    //$('#txtUserName').val("bruno");
+
+    $('#loginDialog').dialog('open');
 
     if (typeof pause === 'function')
         pause();
@@ -235,17 +246,28 @@ function showLoginDialog() {
 
 function postLogin() {
 
-    alert("postLogin: " + $('#txtUserName').val());
+    alert("postLogin: " + $('#txtLoginUserName').val());
 
     expires = new Date();
     expires.setTime(expires.getTime() + 1 * 24 * 60 * 60 * 1000);
-    document.cookie = 'User=' + $('#txtUserName').val() + '; expires=' + expires.toUTCString();
+    document.cookie = 'User=' + $('#txtLoginUserName').val() + '; expires=' + expires.toUTCString();
 
     $('#loginDialog').dialog('close');
     $('#divNotLogedIn').hide();
     $('#divLogedIn').show();
+    $('#helloUser').html("hello " + getCookie());
 
     // add user to a table
+    $.ajax({
+        type: "POST",
+        url: service + "api/Hitcounter/RecordLogin",
+        success: function () {
+            displayStatusMessage("ok", "thanks for logging in " + getCookie());
+        },
+        error: function (jqXHR, exception) {
+            alert("AddMoreImages XHR error: " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
 }
 
 function getCookie(cname) {

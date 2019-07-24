@@ -18,7 +18,6 @@
         <div class="leftColumn"></div>
         <div class="middleColumn">
             <div class="flitterPannelsContainer">
-
                 <div id="pannelZero" class="flitterPannel">
                     <div class="flitterPannelLeftColumn">
                         <img id="pannelZeroCollapse" state="closed" onclick="pannelZeroToggle()" class="flitterPannelIcon" src="Images/man-arms-folded.png" />
@@ -37,10 +36,20 @@
                     </div>
 
                 </div>
-
                 <div id="pannelOne" class="flitterPannel">
-                    <div class="flitterPannelLeftColumn"></div>
-                    <div class="flitterPannelContentArea"></div>
+                    <div class="flitterPannelLeftColumn">
+
+                        <a href="Album.html?folderId=234&kkk=333">234</a>
+
+
+                    </div>
+
+                    <div class="flitterPannelContentArea">
+
+                        <a href="Album.html?folderId=234&kkk=333">23ddd4</a>
+
+
+                    </div>
                 </div>
                 <div id="pannelTwo" class="flitterPannel">
                     <div class="flitterPannelLeftColumn"></div>
@@ -85,11 +94,6 @@
 
         }
 
-    function getFileProperties() {
-
-    }
-
-
         function pannelZeroToggle() {
             if ($('#pannelZeroCollapse').attr('state') == "closed") {
                 $('#pannelZeroCollapse').attr('state', 'open');
@@ -103,7 +107,7 @@
                 //$('#pannelZero .flitterPannelContentArea').css('width', '0');
                 $('#pannelZero .flitterPannelContentArea').animate({ 'width': '0' }, { duration: 500, specialEasing: { width: 'linear' } });
             }
-            $('#pannelOne .flitterPannelContentArea').html($('#pannelZeroCollapse').attr('state'));
+            //$('#pannelOne .flitterPannelContentArea').html($('#pannelZeroCollapse').attr('state'));
         }
 
         function getXmlSettings() {

@@ -233,6 +233,28 @@ namespace WebApi
             return success;
         }
 
+        [HttpPost]
+        public SuccessModel RecordLogin(string userName)
+        {
+            SuccessModel success = new SuccessModel();
+            try
+            {
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    //Hit hit = db.Hits.Where(h => h.HitId == hitId).First();
+
+
+                    //hit.ViewDuration = (DateTime.Now - hit.BeginView).TotalSeconds.ToString();
+                    db.SaveChanges();
+                    success.Success = "ok";
+                }
+            }
+            catch (Exception ex) { success.Success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+
+
         [HttpPatch]
         public string EndVisit(int hitId)
         {
