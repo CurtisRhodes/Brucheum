@@ -73,7 +73,7 @@ namespace WebApi
         {
             CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
             string ftpPath = ftpHost + "/" + dbCategoryFolder.RootFolder + ".ogglebooble.com/"
-                + Helpers.GetFtpParentPathWithoutRoot(folderId) + dbCategoryFolder.FolderName;
+                + Helpers.GetParentPath(folderId) + dbCategoryFolder.FolderName;
 
             if (!FtpUtilies.DirectoryExists(ftpPath))
             {
@@ -107,7 +107,7 @@ namespace WebApi
                 {
 
                     string goDaddyPrefix = "http://" + dbCategoryFolder.RootFolder + ".ogglebooble.com/";
-                    string expectedLinkName = goDaddyPrefix + Helpers.GetFtpParentPathWithoutRoot(folderId) + dbCategoryFolder.FolderName;
+                    string expectedLinkName = goDaddyPrefix + Helpers.GetParentPath(folderId) + dbCategoryFolder.FolderName;
 
 
                     string expectedFileName = "";
@@ -141,7 +141,7 @@ namespace WebApi
                                         if (categoryFolderWhereImageSayItShouldBe != null)
                                         {
                                             string ftpPathWhereImageSayItShouldBe = ftpHost + categoryFolderWhereImageSayItShouldBe.RootFolder + ".ogglebooble.com/"
-                                                + Helpers.GetFtpParentPathWithoutRoot(categoryFolderWhereImageSayItShouldBe.Id) + categoryFolderWhereImageSayItShouldBe.FolderName;
+                                                + Helpers.GetParentPath(categoryFolderWhereImageSayItShouldBe.Id) + categoryFolderWhereImageSayItShouldBe.FolderName;
                                             string[] ArrayWhereImageSayItShouldBe = FtpUtilies.GetFiles(ftpPathWhereImageSayItShouldBe);
                                             if (ArrayWhereImageSayItShouldBe.Contains(categoryFolderWhereImageSayItShouldBe.FolderName + "_" + linkId + ext))
                                             {
@@ -153,7 +153,7 @@ namespace WebApi
                                         {  // move file 
                                             string source = ftpPath + "/" + fileName;
                                             string destination = ftpHost + categoryFolderWhereImageSayItShouldBe.RootFolder + ".ogglebooble.com/"
-                                                + Helpers.GetFtpParentPathWithoutRoot(categoryFolderWhereImageSayItShouldBe.Id) + categoryFolderWhereImageSayItShouldBe.FolderName;
+                                                + Helpers.GetParentPath(categoryFolderWhereImageSayItShouldBe.Id) + categoryFolderWhereImageSayItShouldBe.FolderName;
                                             if (source != destination)
                                             {
                                                 FtpUtilies.MoveFile(source, destination);

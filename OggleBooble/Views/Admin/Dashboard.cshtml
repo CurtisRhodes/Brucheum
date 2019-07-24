@@ -444,34 +444,33 @@
 
         $.ajax({
             type: "PUT",
-            url: service + "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&kludge=0&newFolderName=" + $('#txtReName').val(),
-            success: function (repairReport) {
+            url: service + "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&currentF=x&newFolderName=" + $('#txtReName').val(),
+            success: function (success) {
                 $('#dashBoardLoadingGif').hide();
                 $('#renameFolderCrud').dialog("close");
                 $('#renameFolderCrud').hide();
-                if (repairReport.Success == "ok") {
+                if (success == "ok") {
                     var delta = (Date.now() - start);
                     var minutes = Math.floor(delta / 60000);
                     var seconds = ((delta % 60000) / 1000).toFixed(0);
                     displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
                     console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                     buildDirectoryTree();
-                    setTimeout(function () {
-                        $('#dataifyInfo').html("Rename took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+                    //setTimeout(function () {
+                    //    $('#dataifyInfo').html("Rename took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
 
-                        $('#dataifyInfo').append(", Rows Processed: " + repairReport.RowsProcessed);
-                        $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);
-                        $('#dataifyInfo').append(", Images Renamed: " + repairReport.ImagesRenamed);
-                        $('#dataifyInfo').append(", Folders Renamed: " + repairReport.NewLinksAdded);
+                    //    $('#dataifyInfo').append(", Rows Processed: " + repairReport.RowsProcessed);
+                    //    $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);
+                    //    $('#dataifyInfo').append(", Images Renamed: " + repairReport.ImagesRenamed);
+                    //    $('#dataifyInfo').append(", Folders Renamed: " + repairReport.NewLinksAdded);
 
-                        repairReport.Errors.forEach(function (element) {
-                            $('#renameFolderReport').append("<div> errors: " + element + "</div>");
-                        });
-                        //$('#renameFolderCrud').fadeOut();
-                    }, 1200);
+                    //    repairReport.Errors.forEach(function (element) {
+                    //        $('#renameFolderReport').append("<div> errors: " + element + "</div>");
+                    //    });
+                    //    //$('#renameFolderCrud').fadeOut();
+                    //}, 1200);
                 }
                 else {
-                    $('#dashBoardLoadingGif').hide();
                     alert("renameFolder: " + repairReport.Success);
                 }
             },
