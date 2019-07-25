@@ -231,9 +231,6 @@ function slowlyShowCatDialog(breadCrumbFolderId) {
     }, 600);
 }
 
-
-
-
 function showLoginDialog() {
 
     //$('#txtUserName').val("bruno");
@@ -298,12 +295,3 @@ function logoutSimple() {
     $('#divNotLogedIn').show();
     $('#divLogedIn').hide();
 }
-
-
-
-
-
-
-
-
-

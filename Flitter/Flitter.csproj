@@ -5,11 +5,36 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Css\imagePage.css" />
+    <None Remove="Css\jqueryUI.css" />
+    <None Remove="Css\loginDialog.css" />
     <None Remove="Images\happyMan.gif" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Css\imagePage.css" />
+    <Content Include="Css\jqueryUI.css" />
+    <Content Include="Css\loginDialog.css" />
     <Content Include="Images\happyMan.gif" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Snippets\login.xhtml">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>login.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Snippets\login.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>login.xhtml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

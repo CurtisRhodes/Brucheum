@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using WebApi;
 using WebApi.Models;
 using WebApi.DataContext;
-using static System.Net.WebRequestMethods;
+//using static System.Net.WebRequestMethods;
 using WebApi.Ftp;
 using System.Configuration;
 

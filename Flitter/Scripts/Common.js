@@ -1,4 +1,26 @@
-﻿function includeHTML() {
+﻿var settingsArray = {};
+
+$(document).ready(function () {
+    loadSettings();
+});
+
+function loadSettings() {
+    $.ajax({
+        type: "GET",
+        url: "Data/flitterSettings.xml",
+        dataType: "xml",
+        success: function (xml) {
+            $(xml).find('setting').each(function () {
+                settingsArray[$(this).attr('name')] = $(this).attr('value');
+            });
+        },
+        error: function (jqXHR, exception) {
+            alert("getSettings jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+}
+
+function includeHTML() {
     var z, i, elmnt, file, xhttp;
     /* Loop through a collection of all HTML elements: */
     z = document.getElementsByTagName("*");
@@ -30,6 +52,15 @@ function inClude() {
 
 }
 
+function getParams() {
+    var params = {},
+        pairs = document.URL.split('?').pop().split('&');
+    for (var i = 0, p; i < pairs.length; i++) {
+        p = pairs[i].split('=');
+        params[p[0]] = p[1];
+    }
+    return params;
+}
 
 $(window).resize(function () {
     resizePage();
@@ -110,3 +141,79 @@ function isNullorUndefined(val) {
         return true;
     return false;
 }
+
+function onLoginClick() {
+    $('#loginDialog').show();
+    $('#loginDialog').dialog({
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        width: 333
+    });
+
+    $('#loginDialog').show();
+    if (typeof pause === 'function')
+        pause();
+}
+
+function onLogoutClick() {
+    $('#loginDialog').dialog('close');
+    $('#loginDialog').hide();
+    document.cookie = "cookiename= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+    $('#optionLoggedIn').hide();
+    $('#optionNotLoggedIn').show();
+}
+
+function addClaim() {
+    var cookieContents = document.cookie; // = "cookiename= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+    alert("cookieContents: " + cookieContents);
+}
+
+function postLogin() {
+    expires = new Date();
+    expires.setTime(expires.getTime() + 1 * 24 * 60 * 60 * 1000);
+    document.cookie = 'User=' + $('#txtLoginUserName').val() + '; expires=' + expires.toUTCString();
+
+    $('#loginDialog').dialog('close');
+    $('#optionLoggedIn').show();
+    $('#optionNotLoggedIn').hide();
+    $('#helloUser').html("hello " + getCookie());
+
+    // add user to a table
+    $.ajax({
+        type: "POST",
+        url: service + "api/Hitcounter/RecordLogin",
+        success: function () {
+            displayStatusMessage("ok", "thanks for logging in " + getCookie());
+        },
+        error: function (jqXHR, exception) {
+            alert("AddMoreImages XHR error: " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+}
+
+function getCookie(cname) {
+    if (cname === null)
+        cname = "User";
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return decodedCookie;
+}
+
+function staticPageShowRegisterDialog() {
+    $('#registerUserDialog').fadeIn();
+}
+
+function transferToRegisterPopup() {
+
+}
+

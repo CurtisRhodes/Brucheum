@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Drawing;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Web.Http;
 using System.Web.Http.Cors;
@@ -141,8 +139,6 @@ namespace WebApi.Controllers
             }
             return "<head>\n" +
                 "   <meta charset='utf-8'>\n" +
-                "   <script src='https://code.jquery.com/jquery-latest.min.js' type='text/javascript'></script>\n" +
-                "   <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>\n" +
                 "   <script src='https://code.jquery.com/jquery-latest.min.js' type='text/javascript'></script>\n" +
                 "   <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>\n" +
                 "   <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet'>\n" +
@@ -708,9 +704,6 @@ namespace WebApi.Controllers
                 "</div>\n";
         }
 
-
-
-
         [HttpGet]
         public string CreateIndexPage(string rootFolder, string userName, string pageTitle, int metaTagFolderId)
         {
@@ -800,6 +793,5 @@ namespace WebApi.Controllers
             }
         }
     }
-
 }
 

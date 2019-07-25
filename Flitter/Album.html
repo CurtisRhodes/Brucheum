@@ -1,53 +1,62 @@
 ﻿<!DOCTYPE html>
-
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
-    <title>album</title>
+    <title>Album</title>
     <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
-    <link rel="icon" href="/Images/happyMan.gif" type="image/x-icon">
+    <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>
+    <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet'>
+    <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js'></script>
+    <link href="Css/imagePage.css" rel="stylesheet" />
+    <link rel='icon' type='images/png' href='Images/happyMan.png' />
     <link href="Css/Flitter.css" rel="stylesheet" />
     <script src="Scripts/Common.js"></script>
 </head>
 <body>
-    <div w3-include-html="FlitterHeader.html"></div>
+    <div w3-include-html="Snippets/FlitterHeader.xhtml"></div>
     <div class="threeColumnLayout">
         <div class="leftColumn"></div>
         <div class="middleColumn">
-
-            <h2 id="test1"></h2>
-
+            <div id="divBreadCrumbs"></div>
+            <div id="divStatusMessage"></div>
+            <div id="divTestBox" class="attrBox"></div>
+            <img id="imagePageLoadingGif" class="btnSpinnerImage" src="~/Images/loader.gif" />
+            <div id="imageContainer" class="flexWrapContainer"></div>
+            <div id="fileCount" class="countContainer"></div>
+            <h2 id="text55"></h2>
         </div>
         <div class="rightColumn"></div>
     </div>
-    <div w3-include-html="FlitterFooter.html"></div>
-
-
+    <div w3-include-html="Snippets/FlitterFooter.xhtml"></div>
+    <div w3-include-html="Snippets/Login.xhtml"></div>
 
     <script>
+        var isPornEditor = true;
         $(document).ready(function () {
             includeHTML();
             resizePage();
             params = getParams();
 
-            $('#test1').html(params.folderId);
 
-
+            $('#text55').html(params.kkk);
+            var dots = ""
+            var waiter = setInterval(function () {
+                if (settingsArray.ApiServer === undefined) {
+                    dots += ". ";
+                    $('#text55').html(dots);
+                }
+                else {
+                    clearInterval(waiter);
+                    getAlbumImages(settingsArray.ApiServer, params.folderId);
+                }
+            }, 300);
         });
 
-        function getSettings() { }
 
+        function getAlbumImages(service, folderId) {
 
-
-
-
-
-
-
-
-
-
-        function getAlbumImages(folderId) {
+            alert("folderId: " + folderId + " service: " + service);
+            //service = "localhost:40395/";
             try {
                 var start = Date.now();
                 $('#imagePageLoadingGif').show();
@@ -71,7 +80,7 @@
                     },
                     error: function (jqXHR, exception) {
                         $('#imagePageLoadingGif').hide();
-                        alert("getImageLinks jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                        alert("getAlbumImages jqXHR : " + getXHRErrorDetails(jqXHR, exception));
                     }
                 });
             } catch (e) {
@@ -96,7 +105,7 @@
                     "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div>");
             });
 
-            // IMAGES 
+            // IMAGES
             imageArray = new Array();
             var fileCount = 0;
             $.each(imageLinksModel.Files, function (idx, imageModelFile) {
@@ -172,15 +181,6 @@
 
         }
 
-        function getParams() {
-            var params = {},
-                pairs = document.URL.split('?').pop().split('&');
-            for (var i = 0, p; i < pairs.length; i++) {
-                p = pairs[i].split('=');
-                params[p[0]] = p[1];
-            }
-            return params;
-        }
     </script>
 </body>
 </html>

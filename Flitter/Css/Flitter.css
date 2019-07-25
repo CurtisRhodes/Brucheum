@@ -80,7 +80,7 @@ header {
     border-top: #40767d 3px solid;
     border-bottom: #decd6f 3px solid;
     display: flex;
-    z-index: 1000;
+    z-index: 10;
 }
 
     header .bannerImageContainer {
@@ -172,7 +172,21 @@ footer {
             color: #eee;
         }
 
-
+.roundendButton {
+    display: inline-block;
+    text-align: center;
+    background: #07c;
+    color: #fff;
+    border-radius: 4px;
+    padding: 8px 20px;
+    cursor: pointer;
+}
+.clickable {
+    cursor: pointer;
+}
+.inline {
+    display: inline-block;
+}
 
 .floatLeft {
     float: left;
@@ -186,7 +200,7 @@ footer {
     text-align: right;
 }
 
-.hidden {
+.flitterHidden {
     display: none;
 }
 
