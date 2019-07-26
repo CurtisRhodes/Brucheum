@@ -1,0 +1,134 @@
+﻿.adminRow div {
+    margin: 3px; 
+}
+
+.imageFrame {
+    margin: 4.5px;
+    border: solid .05px #676b8a;
+}
+
+.adminLink {
+    color: blue;
+}
+
+.multiLinkImageFrame {
+    margin: 2px;
+    border: dashed 3px #08fb08;
+}
+
+.nonLocalImageFrame {
+    padding: 1px;
+    margin: 1px;
+    border: dashed 3px #988470;
+}
+.noLinksImageFrame {
+    margin: 1px;
+    padding: 1px;
+    margin-bottom: 4px;
+    border: dashed 2px #d19154;
+}
+
+/*border: solid 6px */
+
+.pornFolderImageOutterFrame {
+    background-color: #333;
+    border: solid 6px #966211;
+    border-radius: 4px;
+    margin: 4px;
+}
+.folderImageOutterFrame {
+    background-color: #333;
+    border: solid 6px var(--thumbnailBorderColor);
+    border-radius: 4px;
+    margin: 4px;
+}
+.subDirLabel {
+    text-align: center;
+    background-color: var(--thumbnailBorderColor);
+}
+.pornSubDirLabel {
+    text-align: center;
+    background-color: #966211;
+    color: #ececec;
+}
+
+.folderImageFrameName {
+    text-align: center;
+    background-color: var(--thumbnailBorderColor);
+}
+.pornFolderImageFrame {
+    text-align: center;
+    background-color: #ffcccc;    
+}
+
+.nonLocalIndicator {
+    border-right: dotted 24px #ff00dc;
+}
+
+.flexWrapContainer {
+    border: solid 4px red;
+    margin-top: 16px;
+    /*background-image: linear-gradient(#b190b6, #b84cc8);*/
+
+    border: solid thin black;
+    min-height: 200px;
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: scroll;
+}
+
+.folderImage {
+    height: 200px;
+    cursor: pointer;
+    display: block;
+    margin: auto;
+}
+
+.centerfold {
+    height: 500px;
+    cursor: pointer;
+}
+
+.thumbImage {
+    height: 200px;
+    cursor: pointer;
+    /*
+            border: dashed thin black;
+            margin-bottom: -3px;
+            width: 100%;
+
+    */
+}
+
+.loadingGif {
+    left: 150px;
+    top: 140px;
+    height: 140px;
+}
+
+:after {
+    border: solid 1px #ff00dc;
+    margin: 2px;
+}
+
+.countContainer {
+    width: 100%;
+    text-align: right;
+}
+
+.roundendButton {
+    margin-top: 6px;
+    display: inline-block;
+}
+
+.viewerImageNav {
+    float: left;
+    cursor: pointer;
+}
+
+.closeButton {
+    margin-top: -5px;
+    margin-right: -5px;
+    padding-left: 10px;
+}
+

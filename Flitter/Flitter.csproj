@@ -5,21 +5,31 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Css\imagePage.css" />
-    <None Remove="Css\jqueryUI.css" />
-    <None Remove="Css\loginDialog.css" />
+    <None Remove="Styles\imagePage.css" />
+    <None Remove="Styles\jqueryUI.css" />
+    <None Remove="Styles\loginDialog.css" />
+    <None Remove="Images\favicon.ico" />
     <None Remove="Images\happyMan.gif" />
+    <None Remove="Images\loader.gif" />
+    <None Remove="Styles\moveCopyArchiveDialog.css" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Css\imagePage.css" />
-    <Content Include="Css\jqueryUI.css" />
-    <Content Include="Css\loginDialog.css" />
+    <Content Include="Styles\imagePage.css" />
+    <Content Include="Styles\jqueryUI.css" />
+    <Content Include="Styles\loginDialog.css" />
+    <Content Include="Images\favicon.ico" />
     <Content Include="Images\happyMan.gif" />
+    <Content Include="Images\loader.gif" />
+    <Content Include="Styles\moveCopyArchiveDialog.css" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Snippets\login.xhtml">
+    <None Update="Snippets\Includes.htm">
+      <LastGenOutput>Includes.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Snippets\login.htm">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>login.cs</LastGenOutput>
     </None>
@@ -27,14 +37,6 @@
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Snippets\login.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>login.xhtml</DependentUpon>
-    </Compile>
   </ItemGroup>
 
 </Project>

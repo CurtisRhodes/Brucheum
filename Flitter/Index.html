@@ -4,21 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flitter</title>
-    <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
-    <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>
-    <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet' />
-    <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js' type="text/javascript"></script>
-    <link href="Css/jqueryUI.css" rel="stylesheet" />
-    <link href="Css/loginDialog.css" rel="stylesheet" />
     <link rel='icon' type='images/png' href='Images/happyMan.png' />
-    <link href="Css/Flitter.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
     <script src="Scripts/Common.js"></script>
 </head>
 <body>
-    <div w3-include-html="Snippets/FlitterHeader.xhtml"></div>
+    <div w3-include-html="Snippets/Includes.htm"></div>
+    <div w3-include-html="Snippets/FlitterHeader.htm"></div>
     <div class="threeColumnLayout">
-        <div class="leftColumn"></div>
-        <div class="middleColumn">
+        <div id="leftColumn"></div>
+        <div id="middleColumn">
             <div class="flitterPannelsContainer">
                 <div id="pannelZero" class="flitterPannel">
                     <div class="flitterPannelLeftColumn">
@@ -40,17 +35,10 @@
                 </div>
                 <div id="pannelOne" class="flitterPannel">
                     <div class="flitterPannelLeftColumn">
-
                         <a href="Album.html?folderId=234&kkk=333">234</a>
-
-
                     </div>
-
                     <div class="flitterPannelContentArea">
-
                         <a href="Album.html?folderId=234&kkk=333">23ddd4</a>
-
-
                     </div>
                 </div>
                 <div id="pannelTwo" class="flitterPannel">
@@ -60,10 +48,10 @@
             </div>
 
         </div>
-        <div class="rightColumn"></div>
+        <div id="rightColumn"></div>
     </div>
-    <div w3-include-html="Snippets/FlitterFooter.xhtml"></div>
-    <div w3-include-html="Snippets/Login.xhtml"></div>
+    <div w3-include-html="Snippets/FlitterFooter.htm"></div>
+    <div w3-include-html="Snippets/Login.htm"></div>
 
     <script>
         $(document).ready(function () {

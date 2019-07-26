@@ -1,0 +1,204 @@
+﻿
+:root {
+    --brucheumBlue: #74bac3;
+    --oggleBackgroundColor: #fef; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
+    --oggleContainerBackgroundColor: #fefefe; /*  #f8e8e8 */
+    --oggleBorderColor: #f1cff7;
+    --ogglePurple: #79078f;
+    --normalFont: 17px;
+    --ogglgeTitleColor: #7f2c8f;
+    --ogglgeSubTitleColor: #490157;
+    --thumbnailBorderColor: #74bac3; /* hot pink #ff00dc   */
+    --ogglgeHeaderBarColor: #00ffff; /*#c79bbe*/
+    --oggleHeaderBoarderTop: #40767d 3px solid;
+    --oggleHeaderBackgroundColor: #74bac3;
+    --oggleHeaderBoarderBottom: #decd6f 11px solid;
+}
+
+body {
+    background-color: var(--oggleBackgroundColor);
+    font-family: Verdana;
+    box-sizing: border-box;
+    margin-top: 100px !important;
+    font-size: var(--normalFont);
+}
+.threeColumnLayout {
+    width: 100%;
+    display: flex;
+}
+
+    .threeColumnLayout #leftColumn {
+        float: left;
+        min-width: 7%;
+    }
+
+    .threeColumnLayout #middleColumn {
+        float: left;
+        width: 100%;
+    }
+
+    .threeColumnLayout #rightColumn {
+        float: right;
+        min-width: 7%;
+    }
+
+
+footer {
+    margin-top: 4px;
+    border-top: solid 4px #feb236;
+    font-family: Arial;
+    background-color: #000;
+    color: #eee;
+}
+
+    footer .footerCol {
+        padding-top: 8px;
+        float: left;
+        min-width: 200px;
+    }
+
+        footer .footerCol div {
+            padding: 8px;
+            text-align: center;
+        }
+
+            footer .footerCol div a {
+                text-decoration: none;
+                color: #fff;
+            }
+
+    footer .footerFooter {
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        width: 100%;
+        background-color: #212121;
+        padding-bottom: 2px;
+    }
+
+    footer #footerMessage {
+        display: inline-block;
+        padding-left: 12px;
+    }
+
+    footer #copyright {
+        display: inline-block;
+        float: right;
+        margin-right: 8px;
+    }
+
+        footer #copyright a:visited {
+            color: #eee;
+        }
+
+.roundendButton {
+    display: inline-block;
+    text-align: center;
+    background: #07c;
+    color: #fff;
+    border-radius: 4px;
+    padding: 8px 20px;
+    cursor: pointer;
+}
+.clickable {
+    cursor: pointer;
+}
+.inline {
+    display: inline-block;
+}
+
+.floatLeft {
+    float: left;
+}
+
+.floatRight {
+    float: right;
+}
+
+.align-right {
+    text-align: right;
+}
+
+.flitterHidden {
+    display: none;
+}
+
+.flexContainer {
+    display: flex;
+}
+
+.severityOk {
+    background-color: rgba(80, 206, 83, 0.71);
+}
+
+.severityWarning {
+    background-color: #e6de3b;
+}
+
+.severityError {
+    background-color: #c64e4e;
+}
+
+.btnSpinner {
+    margin-top: 66px;
+}
+
+.btnSpinnerImage {
+    position: absolute;
+    margin-left: 20px;
+    height: 20px;
+    display: none;
+}
+.loadingGif {
+    left: 150px;
+    top: 140px;
+    height: 140px;
+}
+
+.ogContextMenu {
+    position: absolute;
+    background-color: var(--oggleBackgroundColor);
+    border: solid 2px #923c76;
+    padding: 8px 10px;
+    display: none;
+    z-index: 120;
+}
+
+    .ogContextMenu div {
+        padding: 8px;
+        margin: 2px;
+        background-color: #fff;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+
+.settingsConsole {
+    margin-top: 33px;
+    margin-left: 24px;
+    display: inline-block;
+    border: solid 2px black;
+    background: var(--oggleContainerBackgroundColor);
+}
+
+.settingsConsoleHeader {
+    border: none;
+    text-align: center;
+    background: var(--brucheumBlue);
+}
+
+.settingsConsoleInputsContainer {
+    display: inline-block;
+    border: none;
+    padding: 4px;
+}
+
+.flitterLabel {
+    display: inline-block;
+    width: 160px;
+    text-align: right;
+    padding: 4px;
+}
+
+.flitterButton {
+    padding: 4px;
+}

@@ -27,17 +27,17 @@ body {
     display: flex;
 }
 
-    .threeColumnLayout .leftColumn {
+    .threeColumnLayout #leftColumn {
         float: left;
         min-width: 7%;
     }
 
-    .threeColumnLayout .middleColumn {
+    .threeColumnLayout #middleColumn {
         float: left;
         width: 100%;
     }
 
-    .threeColumnLayout .rightColumn {
+    .threeColumnLayout #rightColumn {
         float: right;
         min-width: 7%;
     }
@@ -230,6 +230,28 @@ footer {
     height: 20px;
     display: none;
 }
+.loadingGif {
+    left: 150px;
+    top: 140px;
+    height: 140px;
+}
+
+.ogContextMenu {
+    position: absolute;
+    background-color: var(--oggleBackgroundColor);
+    border: solid 2px #923c76;
+    padding: 8px 10px;
+    display: none;
+    z-index: 120;
+}
+
+    .ogContextMenu div {
+        padding: 8px;
+        margin: 2px;
+        background-color: #fff;
+        border-radius: 3px;
+        cursor: pointer;
+    }
 
 
 .settingsConsole {

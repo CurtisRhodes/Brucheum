@@ -1,0 +1,40 @@
+﻿<link href="Styles/Header.css" rel="stylesheet" />
+<header>
+    <div id="divTopLeftLogo" class="bannerImageContainer">
+        <a href="Index.html"><img src="Images/redballon.png" class="bannerImage" /></a>
+    </div>
+    <div class='headerBodyContainer'>
+        <div class='headerTopRow'>
+            <div class='headerTitle' id='bannerTitle'>OggleBooble</div>
+            <div class='headerSubTitle' id='headerSubTitle'>
+                <a href='" + httpLocation + "/boobs/boobs.html'>big tits</a> and
+                <a href='" + httpLocation + "/boobs/rear view.html'>ass</a> organized by
+                <a href='" + httpLocation + "/boobs/poses.html'> poses</a>,
+                <a href='" + httpLocation + "/boobs/shapes.html'> shapes</a> and
+                <a href='" + httpLocation + "/boobs/sizes.html'> sizes</a>
+            </div>
+        </div>
+
+        <div class='headerBottomRow'>
+            <div class="menuTabs" id="replaceableMenuItems">
+                <div class="menuTab floatLeft"><a href="~/Admin">Admin</a></div>
+            </div>
+
+            <div id="optionLoggedIn" class="flitterHidden">
+                <div class="menuTab floatRight"><a href="javascript:onLogoutClick()">Log Out</a></div>
+                <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello <span id="spnUserName"></span></a></div>
+            </div>
+
+            <div id="optionNotLoggedIn">
+                <div id="btnLayoutRegister" class="menuTab floatRight">
+                    <a href="javascript:onLoginClick()">Register</a>
+                    <img id="btnHeaderRegisterSpinner" class="btnSpinnerImage" src="Images/loader.gif" />
+                </div>
+                <div id="btnLayoutLogin" class="menuTab floatRight">
+                    <a href="javascript:onLoginClick()">Log In</a>
+                    <img id="btnHeaderLoginSpinner" class="btnSpinnerImage" src="Images/loader.gif" />
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

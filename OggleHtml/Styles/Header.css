@@ -1,0 +1,74 @@
+﻿header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: var(--brucheumBlue);
+    border-top: #40767d 3px solid;
+    border-bottom: #decd6f 3px solid;
+    display: flex;
+    z-index: 10;
+}
+    header .bannerImageContainer {
+        float: left;
+        padding-top: 2px;
+        padding-left: 2px;
+    }
+        header .bannerImageContainer .bannerImage {
+            height: 80px;
+            cursor: pointer;
+        }
+
+    header .headerBodyContainer {
+        float: left;
+        width: 100%;
+    }
+
+        header .headerBodyContainer .headerTopRow {
+            display: flex;
+            width: 100%;
+        }
+
+            header .headerBodyContainer .headerTopRow .headerTitle {
+                float: left;
+                padding-left: 26px;
+                padding-top: 8px;
+                font-family: 'Lucida Calligraphy';
+                font-size: 33px;
+            }
+
+            header .headerBodyContainer .headerTopRow .headerSubTitle {
+                float: left;
+                width: 88%;
+                text-align: center;
+                font-family: Comic Sans MS;
+                color: var(--ogglgeTitleColor);
+                vertical-align: top;
+                margin-top: 7px;
+                font-size: 28px;
+            }
+            
+            header .headerBodyContainer .headerTopRow .headerSubTitle a {
+                    color: var(--ogglgeTitleColor);
+                    cursor: pointer;
+                    text-decoration: underline;
+                }
+
+        header .headerBodyContainer .headerBottomRow {
+            width: 100%;
+        }
+                header .headerBodyContainer .headerBottomRow .menuTab {
+                    margin-top: 4px;
+                    margin-bottom: 11px;
+                    border-radius: 5px;
+                }
+
+                    header .headerBodyContainer .headerBottomRow .menuTab a {
+                        cursor: pointer;
+                        color: black;
+                        padding: 8px 20px;
+                        margin-right: 20px;
+                    }
+
+
+
+

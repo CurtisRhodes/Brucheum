@@ -7,7 +7,7 @@ $(document).ready(function () {
 function loadSettings() {
     $.ajax({
         type: "GET",
-        url: "Data/flitterSettings.xml",
+        url: "Data/Settings.xml",
         dataType: "xml",
         success: function (xml) {
             $(xml).find('setting').each(function () {
@@ -157,9 +157,7 @@ function onLoginClick() {
 }
 
 function onLogoutClick() {
-    $('#loginDialog').dialog('close');
-    $('#loginDialog').hide();
-    document.cookie = "cookiename= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "User= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
     $('#optionLoggedIn').hide();
     $('#optionNotLoggedIn').show();
 }
@@ -170,14 +168,15 @@ function addClaim() {
 }
 
 function postLogin() {
+
+    alert("txtLoginUserName: " + $('#txtLoginUserName').val());
+
     expires = new Date();
     expires.setTime(expires.getTime() + 1 * 24 * 60 * 60 * 1000);
     document.cookie = 'User=' + $('#txtLoginUserName').val() + '; expires=' + expires.toUTCString();
 
     $('#loginDialog').dialog('close');
-    $('#optionLoggedIn').show();
-    $('#optionNotLoggedIn').hide();
-    $('#helloUser').html("hello " + getCookie());
+    getCookie("User");
 
     // add user to a table
     $.ajax({
@@ -193,18 +192,26 @@ function postLogin() {
 }
 
 function getCookie(cname) {
-    if (cname === null)
-        cname = "User";
-    var name = cname + "=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) === ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) === 0) {
-            return c.substring(name.length, c.length);
+    var decodedCookie = "";
+    if (document.cookie) {
+        if (cname === null)
+            cname = "User";
+        var name = cname + "=";
+        decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) === 0) {
+
+                $('#spnUserName').html(c.substring(name.length, c.length));
+                $('#optionLoggedIn').show();
+                $('#optionNotLoggedIn').hide();
+                //alert("cookie success");
+                return c.substring(name.length, c.length);
+            }
         }
     }
     return decodedCookie;

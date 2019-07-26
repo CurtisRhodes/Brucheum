@@ -13,7 +13,28 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetaGig", "GetaGig\GetaGig.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntelDesign", "IntelDesign\IntelDesign.csproj", "{1B7441BF-C313-45A2-8AB8-8AE5DFFB7FEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flitter", "Flitter\Flitter.csproj", "{CB3F5E33-487D-449B-8F2F-86C63D732E70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flitter", "Flitter\Flitter.csproj", "{CB3F5E33-487D-449B-8F2F-86C63D732E70}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "OggleHtml", "OggleHtml\", "{04550DB9-B937-4AB8-83C2-DE40719BB7CD}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_56437"
+		Debug.AspNetCompiler.PhysicalPath = "OggleHtml\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_56437\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_56437"
+		Release.AspNetCompiler.PhysicalPath = "OggleHtml\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_56437\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "56437"
+		SlnRelativePath = "OggleHtml\"
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +66,10 @@ Global
 		{CB3F5E33-487D-449B-8F2F-86C63D732E70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB3F5E33-487D-449B-8F2F-86C63D732E70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB3F5E33-487D-449B-8F2F-86C63D732E70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04550DB9-B937-4AB8-83C2-DE40719BB7CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04550DB9-B937-4AB8-83C2-DE40719BB7CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04550DB9-B937-4AB8-83C2-DE40719BB7CD}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{04550DB9-B937-4AB8-83C2-DE40719BB7CD}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
