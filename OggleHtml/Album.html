@@ -100,7 +100,7 @@
                 $('#imagePageLoadingGif').show();
                 $.ajax({
                     type: "GET",
-                    url: service + "/api/ImagePage/GetImageLinks?folderId=" + folderId,
+                    url: settingsArray.ApiServer + "/api/ImagePage/GetImageLinks?folderId=" + folderId,
                     success: function (imageLinksModel) {
                         rootFolder = imageLinksModel.RootFolder;
                         if (imageLinksModel.Success === "ok") {

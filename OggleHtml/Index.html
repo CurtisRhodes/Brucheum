@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
+ <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OggleHtml</title>
@@ -13,8 +13,8 @@
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
     <link href="Styles/loginDialog.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet" />
-</head>
-<body>
+ </head>
+ <body>
     <div w3-include-html="Snippets/BoobsHeader.htm"></div>
     <div class="threeColumnLayout">
         <div id="leftColumn"></div>
@@ -23,7 +23,7 @@
         </div>
         <div id="rightColumn"></div>
     </div>
-    <div w3-include-html="Snippets/FlitterFooter.htm"></div>
+    <div w3-include-html="Snippets/BoobsFooter.htm"></div>
     <div w3-include-html="Snippets/Login.htm"></div>
 
     <script>
@@ -32,7 +32,8 @@
             setTimeout(function () {
                 getCookie("User");
             }, 400);
+            resizePage();
         });
     </script>
-</body >
+ </body >
 </html >

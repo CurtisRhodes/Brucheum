@@ -178,10 +178,22 @@ function postLogin() {
     $('#loginDialog').dialog('close');
     getCookie("User");
 
+    // validate login
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/Hitcounter/RecordLogin",
+        success: function () {
+            displayStatusMessage("ok", "thanks for logging in " + getCookie());
+        },
+        error: function (jqXHR, exception) {
+            alert("AddMoreImages XHR error: " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+
     // add user to a table
     $.ajax({
         type: "POST",
-        url: service + "api/Hitcounter/RecordLogin",
+        url: settingsArray.ApiServer + "api/Hitcounter/RecordLogin",
         success: function () {
             displayStatusMessage("ok", "thanks for logging in " + getCookie());
         },

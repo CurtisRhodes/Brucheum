@@ -38,7 +38,7 @@
 
             header .headerBodyContainer .headerTopRow .headerSubTitle {
                 float: left;
-                width: 88%;
+                width: 70%;
                 text-align: center;
                 font-family: Comic Sans MS;
                 color: var(--ogglgeTitleColor);
@@ -58,7 +58,6 @@
         }
                 header .headerBodyContainer .headerBottomRow .menuTab {
                     margin-top: 4px;
-                    margin-bottom: 11px;
                     border-radius: 5px;
                 }
 
@@ -67,8 +66,15 @@
                         color: black;
                         padding: 8px 20px;
                         margin-right: 20px;
+                        text-decoration: none;
+                        padding: 5px 5px;
+                        border-radius: 1px;
                     }
 
+    .menuTab a:hover {
+        text-decoration: underline;
+        background-color: #fef;
+    }
 
 
 
