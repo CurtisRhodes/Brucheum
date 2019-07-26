@@ -9,10 +9,11 @@
     --ogglgeTitleColor: #7f2c8f;
     --ogglgeSubTitleColor: #490157;
     --thumbnailBorderColor: #74bac3; /* hot pink #ff00dc   */
-    --ogglgeHeaderBarColor: #00ffff; /*#c79bbe*/
+    --ogglgeHeaderBarColor: #decd6f; /*#c79bbe*/
     --oggleHeaderBoarderTop: #40767d 3px solid;
     --oggleHeaderBackgroundColor: #74bac3;
     --oggleHeaderBoarderBottom: #decd6f 11px solid;
+
 }
 
 body {
@@ -29,6 +30,7 @@ body {
 
     .threeColumnLayout #leftColumn {
         float: left;
+        border-right: solid 5px var(--ogglgeHeaderBarColor);
         min-width: 7%;
     }
 
@@ -42,6 +44,67 @@ body {
         min-width: 7%;
     }
 
+.modalVail {
+    display: none; /*Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 25; /* Sit on top */
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modalContentStyle {
+    z-index: 15;
+}
+
+.validationError {
+    display: inline-block;
+    display: none;
+    color: red;
+    font-style: italic;
+}
+.requiredField {
+    font-size: 15px;
+    color: var(--ogglePurple);
+    cursor: pointer;
+    margin-top: 14px;
+}
+
+.leftColumnList {
+    margin-top: 123px;
+    padding-right: 36px;
+}
+
+    .leftColumnList div {
+        font-size: 17px;
+        cursor: pointer;
+        color: #9a4ea9;
+        margin: 12px 9px;
+        white-space: nowrap;
+    }
+        .leftColumnList div:hover {
+            text-decoration: underline;
+            color: #333;
+        }
+
+.centeredDivShell {
+    position: absolute;
+    left: 50%;
+    top: 300px;
+}
+
+.centeredDivInner {
+    position: relative;
+    left: -50%;
+    min-height: 200px;
+}
+
+.galleryCheckBox {
+    margin-left: 8px;
+}
 
 footer {
     margin-top: 4px;
@@ -118,7 +181,7 @@ footer {
     text-align: right;
 }
 
-.flitterHidden {
+.displayHidden {
     display: none;
 }
 

@@ -124,16 +124,15 @@ namespace WebApi
                 //}
 
                 string visitorId = Guid.NewGuid().ToString();
-                using (AspNetContext db = new AspNetContext())
-                {
-                    AspNetUser aspNetUser = db.AspNetUsers.Where(u => u.UserName == userName).FirstOrDefault();
-                    if (aspNetUser != null)
-                    {
-
-                        success.ReturnValue = "Welcome back " + aspNetUser.UserName;
-                        visitorId = aspNetUser.Id;
-                    }
-                }
+                //using (AspNetContext db = new AspNetContext())
+                //{
+                //    AspNetUser aspNetUser = db.AspNetUsers.Where(u => u.UserName == userName).FirstOrDefault();
+                //    if (aspNetUser != null)
+                //    {
+                //        success.ReturnValue = "Welcome back " + aspNetUser.UserName;
+                //        visitorId = aspNetUser.Id;
+                //    }
+                //}
 
                 using (WebSiteContext db = new WebSiteContext())
                 {
@@ -158,9 +157,12 @@ namespace WebApi
                         }
                         else
                         {
-                            existing.UserName = userName;
+                            if (userName == "unknown")
+                                success.ReturnValue = "Welcome back from " + ipAddress;
+                            else
+                                success.ReturnValue = "Welcome back " + userName;
+
                             db.SaveChanges();
-                            success.ReturnValue = "Thanks for logging in " + userName;
                         }
                     }
                     else
@@ -185,21 +187,21 @@ namespace WebApi
 
                             db.Visits.Add(visit);
                             db.SaveChanges();
+
                             success.ReturnValue = "Welcome back " + ipAddress;
 
                             if ((ipAddress == "68.203.90.183") || (ipAddress == "50.62.160.105"))
                             {
                                 success.ReturnValue = "dev [" + userName + "]";
                             }
-                            else
+                            else {
                                 new GodaddyEmailController().SendEmail("Site Visit", "ip: " + ipAddress + " visited: " + appName);
-                        }
-                        else
-                        {
-                            if (userName != null)
-                                success.ReturnValue = "Welcome back " + userName;
-                            else
-                                success.ReturnValue = "Welcome back. Please log in";
+
+                                if (userName == "unknown")
+                                    success.ReturnValue = "Welcome back from " + ipAddress;
+                                else
+                                    success.ReturnValue = "Welcome back. Please log in";
+                            }
                         }
                     }
                 }

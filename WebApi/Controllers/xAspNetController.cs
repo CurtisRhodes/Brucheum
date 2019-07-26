@@ -14,8 +14,8 @@ namespace WebApi.Asp
     public class xUserController : ApiController
     {
 
-        [HttpGet]
-        public IList<KeyValuePair> GetUsers()
+        
+        IList<KeyValuePair> GetUsers()
         {
             var list = new List<KeyValuePair>();
             try
@@ -36,8 +36,8 @@ namespace WebApi.Asp
             return list;
         }
 
-        [HttpGet]
-        public string VerifyLogin(string userName, string password)
+        
+        string xxVerifyLogin(string userName, string password)
         {
             string error = "ERROR: unknown";
             try
@@ -66,8 +66,7 @@ namespace WebApi.Asp
             return error;
         }
 
-        [HttpGet]
-        public JsonResult<AspNetUser> GetUser(string userId)
+        JsonResult<AspNetUser> GetUser(string userId)
         {
             AspNetUser user = new AspNetUser();
             try
@@ -84,8 +83,8 @@ namespace WebApi.Asp
             return Json(user);
         }
 
-        [HttpPut]
-        public string Update(AspNetUser model)
+        
+        string Update(AspNetUser model)
         {
             string success = "";
             try
@@ -131,8 +130,8 @@ namespace WebApi.Asp
             return sb.ToString();
         }
 
-        [HttpGet]
-        public string GetFacebookUserId(string name, string facebookId)
+        
+        string GetFacebookUserId(string name, string facebookId)
         {
             string response = "ERROR: unknown";
             try
@@ -193,12 +192,10 @@ namespace WebApi.Asp
     //    //}
     //}
 
-    [EnableCors("*", "*", "*")]
     public class xRoleController : ApiController
     {
         //select id from asp.AspNetRoles where Name = 'Admin'
-        [HttpGet]
-        public string GetRoleId(string roleName)
+        string GetRoleId(string roleName)
         {
             string roleId = "";
             try
@@ -211,11 +208,8 @@ namespace WebApi.Asp
             catch (Exception ex) { roleId = "Error: " + Helpers.ErrorDetails(ex);  }
             return roleId;
         }
-
-
-
-        [HttpPost]
-        public string AddRole(string roleName)
+                
+        string AddRole(string roleName)
         {
             string success = "";
             try
@@ -236,9 +230,8 @@ namespace WebApi.Asp
             }
             return success;
         }
-
-        [HttpGet]
-        public IList<KeyValuePair> Get()
+               
+        IList<KeyValuePair> Get()
         {   // finally a day later I figured out that because the generated model AspNetRole has foreign key notations which were causing this to fail
             var list = new List<KeyValuePair>();
             try
@@ -255,9 +248,8 @@ namespace WebApi.Asp
             catch (Exception ex) { list.Add(new KeyValuePair() { Key = "0", Value = Helpers.ErrorDetails(ex) }); }
             return list;
         }
-
-        [HttpPut]
-        public string Put(KeyValuePair roleModel)
+        
+        string Put(KeyValuePair roleModel)
         {
             string success = "ono";
             try
@@ -280,13 +272,9 @@ namespace WebApi.Asp
         public string Value { get; set; }
     }
 
-
-
-    [EnableCors("*", "*", "*")]
     public class xUserRoleController : ApiController
     {
-        [HttpPost]
-        public string AddUserRole(AspNetUserRole userRole)
+        string AddUserRole(AspNetUserRole userRole)
         {
             string success = "";
             try

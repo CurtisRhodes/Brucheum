@@ -190,6 +190,7 @@
     <Compile Include="Controllers\BlogApiController.cs" />
     <Compile Include="Controllers\BookXmlController.cs" />
     <Compile Include="Controllers\BookDbApiController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\RepairLinksController.cs" />
     <Compile Include="Controllers\FtpController.cs" />
     <Compile Include="Controllers\FtpUtilies.cs" />
@@ -204,6 +205,7 @@
     <Compile Include="Controllers\StaticPageController.cs" />
     <Compile Include="Controllers\xAspNetController.cs" />
     <Compile Include="Controllers\OggleBoobleApiController.cs" />
+    <Compile Include="DataContext\LoginContext.cs" />
     <Compile Include="DataContext\ResumeContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

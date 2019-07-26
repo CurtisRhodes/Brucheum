@@ -1,12 +1,13 @@
-﻿<div id='loginDialog' class="modalDialog" title='Log In to OggleBooble'>
+﻿
+<div id='loginDialog' class="modalDialog" title='Log In to OggleBooble'>
     <div class='dialogBody'>
-        <div id='errSummary' class='validationError'></div>
-        <div id='errUserName' class='validationError'>Required</div>
+        <div id='loginValidationSummary' class='validationError'></div>
+        <div id='errLoginUserName' class='validationError'>Required</div>
         <label>User Name</label><br>
         <input id='txtLoginUserName' class='roundedInput'><br>
-        <div id='errPassword' class='validationError'>Required</div>
+        <div id='errLoginPassword' class='validationError'>Required</div>
         <label>Password</label><br>
-        <input id='clearPassword' type='password' class='roundedInput' autocomplete='off' placeholder='********'><br>
+        <input id='txtLoginClearPassword' type='password' class='roundedInput' autocomplete='off' placeholder='********'><br>
         <button id='btnLoginPopupLogin' class='roundendButton' onclick='postLogin()'>
             <img id='btnLoginSpinnerImage' class='btnSpinnerImage' src='/images/loader.gif' />
             Log in

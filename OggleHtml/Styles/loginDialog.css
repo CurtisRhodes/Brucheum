@@ -45,7 +45,7 @@
 #btnLoginPopupLogin {
     margin-top: 6px;
 }
-#registerUserDialog {
+/*#registerUserDialog {
     position: absolute;
     top: 122px;
     left: 40%;
@@ -59,7 +59,7 @@
 
 .registerUserDialogCrudContainer {
     padding: 5px;
-}
+}*/
 
 #divShowDetails {
     cursor: pointer;
@@ -79,6 +79,18 @@
 #divExtraDetails {
     display: none;
 }
+
+.rememberMe {
+    font-size: 14px;
+    margin-top: 13px;
+    margin-bottom: 8px;
+}
+
+.submitButton {
+    margin-top: 10px;
+}
+
+
 .modalDialog {
     /*
     position: absolute;

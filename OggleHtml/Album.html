@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,10 +13,10 @@
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
     <link href="Styles/loginDialog.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet" />
+    <link href="Styles/imagePage.css" rel="stylesheet" />
 </head>
 <body>
-    <div w3-include-html="Snippets/Includes.htm"></div>
-    <div w3-include-html="Snippets/FlitterHeader.htm"></div>
+    <div w3-include-html="Snippets/BoobsHeader.html"></div>
     <div class="threeColumnLayout">
         <div id="leftColumn"></div>
         <div id="middleColumn">
@@ -59,7 +59,7 @@
         </div>
     </div>
 
-    <div id="removeLinkDialog" title="Remove Image" class="flitterHidden">
+    <div id="removeLinkDialog" title="Remove Image" class="displayHidden">
         <div><input type="radio" value="DUP" name="rdoRejectImageReasons" checked="checked" />  duplicate</div>
         <div><input type="radio" value="BAD" name="rdoRejectImageReasons" />  bad link</div>
         <div><input type="radio" value="LOW" name="rdoRejectImageReasons" />  low quality</div>
@@ -69,8 +69,9 @@
         </div>
     </div>
 
-    <div w3-include-html="Snippets/FlitterFooter.htm"></div>
-    <div w3-include-html="Snippets/Login.htm"></div>
+    <div w3-include-html="Snippets/BoobsFooter.html"></div>
+    <div w3-include-html="Snippets/Login.html"></div>
+    <div w3-include-html="Snippets/Register.html"></div>
 
     <script>
         var viewerShowing = false;
@@ -88,7 +89,7 @@
                 }
                 else {
                     clearInterval(waiter);
-                    getAlbumImages(settingsArray.ApiServer, params.folderId);
+                    getAlbumImages(settingsArray.ApiServer, params.folder);
                 }
             }, 300);
         });

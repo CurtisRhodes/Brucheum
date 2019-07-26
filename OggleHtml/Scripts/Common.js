@@ -143,17 +143,81 @@ function isNullorUndefined(val) {
     return false;
 }
 
-function onLoginClick() {
-    $('#loginDialog').show();
-    $('#loginDialog').dialog({
+// LOGIN
+function onRegisterClick() {
+    $('#modalContainer').show();
+    $('#registerUserDialog').show();
+    $('#registerUserDialog').dialog({
         show: { effect: "fade" },
-        hide: { effect: "blind" },
-        width: 333
+        hide: { effect: "blind" }
     });
-
-    $('#loginDialog').show();
     if (typeof pause === 'function')
         pause();
+    $('#registerUserDialog').on('dialogclose', function (event) {
+        $('#modalContainer').hide();
+        $('#registerUserDialog').hide();
+        //$('#loginDialog').hide();
+        if (typeof resume === 'function')
+            resume();
+    });
+}
+function postRegister() {
+    if (validateRegister()) {
+        try {
+            var registeredUserModel = {};
+            registeredUserModel.UserName = $('#txtRegisterUserName').val();
+            registeredUserModel.Pswrd = $('#txtRegisterClearPassword').val();
+            registeredUserModel.FirstName = $('#txtFirstName').val();
+            registeredUserModel.LastName = $('#txtLastName').val();
+            registeredUserModel.Email = $('#ddCategory').val();
+            registeredUserModel.IpAddress = $('#txtPhone').val();
+            registeredUserModel.AppName = "OggleBoogle";
+
+            $.ajax({
+                type: "POST",
+                url: settingsArray.ApiServer + "/api/Login/RegisterUser",
+                data: registeredUserModel,
+                success: function (response) {
+                    if (response === "ok") {
+                        $('#registerUserDialog').dialog('close');
+                        setCookie($('#txtRegisterUserName').val());
+                        setLoginHeader($('#txtRegisterUserName').val());
+                    }
+                    else {
+                        $('#registerValidationSummary').html(response).show();
+                    }
+                },
+                error: function () {
+                    alert("Login Post failed");
+                }
+            });
+        } catch (e) {
+            alert("Login Post error: " + e);
+        }
+    }
+}
+function validateRegister() {
+    if ($('#txtRegisterUserName').val() === "") {
+        $('#errUserName').show();
+        return false;
+    }
+    $('#errUserName').hide();
+
+    if ($('#txtRegisterClearPassword').val() === "") {
+        $('#errRegisterPassword').show();
+        return false;
+    }
+
+    if ($('#txtRegisterClearPassword').val().length < 4) {
+        $('#errRegisterPassword').text("password must be at least 4 characters").show();
+        return false;
+    }
+    if ($('#txtRegisterClearPassword').val() !== $('#txtRegisterClearPasswordRetype').val()) {
+        $('#errRegisterPassword').text("password retype does not match").show();
+        return false;
+    }
+    $('#errRegisterPassword').hide();
+    return true;
 }
 
 function onLogoutClick() {
@@ -167,42 +231,81 @@ function addClaim() {
     alert("cookieContents: " + cookieContents);
 }
 
-function postLogin() {
-
-    alert("txtLoginUserName: " + $('#txtLoginUserName').val());
-
-    expires = new Date();
-    expires.setTime(expires.getTime() + 1 * 24 * 60 * 60 * 1000);
-    document.cookie = 'User=' + $('#txtLoginUserName').val() + '; expires=' + expires.toUTCString();
-
-    $('#loginDialog').dialog('close');
-    getCookie("User");
-
-    // validate login
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "api/Hitcounter/RecordLogin",
-        success: function () {
-            displayStatusMessage("ok", "thanks for logging in " + getCookie());
-        },
-        error: function (jqXHR, exception) {
-            alert("AddMoreImages XHR error: " + getXHRErrorDetails(jqXHR, exception));
-        }
+function onLoginClick() {
+    $('#modalContainer').show();
+    $('#loginDialog').show();
+    $('#loginDialog').dialog({
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        width: 333
     });
-
-    // add user to a table
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "api/Hitcounter/RecordLogin",
-        success: function () {
-            displayStatusMessage("ok", "thanks for logging in " + getCookie());
-        },
-        error: function (jqXHR, exception) {
-            alert("AddMoreImages XHR error: " + getXHRErrorDetails(jqXHR, exception));
-        }
+    $('#loginDialog').show();
+    if (typeof pause === 'function')
+        pause();
+    $('#loginDialog').on('dialogclose', function (event) {
+        $('#modalContainer').hide();
+        $('#loginDialog').hide();
+        if (typeof resume === 'function')
+            resume();
     });
 }
+function postLogin() {
+    if (validateLogin()) {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Login/VerifyLogin?userName=" + $('#txtLoginUserName').val() + "&passWord=" + $('#txtLoginClearPassword').val(),
+            success: function (success) {
+                if (success === "ok") {
+                    $('#loginDialog').dialog('close');
+                    displayStatusMessage("ok", "thanks for logging in " + getCookie());
+                    setCookie($('#txtLoginUserName').val());
+                    setLoginHeader($('#txtLoginUserName').val());
+                }
+                else
+                    $('#loginValidationSummary').html(response).show();                    
+            },
+            error: function (jqXHR, exception) {
+                alert("validateLogin XHR error: " + settingsArray.ApiServer + "api/Login/VerifyLogin?userName" + $('#txtLoginUserName').val() + "&passWord=" + $('#txtLoginClearPassword').val() + "  " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+}
+function validateLogin() {
+    if ($('#txtLoginUserName').val() === "") {
+        $('#errLoginUserName').show();
+        return false;
+    }
+    $('#errLoginUserName').hide();
 
+    if ($('#txtLoginClearPassword').val() === "") {
+        $('#errLoginPassword').show();
+        return false;
+    }
+    $('#errLoginPassword').hide();
+    return true;
+}
+function transferToRegisterPopup() {
+    $('#loginDialog').dialog('close');
+    onRegisterClick();
+}
+
+// COOKIES
+function setLoginHeader(userName) {
+    if (userName === "") {
+        $('#optionLoggedIn').hide();
+        $('#optionNotLoggedIn').show();
+    }
+    else {
+        $('#spnUserName').html(userName);
+        $('#optionLoggedIn').show();
+        $('#optionNotLoggedIn').hide();
+    }
+}
+function setCookie(userName) {
+    expires = new Date();
+    expires.setTime(expires.getTime() + 1 * 24 * 60 * 60 * 1000);
+    document.cookie = 'User=' + userName + '; expires=' + expires.toUTCString();
+}
 function getCookie(cname) {
     var decodedCookie = "";
     if (document.cookie) {
@@ -217,23 +320,14 @@ function getCookie(cname) {
                 c = c.substring(1);
             }
             if (c.indexOf(name) === 0) {
-
-                $('#spnUserName').html(c.substring(name.length, c.length));
-                $('#optionLoggedIn').show();
-                $('#optionNotLoggedIn').hide();
-                //alert("cookie success");
-                return c.substring(name.length, c.length);
+                var userName = c.substring(name.length, c.length);
+                //alert("cookie success: " + c.substring(name.length, c.length));
+                return userName;
             }
         }
     }
+    //else alert("no cookie found");
     return decodedCookie;
 }
 
-function staticPageShowRegisterDialog() {
-    $('#registerUserDialog').fadeIn();
-}
-
-function transferToRegisterPopup() {
-
-}
 

@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
-<html>
- <head>
+<html lang="en">
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OggleHtml</title>
@@ -10,30 +10,78 @@
     <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet' />
     <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js' type="text/javascript"></script>
     <script src="Scripts/Common.js"></script>
+    <script src="Scripts/Carousel.js"></script>
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
     <link href="Styles/loginDialog.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet" />
- </head>
- <body>
-    <div w3-include-html="Snippets/BoobsHeader.htm"></div>
-    <div class="threeColumnLayout">
-        <div id="leftColumn"></div>
-        <div id="middleColumn">
+    <link href="Styles/Carousel.css" rel="stylesheet" />
+  </head>
+  <body>
+      <div w3-include-html="Snippets/BoobsHeader.html"></div>
+      <div class="threeColumnLayout">
+          <div id="leftColumn">
+              <div class="leftColumnList">
+                  <div onclick="window.location.href='/home/transitions?folder=boobs'">Transitions</div>
+                  <div onclick="window.location.href='/home/BoobsRanker'">Boobs Rater</div>
+                  <div onclick="showCustomMessage(38)">Let me Explain</div>
+                  <div onclick="showCatListDialog()">Category List</div>
+                  <div onclick="window.location.href='/admin/blog'">Blog</div>
+                  <div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>
+                  <div onclick="showCustomMessage(35)">Nasty Porn</div>
+              </div>
+          </div>
+          <div id="middleColumn">
+              <div id="customMessage" class="oggleHidden customMessageContainer"></div>
+              <div id="divStatusMessage"></div>
+              <div class="flexContainer">
 
-        </div>
-        <div id="rightColumn"></div>
-    </div>
-    <div w3-include-html="Snippets/BoobsFooter.htm"></div>
-    <div w3-include-html="Snippets/Login.htm"></div>
+                  <div class="floatLeft">
+                      <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('playboy', $(this).is(':checked'), 0, 1000)" /> Include Centerfolds</div>
+                      <div class="galleryCheckBox"><input type="checkbox" onchange="loadImages('archive', $(this).is(':checked'), 0, 50000)" /> Include Archive</div>
+                  </div>
 
-    <script>
-        $(document).ready(function () {
-            includeHTML();
-            setTimeout(function () {
-                getCookie("User");
-            }, 400);
-            resizePage();
-        });
-    </script>
- </body >
-</html >
+                  <div class="floatLeft" id="carousel">
+                      <div class="centeredDivShell randomImageContainer">
+                          <div class="centeredDivInner">
+                              <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
+                              <div id="laCarousel" class="carouselContainer">
+                                  <div class="carouselImageContainer">
+                                      <img id="thisCarouselImage" oncontextmenu="carouselContextMenu()" class="carouselImage" src="Images/ingranaggi3.gif" onclick="clickViewGallery()" />
+                                      <div class="imgBottom">
+                                          <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
+                                          <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
+                                          <div id='categoryLabel' class='carouselCategoryLabel' onclick="clickViewParentGallery()"></div>
+                                          <img class="speedButton floatRight" src="Images/speedDialFaster.png" title="faster" onclick="clickSpeed('faster')" />
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div id="rightColumn"></div>
+      </div>
+      <div id="carouselContextMenu" class="ogContextMenu" onmouseleave="considerHidingContextMenu()">
+          <div id="ctxModelName" onclick="carouselContextMenuAction('showDialog')">model name</div>
+          <div id="ctxSeeMore" onclick="carouselContextMenuAction('seeMore')">See More</div>
+          <div onclick="carouselContextMenuAction('explode')">Explode</div>
+          <div onclick="carouselContextMenuAction('comment')">Comment</div>
+          <div onclick="carouselContextMenuAction('tags')">Tags</div>
+          <div id="ctxMove" onclick="carouselContextMenuAction('archive')">Archive</div>
+      </div>
+      <div w3-include-html="Snippets/BoobsFooter.html"></div>
+      <div w3-include-html="Snippets/Login.html"></div>
+      <div w3-include-html="Snippets/Register.html"></div>
+
+      <script>
+          $(document).ready(function () {
+              includeHTML();
+              setTimeout(function () {
+                  launchCarousel('boobs');
+              }, 400);
+              resizePage();
+          });
+      </script>
+  </body>
+</html>

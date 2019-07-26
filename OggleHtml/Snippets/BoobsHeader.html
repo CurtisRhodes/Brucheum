@@ -16,25 +16,30 @@
         </div>
 
         <div class='headerBottomRow'>
+            <div id="headerMessage" class="floatLeft"></div>
             <div class="menuTabs" id="replaceableMenuItems">
-                <div class="menuTab floatLeft"><a href="~/Admin">Admin</a></div>
+                <div class="menuTab floatLeft"><a href="~/Admin">every playboy centerfold</a></div>
             </div>
 
-            <div id="optionLoggedIn" class="flitterHidden">
+            <div id="optionLoggedIn" class="displayHidden">
                 <div class="menuTab floatRight"><a href="javascript:onLogoutClick()">Log Out</a></div>
                 <div class="menuTab floatRight" title="modify profile"><a href="javascript:profilePease()">Hello <span id="spnUserName"></span></a></div>
             </div>
 
             <div id="optionNotLoggedIn">
-                <div id="btnLayoutRegister" class="menuTab floatRight">
-                    <a href="javascript:onLoginClick()">Register</a>
-                    <img id="btnHeaderRegisterSpinner" class="btnSpinnerImage" src="Images/loader.gif" />
-                </div>
-                <div id="btnLayoutLogin" class="menuTab floatRight">
-                    <a href="javascript:onLoginClick()">Log In</a>
-                    <img id="btnHeaderLoginSpinner" class="btnSpinnerImage" src="Images/loader.gif" />
-                </div>
+                <div id="btnLayoutRegister" class="menuTab floatRight"><a href="javascript:onRegisterClick()">Register</a></div>
+                <div id="btnLayoutLogin" class="menuTab floatRight"><a href="javascript:onLoginClick()">Log In</a></div>
             </div>
+
+            <div class="menuTabs displayHidden" id="adminTabs">
+                <div id="addImageDashboardAccess" class="ogg menuTab floatRight"><a href="~/Admin">Admin</a></div>
+            </div>
+
         </div>
     </div>
 </header>
+<div id="modalContainer" class="modalVail">
+    <div id="modalContent" class="modalContentStyle"></div>
+</div>
+
+
