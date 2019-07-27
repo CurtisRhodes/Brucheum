@@ -1,27 +1,23 @@
 ﻿
-<link href="~/Styles/imageViewer.css" rel="stylesheet" />
+<link href="Styles/Slideshow.css" rel="stylesheet" />
 
 <div id="divStaticImageViewer">
     <div id="imageViewerDialog" class="fullScreenViewer">
         <div id="viewerButtonsRow" class="imageViewerHeaderRow">
             <div class="viewerButtonsRowSection">
-                @*<div id="prev" class="viewerImageNav" onclick="slide('prev')">PREV</div>*@
                 <img id="imgComment" class="imgCommentButton" title="comment" onclick="showImageViewerCommentDialog()" src="/Images/comment.png" />
             </div>
             <span id="imageViewerHeaderTitle" class="imageViewerTitle"></span>
             <div class="viewerButtonsRowSection">
-                <div class="floatRight" style="margin-left: 44px;" onclick="$('#imageViewerDialog').effect('blind', {mode:'hide', direction:'vertical' }, 500); viewerShowing = false;">
-                    <img src="/Images/close.png" />
-                </div>
-                @*<div id="next" class="farSide" onclick="slide('next')">NEXT</div>*@
+                <div class="floatRight" style="margin-left: 44px;" onclick="closeViewer();"><img src="/Images/close.png" /></div>
                 <div class="floatRight" onclick="runSlideShow('faster');"><img id="fasterSlideshow" title="faster slideshow" src="/Images/slideshowFaster.png" /></div>
                 <div class="floatRight" onclick="runSlideShow('start');"><img id="showSlideshow" title="start slideshow" src="/Images/slideshow.png" /></div>
                 <div class="floatRight" onclick="runSlideShow('slower');"><img id="slowerSlideShow" title="slower slideshow" src="/Images/slideshowSlower.png" /></div>
                 <div class="floatRight" onclick="blowupImage()"><img class="popoutBox" src="/Images/expand02.png" /></div>
             </div>
         </div>
-        <div id="leftClickArea" onclick="slide('prev');" class="hiddeClickArea"></div>
-        <div id="rightClickArea" onclick="slide('next');" class="hiddeClickArea"></div>
+        <div id="leftClickArea" class="hiddeClickArea" oncontextmenu="slideshowContexMenu()" onclick="slide('prev');"></div>
+        <div id="rightClickArea" class="hiddeClickArea" oncontextmenu="slideshowContexMenu()" onclick="slide('next');"></div>
 
         <div id="viewerImageContainer" class="expandoImageDiv">
             <img id="viewerImage" class="expandoImage" />
@@ -42,5 +38,4 @@
     </div>
 
 </div>
-<script src="~/Scripts/ImageViewer.js"></script>
 

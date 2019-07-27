@@ -1,0 +1,84 @@
+﻿.expandoImageDiv {
+    position: relative;
+}
+
+.expandoImage {
+    object-fit: contain;
+    transition: all .75s ease-in-out;
+    height: 100%;
+}
+
+.redSides {
+    border-left: solid 5px #c05d5d;
+    border-right: solid 5px #c05d5d;
+}
+
+.fullScreenViewer {
+    position: absolute;
+    display: none;
+    background-color: var(--oggleBackgroundColor);
+    z-index: 110;
+}
+
+.hiddeClickArea {
+    position: absolute;
+    height: 100%;
+    width: 50%;
+    z-index: 115;
+}
+
+.imageViewerHeaderRow {
+    background-color: var(--ogglgeHeaderBarColor);
+    width: 100%;
+    padding-top: 3px;
+    margin-bottom: -5px;
+    display: none;
+}
+
+.viewerButtonsRowSection {
+    width: 19%;
+    display: flex;
+    display: inline-block;
+}
+
+    .viewerButtonsRowSection img {
+        display: inline-block;
+        height: 27px;
+        cursor: pointer;
+    }
+
+.imgCommentButton {
+    margin-left: 44px;
+    float: left;
+}
+
+.popoutBox {
+    margin-right: 22px;
+}
+
+.imageViewerTitle {
+    display: inline-block;
+    font-size: 26px;
+    width: 60%;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.attrBox {
+    position: absolute;
+    border: solid thin black;
+    display: none;
+}
+
+.innerContextMenuInfo {
+    display: none;
+}
+
+.linkInfoItem {
+    text-decoration: underline;
+    color: blue;
+}
+
+
+

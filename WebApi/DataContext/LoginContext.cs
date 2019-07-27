@@ -9,11 +9,11 @@
 
     public partial class LoginContext : DbContext
     {
-        public LoginContext()
-            : base("GoDaddy") { }
+        public LoginContext() : base("GoDaddy") { }
         public virtual DbSet<RegisteredUser> RegisteredUsers { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<PageHit> PageHits { get; set; }
     }
 
     [Table("login.RegisteredUser")]
@@ -47,6 +47,18 @@
         [Key]
         public string RoleId { get; set; }
         public string RoleName { get; set; }
+    }
+
+    [Table("login.PageHit")]
+    public partial class PageHit
+    {
+        [Key]
+        public string PkId { get; set; }
+        public string PageName { get; set; }
+        public string UserName { get; set; }
+        public string IpAddress { get; set; }
+        public string AppId { get; set; }
+        public DateTime HitDateTime { get; set; }
     }
 }
 

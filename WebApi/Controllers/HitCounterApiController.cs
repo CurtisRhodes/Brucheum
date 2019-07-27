@@ -168,7 +168,7 @@ namespace WebApi
                     else
                     {
                         bool logVisit = true;
-                        Visit lastVisit = db.Visits.Where(v => v.IPAddress == ipAddress && v.UserName == userName).FirstOrDefault();
+                        Visit lastVisit = db.Visits.Where(v => v.IPAddress == ipAddress && v.UserName == userName).OrderByDescending(v => v.VisitDate).FirstOrDefault();
                         if (lastVisit != null)
                         {
                             if ((DateTime.Now - lastVisit.VisitDate).TotalHours < 5)
@@ -217,19 +217,24 @@ namespace WebApi
             string success = "";
             try
             {
-                //var ipAddress = System.Text.Encoding.UTF32.GetString(bytes);
-                using (WebSiteContext db = new WebSiteContext())
-                {
-                    Hit hit = new Hit();
-                    hit.IPAddress = hitCounterModel.IpAddress;
-                    hit.App = hitCounterModel.AppName;
-                    hit.BeginView = DateTime.Now;
-                    hit.PageName = hitCounterModel.PageName;
-                    hit.Details = hitCounterModel.Details;
-                    db.Hits.Add(hit);
-                    db.SaveChanges();
-                    success = "ok";
+                string ipAddress = Helpers.GetIPAddress();
+                if ((ipAddress != "68.203.90.183") && (ipAddress != "50.62.160.105")) {
+                    using (LoginContext db = new LoginContext())
+                    {
+                        PageHit hit = new PageHit();
+                        hit.PkId = Guid.NewGuid().ToString();
+                        hit.IpAddress = ipAddress;
+                        hit.AppId = hitCounterModel.AppId;
+                        hit.HitDateTime = DateTime.Now;
+                        hit.PageName = hitCounterModel.PageName;
+                        hit.UserName = hitCounterModel.UserName;
+                        db.PageHits.Add(hit);
+                        db.SaveChanges();
+
+                        new GodaddyEmailController().SendEmail("Site Visit", hitCounterModel.UserName + " from ip: " + ipAddress + " visited: " + hitCounterModel.PageName);
+                    }
                 }
+                success = "ok";
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
@@ -280,10 +285,9 @@ namespace WebApi
     }
     public class HitCounterModel
     {
-        public string IpAddress { get; set; }
-        public string Details { get; set; }
+        public string UserName { get; set; }
         public string PageName { get; set; }
-        public string AppName { get; set; }
+        public string AppId { get; set; }
     }
 
 }

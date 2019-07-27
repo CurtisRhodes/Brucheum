@@ -1,0 +1,46 @@
+﻿.modelInfoContainer {
+    top: 188px;
+    z-index: 150;
+}
+
+.smallTextArea {
+    height: 121px;
+    width: 100%;
+    background-color: #f7eef7;
+    padding: 5px;
+    margin-right: 4px;
+    font-size: 21px;
+}
+
+.modelDialogImage {
+    height: 150px;
+    min-width: 160px;
+    margin-left: 4px;
+}
+
+.modelDialogInput {
+    width: 220px;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.viewOnlyMessage {
+    text-align: center;
+    font-size: 17px;
+    padding: 2px;
+}
+
+label {
+    width: 105px !important;
+}
+
+.addLinkIcon {
+    cursor: pointer;
+    font-size: 28px;
+}
+
+.hrefLabel {
+    font-size: 16px;
+    display: inline-block;
+    margin-right: 4px;
+}

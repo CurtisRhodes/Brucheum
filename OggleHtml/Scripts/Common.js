@@ -176,24 +176,16 @@ function logVisit() {
     });
 }
 
-function logPageHit() {
-    //hit.IPAddress = hitCounterModel.IpAddress;
-    //hit.App = hitCounterModel.AppName;
-    //hit.BeginView = DateTime.Now;
-    //hit.PageName = hitCounterModel.PageName;
-    //hit.Details = hitCounterModel.Details;
+function logPageHit(folderName) {
     //$('#footerMessage').html("logging page hit");
     var userName = getCookie("User");
     if (userName === "") userName = "unknown";
     //if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
-
     var hitCounterModel = {
-        //IpAddress: ipAddress,
-        AppName: "OggleBooble",
+        AppId: "OBH",
         PageName: folderName,
-        Details: userName
+        UserName: userName
     };
-
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer  + "api/HitCounter/LogPageHit",
@@ -214,7 +206,6 @@ function logPageHit() {
             alert("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
         }
     });
-
 }
 
 // LOGIN

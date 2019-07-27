@@ -30,7 +30,7 @@ body {
 
     .threeColumnLayout #leftColumn {
         float: left;
-        border-right: solid 5px var(--ogglgeHeaderBarColor);
+        /*border-right: solid 5px var(--ogglgeHeaderBarColor);*/
         min-width: 7%;
     }
 
