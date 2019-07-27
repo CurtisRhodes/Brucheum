@@ -93,17 +93,10 @@
     height: 200px;
     cursor: pointer;
     /*
-            border: dashed thin black;
-            margin-bottom: -3px;
-            width: 100%;
-
+        border: dashed thin black;
+        margin-bottom: -3px;
+        width: 100%;
     */
-}
-
-.loadingGif {
-    left: 150px;
-    top: 140px;
-    height: 140px;
 }
 
 :after {

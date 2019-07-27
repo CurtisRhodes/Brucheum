@@ -1,4 +1,5 @@
 ﻿var settingsArray = {};
+var userRoles = [];
 
 $(document).ready(function () {
     loadSettings();
@@ -143,6 +144,79 @@ function isNullorUndefined(val) {
     return false;
 }
 
+// HITCOUNTER
+
+function logVisit() {
+    //if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
+    //alert("ipAddress: " + ipAddress);
+
+    $('#footerMessage').html("logging visit");
+    var userName = getCookie("User");
+    setLoginHeader(userName);
+    if (userName === "") userName = "unknown";
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/HitCounter/LogVisit?userName=" + userName + "&appName=Ogglebooble",
+        success: function (successModel) {
+            if (successModel.Success === "ok") {
+
+                if (successModel.ReturnValue !== "") {
+                    $('#headerMessage').html(successModel.ReturnValue);
+                    //if (userName !== "unknown")
+                    //    getUserPermissions();
+                }
+            }
+            else
+                alert(successModel.Success);
+        },
+        error: function (jqXHR, exception) {
+            $('#blogLoadingGif').hide();
+            alert("HitCounter/LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+}
+
+function logPageHit() {
+    //hit.IPAddress = hitCounterModel.IpAddress;
+    //hit.App = hitCounterModel.AppName;
+    //hit.BeginView = DateTime.Now;
+    //hit.PageName = hitCounterModel.PageName;
+    //hit.Details = hitCounterModel.Details;
+    //$('#footerMessage').html("logging page hit");
+    var userName = getCookie("User");
+    if (userName === "") userName = "unknown";
+    //if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
+
+    var hitCounterModel = {
+        //IpAddress: ipAddress,
+        AppName: "OggleBooble",
+        PageName: folderName,
+        Details: userName
+    };
+
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer  + "api/HitCounter/LogPageHit",
+        data: hitCounterModel,
+        success: function (success) {
+            if (success === "ok") {
+                //if (!isNullorUndefined(currentUser)) {
+                //    alert("currentUser: " + currentUser);
+                //    sendEmail(currentUser + " just visited " + folderName, currentUser + " just visited " + folderName + " gallery");
+                //}
+                //else
+                //    sendEmail(ipAddress + " just visited " + folderName, "unknown user just visited " + folderName + " gallery");
+            }
+            else
+                alert("logPageHit: " + success);
+        },
+        error: function (jqXHR, exception) {
+            alert("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+
+}
+
 // LOGIN
 function onRegisterClick() {
     $('#modalContainer').show();
@@ -226,11 +300,6 @@ function onLogoutClick() {
     $('#optionNotLoggedIn').show();
 }
 
-function addClaim() {
-    var cookieContents = document.cookie; // = "cookiename= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
-    alert("cookieContents: " + cookieContents);
-}
-
 function onLoginClick() {
     $('#modalContainer').show();
     $('#loginDialog').show();
@@ -287,6 +356,21 @@ function validateLogin() {
 function transferToRegisterPopup() {
     $('#loginDialog').dialog('close');
     onRegisterClick();
+}
+
+function getUserPermissions(userName) {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Login/UserPermissions?userName=" + userName,
+        success: function (userRoles) {
+            $.each(userRoles,function (idx,obj) {
+                userRoles.push(obj.RoleName);
+            });
+        },
+        error: function (jqXHR, exception) {
+            alert("getUserPermissions jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
 }
 
 // COOKIES

@@ -212,9 +212,10 @@ footer {
     display: none;
 }
 .loadingGif {
+    position: absolute;
     left: 150px;
     top: 140px;
-    height: 140px;
+    height: 110px;
 }
 
 .ogContextMenu {

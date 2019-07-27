@@ -52,7 +52,7 @@
         <div id="moveCopyDialog" title="">
             <div class="inline"><img id="copyDialogImage" class="copyDialogImage" /></div>
             <div id="dirTreeResults" class="pusedoTextBox"></div>
-            <div class="inline"><img class="moveDialogDirTreeButton" src="~/Images/caretDown.png" onclick="$('#moveDialogDirTree').show()" /></div>
+            <div class="inline"><img class="moveDialogDirTreeButton" src="Images/caretDown.png" onclick="$('#moveDialogDirTree').show()" /></div>
             <br />
             <div id="moveDialogDirTree" class="hideableDropDown"></div>
             <div id="btnGo" class="roundendButton" onclick="ftpMoveCopy()">Copy</div>
@@ -76,11 +76,12 @@
     <script>
         var viewerShowing = false;
         var isPornEditor = true;
+        var folderName;
+
         $(document).ready(function () {
             includeHTML();
             resizePage();
             params = getParams();
-            $('#text55').html(params.kkk);
             var dots = ""
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
@@ -89,13 +90,61 @@
                 }
                 else {
                     clearInterval(waiter);
-                    getAlbumImages(settingsArray.ApiServer, params.folder);
+                    getAlbumImages(params.folder);
                 }
             }, 300);
         });
 
-        function getAlbumImages(service, folderId) {
-            //service = "localhost:40395/";
+        function getBreadCrumbs(folderId) {
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "/api/BreadCrumbs/Get?folderId=" + folderId,
+                success: function (breadCrumbModel) {
+                    if (breadCrumbModel.Success === "ok") {
+                        $('#breadcrumbContainer').html("");
+                        for (i = breadCrumbModel.BreadCrumbs.length - 1; i >= 0; i--) {
+                            if (breadCrumbModel.BreadCrumbs[i] === null) {
+                                breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
+                            }
+                            else {
+                                // title: I do not remember having been Invited)
+                                if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder) {
+                                    $('#breadcrumbContainer').append("<a class='inactiveBreadCrumb' " +
+                                        "onmouseover='slowlyShowCatDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + "); forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;' >" +
+                                        breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
+                                }
+                                else {
+                                    // a woman commited suicide when pictures of her "came out"
+                                    $('#breadcrumbContainer').append("<a class='activeBreadCrumb' " +
+                                        "href='/album.html?folderr=" + breadCrumbModel.BreadCrumbs[i].FolderId + "'>" +
+                                        breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
+                                }
+                            }
+                        }
+                        //alert("breadCrumbModel.RootFolder: " + breadCrumbModel.RootFolder);
+                        document.title = breadCrumbModel.FolderName + " OggleBooble";
+                        folderName = breadCrumbModel.FolderName;
+
+                        //if (ipAddress !== "68.203.90.183") {
+                        //    if (ipAddress !== "50.62.160.105") {
+                        //        //alert("ipAddress: " + ipAddress);
+                        logPageHit();
+                        //    }
+                        //}
+                        buildDirTree($('#moveDialogDirTree'), "moveDialogDirTree", 0);
+
+                    }
+                    else
+                        alert("getBreadCrumbs " + breadCrumbModel.Success);
+                },
+                error: function (jqXHR, exception) {
+                    $('#imagePageLoadingGif').hide();
+                    alert("getBreadCrumbs jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
+
+        function getAlbumImages(folderId) {
             try {
                 var start = Date.now();
                 $('#imagePageLoadingGif').show();
@@ -106,7 +155,7 @@
                         rootFolder = imageLinksModel.RootFolder;
                         if (imageLinksModel.Success === "ok") {
                             processImages(imageLinksModel);
-
+                            getBreadCrumbs(folderId);
                             var delta = (Date.now() - start) / 1000;
                             console.log("/api/ImageFolder/GetLinks?folder=" + folderId + " took: " + delta.toFixed(3));
                         }
@@ -125,7 +174,6 @@
                 alert("GetLinkFolders CATCH: " + e);
             }
         }
-
         function processImages(imageLinksModel) {
 
             var imageFrameClass = "folderImageOutterFrame";
@@ -137,7 +185,7 @@
             //  SUBFOLDERS
             $('#imageContainer').html('');
             $.each(imageLinksModel.SubDirs, function (idx, subDir) {
-                $('#imageContainer').append("<div class='" + imageFrameClass + "' onclick=window.location.href='ImagePage?folder=" + subDir.FolderId + "'>" +
+                $('#imageContainer').append("<div class='" + imageFrameClass + "' onclick=window.location.href='/album.html?folder=" + subDir.FolderId + "'>" +
                     "<img class='folderImage' src='" + subDir.Link + "'/>" +
                     "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div>");
             });
@@ -282,7 +330,7 @@
                     });
                     break;
                 case "jump":
-                    window.open("/home/ImagePage?folder=" + selectedImageArchiveFolderId, "_blank");
+                    window.open("/home//album.html?folder=" + selectedImageArchiveFolderId, "_blank");
                     break;
                 case "comment":
                     $("#thumbImageContextMenu").fadeOut();

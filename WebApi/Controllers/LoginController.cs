@@ -31,6 +31,27 @@ namespace WebApi
             }
             return success;
         }
+
+        [HttpGet]
+        public List<UserRoleModel> UserPermissions(string userName)
+        {
+            List<UserRoleModel> roles = null;
+            using (LoginContext db = new LoginContext())
+            {
+                roles = (from u in db.UserRoles
+                         join r in db.Roles on u.RoleId equals r.RoleId
+                         where u.UserName == userName
+                         select new UserRoleModel()
+                         {
+                             UserName = userName,
+                             RoleId = u.RoleId,
+                             RoleName = r.RoleName
+                         }
+                         ).ToList();
+            }
+            return roles;
+        }
+
         [HttpPost]
         public string RegisterUser(RegisteredUser registeredUserModel)
         {
@@ -74,6 +95,12 @@ namespace WebApi
             }
             return sb.ToString();
         }
+    }   
 
+    public class UserRoleModel {
+        public string UserName { get; set; }
+        public string RoleId { get; set; }
+        public string RoleName { get; set; }
     }
+
 }

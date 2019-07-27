@@ -78,65 +78,30 @@ function loadImages(rootFolder, isChecked, skip, take) {
                     $('#categoryTitle').show();
 
                     if (numImages === 0) {
-                        //imageIndex = 0;
-                        //$('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
-                        //$('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath);
-                        //$('#categoryTitle').html(carouselItemArray[imageIndex].FolderName);
-                        //resizeCarousel();
                         startCarousel();
                         $('#footerMessage').html("starting carousel");
                     }
-
                     numImages = carouselInfo.Links.length;
                     numFolders += carouselInfo.FolderCount;
 
                     var delta = (Date.now() - start) / 1000;
-
-                    //setTimeout(function () {
                     if (take === initialTake) {
                         console.log("loadImages(" + rootFolder + ") take: " + initialTake + " took: " + delta.toFixed(3));
                         loadImages(rootFolder, isChecked, initialTake, 80000);
-                        logVisit();
-
                     }
                     else
-                        console.log("loadImages(" + rootFolder + ") take: " + Number(carouselInfo.Links.length - initialTake) + " took: " + delta.toFixed(3));
-                    //}, 20000);
-
+                        console.log("loadImages(" + rootFolder + ") take: " +
+                            Number(carouselInfo.Links.length - initialTake) + " took: " + delta.toFixed(3));
                 }
                 else
                     alert("loadImages: " + carouselInfo.Success);
             },
             error: function (jqXHR, exception) {
-                alert("loadImages jqXHR : " + settingsArray.ApiServer + "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take + "  " + getXHRErrorDetails(jqXHR, exception));
+                alert("loadImages jqXHR : " + settingsArray.ApiServer + "api/Carousel/GetLinks?root=" + rootFolder +
+                    "&skip=" + skip + "&take=" + take + "  " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     }
-}
-
-function logVisit() {
-    //if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
-    //alert("ipAddress: " + ipAddress);
-
-    $('#footerMessage').html("logging visit");
-    var userName = getCookie("User");
-    setLoginHeader(userName);
-    if (userName === "") userName = "unknown";
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "api/HitCounter/LogVisit?userName=" + userName + "&appName=Ogglebooble",
-        success: function (successModel) {
-            if (successModel.Success === "ok") {
-                $('#headerMessage').html(successModel.ReturnValue);
-            }
-            else
-                alert(successModel.Success);
-        },
-        error: function (jqXHR, exception) {
-            $('#blogLoadingGif').hide();
-            alert("HitCounter/LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-        }
-    });
 }
 
 function slowlyShowFolderCategoryDialog() {
@@ -288,7 +253,6 @@ function intervalBody() {
         $('#footerMessage').html("image: " + imageIndex + " of " + numImages);
     });
 }
-
 
 function carouselContextMenu() {
         event.preventDefault();
