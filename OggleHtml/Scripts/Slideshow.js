@@ -261,6 +261,9 @@ function imageViewerContextMenuAction(action) {
             showMoveCopyDialog("Move", imageViewerArray[imageViewerIndex].Link, imageViewerFolderId);
             closeViewer();
             break;
+        case "showLinks":
+            showLinks(imageViewerArray[imageViewerIndex].LinkId);
+            break;
         case "remove":
             removeImage(imageViewerArray[imageViewerIndex].LinkId);
             closeViewer();

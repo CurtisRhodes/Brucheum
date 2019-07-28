@@ -459,39 +459,39 @@ namespace WebApi
                     string patentPath = Helpers.GetParentPath(folderId);
 
                     #region rename folder
-                    //string currentFullPath = ftpSubDomain + patentPath + "/" + dbSourceFolder.FolderName;
-                    //success = FtpUtilies.RenameFolder(currentFullPath, newFolderName);
-                    //if (success == "ok")
-                    //{
-                    //    try
-                    //    {
-                    //        string repoFolderCurrent = repoPath + Helpers.GetLocalParentPath(folderId) + "/" + dbSourceFolder.FolderName;
-                    //        string repoRename = repoPath + Helpers.GetLocalParentPath(folderId) + "/" + newFolderName;
-                    //        DirectoryInfo directoryInfo = new DirectoryInfo(repoFolderCurrent);
-                    //        directoryInfo.MoveTo(repoRename);
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        var err = Helpers.ErrorDetails(ex);
-                    //        System.Diagnostics.Debug.WriteLine("file.MoveTo didnt work " + err);
-                    //    }
-                    //    dbSourceFolder.FolderName = newFolderName;
-                    //    db.SaveChanges();
-                    //}
-                    #endregion
+                    string currentFullPath = ftpSubDomain + patentPath + "/" + dbSourceFolder.FolderName;
+                    success = FtpUtilies.RenameFolder(currentFullPath, newFolderName);
+                    if (success == "ok")
+                        {
+                        //    try
+                        //    {
+                        //        string repoFolderCurrent = repoPath + Helpers.GetLocalParentPath(folderId) + "/" + dbSourceFolder.FolderName;
+                        //        string repoRename = repoPath + Helpers.GetLocalParentPath(folderId) + "/" + newFolderName;
+                        //        DirectoryInfo directoryInfo = new DirectoryInfo(repoFolderCurrent);
+                        //        directoryInfo.MoveTo(repoRename);
+                        //    }
+                        //    catch (Exception ex)
+                        //    {
+                        //        var err = Helpers.ErrorDetails(ex);
+                        //        System.Diagnostics.Debug.WriteLine("file.MoveTo didnt work " + err);
+                        //    }
+                        //    dbSourceFolder.FolderName = newFolderName;
+                        //    db.SaveChanges();
+                        }
+                        #endregion
 
-                    #region rename files
-                    string linkid = "";
+                        #region rename files
+                        string linkid = "";
                     string extension = "";
                     string expectedfilename = "";
                     string expectedlinkname = "";
                     string folderpath = Helpers.GetParentPath(folderId);
                     string parentfolderpath = Helpers.GetParentPath(parentId);
 
-                    string sourcePath = ftpSubDomain + parentfolderpath + "/" + folderpath + sourceFolderName;
+                    //string sourcePath = ftpSubDomain + parentfolderpath + "/" + folderpath + sourceFolderName;
                     string destinationPath = ftpSubDomain + parentfolderpath + "/" + folderpath + newFolderName;
 
-                    string[] files = FtpUtilies.GetFiles(sourcePath);
+                    string[] files = FtpUtilies.GetFiles(destinationPath);
 
                     foreach (string filename in files)
                     {
@@ -499,7 +499,7 @@ namespace WebApi
                         extension = filename.Substring(filename.LastIndexOf("."));
                         expectedfilename = newFolderName + "_" + linkid + extension;
 
-                        string sourceFile = sourcePath + "/" + filename;
+                        string sourceFile = destinationPath + "/" + filename;
                         string destinationfile = destinationPath + "/" + expectedfilename;
 
                         var fileMoveSuccess = FtpUtilies.MoveFile(sourceFile, destinationfile);

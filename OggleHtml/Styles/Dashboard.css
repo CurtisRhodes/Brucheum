@@ -1,0 +1,142 @@
+﻿.linkContainer {
+    display: inline;
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+
+    .linkContainer div {
+        display: inline;
+        color: #585a38;
+        margin-right: 22px;
+    }
+
+.dashBoardContainer {
+    margin-top: 11px;
+    display: flex;
+    border: solid 2px #111;
+    background-color: #eee;
+}
+
+.workarea {
+    float: left;
+    width: 100%;
+}
+
+.collapsable {
+    display: block;
+}
+
+.fileCount {
+    display: inline;
+    color: blue;
+    font-size: smaller;
+}
+
+.smallLoadingGif {
+   position: relative; 
+    top: 100px;
+    left: -210px;
+    height: 100px;
+    display: none;
+}
+
+.loadingGif {
+    left: 150px;
+    top: 200px;
+    height: 140px;
+}
+
+.addLinkCrudArea {
+    font-size: 16px;
+    border: solid .5px #555;
+    padding: 6px;
+}
+
+.linkImage {
+    /*
+            float:right;
+        height: 430px;
+        min-width: 520px;
+
+        */
+    max-width: 80%;
+    border: solid .5px #555;
+}
+
+.roundedInput {
+    display: inline-block;
+    width: 95%;
+    margin-right: 6px;
+    font-size: 22px;
+}
+
+.roundendButton {
+    margin-top: 6px;
+    display: inline-block;
+}
+
+.infoLine {
+    /*position: relative;*/
+    bottom: 44px;
+    display: none;
+    padding: 4px;
+    margin-left: 3px;
+    border: solid .5px #555;
+    height: 32px;
+    min-width: 610px;
+    background-color: #f8e8e8;
+    vertical-align: bottom;
+}
+
+/*.dashboardToggle {
+}*/
+
+.myH2 {
+    font-family: Verdana;
+    margin-top: 1px;
+    font-size: 22px;
+}
+
+.clickable {
+    white-space: nowrap;
+}
+
+.moveDirTreeContainer {
+    background-color: #f8e8e8;
+    padding-right: 5px;
+    text-align: left;
+    overflow-y: auto;
+}
+
+.treeContainer {
+    margin-top: 8px;
+    display: inline-block;
+    border-left: solid .5px #555;
+    min-height: 106px;
+    min-width: 275px;
+    overflow-y: auto;
+}
+
+.toggleButton {
+    display: inline-block;
+    font-size: 24px;
+    background-color: #07C;
+    color: #fff;
+    margin: 2px 4px;
+    border-radius: 8px;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.repairReport {
+    padding: 4px;
+    line-height: 22px;
+    max-height: 412px;
+    overflow-y: auto;
+    background-color: #faf8e3;
+}
+
+.dashboardProgessBar {
+    color: aqua;
+    background-color: bisque;
+}

@@ -153,7 +153,7 @@ function carouselContextMenuAction(ctxMenuAction) {
             });
             break;
         case "seeMore":
-            window.open('/home/ImagePage?folder=' + selectedImageArchiveFolderId, '_blank');
+            window.open('/album.html?folder=' + selectedImageArchiveFolderId, '_blank');
             break;
         case "explode":
             window.open(carouselItemArray[imageIndex].Link, "_blank");

@@ -1,0 +1,207 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OggleHtml</title>
+    <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
+    <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>
+    <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet' />
+    <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js' type="text/javascript"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
+    <script src="Scripts/Common.js"></script>
+    <script src="Scripts/Carousel.js"></script>
+    <script src="Scripts/DirTree.js"></script>
+    <script src="Scripts/CategoryDialog.js"></script>
+    <script src="Scripts/ModelInfoDialog.js"></script>
+    <script src="Scripts/CommentDialog.js"></script>
+    <script src="Scripts/MoveCopyArchive.js"></script>
+
+    <link href="Styles/jqueryUI.css" rel="stylesheet" />
+    <link href="Styles/loginDialog.css" rel="stylesheet" />
+    <link href="Styles/Common.css" rel="stylesheet" />
+    <link href="Styles/Carousel.css" rel="stylesheet" />
+    <link href="Styles/ImagePage.css" rel="stylesheet" />
+    <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
+    <link href="Styles/ModelInfoDialog.css" rel="stylesheet" />
+    <link href="Styles/CommentDialog.css" rel="stylesheet" />
+
+    <!--<script src="/signalr/hubs"></script>-->
+    <!--<script src="Scripts/jquery.signalR-2.4.1.min.js"></script>-->
+    <link href="Styles/Dashboard.css" rel="stylesheet" />
+    <script src="Scripts/Dashboard.js"></script>
+
+</head>
+<body>
+    <div w3-include-html="Snippets/BoobsHeader.html"></div>
+    <div class="threeColumnLayout">
+        <div id="leftColumn">
+            <!--//$('#headerMessage').html(`Dashboard <dir class='linkContainer'></dir>`);-->
+        </div>
+        <div id="middleColumn">
+            <img id="dashBoardLoadingGif" class="loadingGif" src="Images/loader.gif" />
+            <div id="divDashboardContainer" class="dashBoardContainer">
+                <div class="leftColumnList">
+                    <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
+                    <div class="clickable" onclick="showCreateNewFolder()">Create New Folder</div>
+                    <div class="clickable" onclick="showMovefolderDialog()">Move Folder</div>
+                    <div class="clickable" onclick="showRenameFolderDialog()">ReName Folder</div>
+                    <div class="clickable" onclick="loadProperties()">loadProperties</div>
+                    <div class="clickable" onclick="createStaticPages()">Create Static Pages</div>
+                    <div class="clickable" onclick="createStaticIndexPages()">Create Static Index Pages</div>
+                    <div class="clickable" onclick="repairLinks()">Repair Links</div>
+                </div>
+                <div class="workarea">
+                    <div id="divStatusMessage"></div>
+                    <div id="progressBar" class="dashboardProgessBar"></div>
+                    <div id="dataifyInfo" class="infoLine"></div>
+                </div>
+                <div id="dirTreeContainer" class="treeContainer"></div>
+                <img id="getDirTreeLoadingGif" class="smallLoadingGif" src="/Images/loader.gif" />
+            </div>
+
+            <div id="newFolderCrud" class="dashboardToggle" title="Create New Folder">
+                <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
+                <div><span>parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                <div class="roundendButton" onclick="createNewFolder()">Create Folder</div>
+            </div>
+
+            <div id="createStaticPagesCrud" class="dashboardToggle" title="Create Static Pages">
+                <div><span>folders to staticify</span><input id="txtFolderToStaticify" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                <div><span>include all subfolders</span><input type="checkbox" id="ckIncludeSubfolders" checked="checked" /></div>
+                <div class="roundendButton" onclick="createStaticPages()">Build Files</div>
+                <div id="renameFolderReport" class="repairReport"></div>
+            </div>
+
+            <div id="renameFolderCrud" class="dashboardToggle" title="Rename Folder">
+                <div><span>folder to rename</span><input id="txtFolderToRename" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                <div><span>new name</span><input id="txtReName" class="roundedInput" /></div>
+                <div class="roundendButton" onclick="renameFolder()">Rename Folder</div>
+                <div id="renameFolderReport" class="repairReport"></div>
+            </div>
+
+            <div id="moveFolderCrud" class="dashboardToggle" title="Move Folder">
+                <div>
+                    <span>new parent </span><div onclick="$('#partialViewTreeContainer').dialog('open');" class="toggleButton">...</div>
+                    <input id="txtFolderToMove" class="txtPartialDirTreePath roundedInput" readonly="readonly" />
+                </div>
+                <div><span>move folder</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
+            </div>
+
+            <div id="partialViewTreeContainer" title="Select Folder to move">
+                <div id="folderToMoveTreeContainer" class="moveDirTreeContainer"></div>
+            </div>
+
+            <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
+                <div onclick="dashboardContextMenuOpenFolder()">Open Folder</div>
+                <div onclick="dashboardContextMenuShowCategoryDetails()">Show Category Info</div>
+                <div onclick="dashboardContextMenuShowInfoDialog()">Show Model Info</div>
+            </div>
+
+            <!--<div id="videoCrud" class="dashboardToggle">
+                <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
+                <div class="floatingCrudContainer">
+                    <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
+                    <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
+                    <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
+                    <div class="roundendButton" onclick="addVideo()">Insert</div>
+                </div>
+            </div>-->
+        </div>
+        <div id="rightColumn"></div>
+    </div>
+    <div w3-include-html="Snippets/BoobsFooter.html"></div>
+    <div w3-include-html="Snippets/Login.html"></div>
+    <div w3-include-html="Snippets/Register.html"></div>
+
+    <script>
+    $(document).ready(function () {
+        includeHTML();
+        $('#getDirTreeLoadingGif').hide();
+        $('#dashBoardLoadingGif').hide();
+
+        var dots = ""
+        var waiter = setInterval(function () {
+            if (settingsArray.ApiServer === undefined) {
+                dots += ". ";
+                $('#text55').html(dots);
+            }
+            else {
+                clearInterval(waiter);
+                buildDirectoryTree();
+                //logVisit();
+            }
+        }, 300);
+
+        $('#moveFolderCrud').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "400"
+        });
+        $('#renameFolderCrud').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "400"
+        });
+        $('#newFolderCrud').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "615"
+        });
+        $('#createStaticPagesCrud').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "400"
+        });
+        $('#moveFolderCrud').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "400"
+        });
+        $('#partialViewTreeContainer').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            position: ({ my: 'right', at: 'left', of: $('#moveFolderCrud') }),
+            width: "400",
+            height: "550"
+        });
+
+        //setSignalR();
+        window.addEventListener("resize", resizeDashboardPage);
+        resizeDashboardPage();
+    });
+
+//loadProperties()">loadProperties</div>
+//videoCrud
+//createStaticIndexPages()">Create Static Index Pages</div>
+//repairLinks()">Repair Links</div>
+
+    function showcreateStaticIndexPagesDialog() {
+        $('#createStaticPagesCrud').dialog("open");
+    }
+
+    function showRenameFolderDialog() {
+        $('#renameFolderCrud').dialog("open");
+    }
+
+    function showCreateNewFolder() {
+        $('#newFolderCrud').dialog("open");
+    }
+
+    function showMovefolderDialog() {
+        $('#moveFolderCrud').dialog("open");
+        buildDirTree($('#folderToMoveTreeContainer'), "moveFolderTree", 0);
+    }
+
+    </script>
+</body>
+</html>

@@ -1,13 +1,6 @@
 ﻿var MoveCopyImageModel = {};
 
 $(function () {
-    $('#moveCopyDialog').dialog({
-        autoOpen: false,
-        show: { effect: "fade" },
-        hide: { effect: "blind" },
-        position: ({ my: 'right top', at: 'right top', of: $('#middleColumn') }),
-        width: "650"
-    });
 });
 
 function showMoveCopyDialog(mode, link, folderId) {
@@ -15,10 +8,19 @@ function showMoveCopyDialog(mode, link, folderId) {
     MoveCopyImageModel.Link = link;
     MoveCopyImageModel.SourceFolderId = folderId;
     $('#btnGo').html(mode);
-    $('#moveCopyDialog').dialog('option', 'title', mode + " Image Link");
     $('#copyDialogImage').attr("src", link);
+    if ($('#moveDialogDirTree').children().length < 10) {
+        buildDirTree($('#moveDialogDirTree'), "moveDialogDirTree", 0);
+    }
+    //else alert("$('#moveDialogDirTree').children().length: " + $('#moveDialogDirTree').children().length);
     $('#moveCopyDialogContainer').show();
-    $('#moveCopyDialog').dialog("open");
+    $('#moveCopyDialog').dialog({
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        position: { my: 'right top', at: 'right top', of: $('#middleColumn') },
+        width: "650"
+    });
+    $('#moveCopyDialog').dialog('option', 'title', mode + " Image Link");
 }
 
 function ftpMoveCopy() {
@@ -26,7 +28,7 @@ function ftpMoveCopy() {
     $('#imagePageLoadingGif').show();
     $.ajax({
         type: "PUT",
-        url: service + "/api/MoveImage/MoveImage",
+        url: settingsArray.ApiServer + "/api/MoveImage/MoveImage",
         data: MoveCopyImageModel,
         success: function (success) {
             $('#imagePageLoadingGif').hide();

@@ -159,11 +159,10 @@ function logVisit() {
         url: settingsArray.ApiServer + "api/HitCounter/LogVisit?userName=" + userName + "&appName=Ogglebooble",
         success: function (successModel) {
             if (successModel.Success === "ok") {
-
                 if (successModel.ReturnValue !== "") {
                     $('#headerMessage').html(successModel.ReturnValue);
-                    //if (userName !== "unknown")
-                    //    getUserPermissions();
+                    if (userName !== "unknown")
+                        getUserPermissions(userName);
                 }
             }
             else
@@ -177,9 +176,13 @@ function logVisit() {
 }
 
 function logPageHit(folderName) {
-    //$('#footerMessage').html("logging page hit");
+    $('#footerMessage').html("logging page hit");
     var userName = getCookie("User");
-    if (userName === "") userName = "unknown";
+    if (userName === "")
+        userName = "unknown";
+    else {
+        setLoginHeader(userName);
+    }
     //if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
     var hitCounterModel = {
         AppId: "OBH",
@@ -192,12 +195,7 @@ function logPageHit(folderName) {
         data: hitCounterModel,
         success: function (success) {
             if (success === "ok") {
-                //if (!isNullorUndefined(currentUser)) {
-                //    alert("currentUser: " + currentUser);
-                //    sendEmail(currentUser + " just visited " + folderName, currentUser + " just visited " + folderName + " gallery");
-                //}
-                //else
-                //    sendEmail(ipAddress + " just visited " + folderName, "unknown user just visited " + folderName + " gallery");
+                $('#footerMessage').html(success);
             }
             else
                 alert("logPageHit: " + success);
@@ -320,6 +318,7 @@ function postLogin() {
                     displayStatusMessage("ok", "thanks for logging in " + getCookie());
                     setCookie($('#txtLoginUserName').val());
                     setLoginHeader($('#txtLoginUserName').val());
+                    getUserPermissions($('#txtLoginUserName').val());
                 }
                 else
                     $('#loginValidationSummary').html(response).show();                    
@@ -350,18 +349,24 @@ function transferToRegisterPopup() {
 }
 
 function getUserPermissions(userName) {
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Login/UserPermissions?userName=" + userName,
-        success: function (userRoles) {
-            $.each(userRoles,function (idx,obj) {
-                userRoles.push(obj.RoleName);
-            });
-        },
-        error: function (jqXHR, exception) {
-            alert("getUserPermissions jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-        }
-    });
+
+    if (userName !== "unknown") {
+        $('.loginRequired').show();
+
+    }
+
+    //$.ajax({
+    //    type: "GET",
+    //    url: settingsArray.ApiServer + "api/Login/UserPermissions?userName=" + userName,
+    //    success: function (userRoles) {
+    //        $.each(userRoles,function (idx,obj) {
+    //            userRoles.push(obj.RoleName);
+    //        });
+    //    },
+    //    error: function (jqXHR, exception) {
+    //        alert("getUserPermissions jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+    //    }
+    //});
 }
 
 // COOKIES
@@ -405,4 +410,50 @@ function getCookie(cname) {
     return decodedCookie;
 }
 
+// COMMON CONTEXTMENU FUNCTIONS
+function showLinks(linkId) {
+    $.ajax({
+        type: "PATCH",
+        url: settingsArray.ApiServer + "api/ImagePage?linkId=" + linkId,
+        success: function (linksModel) {
+            if (linksModel.Success === "ok") {
+                $('#linkInfo').show();
+                $('#linkInfoContainer').html("");
+                $.each(linksModel.Links, function (idx, obj) {
+                    $('#linkInfoContainer').append("<div id='" + obj.FolderId + "' class='linkInfoItem' onclick='openLink(" + obj.FolderId + ")'>" + obj.PathName + "</div>");
+                });
+            }
+            else
+                alert("showLinks: " + linksModel.Success);
+        },
+        error: function (jqXHR, exception) {
+            alert("showLinks error: " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+}
+
+function openLink(folderId) {
+    window.open("/album.html?folder=" + folderId, "_blank");
+}
+
+function setFolderImage(linkId, folderId, level) {
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "/api/ImageCategoryDetail/?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level,
+        success: function (success) {
+            if (success === "ok") {
+                displayStatusMessage("ok", level + " image set");
+                $('#thumbImageContextMenu').fadeOut();
+                if (viewerShowing)
+                    slide("next");
+            }
+            else {
+                alert("setFolderImage: " + success);
+            }
+        },
+        error: function (xhr) {
+            alert("setFolderImage xhr error: " + xhr.statusText);
+        }
+    });
+}
 

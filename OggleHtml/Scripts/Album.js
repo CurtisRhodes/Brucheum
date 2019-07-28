@@ -283,10 +283,11 @@ function contextMenuAction(action) {
             setFolderImage(currentContextLinkId, currentFolderId, "parent");
             break;
         case "showLinks":
-            showLinks();
+            showLinks(currentContextLinkId);
             //showProps($('#' + currentContextLinkId + '').attr("src"));
             break;
         default:
             alert("contextMenuAction action: " + action);
     }
+
 }
