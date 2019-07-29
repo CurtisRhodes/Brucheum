@@ -24,7 +24,7 @@ namespace WebApi.Controllers
         private int filesProcessed = 0;
 
         [HttpGet]
-        public string Build(int parentFolder, string userName)
+        public string Build(int parentFolder, bool recurr)
         {
             string success = "";
             {
@@ -43,7 +43,7 @@ namespace WebApi.Controllers
                         //SignalRHost.ProgressHub.PostToClient("Creating index page");
                         //CreateIndexPage(categoryFolder.RootFolder, userName);
                         string folderName = categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
-                        success = ProcessFolder(parentFolder, categoryFolder.RootFolder, folderName, userName, db);
+                        success = ProcessFolder(parentFolder, categoryFolder.RootFolder, folderName, db, recurr);
                     }
                 }
                 catch (Exception e) { success = Helpers.ErrorDetails(e); }
@@ -88,7 +88,7 @@ namespace WebApi.Controllers
             return success;
         }
 
-        private string ProcessFolder(int folderId, string rootFolder, string folderName, string userName, OggleBoobleContext db)
+        private string ProcessFolder(int folderId, string rootFolder, string folderName, OggleBoobleContext db, bool recurr)
         {
             string success = "";
             try
@@ -105,13 +105,13 @@ namespace WebApi.Controllers
                     HeaderHtml(folderId) + GalleryPageBodyHtml(folderId, rootFolder) + CommentDialog() + CategoryDialog() + ModelInfoDialog() +
                     "<div id='staticCatTreeContainer' class='oggleHidden categoryListContainer' title=" + rootFolder + "></div>" +
                     "<script>var staticPageFolderId=" + folderId + "; var staticPageFolderName='" + folderName + "'; " +
-                    "var staticPageRootFolder='" + rootFolder + "'; var staticPageCurrentUser ='" + userName + "'; logPageHit();</script>\n" +
+                    "var staticPageRootFolder='" + rootFolder + "';</script>\n" +
                     ImageViewer() + LoginDialog() + RegisterDialog() + FooterHtml(rootFolder) +
                     "<script src='/scripts/StaticPage.js'></script>\n" +
                     "\n</body>\n</html>";
 
                 success = WriteFileToDisk(staticContent, rootFolder, pageTitle);
-                if (success == "ok")
+                if (recurr)
                 {
                     List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
                     foreach (CategoryFolder dbCategoryFolder in categoryFolders)
@@ -121,7 +121,7 @@ namespace WebApi.Controllers
                         filesProcessed += vwDirTree.FileCount;
                         SignalRHost.ProgressHub.ShowProgressBar(totalFiles, filesProcessed);
 
-                        ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName, userName, db);
+                        ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName, db, true);
                     }
                 }
             }
@@ -129,7 +129,7 @@ namespace WebApi.Controllers
             return success;
         }
 
-        private string HeadHtml(int folderId, string pageName)
+        private string HeadHtmlx(int folderId, string pageName)
         {
             var articleTagString = "";
             MetaTagResultsModel metaTagResults = new MetaTagController().GetTags(folderId, "undefined");
@@ -163,6 +163,47 @@ namespace WebApi.Controllers
                 "   <link href='/styles/footer.css'      rel='stylesheet'/>\n" +
                 "   <link href='/styles/ImagePage.css'   rel='stylesheet'/>\n" +
                 "   <link href='/styles/loginDialog.css'   rel='stylesheet'/>\n" +
+                "   <title>" + pageName + " - OggleBooble</title>" +
+                "   <meta name='Title' content='" + pageName + "' property='og:title'/>\n" +
+                "   <meta name='description' content='" + metaTagResults.Description + "'/>\n" +
+                "   <meta property='og:type' content='website' />\n" +
+                "   <meta property='og:url' content='" + httpLocation + "/" + pageName + ".html'/>\n" +
+                "   <meta name='Keywords' content='" + articleTagString + "'/>\n" +
+                "</head>";
+        }
+
+        private string HeadHtml(int folderId, string pageName)
+        {
+            var articleTagString = "";
+            MetaTagResultsModel metaTagResults = new MetaTagController().GetTags(folderId, "undefined");
+            foreach (MetaTagModel metaTag in metaTagResults.MetaTags)
+            {
+                articleTagString += "," + metaTag.Tag;
+            }
+            return "<head>\n" +
+                "   <meta charset='utf-8'>\n" +
+                "   <script src='https://code.jquery.com/jquery-latest.min.js' type='text/javascript'></script>\n" +
+                "   <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>\n" +
+                "   <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet'>\n" +
+                "   <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js'></script>\n" +
+                "   <link href='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css' rel='stylesheet'>\n" +
+                "   <script src='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js'></script>\n" +
+                "   <link href='/Styles/jqueryui.css' rel='stylesheet' />\n" +
+                "   <link rel='icon' type='image/png' href='/static/favicon.png' />" +
+                "   <script src='/Scripts/Common.js' type='text/javascript'></script>\n" +
+                "   <script src='/Scripts/Slideshow.js' type='text/javascript'></script>\n" +
+                "   <script src='/Scripts/ImageCommentDialog.js' type='text/javascript'></script>\n" +
+                "   <script src='/Scripts/CategoryDialog.js' type='text/javascript'></script>\n" +
+                "   <script src='/Scripts/ModelInfoDialog.js' type='text/javascript'></script>\n" +
+                "   <script src='/Scripts/DirTree.js'></script>\n" +
+                "   <link href='/Styles/Common.css'     rel='stylesheet'/>\n" +
+                "   <link href='/Styles/Header.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/Slideshow.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/CategoryDialog.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/Carousel.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/ModelInfoDialog.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/ImagePage.css'   rel='stylesheet'/>\n" +
+                "   <link href='/Styles/LoginDialog.css'   rel='stylesheet'/>\n" +
                 "   <title>" + pageName + " - OggleBooble</title>" +
                 "   <meta name='Title' content='" + pageName + "' property='og:title'/>\n" +
                 "   <meta name='description' content='" + metaTagResults.Description + "'/>\n" +

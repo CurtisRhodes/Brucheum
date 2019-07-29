@@ -1,9 +1,5 @@
 ﻿var folderDetailModel = {};
 
-
-
-
-
 function showImageCommentDialog(src, linkId, folderId, folderName) {
     folderDetailModel.LinkId = linkId;
     folderDetailModel.Link = src;
@@ -18,14 +14,15 @@ function showImageCommentDialog(src, linkId, folderId, folderName) {
     folderDetailModel.Id = 0;
     loadComment();
 
-    $('#imageCommentEditor').summernote({
-        height: 200,
-        codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-        toolbar: [
-            ['codeview']
-            //['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
-        ]
-    });
+    //$('#imageCommentEditor').summernote({
+    //    height: 200,
+    //    //codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+    //    toolbar: false
+    //    //toolbar: [
+    //    //    ['codeview'],
+    //    //    ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
+    //    //]
+    //});
 
     $('#imageCommentDialog').show();
     $('#imageCommentDialog').dialog({

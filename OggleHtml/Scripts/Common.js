@@ -8,7 +8,7 @@ $(document).ready(function () {
 function loadSettings() {
     $.ajax({
         type: "GET",
-        url: "Data/Settings.xml",
+        url: "/Data/Settings.xml",
         dataType: "xml",
         success: function (xml) {
             $(xml).find('setting').each(function () {
@@ -149,9 +149,9 @@ function isNullorUndefined(val) {
 function logVisit() {
     //if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
     //alert("ipAddress: " + ipAddress);
-
-    $('#footerMessage').html("logging visit");
     var userName = getCookie("User");
+    //alert("userName: " + userName);
+    $('#footerMessage').html("logging visit userName: " + userName);
     setLoginHeader(userName);
     if (userName === "") userName = "unknown";
     $.ajax({
@@ -182,6 +182,7 @@ function logPageHit(folderName) {
         userName = "unknown";
     else {
         setLoginHeader(userName);
+        getUserPermissions(userName);
     }
     //if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
     var hitCounterModel = {
@@ -193,12 +194,13 @@ function logPageHit(folderName) {
         type: "PUT",
         url: settingsArray.ApiServer  + "api/HitCounter/LogPageHit",
         data: hitCounterModel,
-        success: function (success) {
-            if (success === "ok") {
-                $('#footerMessage').html(success);
+        success: function (successModel) {
+            if (successModel.Success === "ok") {
+                if (userName === "unknown")
+                    $('#footerMessage').html("logPageHit: " + successModel.ReturnValue);
             }
             else
-                alert("logPageHit: " + success);
+                alert("logPageHit: " + successModel.Success);
         },
         error: function (jqXHR, exception) {
             alert("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
@@ -456,4 +458,12 @@ function setFolderImage(linkId, folderId, level) {
         }
     });
 }
+
+// GET BUILD INFO
+function getFileDate() {
+    
+
+
+}
+
 

@@ -1,4 +1,5 @@
 ﻿var categoryFolderId = "";
+var isPornEditor = false;
 
 function showCategoryDialog(folderId) {
     // 11:11 2/25/19
@@ -7,7 +8,6 @@ function showCategoryDialog(folderId) {
     // --alter table OggleBooble.ImageFolder add CatergoryDescription nvarchar(max)
     // 4/30/2019  --first use of jQuery dialog
     try {
-
         $('#folderCategoryDialog').dialog({
             autoOpen: false,
             show: { effect: "fade" },
@@ -26,7 +26,7 @@ function showCategoryDialog(folderId) {
                     $('#folderCategoryDialog').dialog('option', 'title', categoryComment.FolderName);
 
                     $('#catDlgDescription').prop("readonly", true);
-                    if ((isPornEditor === "True") || (document.domain === 'localhost'))
+                    if (isPornEditor === "True" && document.domain === 'localhost')
                         $('#btnCatDlgEdit').show();
                     else 
                         $('#btnCatDlgEdit').hide();
@@ -75,7 +75,7 @@ function toggleEditCatDialog() {
 }
 
 function addMetaTags() {
-    openMetaTagDialog(categoryFolderId)
+    openMetaTagDialog(categoryFolderId);
 }
 
 function considerClosingCategoryDialog() {

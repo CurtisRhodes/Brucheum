@@ -1,0 +1,66 @@
+﻿.imagePageDialog {
+    background-color: var(--oggleBackgroundColor);
+    font-size: 18px;
+}
+
+.metaTagItem {
+    display: inline-block;
+    color: #fff;
+    margin: 3px;
+    border: solid .23px #444;
+    border-radius: 8px;
+    padding: 3px 5px;
+    cursor: pointer;
+}
+
+.metaTagLinkColor {
+    background-color: blue;
+}
+
+.metaTagFolderColor {
+    background-color: #fcbb20;
+    color: #111;
+}
+
+.metaTagParent1Color {
+    background-color: #f6fca3; /*yellow*/
+    color: #111;
+}
+
+.metaTagParent2Color {
+    background-color: mediumspringgreen;
+    color: #111;
+}
+
+.metaTagParent3Color {
+    background-color: orangered;
+}
+
+label {
+    width: 45px;
+}
+
+.tagInput {
+    width: 200px;
+    margin-top: 4px;
+}
+
+.metaTagAvailableListArea {
+    height: 350px;
+    width: 200px;
+    overflow-y: auto;
+    background-color: var(--oggleBackgroundColor);
+    padding: 9px;
+    margin: 8px;
+    border-radius: 22px;
+}
+
+.metaTagAssignedArea {
+    height: 350px;
+    width: 400px;
+    overflow-y: auto;
+    background-color: var(--oggleBackgroundColor);
+    padding: 9px;
+    margin: 8px;
+    border-radius: 22px;
+}

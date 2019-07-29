@@ -212,9 +212,9 @@ namespace WebApi
         }
 
         [HttpPut]
-        public string LogPageHit(HitCounterModel hitCounterModel)
+        public SuccessModel LogPageHit(HitCounterModel hitCounterModel)
         {
-            string success = "";
+            SuccessModel successModel = new SuccessModel();
             try
             {
                 string ipAddress = Helpers.GetIPAddress();
@@ -234,10 +234,11 @@ namespace WebApi
                         new GodaddyEmailController().SendEmail("Site Visit", hitCounterModel.UserName + " from ip: " + ipAddress + " visited: " + hitCounterModel.PageName);
                     }
                 }
-                success = "ok";
+                successModel.ReturnValue = ipAddress;
+                successModel.Success = "ok";
             }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
+            catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }
+            return successModel;
         }
 
         [HttpPost]

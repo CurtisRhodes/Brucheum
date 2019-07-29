@@ -9,17 +9,21 @@ function showMoveCopyDialog(mode, link, folderId) {
     MoveCopyImageModel.SourceFolderId = folderId;
     $('#btnGo').html(mode);
     $('#copyDialogImage').attr("src", link);
-    if ($('#moveDialogDirTree').children().length < 10) {
+
+    if ($('#moveDialogDirTree').children().length < 1) {
+        //alert("$('#moveDialogDirTree').children().length: " + $('#moveDialogDirTree').children().length);
         buildDirTree($('#moveDialogDirTree'), "moveDialogDirTree", 0);
+        $('#moveCopyDialog').dialog({
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            position: { my: 'right top', at: 'right top', of: $('#middleColumn') },
+            width: "650"
+        });
     }
     //else alert("$('#moveDialogDirTree').children().length: " + $('#moveDialogDirTree').children().length);
+
+    $('#moveCopyDialog').dialog("open");
     $('#moveCopyDialogContainer').show();
-    $('#moveCopyDialog').dialog({
-        show: { effect: "fade" },
-        hide: { effect: "blind" },
-        position: { my: 'right top', at: 'right top', of: $('#middleColumn') },
-        width: "650"
-    });
     $('#moveCopyDialog').dialog('option', 'title', mode + " Image Link");
 }
 

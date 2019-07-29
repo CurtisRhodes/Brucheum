@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OggleHtml</title>
+    <title>Admin - OggleBooble</title>
     <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
     <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
     <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>
@@ -16,8 +16,9 @@
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/CategoryDialog.js"></script>
     <script src="Scripts/ModelInfoDialog.js"></script>
-    <script src="Scripts/CommentDialog.js"></script>
+    <script src="Scripts/ImageCommentDialog.js"></script>
     <script src="Scripts/MoveCopyArchive.js"></script>
+    <script src="Scripts/MetaTagDialog.js"></script>
 
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
     <link href="Styles/loginDialog.css" rel="stylesheet" />
@@ -27,6 +28,8 @@
     <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
     <link href="Styles/ModelInfoDialog.css" rel="stylesheet" />
     <link href="Styles/CommentDialog.css" rel="stylesheet" />
+    <link href="Styles/CategoryDialog.css" rel="stylesheet" />
+    <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
 
     <!--<script src="/signalr/hubs"></script>-->
     <!--<script src="Scripts/jquery.signalR-2.4.1.min.js"></script>-->
@@ -49,7 +52,7 @@
                     <div class="clickable" onclick="showMovefolderDialog()">Move Folder</div>
                     <div class="clickable" onclick="showRenameFolderDialog()">ReName Folder</div>
                     <div class="clickable" onclick="loadProperties()">loadProperties</div>
-                    <div class="clickable" onclick="createStaticPages()">Create Static Pages</div>
+                    <div class="clickable" onclick="showCreateStaticPages()">Create Static Pages</div>
                     <div class="clickable" onclick="createStaticIndexPages()">Create Static Index Pages</div>
                     <div class="clickable" onclick="repairLinks()">Repair Links</div>
                 </div>
@@ -71,7 +74,7 @@
             <div id="createStaticPagesCrud" class="dashboardToggle" title="Create Static Pages">
                 <div><span>folders to staticify</span><input id="txtFolderToStaticify" class="txtLinkPath roundedInput" readonly="readonly" /></div>
                 <div><span>include all subfolders</span><input type="checkbox" id="ckIncludeSubfolders" checked="checked" /></div>
-                <div class="roundendButton" onclick="createStaticPages()">Build Files</div>
+                <div class="roundendButton" onclick="createStaticPages($('#ckIncludeSubfolders').is(':checked'))">Build Files</div>
                 <div id="renameFolderReport" class="repairReport"></div>
             </div>
 
@@ -114,93 +117,94 @@
         <div id="rightColumn"></div>
     </div>
     <div w3-include-html="Snippets/BoobsFooter.html"></div>
+    <div w3-include-html="Snippets/AdminDialogs.html"></div>
     <div w3-include-html="Snippets/Login.html"></div>
     <div w3-include-html="Snippets/Register.html"></div>
 
     <script>
-    $(document).ready(function () {
-        includeHTML();
-        $('#getDirTreeLoadingGif').hide();
-        $('#dashBoardLoadingGif').hide();
+        $(document).ready(function () {
+            includeHTML();
+            $('#getDirTreeLoadingGif').hide();
+            $('#dashBoardLoadingGif').hide();
 
-        var dots = ""
-        var waiter = setInterval(function () {
-            if (settingsArray.ApiServer === undefined) {
-                dots += ". ";
-                $('#text55').html(dots);
-            }
-            else {
-                clearInterval(waiter);
-                buildDirectoryTree();
-                //logVisit();
-            }
-        }, 300);
+            var dots = ""
+            var waiter = setInterval(function () {
+                if (settingsArray.ApiServer === undefined) {
+                    dots += ". ";
+                    $('#text55').html(dots);
+                }
+                else {
+                    clearInterval(waiter);
+                    buildDirectoryTree();
+                    logPageHit("Admin");
+                }
+            }, 300);
 
-        $('#moveFolderCrud').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            width: "400"
+            $('#moveFolderCrud').dialog({
+                autoOpen: false,
+                show: { effect: "fade" },
+                hide: { effect: "blind" },
+                width: "400"
+            });
+            $('#renameFolderCrud').dialog({
+                autoOpen: false,
+                show: { effect: "fade" },
+                hide: { effect: "blind" },
+                width: "400"
+            });
+            $('#newFolderCrud').dialog({
+                autoOpen: false,
+                show: { effect: "fade" },
+                hide: { effect: "blind" },
+                width: "615"
+            });
+            $('#createStaticPagesCrud').dialog({
+                autoOpen: false,
+                show: { effect: "fade" },
+                hide: { effect: "blind" },
+                width: "400"
+            });
+            $('#moveFolderCrud').dialog({
+                autoOpen: false,
+                show: { effect: "fade" },
+                hide: { effect: "blind" },
+                width: "400"
+            });
+            $('#partialViewTreeContainer').dialog({
+                autoOpen: false,
+                show: { effect: "fade" },
+                hide: { effect: "blind" },
+                position: ({ my: 'right', at: 'left', of: $('#moveFolderCrud') }),
+                width: "400",
+                height: "550"
+            });
+
+            //setSignalR();
+            window.addEventListener("resize", resizeDashboardPage);
+            resizeDashboardPage();
         });
-        $('#renameFolderCrud').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            width: "400"
-        });
-        $('#newFolderCrud').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            width: "615"
-        });
-        $('#createStaticPagesCrud').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            width: "400"
-        });
-        $('#moveFolderCrud').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            width: "400"
-        });
-        $('#partialViewTreeContainer').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            position: ({ my: 'right', at: 'left', of: $('#moveFolderCrud') }),
-            width: "400",
-            height: "550"
-        });
 
-        //setSignalR();
-        window.addEventListener("resize", resizeDashboardPage);
-        resizeDashboardPage();
-    });
+        //loadProperties()">loadProperties</div>
+        //videoCrud
+        //createStaticIndexPages()">Create Static Index Pages</div>
+        //repairLinks()">Repair Links</div>
 
-//loadProperties()">loadProperties</div>
-//videoCrud
-//createStaticIndexPages()">Create Static Index Pages</div>
-//repairLinks()">Repair Links</div>
+        function showCreateStaticPages() {
+            $('#createStaticPagesCrud').dialog("open");
+        }
 
-    function showcreateStaticIndexPagesDialog() {
-        $('#createStaticPagesCrud').dialog("open");
-    }
+        function showRenameFolderDialog() {
+            $('#renameFolderCrud').dialog("open");
+        }
 
-    function showRenameFolderDialog() {
-        $('#renameFolderCrud').dialog("open");
-    }
+        function showCreateNewFolder() {
+            $('#newFolderCrud').dialog("open");
+        }
 
-    function showCreateNewFolder() {
-        $('#newFolderCrud').dialog("open");
-    }
-
-    function showMovefolderDialog() {
-        $('#moveFolderCrud').dialog("open");
-        buildDirTree($('#folderToMoveTreeContainer'), "moveFolderTree", 0);
-    }
+        function showMovefolderDialog() {
+            $('#moveFolderCrud').dialog("open");
+            buildDirTree($('#folderToMoveTreeContainer'), "moveFolderTree", 0);
+        }
 
     </script>
 </body>

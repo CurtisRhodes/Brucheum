@@ -54,6 +54,9 @@ function buildDirectoryTree() {
 }
 
 function createStaticPages(justOne) {
+
+    alert("justOne: " + justOne);
+
     //$('#createStaticPagesCrud').dialog("close");
     //$('#createStaticPagesCrud').hide();
     //$('#dashBoardLoadingGif').fadeIn();
@@ -61,7 +64,7 @@ function createStaticPages(justOne) {
     $('#progressBar').show();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/StaticPage/Buld?parentFolder=" + dashboardMainSelectedTreeId + "&userName=xxx",
+        url: settingsArray.ApiServer + "api/StaticPage/Buld?parentFolder=" + dashboardMainSelectedTreeId + "&recurr=" + justOne,
         success: function (success) {
             $('#progressBar').hide();
             //$('#dashBoardLoadingGif').hide();
@@ -436,15 +439,6 @@ function dashboardMainClick(path, id, treeId) {
     //    displayPath = "root";
     //}
 }
-
-$('.workarea').keydown(function (event) {
-    // Number 13 is the "Enter" key on the keyboard
-    if (event.keyCode === 13) {
-        // Cancel the default action, if needed
-        // Trigger the button element with a click
-        addImageLink();
-    }
-});
 
 function showDirTreeContextMenu(linkId, folderId) {
     dashboardContextMenuFolderId = folderId;

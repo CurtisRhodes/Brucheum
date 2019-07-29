@@ -55,3 +55,29 @@
     <div id="divSaveFantasy" class="roundendButton clickable commentDialogButton inline" onclick="saveComment()">save</div>
     <div id="commentInstructions" class="commentDialogInstructions inline">log in to view comments</div>
 </div>
+
+
+<div id="folderCategoryDialog" class="displayHidden" title="" onmouseleave="considerClosingCategoryDialog()">
+
+    <div id="metatabRow" class="metaTagRow">
+        <input id="txtMetatag" onblur="addMetaTag" />
+    </div>
+
+    <div><textarea id="catDlgDescription" class="catDlgTextArea"></textarea></div>
+    <a id="btnCatDlgEdit" class="dialogEditButton" href="javascript:toggleEditCatDialog()">Edit</a>
+    <a id="btnCatDlgEdit" class="dialogEditButton" href="javascript:addMetaTags()">add meta tags</a>
+
+</div>
+
+<div id="metaTagDialog" class="displayHidden" title="">
+    <label>Tag</label>
+    <input id="txtMetaTag" class="roundedInput tagInput" onblur="blurMetaTag()" />
+    <div class="flexContainer">
+        <div class="floatLeft">
+            <div id="metaTagsAssignedList" class="metaTagAssignedArea"></div>
+        </div>
+        <div class="floatLeft">
+            <div id="metaTagsAvailableList" class="metaTagAvailableListArea"></div>
+        </div>
+    </div>
+</div>

@@ -134,7 +134,7 @@ function processImages(imageLinksModel) {
         currentContextLinkId = $(this).attr("id");
         var thisImage = $('#' + currentContextLinkId + '');
         var picpos = thisImage.offset();
-        var picLeft = picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50;
+        var picLeft = Math.max(10, picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50);
         $('#thumbImageContextMenu').css("top", picpos.top + 5);
         $('#thumbImageContextMenu').css("left", picLeft);
         $.ajax({
@@ -189,6 +189,16 @@ function startSlideShow(imageIndex, folderName) {
     launchViewer(imageArray, imageIndex, currentFolderId, folderName);
 }
 
+
+function showDeleteDialog() {
+    $('#removeLinkDialog').show();
+    $('#removeLinkDialog').dialog({
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        width: "300"
+    });
+}
+
 function onRemoveImageClick(btn) {
     if (btn === "ok") {
         var rejectLinkModel = {};
@@ -223,6 +233,43 @@ function onRemoveImageClick(btn) {
         $('#removeLinkDialog').dialog('close');
         $('#removeLinkDialog').hide();
     }
+}
+
+function removeImage(currentContextLinkId) {
+    //    alert("currentContextLinkId: " + currentContextLinkId);
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + currentContextLinkId,
+        success: function (success) {
+            if (success === "ok") {
+                $.ajax({
+                    type: "DELETE",
+                    url: settingsArray.ApiServer + "api/FtpImageRemove/RemoveImageLink?folderId=" + currentFolderId + "&imageId=" + currentContextLinkId,
+                    success: function (success) {
+                        if (success === "ok") {
+                            if (viewerShowing)
+                                slide("next");
+                            getAlbumImages(currentFolderId);
+                        }
+                        else
+                            alert("removeLink: " + success);
+                    },
+                    error: function (xhr) {
+                        alert("delete xhr error: " + xhr.statusText);
+                    }
+                });
+            }
+            else {
+                if (success === "only link")
+                    showDeleteDialog();
+                else
+                    alert(success);
+            }
+        },
+        error: function (xhr) {
+            alert("delete xhr error: " + xhr.statusText);
+        }
+    });
 }
 
 function contextMenuAction(action) {

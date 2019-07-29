@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OggleHtml</title>
@@ -16,8 +16,9 @@
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/CategoryDialog.js"></script>
     <script src="Scripts/ModelInfoDialog.js"></script>
-    <script src="Scripts/CommentDialog.js"></script>
+    <script src="Scripts/ImageCommentDialog.js"></script>
     <script src="Scripts/MoveCopyArchive.js"></script>
+    <script src="Scripts/MetaTagDialog.js"></script>
 
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
     <link href="Styles/loginDialog.css" rel="stylesheet" />
@@ -27,14 +28,16 @@
     <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
     <link href="Styles/ModelInfoDialog.css" rel="stylesheet" />
     <link href="Styles/CommentDialog.css" rel="stylesheet" />
+    <link href="Styles/CategoryDialog.css" rel="stylesheet" />
+    <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
 
     <!--<script src="/signalr/hubs"></script>-->
     <link href="Styles/Dashboard.css" rel="stylesheet" />
     <!--<script src="Scripts/jquery.signalR-2.4.1.min.js"></script>-->
     <script src="Scripts/Dashboard.js"></script>
 
-  </head>
-  <body>
+</head>
+<body>
     <div w3-include-html="Snippets/BoobsHeader.html"></div>
     <div class="threeColumnLayout">
         <div id="leftColumn"></div>
@@ -60,30 +63,46 @@
         </div>
         <div id="rightColumn"></div>
     </div>
+    <div w3-include-html="Snippets/AdminDialogs.html"></div>
     <div w3-include-html="Snippets/BoobsFooter.html"></div>
     <div w3-include-html="Snippets/Login.html"></div>
     <div w3-include-html="Snippets/Register.html"></div>
 
+    <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
+        <div onclick="dashboardContextMenuOpenFolder()">Open Folder</div>
+        <div onclick="dashboardContextMenuShowCategoryDetails()">Show Category Info</div>
+        <div onclick="dashboardContextMenuShowInfoDialog()">Show Model Info</div>
+    </div>
+
     <script>
-    $(document).ready(function () {
-        includeHTML();
-        $('#dashBoardLoadingGif').hide();
-        var dots = ""
-        var waiter = setInterval(function () {
-            if (settingsArray.ApiServer === undefined) {
-                dots += ". ";
-                $('#text55').html(dots);
+        $(document).ready(function () {
+            includeHTML();
+            $('#dashBoardLoadingGif').hide();
+            var dots = ""
+            var waiter = setInterval(function () {
+                if (settingsArray.ApiServer === undefined) {
+                    dots += ". ";
+                    $('#text55').html(dots);
+                }
+                else {
+                    clearInterval(waiter);
+                    buildDirectoryTree();
+                    logPageHit("Upload");
+                }
+            }, 300);
+            //setSignalR();
+            window.addEventListener("resize", resizeDashboardPage);
+            resizeDashboardPage();
+        });
+
+        $('.workarea').keydown(function (event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                // Trigger the button element with a click
+                addImageLink();
             }
-            else {
-                clearInterval(waiter);
-                buildDirectoryTree();
-                logVisit();
-            }
-        }, 300);
-        //setSignalR();
-        window.addEventListener("resize", resizeDashboardPage);
-        resizeDashboardPage();
-    });
+        });
     </script>
-  </body>
+</body>
 </html>

@@ -80,6 +80,7 @@ function loadImages(rootFolder, isChecked, skip, take) {
                     if (numImages === 0) {
                         startCarousel();
                         $('#footerMessage').html("starting carousel");
+                        resizeCarousel();
                     }
                     numImages = carouselInfo.Links.length;
                     numFolders += carouselInfo.FolderCount;

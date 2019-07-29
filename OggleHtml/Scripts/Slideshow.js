@@ -31,8 +31,9 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
     $('#viewerImage').attr("src", imageViewerArray[imageViewerIndex].Link);
     $('#viewerImage').removeClass('redSides');
     $('#viewerButtonsRow').hide();
+    $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
     resizePage();
-
+    resizeViewer();
     $('#imageViewerDialog').show();
     //$('#imageViewerDialog').dialog("open");
 
@@ -128,9 +129,8 @@ function slide(direction) {
         $('#viewerImage').show();
         $('#viewerImage').css("transform", "translateX(0)");
     }, 450);
-    //$('#viewerImageContainer').css('left', 0);
-    //$('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
-    $('#footerMessage').html("2image: " + imageViewerIndex + " of: " + imageViewerArray.length);
+    resizeViewer();
+    $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
 }
 
 function runSlideShow(action) {
@@ -285,11 +285,12 @@ function closeViewer() {
 }
 
 function resizeViewer() {
-    //$('#leftClickArea').css('left', 0);
-    //$('#rightClickArea').css('left', $(window).width() / 2);
+    $('#leftClickArea').css('left', 0);
+    $('#rightClickArea').css('left', $(window).width() / 2);
 
     $('#imageViewerDialog').width($(window).width());
     $('#imageViewerDialog').height($(window).height());
+    $('#viewerImage').height($(window).height() - 30);
 }
 
 $(document).keydown(function (event) {

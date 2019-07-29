@@ -15,17 +15,17 @@ function buildDirTree(dest, treeId, startNode) {
             url: settingsArray.ApiServer + "api/CatTree/Get?root=" + startNode,
             success: function (categoryTreeModel) {
 
-                if (treeId === "dashboardMain")
-                    $('#dataifyInfo').show().html("rebuilding directory tree");
+                //if (treeId === "dashboardMain")
+                //    $('#dataifyInfo').show().html("rebuilding directory tree");
 
                 recurrBuildDirTree(categoryTreeModel, treeId);
                 var delta = (Date.now() - start) / 1000;
                 console.log("rebuildCatTree took: " + delta.toFixed(3));
 
-                if (treeId === "dashboardMain") {
-                    $('#dataifyInfo').html("rebuildCatTree took: " + delta.toFixed(3) + " total folders: " + totalFolders + " total pics: " + totalPics.toLocaleString());
-                    $('#getDirTreeLoadingGif').hide();
-                }
+                //if (treeId === "dashboardMain") {
+                //    $('#dataifyInfo').html("rebuildCatTree took: " + delta.toFixed(3) + " total folders: " + totalFolders + " total pics: " + totalPics.toLocaleString());
+                //    $('#getDirTreeLoadingGif').hide();
+                //}
                 dest.html(dirTreeContainer);
             },
             error: function (xhr) {
