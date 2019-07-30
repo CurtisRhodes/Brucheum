@@ -6,6 +6,23 @@ var selectedImageArchiveFolderId;
 var currentContextLinkId;
 var imageArray;
 
+function directToStaticPage(folderId) {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Carousel/GetStaticPage?folderId=" + folderId,
+        success: function (successModel) {
+            if (successModel.Success === "ok") {
+                window.location.href = successModel.ReturnValue;
+            }
+            else
+                alert("directToStaticPage " + successModel.Success);
+        },
+        error: function (jqXHR, exception) {
+            alert("directToStaticPage jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+}
+
 function getBreadCrumbs(folderId) {
     // a woman commited suicide when pictures of her "came out"
     // title: I do not remember having been Invited)
@@ -188,7 +205,6 @@ function startSlideShow(imageIndex, folderName) {
     viewerShowing = true;
     launchViewer(imageArray, imageIndex, currentFolderId, folderName);
 }
-
 
 function showDeleteDialog() {
     $('#removeLinkDialog').show();

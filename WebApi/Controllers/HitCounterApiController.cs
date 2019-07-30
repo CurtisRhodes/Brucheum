@@ -115,15 +115,11 @@ namespace WebApi
             SuccessModel success = new SuccessModel();
             try
             {
-                string ipAddress = Helpers.GetIPAddress();
-
                 //if ((ipAddress == "68.203.90.183") || (ipAddress == "50.62.160.105"))
                 //{
                 //    success.Success = "ok";
                 //    return success;
                 //}
-
-                string visitorId = Guid.NewGuid().ToString();
                 //using (AspNetContext db = new AspNetContext())
                 //{
                 //    AspNetUser aspNetUser = db.AspNetUsers.Where(u => u.UserName == userName).FirstOrDefault();
@@ -133,18 +129,19 @@ namespace WebApi
                 //        visitorId = aspNetUser.Id;
                 //    }
                 //}
-
+                string ipAddress = Helpers.GetIPAddress();
                 using (WebSiteContext db = new WebSiteContext())
                 {
                     Visitor dexisting = db.Visitors.Where(v => v.IPAddress == ipAddress && v.UserName == userName).FirstOrDefault();
                     if (dexisting == null)
                     {
+                        //string visitorId = Guid.NewGuid().ToString();
                         Visitor existing = db.Visitors.Where(v => v.IPAddress == ipAddress).FirstOrDefault();
                         if (existing == null)
                         {
                             // WE HAVE A NEW VISITOR
                             Visitor visitor = new Visitor();
-                            visitor.Id = visitorId;
+                            visitor.Id = Guid.NewGuid().ToString();
                             visitor.UserName = userName;
                             visitor.AppName = appName;
                             visitor.IPAddress = ipAddress;
@@ -162,45 +159,43 @@ namespace WebApi
                             else
                                 success.ReturnValue = "Welcome back " + userName;
 
-                            db.SaveChanges();
-                        }
-                    }
-                    else
-                    {
-                        bool logVisit = true;
-                        Visit lastVisit = db.Visits.Where(v => v.IPAddress == ipAddress && v.UserName == userName).OrderByDescending(v => v.VisitDate).FirstOrDefault();
-                        if (lastVisit != null)
-                        {
-                            if ((DateTime.Now - lastVisit.VisitDate).TotalHours < 5)
+                            bool logVisit = true;
+                            Visit lastVisit = db.Visits.Where(v => v.IPAddress == ipAddress && v.UserName == userName).OrderByDescending(v => v.VisitDate).FirstOrDefault();
+                            if (lastVisit != null)
                             {
-                                logVisit = false;
+                                if ((DateTime.Now - lastVisit.VisitDate).TotalHours < 5)
+                                {
+                                    logVisit = false;
+                                    success.ReturnValue = "";
+                                }
                             }
-                        }
-                        if (logVisit)
-                        {
-                            Visit visit = new Visit();
-                            visit.VisitorId = visitorId;
-                            visit.UserName = userName;
-                            visit.IPAddress = ipAddress;
-                            visit.AppName = appName;
-                            visit.VisitDate = DateTime.Now;
-
-                            db.Visits.Add(visit);
-                            db.SaveChanges();
-
-                            success.ReturnValue = "Welcome back " + ipAddress;
-
-                            if ((ipAddress == "68.203.90.183") || (ipAddress == "50.62.160.105"))
+                            if (logVisit)
                             {
-                                success.ReturnValue = "dev [" + userName + "]";
-                            }
-                            else {
-                                new GodaddyEmailController().SendEmail("Site Visit", "ip: " + ipAddress + " visited: " + appName);
+                                Visit visit = new Visit();
+                                visit.VisitorId = Guid.NewGuid().ToString();
+                                visit.UserName = userName;
+                                visit.IPAddress = ipAddress;
+                                visit.AppName = appName;
+                                visit.VisitDate = DateTime.Now;
 
-                                if (userName == "unknown")
-                                    success.ReturnValue = "Welcome back from " + ipAddress;
+                                db.Visits.Add(visit);
+                                db.SaveChanges();
+
+                                success.ReturnValue = "Welcome back " + ipAddress;
+
+                                if ((ipAddress == "68.203.90.183") || (ipAddress == "50.62.160.105"))
+                                {
+                                    success.ReturnValue = "dev [" + userName + "]";
+                                }
                                 else
-                                    success.ReturnValue = "Welcome back. Please log in";
+                                {
+                                    new GodaddyEmailController().SendEmail("Site Visit", "ip: " + ipAddress + " visited: " + appName);
+
+                                    if (userName == "unknown")
+                                        success.ReturnValue = "Welcome back from " + ipAddress;
+                                    else
+                                        success.ReturnValue = "Welcome back. Please log in";
+                                }
                             }
                         }
                     }

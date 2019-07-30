@@ -286,7 +286,7 @@ function validateRegister() {
 }
 
 function onLogoutClick() {
-    document.cookie = "User= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "OggleUser=''; User=''; expires = Thu, 01 Jan 1970 00:00:00 GMT";
     $('#optionLoggedIn').hide();
     $('#optionNotLoggedIn').show();
 }

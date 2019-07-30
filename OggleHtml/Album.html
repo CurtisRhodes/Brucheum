@@ -14,13 +14,13 @@
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/Carousel.js"></script>
     <script src="Scripts/DirTree.js"></script>
-    <script src="Scripts/CategoryDialog.js"></script>
+    <script src="Scripts/FolderCategoryDialog.js"></script>
     <script src="Scripts/ModelInfoDialog.js"></script>
     <script src="Scripts/ImageCommentDialog.js"></script>
     <script src="Scripts/MoveCopyArchive.js"></script>
     <script src="Scripts/MetaTagDialog.js"></script>
     <script src="Scripts/Slideshow.js"></script>
-
+    <script src="Scripts/Album.js"></script>
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
     <link href="Styles/loginDialog.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet" />
@@ -28,10 +28,9 @@
     <link href="Styles/ImagePage.css" rel="stylesheet" />
     <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
     <link href="Styles/ModelInfoDialog.css" rel="stylesheet" />
-    <link href="Styles/CommentDialog.css" rel="stylesheet" />
-    <link href="Styles/CategoryDialog.css" rel="stylesheet" />
+    <link href="Styles/ImageCommentDialog.css" rel="stylesheet" />
+    <link href="Styles/FolderCategoryDialog.css" rel="stylesheet" />
     <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
-
 </head>
   <body>
     <div w3-include-html="Snippets/BoobsHeader.html"></div>
@@ -80,7 +79,6 @@
             if (params.folder == undefined) {
                 window.location.href = "Index.html";
             }
-
             var dots = ""
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
@@ -89,11 +87,17 @@
                 }
                 else {
                     clearInterval(waiter);
-                    getAlbumImages(params.folder);
+                    var cookieName = getCookie();
+                    alert("cookieName: " + cookieName);
+                    if (cookieName == cookieName) {
+                        directToStaticPage(params.folder)
+                    }
+                    else {
+                        getAlbumImages(params.folder);
+                    }
                 }
             }, 300);
         });
     </script>
-    <script src="Scripts/Album.js"></script>
   </body>
 </html>

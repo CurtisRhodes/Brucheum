@@ -17,7 +17,7 @@ var throttleSpeed = 15200;
 var throttleSize = 2500;
 
 $(document).ready(function () {
-    loadHardCoded();
+    //loadHardCoded();
     launchPromoMessages();
 
     var cookie = getCookie("User");

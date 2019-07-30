@@ -103,7 +103,7 @@ namespace WebApi.Controllers
                     "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, pageTitle) +
                     "\n<body style='margin-top:105px'>\n" +
                     HeaderHtml(folderId) + GalleryPageBodyHtml(folderId, rootFolder) + CommentDialog() + CategoryDialog() + ModelInfoDialog() +
-                    "<div id='staticCatTreeContainer' class='oggleHidden categoryListContainer' title=" + rootFolder + "></div>" +
+                    "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
                     "<script>var staticPageFolderId=" + folderId + "; var staticPageFolderName='" + folderName + "'; " +
                     "var staticPageRootFolder='" + rootFolder + "';</script>\n" +
                     ImageViewer() + LoginDialog() + RegisterDialog() + FooterHtml(rootFolder) +
@@ -127,49 +127,6 @@ namespace WebApi.Controllers
             }
             catch (Exception e) { success = Helpers.ErrorDetails(e); }
             return success;
-        }
-
-        private string HeadHtmlx(int folderId, string pageName)
-        {
-            var articleTagString = "";
-            MetaTagResultsModel metaTagResults = new MetaTagController().GetTags(folderId, "undefined");
-            foreach (MetaTagModel metaTag in metaTagResults.MetaTags)
-            {
-                articleTagString += "," + metaTag.Tag;
-            }
-            return "<head>\n" +
-                "   <meta charset='utf-8'>\n" +
-                "   <script src='https://code.jquery.com/jquery-latest.min.js' type='text/javascript'></script>\n" +
-                "   <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>\n" +
-                "   <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet'>\n" +
-                "   <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js'></script>\n" +
-                "   <link href='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css' rel='stylesheet'>\n" +
-                "   <script src='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js'></script>\n" +
-                "   <link href='/styles/jqueryui.css' rel='stylesheet' />\n" +
-                "   <link rel='icon' type='image/png' href='/static/favicon.png' />" +
-                "   <script src='/scripts/GlobalFunctions.js' type='text/javascript'></script>\n" +
-                "   <script src='/scripts/ResizeThreeColumnPage.js' type='text/javascript'></script>\n" +
-                "   <script src='/scripts/ImageViewer.js' type='text/javascript'></script>\n" +
-                "   <script src='/scripts/CommentDialog.js' type='text/javascript'></script>\n" +
-                "   <script src='/scripts/CategoryDialog.js' type='text/javascript'></script>\n" +
-                "   <script src='/scripts/ModelInfoDialog.js' type='text/javascript'></script>\n" +
-                "   <script src='/scripts/DirTree.js'></script>\n" +
-                "   <link href='/styles/default.css'     rel='stylesheet'/>\n" +
-                "   <link href='/styles/fixedHeader.css' rel='stylesheet'/>\n" +
-                "   <link href='/styles/imageViewer.css' rel='stylesheet'/>\n" +
-                "   <link href='/styles/categoryDialog.css' rel='stylesheet'/>\n" +
-                "   <link href='/styles/carousel.css' rel='stylesheet'/>\n" +
-                "   <link href='/styles/modelInfoDialog.css' rel='stylesheet'/>\n" +
-                "   <link href='/styles/footer.css'      rel='stylesheet'/>\n" +
-                "   <link href='/styles/ImagePage.css'   rel='stylesheet'/>\n" +
-                "   <link href='/styles/loginDialog.css'   rel='stylesheet'/>\n" +
-                "   <title>" + pageName + " - OggleBooble</title>" +
-                "   <meta name='Title' content='" + pageName + "' property='og:title'/>\n" +
-                "   <meta name='description' content='" + metaTagResults.Description + "'/>\n" +
-                "   <meta property='og:type' content='website' />\n" +
-                "   <meta property='og:url' content='" + httpLocation + "/" + pageName + ".html'/>\n" +
-                "   <meta name='Keywords' content='" + articleTagString + "'/>\n" +
-                "</head>";
         }
 
         private string HeadHtml(int folderId, string pageName)
@@ -199,7 +156,8 @@ namespace WebApi.Controllers
                 "   <link href='/Styles/Common.css'     rel='stylesheet'/>\n" +
                 "   <link href='/Styles/Header.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/Slideshow.css' rel='stylesheet'/>\n" +
-                "   <link href='/Styles/CategoryDialog.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/FolderCategoryDialog.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/ImageCommentDialog.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/Carousel.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/ModelInfoDialog.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/ImagePage.css'   rel='stylesheet'/>\n" +
@@ -272,58 +230,54 @@ namespace WebApi.Controllers
                     "<a href='" + httpLocation + "/porn/naughty.html'> naughty behavior</a> categorized";
                     colorClass = "pornColors";
                     bannerLogo = "/images/csLips02.png";
-                    homeLink = "" + httpLocation + "/porn.html";
+                    //homeLink = "" + httpLocation + "/porn.html";
+                    homeLink = "/index.html?subdomain=porn";
                 }
                 else
                 {
                     headerSubtitle = "<a href='" + httpLocation + "/boobs/boobs.html'>big tits</a> and " +
-                     "<a href='" + httpLocation + "/boobs/rear view.html'>ass</a> organized by" +
-                     "<a href='" + httpLocation + "/boobs/poses.html'> poses</a> " +
-                     "<a href='" + httpLocation + "/boobs/shapes.html'> shapes</a> and " +
-                     "<a href='" + httpLocation + "/boobs/sizes.html'> sizes</a> ";
+                     "<a href='" + httpLocation + "/boobs/rear view.html'>ass</a> organized by " +
+                     "<a href='" + httpLocation + "/boobs/poses.html'>poses</a>, " +
+                     "<a href='" + httpLocation + "/boobs/shapes.html'>shapes</a> and " +
+                     "<a href='" + httpLocation + "/boobs/sizes.html'>sizes</a>";
                     colorClass = "classicColors";
                     bannerLogo = "/images/redballon.png";
-                    homeLink = httpLocation;
+                    homeLink = "/";
                 }
             }
-            return "<div class='fixedHeader flexContainer " + colorClass + "' id='oggleBoobleHeader'>\n" +
-                "<div class='bannerImageContainer' id='divTopLeftLogo'>\n" +
-                    "<a href='" + homeLink + "'><img class='bannerImage' id='logo' src='" + bannerLogo + "'/></a>\n" +
-                "</div>\n" +
-                    "<div class='headerBodyContainer' id='largeFixedHeader'>\n" +
-                        "<div id='headerTopRow'>\n" +
-                            "<div class='headerTitle' id='bannerTitle'>OggleBooble2</div>\n" +
-                            "<div class='headerSubTitle' id='headerSubTitle'>" + headerSubtitle + "</div>\n" +
-                        "</div>\n" +
-                        "<div class='flexContainer' id='headerBottomRow'>\n" +
-                            "<div class='breadCrumbArea' id='breadcrumbContainer'>" + breadCrumbs + "</div>\n" +
-                            "<div class='menuTabContainer' id='menuContainer'>\n" +
-                                "<div class='floatLeft' id='dynamicOnly' style='display: none;'>\n" +
-                                "<div class='menuTab floatLeft' id='replaceableMenuItems'>\n" +
-                                    "<a href='/Admin/Blog'>Blog</a>\n" +
-                                    "</div> \n" +
-                                    "<div class='oggleHidden inline floatLeft' id='divPornEditor' style='display: block;'>\n" +
-                                        "<div class='menuTab floatLeft'><a href='/Admin/Dashboard'>Admin</a></div>\n" +
-                                    "</div>\n" +
-                                "</div>\n" +
-                                "<div class='oggleHidden inline floatRight' id='divLogedIn' style='display: none;'>\n" +
-                                    "<div class='menuTab floatRight'><a href='javascript:logoutSimple()'>Log Out</a></div>\n" +
-                                    "<div id='helloUser' title='modify profile' class='menuTab floatRight'><a href='javascript:profilePease()'>Hello  </a></div>\n" +
-                                "</div>\n" +
-                                "<div class='oggleHidden inline floatRight' id='divNotLogedIn' style='display: block;'>\n" +
-                                    "<div class='menuTab floatRight' id='btnLayoutRegister'>\n" +
-                                        "<a href='javascript:showRegisterDialog()'>Register</a>\n" +
-                                        "<img class='btnSpinnerImage' id='btnHeaderRegisterSpinner' src='/images/loader.gif'/>\n" +
-                                    "</div>\n" +
-                                "<div class='menuTab floatRight' id='btnLayoutLogin'>\n" +
-                                    "<a href='javascript:showLoginDialog()'>Log In</a>\n" +
-                                    "<img class='btnSpinnerImage' id='btnHeaderLoginSpinner' src='/images/loader.gif'/>\n" +
-                                "</div>\n" +
-                            "</div>\n" +
-                        "</div>\n" +
-                    "</div>\n" +
-                "</div>\n" +
-            "</div>";
+            return
+                "<header class='" + colorClass + "'>\n" +
+                "    <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
+                "        <a href='" + homeLink + "'><img class='bannerImage' id='logo' src='" + bannerLogo + "'/></a>\n" +
+                "    </div>\n" +
+                "    <div class='headerBodyContainer'>\n" +
+                "        <div class='headerTopRow'>\n" +
+                "            <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
+                "            <div class='headerSubTitle' id='headerSubTitle'>" + headerSubtitle + "</div>\n" +
+                "            <div class='headerSubTitle' id='headerSubTitle'>\n</div>\n" +
+                "        </div>\n" +
+                "        <div class='headerBottomRow'>\n" +
+                "            <div id='headerMessage' class='floatLeft'></div>\n" +
+                "            <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
+                "            <div class='menuTabs replaceableMenuItems'>\n" +
+                "                <!--<div class='menuTab floatLeft'><a href='~/Admin'>every playboy centerfold</a></div>-->\n" +
+                "                <div id='menuTabUpload' class='menuTab displayHidden loginRequired floatLeft'><a href='/Upload.html'>Upload</a></div>\n" +
+                "                <div id='menuTabAdmin' class='menuTab  displayHidden loginRequired floatLeft'><a href='/Admin.html'>Admin</a></div>\n" +
+                "            </div>\n" +
+                "            <div id='optionLoggedIn' class='displayHidden'>\n" +
+                "                <div class='menuTab floatRight'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
+                "                <div class='menuTab floatRight' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
+                "            </div>\n" +
+                "            <div id='optionNotLoggedIn'>\n" +
+                "                <div id='btnLayoutRegister' class='menuTab floatRight'><a href='javascript:onRegisterClick()'>Register</a></div>\n" +
+                "                <div id='btnLayoutLogin' class='menuTab floatRight'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
+                "            </div>\n" +
+                "            <div class='menuTabs displayHidden' id='adminTabs'>\n" +
+                "                <div id='addImageDashboardAccess' class='ogg menuTab floatRight'><a href='~/Admin'>Admin</a></div>\n" +
+                "            </div>\n" +
+                "        </div>\n" +
+                "    </div>\n" +
+                "</header>\n";
         }
 
         private string GalleryPageBodyHtml(int folderId, string rootFolder)
@@ -355,9 +309,39 @@ namespace WebApi.Controllers
                 //List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).ToList();
                 List<ImageLink> links = db.ImageLinks.Where(l => l.FolderLocation == folderId).OrderBy(l => l.Id).ToList();
                 int idx = 0;
+                string imageFrameClass = "imageFrame";
+                if (rootFolder == "porn" && rootFolder == "sluts") { }
+
+
+
                 foreach (ImageLink link in links)
                 {
-                    bodyHtml += "<div class='imageFrame'><img id='" + link.Id + "' class='thumbImage' " +
+                    // add files to array
+                    //imageArray.push({
+                    //Link: imageModelFile.Link.replace(/ / g, "%20"),
+                    //LinkId: imageModelFile.LinkId,
+                    //Local: imageModelFile.LinkCount === 1
+                    //});
+                    //if (link.Link.LinkCount > 1)
+                    {
+                        imageFrameClass = "multiLinkImageFrame";
+                    }
+
+
+
+                    if (rootFolder == "archive")
+                        {
+                        }
+                        else
+                        {
+                            if (imageModelFile.LinkCount > 1)
+                            {
+                                imageFrameClass = "nonLocalImageFrame";
+                            }
+                        }
+                    
+
+                    bodyHtml += "<div class='" + imageFrameClass + "'><img id='" + link.Id + "' class='thumbImage' " +
                          "oncontextmenu='ctxSAP()' onclick='imgClick(" + idx++ + ")' src='" + link.Link + "'/></div>\n";
 
                     //bodyHtml += "<div class='imageFrame'><img id='"+ link.Id + "'+ idx=" + idx +
@@ -419,7 +403,7 @@ namespace WebApi.Controllers
 
         private string CommentDialog()
         {
-            return "\n<div id='imageCommentDialog' class='oggleHidden commentDialog' title='Write a fantasy about this image'>\n" +
+            return "\n<div id='imageCommentDialog' class='displayHidden commentDialog' title='Write a fantasy about this image'>\n" +
               "<div class='commentDialogContentArea'>\n" +
                 "<div class='center'><img id='commentDialogImage' class='commentDialogImage' /></div>\n" +
                 "<div><input id='txtCommentTitle' tabindex='1' class='roundedInput commentTitleText' placeholder='Give your comment a title' /></div>\n" +
@@ -432,15 +416,15 @@ namespace WebApi.Controllers
 
         private string CategoryDialog()
         {
-            return "<div id='folderCategoryDialog' class='oggleHidden' title='' onmouseleave='considerClosingCategoryDialog()'>\n" +
+            return "<div id='folderCategoryDialog' class='displayHidden' title='' onmouseleave='considerClosingCategoryDialog()'>\n" +
             "    <div><textarea id='catDlgDescription' class='catDlgTextArea'></textarea></div>\n" +
             "</div>\n";
         }
 
         private string ModelInfoDialog()
         {
-            return "<div id = 'modelInfoDialog' class='oggleHidden' onmouseleave='considerClosingModelInfoDialog()'>\n" +
-                        "    <div id = 'modelInfoEditArea' class='oggleHidden'>\n" +
+            return "<div id = 'modelInfoDialog' class='displayHidden' onmouseleave='considerClosingModelInfoDialog()'>\n" +
+                        "    <div id = 'modelInfoEditArea' class='displayHidden'>\n" +
                         "        <div class='flexContainer'>\n" +
                         "            <div class='floatLeft'>\n" +
                         "                <label>name</label><input id = 'txtFolderName' class='roundedInput modelDialogInput inline' /><br />\n" +
@@ -459,7 +443,7 @@ namespace WebApi.Controllers
                         "        <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
                         "        <div id = 'externalLinks' class='smallTextArea'></div>\n" +
                         "    </div>\n" +
-                        "    <div id = 'modelInfoViewOnlyArea' class='oggleHidden'>\n" +
+                        "    <div id = 'modelInfoViewOnlyArea' class='displayHidden'>\n" +
                         "        <div class='viewOnlyMessage'>If you you know who this is Please click Edit</div>\n" +
                         "        <div id = 'unknownModelLinks' class='smallTextArea'></div>\n" +
                         "    </div>\n" +
@@ -526,7 +510,7 @@ namespace WebApi.Controllers
         private string RegisterDialog()
         {
             return
-            "<div id='registerUserDialog' class='oggleHidden'>\n" +
+            "<div id='registerUserDialog' class='displayHidden'>\n" +
             "    <div class='dialogHeader'>\n" +
             "        welcome to<span>OggleBooble</span>\n" +
             "        <div id = 'btnClose' class='divCloseButton'>\n" +
@@ -570,74 +554,55 @@ namespace WebApi.Controllers
 
         private string LoginDialog() {
             return
-            "<div id='loginDialog' title='Log In to <span>OggleBooble</span>'>\n" +
-            //"    <div id='divStatusMessage'></div>\n" +
-            //"    <div class='dialogHeader'>\n" +
-            //"        Log In to <span>OggleBooble</span>\n" +
-            //"        <div onclick='$(\"#loginDialog\").hide();' class='dialogCloseButton'>\n" +
-            //"            <img height='19' src='/images/powerOffRed01.png' />\n" +
-            //"        </div>\n" +
-            //"    </div>\n" +
-            "    <div class='dialogBody'>\n" +
-            "        <div id='errSummary' class='validationError'></div>\n" +
-            "        <div id='errUserName' class='validationError'>Required</div>\n" +
-            "        <label>User Name</label><br>\n" +
-
-            "        <input id='txtLoginUserName' class='roundedInput'><br>\n" +
-
-            "        <div id='errPassword' class='validationError'>Required</div>\n" +
-            "        <label>Password</label><br>\n" +
-            "        <input id='clearPassword' type='password' class='roundedInput' autocomplete='off' placeholder='********'><br>\n" +
-            "        <button id='btnLoginPopupLogin' class='roundendButton' onclick='postLogin()'>\n" +
-            "            <img id='btnLoginSpinnerImage' class='btnSpinnerImage' src='/images/loader.gif' />\n" +
-            "            Log in\n" +
-            "        </button>\n" +
-            "        <div class='ckRemember'>\n" +
-            "            <input id='ckRememberMe' type='checkbox' checked='checked' />  Remember Me ?  (<span>uses a cookie</span>)\n" +
-            "        </div>\n" +
-            "        <div class='forgot'>\n" +
-            "            <a id='forgot-pw' href='/users/account-recovery'>forgot password ?</a>\n" +
-            "        </div>\n" +
-
-            "        <div>\n" +
-            "            <div class='clickable inline' onclick='transferToRegisterPopup()'>Register</div>\n" +
-            "            <div onclick='$(\"#loginDialog\").hide();' class='clickable inline'>Cancel</div>\n" +
-            "        </div>\n" +
-            "    </div>\n" +
-            "    <div style='clear:both'></div>\n" +
-            //"    <div class='or-container'>\n" +
-            //"        <hr class='or-hr' />\n" +
-            "        <div class='or'>or</div>\n" +
-            //"    </div>\n" +
-            //"    <div>\n" +
-            "        <div class='externalLogin'>\n" +
-            "            <div class='fb-login-button' data-max-rows='1' data-size='medium' data-button-type='login_with'\n" +
-            "                 data-show-faces='false' data-auto-logout-link='false' data-use-continue-as='false'\n" +
-            "                 scope='public_profile,email' onlogin='checkFaceBookLoginState();'>\n" +
-            //"                login with facebook\n" +
-            "            </div>\n" +
-            "            <FB:login-button scope='public_profile,email' onlogin='checkFaceBookLoginState();'>\n" +
-            "                    <svg class='svg-icon iconFacebook' width='18' height='18' viewBox='0 0 18 18'>\n" +
-            "                        <path d='M1.88 1C1.4 1 1 1.4 1 1.88v14.24c0 .48.4.88.88.88h7.67v-6.2H7.46V8.4h2.09V6.61c0-2.07 1.26-3.2 3.1-3.2.88 0 1.64.07 1.87.1v2.16h-1.29c-1 0-1.19.48-1.19 1.18V8.4h2.39l-.31 2.42h-2.08V17h4.08c.48 0 .88-.4.88-.88V1.88c0-.48-.4-.88-.88-.88H1.88z' fill='#3C5A96'></path>\n" +
-            "                    </svg>\n" +
-            "                    Facebook\n" +
-            "                </FB:login-button>\n" +
-            "        </div>\n" +
-            "        <div class='externalLogin google-login' data-provider='google' data-oauthserver='https://accounts.google.com/o/oauth2/auth' data-oauthversion='2.0'>\n" +
-            "            <svg aria-hidden='true' class='svg-icon native iconGoogle' width='18' height='18' viewBox='0 0 18 18'>\n" +
-            "                <g>\n" +
-            "                    <path d='M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z' fill='#4285F4'></path>\n" +
-            "                    <path d='M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z' fill='#34A853'></path>\n" +
-            "                    <path d='M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z' fill='#FBBC05'></path>\n" +
-            "                    <path d='M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z' fill='#EA4335'></path>\n" +
-            "                </g>\n" +
-            "            </svg>\n" +
-            "            Google\n" +
-            "        </div>\n" +
-            "    </div>\n" +
-            "</div>\n";
-
-
+                "<div id = 'loginDialog' class='modalDialog' title='Log In to OggleBooble'>\n" +
+                "    <div class='dialogBody'>\n" +
+                "        <div id = 'loginValidationSummary' class='validationError'></div>\n" +
+                "        <div id = 'errLoginUserName' class='validationError'>Required</div>\n" +
+                "        <label>User Name</label><br>\n" +
+                "        <input id = 'txtLoginUserName' class='roundedInput'><br>\n" +
+                "        <div id = 'errLoginPassword' class='validationError'>Required</div>\n" +
+                "        <label>Password</label><br>\n" +
+                "        <input id = 'txtLoginClearPassword' type='password' class='roundedInput' autocomplete='off' placeholder='********'><br>\n" +
+                "        <button id = 'btnLoginPopupLogin' class='roundendButton' onclick='postLogin()'>\n" +
+                "            <img id = 'btnLoginSpinnerImage' class='btnSpinnerImage' src='/images/loader.gif' />\n" +
+                "            Log in\n" +
+                "        </button>\n" +
+                "        <div class='ckRemember'>\n" +
+                "            <input id = 'ckRememberMe' type='checkbox' checked='checked' />  Remember Me ?  (<span>uses a cookie</span>)\n" +
+                "        </div>\n" +
+                "        <div class='forgot'>\n" +
+                "            <a id = 'forgot-pw' href='/users/account-recovery'>forgot password ?</a>\n" +
+                "        </div>\n" +
+                "        <div>\n" +
+                "            <div class='clickable inline' onclick='transferToRegisterPopup()'>Register</div>\n" +
+                "            <div onclick = '$(\"#loginDialog\").dialog(\"close\");' class='clickable inline'>Cancel</div>\n" +
+                "        </div>\n" +
+                "        <div class='or'>or</div>\n" +
+                "        <div class='externalLogin'>\n" +
+                "            <div class='fb-login-button' data-max-rows='1' data-size='medium' data-button-type='login_with'\n" +
+                "                 data-show-faces='false' data-auto-logout-link='false' data-use-continue-as='false'\n" +
+                "                 scope='public_profile,email' onlogin='checkFaceBookLoginState();'>\n" +
+                "            </div>\n" +
+                "            <FB:login-button scope = 'public_profile,email' onlogin='checkFaceBookLoginState();'>\n" +
+                "                <svg class='svg-icon iconFacebook' width='18' height='18' viewBox='0 0 18 18'>\n" +
+                "                    <path d = 'M1.88 1C1.4 1 1 1.4 1 1.88v14.24c0 .48.4.88.88.88h7.67v-6.2H7.46V8.4h2.09V6.61c0-2.07 1.26-3.2 3.1-3.2.88 0 1.64.07 1.87.1v2.16h-1.29c-1 0-1.19.48-1.19 1.18V8.4h2.39l-.31 2.42h-2.08V17h4.08c.48 0 .88-.4.88-.88V1.88c0-.48-.4-.88-.88-.88H1.88z' fill='#3C5A96'></path>\n" +
+                "                </svg>\n" +
+                "                Facebook\n" +
+                "            </FB:login-button>\n" +
+                "        </div>\n" +
+                "        <div class='externalLogin google-login' data-provider='google' data-oauthserver='https://accounts.google.com/o/oauth2/auth' data-oauthversion='2.0'>\n" +
+                "            <svg aria-hidden='true' class='svg-icon native iconGoogle' width='18' height='18' viewBox='0 0 18 18'>\n" +
+                "                <g>\n" +
+                "                    <path d = 'M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z' fill='#4285F4'></path>\n" +
+                "                    <path d = 'M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z' fill='#34A853'></path>\n" +
+                "                    <path d = 'M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z' fill='#FBBC05'></path>\n" +
+                "                    <path d = 'M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z' fill='#EA4335'></path>\n" +
+                "                </g>\n" +
+                "            </svg>\n" +
+                "            Google\n" +
+                "        </div>\n" +
+                "    </div>\n" +
+                "</div>\n";
         }
 
         private string IndexPageHtml()
@@ -655,8 +620,8 @@ namespace WebApi.Controllers
                 "        </div>\n" +
                 "    </div>\n" +
                 "    <div id='middleColumn'>\n" +
-                "        <div id='customMessage' class='oggleHidden customMessageContainer'></div>\n" +
-                "        <div id='staticCatTreeContainer' class='oggleHidden categoryListContainer' title='boob folders'></div>" +
+                "        <div id='customMessage' class='displayHidden customMessageContainer'></div>\n" +
+                "        <div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title='boob folders'></div>" +
                 "        <div id='divStatusMessage'></div>\n" +
                 "        <div class='flexContainer'>\n" +
                 //"            <div class='floatLeft'>\n" +
@@ -713,8 +678,8 @@ namespace WebApi.Controllers
                 "        </div>\n" +
                 "    </div>\n" +
                 "    <div id='middleColumn'>\n" +
-                "        <div id='customMessage' class='oggleHidden customMessageContainer'></div>\n" +
-                "        <div id='staticCatTreeContainer' class='oggleHidden categoryListContainer' title='porn folders'></div>" +
+                "        <div id='customMessage' class='displayHidden customMessageContainer'></div>\n" +
+                "        <div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title='porn folders'></div>" +
                 "        <div id='divStatusMessage'></div>\n" +
                 "        <div class='flexContainer'>\n" +
                 "            <div class='floatLeft'>\n" +
@@ -751,7 +716,7 @@ namespace WebApi.Controllers
             string success = "";
             try
             {
-                StringBuilder hardcodedImages = new StringBuilder("<div id='hardcodedImagesContainer' class='oggleHidden'>");
+                StringBuilder hardcodedImages = new StringBuilder("<div id='hardcodedImagesContainer' class='displayHidden'>");
                 List<VwLink> vwLinks = null;
                 var timer = new System.Diagnostics.Stopwatch();
                 timer.Start();
@@ -779,8 +744,7 @@ namespace WebApi.Controllers
                     staticContent += PornIndexPageHtml();
 
                 staticContent += 
-                    "<script>var staticPageFolderId=" + metaTagFolderId + "; var staticPageRootFolder='" + rootFolder + "'; " +
-                    "var staticPageCurrentUser ='" + userName + "'; </script>\n" +
+                    "<script>var staticPageFolderId=" + metaTagFolderId + "; var staticPageRootFolder='" + rootFolder + "';</script>\n" +
                     "<script src='/scripts/staticIndexPage.js'></script>\n" +
                     hardcodedImages.ToString() +
                     LoginDialog() + RegisterDialog() + FooterHtml(rootFolder)+
@@ -795,7 +759,7 @@ namespace WebApi.Controllers
         [HttpPut]
         public List<VwLink> AddMoreImages(string rootFolder, int skip, int take)
         {
-            //StringBuilder sb = new StringBuilder("<div class='oggleHidden'>");
+            //StringBuilder sb = new StringBuilder("<div class='displayHidden'>");
             List<VwLink> vwLinks = null;
             using (OggleBoobleContext db = new OggleBoobleContext())
             {

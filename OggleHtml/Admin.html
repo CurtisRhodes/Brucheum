@@ -14,7 +14,7 @@
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/Carousel.js"></script>
     <script src="Scripts/DirTree.js"></script>
-    <script src="Scripts/CategoryDialog.js"></script>
+    <script src="Scripts/FolderCategoryDialog.js"></script>
     <script src="Scripts/ModelInfoDialog.js"></script>
     <script src="Scripts/ImageCommentDialog.js"></script>
     <script src="Scripts/MoveCopyArchive.js"></script>
@@ -53,7 +53,6 @@
                     <div class="clickable" onclick="showRenameFolderDialog()">ReName Folder</div>
                     <div class="clickable" onclick="loadProperties()">loadProperties</div>
                     <div class="clickable" onclick="showCreateStaticPages()">Create Static Pages</div>
-                    <div class="clickable" onclick="createStaticIndexPages()">Create Static Index Pages</div>
                     <div class="clickable" onclick="repairLinks()">Repair Links</div>
                 </div>
                 <div class="workarea">
@@ -73,7 +72,7 @@
 
             <div id="createStaticPagesCrud" class="dashboardToggle" title="Create Static Pages">
                 <div><span>folders to staticify</span><input id="txtFolderToStaticify" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div><span>include all subfolders</span><input type="checkbox" id="ckIncludeSubfolders" checked="checked" /></div>
+                <div><span>include all subfolders </span><input type="checkbox" id="ckIncludeSubfolders" checked="checked" /></div>
                 <div class="roundendButton" onclick="createStaticPages($('#ckIncludeSubfolders').is(':checked'))">Build Files</div>
                 <div id="renameFolderReport" class="repairReport"></div>
             </div>

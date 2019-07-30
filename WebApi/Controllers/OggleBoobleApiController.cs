@@ -346,6 +346,26 @@ namespace WebApi
     public class CarouselController : ApiController
     {
         [HttpGet]
+        public SuccessModel GetStaticPage(int folderId)
+        {
+            SuccessModel successModel = new SuccessModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    successModel.ReturnValue = "http://ogglebooble.com/static/" + dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName + ".html";
+                    successModel.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                successModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return successModel;
+        }
+
+        [HttpGet]
         public CarouselInfoModel GetLinks(string root, int skip, int take)
         {
             CarouselInfoModel carouselInfo = new CarouselInfoModel();

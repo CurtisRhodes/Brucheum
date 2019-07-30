@@ -113,7 +113,7 @@ function imgClick(imageIndex) {
             Link: $(this).find("img").attr("src")
         });
     });
-    launchViewer(imageArray, imageIndex, staticPageFolderId, staticPageFolderName, staticPageCurrentUser);
+    launchViewer(imageArray, imageIndex, staticPageFolderId, staticPageFolderName);
     resizeViewer();
 }
 
@@ -165,7 +165,7 @@ function contextMenuActionJump() {
     window.open(httpLocation + fullPageName + ".html", "_blank");
 }
 function contextMenuActionComment() {
-    showImageCommentDialog(selectedImage, selectedImageLinkId, staticPageFolderId, staticPageFolderName, staticPageCurrentUser);
+    showImageCommentDialog(selectedImage, selectedImageLinkId, staticPageFolderId, staticPageFolderName);
 }
 function contextMenuActionExplode() {
     //alert("selectedImage: " + selectedImage);

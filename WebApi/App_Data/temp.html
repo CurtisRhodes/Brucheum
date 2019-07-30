@@ -18,84 +18,72 @@
    <link href='/Styles/Common.css'     rel='stylesheet'/>
    <link href='/Styles/Header.css' rel='stylesheet'/>
    <link href='/Styles/Slideshow.css' rel='stylesheet'/>
-   <link href='/Styles/CategoryDialog.css' rel='stylesheet'/>
+   <link href='/Styles/FolderCategoryDialog.css' rel='stylesheet'/>
+   <link href='/Styles/ImageCommentDialog.css' rel='stylesheet'/>
    <link href='/Styles/Carousel.css' rel='stylesheet'/>
    <link href='/Styles/ModelInfoDialog.css' rel='stylesheet'/>
    <link href='/Styles/ImagePage.css'   rel='stylesheet'/>
    <link href='/Styles/LoginDialog.css'   rel='stylesheet'/>
-   <title>Leandra Forrester - OggleBooble</title>   <meta name='Title' content='Leandra Forrester' property='og:title'/>
-   <meta name='description' content='free images of Leandra Forrester'/>
+   <title>tramp stamp - OggleBooble</title>   <meta name='Title' content='tramp stamp' property='og:title'/>
+   <meta name='description' content='free images of tramp stamp'/>
    <meta property='og:type' content='website' />
-   <meta property='og:url' content='https://ogglebooble.com/static/Leandra Forrester.html'/>
-   <meta name='Keywords' content=',Leandra Forrester,blondes,archive.OGGLEBOOBLE.COM,big tits,beautiful naked ladies,boobs'/>
+   <meta property='og:url' content='https://ogglebooble.com/static/tramp stamp.html'/>
+   <meta name='Keywords' content=',tramp stamp,rear view,boobs.OGGLEBOOBLE.COM,big boobs,tits,naked girls,only high quality images,poses,girls showing off their tits,big tits,naked ladies,breasts,nude,boobs,free'/>
 </head>
 <body style='margin-top:105px'>
-<div class='fixedHeader flexContainer classicColors' id='oggleBoobleHeader'>
-<div class='bannerImageContainer' id='divTopLeftLogo'>
-<a href='https://ogglebooble.com/static'><img class='bannerImage' id='logo' src='/images/redballon.png'/></a>
+<header class='classicColors'>
+    <div id='divTopLeftLogo' class='bannerImageContainer'>
+        <a href='/'><img class='bannerImage' id='logo' src='/images/redballon.png'/></a>
+    </div>
+    <div class='headerBodyContainer'>
+        <div class='headerTopRow'>
+            <div class='headerTitle' id='bannerTitle'>OggleBooble</div>
+            <div class='headerSubTitle' id='headerSubTitle'><a href='https://ogglebooble.com/static/boobs/boobs.html'>big tits</a> and <a href='https://ogglebooble.com/static/boobs/rear view.html'>ass</a> organized by <a href='https://ogglebooble.com/static/boobs/poses.html'>poses</a>, <a href='https://ogglebooble.com/static/boobs/shapes.html'>shapes</a> and <a href='https://ogglebooble.com/static/boobs/sizes.html'>sizes</a></div>
+            <div class='headerSubTitle' id='headerSubTitle'>
 </div>
-<div class='headerBodyContainer' id='largeFixedHeader'>
-<div id='headerTopRow'>
-<div class='headerTitle' id='bannerTitle'>OggleBooble2</div>
-<div class='headerSubTitle' id='headerSubTitle'><a href='https://ogglebooble.com/static/boobs/boobs.html'>big tits</a> and <a href='https://ogglebooble.com/static/boobs/rear view.html'>ass</a> organized by<a href='https://ogglebooble.com/static/boobs/poses.html'> poses</a> <a href='https://ogglebooble.com/static/boobs/shapes.html'> shapes</a> and <a href='https://ogglebooble.com/static/boobs/sizes.html'> sizes</a> </div>
-</div>
-<div class='flexContainer' id='headerBottomRow'>
-<div class='breadCrumbArea' id='breadcrumbContainer'><a class='activeBreadCrumb' href='archive.html'>archive</a><a class='activeBreadCrumb' href='blondes.html'>blondes</a><a class='inactiveBreadCrumb' onmouseover='slowlyShowCatDialog(933); forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;' >Leandra Forrester</a></div>
-<div class='menuTabContainer' id='menuContainer'>
-<div class='floatLeft' id='dynamicOnly' style='display: none;'>
-<div class='menuTab floatLeft' id='replaceableMenuItems'>
-<a href='/Admin/Blog'>Blog</a>
-</div> 
-<div class='oggleHidden inline floatLeft' id='divPornEditor' style='display: block;'>
-<div class='menuTab floatLeft'><a href='/Admin/Dashboard'>Admin</a></div>
-</div>
-</div>
-<div class='oggleHidden inline floatRight' id='divLogedIn' style='display: none;'>
-<div class='menuTab floatRight'><a href='javascript:logoutSimple()'>Log Out</a></div>
-<div id='helloUser' title='modify profile' class='menuTab floatRight'><a href='javascript:profilePease()'>Hello  </a></div>
-</div>
-<div class='oggleHidden inline floatRight' id='divNotLogedIn' style='display: block;'>
-<div class='menuTab floatRight' id='btnLayoutRegister'>
-<a href='javascript:showRegisterDialog()'>Register</a>
-<img class='btnSpinnerImage' id='btnHeaderRegisterSpinner' src='/images/loader.gif'/>
-</div>
-<div class='menuTab floatRight' id='btnLayoutLogin'>
-<a href='javascript:showLoginDialog()'>Log In</a>
-<img class='btnSpinnerImage' id='btnHeaderLoginSpinner' src='/images/loader.gif'/>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class='threeColumnArray'>
+        </div>
+        <div class='headerBottomRow'>
+            <div id='headerMessage' class='floatLeft'></div>
+            <div id='breadcrumbContainer' class='breadCrumbArea'></div>
+            <div class='menuTabs replaceableMenuItems'>
+                <!--<div class='menuTab floatLeft'><a href='~/Admin'>every playboy centerfold</a></div>-->
+                <div id='menuTabUpload' class='menuTab displayHidden loginRequired floatLeft'><a href='/Upload.html'>Upload</a></div>
+                <div id='menuTabAdmin' class='menuTab  displayHidden loginRequired floatLeft'><a href='/Admin.html'>Admin</a></div>
+            </div>
+            <div id='optionLoggedIn' class='displayHidden'>
+                <div class='menuTab floatRight'><a href='javascript:onLogoutClick()'>Log Out</a></div>
+                <div class='menuTab floatRight' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>
+            </div>
+            <div id='optionNotLoggedIn'>
+                <div id='btnLayoutRegister' class='menuTab floatRight'><a href='javascript:onRegisterClick()'>Register</a></div>
+                <div id='btnLayoutLogin' class='menuTab floatRight'><a href='javascript:onLoginClick()'>Log In</a></div>
+            </div>
+            <div class='menuTabs displayHidden' id='adminTabs'>
+                <div id='addImageDashboardAccess' class='ogg menuTab floatRight'><a href='~/Admin'>Admin</a></div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class='threeColumnArray'>
 <div id='leftColumn'></div>
 <div id='middleColumn'>
 <div id='divStatusMessage'></div>
 <div id='imageContainer' class='flexWrapContainer'>
-<div class='imageFrame'><img id='04cc3b68-f089-4c1c-874d-1d7333fef1dd' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(0)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_04cc3b68-f089-4c1c-874d-1d7333fef1dd.jpg'/></div>
-<div class='imageFrame'><img id='20080c61-bf64-4b36-9ec6-edda44e5f01d' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(1)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_20080c61-bf64-4b36-9ec6-edda44e5f01d.jpg'/></div>
-<div class='imageFrame'><img id='20bbaba0-2b49-4b64-9acd-d16172e38905' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(2)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_20bbaba0-2b49-4b64-9acd-d16172e38905.jpg'/></div>
-<div class='imageFrame'><img id='2e454814-91a5-45bd-bfbf-56003cd6b1bf' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(3)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_2e454814-91a5-45bd-bfbf-56003cd6b1bf.jpg'/></div>
-<div class='imageFrame'><img id='367ded79-12ea-45f2-9ad1-bb46f9930989' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(4)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_367ded79-12ea-45f2-9ad1-bb46f9930989.jpg'/></div>
-<div class='imageFrame'><img id='46029526-a407-49f3-b28b-1d3838526f1b' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(5)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_46029526-a407-49f3-b28b-1d3838526f1b.jpg'/></div>
-<div class='imageFrame'><img id='46db04b9-8e64-44f3-9b44-b194a7b762a5' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(6)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_46db04b9-8e64-44f3-9b44-b194a7b762a5.jpg'/></div>
-<div class='imageFrame'><img id='50473069-3769-4071-89d8-88c45d7416aa' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(7)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_50473069-3769-4071-89d8-88c45d7416aa.jpg'/></div>
-<div class='imageFrame'><img id='535ce474-5d9e-40ec-85f5-8efdcecba96d' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(8)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_535ce474-5d9e-40ec-85f5-8efdcecba96d.jpg'/></div>
-<div class='imageFrame'><img id='57a74017-70a0-4c30-a96f-d1b5adb11677' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(9)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_57a74017-70a0-4c30-a96f-d1b5adb1167.jpg'/></div>
-<div class='imageFrame'><img id='66760c50-55ce-453d-acb8-db741b9f870e' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(10)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_66760c50-55ce-453d-acb8-db741b9f870e.jpg'/></div>
-<div class='imageFrame'><img id='6d4c8108-a747-4f85-be5d-094f7311ee16' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(11)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_6d4c8108-a747-4f85-be5d-094f7311ee16.jpg'/></div>
-<div class='imageFrame'><img id='7698ab07-ec24-4685-b497-89d94b6c48d5' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(12)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_7698ab07-ec24-4685-b497-89d94b6c48d5.jpg'/></div>
-<div class='imageFrame'><img id='91dfb304-3edf-4248-8358-ddc4f2f6043b' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(13)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_91dfb304-3edf-4248-8358-ddc4f2f6043b.jpg'/></div>
-<div class='imageFrame'><img id='93f39231-f9f9-420e-ba51-829c2e52e402' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(14)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_93f39231-f9f9-420e-ba51-829c2e52e40.jpg'/></div>
-<div class='imageFrame'><img id='9a2b3864-d95f-40b9-a6be-67e2b07bbb82' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(15)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_9a2b3864-d95f-40b9-a6be-67e2b07bbb82.jpg'/></div>
-<div class='imageFrame'><img id='b421862f-b908-4860-9356-429fb77eb025' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(16)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_b421862f-b908-4860-9356-429fb77eb025.jpg'/></div>
-<div class='imageFrame'><img id='b4ef3821-fcbb-4c8f-aac2-585254a6a745' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(17)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_b4ef3821-fcbb-4c8f-aac2-585254a6a745.jpg'/></div>
-<div class='imageFrame'><img id='b7925372-7c02-47ee-ba18-029f4c3d3a5b' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(18)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_b7925372-7c02-47ee-ba18-029f4c3d3a5b.jpg'/></div>
-<div class='imageFrame'><img id='bbf662ef-3ce4-4e35-b4d6-d80c4f24fc55' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(19)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_bbf662ef-3ce4-4e35-b4d6-d80c4f24fc55.jpg'/></div>
-<div class='imageFrame'><img id='d9ea1a73-6eb4-41f6-88e6-a31485f69c88' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(20)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_d9ea1a73-6eb4-41f6-88e6-a31485f69c88.jpg'/></div>
-<div class='imageFrame'><img id='deb9a1b6-49fa-471b-ae01-8610397e935a' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(21)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_deb9a1b6-49fa-471b-ae01-8610397e935a.jpg'/></div>
-<div class='imageFrame'><img id='f9e46132-8eda-48ec-88f7-2d4471232d5b' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(22)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_f9e46132-8eda-48ec-88f7-2d4471232d5.jpg'/></div>
-<div class='imageFrame'><img id='fbe2dfe7-dd05-41c6-922a-cfb9808892d0' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(23)' src='http://archive.ogglebooble.com/blondes/Leandra Forrester/Leandra Forrester_fbe2dfe7-dd05-41c6-922a-cfb9808892d0.jpg'/></div>
+<div class='imageFrame'><img id='4d4fd378-d4c4-4c20-b956-cd4ce5c8ac62' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(0)' src='http://boobs.ogglebooble.com//rear view/tramp stamp/tramp stamp_4d4fd378-d4c4-4c20-b956-cd4ce5c8ac62.jpg'/></div>
+<div class='imageFrame'><img id='55f016b7-0fe7-474d-84af-00eddcaf4690' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(1)' src='http://boobs.ogglebooble.com//rear view/tramp stamp/tramp stamp_55f016b7-0fe7-474d-84af-00eddcaf4690.jpg'/></div>
+<div class='imageFrame'><img id='633bd233-a4ee-4b65-a463-429cf343ba9b' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(2)' src='http://boobs.ogglebooble.com//rear view/tramp stamp/tramp stamp_633bd233-a4ee-4b65-a463-429cf343ba9b.jpg'/></div>
+<div class='imageFrame'><img id='6aefa390-6bb9-41d0-82e9-b5e60d987182' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(3)' src='http://boobs.ogglebooble.com//rear view/tramp stamp/tramp stamp_6aefa390-6bb9-41d0-82e9-b5e60d987182.jpg'/></div>
+<div class='imageFrame'><img id='6f1192c8-815c-430a-830c-778461c12a7e' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(4)' src='http://boobs.ogglebooble.com//rear view/tramp stamp/tramp stamp_6f1192c8-815c-430a-830c-778461c12a7e.jpg'/></div>
+<div class='imageFrame'><img id='80fb9b83-1cfd-40b6-9f29-227bf61ae373' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(5)' src='http://boobs.ogglebooble.com//rear view/tramp stamp/tramp stamp_80fb9b83-1cfd-40b6-9f29-227bf61ae373.jpg'/></div>
+<div class='imageFrame'><img id='83e22bc2-2050-4cd9-a1c2-c8d82aaf734e' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(6)' src='http://boobs.ogglebooble.com//rear view/tramp stamp/tramp stamp_83e22bc2-2050-4cd9-a1c2-c8d82aaf734e.jpg'/></div>
+<div class='imageFrame'><img id='920d3e62-0a4f-4fdf-9d37-5c4703d0df60' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(7)' src='http://boobs.ogglebooble.com//rear view/tramp stamp/tramp stamp_920d3e62-0a4f-4fdf-9d37-5c4703d0df60.jpg'/></div>
+<div class='imageFrame'><img id='a2726340-3e07-4bfd-8333-b2350559236b' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(8)' src='http://boobs.ogglebooble.com//rear view/tramp stamp/tramp stamp_a2726340-3e07-4bfd-8333-b2350559236b.jpg'/></div>
+<div class='imageFrame'><img id='aa85ea40-970e-49ae-9201-5bbc739cd403' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(9)' src='http://boobs.ogglebooble.com//rear view/tramp stamp/tramp stamp_aa85ea40-970e-49ae-9201-5bbc739cd403.jpg'/></div>
+<div class='imageFrame'><img id='b13928c7-ad80-42e2-ba87-41f3d294db22' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(10)' src='http://boobs.ogglebooble.com//rear view/tramp stamp/tramp stamp_b13928c7-ad80-42e2-ba87-41f3d294db22.jpg'/></div>
+<div class='imageFrame'><img id='c4bd6c58-8e66-4372-8342-23f4e7bd99d9' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(11)' src='http://boobs.ogglebooble.com//rear view/tramp stamp/tramp stamp_c4bd6c58-8e66-4372-8342-23f4e7bd99d9.jpg'/></div>
+<div class='imageFrame'><img id='d3f5ab43-7d25-4858-b16d-9f7f4ec14bae' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(12)' src='http://boobs.ogglebooble.com//rear view/tramp stamp/tramp stamp_d3f5ab43-7d25-4858-b16d-9f7f4ec14bae.jpg'/></div>
+<div class='imageFrame'><img id='d6d0c384-f828-4e21-b059-ff8a74f08e3b' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(13)' src='http://boobs.ogglebooble.com//rear view/tramp stamp/tramp stamp_d6d0c384-f828-4e21-b059-ff8a74f08e3b.jpg'/></div>
+<div class='imageFrame'><img id='f55114c8-b4b6-42e3-983f-eaf14151c89d' class='thumbImage' oncontextmenu='ctxSAP()' onclick='imgClick(14)' src='http://boobs.ogglebooble.com//rear view/tramp stamp/tramp stamp_f55114c8-b4b6-42e3-983f-eaf14151c89d.jpg'/></div>
 </div>
 <script>resizePage();</script>
 <div id='thumbImageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut();'>
@@ -107,7 +95,7 @@
 </div>
 <div id='rightColumn'></div>
 </div>
-<div id='imageCommentDialog' class='oggleHidden commentDialog' title='Write a fantasy about this image'>
+<div id='imageCommentDialog' class='displayHidden commentDialog' title='Write a fantasy about this image'>
 <div class='commentDialogContentArea'>
 <div class='center'><img id='commentDialogImage' class='commentDialogImage' /></div>
 <div><input id='txtCommentTitle' tabindex='1' class='roundedInput commentTitleText' placeholder='Give your comment a title' /></div>
@@ -116,11 +104,11 @@
 <div id='commentInstructions' class='loginComment inline'>log in to view comments</div>
 </div>
 </div>
-<div id='folderCategoryDialog' class='oggleHidden' title='' onmouseleave='considerClosingCategoryDialog()'>
+<div id='folderCategoryDialog' class='displayHidden' title='' onmouseleave='considerClosingCategoryDialog()'>
     <div><textarea id='catDlgDescription' class='catDlgTextArea'></textarea></div>
 </div>
-<div id = 'modelInfoDialog' class='oggleHidden' onmouseleave='considerClosingModelInfoDialog()'>
-    <div id = 'modelInfoEditArea' class='oggleHidden'>
+<div id = 'modelInfoDialog' class='displayHidden' onmouseleave='considerClosingModelInfoDialog()'>
+    <div id = 'modelInfoEditArea' class='displayHidden'>
         <div class='flexContainer'>
             <div class='floatLeft'>
                 <label>name</label><input id = 'txtFolderName' class='roundedInput modelDialogInput inline' /><br />
@@ -139,13 +127,13 @@
         <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>
         <div id = 'externalLinks' class='smallTextArea'></div>
     </div>
-    <div id = 'modelInfoViewOnlyArea' class='oggleHidden'>
+    <div id = 'modelInfoViewOnlyArea' class='displayHidden'>
         <div class='viewOnlyMessage'>If you you know who this is Please click Edit</div>
         <div id = 'unknownModelLinks' class='smallTextArea'></div>
     </div>
     <a id = 'modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Edit</a>
 </div>
-<div id='staticCatTreeContainer' class='oggleHidden categoryListContainer' title=archive></div><script>var staticPageFolderId=933; var staticPageFolderName='Leandra Forrester'; var staticPageRootFolder='archive';</script>
+<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=boobs></div><script>var staticPageFolderId=1136; var staticPageFolderName='boobs/tramp stamp'; var staticPageRootFolder='boobs';</script>
 
 <div id = 'imageViewerDialog' class='fullScreenViewer'>
 <div id = 'viewerButtonsRow' class='imageViewerHeaderRow'>
@@ -168,58 +156,56 @@
 <div onclick='imageViewerContextMenuAction("comment")'>Comment</div>
 <div onclick='imageViewerContextMenuAction("explode")'>Explode</div>
 </div>
-<div id='loginDialog' title='Log In to <span>OggleBooble</span>'>
+<div id = 'loginDialog' class='modalDialog' title='Log In to OggleBooble'>
     <div class='dialogBody'>
-        <div id='errSummary' class='validationError'></div>
-        <div id='errUserName' class='validationError'>Required</div>
+        <div id = 'loginValidationSummary' class='validationError'></div>
+        <div id = 'errLoginUserName' class='validationError'>Required</div>
         <label>User Name</label><br>
-        <input id='txtLoginUserName' class='roundedInput'><br>
-        <div id='errPassword' class='validationError'>Required</div>
+        <input id = 'txtLoginUserName' class='roundedInput'><br>
+        <div id = 'errLoginPassword' class='validationError'>Required</div>
         <label>Password</label><br>
-        <input id='clearPassword' type='password' class='roundedInput' autocomplete='off' placeholder='********'><br>
-        <button id='btnLoginPopupLogin' class='roundendButton' onclick='postLogin()'>
-            <img id='btnLoginSpinnerImage' class='btnSpinnerImage' src='/images/loader.gif' />
+        <input id = 'txtLoginClearPassword' type='password' class='roundedInput' autocomplete='off' placeholder='********'><br>
+        <button id = 'btnLoginPopupLogin' class='roundendButton' onclick='postLogin()'>
+            <img id = 'btnLoginSpinnerImage' class='btnSpinnerImage' src='/images/loader.gif' />
             Log in
         </button>
         <div class='ckRemember'>
-            <input id='ckRememberMe' type='checkbox' checked='checked' />  Remember Me ?  (<span>uses a cookie</span>)
+            <input id = 'ckRememberMe' type='checkbox' checked='checked' />  Remember Me ?  (<span>uses a cookie</span>)
         </div>
         <div class='forgot'>
-            <a id='forgot-pw' href='/users/account-recovery'>forgot password ?</a>
+            <a id = 'forgot-pw' href='/users/account-recovery'>forgot password ?</a>
         </div>
         <div>
             <div class='clickable inline' onclick='transferToRegisterPopup()'>Register</div>
-            <div onclick='$("#loginDialog").hide();' class='clickable inline'>Cancel</div>
+            <div onclick = '$("#loginDialog").dialog("close");' class='clickable inline'>Cancel</div>
         </div>
-    </div>
-    <div style='clear:both'></div>
         <div class='or'>or</div>
         <div class='externalLogin'>
             <div class='fb-login-button' data-max-rows='1' data-size='medium' data-button-type='login_with'
                  data-show-faces='false' data-auto-logout-link='false' data-use-continue-as='false'
                  scope='public_profile,email' onlogin='checkFaceBookLoginState();'>
             </div>
-            <FB:login-button scope='public_profile,email' onlogin='checkFaceBookLoginState();'>
-                    <svg class='svg-icon iconFacebook' width='18' height='18' viewBox='0 0 18 18'>
-                        <path d='M1.88 1C1.4 1 1 1.4 1 1.88v14.24c0 .48.4.88.88.88h7.67v-6.2H7.46V8.4h2.09V6.61c0-2.07 1.26-3.2 3.1-3.2.88 0 1.64.07 1.87.1v2.16h-1.29c-1 0-1.19.48-1.19 1.18V8.4h2.39l-.31 2.42h-2.08V17h4.08c.48 0 .88-.4.88-.88V1.88c0-.48-.4-.88-.88-.88H1.88z' fill='#3C5A96'></path>
-                    </svg>
-                    Facebook
-                </FB:login-button>
+            <FB:login-button scope = 'public_profile,email' onlogin='checkFaceBookLoginState();'>
+                <svg class='svg-icon iconFacebook' width='18' height='18' viewBox='0 0 18 18'>
+                    <path d = 'M1.88 1C1.4 1 1 1.4 1 1.88v14.24c0 .48.4.88.88.88h7.67v-6.2H7.46V8.4h2.09V6.61c0-2.07 1.26-3.2 3.1-3.2.88 0 1.64.07 1.87.1v2.16h-1.29c-1 0-1.19.48-1.19 1.18V8.4h2.39l-.31 2.42h-2.08V17h4.08c.48 0 .88-.4.88-.88V1.88c0-.48-.4-.88-.88-.88H1.88z' fill='#3C5A96'></path>
+                </svg>
+                Facebook
+            </FB:login-button>
         </div>
         <div class='externalLogin google-login' data-provider='google' data-oauthserver='https://accounts.google.com/o/oauth2/auth' data-oauthversion='2.0'>
             <svg aria-hidden='true' class='svg-icon native iconGoogle' width='18' height='18' viewBox='0 0 18 18'>
                 <g>
-                    <path d='M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z' fill='#4285F4'></path>
-                    <path d='M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z' fill='#34A853'></path>
-                    <path d='M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z' fill='#FBBC05'></path>
-                    <path d='M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z' fill='#EA4335'></path>
+                    <path d = 'M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z' fill='#4285F4'></path>
+                    <path d = 'M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z' fill='#34A853'></path>
+                    <path d = 'M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z' fill='#FBBC05'></path>
+                    <path d = 'M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z' fill='#EA4335'></path>
                 </g>
             </svg>
             Google
         </div>
     </div>
 </div>
-<div id='registerUserDialog' class='oggleHidden'>
+<div id='registerUserDialog' class='displayHidden'>
     <div class='dialogHeader'>
         welcome to<span>OggleBooble</span>
         <div id = 'btnClose' class='divCloseButton'>

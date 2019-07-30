@@ -54,21 +54,19 @@ function buildDirectoryTree() {
 }
 
 function createStaticPages(justOne) {
-
-    alert("justOne: " + justOne);
-
     //$('#createStaticPagesCrud').dialog("close");
     //$('#createStaticPagesCrud').hide();
-    //$('#dashBoardLoadingGif').fadeIn();
+    $('#dashBoardLoadingGif').fadeIn();
     $('#dataifyInfo').show().html("creating static pages for " + dashboardMainSelectedPath);
     $('#progressBar').show();
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/StaticPage/Buld?parentFolder=" + dashboardMainSelectedTreeId + "&recurr=" + justOne,
         success: function (success) {
-            $('#progressBar').hide();
-            //$('#dashBoardLoadingGif').hide();
+            //$('#progressBar').hide();
+            $('#dashBoardLoadingGif').hide();
             if (success === "ok") {
+                $('#createStaticPagesCrud').dialog("close");
                 displayStatusMessage("ok", "done");
                 $('#txtNewLink').val("");
                 $('#progressBar').hide();
@@ -84,7 +82,7 @@ function createStaticPages(justOne) {
     });
 }
 
-function createStaticIndexPages() {
+function xxcreateStaticIndexPages() {
     $('#dataifyInfo').show().html("Building Index page");
     $.ajax({
         type: "GET",
