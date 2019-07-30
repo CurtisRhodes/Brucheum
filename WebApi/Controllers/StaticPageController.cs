@@ -22,6 +22,7 @@ namespace WebApi.Controllers
         private int initialTake = 145;
         private int totalFiles = 0;
         private int filesProcessed = 0;
+        private int imagesCount;
 
         [HttpGet]
         public string Build(int parentFolder, bool recurr)
@@ -36,12 +37,7 @@ namespace WebApi.Controllers
                         VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == parentFolder).First();
                         totalFiles = Math.Max(vwDirTree.GrandTotalFiles, vwDirTree.TotalFiles);
                         SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
-
-
-
                         CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == parentFolder).First();
-                        //SignalRHost.ProgressHub.PostToClient("Creating index page");
-                        //CreateIndexPage(categoryFolder.RootFolder, userName);
                         string folderName = categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
                         success = ProcessFolder(parentFolder, categoryFolder.RootFolder, folderName, db, recurr);
                     }
@@ -49,6 +45,51 @@ namespace WebApi.Controllers
                 catch (Exception e) { success = Helpers.ErrorDetails(e); }
                 return success;
             }
+        }
+
+        private string ProcessFolder(int folderId, string rootFolder, string folderName, OggleBoobleContext db, bool recurr)
+        {
+            string success = "";
+            try
+            {
+                SignalRHost.ProgressHub.PostToClient("Creating static files: " + folderName + ".html");
+
+                string pageTitle = folderName;
+                if (folderName.LastIndexOf('/') > 0)
+                    pageTitle = folderName.Substring(folderName.LastIndexOf('/') + 1);
+
+                string staticContent =
+                    "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, pageTitle) +
+                    "\n<body style='margin-top:105px'>\n" +
+                    HeaderHtml(folderId) + 
+                    GalleryPageBodyHtml(folderId, rootFolder) + 
+                    CommentDialog() + CategoryDialog() + ModelInfoDialog() +
+                    "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
+                    "<script>var staticPageFolderId=" + folderId + "; " +
+                    "var staticPageFolderName='" + folderName + "'; " +
+                    "var staticPageImagesCount='" + imagesCount + "'; " +
+                    "var staticPageRootFolder='" + rootFolder + "';</script>\n" +
+                    ImageViewer() + LoginDialog() + RegisterDialog() + FooterHtml(rootFolder) +
+                    "<script src='/scripts/StaticPage.js'></script>\n" +
+                    "\n</body>\n</html>";
+
+                success = WriteFileToDisk(staticContent, rootFolder, pageTitle);
+                if (recurr)
+                {
+                    List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+                    foreach (CategoryFolder dbCategoryFolder in categoryFolders)
+                    {
+                        VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == dbCategoryFolder.Id).First();
+                        //filesProcessed += Math.Max(vwDirTree.TotalFiles, vwDirTree.FileCount);
+                        filesProcessed += vwDirTree.FileCount;
+                        SignalRHost.ProgressHub.ShowProgressBar(totalFiles, filesProcessed);
+
+                        ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName, db, true);
+                    }
+                }
+            }
+            catch (Exception e) { success = Helpers.ErrorDetails(e); }
+            return success;
         }
 
         private string WriteFileToDisk(string staticContent, string rootFolder, string pageTitle)
@@ -88,47 +129,6 @@ namespace WebApi.Controllers
             return success;
         }
 
-        private string ProcessFolder(int folderId, string rootFolder, string folderName, OggleBoobleContext db, bool recurr)
-        {
-            string success = "";
-            try
-            {
-                SignalRHost.ProgressHub.PostToClient("Creating static files: " + folderName + ".html");
-
-                string pageTitle = folderName;
-                if (folderName.LastIndexOf('/') > 0)
-                    pageTitle = folderName.Substring(folderName.LastIndexOf('/') + 1);
-
-                string staticContent =
-                    "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, pageTitle) +
-                    "\n<body style='margin-top:105px'>\n" +
-                    HeaderHtml(folderId) + GalleryPageBodyHtml(folderId, rootFolder) + CommentDialog() + CategoryDialog() + ModelInfoDialog() +
-                    "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
-                    "<script>var staticPageFolderId=" + folderId + "; var staticPageFolderName='" + folderName + "'; " +
-                    "var staticPageRootFolder='" + rootFolder + "';</script>\n" +
-                    ImageViewer() + LoginDialog() + RegisterDialog() + FooterHtml(rootFolder) +
-                    "<script src='/scripts/StaticPage.js'></script>\n" +
-                    "\n</body>\n</html>";
-
-                success = WriteFileToDisk(staticContent, rootFolder, pageTitle);
-                if (recurr)
-                {
-                    List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
-                    foreach (CategoryFolder dbCategoryFolder in categoryFolders)
-                    {
-                        VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == dbCategoryFolder.Id).First();
-                        //filesProcessed += Math.Max(vwDirTree.TotalFiles, vwDirTree.FileCount);
-                        filesProcessed += vwDirTree.FileCount;
-                        SignalRHost.ProgressHub.ShowProgressBar(totalFiles, filesProcessed);
-
-                        ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName, db, true);
-                    }
-                }
-            }
-            catch (Exception e) { success = Helpers.ErrorDetails(e); }
-            return success;
-        }
-
         private string HeadHtml(int folderId, string pageName)
         {
             var articleTagString = "";
@@ -153,15 +153,15 @@ namespace WebApi.Controllers
                 "   <script src='/Scripts/CategoryDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/ModelInfoDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/DirTree.js'></script>\n" +
-                "   <link href='/Styles/Common.css'     rel='stylesheet'/>\n" +
+                "   <link href='/Styles/Common.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/Header.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/Slideshow.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/FolderCategoryDialog.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/ImageCommentDialog.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/Carousel.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/ModelInfoDialog.css' rel='stylesheet'/>\n" +
-                "   <link href='/Styles/ImagePage.css'   rel='stylesheet'/>\n" +
-                "   <link href='/Styles/LoginDialog.css'   rel='stylesheet'/>\n" +
+                "   <link href='/Styles/ImagePage.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/LoginDialog.css' rel='stylesheet'/>\n" +
                 "   <title>" + pageName + " - OggleBooble</title>" +
                 "   <meta name='Title' content='" + pageName + "' property='og:title'/>\n" +
                 "   <meta name='description' content='" + metaTagResults.Description + "'/>\n" +
@@ -171,80 +171,62 @@ namespace WebApi.Controllers
                 "</head>";
         }
 
-        private string HeaderHtml(int folderId)
+        private BreadCrumbModel GetBreadCrumbs(int folderId)
         {
             string breadCrumbs = "";
+            BreadCrumbModel breadCrumbModel = new BreadCrumbsController().Get(folderId);
+            for (int i = breadCrumbModel.BreadCrumbs.Count - 1; i >= 0; i--)
+            {
+                if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder)
+                {
+                    breadCrumbs += "<a class='inactiveBreadCrumb' " +
+                        "onmouseover='slowlyShowCatDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + "); forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;' >" +
+                        breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>";
+                }
+                else
+                {
+                    // a woman commited suicide when pictures of her "came out"
+                    breadCrumbs += "<a class='activeBreadCrumb' " +
+                        "href='" + breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + ".html'>" +
+                        breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>";
+                }
+            }
+            breadCrumbModel.Html = breadCrumbs;
+            return breadCrumbModel;
+        }
+
+        private string HeaderHtml(int folderId)
+        {
+            BreadCrumbModel breadCrumbModel = GetBreadCrumbs(folderId);
             string headerSubtitle = "";
             string colorClass = "";
             string bannerLogo = "";
             string homeLink = "";
             //string rootFolder = "";
-            BreadCrumbModel breadCrumbModel = new BreadCrumbModel();
-            using (OggleBoobleContext db = new OggleBoobleContext())
+
+            if (breadCrumbModel.RootFolder == "porn" || breadCrumbModel.RootFolder == "sluts")
             {
-                var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                //string root = thisFolder.RootFolder;
-                breadCrumbModel.BreadCrumbs.Add(new BreadCrumbItemModel()
-                {
-                    FolderId = thisFolder.Id,
-                    FolderName = thisFolder.FolderName,
-                    IsInitialFolder = true
-                });
-                breadCrumbModel.RootFolder = thisFolder.RootFolder;
-                breadCrumbModel.FolderName = thisFolder.FolderName;
-
-                var parent = thisFolder.Parent;
-                while (parent > 1)
-                {
-                    var parentDb = db.CategoryFolders.Where(f => f.Id == parent).First();
-                    breadCrumbModel.BreadCrumbs.Add(new BreadCrumbItemModel()
-                    {
-                        FolderId = parentDb.Id,
-                        FolderName = parentDb.FolderName,
-                        IsInitialFolder = false
-                    });
-                    parent = parentDb.Parent;
-                }
-                for (int i = breadCrumbModel.BreadCrumbs.Count - 1; i >= 0; i--)
-                {
-                    if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder)
-                    {
-                        breadCrumbs += "<a class='inactiveBreadCrumb' " +
-                            "onmouseover='slowlyShowCatDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + "); forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;' >" +
-                            breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>";
-                    }
-                    else
-                    {
-                        // a woman commited suicide when pictures of her "came out"
-                        breadCrumbs += "<a class='activeBreadCrumb' " +
-                            "href='" + breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + ".html'>" +
-                            breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>";
-                    }
-                }
-
-                if (thisFolder.RootFolder == "porn" || thisFolder.RootFolder == "sluts")
-                {
-                    headerSubtitle = "<a href='" + httpLocation + "/porn/cock suckers.html'> blowjobs </a>," +
-                    "<a href='" + httpLocation + "/porn/cum shots.html'> cum shots</a>," +
-                    "<a href='" + httpLocation + "/porn/kinky.html'> kinky </a>, and other" +
-                    "<a href='" + httpLocation + "/porn/naughty.html'> naughty behavior</a> categorized";
-                    colorClass = "pornColors";
-                    bannerLogo = "/images/csLips02.png";
-                    //homeLink = "" + httpLocation + "/porn.html";
-                    homeLink = "/index.html?subdomain=porn";
-                }
-                else
-                {
-                    headerSubtitle = "<a href='" + httpLocation + "/boobs/boobs.html'>big tits</a> and " +
-                     "<a href='" + httpLocation + "/boobs/rear view.html'>ass</a> organized by " +
-                     "<a href='" + httpLocation + "/boobs/poses.html'>poses</a>, " +
-                     "<a href='" + httpLocation + "/boobs/shapes.html'>shapes</a> and " +
-                     "<a href='" + httpLocation + "/boobs/sizes.html'>sizes</a>";
-                    colorClass = "classicColors";
-                    bannerLogo = "/images/redballon.png";
-                    homeLink = "/";
-                }
+                headerSubtitle = "<a href='" + httpLocation + "/porn/cock suckers.html'> blowjobs </a>," +
+                "<a href='" + httpLocation + "/porn/cum shots.html'> cum shots</a>," +
+                "<a href='" + httpLocation + "/porn/kinky.html'> kinky </a>, and other" +
+                "<a href='" + httpLocation + "/porn/naughty.html'> naughty behavior</a> categorized";
+                colorClass = "pornColors";
+                bannerLogo = "/images/csLips02.png";
+                //homeLink = "" + httpLocation + "/porn.html";
+                homeLink = "/index.html?subdomain=porn";
             }
+                else
+            {
+                headerSubtitle = "<a href='" + httpLocation + "/boobs/boobs.html'>big tits</a> and " +
+                 "<a href='" + httpLocation + "/boobs/rear view.html'>ass</a> organized by " +
+                 "<a href='" + httpLocation + "/boobs/poses.html'>poses</a>, " +
+                 "<a href='" + httpLocation + "/boobs/shapes.html'>shapes</a> and " +
+                 "<a href='" + httpLocation + "/boobs/sizes.html'>sizes</a>";
+                colorClass = "classicColors";
+                bannerLogo = "/images/redballon.png";
+                homeLink = "/";
+            }
+
             return
                 "<header class='" + colorClass + "'>\n" +
                 "    <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
@@ -258,7 +240,7 @@ namespace WebApi.Controllers
                 "        </div>\n" +
                 "        <div class='headerBottomRow'>\n" +
                 "            <div id='headerMessage' class='floatLeft'></div>\n" +
-                "            <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
+                "            <div id='breadcrumbContainer' class='breadCrumbArea'>" + breadCrumbModel.Html + "</div>\n" +
                 "            <div class='menuTabs replaceableMenuItems'>\n" +
                 "                <!--<div class='menuTab floatLeft'><a href='~/Admin'>every playboy centerfold</a></div>-->\n" +
                 "                <div id='menuTabUpload' class='menuTab displayHidden loginRequired floatLeft'><a href='/Upload.html'>Upload</a></div>\n" +
@@ -282,84 +264,60 @@ namespace WebApi.Controllers
 
         private string GalleryPageBodyHtml(int folderId, string rootFolder)
         {
-            string bodyHtml = 
-            "<div class='threeColumnArray'>\n" +
+            string bodyHtml =
+            "<div class='threeColumnLayout'>\n" +
                 "<div id='leftColumn'></div>\n" +
                 "<div id='middleColumn'>\n" +
                     "<div id='divStatusMessage'></div>\n" +
                     "<div id='imageContainer' class='flexWrapContainer'>\n";
 
-            string imageFolderFrame = "folderImageFrameName";
-            if (rootFolder == "porn")
-                imageFolderFrame = "pornFolderImageFrame";
-
+            //ImageLink[] imageArray = null;
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
+                imagesCount = 0;
+                string imageFrameClass = "folderImageOutterFrame";
+                string subDirLabelClass = "subDirLabel";
+                if (rootFolder == "porn" && rootFolder == "sluts")
+                {
+                    imageFrameClass = "pornFolderImageOutterFrame";
+                    subDirLabelClass = "pornSubDirLabel";
+                }
                 //  SUBFOLDERS
                 List<VwDirTree> subDirs = db.VwDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.FolderName).ToList();
                 foreach (VwDirTree subDir in subDirs)
                 {
                     int subDirFileCount = subDir.FileCount + subDir.TotalFiles + subDir.GrandTotalFiles;
-                    bodyHtml += "<div class='folderImageOutterFrame'>" +
+                    bodyHtml += "<div class='" + imageFrameClass + "'>" +
                         "<div class='folderImageFrame' onclick='window.location.href=\"" + subDir.FolderName + ".html\"'>" +
                         "<img class='folderImage' src='" + subDir.Link + "'/>" +
-                        "<div class='"+ imageFolderFrame + "'>" + subDir.FolderName + " (" + subDirFileCount + ")</div></div></div>\n";
+                        "<div class='" + subDirLabelClass + "'>" + subDir.FolderName + " (" + subDirFileCount + ")</div></div></div>\n";
+                    imagesCount++;
                 }
                 // IMAGES 
-                //List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).ToList();
-                List<ImageLink> links = db.ImageLinks.Where(l => l.FolderLocation == folderId).OrderBy(l => l.Id).ToList();
+                List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).ToList();
+                //List<ImageLink> links = db.ImageLinks.Where(l => l.FolderLocation == folderId).OrderBy(l => l.Id).ToList();
                 int idx = 0;
-                string imageFrameClass = "imageFrame";
-                if (rootFolder == "porn" && rootFolder == "sluts") { }
 
+                //imageArray = VwLink.ToArray();
 
-
-                foreach (ImageLink link in links)
+                //List<string>  = new List<string>();
+                foreach (VwLink link in vwLinks)
                 {
-                    // add files to array
-                    //imageArray.push({
-                    //Link: imageModelFile.Link.replace(/ / g, "%20"),
-                    //LinkId: imageModelFile.LinkId,
-                    //Local: imageModelFile.LinkCount === 1
-                    //});
-                    //if (link.Link.LinkCount > 1)
-                    {
-                        imageFrameClass = "multiLinkImageFrame";
-                    }
-
-
-
-                    if (rootFolder == "archive")
-                        {
-                        }
-                        else
-                        {
-                            if (imageModelFile.LinkCount > 1)
-                            {
-                                imageFrameClass = "nonLocalImageFrame";
-                            }
-                        }
-                    
-
-                    bodyHtml += "<div class='" + imageFrameClass + "'><img id='" + link.Id + "' class='thumbImage' " +
-                         "oncontextmenu='ctxSAP()' onclick='imgClick(" + idx++ + ")' src='" + link.Link + "'/></div>\n";
-
-                    //bodyHtml += "<div class='imageFrame'><img id='"+ link.Id + "'+ idx=" + idx +
-                    //    "' oncontextmenu='ctxSAP(\"" + link.Id + "\")' onclick='imgClick(" + idx++ + ")' " +
-                    //    " class='thumbImage' src='" + link.Link + "'/></div>\n";
+                    bodyHtml += "<div id='img" + idx + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
+                         "oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='imgClick(" + idx++ + ")' src='" + link.Link + "'/></div>\n";
+                    imagesCount++;
                 }
             }
-
-            bodyHtml += 
-                    "</div>\n"+
-                    "<script>resizePage();</script>\n" +
-                    "<div id='thumbImageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut();'>\n" +
-                        "<div id='staticPagectxModelName' onclick='contextMenuActionShow()'>model name</div>\n" +
-                        "<div id='ctxSeeMore' onclick='contextMenuActionJump()'>see more of her</div>\n" +
-                        "<div onclick='contextMenuActionComment()'>comment</div>\n" +
-                        "<div onclick='contextMenuActionExplode()'>explode</div>\n" +
-                    "</div>\n" +
-                "</div>\n" +
+            bodyHtml +=
+                "   </div>\n" +
+                "       <div id='fileCount' class='countContainer'></div>\n" +
+                "       <div id='thumbImageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut();'>\n" +
+                "           <div id='staticPagectxModelName' onclick='contextMenuActionShow()'>model name</div>\n" +
+                "           <div id='ctxSeeMore' onclick='contextMenuActionJump()'>see more of her</div>\n" +
+                "           <div onclick='contextMenuActionComment()'>comment</div>\n" +
+                "           <div onclick='contextMenuActionExplode()'>explode</div>\n" +
+                "       </div>\n" +
+                "   </div>\n" +
                 "<div id='rightColumn'></div>\n" +
             "</div>";
             return bodyHtml;
@@ -607,7 +565,7 @@ namespace WebApi.Controllers
 
         private string IndexPageHtml()
         {
-            return "<div class='threeColumnArray'>\n" +
+            return "<div class='threeColumnLayout'>\n" +
                 "    <div id='leftColumn'>\n" +
                 "        <div class='leftColumnList'>\n" +
                 "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/Transitions?folder=boobs\"'>Transitions</div>\n" +
@@ -667,7 +625,7 @@ namespace WebApi.Controllers
 
         private string PornIndexPageHtml()
         {
-            return "<div class='threeColumnArray'>\n" +
+            return "<div class='threeColumnLayout'>\n" +
                 "    <div id='leftColumn'>\n" +
                 "        <div class='leftColumnList'>\n" +
                 "            <div onclick='window.location.href=\"" + httpLocation + "\"'>OggleBooble</div>\n" +

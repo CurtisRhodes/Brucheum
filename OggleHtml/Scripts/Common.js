@@ -65,6 +65,8 @@ function getParams() {
 
 $(window).resize(function () {
     resizePage();
+    if (typeof resizeStaticPage === 'function')
+        resizeStaticPage();
 });
 
 function resizePage() {
@@ -309,7 +311,7 @@ function onLoginClick() {
             resume();
     });
 }
-function postLogin() {
+function postLogin(pageType) {
     if (validateLogin()) {
         $.ajax({
             type: "GET",
@@ -320,13 +322,15 @@ function postLogin() {
                     displayStatusMessage("ok", "thanks for logging in " + getCookie());
                     setCookie($('#txtLoginUserName').val());
                     setLoginHeader($('#txtLoginUserName').val());
+                    if(pageType!="")
                     getUserPermissions($('#txtLoginUserName').val());
                 }
                 else
                     $('#loginValidationSummary').html(response).show();                    
             },
             error: function (jqXHR, exception) {
-                alert("validateLogin XHR error: " + settingsArray.ApiServer + "api/Login/VerifyLogin?userName" + $('#txtLoginUserName').val() + "&passWord=" + $('#txtLoginClearPassword').val() + "  " + getXHRErrorDetails(jqXHR, exception));
+                alert("validateLogin XHR error: " + settingsArray.ApiServer + "api/Login/VerifyLogin?userName" +
+                    $('#txtLoginUserName').val() + "&passWord=" + $('#txtLoginClearPassword').val() + "  " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     }

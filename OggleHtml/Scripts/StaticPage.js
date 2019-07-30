@@ -30,67 +30,16 @@ $(document).ready(function () {
             logPageHit();
         }
     }, 300);
+    $('#fileCount').html(staticPageImagesCount);
+    $('footerMessage').html(staticPageFolderName);
+
+    resizeStaticPage();
 });
-
-//function logPageHit() {
-//    var cookie = getCookie("User");
-//    if (cookie !== "") {
-//        $('#divNotLogedIn').hide();
-//        $('#divLogedIn').show();
-//        $('#helloUser').html("hello: " + cookie);
-//    }
-//    if (typeof staticPageFolderName !== "undefined") {
-//        $('#footerMessage').html("logging page hit");
-//        $.ajax({
-//            type: "GET",
-//            url: service + "api/StaticPage/StaticPageGetIPAddress",
-//            success: function (ipAddress) {
-//               // if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
-//                if (cookie === "")
-//                    cookie = "unknown";
-
-//                var hitCounterModel = {
-//                    IpAddress: ipAddress,
-//                    AppName: "static OggleBooble",
-//                    PageName: staticPageFolderName,
-//                    Details: cookie
-//                };
-
-//                $.ajax({
-//                    type: "PUT",
-//                    url: service + "api/HitCounter/LogPageHit",
-//                    data: hitCounterModel,
-//                    success: function (success) {
-//                        if (success === "ok") {
-//                            if (!isNullorUndefined(cookie)) {
-//                                //alert("currentUser: " + cookie);
-//                                sendEmail(cookie + " just visited " + staticPageFolderName, cookie + " just visited " + staticPageFolderName + " gallery");
-//                            }
-//                            else
-//                                sendEmail(ipAddress + " just visited " + staticPageFolderName, "unknown user just visited " + staticPageFolderName + " gallery");
-//                        }
-//                        else
-//                            alert("logPageHit: " + success);
-
-//                        $('#footerMessage').html(staticPageFolderName);
-//                    },
-//                    error: function (jqXHR, exception) {
-//                        alert("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
-//                    }
-//                });
-//            },
-//            error: function (jqXHR, exception) {
-//                alert("StaticPageGetIPAddress XHR error: " + getXHRErrorDetails(jqXHR, exception));
-//            }
-//        });
-//    }
-//}
 
 function resizeStaticPage() {
     resizePage();
     $('#imageContainer').width($('#middleColumn').width());
     $('#imageContainer').css("max-height", $('#middleColumn').height() - 150);
-
     if (viewerShowing) {
         resizeViewer();
     }
@@ -101,7 +50,6 @@ function resizeStaticPage() {
 function imgClick(imageIndex) {
     //alert("imageArray[]: " + imageArray.length + " folderId: " + staticPageFolderId + " folderName: " + staticPageFolderName);
     viewerShowing = true;
-
     // get image array from DOM
     $('#imageContainer').children().each(function() {
         //alert("LinkId: " + $(this).find("img").attr("id") + "  src: " + $(this).children("img").attr("src"));
@@ -110,18 +58,21 @@ function imgClick(imageIndex) {
             Link: $(this).find("img").attr("src")
         });
     });
-    launchViewer(imageArray, imageIndex, staticPageFolderId, staticPageFolderName, staticPageCurrentUser);
+    launchViewer(imageArray, imageIndex, staticPageFolderId, staticPageFolderName);
     resizeViewer();
 }
 
-function ctxSAP(linkId) {
-    //alert("staticPageContextMenu: linkId: " + linkId);
+function ctxSAP(imgId) {
     event.preventDefault();
     window.event.returnValue = false;
-    selectedImageLinkId = linkId;
-    var thisImage = $('#' + selectedImageLinkId + '');
-    var picpos = thisImage.offset();
-    var picLeft = Math.max(0, picpos.left + thisImage.width() - $('#thumbImageContextMenu').width() - 50);
+    var thisImageDiv = $('#' + imgId + '');   
+    var sstring = thisImageDiv.html();
+    selectedImageLinkId = sstring.substr(sstring.lastIndexOf("_") + 1, 36);
+
+    //alert("selectedImageLinkId: " + selectedImageLinkId);
+
+    var picpos = thisImageDiv.offset();
+    var picLeft = Math.max(0, picpos.left + thisImageDiv.width() - $('#thumbImageContextMenu').width() - 50);
     $('#thumbImageContextMenu').css("top", picpos.top + 5);
     $('#thumbImageContextMenu').css("left", picLeft);
     $.ajax({
@@ -162,7 +113,7 @@ function contextMenuActionJump() {
     window.open(httpLocation + fullPageName + ".html", "_blank");
 }
 function contextMenuActionComment() {
-    showImageCommentDialog(selectedImage, selectedImageLinkId, staticPageFolderId, staticPageFolderName, staticPageCurrentUser);
+    showImageCommentDialog(selectedImage, selectedImageLinkId, staticPageFolderId, staticPageFolderName);
 }
 function contextMenuActionExplode() {
     //alert("selectedImage: " + selectedImage);
@@ -229,57 +180,9 @@ function slowlyShowCatDialog(breadCrumbFolderId) {
 }
 
 function showLoginDialog() {
-
-    //$('#txtUserName').val("bruno");
-
     $('#loginDialog').dialog('open');
-
     if (typeof pause === 'function')
         pause();
-}
-
-function postLogin() {
-
-    alert("postLogin: " + $('#txtLoginUserName').val());
-
-    expires = new Date();
-    expires.setTime(expires.getTime() + 1 * 24 * 60 * 60 * 1000);
-    document.cookie = 'User=' + $('#txtLoginUserName').val() + '; expires=' + expires.toUTCString();
-
-    $('#loginDialog').dialog('close');
-    $('#divNotLogedIn').hide();
-    $('#divLogedIn').show();
-    $('#helloUser').html("hello " + getCookie());
-
-    // add user to a table
-    $.ajax({
-        type: "POST",
-        url: service + "api/Hitcounter/RecordLogin",
-        success: function () {
-            displayStatusMessage("ok", "thanks for logging in " + getCookie());
-        },
-        error: function (jqXHR, exception) {
-            alert("AddMoreImages XHR error: " + getXHRErrorDetails(jqXHR, exception));
-        }
-    });
-}
-
-function getCookie(cname) {
-    if (cname === null)
-        cname = "User";
-    var name = cname + "=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) === ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) === 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return decodedCookie;
 }
 
 function staticPageShowRegisterDialog() {

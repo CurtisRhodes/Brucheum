@@ -42,10 +42,11 @@
     </div>
     <div id="rightColumn"></div>
 
-
-    <div id="createStaticPagesCrud" class="oggleHidden" title="Create Static Index Pages">
-        <div><input id="txtStaticParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-        <div class="roundendButton" onclick="createStaticPages()">Go</div>
+    <div id="createStaticPagesCrud" class="dashboardToggle" title="Create Static Pages">
+        <div><span>folders to staticify</span><input id="txtFolderToStaticify" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+        <div><span>include all subfolders </span><input type="checkbox" id="ckIncludeSubfolders" checked="checked" /></div>
+        <div class="roundendButton" onclick="createStaticPages($('#ckIncludeSubfolders').is(':checked'))">Build Files</div>
+        <div id="renameFolderReport" class="repairReport"></div>
     </div>
 
     <div id="renameFolderCrud" class="oggleHidden" title="Rename Folder">
@@ -104,9 +105,8 @@
         <div class="clickable" onclick="showMovefolderDialog()">Move Folder</div>
         <div class="clickable" onclick="showRenameFolderDialog()">ReName Folder</div>
         <div class="clickable" onclick="loadProperties()">loadProperties</div>
-        <div class="clickable" onclick="createStaticPages()">Create Static Pages</div>
-        <div class="clickable" onclick="createStaticIndexPages()">Create Static Index Pages</div>
-        <div class="clickable" onclick="repairLinks()">Repair Links</div></dir>`);        
+        <div class="clickable" onclick="showCreateStaticPages()">Create Static Pages</div>
+        <div class="clickable" onclick="repairLinks()">Repair Links</div></dir>`);
 
         buildDirectoryTree();
 
@@ -114,6 +114,14 @@
 
         window.addEventListener("resize", resizeDashboardPage);
         resizeDashboardPage();
+
+        $('#createStaticPagesCrud').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "400"
+        });
+
     });
 
     function resizeDashboardPage() {
@@ -162,7 +170,7 @@
         buildDirTree($('#dirTreeContainer'), "dashboardMain", 0);
     }
 
-    function createStaticPages() {
+    function createStaticPages(justOne) {
         //$('#createStaticPagesCrud').dialog("close");
         //$('#createStaticPagesCrud').hide();
         //$('#dashBoardLoadingGif').fadeIn();
@@ -170,24 +178,29 @@
         $('#progressBar').show();
         $.ajax({
             type: "GET",
-            url: service + "api/StaticPage/Buld?parentFolder=" + dashboardMainSelectedTreeId + "&userName=xxx",
+            url: service + "api/StaticPage/Buld?parentFolder=" + dashboardMainSelectedTreeId + "&recurr=" + justOne,
             success: function (success) {
                 $('#progressBar').hide();
                 //$('#dashBoardLoadingGif').hide();
                 if (success == "ok") {
                     displayStatusMessage("ok", "done");
+                    $('#createStaticPagesCrud').dialog("close");
                     $('#txtNewLink').val("");
                     $('#progressBar').hide();
                     $('#dataifyInfo').hide();
                 }
                 else
-                    alert("createStaticPages: " + success);
+                    alert("createStaticPages ERROR:" + success);
             },
             error: function (xhr) {
                 $('#dashBoardLoadingGif').hide();
                 alert("createStaticPages xhr error: " + getXHRErrorDetails(xhr));
             }
         });
+    }
+
+    function showCreateStaticPages() {
+        $('#createStaticPagesCrud').dialog("open");
     }
 
     function createStaticIndexPages() {
