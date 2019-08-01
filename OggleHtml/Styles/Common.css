@@ -23,6 +23,12 @@ body {
     margin-top: 100px !important;
     font-size: var(--normalFont);
 }
+
+.pornBodyColors {
+    background-color: #ffcccc;
+}
+
+
 .threeColumnLayout {
     width: 100%;
     display: flex;
@@ -78,14 +84,14 @@ body {
     padding-right: 36px;
 }
 
-    .leftColumnList div {
+    .leftColumnList div div {
         font-size: 17px;
         cursor: pointer;
         color: #9a4ea9;
         margin: 12px 9px;
         white-space: nowrap;
     }
-        .leftColumnList div:hover {
+        .leftColumnList div div:hover {
             text-decoration: underline;
             color: #333;
         }
@@ -102,8 +108,11 @@ body {
     min-height: 200px;
 }
 
+.galleryCheckBoxContainer {
+    margin: 8px;
+}
 .galleryCheckBox {
-    margin-left: 8px;
+    
 }
 
 .floatingDirTreeImage {

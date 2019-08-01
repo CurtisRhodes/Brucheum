@@ -8,6 +8,19 @@
     display: flex;
     z-index: 10;
 }
+
+.classicColors {
+    background-color: var(--oggleHeaderBackgroundColor);
+    border-top: var(--oggleHeaderBoarderTop);
+    border-bottom: var(--oggleHeaderBoarderBottom);
+}
+
+.pornHeaderColors {
+    background-color: #cab37e;
+    border-top: #40767d 3px solid;
+    border-bottom: #decd6f 11px solid;
+}
+
     header .bannerImageContainer {
         float: left;
         padding-top: 2px;
@@ -37,12 +50,13 @@
             }
 
             header .headerBodyContainer .headerTopRow .headerSubTitle {
-                float: left;
                 width: 70%;
+                float: left;
                 text-align: center;
                 font-family: Comic Sans MS;
                 color: var(--ogglgeTitleColor);
                 vertical-align: top;
+                
                 margin-top: 7px;
                 font-size: 28px;
             }

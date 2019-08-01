@@ -343,7 +343,7 @@ namespace WebApi
     }
 
     [EnableCors("*", "*", "*")]
-    public class CarouselController : ApiController
+    public class AlbumPageController : ApiController
     {
         [HttpGet]
         public SuccessModel GetStaticPage(int folderId)
@@ -354,7 +354,7 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    successModel.ReturnValue = "http://ogglebooble.com/static/" + dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName + ".html";
+                    successModel.ReturnValue = "http://ogglebooble.com/static/" + dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "") + ".html";
                     successModel.Success = "ok";
                 }
             }
@@ -365,6 +365,32 @@ namespace WebApi
             return successModel;
         }
 
+        [HttpPatch]
+        public SuccessModel GetRootFolder(int folderId)
+        {
+            SuccessModel successModel = new SuccessModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    successModel.ReturnValue = dbCategoryFolder.RootFolder;
+                    successModel.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                successModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return successModel;
+        }
+
+    }
+
+
+    [EnableCors("*", "*", "*")]
+    public class CarouselController : ApiController
+    {
         [HttpGet]
         public CarouselInfoModel GetLinks(string root, int skip, int take)
         {

@@ -9,7 +9,7 @@ var imageArray;
 function directToStaticPage(folderId) {
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Carousel/GetStaticPage?folderId=" + folderId,
+        url: settingsArray.ApiServer + "api/AlbumPage/GetStaticPage?folderId=" + folderId,
         success: function (successModel) {
             if (successModel.Success === "ok") {
                 window.location.href = successModel.ReturnValue;
@@ -19,6 +19,29 @@ function directToStaticPage(folderId) {
         },
         error: function (jqXHR, exception) {
             alert("directToStaticPage jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+}
+
+function getAlbumPageHeader(folderId) {
+    $.ajax({
+        type: "PATCH",
+        async: false,
+        url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=" + folderId,
+        success: function (successModel) {
+            if (successModel.Success === "ok") {
+
+                //alert("getAlbumImages(" + params.folder + ")");
+                //alert("successModel.ReturnValue: " + successModel.ReturnValue);
+
+                getHeader(successModel.ReturnValue);
+
+            }
+            else
+                alert("getAlbumPageHeader " + successModel.Success);
+        },
+        error: function (jqXHR, exception) {
+            alert("getAlbumPageHeader jqXHR : " + getXHRErrorDetails(jqXHR, exception));
         }
     });
 }

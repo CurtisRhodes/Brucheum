@@ -147,7 +147,6 @@ function isNullorUndefined(val) {
 }
 
 // HITCOUNTER
-
 function logVisit() {
     //if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
     //alert("ipAddress: " + ipAddress);
@@ -176,7 +175,6 @@ function logVisit() {
         }
     });
 }
-
 function logPageHit(folderName) {
     $('#footerMessage').html("logging page hit");
     var userName = getCookie("User");
@@ -311,7 +309,7 @@ function onLoginClick() {
             resume();
     });
 }
-function postLogin(pageType) {
+function postLogin() {
     if (validateLogin()) {
         $.ajax({
             type: "GET",
@@ -322,15 +320,13 @@ function postLogin(pageType) {
                     displayStatusMessage("ok", "thanks for logging in " + getCookie());
                     setCookie($('#txtLoginUserName').val());
                     setLoginHeader($('#txtLoginUserName').val());
-                    if(pageType!="")
                     getUserPermissions($('#txtLoginUserName').val());
                 }
                 else
                     $('#loginValidationSummary').html(response).show();                    
             },
             error: function (jqXHR, exception) {
-                alert("validateLogin XHR error: " + settingsArray.ApiServer + "api/Login/VerifyLogin?userName" +
-                    $('#txtLoginUserName').val() + "&passWord=" + $('#txtLoginClearPassword').val() + "  " + getXHRErrorDetails(jqXHR, exception));
+                alert("validateLogin XHR error: " + settingsArray.ApiServer + "api/Login/VerifyLogin?userName" + $('#txtLoginUserName').val() + "&passWord=" + $('#txtLoginClearPassword').val() + "  " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     }
@@ -468,6 +464,72 @@ function getFileDate() {
     
 
 
+}
+
+
+function getHeader(subdomain) {
+    var headerHtml;
+    if (subdomain === "boobs" || subdomain === "archive") {
+        headerHtml =
+        "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
+        "       <a href='/'><img src='Images/redballon.png' class='bannerImage' /></a>\n" +
+        "   </div>\n" +
+        "   <div class='headerBodyContainer'>\n" +
+        "       <div class='headerTopRow'>\n" +
+        "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
+        "           <div class='headerSubTitle' id='headerSubTitle'>\n" +
+        "                <a href='/album.html?folder=2'>tits</a> and\n" +
+        "                <a href='/album.html?folder=996'>ass</a> organized by\n" +
+        "                <a href='/album.html?folder=136'> poses</a>.\n" +
+        "                <a href='/album.html?folder=199'> shapes</a> and\n" +
+        "                <a href='/album.html?folder=241'>sizes</a>\n" +
+        "            </div>\n" +
+        "        </div>\n";
+    }
+
+    if (subdomain === "porn" || subdomain === "sluts") {
+        $('body').addClass('pornBodyColors');
+        headerHtml =
+            "   <div id='divTopLeftLogo' class='pornHeaderColors bannerImageContainer'>\n" +
+            "       <a href='/index.html?subdomain=porn'><img src='Images/csLips02.png' class='bannerImage' /></a>\n" +
+            "   </div>\n" +
+            "   <div class='pornHeaderColors headerBodyContainer'>\n" +
+            "       <div class='headerTopRow'>\n" +
+            "           <div class='headerTitle' id='bannerTitle'>OgglePorn</div>\n" +
+            "           <div class='headerSubTitle' id='headerSubTitle'>\n" +
+            "               <a href='/album.html?folder=243'>cock suckers</a>, \n" +
+            "               <a href='/album.html?folder=420'>boob suckers</a>, \n" +
+            "               <a href='/album.html?folder=357'>cum shots</a>, \n" +
+            "               <a href='/album.html?folder=397'>kinky</a> and \n" +
+            "               <a href='/album.html?folder=411'>naughty behaviour</a>\n" +
+            "           </div>\n" +
+            "      </div>\n";
+    }
+
+    headerHtml+=
+        "            <div class='headerBottomRow'>\n" +
+        "                <div id='headerMessage' class='floatLeft'></div>\n" +
+        "                <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
+        "                <div class='menuTabs replaceableMenuItems'>\n" +
+        "                    <!--<div class='menuTab floatLeft'><a href='~/Admin'>every playboy centerfold</a></div>-->\n" +
+        "                <div id='menuTabUpload' class='menuTab displayHidden loginRequired floatLeft'><a href='/Upload.html'>Upload</a></div>\n" +
+        "                    <div id='menuTabAdmin' class='menuTab  displayHidden loginRequired floatLeft'><a href='/Admin.html'>Admin</a></div>\n" +
+        "                </div>\n" +
+        "                <div id='optionLoggedIn' class='displayHidden'>\n" +
+        "                    <div class='menuTab floatRight'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
+        "                    <div class='menuTab floatRight' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
+        "                </div>\n" +
+        "                <div id='optionNotLoggedIn'>\n" +
+        "                    <div id='btnLayoutRegister' class='menuTab floatRight'><a href='javascript:onRegisterClick()'>Register</a></div>\n" +
+        "                    <div id='btnLayoutLogin' class='menuTab floatRight'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
+        "                </div>\n" +
+        "                <div class='menuTabs displayHidden' id='adminTabs'>\n" +
+        "                    <div id='addImageDashboardAccess' class='ogg menuTab floatRight'><a href='~/Admin'>Admin</a></div>\n" +
+        "                </div>\n" +
+        "            </div>\n" +
+        "        </div>\n";
+
+    $('header').html(headerHtml);
 }
 
 
