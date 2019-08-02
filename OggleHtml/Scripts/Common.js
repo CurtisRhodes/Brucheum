@@ -49,10 +49,6 @@ function includeHTML() {
     }
 }
 
-function inClude() {
-
-}
-
 function getParams() {
     var params = {},
         pairs = document.URL.split('?').pop().split('&');
@@ -151,7 +147,6 @@ function logVisit() {
     //if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
     //alert("ipAddress: " + ipAddress);
     var userName = getCookie("User");
-    //alert("userName: " + userName);
     $('#footerMessage').html("logging visit userName: " + userName);
     setLoginHeader(userName);
     if (userName === "") userName = "unknown";
@@ -164,6 +159,7 @@ function logVisit() {
                     $('#headerMessage').html(successModel.ReturnValue);
                     if (userName !== "unknown")
                         getUserPermissions(userName);
+                    //alert("logVisit userName: " + userName);
                 }
             }
             else
@@ -175,7 +171,7 @@ function logVisit() {
         }
     });
 }
-function logPageHit(folderName) {
+function logPageHit(folderName, appName) {
     $('#footerMessage').html("logging page hit");
     var userName = getCookie("User");
     if (userName === "")
@@ -186,7 +182,7 @@ function logPageHit(folderName) {
     }
     //if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
     var hitCounterModel = {
-        AppId: "OBH",
+        AppId: appName,
         PageName: folderName,
         UserName: userName
     };
@@ -198,6 +194,8 @@ function logPageHit(folderName) {
             if (successModel.Success === "ok") {
                 if (userName === "unknown")
                     $('#footerMessage').html("logPageHit: " + successModel.ReturnValue);
+                else
+                    $('#footerMessage').html("");
             }
             else
                 alert("logPageHit: " + successModel.Success);
@@ -209,208 +207,6 @@ function logPageHit(folderName) {
 }
 
 // LOGIN
-function onRegisterClick() {
-    $('#modalContainer').show();
-    $('#registerUserDialog').show();
-    $('#registerUserDialog').dialog({
-        show: { effect: "fade" },
-        hide: { effect: "blind" }
-    });
-    if (typeof pause === 'function')
-        pause();
-    $('#registerUserDialog').on('dialogclose', function (event) {
-        $('#modalContainer').hide();
-        $('#registerUserDialog').hide();
-        //$('#loginDialog').hide();
-        if (typeof resume === 'function')
-            resume();
-    });
-}
-function postRegister() {
-    if (validateRegister()) {
-        try {
-            var registeredUserModel = {};
-            registeredUserModel.UserName = $('#txtRegisterUserName').val();
-            registeredUserModel.Pswrd = $('#txtRegisterClearPassword').val();
-            registeredUserModel.FirstName = $('#txtFirstName').val();
-            registeredUserModel.LastName = $('#txtLastName').val();
-            registeredUserModel.Email = $('#ddCategory').val();
-            registeredUserModel.IpAddress = $('#txtPhone').val();
-            registeredUserModel.AppName = "OggleBoogle";
-
-            $.ajax({
-                type: "POST",
-                url: settingsArray.ApiServer + "/api/Login/RegisterUser",
-                data: registeredUserModel,
-                success: function (response) {
-                    if (response === "ok") {
-                        $('#registerUserDialog').dialog('close');
-                        setCookie($('#txtRegisterUserName').val());
-                        setLoginHeader($('#txtRegisterUserName').val());
-                    }
-                    else {
-                        $('#registerValidationSummary').html(response).show();
-                    }
-                },
-                error: function () {
-                    alert("Login Post failed");
-                }
-            });
-        } catch (e) {
-            alert("Login Post error: " + e);
-        }
-    }
-}
-function validateRegister() {
-    if ($('#txtRegisterUserName').val() === "") {
-        $('#errUserName').show();
-        return false;
-    }
-    $('#errUserName').hide();
-
-    if ($('#txtRegisterClearPassword').val() === "") {
-        $('#errRegisterPassword').show();
-        return false;
-    }
-
-    if ($('#txtRegisterClearPassword').val().length < 4) {
-        $('#errRegisterPassword').text("password must be at least 4 characters").show();
-        return false;
-    }
-    if ($('#txtRegisterClearPassword').val() !== $('#txtRegisterClearPasswordRetype').val()) {
-        $('#errRegisterPassword').text("password retype does not match").show();
-        return false;
-    }
-    $('#errRegisterPassword').hide();
-    return true;
-}
-
-function onLogoutClick() {
-    document.cookie = "OggleUser=''; User=''; expires = Thu, 01 Jan 1970 00:00:00 GMT";
-    $('#optionLoggedIn').hide();
-    $('#optionNotLoggedIn').show();
-}
-
-function onLoginClick() {
-    $('#modalContainer').show();
-    $('#loginDialog').show();
-    $('#loginDialog').dialog({
-        show: { effect: "fade" },
-        hide: { effect: "blind" },
-        width: 333
-    });
-    $('#loginDialog').show();
-    if (typeof pause === 'function')
-        pause();
-    $('#loginDialog').on('dialogclose', function (event) {
-        $('#modalContainer').hide();
-        $('#loginDialog').hide();
-        if (typeof resume === 'function')
-            resume();
-    });
-}
-function postLogin() {
-    if (validateLogin()) {
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Login/VerifyLogin?userName=" + $('#txtLoginUserName').val() + "&passWord=" + $('#txtLoginClearPassword').val(),
-            success: function (success) {
-                if (success === "ok") {
-                    $('#loginDialog').dialog('close');
-                    displayStatusMessage("ok", "thanks for logging in " + getCookie());
-                    setCookie($('#txtLoginUserName').val());
-                    setLoginHeader($('#txtLoginUserName').val());
-                    getUserPermissions($('#txtLoginUserName').val());
-                }
-                else
-                    $('#loginValidationSummary').html(response).show();                    
-            },
-            error: function (jqXHR, exception) {
-                alert("validateLogin XHR error: " + settingsArray.ApiServer + "api/Login/VerifyLogin?userName" + $('#txtLoginUserName').val() + "&passWord=" + $('#txtLoginClearPassword').val() + "  " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
-    }
-}
-function validateLogin() {
-    if ($('#txtLoginUserName').val() === "") {
-        $('#errLoginUserName').show();
-        return false;
-    }
-    $('#errLoginUserName').hide();
-
-    if ($('#txtLoginClearPassword').val() === "") {
-        $('#errLoginPassword').show();
-        return false;
-    }
-    $('#errLoginPassword').hide();
-    return true;
-}
-function transferToRegisterPopup() {
-    $('#loginDialog').dialog('close');
-    onRegisterClick();
-}
-
-function getUserPermissions(userName) {
-
-    if (userName !== "unknown") {
-        $('.loginRequired').show();
-
-    }
-
-    //$.ajax({
-    //    type: "GET",
-    //    url: settingsArray.ApiServer + "api/Login/UserPermissions?userName=" + userName,
-    //    success: function (userRoles) {
-    //        $.each(userRoles,function (idx,obj) {
-    //            userRoles.push(obj.RoleName);
-    //        });
-    //    },
-    //    error: function (jqXHR, exception) {
-    //        alert("getUserPermissions jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-    //    }
-    //});
-}
-
-// COOKIES
-function setLoginHeader(userName) {
-    if (userName === "") {
-        $('#optionLoggedIn').hide();
-        $('#optionNotLoggedIn').show();
-    }
-    else {
-        $('#spnUserName').html(userName);
-        $('#optionLoggedIn').show();
-        $('#optionNotLoggedIn').hide();
-    }
-}
-function setCookie(userName) {
-    expires = new Date();
-    expires.setTime(expires.getTime() + 1 * 24 * 60 * 60 * 1000);
-    document.cookie = 'User=' + userName + '; expires=' + expires.toUTCString();
-}
-function getCookie(cname) {
-    var decodedCookie = "";
-    if (document.cookie) {
-        if (cname === null)
-            cname = "User";
-        var name = cname + "=";
-        decodedCookie = decodeURIComponent(document.cookie);
-        var ca = decodedCookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) === ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) === 0) {
-                var userName = c.substring(name.length, c.length);
-                //alert("cookie success: " + c.substring(name.length, c.length));
-                return userName;
-            }
-        }
-    }
-    //else alert("no cookie found");
-    return decodedCookie;
-}
 
 // COMMON CONTEXTMENU FUNCTIONS
 function showLinks(linkId) {
@@ -466,10 +262,27 @@ function getFileDate() {
 
 }
 
-
+// SET HEADER
 function getHeader(subdomain) {
     var headerHtml;
     if (subdomain === "boobs" || subdomain === "archive") {
+        headerHtml =
+            "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
+            "       <a href='/'><img src='Images/redballon.png' class='bannerImage' /></a>\n" +
+            "   </div>\n" +
+            "   <div class='headerBodyContainer'>\n" +
+            "       <div class='headerTopRow'>\n" +
+            "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
+            "           <div class='headerSubTitle' id='headerSubTitle'>\n" +
+            "                <a href='/album.html?folder=2'>tits</a> and\n" +
+            "                <a href='/album.html?folder=996'>ass</a> organized by\n" +
+            "                <a href='/album.html?folder=136'> poses</a>.\n" +
+            "                <a href='/album.html?folder=199'> shapes</a> and\n" +
+            "                <a href='/album.html?folder=241'>sizes</a>\n" +
+            "            </div>\n" +
+            "        </div>\n";
+    }
+    if (subdomain === "playboy") {
         headerHtml =
         "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
         "       <a href='/'><img src='Images/redballon.png' class='bannerImage' /></a>\n" +
@@ -477,12 +290,7 @@ function getHeader(subdomain) {
         "   <div class='headerBodyContainer'>\n" +
         "       <div class='headerTopRow'>\n" +
         "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
-        "           <div class='headerSubTitle' id='headerSubTitle'>\n" +
-        "                <a href='/album.html?folder=2'>tits</a> and\n" +
-        "                <a href='/album.html?folder=996'>ass</a> organized by\n" +
-        "                <a href='/album.html?folder=136'> poses</a>.\n" +
-        "                <a href='/album.html?folder=199'> shapes</a> and\n" +
-        "                <a href='/album.html?folder=241'>sizes</a>\n" +
+        "           <div class='headerSubTitle' id='headerSubTitle'>Every Playboy Centerfold" +
         "            </div>\n" +
         "        </div>\n";
     }
@@ -503,31 +311,29 @@ function getHeader(subdomain) {
             "               <a href='/album.html?folder=397'>kinky</a> and \n" +
             "               <a href='/album.html?folder=411'>naughty behaviour</a>\n" +
             "           </div>\n" +
-            "      </div>\n";
+            "       </div>\n";
     }
 
     headerHtml+=
-        "            <div class='headerBottomRow'>\n" +
-        "                <div id='headerMessage' class='floatLeft'></div>\n" +
-        "                <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
-        "                <div class='menuTabs replaceableMenuItems'>\n" +
-        "                    <!--<div class='menuTab floatLeft'><a href='~/Admin'>every playboy centerfold</a></div>-->\n" +
-        "                <div id='menuTabUpload' class='menuTab displayHidden loginRequired floatLeft'><a href='/Upload.html'>Upload</a></div>\n" +
-        "                    <div id='menuTabAdmin' class='menuTab  displayHidden loginRequired floatLeft'><a href='/Admin.html'>Admin</a></div>\n" +
-        "                </div>\n" +
-        "                <div id='optionLoggedIn' class='displayHidden'>\n" +
-        "                    <div class='menuTab floatRight'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
-        "                    <div class='menuTab floatRight' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
-        "                </div>\n" +
-        "                <div id='optionNotLoggedIn'>\n" +
-        "                    <div id='btnLayoutRegister' class='menuTab floatRight'><a href='javascript:onRegisterClick()'>Register</a></div>\n" +
-        "                    <div id='btnLayoutLogin' class='menuTab floatRight'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
-        "                </div>\n" +
-        "                <div class='menuTabs displayHidden' id='adminTabs'>\n" +
-        "                    <div id='addImageDashboardAccess' class='ogg menuTab floatRight'><a href='~/Admin'>Admin</a></div>\n" +
-        "                </div>\n" +
-        "            </div>\n" +
-        "        </div>\n";
+        "   <div class='headerBottomRow'>\n" +
+        "       <div id='headerMessage' class='floatLeft'></div>\n" +
+        "       <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
+        "       <div class='menuTabs replaceableMenuItems'>\n" +
+        "       </div>\n" +
+        "       <div id='optionLoggedIn' class='displayHidden'>\n" +
+        "           <div class='menuTab floatRight'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
+        "           <div class='menuTab floatRight' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
+        "       </div>\n" +
+        "       <div id='optionNotLoggedIn'>\n" +
+        "           <div id='btnLayoutRegister' class='menuTab floatRight'><a href='javascript:onRegisterClick()'>Register</a></div>\n" +
+        "               <div id='btnLayoutLogin' class='menuTab floatRight'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
+        "           </div>\n" +
+        "           <div class='menuTabs' id='adminTabs'>\n" +
+        "              <div id='menuTabUpload' class='menuTab displayHidden loginRequired floatRight'><a href='/Upload.html'>Upload</a></div>\n" +
+        "              <div id='menuTabAdmin' class='menuTab  displayHidden loginRequired floatRight'><a href='/Admin.html'>Admin</a></div>\n" +
+        "           </div>\n" +
+        "       </div>\n" +
+        "   </div>\n";
 
     $('header').html(headerHtml);
 }

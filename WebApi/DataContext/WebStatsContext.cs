@@ -7,13 +7,33 @@
     using System.ComponentModel.DataAnnotations;
     using System.Collections.Generic;
 
-    public partial class LoginContext : DbContext
+    public partial class WebStatsContext : DbContext
     {
-        public LoginContext() : base("GoDaddy") { }
+        public WebStatsContext() : base("GoDaddy") { }
         public virtual DbSet<RegisteredUser> RegisteredUsers { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<Visitor> Visitors { get; set; }
+        public virtual DbSet<Visit> Visits { get; set; }
         public virtual DbSet<PageHit> PageHits { get; set; }
+    }
+
+    [Table("webStats.Visitor")]
+    public partial class Visitor
+    {
+        public string UserName { get; set; }
+        public string IpAddress { get; set; }
+        public string AppName { get; set; }
+        public DateTime CreateDate { get; set; }
+        [Key]
+        public string VisitorId { get; set; }
+    }
+    [Table("webStats.Visit")]
+    public partial class Visit
+    {
+        public string VisitorId { get; set; }
+        [Key]
+        public DateTime VisitDate { get; set; }
     }
 
     [Table("login.RegisteredUser")]
@@ -49,7 +69,7 @@
         public string RoleName { get; set; }
     }
 
-    [Table("login.PageHit")]
+    [Table("webStats.PageHit")]
     public partial class PageHit
     {
         [Key]

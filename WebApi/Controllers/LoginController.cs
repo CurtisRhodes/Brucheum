@@ -14,7 +14,7 @@ namespace WebApi
         public string VerifyLogin(string userName, string passWord)
         {
             string success = "";
-            using (LoginContext db = new LoginContext())
+            using (WebStatsContext db = new WebStatsContext())
             {
                 string encryptedPassword = HashSHA256(passWord);
                 RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == userName && u.Pswrd == encryptedPassword).FirstOrDefault();
@@ -36,7 +36,7 @@ namespace WebApi
         public List<UserRoleModel> UserPermissions(string userName)
         {
             List<UserRoleModel> roles = null;
-            using (LoginContext db = new LoginContext())
+            using (WebStatsContext db = new WebStatsContext())
             {
                 roles = (from u in db.UserRoles
                          join r in db.Roles on u.RoleId equals r.RoleId
@@ -58,7 +58,7 @@ namespace WebApi
             string success = "";
             try
             {
-                using (LoginContext db = new LoginContext())
+                using (WebStatsContext db = new WebStatsContext())
                 {
                     RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == registeredUserModel.UserName).FirstOrDefault();
                     if (dbRegisteredUser != null)

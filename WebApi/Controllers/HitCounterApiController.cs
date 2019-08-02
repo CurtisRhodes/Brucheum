@@ -130,72 +130,63 @@ namespace WebApi
                 //    }
                 //}
                 string ipAddress = Helpers.GetIPAddress();
-                using (WebSiteContext db = new WebSiteContext())
+                using (WebStatsContext db = new WebStatsContext())
                 {
-                    Visitor dexisting = db.Visitors.Where(v => v.IPAddress == ipAddress && v.UserName == userName).FirstOrDefault();
+
+                    string visitorId = "";
+                    Visitor dexisting = db.Visitors.Where(v => v.IpAddress == ipAddress && v.UserName == userName).FirstOrDefault();
                     if (dexisting == null)
                     {
-                        //string visitorId = Guid.NewGuid().ToString();
-                        Visitor existing = db.Visitors.Where(v => v.IPAddress == ipAddress).FirstOrDefault();
-                        if (existing == null)
-                        {
-                            // WE HAVE A NEW VISITOR
-                            Visitor visitor = new Visitor();
-                            visitor.Id = Guid.NewGuid().ToString();
-                            visitor.UserName = userName;
-                            visitor.AppName = appName;
-                            visitor.IPAddress = ipAddress;
-                            visitor.CreateDate = DateTime.Now;
+                        // WE HAVE A NEW VISITOR
+                        Visitor visitor = new Visitor();
+                        visitor.VisitorId = Guid.NewGuid().ToString();
+                        visitor.UserName = userName;
+                        visitor.AppName = appName;
+                        visitor.IpAddress = ipAddress;
+                        visitor.CreateDate = DateTime.Now;
 
-                            db.Visitors.Add(visitor);
-                            db.SaveChanges();
-                            success.ReturnValue = "Welcome new visitor!";
-                            new GodaddyEmailController().SendEmail("CONGRATULATIONS: someone new just visited your site", "ip: " + ipAddress + " visited: " + appName);
-                        }
+                        db.Visitors.Add(visitor);
+                        db.SaveChanges();
+                        success.ReturnValue = "Welcome new visitor!";
+                        new GodaddyEmailController().SendEmail("CONGRATULATIONS: someone new just visited your site", "ip: " + ipAddress + " visited: " + appName);
+                    }
+                    else 
+                    {
+                        visitorId = dexisting.VisitorId;
+
+                        if (userName == "unknown")
+                            success.ReturnValue = "Welcome back from " + ipAddress;
                         else
+                            success.ReturnValue = "Welcome back " + userName;
+
+                        bool logVisit = true;
+                        Visit lastVisit = db.Visits.Where(v => v.VisitorId == visitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault();
+                        if (lastVisit != null)
                         {
-                            if (userName == "unknown")
-                                success.ReturnValue = "Welcome back from " + ipAddress;
-                            else
-                                success.ReturnValue = "Welcome back " + userName;
-
-                            bool logVisit = true;
-                            Visit lastVisit = db.Visits.Where(v => v.IPAddress == ipAddress && v.UserName == userName).OrderByDescending(v => v.VisitDate).FirstOrDefault();
-                            if (lastVisit != null)
+                            if ((DateTime.Now - lastVisit.VisitDate).TotalHours < 5)
                             {
-                                if ((DateTime.Now - lastVisit.VisitDate).TotalHours < 5)
-                                {
-                                    logVisit = false;
-                                    success.ReturnValue = "";
-                                }
+                                logVisit = false;
+                                success.ReturnValue = "";
                             }
-                            if (logVisit)
+                        }
+                        if (logVisit)
+                        {
+                            Visit visit = new Visit() { VisitorId = visitorId, VisitDate = DateTime.Today };
+                            db.Visits.Add(visit);
+                            db.SaveChanges();
+                            success.ReturnValue = "Welcome back " + ipAddress;
+                            if ((ipAddress == "68.203.90.183") || (ipAddress == "50.62.160.105"))
                             {
-                                Visit visit = new Visit();
-                                visit.VisitorId = Guid.NewGuid().ToString();
-                                visit.UserName = userName;
-                                visit.IPAddress = ipAddress;
-                                visit.AppName = appName;
-                                visit.VisitDate = DateTime.Now;
+                                success.ReturnValue = "dev [" + userName + "]";
+                            }
+                            else
+                            {
+                                new GodaddyEmailController().SendEmail("Site Visit", "ip: " + ipAddress + " visited: " + appName);
 
-                                db.Visits.Add(visit);
-                                db.SaveChanges();
-
-                                success.ReturnValue = "Welcome back " + ipAddress;
-
-                                if ((ipAddress == "68.203.90.183") || (ipAddress == "50.62.160.105"))
-                                {
-                                    success.ReturnValue = "dev [" + userName + "]";
-                                }
+                                if (userName == "unknown")
+                                    success.ReturnValue = "Welcome back from " + ipAddress;
                                 else
-                                {
-                                    new GodaddyEmailController().SendEmail("Site Visit", "ip: " + ipAddress + " visited: " + appName);
-
-                                    if (userName == "unknown")
-                                        success.ReturnValue = "Welcome back from " + ipAddress;
-                                    else
-                                        success.ReturnValue = "Welcome back. Please log in";
-                                }
+                                    success.ReturnValue = "Welcome back. Please log in";
                             }
                         }
                     }
@@ -213,22 +204,24 @@ namespace WebApi
             try
             {
                 string ipAddress = Helpers.GetIPAddress();
-                if ((ipAddress != "68.203.90.183") && (ipAddress != "50.62.160.105")) {
-                    using (LoginContext db = new LoginContext())
-                    {
-                        PageHit hit = new PageHit();
-                        hit.PkId = Guid.NewGuid().ToString();
-                        hit.IpAddress = ipAddress;
-                        hit.AppId = hitCounterModel.AppId;
-                        hit.HitDateTime = DateTime.Now;
-                        hit.PageName = hitCounterModel.PageName;
-                        hit.UserName = hitCounterModel.UserName;
-                        db.PageHits.Add(hit);
-                        db.SaveChanges();
+                //if ((ipAddress != "68.203.90.183") && (ipAddress != "50.62.160.105")) {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    PageHit hit = new PageHit();
+                    hit.PkId = Guid.NewGuid().ToString();
+                    hit.IpAddress = ipAddress;
+                    hit.AppId = hitCounterModel.AppId;
+                    hit.HitDateTime = DateTime.Now;
+                    hit.PageName = hitCounterModel.PageName;
+                    hit.UserName = hitCounterModel.UserName;
+                    db.PageHits.Add(hit);
+                    db.SaveChanges();
 
+                    if ((ipAddress != "68.203.90.183") && (ipAddress != "50.62.160.105"))
                         new GodaddyEmailController().SendEmail("Site Visit", hitCounterModel.UserName + " from ip: " + ipAddress + " visited: " + hitCounterModel.PageName);
-                    }
+
                 }
+                //}
                 successModel.ReturnValue = ipAddress;
                 successModel.Success = "ok";
             }
@@ -259,15 +252,17 @@ namespace WebApi
 
 
         [HttpPatch]
-        public string EndVisit(int hitId)
+        public string EndVisit(string visitorId)
         {
             var success = "on no";
             try
             {
-                using (WebSiteContext db = new WebSiteContext())
+                using (WebStatsContext db = new WebStatsContext())
+
                 {
-                    Hit hit = db.Hits.Where(h => h.HitId == hitId).First();
-                    hit.ViewDuration = (DateTime.Now - hit.BeginView).TotalSeconds.ToString();
+                    Visit visit = db.Visits.Where(v => v.VisitorId == visitorId).First();
+
+                    //hit.ViewDuration = (DateTime.Now - hit.BeginView).TotalSeconds.ToString();
                     db.SaveChanges();
                     success = "ok";
                 }

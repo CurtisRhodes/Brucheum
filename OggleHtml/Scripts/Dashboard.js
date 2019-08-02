@@ -280,13 +280,11 @@ function moveFolder() {
         url: settingsArray.ApiServer + "/api/FtpDashboard/MoveFolder?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + partialViewSelectedItemId,
         success: function (success) {
             //$('#dashBoardLoadingGif').hide();
-            $('#moveFolderCrud').hide();
-            $('#moveFolderCrud').dialog("close");
+            //$('#moveFolderCrud').hide();
+            //$('#moveFolderCrud').dialog("close");
             if (!success.startsWith("ERROR")) {
                 displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val());
-                buildDirectoryTree();
-                $('#progressBar').hide();
-
+                //$('#progressBar').hide();
                 //$('#progressBar').progressbar("destroy");
             }
             else
@@ -297,6 +295,9 @@ function moveFolder() {
             alert("Move Folder xhr error: " + getXHRErrorDetails(xhr));
         }
     });
+    //$('#moveFolderCrud').on('dialogclose', function (event) {
+                //buildDirectoryTree();
+    //});
 }
 
 function renameFolder() {

@@ -13,10 +13,7 @@ namespace WebApi.DataContext
             : base("GoDaddy") { }
 
         public virtual DbSet<Comment> Comments { get; set; }
-        public virtual DbSet<Hit> Hits { get; set; }
         public virtual DbSet<Ref> Refs { get; set; }
-        public virtual DbSet<Visit> Visits { get; set; }
-        public virtual DbSet<Visitor> Visitors { get; set; }
         public virtual DbSet<Article> Articles { get; set; }
         public virtual DbSet<ArticleTag> ArticleTags { get; set; }
         public virtual DbSet<Blog> Blogs { get; set; }
@@ -45,56 +42,7 @@ namespace WebApi.DataContext
             //    .WillCascadeOnDelete(false);
         }
     }
-
-    [Table("website.Visitor")]
-    public partial class Visitor
-    {
-        [Key]
-        public string Id { get; set; }
-        public string UserName { get; set; }
-        public string IPAddress { get; set; }
-        public string AppName { get; set; }
-        public DateTime CreateDate { get; set; }
-    }
-
-    [Table("website.Visit")]
-    public partial class Visit
-    {
-        [Key]
-        public int VisitId { get; set; }
-        public string VisitorId { get; set; }
-        public string UserName { get; set; }
-        public string IPAddress { get; set; }
-        public string AppName { get; set; }
-        public DateTime VisitDate { get; set; }
-    }
-
-    [Table("website.Hit")]
-    public partial class Hit
-    {
-        public int HitId { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string IPAddress { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string App { get; set; }
-
-        [Required]
-        [StringLength(300)]
-        public string PageName { get; set; }
-
-        [StringLength(300)]
-        public string Details { get; set; }
-
-        public DateTime BeginView { get; set; }
-
-        [StringLength(200)]
-        public string ViewDuration { get; set; }
-    }
-
+        
     [Table("website.Comment")]
     public partial class Comment
     {

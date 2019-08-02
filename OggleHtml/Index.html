@@ -11,6 +11,7 @@
     <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js' type="text/javascript"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
+    <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/Carousel.js"></script>
     <script src="Scripts/DirTree.js"></script>
@@ -43,15 +44,13 @@
                         <div onclick="window.location.href='/home/BoobsRanker'">Boobs Rater</div>
                         <div onclick="showCustomMessage(38)">Let me Explain</div>
                         <div onclick="showCatListDialog()">Category List</div>
+                        <div onclick="window.location.href='/album.html?folder=1132'">Centerfolds</div>
                         <div onclick="window.location.href='/admin/blog'">Blog</div>
                         <div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>
                         <div onclick="showCustomMessage(35)">Nasty Porn</div>
                     </div>
                     <div id="pornLeftColumnList" class="displayHidden">
-                        <div onclick="window.location.href='/'">Tits</div>
-                        <div onclick="window.location.href='/home/transitions?folder=porn'">Transitions</div>
-                        <div onclick="window.location.href='/home/BoobsRanker'">Porn Rater</div>
-                        <div onclick="showCustomMessage(38)">Let me Explain</div>
+                        <div onclick="window.location.href='/'">Tits</div> 
                         <div onclick="showCatListDialog()">Category List</div>
                         <div onclick="window.location.href='/admin/blog'">Blog</div>
                         <div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>
@@ -73,7 +72,7 @@
                         <div class="centeredDivShell randomImageContainer">
                             <div class="centeredDivInner">
                                 <!--<div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>-->
-                                <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
+                                <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
                                 <div id="laCarousel" class="carouselContainer">
                                     <div class="carouselImageContainer">
                                         <img id="thisCarouselImage" oncontextmenu="carouselContextMenu()" class="carouselImage" src="Images/ingranaggi3.gif" onclick="clickViewGallery()" />
@@ -92,6 +91,7 @@
             </div>
             <div id="rightColumn"></div>
         </div>
+
         <div id="carouselContextMenu" class="ogContextMenu" onmouseleave="considerHidingContextMenu()">
             <div id="ctxModelName" onclick="carouselContextMenuAction('showDialog')">model name</div>
             <div id="ctxSeeMore" onclick="carouselContextMenuAction('seeMore')">See More</div>
@@ -100,6 +100,7 @@
             <div onclick="carouselContextMenuAction('tags')">Tags</div>
             <div id="ctxMove" onclick="carouselContextMenuAction('archive')">Archive</div>
         </div>
+
         <div w3-include-html="Snippets/BoobsFooter.html"></div>
         <div w3-include-html="Snippets/AdminDialogs.html"></div>
         <div w3-include-html="Snippets/Login.html"></div>
@@ -131,16 +132,16 @@
 
             getHeader(subdomain);
 
-            var dots = ""
+            //var dots = ""
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
-                    dots += ". ";
+                    //dots += ". ";
                     $('#dots').html(dots);
                 }
                 else {
                     $('#dots').html('');
                     clearInterval(waiter);
-                    launchCarousel(subdomain);
+                    launchCarousel(subdomain);                    
                     logVisit();
 
                     if (subdomain == "porn") {

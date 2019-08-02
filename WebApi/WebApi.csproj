@@ -205,7 +205,7 @@
     <Compile Include="Controllers\StaticPageController.cs" />
     <Compile Include="Controllers\xAspNetController.cs" />
     <Compile Include="Controllers\OggleBoobleApiController.cs" />
-    <Compile Include="DataContext\LoginContext.cs" />
+    <Compile Include="DataContext\WebStatsContext.cs" />
     <Compile Include="DataContext\ResumeContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

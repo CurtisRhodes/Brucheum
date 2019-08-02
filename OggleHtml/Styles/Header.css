@@ -50,13 +50,13 @@
             }
 
             header .headerBodyContainer .headerTopRow .headerSubTitle {
-                width: 70%;
                 float: left;
+
                 text-align: center;
                 font-family: Comic Sans MS;
                 color: var(--ogglgeTitleColor);
                 vertical-align: top;
-                
+                margin-left: 33px;
                 margin-top: 7px;
                 font-size: 28px;
             }

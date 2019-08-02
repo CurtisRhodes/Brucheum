@@ -19,7 +19,6 @@ namespace WebApi.Controllers
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
         private readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         private readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
-        private int initialTake = 145;
         private int totalFiles = 0;
         private int filesProcessed = 0;
         private int imagesCount;
@@ -61,8 +60,8 @@ namespace WebApi.Controllers
                 string staticContent =
                     "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, pageTitle) +
                     "\n<body style='margin-top:105px'>\n" +
-                    HeaderHtml(folderId) + 
-                    GalleryPageBodyHtml(folderId, rootFolder) + 
+                    HeaderHtml(folderId) +
+                    GalleryPageBodyHtml(folderId, rootFolder) +
                     CommentDialog() + CategoryDialog() + ModelInfoDialog() +
                     "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
                     "<script>var staticPageFolderId=" + folderId + "; " +
@@ -147,12 +146,14 @@ namespace WebApi.Controllers
                 "   <script src='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js'></script>\n" +
                 "   <link href='/Styles/jqueryui.css' rel='stylesheet' />\n" +
                 "   <link rel='icon' type='image/png' href='/static/favicon.png' />" +
+                "   <script src='/Scripts/Login.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Common.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Slideshow.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/ImageCommentDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/CategoryDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/ModelInfoDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/DirTree.js'></script>\n" +
+
                 "   <link href='/Styles/Common.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/Header.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/Slideshow.css' rel='stylesheet'/>\n" +
@@ -180,15 +181,15 @@ namespace WebApi.Controllers
                 if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder)
                 {
                     breadCrumbs += "<a class='inactiveBreadCrumb' " +
-                        "onmouseover='slowlyShowCatDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + "); forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;' >" +
-                        breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>";
+                        "onmouseover='slowlyShowFolderCategoryDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + "); forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;' >" +
+                        breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>\n";
                 }
                 else
                 {
                     // a woman commited suicide when pictures of her "came out"
                     breadCrumbs += "<a class='activeBreadCrumb' " +
                         "href='" + breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + ".html'>" +
-                        breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>";
+                        breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>\n";
                 }
             }
             breadCrumbModel.Html = breadCrumbs;
@@ -242,9 +243,6 @@ namespace WebApi.Controllers
                 "            <div id='headerMessage' class='floatLeft'></div>\n" +
                 "            <div id='breadcrumbContainer' class='breadCrumbArea'>" + breadCrumbModel.Html + "</div>\n" +
                 "            <div class='menuTabs replaceableMenuItems'>\n" +
-                "                <!--<div class='menuTab floatLeft'><a href='~/Admin'>every playboy centerfold</a></div>-->\n" +
-                "                <div id='menuTabUpload' class='menuTab displayHidden loginRequired floatLeft'><a href='/Upload.html'>Upload</a></div>\n" +
-                "                <div id='menuTabAdmin' class='menuTab  displayHidden loginRequired floatLeft'><a href='/Admin.html'>Admin</a></div>\n" +
                 "            </div>\n" +
                 "            <div id='optionLoggedIn' class='displayHidden'>\n" +
                 "                <div class='menuTab floatRight'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
@@ -255,7 +253,8 @@ namespace WebApi.Controllers
                 "                <div id='btnLayoutLogin' class='menuTab floatRight'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
                 "            </div>\n" +
                 "            <div class='menuTabs displayHidden' id='adminTabs'>\n" +
-                "                <div id='addImageDashboardAccess' class='ogg menuTab floatRight'><a href='~/Admin'>Admin</a></div>\n" +
+                "              <div id='menuTabUpload' class='menuTab displayHidden loginRequired floatRight'><a href='/Upload.html'>Upload</a></div>\n" +
+                "              <div id='menuTabAdmin' class='menuTab  displayHidden loginRequired floatRight'><a href='/Admin.html'>Admin</a></div>\n" +
                 "            </div>\n" +
                 "        </div>\n" +
                 "    </div>\n" +
@@ -295,27 +294,34 @@ namespace WebApi.Controllers
                 }
                 // IMAGES 
                 List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).ToList();
-                //List<ImageLink> links = db.ImageLinks.Where(l => l.FolderLocation == folderId).OrderBy(l => l.Id).ToList();
                 int idx = 0;
-
-                //imageArray = VwLink.ToArray();
-
-                //List<string>  = new List<string>();
                 foreach (VwLink link in vwLinks)
                 {
                     bodyHtml += "<div id='img" + idx + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
-                         "oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='imgClick(" + idx++ + ")' src='" + link.Link + "'/></div>\n";
+                         "oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='startSlideShow(" + idx++ + ")' src='" + link.Link + "'/></div>\n";
                     imagesCount++;
                 }
             }
+
             bodyHtml +=
                 "   </div>\n" +
                 "       <div id='fileCount' class='countContainer'></div>\n" +
+
+                //<div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut(); $('#linkInfo').hide();">
+                //    <div id="ctxModelName" onclick="contextMenuAction('show')">model name</div>
+                //    <div id="ctxSeeMore" onclick="contextMenuAction('jump')">see more of her</div>
+                //    <div onclick="contextMenuAction('comment')">Comment</div>
+                //    <div onclick="contextMenuAction('explode')">explode</div>
+                //    <div onclick="contextMenuAction('showLinks')">Show Links</div>
+                //    <div id="linkInfo" class="innerContextMenuInfo">
+                //        <div id="linkInfoContainer"></div>
+                //    </div>
+
                 "       <div id='thumbImageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut();'>\n" +
-                "           <div id='staticPagectxModelName' onclick='contextMenuActionShow()'>model name</div>\n" +
-                "           <div id='ctxSeeMore' onclick='contextMenuActionJump()'>see more of her</div>\n" +
-                "           <div onclick='contextMenuActionComment()'>comment</div>\n" +
-                "           <div onclick='contextMenuActionExplode()'>explode</div>\n" +
+                "           <div id='ctxModelName' onclick='contextMenuActionShow()'>model name</div>\n" +
+                "           <div id='ctxSeeMore' onclick='contextMenuAction(\"jump\")'>see more of her</div>\n" +
+                "           <div onclick='contextMenuAction(\"comment\")'>comment</div>\n" +
+                "           <div onclick='contextMenuAction(\"explode\")'>explode</div>\n" +
                 "       </div>\n" +
                 "   </div>\n" +
                 "<div id='rightColumn'></div>\n" +
@@ -562,158 +568,7 @@ namespace WebApi.Controllers
                 "    </div>\n" +
                 "</div>\n";
         }
-
-        private string IndexPageHtml()
-        {
-            return "<div class='threeColumnLayout'>\n" +
-                "    <div id='leftColumn'>\n" +
-                "        <div class='leftColumnList'>\n" +
-                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/Transitions?folder=boobs\"'>Transitions</div>\n" +
-                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/BoobsRanker\"'>Boobs Rater</div>\n" +
-                "            <div onclick='showCustomMessage(38)'>Let me Explain</div>\n" +
-                "            <div onclick='showCatListDialog(2)'>Category List</div>\n" +
-                "            <div onclick='window.location.href=\"https://ogglebooble.com/Admin/Blog\"'>Blog</div>\n" +
-                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/Mobile?folder=boobs\"'>Mobile</div>\n" +
-                "            <div onclick='showCustomMessage(35)'>Nasty Porn</div>\n" +
-                "        </div>\n" +
-                "    </div>\n" +
-                "    <div id='middleColumn'>\n" +
-                "        <div id='customMessage' class='displayHidden customMessageContainer'></div>\n" +
-                "        <div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title='boob folders'></div>" +
-                "        <div id='divStatusMessage'></div>\n" +
-                "        <div class='flexContainer'>\n" +
-                //"            <div class='floatLeft'>\n" +
-                //"                <div class='galleryCheckBox'><input type='checkbox' onchange=\"loadImages(\'playboy\', $(this).is(\':checked\'), 50000)\" /> Include Centerfolds</div>\n" +
-                //"                <div class='galleryCheckBox'><input type='checkbox' onchange=\"loadImages(\'archive\', $(this).is(\':checked\'), 50000)\" /> Include Archive</div>\n" +
-                //"            </div>\n" +
-                "            <div class='floatLeft'>\n" +
-                "               <div class='centeredDivShell randomImageContainer'>\n" +
-                "                   <div class='centeredDivInner'>\n" +
-                "                       <div id='categoryTitle' class='floatingLabel' onmouseover='slowlyShowFolderCategoryDialog();" +
-                "                           forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;'></div>\n" +
-                "                       <div id='laCarousel' class='carouselContainer'>\n" +
-                "                           <div id='laCarouselImageContainer' class='carouselImageContainer'>\n" +
-                "                               <img class='carouselImage' oncontextmenu='showContextMenu()' src='/images/ingranaggi3.gif'/>\n" +
-                "                           </div>\n" +
-                "                           <div class='imgBottom'>\n" +
-                "                                    <img class='speedButton floatLeft' src='/images/speedDialSlower.png' title='slower' onclick='clickSpeed(\"slower\")' />\n" +
-                "                                    <div id='pauseButton' class='pauseButton' onclick='togglePause()'>||</div>\n" +
-                "                                    <div id='categoryLabel' class='carouselCategoryLabel' onclick='clickViewParentGallery()'></div>\n" +
-                "                                    <img class='speedButton floatRight' src='/images/speedDialFaster.png' title='faster' onclick='clickSpeed(\"faster\")' />\n" +
-                "                           </div>\n" +
-                "                       </div>\n" +
-                "                   </div>\n" +
-                "               </div>\n" +
-                "            </div>\n" +
-                "        </div>\n" +
-                "    </div>\n" +
-                "    <div id='rightColumn'></div>\n" +
-                "</div>\n" +
-                "<div id='promoContainer' class='ogglePromoContainer' onclick='killPromoMessages()'>\n" +
-                "    <div id='promoContainerTitle' class='ogglePromoTitle'></div>\n" +
-                "    <div id='promoContainerText' class='ogglePromoText'></div>\n" +
-                "</div>\n" +
-                "<div id='carouselContextMenu' class='ogContextMenu' onmouseleave='considerHidingContextMenu()'>\n" +
-                "    <div id='ctxModelName' onclick='carouselContextMenuAction(\"showDialog\")'>model name</div>\n" +
-                "    <div id='ctxSeeMore' onclick='carouselContextMenuAction(\"seeMore\")'>See More</div>\n" +
-                "    <div onclick='carouselContextMenuAction(\"explode\")'>Explode</div>\n" +
-                "    <div onclick='carouselContextMenuAction(\"comment\")'>Comment</div>\n" +
-                "    <div onclick='carouselContextMenuAction(\"tags\")'>Tags</div>\n" +
-                "    <div id='ctxMove' onclick='carouselContextMenuAction(\"archive\")'>Archive</div>\n" +
-                "</div>\n";
-        }
-
-        private string PornIndexPageHtml()
-        {
-            return "<div class='threeColumnLayout'>\n" +
-                "    <div id='leftColumn'>\n" +
-                "        <div class='leftColumnList'>\n" +
-                "            <div onclick='window.location.href=\"" + httpLocation + "\"'>OggleBooble</div>\n" +
-                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/Transitions?folder=porn\"'>Transitions</div>\n" +
-                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/BoobsRanker\"'>Boobs Rater</div>\n" +
-                "            <div onclick='showCatListDialog(242)'>Category List</div>\n" +
-                "            <div onclick='window.location.href=\"https://ogglebooble.com/Home/Videos\"'>Videos</div>\n" +
-                "        </div>\n" +
-                "    </div>\n" +
-                "    <div id='middleColumn'>\n" +
-                "        <div id='customMessage' class='displayHidden customMessageContainer'></div>\n" +
-                "        <div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title='porn folders'></div>" +
-                "        <div id='divStatusMessage'></div>\n" +
-                "        <div class='flexContainer'>\n" +
-                "            <div class='floatLeft'>\n" +
-                "                <div class='galleryCheckBox'><input type='checkbox' onchange=\"loadImages(\'sluts\', $(this).is(\':checked\'), 50000)\" /> Include Archive</div>\n" +
-                "            </div>\n" +
-                "            <div class='floatLeft'>\n" +
-                "               <div class='centeredDivShell randomImageContainer'>\n" +
-                "                   <div class='centeredDivInner'>\n" +
-                "                       <div id='categoryTitle' class='floatingLabel' onmouseover='slowlyShowFolderCategoryDialog();" +
-                "                           forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;'></div>\n" +
-                "                       <div id='laCarousel' class='carouselContainer'>\n" +
-                "                           <div id='laCarouselImageContainer' class='carouselImageContainer'>\n" +
-                "                               <img class='carouselImage' src='/images/ingranaggi3.gif' />\n" +
-                "                           </div>\n" +
-                "                           <div class='imgBottom'>\n" +
-                "                                    <img class='speedButton floatLeft' src='/images/speedDialSlower.png' title='slower' onclick='clickSpeed(\"slower\")' />\n" +
-                "                                    <div id='pauseButton' class='pauseButton' onclick='togglePause()'>||</div>\n" +
-                "                                    <div id='categoryLabel' class='carouselCategoryLabel' onclick='clickViewParentGallery()'></div>\n" +
-                "                                    <img class='speedButton floatRight' src='/images/speedDialFaster.png' title='faster' onclick='clickSpeed(\"faster\")' />\n" +
-                "                           </div>\n" +
-                "                       </div>\n" +
-                "                   </div>\n" +
-                "               </div>\n" +
-                "            </div>\n" +
-                "        </div>\n" +
-                "    </div>\n" +
-                "    <div id='rightColumn'></div>\n" +
-                "</div>\n";
-        }
-
-        [HttpGet]
-        public string CreateIndexPage(string rootFolder, string userName, string pageTitle, int metaTagFolderId)
-        {
-            string success = "";
-            try
-            {
-                StringBuilder hardcodedImages = new StringBuilder("<div id='hardcodedImagesContainer' class='displayHidden'>");
-                List<VwLink> vwLinks = null;
-                var timer = new System.Diagnostics.Stopwatch();
-                timer.Start();
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    vwLinks = db.VwLinks.Where(l => l.RootFolder == rootFolder).OrderBy(l => l.LinkId).Take(initialTake).ToList();
-                }
-                for (int i = 0; i < vwLinks.Count; i++)
-                {
-                    hardcodedImages.Append("<img id='image" + i + "' folderName='" + vwLinks[i].FolderName + "' rootFolder='" + vwLinks[i].RootFolder
-                        + "' folderId='" + vwLinks[i].FolderId + "' parentName='" + vwLinks[i].ParentName + "' linkId='" + vwLinks[i].LinkId + "' src='" + vwLinks[i].Link + "'/>\n");
-                }
-                hardcodedImages.Append("</div>");
-
-                timer.Stop();
-                System.Diagnostics.Debug.WriteLine("get VwLinks took: " + timer.Elapsed);
-
-                string staticContent =
-                    "<!DOCTYPE html>\n<html>\n" + HeadHtml(metaTagFolderId, "Welcome") +
-                    "\n<body style='margin-top:105px'>\n" + HeaderHtml(metaTagFolderId);
-
-                if (rootFolder == "boobs")
-                    staticContent += IndexPageHtml();
-                else
-                    staticContent += PornIndexPageHtml();
-
-                staticContent += 
-                    "<script>var staticPageFolderId=" + metaTagFolderId + "; var staticPageRootFolder='" + rootFolder + "';</script>\n" +
-                    "<script src='/scripts/staticIndexPage.js'></script>\n" +
-                    hardcodedImages.ToString() +
-                    LoginDialog() + RegisterDialog() + FooterHtml(rootFolder)+
-                    "<script src='/scripts/StaticPage.js'></script>\n</body>\n</html>";
-
-                success = WriteFileToDisk(staticContent, "", pageTitle);
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
-
+        
         [HttpPut]
         public List<VwLink> AddMoreImages(string rootFolder, int skip, int take)
         {

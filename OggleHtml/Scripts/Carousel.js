@@ -105,21 +105,6 @@ function loadImages(rootFolder, isChecked, skip, take) {
     }
 }
 
-function slowlyShowFolderCategoryDialog() {
-
-    setTimeout(function () {
-        if (forgetShowingCatDialog === false) {
-            pause();
-            folderCategoryDialogIsOpen = true;
-            showCategoryDialog(carouselItemArray[imageIndex].FolderId);
-        }
-    }, 1100);
-    $('#folderCategoryDialog').on('dialogclose', function (event) {
-        folderCategoryDialogIsOpen = false;
-        resume();
-    });
-}
-
 function clickViewGallery() {
     clearInterval(CarouselInterval);
     //alert("clickViewGallery");
