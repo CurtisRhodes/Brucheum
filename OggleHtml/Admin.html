@@ -47,13 +47,15 @@
             <img id="dashBoardLoadingGif" class="loadingGif" src="Images/loader.gif" />
             <div id="divDashboardContainer" class="dashBoardContainer">
                 <div class="leftColumnList">
-                    <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
-                    <div class="clickable" onclick="showCreateNewFolder()">Create New Folder</div>
-                    <div class="clickable" onclick="showMovefolderDialog()">Move Folder</div>
-                    <div class="clickable" onclick="showRenameFolderDialog()">ReName Folder</div>
-                    <div class="clickable" onclick="loadProperties()">loadProperties</div>
-                    <div class="clickable" onclick="showCreateStaticPages()">Create Static Pages</div>
-                    <div class="clickable" onclick="repairLinks()">Repair Links</div>
+                    <div>
+                        <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
+                        <div class="clickable" onclick="showCreateNewFolder()">Create New Folder</div>
+                        <div class="clickable" onclick="showMovefolderDialog()">Move Folder</div>
+                        <div class="clickable" onclick="showRenameFolderDialog()">ReName Folder</div>
+                        <div class="clickable" onclick="loadProperties()">loadProperties</div>
+                        <div class="clickable" onclick="showCreateStaticPages()">Create Static Pages</div>
+                        <div class="clickable" onclick="repairLinks()">Repair Links</div>
+                    </div>
                 </div>
                 <div class="workarea">
                     <div id="divStatusMessage"></div>
@@ -64,7 +66,7 @@
                 <img id="getDirTreeLoadingGif" class="smallLoadingGif" src="/Images/loader.gif" />
             </div>
 
-            <div id="newFolderCrud" class="dashboardToggle" title="Create New Folder">
+            <div id="createNewFolderDialog" class="dashboardToggle" title="Create New Folder">
                 <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
                 <div><span>parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
                 <div class="roundendButton" onclick="createNewFolder()">Create Folder</div>
@@ -104,14 +106,14 @@
             </div>
 
             <!--<div id="videoCrud" class="dashboardToggle">
-                <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
-                <div class="floatingCrudContainer">
-                    <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
-                    <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
-                    <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
-                    <div class="roundendButton" onclick="addVideo()">Insert</div>
-                </div>
-            </div>-->
+        <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
+        <div class="floatingCrudContainer">
+            <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
+            <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
+            <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
+            <div class="roundendButton" onclick="addVideo()">Insert</div>
+        </div>
+    </div>-->
         </div>
         <div id="rightColumn"></div>
     </div>
@@ -151,7 +153,7 @@
                 hide: { effect: "blind" },
                 width: "400"
             });
-            $('#newFolderCrud').dialog({
+            $('#createNewFolderDialog').dialog({
                 autoOpen: false,
                 show: { effect: "fade" },
                 hide: { effect: "blind" },
@@ -197,7 +199,7 @@
         }
 
         function showCreateNewFolder() {
-            $('#newFolderCrud').dialog("open");
+            $('#createNewFolderDialog').dialog("open");
         }
 
         function showMovefolderDialog() {

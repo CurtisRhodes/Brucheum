@@ -200,9 +200,12 @@ function createNewFolder() {
         success: function (successModel) {
             $('#dashBoardLoadingGif').hide();
             if (successModel.Success === "ok") {
-                displayStatusMessage("ok", "new folder created");
-                buildDirectoryTree();
-                $('#newFolderCrud').dialog("close");
+                displayStatusMessage("ok", "new folder " + newFolder.FolderName + " created");
+                //buildDirectoryTree();
+                //$('#newFolderCrud').dialog("close");
+                $('#txtNewFolderTitle').val('');
+                $('#txtNewFolderTitle').text('');
+                
             }
             else
                 alert("CreateVirtualFolder: " + successModel.Success);
@@ -213,6 +216,12 @@ function createNewFolder() {
         }
     });
 }
+
+$('#createNewFolderDialog').keydown(function (event) {
+    if (event.keyCode === 13) {
+        createNewFolder();
+    }
+});
 
 function loadProperties() {
     $('#dataifyInfo').show().html("adding size info");
