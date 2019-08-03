@@ -17,14 +17,14 @@
     position: absolute;
     display: none;
     background-color: var(--oggleBackgroundColor);
-    z-index: 110;
+    z-index: 30;
 }
 
 .hiddeClickArea {
     position: absolute;
     height: 100%;
     width: 50%;
-    z-index: 115;
+    z-index: 35;
 }
 
 .imageViewerHeaderRow {

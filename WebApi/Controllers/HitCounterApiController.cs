@@ -143,7 +143,7 @@ namespace WebApi
                         visitor.UserName = userName;
                         visitor.AppName = appName;
                         visitor.IpAddress = ipAddress;
-                        visitor.CreateDate = DateTime.Now;
+                        visitor.VisitDate = DateTime.Now;
 
                         db.Visitors.Add(visitor);
                         db.SaveChanges();
@@ -163,7 +163,7 @@ namespace WebApi
                         Visit lastVisit = db.Visits.Where(v => v.VisitorId == visitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault();
                         if (lastVisit != null)
                         {
-                            if ((DateTime.Now - lastVisit.VisitDate).TotalHours < 5)
+                            if ((DateTime.Now - lastVisit.VisitDate).TotalHours < 24)
                             {
                                 logVisit = false;
                                 success.ReturnValue = "";

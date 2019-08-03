@@ -42,7 +42,7 @@ function setSignalR() {
             console.log('Now connected, connection ID=' + connection.id);
         })
         .fail(function () {
-            alert('signalr Could not connect')
+            alert('signalr Could not connect');
             console.log('signalr Could not connect');
         });
 }

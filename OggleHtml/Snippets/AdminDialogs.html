@@ -1,5 +1,13 @@
-﻿
-<div id="modelInfoDialog" class="displayHidden" onmouseleave="considerClosingModelInfoDialog()">
+﻿<style>
+    .oggleDialogWindow {
+        border: solid thin #777;
+        border-radius: 6px;
+        box-shadow: 10px 10px rgba(95, 12, 12, 0.5);
+        display: none;
+    }
+</style>
+
+<div id="modelInfoDialog" class="oggleDialogWindow" onmouseleave="considerClosingModelInfoDialog()">
     <div id="modelInfoEditArea" class="displayHidden">
         <div class="flexContainer">
             <div class="floatLeft">
@@ -26,18 +34,16 @@
     <a id="modelInfoEdit" class="dialogEditButton" href="javascript:toggleMode()">Edit</a>
 </div>
 
-<div class="moveCopyDialogContainer">
-    <div id="moveCopyDialog" title="">
-        <div class="inline"><img id="copyDialogImage" class="copyDialogImage" /></div>
-        <div id="dirTreeResults" class="pusedoTextBox"></div>
-        <div class="inline"><img class="moveDialogDirTreeButton" src="Images/caretDown.png" onclick="$('#moveDialogDirTree').show()" /></div>
-        <br />
-        <div id="moveDialogDirTree" class="hideableDropDown"></div>
-        <div id="btnGo" class="roundendButton" onclick="ftpMoveCopy()">Copy</div>
-    </div>
+<div id="moveCopyDialog" class="oggleDialogWindow" title="">
+    <div class="inline"><img id="copyDialogImage" class="copyDialogImage" /></div>
+    <div id="dirTreeResults" class="pusedoTextBox"></div>
+    <div class="inline"><img class="moveDialogDirTreeButton" src="Images/caretDown.png" onclick="$('#moveDialogDirTree').show()" /></div>
+    <br />
+    <div id="moveDialogDirTree" class="hideableDropDown"></div>
+    <div id="btnGo" class="roundendButton" onclick="ftpMoveCopy()">Copy</div>
 </div>
 
-<div id="removeLinkDialog" title="Remove Image" class="displayHidden">
+<div id="removeLinkDialog" class="oggleDialogWindow" title="Remove Image">
     <div><input type="radio" value="DUP" name="rdoRejectImageReasons" checked="checked" />  duplicate</div>
     <div><input type="radio" value="BAD" name="rdoRejectImageReasons" />  bad link</div>
     <div><input type="radio" value="LOW" name="rdoRejectImageReasons" />  low quality</div>
@@ -47,7 +53,7 @@
     </div>
 </div>
 
-<div id="imageCommentDialog" class="displayHidden commentDialog" title="Write a fantasy about this image">
+<div id="imageCommentDialog" class="oggleDialogWindow" title="Write a fantasy about this image">
     <div id="divStatusMessage"></div>
     <div class="center"><img id="commentDialogImage" class="commentDialogImage" /></div>
     <div><input id="txtCommentTitle" class="roundedInput commentTitleText" tabindex="1" placeholder="Give your comment a title" /></div>
@@ -56,8 +62,7 @@
     <div id="commentInstructions" class="commentDialogInstructions inline">log in to view comments</div>
 </div>
 
-
-<div id="folderCategoryDialog" class="displayHidden" title="" onmouseleave="considerClosingCategoryDialog()">
+<div id="folderCategoryDialog" class="oggleDialogWindow" title="" onmouseleave="considerClosingCategoryDialog()">
 
     <div id="metatabRow" class="metaTagRow">
         <input id="txtMetatag" onblur="addMetaTag" />
@@ -69,7 +74,7 @@
 
 </div>
 
-<div id="metaTagDialog" class="displayHidden" title="">
+<div id="metaTagDialog" class="oggleDialogWindow" title="">
     <label>Tag</label>
     <input id="txtMetaTag" class="roundedInput tagInput" onblur="blurMetaTag()" />
     <div class="flexContainer">
@@ -80,4 +85,11 @@
             <div id="metaTagsAvailableList" class="metaTagAvailableListArea"></div>
         </div>
     </div>
+</div>
+
+<div id="modalContainer" class="modalVail">
+    <div id="modalContent" class="modalContentStyle"></div>
+</div>
+<div id="dirTreeImageContainer" class="floatingDirTreeImage">
+    <img id="dirTreeImage" />
 </div>

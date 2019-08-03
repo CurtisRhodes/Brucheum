@@ -24,7 +24,7 @@
         public string UserName { get; set; }
         public string IpAddress { get; set; }
         public string AppName { get; set; }
-        public DateTime CreateDate { get; set; }
+        public DateTime VisitDate { get; set; }
         [Key]
         public string VisitorId { get; set; }
     }
@@ -36,7 +36,7 @@
         public DateTime VisitDate { get; set; }
     }
 
-    [Table("login.RegisteredUser")]
+    [Table("webStats.RegisteredUser")]
     public partial class RegisteredUser
     {
         [Key]
@@ -50,7 +50,7 @@
         public DateTime CreateDate { get; set; }
     }
 
-    [Table("login.UserRole")]
+    [Table("webStats.UserRole")]
     public partial class UserRole
     {
         [Key]
@@ -61,7 +61,7 @@
         public string RoleId { get; set; }
     }
 
-    [Table("login.Role")]
+    [Table("webStats.Role")]
     public partial class Role
     {
         [Key]

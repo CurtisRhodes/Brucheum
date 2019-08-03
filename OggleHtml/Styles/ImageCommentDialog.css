@@ -1,8 +1,4 @@
-﻿.commentDialog {
-    z-index: 820;
-}
-
-.commentDialogContentArea {
+﻿.commentDialogContentArea {
     background-color: var(--oggleBackgroundColor);
 }
 
@@ -27,3 +23,6 @@
     width: 100%;
 }
 
+.center {
+    text-align: center;
+}

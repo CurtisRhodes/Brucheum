@@ -23,8 +23,8 @@ $(document).ready(function () {
     resizeStaticPage();
     var waiter = setInterval(function () {
         if (settingsArray.ApiServer === undefined) {
-           //dots += ". ";
-            $('#dots').html(dots);
+           dots += ". ";
+           // $('#dots').html(dots);
         }
         else {
             clearInterval(waiter);

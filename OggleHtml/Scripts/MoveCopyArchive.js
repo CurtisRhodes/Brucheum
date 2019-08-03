@@ -1,8 +1,5 @@
 ﻿var MoveCopyImageModel = {};
 
-$(function () {
-});
-
 function showMoveCopyDialog(mode, link, folderId) {
     MoveCopyImageModel.Mode = mode;
     MoveCopyImageModel.Link = link;

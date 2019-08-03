@@ -49,12 +49,6 @@
         </div>
         <div id="rightColumn"></div>
     </div>
-    <div id="modalContainer" class="modalVail">
-        <div id="modalContent" class="modalContentStyle"></div>
-    </div>
-    <div id="dirTreeImageContainer" class="floatingDirTreeImage">
-        <img id="dirTreeImage" />
-    </div>
 
     <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut(); $('#linkInfo').hide();">
         <div id="ctxModelName" onclick="contextMenuAction('show')">model name</div>
@@ -97,7 +91,7 @@
                     clearInterval(waiter);
                     var cookieName = getCookie();
 
-                    if (cookieName == "xxx") {
+                    if (cookieName == "") {
                         directToStaticPage(params.folder)
                     }
                     else {

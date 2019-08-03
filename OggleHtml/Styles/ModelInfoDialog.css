@@ -1,9 +1,4 @@
-﻿.modelInfoContainer {
-    top: 188px;
-    z-index: 150;
-}
-
-.smallTextArea {
+﻿.smallTextArea {
     height: 121px;
     width: 100%;
     background-color: #f7eef7;

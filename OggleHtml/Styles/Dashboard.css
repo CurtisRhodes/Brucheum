@@ -44,6 +44,7 @@
     left: 150px;
     top: 200px;
     height: 140px;
+    display: none;
 }
 
 .addLinkCrudArea {

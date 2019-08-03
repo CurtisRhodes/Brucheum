@@ -172,6 +172,7 @@ function logVisit() {
     });
 }
 function logPageHit(folderName, appName) {
+    //alert("logPageHit(" + folderName + "," + appName + ")");
     $('#footerMessage').html("logging page hit");
     var userName = getCookie("User");
     if (userName === "")
@@ -293,6 +294,18 @@ function getHeader(subdomain) {
         "           <div class='headerSubTitle' id='headerSubTitle'>Every Playboy Centerfold" +
         "            </div>\n" +
         "        </div>\n";
+    }
+    if (subdomain === "admin") {
+        headerHtml =
+            "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
+            "       <a href='/'><img src='Images/redballon.png' class='bannerImage' /></a>\n" +
+            "   </div>\n" +
+            "   <div class='headerBodyContainer'>\n" +
+            "       <div class='headerTopRow'>\n" +
+            "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
+            "           <div class='headerSubTitle' id='headerSubTitle'>Admin" +
+            "            </div>\n" +
+            "        </div>\n";
     }
 
     if (subdomain === "porn" || subdomain === "sluts") {

@@ -11,6 +11,7 @@
     <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js' type="text/javascript"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
+    <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/Carousel.js"></script>
     <script src="Scripts/DirTree.js"></script>
@@ -22,15 +23,18 @@
 
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
     <link href="Styles/loginDialog.css" rel="stylesheet" />
+    <link href="Styles/Header.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet" />
     <link href="Styles/Carousel.css" rel="stylesheet" />
     <link href="Styles/ImagePage.css" rel="stylesheet" />
     <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
     <link href="Styles/ModelInfoDialog.css" rel="stylesheet" />
-    <link href="Styles/CommentDialog.css" rel="stylesheet" />
-    <link href="Styles/CategoryDialog.css" rel="stylesheet" />
+    <!--
     <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
-
+    <link href="Styles/ImageCommentDialog.css" rel="stylesheet" />
+    <link href="Styles/ImageCategoryDialog.css" rel="stylesheet" />
+    <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
+    -->
     <!--<script src="/signalr/hubs"></script>-->
     <!--<script src="Scripts/jquery.signalR-2.4.1.min.js"></script>-->
     <link href="Styles/Dashboard.css" rel="stylesheet" />
@@ -38,7 +42,7 @@
 
 </head>
 <body>
-    <div w3-include-html="Snippets/BoobsHeader.html"></div>
+    <header></header>
     <div class="threeColumnLayout">
         <div id="leftColumn">
             <!--//$('#headerMessage').html(`Dashboard <dir class='linkContainer'></dir>`);-->
@@ -106,14 +110,14 @@
             </div>
 
             <!--<div id="videoCrud" class="dashboardToggle">
-        <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
-        <div class="floatingCrudContainer">
-            <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
-            <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
-            <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
-            <div class="roundendButton" onclick="addVideo()">Insert</div>
-        </div>
-    </div>-->
+                <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
+                <div class="floatingCrudContainer">
+                    <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
+                    <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
+                    <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
+                    <div class="roundendButton" onclick="addVideo()">Insert</div>
+                </div>
+            </div>-->
         </div>
         <div id="rightColumn"></div>
     </div>
@@ -125,8 +129,6 @@
     <script>
         $(document).ready(function () {
             includeHTML();
-            $('#getDirTreeLoadingGif').hide();
-            $('#dashBoardLoadingGif').hide();
 
             var dots = ""
             var waiter = setInterval(function () {
@@ -136,6 +138,7 @@
                 }
                 else {
                     clearInterval(waiter);
+                    getHeader("admin");
                     buildDirectoryTree();
                     logPageHit("Admin", "OggleHtml");
                 }

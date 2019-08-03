@@ -68,7 +68,7 @@ namespace WebApi.Controllers
                     "var staticPageFolderName='" + folderName + "'; " +
                     "var staticPageImagesCount='" + imagesCount + "'; " +
                     "var staticPageRootFolder='" + rootFolder + "';</script>\n" +
-                    ImageViewer() + LoginDialog() + RegisterDialog() + FooterHtml(rootFolder) +
+                    Slideshow() + LoginDialog() + RegisterDialog() + FooterHtml(rootFolder) +
                     "<script src='/scripts/StaticPage.js'></script>\n" +
                     "\n</body>\n</html>";
 
@@ -148,6 +148,7 @@ namespace WebApi.Controllers
                 "   <link rel='icon' type='image/png' href='/static/favicon.png' />" +
                 "   <script src='/Scripts/Login.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Common.js' type='text/javascript'></script>\n" +
+                "   <script src='/Scripts/Album.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Slideshow.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/ImageCommentDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/CategoryDialog.js' type='text/javascript'></script>\n" +
@@ -306,63 +307,45 @@ namespace WebApi.Controllers
             bodyHtml +=
                 "   </div>\n" +
                 "       <div id='fileCount' class='countContainer'></div>\n" +
-
-                //<div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut(); $('#linkInfo').hide();">
-                //    <div id="ctxModelName" onclick="contextMenuAction('show')">model name</div>
-                //    <div id="ctxSeeMore" onclick="contextMenuAction('jump')">see more of her</div>
-                //    <div onclick="contextMenuAction('comment')">Comment</div>
-                //    <div onclick="contextMenuAction('explode')">explode</div>
-                //    <div onclick="contextMenuAction('showLinks')">Show Links</div>
-                //    <div id="linkInfo" class="innerContextMenuInfo">
-                //        <div id="linkInfoContainer"></div>
-                //    </div>
-
                 "       <div id='thumbImageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut();'>\n" +
                 "           <div id='ctxModelName' onclick='contextMenuActionShow()'>model name</div>\n" +
                 "           <div id='ctxSeeMore' onclick='contextMenuAction(\"jump\")'>see more of her</div>\n" +
                 "           <div onclick='contextMenuAction(\"comment\")'>comment</div>\n" +
                 "           <div onclick='contextMenuAction(\"explode\")'>explode</div>\n" +
-                "       </div>\n" +
+                "           <div onclick= 'contextMenuAction(\"showLinks\")' > Show Links</div>\n" +
+                "           <div id='linkInfo' class='innerContextMenuInfo'>\n" +
+                "               <div id='linkInfoContainer'></div>\n" +
+                "           </div>\n" +
+                "      </div>\n" +
                 "   </div>\n" +
                 "<div id='rightColumn'></div>\n" +
             "</div>";
             return bodyHtml;
         }
 
-        private string ImageViewer()
+        private string Slideshow()
         {
             return
-             "\n<div id = 'imageViewerDialog' class='fullScreenViewer'>\n" +
-               "<div id = 'viewerButtonsRow' class='imageViewerHeaderRow'>\n" +
-                  "<div class='viewerButtonsRowSection'>\n" +
-                    "<img id = 'imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/images/comment.png' />" +
-                  "</div>\n" +
-                  "<span id = 'imageViewerHeaderTitle' class='imageViewerTitle'></span>" +
-                  "<div class='viewerButtonsRowSection'>" +
-                    "<div class='floatRight' style='margin-left: 44px;' onclick=\"$('#imageViewerDialog').effect('blind', {mode:'hide', direction:'vertical' }, 500); viewerShowing = 'false';\">" +
-                      "<img src='/images/close.png' />" +
+            "\n<div id='imageViewerDialog' class='fullScreenViewer'>\n" +
+                "<div id = 'viewerButtonsRow' class='imageViewerHeaderRow'>\n" +
+                    "<div class='viewerButtonsRowSection'>\n" +
+                        "<img id = 'imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/images/comment.png' />" +
                     "</div>\n" +
-                     "<div class='floatRight' onclick=\"runSlideShow('faster')\"><img id='fasterSlideshow' title='faster slideshow' src='/images/slideshowFaster.png' /></div>\n" +
-                      "<div class='floatRight' onclick=\"runSlideShow('start')\"><img id='showSlideshow' title='start slideshow' src='/images/slideshow.png' /></div>\n" +
-                      "<div class='floatRight' onclick=\"runSlideShow('slower')\"><img id='slowerSlideShow' title='slower slideshow' src='/images/slideshowSlower.png' /></div>\n" +
-                     "<div class='floatRight' onclick=\"blowupImage()\"><img class='popoutBox' src='/images/expand02.png' /></div>\n" +
-                  "</div>\n" +
-               "</div>\n" +
-               "<div id = 'leftClickArea' onclick='slide(\"prev\")' class='hiddeClickArea'></div>" +
-               "<div id = 'rightClickArea' onclick='slide(\"next\")' class='hiddeClickArea'></div>\n" +
-               "<div id = 'viewerImageContainer' class='expandoImageDiv'>\n" +
-                "<img id = 'viewerImage' class='expandoImage'/>\n" +
-               "</div>" +
-             "</div>\n" +
-
-            //staticPageContextMenu
-
-            "<div id='imageViewerContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut();'>\n" +
-                "<div id='ctxImageViewerModelName' onclick='imageViewerContextMenuAction(\"show\")'>model name</div>\n" +
-                "<div id='ctxImageViewerSeeMore' onclick= 'imageViewerContextMenuAction(\"jump\")'>see more of her</div>\n" +
-                "<div onclick='imageViewerContextMenuAction(\"comment\")'>Comment</div>\n" +
-                "<div onclick='imageViewerContextMenuAction(\"explode\")'>Explode</div>\n" +
-            "</div>\n";
+                    "<span id = 'imageViewerHeaderTitle' class='imageViewerTitle'></span>" +
+                    "<div class='viewerButtonsRowSection'>" +
+                        "<div class='floatRight' style='margin-left: 44px;' onclick='closeViewer();'><img src='/images/close.png' /></div>\n" +
+                        "<div class='floatRight' onclick=\"runSlideShow('faster')\"><img id='fasterSlideshow' title='faster slideshow' src='/images/slideshowFaster.png' /></div>\n" +
+                        "<div class='floatRight' onclick=\"runSlideShow('start')\"><img id='showSlideshow' title='start slideshow' src='/images/slideshow.png' /></div>\n" +
+                        "<div class='floatRight' onclick=\"runSlideShow('slower')\"><img id='slowerSlideShow' title='slower slideshow' src='/images/slideshowSlower.png' /></div>\n" +
+                        "<div class='floatRight' onclick=\"blowupImage()\"><img class='popoutBox' src='/images/expand02.png' /></div>\n" +
+                    "</div>\n" +
+                "</div>\n" +
+                "<div id='leftClickArea' class='hiddeClickArea' oncontextmenu='slideshowContexMenu()' onclick='slide(\"prev\")'></div>" +
+                "<div id='rightClickArea' class='hiddeClickArea' oncontextmenu='slideshowContexMenu()' onclick='slide(\"next\")' ></div>\n" +
+                "<div id='viewerImageContainer' class='expandoImageDiv'>\n" +
+                    "<img id='viewerImage' class='expandoImage'/>\n" +
+                "</div>\n" +
+             "</div>\n";
         }
 
         private string CommentDialog()

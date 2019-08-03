@@ -75,7 +75,10 @@ function validateRegister() {
 }
 
 function onLogoutClick() {
-    document.cookie = "OggleUser=''; User=''; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+
+    document.cookie = "User=; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+
+
     $('#optionLoggedIn').hide();
     $('#optionNotLoggedIn').show();
 }
@@ -144,8 +147,9 @@ function profilePease() {
 }
 
 
-function getUserPermissions(userName) {
+function getUserPermissions() {
 
+    var userName = getCookie();
     if (userName !== "unknown") {
         $('.loginRequired').show();
 

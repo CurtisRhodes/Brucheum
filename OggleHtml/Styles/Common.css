@@ -53,7 +53,7 @@ body {
 .modalVail {
     display: none; /*Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 25; /* Sit on top */
+    z-index: 19; /* Sit on top */
     top: 0;
     width: 100%; /* Full width */
     height: 100%; /* Full height */
@@ -118,7 +118,7 @@ body {
 .floatingDirTreeImage {
     position: absolute;
     display: none;
-    z-index: 200;
+    z-index: 20;
 }
 
     .floatingDirTreeImage img {
@@ -245,7 +245,7 @@ footer {
     border: solid 2px #923c76;
     padding: 8px 10px;
     display: none;
-    z-index: 120;
+    z-index: 20;
 }
 
     .ogContextMenu div {
@@ -290,7 +290,7 @@ footer {
 
 .customMessageContainer {
     position: fixed;
-    z-index: 200;
+    z-index: 20;
     margin: 20px;
     display: none;
 }
