@@ -18,7 +18,7 @@ function resizeDashboardPage() {
     else
         $('#footerMessage').html("_");
 
-    $('#divDashboardContainer').height($('#middleColumn').height() - 150);
+    $('#divDashboardContainer').height($('#middleColumn').height() - 80);
     $('.floatingCrud').width($('.workarea').width() - 100);
 }
 
