@@ -115,14 +115,20 @@ function postLogin() {
                     getUserPermissions($('#txtLoginUserName').val());
                 }
                 else
-                    $('#loginValidationSummary').html(response).show();
+
+                    $('#loginValidationSummary').html(success).show();
             },
             error: function (jqXHR, exception) {
                 alert("validateLogin XHR error: " + settingsArray.ApiServer + "api/Login/VerifyLogin?userName" + $('#txtLoginUserName').val() + "&passWord=" + $('#txtLoginClearPassword').val() + "  " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     }
+    else {
+
+        alert("");
+    }
 }
+
 function validateLogin() {
     if ($('#txtLoginUserName').val() === "") {
         $('#errLoginUserName').show();

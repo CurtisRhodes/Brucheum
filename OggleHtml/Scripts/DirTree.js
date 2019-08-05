@@ -44,7 +44,7 @@ function recurrBuildDirTree(dir, treeId) {
     var expandClass = "";
     $.each(dir.SubDirs, function (idx, subDir) {
         if (isNullorUndefined(subDir.Link))
-            imgSrc = "http://boobs.ogglebooble.com/redballon.png";
+            imgSrc = "Images/redballon.png";
         else
             imgSrc = subDir.Link;
 

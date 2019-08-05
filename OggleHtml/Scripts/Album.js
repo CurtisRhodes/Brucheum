@@ -32,12 +32,7 @@ function getAlbumPageHeader(folderId) {
         url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=" + folderId,
         success: function (successModel) {
             if (successModel.Success === "ok") {
-
-                //alert("getAlbumImages(" + params.folder + ")");
-                //alert("successModel.ReturnValue: " + successModel.ReturnValue);
-
                 getHeader(successModel.ReturnValue);
-
             }
             else
                 alert("getAlbumPageHeader " + successModel.Success);
@@ -137,6 +132,11 @@ function processImages(imageLinksModel) {
     //  SUBFOLDERS
     $('#imageContainer').html('');
     $.each(imageLinksModel.SubDirs, function (idx, subDir) {
+        if (subDir.Link === null) {
+            //alert("subDir: " + subDir.DirectoryName + "  Link==null");
+            subDir.Link = "Images/redballon.png";
+        }
+
         $('#imageContainer').append("<div class='" + imageFrameClass + "' onclick=window.location.href='/album.html?folder=" + subDir.FolderId + "'>" +
             "<img class='folderImage' src='" + subDir.Link + "'/>" +
             //"<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "</div></div>");
@@ -204,8 +204,6 @@ function startSlideShow(imageIndex) {
     var imageArray = new Array();
     var lnk;
     $('#imageContainer').children().each(function () {
-        //lnk = $(this).find("img").attr("src");
-        //LinkId: lnk.substr(lnk.lastIndexOf("_") + 1, 36),
         imageArray.push({            
             Id: $(this).attr("id"),
             Link: $(this).find("img").attr("src")
@@ -370,29 +368,24 @@ function contextMenuAction(action) {
             $("#thumbImageContextMenu").fadeOut();
             showMoveCopyDialog("Archive", selectedImage, currentFolderId);
             //showMoveCopyDialog("Archive", $('#' + selectedImageLinkId + '').attr("src"), currentFolderId);
-            $('#moveCopyDialog').on('dialogclose', function (event) {
-                if (viewerShowing)
-                    slide("next");
-                getAlbumImages(currentFolderId);
-            });
+            //$('#moveCopyDialog').on('dialogclose', function (event) {
+            //    if (viewerShowing)
+            //        slide("next");
+            //    getAlbumImages(currentFolderId);
+            //});
             break;
         case "copy":
             $("#thumbImageContextMenu").fadeOut();
             showMoveCopyDialog("Copy", selectedImage, currentFolderId);
-            $('#moveCopyDialog').on('dialogclose', function (event) {
-                if (viewerShowing)
-                    slide("next");
-                getAlbumImages(currentFolderId);
-            });
             break;
         case "move":
             $("#thumbImageContextMenu").fadeOut();
             showMoveCopyDialog("Move", selectedImage, currentFolderId);
-            $('#moveCopyDialog').on('dialogclose', function (event) {
-                if (viewerShowing)
-                    slide("next");
-                getAlbumImages(currentFolderId);
-            });
+            //$('#moveCopyDialog').on('dialogclose', function (event) {
+            //    if (viewerShowing)
+            //        slide("next");
+            //    getAlbumImages(currentFolderId);
+            //});
             break;
         case "remove":
             $("#thumbImageContextMenu").fadeOut();

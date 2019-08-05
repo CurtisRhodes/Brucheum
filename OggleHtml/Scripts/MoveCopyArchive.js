@@ -22,7 +22,15 @@ function showMoveCopyDialog(mode, link, folderId) {
     $('#moveCopyDialog').dialog("open");
     $('#moveCopyDialogContainer').show();
     $('#moveCopyDialog').dialog('option', 'title', mode + " Image Link");
+    $('#moveCopyDialog').on('dialogclose', function (event) {
+        if (typeof getAlbumImages === 'function') {
+            getAlbumImages(folderId);
+            if (viewerShowing)
+                slide("next");
+        }
+    });
 }
+
 
 function ftpMoveCopy() {
    // alert("MoveCopyImageModel.DestinationFolderId: " + MoveCopyImageModel.DestinationFolderId);
@@ -31,19 +39,23 @@ function ftpMoveCopy() {
         type: "PUT",
         url: settingsArray.ApiServer + "/api/MoveImage/MoveImage",
         data: MoveCopyImageModel,
-        success: function (success) {
+        success: function (successModel) {
             $('#imagePageLoadingGif').hide();
-            if (success === "ok") {
-                displayStatusMessage("ok", "image moved to " + $('#dirTreeResults').html());
-                displayStatusMessage("ok", "link coppyed to " + $('#dirTreeResults').html());
+            if (successModel.Success === "ok") {
+                displayStatusMessage("ok", "link " + MoveCopyImageModel.Mode + "ed to " + $('#dirTreeResults').html());
                 $('#moveCopyDialog').dialog("close");
 
-                if (typeof getImageLinks === 'function') {
-                    getImageLinks();
+                //alert("successModel.ReturnValue: " + successModel.ReturnValue);
+
+                if (successModel.ReturnValue === "0") {
+                    var linkId = MoveCopyImageModel.Link.substr(MoveCopyImageModel.Link.lastIndexOf("_") + 1, 36);
+                    //alert("set folder image: " + linkId + "," + MoveCopyImageModel.SourceFolderId);
+                    setFolderImage(linkId, MoveCopyImageModel.DestinationFolderId, "folder");
+
                 }
             }
             else {
-                alert("ftp Move " + success);
+                alert("ftp Move " + successModel.Success);
             }
         },
         error: function (xhr) {
