@@ -302,14 +302,20 @@ function ctxSAP(imgId) {
     var thisImageDiv = $('#' + imgId + '');
     var sstring = thisImageDiv.html();
     selectedImageLinkId = sstring.substr(sstring.lastIndexOf("_") + 1, 36);
-    //alert("selectedImageLinkId: " + selectedImageLinkId);
-    var picpos = thisImageDiv.offset();
-    var picLeft = Math.max(0, picpos.left + thisImageDiv.width() - $('#thumbImageContextMenu').width() - 50);
-    $('#thumbImageContextMenu').css("top", picpos.top + 5);
-    $('#thumbImageContextMenu').css("left", picLeft);
+
+    if (viewerShowing) {
+        $('#thumbImageContextMenu').css("top", event.clientY + 5);
+        $('#thumbImageContextMenu').css("left", event.clientX);
+    }
+    else {
+        var picpos = thisImageDiv.offset();
+        var picLeft = Math.max(0, picpos.left + thisImageDiv.width() - $('#thumbImageContextMenu').width() - 50);
+        $('#thumbImageContextMenu').css("top", picpos.top + 5);
+        $('#thumbImageContextMenu').css("left", picLeft);
+    }
+
     if (!isPornEditor)
         $('.adminLink').hide();
-
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/ImageCategoryDetail/GetModelName?linkId=" + selectedImageLinkId,
