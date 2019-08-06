@@ -342,7 +342,6 @@ function getHeader(subdomain) {
         "               <div id='btnLayoutLogin' class='menuTab floatRight'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
         "           </div>\n" +
         "           <div class='menuTabs' id='adminTabs'>\n" +
-        "              <div id='menuTabUpload' class='menuTab displayHidden loginRequired floatRight'><a href='/Upload.html'>Upload</a></div>\n" +
         "              <div id='menuTabAdmin' class='menuTab  displayHidden loginRequired floatRight'><a href='/Admin.html'>Admin</a></div>\n" +
         "           </div>\n" +
         "       </div>\n" +

@@ -60,7 +60,8 @@ function getBreadCrumbs(folderId) {
                         if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder) {
                             $('#breadcrumbContainer').append("<a class='inactiveBreadCrumb' " +
                                 //"onmouseover='slowlyShowCatDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + "); forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;' >" +
-                                "onclick='showCategoryDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + ");' >" +
+                                "onclick='showHomeFolderInfoDialog(" + Number(breadCrumbModel.BreadCrumbs.length - i) + ",\"" + breadCrumbModel.FolderName + "\",\"" + breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" + breadCrumbModel.RootFolder + "\")' >" +
+                                //"onclick='showCategoryDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + ");' >" +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                         else {
@@ -71,13 +72,10 @@ function getBreadCrumbs(folderId) {
                     }
                 }
                 currentfolderName = breadCrumbModel.FolderName;
-                document.title = currentfolderName + ": OggleBooble";
+                document.title = currentfolderName + " : OggleBooble";
                 logPageHit(currentfolderName, "OggleHtml");
                 if (getCookie() === "")
                     isPornEditor = false;
-
-
-
             }
             else
                 alert("getBreadCrumbs " + breadCrumbModel.Success);
@@ -87,6 +85,17 @@ function getBreadCrumbs(folderId) {
             alert("getBreadCrumbs jqXHR : " + getXHRErrorDetails(jqXHR, exception));
         }
     });
+}
+
+function showHomeFolderInfoDialog(index, folderName, folderId, rootFolder) {
+    //alert("showHomeFolderInfoDialog(" + folderId + "," + rootFolder + ")");
+    //alert("index: " + index);
+    if (rootFolder === "playboy" && index > 4) {
+        //showModelInfoDialog(modelName, folderId, currentSrc)
+        showModelInfoDialog(folderName, folderId, 'Images/redballon.png');
+    }
+    else
+        showCategoryDialog(folderId);
 }
 
 function getAlbumImages(folderId) {
@@ -316,6 +325,7 @@ function ctxSAP(imgId) {
 
     if (!isPornEditor)
         $('.adminLink').hide();
+
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/ImageCategoryDetail/GetModelName?linkId=" + selectedImageLinkId,
@@ -331,11 +341,18 @@ function ctxSAP(imgId) {
                     //alert("modelDetails: " + modelDetails.FolderName + "  curren: " + currentfolderName);
                     $('#ctxModelName').html(modelDetails.FolderName);
 
-
+                
                 if (modelDetails.RootFolder === "archive" && currentFolderRoot !== "archive")
                     $('#ctxSeeMore').show();
                 else
                     $('#ctxSeeMore').hide();
+
+                if (modelDetails.RootFolder === "playboy") {
+                    $('#ctxModelName').html(modelDetails.FolderName);
+                    $('#ctxSeeMore').hide();
+                }
+
+
             }
             else
                 alert("GetModelName: " + modelDetails.Success);

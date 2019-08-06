@@ -8,45 +8,6 @@ var dashboardMainSelectedPath = "";
 var partialViewSelectedItemId = 0;
 var dashboardContextMenuFolderId = "";
 
-function resizeDashboardPage() {
-    resizePage();
-    var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);
-    if (workAreaHeight > $('#middleColumn').height()) {
-        $('#middleColumn').height(workAreaHeight);
-        $('#footerMessage').html("middleColumn.height: " + $('#middleColumn').height()); //image height: " + $('#imgLinkPreview').height());
-    }
-    else
-        $('#footerMessage').html("_");
-
-    $('#divDashboardContainer').height($('#middleColumn').height() - 80);
-    $('.floatingCrud').width($('.workarea').width() - 100);
-}
-
-function setSignalR() {
-
-    var connection = $.hubConnection(service);
-
-    var progressHubProxy = connection.createHubProxy('ProgressHub');
-
-    progressHubProxy.on('PostToClient', function (data) {
-        $('#dataifyInfo').html(data);
-    });
-
-    progressHubProxy.on('ShowProgressBar', function (goal, progress) {
-        $('#progressBar').progressbar({ value: progress, max: goal });
-    });
-
-
-    connection.start({ jsonp: true })
-        .done(function () {
-            console.log('Now connected, connection ID=' + connection.id);
-        })
-        .fail(function () {
-            alert('signalr Could not connect');
-            console.log('signalr Could not connect');
-        });
-}
-
 function buildDirectoryTree() {
     $('#dirTreeContainer').html("");
     //$('#getDirTreeLoadingGif').show();
@@ -205,7 +166,7 @@ function createNewFolder() {
                 //$('#newFolderCrud').dialog("close");
                 $('#txtNewFolderTitle').val('');
                 $('#txtNewFolderTitle').text('');
-                
+
             }
             else
                 alert("CreateVirtualFolder: " + successModel.Success);
@@ -216,12 +177,6 @@ function createNewFolder() {
         }
     });
 }
-
-$('#createNewFolderDialog').keydown(function (event) {
-    if (event.keyCode === 13) {
-        createNewFolder();
-    }
-});
 
 function loadProperties() {
     $('#dataifyInfo').show().html("adding size info");
@@ -304,7 +259,20 @@ function renameFolder() {
     var start = Date.now();
     $('#dashBoardLoadingGif').fadeIn();
     $('#dataifyInfo').show().html("renaming folder " + $('.txtLinkPath').val() + " to " + $('#txtReName').val());
-    $('#renameFolderReport').html("");
+    //$('#renameFolderReport').html("");
+    //setTimeout(function () {
+    //    $('#dataifyInfo').html("Rename took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+
+    //    $('#dataifyInfo').append(", Rows Processed: " + repairReport.RowsProcessed);
+    //    $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);
+    //    $('#dataifyInfo').append(", Images Renamed: " + repairReport.ImagesRenamed);
+    //    $('#dataifyInfo').append(", Folders Renamed: " + repairReport.NewLinksAdded);
+
+    //    repairReport.Errors.forEach(function (element) {
+    //        $('#renameFolderReport').append("<div> errors: " + element + "</div>");
+    //    });
+    //    //$('#renameFolderCrud').fadeOut();
+    //}, 1200);
 
     $.ajax({
         type: "PUT",
@@ -320,19 +288,7 @@ function renameFolder() {
                 displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
                 console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                 buildDirectoryTree();
-                //setTimeout(function () {
-                //    $('#dataifyInfo').html("Rename took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-
-                //    $('#dataifyInfo').append(", Rows Processed: " + repairReport.RowsProcessed);
-                //    $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);
-                //    $('#dataifyInfo').append(", Images Renamed: " + repairReport.ImagesRenamed);
-                //    $('#dataifyInfo').append(", Folders Renamed: " + repairReport.NewLinksAdded);
-
-                //    repairReport.Errors.forEach(function (element) {
-                //        $('#renameFolderReport').append("<div> errors: " + element + "</div>");
-                //    });
-                //    //$('#renameFolderCrud').fadeOut();
-                //}, 1200);
+                $('#dataifyInfo').hide();
             }
             else {
                 alert("renameFolder: " + repairReport.Success);
@@ -465,3 +421,6 @@ function dashboardContextMenuShowCategoryDetails() {
 function dashboardContextMenuShowInfoDialog() {
     showModelInfoDialog($('.txtLinkPath').val(), dashboardContextMenuFolderId, "http://boobs.ogglebooble.com/redballon.png");
 }
+
+
+

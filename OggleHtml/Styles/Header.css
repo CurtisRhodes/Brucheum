@@ -106,6 +106,7 @@
 .inactiveBreadCrumb {
     margin-left: 20px;
     font-weight: bold;
+    cursor: pointer;
     float: left;
 }
 

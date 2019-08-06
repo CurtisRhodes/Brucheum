@@ -1,0 +1,114 @@
+﻿.blogEditArea {
+    display: flex;
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px;
+    display: none;
+}
+
+.blogDisplayArea {
+    margin-top: 10px;
+    display: none;
+}
+
+.crudLabel {
+    min-width: 45px;
+    margin-right: 4px;
+    margin-left: 7px;
+}
+
+.roundedInput {
+    margin-bottom: 7px;
+    width: 500px;
+}
+
+.leftImage {
+    border: solid .05px var(--oggleBorderColor);
+    height: 130px;
+    min-width: 120px;
+    margin-left: 10px;
+}
+
+.blogArticleJogContainer {
+    overflow-y: auto;
+}
+
+.blogItemContainer {
+    height: 100%;
+    margin-left: 10px;
+    overflow-y: auto;
+    background-color: var(--oggleContainerBackgroundColor);
+}
+
+.blogListItem {
+    font-size: 13px;
+    padding: 4px 2px;
+    margin: 3px;
+    cursor: pointer;
+    background-color: var(--oggleBackgroundColor);
+}
+
+.blogArticleJogBody {
+    display: inline-block;
+    background-color: var(--oggleContainerBackgroundColor);
+    width: 100%;
+}
+
+.blogArticleImage {
+    height: 222px;
+}
+
+.blogArticleTitle {
+    font-size: 24px;
+    text-align: center;
+}
+
+.blogArticleJog {
+    margin-bottom: 4px;
+}
+
+.blogArticleJogImage {
+    height: 185px;
+    width: 222px;
+    cursor: pointer;
+}
+
+.blogArticleText {
+    padding: 4px;
+    display: inline-block;
+    width: 100%;
+    height: 124px;
+    overflow-y: hidden;
+    font-size: 17px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.blogArticleBottomRow {
+    margin: 0 8px;
+}
+
+.singleBlogEntryContainer {
+    background-color: var(--oggleContainerBackgroundColor);
+    display: block;
+    border: solid thin black;
+}
+
+.blogPageSubHeader {
+    text-align: center;
+    font-size: 25px;
+    margin: 11px;
+}
+
+.blogPageImageContainer {
+    text-align: center;
+}
+
+.largeCenteredImage {
+    max-height: 233px;
+}
+
+.blogPageBodyText {
+    margin-top: 7px;
+    padding: 4px;
+    text-align: justify;
+}

@@ -13,183 +13,6 @@ using System.Xml;
 namespace WebApi
 {
     [EnableCors("*", "*", "*")]
-    public class ImageCategoryDetailController : ApiController
-    {
-        [HttpGet]
-        public GetModelNameModel GetModelName(string linkId)
-        {
-            GetModelNameModel imageDetail = new GetModelNameModel();
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    imageDetail = (from l in db.ImageLinks
-                                   join f in db.CategoryFolders on l.FolderLocation equals f.Id
-                                   where l.Id == linkId
-                                   select new GetModelNameModel()
-                                   {
-                                       FolderId = f.Id,
-                                       Link = l.Link,
-                                       FolderName = f.FolderName,
-                                       RootFolder = f.RootFolder
-                                   }).FirstOrDefault();
-                    imageDetail.Success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                imageDetail.Success = Helpers.ErrorDetails(ex);
-            }
-            return imageDetail;
-        }
-
-        [HttpGet]
-        public CategoryFolderDetailModel Get(int folderId)
-        {
-            CategoryFolderDetailModel model = new CategoryFolderDetailModel();
-            try
-            {
-                if (folderId == 0)
-                {
-                    model.FolderName = "Unknown";
-                }
-                else
-                {
-                    using (OggleBoobleContext db = new OggleBoobleContext())
-                    {
-                        CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(xn => xn.FolderId == folderId).FirstOrDefault();
-                        //CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                        if (categoryFolderDetails == null)
-                            model.FolderName = "";
-                        else
-                        {
-                            model.Measurements = categoryFolderDetails.Measurements;
-                            model.Nationality = categoryFolderDetails.Nationality;
-                            model.ExternalLinks = categoryFolderDetails.ExternalLinks;
-                            model.FolderImageLink = categoryFolderDetails.FolderImage;
-                            model.CommentText = categoryFolderDetails.CommentText;
-                            model.Born = categoryFolderDetails.Born;
-                            model.FolderName = db.CategoryFolders.Where(f => f.Id == folderId).First().FolderName;
-                            model.FolderId = categoryFolderDetails.FolderId;
-                        }
-                        if (model.FolderImageLink == null)
-                            model.FolderImage = Helpers.GetFirstImage(folderId);
-                        else
-                            model.FolderImage = db.ImageLinks.Where(g => g.Id == categoryFolderDetails.FolderImage).First().Link;
-                    }
-                }
-                model.Success = "ok";
-            }
-            catch (Exception ex) { model.Success = Helpers.ErrorDetails(ex); }
-            return model;
-        }
-
-        // create new folder in Posers Identified
-        [HttpPost]
-        public string Insert(CategoryFolderDetailModel model)
-        {
-            string success = "";
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    int newFolderId = 0;
-                    CategoryFolder dbParent = db.CategoryFolders.Where(f => f.FolderName == "posers identified").First();
-                    CategoryFolder poser = new CategoryFolder()
-                    {
-                        FolderName = model.FolderName,
-                        RootFolder = dbParent.RootFolder,
-                        Parent = dbParent.Id
-                    };
-                    db.CategoryFolders.Add(poser);
-                    db.SaveChanges();
-                    newFolderId = poser.Id;
-
-                    db.CategoryFolderDetails.Add(new CategoryFolderDetail()
-                    {
-                        CommentText = model.CommentText,
-                        ExternalLinks = model.ExternalLinks,
-                        FolderId = newFolderId,
-                        Nationality = model.Nationality,
-                        Measurements = model.Measurements,
-                        Born = model.Born
-                    });
-                    db.SaveChanges();
-                    success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-
-        [HttpPut]
-        public string Update(CategoryFolderDetailModel model)
-        {
-            string success = "";
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    CategoryFolderDetail dbFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == model.FolderId).First();
-                    dbFolderDetail.Born = model.Born;
-                    dbFolderDetail.Nationality = model.Nationality;
-                    dbFolderDetail.ExternalLinks = model.ExternalLinks;
-                    dbFolderDetail.CommentText = model.CommentText;
-                    dbFolderDetail.Measurements = model.Measurements;
-                    db.SaveChanges();
-                    success = "ok";
-                }
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
-
-        [HttpPut]
-        public string UpdateFolderImage(string linkId, int folderId, string level)
-        {
-            string success = "";
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    if (level == "folder")
-                    {
-                        CategoryFolderDetail dbCategoryFolderDetail = db.CategoryFolderDetails.Where(n => n.FolderId == folderId).FirstOrDefault();
-                        if (dbCategoryFolderDetail == null)
-                            db.CategoryFolderDetails.Add(new CategoryFolderDetail() { FolderId = folderId, FolderImage = linkId });
-                        else
-                            dbCategoryFolderDetail.FolderImage = linkId;
-                    }
-                    else
-                    {
-                        int parent = db.CategoryFolders.Where(f => f.Id == folderId).First().Parent;
-                        CategoryFolderDetail dbCategoryFolderDetail = db.CategoryFolderDetails.Where(n => n.FolderId == parent).FirstOrDefault();
-                        if (dbCategoryFolderDetail == null)
-                        {
-                            CategoryFolderDetail CategoryFolderDetail = new CategoryFolderDetail() { FolderId = parent, FolderImage = linkId };
-                            db.CategoryFolderDetails.Add(CategoryFolderDetail);
-                        }
-                        else
-                        {
-                            dbCategoryFolderDetail.FolderImage = linkId;
-                        }
-                    }
-                    db.SaveChanges();
-                    success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-    }
-
-    [EnableCors("*", "*", "*")]
     public class ImagePageController : ApiController
     {
         // used by ImagePage
@@ -386,7 +209,6 @@ namespace WebApi
         }
 
     }
-
 
     [EnableCors("*", "*", "*")]
     public class CarouselController : ApiController
@@ -885,6 +707,183 @@ namespace WebApi
             catch (Exception e)
             {
                 success = Helpers.ErrorDetails(e);
+            }
+            return success;
+        }
+    }
+
+    [EnableCors("*", "*", "*")]
+    public class ImageCategoryDetailController : ApiController
+    {
+        [HttpGet]
+        public GetModelNameModel GetModelName(string linkId)
+        {
+            GetModelNameModel imageDetail = new GetModelNameModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    imageDetail = (from l in db.ImageLinks
+                                   join f in db.CategoryFolders on l.FolderLocation equals f.Id
+                                   where l.Id == linkId
+                                   select new GetModelNameModel()
+                                   {
+                                       FolderId = f.Id,
+                                       Link = l.Link,
+                                       FolderName = f.FolderName,
+                                       RootFolder = f.RootFolder
+                                   }).FirstOrDefault();
+                    imageDetail.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                imageDetail.Success = Helpers.ErrorDetails(ex);
+            }
+            return imageDetail;
+        }
+
+        [HttpGet]
+        public CategoryFolderDetailModel Get(int folderId)
+        {
+            CategoryFolderDetailModel model = new CategoryFolderDetailModel();
+            try
+            {
+                if (folderId == 0)
+                {
+                    model.FolderName = "Unknown";
+                }
+                else
+                {
+                    using (OggleBoobleContext db = new OggleBoobleContext())
+                    {
+                        CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(xn => xn.FolderId == folderId).FirstOrDefault();
+                        //CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                        if (categoryFolderDetails == null)
+                            model.FolderName = "";
+                        else
+                        {
+                            model.Measurements = categoryFolderDetails.Measurements;
+                            model.Nationality = categoryFolderDetails.Nationality;
+                            model.ExternalLinks = categoryFolderDetails.ExternalLinks;
+                            model.FolderImageLink = categoryFolderDetails.FolderImage;
+                            model.CommentText = categoryFolderDetails.CommentText;
+                            model.Born = categoryFolderDetails.Born;
+                            model.FolderName = db.CategoryFolders.Where(f => f.Id == folderId).First().FolderName;
+                            model.FolderId = categoryFolderDetails.FolderId;
+                        }
+                        if (model.FolderImageLink == null)
+                            model.FolderImage = Helpers.GetFirstImage(folderId);
+                        else
+                            model.FolderImage = db.ImageLinks.Where(g => g.Id == categoryFolderDetails.FolderImage).First().Link;
+                    }
+                }
+                model.Success = "ok";
+            }
+            catch (Exception ex) { model.Success = Helpers.ErrorDetails(ex); }
+            return model;
+        }
+
+        // create new folder in Posers Identified
+        [HttpPost]
+        public string Insert(CategoryFolderDetailModel model)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    int newFolderId = 0;
+                    CategoryFolder dbParent = db.CategoryFolders.Where(f => f.FolderName == "posers identified").First();
+                    CategoryFolder poser = new CategoryFolder()
+                    {
+                        FolderName = model.FolderName,
+                        RootFolder = dbParent.RootFolder,
+                        Parent = dbParent.Id
+                    };
+                    db.CategoryFolders.Add(poser);
+                    db.SaveChanges();
+                    newFolderId = poser.Id;
+
+                    db.CategoryFolderDetails.Add(new CategoryFolderDetail()
+                    {
+                        CommentText = model.CommentText,
+                        ExternalLinks = model.ExternalLinks,
+                        FolderId = newFolderId,
+                        Nationality = model.Nationality,
+                        Measurements = model.Measurements,
+                        Born = model.Born
+                    });
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+        [HttpPut]
+        public string Update(CategoryFolderDetailModel model)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    CategoryFolderDetail dbFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == model.FolderId).First();
+                    dbFolderDetail.Born = model.Born;
+                    dbFolderDetail.Nationality = model.Nationality;
+                    dbFolderDetail.ExternalLinks = model.ExternalLinks;
+                    dbFolderDetail.CommentText = model.CommentText;
+                    dbFolderDetail.Measurements = model.Measurements;
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        [HttpPut]
+        public string UpdateFolderImage(string linkId, int folderId, string level)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    if (level == "folder")
+                    {
+                        CategoryFolderDetail dbCategoryFolderDetail = db.CategoryFolderDetails.Where(n => n.FolderId == folderId).FirstOrDefault();
+                        if (dbCategoryFolderDetail == null)
+                            db.CategoryFolderDetails.Add(new CategoryFolderDetail() { FolderId = folderId, FolderImage = linkId });
+                        else
+                            dbCategoryFolderDetail.FolderImage = linkId;
+                    }
+                    else
+                    {
+                        int parent = db.CategoryFolders.Where(f => f.Id == folderId).First().Parent;
+                        CategoryFolderDetail dbCategoryFolderDetail = db.CategoryFolderDetails.Where(n => n.FolderId == parent).FirstOrDefault();
+                        if (dbCategoryFolderDetail == null)
+                        {
+                            CategoryFolderDetail CategoryFolderDetail = new CategoryFolderDetail() { FolderId = parent, FolderImage = linkId };
+                            db.CategoryFolderDetails.Add(CategoryFolderDetail);
+                        }
+                        else
+                        {
+                            dbCategoryFolderDetail.FolderImage = linkId;
+                        }
+                    }
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
             }
             return success;
         }

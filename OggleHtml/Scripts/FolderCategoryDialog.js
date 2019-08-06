@@ -7,6 +7,10 @@ function showCategoryDialog(folderId) {
     // create a new table (or row)
     // --alter table OggleBooble.ImageFolder add CatergoryDescription nvarchar(max)
     // 4/30/2019  --first use of jQuery dialog
+
+    $('#catDlgDescription').summernote('code', "");
+
+
     try {
         $('#folderCategoryDialog').dialog({
             autoOpen: false,
@@ -19,6 +23,10 @@ function showCategoryDialog(folderId) {
             type: "GET",
             url: settingsArray.ApiServer + "api/CategoryComment/Get?folderId=" + folderId,
             success: function (categoryComment) {
+
+//<a id="btnCatDlgEdit" class="folderCategoryDialogButton" href="javascript:toggleEditCatDialog()">Edit</a>
+//<a id="btnCatDlgMeta" class="folderCategoryDialogButton" href="javascript:addMetaTags()">add meta tags</a>
+
                 if (categoryComment.Success === "ok") {
                     categoryFolderId = folderId;
                     $('#catDlgDescription').val(categoryComment.CommentText);
@@ -26,10 +34,10 @@ function showCategoryDialog(folderId) {
                     $('#folderCategoryDialog').dialog('option', 'title', categoryComment.FolderName);
 
                     $('#catDlgDescription').prop("readonly", true);
-                    if (isPornEditor === "True" && document.domain === 'localhost')
-                        $('#btnCatDlgEdit').show();
+                    if (isPornEditor === "True" || document.domain === 'localhost')
+                        $('.folderCategoryDialogButton').show();
                     else 
-                        $('#btnCatDlgEdit').hide();
+                        $('.folderCategoryDialogButton').hide();
 
                     $('#folderCategoryDialog').show();
                     $('#folderCategoryDialog').dialog("open");
@@ -82,4 +90,20 @@ function considerClosingCategoryDialog() {
     if ($('#catDlgDescription').prop("readonly")) {
         $('#folderCategoryDialog').dialog("close");
     }
+}
+
+function slowlyShowFolderCategoryDialog(folderId) {
+    setTimeout(function () {
+        if (forgetShowingCatDialog === false) {
+            if (typeof pause === 'function')
+                pause();
+            folderCategoryDialogIsOpen = true;
+            showCategoryDialog(folderId);
+        }
+    }, 1100);
+    $('#folderCategoryDialog').on('dialogclose', function (event) {
+        folderCategoryDialogIsOpen = false;
+        if (typeof resume === 'function')
+            resume();
+    });
 }

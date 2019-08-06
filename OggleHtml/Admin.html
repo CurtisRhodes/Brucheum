@@ -45,7 +45,9 @@
     <header></header>
     <div class="threeColumnLayout">
         <div id="leftColumn">
-            <!--//$('#headerMessage').html(`Dashboard <dir class='linkContainer'></dir>`);-->
+            <!--//$('#headerMessage').html(`Dashboard <dir class='linkContainer'></dir>`);
+
+           -->
         </div>
         <div id="middleColumn">
             <img id="dashBoardLoadingGif" class="loadingGif" src="Images/loader.gif" />
@@ -53,16 +55,26 @@
                 <div class="leftColumnList">
                     <div>
                         <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
-                        <div class="clickable" onclick="showCreateNewFolder()">Create New Folder</div>
-                        <div class="clickable" onclick="showMovefolderDialog()">Move Folder</div>
-                        <div class="clickable" onclick="showRenameFolderDialog()">ReName Folder</div>
+                        <div class="clickable" onclick="$('#createNewFolderDialog').dialog('open');">Create New Folder</div>
+                        <div class="clickable" onclick="$('#moveFolderCrud').dialog('open');buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);">Move Folder</div>
+                        <div class="clickable" onclick="$('#renameFolderCrud').dialog('open');">Rename Folder</div>
                         <div class="clickable" onclick="loadProperties()">loadProperties</div>
-                        <div class="clickable" onclick="showCreateStaticPages()">Create Static Pages</div>
+                        <div class="clickable" onclick="$('#createStaticPagesCrud').dialog('open');">Create Static Pages</div>
                         <div class="clickable" onclick="repairLinks()">Repair Links</div>
                     </div>
                 </div>
                 <div class="workarea">
                     <div id="divStatusMessage"></div>
+
+                    <div id="uploadArea" class="oggleh">
+                        <div id="addNewLink" class="addLinkCrudArea">
+                            <div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
+                            <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
+                            <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
+                        </div>
+                        <img id="imgLinkPreview" class="linkImage" />
+                    </div>
+
                     <div id="progressBar" class="dashboardProgessBar"></div>
                     <div id="dataifyInfo" class="infoLine"></div>
                 </div>
@@ -144,71 +156,104 @@
                 }
             }, 300);
 
-            $('#moveFolderCrud').dialog({
-                autoOpen: false,
-                show: { effect: "fade" },
-                hide: { effect: "blind" },
-                width: "400"
-            });
-            $('#renameFolderCrud').dialog({
-                autoOpen: false,
-                show: { effect: "fade" },
-                hide: { effect: "blind" },
-                width: "400"
-            });
-            $('#createNewFolderDialog').dialog({
-                autoOpen: false,
-                show: { effect: "fade" },
-                hide: { effect: "blind" },
-                width: "615"
-            });
-            $('#createStaticPagesCrud').dialog({
-                autoOpen: false,
-                show: { effect: "fade" },
-                hide: { effect: "blind" },
-                width: "400"
-            });
-            $('#moveFolderCrud').dialog({
-                autoOpen: false,
-                show: { effect: "fade" },
-                hide: { effect: "blind" },
-                width: "400"
-            });
-            $('#partialViewTreeContainer').dialog({
-                autoOpen: false,
-                show: { effect: "fade" },
-                hide: { effect: "blind" },
-                position: ({ my: 'right', at: 'left', of: $('#moveFolderCrud') }),
-                width: "400",
-                height: "550"
-            });
-
+            defineDilogs();
             //setSignalR();
             window.addEventListener("resize", resizeDashboardPage);
             resizeDashboardPage();
         });
 
-        //loadProperties()">loadProperties</div>
-        //videoCrud
-        //createStaticIndexPages()">Create Static Index Pages</div>
-        //repairLinks()">Repair Links</div>
+        function resizeDashboardPage() {
+            resizePage();
+            var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);
+            if (workAreaHeight > $('#middleColumn').height()) {
+                $('#middleColumn').height(workAreaHeight);
+                $('#footerMessage').html("middleColumn.height: " + $('#middleColumn').height()); //image height: " + $('#imgLinkPreview').height());
+            }
+            else
+                $('#footerMessage').html("_");
 
-        function showCreateStaticPages() {
-            $('#createStaticPagesCrud').dialog("open");
+            $('#divDashboardContainer').height($('#middleColumn').height() - 180);
+            $('.floatingCrud').width($('.workarea').width() - 100);
         }
 
-        function showRenameFolderDialog() {
-            $('#renameFolderCrud').dialog("open");
+        function setSignalR() {
+
+            var connection = $.hubConnection(service);
+
+            var progressHubProxy = connection.createHubProxy('ProgressHub');
+
+            progressHubProxy.on('PostToClient', function (data) {
+                $('#dataifyInfo').html(data);
+            });
+
+            progressHubProxy.on('ShowProgressBar', function (goal, progress) {
+                $('#progressBar').progressbar({ value: progress, max: goal });
+            });
+
+
+            connection.start({ jsonp: true })
+                .done(function () {
+                    console.log('Now connected, connection ID=' + connection.id);
+                })
+                .fail(function () {
+                    alert('signalr Could not connect');
+                    console.log('signalr Could not connect');
+                });
         }
 
-        function showCreateNewFolder() {
-            $('#createNewFolderDialog').dialog("open");
-        }
+    function defineDilogs() {
+        $('#uploadArea').keydown(function (event) {
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                // Trigger the button element with a click
+                addImageLink();
+            }
+        });
+        $('#moveFolderCrud').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "400"
+        });
+        $('#renameFolderCrud').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "400"
+        });
+        $('#createNewFolderDialog').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "615"
+        });
+        $('#createNewFolderDialog').keydown(function (event) {
+            if (event.keyCode === 13) {
+                createNewFolder();
+            }
+        });
 
-        function showMovefolderDialog() {
-            $('#moveFolderCrud').dialog("open");
-            buildDirTree($('#folderToMoveTreeContainer'), "moveFolderTree", 0);
-        }
+        $('#createStaticPagesCrud').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "400"
+        });
+        $('#moveFolderCrud').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            width: "400"
+        });
+        $('#partialViewTreeContainer').dialog({
+            autoOpen: false,
+            show: { effect: "fade" },
+            hide: { effect: "blind" },
+            position: ({ my: 'right', at: 'left', of: $('#moveFolderCrud') }),
+            width: "400",
+            height: "550"
+        });
+    }
 
     </script>
 </body>

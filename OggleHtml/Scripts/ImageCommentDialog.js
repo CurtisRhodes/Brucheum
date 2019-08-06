@@ -8,29 +8,29 @@ function showImageCommentDialog(src, linkId, folderId, folderName) {
     folderDetailModel.UserId = getCookie();
     folderDetailModel.CommentType = "CMT";
     $('#commentDialogImage').attr("src", src);
-    $('#imageCommentEditor').summernote('code', "");
+    //$('#imageCommentEditor').summernote('code', "");
     $('#txtCommentTitle').val("");
     $('#divSaveFantasy').html("save");
     folderDetailModel.Id = 0;
-    loadComment();
 
-    //$('#imageCommentEditor').summernote({
-    //    height: 200,
-    //    //codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-    //    toolbar: false
-    //    //toolbar: [
-    //    //    ['codeview'],
-    //    //    ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
-    //    //]
-    //});
+    $('#imageCommentEditor').summernote({
+        height: 300,
+        codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+        toolbar: [
+            ['codeview'],
+            ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
+        ]
+    });
 
     $('#imageCommentDialog').show();
     $('#imageCommentDialog').dialog({
         show: { effect: "fade" },
         hide: { effect: "blind" },
-        width: "615"
+        width: "715"
     });
 
+    $('#imageCommentDialog').dialog('option', 'title', "Write a fantasy about this image");
+    loadComment();
 }
 
 function loadComment() {
