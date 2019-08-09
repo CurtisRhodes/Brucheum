@@ -33,7 +33,7 @@ function showMoveCopyDialog(mode, link, folderId) {
 
 
 function ftpMoveCopy() {
-   // alert("MoveCopyImageModel.DestinationFolderId: " + MoveCopyImageModel.DestinationFolderId);
+    //alert("MoveCopyImageModel.DestinationFolderId: " + MoveCopyImageModel.DestinationFolderId);
     $('#imagePageLoadingGif').show();
     $.ajax({
         type: "PUT",

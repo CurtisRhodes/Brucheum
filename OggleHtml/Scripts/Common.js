@@ -145,7 +145,7 @@ function isNullorUndefined(val) {
 // HITCOUNTER
 function logVisit() {
     //if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
-    //alert("ipAddress: " + ipAddress);
+    //alert("logVisit: " + settingsArray.ApiServer);
     var userName = getCookie("User");
     $('#footerMessage').html("logging visit userName: " + userName);
     setLoginHeader(userName);
@@ -167,12 +167,13 @@ function logVisit() {
         },
         error: function (jqXHR, exception) {
             $('#blogLoadingGif').hide();
-            alert("HitCounter/LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+            alert("LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
         }
     });
 }
 function logPageHit(folderName, appName) {
     //alert("logPageHit(" + folderName + "," + appName + ")");
+    logVisit();
     $('#footerMessage').html("logging page hit");
     var userName = getCookie("User");
     if (userName === "")
@@ -206,8 +207,6 @@ function logPageHit(folderName, appName) {
         }
     });
 }
-
-// LOGIN
 
 // COMMON CONTEXTMENU FUNCTIONS
 function showLinks(linkId) {
@@ -342,7 +341,7 @@ function getHeader(subdomain) {
         "               <div id='btnLayoutLogin' class='menuTab floatRight'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
         "           </div>\n" +
         "           <div class='menuTabs' id='adminTabs'>\n" +
-        "              <div id='menuTabAdmin' class='menuTab  displayHidden loginRequired floatRight'><a href='/Admin.html'>Admin</a></div>\n" +
+        "              <div id='menuTabAdmin' class='menuTab displayHidden loginRequired floatRight'><a href='/Dashboard.html'>dashboard</a></div>\n" +
         "           </div>\n" +
         "       </div>\n" +
         "   </div>\n";

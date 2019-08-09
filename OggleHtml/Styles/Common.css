@@ -66,6 +66,23 @@ body {
     z-index: 15;
 }
 
+.roundendButton {
+    text-align: center;
+    background: var(--brucheumBlue);
+    color: #000;
+    border-radius: 6px;
+    padding: 8px 20px;
+    cursor: pointer;
+}
+.roundedInput {
+    padding: 2px;
+    color: #555;
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+
 .validationError {
     display: inline-block;
     display: none;
@@ -237,6 +254,7 @@ footer {
     left: 150px;
     top: 140px;
     height: 110px;
+    z-index: 31;
 }
 
 .ogContextMenu {

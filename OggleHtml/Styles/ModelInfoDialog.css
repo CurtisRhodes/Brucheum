@@ -1,5 +1,6 @@
 ﻿.smallTextArea {
     height: 121px;
+    overflow-y:auto;
     width: 100%;
     background-color: #f7eef7;
     padding: 5px;
@@ -7,16 +8,28 @@
     font-size: 21px;
 }
 
+
+
 .modelDialogImage {
     height: 150px;
     min-width: 160px;
     margin-left: 4px;
 }
 
+.modelInfoDialogLabel {
+    display: inline-block;
+    width: 61px;
+    margin-right: 6px;
+    text-align: right;
+    font-size: 13px;
+}
+
 .modelDialogInput {
     width: 220px;
     font-size: 14px;
-    font-weight: normal;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-bottom: 2px;
 }
 
 .viewOnlyMessage {

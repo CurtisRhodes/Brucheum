@@ -1,5 +1,5 @@
 ﻿var categoryFolderId = "";
-var isPornEditor = false;
+var isPornEditor = true;
 
 function showCategoryDialog(folderId) {
     // 11:11 2/25/19
@@ -8,17 +8,25 @@ function showCategoryDialog(folderId) {
     // --alter table OggleBooble.ImageFolder add CatergoryDescription nvarchar(max)
     // 4/30/2019  --first use of jQuery dialog
 
-    $('#catDlgDescription').summernote('code', "");
+    if (isPornEditor) {
+        $('#catDlgDescription').summernote({
+            height: 300,
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+            toolbar: [
+                ['codeview'],
+                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
+            ]
+        });
+    }
 
+    $('#folderCategoryDialog').dialog({
+        autoOpen: false,
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        width: "500px"
+    });
 
     try {
-        $('#folderCategoryDialog').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            width: "456px"
-        });
-
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/CategoryComment/Get?folderId=" + folderId,
@@ -29,16 +37,17 @@ function showCategoryDialog(folderId) {
 
                 if (categoryComment.Success === "ok") {
                     categoryFolderId = folderId;
-                    $('#catDlgDescription').val(categoryComment.CommentText);
+                    if (isPornEditor) {
+                        $('#catDlgDescription').summernote('code', categoryComment.CommentText);
+                        $('.folderCategoryDialogButton').show();
+}
+                    else {
+                        $('#catDlgDescription').val(categoryComment.CommentText);
+                        $('#catDlgDescription').prop("readonly", true);
+                        $('.folderCategoryDialogButton').hide();
+                    }
 
                     $('#folderCategoryDialog').dialog('option', 'title', categoryComment.FolderName);
-
-                    $('#catDlgDescription').prop("readonly", true);
-                    if (isPornEditor === "True" || document.domain === 'localhost')
-                        $('.folderCategoryDialogButton').show();
-                    else 
-                        $('.folderCategoryDialogButton').hide();
-
                     $('#folderCategoryDialog').show();
                     $('#folderCategoryDialog').dialog("open");
                 }
@@ -65,7 +74,7 @@ function toggleEditCatDialog() {
     else {
         $.ajax({
             type: "PUT",
-            url: settingsArray.ApiServer + "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" + $('#catDlgDescription').val(),
+            url: settingsArray.ApiServer + "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" + $('#catDlgDescription').summernote('code'),
             success: function (success) {
                 if (success === "ok") {
                     displayStatusMessage("ok", "category description updated");

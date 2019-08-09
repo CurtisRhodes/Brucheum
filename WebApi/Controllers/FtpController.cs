@@ -220,6 +220,8 @@ namespace WebApi
                                         successModel.Success = "ok";
                                     }
                                 }
+                                else
+                                    successModel.Success = "file not found";
                             }
                         }
                     }

@@ -14,6 +14,20 @@ function buildDirectoryTree() {
     buildDirTree($('#dirTreeContainer'), "dashboardMain", 0);
 }
 
+function resizeDashboardPage() {
+    resizePage();
+    var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);
+    if (workAreaHeight > $('#middleColumn').height()) {
+        $('#middleColumn').height(workAreaHeight);
+        $('#footerMessage').html("middleColumn.height: " + $('#middleColumn').height()); //image height: " + $('#imgLinkPreview').height());
+    }
+    else
+        $('#footerMessage').html("_");
+
+    $('#divDashboardContainer').height($('#middleColumn').height() - 180);
+    $('.floatingCrud').width($('.workarea').width() - 100);
+}
+
 function createStaticPages(justOne) {
     //$('#createStaticPagesCrud').dialog("close");
     //$('#createStaticPagesCrud').hide();
@@ -227,9 +241,16 @@ function collapseChildFolder() {
     }
 }
 
+function showMoveFolderDialog() {
+
+    $('#moveFolderCrud').dialog('open');
+    buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
+
+}
+
 function moveFolder() {
-    $('#dataifyInfo').show().html("Preparing to Move Folder");
-    $('#progressBar').show();
+    //$('#dataifyInfo').show().html("Preparing to Move Folder");
+    //$('#progressBar').show();
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "/api/FtpDashboard/MoveFolder?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + partialViewSelectedItemId,

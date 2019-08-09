@@ -63,7 +63,6 @@
     max-width: 80%;
     border: solid .5px #555;
 }
-
 .roundedInput {
     display: inline-block;
     width: 95%;
@@ -89,8 +88,9 @@
     vertical-align: bottom;
 }
 
-/*.dashboardToggle {
-}*/
+*.dashboardToggle {
+    display:none;
+}
 
 .myH2 {
     font-family: Verdana;

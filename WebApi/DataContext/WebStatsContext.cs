@@ -58,14 +58,13 @@
         public string UserName { get; set; }
         [Key]
         [Column(Order = 1)]
-        public string RoleId { get; set; }
+        public string RoleName { get; set; }
     }
 
     [Table("webStats.Role")]
     public partial class Role
     {
         [Key]
-        public string RoleId { get; set; }
         public string RoleName { get; set; }
     }
 

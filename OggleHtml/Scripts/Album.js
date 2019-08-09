@@ -138,20 +138,7 @@ function processImages(imageLinksModel) {
         imageFrameClass = "pornFolderImageOutterFrame";
         subDirLabel = "pornSubDirLabel";
     }
-    //  SUBFOLDERS
     $('#imageContainer').html('');
-    $.each(imageLinksModel.SubDirs, function (idx, subDir) {
-        if (subDir.Link === null) {
-            //alert("subDir: " + subDir.DirectoryName + "  Link==null");
-            subDir.Link = "Images/redballon.png";
-        }
-
-        $('#imageContainer').append("<div class='" + imageFrameClass + "' onclick=window.location.href='/album.html?folder=" + subDir.FolderId + "'>" +
-            "<img class='folderImage' src='" + subDir.Link + "'/>" +
-            //"<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "</div></div>");
-            "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div>");
-    });
-
     // IMAGES
     $.each(imageLinksModel.Files, function (idx, imageModelFile) {
         // add files to array
@@ -178,6 +165,19 @@ function processImages(imageLinksModel) {
         $('#imageContainer').append("<div id='img" + idx + "' class='" + imageFrameClass + "'><img class='thumbImage' "+
             " oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='startSlideShow(" + idx + ")'" +
             " src='" + imageModelFile.Link + "'/></div>");
+    });
+
+    //  SUBFOLDERS
+    $.each(imageLinksModel.SubDirs, function (idx, subDir) {
+        if (subDir.Link === null) {
+            //alert("subDir: " + subDir.DirectoryName + "  Link==null");
+            subDir.Link = "Images/redballon.png";
+        }
+
+        $('#imageContainer').append("<div class='" + imageFrameClass + "' onclick=window.location.href='/album.html?folder=" + subDir.FolderId + "'>" +
+            "<img class='folderImage' src='" + subDir.Link + "'/>" +
+            //"<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "</div></div>");
+            "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div>");
     });
 
     if (imageLinksModel.SubDirs.length > 0) {
@@ -402,6 +402,7 @@ function contextMenuAction(action) {
             showMoveCopyDialog("Copy", selectedImage, currentFolderId);
             break;
         case "move":
+            //if (viewerShowing) { alert("showImageCommentDialog(" + selectedImage + ", " + selectedImageLinkId + ", " + currentFolderId + ", " + currentfolderName + ");"); }
             $("#thumbImageContextMenu").fadeOut();
             showMoveCopyDialog("Move", selectedImage, currentFolderId);
             //$('#moveCopyDialog').on('dialogclose', function (event) {

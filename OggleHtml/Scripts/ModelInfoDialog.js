@@ -1,68 +1,82 @@
 ﻿var FolderDetailModel = {};
+var isPornEditor = true;
 
 function showModelInfoDialog(modelName, folderId, currentSrc) {
     FolderDetailModel.FolderId = folderId;
+    $("#txtBorn").datepicker();
+    if (isPornEditor) {
+        $('#modelInfoDialogTrackBack').show();
+        $('#txaModelComment').summernote({
+            height: 300,
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+            toolbar: [['codeview'],]
+        });
+    }
+    else {
+        $('#modelInfoDialogTrackBack').hide();
+    }
+
+    $('#modelInfoDialog').dialog({
+        autoOpen: false,
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        position: ({ my: 'center', at: 'top', of: $('#middleColumn') }),
+        width: "615"
+    });
     clearGets();
     getFolderDetails(modelName, folderId, currentSrc);
 }
 
 function getFolderDetails(modelName, folderId, currentSrc) {
-        $("#txtBorn").datepicker();
-
-        $('#modelInfoDialog').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            width: "615"
-        });
-        //alert("getFolderDetails: " + modelName);
-        if (modelName === "unknown model") {
-            FolderDetailModel.FolderImage = currentSrc;
-            $('#modelDialogThumbNailImage').attr("src", currentSrc);
-            $('#modelInfoDialog').show();
-            $('#modelInfoDialog').dialog('option', 'title', "unknown model");
-            //$('#unknownModelLinks').append(folderDetails.ExternalLinks)
-            $('#modelInfoEditArea').hide();
-            $('#modelInfoViewOnlyArea').show();
-            $('#modelInfoEdit').html("Edit");
-        }
-        else {
+    if (modelName === "unknown model") {
+        FolderDetailModel.FolderImage = currentSrc;
+        $('#modelDialogThumbNailImage').attr("src", currentSrc);
+        $('#modelInfoDialog').show();
+        $('#modelInfoDialog').dialog('option', 'title', "unknown model");
+        $('#modelInfoEditArea').hide();
+        $('#modelInfoViewOnlyArea').show();
+        $('#modelInfoEdit').html("Edit");
+    }
+    else {
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
             success: function (folderDetails) {
                 if (folderDetails.Success === "ok") {
-                    if (folderDetails.FolderName === "Unknown") {
+                    //if (folderDetails.FolderName === "Unknown") {
+                    //    FolderDetailModel.FolderImage = currentSrc;
+                    //    $('#modelDialogThumbNailImage').attr("src", currentSrc);
+                    //    $('#modelInfoDialog').dialog('option', 'title', "unknown model");
+                    //    $('#unknownModelLinks').append(folderDetails.ExternalLinks);
+                    //    $('#modelInfoEditArea').hide();
+                    //    $('#modelInfoViewOnlyArea').show();
+                    //    $('#modelInfoEdit').html("Edit");
+                    //}
+                    //else {
+                    $('#modelInfoViewOnlyArea').hide();
+                    if (folderDetails.FolderImage === null) {
                         FolderDetailModel.FolderImage = currentSrc;
-                        $('#modelDialogThumbNailImage').attr("src", currentSrc);
-                        $('#modelInfoDialog').dialog('option', 'title', "unknown model");
-                        //$('#unknownModelLinks').html(linkId.substring(linkId.lastIndexOf('/') + 1) + "<br/>");
-                        $('#unknownModelLinks').append(folderDetails.ExternalLinks);
-                        $('#modelInfoEditArea').hide();
-                        $('#modelInfoViewOnlyArea').show();
-                        $('#modelInfoEdit').html("Edit");
                     }
-                    else {
-                        $('#modelInfoViewOnlyArea').hide();
-                        if (folderDetails.FolderImage === null) {
-                            FolderDetailModel.FolderImage = currentSrc;
-                        }
-                        else {
-                            //alert("MODEL NAME: " + modelName);
-                        }
-                        $('#modelDialogThumbNailImage').attr("src", folderDetails.FolderImage);
-                        $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
-                        $('#modelInfoEditArea').show();
-                        $('#modelInfoViewOnlyArea').hide();
-                        $('#txtFolderName').val(folderDetails.FolderName);
-                        $('#txtBorn').val(folderDetails.Born);
+                    if (isPornEditor) {
+                        $('#txaModelComment').summernote("code", folderDetails.CommentText);
+                    }
+                    else
                         $('#txaModelComment').val(folderDetails.CommentText);
-                        $('#txtNationality').val(folderDetails.Nationality);
-                        $('#txtMeasurements').val(folderDetails.Measurements);
-                        $('#externalLinks').html(folderDetails.ExternalLinks);
-                        $('#modelInfoEdit').html("Save");
-                        $('#modelInfoEditArea').show();
-                    }
+
+                    $('#modelDialogThumbNailImage').attr("src", folderDetails.FolderImage);
+                    $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
+                    $('#modelInfoEditArea').show();
+                    $('#modelInfoViewOnlyArea').hide();
+                    $('#txtFolderName').val(folderDetails.FolderName);
+                    $('#txtBorn').val(folderDetails.Born);
+                    $('#txtNationality').val(folderDetails.Nationality);
+                    $('#txtMeasurements').val(folderDetails.Measurements);
+                    $('#txtBoobs').val(folderDetails.Boobs);
+
+                    $('#externalLinks').html(folderDetails.ExternalLinks);
+                    $('#modelInfoEdit').html("Save");
+                    $('#modelInfoEditArea').show();
+
                 }
                 else
                     alert("Get FolderDetail model Info : " + folderDetails.Success);

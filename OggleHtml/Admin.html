@@ -13,135 +13,121 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
-    <script src="Scripts/Carousel.js"></script>
     <script src="Scripts/DirTree.js"></script>
-    <script src="Scripts/FolderCategoryDialog.js"></script>
+    <script src="Scripts/Dashboard.js"></script>
+    <!--<script src="Scripts/FolderCategoryDialog.js"></script>
     <script src="Scripts/ModelInfoDialog.js"></script>
     <script src="Scripts/ImageCommentDialog.js"></script>
     <script src="Scripts/MoveCopyArchive.js"></script>
-    <script src="Scripts/MetaTagDialog.js"></script>
+    <script src="Scripts/MetaTagDialog.js"></script>-->
 
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
     <link href="Styles/loginDialog.css" rel="stylesheet" />
     <link href="Styles/Header.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet" />
-    <link href="Styles/Carousel.css" rel="stylesheet" />
-    <link href="Styles/ImagePage.css" rel="stylesheet" />
-    <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
+    <link href="Styles/Dashboard.css" rel="stylesheet" />
+    <link href="Styles/ChooseBox.css" rel="stylesheet" />
+    <!--<link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
     <link href="Styles/ModelInfoDialog.css" rel="stylesheet" />
-    <!--
-    <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
-    <link href="Styles/ImageCommentDialog.css" rel="stylesheet" />
-    <link href="Styles/ImageCategoryDialog.css" rel="stylesheet" />
-    <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
-    -->
+    <link href="Styles/MetaTagDialog.css" rel="stylesheet" />-->
     <!--<script src="/signalr/hubs"></script>-->
     <!--<script src="Scripts/jquery.signalR-2.4.1.min.js"></script>-->
-    <link href="Styles/Dashboard.css" rel="stylesheet" />
-    <script src="Scripts/Dashboard.js"></script>
 
 </head>
 <body>
     <header></header>
     <div class="threeColumnLayout">
-        <div id="leftColumn">
-            <!--//$('#headerMessage').html(`Dashboard <dir class='linkContainer'></dir>`);
-
-           -->
-        </div>
+        <div id="leftColumn"></div>
         <div id="middleColumn">
-            <img id="dashBoardLoadingGif" class="loadingGif" src="Images/loader.gif" />
+            <img id="getDirTreeLoadingGif" class="smallLoadingGif" src="/Images/loader.gif" />
+            <img id="dashBoardLoadingGif" class="loadingGif" src="/Images/loader.gif" />
             <div id="divDashboardContainer" class="dashBoardContainer">
                 <div class="leftColumnList">
                     <div>
-                        <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
+                        <div class="clickable" onclick="window.location.href='/Dashboard.html'">Dashboard</div>
+                        <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>                        
+                        <div class="clickable" onclick="showAddRolesDialog()">Add/Edit Roles</div>
+                        <div class="clickable" onclick="showAssignRolesDialog()">Assign User Roles</div>
                         <div class="clickable" onclick="$('#createNewFolderDialog').dialog('open');">Create New Folder</div>
-                        <div class="clickable" onclick="$('#moveFolderCrud').dialog('open');buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);">Move Folder</div>
+                        <div class="clickable" onclick="showMoveFolderDialog();">Move Folder</div>
                         <div class="clickable" onclick="$('#renameFolderCrud').dialog('open');">Rename Folder</div>
-                        <div class="clickable" onclick="loadProperties()">loadProperties</div>
+                        <div class="clickable" onclick="loadProperties()">load Properties</div>
                         <div class="clickable" onclick="$('#createStaticPagesCrud').dialog('open');">Create Static Pages</div>
                         <div class="clickable" onclick="repairLinks()">Repair Links</div>
                     </div>
                 </div>
+
                 <div class="workarea">
                     <div id="divStatusMessage"></div>
-
-                    <div id="uploadArea" class="oggleh">
-                        <div id="addNewLink" class="addLinkCrudArea">
-                            <div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
-                            <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
-                            <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
-                        </div>
-                        <img id="imgLinkPreview" class="linkImage" />
+                    <div id="addNewLink" class="addLinkCrudArea">
+                        <div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
+                        <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
+                        <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
                     </div>
-
+                    <img id="imgLinkPreview" class="linkImage" />
                     <div id="progressBar" class="dashboardProgessBar"></div>
                     <div id="dataifyInfo" class="infoLine"></div>
                 </div>
+
                 <div id="dirTreeContainer" class="treeContainer"></div>
-                <img id="getDirTreeLoadingGif" class="smallLoadingGif" src="/Images/loader.gif" />
             </div>
-
-            <div id="createNewFolderDialog" class="dashboardToggle" title="Create New Folder">
-                <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
-                <div><span>parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div class="roundendButton" onclick="createNewFolder()">Create Folder</div>
-            </div>
-
-            <div id="createStaticPagesCrud" class="dashboardToggle" title="Create Static Pages">
-                <div><span>folders to staticify</span><input id="txtFolderToStaticify" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div><span>include all subfolders </span><input type="checkbox" id="ckIncludeSubfolders" checked="checked" /></div>
-                <div class="roundendButton" onclick="createStaticPages($('#ckIncludeSubfolders').is(':checked'))">Build Files</div>
-                <div id="renameFolderReport" class="repairReport"></div>
-            </div>
-
-            <div id="renameFolderCrud" class="dashboardToggle" title="Rename Folder">
-                <div><span>folder to rename</span><input id="txtFolderToRename" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div><span>new name</span><input id="txtReName" class="roundedInput" /></div>
-                <div class="roundendButton" onclick="renameFolder()">Rename Folder</div>
-                <div id="renameFolderReport" class="repairReport"></div>
-            </div>
-
-            <div id="moveFolderCrud" class="dashboardToggle" title="Move Folder">
-                <div>
-                    <span>new parent </span><div onclick="$('#partialViewTreeContainer').dialog('open');" class="toggleButton">...</div>
-                    <input id="txtFolderToMove" class="txtPartialDirTreePath roundedInput" readonly="readonly" />
-                </div>
-                <div><span>move folder</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
-            </div>
-
-            <div id="partialViewTreeContainer" title="Select Folder to move">
-                <div id="folderToMoveTreeContainer" class="moveDirTreeContainer"></div>
-            </div>
-
-            <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
-                <div onclick="dashboardContextMenuOpenFolder()">Open Folder</div>
-                <div onclick="dashboardContextMenuShowCategoryDetails()">Show Category Info</div>
-                <div onclick="dashboardContextMenuShowInfoDialog()">Show Model Info</div>
-            </div>
-
-            <!--<div id="videoCrud" class="dashboardToggle">
-                <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
-                <div class="floatingCrudContainer">
-                    <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
-                    <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
-                    <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
-                    <div class="roundendButton" onclick="addVideo()">Insert</div>
-                </div>
-            </div>-->
         </div>
+
+        <div id="addEditRolesDialog" class="dashboardToggle" title="Add Edit Roles">
+            <div class="crudArea">
+                <label>Role:</label>
+                <input class="roundedInput" id="txtRoleName" />
+                <div id="btnAddUpdateRole" class="roundendButton editRolebtn" onclick="addUpdateRole()">Add</div>
+                <div id="btnRoleToggle" class="roundendButton editRolebtn" onclick="toggleAddButton()">New</div>
+            </div>
+            <div class="crudItemsList" id="divRoleList"></div>
+        </div>
+
+        <div id="rolesChooseBoxDialog" class="dashboardToggle" title="Assign Roles">
+            <div class="crudContainer AssignRolesContainer">
+                <div class="crudContainerTitle">Assign Roles</div>
+                <div class="flexContainer">
+                    <div><select id="ddUsers" class="crudDropDown"></select></div>
+                </div>
+                <div id="divRolesChoose" class="chooseBoxContainer">
+
+                    <div id="divChooseAvailable" class="chooseBox floatLeft"></div>
+
+                    <div id="divChooseButtons" class="chooseBtnsContainer floatLeft">
+                        <div><img id="imgAdd" class="chooseBtn" onclick="addUserRole()" src="/Images/sglright.jpg" /></div>
+                        <div><img id="imgAddAll" class="chooseBtn disenabled" src="/Images/dblright.jpg" /></div>
+                        <div><img id="imgRemove" class="chooseBtn" src="/Images/sglleft.jpg" /></div>
+                        <div><img id="imgRemoveAll" class="chooseBtn disenabled" src="/Images/dblleft.jpg" /></div>
+                    </div>
+                    <div id="divChooseAssigned" class="chooseBox floatLeft"></div>
+                </div>
+            </div>
+        </div>
+
+
         <div id="rightColumn"></div>
     </div>
-    <div w3-include-html="Snippets/BoobsFooter.html"></div>
     <div w3-include-html="Snippets/AdminDialogs.html"></div>
+    <div w3-include-html="Snippets/BoobsFooter.html"></div>
     <div w3-include-html="Snippets/Login.html"></div>
     <div w3-include-html="Snippets/Register.html"></div>
 
+    <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
+        <div onclick="dashboardContextMenuOpenFolder()">Open Folder</div>
+        <div onclick="dashboardContextMenuShowCategoryDetails()">Show Category Info</div>
+        <div onclick="dashboardContextMenuShowInfoDialog()">Show Model Info</div>
+    </div>
+
     <script>
+        var selectedRoleName = "";
+        var selectedUserName = "";
+        var selectedRoleType = "";
+
         $(document).ready(function () {
             includeHTML();
+            getHeader("admin");
 
+            $('#dashBoardLoadingGif').hide();
             var dots = ""
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
@@ -150,111 +136,381 @@
                 }
                 else {
                     clearInterval(waiter);
-                    getHeader("admin");
                     buildDirectoryTree();
-                    logPageHit("Admin", "OggleHtml");
+                    logPageHit("Upload");
                 }
             }, 300);
-
-            defineDilogs();
             //setSignalR();
             window.addEventListener("resize", resizeDashboardPage);
             resizeDashboardPage();
+            defineDilogs();
         });
 
-        function resizeDashboardPage() {
-            resizePage();
-            var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);
-            if (workAreaHeight > $('#middleColumn').height()) {
-                $('#middleColumn').height(workAreaHeight);
-                $('#footerMessage').html("middleColumn.height: " + $('#middleColumn').height()); //image height: " + $('#imgLinkPreview').height());
-            }
-            else
-                $('#footerMessage').html("_");
-
-            $('#divDashboardContainer').height($('#middleColumn').height() - 180);
-            $('.floatingCrud').width($('.workarea').width() - 100);
+        function showAssignRolesDialog() {
+            $('#rolesChooseBoxDialog').dialog('open');
+            $('#divChooseAssigned').html("");
+            //$('#divSelectedUser').html("");
+            loadUsers();
+            loadUserRoles("Available")
+            loadAllUserRoles();
         }
 
-        function setSignalR() {
+        function showAddRolesDialog() {
+            $('#addEditRolesDialog').dialog('open');
+            loadAaddEditRoles()
+        }
 
-            var connection = $.hubConnection(service);
+        function defineDilogs() {
 
-            var progressHubProxy = connection.createHubProxy('ProgressHub');
-
-            progressHubProxy.on('PostToClient', function (data) {
-                $('#dataifyInfo').html(data);
+            $('#rolesChooseBoxDialog').dialog({
+                autoOpen: false,
+                show: { effect: "fade" },
+                hide: { effect: "blind" },
+                width: "700"
             });
 
-            progressHubProxy.on('ShowProgressBar', function (goal, progress) {
-                $('#progressBar').progressbar({ value: progress, max: goal });
+
+            $('#addEditRolesDialog').dialog({
+                autoOpen: false,
+                show: { effect: "fade" },
+                hide: { effect: "blind" },
+                width: "400"
             });
+        }
 
+        $(".chooseBtn").click(function () {
+            if (isNullorUndefined(selectedUserName)) {
+                displayStatusMessage("warning", "please select a user");
+            }
+            else {
+                if (isNullorUndefined(selectedRoleName)) {
+                    alert("Please select a Role.");
+                }
+                else {
+                    switch ($(this).attr("Id")) {
+                        case "imgAdd":
+                            if (selectedRoleType == "Available")
+                                addUserRole();
+                            else
+                                displayStatusMessage("warning", "no available item selected")
+                            break;
+                        case "imgAddAll":  //  disabled
+                            //$('#divChooseAssigned').html("");
+                            //$('#divChooseAssigned').append($('#divChooseAvailable').html());
+                            //$('#divChooseAvailable').html("");
+                            //perfom special role function
+                            break;
+                        case "imgRemove":
+                            if (selectedRoleType == "Assigned")
+                                RemoveUserRole(selectedUserName, selectedRoleName);
+                            else
+                                displayStatusMessage("warning", "no assigned item selected")
+                            break;
+                        case "imgRemoveAll":  //  disabled
+                            //$('#divChooseAvailable').append($('#divChooseAssigned').html());
+                            //$('#divChooseAssigned').html("");
+                            //perfom special role function
+                            break;
+                        default:
+                            alert("$(this).Id :" + $(this).attr("Id"))
+                    }
+                }
+            }
+        });
 
-            connection.start({ jsonp: true })
-                .done(function () {
-                    console.log('Now connected, connection ID=' + connection.id);
-                })
-                .fail(function () {
-                    alert('signalr Could not connect');
-                    console.log('signalr Could not connect');
+        function loadUsers() {
+            try {
+                $.ajax({
+                    type: "GET",
+                    url: settingsArray.ApiServer + "api/Login/GetUsers",
+                    success: function (usersModel) {
+                        if (usersModel.Success === "ok") {
+                            $('#ddUsers').html("<option class= 'ddOption' value ='0'>-- select a user --</option >");
+                            $.each(usersModel.UserNames, function (idx, userName) {
+                                $('#ddUsers').append("<option class='ddOption' value='" + userName + "'>" + userName + "</option>");
+                            });
+
+                            $('#ddUsers').change(function () {
+                                selectedUserName = $('#ddUsers option:selected').attr("value")
+                                loadAvailableRoles();
+                                loadAssignedUserRoles();
+                            });
+                        }
+                        else
+                            alert(usersModel.Success);
+                    },
+                    error: function (jqXHR, exception) {
+                        alert("jqXHR error: " + getXHRErrorDetails(jqXHR, exception));
+                    }
                 });
+            } catch (e) { alert("catch: " + e); }
         }
 
-    function defineDilogs() {
-        $('#uploadArea').keydown(function (event) {
-            if (event.keyCode === 13) {
-                // Cancel the default action, if needed
-                // Trigger the button element with a click
-                addImageLink();
+        function loadAllUserRoles() {
+            try {
+                // $('#divLoadingGif').show();
+                $.ajax({
+                    type: "PATCH",
+                    url: settingsArray.ApiServer + "api/Roles/GetRoles",
+                    success: function (roleModel) {
+                        if (roleModel.Success === "ok") {
+                            $('#divChooseAvailable').html("");
+                            $.each(roleModel.RoleNames, function (idx, roleName) {
+                                $('#divChooseAvailable').append("<div class='availableListBoxItem chooseBoxListItem'>" + roleName + "</div>");
+                            });
+                            $('.availableListBoxItem').click(function () {
+                                $('.chooseBoxListItem').removeClass("highlightItem");
+                                if (isNullorUndefined(selectedRoleName)) {
+                                    $(this).addClass('highlightItem');
+                                    selectedRoleType = "Available";
+                                    selectedRoleName = $(this).text();
+                                }
+                                else {
+                                    if (selectedRoleName === $(this).text()) {
+                                        selectedRoleName = "";
+                                        selectedRoleType = "";
+                                    }
+                                    else {
+                                        $(this).addClass("highlightItem");
+                                        selectedRoleType = "Available";
+                                        selectedRoleName = $(this).text();
+                                    }
+                                }
+                            });
+                        }
+                        else
+                            alert("loadAllUserRoles: " + roleModel.Success);
+                    },
+                    error: function (jqXHR, exception) {
+                        alert("error: " + getXHRErrorDetails(jqXHR, exception));
+                    },
+                });
+            } catch (e) {
+                //displayStatusMessage("error", "catch ERROR: " +e);
+                alert("catch: " + e);
             }
-        });
-        $('#moveFolderCrud').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            width: "400"
-        });
-        $('#renameFolderCrud').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            width: "400"
-        });
-        $('#createNewFolderDialog').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            width: "615"
-        });
-        $('#createNewFolderDialog').keydown(function (event) {
-            if (event.keyCode === 13) {
-                createNewFolder();
+        }
+
+        function loadUserRoles(whichType) {
+            try {
+                $.ajax({
+                    type: "PATCH",
+                    url: settingsArray.ApiServer + "api/Roles/GetUserRoles&userName=" + selectedUserName + "&whichType=" + whichType,
+                    success: function (roleModel) {
+                        if (roleModel.Success === "ok") {
+                            if (whichType === "Available") {
+                                $('#divChooseAvailable').html("");
+                                $.each(roleModel.RoleNames, function (idx, roleName) {
+                                    $('#divChooseAvailable').append("<div class='chooseBoxListItem'>" + roleName + "</div>");
+                                });
+                            }
+                            if (whichType === "Assigned") {
+                                $('#divChooseAssigned').html("");
+                                $.each(roleModel.RoleNames, function (idx, roleName) {
+                                    $('#divChooseAssigned').append("<div class='chooseBoxListItem'>" + roleName + "</div>");
+                                });
+                            }
+                            //// thanks to hereswhatidid.com/2011/02/using-jquery-to-find-elements-that-contain-a-specific-text-string/
+                            //var pickedRoleId = $("#divChooseAvailable div:contains(" + roleName + ")").filter(function ()
+                            //{
+                            //    return $(this).html() == roleName;
+                            //}).attr('Id');
+                            //$('div').remove("#" + pickedRoleId);
+
+                            $('.chooseBoxListItem').click(function () {
+                                if (selectedRoleName == $(this).text()) {
+                                    $(this).removeClass('highlightItem');
+                                    selectedRoleName = "";
+                                }
+                                else {
+                                    $('.chooseBoxListItem').removeClass("highlightItem");
+                                    $(this).addClass('highlightItem');
+                                    selectedRoleName = $(this).text();
+                                }
+                            });
+                        }
+                        else
+                            alert("loadAllUserRoles: " + roleModel.Success);
+                    },
+                    error: function (jqXHR, exception) {
+                        alert("error: " + getXHRErrorDetails(jqXHR, exception));
+                    },
+                });
+            } catch (e) {
+                //displayStatusMessage("error", "catch ERROR: " +e);
+                alert("catch: " + e);
             }
-        });
+        }
 
-        $('#createStaticPagesCrud').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            width: "400"
-        });
-        $('#moveFolderCrud').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            width: "400"
-        });
-        $('#partialViewTreeContainer').dialog({
-            autoOpen: false,
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            position: ({ my: 'right', at: 'left', of: $('#moveFolderCrud') }),
-            width: "400",
-            height: "550"
-        });
-    }
+        function addUserRole() {
+            //if (selectedRoleType == "Available")
+            //    addUserRole();
+            //else
+            //    displayStatusMessage("warning", "no available item selected")
+            //break;
 
+            try {
+                $.ajax({
+                    type: "POST",
+                    url: settingsArray.ApiServer + "api/Roles/AddUserRole?userName=" + selectedUserName + "&roleName=" + selectedRoleName,
+                    success: function (success) {
+                        if (success == "ok") {
+                            loadAllUserRoles();
+                            loadAvailableRoles();
+                            displayStatusMessage("ok", "User Role [" + selectedRoleName + "] added");
+                        }
+                        else {
+                            //displayStatusMessage("error", "ERROR: " + success);
+                            alert("addUserRole: " + success);
+                        }
+                    },
+                    error: function (xhr) {
+                        //displayStatusMessage("error", "error: " + xhr.statusText);
+                        alert("addUserRole xhr error: " + xhr.statusText);
+                    }
+                });
+            }
+            catch (e) {
+                alert("addUserRole CATCH error: " + e);
+            }
+        }
+
+        function RemoveUserRole(selectedUserName, selectedRoleId) {
+            try {
+                $.ajax({
+                    type: "DELETE",
+                    url: settingsArray.ApiServer + "api/Roles/RemoveUserRole?userName=" + selectedUserName + "&roleId=" + selectedRoleId,
+                    success: function (success) {
+                        if (success == "ok") {
+                            loadRoles();
+                            //displayStatusMessage("ok", "Role [" + selectedRoleName + "] Removed");
+                        }
+                        else {
+                            alert("remove: " + success);
+                            //displayStatusMessage("error", "ERROR: " + success);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                        alert("RemoveUserRole XHR error : " + getXHRErrorDetails(jqXHR, exception));
+                    },
+                });
+            }
+            catch (e) {
+                alert("RemoveUserRole catch ERROR: " + e);
+            }
+        }
+
+        function loadAaddEditRoles() {
+            try {
+                // $('#divLoadingGif').show();
+                $.ajax({
+                    type: "PATCH",
+                    url: settingsArray.ApiServer + "api/Roles/GetRoles",
+                    success: function (roleModel) {
+                        if (roleModel.Success === "ok") {
+                            $('#divRoleList').html("");
+                            $.each(roleModel.RoleNames, function (idx, roleName) {
+                                $('#divRoleList').append("<div class='chooseBoxListItem'>" + roleName + "</div>");
+                            });
+                            $('.chooseBoxListItem').click(function () {
+                                $('#txtRoleName').val($(this).html());
+                                $('#btnAddUpdateRole').text("Edit");
+                                $('#btnRoleToggle').show();
+                            });
+                        }
+                        else
+                            alert(roleModel.Success)
+                    },
+                    error: function (jqXHR, exception) {
+                        alert("loadAaddEditRoles : " + getXHRErrorDetails(jqXHR, exception));
+                    }
+                });
+            } catch (e) {
+                //displayStatusMessage("error", "catch ERROR: " +e);
+                alert("getRoles catch: " + e);
+            }
+        }
+
+        function addUpdateRole() {
+                if ($('#btnAddUpdateRole').html() === "Add")
+                    addRole();
+                else
+                    updateRole();
+            };
+
+        function toggleAddButton() {
+            objClassificationRefCode = null;
+            $('#btnAddUpdateRole').text("Add");
+            $(this).hide();
+        };
+
+        function addRole() {
+            try {
+                $.ajax({
+                    type: "POST",
+                    url: settingsArray.ApiServer + "api/Roles/AddRole?roleName=" + $('#txtRoleName').val(),
+                    success: function (success) {
+                        if (success == "ok") {
+                            $('#txtRoleName').val("");
+                            $('#btnAddUpdateRole').text("Add");
+                            displayStatusMessage("ok", "Saved");
+                            loadAaddEditRoles();
+                            $('#btnRoleToggle').hide();
+                        }
+                        else {
+                            alert("addRole :" + success);
+                            //displayStatusMessage("error", "xhr ERROR: " + success);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                        //displayStatusMessage("error", "AddRole error: " + getXHRErrorDetails(jqXHR, exception));
+                        alert("AddRole XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                    }
+                });
+            }
+            catch (e) {
+                alert("AddRole catch: " +e);
+            }
+        }
+
+    function updateRole(newName) {        
+        var newName = $('#txtRoleName').val();
+            try {
+                $.ajax({
+                    url: settingsArray.ApiServer + "api/Roles/UpdateRole?roleId=" + roleId + "&newName=" + newName,
+                    type: "PUT",
+                    success: function (success) {
+                        if (success === "ok") {
+                            $('#txtRoleName').val("");
+                            $('#btnAddUpdateRole').text("Add");
+                            displayStatusMessage("ok", "Updated");
+                            getAllRoles();
+                            $('#btnRoleToggle').hide();
+                        }
+                        else
+                            displayStatusMessage("error", "server ERROR: " + success);
+                    },
+                    error: function (jqXHR, exception) {
+                        alert("updateRole: " + getXHRErrorDetails(jqXHR, exception));
+                    }
+                });
+            }
+            catch (e) {
+                alert("updateRole catch: " + e);
+            }
+        }
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -6,6 +6,14 @@
 #folderCategoryDialog .ui-corner-all {
     border-radius: 22px;
 }
+.folderCategoryDialogButton {
+    text-align: center;
+    background: var(--brucheumBlue);
+    color: #000;
+    border-radius: 6px;
+    padding: 8px 20px;
+    cursor: pointer;
+}
 
 #folderCategoryDialog .ui-widget textarea {
     font-family: 'Comic Sans MS';

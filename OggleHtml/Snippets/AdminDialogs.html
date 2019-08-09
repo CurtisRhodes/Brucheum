@@ -11,21 +11,26 @@
     <div id="modelInfoEditArea" class="displayHidden">
         <div class="flexContainer">
             <div class="floatLeft">
-                <label>name</label><input id="txtFolderName" class="roundedInput modelDialogInput inline" /><br />
-                <label>nationality</label><input id="txtNationality" class="roundedInput modelDialogInput inline" /><br />
-                <label>born</label><input id="txtBorn" class="roundedInput modelDialogInput inline" /><br />
-                <label>measurements</label><input id="txtMeasurements" class="roundedInput modelDialogInput inline" />
+                <div class="modelInfoDialogLabel">name</div><input id="txtFolderName" class="modelDialogInput" /><br />
+                <div class="modelInfoDialogLabel">from</div><input id="txtNationality" class="modelDialogInput" /><br />
+                <div class="modelInfoDialogLabel">born</div><input id="txtBorn" class="modelDialogInput" /><br />
+                <div class="modelInfoDialogLabel">boobs</div><input id="txtBoobs" class="modelDialogInput" /><br />
+                <div class="modelInfoDialogLabel">figure</div><input id="txtMeasurements" class="modelDialogInput" />
             </div>
             <div class="floatLeft">
                 <img id="modelDialogThumbNailImage" src="Images/redballon.png" class="modelDialogImage" />
             </div>
         </div>
-        <label>comment</label>
+        <div class="modelInfoDialogLabel">comment</div>
         <div><textarea id="txaModelComment" class="smallTextArea"></textarea></div>
-        <div class="hrefLabel">href</div><input id="txtLinkHref" class="roundedInput inline" />
-        <div class="hrefLabel">label</div><input id="txtLinkLabel" class="roundedInput" onblur="addHrefToExternalLinks()" />
-        <span class="addLinkIcon" onclick="addHrefToExternalLinks()">+</span>
+        <div class="modelInfoDialogLabel">trackbacks</div>
+        <div id="modelInfoDialogTrackBack">
+            <div class="hrefLabel">href</div><input id="txtLinkHref" class="modelDialogInput" />
+            <div class="hrefLabel">label</div><input id="txtLinkLabel" class="modelDialogInput" onblur="addHrefToExternalLinks()" />
+            <span class="addLinkIcon" onclick="addHrefToExternalLinks()">+</span>
+        </div>
         <div id="externalLinks" class="smallTextArea"></div>
+
     </div>
     <div id="modelInfoViewOnlyArea" class="displayHidden">
         <div class="viewOnlyMessage">If you you know who this is Please click Edit</div>

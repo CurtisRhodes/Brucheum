@@ -15,6 +15,7 @@
             resume();
     });
 }
+
 function postRegister() {
     if (validateRegister()) {
         try {
@@ -50,6 +51,7 @@ function postRegister() {
         }
     }
 }
+
 function validateRegister() {
     if ($('#txtRegisterUserName').val() === "") {
         $('#errUserName').show();
@@ -101,6 +103,7 @@ function onLoginClick() {
             resume();
     });
 }
+
 function postLogin() {
     if (validateLogin()) {
         $.ajax({
@@ -112,7 +115,7 @@ function postLogin() {
                     displayStatusMessage("ok", "thanks for logging in " + getCookie());
                     setCookie($('#txtLoginUserName').val());
                     setLoginHeader($('#txtLoginUserName').val());
-                    getUserPermissions($('#txtLoginUserName').val());
+                    getUserPermissions();
                 }
                 else
 
@@ -143,6 +146,7 @@ function validateLogin() {
     $('#errLoginPassword').hide();
     return true;
 }
+
 function transferToRegisterPopup() {
     $('#loginDialog').dialog('close');
     onRegisterClick();
@@ -152,11 +156,10 @@ function profilePease() {
     alert("profilePease");
 }
 
-
 function getUserPermissions() {
 
     var userName = getCookie();
-    if (userName !== "unknown") {
+    if (userName !== "") {
         $('.loginRequired').show();
 
     }

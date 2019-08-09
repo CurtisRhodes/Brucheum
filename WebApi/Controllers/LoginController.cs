@@ -11,6 +11,22 @@ namespace WebApi
     public class LoginController : ApiController
     {
         [HttpGet]
+        public UsersModel GetUsers()
+        {
+            UsersModel users = new UsersModel();
+            try
+            {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    users.UserNames = db.RegisteredUsers.Select(r => r.UserName).ToList();
+                    users.Success = "ok";
+                }
+            }
+            catch (Exception ex) { users.Success = Helpers.ErrorDetails(ex); }
+            return users;
+        }
+
+        [HttpGet]
         public string VerifyLogin(string userName, string passWord)
         {
             string success = "";
@@ -39,12 +55,11 @@ namespace WebApi
             using (WebStatsContext db = new WebStatsContext())
             {
                 roles = (from u in db.UserRoles
-                         join r in db.Roles on u.RoleId equals r.RoleId
+                         join r in db.Roles on u.RoleName equals r.RoleName
                          where u.UserName == userName
                          select new UserRoleModel()
                          {
                              UserName = userName,
-                             RoleId = u.RoleId,
                              RoleName = r.RoleName
                          }
                          ).ToList();
@@ -95,11 +110,163 @@ namespace WebApi
             }
             return sb.ToString();
         }
-    }   
+    }
 
-    public class UserRoleModel {
+    [EnableCors("*", "*", "*")]
+    public class RolesController : ApiController
+    {
+        [HttpPatch]
+        public RoleModel GetRoles()
+        {
+            var roleModel = new RoleModel();
+            try
+            {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    roleModel.RoleNames = db.Roles.Select(r => r.RoleName).ToList();
+                    roleModel.Success = "ok";
+                }
+            }
+            catch (Exception ex) { roleModel.Success = Helpers.ErrorDetails(ex); }
+            return roleModel;
+        }
+
+        [HttpGet]
+        public UsersModel GetAvailableRoles()
+        {
+            UsersModel users = new UsersModel();
+            try
+            {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    users.UserNames = db.RegisteredUsers.Select(r => r.UserName).ToList();
+                    users.Success = "ok";
+                }
+            }
+            catch (Exception ex) { users.Success = Helpers.ErrorDetails(ex); }
+            return users;
+        }
+
+        //api/Roles/GetAvailableRoles&userName=" + selectedUserName,
+
+
+        [HttpGet]
+        public RoleModel GetUserRoles(string userName, string whichType)
+        {
+            RoleModel roleModel = new RoleModel();
+            try
+            {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    if(whichType== "Assigned")
+                        roleModel.RoleNames = db.UserRoles.Where(ur => ur.UserName == userName).Select(ur => ur.RoleName).ToList();
+
+                    if (whichType == "Available")
+                    {
+                        List<string> assigned = db.UserRoles.Where(ur => ur.UserName == userName).Select(ur => ur.RoleName).ToList();
+                        List<string> allRoles = db.Roles.Select(r => r.RoleName).ToList();
+                        //roleModel.RoleNames = allRoles.Where(a=>a.co)
+                        //roleModel.RoleNames = db.UserRoles.Where(ur => ur.UserName == userName).Select(ur => ur.RoleName).ToList();
+                    }
+                    roleModel.Success = "ok";
+                }
+            }
+            catch (Exception ex) { roleModel.Success = Helpers.ErrorDetails(ex); }
+            return roleModel;
+        }
+
+        [HttpPost]
+        public string AddRole(string roleName)
+        {
+            string success = "";
+            try
+            {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    db.Roles.Add(new Role() { RoleName = roleName });
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        [HttpPost]
+        public string AddUserRole(string userName, string roleName)
+        {
+            string success = "";
+            try
+            {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    db.UserRoles.Add(new UserRole() { UserName = userName, RoleName = roleName });
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        [HttpPut]
+        public string UpdateRoleName(string roleName, string newName)
+        {
+            string success = "";
+            try
+            {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    Role roleToUpdate = db.Roles.Where(r => r.RoleName == roleName).First();
+                    roleToUpdate.RoleName = newName;
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        [HttpDelete]
+        public string RemoveUserRole(string userName, string roleName) {
+            string success = "";
+            try
+            {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    UserRole roleToDelete = db.UserRoles.Where(r => r.UserName == userName && r.RoleName == roleName).First();
+                    db.UserRoles.Remove(roleToDelete);
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+    }
+
+
+    public class UsersModel
+    {
+        public UsersModel()
+        {
+            UserNames = new List<string>();
+        }
+        public List<string> UserNames { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class RoleModel
+    {
+        public RoleModel()
+        {
+            RoleNames = new List<string>();
+        }
+        public List<string> RoleNames { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class UserRoleModel
+    {
         public string UserName { get; set; }
-        public string RoleId { get; set; }
         public string RoleName { get; set; }
     }
 
