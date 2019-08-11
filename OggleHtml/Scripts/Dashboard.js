@@ -10,7 +10,9 @@ var dashboardContextMenuFolderId = "";
 
 function buildDirectoryTree() {
     $('#dirTreeContainer').html("");
-    //$('#getDirTreeLoadingGif').show();
+    $('#dataifyInfo').show().html("rebuilding directory tree");
+
+    $('#dashBoardLoadingGif').show();
     buildDirTree($('#dirTreeContainer'), "dashboardMain", 0);
 }
 
@@ -24,7 +26,7 @@ function resizeDashboardPage() {
     else
         $('#footerMessage').html("_");
 
-    $('#divDashboardContainer').height($('#middleColumn').height() - 180);
+    $('#divDashboardContainer').height($('#middleColumn').height() - 122);
     $('.floatingCrud').width($('.workarea').width() - 100);
 }
 
@@ -33,10 +35,10 @@ function createStaticPages(justOne) {
     //$('#createStaticPagesCrud').hide();
     $('#dashBoardLoadingGif').fadeIn();
     $('#dataifyInfo').show().html("creating static pages for " + dashboardMainSelectedPath);
-    $('#progressBar').show();
+    //$('#progressBar').show();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/StaticPage/Buld?parentFolder=" + dashboardMainSelectedTreeId + "&recurr=" + justOne,
+        url: settingsArray.ApiServer + "api/StaticPage/Buld?folderId=" + dashboardMainSelectedTreeId + "&recurr=" + justOne,
         success: function (success) {
             //$('#progressBar').hide();
             $('#dashBoardLoadingGif').hide();

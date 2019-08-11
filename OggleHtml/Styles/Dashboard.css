@@ -76,8 +76,8 @@
 }
 
 .infoLine {
-    /*position: relative;*/
-    bottom: 44px;
+    position: absolute;
+    bottom: 22px;
     display: none;
     padding: 4px;
     margin-left: 3px;
@@ -85,7 +85,7 @@
     height: 32px;
     min-width: 610px;
     background-color: #f8e8e8;
-    vertical-align: bottom;
+    /*vertical-align: bottom;*/
 }
 
 *.dashboardToggle {
@@ -114,7 +114,7 @@
     display: inline-block;
     border-left: solid .5px #555;
     min-height: 106px;
-    min-width: 275px;
+    min-width: 400px;
     overflow-y: auto;
 }
 

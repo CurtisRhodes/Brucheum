@@ -191,9 +191,12 @@ function setLoginHeader(userName) {
     }
 }
 function setCookie(userName) {
-    expires = new Date();
-    expires.setTime(expires.getTime() + 1 * 24 * 60 * 60 * 1000);
-    document.cookie = 'User=' + userName + '; expires=' + expires.toUTCString();
+    var expiryDate = new Date();
+    //expires = new Date(date.setMonth(date.getMonth() + 3));
+    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+    document.cookie = 'User=' + userName + '; expires=' + expiryDate.toUTCString();
+
+    alert("expires: " + expiryDate.toUTCString());
 }
 function getCookie(cname) {
     var decodedCookie = "";
