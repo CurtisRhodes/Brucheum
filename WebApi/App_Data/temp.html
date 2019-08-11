@@ -14,7 +14,7 @@
    <script src='/Scripts/Album.js' type='text/javascript'></script>
    <script src='/Scripts/Slideshow.js' type='text/javascript'></script>
    <script src='/Scripts/ImageCommentDialog.js' type='text/javascript'></script>
-   <script src='/Scripts/CategoryDialog.js' type='text/javascript'></script>
+   <script src='/Scripts/FolderCategoryDialog.js' type='text/javascript'></script>
    <script src='/Scripts/ModelInfoDialog.js' type='text/javascript'></script>
    <script src='/Scripts/DirTree.js'></script>
    <link href='/Styles/Common.css' rel='stylesheet'/>
@@ -26,11 +26,11 @@
    <link href='/Styles/ModelInfoDialog.css' rel='stylesheet'/>
    <link href='/Styles/ImagePage.css' rel='stylesheet'/>
    <link href='/Styles/LoginDialog.css' rel='stylesheet'/>
-   <title>Donna Michelle : OggleBooble</title>   <meta name='Title' content='centerfolds_1960s_1963_Donna Michelle' property='og:title'/>
-   <meta name='description' content='free images of Donna Michelle'/>
+   <title>centerfolds/1960s/1963/Christine Williams : OggleBooble</title>   <meta name='Title' content='centerfolds_1960s_1963_Christine Williams' property='og:title'/>
+   <meta name='description' content='free images of Christine Williams'/>
    <meta property='og:type' content='website' />
-   <meta property='og:url' content='https://ogglebooble.com/static/centerfolds_1960s_1963_Donna Michelle.html'/>
-   <meta name='Keywords' content=',Donna Michelle,1963,1960s,centerfolds,every Playboy centerfold,playboy.OGGLEBOOBLE.COM'/>
+   <meta property='og:url' content='https://ogglebooble.com/static/centerfolds_1960s_1963_Christine Williams.html'/>
+   <meta name='Keywords' content=',Christine Williams,1963,1960s,centerfolds,every Playboy centerfold,playboy.OGGLEBOOBLE.COM'/>
 </head>
 <body style='margin-top:105px'>
 <header class='classicColors'>
@@ -50,7 +50,7 @@
 <a class='activeBreadCrumb' href='/centerfolds.html'>centerfolds</a>
 <a class='activeBreadCrumb' href='/1960s.html'>1960s</a>
 <a class='activeBreadCrumb' href='/1963.html'>1963</a>
-<a class='inactiveBreadCrumb' onclick='showHomeFolderInfoDialog("5","1824")'>Donna Michelle</a></div>
+<a class='inactiveBreadCrumb' onclick='showHomeFolderInfoDialog("5","Christine Williams","1822","playboy")'>Christine Williams</a></div>
             <div class='menuTabs replaceableMenuItems'>
             </div>
             <div id='optionLoggedIn' class='displayHidden'>
@@ -73,7 +73,7 @@
 <div id='middleColumn'>
 <div id='divStatusMessage'></div>
 <div id='imageContainer' class='flexWrapContainer'>
-<div id='img0' class='folderImageOutterFrame'><img class='thumbImage' oncontextmenu='ctxSAP("img0")' onclick='startSlideShow(0)' src='http://playboy.OGGLEBOOBLE.COM/centerfolds/1960s/1963/Donna Michelle/Donna Michelle_876d0b64-9359-42a8-9952-aaf5e27b9075.jpg'/></div>
+<div id='img0' class='folderImageOutterFrame'><img class='thumbImage' oncontextmenu='ctxSAP("img0")' onclick='startSlideShow(0)' src='http://playboy.OGGLEBOOBLE.COM/centerfolds/1960s/1963/Christine Williams/Christine Williams_25b3918d-f126-408a-9a99-a19452c88ade.jpg'/></div>
    </div>
        <div id='fileCount' class='countContainer'></div>
        <div id='thumbImageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut();'>
@@ -101,24 +101,28 @@
 <div id='folderCategoryDialog' class='displayHidden' title='' onmouseleave='considerClosingCategoryDialog()'>
     <div><textarea id='catDlgDescription' class='catDlgTextArea'></textarea></div>
 </div>
-<div id = 'modelInfoDialog' class='displayHidden' onmouseleave='considerClosingModelInfoDialog()'>
-    <div id = 'modelInfoEditArea' class='displayHidden'>
+<div id = 'modelInfoDialog' class='oggleDialogWindow' onmouseleave='considerClosingModelInfoDialog()'>
+       <div id = 'modelInfoEditArea' class='displayHidden'>
         <div class='flexContainer'>
             <div class='floatLeft'>
-                <label>name</label><input id = 'txtFolderName' class='roundedInput modelDialogInput inline' /><br />
-                <label>nationality</label><input id = 'txtNationality' class='roundedInput modelDialogInput inline' /><br />
-                <label>born</label><input id = 'txtBorn' class='roundedInput modelDialogInput inline' /><br />
-                <label>measurements</label><input id = 'txtMeasurements' class='roundedInput modelDialogInput inline' />
+                <div class='modelInfoDialogLabel'>name</div><input id='txtFolderName' class='modelDialogInput' /><br />
+                <div class='modelInfoDialogLabel'>from</div><input id='txtNationality' class='modelDialogInput' /><br />
+                <div class='modelInfoDialogLabel'>born</div><input id='txtBorn' class='modelDialogInput' /><br />
+                <div class='modelInfoDialogLabel'>boobs</div><input id='txtBoobs' class='modelDialogInput' /><br />
+                <div class='modelInfoDialogLabel'>figure</div><input id='txtMeasurements' class='modelDialogInput' />
             </div>
             <div class='floatLeft'>
                 <img id = 'modelDialogThumbNailImage' src='/images/redballon.png' class='modelDialogImage' />
             </div>
-        </div>
-        <label>comment</label>
-        <div><textarea id = 'txaModelComment' class='smallTextArea'></textarea></div>
-        <div class='hrefLabel'>href</div><input id = 'txtLinkHref' class='roundedInput inline' />
-        <div class='hrefLabel'>label</div><input id = 'txtLinkLabel' class='roundedInput' onblur='addHrefToExternalLinks()' />
-        <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>
+       </div>
+       <div class='modelInfoDialogLabel'>comment</div>
+       <div><textarea id = 'txaModelComment' class='smallTextArea'></textarea></div>
+       <div class='modelInfoDialogLabel'>trackbacks</div>
+       <div class='modelInfoDialogTrackBack'>
+           <div class='hrefLabel'>href</div><input id = 'txtLinkHref' class='modelDialogInput' />
+            <div class='hrefLabel'>label</div><input id = 'txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />
+            <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>
+       </div>
         <div id = 'externalLinks' class='smallTextArea'></div>
     </div>
     <div id = 'modelInfoViewOnlyArea' class='displayHidden'>
@@ -127,7 +131,7 @@
     </div>
     <a id = 'modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Edit</a>
 </div>
-<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=playboy></div><script>var staticPageFolderId=1824; var staticPageFolderName='centerfolds/1960s/1963/Donna Michelle'; var staticPageImagesCount='1'; var staticPageRootFolder='playboy';</script>
+<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=playboy></div><script>var staticPageFolderId=1822; var staticPageFolderName='centerfolds/1960s/1963/Christine Williams'; var staticPageImagesCount='1'; var staticPageRootFolder='playboy';</script>
 
 <div id='imageViewerDialog' class='fullScreenViewer'>
 <div id = 'viewerButtonsRow' class='imageViewerHeaderRow'>

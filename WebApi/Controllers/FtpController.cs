@@ -205,6 +205,7 @@ namespace WebApi
                                     //3 create new link for new location if necessary
                                     if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Where(c => c.ImageLinkId == dbImageLink.Id).FirstOrDefault() == null)
                                     {
+                                        successModel.ReturnValue = db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Count().ToString();
                                         CategoryImageLink newCatImageLink = new CategoryImageLink() { ImageCategoryId = model.DestinationFolderId, ImageLinkId = dbImageLink.Id };
                                         db.CategoryImageLinks.Add(newCatImageLink);
                                         db.SaveChanges();
@@ -217,8 +218,8 @@ namespace WebApi
                                         db.CategoryImageLinks.Remove(oldCatImageLink);
                                         db.SaveChanges();
                                         successModel.ReturnValue = categoryImageLinks.Count().ToString();
-                                        successModel.Success = "ok";
                                     }
+                                    successModel.Success = "ok";
                                 }
                                 else
                                     successModel.Success = "file not found";
@@ -304,9 +305,9 @@ namespace WebApi
         static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
 
         [HttpPost]
-        public string AddImageLink(AddLinkModel newLink)
+        public SuccessModel AddImageLink(AddLinkModel newLink)
         {
-            string success = "";
+            SuccessModel successModel = new SuccessModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
@@ -345,7 +346,7 @@ namespace WebApi
                             }
                             catch (Exception ex)
                             {
-                                success = "wc. download didnt work " + ex.Message;
+                                successModel.Success = "wc. download didnt work " + ex.Message;
                             }
                         }
                         FtpWebRequest webRequest = null;
@@ -362,7 +363,8 @@ namespace WebApi
                         }
                         catch (Exception ex)
                         {
-                            return " webRequest didnt work " + ex.Message;
+                            successModel.Success = " webRequest didnt work " + ex.Message;
+                            return successModel;
                         }
                         try
                         {
@@ -377,7 +379,8 @@ namespace WebApi
                         }
                         catch (Exception ex)
                         {
-                            return "GetRequestStream didn't work " + ex.Message;
+                            successModel.Success = "GetRequestStream didn't work " + ex.Message;
+                            return successModel;
                         }
 
                         int fWidth = 0;
@@ -423,25 +426,31 @@ namespace WebApi
                     }
                     try
                     {
+                        int lnkCount = db.CategoryImageLinks.Where(c => c.ImageCategoryId == newLink.FolderId).Count();
+                        if (lnkCount == 0)
+                            successModel.ReturnValue = "ok";
+                        else
+                            successModel.ReturnValue = imageLinkId;
+
                         db.CategoryImageLinks.Add(new CategoryImageLink()
                         {
                             ImageCategoryId = newLink.FolderId,
                             ImageLinkId = imageLinkId
                         });
                         db.SaveChanges();
-                        success = "ok";
+                        successModel.Success = "ok";
                     }
                     catch (Exception)
                     {
-                        success = "Alredy Added";
+                        successModel.Success = "Alredy Added";
                     }
                 }
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex) + "please try again";
+                successModel.Success = Helpers.ErrorDetails(ex) + "please try again";
             }
-            return success;
+            return successModel;
         }
 
         [HttpPut]

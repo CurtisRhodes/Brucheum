@@ -23,7 +23,7 @@ $(document).ready(function () {
     resizeStaticPage();
     var waiter = setInterval(function () {
         if (settingsArray.ApiServer === undefined) {
-           dots += ". ";
+           //dots += ". ";
            // $('#dots').html(dots);
         }
         else {

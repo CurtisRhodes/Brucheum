@@ -1,10 +1,12 @@
 ﻿var FolderDetailModel = {};
-var isPornEditor = true;
+var isPornEditor = false;
 
 function showModelInfoDialog(modelName, folderId, currentSrc) {
     FolderDetailModel.FolderId = folderId;
-    $("#txtBorn").datepicker();
+    isPornEditor = false;
+
     if (isPornEditor) {
+        $("#txtBorn").datepicker();
         $('#modelInfoDialogTrackBack').show();
         $('#txaModelComment').summernote({
             height: 300,
@@ -14,6 +16,10 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
     }
     else {
         $('#modelInfoDialogTrackBack').hide();
+        $('#txaModelComment').attr("readonly", "readonly");
+        $('.modelDialogInput').attr("readonly", "readonly");        
+        $('#modelInfoEdit').html("Edit");
+        $('#modelInfoEdit').hide();
     }
 
     $('#modelInfoDialog').dialog({
@@ -235,6 +241,6 @@ function updateFolderDetail() {
 
 function considerClosingModelInfoDialog() {
     if ($('#modelInfoEdit').html() === "Edit")
-    $('#modelInfoDialog').dialog("close");
+        $('#modelInfoDialog').dialog("close");
 }
 

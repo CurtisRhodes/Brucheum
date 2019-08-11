@@ -154,6 +154,13 @@ function addImageLink() {
                     displayStatusMessage("ok", "image link added");
                     $('#txtNewLink').val("");
                     resizeDashboardPage();
+
+                    if (successModel.ReturnValue === "0") {
+                        //var linkId = MoveCopyImageModel.Link.substr(MoveCopyImageModel.Link.lastIndexOf("_") + 1, 36);
+                        //alert("set folder image: " + linkId + "," + MoveCopyImageModel.SourceFolderId);
+                        //setFolderImage(linkId, MoveCopyImageModel.DestinationFolderId, "folder");
+
+                    }
                 }
                 else
                     alert("addImageLink: " + success);
