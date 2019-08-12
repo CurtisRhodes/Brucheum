@@ -74,8 +74,10 @@ function getBreadCrumbs(folderId) {
                 currentfolderName = breadCrumbModel.FolderName;
                 document.title = currentfolderName + " : OggleBooble";
                 logPageHit(currentfolderName, "OggleHtml");
-                if (getCookie() === "")
+                if (getCookie("User") === "") {
+                    alert("Bread cookie===''");
                     isPornEditor = false;
+                }
             }
             else
                 alert("getBreadCrumbs " + breadCrumbModel.Success);
@@ -88,9 +90,11 @@ function getBreadCrumbs(folderId) {
 }
 
 function showHomeFolderInfoDialog(index, folderName, folderId, rootFolder) {
-    //alert("showHomeFolderInfoDialog(" + folderId + "," + rootFolder + ")");
+    alert("showHomeFolderInfoDialog(" + folderId + "," + rootFolder + ")");
     //alert("index: " + index);
     if (rootFolder === "playboy" && index > 4) {
+
+
         //showModelInfoDialog(modelName, folderId, currentSrc)
         showModelInfoDialog(folderName, folderId, 'Images/redballon.png');
     }
@@ -334,25 +338,30 @@ function ctxSAP(imgId) {
                 selectedImage = modelDetails.Link;
                 fullPageName = modelDetails.RootFolder + "/" + modelDetails.FolderName;
                 modelFolderId = modelDetails.FolderId;
-
-                if ((modelDetails.RootFolder + "/" + modelDetails.FolderName === currentfolderName) || (modelDetails.FolderName === currentfolderName))
+                if ((modelDetails.RootFolder + "/" + modelDetails.FolderName === currentfolderName) || (modelDetails.FolderName === currentfolderName)) {
                     $('#ctxModelName').html("unknown model");
-                else
-                    //alert("modelDetails: " + modelDetails.FolderName + "  curren: " + currentfolderName);
-                    $('#ctxModelName').html(modelDetails.FolderName);
-
-                
-                if (modelDetails.RootFolder === "archive" && currentFolderRoot !== "archive")
-                    $('#ctxSeeMore').show();
-                else
-                    $('#ctxSeeMore').hide();
-
-                if (modelDetails.RootFolder === "playboy") {
-                    $('#ctxModelName').html(modelDetails.FolderName);
                     $('#ctxSeeMore').hide();
                 }
+                else {
+                    //alert("modelDetails.FolderName:" + modelDetails.FolderName + " currentfolderName: " + currentfolderName);
+                    $('#ctxModelName').html(modelDetails.FolderName);
 
+                }
 
+                if (currentFolderRoot === "archive" || currentFolderRoot === "playboy") {
+                    $('#ctxSeeMore').hide();
+                }
+                if (modelDetails.RootFolder === "archive" && currentFolderRoot !== "archive") {
+                    //alert("modelDetails.RootFolder == " + modelDetails.RootFolder + " and currentFolderRoot = " + currentFolderRoot);
+                    $('#ctxModelName').html(modelDetails.FolderName);
+                    $('#ctxSeeMore').show();
+                }
+
+                if (modelDetails.RootFolder === "playboy" && currentFolderRoot !== "playboy") {
+                    //alert("modelDetails.RootFolder == " + modelDetails.RootFolder + " and currentFolderRoot = " + currentFolderRoot);
+                    $('#ctxModelName').html(modelDetails.FolderName);
+                    $('#ctxSeeMore').show();
+                }
             }
             else
                 alert("GetModelName: " + modelDetails.Success);

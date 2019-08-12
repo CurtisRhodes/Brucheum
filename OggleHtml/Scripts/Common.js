@@ -144,21 +144,28 @@ function isNullorUndefined(val) {
 
 // HITCOUNTER
 function logVisit() {
+
+    //var x = getCookie("path");
+    //alert("cookie path: " + x);
+
+
     //if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
-    //alert("logVisit: " + settingsArray.ApiServer);
-    var userName = getCookie("User");
-    $('#footerMessage').html("logging visit userName: " + userName);
-    setLoginHeader(userName);
-    if (userName === "") userName = "unknown";
+    var logVisitUserName = getCookie("User");
+    //if (logVisitUserName !== "") {    }
+     //alert("logVisit UserName: " + logVisitUserName);
+
+    $('#footerMessage').html("logging visit userName: " + logVisitUserName);
+    setLoginHeader(logVisitUserName);
+    if (logVisitUserName === "") logVisitUserName = "unknown";
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/HitCounter/LogVisit?userName=" + userName + "&appName=Ogglebooble",
+        url: settingsArray.ApiServer + "api/HitCounter/LogVisit?userName=" + logVisitUserName + "&appName=Ogglebooble",
         success: function (successModel) {
             if (successModel.Success === "ok") {
+                $('#footerMessage').html("");;
                 if (successModel.ReturnValue !== "") {
                     $('#headerMessage').html(successModel.ReturnValue);
-                    if (userName !== "unknown")
-                        getUserPermissions(userName);
+                    //if (userName !== "unknown") getUserPermissions(userName);
                     //alert("logVisit userName: " + userName);
                 }
             }

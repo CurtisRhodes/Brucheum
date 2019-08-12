@@ -148,9 +148,9 @@ function addImageLink() {
             type: "POST",
             url: settingsArray.ApiServer + "/api/FtpDashBoard",
             data: newLink,
-            success: function (success) {
+            success: function (successModel) {
                 $('#dashBoardLoadingGif').hide();
-                if (success === "ok") {
+                if (successModel.Success === "ok") {
                     displayStatusMessage("ok", "image link added");
                     $('#txtNewLink').val("");
                     resizeDashboardPage();
@@ -163,7 +163,7 @@ function addImageLink() {
                     }
                 }
                 else
-                    alert("addImageLink: " + success);
+                    alert("addImageLink: " + successModel.Success);
             },
             error: function (xhr) {
                 $('#dashBoardLoadingGif').hide();

@@ -108,7 +108,7 @@ function showCatListDialog(root) {
 }
 function staticCatTreeContainerClick(path, id, treeId) {
     if (treeId === "staticCatTreeContainer") {
-        window.location.href = "https://ogglebooble.com/static/" + staticPageRootFolder + "/" + path.substring(path.lastIndexOf("/") + 1) + ".html";
+        window.location.href = "https://ogglebooble.com/static/" + currentFolderRoot + "/" + path.substring(path.lastIndexOf("/") + 1) + ".html";
         $('#staticCatTreeContainer').dialog('close');
     }
     else

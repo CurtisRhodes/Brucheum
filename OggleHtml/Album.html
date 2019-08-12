@@ -89,7 +89,7 @@
                 }
                 else {
                     clearInterval(waiter);
-                    var cookieName = getCookie();
+                    var cookieName = getCookie("User");
 
                     if (cookieName == "") {
                         directToStaticPage(params.folder)

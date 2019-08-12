@@ -136,10 +136,12 @@ function validate() {
     FolderDetailModel.Born = $('#txtBorn').val();
     FolderDetailModel.Nationality = $('#txtNationality').val();
     FolderDetailModel.Measurements = $('#txtMeasurements').val();
+    FolderDetailModel.Boobs = $('#selBoobs').val();
     FolderDetailModel.CommentText = $('#txaModelComment').val();
     FolderDetailModel.ExternalLinks = $('#externalLinks').html();
     return true;
 }
+//<div class="modelInfoDialogLabel">boobs</div> <input id="txtBoobs" class="modelDialogInput" /> <br />
 
 function createPosersIdentifiedFolder() {
     var defaultParentFolder = 917;
@@ -150,7 +152,7 @@ function createPosersIdentifiedFolder() {
         url: settingsArray.ApiServer + "/api/FtpDashBoard/CreateFolder?parentId=" + defaultParentFolder + "&newFolderName=" + FolderDetailModel.FolderName,
         success: function (successModel) {
             $('#dashBoardLoadingGif').hide();
-            if (successModel.Success == "ok") {
+            if (successModel.Success === "ok") {
                 // step 2: Move Image 
                 displayStatusMessage("ok", "new folder created");
                 //linkId = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
@@ -220,22 +222,22 @@ function createPosersIdentifiedFolder() {
 
 function updateFolderDetail() {
     if (validate()) {
-    $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "/api/ImageCategoryDetail",
-        data: FolderDetailModel,
-        success: function (success) {
-            if (success === "ok") {
-                displayStatusMessage("ok", "Model info updated");
+        $.ajax({
+            type: "PUT",
+            url: settingsArray.ApiServer + "/api/ImageCategoryDetail",
+            data: FolderDetailModel,
+            success: function (success) {
+                if (success === "ok") {
+                    displayStatusMessage("ok", "Model info updated");
+                }
+                else
+                    alert("Edit Model info: " + success);
+            },
+            error: function (jqXHR, exception) {
+                alert("Edit ModelInfo jqXHR : " + getXHRErrorDetails(jqXHR, exception));
             }
-            else
-                alert("Edit Model info: " + success);
-        },
-        error: function (jqXHR, exception) {
-            alert("Edit ModelInfo jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-        }
-    })
-}
+        });
+    }
 }
 
 

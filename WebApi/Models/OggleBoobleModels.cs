@@ -133,7 +133,7 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
-    public class CategoryFolderDetailModel
+    public class FolderDetailModel
     {
         public int FolderId { get; set; }
         public string FolderName { get; set; }
@@ -142,6 +142,7 @@ namespace WebApi.Models
         public string ExternalLinks { get; set; }
         public string CommentText { get; set; }
         public string Born { get; set; }
+        public string Boobs { get; set; }
         public string ImageLinkId { get; set; }
         public string FolderImageLink { get; set; }
         public string FolderImage { get; set; }
@@ -156,7 +157,7 @@ namespace WebApi.Models
         }
         public List<MetaTagModel> MetaTags { get; set; }
         public string Source { get; set; }
-        public string Description { get; set; }
+        public string MetaDescription { get; set; }
         public string Success { get; set; }
     }
 

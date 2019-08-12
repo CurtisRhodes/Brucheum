@@ -78,11 +78,17 @@ function validateRegister() {
 
 function onLogoutClick() {
 
-    document.cookie = "User=; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+    //document.cookie = "OggleUser=; User=; path=/; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "User=; path=/; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+    //document.cookie = "expires = Thu, 01 Jan 1970 00:00:00 GMT";
+    //document.cookie = null;
 
+    if (document.cookie)
+        alert("after logout document.cookie: " + document.cookie);
 
     $('#optionLoggedIn').hide();
     $('#optionNotLoggedIn').show();
+    $('.loginRequired').hide();
 }
 
 function onLoginClick() {
@@ -105,6 +111,7 @@ function onLoginClick() {
 }
 
 function postLogin() {
+
     if (validateLogin()) {
         $.ajax({
             type: "GET",
@@ -112,8 +119,13 @@ function postLogin() {
             success: function (success) {
                 if (success === "ok") {
                     $('#loginDialog').dialog('close');
-                    displayStatusMessage("ok", "thanks for logging in " + getCookie());
+
+                    //alert("setCookie($('#txtLoginUserName').val()); " + $('#txtLoginUserName').val());
+
                     setCookie($('#txtLoginUserName').val());
+
+                    displayStatusMessage("ok", "thanks for logging in " + getCookie("User"));
+
                     setLoginHeader($('#txtLoginUserName').val());
                     getUserPermissions();
                 }
@@ -158,10 +170,12 @@ function profilePease() {
 
 function getUserPermissions() {
 
-    var userName = getCookie();
-    if (userName !== "") {
-        $('.loginRequired').show();
+    var userName = getCookie("User");
 
+    //alert("document.domain: " + document.domain);
+
+    if (userName !== "" || document.domain === 'localhost') {
+        $('.loginRequired').show();
     }
 
     //$.ajax({
@@ -183,6 +197,7 @@ function setLoginHeader(userName) {
     if (userName === "") {
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').show();
+        $('.loginRequired').hide();
     }
     else {
         $('#spnUserName').html(userName);
@@ -190,20 +205,25 @@ function setLoginHeader(userName) {
         $('#optionNotLoggedIn').hide();
     }
 }
+
 function setCookie(userName) {
     var expiryDate = new Date();
     //expires = new Date(date.setMonth(date.getMonth() + 3));
     expiryDate.setFullYear(expiryDate.getFullYear() + 1);
-    document.cookie = 'User=' + userName + '; expires=' + expiryDate.toUTCString();
+    document.cookie = 'User=' + userName + '; expires=' + expiryDate.toUTCString() + 'path=https://ogglebooble.com/';
 
     alert("expires: " + expiryDate.toUTCString());
 }
 function getCookie(cname) {
     var decodedCookie = "";
     if (document.cookie) {
-        if (cname === null)
+        if (cname === undefined)
             cname = "User";
         var name = cname + "=";
+
+        if (cname !== "User")
+            alert("getCookie(cname): " + name);
+
         decodedCookie = decodeURIComponent(document.cookie);
         var ca = decodedCookie.split(';');
         for (var i = 0; i < ca.length; i++) {
@@ -212,9 +232,14 @@ function getCookie(cname) {
                 c = c.substring(1);
             }
             if (c.indexOf(name) === 0) {
-                var userName = c.substring(name.length, c.length);
+                var cookieValue = c.substring(name.length, c.length);
                 //alert("cookie success: " + c.substring(name.length, c.length));
-                return userName;
+
+                if (cname !== "User")
+                    alert("name: " + name + "  value" + cookieValue);
+
+
+                return cookieValue;
             }
         }
     }

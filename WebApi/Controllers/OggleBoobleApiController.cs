@@ -374,29 +374,26 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    if (linkId != "undefined")
-                    {
-                        //metaTagResults.Source = "Image";
-                        metaTagResults.Source = (from l in db.ImageLinks
-                                                 join f in db.CategoryFolders on l.FolderLocation equals f.Id
-                                                 where l.Id == linkId
-                                                 select f.FolderName).First() + "(image)";
-
-                        List<MetaTag> metaTags = db.MetaTags.Where(m => m.LinkId == linkId).ToList();
-                        foreach (MetaTag metaTag in metaTags)
-                            metaTagResults.MetaTags.Add(new MetaTagModel() { TagId = metaTag.TagId, LinkId = linkId, Tag = metaTag.Tag });
-                    }
-                    else
-                        metaTagResults.Source = db.CategoryFolders.Where(f => f.Id == folderId).Select(f => f.FolderName).First();
-
                     CategoryFolderDetail categoryFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
                     if (categoryFolderDetail != null)
                     {
-                        if (categoryFolderDetail.CommentText != null)
-                            metaTagResults.Description = Helpers.Beautify(categoryFolderDetail.CommentText);
-                        else
-                            metaTagResults.Description = "free images of " + metaTagResults.Source;
+                        metaTagResults.Source = categoryFolderDetail.FolderImage;
+                        metaTagResults.MetaDescription = categoryFolderDetail.MetaDescription;
                     }
+                    else {
+                        metaTagResults.Source = linkId;
+                        //metaTagResults.MetaDescription = "";
+                    }
+
+                    List<MetaTag> metaTags = db.MetaTags.Where(m => m.LinkId == linkId).ToList();
+                    foreach (MetaTag metaTag in metaTags)
+                        metaTagResults.MetaTags.Add(new MetaTagModel() { TagId = metaTag.TagId, LinkId = linkId, Tag = metaTag.Tag });
+
+                    //metaTagResults.Source = db.CategoryFolders.Where(f => f.Id == folderId).Select(f => f.FolderName).First();
+
+                    //metaTagResults.MetaDescription = "";
+
+
                     GetMetaTasRecurr(metaTagResults, folderId, db);
                 }
                 metaTagResults.Success = "ok";
@@ -744,14 +741,14 @@ namespace WebApi
         }
 
         [HttpGet]
-        public CategoryFolderDetailModel Get(int folderId)
+        public FolderDetailModel Get(int folderId)
         {
-            CategoryFolderDetailModel model = new CategoryFolderDetailModel();
+            FolderDetailModel folderDetailModel = new FolderDetailModel();
             try
             {
                 if (folderId == 0)
                 {
-                    model.FolderName = "Unknown";
+                    folderDetailModel.FolderName = "Unknown";
                 }
                 else
                 {
@@ -760,33 +757,33 @@ namespace WebApi
                         CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(xn => xn.FolderId == folderId).FirstOrDefault();
                         //CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                         if (categoryFolderDetails == null)
-                            model.FolderName = "";
+                            folderDetailModel.FolderName = "";
                         else
                         {
-                            model.Measurements = categoryFolderDetails.Measurements;
-                            model.Nationality = categoryFolderDetails.Nationality;
-                            model.ExternalLinks = categoryFolderDetails.ExternalLinks;
-                            model.FolderImageLink = categoryFolderDetails.FolderImage;
-                            model.CommentText = categoryFolderDetails.CommentText;
-                            model.Born = categoryFolderDetails.Born;
-                            model.FolderName = db.CategoryFolders.Where(f => f.Id == folderId).First().FolderName;
-                            model.FolderId = categoryFolderDetails.FolderId;
+                            folderDetailModel.Measurements = categoryFolderDetails.Measurements;
+                            folderDetailModel.Nationality = categoryFolderDetails.Nationality;
+                            folderDetailModel.ExternalLinks = categoryFolderDetails.ExternalLinks;
+                            folderDetailModel.FolderImageLink = categoryFolderDetails.FolderImage;
+                            folderDetailModel.CommentText = categoryFolderDetails.CommentText;
+                            folderDetailModel.Born = categoryFolderDetails.Born;
+                            folderDetailModel.FolderName = db.CategoryFolders.Where(f => f.Id == folderId).First().FolderName;
+                            folderDetailModel.FolderId = categoryFolderDetails.FolderId;
                         }
-                        if (model.FolderImageLink == null)
-                            model.FolderImage = Helpers.GetFirstImage(folderId);
+                        if (folderDetailModel.FolderImageLink == null)
+                            folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
                         else
-                            model.FolderImage = db.ImageLinks.Where(g => g.Id == categoryFolderDetails.FolderImage).First().Link;
+                            folderDetailModel.FolderImage = db.ImageLinks.Where(g => g.Id == categoryFolderDetails.FolderImage).First().Link;
                     }
                 }
-                model.Success = "ok";
+                folderDetailModel.Success = "ok";
             }
-            catch (Exception ex) { model.Success = Helpers.ErrorDetails(ex); }
-            return model;
+            catch (Exception ex) { folderDetailModel.Success = Helpers.ErrorDetails(ex); }
+            return folderDetailModel;
         }
 
         // create new folder in Posers Identified
         [HttpPost]
-        public string Insert(CategoryFolderDetailModel model)
+        public string Insert(FolderDetailModel model)
         {
             string success = "";
             try
@@ -812,6 +809,7 @@ namespace WebApi
                         FolderId = newFolderId,
                         Nationality = model.Nationality,
                         Measurements = model.Measurements,
+                        Boobs=model.Boobs,
                         Born = model.Born
                     });
                     db.SaveChanges();
@@ -825,8 +823,9 @@ namespace WebApi
             return success;
         }
 
+        //FolderDetailModel.Boobs = $('#selBoobs').val();
         [HttpPut]
-        public string Update(CategoryFolderDetailModel model)
+        public string Update(FolderDetailModel model)
         {
             string success = "";
             try
@@ -835,6 +834,7 @@ namespace WebApi
                 {
                     CategoryFolderDetail dbFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == model.FolderId).First();
                     dbFolderDetail.Born = model.Born;
+                    dbFolderDetail.Boobs = model.Boobs;
                     dbFolderDetail.Nationality = model.Nationality;
                     dbFolderDetail.ExternalLinks = model.ExternalLinks;
                     dbFolderDetail.CommentText = model.CommentText;

@@ -428,9 +428,9 @@ namespace WebApi
                     {
                         int lnkCount = db.CategoryImageLinks.Where(c => c.ImageCategoryId == newLink.FolderId).Count();
                         if (lnkCount == 0)
-                            successModel.ReturnValue = "ok";
-                        else
                             successModel.ReturnValue = imageLinkId;
+                        else
+                            successModel.ReturnValue = "0";
 
                         db.CategoryImageLinks.Add(new CategoryImageLink()
                         {
@@ -440,9 +440,11 @@ namespace WebApi
                         db.SaveChanges();
                         successModel.Success = "ok";
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        successModel.Success = "Alredy Added";
+                        successModel.Success = Helpers.ErrorDetails(ex);
+                        if (successModel.Success.StartsWith("ERROR: Cannot insert duplicate key row in object"))
+                            successModel.Success = "Alredy Added";
                     }
                 }
             }
@@ -752,9 +754,14 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == parentId).FirstOrDefault(); ;
-
+                    CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == parentId).FirstOrDefault();
                     string destinationFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(parentId) + dbSourceFolder.FolderName + "/" + newFolderName.Trim();
+
+
+                    if (dbSourceFolder.FolderName.Contains("OGGLEBOOBLE.COM"))
+                        destinationFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(parentId) + newFolderName.Trim();
+
+
 
                     if (FtpUtilies.DirectoryExists(destinationFtpPath))
                         successModel.Success = "folder already exists";

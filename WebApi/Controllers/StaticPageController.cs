@@ -38,7 +38,7 @@ namespace WebApi.Controllers
                         SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
                         CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                         string folderName = categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
-                       string fileName = folderName = Helpers.GetParentPath(folderId) + folderName;
+                        string fileName = Helpers.GetParentPath(folderId) + folderName;
                         //var parentPath = Helpers.GetParentPath(folderId);
 
                         success = ProcessFolder(folderId, categoryFolder.RootFolder, folderName, fileName, db, recurr);
@@ -67,7 +67,7 @@ namespace WebApi.Controllers
                     "<script>var staticPageFolderId=" + folderId + "; " +
                     "var staticPageFolderName='" + folderName + "'; " +
                     "var staticPageImagesCount='" + imagesCount + "'; " +
-                    "var staticPageRootFolder='" + rootFolder + "';</script>\n" +
+                    "var currentFolderRoot='" + rootFolder + "';</script>\n" +
                     Slideshow() + LoginDialog() + RegisterDialog() + FooterHtml(rootFolder) +
                     "<script src='/scripts/StaticPage.js'></script>\n" +
                     "\n</body>\n</html>";
@@ -168,39 +168,85 @@ namespace WebApi.Controllers
                 "   <link href='/Styles/LoginDialog.css' rel='stylesheet'/>\n" +
                 "   <title>" + pageTitle + "</title>" +
                 "   <meta name='Title' content='" + pageName + "' property='og:title'/>\n" +
-                "   <meta name='description' content='" + metaTagResults.Description + "'/>\n" +
+                "   <meta name='description' content='" + metaTagResults.MetaDescription + "'/>\n" +
                 "   <meta property='og:type' content='website' />\n" +
                 "   <meta property='og:url' content='" + httpLocation + "/" + pageName + ".html'/>\n" +
                 "   <meta name='Keywords' content='" + articleTagString + "'/>\n" +
                 "</head>";
         }
 
-        private BreadCrumbModel GetBreadCrumbs(int folderId)
+        public BreadCrumbModel GetBreadCrumbs(int folderId)
         {
-            string breadCrumbs = "";
-            BreadCrumbModel breadCrumbModel = new BreadCrumbsController().Get(folderId);
-            int breadCrumbModelCount = breadCrumbModel.BreadCrumbs.Count;
-            for (int i = breadCrumbModelCount - 1; i >= 0; i--)
+            BreadCrumbModel breadCrumbModel = new BreadCrumbModel();
+            try
             {
-                if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder)
+                using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    //function showHomeFolderInfoDialog(index, folderName, folderId, rootFolder)
-                    breadCrumbs += "<a class='inactiveBreadCrumb' " +
-                    "onclick='showHomeFolderInfoDialog(\"" + (breadCrumbModelCount - i) + "\",\"" + breadCrumbModel.FolderName + "\",\"" +
-                    breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" + breadCrumbModel.RootFolder + "\")'>" +
-                    breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>";
-                }
-                else
-                {
-                    // a woman commited suicide when pictures of her "came out"
-                    breadCrumbs += "<a class='activeBreadCrumb' " +
-                        "href='/" + breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + ".html'>" +
-                        breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>\n";
+                    var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                    breadCrumbModel.BreadCrumbs.Add(new BreadCrumbItemModel()
+                    {
+                        FolderId = thisFolder.Id,
+                        FolderName = thisFolder.FolderName,
+                        IsInitialFolder = true
+                    });
+                    breadCrumbModel.RootFolder = thisFolder.RootFolder;
+                    breadCrumbModel.FolderName = thisFolder.FolderName;
+
+                    var parent = thisFolder.Parent;
+                    while (parent > 1)
+                    {
+                        var parentDb = db.CategoryFolders.Where(f => f.Id == parent).First();
+                        breadCrumbModel.BreadCrumbs.Add(new BreadCrumbItemModel()
+                        {
+                            FolderId = parentDb.Id,
+                            FolderName = parentDb.FolderName,
+                            IsInitialFolder = false
+                        });
+                        parent = parentDb.Parent;
+                    }
+
+
+
+
+                    breadCrumbModel.Success = "ok";
                 }
             }
-            breadCrumbModel.Html = breadCrumbs;
+            catch (Exception ex)
+            {
+                breadCrumbModel.Success = Helpers.ErrorDetails(ex);
+            }
             return breadCrumbModel;
         }
+
+        //private BreadCrumbModel GetBreadCrumbs(int folderId)
+        //{
+        //    string breadCrumbs = "";
+        //    BreadCrumbModel breadCrumbModel = new BreadCrumbsController().Get(folderId);
+        //    int breadCrumbModelCount = breadCrumbModel.BreadCrumbs.Count;
+        //    for (int i = breadCrumbModelCount - 1; i >= 0; i--)
+        //    {
+        //        if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder)
+        //        {
+        //            //function showHomeFolderInfoDialog(index, folderName, folderId, rootFolder)
+        //            breadCrumbs += "<a class='inactiveBreadCrumb' " +
+        //            "onclick='showHomeFolderInfoDialog(\"" + (breadCrumbModelCount - i) + "\",\"" + breadCrumbModel.FolderName + "\",\"" +
+        //            breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" + breadCrumbModel.RootFolder + "\")'>" +
+        //            breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>";
+        //        }
+        //        else
+        //        {
+        //            // a woman commited suicide when pictures of her "came out"
+        //            string fileName = (Helpers.GetParentPath(breadCrumbModel.BreadCrumbs[i].FolderId) + breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "")).Replace("/", "_");
+        //            fileName = breadCrumbModel.RootFolder;
+        //            fileName = breadCrumbModel.FolderName;
+        //            breadCrumbs += "<a class='activeBreadCrumb' " +
+        //                "href='" + httpLocation + "/" + breadCrumbModel.RootFolder + "/" + fileName + ".html'>" +
+        //                breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>\n";
+        //        }
+        //    }
+        //    breadCrumbModel.Html = breadCrumbs;
+        //    return breadCrumbModel;
+        //}
 
         private string HeaderHtml(int folderId)
         {

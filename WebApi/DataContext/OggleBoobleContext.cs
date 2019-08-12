@@ -87,7 +87,9 @@ namespace WebApi.DataContext
         public string ExternalLinks { get; set; }
         public string CommentText { get; set; }
         public string Born { get; set; }
+        public string Boobs { get; set; }
         public string FolderImage { get; set; }
+        public string MetaDescription { get; set; }
     }
 
     [Table("OggleBooble.vwLinks")]
