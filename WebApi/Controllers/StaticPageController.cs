@@ -38,7 +38,7 @@ namespace WebApi.Controllers
                         SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
                         CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                         string folderName = categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
-                        string fileName = Helpers.GetParentPath(folderId) + folderName;
+                        string fileName = Helpers.GetImmediateParentPath(folderId) + folderName;
                         //var parentPath = Helpers.GetParentPath(folderId);
 
                         success = ProcessFolder(folderId, categoryFolder.RootFolder, folderName, fileName, db, recurr);
@@ -55,13 +55,13 @@ namespace WebApi.Controllers
             try
             {
                 //SignalRHost.ProgressHub.PostToClient("Creating static files: " + folderName + ".html");
-                string pageName = folderName.Replace("/", "_");
+                string pageName = fileName.Replace("/", "_");
 
                 string staticContent =
                     "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, pageName, pageTitle: fileName + " : OggleBooble") +
                     "\n<body style='margin-top:105px'>\n" +
                     HeaderHtml(folderId) +
-                    GalleryPageBodyHtml(folderId, rootFolder, pageName) +
+                    GalleryPageBodyHtml(folderId, rootFolder) +
                     CommentDialog() + CategoryDialog() + ModelInfoDialog() +
                     "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
                     "<script>var staticPageFolderId=" + folderId + "; " +
@@ -83,9 +83,9 @@ namespace WebApi.Controllers
                         filesProcessed += vwDirTree.FileCount;
                         //SignalRHost.ProgressHub.ShowProgressBar(totalFiles, filesProcessed);
                         //var xx = Helpers.GetParentPath(dbCategoryFolder.Id);
-                        var cFolderName = Helpers.GetParentPath(dbCategoryFolder.Id) + dbCategoryFolder.FolderName;
+                        var cFolderName = Helpers.GetImmediateParentPath(dbCategoryFolder.Id) + dbCategoryFolder.FolderName;
                         //ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName, db, true);
-                        ProcessFolder(dbCategoryFolder.Id, rootFolder, cFolderName, dbCategoryFolder.FolderName, db, true);
+                        ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.FolderName, cFolderName, db, true);
                     }
                 }
             }
@@ -175,7 +175,7 @@ namespace WebApi.Controllers
                 "</head>";
         }
 
-        public BreadCrumbModel GetBreadCrumbs(int folderId)
+        private BreadCrumbModel GetBreadCrumbs(int folderId)
         {
             BreadCrumbModel breadCrumbModel = new BreadCrumbModel();
             try
@@ -204,10 +204,32 @@ namespace WebApi.Controllers
                         });
                         parent = parentDb.Parent;
                     }
+                    string breadCrumbs = "";
+                    string staticPageFileName = "";
+                    int breadCrumbModelCount = breadCrumbModel.BreadCrumbs.Count;
+                    for (int i = breadCrumbModelCount - 1; i >= 0; i--)
+                    {
+                        if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder)
+                        {
+                            //function showHomeFolderInfoDialog(index, folderName, folderId, rootFolder)
+                            breadCrumbs += "<a class='inactiveBreadCrumb' " +
+                            "onclick='showHomeFolderInfoDialog(\"" + (breadCrumbModelCount - i) + "\",\"" + staticPageFileName + "\",\"" +
+                            breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" + breadCrumbModel.RootFolder + "\")'>" +
+                            breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>";
+                        }
+                        else
+                        {
+                            // a woman commited suicide when pictures of her "came out"
+                            //var test = "href='" + httpLocation + "/" + breadCrumbModel.BreadCrumbs[i].StaticPageFileName + ".html";
+                            staticPageFileName = httpLocation + "/" + breadCrumbModel.RootFolder + "/" + 
+                                Helpers.GetImmediateParentPath(breadCrumbModel.BreadCrumbs[i].FolderId) +
+                                breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + ".html";
 
-
-
-
+                            breadCrumbs += "<a class='activeBreadCrumb' " + "href='" + staticPageFileName + "'>" +
+                             breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>\n";
+                        }
+                    }
+                    breadCrumbModel.Html = breadCrumbs;
                     breadCrumbModel.Success = "ok";
                 }
             }
@@ -217,36 +239,6 @@ namespace WebApi.Controllers
             }
             return breadCrumbModel;
         }
-
-        //private BreadCrumbModel GetBreadCrumbs(int folderId)
-        //{
-        //    string breadCrumbs = "";
-        //    BreadCrumbModel breadCrumbModel = new BreadCrumbsController().Get(folderId);
-        //    int breadCrumbModelCount = breadCrumbModel.BreadCrumbs.Count;
-        //    for (int i = breadCrumbModelCount - 1; i >= 0; i--)
-        //    {
-        //        if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder)
-        //        {
-        //            //function showHomeFolderInfoDialog(index, folderName, folderId, rootFolder)
-        //            breadCrumbs += "<a class='inactiveBreadCrumb' " +
-        //            "onclick='showHomeFolderInfoDialog(\"" + (breadCrumbModelCount - i) + "\",\"" + breadCrumbModel.FolderName + "\",\"" +
-        //            breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" + breadCrumbModel.RootFolder + "\")'>" +
-        //            breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>";
-        //        }
-        //        else
-        //        {
-        //            // a woman commited suicide when pictures of her "came out"
-        //            string fileName = (Helpers.GetParentPath(breadCrumbModel.BreadCrumbs[i].FolderId) + breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "")).Replace("/", "_");
-        //            fileName = breadCrumbModel.RootFolder;
-        //            fileName = breadCrumbModel.FolderName;
-        //            breadCrumbs += "<a class='activeBreadCrumb' " +
-        //                "href='" + httpLocation + "/" + breadCrumbModel.RootFolder + "/" + fileName + ".html'>" +
-        //                breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + "</a>\n";
-        //        }
-        //    }
-        //    breadCrumbModel.Html = breadCrumbs;
-        //    return breadCrumbModel;
-        //}
 
         private string HeaderHtml(int folderId)
         {
@@ -313,7 +305,7 @@ namespace WebApi.Controllers
                 "</header>\n";
         }
 
-        private string GalleryPageBodyHtml(int folderId, string rootFolder, string pageTitle)
+        private string GalleryPageBodyHtml(int folderId, string rootFolder)
         {
             string bodyHtml =
             "<div class='threeColumnLayout'>\n" +
@@ -338,7 +330,7 @@ namespace WebApi.Controllers
                 foreach (VwDirTree subDir in subDirs)
                 {
 
-                    string fullerFolderName = (Helpers.GetParentPath(subDir.Id) + subDir.FolderName).Replace("/", "_");
+                    string fullerFolderName = (Helpers.GetImmediateParentPath(subDir.Id) + subDir.FolderName).Replace("/", "_");
 
                     int subDirFileCount = subDir.FileCount + subDir.TotalFiles + subDir.GrandTotalFiles;
                     bodyHtml += "<div class='" + imageFrameClass + "'>" +

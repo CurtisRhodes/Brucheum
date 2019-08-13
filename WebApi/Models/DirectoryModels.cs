@@ -38,7 +38,7 @@ namespace WebApi.Models
         public BreadCrumbModel()
         {
             BreadCrumbs = new List<BreadCrumbItemModel>();
-        }
+        }        
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
         public string Html { get; set; }

@@ -63,9 +63,14 @@ function resizeStaticPage() {
 
 function contextMenuActionShow() {
     //showModelInfoDialog(modelName, folderId, currentSrc)
+    alert("hoe");
+
+
     showModelInfoDialog($('#staticPagectxModelName').html(), modelFolderId, selectedImage);
 }
 function contextMenuActionJump() {
+
+    alert("fullPageName: " + fullPageName);
     window.open(httpLocation + fullPageName + ".html", "_blank");
 }
 function contextMenuActionComment() {

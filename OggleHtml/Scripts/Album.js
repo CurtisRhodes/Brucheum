@@ -90,12 +90,8 @@ function getBreadCrumbs(folderId) {
 }
 
 function showHomeFolderInfoDialog(index, folderName, folderId, rootFolder) {
-    alert("showHomeFolderInfoDialog(" + folderId + "," + rootFolder + ")");
-    //alert("index: " + index);
+    //alert("showHomeFolderInfoDialog(" + folderId + "," + rootFolder + ")");
     if (rootFolder === "playboy" && index > 4) {
-
-
-        //showModelInfoDialog(modelName, folderId, currentSrc)
         showModelInfoDialog(folderName, folderId, 'Images/redballon.png');
     }
     else
@@ -338,28 +334,41 @@ function ctxSAP(imgId) {
                 selectedImage = modelDetails.Link;
                 fullPageName = modelDetails.RootFolder + "/" + modelDetails.FolderName;
                 modelFolderId = modelDetails.FolderId;
-                if ((modelDetails.RootFolder + "/" + modelDetails.FolderName === currentfolderName) || (modelDetails.FolderName === currentfolderName)) {
-                    $('#ctxModelName').html("unknown model");
-                    $('#ctxSeeMore').hide();
+
+                $('#ctxModelName').html("unknown model");
+                $('#ctxSeeMore').hide();
+
+                if (staticPageFolderName) {
+                    currentfolderName = staticPageFolderName;
+                    //alert("staticPageFolderName: " + staticPageFolderName);
                 }
-                else {
-                    //alert("modelDetails.FolderName:" + modelDetails.FolderName + " currentfolderName: " + currentfolderName);
+                //alert("modelDetails.RootFolder:" + modelDetails.RootFolder + " currentfolderName: " + currentfolderName);
+
+                //if ((modelDetails.RootFolder + "/" + modelDetails.FolderName === currentfolderName) || (modelDetails.FolderName === currentfolderName)) {
+                //    alert("modelDetails.RootFolder:" + modelDetails.RootFolder + " currentfolderName: " + currentfolderName);
+                //    //alert("modelDetails.FolderName:" + modelDetails.FolderName + " currentfolderName: " + currentfolderName);
+                //    $('#ctxModelName').html("unknown model");
+                //    $('#ctxSeeMore').hide();
+                //}
+                //else {
+                //    //alert("modelDetails.FolderName:" + modelDetails.FolderName + " currentfolderName: " + currentfolderName);
+                //    $('#ctxModelName').html(modelDetails.FolderName);
+                //}
+
+                if (modelDetails.RootFolder === "archive" || modelDetails.RootFolder === "playboy") {
+                    //alert("currentFolderRoot: " + currentFolderRoot + "  modelDetails.RootFolder: " + modelDetails.RootFolder);
                     $('#ctxModelName').html(modelDetails.FolderName);
-
-                }
-
-                if (currentFolderRoot === "archive" || currentFolderRoot === "playboy") {
                     $('#ctxSeeMore').hide();
                 }
+
                 if (modelDetails.RootFolder === "archive" && currentFolderRoot !== "archive") {
-                    //alert("modelDetails.RootFolder == " + modelDetails.RootFolder + " and currentFolderRoot = " + currentFolderRoot);
-                    $('#ctxModelName').html(modelDetails.FolderName);
+                    //alert("archive   modelDetails.RootFolder == " + modelDetails.RootFolder + " and currentFolderRoot = " + currentFolderRoot);
                     $('#ctxSeeMore').show();
                 }
 
                 if (modelDetails.RootFolder === "playboy" && currentFolderRoot !== "playboy") {
+                    alert("playboy");
                     //alert("modelDetails.RootFolder == " + modelDetails.RootFolder + " and currentFolderRoot = " + currentFolderRoot);
-                    $('#ctxModelName').html(modelDetails.FolderName);
                     $('#ctxSeeMore').show();
                 }
             }
