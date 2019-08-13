@@ -3,34 +3,36 @@ var isPornEditor = false;
 
 function showModelInfoDialog(modelName, folderId, currentSrc) {
     FolderDetailModel.FolderId = folderId;
-    isPornEditor = false;
+   
+    setUserPermissions();
 
+    $('#modelInfoDialog').dialog({
+        autoOpen: false,
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        //position: { my: 'center', at: 'bottom', of: $('header') },
+        width: "615"
+    });
+    clearGets();
+    getFolderDetails(modelName, folderId, currentSrc);
+
+    //alert("isPornEditor: " + isPornEditor);
     if (isPornEditor) {
         $("#txtBorn").datepicker();
         $('#modelInfoDialogTrackBack').show();
         $('#txaModelComment').summernote({
             height: 300,
             codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-            toolbar: [['codeview'],]
+            toolbar: [['codeview']]
         });
     }
     else {
         $('#modelInfoDialogTrackBack').hide();
         $('#txaModelComment').attr("readonly", "readonly");
-        $('.modelDialogInput').attr("readonly", "readonly");        
+        $('.modelDialogInput').attr("readonly", "readonly");
         $('#modelInfoEdit').html("Edit");
         $('#modelInfoEdit').hide();
     }
-
-    $('#modelInfoDialog').dialog({
-        autoOpen: false,
-        show: { effect: "fade" },
-        hide: { effect: "blind" },
-        position: ({ my: 'center', at: 'top', of: $('#middleColumn') }),
-        width: "615"
-    });
-    clearGets();
-    getFolderDetails(modelName, folderId, currentSrc);
 }
 
 function getFolderDetails(modelName, folderId, currentSrc) {
@@ -49,16 +51,6 @@ function getFolderDetails(modelName, folderId, currentSrc) {
             url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
             success: function (folderDetails) {
                 if (folderDetails.Success === "ok") {
-                    //if (folderDetails.FolderName === "Unknown") {
-                    //    FolderDetailModel.FolderImage = currentSrc;
-                    //    $('#modelDialogThumbNailImage').attr("src", currentSrc);
-                    //    $('#modelInfoDialog').dialog('option', 'title', "unknown model");
-                    //    $('#unknownModelLinks').append(folderDetails.ExternalLinks);
-                    //    $('#modelInfoEditArea').hide();
-                    //    $('#modelInfoViewOnlyArea').show();
-                    //    $('#modelInfoEdit').html("Edit");
-                    //}
-                    //else {
                     $('#modelInfoViewOnlyArea').hide();
                     if (folderDetails.FolderImage === null) {
                         FolderDetailModel.FolderImage = currentSrc;
@@ -141,7 +133,6 @@ function validate() {
     FolderDetailModel.ExternalLinks = $('#externalLinks').html();
     return true;
 }
-//<div class="modelInfoDialogLabel">boobs</div> <input id="txtBoobs" class="modelDialogInput" /> <br />
 
 function createPosersIdentifiedFolder() {
     var defaultParentFolder = 917;
@@ -170,17 +161,14 @@ function createPosersIdentifiedFolder() {
                     success: function (success) {
                         if (success === "ok") {
                             displayStatusMessage("ok", "image moved to newfolder");
-
-
-
                         }
                         else {
-                            alert("ftp Move " + success);
+                            alert("createPosersIdentifiedFolder " + success);
                         }
                     },
                     error: function (xhr) {
                         $('#moveCopyDialogLoadingGif').hide();
-                        alert("ftp Move xhr error: " + xhr.statusText);
+                        alert("createPosersIdentifiedFolder xhr error: " + xhr.statusText);
                     }
                 });
             }
@@ -239,7 +227,6 @@ function updateFolderDetail() {
         });
     }
 }
-
 
 function considerClosingModelInfoDialog() {
     if ($('#modelInfoEdit').html() === "Edit")

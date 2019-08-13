@@ -3,7 +3,7 @@
     --brucheumBlue: #74bac3;
     --oggleBackgroundColor: #fef; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
     --oggleContainerBackgroundColor: #fefefe; /*  #f8e8e8 */
-    --oggleBorderColor: #f1cff7;
+    --oggleBorderColor: #b200ff; /* #f1cff7;       carouselContainer  #b200ff; */
     --ogglePurple: #79078f;
     --normalFont: 17px;
     --ogglgeTitleColor: #7f2c8f;
@@ -13,7 +13,7 @@
     --oggleHeaderBoarderTop: #40767d 3px solid;
     --oggleHeaderBackgroundColor: #74bac3;
     --oggleHeaderBoarderBottom: #decd6f 11px solid;
-
+    --oggleHeaderSelectBackgroundColor: #74bac3;
 }
 
 body {
@@ -135,11 +135,12 @@ body {
 .floatingDirTreeImage {
     position: absolute;
     display: none;
-    z-index: 20;
+    z-index: 102;
 }
 
     .floatingDirTreeImage img {
-        border: solid thin var(--oggleBorderColor);
+        /*border: solid thin ;*/
+        border: solid 2px var(--oggleBorderColor);
         height: 100px;
         width: 100px;
     }
@@ -263,7 +264,7 @@ footer {
     border: solid 2px #923c76;
     padding: 8px 10px;
     display: none;
-    z-index: 20;
+    z-index: 120;
 }
 
     .ogContextMenu div {
@@ -273,7 +274,6 @@ footer {
         border-radius: 3px;
         cursor: pointer;
     }
-
 
 .settingsConsole {
     margin-top: 33px;

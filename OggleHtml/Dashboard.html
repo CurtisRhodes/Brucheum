@@ -38,32 +38,33 @@
     <!--<script src="/signalr/hubs"></script>-->
     <!--<script src="Scripts/jquery.signalR-2.4.1.min.js"></script>-->
     <link href="Styles/Dashboard.css" rel="stylesheet" />
+    <link href="Styles/ChooseBox.css" rel="stylesheet" />
     <script src="Scripts/Dashboard.js"></script>
+    <script src="Scripts/Admin.js"></script>
 
 </head>
 <body>
     <header></header>
     <div class="threeColumnLayout">
-        <div id="leftColumn">
-            <!--//$('#headerMessage').html(`Dashboard <dir class='linkContainer'></dir>`);
-
-            -->
-        </div>
+        <div id="leftColumn"></div>
         <div id="middleColumn">
             <img id="dashBoardLoadingGif" class="loadingGif" src="Images/loader.gif" />
+
             <div id="divDashboardContainer" class="dashBoardContainer">
                 <div class="leftColumnList">
                     <div>
                         <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
                         <div class="clickable" onclick="$('#createNewFolderDialog').dialog('open');">Create New Folder</div>
-                        <div class="clickable" onclick="showMoveFolderDialog();">Move Folder</div>
-                        <div class="clickable" onclick="$('#renameFolderCrud').dialog('open');">Rename Folder</div>
-                        <div class="clickable" onclick="loadProperties()">load Properties</div>
-                        <div class="clickable" onclick="$('#createStaticPagesCrud').dialog('open');">Create Static Pages</div>
-                        <div class="clickable" onclick="repairLinks()">Repair Links</div>
-                        <div class="clickable" onclick="window.location.href='/Admin.html'">Admin</div>
+                        <div class="clickable adminLevelRequired" onclick="showMoveFolderDialog();">Move Folder</div>
+                        <div class="clickable adminLevelRequired" onclick="$('#renameFolderCrud').dialog('open');">Rename Folder</div>
+                        <div class="clickable adminLevelRequired" onclick="loadProperties()">load Properties</div>
+                        <div class="clickable adminLevelRequired" onclick="$('#createStaticPagesCrud').dialog('open');">Create Static Pages</div>
+                        <div class="clickable adminLevelRequired" onclick="repairLinks()">Repair Links</div>
+                        <div class="clickable adminLevelRequired" onclick="showAddRolesDialog()">Add/Edit Roles</div>
+                        <div class="clickable adminLevelRequired" onclick="showAssignRolesDialog()">Assign User Roles</div>
                     </div>
                 </div>
+
                 <div class="workarea">
                     <div id="divStatusMessage"></div>
 
@@ -116,10 +117,35 @@
                 <div id="folderToMoveTreeContainer" class="moveDirTreeContainer"></div>
             </div>
 
-            <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
-                <div onclick="dashboardContextMenuOpenFolder()">Open Folder</div>
-                <div onclick="dashboardContextMenuShowCategoryDetails()">Show Category Info</div>
-                <div onclick="dashboardContextMenuShowInfoDialog()">Show Model Info</div>
+            <div id="addEditRolesDialog" class="dashboardToggle" title="Add Edit Roles">
+                <div class="crudArea">
+                    <label>Role:</label>
+                    <input class="roundedInput" id="txtRoleName" />
+                    <div id="btnAddUpdateRole" class="roundendButton editRolebtn" onclick="addUpdateRole()">Add</div>
+                    <div id="btnRoleToggle" class="roundendButton editRolebtn" onclick="toggleAddButton()">New</div>
+                </div>
+                <div class="crudItemsList" id="divRoleList"></div>
+            </div>
+
+            <div id="rolesChooseBoxDialog" class="dashboardToggle" title="Assign Roles">
+                <div class="crudContainer AssignRolesContainer">
+                    <div class="crudContainerTitle">Assign Roles</div>
+                    <div class="flexContainer">
+                        <div><select id="ddUsers" class="crudDropDown"></select></div>
+                    </div>
+                    <div id="divRolesChoose" class="chooseBoxContainer">
+
+                        <div id="divChooseAvailable" class="chooseBox floatLeft"></div>
+
+                        <div id="divChooseButtons" class="chooseBtnsContainer floatLeft">
+                            <div><img id="imgAdd" class="chooseBtn" onclick="addUserRole()" src="/Images/sglright.jpg" /></div>
+                            <div><img id="imgAddAll" class="chooseBtn disenabled" src="/Images/dblright.jpg" /></div>
+                            <div><img id="imgRemove" class="chooseBtn" onclick="removeUserRole()" src="/Images/sglleft.jpg" /></div>
+                            <div><img id="imgRemoveAll" class="chooseBtn disenabled" src="/Images/dblleft.jpg" /></div>
+                        </div>
+                        <div id="divChooseAssigned" class="chooseBox floatLeft"></div>
+                    </div>
+                </div>
             </div>
 
             <!--<div id="videoCrud" class="dashboardToggle">
@@ -134,6 +160,12 @@
         </div>
         <div id="rightColumn"></div>
     </div>
+    <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
+        <div onclick="dashboardContextMenuOpenFolder()">Open Folder</div>
+        <div onclick="dashboardContextMenuShowCategoryDetails()">Show Category Info</div>
+        <div onclick="dashboardContextMenuShowInfoDialog()">Show Model Info</div>
+    </div>
+
     <div w3-include-html="Snippets/BoobsFooter.html"></div>
     <div w3-include-html="Snippets/AdminDialogs.html"></div>
     <div w3-include-html="Snippets/Login.html"></div>
@@ -196,6 +228,7 @@
                     addImageLink();
                 }
             });
+
             $('#moveFolderCrud').dialog({
                 autoOpen: false,
                 show: { effect: "fade" },
@@ -226,12 +259,14 @@
                 hide: { effect: "blind" },
                 width: "400"
             });
+
             $('#moveFolderCrud').dialog({
                 autoOpen: false,
                 show: { effect: "fade" },
                 hide: { effect: "blind" },
                 width: "400"
             });
+
             $('#partialViewTreeContainer').dialog({
                 autoOpen: false,
                 show: { effect: "fade" },
@@ -239,6 +274,20 @@
                 position: ({ my: 'right', at: 'left', of: $('#moveFolderCrud') }),
                 width: "400",
                 height: "550"
+            });
+
+            $('#rolesChooseBoxDialog').dialog({
+                autoOpen: false,
+                show: { effect: "fade" },
+                hide: { effect: "blind" },
+                width: "700"
+            });
+
+            $('#addEditRolesDialog').dialog({
+                autoOpen: false,
+                show: { effect: "fade" },
+                hide: { effect: "blind" },
+                width: "400"
             });
         }
 

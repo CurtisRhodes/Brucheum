@@ -8,6 +8,8 @@ var dashboardMainSelectedPath = "";
 var partialViewSelectedItemId = 0;
 var dashboardContextMenuFolderId = "";
 
+
+
 function buildDirectoryTree() {
     $('#dirTreeContainer').html("");
     $('#dataifyInfo').show().html("rebuilding directory tree");
@@ -257,34 +259,6 @@ function showMoveFolderDialog() {
 
 }
 
-function moveFolder() {
-    //$('#dataifyInfo').show().html("Preparing to Move Folder");
-    //$('#progressBar').show();
-    $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "/api/FtpDashboard/MoveFolder?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + partialViewSelectedItemId,
-        success: function (success) {
-            //$('#dashBoardLoadingGif').hide();
-            //$('#moveFolderCrud').hide();
-            //$('#moveFolderCrud').dialog("close");
-            if (!success.startsWith("ERROR")) {
-                displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val());
-                //$('#progressBar').hide();
-                //$('#progressBar').progressbar("destroy");
-            }
-            else
-                alert("Move Folder: " + success);
-        },
-        error: function (xhr) {
-            $('#dashBoardLoadingGif').hide();
-            alert("Move Folder xhr error: " + getXHRErrorDetails(xhr));
-        }
-    });
-    //$('#moveFolderCrud').on('dialogclose', function (event) {
-                //buildDirectoryTree();
-    //});
-}
-
 function renameFolder() {
     var start = Date.now();
     $('#dashBoardLoadingGif').fadeIn();
@@ -331,69 +305,16 @@ function renameFolder() {
     });
 }
 
-function repairLinks() {
-    var start = Date.now();
-    $('#dataifyInfo').show().html("checking and repairing links");
-    $('#dashBoardLoadingGif').fadeIn();
-    $('#repairLinksReport').html("");
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "/api/RepairLinks/RepairLinks/?startFolderId=" + dashboardMainSelectedTreeId + "&drive=XX",
-        success: function (repairReport) {
-            $('#dashBoardLoadingGif').hide();
-            if (repairReport.Success === "ok") {
-                try {
-                    var delta = (Date.now() - start);
-                    var minutes = Math.floor(delta / 60000);
-                    var seconds = ((delta % 60000) / 1000).toFixed(0);
-                    //console.log("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-                    $('#dataifyInfo').html("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-                    $('#dataifyInfo').append(", Rows Processed: " + repairReport.RowsProcessed);
-                    if (repairReport.ImagesDownLoaded > 0)
-                        $('#dataifyInfo').append(", Images DownLoaded: " + repairReport.ImagesDownLoaded);
-                    if (repairReport.LinksEdited > 0)
-                        $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);
-                    if (repairReport.ImagesRenamed > 0)
-                        $('#dataifyInfo').append(", Images Renamed: " + repairReport.ImagesRenamed);
-                    if (repairReport.NewLinksAdded > 0)
-                        $('#dataifyInfo').append(", New Links Added: " + repairReport.NewLinksAdded);
-                    if (repairReport.ImagesMoved > 0)
-                        $('#dataifyInfo').append(", Images Moved: " + repairReport.ImagesMoved);
-                    if (repairReport.LinksRemoved > 0)
-                        $('#dataifyInfo').append(", CatLinks Added: " + repairReport.LinksRemoved);
-                    if (repairReport.CatLinksAdded > 0)
-                        $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
+function showAssignRolesDialog() {
+    $('#rolesChooseBoxDialog').dialog('open');
+    $('#divChooseAssigned').html("");
+    loadUsers();
+    loadAllUserRoles();
+}
 
-
-                    //$('#dataifyInfo').append(", directory errors: " + repairReport.DirNotFound);
-                    //$('#dataifyInfo').append(", bad file names: " + repairReport.BadFileNames);
-
-                    //$('#dataifyInfo').append(", links fixed: " + repairReport.LinksRemoved);
-                    //repairReport.MissingImages.forEach(function (element) {
-                    //    /// add new link
-                    //    $('#repairReport').append("<div> missing image: " + element.Name + "</div>");
-                    //});
-
-                    repairReport.Errors.forEach(function (element) {
-                        $('#repairLinksReport').append("<div> errors: " + element + "</div>");
-                    });
-
-                    //repairReport.BadLinks.forEach(function (element) {
-                    //    $('#repairReport').append("<div> bad link: " + element.id + "</div>");
-                    //});
-                }
-                catch (e) {
-                    alert("problem displaying repair report: " + e);
-                }
-            }
-            else
-                alert("repairLinks: " + repairReport.Success);
-        },
-        error: function (xhr) {
-            $('#dashBoardLoadingGif').hide();
-            alert("downloadLinks xhr error: " + getXHRErrorDetails(xhr));
-        }
-    });
+function showAddRolesDialog() {
+    $('#addEditRolesDialog').dialog('open');
+    loadAaddEditRoles();
 }
 
 function moveFolderTreeClick(path, id, treeId) {
@@ -434,14 +355,6 @@ function dashboardMainClick(path, id, treeId) {
     //}
 }
 
-function showDirTreeContextMenu(linkId, folderId) {
-    dashboardContextMenuFolderId = folderId;
-    event.preventDefault();
-    window.event.returnValue = false;
-    $('#dashboardContextMenu').css("top", event.clientY + 5);
-    $('#dashboardContextMenu').css("left", event.clientX);
-    $('#dashboardContextMenu').fadeIn();
-}
 function dashboardContextMenuOpenFolder() {
     window.open("/album.html?folder=" + dashboardContextMenuFolderId, "_blank");
 }

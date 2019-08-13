@@ -81,24 +81,26 @@
             if (params.folder == undefined) {
                 window.location.href = "Index.html";
             }
-
+            var dots = "";
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
-                    //dots += ". ";
+                    dots += ". ";
                     //$('#text55').html(dots);
                 }
                 else {
                     clearInterval(waiter);
-                    var cookieName = getCookie("User");
 
-                    if (cookieName == "") {
-                        directToStaticPage(params.folder)
-                    }
+                    var showStatic = false;
+
+
+                    if (showStatic)
+                        directToStaticPage(params.folder);
                     else {
-
-
-                        getAlbumImages(params.folder);
                         getAlbumPageHeader(params.folder);
+
+                        setTimeout(function () { setUserPermissions(); }, 1000);
+                        
+                        getAlbumImages(params.folder);
                     }
                 }
             }, 300);

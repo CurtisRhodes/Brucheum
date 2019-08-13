@@ -2,9 +2,19 @@
     background-color: red !important;
 }
 
-.chooseBoxListItem {
+.chooseAvailableListItem {
     color: black;
-    background-color: #a2a2a2;
+    background-color: var(--oggleHeaderSelectBackgroundColor);
+    font-size: 16px;
+    margin: 4px;
+    padding: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.chooseAssignedListItem {
+    color: black;
+    background-color: var(--oggleHeaderSelectBackgroundColor);
     font-size: 16px;
     margin: 4px;
     padding: 4px;

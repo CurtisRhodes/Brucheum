@@ -1,7 +1,8 @@
 ﻿.carouselContainer {
     padding: 1px;
-    border: solid 2px #b200ff;
-    /*background-color: rgba(164, 168, 169, 0.75);*/
+    border: solid 2px var(--oggleBorderColor);
+    /*border: solid 2px #b200ff;
+      background-color: rgba(164, 168, 169, 0.75);*/
     z-index: 10;
     display: none;
 }

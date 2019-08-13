@@ -22,9 +22,9 @@
     <script src="Scripts/MetaTagDialog.js"></script>
 
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
+    <link href="Styles/Common.css" rel="stylesheet" />
     <link href="Styles/loginDialog.css" rel="stylesheet" />
     <link href="Styles/Header.css" rel="stylesheet" />
-    <link href="Styles/Common.css" rel="stylesheet" />
     <link href="Styles/Carousel.css" rel="stylesheet" />
     <link href="Styles/ImagePage.css" rel="stylesheet" />
     <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
@@ -100,10 +100,7 @@
             <div id="ctxMove" onclick="carouselContextMenuAction('archive')">Archive</div>
         </div>
 
-        <div w3-include-html="Snippets/BoobsFooter.html"></div>
-        <div w3-include-html="Snippets/AdminDialogs.html"></div>
-        <div w3-include-html="Snippets/Login.html"></div>
-        <div w3-include-html="Snippets/Register.html"></div>
+        <div id="dirTreeContainer" class="treeContainer"></div>
         <div id="promoContainer" class="ogglePromoContainer">
             <div id="promoContainerTitle" class="ogglePromoTitle"></div>
             <div id="promoContainerText" class="ogglePromoText"></div>
@@ -112,6 +109,12 @@
         </div>
         <div id="indexCatTreeContainer" class="oggleHidden"></div>
     </div>
+
+    <div w3-include-html="Snippets/BoobsFooter.html"></div>
+    <div w3-include-html="Snippets/AdminDialogs.html"></div>
+    <div w3-include-html="Snippets/Login.html"></div>
+    <div w3-include-html="Snippets/Register.html"></div>
+
     <script>
         var promoIdx = 0;
         var promoMessagesArray = new Array();
@@ -140,10 +143,10 @@
                 else {
                     $('#dots').html('');
                     clearInterval(waiter);
-                    launchCarousel(subdomain);                    
+                    launchCarousel(subdomain);
                     logVisit();
-                    getUserPermissions();
-                    
+                    setUserPermissions();
+
                     if (subdomain == "porn") {
                         $('#pornLeftColumnList').show();
                         $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");

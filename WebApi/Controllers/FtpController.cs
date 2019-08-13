@@ -758,11 +758,6 @@ namespace WebApi
                     string destinationFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(parentId) + dbSourceFolder.FolderName + "/" + newFolderName.Trim();
 
 
-                    if (dbSourceFolder.FolderName.Contains("OGGLEBOOBLE.COM"))
-                        destinationFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(parentId) + newFolderName.Trim();
-
-
-
                     if (FtpUtilies.DirectoryExists(destinationFtpPath))
                         successModel.Success = "folder already exists";
                     else

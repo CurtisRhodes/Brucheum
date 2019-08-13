@@ -71,7 +71,7 @@ function recurrBuildDirTree(dir, treeId) {
             //+ "<span onclick=" + treeId + "Click('" + subDir.RootFolder + "/" + subDir.DirectoryName.replace(/ /g, "%20") + "','" + subDir.FolderId + "','" + treeId + "') "
 
             + "oncontextmenu=showDirTreeContextMenu('" + subDir.LinkId + "','" + subDir.FolderId + "') "
-            + "onmouseover=showFolderImage('" + encodeURI(imgSrc) + "') onmouseout=$('#dirTreeImageContainer').hide() >"
+            + "onmouseover=showFolderImage('" + encodeURI(imgSrc) + "') onmouseout=$('.dirTreeImageContainer').hide() >"
             + subDir.DirectoryName.replace(".OGGLEBOOBLE.COM", "") + "</span><span class='fileCount'>  : " + subDir.Length.toLocaleString() + subDirtxt + "</span></div>"
             + "<div class='" + expandClass + "' id=" + subDir.LinkId + ">";
 
@@ -92,10 +92,21 @@ function toggleDirTree(id) {
 }
 
 function showFolderImage(link) {
-    $('#dirTreeImageContainer').css("top", event.clientY - 100);
-    $('#dirTreeImageContainer').css("left", event.clientX + 10);
-    $('#dirTreeImage').attr("src", link);
-    $('#dirTreeImageContainer').show();
+    //alert("showFolderImage: " + link);
+    $('.dirTreeImageContainer').css("top", event.clientY - 100);
+    $('.dirTreeImageContainer').css("left", event.clientX + 10);
+    $('.dirTreeImage').attr("src", link);
+    $('.dirTreeImageContainer').show();
     //$('#footerMessage').html(link);
 }
 
+function showDirTreeContextMenu(linkId, folderId) {
+    //alert("showDirTreeContextMenu");
+
+    dashboardContextMenuFolderId = folderId;
+    event.preventDefault();
+    window.event.returnValue = false;
+    $('#dashboardContextMenu').css("top", event.clientY + 5);
+    $('#dashboardContextMenu').css("left", event.clientX);
+    $('#dashboardContextMenu').fadeIn();
+}

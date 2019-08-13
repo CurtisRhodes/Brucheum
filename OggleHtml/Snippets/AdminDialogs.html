@@ -15,10 +15,10 @@
                 <div class="modelInfoDialogLabel">from</div><input id="txtNationality" class="modelDialogInput" /><br />
                 <div class="modelInfoDialogLabel">born</div><input id="txtBorn" class="modelDialogInput" /><br />
                 <div class="modelInfoDialogLabel">boobs</div>
-                <select id="selBoobs" class="modelDialogInput" >
+                <select id="selBoobs" class="modelDialogSelect">
                     <option value="Real">Real</option>
                     <option value="Fake">Fake</option>
-                </select>
+                </select><br />
                 <div class="modelInfoDialogLabel">figure</div><input id="txtMeasurements" class="modelDialogInput" />
             </div>
             <div class="floatLeft">
@@ -62,7 +62,7 @@
     </div>
 </div>
 
-<div id="imageCommentDialog" class="oggleDialogWindow" >
+<div id="imageCommentDialog" class="oggleDialogWindow">
     <div id="divStatusMessage"></div>
     <div class="center"><img id="commentDialogImage" class="commentDialogImage" /></div>
     <div><input id="txtCommentTitle" class="roundedInput commentTitleText" tabindex="1" placeholder="Give your comment a title" /></div>
@@ -100,6 +100,12 @@
     <div id="modalContent" class="modalContentStyle"></div>
 </div>
 
-<div id="dirTreeImageContainer" class="floatingDirTreeImage">
-    <img id="dirTreeImage" />
+<div class="dirTreeImageContainer floatingDirTreeImage">
+    <img class="dirTreeImage" />
+</div>
+
+<div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
+    <div onclick="dashboardContextMenuOpenFolder()">Open Folder</div>
+    <div onclick="dashboardContextMenuShowCategoryDetails()">Show Category Info</div>
+    <div onclick="dashboardContextMenuShowInfoDialog()">Show Model Info</div>
 </div>

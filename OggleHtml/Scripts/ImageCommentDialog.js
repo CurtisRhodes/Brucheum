@@ -87,7 +87,7 @@ function addImageComment() {
         error: function (jqXHR, exception) {
             alert("saveComment XHR : " + getXHRErrorDetails(jqXHR, exception));
         }
-    })
+    });
 }
 
 function editImageComment() {
@@ -105,5 +105,5 @@ function editImageComment() {
         error: function (jqXHR, exception) {
             alert("editImageComment XHR : " + getXHRErrorDetails(jqXHR, exception));
         }
-    })
+    });
 }

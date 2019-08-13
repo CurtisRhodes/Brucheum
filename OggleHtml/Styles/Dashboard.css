@@ -17,6 +17,10 @@
     background-color: #eee;
 }
 
+.adminLevelRequired {
+    display: none;
+}
+
 .workarea {
     float: left;
     width: 100%;

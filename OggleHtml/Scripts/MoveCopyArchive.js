@@ -55,12 +55,12 @@ function ftpMoveCopy() {
                 }
             }
             else {
-                alert("ftp Move " + successModel.Success);
+                alert("ftpMoveCopy: " + successModel.Success);
             }
         },
         error: function (xhr) {
             $('#imagePageLoadingGif').hide();
-            alert("ftp Move xhr error: " + xhr.statusText);
+            alert("ftpMoveCopy xhr error: " + xhr.statusText);
         }
     });
 }

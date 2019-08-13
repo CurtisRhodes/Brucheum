@@ -132,25 +132,6 @@ namespace WebApi
         }
 
         [HttpGet]
-        public UsersModel GetAvailableRoles()
-        {
-            UsersModel users = new UsersModel();
-            try
-            {
-                using (WebStatsContext db = new WebStatsContext())
-                {
-                    users.UserNames = db.RegisteredUsers.Select(r => r.UserName).ToList();
-                    users.Success = "ok";
-                }
-            }
-            catch (Exception ex) { users.Success = Helpers.ErrorDetails(ex); }
-            return users;
-        }
-
-        //api/Roles/GetAvailableRoles&userName=" + selectedUserName,
-
-
-        [HttpGet]
         public RoleModel GetUserRoles(string userName, string whichType)
         {
             RoleModel roleModel = new RoleModel();
@@ -165,8 +146,11 @@ namespace WebApi
                     {
                         List<string> assigned = db.UserRoles.Where(ur => ur.UserName == userName).Select(ur => ur.RoleName).ToList();
                         List<string> allRoles = db.Roles.Select(r => r.RoleName).ToList();
-                        //roleModel.RoleNames = allRoles.Where(a=>a.co)
-                        //roleModel.RoleNames = db.UserRoles.Where(ur => ur.UserName == userName).Select(ur => ur.RoleName).ToList();
+                        foreach (string alreadyAssignedRole in assigned)
+                        {
+                            allRoles.Remove(alreadyAssignedRole);
+                        }
+                        roleModel.RoleNames = allRoles;
                     }
                     roleModel.Success = "ok";
                 }
@@ -201,6 +185,7 @@ namespace WebApi
                 using (WebStatsContext db = new WebStatsContext())
                 {
                     db.UserRoles.Add(new UserRole() { UserName = userName, RoleName = roleName });
+                    db.SaveChanges();
                     success = "ok";
                 }
             }
@@ -235,6 +220,7 @@ namespace WebApi
                 {
                     UserRole roleToDelete = db.UserRoles.Where(r => r.UserName == userName && r.RoleName == roleName).First();
                     db.UserRoles.Remove(roleToDelete);
+                    db.SaveChanges();
                     success = "ok";
                 }
             }

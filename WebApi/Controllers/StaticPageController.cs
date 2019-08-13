@@ -38,7 +38,7 @@ namespace WebApi.Controllers
                         SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
                         CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                         string folderName = categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
-                        string fileName = Helpers.GetImmediateParentPath(folderId) + folderName;
+                        string fileName = Helpers.GetParentPath(folderId) + folderName;
                         //var parentPath = Helpers.GetParentPath(folderId);
 
                         success = ProcessFolder(folderId, categoryFolder.RootFolder, folderName, fileName, db, recurr);
@@ -82,9 +82,7 @@ namespace WebApi.Controllers
                         //filesProcessed += Math.Max(vwDirTree.TotalFiles, vwDirTree.FileCount);
                         filesProcessed += vwDirTree.FileCount;
                         //SignalRHost.ProgressHub.ShowProgressBar(totalFiles, filesProcessed);
-                        //var xx = Helpers.GetParentPath(dbCategoryFolder.Id);
-                        var cFolderName = Helpers.GetImmediateParentPath(dbCategoryFolder.Id) + dbCategoryFolder.FolderName;
-                        //ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.RootFolder + "/" + dbCategoryFolder.FolderName, db, true);
+                        var cFolderName = Helpers.GetParentPath(dbCategoryFolder.Id) + dbCategoryFolder.FolderName;
                         ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.FolderName, cFolderName, db, true);
                     }
                 }
@@ -222,7 +220,7 @@ namespace WebApi.Controllers
                             // a woman commited suicide when pictures of her "came out"
                             //var test = "href='" + httpLocation + "/" + breadCrumbModel.BreadCrumbs[i].StaticPageFileName + ".html";
                             staticPageFileName = httpLocation + "/" + breadCrumbModel.RootFolder + "/" + 
-                                Helpers.GetImmediateParentPath(breadCrumbModel.BreadCrumbs[i].FolderId) +
+                                Helpers.GetParentPath(breadCrumbModel.BreadCrumbs[i].FolderId) +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + ".html";
 
                             breadCrumbs += "<a class='activeBreadCrumb' " + "href='" + staticPageFileName + "'>" +
@@ -330,7 +328,7 @@ namespace WebApi.Controllers
                 foreach (VwDirTree subDir in subDirs)
                 {
 
-                    string fullerFolderName = (Helpers.GetImmediateParentPath(subDir.Id) + subDir.FolderName).Replace("/", "_");
+                    string fullerFolderName = (Helpers.GetParentPath(subDir.Id) + subDir.FolderName).Replace("/", "_");
 
                     int subDirFileCount = subDir.FileCount + subDir.TotalFiles + subDir.GrandTotalFiles;
                     bodyHtml += "<div class='" + imageFrameClass + "'>" +

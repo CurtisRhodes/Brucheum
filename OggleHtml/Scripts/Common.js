@@ -162,11 +162,9 @@ function logVisit() {
         url: settingsArray.ApiServer + "api/HitCounter/LogVisit?userName=" + logVisitUserName + "&appName=Ogglebooble",
         success: function (successModel) {
             if (successModel.Success === "ok") {
-                $('#footerMessage').html("");;
+                $('#footerMessage').html("");
                 if (successModel.ReturnValue !== "") {
                     $('#headerMessage').html(successModel.ReturnValue);
-                    //if (userName !== "unknown") getUserPermissions(userName);
-                    //alert("logVisit userName: " + userName);
                 }
             }
             else
@@ -187,7 +185,6 @@ function logPageHit(folderName, appName) {
         userName = "unknown";
     else {
         setLoginHeader(userName);
-        getUserPermissions(userName);
     }
     //if ((ipAddress === "68.203.90.183") || (ipAddress === "50.62.160.105")) return "ok";
     var hitCounterModel = {
@@ -197,7 +194,7 @@ function logPageHit(folderName, appName) {
     };
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer  + "api/HitCounter/LogPageHit",
+        url: settingsArray.ApiServer + "api/HitCounter/LogPageHit",
         data: hitCounterModel,
         success: function (successModel) {
             if (successModel.Success === "ok") {
@@ -281,9 +278,9 @@ function getHeader(subdomain) {
             "       <div class='headerTopRow'>\n" +
             "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
             "           <div class='headerSubTitle' id='headerSubTitle'>\n" +
-            "                <a href='/album.html?folder=2'>tits</a> and\n" +
+            "                <a href='/album.html?folder=2'><span class='bigTits'>BIG</span> tits</a> and\n" +
             "                <a href='/album.html?folder=996'>ass</a> organized by\n" +
-            "                <a href='/album.html?folder=136'> poses</a>.\n" +
+            "                <a href='/album.html?folder=136'> poses,</a>\n" +
             "                <a href='/album.html?folder=199'> shapes</a> and\n" +
             "                <a href='/album.html?folder=241'>sizes</a>\n" +
             "            </div>\n" +

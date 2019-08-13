@@ -78,8 +78,10 @@ function validateRegister() {
 
 function onLogoutClick() {
 
-    //document.cookie = "OggleUser=; User=; path=/; expires = Thu, 01 Jan 1970 00:00:00 GMT";
-    document.cookie = "User=; path=/; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+    //alert("onLogoutClick: " + document.cookie);
+
+    //document.cookie = "OggleUser=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "User=; path=; expires = Thu, 01 Jan 1970 00:00:00 GMT";
     //document.cookie = "expires = Thu, 01 Jan 1970 00:00:00 GMT";
     //document.cookie = null;
 
@@ -127,7 +129,7 @@ function postLogin() {
                     displayStatusMessage("ok", "thanks for logging in " + getCookie("User"));
 
                     setLoginHeader($('#txtLoginUserName').val());
-                    getUserPermissions();
+                    setUserPermissions();
                 }
                 else
 
@@ -168,28 +170,57 @@ function profilePease() {
     alert("profilePease");
 }
 
-function getUserPermissions() {
-
-    var userName = getCookie("User");
-
-    //alert("document.domain: " + document.domain);
-
-    if (userName !== "" || document.domain === 'localhost') {
+function setUserPermissions() {
+    //alert("document.domain : " + document.domain);
+    if (document.domain === 'localhost') {
         $('.loginRequired').show();
+        $('.adminLevelRequired').show();
+        if (typeof isPornEditor === 'boolean') 
+            isPornEditor = true;        
+        $('#spnUserName').html("devl");
+        $('#optionLoggedIn').hide();
+        $('#optionNotLoggedIn').hide();
     }
+    else {
+        var userName = getCookie("User");
+        if (userName !== "") {
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned",
+                success: function (roleModel) {
+                    if (roleModel.Success === "ok") {
+                        $.each(roleModel.RoleNames, function (idx, roleName) {
+                            //alert("roleModel.RoleName: " + roleName);
+                            if (roleName === "Oggle Add Images") {
+                                $('.loginRequired').show();
+                            }
+                            if (roleName === "Oggle admin") {
+                                $('.loginRequired').show();
+                                $('.adminLevelRequired').show();
+                                if (typeof isPornEditor === 'boolean') {
+                                    isPornEditor = true;
+                                    //alert("typeof isPornEditor: " + typeof isPornEditor);
+                                }
+                            }
+                        });
+                    }
+                    else
+                        alert("loadUserRoles: " + roleModel.Success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("loadUserRoles XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
+    }
+}
 
-    //$.ajax({
-    //    type: "GET",
-    //    url: settingsArray.ApiServer + "api/Login/UserPermissions?userName=" + userName,
-    //    success: function (userRoles) {
-    //        $.each(userRoles,function (idx,obj) {
-    //            userRoles.push(obj.RoleName);
-    //        });
-    //    },
-    //    error: function (jqXHR, exception) {
-    //        alert("getUserPermissions jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-    //    }
-    //});
+
+function isInRole(roleName) {
+    var userName = getCookie("User");
+    //alert("document.domain: " + document.domain);
+    //window.localStorage()
+    //if (userName !== "" || document.domain === 'localhost') {
 }
 
 // COOKIES
@@ -211,9 +242,9 @@ function setCookie(userName) {
     //expires = new Date(date.setMonth(date.getMonth() + 3));
     expiryDate.setFullYear(expiryDate.getFullYear() + 1);
     document.cookie = 'User=' + userName + '; expires=' + expiryDate.toUTCString() + 'path=https://ogglebooble.com/';
-
-    alert("expires: " + expiryDate.toUTCString());
+    //alert("expires: " + expiryDate.toUTCString());
 }
+
 function getCookie(cname) {
     var decodedCookie = "";
     if (document.cookie) {

@@ -7,7 +7,6 @@ var modelFolderId;
 var selectedImage;
 var selectedImageLinkId;
 
-
 function directToStaticPage(folderId) {
     $.ajax({
         type: "GET",
@@ -26,6 +25,7 @@ function directToStaticPage(folderId) {
 }
 
 function getAlbumPageHeader(folderId) {
+    //alert("getAlbumPageHeader");
     $.ajax({
         type: "PATCH",
         async: false,
@@ -74,10 +74,6 @@ function getBreadCrumbs(folderId) {
                 currentfolderName = breadCrumbModel.FolderName;
                 document.title = currentfolderName + " : OggleBooble";
                 logPageHit(currentfolderName, "OggleHtml");
-                if (getCookie("User") === "") {
-                    alert("Bread cookie===''");
-                    isPornEditor = false;
-                }
             }
             else
                 alert("getBreadCrumbs " + breadCrumbModel.Success);
@@ -91,7 +87,7 @@ function getBreadCrumbs(folderId) {
 
 function showHomeFolderInfoDialog(index, folderName, folderId, rootFolder) {
     //alert("showHomeFolderInfoDialog(" + folderId + "," + rootFolder + ")");
-    if (rootFolder === "playboy" && index > 4) {
+    if ((rootFolder === "playboy" && index > 4) || (rootFolder === "archive" && index > 2)) {
         showModelInfoDialog(folderName, folderId, 'Images/redballon.png');
     }
     else
@@ -134,7 +130,7 @@ function processImages(imageLinksModel) {
 
     var imageFrameClass = "folderImageOutterFrame";
     var subDirLabel = "subDirLabel";
-    if ((imageLinksModel.RootFolder === "porn") || (imageLinksModel.RootFolder === "sluts")) {
+    if (imageLinksModel.RootFolder === "porn" || imageLinksModel.RootFolder === "sluts") {
         imageFrameClass = "pornFolderImageOutterFrame";
         subDirLabel = "pornSubDirLabel";
     }
@@ -188,7 +184,7 @@ function processImages(imageLinksModel) {
         $('#fileCount').html(imageLinksModel.Files.length);
         $('#footerMessage').html(": " + imageLinksModel.Files.length);
     }
-    if (imageLinksModel.Files.length > 0 && (imageLinksModel.SubDirs.length > 0)) 
+    if (imageLinksModel.Files.length > 0 && imageLinksModel.SubDirs.length > 0) 
         $('#fileCount').html(imageLinksModel.Files.length + "  (" + imageLinksModel.SubDirs.length + ")");
 
     $('#imagePageLoadingGif').hide();
@@ -338,9 +334,9 @@ function ctxSAP(imgId) {
                 $('#ctxModelName').html("unknown model");
                 $('#ctxSeeMore').hide();
 
-                if (staticPageFolderName) {
+
+                if (typeof staticPageFolderName === 'string') {
                     currentfolderName = staticPageFolderName;
-                    //alert("staticPageFolderName: " + staticPageFolderName);
                 }
                 //alert("modelDetails.RootFolder:" + modelDetails.RootFolder + " currentfolderName: " + currentfolderName);
 
