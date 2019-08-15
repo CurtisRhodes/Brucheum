@@ -722,7 +722,7 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    imageDetail = (from l in db.ImageLinks
+                    var expectedImageDetail = (from l in db.ImageLinks
                                    join f in db.CategoryFolders on l.FolderLocation equals f.Id
                                    where l.Id == linkId
                                    select new GetModelNameModel()
@@ -732,6 +732,11 @@ namespace WebApi
                                        FolderName = f.FolderName,
                                        RootFolder = f.RootFolder
                                    }).FirstOrDefault();
+                    if (expectedImageDetail != null)
+                        imageDetail = expectedImageDetail;
+                    else
+                        System.Diagnostics.Debug.WriteLine(linkId+ " didnt work ");
+
                     imageDetail.Success = "ok";
                 }
             }

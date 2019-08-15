@@ -115,15 +115,9 @@ namespace WebApi
                     string ext = "";
                     bool fileNameInExpectedForm;
                     bool anyChangesMade = false;
-
                     foreach (string fileName in files)
                     {
-
-
-
                         //EnsureCorrectFileName(fileName, ftpPath);
-
-
                         if ((fileName.LastIndexOf("_") > 0) && (fileName.Substring(fileName.LastIndexOf("_")).Length > 40))
                         {
                             fileNameInExpectedForm = true;
@@ -168,19 +162,23 @@ namespace WebApi
                                         }
                                     }
 
-                                    if (linkId == "9ec2b80b-d808-46e1-a1da-8e4f116e5693")
-                                        anyChangesMade = true;
-
-
-                                    ImageLink goDaddyLinkExists = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
+                                    ImageLink goDaddyLinkExists = db.ImageLinks.Where(g => g.Id == linkId && g.FolderLocation != folderId).FirstOrDefault();
                                     if (goDaddyLinkExists == null)
-                                    {
-                                        // no godaddyLink found // add row
-                                        ImageLink newLink = new ImageLink() { Id = linkId, Link = expectedLinkName + "/" + expectedFileName, ExternalLink = "unknown" + linkId, FolderLocation = folderId };
-                                        db.ImageLinks.Add(newLink);
-                                        db.SaveChanges();
-                                        repairReport.NewLinksAdded++;
-                                        anyChangesMade = true;
+                                    {                                        
+                                        goDaddyLinkExists = db.ImageLinks.Where(g => g.Link == (expectedLinkName + "/" + expectedFileName) && g.FolderLocation == folderId).FirstOrDefault();
+                                        if (goDaddyLinkExists == null)
+                                        {   // no godaddyLink found // add row
+                                            goDaddyLinkExists = db.ImageLinks.Where(g => g.Id == linkId && g.FolderLocation != folderId).FirstOrDefault();
+                                            if (goDaddyLinkExists != null)
+                                            {   // somehow the guid already exists (some move funtion must be buggy)
+                                                linkId = Guid.NewGuid().ToString();
+                                            }
+                                            ImageLink newLink = new ImageLink() { Id = linkId, Link = expectedLinkName + "/" + expectedFileName, ExternalLink = "unknown", FolderLocation = folderId };
+                                            db.ImageLinks.Add(newLink);
+                                            db.SaveChanges();
+                                            repairReport.NewLinksAdded++;
+                                            anyChangesMade = true;
+                                        }
                                     }
                                     if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == folderId).Where(c => c.ImageLinkId == linkId).Where(c => c.ImageCategoryId == folderId).FirstOrDefault() == null)
                                     {
@@ -320,9 +318,9 @@ namespace WebApi
                                             else
                                             {
                                                 repairReport.Errors.Add(goDaddyLink.Id + " " + goDaddyLink.Link.Substring(goDaddyLink.Link.LastIndexOf("/") + 1) + " " + downLoadSuccess);
-                                                db.ImageLinks.Remove(goDaddyLink);
-                                                db.SaveChanges();
-                                                repairReport.LinksRemoved++;
+                                                //db.ImageLinks.Remove(goDaddyLink);
+                                                //db.SaveChanges();
+                                                //repairReport.LinksRemoved++;
                                             }
                                         }
                                     }

@@ -74,6 +74,7 @@
     <div w3-include-html="Snippets/Register.html"></div>
 
     <script>
+        var isPornEditor = false;
         $(document).ready(function () {
             includeHTML();
             resizePage();
@@ -89,19 +90,17 @@
                 }
                 else {
                     clearInterval(waiter);
-
-                    var showStatic = false;
-
-
-                    if (showStatic)
-                        directToStaticPage(params.folder);
-                    else {
-                        getAlbumPageHeader(params.folder);
-
-                        setTimeout(function () { setUserPermissions(); }, 1000);
-                        
-                        getAlbumImages(params.folder);
-                    }
+                    setUserPermissions();
+                    setTimeout(function () {
+                        $('#footerMessage').html("isPornEditor: " + isPornEditor);
+                        //alert("Album.html isPornEditor: " + isPornEditor);
+                        if (!isPornEditor)
+                            directToStaticPage(params.folder);
+                        else {
+                            getAlbumPageHeader(params.folder);
+                            getAlbumImages(params.folder);
+                        }
+                    }, 700);
                 }
             }, 300);
         });

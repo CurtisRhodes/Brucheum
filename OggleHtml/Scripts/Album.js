@@ -338,20 +338,8 @@ function ctxSAP(imgId) {
                 if (typeof staticPageFolderName === 'string') {
                     currentfolderName = staticPageFolderName;
                 }
-                //alert("modelDetails.RootFolder:" + modelDetails.RootFolder + " currentfolderName: " + currentfolderName);
 
-                //if ((modelDetails.RootFolder + "/" + modelDetails.FolderName === currentfolderName) || (modelDetails.FolderName === currentfolderName)) {
-                //    alert("modelDetails.RootFolder:" + modelDetails.RootFolder + " currentfolderName: " + currentfolderName);
-                //    //alert("modelDetails.FolderName:" + modelDetails.FolderName + " currentfolderName: " + currentfolderName);
-                //    $('#ctxModelName').html("unknown model");
-                //    $('#ctxSeeMore').hide();
-                //}
-                //else {
-                //    //alert("modelDetails.FolderName:" + modelDetails.FolderName + " currentfolderName: " + currentfolderName);
-                //    $('#ctxModelName').html(modelDetails.FolderName);
-                //}
-
-                if (modelDetails.RootFolder === "archive" || modelDetails.RootFolder === "playboy") {
+                if (modelDetails.RootFolder === "archive" || modelDetails.RootFolder === "playboy" || modelDetails.RootFolder === "sluts") {
                     //alert("currentFolderRoot: " + currentFolderRoot + "  modelDetails.RootFolder: " + modelDetails.RootFolder);
                     $('#ctxModelName').html(modelDetails.FolderName);
                     $('#ctxSeeMore').hide();
@@ -363,8 +351,9 @@ function ctxSAP(imgId) {
                 }
 
                 if (modelDetails.RootFolder === "playboy" && currentFolderRoot !== "playboy") {
-                    alert("playboy");
-                    //alert("modelDetails.RootFolder == " + modelDetails.RootFolder + " and currentFolderRoot = " + currentFolderRoot);
+                    $('#ctxSeeMore').show();
+                }
+                if (modelDetails.RootFolder === "sluts" && currentFolderRoot !== "sluts") {
                     $('#ctxSeeMore').show();
                 }
             }

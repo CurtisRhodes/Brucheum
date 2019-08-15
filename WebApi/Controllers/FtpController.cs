@@ -450,7 +450,7 @@ namespace WebApi
             }
             catch (Exception ex)
             {
-                successModel.Success = Helpers.ErrorDetails(ex) + "please try again";
+                successModel.Success = Helpers.ErrorDetails(ex) + " please try again";
             }
             return successModel;
         }
@@ -655,24 +655,28 @@ namespace WebApi
                     string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + destinationPath;
                     //if (dbDestinationFolder.FolderName.Contains("OGGLEBOOBLE.COM"))                        dbDestinationFolder.FolderName = "";
 
-                    string createDirectorySuccess = "";
                     if (FtpUtilies.DirectoryExists(destinationFtpPath))
-                        createDirectorySuccess = "ok";
+                        success = "Directory Already Exists";
                     else
-                        createDirectorySuccess = FtpUtilies.CreateDirectory(destinationFtpPath);
-                    if (createDirectorySuccess == "ok")
+                        success = FtpUtilies.CreateDirectory(destinationFtpPath);
+                    if (success == "ok")
                     {
+                        // local repository
                         string linkId = "";
                         string[] folderContents = FtpUtilies.GetFiles(sourceFtpPath);
                         int folderRows = 0;
                         int fileCount = folderContents.Length;
                         ImageLink goDaddyrow = null;
+                        string sourceFileName = "";
+                        string destinationFileName = "";
                         string newGoDaddyLink = "";
-                        string moveFileSuccess = "";
+                        DirectoryInfo newLocalFolder = new DirectoryInfo(repoPath + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + dbDestinationFolder.FolderName + "/" + dbSourceFolder.FolderName);
+                        if (!newLocalFolder.Exists)
+                            newLocalFolder.Create();
                         foreach (string fileName in folderContents)
                         {
-                            moveFileSuccess = FtpUtilies.MoveFile(sourceFtpPath + "/" + fileName, destinationFtpPath + "/" + fileName);
-                            if (moveFileSuccess == "ok")
+                            success = FtpUtilies.MoveFile(sourceFtpPath + "/" + fileName, destinationFtpPath + "/" + fileName);
+                            if (success == "ok")
                             {
                                 // update godaddy link
                                 linkId = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
@@ -686,38 +690,38 @@ namespace WebApi
                                 SignalRHost.ProgressHub.ShowProgressBar(fileCount, ++folderRows);
                                 SignalRHost.ProgressHub.PostToClient("Moving files from: " + dbSourceFolder.FolderName + " to " + dbDestinationFolder.FolderName + "  " +
                                     folderRows + " of " + fileCount);
+
+                                // local repository
+                                try
+                                {
+                                    sourceFileName = repoPath + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName + "/" + fileName;
+                                    destinationFileName = repoPath + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + destinationPath + "/" + dbDestinationFolder.FolderName + "/" + fileName;
+                                    File.Move(sourceFileName, destinationFileName);
+                                }
+                                catch (Exception ex)
+                                {
+                                    var err = Helpers.ErrorDetails(ex);
+                                    System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
+                                }
                             }
                             else
-                                return moveFileSuccess;
-                        }
+                            {
+                                System.Diagnostics.Debug.WriteLine("wc. download didnt work " + success);
 
-                        // local repository
-                        try
-                        {
-                            //string localFolder = 
-                            newGoDaddyLink = repoPath + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName;
-                            DirectoryInfo directoryInfo = new DirectoryInfo(repoPath + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName);
-                            newGoDaddyLink = repoPath + dbSourceFolder.RootFolder + ".ogglebooble.com/" + dbDestinationFolder.FolderName + destinationPath + "/" + dbSourceFolder.FolderName;
-                            directoryInfo.MoveTo(repoPath + dbSourceFolder.RootFolder + ".ogglebooble.com/" + dbDestinationFolder.FolderName + destinationPath + "/" + dbSourceFolder.FolderName);
+                            }
                         }
-                        catch (Exception ex)
-                        {
-                            var err = Helpers.ErrorDetails(ex);
-                            System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
-                        }
-
-                        string removeFolderSuccess = RemoveFolder(sourceFtpPath);
-
+                    }
+                    if (success == "ok")
+                    {
                         subdirs = db.CategoryFolders.Where(f => f.Parent == dbSourceFolder.Id).ToList();
-
+                        foreach (CategoryFolder subdir in subdirs)
+                        {
+                            MoveFolder(subdir.Id, 22);
+                        }
+                        string removeFolderSuccess = RemoveFolder(sourceFtpPath);
                         dbSourceFolder.Parent = dbDestinationFolder.Id;
                         db.SaveChanges();
                         success = "ok";
-                    }
-
-                    foreach (CategoryFolder subdir in subdirs)
-                    {
-                        MoveFolder(subdir.Id, 22);
                     }
                 }
             }
@@ -756,8 +760,6 @@ namespace WebApi
                 {
                     CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == parentId).FirstOrDefault();
                     string destinationFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(parentId) + dbSourceFolder.FolderName + "/" + newFolderName.Trim();
-
-
                     if (FtpUtilies.DirectoryExists(destinationFtpPath))
                         successModel.Success = "folder already exists";
                     else

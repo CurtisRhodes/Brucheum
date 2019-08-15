@@ -82,6 +82,7 @@ function onLogoutClick() {
 
     //document.cookie = "OggleUser=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     document.cookie = "User=; path=; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "User=; expires = Thu, 01 Jan 1970 00:00:00 GMT";
     //document.cookie = "expires = Thu, 01 Jan 1970 00:00:00 GMT";
     //document.cookie = null;
 
@@ -197,9 +198,12 @@ function setUserPermissions() {
                             if (roleName === "Oggle admin") {
                                 $('.loginRequired').show();
                                 $('.adminLevelRequired').show();
+
+
                                 if (typeof isPornEditor === 'boolean') {
                                     isPornEditor = true;
-                                    //alert("typeof isPornEditor: " + typeof isPornEditor);
+                                    //alert("setUserPermissions isPornEditor: " + isPornEditor);
+                                    
                                 }
                             }
                         });

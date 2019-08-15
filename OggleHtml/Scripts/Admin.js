@@ -387,18 +387,21 @@ function repairLinks() {
 
 function moveFolder() {
     //$('#dataifyInfo').show().html("Preparing to Move Folder");
+    $('#dataifyInfo').show().html("Moveing Folder");
     //$('#progressBar').show();
+    $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "/api/FtpDashboard/MoveFolder?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + partialViewSelectedItemId,
         success: function (success) {
-            //$('#dashBoardLoadingGif').hide();
-            //$('#moveFolderCrud').hide();
-            //$('#moveFolderCrud').dialog("close");
+            $('#dashBoardLoadingGif').hide();
             if (!success.startsWith("ERROR")) {
                 displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val());
                 //$('#progressBar').hide();
                 //$('#progressBar').progressbar("destroy");
+                $('#dataifyInfo').hide();
+                $('#moveFolderCrud').dialog("close");
+                buildDirectoryTree();
             }
             else
                 alert("Move Folder: " + success);
@@ -409,6 +412,4 @@ function moveFolder() {
         }
     });
     //$('#moveFolderCrud').on('dialogclose', function (event) {
-    //buildDirectoryTree();
-    //});
 }
