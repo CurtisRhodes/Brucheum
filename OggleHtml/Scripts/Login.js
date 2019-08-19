@@ -207,6 +207,8 @@ function setUserPermissions() {
                                 }
                             }
                         });
+                        if (typeof permissionsSet === "boolean")
+                            permissionsSet = true;
                     }
                     else
                         alert("loadUserRoles: " + roleModel.Success);

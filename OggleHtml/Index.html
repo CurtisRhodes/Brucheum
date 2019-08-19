@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome - OggleBooble</title>
     <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
-    <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
-    <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>
-    <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet' />
-    <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js' type="text/javascript"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
@@ -21,16 +21,18 @@
     <script src="Scripts/MoveCopyArchive.js"></script>
     <script src="Scripts/MetaTagDialog.js"></script>
 
-    <link href="Styles/jqueryUI.css" rel="stylesheet" />
-    <link href="Styles/Common.css" rel="stylesheet" />
-    <link href="Styles/loginDialog.css" rel="stylesheet" />
-    <link href="Styles/Header.css" rel="stylesheet" />
-    <link href="Styles/Carousel.css" rel="stylesheet" />
-    <link href="Styles/ImagePage.css" rel="stylesheet" />
-    <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
-    <link href="Styles/ModelInfoDialog.css" rel="stylesheet" />
-    <link href="Styles/ImageCommentDialog.css" rel="stylesheet" />
-    <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
+    <link href="Styles/jqueryUI.css" rel="stylesheet">
+    <link href="Styles/Common.css" rel="stylesheet">
+    <link href="Styles/loginDialog.css" rel="stylesheet">
+    <link href="Styles/Header.css" rel="stylesheet">
+    <link href="Styles/Carousel.css" rel="stylesheet">
+    <link href="Styles/ImagePage.css" rel="stylesheet">
+    <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet">
+    <link href="Styles/ModelInfoDialog.css" rel="stylesheet">
+    <link href="Styles/ImageCommentDialog.css" rel="stylesheet">
+    <link href="Styles/MetaTagDialog.css" rel="stylesheet">
 </head>
 <body>
     <div>
@@ -59,14 +61,13 @@
             <div id="middleColumn">
                 <div id="customMessage" class="displayHidden customMessageContainer"></div>
                 <div id="divStatusMessage"></div>
+                <div id="dots"></div>
                 <div class="flexContainer">
-
                     <div class="floatLeft">
                         <div id="includeCenterfoldsCheckbox" class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('playboy', $(this).is(':checked'))" /> Include Centerfolds</div>
                         <div class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('archive', $(this).is(':checked'))" /> Include Archive</div>
                         <div id="dots"></div>
                     </div>
-
                     <div class="floatLeft" id="carousel">
                         <div class="centeredDivShell randomImageContainer">
                             <div class="centeredDivInner">
@@ -121,6 +122,8 @@
         var promoMessageRotator;
         var promoMessageRotationSpeed = 8000;
         var subdomain;
+        var permissionsSet = false;
+        var isPornEditor = false;
 
         $(document).ready(function () {
             includeHTML();
@@ -134,10 +137,10 @@
 
             getHeader(subdomain);
 
-            //var dots = ""
+            var dots = ""
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
-                    //dots += ". ";
+                    dots += ". ";
                     $('#dots').html(dots);
                 }
                 else {
@@ -145,20 +148,33 @@
                     clearInterval(waiter);
                     launchCarousel(subdomain);
                     logVisit();
-                    setUserPermissions();
-
                     if (subdomain == "porn") {
                         $('#pornLeftColumnList').show();
                         $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
                         $('body').addClass('pornBodyColors');
                         $('#includeCenterfoldsCheckbox').hide();
-
                     }
                     else {
                         $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
                         $('#boobsLeftColumnList').show();
                         launchPromoMessages();
                     }
+                    setUserPermissions();
+                    var waiter2 = setInterval(function () {
+                        dots += "* ";
+                        $('#dots').html(dots);
+                        if (permissionsSet === true) {
+                            clearInterval(waiter2);
+                            $('#dots').html("");
+                            $('#footerMessage').html("isPornEditor: " + isPornEditor);
+                            //if (!isPornEditor)
+                            //    directToStaticPage(params.folder);
+                            //else {
+                            //    getAlbumPageHeader(params.folder);
+                            //    getAlbumImages(params.folder);
+                            //}
+                        }
+                    }, 300);
                 }
             }, 300);
 

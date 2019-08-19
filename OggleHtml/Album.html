@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OggleHtml</title>
     <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
-    <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
-    <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>
-    <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet' />
+
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+
     <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js' type="text/javascript"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
@@ -22,6 +23,8 @@
     <script src="Scripts/MetaTagDialog.js"></script>
     <script src="Scripts/Slideshow.js"></script>
     <script src="Scripts/Album.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
+    <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet' />
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
     <link href="Styles/loginDialog.css" rel="stylesheet" />
     <link href="Styles/Header.css" rel="stylesheet" />
@@ -43,9 +46,9 @@
             <div id="divStatusMessage"></div>
             <div id="divTestBox" class="attrBox"></div>
             <img id="imagePageLoadingGif" class="loadingGif" src="Images/loader.gif" />
+            <div id="dots"></div>
             <div id="imageContainer" class="flexWrapContainer"></div>
             <div id="fileCount" class="countContainer"></div>
-            <h2 id="text55"></h2>
         </div>
         <div id="rightColumn"></div>
     </div>
@@ -74,6 +77,7 @@
     <div w3-include-html="Snippets/Register.html"></div>
 
     <script>
+        var permissionsSet = false;
         var isPornEditor = false;
         $(document).ready(function () {
             includeHTML();
@@ -86,21 +90,27 @@
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
                     dots += ". ";
-                    //$('#text55').html(dots);
+                    $('#dots').html(dots);
                 }
                 else {
                     clearInterval(waiter);
                     setUserPermissions();
-                    setTimeout(function () {
-                        $('#footerMessage').html("isPornEditor: " + isPornEditor);
-                        //alert("Album.html isPornEditor: " + isPornEditor);
-                        if (!isPornEditor)
-                            directToStaticPage(params.folder);
-                        else {
-                            getAlbumPageHeader(params.folder);
-                            getAlbumImages(params.folder);
+                    var waiter2 = setInterval(function () {
+                        dots += "* ";
+                        $('#dots').html(dots);
+                        if (permissionsSet === true) {
+                            $('#dots').html('');
+                            clearInterval(waiter2);
+                            $('#footerMessage').html("isPornEditor: " + isPornEditor);
+                            //alert("Album.html isPornEditor: " + isPornEditor);
+                            if (!isPornEditor)
+                                directToStaticPage(params.folder);
+                            else {
+                                getAlbumPageHeader(params.folder);
+                                getAlbumImages(params.folder);
+                            }
                         }
-                    }, 700);
+                    }, 300);
                 }
             }, 300);
         });

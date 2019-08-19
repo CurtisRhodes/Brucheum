@@ -54,11 +54,12 @@
 
 .folderImageFrameName {
     text-align: center;
-    background-color: var(--thumbnailBorderColor);
+    /*background-color: var(--thumbnailBorderColor);*/
+    background-color: orangered; /*#ffcccc;*/
 }
 .pornFolderImageFrame {
     text-align: center;
-    background-color: #ffcccc;    
+    background-color: #ffcccc;
 }
 
 .nonLocalIndicator {
@@ -68,8 +69,8 @@
 .flexWrapContainer {
     border: solid 4px red;
     margin-top: 16px;
+    background-color: #f49ce8; /*#ffcccc;*/
     /*background-image: linear-gradient(#b190b6, #b84cc8);*/
-
     border: solid thin black;
     min-height: 200px;
     display: flex;

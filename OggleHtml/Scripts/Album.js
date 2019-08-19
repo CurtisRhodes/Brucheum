@@ -371,9 +371,12 @@ function ctxSAP(imgId) {
 function contextMenuAction(action) {
     switch (action) {
         case "show":
+            var disableViewerKeys = viewerShowing;
+            viewerShowing = false;
             $("#thumbImageContextMenu").fadeOut();
             showModelInfoDialog($('#ctxModelName').html(), modelFolderId, selectedImage);// $('#' + currentContextLinkId + '').attr("src"));
             $('#modelInfoDialog').on('dialogclose', function (event) {
+                viewerShowing = disableViewerKeys;
                 $('#modelInfoDialog').hide();
                 getAlbumImages(currentFolderId);
             });
@@ -393,26 +396,14 @@ function contextMenuAction(action) {
         case "archive":
             $("#thumbImageContextMenu").fadeOut();
             showMoveCopyDialog("Archive", selectedImage, currentFolderId);
-            //showMoveCopyDialog("Archive", $('#' + selectedImageLinkId + '').attr("src"), currentFolderId);
-            //$('#moveCopyDialog').on('dialogclose', function (event) {
-            //    if (viewerShowing)
-            //        slide("next");
-            //    getAlbumImages(currentFolderId);
-            //});
             break;
         case "copy":
             $("#thumbImageContextMenu").fadeOut();
             showMoveCopyDialog("Copy", selectedImage, currentFolderId);
             break;
         case "move":
-            //if (viewerShowing) { alert("showImageCommentDialog(" + selectedImage + ", " + selectedImageLinkId + ", " + currentFolderId + ", " + currentfolderName + ");"); }
             $("#thumbImageContextMenu").fadeOut();
             showMoveCopyDialog("Move", selectedImage, currentFolderId);
-            //$('#moveCopyDialog').on('dialogclose', function (event) {
-            //    if (viewerShowing)
-            //        slide("next");
-            //    getAlbumImages(currentFolderId);
-            //});
             break;
         case "remove":
             $("#thumbImageContextMenu").fadeOut();

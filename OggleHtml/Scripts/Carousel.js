@@ -228,14 +228,16 @@ function intervalBody() {
     $('#categoryTitle').fadeOut(intervalSpeed);
     $('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
         imageIndex = Math.floor(Math.random() * numImages);
+        //preloadImage = carouselItemArray[imageIndex].Link;
         $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
-        setTimeout(function () {
-            $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
-            $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath);
-            $('#laCarousel').fadeIn(intervalSpeed);
-        }, 400);
+        //$('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
+        $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
+        $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath);
+        $('#laCarousel').fadeIn(intervalSpeed);
         resizeCarousel();
         $('#footerMessage').html("image: " + imageIndex + " of " + numImages);
+        //$('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link).onload = function () {        };
+        //setTimeout(function () { }, 400);
     });
 }
 
