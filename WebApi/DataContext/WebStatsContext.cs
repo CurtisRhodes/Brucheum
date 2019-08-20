@@ -16,6 +16,19 @@
         public virtual DbSet<Visitor> Visitors { get; set; }
         public virtual DbSet<Visit> Visits { get; set; }
         public virtual DbSet<PageHit> PageHits { get; set; }
+        public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
+    }
+
+    [Table("webStats.ChangeLog")]
+    public class ChangeLog
+    {
+        [Key]
+        public int PkId { get; set; }
+        public int PageId { get; set; }
+        public string PageName { get; set; }
+        public string Activity { get; set; }
+        public DateTime Occured { get; set; }
+        public bool StaticRebuild { get; set; }
     }
 
     [Table("webStats.Visitor")]

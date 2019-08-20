@@ -247,6 +247,12 @@ function onRemoveImageClick(btn) {
                     if (viewerShowing)
                         slide("next");
                     getAlbumImages(currentFolderId);
+                    var changeLogModel = {
+                        PageId: currentFolderId,
+                        PageName: currentfolderName,
+                        Activity: "link removed " + selectedImageLinkId
+                    };
+                    logActivity(changeLogModel);
                 }
                 else
                     alert("removeLink: " + success);
@@ -279,6 +285,13 @@ function removeImage() {
                             if (viewerShowing)
                                 slide("next");
                             getAlbumImages(currentFolderId);
+
+                            var changeLogModel = {
+                                PageId: currentFolderId,
+                                PageName: currentfolderName,
+                                Activity: "link removed " + selectedImageLinkId
+                            };
+                            logActivity(changeLogModel);
                         }
                         else
                             alert("removeLink: " + success);

@@ -45,27 +45,7 @@ function resizeStaticPage() {
     //$('#footerMessage').html("8");
 }
 
-//function imgClick(imageIndex) {
-//    //alert("imageArray[]: " + imageArray.length + " folderId: " + staticPageFolderId + " folderName: " + staticPageFolderName);
-//    viewerShowing = true;
-//    // get image array from DOM
-//    $('#imageContainer').children().each(function() {
-//        //alert("LinkId: " + $(this).find("img").attr("id") + "  src: " + $(this).children("img").attr("src"));
-//        imageArray.push({
-//            LinkId: $(this).find("img").attr("id"),
-//            Link: $(this).find("img").attr("src")
-//        });
-//    });
-//    launchViewer(imageArray, imageIndex, staticPageFolderId, staticPageFolderName);
-//    resizeViewer();
-//}
-
-
 function contextMenuActionShow() {
-    //showModelInfoDialog(modelName, folderId, currentSrc)
-    alert("hoe");
-
-
     showModelInfoDialog($('#staticPagectxModelName').html(), modelFolderId, selectedImage);
 }
 function contextMenuActionJump() {

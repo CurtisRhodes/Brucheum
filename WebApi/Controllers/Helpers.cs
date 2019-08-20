@@ -134,8 +134,6 @@ namespace WebApi
             //.replace(/\n / g, "");
         }
 
-
-
         public static string GetIPAddress()
         {
             String address = "";
@@ -189,6 +187,9 @@ namespace WebApi
                     parentId = parentDb.Parent;
                 }
             }
+
+            var test = parentPath;
+            
             return parentPath.Substring(parentPath.IndexOf("/") + 1);
         }
 
@@ -229,6 +230,18 @@ namespace WebApi
                 }
             }
             return goodLink;
+        }
+
+        public static string GetCustomStaticFolderName(int folderId, string folderName)
+        {
+            string filePath = Helpers.GetParentPath(folderId);
+            if (filePath.Contains("centerfolds"))
+                folderName = "centerfolds/" + folderName;
+            if (filePath.Contains("magazine"))
+                folderName = "covers/" + folderName;
+            if (filePath.Contains("plus"))
+                folderName = "plus/" + folderName;
+            return folderName;
         }
     }
 }

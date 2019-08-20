@@ -148,7 +148,7 @@ function addUserRole() {
                 type: "POST",
                 url: settingsArray.ApiServer + "api/Roles/AddUserRole?userName=" + selectedUserName + "&roleName=" + selectedRoleName,
                 success: function (success) {
-                    if (success == "ok") {
+                    if (success === "ok") {
                         loadUserRoles("Available");
                         loadUserRoles("Assigned");
                         displayStatusMessage("ok", "User Role [" + selectedRoleName + "] added");
@@ -270,7 +270,7 @@ function addRole() {
             type: "POST",
             url: settingsArray.ApiServer + "api/Roles/AddRole?roleName=" + $('#txtRoleName').val(),
             success: function (success) {
-                if (success == "ok") {
+                if (success === "ok") {
                     $('#txtRoleName').val("");
                     $('#btnAddUpdateRole').text("Add");
                     displayStatusMessage("ok", "Saved");
@@ -400,8 +400,19 @@ function moveFolder() {
                 //$('#progressBar').hide();
                 //$('#progressBar').progressbar("destroy");
                 $('#dataifyInfo').hide();
+
+                //alert("changeLogModel id: " + MoveCopyImageModel.SourceFolderId + " mode: " + MoveCopyImageModel.Mode + "  name: " + $('#dirTreeResults').html());
+                var changeLogModel = {
+                    PageId: dashboardMainSelectedTreeId,
+                    PageName: $('.txtPartialDirTreePath').val(),
+                    Activity: "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val()
+                };
+                logActivity(changeLogModel);
+
+
+
                 $('#moveFolderCrud').dialog("close");
-                buildDirectoryTree();
+                //buildDirectoryTree();
             }
             else
                 alert("Move Folder: " + success);

@@ -8,8 +8,6 @@ var dashboardMainSelectedPath = "";
 var partialViewSelectedItemId = 0;
 var dashboardContextMenuFolderId = "";
 
-
-
 function buildDirectoryTree() {
     $('#dirTreeContainer').html("");
     $('#dataifyInfo').show().html("rebuilding directory tree");
@@ -157,10 +155,17 @@ function addImageLink() {
                     $('#txtNewLink').val("");
                     resizeDashboardPage();
 
-                    if (successModel.ReturnValue !== "0") {
+                    if (successModel.ReturnValue == "0") {
                         alert("set folder image: " + successModel.ReturnValue + "," + dashboardMainSelectedTreeId);
                         setFolderImage(successModel.ReturnValue, dashboardMainSelectedTreeId, "folder");
                     }
+
+                    var changeLogModel = {
+                        PageId: dashboardMainSelectedTreeId,
+                        PageName: $('.txtLinkPath').val(),
+                        Activity: "new image added " + successModel.ReturnValue
+                    };
+                    logActivity(changeLogModel);
                 }
                 else
                     alert("addImageLink: " + successModel.Success);
@@ -185,11 +190,14 @@ function createNewFolder() {
             $('#dashBoardLoadingGif').hide();
             if (successModel.Success === "ok") {
                 displayStatusMessage("ok", "new folder " + newFolder.FolderName + " created");
-                //buildDirectoryTree();
-                //$('#newFolderCrud').dialog("close");
-                $('#txtNewFolderTitle').val('');
-                $('#txtNewFolderTitle').text('');
 
+                var changeLogModel = {
+                    PageId: dashboardMainSelectedTreeId,
+                    PageName: $('#txtNewFolderTitle').val(),
+                    Activity: "new folder created"
+                };
+                logActivity(changeLogModel);
+                $('#txtNewFolderTitle').val('');
             }
             else
                 alert("CreateVirtualFolder: " + successModel.Success);
@@ -261,20 +269,6 @@ function renameFolder() {
     var start = Date.now();
     $('#dashBoardLoadingGif').fadeIn();
     $('#dataifyInfo').show().html("renaming folder " + $('.txtLinkPath').val() + " to " + $('#txtReName').val());
-    //$('#renameFolderReport').html("");
-    //setTimeout(function () {
-    //    $('#dataifyInfo').html("Rename took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-
-    //    $('#dataifyInfo').append(", Rows Processed: " + repairReport.RowsProcessed);
-    //    $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);
-    //    $('#dataifyInfo').append(", Images Renamed: " + repairReport.ImagesRenamed);
-    //    $('#dataifyInfo').append(", Folders Renamed: " + repairReport.NewLinksAdded);
-
-    //    repairReport.Errors.forEach(function (element) {
-    //        $('#renameFolderReport').append("<div> errors: " + element + "</div>");
-    //    });
-    //    //$('#renameFolderCrud').fadeOut();
-    //}, 1200);
 
     $.ajax({
         type: "PUT",
@@ -290,6 +284,15 @@ function renameFolder() {
                 displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
                 console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                 buildDirectoryTree();
+
+                var changeLogModel = {
+                    PageId: dashboardMainSelectedTreeId,
+                    PageName: $('.txtLinkPath').val(),
+                    Activity: "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val()
+                };
+                logActivity(changeLogModel);
+
+
                 $('#dataifyInfo').hide();
             }
             else {

@@ -174,6 +174,8 @@ function profilePease() {
 function setUserPermissions() {
     //alert("document.domain : " + document.domain);
     if (document.domain === 'localhost') {
+        if (typeof permissionsSet === "boolean")
+            permissionsSet = true;
         $('.loginRequired').show();
         $('.adminLevelRequired').show();
         if (typeof isPornEditor === 'boolean') 
@@ -183,6 +185,7 @@ function setUserPermissions() {
         $('#optionNotLoggedIn').hide();
     }
     else {
+
         var userName = getCookie("User");
         if (userName !== "") {
             $.ajax({
@@ -207,7 +210,7 @@ function setUserPermissions() {
                                 }
                             }
                         });
-                        if (typeof permissionsSet === "boolean")
+                        if (typeof permissionsSet === "boolean") 
                             permissionsSet = true;
                     }
                     else
@@ -218,6 +221,10 @@ function setUserPermissions() {
                 }
             });
         }
+        else
+            if (typeof permissionsSet === "boolean")
+                permissionsSet = true;
+
     }
 }
 

@@ -249,8 +249,6 @@ namespace WebApi
             return success;
         }
 
-
-
         [HttpPatch]
         public string EndVisit(string visitorId)
         {
@@ -274,11 +272,52 @@ namespace WebApi
             return success;
         }
     }
+
+    [EnableCors("*", "*", "*")]
+    public class ChangeLogController : ApiController
+    {
+        [HttpPost]
+        public string LogActivity(ChangeLogModel changeLog)
+        {
+            string success = "";
+            try
+            {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    db.ChangeLogs.Add(new ChangeLog()
+                    {
+                        PageId = changeLog.PageId,
+                        PageName = changeLog.PageName,
+                        Activity = changeLog.Activity,
+                        Occured = DateTime.Now
+                    });
+                    db.SaveChanges();
+                }
+                success = "ok";
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+    }
+
+    public class ChangeLogModel
+    {
+        public int PkId { get; set; }
+        public int PageId { get; set; }
+        public string PageName { get; set; }
+        public string Activity { get; set; }
+        public DateTime Occured { get; set; }
+        public bool StaticRebuild { get; set; }
+    }
+
     public class HitCounterModel
     {
         public string UserName { get; set; }
         public string PageName { get; set; }
         public string AppId { get; set; }
     }
+
+
+
 
 }

@@ -142,6 +142,24 @@ function isNullorUndefined(val) {
     return false;
 }
 
+function logActivity(changeLogModel) {
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "/api/ChangeLog",
+        data: changeLogModel,
+        success: function (success) {
+            if (success === "ok")
+                displayStatusMessage("ok", "add image logged");
+            else
+                alert("ChangeLog: " + success);
+        },
+        error: function (xhr) {
+            $('#dashBoardLoadingGif').hide();
+            alert("ChangeLog xhr error: " + getXHRErrorDetails(xhr));
+        }
+    });
+}
+
 // HITCOUNTER
 function logVisit() {
 
@@ -246,8 +264,10 @@ function setFolderImage(linkId, folderId, level) {
             if (success === "ok") {
                 displayStatusMessage("ok", level + " image set");
                 $('#thumbImageContextMenu').fadeOut();
-                if (viewerShowing)
-                    slide("next");
+                if (typeof viewerShowing === "boolean") {
+                    if (viewerShowing)
+                        slide("next");
+                }
             }
             else {
                 alert("setFolderImage: " + success);

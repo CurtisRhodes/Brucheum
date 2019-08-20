@@ -177,8 +177,7 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    string staticPageFileName = (Helpers.GetParentPath(folderId) + dbCategoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "")).Replace("/", "_");
-
+                    string staticPageFileName =Helpers.GetCustomStaticFolderName(folderId, dbCategoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", ""));
                     successModel.ReturnValue = "http://ogglebooble.com/static/" + dbCategoryFolder.RootFolder + "/" + staticPageFileName + ".html";
                     successModel.Success = "ok";
                 }
