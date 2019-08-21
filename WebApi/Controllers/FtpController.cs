@@ -652,7 +652,10 @@ namespace WebApi
                     //if (dbDestinationFolder.FolderName.Contains("OGGLEBOOBLE.COM"))                        dbDestinationFolder.FolderName = "";
 
                     if (FtpUtilies.DirectoryExists(destinationFtpPath))
+                    {
                         success = "Directory Already Exists";
+                        success = "ok";
+                    }
                     else
                         success = FtpUtilies.CreateDirectory(destinationFtpPath);
                     if (success == "ok")
@@ -666,9 +669,27 @@ namespace WebApi
                         string sourceFileName = "";
                         string destinationFileName = "";
                         string newGoDaddyLink = "";
-                        DirectoryInfo newLocalFolder = new DirectoryInfo(repoPath + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + originPath + dbDestinationFolder.FolderName);
-                        if (!newLocalFolder.Exists)
-                            newLocalFolder.Create();
+
+                                // local repository
+                        try
+                        {
+                            string newFolderPath = repoPath + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + dbDestinationFolder.FolderName + "/" + dbSourceFolder.FolderName;
+                            DirectoryInfo newLocalFolder = new DirectoryInfo(newFolderPath);
+                            if (!newLocalFolder.Exists)
+                            {
+                                DirectoryInfo repoParentFolder = new DirectoryInfo(repoPath + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + dbDestinationFolder.FolderName);
+                                if (repoParentFolder.Exists)
+                                {
+                                    newLocalFolder.Create();
+
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            var err = Helpers.ErrorDetails(ex);
+                            System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
+                        }
                         foreach (string fileName in folderContents)
                         {
                             success = FtpUtilies.MoveFile(sourceFtpPath + "/" + fileName, destinationFtpPath + "/" + fileName);
