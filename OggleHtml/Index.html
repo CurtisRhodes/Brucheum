@@ -39,23 +39,21 @@
         <header></header>
         <div class="threeColumnLayout">
             <div id="leftColumn">
-                <div class="leftColumnList">
-                    <div id="boobsLeftColumnList" class="displayHidden">
-                        <div onclick="window.location.href='/home/transitions?folder=boobs'">Transitions</div>
-                        <div onclick="window.location.href='/home/BoobsRanker'">Boobs Rater</div>
-                        <div onclick="showCustomMessage(38)">Let me Explain</div>
-                        <div onclick="showCatListDialog()">Category List</div>
-                        <div onclick="window.location.href='/album.html?folder=1132'">Centerfolds</div>
-                        <div onclick="window.location.href='/Blog.html'">Blog</div>
-                        <div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>
-                        <div onclick="showCustomMessage(35)">Nasty Porn</div>
-                    </div>
-                    <div id="pornLeftColumnList" class="displayHidden">
-                        <div onclick="window.location.href='/'">Tits</div>
-                        <div onclick="showCatListDialog()">Category List</div>
-                        <div onclick="window.location.href='/Blog.html'">Blog</div>
-                        <div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>
-                    </div>
+                <div id="boobsLeftColumnList" class="leftColumnList">
+                    <div onclick="window.location.href='/home/transitions?folder=boobs'">Transitions</div>
+                    <div onclick="window.location.href='Ranker.html'">Boobs Rater</div>
+                    <div onclick="showCustomMessage(38)">Let me Explain</div>
+                    <div onclick="showCatListDialog()">Category List</div>
+                    <div onclick="window.location.href='/album.html?folder=1132'">Every Playboy Centerfold</div>
+                    <div onclick="window.location.href='/Blog.html'">Blog</div>
+                    <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
+                    <div onclick="showCustomMessage(35)">Nasty Porn</div>
+                </div>
+                <div id="pornLeftColumnList" class="leftColumnList">
+                    <div onclick="window.location.href='/'">Tits</div>
+                    <div onclick="showCatListDialog()">Category List</div>
+                    <div onclick="window.location.href='/Blog.html'">Blog</div>
+                    <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
                 </div>
             </div>
             <div id="middleColumn">
@@ -150,6 +148,7 @@
                     logVisit();
                     if (subdomain == "porn") {
                         $('#pornLeftColumnList').show();
+                        $('#boobsLeftColumnList').hide();
                         $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
                         $('body').addClass('pornBodyColors');
                         $('#includeCenterfoldsCheckbox').hide();
@@ -157,6 +156,7 @@
                     else {
                         $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
                         $('#boobsLeftColumnList').show();
+                        $('#pornLeftColumnList').hide();
                         launchPromoMessages();
                     }
                     setUserPermissions();

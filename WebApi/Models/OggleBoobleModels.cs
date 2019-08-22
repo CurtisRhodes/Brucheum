@@ -117,7 +117,7 @@ namespace WebApi.Models
         public int FolderId { get; set; }
         public string LinkId { get; set; }
         public string Link { get; set; }
-        public string RootFolder { get; set; }
+        public string FolderName { get; set; }
         public string Orientation { get; set; }
     }
 

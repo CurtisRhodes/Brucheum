@@ -241,6 +241,8 @@ namespace WebApi
                 folderName = "covers/" + folderName;
             if (filePath.Contains("plus"))
                 folderName = "plus/" + folderName;
+            if (filePath.Contains("porn"))
+                folderName = "porn/" + folderName;
             return folderName;
         }
     }

@@ -1,0 +1,254 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OggleHtml</title>
+    <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
+
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+
+    <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js' type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
+    <script src="Scripts/Login.js"></script>
+    <script src="Scripts/Common.js"></script>
+    <script src="Scripts/Carousel.js"></script>
+    <script src="Scripts/DirTree.js"></script>
+    <script src="Scripts/Album.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
+    <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet' />
+    <link href="Styles/jqueryUI.css" rel="stylesheet" />
+    <link href="Styles/loginDialog.css" rel="stylesheet" />
+    <link href="Styles/Header.css" rel="stylesheet" />
+    <link href="Styles/Common.css" rel="stylesheet" />
+    <link href="Styles/Ranker.css" rel="stylesheet" />
+
+</head>
+<body>
+    <header></header>
+    <div class="threeColumnLayout">
+        <div id="leftColumn"></div>
+        <div id="middleColumn">
+            <img id="boobsRankerLoadingGif" class="loadingGif" src="Images/loader.gif" />
+            <div id="dots"></div>
+            <div class="titleContainer">
+                <div class="boobsRankerTitle">Boobs Ranker</div>
+                <div id="doubleImageContainer" class="rankerImageContainer">
+                    <div class="rankerImageFloatBox">
+                        <div id="rankerBoxLeft" class="rankerImageSlotBox" onclick="imageClick('Left')"></div>
+                        <div id="rankerLeftText" class="rankerImageName">rankerLeftText</div>
+                    </div>
+                    <div id="divCountDown" class="roundCountDowner">
+                        <div id="countDownNumber" class="countDownNumberContainer"></div>
+                    </div>
+                    <div class="rankerImageFloatBox">
+                        <div id="rankerBoxRight" class="rankerImageSlotBox" onclick="imageClick('Right')"></div>
+                        <div id="rankerRightText" class="rankerImageName">rankerRightText</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="rightColumn"></div>
+    </div>
+    <div w3-include-html="Snippets/BoobsFooter.html"></div>
+
+    <div id="preload"></div>
+
+
+    <script>
+        var spinSpeed = 200;
+        var rankerLinksArray = [];
+        var countDownTimer;
+        var slotTimer;
+        var spinRate = 25;
+        var spinSwapSpeed = 133;
+        var spinCount = 0;
+        var leftimageIndex, rightimageIndex;
+        var permissionsSet = false;
+        var isPornEditor = false;
+        var userName;
+        var subdomain;
+        var skip = 0;
+        var take = 40;
+        var throttle;
+
+        $(document).ready(function () {
+            includeHTML();
+            resizePage();
+
+            params = getParams();
+            if (params.subdomain == undefined)
+                subdomain = "boobs";
+            else
+                subdomain = params.subdomain;
+
+            getHeader(subdomain);
+
+            var dots = "";
+            var waiter = setInterval(function () {
+                if (settingsArray.ApiServer === undefined) {
+                    dots += ". ";
+                    $('#dots').html(dots);
+                }
+                else {
+                    clearInterval(waiter);
+                    setUserPermissions();
+                    var waiter2 = setInterval(function () {
+                        dots += "* ";
+                        $('#dots').html(dots);
+                        if (permissionsSet === true) {
+                            $('#dots').html('');
+                            userName = getCookie("User");
+                            clearInterval(waiter2);
+                            $('#footerMessage').html("isPornEditor: " + isPornEditor);
+                            loadBoobsRanker();
+                        }
+                    }, 300);
+                }
+            }, 300);
+        });
+
+        function startCountDown() {
+            var timeLeft = 6;
+            $('#countDownNumber').html(5);
+            $('#divCountDown').css('visibility', 'visible');
+            $('.boobsRankerTitle').html("Pick Which One is Hotter");
+            $('.rankerImageSlotBox').css('cursor', 'pointer');
+            countDownTimer = setInterval(function () {
+                $('#countDownNumber').html(--timeLeft);
+                if (timeLeft == -1) {
+                    spinTheSlots();
+                }
+            }, 1100);
+        }
+
+        function loadBoobsRanker() {
+            $('#boobsRankerLoadingGif').show();
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/BoobsRanker?rootFolder=" + subdomain + "&skip=" + skip + "&take=" + take,
+                success: function (container) {
+                    $('#boobsRankerLoadingGif').hide();
+                    if (container.Success = "ok") {
+                        $.each(container.RankerLinks, function (idx, obj) {
+                            rankerLinksArray[idx + skip] = new Image();
+                            rankerLinksArray[idx + skip].src = obj.Link;
+                            rankerLinksArray[idx + skip].Id = obj.LinkId;
+                            rankerLinksArray[idx + skip].FolderName = obj.FolderName;
+                        });
+
+                        if (container.RankerLinks.length < take) {
+                            clearInterval(throttle);
+                            alert("rankerLinksArray.length: " + rankerLinksArray.length);
+                        }
+
+                        if (skip == 0) {
+                            $('#footerMessage').html("rankerLinksArray.length: " + rankerLinksArray.length);
+                            spinTheSlots();
+                            addMore();
+                        }
+
+                    }
+                    else
+                        alert("BoobsRanker: " + container.Success);
+                },
+                error: function (xhr) {
+                    alert("BoobsRanker xhr error: " + xhr.statusText);
+                }
+            });
+        }
+
+        function addMore() {
+            take = 200;
+            throttle = setInterval(function () {
+                skip = rankerLinksArray.length;
+                loadBoobsRanker();
+                $('#footerMessage').html("rankerLinksArray.length: " + rankerLinksArray.length);
+            }, 15000);
+        }
+
+        function spinTheSlots() {
+            clearInterval(countDownTimer);
+            $('#divCountDown').css('visibility', 'hidden');
+
+            $('.boobsRankerTitle').html("picking random images");
+            $('.rankerImageSlotBox').css('cursor', 'not-allowed');
+
+            leftimageIndex = Math.floor(Math.random() * rankerLinksArray.length);
+            $('#rankerBoxLeft').html(rankerLinksArray[leftimageIndex]);
+            rightimageIndex = Math.floor(Math.random() * rankerLinksArray.length);
+            $('#rankerBoxRight').html(rankerLinksArray[rightimageIndex]);
+
+            var i = 0;
+            slotTimer = setInterval(function () {
+                leftimageIndex = Math.floor(Math.random() * rankerLinksArray.length);
+                $('#rankerBoxLeft').html(rankerLinksArray[leftimageIndex]);
+                $('#rankerLeftText').html(rankerLinksArray[leftimageIndex].FolderName);
+
+                rightimageIndex = Math.floor(Math.random() * rankerLinksArray.length);
+                $('#rankerBoxRight').html(rankerLinksArray[rightimageIndex]);
+                $('#rankerRightText').html(rankerLinksArray[rightimageIndex].FolderName);
+
+                if (i > spinRate) {
+                    clearInterval(slotTimer);
+                    startCountDown();
+                    //$('#footerMessage').html("images: " + rankerLinksArray.length + "   spin: " + ++spinCount);
+                    //$('#footerMessage').html("   spin: " + ++spinCount);
+                }
+                //$('#testMessage').html(i++);
+                i++;
+            }, spinSwapSpeed);
+        }
+
+        function imageClick(selectedSide) {
+            if ($('.rankerImageSlotBox').css('cursor') !== 'not-allowed') {
+                // score it
+                clearInterval(slotTimer);
+                clearInterval(countDownTimer);
+
+                $('#divCountDown').css('visibility', 'hidden');
+                $('#rankerBox' + selectedSide).addClass("bigRedBorder");
+
+                var winnerLinkId = rankerLinksArray[leftimageIndex].Id;
+                var looserLinkId = rankerLinksArray[rightimageIndex].Id;
+                if (selectedSide == "Right") {
+                    winnerLinkId = rankerLinksArray[rightimageIndex].Id;
+                    looserLinkId = rankerLinksArray[leftimageIndex].Id;
+                }
+
+                var rankerVoteModel = {
+                    Winner: winnerLinkId,
+                    Looser: looserLinkId,
+                    UserName: userName
+                };
+                $.ajax({
+                    type: "POST",
+                    url: settingsArray.ApiServer + "api/BoobsRanker",
+                    data: rankerVoteModel,
+                    success: function (success) {
+                        if (success == "ok") {
+
+                            setTimeout(function () {
+                                spinTheSlots();
+                                $('#rankerBox' + selectedSide).removeClass("bigRedBorder");
+                            }, 1500);
+
+                        }
+                        else
+                            alert("BoobsRanker POST: " + container.Success);
+                    },
+                    error: function (xhr) {
+                        alert("BoobsRanker POST xhr error: " + xhr.statusText);
+                    }
+                });
+            }
+        }
+    </script>
+
+
+
+</body>
+
+</html>

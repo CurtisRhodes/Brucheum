@@ -1,0 +1,57 @@
+﻿.titleContainer {
+    border: solid thin orange;
+    display: inline-block;
+}
+
+.boobsRankerTitle {
+    font-size: 28px;
+    font-family: Verdana;
+    text-align: center;
+}
+
+.rankerImageContainer {
+    display: flex;
+}
+.rankerImageName {
+    text-align:center;
+    font-size: 24px;
+    cursor: pointer;
+    padding-bottom:8px;
+}
+.rankerImageFloatBox {
+    float: left;
+    border: solid thin black;
+}
+.rankerImageSlotBox {
+    height: 715px;
+    width: 515px;
+    cursor: not-allowed;
+}
+    .rankerImageSlotBox img {
+        height: 700px;
+        padding-top: 4px;
+        padding-left: 4px;
+        width: 500px;
+    }
+
+.bigRedBorder {
+    border: double 7px red;
+}
+
+.roundCountDowner {
+    margin: 50px;
+    margin-top: 150px;
+    height: 300px;
+    width: 300px;
+    border: 18px dashed blue;
+    background-color: var(--oggleContainerBackgroundColor);
+    border-radius: 150px;
+    visibility: hidden;
+}
+
+.countDownNumberContainer {
+    margin-top: -50px;
+    padding-left: 50px;
+    font-size: 250px;
+    color: blue;
+}

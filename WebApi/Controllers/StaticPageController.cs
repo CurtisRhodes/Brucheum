@@ -448,18 +448,16 @@ namespace WebApi.Controllers
                 return "\n<footer>\n" +
                     "<div class='flexContainer'>\n" +
                           "<div class='footerCol'>\n" +
-                              "<div><a href='/Home/Index'>Let Me Explain</a></div>\n" +
                               "<div onclick='showCatListDialog(242)'>Category List</div>\n" +
-                              "<div><a href='" + httpLocation + "'>Oggle Booble</a></div>\n" +
+                              "<div><a href='https://ogglebooble.com'>Oggle Booble</a></div>\n" +
                           "</div>\n" +
                           "<div class='footerCol'>\n" +
-                              "<div><a href='https://ogglebooble.com/Home/BoobsRanker'>Boobs Rater</a></div>\n" +
-                              "<div><a href='/Home/ImagePage?folder=908'>Rejects</a></div>\n" +
-                              "<div><a href='https://ogglebooble.com/Home/Videos'>Nasty Videos</a></div>\n" +
+                              "<div><a href='https://ogglebooble.com/Ranker.html?subdomain=porn'>Porn Rater</a></div>\n" +
+                              "<div><a href='https://ogglebooble.com/Videos.html'>Nasty Videos</a></div>\n" +
                           "</div>\n" +
                           "<div class='footerCol'>\n" +
                               "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
-                              "<div><a href='https://ogglebooble.com/Admin/Blog'>Blog</a></div>\n" +
+                              "<div><a href='https://ogglebooble.com/Blog.html'>Blog</a></div>\n" +
                               "<div><a href='" + httpLocation + "sluts/sluts.html'>Archive</a></div>\n" +
                           "</div>\n" +
                     "</div>\n" +
@@ -476,17 +474,17 @@ namespace WebApi.Controllers
                         "<div class='footerCol'>\n" +
                             "<div id='explain'></div>\n" +
                             "<div onclick='showCatListDialog(2)'>Category List</div>\n" +
-                            "<div><a href='" + httpLocation + "porn.html'>Nasty Porn</a></div>\n" +
+                            "<div><a href='" + httpLocation + "porn/porn.html'>Nasty Porn</a></div>\n" +
                           "</div>\n" +
                           "<div class='footerCol'>\n" +
-                              "<div><a href='https://ogglebooble.com/Home/BoobsRanker'>Boobs Rater</a></div>\n" +
+                              "<div><a href='https://ogglebooble.com/Ranker.html'>Boobs Rater</a></div>\n" +
                               "<div id='Rejects'></div>\n" +
-                              "<div><a href='" + httpLocation + "playboy.html'>Centerfolds</a></div>\n" +
+                              "<div><a href='" + httpLocation + "playboy/centerfolds.html'>Centerfolds</a></div>\n" +
                           "</div>\n" +
                           "<div class='footerCol'>\n" +
                               "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
-                              "<div><a href='https://ogglebooble.com/Admin/Blog'>Blog</a></div>\n" +
-                              "<div><a href='" + httpLocation + "archive/archive.html'>Archive</a></div>\n" +
+                              "<div><a href='https://ogglebooble.com/Blog.html'>Blog</a></div>\n" +
+                              "<div><a href='" + httpLocation + "sluts/sluts.html'>Archive</a></div>\n" +
                           "</div>\n" +
                     "</div>\n" +
                     "<div class='footerVersionMessage'>built " + DateTime.Now.ToShortDateString() + "</div>\n" +

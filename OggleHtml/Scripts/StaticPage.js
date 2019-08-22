@@ -32,6 +32,7 @@ $(document).ready(function () {
             logPageHit(staticPageFolderName, "static");
         }
     }, 300);
+    $(window).resize(resizeStaticPage());
 });
 
 function resizeStaticPage() {

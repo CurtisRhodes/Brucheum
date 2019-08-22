@@ -20,7 +20,7 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
     if (isPornEditor) {
         $("#txtBorn").datepicker();
         $('#modelInfoDialogTrackBack').show();
-        $('#txaModelComment').summernote({
+        $('#modelInfoDialogComment').summernote({
             height: 300,
             codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
             toolbar: [['codeview']]
@@ -28,7 +28,7 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
     }
     else {
         $('#modelInfoDialogTrackBack').hide();
-        $('#txaModelComment').attr("readonly", "readonly");
+        $('#modelInfoDialogComment').attr("readonly", "readonly");
         $('.modelDialogInput').attr("readonly", "readonly");
         $('#modelInfoEdit').html("Edit");
         $('#modelInfoEdit').hide();
@@ -56,10 +56,10 @@ function getFolderDetails(modelName, folderId, currentSrc) {
                         FolderDetailModel.FolderImage = currentSrc;
                     }
                     if (isPornEditor) {
-                        $('#txaModelComment').summernote("code", folderDetails.CommentText);
+                        $('#modelInfoDialogComment').summernote("code", folderDetails.CommentText);
                     }
                     else
-                        $('#txaModelComment').val(folderDetails.CommentText);
+                        $('#modelInfoDialogComment').val(folderDetails.CommentText);
 
                     $('#modelDialogThumbNailImage').attr("src", folderDetails.FolderImage);
                     $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
@@ -117,7 +117,7 @@ function clearGets() {
     $('#txtLinkLabel').val('');
     $('#txtFolderName').val('');
     $('#txtBorn').val('');
-    $('#txaModelComment').val('');
+    $('#modelInfoDialogComment').html('');
     $('#txtNationality').val('');
     $('#externalLinks').html('');
 }
@@ -129,7 +129,7 @@ function validate() {
     FolderDetailModel.Nationality = $('#txtNationality').val();
     FolderDetailModel.Measurements = $('#txtMeasurements').val();
     FolderDetailModel.Boobs = $('#selBoobs').val();
-    FolderDetailModel.CommentText = $('#txaModelComment').val();
+    FolderDetailModel.CommentText = $('#modelInfoDialogComment').val();
     FolderDetailModel.ExternalLinks = $('#externalLinks').html();
     return true;
 }

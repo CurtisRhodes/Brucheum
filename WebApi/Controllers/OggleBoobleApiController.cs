@@ -1000,7 +1000,7 @@ namespace WebApi
     public class BoobsRankerController : ApiController
     {
         [HttpGet]
-        public ImageRankerModelContainer LoadImages()
+        public ImageRankerModelContainer LoadImages(string rootFolder, int skip, int take )
         {
             ImageRankerModelContainer imageRankerModelContainer = new ImageRankerModelContainer();
             try
@@ -1009,14 +1009,15 @@ namespace WebApi
                 {
                     imageRankerModelContainer.RankerLinks =
                         (from i in db.VwLinks
-                         where i.RootFolder != "porn"
+                         where i.RootFolder == rootFolder
                          where i.Orientation == "P"
                          select new ImageRankerModel()
                          {
                              FolderId = i.FolderId,
                              LinkId = i.LinkId,
-                             Link = i.Link
-                         }).Take(500).ToList();
+                             Link = i.Link,
+                             FolderName = i.FolderName
+                         }).OrderBy(i => i.LinkId).Skip(skip).Take(take).ToList();
                     imageRankerModelContainer.Success = "ok";
                 }
             }

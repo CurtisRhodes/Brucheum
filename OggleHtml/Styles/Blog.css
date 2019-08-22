@@ -29,12 +29,20 @@
     margin-left: 10px;
 }
 
+.blogEditButton {
+    float: right;
+    cursor: pointer;
+    text-decoration: underline;
+    color: var(--brucheumBlue);
+}
+
 .blogArticleJogContainer {
+    border: solid .05px var(--oggleBorderColor);
     overflow-y: auto;
 }
 
 .blogItemContainer {
-    height: 100%;
+    height: 200px;
     margin-left: 10px;
     overflow-y: auto;
     background-color: var(--oggleContainerBackgroundColor);
@@ -91,6 +99,9 @@
     background-color: var(--oggleContainerBackgroundColor);
     display: block;
     border: solid thin black;
+    height: 400px;
+    padding: 6px;
+    overflow-y: auto;
 }
 
 .blogPageSubHeader {

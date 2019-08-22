@@ -1,12 +1,4 @@
-﻿<style>
-    .oggleDialogWindow {
-        border: solid thin #777;
-        border-radius: 6px;
-        box-shadow: 10px 10px rgba(95, 12, 12, 0.5);
-        display: none;
-    }
-</style>
-
+﻿
 <div id="modelInfoDialog" class="oggleDialogWindow" onmouseleave="considerClosingModelInfoDialog()">
     <div id="modelInfoEditArea" class="displayHidden">
         <div class="flexContainer">
@@ -26,14 +18,14 @@
             </div>
         </div>
         <div class="modelInfoDialogLabel">comment</div>
-        <div><textarea id="txaModelComment" class="smallTextArea"></textarea></div>
+        <div><div id="modelInfoDialogComment"></div></div>
         <div class="modelInfoDialogLabel">trackbacks</div>
         <div id="modelInfoDialogTrackBack">
             <div class="hrefLabel">href</div><input id="txtLinkHref" class="modelDialogInput" />
             <div class="hrefLabel">label</div><input id="txtLinkLabel" class="modelDialogInput" onblur="addHrefToExternalLinks()" />
             <span class="addLinkIcon" onclick="addHrefToExternalLinks()">+</span>
         </div>
-        <div id="externalLinks" class="smallTextArea"></div>
+        <div id="externalLinks" class="trackbackLinksArea"></div>
 
     </div>
     <div id="modelInfoViewOnlyArea" class="displayHidden">

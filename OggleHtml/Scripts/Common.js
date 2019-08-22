@@ -59,12 +59,6 @@ function getParams() {
     return params;
 }
 
-$(window).resize(function () {
-    resizePage();
-    if (typeof resizeStaticPage === 'function')
-        resizeStaticPage();
-});
-
 function resizePage() {
     // set page width
     var winW = $(window).width();

@@ -733,7 +733,7 @@ namespace WebApi
                         subdirs = db.CategoryFolders.Where(f => f.Parent == dbSourceFolder.Id).ToList();
                         foreach (CategoryFolder subdir in subdirs)
                         {
-                            MoveFolder(subdir.Id, 22);
+                            MoveFolder(subdir.Id, destinationFolderId);
                         }
                         string removeFolderSuccess = RemoveFolder(sourceFtpPath);
                         dbSourceFolder.Parent = dbDestinationFolder.Id;

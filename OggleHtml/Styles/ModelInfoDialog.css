@@ -1,14 +1,20 @@
-﻿.smallTextArea {
+﻿.viewOnlyMessage {
+    text-align: center;
+    font-size: 17px;
+    padding: 2px;
+}
+
+label {
+    width: 105px !important;
+}
+
+.trackbackLinksArea {
     height: 121px;
     overflow-y:auto;
     width: 100%;
-    background-color: #f7eef7;
     padding: 5px;
     margin-right: 4px;
-    font-size: 21px;
 }
-
-
 
 .modelDialogImage {
     height: 150px;
@@ -31,6 +37,7 @@
     border-radius: 3px;
     margin-bottom: 2px;
 }
+
 .modelDialogSelect {
     width: 220px;
     margin-left: -6px;
@@ -38,16 +45,6 @@
     border: 1px solid #ccc;
     border-radius: 3px;
     margin-bottom: 2px;
-}
-
-.viewOnlyMessage {
-    text-align: center;
-    font-size: 17px;
-    padding: 2px;
-}
-
-label {
-    width: 105px !important;
 }
 
 .addLinkIcon {
