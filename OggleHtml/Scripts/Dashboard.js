@@ -374,7 +374,7 @@ function prepareXhamsterPage() {
         success: function (success) {
             $('#dashBoardLoadingGif').hide();
             if (success === "ok") {
-                displayStatusMessage("ok", "prepareXhamsterPage");
+                displayStatusMessage("ok", "Xhamster Page created");
             }
             else {
                 alert("prepareXhamsterPage: " + success);

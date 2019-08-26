@@ -292,9 +292,9 @@ function getHeader(subdomain) {
             "       <div class='headerTopRow'>\n" +
             "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
             "           <div class='headerSubTitle' id='headerSubTitle'>\n" +
-            "                <a href='/album.html?folder=2'><span class='bigTits'>BIG</span> tits</a> and\n" +
-            "                <a href='/album.html?folder=996'>ass</a> organized by\n" +
+            "                <a href='/album.html?folder=2'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
             "                <a href='/album.html?folder=136'> poses,</a>\n" +
+            "                <a href='/album.html?folder=159'> topic,</a>\n" +
             "                <a href='/album.html?folder=199'> shapes</a> and\n" +
             "                <a href='/album.html?folder=241'>sizes</a>\n" +
             "            </div>\n" +

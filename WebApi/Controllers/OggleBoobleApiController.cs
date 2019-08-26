@@ -224,6 +224,10 @@ namespace WebApi
                 timer.Start();
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
+
+                    var x = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
+
+
                     carouselInfo.Links =
                         (from c in db.CategoryImageLinks
                          join f in db.CategoryFolders on c.ImageCategoryId equals f.Id
