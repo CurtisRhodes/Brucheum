@@ -890,4 +890,55 @@ namespace WebApi
             return success;
         }
     }
+
+    [EnableCors("*", "*", "*")]
+    public class xHampsterController : ApiController
+    {
+        //static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
+        //static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
+        //static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
+
+        [HttpPost]
+        public string CreatePage(int folderId)
+        {
+            string success = "";
+            using (OggleBoobleContext db = new OggleBoobleContext())
+            {
+                string folderName = db.CategoryFolders.Where(f => f.Id == folderId).Select(f => f.FolderName).First();
+
+                List<string> links = (from i in db.CategoryImageLinks
+                                      join g in db.ImageLinks on i.ImageLinkId equals g.Id
+                                      where i.ImageCategoryId == folderId
+                                      select g.Link).ToList();
+
+                string destinationFolder = System.Web.HttpContext.Current.Server.MapPath("~/app_data/xhampster/");
+
+                DirectoryInfo dirInfo = new DirectoryInfo(destinationFolder);
+                foreach (FileInfo file in dirInfo.GetFiles())
+                {
+                    file.Delete();
+                }
+                using (WebClient wc = new WebClient())
+                {
+                    try
+                    {
+                        int k = 0;
+                        string fileName = "";
+                        foreach (string link in links)
+                        {
+                            fileName = destinationFolder + "/" + folderName + "_" + string.Format("{0:0000}", ++k) + link.Substring(link.LastIndexOf("."));
+                            wc.DownloadFile(new Uri(link), fileName);
+                        }
+                        success = "ok";
+                    }
+                    catch (Exception ex)
+                    {
+                        success = ex.Message;
+                    }
+                }
+            }
+            return success;
+        }
+    }
+
 }

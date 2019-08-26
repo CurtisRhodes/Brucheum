@@ -51,7 +51,7 @@ function contextMenuActionShow() {
 }
 function contextMenuActionJump() {
 
-    alert("fullPageName: " + fullPageName);
+    //alert("fullPageName: " + fullPageName);
     window.open(httpLocation + fullPageName + ".html", "_blank");
 }
 function contextMenuActionComment() {

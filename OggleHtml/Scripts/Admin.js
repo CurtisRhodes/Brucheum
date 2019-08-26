@@ -66,7 +66,7 @@ function loadAllUserRoles() {
             },
             error: function (jqXHR, exception) {
                 alert("error: " + getXHRErrorDetails(jqXHR, exception));
-            },
+            }
         });
     } catch (e) {
         //displayStatusMessage("error", "catch ERROR: " +e);
@@ -131,7 +131,7 @@ function loadUserRoles(whichType) {
             },
             error: function (jqXHR, exception) {
                 alert("loadUserRoles XHR error: " + getXHRErrorDetails(jqXHR, exception));
-            },
+            }
         });
     } catch (e) {
         //displayStatusMessage("error", "catch ERROR: " +e);
@@ -201,7 +201,7 @@ function RemoveUserRole(selectedUserName, selectedRoleId) {
             type: "DELETE",
             url: settingsArray.ApiServer + "api/Roles/RemoveUserRole?userName=" + selectedUserName + "&roleId=" + selectedRoleId,
             success: function (success) {
-                if (success == "ok") {
+                if (success === "ok") {
                     loadRoles();
                     //displayStatusMessage("ok", "Role [" + selectedRoleName + "] Removed");
                 }
@@ -212,7 +212,7 @@ function RemoveUserRole(selectedUserName, selectedRoleId) {
             },
             error: function (jqXHR, exception) {
                 alert("RemoveUserRole XHR error : " + getXHRErrorDetails(jqXHR, exception));
-            },
+            }
         });
     }
     catch (e) {
@@ -239,7 +239,7 @@ function loadAaddEditRoles() {
                     });
                 }
                 else
-                    alert(roleModel.Success)
+                    alert(roleModel.Success);
             },
             error: function (jqXHR, exception) {
                 alert("loadAaddEditRoles : " + getXHRErrorDetails(jqXHR, exception));
@@ -256,13 +256,13 @@ function addUpdateRole() {
         addRole();
     else
         updateRole();
-};
+}
 
 function toggleAddButton() {
     objClassificationRefCode = null;
     $('#btnAddUpdateRole').text("Add");
     $(this).hide();
-};
+}
 
 function addRole() {
     try {
@@ -332,9 +332,9 @@ function repairLinks() {
             $('#dashBoardLoadingGif').hide();
             if (repairReport.Success === "ok") {
                 try {
-                    var delta = (Date.now() - start);
+                    var delta = Date.now() - start;
                     var minutes = Math.floor(delta / 60000);
-                    var seconds = ((delta % 60000) / 1000).toFixed(0);
+                    var seconds = (delta % 60000 / 1000).toFixed(0);
                     //console.log("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                     $('#dataifyInfo').html("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                     $('#dataifyInfo').append(", Rows Processed: " + repairReport.RowsProcessed);

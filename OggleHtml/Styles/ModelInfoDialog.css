@@ -8,13 +8,25 @@ label {
     width: 105px !important;
 }
 
-.trackbackLinksArea {
+.modelInfoCommentArea {
     height: 121px;
-    overflow-y:auto;
+    overflow-y: auto;
     width: 100%;
     padding: 5px;
     margin-right: 4px;
 }
+
+.trackbackLinksArea {
+    height: 121px;
+    overflow-y: auto;
+    width: 100%;
+    padding: 5px;
+    margin-right: 4px;
+}
+    .trackbackLinksArea a{
+        color: blue;
+        font-size : 15px;
+    }
 
 .modelDialogImage {
     height: 150px;

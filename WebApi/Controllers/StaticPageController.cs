@@ -256,9 +256,9 @@ namespace WebApi.Controllers
             }
                 else
             {
-                headerSubtitle = "<a href='" + httpLocation + "boobs/boobs.html'>big tits</a> and " +
-                 "<a href='" + httpLocation + "boobs/rear view.html'>ass</a> organized by " +
+                headerSubtitle = "<a href='" + httpLocation + "boobs/boobs.html'>big tits</a> organized by " +
                  "<a href='" + httpLocation + "boobs/poses.html'>poses</a>, " +
+                 "<a href='" + httpLocation + "boobs/nice tits.html'>topic</a>, " +
                  "<a href='" + httpLocation + "boobs/shapes.html'>shapes</a> and " +
                  "<a href='" + httpLocation + "boobs/sizes.html'>sizes</a>";
                 colorClass = "classicColors";
@@ -282,18 +282,18 @@ namespace WebApi.Controllers
                 "            <div id='breadcrumbContainer' class='breadCrumbArea'>" + breadCrumbModel.Html + "</div>\n" +
                 "            <div class='menuTabs replaceableMenuItems'>\n" +
                 "            </div>\n" +
-                "            <div id='optionLoggedIn' class='displayHidden'>\n" +
-                "                <div class='menuTab floatRight'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
-                "                <div class='menuTab floatRight' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
-                "            </div>\n" +
-                "            <div id='optionNotLoggedIn'>\n" +
-                "                <div id='btnLayoutRegister' class='menuTab floatRight'><a href='javascript:onRegisterClick()'>Register</a></div>\n" +
-                "                <div id='btnLayoutLogin' class='menuTab floatRight'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
-                "            </div>\n" +
-                "            <div class='menuTabs displayHidden' id='adminTabs'>\n" +
-                "              <div id='menuTabUpload' class='menuTab displayHidden loginRequired floatRight'><a href='/Upload.html'>Upload</a></div>\n" +
-                "              <div id='menuTabAdmin' class='menuTab  displayHidden loginRequired floatRight'><a href='/Admin.html'>Admin</a></div>\n" +
-                "            </div>\n" +
+                //"            <div id='optionLoggedIn' class='displayHidden'>\n" +
+                //"                <div class='menuTab floatRight'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
+                //"                <div class='menuTab floatRight' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
+                //"            </div>\n" +
+                //"            <div id='optionNotLoggedIn'>\n" +
+                //"                <div id='btnLayoutRegister' class='menuTab floatRight'><a href='javascript:onRegisterClick()'>Register</a></div>\n" +
+                //"                <div id='btnLayoutLogin' class='menuTab floatRight'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
+                //"            </div>\n" +
+                //"            <div class='menuTabs displayHidden' id='adminTabs'>\n" +
+                //"              <div id='menuTabUpload' class='menuTab displayHidden loginRequired floatRight'><a href='/Upload.html'>Upload</a></div>\n" +
+                //"              <div id='menuTabAdmin' class='menuTab  displayHidden loginRequired floatRight'><a href='/Admin.html'>Admin</a></div>\n" +
+                //"            </div>\n" +
                 "        </div>\n" +
                 "    </div>\n" +
                 "</header>\n";
@@ -424,14 +424,14 @@ namespace WebApi.Controllers
             "            </div>\n" +
             "       </div>\n" +
             "       <div class='modelInfoDialogLabel'>comment</div>\n" +
-            "       <div><textarea id = 'txaModelComment' class='smallTextArea'></textarea></div>\n" +
+            "       <div><textarea id='modelInfoDialogComment' class='modelInfoCommentArea'></textarea></div>\n" +
             "       <div class='modelInfoDialogLabel'>trackbacks</div>\n" +
             "       <div id='modelInfoDialogTrackBack'>\n" +
             "           <div class='hrefLabel'>href</div><input id = 'txtLinkHref' class='modelDialogInput' />\n" +
             "            <div class='hrefLabel'>label</div><input id = 'txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />\n" +
             "            <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
             "       </div>\n" +
-            "        <div id = 'externalLinks' class='smallTextArea'></div>\n" +
+            "        <div id = 'externalLinks' class='trackbackLinksArea'></div>\n" +
             "    </div>\n" +
             "    <div id = 'modelInfoViewOnlyArea' class='displayHidden'>\n" +
             "        <div class='viewOnlyMessage'>If you you know who this is Please click Edit</div>\n" +

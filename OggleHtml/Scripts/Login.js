@@ -252,10 +252,9 @@ function setLoginHeader(userName) {
 
 function setCookie(userName) {
     var expiryDate = new Date();
-    //expires = new Date(date.setMonth(date.getMonth() + 3));
-    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+    expiryDate.setMonth(expiryDate.getMonth() + 9);
     document.cookie = 'User=' + userName + '; expires=' + expiryDate.toUTCString() + 'path=https://ogglebooble.com/';
-    //alert("expires: " + expiryDate.toUTCString());
+    alert("expires: " + expiryDate.toUTCString());
 }
 
 function getCookie(cname) {

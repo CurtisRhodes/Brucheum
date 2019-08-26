@@ -155,7 +155,7 @@ function addImageLink() {
                     $('#txtNewLink').val("");
                     resizeDashboardPage();
 
-                    if (successModel.ReturnValue == "0") {
+                    if (successModel.ReturnValue === "0") {
                         alert("set folder image: " + successModel.ReturnValue + "," + dashboardMainSelectedTreeId);
                         setFolderImage(successModel.ReturnValue, dashboardMainSelectedTreeId, "folder");
                     }
@@ -278,9 +278,9 @@ function renameFolder() {
             $('#renameFolderCrud').dialog("close");
             $('#renameFolderCrud').hide();
             if (success === "ok") {
-                var delta = (Date.now() - start);
+                var delta = Date.now() - start;
                 var minutes = Math.floor(delta / 60000);
-                var seconds = ((delta % 60000) / 1000).toFixed(0);
+                var seconds = (delta % 60000 / 1000).toFixed(0);
                 displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
                 console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                 buildDirectoryTree();
@@ -366,5 +366,25 @@ function dashboardContextMenuShowInfoDialog() {
     showModelInfoDialog($('.txtLinkPath').val(), dashboardContextMenuFolderId, "http://boobs.ogglebooble.com/redballon.png");
 }
 
+function prepareXhamsterPage() {
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "/api/xHampster?folderId=" + dashboardMainSelectedTreeId,
+        success: function (success) {
+            $('#dashBoardLoadingGif').hide();
+            if (success === "ok") {
+                displayStatusMessage("ok", "prepareXhamsterPage");
+            }
+            else {
+                alert("prepareXhamsterPage: " + success);
+            }
+        },
+        error: function (xhr) {
+            $('#dashBoardLoadingGif').hide();
+            alert("prepareXhamsterPage xhr error: " + getXHRErrorDetails(xhr));
+        }
+    });
+}
 
 
