@@ -1011,18 +1011,42 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    imageRankerModelContainer.RankerLinks =
-                        (from i in db.VwLinks
-                         where i.RootFolder == rootFolder
-                         where i.Orientation == "P"
-                         select new ImageRankerModel()
-                         {
-                             FolderId = i.FolderId,
-                             LinkId = i.LinkId,
-                             Link = i.Link,
-                             FolderName = i.FolderName
-                         }).OrderBy(i => i.LinkId).Skip(skip).Take(take).ToList();
-                    imageRankerModelContainer.Success = "ok";
+                    if (rootFolder == "playmates")
+                    {
+                        imageRankerModelContainer.RankerLinks =
+                            (from f in db.CategoryFolders
+                             join p in db.CategoryFolders on f.Parent equals p.Id
+                             join g in db.CategoryFolders on p.Parent equals g.Id
+                             join gg in db.CategoryFolders on g.Parent equals gg.Id
+                             join c in db.CategoryFolders on f.Id equals c.Parent
+                             join l in db.CategoryImageLinks on f.Id equals l.ImageCategoryId
+                             join i in db.ImageLinks on l.ImageLinkId equals i.Id
+                             where gg.FolderName == "centerfolds" 
+                             where i.Height > i.Width
+                             select new ImageRankerModel()
+                             {
+                                 FolderId = f.Id,
+                                 LinkId = l.ImageLinkId,
+                                 Link = i.Link,
+                                 FolderName = f.FolderName + " " + c.FolderName
+                             }).OrderBy(i => i.LinkId).Skip(skip).Take(take).ToList();
+                        imageRankerModelContainer.Success = "ok";
+                    }
+                    else
+                    {
+                        imageRankerModelContainer.RankerLinks =
+                            (from i in db.VwLinks
+                             where i.RootFolder == rootFolder
+                             where i.Orientation == "P"
+                             select new ImageRankerModel()
+                             {
+                                 FolderId = i.FolderId,
+                                 LinkId = i.LinkId,
+                                 Link = i.Link,
+                                 FolderName = i.FolderName
+                             }).OrderBy(i => i.LinkId).Skip(skip).Take(take).ToList();
+                        imageRankerModelContainer.Success = "ok";
+                    }
                 }
             }
             catch (Exception ex)

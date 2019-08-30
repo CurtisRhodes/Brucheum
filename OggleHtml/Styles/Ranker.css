@@ -1,8 +1,11 @@
-﻿.titleContainer {
-    border: solid thin orange;
+﻿.titleContainer {    
     display: inline-block;
 }
-
+.playboyButton {
+    margin-left:50px;
+    margin-top: 100px;
+    cursor: pointer;
+}
 .boobsRankerTitle {
     font-size: 28px;
     font-family: Verdana;
@@ -44,14 +47,14 @@
     height: 300px;
     width: 300px;
     border: 18px dashed blue;
-    background-color: var(--oggleContainerBackgroundColor);
+    /*background-color: var(--oggleContainerBackgroundColor);*/
     border-radius: 150px;
     visibility: hidden;
 }
 
 .countDownNumberContainer {
     margin-top: -50px;
-    padding-left: 50px;
+    text-align: center;
     font-size: 250px;
     color: blue;
 }

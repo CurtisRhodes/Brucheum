@@ -47,6 +47,12 @@
                         <div id="rankerBoxRight" class="rankerImageSlotBox" onclick="imageClick('Right')"></div>
                         <div id="rankerRightText" class="rankerImageName">rankerRightText</div>
                     </div>
+                    <div class="floatLeft">
+                        <div class="playboyButton" onclick="changeDomain('boobs')">poses and shapes</div>
+                        <div class="playboyButton" onclick="changeDomain('playmates')">Playboy playmates</div>
+                        <div class="playboyButton" onclick="changeDomain('archive')">archive</div>
+                        <div class="playboyButton" onclick="changeDomain('porn')">porn</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -85,6 +91,7 @@
                 subdomain = params.subdomain;
 
             getHeader(subdomain);
+            $('#breadcrumbContainer').html(subdomain);
 
             var dots = "";
             var waiter = setInterval(function () {
@@ -200,6 +207,19 @@
                 //$('#testMessage').html(i++);
                 i++;
             }, spinSwapSpeed);
+        }
+
+        function changeDomain(domain) {
+            subdomain = domain;
+            skip = 0;
+            take = 40;
+            clearInterval(slotTimer);
+            clearInterval(countDownTimer);
+            clearInterval(throttle);
+            $('#breadcrumbContainer').html(domain);
+            rankerLinksArray = [];
+            loadBoobsRanker()
+            getHeader(subdomain);
         }
 
         function imageClick(selectedSide) {

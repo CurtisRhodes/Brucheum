@@ -25,6 +25,11 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
             codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
             toolbar: [['codeview']]
         });
+        $('#externalLinks').summernote({
+            height: 120,
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+            toolbar: [['codeview']]
+        });
     }
     else {
         $('#modelInfoDialogComment').summernote({
@@ -59,7 +64,14 @@ function getFolderDetails(modelName, folderId, currentSrc) {
                     if (folderDetails.FolderImage === null) {
                         FolderDetailModel.FolderImage = currentSrc;
                     }
+
                     $('#modelInfoDialogComment').summernote("code", folderDetails.CommentText);
+                    if (isPornEditor) {
+                        $('#externalLinks').summernote("code", folderDetails.ExternalLinks);
+                    }
+                    else {
+                        $('#externalLinks').html(folderDetails.ExternalLinks);
+                    }
                     $('#modelDialogThumbNailImage').attr("src", folderDetails.FolderImage);
                     $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
                     $('#modelInfoEditArea').show();
@@ -69,11 +81,8 @@ function getFolderDetails(modelName, folderId, currentSrc) {
                     $('#txtNationality').val(folderDetails.Nationality);
                     $('#txtMeasurements').val(folderDetails.Measurements);
                     $('#txtBoobs').val(folderDetails.Boobs);
-
-                    $('#externalLinks').html(folderDetails.ExternalLinks);
                     $('#modelInfoEdit').html("Save");
                     $('#modelInfoEditArea').show();
-
                 }
                 else
                     alert("Get FolderDetail model Info : " + folderDetails.Success);
@@ -89,7 +98,7 @@ function getFolderDetails(modelName, folderId, currentSrc) {
 }
 
 function addHrefToExternalLinks() {
-    $('#externalLinks').append("<a href=" + $('#txtLinkHref').val() + ">" + $('#txtLinkLabel').val() + "</a><br/>");
+    $('#externalLinks').append("<a href=" + $('#txtLinkHref').val() + ">" + $('#txtLinkLabel').val() + " target='_blank'</a><br/>");
     $('#txtLinkHref').val('');
     $('#txtLinkLabel').val('');
 }
@@ -129,7 +138,7 @@ function validate() {
     FolderDetailModel.Measurements = $('#txtMeasurements').val();
     FolderDetailModel.Boobs = $('#selBoobs').val();
     FolderDetailModel.CommentText = $('#modelInfoDialogComment').summernote('code');
-    FolderDetailModel.ExternalLinks = $('#externalLinks').html();
+    FolderDetailModel.ExternalLinks = $('#externalLinks').summernote('code');
     return true;
 }
 

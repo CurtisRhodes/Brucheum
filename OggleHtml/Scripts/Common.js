@@ -300,7 +300,7 @@ function getHeader(subdomain) {
             "            </div>\n" +
             "        </div>\n";
     }
-    if (subdomain === "playboy") {
+    if (subdomain === "playboy" || subdomain === "playmates") {
         headerHtml =
         "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
         "       <a href='/'><img src='Images/redballon.png' class='bannerImage' /></a>\n" +
