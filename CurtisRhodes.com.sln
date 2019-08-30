@@ -36,6 +36,26 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "OggleHtml", "OggleHtml\", "
 		SlnRelativePath = "OggleHtml\"
 	EndProjectSection
 EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "BruchHtml", "BruchHtml\", "{5787F365-E98B-482F-A9D3-0702D363B9D0}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_59579"
+		Debug.AspNetCompiler.PhysicalPath = "BruchHtml\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_59579\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_59579"
+		Release.AspNetCompiler.PhysicalPath = "BruchHtml\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_59579\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "59579"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +90,10 @@ Global
 		{04550DB9-B937-4AB8-83C2-DE40719BB7CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04550DB9-B937-4AB8-83C2-DE40719BB7CD}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{04550DB9-B937-4AB8-83C2-DE40719BB7CD}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{5787F365-E98B-482F-A9D3-0702D363B9D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5787F365-E98B-482F-A9D3-0702D363B9D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5787F365-E98B-482F-A9D3-0702D363B9D0}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{5787F365-E98B-482F-A9D3-0702D363B9D0}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Get a Gig</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='shortcut icon' href='Images/Brucheum.ico' type='image/x-icon' />
+
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
+    <script src="Scripts/Login.js"></script>
+    <script src="Scripts/Common.js"></script>
+    <script src="Scripts/Headers.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
+    <link href="Styles/jqueryUI.css" rel="stylesheet">
+    <link href="Styles/Common.css" rel="stylesheet">
+    <link href="Styles/loginDialog.css" rel="stylesheet">
+    <link href="Styles/Header.css" rel="stylesheet">
+    <link href="Styles/Footer.css" rel="stylesheet">
+
+</head>
+<body>
+    <style>
+        .caveImage {
+            border: solid #444;
+            background-image: url("Images/caveStairsWide.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .vMenu {
+            padding-top: 33px;
+            padding-left: 33px;
+        }
+        .tabvMenuItem {
+            padding: 13px;
+        }
+        .tabvMenuItem img {
+            width: 166px;
+            height: 62px;
+            cursor: pointer;
+        }
+    </style>
+    <header></header>
+    <div class="threeColumnLayout">
+        <div id="leftColumn">
+            <div id="tanBlue" class="vMenu">
+                <div id="itemIntelDesgn" class="tabvMenuItem" onclick="window.location.href='/IntelDsgn/'">
+                    <img src="Images/TanBlue/IntelligentDesignTan.png" onmouseover="this.src='Images/TanBlue/IntelligentDesignBlue.png'" onmouseout="this.src='Images/TanBlue/IntelligentDesignTan.png'" />
+                </div>
+                <div id="itemBlondJew" class="tabvMenuItem" onclick="window.location.href='/BookDb/ToC?book=1'">
+                    <img src="Images/TanBlue/BlondJewTan.png" onmouseover="this.src='Images/TanBlue/BlondJewBlue.png'" onmouseout="this.src='Images/TanBlue/BlondJewTan.png'" />
+                </div>
+                <div class="tabvMenuItem">
+                    <img src="Images/TanBlue/BrucheumTan.png" onmouseover="this.src='Images/TanBlue/BrucheumBlue.png'" onmouseout="this.src='Images/TanBlue/BrucheumTan.png'" />
+                </div>
+                <div class="tabvMenuItem" onclick="window.location.href='/Flitter/Flitter'"> 
+                    <img src="Images/TanBlue/FlitterTan.png" onmouseover="this.src='Images/TanBlue/FlitterBlue.png'" onmouseout="this.src='Images/TanBlue/FlitterTan.png'" />
+                </div>
+                <div class="tabvMenuItem" onclick="window.location.href='/GetaJob/GetaJobAdmin'">
+                    <img src="Images/TanBlue/GetaJobTan.png" onmouseover="this.src='Images/TanBlue/GetaJobBlue.png'" onmouseout="this.src='Images/TanBlue/GetaJobTan.png'" />
+                </div>
+                <div class="tabvMenuItem" onclick="window.location.href='/BookDb/ToC?book=2'">
+                    <img src="Images/TanBlue/TimeSquaredTan.png" onmouseover="this.src='Images/TanBlue/TimeSquaredBlue.png'" onmouseout="this.src='Images/TanBlue/TimeSquaredTan.png'" />
+                </div>
+                <div id="item2aT" class="tabvMenuItem" onclick="emailTest()">
+                    <img src="Images/TanBlue/ToATeeTan.png" onmouseover="this.src='Images/TanBlue/ToATeeBlue.png'" onmouseout="this.src='Images/TanBlue/ToATeeTan.png'" />
+                </div>
+            </div>
+        </div>
+        <div id="middleColumn" class="caveImage">
+            <div id="customMessage" class="displayHidden customMessageContainer"></div>
+            <div id="divStatusMessage"></div>
+            <div id="dots"></div>
+        </div>
+        <div id="rightColumn"></div>
+    </div>
+    <div w3-include-html="Snippets/Footer.html"></div>
+
+    <script>
+        var subdomain;
+        var permissionsSet = false;
+        $(document).ready(function () {
+            //var emailSubject = "OH MY GOD: ";
+            //sendEmailFromJS(emailSubject, "someone just looked at your skills page");
+            //hitSession = logPageHit(service, currentUser, ipAddress, "SKILLs", "nothing");
+            includeHTML();
+            params = getParams();
+            if (params.subdomain == undefined)
+                subdomain = "bruch";
+            else
+                subdomain = params.subdomain;
+
+            getHeader(subdomain);
+
+            var dots = ""
+            var waiter = setInterval(function () {
+                if (settingsArray.ApiServer === undefined) {
+                    dots += ". ";
+                    $('#dots').html(dots);
+                }
+                else {
+                    $('#dots').html('');
+                    clearInterval(waiter);
+                    logVisit();
+                    setUserPermissions();
+                    var waiter2 = setInterval(function () {
+                        dots += "* ";
+                        $('#dots').html(dots);
+                        if (permissionsSet === true) {
+                            clearInterval(waiter2);
+                            $('#dots').html("");
+                        }
+                    }, 300);
+                }
+            }, 300);
+        });
+
+        resizePage();
+        $(window).resize(function () {
+            resizePage();
+        });
+    </script>
+</body>
+</html>

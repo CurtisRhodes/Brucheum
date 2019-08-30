@@ -1,0 +1,126 @@
+﻿header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: var(--brucheumBlue);
+    border-top: #40767d 3px solid;
+    border-bottom: #decd6f 3px solid;
+    display: flex;
+    z-index: 10;
+}
+
+.classicColors {
+    background-color: var(--oggleHeaderBackgroundColor);
+    border-top: var(--oggleHeaderBoarderTop);
+    border-bottom: var(--oggleHeaderBoarderBottom);
+}
+
+.pornHeaderColors {
+    background-color: #cab37e;
+    border-top: #40767d 3px solid;
+    border-bottom: #decd6f 11px solid;
+}
+
+    header .bannerImageContainer {
+        float: left;
+        padding-top: 2px;
+        padding-left: 2px;
+    }
+        header .bannerImageContainer .bannerImage {
+            height: 80px;
+            cursor: pointer;
+        }
+
+    header .headerBodyContainer {
+        float: left;
+        width: 100%;
+    }
+
+        header .headerBodyContainer .headerTopRow {
+            display: flex;
+            width: 100%;
+        }
+
+            header .headerBodyContainer .headerTopRow .headerTitle {
+                float: left;
+                padding-left: 26px;
+                padding-top: 8px;
+                font-family: 'Lucida Calligraphy';
+                font-size: 33px;
+            }
+
+            header .headerBodyContainer .headerTopRow .headerSubTitle {
+                float: left;
+
+                text-align: center;
+                font-family: Comic Sans MS;
+                color: var(--ogglgeTitleColor);
+                vertical-align: top;
+                margin-left: 33px;
+                margin-top: 7px;
+                font-size: 28px;
+            }
+            
+            header .headerBodyContainer .headerTopRow .headerSubTitle a {
+                    color: var(--ogglgeTitleColor);
+                    cursor: pointer;
+                    text-decoration: underline;
+                }
+
+        header .headerBodyContainer .headerBottomRow {
+            width: 100%;
+        }
+                header .headerBodyContainer .headerBottomRow .menuTab {
+                    margin-top: 4px;
+                    border-radius: 5px;
+                }
+
+                    header .headerBodyContainer .headerBottomRow .menuTab a {
+                        cursor: pointer;
+                        color: black;
+                        padding: 8px 20px;
+                        margin-right: 20px;
+                        text-decoration: none;
+                        padding: 5px 5px;
+                        border-radius: 1px;
+                    }
+            header .headerBodyContainer .headerBottomRow .breadCrumbArea {
+                float: left;
+                color: var(--ogglgeSubTitleColor);
+                font-family: Verdana;
+                font-size: 24px;
+                margin-left: 20px;
+            }
+
+    .menuTab a:hover {
+        text-decoration: underline;
+        background-color: #fef;
+    }
+
+.activeBreadCrumb {
+    margin-left: 20px;
+    cursor: pointer;
+    float: left;
+}
+
+.inactiveBreadCrumb {
+    margin-left: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    float: left;
+}
+
+.replaceableMenuItems {
+    margin-left: 55px;
+}
+
+.bigTits {
+    font-size: 40px;
+    font-family: 'Arial Rounded MT';
+    /*
+        color: #ff00dc;
+        color: var(--thumbnailBorderColor); #74bac3;
+    */
+}
+
+
