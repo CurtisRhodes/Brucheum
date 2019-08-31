@@ -1,0 +1,330 @@
+﻿
+
+/*Find all "CrudEdit.css", Subfolders, Find Results 1, Current Project: Brucheum\Brucheum.csproj, ""
+F:\Devl\Brucheum\Views\Admin\AdminIndex.cshtml(4):<link href="~/Styles/crudEdit.css" rel="stylesheet" / >
+F:\Devl\Brucheum\Views\BookDb\Edit.cshtml(1):<link href="~/Styles/crudEdit.css" rel="stylesheet" / >
+F:\Devl\Brucheum\Views\BookDb\Write.cshtml(5):<link href="~/Styles/crudEdit.css" rel="stylesheet" / >
+F:\Devl\Brucheum\Views\Flitter\ToDo.cshtml(8):<link href="~/Styles/CrudEdit.css" rel="stylesheet" / >
+F:\Devl\Brucheum\Views\GetaJob\GetaJobAdmin.cshtml(4):<link href="~/Styles/crudEdit.css" rel="stylesheet" / >
+F:\Devl\Brucheum\Views\GetaJob\Index.cshtml(5):<link href="~/Styles/crudEdit.css" rel="stylesheet" / >
+F:\Devl\Brucheum\Views\IntelDsgn\Blog.cshtml(6):<link href="~/Styles/CrudEdit.css" rel="stylesheet" / >
+F:\Devl\Brucheum\Views\Resume\ResumeAdmin.cshtml(6):<link href="~/Styles/crudEdit.css" rel="stylesheet" / >
+Matching lines: 8 Matching files: 8 Total files searched: 158*/
+
+.crudContainer {
+    font-size: 14px;
+    display: inline-block;
+    margin: 11px;
+    background-color: #eee;
+    border: solid 1.5px #bbb;
+    border-radius: 4px;
+    padding-bottom: 4px;
+}
+/*summernote*/
+.editorContainer {
+    display: inline-flex;
+    color: #555;
+    background-color: #c166bf;
+    border-radius: 5px;
+    z-index: 0;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.crudContainerTitle {
+    text-align: center;
+    background-color: #74bac3;
+    padding: 3px;
+}
+
+.width40px {
+    width: 40px;
+}
+.width50px {
+    width: 50px;
+}
+.width60percent {
+    width: 60%;
+}
+
+.wide {
+    width: 80%;
+}
+.crudButtonRow {
+    width: 95%;
+    margin-left: 4px;
+    margin-bottom: 8px;
+}
+.crudBreadcrumb {
+    margin-left: 56px;
+    font-size: 16px;
+}
+/*.editorContainer > div:first-child {
+    width: 100%;
+}*/
+
+/*.note-editable {
+    width: 554px;
+}*/
+
+.adminOptionContainer {
+    float: left;
+    margin-left: 56px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+.adminOption {
+    display: none;
+}
+/*#leftColumn {
+    border-right: solid 1px orange;
+}*/
+
+.adminInput {
+    /*float: left;
+    height: 21px;*/
+    margin-left: 6px;
+    padding: 3px 6px;
+    color: #555;
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+}
+
+.crudArea {
+    padding: 8px;
+    border: solid 2px rgba(85, 85, 85, 0.50);
+    border-radius: 4px;
+}
+.crudRowLabel {
+    display: inline-block;
+    /*min-width: 65px;*/
+    vertical-align: middle;
+}
+.crudRow {
+    margin:5px;
+    /*margin-top: 10px;
+    padding: 0 22px;
+    white-space: nowrap;*/
+}
+
+.closeIcon {
+    float: right;
+    cursor: pointer;
+    margin-top: 2px;
+    border: 2px;
+}
+
+.crudList {
+    /*
+        min-height: 606px;
+        min-width: 574px;
+        color: #555;
+        background-color: #ddd;
+        border-radius: 5px;
+        margin: 2px 11px;
+    */
+    padding: 4px;
+
+}
+
+.crudListItem {
+    padding: 4px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    background-color: #74bac3;
+    border-radius: 4px;
+}
+
+.crudItemsList {
+    border: solid 2px rgba(85, 85, 85, 0.50);
+    border-radius: 4px;
+    margin: 3px;
+    min-height: 200px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+    .crudItemsList li {
+        color: #330533;
+        list-style: none;
+        padding: 8px 0 8px 77px;
+        cursor: pointer;
+        margin-bottom: 4px;
+        background-color: #c3cecf;
+    }
+
+.crudListSubItem {
+    padding: 4px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    background-color: #74bac3;
+    border-radius: 5px;
+    padding-left: 88px;
+}
+
+.ddOption {
+    padding: 4px 3px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    white-space: nowrap;
+}
+
+.crudDropDown {
+    /*height: 28px;
+    margin: 6px;*/
+    padding: 3px 6px;
+    color: #555;
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.vertMenu {
+    margin-top: 88px;
+}
+
+.vertMenuTab {
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+    margin: 14px 6px;
+    padding: 8px 20px;
+    border-radius: 4px;
+    white-space: nowrap;
+    text-wrap: none;
+    color: #000;
+    background-color: #74bac3;
+}
+
+.threeColumnArray {
+    background-color: #e2e1d2;
+}
+
+.articleSaveSpinner {
+    padding-top: 11px;
+    padding-left: 27px;
+    height: 32px;
+}
+
+.tbLabel {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.tbInput {
+    width: 100%;
+}
+
+.imageUpload {
+    height: 32px;
+    width: 100%;
+}
+
+.btnRow {
+    margin-bottom: 17px;
+}
+
+.ddOption {
+    padding: 4px 3px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 17px;
+}
+
+#txtMetaTag {
+    margin-right: 3px;
+}
+/*#txbSummary {
+    height: 123px;
+    margin-top: -12px;
+    margin-bottom: -12px;
+    padding-left: 3px;
+}
+.summaryTableRow {
+
+<img id=" " class="imageContainer" />
+
+
+}*/
+
+.editArticleContainer {
+    margin-top: 12px;
+    display: flex;
+}
+
+.editArticleRowContainer {
+    float: left;
+}
+
+.editArticlePicContainer {
+    float: right;
+    height: 100%;
+    max-width: 33%;
+}
+
+.articleJog {
+    height: 356px;
+    width: 460px;
+    /*
+        object-fit: scale-down;
+        overflow: hidden;
+
+        width: 100%;
+        min-width: 300px;
+        height: 300px;
+        margin-top: 4px;
+
+    */
+    margin-left: 5px;
+    border: solid 1px #333;
+}
+
+.editArticleRow {
+    margin-left: 4px;
+}
+
+.articleSummary {
+    /*display: inline-block;
+    border: solid thin red;
+    min-height: 270px;
+    width: 80%;
+    padding: 5px;
+    font-style: italic;
+    color: #7a2424;
+    font-weight: bold;
+    text-justify: auto;*/
+}
+
+    .articleSummary .note-editable {
+        font-style: italic;
+    }
+
+
+.editArticleLabel {
+    display: inline-block;
+    min-width: 65px;
+    vertical-align: middle;
+}
+
+.editArticleInput {
+    margin-top: 3px;
+    display: inline-block;
+}
+
+
+.tagContainer {
+    display: inline-flex;
+}
+
+.tagItem {
+    /*box-sizing: content-box;*/
+    float: left;
+    border-radius: 4px;
+    background-color: #86bfef;
+    padding: 3px;
+    margin-top: 5px;
+    margin-right: 3px;
+    cursor: pointer;
+}
+

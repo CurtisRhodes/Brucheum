@@ -3,7 +3,7 @@ function getHeader(subdomain) {
     if (subdomain === "bruch" || subdomain === "playmates") {
         headerHtml =
         "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
-        "       <a href='/'><img src='Images/house.gif' class='bannerImage' /></a>\n" +
+        "       <a href='index.html'><img src='Images/house.gif' class='bannerImage' /></a>\n" +
         "   </div>\n" +
         "   <div class='headerBodyContainer'>\n" +
         "       <div class='headerTopRow'>\n" +
@@ -14,7 +14,7 @@ function getHeader(subdomain) {
         "           <div id='headerMessage' class='floatLeft'></div>\n" +
         "           <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
         "               <div class='menuTabs replaceableMenuItems'>\n" +
-        "               <div class='menuTab floatLeft'><a href='~/Article/ArticleList'>Latest Articles</a></div>\n" +
+        "               <div class='menuTab floatLeft'><a href='Article.html?ArticleList=0'>Latest Articles</a></div>\n" +
         "               <div class='menuTab floatLeft'><a href='~/BookDb/Index'>Books</a></div>\n" +
         "               <div class='menuTab floatLeft'><a href='~/Home/Apps'>Apps</a></div>\n" +
         "               <div class='menuTab floatLeft'><a href='/IntelDsgn/Index'>Intelligent Design</a></div>\n" +

@@ -54,6 +54,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "BruchHtml", "BruchHtml\", "
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "59579"
+		SlnRelativePath = "BruchHtml\"
 	EndProjectSection
 EndProject
 Global

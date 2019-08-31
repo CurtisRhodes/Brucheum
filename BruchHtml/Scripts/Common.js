@@ -42,7 +42,7 @@ function resizePage() {
     //set page height
     var winH = $(window).height();
     var headerH = $('header').height();
-    $('#middleColumn').height(winH - headerH - 155);
+    $('#middleColumn').height(winH - headerH - 45);
 }
 function getParams() {
     var params = {},
@@ -100,7 +100,6 @@ function displayStatusMessage(msgCode, message) {
         setTimeout(function () { $('#divStatusMessage').hide("slow"); }, 15000);
     }
 }
-
 function getXHRErrorDetails(jqXHR) {
     var msg = '';
     if (jqXHR.status === 0) {
@@ -121,7 +120,6 @@ function getXHRErrorDetails(jqXHR) {
     }
     return msg;
 }
-
 function isNullorUndefined(val) {
     if (val === "")
         return true;
@@ -131,7 +129,6 @@ function isNullorUndefined(val) {
         return true;
     return false;
 }
-
 function logActivity(changeLogModel) {
     $.ajax({
         type: "POST",
@@ -149,6 +146,9 @@ function logActivity(changeLogModel) {
         }
     });
 }
+
+
+
 
 // HITCOUNTER
 function logVisit() {

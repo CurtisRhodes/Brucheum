@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Get a Gig</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='shortcut icon' href='Images/Brucheum.ico' type='image/x-icon' />
+
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
+    <script src="Scripts/Login.js"></script>
+    <script src="Scripts/Common.js"></script>
+    <script src="Scripts/Headers.js"></script>
+    <script src="Scripts/ArticleView.js"></script>
+    <script src="Scripts/ArticleEdit.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
+    <link href="Styles/jqueryUI.css" rel="stylesheet">
+    <link href="Styles/Common.css" rel="stylesheet">
+    <link href="Styles/loginDialog.css" rel="stylesheet">
+    <link href="Styles/Header.css" rel="stylesheet">
+    <link href="Styles/Footer.css" rel="stylesheet">
+    <link href="Styles/ArticleView.css" rel="stylesheet">
+    <link href="Styles/ArticleEdit.css" rel="stylesheet" />
+</head>
+<body>
+    <header></header>
+    <div class="threeColumnLayout">
+        <div id="leftColumn">
+            <div id="articleViewLeftColumn" class="displayHidden">
+                <div class="staticFileLinks">
+                    <div id="lnkStaticify" class="clickable" onclick="staticify()">staticify</div>
+                    <div id="lnkFacebook" class="fb-share-button" data-href="' + pageName + '" data-layout="button" data-size="large" data-mobile-iframe="false">
+                        <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + pageName + '&src=sdkpreparse">Share on Facebook</a>
+                    </div>
+                    <div id="lnkPermalink" class="clickable" onclick="goToPermaLink()">permalink</div>
+                </div>
+            </div>
+        </div>
+        <div id="middleColumn">
+            <div id="divStatusMessage"></div>
+
+            <div id="articleListMiddleColumn" class="displayHidden">
+
+            </div>
+
+            <div id="articleViewMiddleColumn" class="displayHidden">
+                <div class="pollybox">
+                    <div class="divTopLine">
+                        <div id="divArticleDate" class="floatLeft"></div>
+                        <div id="divCategory" class="floatRightDiv"></div>
+                    </div>
+                    <div id="divTitle" class='articleTitle'></div>
+                    <div class="flexContainer">
+                        <div id="divByline" class="byline"></div>
+                        <div class="floatRightDivEdit clickable" onclick="gotoArticleEdit()">edit</div>
+                    </div>
+                </div>
+                <img id="divImage" class="articleCenterImage" />
+                <div id="contentArea">
+                    <div id="divSummary" class="summaryText"></div>
+                    <div id="divContent" class="articleContent"></div>
+                    <div id="divCommentsButton" class="roundendButton">comments</div>
+                </div>
+                <div id="divCommentsSection"></div>
+            </div>
+
+            <div id="articleEditMiddleColumn" class="displayHidden">
+                <div id="divAjustableItemsWrapper">
+                    <div id="divEditArticlePicContainer" class="editArticlePicContainer">
+                        <div>
+                            <img id="imgArticleJog" class="articleJog" />
+                        </div>
+                    </div>
+                    <div id="divEditArticleContainer" class="editArticleContainer">
+                        <div id="divArticleRowContainer" class="editArticleRowContainer">
+                            <div class="editArticleRow">
+                                <div class="editArticleLabel">Title:</div>
+                                <div class="editArticleInput" style="width:88%"><input id="txtTitle" class="roundedInput" style="width:100%" /></div>
+                            </div>
+                            <div class="editArticleRow">
+                                <div class="editArticleLabel">Category:</div>
+                                <div class="editArticleInput"><select id="ddCategory" class="crudDropDown"></select></div>
+                                <div class="editArticleLabel align-right">Byline:</div>
+                                <div class="editArticleInput"><select id="ddAvatars" class="crudDropDown"></select></div>
+                                <div class="editArticleLabel align-right">Updated:</div>
+                                <div class="editArticleInput"><input class="roundedInput" id="txtUpdated" /></div>
+                            </div>
+                            <div class="editArticleRow">
+                                <div class="editArticleLabel">Image:</div>
+                                <div class="editArticleInput" style="width:91px"><input id="uplImage" type="file" class="imageUpload" onchange="loadImage()" /></div>
+                            </div>
+                            <div class="editArticleRow">
+                                <div class="editArticleLabel">Meta Tag:</div>
+                                <div class="editArticleInput"><input class="roundedInput" id="txtMetaTag" /></div>
+                                <div id="divTagContainer" class="tagContainer"></div>
+                            </div>
+                            <div class="editArticleRow">
+                                <div class="editArticleLabel">Summary:</div>
+                                <div id="articleSummaryEditor"></div>
+                            </div>
+                            <div style="clear:both"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="articleContentEditor"></div>
+                <div id="divStatusMessage"></div>
+                <div class="btnRow">
+                    <img id="updateArticleSpinner" class="btnSpinnerImage articleSaveSpinner" src="~/Images/loader.gif" />
+                    <button id="btnSave" class="roundendButton" onclick="addUpdateArticle()">Save</button>
+                    <button id="btnView" class="roundendButton" onclick="saveAndView()">View</button>
+                </div>
+
+
+
+            </div>
+        </div>
+        <div id="rightColumn">
+        </div>
+    </div>
+    <div w3-include-html="Snippets/Footer.html"></div>
+
+    <script>
+        var permissionsSet = false;
+        $(document).ready(function () {
+            getHeader("bruch");
+            includeHTML();
+            params = getParams();
+            if (params.ArticleList !== undefined) {
+                $('#articleListMiddleColumn').show();
+                $('#articleViewLeftColumn').show();
+            }
+            if (params.ArticleViewId !== undefined) {
+                $('#articleViewMiddleColumn').show();
+                $('#articleViewLeftColumn').show();
+            }
+            if (params.ArticleEditId !== undefined) {
+                $('#articleEditMiddleColumn').fadeIn();
+            }
+            var dots = "";
+            var waiter = setInterval(function () {
+                if (settingsArray.ApiServer === undefined) {
+                    dots += ". ";
+                    $('#dots').html(dots);
+                }
+                else {
+                    $('#dots').html('');
+                    clearInterval(waiter);
+                    logVisit();
+                    setUserPermissions();
+
+                    if (params.ArticleViewId != undefined) {
+                        loadArticle(params.ArticleViewId);
+                    }
+                    if (params.ArticleEditId != undefined) {
+                        setUpEditPage();
+                        getArticle(params.ArticleEditId);
+                    }
+
+                    var waiter2 = setInterval(function () {
+                        dots += "* ";
+                        $('#dots').html(dots);
+                        if (permissionsSet === true) {
+                            clearInterval(waiter2);
+                            $('#dots').html("");
+                        }
+                    }, 300);
+                }
+            }, 300);
+        });
+
+        resizePage();
+        $(window).resize(function () {
+            resizePage();
+        });
+
+    </script>
+</body>
+</html>

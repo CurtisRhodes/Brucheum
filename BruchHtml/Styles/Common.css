@@ -42,6 +42,20 @@ body {
     float: right;
     min-width: 7%;
 }
+
+.centeredDivShell {
+    position: absolute;
+    left: 50%;
+    top: 300px;
+    display: none;
+}
+
+.centeredDivInner {
+    position: relative;
+    left: -50%;
+    min-height: 200px;
+}
+
 .clickable {
     cursor: pointer;
 }
