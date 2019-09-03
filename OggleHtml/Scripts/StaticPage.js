@@ -18,7 +18,6 @@ var fullPageName;
 $(document).ready(function () {
     //getHeader(staticPageRootFolder);
     $('#fileCount').html(staticPageImagesCount);
-    $('footerMessage').html(staticPageFolderName);
 
     resizeStaticPage();
     var waiter = setInterval(function () {
@@ -30,10 +29,32 @@ $(document).ready(function () {
             clearInterval(waiter);
             //alert("logPageHit(" + staticPageFolderName + ")");
             logPageHit(staticPageFolderName, "static");
+            checkForLink(staticPageFolderId, "freeones");
+            $('footerMessage').html(staticPageFolderName);
         }
     }, 300);
     $(window).resize(resizeStaticPage());
 });
+
+function checkForLink(folderId, hrefTextSubstring) {
+    //alert("containsLink(" + folderId + "," + hrefTextSubstring + ")");
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/StaticPage/HasLink?folderId=" + folderId + "&hrefTextSubstring=" + hrefTextSubstring,
+        success: function (successModel) {
+            if (successModel.Success) {
+                if (successModel.ReturnValue === "ok") {
+                    $('#freeonesLink').show();
+                }
+            }
+            else
+                alert(": " + successModel.Success);
+        },
+        error: function (xhr) {
+            alert("containsLink xhr: " + getXHRErrorDetails(xhr));
+        }
+    });
+}
 
 function resizeStaticPage() {
     resizePage();

@@ -31,24 +31,6 @@
         public bool StaticRebuild { get; set; }
     }
 
-    [Table("webStats.Visitor")]
-    public partial class Visitor
-    {
-        public string UserName { get; set; }
-        public string IpAddress { get; set; }
-        public string AppName { get; set; }
-        public DateTime VisitDate { get; set; }
-        [Key]
-        public string VisitorId { get; set; }
-    }
-    [Table("webStats.Visit")]
-    public partial class Visit
-    {
-        public string VisitorId { get; set; }
-        [Key]
-        public DateTime VisitDate { get; set; }
-    }
-
     [Table("webStats.RegisteredUser")]
     public partial class RegisteredUser
     {
@@ -81,16 +63,41 @@
         public string RoleName { get; set; }
     }
 
+    [Table("webStats.Visitor")]
+    public partial class Visitor
+    {
+        [Key]
+        public string VisitorId { get; set; }
+        public string UserName { get; set; }
+        public string AppName { get; set; }
+        public string IpAddress { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        public string GeoCode { get; set; }
+    }
+    [Table("webStats.Visit")]
+    public partial class Visit
+    {
+        [Key]
+        [Column(Order = 0)]
+        public string VisitorId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public DateTime VisitDate { get; set; }
+    }
+
     [Table("webStats.PageHit")]
     public partial class PageHit
     {
         [Key]
-        public string PkId { get; set; }
-        public string PageName { get; set; }
-        public string UserName { get; set; }
-        public string IpAddress { get; set; }
-        public string AppId { get; set; }
+        [Column(Order = 0)]
         public DateTime HitDateTime { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string VisitorId { get; set; }
+        public string AppName { get; set; }
+        public string PageName { get; set; }
     }
 }
 

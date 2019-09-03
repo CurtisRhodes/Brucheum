@@ -7,7 +7,7 @@ function showImageCommentDialog(src, linkId, folderId, folderName) {
     folderDetailModel.FolderName = folderName;
 
 
-    folderDetailModel.UserId = getCookie("User");
+    folderDetailModel.UserId = getCookieValue("User");
 
 
 

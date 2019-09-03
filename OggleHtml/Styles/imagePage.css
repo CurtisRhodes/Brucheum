@@ -7,6 +7,10 @@
     border: solid .05px #676b8a;
 }
 
+.freeones {
+    height: 45px;
+    margin-left: 200px;
+}
 .adminLink {
     color: blue;
 }

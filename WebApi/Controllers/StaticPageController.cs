@@ -254,7 +254,22 @@ namespace WebApi.Controllers
                 //homeLink = "" + httpLocation + "/porn.html";
                 homeLink = "/index.html?subdomain=porn";
             }
-                else
+
+            //if (breadCrumbModel.RootFolder == "playmates")
+            //{
+            //    headerSubtitle =
+            //    "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
+            //    "       <a href='/'><img src='Images/redballon.png' class='bannerImage' /></a>\n" +
+            //    "   </div>\n" +
+            //    "   <div class='headerBodyContainer'>\n" +
+            //    "       <div class='headerTopRow'>\n" +
+            //    "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
+            //    "           <div class='headerSubTitle' id='headerSubTitle'>Every Playboy Centerfold" +
+            //    "            </div>\n" +
+            //    "        </div>\n";
+            //}
+
+            else
             {
                 headerSubtitle = "<a href='" + httpLocation + "boobs/boobs.html'>big tits</a> organized by " +
                  "<a href='" + httpLocation + "boobs/poses.html'>poses</a>, " +
@@ -281,6 +296,9 @@ namespace WebApi.Controllers
                 "            <div id='headerMessage' class='floatLeft'></div>\n" +
                 "            <div id='breadcrumbContainer' class='breadCrumbArea'>" + breadCrumbModel.Html + "</div>\n" +
                 "            <div class='menuTabs replaceableMenuItems'>\n" +
+                "               <div id='freeonesLink' class='menuTabs displayHidden'>\n" +
+                "                  <a href='http://www.freeones.com' target='_blank'><img src='/Images/freeones.png' class='freeones'></a>"+
+                "               </div>\n" +
                 "            </div>\n" +
                 //"            <div id='optionLoggedIn' class='displayHidden'>\n" +
                 //"                <div class='menuTab floatRight'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
@@ -592,47 +610,29 @@ namespace WebApi.Controllers
                 "    </div>\n" +
                 "</div>\n";
         }
-        
-        [HttpPut]
-        public List<VwLink> AddMoreImages(string rootFolder, int skip, int take)
-        {
-            //StringBuilder sb = new StringBuilder("<div class='displayHidden'>");
-            List<VwLink> vwLinks = null;
-            using (OggleBoobleContext db = new OggleBoobleContext())
-            {
-                vwLinks = db.VwLinks.Where(l => l.RootFolder == rootFolder).OrderBy(l => l.LinkId).Skip(skip).Take(take).ToList();
-            }
-            return vwLinks;
-        }
 
         [HttpGet]
-        public int GetImageCount(string rootFolder)
+        public SuccessModel HasLink(int folderId, string hrefTextSubstring)
         {
-            int totalRows = 0;
-            using (OggleBoobleContext db = new OggleBoobleContext())
+            SuccessModel success = new SuccessModel() { ReturnValue = "not found" };
+            try
             {
-                totalRows = db.VwLinks.Where(l => l.RootFolder == rootFolder).Count();
-            }
-            return totalRows;
-        }
-
-        [HttpGet]
-        public string StaticPageGetIPAddress()
-        {
-            String address = "";
-            WebRequest request = WebRequest.Create("http://checkip.dyndns.org/");
-            using (WebResponse response = request.GetResponse())
-            {
-                using (var stream = new System.IO.StreamReader(response.GetResponseStream()))
+                using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    address = stream.ReadToEnd();
+                    var dbRow = (from f in db.CategoryFolders
+                                 join d in db.CategoryFolderDetails on f.Id equals d.FolderId
+                                 where d.ExternalLinks.Contains(hrefTextSubstring) && f.Id == folderId
+                                 select (new CategoryFolderModel() { Success = "ok", Id = f.Id })).FirstOrDefault();
+                    if (dbRow != null)
+                        success.ReturnValue = "ok";
+                    success.Success = "ok";
                 }
-                int first = address.IndexOf("Address: ") + 9;
-                int last = address.LastIndexOf("</body>");
-                address = address.Substring(first, last - first);
-
-                return address;
             }
+            catch (Exception ex)
+            {
+                success.Success = Helpers.ErrorDetails(ex);
+            }
+            return success;
         }
     }
 }

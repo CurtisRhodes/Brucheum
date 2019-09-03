@@ -82,7 +82,7 @@ namespace WebApi
                     {
                         registeredUserModel.Pswrd = HashSHA256(registeredUserModel.Pswrd);
                         registeredUserModel.CreateDate = DateTime.Now;
-                        registeredUserModel.IpAddress = Helpers.GetIPAddress();
+                        //registeredUserModel.IpAddress = Helpers.GetIPAddress();
                         db.RegisteredUsers.Add(registeredUserModel);
                         db.SaveChanges();
 

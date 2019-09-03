@@ -14,6 +14,7 @@
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/Headers.js"></script>
+    <script src="Scripts/ArticleList.js"></script>
     <script src="Scripts/ArticleView.js"></script>
     <script src="Scripts/ArticleEdit.js"></script>
 
@@ -24,11 +25,38 @@
     <link href="Styles/loginDialog.css" rel="stylesheet">
     <link href="Styles/Header.css" rel="stylesheet">
     <link href="Styles/Footer.css" rel="stylesheet">
+    <link href="Styles/ArticleList.css" rel="stylesheet" />
     <link href="Styles/ArticleView.css" rel="stylesheet">
     <link href="Styles/ArticleEdit.css" rel="stylesheet" />
 </head>
 <body>
     <header></header>
+    <style>
+        #divBookPannel {
+            box-sizing: border-box;
+            margin-left: 18px;
+            margin-top: 60px;
+            margin-right: 11px;
+            padding-bottom: 3px;
+            background-color: #aaa;
+            /*border: solid 2px purple;*/
+        }
+
+        #divPannelHeader {
+            font-family: Tahoma;
+            font-size: 12px;
+            padding-top: 6px;
+            text-align: center;
+        }
+
+        .bookImage {
+            margin: 3px 6px;
+            width: 130px;
+            height: 140px;
+            cursor: pointer;
+        }
+    </style>
+
     <div class="threeColumnLayout">
         <div id="leftColumn">
             <div id="articleViewLeftColumn" class="displayHidden">
@@ -40,12 +68,19 @@
                     <div id="lnkPermalink" class="clickable" onclick="goToPermaLink()">permalink</div>
                 </div>
             </div>
+            <div id="articleListLeftColumn" class="displayHidden">
+
+            </div>
         </div>
         <div id="middleColumn">
             <div id="divStatusMessage"></div>
 
             <div id="articleListMiddleColumn" class="displayHidden">
-
+                <div id="divArticleList">
+                    <div id="divlistHeader" class="articleListHeader"></div>
+                    <div id="articleListContainer" class="articleListContainer"></div>
+                    <div id="divMoreButton" class="roundendButton" onclick="showMoreButtonClick()">More</div>
+                </div>
             </div>
 
             <div id="articleViewMiddleColumn" class="displayHidden">
@@ -120,6 +155,22 @@
             </div>
         </div>
         <div id="rightColumn">
+
+            <div id="divBookPannel" class="displayHidden">
+                <div id="divPannelHeader">
+                    Check out my books
+                </div>
+                <div class="divBookImage" book="The Blond Jew" onclick="window.location.href='/BookDb/ToC?book=1'">
+                    <img class="bookImage" src="Images/TheBlondJew.jpg" />
+                </div>
+                <div class="divBookImage" book="Time Squared" onclick="window.location.href='/BookDb/ToC?book=2'">
+                    <img class="bookImage" src="Images/TimeSquared.jpg" />
+                </div>
+                <div class="divBookImage" book="Ready; Fire; Aim" onclick="window.location.href='/BookDb/ToC?book=3'">
+                    <img class="bookImage" src="Images/ReadyFireAim.jpg" />
+                </div>
+            </div>
+
         </div>
     </div>
     <div w3-include-html="Snippets/Footer.html"></div>
@@ -132,7 +183,7 @@
             params = getParams();
             if (params.ArticleList !== undefined) {
                 $('#articleListMiddleColumn').show();
-                $('#articleViewLeftColumn').show();
+                $('#divBookPannel').show();
             }
             if (params.ArticleViewId !== undefined) {
                 $('#articleViewMiddleColumn').show();
@@ -160,6 +211,10 @@
                         setUpEditPage();
                         getArticle(params.ArticleEditId);
                     }
+                    if (params.ArticleList !== undefined) {
+
+                        getArticleList(params.ArticleList,params.filter);
+                    }
 
                     var waiter2 = setInterval(function () {
                         dots += "* ";
@@ -177,7 +232,6 @@
         $(window).resize(function () {
             resizePage();
         });
-
     </script>
 </body>
 </html>

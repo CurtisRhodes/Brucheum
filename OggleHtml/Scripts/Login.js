@@ -127,7 +127,7 @@ function postLogin() {
 
                     setCookie($('#txtLoginUserName').val());
 
-                    displayStatusMessage("ok", "thanks for logging in " + getCookie("User"));
+                    displayStatusMessage("ok", "thanks for logging in " + getCookieValue("User"));
 
                     setLoginHeader($('#txtLoginUserName').val());
                     setUserPermissions();
@@ -186,7 +186,7 @@ function setUserPermissions() {
     }
     else {
 
-        var userName = getCookie("User");
+        var userName = getCookieValue("User");
         if (userName !== "") {
             $.ajax({
                 type: "GET",
@@ -228,9 +228,8 @@ function setUserPermissions() {
     }
 }
 
-
 function isInRole(roleName) {
-    var userName = getCookie("User");
+    var userName = getCookieValue("User");
     //alert("document.domain: " + document.domain);
     //window.localStorage()
     //if (userName !== "" || document.domain === 'localhost') {
@@ -238,7 +237,7 @@ function isInRole(roleName) {
 
 // COOKIES
 function setLoginHeader(userName) {
-    if (userName === "") {
+    if (userName === "unknown" || userName === "") {
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').show();
         $('.loginRequired').hide();
@@ -254,18 +253,15 @@ function setCookie(userName) {
     var expiryDate = new Date();
     expiryDate.setMonth(expiryDate.getMonth() + 9);
     document.cookie = 'User=' + userName + '; expires=' + expiryDate.toUTCString() + 'path=https://ogglebooble.com/';
+
+    //alert("document.cookie:" + document.cookie);
     alert("expires: " + expiryDate.toUTCString());
 }
 
-function getCookie(cname) {
+function getCookieValue(valueName) {
     var decodedCookie = "";
     if (document.cookie) {
-        if (cname === undefined)
-            cname = "User";
-        var name = cname + "=";
-
-        if (cname !== "User")
-            alert("getCookie(cname): " + name);
+        var cName = valueName + "=";
 
         decodedCookie = decodeURIComponent(document.cookie);
         var ca = decodedCookie.split(';');
@@ -274,19 +270,19 @@ function getCookie(cname) {
             while (c.charAt(0) === ' ') {
                 c = c.substring(1);
             }
-            if (c.indexOf(name) === 0) {
+            if (c.indexOf(cName) === 0) {
                 var cookieValue = c.substring(name.length, c.length);
                 //alert("cookie success: " + c.substring(name.length, c.length));
 
-                if (cname !== "User")
-                    alert("name: " + name + "  value" + cookieValue);
-
-
                 return cookieValue;
+            }
+            else {
+                alert("document.cookie: " + document.cookie);
+                alert("cookie value " + valueName + " not found");
             }
         }
     }
-    //else alert("no cookie found");
+    else alert("no cookie found");
     return decodedCookie;
 }
 

@@ -123,3 +123,11 @@ body {
     display: none;
 }
 
+.roundendButton {
+    text-align: center;
+    background: var(--brucheumBlue);
+    color: #000;
+    border-radius: 6px;
+    padding: 8px 20px;
+    cursor: pointer;
+}

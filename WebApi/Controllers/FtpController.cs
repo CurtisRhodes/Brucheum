@@ -167,9 +167,8 @@ namespace WebApi
                                 string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName;
                                 string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.SourceFolderId) + dbSourceFolder.FolderName;
                                 string newFileName = dbDestinationFolder.FolderName + "_" + dbImageLink.Id + extension;
-                                string sourceFileName = "";
+                                string sourceFileName = model.Link.Substring(model.Link.LastIndexOf("/") + 1);
 
-                                sourceFileName = model.Link.Substring(model.Link.LastIndexOf("/") + 1);
                                 if (!FtpUtilies.DirectoryExists(destinationFtpPath))
                                     FtpUtilies.CreateDirectory(destinationFtpPath);
 
@@ -776,7 +775,12 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == parentId).FirstOrDefault();
-                    string destinationFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(parentId) + dbSourceFolder.FolderName + "/" + newFolderName.Trim();
+
+                    var folderPath = dbSourceFolder.FolderName;
+                    if (folderPath.ToUpper().Contains("OGGLEBOOBLE.COM"))
+                        folderPath = "";
+
+                    string destinationFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(parentId) + folderPath + "/" + newFolderName.Trim();
                     if (FtpUtilies.DirectoryExists(destinationFtpPath))
                         successModel.Success = "folder already exists";
                     else
