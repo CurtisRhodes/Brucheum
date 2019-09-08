@@ -111,7 +111,13 @@
 }
 
 .replaceableMenuItems {
-    margin-left: 55px;
+    float: left;
+    display: flex;
+    margin-left: 15px;
+}
+.freeones {
+    height: 45px;
+    margin-left: 80px;
 }
 
 .bigTits {

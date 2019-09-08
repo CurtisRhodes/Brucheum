@@ -155,13 +155,8 @@ function logActivity(changeLogModel) {
 }
 
 // HITCOUNTER
-
-function logVisit(visitorModel) {
-
-}
-
 function logPageHit(folderName, appName) {
-    var verbose = true;
+    var verbose = false;
     $('#footerMessage').html("logging page hit");
     $.getJSON("https://ipinfo.io?token=ac5da086206dc4", function (data) {
         //$("#info").html("City: " + data.city + " ,County: " + data.country + " ,IP: " + data.ip + " ,Location: " + data.loc + " ,Organisation: " 
@@ -288,6 +283,38 @@ function setFolderImage(linkId, folderId, level) {
     });
 }
 
+function checkForLink(folderId, hrefTextSubstring) {
+    //alert("containsLink(" + folderId + "," + hrefTextSubstring + ")");
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/StaticPage/HasLink?folderId=" + folderId + "&hrefTextSubstring=" + hrefTextSubstring,
+        success: function (successModel) {
+            if (successModel.Success === "ok") {
+                if (successModel.ReturnValue !== "no") {
+                    var p = successModel.ReturnValue;
+                    if (hrefTextSubstring === "freeones") {
+
+                        //var zp = "<a https://www.freeones.com/html/" + p.substring(p.indexOf("https://www.freeones.com") + 38);  //, p.substring(p.indexOf("https://www.freeones.com", 39)).indexOf('>'));
+                        var zp = "<a https://www.freeones.com/html/" + p.substring(p.indexOf("https://www.freeones.com") + 31);//, (p.substring(p.indexOf("https://www.freeones.com") + 38)).indexOf('>'));
+                        var zp2 = zp.substring(0, zp.indexOf('>') - 1) + " target='_blank'>";
+                        //alert("link: "+  zp2);
+
+                        $('#freeonesLink').show();
+                    }
+                    if (hrefTextSubstring === "babepedia") {
+                        $('#babapediaLink').show();
+                    }
+                }
+            }
+            else
+                alert("checkForLink: " + successModel.Success);
+        },
+        error: function (xhr) {
+            alert("containsLink xhr: " + getXHRErrorDetails(xhr));
+        }
+    });
+}
+
 // GET BUILD INFO
 function getFileDate() {
     
@@ -297,6 +324,11 @@ function getFileDate() {
 
 // SET HEADER
 function getHeader(subdomain) {
+
+    //$('#replaceableMenuItems').append("<div id='babapediaLink' class='menuTabs'>\n" +
+    //    "              <a href='https://www.babepedia.com' target='_blank'><img src='/Images/babepedia.png' class='freeones'></a>" +
+    //    "           </div>\n");
+
     var headerHtml;
     if (subdomain === "boobs" || subdomain === "archive") {
         headerHtml =
@@ -364,6 +396,12 @@ function getHeader(subdomain) {
         "       <div id='headerMessage' class='floatLeft'></div>\n" +
         "       <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
         "       <div class='menuTabs replaceableMenuItems'>\n" +
+        "           <div id='freeonesLink' class='menuTabs displayHidden'>\n" +
+        "              <a href='http://www.freeones.com' target='_blank'><img src='/Images/freeones.png' class='freeones'></a>" +
+        "           </div>\n" +
+        "           <div id='babapediaLink' class='menuTabs displayHidden'>\n" +
+        "              <a href='https://www.babepedia.com' target='_blank'><img src='/Images/babepedia.png' class='freeones'></a>" +
+        "           </div>\n" +
         "       </div>\n" +
         "       <div id='optionLoggedIn' class='displayHidden'>\n" +
         "           <div class='menuTab floatRight'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +

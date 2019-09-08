@@ -71,6 +71,32 @@ function explodeViewer() {
     //   alert("dlgW: " + $('#imageViewerDialog').width() + "imgW: " + $('#viewerImage').width());
 
     if ((viewerT === 0) && (viewerL === 0) && (viewerH === windowH) && (viewerW === windowW)) {
+        if (imageViewerFolderName === undefined) {
+
+            alert("imageViewerIndex: " + imageViewerIndex);
+
+
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/ImageCategoryDetail/GetModelName?linkId=" + imageViewerIndex,
+                success: function (modelDetails) {
+                    if (modelDetails.Success === "ok") {
+                        selectedImage = modelDetails.Link;
+                        fullPageName = modelDetails.RootFolder + "/" + modelDetails.FolderName;
+                        modelFolderId = modelDetails.FolderId;
+                        imageViewerFolderName = modelDetails.FolderName;
+                        alert("had to lookup folder name: " + imageViewerFolderName);
+                        $('#imageViewerHeaderTitle').html(imageViewerFolderName + "!");
+                    }
+                    else
+                        alert("GetModelName: " + modelDetails.Success);
+                },
+                error: function (xhr) {
+                    alert("GetModelName xhr error: " + xhr.statusText);
+                }
+            });
+        }
+
         $('#imageViewerHeaderTitle').html(imageViewerFolderName);
         $('#viewerButtonsRow').show();
         if (imageViewerArray[imageViewerIndex].Local)
@@ -185,49 +211,6 @@ function showImageViewerCommentDialog() {
 
 function slideshowContexMenu() {
     ctxSAP(imageViewerArray[imageViewerIndex].Id);
-
-    //event.preventDefault();
-    //window.event.returnValue = false;
-    //$('#imageViewerContextMenu').css("top", event.clientY + 5);
-    //$('#imageViewerContextMenu').css("left", event.clientX);
-    //$.ajax({
-    //    type: "GET",
-    //    url: settingsArray.ApiServer + "api/ImageCategoryDetail/GetModelName?linkId=" + imageViewerArray[imageViewerIndex].LinkId,
-    //    success: function (folderDetails) {
-    //        if (folderDetails.Success === "ok") {
-    //            imageViewerSelectedImageArchiveFolderId = folderDetails.FolderId;
-    //            if (folderDetails.FolderId === imageViewerFolderId) {
-    //                $('#ctxImageViewerSeeMore').hide();
-    //                if (folderDetails.RootFolder === "archive") {
-    //                    $('#ctxImageViewerModelName').html(folderDetails.FolderName);
-    //                    $('#ctxArchive').hide();
-    //                }
-    //                else {
-    //                    $('#ctxImageViewerModelName').html("unknown model");
-    //                    $('#ctxArchive').show();
-    //                }
-    //            }
-    //            else {
-    //                $('#ctxImageViewerModelName').html(folderDetails.FolderName);
-    //                $('#ctxImageViewerSeeMore').show();
-    //                if (folderDetails.RootFolder === "archive")
-    //                    $('#ctxArchive').hide();
-    //                else
-    //                    $('#ctxArchive').show();
-    //            }
-
-    //            $('#imageViewerContextMenu').fadeIn();
-
-
-    //        }
-    //        else
-    //            alert("GetModelName: " + folderDetails.Success);
-    //    },
-    //    error: function (jqXHR, exception) {
-    //        $('#blogLoadingGif').hide();
-    //        alert("GetModelName jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-    //    }
-    //});
 }
 
 function imageViewerContextMenuAction(action) {

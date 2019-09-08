@@ -98,7 +98,11 @@ function getFolderDetails(modelName, folderId, currentSrc) {
 }
 
 function addHrefToExternalLinks() {
-    $('#externalLinks').append("<a href=" + $('#txtLinkHref').val() + ">" + $('#txtLinkLabel').val() + " target='_blank'</a><br/>");
+
+    //alert("addHrefToExternalLinks: " + $('#txtLinkHref').val());
+    $('#externalLinks').summernote('pasteHTML', "<a href=" + $('#txtLinkHref').val() + " target = '_blank'>" + $('#txtLinkLabel').val() + "</a><br/>");
+
+    //$('#externalLinks').append("<a href=" + $('#txtLinkHref').val() + ">" + $('#txtLinkLabel').val() + " target='_blank'</a><br/>");
     $('#txtLinkHref').val('');
     $('#txtLinkLabel').val('');
 }

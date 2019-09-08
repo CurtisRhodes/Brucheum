@@ -15,6 +15,24 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class HitCounterController : ApiController
     {
+        [HttpGet]
+           public LogVisitModel Get() {
+            LogVisitModel visitModel = new LogVisitModel();
+            try
+            {
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    //Hit hit = db.Hits.Where(h => h.HitId == hitId).First();
+
+
+                    //hit.ViewDuration = (DateTime.Now - hit.BeginView).TotalSeconds.ToString();
+                    db.SaveChanges();
+                    visitModel.Success = "ok";
+                }
+            }
+            catch (Exception ex) { visitModel.Success = Helpers.ErrorDetails(ex); }
+            return visitModel;
+        }
         [HttpPost]
         public LogVisitModel LogVisit(VisitorModel visitorModel)
         {
@@ -41,7 +59,15 @@ namespace WebApi
                         db.SaveChanges();
                         visitSuccessModel.WelcomeMessage = "Welcome new visitor!";
                         visitSuccessModel.VisitorId = dbVisitor.VisitorId;
-                        new GodaddyEmailController().SendEmail("CONGRATULATIONS: someone new just visited your site", "ip: " + visitorModel.IpAddress + " visited: " + visitorModel.AppName);
+                        using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
+                        {
+                            //godaddyEmail.SendEmail("CONGRATULATIONS: someone new just visited your site", "ip: " + visitorModel.IpAddress + " visited: " + visitorModel.AppName);
+                            // translate
+
+                            godaddyEmail.SendEmail("CONGRATULATIONS: someone new just visited your site", "from: " +
+                                visitorModel.City + "," + visitorModel.Country + "/" + visitorModel.Region
+                                + " visited: " + visitorModel.AppName);
+                        }
                     }
                     else
                     {
@@ -113,7 +139,7 @@ namespace WebApi
         }
 
         [HttpPost]
-        public SuccessModel RecordLogin(string userName)
+        public SuccessModel RecordLogin()
         {
             SuccessModel success = new SuccessModel();
             try
@@ -183,41 +209,7 @@ namespace WebApi
         }
     }
 
-    public class ChangeLogModel
-    {
-        public int PkId { get; set; }
-        public int PageId { get; set; }
-        public string PageName { get; set; }
-        public string Activity { get; set; }
-        public DateTime Occured { get; set; }
-        public bool StaticRebuild { get; set; }
-    }
-    public class PageHitModel
-    {
-        public string VisitorId { get; set; }
-        public string IpAddress { get; set; }
-        public string AppName { get; set; }
-        public string PageName { get; set; }
-        public string VisitDate { get; set; }
-        public bool Verbose { get; set; }
-    }
 
-    public class LogVisitModel
-    {
-        public string VisitorId { get; set; }
-        public string WelcomeMessage { get; set; }
-        public string Success { get; set; }
-    }
 
-    public class VisitorModel
-    {
-        public string AppName { get; set; }
-        public string PageName { get; set; }
-        public string IpAddress { get; set; }
-        public string CookieName { get; set; }
-        public string City { get; set; }
-        public string Region { get; set; }
-        public string Country { get; set; }
-        public string GeoCode { get; set; }
-    }
+
 }

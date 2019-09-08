@@ -72,6 +72,7 @@ function getBreadCrumbs(folderId) {
                     }
                 }
                 currentfolderName = breadCrumbModel.FolderName;
+                //alert("1 currentfolderName: " + currentfolderName);
                 document.title = currentfolderName + " : OggleBooble";
                 logPageHit(currentfolderName, "OggleHtml");
             }
@@ -214,6 +215,9 @@ function startSlideShow(imageIndex) {
             Link: $(this).find("img").attr("src")
         });
     });
+
+    //alert("2 currentfolderName: " + currentfolderName);
+
     launchViewer(imageArray, imageIndex, currentFolderId, currentfolderName);
     resizeViewer();
     viewerShowing = true;

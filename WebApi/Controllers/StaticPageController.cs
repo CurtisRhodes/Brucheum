@@ -299,6 +299,9 @@ namespace WebApi.Controllers
                 "               <div id='freeonesLink' class='menuTabs displayHidden'>\n" +
                 "                  <a href='http://www.freeones.com' target='_blank'><img src='/Images/freeones.png' class='freeones'></a>"+
                 "               </div>\n" +
+                "               <div id='babapediaLink' class='menuTabs displayHidden'>\n" +
+                "                  <a href='https://www.babepedia.com' target='_blank'><img src='/Images/babepedia.png' class='freeones'></a>" +
+                "               </div>\n" +
                 "            </div>\n" +
                 //"            <div id='optionLoggedIn' class='displayHidden'>\n" +
                 //"                <div class='menuTab floatRight'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
@@ -614,17 +617,19 @@ namespace WebApi.Controllers
         [HttpGet]
         public SuccessModel HasLink(int folderId, string hrefTextSubstring)
         {
-            SuccessModel success = new SuccessModel() { ReturnValue = "not found" };
+            SuccessModel success = new SuccessModel() { ReturnValue = "no" };
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    var dbRow = (from f in db.CategoryFolders
+                    SuccessModel dbRow = (from f in db.CategoryFolders
                                  join d in db.CategoryFolderDetails on f.Id equals d.FolderId
                                  where d.ExternalLinks.Contains(hrefTextSubstring) && f.Id == folderId
-                                 select (new CategoryFolderModel() { Success = "ok", Id = f.Id })).FirstOrDefault();
+                                 select (new SuccessModel { ReturnValue = d.ExternalLinks })).FirstOrDefault();
                     if (dbRow != null)
-                        success.ReturnValue = "ok";
+                    {
+                        success.ReturnValue = dbRow.ReturnValue;
+                    }
                     success.Success = "ok";
                 }
             }

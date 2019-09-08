@@ -37,7 +37,7 @@
     <link href="Styles/FolderCategoryDialog.css" rel="stylesheet" />
     <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
 </head>
-<body>
+  <body>
     <header></header>
     <div class="threeColumnLayout">
         <div id="leftColumn"></div>
@@ -108,12 +108,19 @@
                             else {
                                 getAlbumPageHeader(params.folder);
                                 getAlbumImages(params.folder);
+
+                                checkForLink(params.folder, "freeones");
+
+                                checkForLink(params.folder, "babepedia");
+
+
                             }
                         }
                     }, 300);
                 }
             }, 300);
         });
+
     </script>
-</body>
+  </body>
 </html>

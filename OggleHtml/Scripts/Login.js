@@ -172,10 +172,7 @@ function profilePease() {
 }
 
 function setUserPermissions() {
-    //alert("document.domain : " + document.domain);
     if (document.domain === 'localhost') {
-        if (typeof permissionsSet === "boolean")
-            permissionsSet = true;
         $('.loginRequired').show();
         $('.adminLevelRequired').show();
         if (typeof isPornEditor === 'boolean') 
@@ -183,9 +180,9 @@ function setUserPermissions() {
         $('#spnUserName').html("devl");
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').hide();
+        //alert("document.domain : " + document.domain);
     }
     else {
-
         var userName = getCookieValue("User");
         if (userName !== "") {
             $.ajax({
@@ -210,8 +207,6 @@ function setUserPermissions() {
                                 }
                             }
                         });
-                        if (typeof permissionsSet === "boolean") 
-                            permissionsSet = true;
                     }
                     else
                         alert("loadUserRoles: " + roleModel.Success);
@@ -221,11 +216,9 @@ function setUserPermissions() {
                 }
             });
         }
-        else
-            if (typeof permissionsSet === "boolean")
-                permissionsSet = true;
-
     }
+    if (typeof permissionsSet === "boolean")
+        permissionsSet = true;
 }
 
 function isInRole(roleName) {
@@ -240,7 +233,7 @@ function setLoginHeader(userName) {
     if (userName === "unknown" || userName === "") {
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').show();
-        $('.loginRequired').hide();
+        //$('.loginRequired').hide();
     }
     else {
         $('#spnUserName').html(userName);
@@ -271,7 +264,7 @@ function getCookieValue(valueName) {
                 c = c.substring(1);
             }
             if (c.indexOf(cName) === 0) {
-                var cookieValue = c.substring(name.length, c.length);
+                var cookieValue = c.substring(cName.length, c.length);
                 //alert("cookie success: " + c.substring(name.length, c.length));
 
                 return cookieValue;
@@ -282,7 +275,7 @@ function getCookieValue(valueName) {
             }
         }
     }
-    else alert("no cookie found");
+    //else alert("no cookie found");
     return decodedCookie;
 }
 
