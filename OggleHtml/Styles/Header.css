@@ -10,10 +10,14 @@
 }
 
 .boobRankerBanner {
-    float: left;
-    font-size: 26px;
-    color: var(--oggleTitleColor);
-    margin-left: 100px;
+    border: solid 2px #000;
+    font-size: 23px;
+    padding: 3px;
+    color: #000;
+    text-decoration: none;
+    display: inline-block;
+    background-color: aliceblue;
+    margin-left: 70px;
     cursor: pointer;
 }
 
@@ -76,6 +80,8 @@
                 }
 
         header .headerBodyContainer .headerBottomRow {
+            font-family: Verdana;
+            font-size: 17px;
             width: 100%;
         }
                 header .headerBodyContainer .headerBottomRow .menuTab {

@@ -8,6 +8,7 @@
             "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
             "       <a href='/'><img src='Images/redballon.png' class='bannerImage' /></a>\n" +
             "   </div>\n" +
+
             "   <div class='headerBodyContainer'>\n" +
             "       <div id='' class='headerTopRow'>\n" +
             "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
@@ -17,10 +18,11 @@
             "                <a href='/album.html?folder=159'> topic,</a>\n" +
             "                <a href='/album.html?folder=199'> shapes</a> and\n" +
             "                <a href='/album.html?folder=241'>sizes</a>\n" +
-            "            </div>\n" +
-            "                <div class='menuTabs boobRankerBanner' >\n" +
-            "                    <a href='/Ranker.html' target='_blank'>Boobs Ranker</a>" +
-            "               </div>\n";
+                "           <div class='boobRankerBanner'>\n" +
+                "               <a href='/Ranker.html'>Boobs Ranker</a>" +
+                "           </div>\n";
+            "           </div>\n";
+            "           </div>\n";
             "       </div>\n";
         }
         if (lang === "DE") {
@@ -41,7 +43,8 @@
                 "        </div>\n" +
                 "       <div class='menuTabs boobRankerBanner' >\n" +
                 "          <a href='/Ranker.html' target='_blank'>Boobs Ranker</a>" +
-                "        </div>\n";
+                "        </div>\n" +
+                "   </div>\n";
         }
     }
 
@@ -58,7 +61,6 @@
             "            </div>\n" +
             "        </div>\n";
     }
-
 
     if (subdomain === "admin") {
         headerHtml =

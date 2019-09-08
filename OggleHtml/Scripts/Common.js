@@ -180,8 +180,6 @@ function logPageHit(folderName, appName) {
             IpAddress: data.ip
         };
 
-        alert("url  " + settingsArray.ApiServer + "api/HitCounter/LogVisit");
-
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/HitCounter/LogVisit",

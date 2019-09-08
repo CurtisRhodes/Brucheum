@@ -63,9 +63,9 @@ namespace WebApi
                             //godaddyEmail.SendEmail("CONGRATULATIONS: someone new just visited your site", "ip: " + visitorModel.IpAddress + " visited: " + visitorModel.AppName);
                             // translate
 
-                            godaddyEmail.SendEmail("CONGRATULATIONS: someone new just visited your site", "from: " +
-                                visitorModel.City + "," + visitorModel.Country + "/" + visitorModel.Region
-                                + "initial visit: " + visitorModel.PageName);
+                            godaddyEmail.SendEmail("CONGRATULATIONS: someone new just visited your site",
+                             visitorModel.IpAddress + " from " + visitorModel.City + "," + visitorModel.Country + " " + visitorModel.Region
+                                + ".  Initial visit: " + visitorModel.PageName);
                         }
                     }
                     else
@@ -86,7 +86,7 @@ namespace WebApi
                         Visit lastVisit = db.Visits.Where(v => v.VisitorId == visitSuccessModel.VisitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault();
                         if (lastVisit != null)
                         {
-                            if ((DateTime.Now - lastVisit.VisitDate).TotalHours < 24)
+                            if ((DateTime.Now - lastVisit.VisitDate).TotalHours < 12)
                             {
                                 logVisit = false;
                                 visitSuccessModel.WelcomeMessage = "";
@@ -94,9 +94,19 @@ namespace WebApi
                         }
                         if (logVisit)
                         {
-                            Visit visit = new Visit() { VisitorId = visitSuccessModel.VisitorId, VisitDate = DateTime.Today };
+                            Visit visit = new Visit() { VisitorId = visitSuccessModel.VisitorId, VisitDate = DateTime.Now };
                             db.Visits.Add(visit);
                             db.SaveChanges();
+
+                            if ((visitorModel.IpAddress != "68.203.90.183") && (visitorModel.IpAddress != "50.62.160.105"))
+                            {
+                                using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
+                                {
+                                    godaddyEmail.SendEmail("VERY GOOD: someone came back for another visit",
+                                     visitorModel.IpAddress + " from " + visitorModel.City + "," + visitorModel.Country + " " + visitorModel.Region
+                                        + ".  Initial visit: " + visitorModel.PageName);
+                                }
+                            }
                         }
                     }
                 }
