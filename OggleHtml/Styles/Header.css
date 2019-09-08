@@ -9,6 +9,14 @@
     z-index: 10;
 }
 
+.boobRankerBanner {
+    float: left;
+    font-size: 26px;
+    color: var(--oggleTitleColor);
+    margin-left: 100px;
+    cursor: pointer;
+}
+
 .classicColors {
     background-color: var(--oggleHeaderBackgroundColor);
     border-top: var(--oggleHeaderBoarderTop);
@@ -54,7 +62,7 @@
 
                 text-align: center;
                 font-family: Comic Sans MS;
-                color: var(--ogglgeTitleColor);
+                color: var(--oggleTitleColor);
                 vertical-align: top;
                 margin-left: 33px;
                 margin-top: 7px;
@@ -62,7 +70,7 @@
             }
             
             header .headerBodyContainer .headerTopRow .headerSubTitle a {
-                    color: var(--ogglgeTitleColor);
+                    color: var(--oggleTitleColor);
                     cursor: pointer;
                     text-decoration: underline;
                 }

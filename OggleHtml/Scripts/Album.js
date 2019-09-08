@@ -216,7 +216,9 @@ function startSlideShow(imageIndex) {
         });
     });
 
-    //alert("2 currentfolderName: " + currentfolderName);
+    if (typeof staticPageFolderName === 'string') {
+        currentfolderName = staticPageFolderName;
+    }
 
     launchViewer(imageArray, imageIndex, currentFolderId, currentfolderName);
     resizeViewer();

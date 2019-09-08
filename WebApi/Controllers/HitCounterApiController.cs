@@ -16,23 +16,22 @@ namespace WebApi
     public class HitCounterController : ApiController
     {
         [HttpGet]
-           public LogVisitModel Get() {
+        public LogVisitModel Get()
+        {
             LogVisitModel visitModel = new LogVisitModel();
             try
             {
                 using (WebSiteContext db = new WebSiteContext())
                 {
                     //Hit hit = db.Hits.Where(h => h.HitId == hitId).First();
-
-
                     //hit.ViewDuration = (DateTime.Now - hit.BeginView).TotalSeconds.ToString();
-                    db.SaveChanges();
                     visitModel.Success = "ok";
                 }
             }
             catch (Exception ex) { visitModel.Success = Helpers.ErrorDetails(ex); }
             return visitModel;
         }
+
         [HttpPost]
         public LogVisitModel LogVisit(VisitorModel visitorModel)
         {
@@ -66,7 +65,7 @@ namespace WebApi
 
                             godaddyEmail.SendEmail("CONGRATULATIONS: someone new just visited your site", "from: " +
                                 visitorModel.City + "," + visitorModel.Country + "/" + visitorModel.Region
-                                + " visited: " + visitorModel.AppName);
+                                + "initial visit: " + visitorModel.PageName);
                         }
                     }
                     else
@@ -138,25 +137,25 @@ namespace WebApi
             return successModel;
         }
 
-        [HttpPost]
-        public SuccessModel RecordLogin()
-        {
-            SuccessModel success = new SuccessModel();
-            try
-            {
-                using (WebSiteContext db = new WebSiteContext())
-                {
-                    //Hit hit = db.Hits.Where(h => h.HitId == hitId).First();
+        //[HttpPost]
+        //public SuccessModel RecordLogin()
+        //{
+        //    SuccessModel success = new SuccessModel();
+        //    try
+        //    {
+        //        using (WebSiteContext db = new WebSiteContext())
+        //        {
+        //            //Hit hit = db.Hits.Where(h => h.HitId == hitId).First();
 
 
-                    //hit.ViewDuration = (DateTime.Now - hit.BeginView).TotalSeconds.ToString();
-                    db.SaveChanges();
-                    success.Success = "ok";
-                }
-            }
-            catch (Exception ex) { success.Success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
+        //            //hit.ViewDuration = (DateTime.Now - hit.BeginView).TotalSeconds.ToString();
+        //            db.SaveChanges();
+        //            success.Success = "ok";
+        //        }
+        //    }
+        //    catch (Exception ex) { success.Success = Helpers.ErrorDetails(ex); }
+        //    return success;
+        //}
 
         [HttpPatch]
         public string EndVisit(string visitorId)

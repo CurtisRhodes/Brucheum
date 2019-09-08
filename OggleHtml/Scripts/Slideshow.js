@@ -73,28 +73,14 @@ function explodeViewer() {
     if ((viewerT === 0) && (viewerL === 0) && (viewerH === windowH) && (viewerW === windowW)) {
         if (imageViewerFolderName === undefined) {
 
-            alert("imageViewerIndex: " + imageViewerIndex);
 
+            if (typeof staticPageFolderName === 'string') {
+                alert("staticPageFolderName: " + staticPageFolderName);
+                currentfolderName = staticPageFolderName;
+            }
+            else
+                alert("fked");
 
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "api/ImageCategoryDetail/GetModelName?linkId=" + imageViewerIndex,
-                success: function (modelDetails) {
-                    if (modelDetails.Success === "ok") {
-                        selectedImage = modelDetails.Link;
-                        fullPageName = modelDetails.RootFolder + "/" + modelDetails.FolderName;
-                        modelFolderId = modelDetails.FolderId;
-                        imageViewerFolderName = modelDetails.FolderName;
-                        alert("had to lookup folder name: " + imageViewerFolderName);
-                        $('#imageViewerHeaderTitle').html(imageViewerFolderName + "!");
-                    }
-                    else
-                        alert("GetModelName: " + modelDetails.Success);
-                },
-                error: function (xhr) {
-                    alert("GetModelName xhr error: " + xhr.statusText);
-                }
-            });
         }
 
         $('#imageViewerHeaderTitle').html(imageViewerFolderName);

@@ -20,6 +20,7 @@ namespace WebApi.Xml
         public IEnumerable<ArticelXmlModel> Get(int pageLen, int page, string filterType, string filter)
         {
             IEnumerable<ArticelXmlModel> orderedList = new List<ArticelXmlModel>();
+            var articleList = new List<ArticelXmlModel>();
             try
             {
                 var regularList = new List<ArticelXmlModel>();
@@ -28,7 +29,6 @@ namespace WebApi.Xml
 
                 XmlNodeList entries = xdoc.SelectNodes("//Article");
                 xdoc = null;
-                var articleList = new List<ArticelXmlModel>();
                 foreach (XmlNode entry in entries)
                 {
                     if (entry.Attributes["DateCreated"].InnerText != "")
@@ -87,7 +87,8 @@ namespace WebApi.Xml
             }
             catch (Exception e)
             {
-                orderedList.Append(new ArticelXmlModel() { Title = "ERROR", Summary = e.Message });
+                articleList.Add(new ArticelXmlModel() { Title = "ERROR", Summary = e.Message });
+                orderedList = articleList;
             }
             return orderedList;
         }
@@ -171,7 +172,7 @@ namespace WebApi.Xml
             }
             catch (Exception e)
             {
-                articleList.Append(new ArticelXmlModel() { Title = "ERROR", Summary = e.Message });
+                articleList.Add(new ArticelXmlModel() { Title = "ERROR", Summary = e.Message });
             }
             return articleList;
         }

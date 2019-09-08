@@ -5,20 +5,23 @@
     if (subdomain === "boobs" || subdomain === "archive") {
         if (lang === "en") {
             headerHtml =
-                "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
-                "       <a href='/'><img src='Images/redballon.png' class='bannerImage' /></a>\n" +
-                "   </div>\n" +
-                "   <div class='headerBodyContainer'>\n" +
-                "       <div id='' class='headerTopRow'>\n" +
-                "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
-                "           <div class='headerSubTitle' id='headerSubTitle'>\n" +
-                "                <a href='/album.html?folder=2'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
-                "                <a href='/album.html?folder=136'> poses,</a>\n" +
-                "                <a href='/album.html?folder=159'> topic,</a>\n" +
-                "                <a href='/album.html?folder=199'> shapes</a> and\n" +
-                "                <a href='/album.html?folder=241'>sizes</a>\n" +
-                "            </div>\n" +
-                "        </div>\n";
+            "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
+            "       <a href='/'><img src='Images/redballon.png' class='bannerImage' /></a>\n" +
+            "   </div>\n" +
+            "   <div class='headerBodyContainer'>\n" +
+            "       <div id='' class='headerTopRow'>\n" +
+            "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
+            "           <div class='headerSubTitle' id='headerSubTitle'>\n" +
+            "                <a href='/album.html?folder=2'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+            "                <a href='/album.html?folder=136'> poses,</a>\n" +
+            "                <a href='/album.html?folder=159'> topic,</a>\n" +
+            "                <a href='/album.html?folder=199'> shapes</a> and\n" +
+            "                <a href='/album.html?folder=241'>sizes</a>\n" +
+            "            </div>\n" +
+            "                <div class='menuTabs boobRankerBanner' >\n" +
+            "                    <a href='/Ranker.html' target='_blank'>Boobs Ranker</a>" +
+            "               </div>\n";
+            "       </div>\n";
         }
         if (lang === "DE") {
             headerHtml =
@@ -35,6 +38,9 @@
                 "                <a href='/album.html?folder=199'> figurer</a> og\n" +
                 "                <a href='/album.html?folder=241'>størrelser</a>\n" +
                 "            </div>\n" +
+                "        </div>\n" +
+                "       <div class='menuTabs boobRankerBanner' >\n" +
+                "          <a href='/Ranker.html' target='_blank'>Boobs Ranker</a>" +
                 "        </div>\n";
         }
     }

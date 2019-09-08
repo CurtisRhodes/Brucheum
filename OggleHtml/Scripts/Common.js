@@ -180,9 +180,11 @@ function logPageHit(folderName, appName) {
             IpAddress: data.ip
         };
 
+        alert("url  " + settingsArray.ApiServer + "api/HitCounter/LogVisit");
+
         $.ajax({
             type: "POST",
-            url: settingsArray.ApiServer + "api/HitCounter",
+            url: settingsArray.ApiServer + "api/HitCounter/LogVisit",
             data: visitorModel,
             success: function (visitModel) {
                 if (visitModel.Success === "ok") {
@@ -323,7 +325,7 @@ function getFileDate() {
 }
 
 // SET HEADER
-function getHeader(subdomain) {
+function xxxgetHeader(subdomain) {
 
     //$('#replaceableMenuItems').append("<div id='babapediaLink' class='menuTabs'>\n" +
     //    "              <a href='https://www.babepedia.com' target='_blank'><img src='/Images/babepedia.png' class='freeones'></a>" +

@@ -62,7 +62,7 @@ namespace WebApi
             }
             catch (Exception ex)
             {
-                articleList.Append(new DbArticleModel() { Title = "ERROR", Summary = Helpers.ErrorDetails(ex) });
+                articleList.Add(new DbArticleModel() { Title = "ERROR", Summary = Helpers.ErrorDetails(ex) });
             }
             return articleList;
         }
