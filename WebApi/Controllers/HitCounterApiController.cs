@@ -58,14 +58,18 @@ namespace WebApi
                         db.SaveChanges();
                         visitSuccessModel.WelcomeMessage = "Welcome new visitor!";
                         visitSuccessModel.VisitorId = dbVisitor.VisitorId;
+
+                        Visit visit = new Visit() { VisitorId = visitSuccessModel.VisitorId, VisitDate = DateTime.Now };
+                        db.Visits.Add(visit);
+                        db.SaveChanges();
+
                         using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
                         {
                             //godaddyEmail.SendEmail("CONGRATULATIONS: someone new just visited your site", "ip: " + visitorModel.IpAddress + " visited: " + visitorModel.AppName);
                             // translate
 
                             godaddyEmail.SendEmail("CONGRATULATIONS: someone new just visited your site",
-                             visitorModel.IpAddress + " from " + visitorModel.City + "," + visitorModel.Country + " " + visitorModel.Region
-                                + ".  Initial visit: " + visitorModel.PageName);
+                             visitorModel.PageName + " visited from " + visitorModel.City + "," + visitorModel.Region + " " + visitorModel.Country);
                         }
                     }
                     else
@@ -122,7 +126,7 @@ namespace WebApi
             SuccessModel successModel = new SuccessModel();
             try
             {
-                if ((pageHitModel.IpAddress != "68.203.90.183") && (pageHitModel.IpAddress != "50.62.160.105"))
+                //if ((pageHitModel.IpAddress != "68.203.90.183") && (pageHitModel.IpAddress != "50.62.160.105"))
                 {
                     using (WebStatsContext db = new WebStatsContext())
                     {
@@ -134,14 +138,23 @@ namespace WebApi
                         db.PageHits.Add(hit);
                         db.SaveChanges();
 
+                        var pageHits = (from h in db.PageHits
+                                        where h.VisitorId == pageHitModel.VisitorId
+                                        select new SuccessModel()).ToList();
+                        successModel.ReturnValue = pageHits.Count().ToString();
+                        //var x = pageHits
+                        //successModel.ReturnValue = pageHits.ToString();
+
                         if (pageHitModel.Verbose)
                         {
-                            new GodaddyEmailController().SendEmail("Page Visit", "Visitor " + pageHitModel.IpAddress + " visited: " + pageHitModel.PageName);
-                        }
-                        successModel.Success = "ok";
+                            using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
+                            {
+                                godaddyEmail.SendEmail("Page Visit", "Visitor " + pageHitModel.IpAddress + " visited: " + pageHitModel.PageName);
+                            }
+                        }                        
                     }
                 }
-                successModel.ReturnValue = "ok";
+                successModel.Success = "ok";
             }
             catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }
             return successModel;
@@ -217,8 +230,4 @@ namespace WebApi
             return success;
         }
     }
-
-
-
-
 }

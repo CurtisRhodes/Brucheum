@@ -53,15 +53,14 @@ namespace WebApi.Controllers
                 folderName = Helpers.GetCustomStaticFolderName(folderId, folderName.Replace(".OGGLEBOOBLE.COM", ""));
                 string staticContent =
                     "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, folderName) +
-                    "\n<body style='margin-top:105px'>\n" +
-                    HeaderHtml(folderId) +
+                    "\n<body style='margin-top:105px'>\n<header></header>" + 
                     GalleryPageBodyHtml(folderId, rootFolder) +
                     CommentDialog() + CategoryDialog() + ModelInfoDialog() +
                     "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
                     "<script>var staticPageFolderId=" + folderId + "; " +
                     "var staticPageFolderName='" + folderName + "'; " +
                     "var staticPageImagesCount='" + imagesCount + "'; " +
-                    "var currentFolderRoot='" + rootFolder + "';</script>\n" +
+                    "var staticPageRootFolderId='" + rootFolder + "';</script>\n" +
                     Slideshow() + LoginDialog() + RegisterDialog() + FooterHtml(rootFolder) +
                     "<script src='/scripts/StaticPage.js'></script>\n" +
                     "\n</body>\n</html>";
@@ -146,6 +145,7 @@ namespace WebApi.Controllers
                 "   <link rel='icon' type='image/png' href='/static/favicon.png' />" +
                 "   <script src='/Scripts/Login.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Common.js' type='text/javascript'></script>\n" +
+                "   <script src='/Scripts/OggleHeader.js'></script>\n"+
                 "   <script src='/Scripts/Album.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Slideshow.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/ImageCommentDialog.js' type='text/javascript'></script>\n" +

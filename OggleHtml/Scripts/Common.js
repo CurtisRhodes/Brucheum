@@ -1,5 +1,6 @@
 ﻿var settingsArray = {};
 var userRoles = [];
+var freeVisitorHitsAllowed = 5;
 
 $(document).ready(function () {
     loadSettings();
@@ -191,9 +192,8 @@ function logPageHit(folderName, appName) {
                         $('#headerMessage').html(visitModel.WelcomeMessage);
                     }
 
-                    if ((data.ip === "68.203.90.183") || (data.ip === "50.62.160.105"))
-                        return "ok";
-                    else {
+                    //if ((data.ip === "68.203.90.183") || (data.ip === "50.62.160.105")) return "ok"; else
+                    {
                         var hitCounterModel = {
                             VisitorId: visitModel.VisitorId,
                             AppId: appName,
@@ -208,6 +208,12 @@ function logPageHit(folderName, appName) {
                             data: hitCounterModel,
                             success: function (successModel) {
                                 if (successModel.Success === "ok") {
+                                    if (successModel.ReturnValue > freeVisitorHitsAllowed) {
+                                        alert("you hav now visited " + successModel.ReturnValue + " pages." +
+                                            "\n It's time you Registered and logged in." +
+                                            "\n you will be placed in manditory comment mode until you log in ");
+                                    }
+
                                     //if (userName === "unknown")
                                     //    $('#footerMessage').html("logPageHit: " + successModel.ReturnValue);
                                     //else

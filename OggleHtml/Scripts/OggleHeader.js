@@ -6,9 +6,8 @@
         if (lang === "en") {
             headerHtml =
             "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
-            "       <a href='/'><img src='Images/redballon.png' class='bannerImage' /></a>\n" +
+            "       <a href='/'><img src='/Images/redballon.png' title='home. Find lots of cool things here.' class='bannerImage' /></a>\n" +
             "   </div>\n" +
-
             "   <div class='headerBodyContainer'>\n" +
             "       <div id='' class='headerTopRow'>\n" +
             "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
@@ -18,17 +17,16 @@
             "                <a href='/album.html?folder=159'> topic,</a>\n" +
             "                <a href='/album.html?folder=199'> shapes</a> and\n" +
             "                <a href='/album.html?folder=241'>sizes</a>\n" +
-            "              <div class='boobRankerBanner'>\n" +
+            "               <div class='boobRankerBanner'>\n" +
             "                   <a href='/Ranker.html' title='check out a masterpiece of web design. Spin through the links to land on random portrait images. ' >Boobs Ranker</a>" +
-            "               </div>\n";
-            "           </div>\n";
-            "           </div>\n";
+            "               </div>\n"+
+            "           </div>\n"+
             "       </div>\n";
         }
         if (lang === "DE") {
             headerHtml =
                 "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
-                "       <a href='/'><img src='Images/redballon.png' class='bannerImage' /></a>\n" +
+                "       <a href='/'><img src='Images/redballon.png' title='home' class='bannerImage' /></a>\n" +
                 "   </div>\n" +
                 "   <div class='headerBodyContainer'>\n" +
                 "       <div id='' class='headerTopRow'>\n" +
@@ -51,15 +49,24 @@
 
     if (subdomain === "playboy" || subdomain === "playmates") {
         headerHtml =
-            "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
-            "       <a href='/'><img src='Images/redballon.png' class='bannerImage' /></a>\n" +
-            "   </div>\n" +
-            "   <div class='headerBodyContainer'>\n" +
-            "       <div class='headerTopRow'>\n" +
-            "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
-            "           <div class='headerSubTitle' id='headerSubTitle'>Every Playboy Centerfold" +
-            "            </div>\n" +
-            "        </div>\n";
+        "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
+        "       <a href='/'><img src='/Images/redballon.png' title='home. Find lots of cool things here.' class='bannerImage' /></a>\n" +
+        "   </div>\n" +
+        "   <div class='headerBodyContainer'>\n" +
+        "       <div class='headerTopRow'>\n" +
+        "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
+        "           <div class='domainMessage'>Every Playboy Centerfold</div>\n" +
+        "           <div class='headerSubTitle' id='headerSubTitle'>\n" +
+        "               <a href='/album.html?folder=2'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+        "               <a href='/album.html?folder=136'> poses,</a>\n" +
+        "               <a href='/album.html?folder=159'> topic,</a>\n" +
+        "               <a href='/album.html?folder=199'> shapes</a> and\n" +
+        "               <a href='/album.html?folder=241'>sizes</a>\n" +
+        "               <div class='boobRankerBanner'>\n" +
+        "                   <a href='/Ranker.html' title='check out a masterpiece of web design. Spin through the links to land on random portrait images. ' >Boobs Ranker</a>" +
+        "               </div>\n";        
+        "           </div>\n" +
+        "       </div>\n";
     }
 
     if (subdomain === "admin") {
@@ -94,31 +101,35 @@
             "       </div>\n";
     }
 
+    //alert("subdomain: " + subdomain);
+    //alert("headerHtml: " + headerHtml);
+
     headerHtml +=
-        "   <div class='headerBottomRow'>\n" +
-        "       <div id='headerMessage' class='floatLeft'></div>\n" +
-        "       <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
-        "       <div class='menuTabs replaceableMenuItems'>\n" +
-        "           <div id='freeonesLink' class='menuTabs displayHidden'>\n" +
-        "              <a href='http://www.freeones.com' target='_blank'><img src='/Images/freeones.png' class='freeones'></a>" +
-        "           </div>\n" +
-        "           <div id='babapediaLink' class='menuTabs displayHidden'>\n" +
-        "              <a href='https://www.babepedia.com' target='_blank'><img src='/Images/babepedia.png' class='freeones'></a>" +
-        "           </div>\n" +
-        "       </div>\n" +
-        "       <div id='optionLoggedIn' class='displayHidden'>\n" +
-        "           <div class='menuTab floatRight'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
-        "           <div class='menuTab floatRight' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
-        "       </div>\n" +
-        "       <div id='optionNotLoggedIn'>\n" +
-        "           <div id='btnLayoutRegister' class='menuTab floatRight'><a href='javascript:onRegisterClick()'>Register</a></div>\n" +
-        "               <div id='btnLayoutLogin' class='menuTab floatRight'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
-        "           </div>\n" +
-        "           <div class='menuTabs' id='adminTabs'>\n" +
-        "              <div id='menuTabAdmin' class='menuTab displayHidden loginRequired floatRight'><a href='/Dashboard.html'>dashboard</a></div>\n" +
-        "           </div>\n" +
-        "       </div>\n" +
-        "   </div>\n";
+            "       <div class='headerBottomRow'>\n" +
+            "           <div id='headerMessage' class='floatLeft'></div>\n" +
+            "           <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
+            "           <div class='menuTabs replaceableMenuItems'>\n" +
+            "               <div id='freeonesLink' class='menuTabs displayHidden'>\n" +
+            "                   <a href='http://www.freeones.com' target='_blank'><img src='/Images/freeones.png' class='freeones'></a>" +
+            "               </div>\n" +
+            "               <div id='babapediaLink' class='menuTabs displayHidden'>\n" +
+            "                   <a href='https://www.babepedia.com' target='_blank'><img src='/Images/babepedia.png' class='freeones'></a>" +
+            "               </div>\n" +
+            "           </div>\n" +
+            "           <div id='optionLoggedIn' class='displayHidden'>\n" +
+            "               <div class='menuTab floatRight'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
+            "               <div class='menuTab floatRight' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
+            "           </div>\n" +
+            "           <div id='optionNotLoggedIn'>\n" +
+            "               <div id='btnLayoutRegister' class='menuTab floatRight'><a href='javascript:onRegisterClick()'>Register</a></div>\n" +
+            "                   <div id='btnLayoutLogin' class='menuTab floatRight'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
+            "               </div>\n" +
+            "               <div class='menuTabs' id='adminTabs'>\n" +
+            "                   <div id='menuTabAdmin' class='menuTab displayHidden loginRequired floatRight'><a href='/Dashboard.html'>dashboard</a></div>\n" +
+            "               </div>\n" +
+            "           </div>\n" +
+            "       </div>\n" +  //  headerBottomRow
+            "   </div>\n"; // headerBodyContainer
 
     $('header').html(headerHtml);
 }

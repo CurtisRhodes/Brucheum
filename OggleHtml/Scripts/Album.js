@@ -74,7 +74,6 @@ function getBreadCrumbs(folderId) {
                     }
                 }
                 currentfolderName = breadCrumbModel.FolderName;
-                //alert("1 currentfolderName: " + currentfolderName);
                 document.title = currentfolderName + " : OggleBooble";
                 logPageHit(currentfolderName, "OggleHtml");
             }
