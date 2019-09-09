@@ -323,7 +323,7 @@ function getFileDate() {
 }
 
 // SET HEADER
-function xxxgetHeader(subdomain) {
+function getHeader(subdomain) {
 
     //$('#replaceableMenuItems').append("<div id='babapediaLink' class='menuTabs'>\n" +
     //    "              <a href='https://www.babepedia.com' target='_blank'><img src='/Images/babepedia.png' class='freeones'></a>" +

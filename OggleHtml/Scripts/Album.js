@@ -32,7 +32,7 @@ function getAlbumPageHeader(folderId) {
         url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=" + folderId,
         success: function (successModel) {
             if (successModel.Success === "ok") {
-                getHeader(successModel.ReturnValue);
+                getOggleHeader(successModel.ReturnValue);
             }
             else
                 alert("getAlbumPageHeader " + successModel.Success);
@@ -60,7 +60,9 @@ function getBreadCrumbs(folderId) {
                         if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder) {
                             $('#breadcrumbContainer').append("<a class='inactiveBreadCrumb' " +
                                 //"onmouseover='slowlyShowCatDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + "); forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;' >" +
-                                "onclick='showHomeFolderInfoDialog(" + Number(breadCrumbModel.BreadCrumbs.length - i) + ",\"" + breadCrumbModel.FolderName + "\",\"" + breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" + breadCrumbModel.RootFolder + "\")' >" +
+                                "onclick='showHomeFolderInfoDialog(" + Number(breadCrumbModel.BreadCrumbs.length - i) +
+                                ",\"" + breadCrumbModel.FolderName + "\",\"" + breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" + breadCrumbModel.BreadCrumbs[i].ParentId
+                                + "\",\"" + breadCrumbModel.RootFolder + "\")' >" +
                                 //"onclick='showCategoryDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + ");' >" +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
@@ -86,9 +88,9 @@ function getBreadCrumbs(folderId) {
     });
 }
 
-function showHomeFolderInfoDialog(index, folderName, folderId, rootFolder) {
-    //alert("showHomeFolderInfoDialog(" + folderId + "," + rootFolder + ")");
-    if ((rootFolder === "playboy" && index > 4) || (rootFolder === "archive" && index > 2)) {
+function showHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
+    //alert("parentId: " + parentId + "  == 506: " + (parentId === "506"));
+    if ((rootFolder === "playboy" && index > 4) || (rootFolder === "archive" && index > 2) || (parentId === "506")) {
         showModelInfoDialog(folderName, folderId, 'Images/redballon.png');
     }
     else

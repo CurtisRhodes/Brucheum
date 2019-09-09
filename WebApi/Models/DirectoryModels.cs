@@ -50,6 +50,7 @@ namespace WebApi.Models
     {
         public int FolderId { get; set; }
         public string FolderName { get; set; }
+        public int ParentId { get; set; }
         public bool IsInitialFolder { get; set; }
     }
 

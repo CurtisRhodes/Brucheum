@@ -137,6 +137,7 @@ namespace WebApi
                     {
                         FolderId = thisFolder.Id,
                         FolderName = thisFolder.FolderName,
+                        ParentId = thisFolder.Parent,
                         IsInitialFolder = true
                     });
                     breadCrumbModel.RootFolder = thisFolder.RootFolder;

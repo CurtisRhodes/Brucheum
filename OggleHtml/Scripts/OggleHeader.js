@@ -1,4 +1,4 @@
-﻿function getHeader(subdomain) {
+﻿function getOggleHeader(subdomain) {
     var headerHtml;
     var lang = "en";
 
@@ -18,9 +18,9 @@
             "                <a href='/album.html?folder=159'> topic,</a>\n" +
             "                <a href='/album.html?folder=199'> shapes</a> and\n" +
             "                <a href='/album.html?folder=241'>sizes</a>\n" +
-                "           <div class='boobRankerBanner'>\n" +
-                "               <a href='/Ranker.html'>Boobs Ranker</a>" +
-                "           </div>\n";
+            "              <div class='boobRankerBanner'>\n" +
+            "                   <a href='/Ranker.html'>Boobs Ranker</a>" +
+            "               </div>\n";
             "           </div>\n";
             "           </div>\n";
             "       </div>\n";

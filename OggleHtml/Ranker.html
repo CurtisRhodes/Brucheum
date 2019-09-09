@@ -88,7 +88,7 @@
             else
                 subdomain = params.subdomain;
 
-            getHeader(subdomain);
+            getOggleHeader(subdomain);
             $('#breadcrumbContainer').html(subdomain);
 
             var dots = "";
@@ -216,7 +216,7 @@
             $('#breadcrumbContainer').html(domain);
             rankerLinksArray = [];
             loadBoobsRanker()
-            getHeader(subdomain);
+            getOggleHeader(subdomain);
         }
 
         function imageClick(selectedSide) {
