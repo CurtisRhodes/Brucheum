@@ -46,10 +46,10 @@
                         <div id="rankerRightText" class="rankerImageName">rankerRightText</div>
                     </div>
                     <div class="floatLeft">
-                        <div class="playboyButton" onclick="changeDomain('boobs')">poses and shapes</div>
-                        <div class="playboyButton" onclick="changeDomain('playmates')">Playboy playmates</div>
-                        <div class="playboyButton" onclick="changeDomain('archive')">archive</div>
-                        <div class="playboyButton" onclick="changeDomain('porn')">porn</div>
+                        <div id="playboyButtonBoobs" class="playboyButton" onclick="changeDomain('boobs')">poses and shapes</div>
+                        <div id="playboyButtonplaymates" class="playboyButton" onclick="changeDomain('playmates')">Playboy playmates</div>
+                        <div id="playboyButtonarchive" class="playboyButton" onclick="changeDomain('archive')">archive</div>
+                        <div id="playboyButtonporn" class="playboyButton" onclick="changeDomain('porn')">porn</div>
                     </div>
                 </div>
             </div>
@@ -83,8 +83,9 @@
             resizePage();
 
             params = getParams();
-            if (params.subdomain == undefined)
+            if (params.subdomain == undefined) {
                 subdomain = "boobs";
+            }
             else
                 subdomain = params.subdomain;
 
@@ -107,6 +108,7 @@
                             $('#dots').html('');                            
                             clearInterval(waiter2);
                             $('#footerMessage').html("isPornEditor: " + isPornEditor);
+                            $('#playboyButtonBoobs').addClass('selectedPlayboyButton');                            
                             loadBoobsRanker();
                         }
                     }, 300);
@@ -209,7 +211,9 @@
         function changeDomain(domain) {
             subdomain = domain;
             skip = 0;
-            take = 40;
+            $('.playboyButton').removeClass('selectedPlayboyButton');
+            //alert("'#playboyButton" + domain + "': " + $('#playboyButton' + domain+'').attr('id'));
+            $('#playboyButton' + domain + '').addClass('selectedPlayboyButton');
             clearInterval(slotTimer);
             clearInterval(countDownTimer);
             clearInterval(throttle);
@@ -217,6 +221,7 @@
             rankerLinksArray = [];
             loadBoobsRanker()
             getOggleHeader(subdomain);
+            $('#breadcrumbContainer').html(domain);
         }
 
         function imageClick(selectedSide) {

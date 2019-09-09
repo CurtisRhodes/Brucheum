@@ -63,7 +63,7 @@
 
             header .headerBodyContainer .headerTopRow .headerSubTitle {
                 float: left;
-
+                width: 100%;
                 text-align: center;
                 font-family: Comic Sans MS;
                 color: var(--oggleTitleColor);

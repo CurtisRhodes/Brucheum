@@ -44,7 +44,7 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
 }
 
 function getFolderDetails(modelName, folderId, currentSrc) {
-    alert("modelName: " + modelName + " folderId:" + folderId);
+    //alert("modelName: " + modelName + " folderId:" + folderId);
     if (modelName === "unknown model") {
         FolderDetailModel.FolderImage = currentSrc;
         $('#modelDialogThumbNailImage').attr("src", currentSrc);

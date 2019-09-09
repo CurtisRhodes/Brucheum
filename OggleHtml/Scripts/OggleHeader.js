@@ -19,7 +19,7 @@
             "                <a href='/album.html?folder=199'> shapes</a> and\n" +
             "                <a href='/album.html?folder=241'>sizes</a>\n" +
             "              <div class='boobRankerBanner'>\n" +
-            "                   <a href='/Ranker.html'>Boobs Ranker</a>" +
+            "                   <a href='/Ranker.html' title='check out a masterpiece of web design. Spin through the links to land on random portrait images. ' >Boobs Ranker</a>" +
             "               </div>\n";
             "           </div>\n";
             "           </div>\n";

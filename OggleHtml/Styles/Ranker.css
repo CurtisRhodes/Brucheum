@@ -6,6 +6,9 @@
     margin-top: 100px;
     cursor: pointer;
 }
+.selectedPlayboyButton {
+    background-color: var(--brucheumBlue);
+}
 .boobsRankerTitle {
     font-size: 28px;
     font-family: Verdana;
