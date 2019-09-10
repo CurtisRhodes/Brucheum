@@ -172,18 +172,25 @@ function profilePease() {
 }
 
 function setUserPermissions() {
-    if (document.domain === 'localhost') {
-        $('.loginRequired').show();
-        $('.adminLevelRequired').show();
-        if (typeof isPornEditor === 'boolean') 
-            isPornEditor = true;        
-        $('#spnUserName').html("devl");
-        $('#optionLoggedIn').hide();
-        $('#optionNotLoggedIn').hide();
-        //alert("document.domain : " + document.domain);
-    }
-    else {
+
+    alert("entering setUserPermissions");
+
+    //if (document.domain === 'localhost') {
+    //    $('.loginRequired').show();
+    //    $('.adminLevelRequired').show();
+    //    if (typeof isPornEditor === 'boolean')
+    //        isPornEditor = true;
+    //    $('#spnUserName').html("devl");
+    //    $('#optionLoggedIn').hide();
+    //    $('#optionNotLoggedIn').hide();
+    //    alert("document.domain : " + document.domain);
+    //    if (typeof permissionsSet === "boolean")
+    //        permissionsSet = true;
+    //}
+    //else
+    {
         var userName = getCookieValue("User");
+        alert("userName: " + userName);
         if (userName !== "") {
             $.ajax({
                 type: "GET",
@@ -200,11 +207,17 @@ function setUserPermissions() {
                                 $('.adminLevelRequired').show();
 
 
-                                if (typeof isPornEditor === 'boolean') {
+                                if (typeof isPornEditor === 'boolean')
                                     isPornEditor = true;
-                                    //alert("setUserPermissions isPornEditor: " + isPornEditor);
-                                    
-                                }
+                                else
+                                    alert("typeof isPornEditor: " + typeof isPornEditor);
+
+                                //alert("LOGIN isPornEditor: " + isPornEditor);
+                                //alert("setUserPermissions isPornEditor: " + isPornEditor);
+
+                                if (typeof permissionsSet === "boolean")
+                                    permissionsSet = true;
+
                             }
                         });
                     }
@@ -216,9 +229,13 @@ function setUserPermissions() {
                 }
             });
         }
+        else {
+            if (typeof permissionsSet === "boolean") {
+                alert("userName: " + userName);
+                permissionsSet = true;
+            }
+        }
     }
-    if (typeof permissionsSet === "boolean")
-        permissionsSet = true;
 }
 
 function isInRole(roleName) {
