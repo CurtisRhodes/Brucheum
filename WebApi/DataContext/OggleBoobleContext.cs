@@ -90,6 +90,7 @@ namespace WebApi.DataContext
         public string Boobs { get; set; }
         public string FolderImage { get; set; }
         public string MetaDescription { get; set; }
+        public int SortOrder { get; set; }
     }
 
     [Table("OggleBooble.vwLinks")]

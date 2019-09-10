@@ -126,7 +126,7 @@ namespace WebApi
             SuccessModel successModel = new SuccessModel();
             try
             {
-                //if ((pageHitModel.IpAddress != "68.203.90.183") && (pageHitModel.IpAddress != "50.62.160.105"))
+                if ((pageHitModel.IpAddress != "68.203.90.183") && (pageHitModel.IpAddress != "50.62.160.105"))
                 {
                     using (WebStatsContext db = new WebStatsContext())
                     {

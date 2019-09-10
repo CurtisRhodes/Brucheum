@@ -800,7 +800,7 @@ namespace WebApi
 
                             if (successModel.Success == "ok")
                             {
-                                db.CategoryFolderDetails.Add(new CategoryFolderDetail() { FolderId = newFolder.Id });
+                                db.CategoryFolderDetails.Add(new CategoryFolderDetail() { FolderId = newFolder.Id, SortOrder = 99 });
                                 db.SaveChanges();
                             }
                         }
