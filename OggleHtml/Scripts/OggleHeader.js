@@ -55,7 +55,7 @@
         "   <div class='headerBodyContainer'>\n" +
         "       <div class='headerTopRow'>\n" +
         "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
-        "           <div class='domainMessage'>Every Playboy Centerfold</div>\n" +
+        //"           <div class='domainMessage'>Every Playboy Centerfold</div>\n" +
         "           <div class='headerSubTitle' id='headerSubTitle'>\n" +
         "               <a href='/album.html?folder=2'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
         "               <a href='/album.html?folder=136'> poses,</a>\n" +

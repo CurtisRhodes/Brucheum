@@ -1,6 +1,6 @@
 ﻿var settingsArray = {};
 var userRoles = [];
-var freeVisitorHitsAllowed = 5;
+var freeVisitorHitsAllowed = 1500;
 
 $(document).ready(function () {
     loadSettings();
@@ -192,11 +192,19 @@ function logPageHit(folderName, appName) {
                         $('#headerMessage').html(visitModel.WelcomeMessage);
                     }
 
+    //public class PageHitModel {
+    //    public string VisitorId { get; set; }
+    //    public string IpAddress { get; set; }
+    //    public string AppName { get; set; }
+    //    public string PageName { get; set; }
+    //    public string VisitDate { get; set; }
+    //    public bool Verbose { get; set; }
+    //}
                     //if ((data.ip === "68.203.90.183") || (data.ip === "50.62.160.105")) return "ok"; else
                     {
                         var hitCounterModel = {
                             VisitorId: visitModel.VisitorId,
-                            AppId: appName,
+                            AppName: appName,
                             IpAddress: data.ip,
                             PageName: folderName,
                             UserName: userName,
@@ -220,8 +228,10 @@ function logPageHit(folderName, appName) {
                                     setLoginHeader(userName);
                                     $('#footerMessage').html("");
                                 }
-                                else
-                                    alert("logPageHit: " + successModel.Success);
+                                else {
+
+                                    //alert("logPageHit: " + successModel.Success);
+                                }
                             },
                             error: function (jqXHR, exception) {
                                 alert("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));

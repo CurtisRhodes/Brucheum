@@ -118,6 +118,7 @@ namespace WebApi.DataContext
         public int FileCount { get; set; }
         public int TotalFiles { get; set; }
         public int GrandTotalFiles { get; set; }
+        public int SortOrder { get; set; }
     }
 
     [Table("OggleBooble.VideoLink")]

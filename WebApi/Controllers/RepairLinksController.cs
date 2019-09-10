@@ -162,9 +162,9 @@ namespace WebApi
                                         }
                                     }
 
-                                    ImageLink goDaddyLinkExists = db.ImageLinks.Where(g => g.Id == linkId && g.FolderLocation != folderId).FirstOrDefault();
+                                    ImageLink goDaddyLinkExists = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
                                     if (goDaddyLinkExists == null)
-                                    {                                        
+                                    {
                                         goDaddyLinkExists = db.ImageLinks.Where(g => g.Link == (expectedLinkName + "/" + expectedFileName) && g.FolderLocation == folderId).FirstOrDefault();
                                         if (goDaddyLinkExists == null)
                                         {   // no godaddyLink found // add row
@@ -180,6 +180,20 @@ namespace WebApi
                                             anyChangesMade = true;
                                         }
                                     }
+                                    else
+                                    {
+                                        if (goDaddyLinkExists.Link != expectedLinkName + "/" + expectedFileName)
+                                        {
+                                            goDaddyLinkExists.Link = expectedLinkName + "/" + expectedFileName;
+                                            db.SaveChanges();
+                                            repairReport.LinksEdited++;
+                                            anyChangesMade = true;
+                                        }
+                                        else {
+                                            anyChangesMade = true;
+                                        }
+                                    }
+
                                     if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == folderId).Where(c => c.ImageLinkId == linkId).Where(c => c.ImageCategoryId == folderId).FirstOrDefault() == null)
                                     {
                                         CategoryImageLink newCatLink = new CategoryImageLink() { ImageCategoryId = folderId, ImageLinkId = linkId };
@@ -339,28 +353,16 @@ namespace WebApi
                             repairReport.Errors.Add("Extra Links Found in " + ftpPath);
                         }
                     }
-
-                    int[] subDirs = db.CategoryFolders.Where(f => f.Parent == folderId).Select(f => f.Id).ToArray();
-
-                    foreach (int subDir in subDirs)
-                    {
-                        repairReport.isSubFolder = true;
-                        RepairLinksRecurr(subDir, repairReport, db);
-                    }
-
                 }
             }
+
+            int[] subDirs = db.CategoryFolders.Where(f => f.Parent == folderId).Select(f => f.Id).ToArray();
+            foreach (int subDir in subDirs)
+            {
+                repairReport.isSubFolder = true;
+                RepairLinksRecurr(subDir, repairReport, db);
+            }
         }
-
-        private void UnListedImages()
-        {
-            string ftpFolderPath = ftpHost;
-
-
-
-        }
-
-
 
         private string DownLoadImage(string ftpPath, string link, string newFileName)
         {

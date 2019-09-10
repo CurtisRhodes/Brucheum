@@ -30,7 +30,7 @@ namespace WebApi
                     imageLinks.RootFolder = dbCategoryFolder.RootFolder;
                     imageLinks.FolderName = dbCategoryFolder.FolderName;
 
-                    List<VwDirTree> vwTrees = db.VwDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.FolderName).ToList();
+                    List<VwDirTree> vwTrees = db.VwDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
                     string folderImage = null;
 
                     foreach (VwDirTree vwTree in vwTrees)

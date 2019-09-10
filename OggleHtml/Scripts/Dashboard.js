@@ -275,15 +275,15 @@ function renameFolder() {
         url: settingsArray.ApiServer + "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&currentF=x&newFolderName=" + $('#txtReName').val(),
         success: function (success) {
             $('#dashBoardLoadingGif').hide();
-            $('#renameFolderCrud').dialog("close");
-            $('#renameFolderCrud').hide();
+            $//('#renameFolderCrud').dialog("close");
+            //$('#renameFolderCrud').hide();
             if (success === "ok") {
                 var delta = Date.now() - start;
                 var minutes = Math.floor(delta / 60000);
                 var seconds = (delta % 60000 / 1000).toFixed(0);
                 displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
                 console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-                buildDirectoryTree();
+                //buildDirectoryTree();
 
                 var changeLogModel = {
                     PageId: dashboardMainSelectedTreeId,

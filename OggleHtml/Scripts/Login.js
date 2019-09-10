@@ -177,12 +177,16 @@ function setUserPermissions() {
         $('.adminLevelRequired').show();
         if (typeof isPornEditor === 'boolean') 
             isPornEditor = true;        
+        if (typeof permissionsSet === "boolean")
+            permissionsSet = true;
         $('#spnUserName').html("devl");
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').hide();
         //alert("document.domain : " + document.domain);
     }
-    else {
+    else
+    {
+        //alert("zentering setUserPermissions");
         var userName = getCookieValue("User");
         if (userName !== "") {
             $.ajax({
@@ -203,10 +207,15 @@ function setUserPermissions() {
                                 if (typeof isPornEditor === 'boolean') {
                                     isPornEditor = true;
                                     //alert("setUserPermissions isPornEditor: " + isPornEditor);
-                                    
+
                                 }
                             }
                         });
+                        if (typeof permissionsSet === "boolean")
+                            permissionsSet = true;
+
+                        //alert("leaving2 setUserPermissions");
+
                     }
                     else
                         alert("loadUserRoles: " + roleModel.Success);
@@ -216,9 +225,12 @@ function setUserPermissions() {
                 }
             });
         }
+        else {
+            if (typeof permissionsSet === "boolean")
+                permissionsSet = true;
+            //alert("leaving setUserPermissions");
+        }
     }
-    if (typeof permissionsSet === "boolean")
-        permissionsSet = true;
 }
 
 function isInRole(roleName) {

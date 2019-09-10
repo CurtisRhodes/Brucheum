@@ -105,14 +105,18 @@ function staticCatTreeContainerClick(path, id, treeId) {
         alert("dirTreeClick treeId: " + treeId);
 }
 
-function showLoginDialog() {
-    $('#loginDialog').dialog('open');
-    if (typeof pause === 'function')
-        pause();
+function onLoginClick() {
+    alert("due to a path issue with static pages it's best to login from the home page.");
+    window.location.href = "/";
+    //$('#loginDialog').dialog('open');
+    //if (typeof pause === 'function')
+    //    pause();
 }
 
-function staticPageShowRegisterDialog() {
-    $('#registerUserDialog').fadeIn();
+function onRegisterClick() {
+    alert("due to a path issue with static pages it's best to Register from the home page.");
+    window.location.href = "/";
+    //$('#registerUserDialog').fadeIn();
 }
 
 function logoutSimple() {

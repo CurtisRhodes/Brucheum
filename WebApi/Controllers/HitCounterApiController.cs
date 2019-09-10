@@ -16,13 +16,14 @@ namespace WebApi
     public class HitCounterController : ApiController
     {
         [HttpGet]
-        public LogVisitModel Get()
+        public LogVisitModel GetHitCount(int pageId)
         {
             LogVisitModel visitModel = new LogVisitModel();
             try
             {
-                using (WebSiteContext db = new WebSiteContext())
+                using (WebStatsContext db = new WebStatsContext())
                 {
+                    int hitCount = db.PageHits.Where(h => h.PageName == "x").Count();
                     //Hit hit = db.Hits.Where(h => h.HitId == hitId).First();
                     //hit.ViewDuration = (DateTime.Now - hit.BeginView).TotalSeconds.ToString();
                     visitModel.Success = "ok";
@@ -69,7 +70,7 @@ namespace WebApi
                             // translate
 
                             godaddyEmail.SendEmail("CONGRATULATIONS: someone new just visited your site",
-                             visitorModel.PageName + " visited from " + visitorModel.City + "," + visitorModel.Region + " " + visitorModel.Country);
+                             "viewed "+ visitorModel.PageName + " from " + visitorModel.City + "," + visitorModel.Region + " " + visitorModel.Country);
                         }
                     }
                     else
@@ -107,8 +108,7 @@ namespace WebApi
                                 using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
                                 {
                                     godaddyEmail.SendEmail("VERY GOOD: someone came back for another visit",
-                                     visitorModel.IpAddress + " from " + visitorModel.City + "," + visitorModel.Country + " " + visitorModel.Region
-                                        + ".  Initial visit: " + visitorModel.PageName);
+                                     visitorModel.PageName + " hit from " + visitorModel.City + "," + visitorModel.Region + " " + visitorModel.Country);
                                 }
                             }
                         }
@@ -156,7 +156,12 @@ namespace WebApi
                 }
                 successModel.Success = "ok";
             }
-            catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex) {
+
+                successModel.Success = Helpers.ErrorDetails(ex);
+
+
+            }
             return successModel;
         }
 
@@ -179,6 +184,9 @@ namespace WebApi
         //    catch (Exception ex) { success.Success = Helpers.ErrorDetails(ex); }
         //    return success;
         //}
+
+
+
 
         [HttpPatch]
         public string EndVisit(string visitorId)
