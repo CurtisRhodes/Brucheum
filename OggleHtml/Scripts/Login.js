@@ -173,7 +173,7 @@ function profilePease() {
 
 function setUserPermissions() {
 
-    alert("entering setUserPermissions");
+    //alert("entering setUserPermissions");
 
     //if (document.domain === 'localhost') {
     //    $('.loginRequired').show();
@@ -190,7 +190,6 @@ function setUserPermissions() {
     //else
     {
         var userName = getCookieValue("User");
-        alert("userName: " + userName);
         if (userName !== "") {
             $.ajax({
                 type: "GET",
@@ -231,7 +230,7 @@ function setUserPermissions() {
         }
         else {
             if (typeof permissionsSet === "boolean") {
-                alert("userName: " + userName);
+                alert("userName bypass: " + userName);
                 permissionsSet = true;
             }
         }
