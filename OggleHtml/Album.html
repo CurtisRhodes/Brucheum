@@ -95,22 +95,11 @@
                 }
                 else {
                     clearInterval(waiter);
-
-        //alert("permissionsSet: " + permissionsSet);
-
                     setUserPermissions();
-
-
                     var waiter2 = setInterval(function () {
                         dots += "* ";
                         $('#dots').html(dots);
                         if (permissionsSet === true) {
-
-        //alert("permissionsSet: " + permissionsSet);
-
-        //alert("ALBUM isPornEditor: " + isPornEditor);
-
-
                             $('#dots').html('');
                             clearInterval(waiter2);
                             $('#footerMessage').html("isPornEditor: " + isPornEditor);
