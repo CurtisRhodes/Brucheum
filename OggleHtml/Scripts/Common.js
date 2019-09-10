@@ -1,6 +1,6 @@
 ﻿var settingsArray = {};
 var userRoles = [];
-var freeVisitorHitsAllowed = 1005;
+var freeVisitorHitsAllowed = 5;
 
 $(document).ready(function () {
     loadSettings();
