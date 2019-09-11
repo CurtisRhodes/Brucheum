@@ -24,6 +24,13 @@ namespace WebApi.Models
         public bool Verbose { get; set; }
     }
 
+    public class PageHitSuccessModel
+    {
+        public int PageHits { get; set; }
+        public int UserHits { get; set; }
+        public string Success { get; set; }
+    }
+
     public class LogVisitModel
     {
         public string VisitorId { get; set; }

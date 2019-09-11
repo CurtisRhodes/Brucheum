@@ -240,7 +240,7 @@ function isInRole(roleName) {
     //if (userName !== "" || document.domain === 'localhost') {
 }
 
-// COOKIES
+
 function setLoginHeader(userName) {
     if (userName === "unknown" || userName === "") {
         $('#optionLoggedIn').hide();
@@ -254,40 +254,95 @@ function setLoginHeader(userName) {
     }
 }
 
-function setCookie(userName) {
-    var expiryDate = new Date();
-    expiryDate.setMonth(expiryDate.getMonth() + 9);
-    document.cookie = 'User=' + userName + '; expires=' + expiryDate.toUTCString() + 'path=https://ogglebooble.com/';
-
-    //alert("document.cookie:" + document.cookie);
-    alert("expires: " + expiryDate.toUTCString());
+function deleteCookie() {
+    if (document.cookie) {
+        var expiryDate = new Date();
+        expiryDate.setMonth(expiryDate.getMonth() - 1);
+        document.cookie = "User=;expires=" + expiryDate.toUTCString() + ";";
+        alert("after cancel document.cookie: " + document.cookie);
+    }
+    else {
+        alert("document.cookie= " + document.cookie);
+    }
 }
 
-function getCookieValue(valueName) {
+// COOKIES
+function setCookieValue(elementName, elementValue) {
+    alert("setCookieValue(" + elementName + "," + elementValue + ")");
     var decodedCookie = "";
     if (document.cookie) {
-        var cName = valueName + "=";
-
+        var user = "Unknown";
+        var ipAddress = getCookieValue("IpAddress");
+        var visitorId = getCookieValue("VisitorId");
         decodedCookie = decodeURIComponent(document.cookie);
-        var ca = decodedCookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) === ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(cName) === 0) {
-                var cookieValue = c.substring(cName.length, c.length);
-                //alert("cookie success: " + c.substring(name.length, c.length));
+        var cookieElements = decodedCookie.split(';');
+        var cookieItem; var cookieItemName; var cookieItemValue; 
 
-                return cookieValue;
-            }
-            else {
-                alert("document.cookie: " + document.cookie);
-                alert("cookie value " + valueName + " not found");
-            }
+
+        for (var i = 0; i < cookieElements.length; i++) {            
+            cookieItem = cookieElements[i];
+            cookieItemName = cookieItem.substring(0, cookieItem.indexOf("="));
+            cookieItemValue = cookieItem.substring(cookieItem.indexOf("=") + 1);
+
+            if (cookieItemValue === "IpAddress") alert("cookieItemName: " + cookieItemName + "  cookieValue: " + cookieItemValue);
+
+
+            if (cookieItemName === "IpAddress") ipAddress = cookieItemValue;
+            if (cookieItemName === "VisitorId") visitorId = cookieItemValue;
         }
+        if (elementName === "User") user = elementValue;
+        if (elementName === "IpAddress") {
+
+            ipAddress = elementValue;
+        }
+        if (elementName === "VisitorId") visitorId = elementValue;
     }
-    //else alert("no cookie found");
-    return decodedCookie;
+    //document.cookie = "User=; expires=" + expiryDate.toUTCString();
+    //document.cookie = "VisitorId=;IpAddress=;expires=" + expiryDate.toUTCString();
+
+    expiryDate = new Date();
+    expiryDate.setMonth(expiryDate.getMonth() + 9);
+
+    document.cookie = "User=" + user + ";IpAddress=" + ipAddress + ";VisitorId='" + visitorId + "';path='/'" + "';expires='" + expiryDate.toUTCString() + "'";
+
+    //alert("document.cookie: User=" + user + "; expires=" + expiryDate.toUTCString() + "; path='/'" + "; IpAddress=" + ipAddress + "; VisitorId=" + visitorId);
+    alert("after all document.cookie: " + decodeURIComponent(document.cookie));
+
+}
+
+//function setCookie(userName) {
+//    alert("setCookie: " + userName);
+//    var expiryDate = new Date();
+//    expiryDate.setMonth(expiryDate.getMonth() + 9);
+//    document.cookie = 'User=' + userName + '; expires=' + expiryDate.toUTCString() + '; path=https://ogglebooble.com/';
+
+//    //alert("document.cookie:" + document.cookie);
+
+//    alert("expires: " + expiryDate.toUTCString());
+//}
+
+function getCookieValue(itemName) {
+    //alert("getCookieValue: " + itemName);
+    var rtn = "";
+    if (document.cookie) {
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var cookieElements = decodedCookie.split(';');
+        var cookieItemName; var cookieItemValue;
+        for (var i = 0; i < cookieElements.length; i++) {
+            cookieItemName =  cookieElements[i].substring(0, cookieElements[i].indexOf("=")).trim();
+            cookieItemValue = cookieElements[i].substring(cookieElements[i].indexOf("=") + 1);
+
+            if (cookieItemName === itemName) {
+                //alert("FOUND IT cookieItemName === itemName: " + itemName + ": " + cookieItemValue);
+                rtn = cookieItemValue;
+                break;
+            }
+            //else alert("cookie item[" + i + "] name: {" + cookieItemName + "} looking for: " + itemName);
+        }
+        //if (rtn === "")
+        //    alert("'" + itemName + "' not found  \ngetCookieValue says document.cookie:\n" + document.cookie.toString());
+    }
+    else alert("no cookie found");
+    return rtn;
 }
 

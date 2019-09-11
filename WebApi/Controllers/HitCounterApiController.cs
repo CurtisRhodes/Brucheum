@@ -34,7 +34,64 @@ namespace WebApi
         }
 
         [HttpPost]
-        public LogVisitModel LogVisit(VisitorModel visitorModel)
+        public LogVisitModel LogVisit(string visitorId)
+        {
+            LogVisitModel visitSuccessModel = new LogVisitModel();
+            try
+            {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    //Visitor dbExisting = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                    bool logVisit = true;
+                    Visit lastVisit = db.Visits.Where(v => v.VisitorId == visitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault();
+                    if (lastVisit != null)
+                    {
+                        if ((DateTime.Now - lastVisit.VisitDate).TotalHours < 12)
+                        {
+                            logVisit = false;
+                            //if()
+                            visitSuccessModel.WelcomeMessage = "";
+                        }
+                    }
+                    if (logVisit)
+                    {
+                        Visit visit = new Visit() { VisitorId = visitorId, VisitDate = DateTime.Now };
+                        db.Visits.Add(visit);
+                        db.SaveChanges();
+
+                        //if ((visitorModel.IpAddress != "68.203.90.183") && (visitorModel.IpAddress != "50.62.160.105"))
+                        {
+                            using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
+                            {
+                                godaddyEmail.SendEmail("VERY GOOD: someone came back for another visit", "");
+                                 //visitorModel.PageName + " hit from " + visitorModel.City + "," + visitorModel.Region + " " + visitorModel.Country);
+                            }
+                        }
+                        visitSuccessModel.WelcomeMessage = "Welcome back " ;
+                    }
+
+
+
+                    //visitSuccessModel.VisitorId = dbExisting.VisitorId;
+                    //if (visitorModel.CookieName == "unknown")
+                    //    visitSuccessModel.WelcomeMessage = "Welcome back from " + dbExisting.IpAddress + " please log in";
+                    //else
+                    //{
+                    //    if (dbExisting.UserName != visitorModel.CookieName)
+                    //    {
+                    //        dbExisting.UserName = visitorModel.CookieName;
+                    //        db.SaveChanges();
+                    //    }
+                    //}
+                    visitSuccessModel.Success = "ok";
+                }
+            }
+            catch (Exception ex) { visitSuccessModel.Success = Helpers.ErrorDetails(ex); }
+            return visitSuccessModel;
+        }
+
+        [HttpPost]
+        public LogVisitModel LogVisitor(VisitorModel visitorModel)
         {
             LogVisitModel visitSuccessModel = new LogVisitModel();
             try
@@ -59,6 +116,7 @@ namespace WebApi
                         db.SaveChanges();
                         visitSuccessModel.WelcomeMessage = "Welcome new visitor!";
                         visitSuccessModel.VisitorId = dbVisitor.VisitorId;
+                        LogVisit(dbVisitor.VisitorId);
 
                         Visit visit = new Visit() { VisitorId = visitSuccessModel.VisitorId, VisitDate = DateTime.Now };
                         db.Visits.Add(visit);
@@ -66,9 +124,6 @@ namespace WebApi
 
                         using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
                         {
-                            //godaddyEmail.SendEmail("CONGRATULATIONS: someone new just visited your site", "ip: " + visitorModel.IpAddress + " visited: " + visitorModel.AppName);
-                            // translate
-
                             godaddyEmail.SendEmail("CONGRATULATIONS: someone new just visited your site",
                              "viewed "+ visitorModel.PageName + " from " + visitorModel.City + "," + visitorModel.Region + " " + visitorModel.Country);
                         }
@@ -76,42 +131,7 @@ namespace WebApi
                     else
                     {
                         visitSuccessModel.VisitorId = dbExisting.VisitorId;
-                        if (visitorModel.CookieName == "unknown")
-                            visitSuccessModel.WelcomeMessage = "Welcome back from " + dbExisting.IpAddress + " please log in";
-                        else
-                        {
-                            if (dbExisting.UserName != visitorModel.CookieName)
-                            {
-                                dbExisting.UserName = visitorModel.CookieName;
-                                db.SaveChanges();
-                            }
-                            visitSuccessModel.WelcomeMessage = "Welcome back " + dbExisting.UserName;
-                        }
-                        bool logVisit = true;
-                        Visit lastVisit = db.Visits.Where(v => v.VisitorId == visitSuccessModel.VisitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault();
-                        if (lastVisit != null)
-                        {
-                            if ((DateTime.Now - lastVisit.VisitDate).TotalHours < 12)
-                            {
-                                logVisit = false;
-                                visitSuccessModel.WelcomeMessage = "";
-                            }
-                        }
-                        if (logVisit)
-                        {
-                            Visit visit = new Visit() { VisitorId = visitSuccessModel.VisitorId, VisitDate = DateTime.Now };
-                            db.Visits.Add(visit);
-                            db.SaveChanges();
-
-                            if ((visitorModel.IpAddress != "68.203.90.183") && (visitorModel.IpAddress != "50.62.160.105"))
-                            {
-                                using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
-                                {
-                                    godaddyEmail.SendEmail("VERY GOOD: someone came back for another visit",
-                                     visitorModel.PageName + " hit from " + visitorModel.City + "," + visitorModel.Region + " " + visitorModel.Country);
-                                }
-                            }
-                        }
+                        LogVisit(dbExisting.VisitorId);
                     }
                 }
                 visitSuccessModel.Success = "ok";
@@ -121,13 +141,14 @@ namespace WebApi
         }
 
         [HttpPut]
-        public SuccessModel LogPageHit(PageHitModel pageHitModel)
+        public PageHitSuccessModel LogPageHit(PageHitModel pageHitModel)
         {
-            SuccessModel successModel = new SuccessModel();
+            PageHitSuccessModel pageHitSuccessModel = new PageHitSuccessModel();
             try
             {
                 if ((pageHitModel.IpAddress != "68.203.90.183") && (pageHitModel.IpAddress != "50.62.160.105"))
                 {
+                    LogVisit(pageHitModel.VisitorId);
                     using (WebStatsContext db = new WebStatsContext())
                     {
                         PageHit hit = new PageHit();
@@ -138,31 +159,31 @@ namespace WebApi
                         db.PageHits.Add(hit);
                         db.SaveChanges();
 
-                        var pageHits = (from h in db.PageHits
-                                        where h.VisitorId == pageHitModel.VisitorId
-                                        select new SuccessModel()).ToList();
-                        successModel.ReturnValue = pageHits.Count().ToString();
-                        //var x = pageHits
-                        //successModel.ReturnValue = pageHits.ToString();
+                        pageHitSuccessModel.PageHits= db.PageHits.Where(h => h.PageName == pageHitModel.PageName).Count();
+                        pageHitSuccessModel.UserHits= db.PageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
 
-                        if (pageHitModel.Verbose)
+                        if (pageHitModel.PageName == "Ranker")
+                        {
+                            using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
+                            {
+                                godaddyEmail.SendEmail("ALRIGHT!. Somebody Visited Ranker", "Visitor " + pageHitModel.IpAddress + " visited: " + pageHitModel.PageName);
+                            }
+                        }
+                        else if (pageHitModel.Verbose)
                         {
                             using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
                             {
                                 godaddyEmail.SendEmail("Page Visit", "Visitor " + pageHitModel.IpAddress + " visited: " + pageHitModel.PageName);
                             }
-                        }                        
+                        }
                     }
                 }
-                successModel.Success = "ok";
+                pageHitSuccessModel.Success= "ok";
             }
             catch (Exception ex) {
-
-                successModel.Success = Helpers.ErrorDetails(ex);
-
-
+                pageHitSuccessModel.Success = Helpers.ErrorDetails(ex);
             }
-            return successModel;
+            return pageHitSuccessModel;
         }
 
         //[HttpPost]
@@ -184,9 +205,6 @@ namespace WebApi
         //    catch (Exception ex) { success.Success = Helpers.ErrorDetails(ex); }
         //    return success;
         //}
-
-
-
 
         [HttpPatch]
         public string EndVisit(string visitorId)

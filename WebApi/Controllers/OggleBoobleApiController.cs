@@ -317,7 +317,7 @@ namespace WebApi
         }
         private void GetCatTreeRecurr(CategoryTreeModel parent, List<VwDirTree> vwDirTree, string path)
         {
-            var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).OrderBy(f => f.SortOrder).ThenBy(f=>f.Id).ToList();
+            var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
             foreach (VwDirTree vwTree in vwTrees)
             {
                 var subChild = new CategoryTreeModel()
