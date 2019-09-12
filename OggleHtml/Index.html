@@ -168,12 +168,9 @@
                             clearInterval(waiter2);
                             $('#dots').html("");
                             $('#footerMessage').html("isPornEditor: " + isPornEditor);
-                            //if (!isPornEditor)
-                            //    directToStaticPage(params.folder);
-                            //else {
-                            //    getAlbumPageHeader(params.folder);
-                            //    getAlbumImages(params.folder);
-                            //}
+
+                            setLoginHeader(getCookieValue("User"));
+
                         }
                     }, 300);
                 }

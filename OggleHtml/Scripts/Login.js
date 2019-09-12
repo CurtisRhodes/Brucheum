@@ -77,18 +77,7 @@ function validateRegister() {
 }
 
 function onLogoutClick() {
-
-    //alert("onLogoutClick: " + document.cookie);
-
-    //document.cookie = "OggleUser=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    document.cookie = "User=; path=; expires = Thu, 01 Jan 1970 00:00:00 GMT";
-    document.cookie = "User=; expires = Thu, 01 Jan 1970 00:00:00 GMT";
-    //document.cookie = "expires = Thu, 01 Jan 1970 00:00:00 GMT";
-    //document.cookie = null;
-
-    if (document.cookie)
-        alert("after logout document.cookie: " + document.cookie);
-
+    setCookieValue("User", "");
     $('#optionLoggedIn').hide();
     $('#optionNotLoggedIn').show();
     $('.loginRequired').hide();
@@ -125,7 +114,7 @@ function postLogin() {
 
                     //alert("setCookie($('#txtLoginUserName').val()); " + $('#txtLoginUserName').val());
 
-                    setCookie($('#txtLoginUserName').val());
+                    setCookieValue("User", $('#txtLoginUserName').val());
 
                     displayStatusMessage("ok", "thanks for logging in " + getCookieValue("User"));
 
@@ -143,7 +132,7 @@ function postLogin() {
     }
     else {
 
-        alert("");
+        //alert("");
     }
 }
 
@@ -186,7 +175,6 @@ function setUserPermissions() {
     }
     else
     {
-        //alert("zentering setUserPermissions");
         var userName = getCookieValue("User");
         if (userName !== "") {
             $.ajax({
@@ -202,20 +190,14 @@ function setUserPermissions() {
                             if (roleName === "Oggle admin") {
                                 $('.loginRequired').show();
                                 $('.adminLevelRequired').show();
-
-
                                 if (typeof isPornEditor === 'boolean') {
                                     isPornEditor = true;
-                                    //alert("setUserPermissions isPornEditor: " + isPornEditor);
-
                                 }
                             }
                         });
+                        //setLoginHeader(userName);
                         if (typeof permissionsSet === "boolean")
                             permissionsSet = true;
-
-                        //alert("leaving2 setUserPermissions");
-
                     }
                     else
                         alert("loadUserRoles: " + roleModel.Success);
@@ -228,7 +210,6 @@ function setUserPermissions() {
         else {
             if (typeof permissionsSet === "boolean")
                 permissionsSet = true;
-            //alert("leaving setUserPermissions");
         }
     }
 }
@@ -240,9 +221,14 @@ function isInRole(roleName) {
     //if (userName !== "" || document.domain === 'localhost') {
 }
 
-
 function setLoginHeader(userName) {
-    if (userName === "unknown" || userName === "") {
+    //alert("setLoginHeader: " + userName);
+
+    //var xxuserName = getCookieValue("User");
+    //alert("in setLoginHeader xxuserName:" + xxuserName);
+
+    if (userName === "Unknown" || userName === "unknown" || userName === "") {
+        //alert("userName unknown: " + userName);
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').show();
         //$('.loginRequired').hide();
@@ -255,20 +241,22 @@ function setLoginHeader(userName) {
 }
 
 function deleteCookie() {
-    if (document.cookie) {
-        var expiryDate = new Date();
-        expiryDate.setMonth(expiryDate.getMonth() - 1);
-        document.cookie = "User=;expires=" + expiryDate.toUTCString() + ";";
-        alert("after cancel document.cookie: " + document.cookie);
-    }
-    else {
-        alert("document.cookie= " + document.cookie);
-    }
+    //alert("BEFORE delete document.cookie: " + decodeURIComponent(document.cookie));
+    var expiryDate = new Date();
+    expiryDate.setMonth(expiryDate.getMonth() - 1);
+    //document.cookie = "";
+    //document.cookie = "VisitorIdundefined=;VisitorId=;expires=" + expiryDate.toUTCString() + ";";
+    //document.cookie = "VisitorId=;expires=" + expiryDate.toUTCString() + ";";
+    document.cookie = "VisitorId=;IpAddress=;User=;path=;expires=" + expiryDate.toUTCString();
+    //document.cookie = "VisitorId:;IpAddress:;User:;path:;expires=" + expiryDate.toUTCString();
+    //document.cookie = "expires=" + expiryDate.toUTCString() + ";";
+
+    //alert("after delete document.cookie:\n [" + document.cookie + "]");
 }
 
 // COOKIES
 function setCookieValue(elementName, elementValue) {
-    alert("setCookieValue(" + elementName + "," + elementValue + ")");
+    //alert("setCookieValue(" + elementName + "," + elementValue + ")");
     var decodedCookie = "";
     if (document.cookie) {
         var user = "Unknown";
@@ -276,73 +264,82 @@ function setCookieValue(elementName, elementValue) {
         var visitorId = getCookieValue("VisitorId");
         decodedCookie = decodeURIComponent(document.cookie);
         var cookieElements = decodedCookie.split(';');
-        var cookieItem; var cookieItemName; var cookieItemValue; 
-
-
-        for (var i = 0; i < cookieElements.length; i++) {            
+        var cookieItem; var cookieItemName; var cookieItemValue;
+        for (var i = 0; i < cookieElements.length; i++) {
             cookieItem = cookieElements[i];
             cookieItemName = cookieItem.substring(0, cookieItem.indexOf("="));
             cookieItemValue = cookieItem.substring(cookieItem.indexOf("=") + 1);
 
-            if (cookieItemValue === "IpAddress") alert("cookieItemName: " + cookieItemName + "  cookieValue: " + cookieItemValue);
-
-
+            if (cookieItemName === "User") user = cookieItemValue;
             if (cookieItemName === "IpAddress") ipAddress = cookieItemValue;
             if (cookieItemName === "VisitorId") visitorId = cookieItemValue;
         }
         if (elementName === "User") user = elementValue;
-        if (elementName === "IpAddress") {
-
-            ipAddress = elementValue;
-        }
+        if (elementName === "IpAddress") ipAddress = elementValue;
         if (elementName === "VisitorId") visitorId = elementValue;
     }
-    //document.cookie = "User=; expires=" + expiryDate.toUTCString();
-    //document.cookie = "VisitorId=;IpAddress=;expires=" + expiryDate.toUTCString();
-
+    deleteCookie();
     expiryDate = new Date();
     expiryDate.setMonth(expiryDate.getMonth() + 9);
 
-    document.cookie = "User=" + user + ";IpAddress=" + ipAddress + ";VisitorId='" + visitorId + "';path='/'" + "';expires='" + expiryDate.toUTCString() + "'";
+    //var cookieString = "VisitorId=" + visitorId + ";IpAddress=" + ipAddress + ";User=" + user + ";path='/;expires=" + expiryDate.toUTCString();
+    var cookieString = "VisitorId:" + visitorId + ",IpAddress:" + ipAddress + ",User:" + user + ",path:'/,expires:" + expiryDate.toUTCString();
 
-    //alert("document.cookie: User=" + user + "; expires=" + expiryDate.toUTCString() + "; path='/'" + "; IpAddress=" + ipAddress + "; VisitorId=" + visitorId);
-    alert("after all document.cookie: " + decodeURIComponent(document.cookie));
+    //var cookieObject = { "VisitorId": visitorId, "IpAddress": ipAddress, "User": user, "path": '/', "expires": expiryDate.toUTCString() };
+    //var jsonString = JSON.stringify(cookieObject);
+    //var cookieString = "VisitorId=" + visitorId + ";IpAddress=" + ipAddress + ";User=" + user + ";path='/;expires=" + expiryDate.toUTCString(); 
+    //alert("jsonString: " + jsonString);
+    //document.cookie = "cookieValues=" + jsonString;
 
+    document.cookie = cookieString;
+
+    //if (elementName === "VisitorId" && user === "cooler")
+    //{
+    //    alert("should be: " + cookieString);
+    //    alert("MY document.cookie: " + document.cookie);
+    //}
 }
 
-//function setCookie(userName) {
-//    alert("setCookie: " + userName);
-//    var expiryDate = new Date();
-//    expiryDate.setMonth(expiryDate.getMonth() + 9);
-//    document.cookie = 'User=' + userName + '; expires=' + expiryDate.toUTCString() + '; path=https://ogglebooble.com/';
-
-//    //alert("document.cookie:" + document.cookie);
-
-//    alert("expires: " + expiryDate.toUTCString());
-//}
-
 function getCookieValue(itemName) {
+    //var testUser = "";
     //alert("getCookieValue: " + itemName);
     var rtn = "";
     if (document.cookie) {
         var decodedCookie = decodeURIComponent(document.cookie);
-        var cookieElements = decodedCookie.split(';');
-        var cookieItemName; var cookieItemValue;
+        //if (itemName === "VisitorId") alert("decodedCookie: " + decodedCookie);
+        var cookieElements = decodedCookie.split(',');
+        var cookieItem; var cookieItemName; var cookieItemValue;
         for (var i = 0; i < cookieElements.length; i++) {
-            cookieItemName =  cookieElements[i].substring(0, cookieElements[i].indexOf("=")).trim();
-            cookieItemValue = cookieElements[i].substring(cookieElements[i].indexOf("=") + 1);
+            cookieItem = cookieElements[i].split(':');
+            cookieItemName = cookieItem[0].trim();//.substring(0, cookieElements[i].indexOf("=")).trim();
+            cookieItemValue = cookieItem[1];//.substring(cookieElements[i].indexOf("=") + 1);
 
+            //if (cookieItemName === "User") {
+            //    if (testUser === "") {
+            //        testUser = cookieItemValue;
+            //        i = 0;
+            //    }
+            //}
+            //if (itemName === "VisitorId") alert("cookieItem: " + cookieItem + "   cookieItemName: " + cookieItemName + " cookieItemValue: " + cookieItemValue);
             if (cookieItemName === itemName) {
-                //alert("FOUND IT cookieItemName === itemName: " + itemName + ": " + cookieItemValue);
+
+                //if (itemName === "VisitorId" && testUser === "cooler")
+                //    alert("FOUND itemName: " + itemName + "  value: " + cookieItemValue);
+
+
                 rtn = cookieItemValue;
                 break;
             }
-            //else alert("cookie item[" + i + "] name: {" + cookieItemName + "} looking for: " + itemName);
+            else {
+                //if (itemName === "VisitorId" && testUser === "cooler")
+                  //  alert("cookie item[" + i + "] name: {" + cookieItemName + "} value  " + cookieItemValue + "  looking for: " + itemName);
+            }
         }
-        //if (rtn === "")
-        //    alert("'" + itemName + "' not found  \ngetCookieValue says document.cookie:\n" + document.cookie.toString());
+        //if (rtn === "" && itemName === "VisitorId") {
+         //   alert("'" + itemName + "' not found  \ngetCookieValue says document.cookie:\n" + document.cookie.toString());
+        //}
     }
-    else alert("no cookie found");
+    //else alert("no cookie found");
     return rtn;
 }
 

@@ -27,7 +27,7 @@ $(document).ready(function () {
         $('#divLogedIn').show();
         $('#helloUser').html("hello: " + cookie);
     }
-    logVisit(cookie);
+    logPageHit(staticPageFolderName, "static");
 });
 
 function loadHardCoded() {   
@@ -301,40 +301,6 @@ function killPromoMessages() {
     $('#promoContainer').fadeOut();
     clearInterval(promoMessageRotator);
     setInterval(function () { showPromoMessages(); }, 300000);
-}
-
-function logVisit(userName) {
-    $('#footerMessage').html("logging visit");
-    $.ajax({
-        type: "GET",
-        url: service + "api/StaticPage/StaticPageGetIPAddress",
-        success: function (ipaddress) {
-
-            if (ipaddress === "68.203.90.183" || ipaddress === "50.62.160.105") return "ok";
-
-            alert("ipAddress: " + ipAddress);
-
-            $.ajax({
-                type: "POST",
-                url: service + "api/HitCounter?userName=" + userName + "&appName=Static OggleBooble",
-                data: { UserName: userName, IpAddress: ipaddress, AppName: "static OggleBooble" },
-                //data: visitModel,
-                success: function (successModel) {
-                    if (successModel.Success === "ok") {
-                        $('#headerMessage').html(successModel.ReturnValue);
-                    }
-                    else
-                        alert(successModel.Success);
-                },
-                error: function (jqXHR, exception) {
-                    alert("HitCounter/LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-                }
-            });
-        },
-        error: function (jqXHR, exception) {
-            alert("StaticPageGetIPAddress XHR error: " + getXHRErrorDetails(jqXHR, exception));
-        }
-    });
 }
 
 function letemPorn(response) {

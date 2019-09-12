@@ -134,6 +134,8 @@ function isNullorUndefined(val) {
         return true;
     if (val === undefined)
         return true;
+    if (val === "undefined")
+        return true;
     return false;
 }
 
@@ -158,89 +160,98 @@ function logActivity(changeLogModel) {
 // HITCOUNTER
 function logPageHit(pageName, appName) {
     var verbose = false;
+
     $('#footerMessage').html("logging page hit");
+    //alert("logging page hit");
 
-    //setLoginHeader(getCookieValue("User"));
-
+    var ipAddress = getCookieValue("IpAddress");
     var visitorId = getCookieValue("VisitorId");
-    //var ipAddress = getCookieValue("IpAddress");
-    if (visitorId === "" || ipAddress === "") {
+    var userName = getCookieValue("User");
+
+    if (isNullorUndefined(visitorId) || isNullorUndefined(ipAddress)) {
+        //if (userName === "cooler")
+        //    alert(" DEBUG  username: " + userName + " ipAddress : " + ipAddress + " visitorId: " + visitorId);
+
         logVisitor(pageName);
+        //deleteCookie();
     }
     else {
-        //alert("logging page hit");
-        //if ((data.ip === "68.203.90.183") || (data.ip === "50.62.160.105")) return "ok"; else
-        {
-            var hitCounterModel = {
-                VisitorId: visitorId,
-                AppName: appName,
-                IpAddress: ipAddress,
-                PageName: pageName,
-                UserName: getCookieValue("User"),
-                Verbose: verbose
-            };
-            $.ajax({
-                type: "PUT",
-                url: settingsArray.ApiServer + "api/HitCounter/LogPageHit",
-                data: hitCounterModel,
-                success: function (pageHitSuccessModel) {
-                    if (pageHitSuccessModel.Success === "ok") {
-                        if (pageHitSuccessModel.UserHits > freeVisitorHitsAllowed) {
-                            alert("you hav now visited " + successModel.ReturnValue + " pages." +
-                                "\n It's time you Registered and logged in." +
-                                "\n you will be placed in manditory comment mode until you log in ");
-                        }
+        //if (userName === "cooler")
+          //  alert("logging page hit");
 
 
+        var hitCounterModel = {
+            VisitorId: visitorId,
+            AppName: appName,
+            IpAddress: ipAddress,
+            PageName: pageName,
+            UserName: getCookieValue("User"),
+            Verbose: verbose
+        };
+        $.ajax({
+            type: "PUT",
+            url: settingsArray.ApiServer + "api/HitCounter/LogPageHit",
+            data: hitCounterModel,
+            success: function (pageHitSuccessModel) {
+                if (pageHitSuccessModel.Success === "ok") {
 
-                        //if (userName === "unknown")
-                        //    $('#footerMessage').html("logPageHit: " + successModel.ReturnValue);
-                        //else
+                    //setLoginHeader(getCookieValue("User"));
 
-                                $.ajax({
-                                    type: "POST",
-                                    url: settingsArray.ApiServer + "api/HitCounter/LogVisit?visitorId=" + visitorId,
-                                    success: function (visitSuccess) {
-                                        if (visitSuccess.Success === "ok") {
-                                            if (visitSuccess.WelcomeMessage === "")
-                                                $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
-                                            else
-                                                $('#headerMessage').html(visitSuccess.WelcomeMessage);
-                                            //$('#footerMessage').html(visitSuccess.WelcomeMessage);
-                                            //alert("logVisitModel.WelcomeMessage: " + visitSuccess.WelcomeMessage);
-                                        }
-                                        else
-                                            alert("LogVisit success: " + visitSuccess.Success);
-                                    },
-                                    error: function (jqXHR, exception) {
-                                        alert("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
-                                    }
-                                });
-                        //$('#footerMessage').html("");
+                    if (pageHitSuccessModel.UserHits > freeVisitorHitsAllowed) {
+                        alert("you hav now visited " + pageHitSuccessModel.UserHits + " pages." +
+                            "\n It's time you Registered and logged in." +
+                            "\n you will be placed in manditory comment mode until you log in ");
                     }
-                    else {
-                        alert("logPageHit: " + successModel.Success);
-                    }
-                },
-                error: function (jqXHR, exception) {
-                    alert("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
+
+                    //alert("pagehits: " + pageHitSuccessModel.PageHits);
+                    $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
+
+                    //alert("visitorId: " + visitorId + "  pageName: " + pageName);
+                    //$.ajax({
+                    //    type: "POST",
+                    //    url: settingsArray.ApiServer + "api/HitCounter/LogVisit?visitorId=" + visitorId + "&pageNme=" + pageName,
+                    //    success: function (visitSuccess) {
+                    //        if (visitSuccess.Success === "ok") {
+                    //            if (visitSuccess.WelcomeMessage === "") {
+                    //                alert("visitSuccess.WelcomeMessage: " + visitSuccess.WelcomeMessage);
+                    //                $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
+                    //            }
+                    //            else
+                    //                $('#headerMessage').html(visitSuccess.WelcomeMessage);
+                    //            //$('#footerMessage').html(visitSuccess.WelcomeMessage);
+                    //        }
+                    //        else {
+                    //            alert("LogVisit : " + visitSuccess.Success);
+                    //        }
+                    //    },
+                    //    error: function (jqXHR, exception) {
+                    //        alert("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
+                    //    }
+                    //});
+                    //$('#footerMessage').html("");
                 }
-            });
-        }
-
+                else {
+                    alert("logPageHit: " + successModel.Success);
+                }
+            },
+            error: function (jqXHR, exception) {
+                alert("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
     }
 }
 
 function logVisitor(pageName) {
     $('#footerMessage').html("logging visitor");
-    alert("logging visitor");
 
     $.getJSON("https://ipinfo.io?token=ac5da086206dc4", function (data) {
         //$("#info").html("City: " + data.city + " ,County: " + data.country + " ,IP: " + data.ip + " ,Location: " + data.loc + " ,Organisation: " 
         //+ data.org + " ,Postal Code: " + data.postal + " ,Region: " + data.region + "")
-        var userName = "";  // getCookieValue("User");
-        if (userName === "")
-            userName = "unknown";
+
+        var userName = getCookieValue("User");
+
+        if (userName === "cooler")
+            alert("logging visitor");
 
         var visitorModel = {
             AppName: "OggleBooble",
@@ -253,6 +264,7 @@ function logVisitor(pageName) {
             IpAddress: data.ip
         };
 
+        //alert("logging visitor");
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/HitCounter/LogVisitor",
@@ -260,9 +272,21 @@ function logVisitor(pageName) {
             success: function (visitModel) {
                 if (visitModel.Success === "ok") {
 
+
+                    if (userName === "cooler")
+                        alert("VisitorId: " + visitModel.VisitorId);
                     setCookieValue("VisitorId", visitModel.VisitorId);
-                    alert("setCookieValue(IpAddress,: " + data.ip);
+                    //alert("IpAddress: " + data.ip);
                     setCookieValue("IpAddress", data.ip);
+
+                    if (userName === "cooler")
+                        alert("MY document.cookie: " + document.cookie);
+
+
+                    //var xxipAddress = getCookieValue("IpAddress");
+                    //var xxvisitorId = getCookieValue("VisitorId");
+                    //alert("ipAddress: " + xxipAddress + " visitorId: " + xxvisitorId);
+                    //alert("MY document.cookie: " + document.cookie);
 
                     $('#footerMessage').html("");
                     if (visitModel.WelcomeMessage !== "") {
@@ -270,7 +294,7 @@ function logVisitor(pageName) {
                     }
                 }
                 else
-                    alert(visitModel.Success);
+                    alert("ERROR: " + visitModel.Success);
             },
             error: function (jqXHR, exception) {
                 $('#blogLoadingGif').hide();
