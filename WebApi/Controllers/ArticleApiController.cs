@@ -9,7 +9,8 @@ using WebApi.DataContext;
 
 namespace WebApi
 {
-    [System.Web.Http.Cors.EnableCors("*", "*", "*")] 
+    [System.Web.Http.Cors.EnableCors("*", "*", "*")]
+
     public class DbArticleController : ApiController
     {
         [HttpGet]

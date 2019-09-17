@@ -23,7 +23,7 @@ namespace WebApi
 
             GlobalConfiguration.Configuration.Formatters.JsonFormatter.SupportedMediaTypes.Add(new System.Net.Http.Headers.MediaTypeHeaderValue("text/html"));
 
-            AreaRegistration.RegisterAllAreas();
+            //AreaRegistration.RegisterAllAreas();
 
             GlobalConfiguration.Configuration.MapHttpAttributeRoutes();
 

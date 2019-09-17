@@ -9,6 +9,8 @@ using Microsoft.Owin.Cors;
 using Microsoft.Owin.Security;
 using System.Security.Claims;
 using System.Web.Http;
+using NuGet;
+using Microsoft.AspNetCore.Builder;
 
 [assembly: OwinStartup(typeof(WebApi.Startup))]
 namespace WebApi
@@ -17,13 +19,23 @@ namespace WebApi
     {
         public void Configuration(IAppBuilder app)
         {
-            //app.MapSignalR();
+           //app.MapSignalR();
 
             app.Map("/signalr", map =>
             {
                 map.UseCors(CorsOptions.AllowAll);
                 map.RunSignalR(new HubConfiguration { EnableJSONP = true });
             });
+           
+            //const string rootFolder = ".";
+            //var fileSystem = new PhysicalFileSystem(rootFolder);
+            //var options = new FileServerOptions
+            //{
+            //    EnableDefaultFiles = true  //, FileSystem = fileSystem
+            //};
+            //app.UseFileServer(options);
+            //app.UseStaticFiles();
+
         }
     }
 }

@@ -118,25 +118,27 @@ namespace WebApi
                                 }
                                 if (AppDomain.CurrentDomain.BaseDirectory != "F:\\Devl\\WebApi\\")
                                 {
-                                    using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
-                                    {
-                                        if (visitor.UserName == "")
+                                    if (pageName != "Julie Woodson" && pageName != "Teri Peterson" && pageName != "Alana Soares" && pageName != "Ola Ray") {
+                                        using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
                                         {
-                                            if ((visitor.IpAddress != "68.203.90.183") && (visitor.IpAddress != "50.62.160.105"))
+                                            if (visitor.UserName == "unknown" && visitor.UserName == "")
                                             {
-                                                godaddyEmail.SendEmail("VERY GOOD: Someone came back for another visit",
-                                                pageName + " hit from " + visitor.City + "," + visitor.Region + " " + visitor.Country);
+                                                if ((visitor.IpAddress != "68.203.90.183") && (visitor.IpAddress != "50.62.160.105"))
+                                                {
+                                                    godaddyEmail.SendEmail("VERY GOOD: Someone came back for another visit",
+                                                    pageName + " hit from " + visitor.City + "," + visitor.Region + " " + visitor.Country + " Ip: " + visitor.IpAddress);
+                                                }
+                                                visitSuccessModel.WelcomeMessage = "Welcome back. Please Log in.";
                                             }
-                                            visitSuccessModel.WelcomeMessage = "Welcome back. Please Log in.";
-                                        }
-                                        else
-                                        {
-                                            if ((visitor.IpAddress != "68.203.90.183") && (visitor.IpAddress != "50.62.160.105"))
+                                            else
                                             {
-                                                godaddyEmail.SendEmail("EXCELLENT! " + visitor.UserName + "came back for another visit",
-                                                pageName + " hit from " + visitor.City + "," + visitor.Region + " " + visitor.Country);
+                                                if ((visitor.IpAddress != "68.203.90.183") && (visitor.IpAddress != "50.62.160.105"))
+                                                {
+                                                    godaddyEmail.SendEmail("EXCELLENT! " + visitor.UserName + " came back for another visit ",
+                                                    pageName + " hit from " + visitor.City + "," + visitor.Region + " " + visitor.Country);
+                                                }
+                                                visitSuccessModel.WelcomeMessage = "Welcome back " + visitor.UserName;
                                             }
-                                            visitSuccessModel.WelcomeMessage = "Welcome back " + visitor.UserName;
                                         }
                                     }
                                 }

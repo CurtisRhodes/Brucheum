@@ -266,3 +266,7 @@ __pycache__/
 /OggleBooble/App_Data
 /WebApi/App_Data/temp/tempImage.jpg
 /WebApi/App_Data/xHampster
+/WebApi/App_Data/temp/tempImagempeg
+/WebApi/App_Data/temp/tempImagejpeg
+/WebApi/App_Data/temp/tempImage.webp
+/WebApi/App_Data/temp/tempImage.bmp

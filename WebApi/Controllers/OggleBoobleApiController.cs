@@ -1083,5 +1083,40 @@ namespace WebApi
         }
     }
 
+    [EnableCors("*", "*", "*")]
+    public class OggleSearchController : ApiController
+    {
+        [HttpGet]
+        public SearchResultsModel GetSearchResults(string searchString)
+        {
+            SearchResultsModel searchResultsModel = new SearchResultsModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    List<CategoryFolder> startsWithSearchResults = db.CategoryFolders.Where(f => f.FolderName.StartsWith(searchString)).ToList();
+                    foreach (CategoryFolder folder in startsWithSearchResults)
+                    {
+                        searchResultsModel.SearchResults.Add(new SearchResultModel() { FolderId = folder.Id, FolderName = folder.FolderName });
+                    }
+                    List<CategoryFolder> containsSearchResults = db.CategoryFolders.Where(f => f.FolderName.Contains(searchString)).ToList();
+                    foreach (CategoryFolder folder in containsSearchResults)
+                    {
+                        if(!folder.FolderName.ToLower().StartsWith(searchString.ToLower()))
+                            searchResultsModel.SearchResults.Add(new SearchResultModel() { FolderId = folder.Id, FolderName = folder.FolderName });
+                    }
+                }
+                searchResultsModel.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                searchResultsModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return searchResultsModel;
+        }
+    }
+
+
+
 }
 

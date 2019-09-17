@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Web.Api</title>
+    <link href="Styles/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="jumbotron">
+        <h1>Burcheum API</h1>
+        <p class="lead">This is a Web Service. Not intended to be accessed directly</p>
+        <div id="divLastBuild" class="msgArea">lastbuild</div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Journal Service</h2>
+            <p>Content is stored in XML and delivered to nicely formatted pages. No longer needed.</p>
+            <p><button onclick="JournalTest()">Test</button></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Images Service</h2>
+            <p>Upload (post) and retrieve (get) Images. 630</p>
+            <p><button onclick="ImageTest()">Test</button></p>
+
+        </div>
+        <div class="col-md-4">
+            <h2>Article Service</h2>
+            <p>A Lot of other services have been added. </p>
+            <p><button onclick="runTest('insert')">Test Insert</button></p>
+            <p><button onclick="runTest('edit')">Test Edit</button></p>
+            <p></p>
+
+
+
+            <div id="msgArea"></div>
+            <form action="~/Home/EmailTest" method="post">
+                <p><button onclick="testEmail()">Test Email</button></p>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

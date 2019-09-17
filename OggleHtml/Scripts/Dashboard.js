@@ -275,7 +275,7 @@ function renameFolder() {
         url: settingsArray.ApiServer + "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&currentF=x&newFolderName=" + $('#txtReName').val(),
         success: function (success) {
             $('#dashBoardLoadingGif').hide();
-            $//('#renameFolderCrud').dialog("close");
+            //$('#renameFolderCrud').dialog("close");
             //$('#renameFolderCrud').hide();
             if (success === "ok") {
                 var delta = Date.now() - start;

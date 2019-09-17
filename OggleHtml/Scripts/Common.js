@@ -250,8 +250,8 @@ function logVisitor(pageName) {
 
         var userName = getCookieValue("User");
 
-        if (userName === "cooler")
-            alert("logging visitor");
+        //if (userName === "cooler")
+        //    alert("logging visitor");
 
         var visitorModel = {
             AppName: "OggleBooble",
@@ -273,14 +273,14 @@ function logVisitor(pageName) {
                 if (visitModel.Success === "ok") {
 
 
-                    if (userName === "cooler")
-                        alert("VisitorId: " + visitModel.VisitorId);
+                    //if (userName === "cooler")
+                    //    alert("VisitorId: " + visitModel.VisitorId);
                     setCookieValue("VisitorId", visitModel.VisitorId);
                     //alert("IpAddress: " + data.ip);
                     setCookieValue("IpAddress", data.ip);
 
-                    if (userName === "cooler")
-                        alert("MY document.cookie: " + document.cookie);
+                    //if (userName === "cooler")
+                    //    alert("MY document.cookie: " + document.cookie);
 
 
                     //var xxipAddress = getCookieValue("IpAddress");

@@ -192,4 +192,18 @@ namespace WebApi.Models
         public string FolderId { get; set; }
         public string ImageArray { get; set; }
     }
+
+    public class SearchResultsModel
+    {
+        public SearchResultsModel() {
+            SearchResults = new List<SearchResultModel>();
+        }
+        public List<SearchResultModel> SearchResults{ get; set; }
+        public string Success { get; set; }
+    }
+    public class SearchResultModel
+    {
+        public string FolderName { get; set; }
+        public int FolderId { get; set; }
+    }
 }
