@@ -113,7 +113,7 @@ header {
 
 
 .headerBottomRow {
-    display:  inline-flex;
+    display: flex;
     font-family: Verdana;
     font-size: 17px;
     width: 100%;
@@ -124,6 +124,7 @@ header {
 }
 
 .menuTab {
+    float: left;
     display: inline-block;
     margin-top: 1px;
     border-radius: 5px;

@@ -81,7 +81,7 @@
         </div>
         <div id="rightColumn"></div>
     </div>
-
+    <footer></footer>
 
     <script>
         //var service = '@ViewBag.Service';
@@ -104,8 +104,8 @@
             else
                 subdomain = params.subdomain;
 
-            getOggleHeader(subdomain);
-
+            setOggleHeader(subdomain);
+            setogglefooter()
             if (subdomain == "boobs")
                 $('#floatingMessage').html("Want to see her tits?")
             else

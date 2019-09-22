@@ -71,14 +71,14 @@ function ftpMoveCopy() {
 }
 
 function moveDialogDirTreeClick(path, id, treeId) {
-    if (treeId == "moveDialogDirTree") {
+    //if (treeId == "moveDialogDirTree") {
         MoveCopyImageModel.DestinationFolderId = id;
         $('#moveDialogDirTree').hide();
         if (path.length > path.indexOf(".COM") + 4)
             $('#dirTreeResults').html(path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " "));
         else
             $('#dirTreeResults').html(path);
-    }
-    else
-        alert("moveDialogDirTreeClick treeId: " + treeId);
+    //}
+    ///else
+    //    alert("moveDialogDirTreeClick treeId: " + treeId);
 }

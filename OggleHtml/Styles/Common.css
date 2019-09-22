@@ -28,6 +28,12 @@ body {
     background-color: #ffcccc;
 }
 
+.selectedDirTreeNode {
+    background-color: #dcd7be;
+}
+
+.dirTreeSpan {
+}
 
 .threeColumnLayout {
     width: 100%;

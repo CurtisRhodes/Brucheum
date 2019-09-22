@@ -32,7 +32,7 @@ function getAlbumPageHeader(folderId) {
         url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=" + folderId,
         success: function (successModel) {
             if (successModel.Success === "ok") {
-                getOggleHeader(successModel.ReturnValue);
+                setOggleHeader(successModel.ReturnValue);
             }
             else
                 alert("getAlbumPageHeader " + successModel.Success);

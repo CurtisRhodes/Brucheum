@@ -28,7 +28,7 @@ $(document).ready(function () {
         else {
             clearInterval(waiter);
             getBreadCrumbs(staticPageFolderId);
-            getOggleHeader(staticPageRootFolderId);
+            setOggleHeader(staticPageRootFolderId);
             //alert("logPageHit(" + staticPageFolderName + ")");
             //logPageHit(staticPageFolderName, "static");
             checkForLink(staticPageFolderId, "babepedia");

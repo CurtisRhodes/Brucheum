@@ -3,7 +3,7 @@ var dirTreeTab, totalPics, totalFolders;
 var dirTreeTabIndent = 22;
 var dirDepth = 3;
 
-function buildDirTree(dest, treeId, startNode) {  
+function buildDirTree(dest, treeId, startNode, endNode) {  
     try {
         var start = Date.now();
         totalFolders = 0;
@@ -14,14 +14,10 @@ function buildDirTree(dest, treeId, startNode) {
             type: "GET",
             url: settingsArray.ApiServer + "api/CatTree/Get?root=" + startNode,
             success: function (categoryTreeModel) {
-
                 recurrBuildDirTree(categoryTreeModel, treeId);
-
                 dest.html(dirTreeContainer);
-
                 var delta = (Date.now() - start) / 1000;
                 console.log("rebuildCatTree took: " + delta.toFixed(3));
-
                 if (treeId === "dashboardMain") {
                     $('#dataifyInfo').html("rebuildCatTree took: " + delta.toFixed(3) + " total folders: " + totalFolders + " total pics: " + totalPics.toLocaleString());
                     $('#dashBoardLoadingGif').hide();
@@ -56,7 +52,6 @@ function recurrBuildDirTree(dir, treeId) {
                 expandMode = "+";
         }
 
-
         if (subDir.SubDirCount > 0) {
             subDirtxt = " (" + subDir.SubDirCount + ")";
             totalFolders += subDir.SubDirCount;
@@ -66,13 +61,12 @@ function recurrBuildDirTree(dir, treeId) {
 
         dirTreeContainer += "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
             + "<span id=S" + subDir.LinkId + " onclick=toggleDirTree('" + subDir.LinkId + "') >[" + expandMode + "] </span>"
-
-            + "<span onclick=" + treeId + "Click('" + subDir.DanniPath + "','" + subDir.FolderId + "','" + treeId + "') "
-            //+ "<span onclick=" + treeId + "Click('" + subDir.RootFolder + "/" + subDir.DirectoryName.replace(/ /g, "%20") + "','" + subDir.FolderId + "','" + treeId + "') "
-
+            + "<span id='" + subDir.linkId + "' class='dirTreeSpan' onclick=" + treeId
+            + "Click('" + subDir.DanniPath + "','" + subDir.FolderId + "','" + subDir.linkId + "') "
             + "oncontextmenu=showDirTreeContextMenu('" + subDir.LinkId + "','" + subDir.FolderId + "') "
             + "onmouseover=showFolderImage('" + encodeURI(imgSrc) + "') onmouseout=$('.dirTreeImageContainer').hide() >"
-            + subDir.DirectoryName.replace(".OGGLEBOOBLE.COM", "") + "</span><span class='fileCount'>  : " + subDir.Length.toLocaleString() + subDirtxt + "</span></div>"
+            + subDir.DirectoryName.replace(".OGGLEBOOBLE.COM", "") + "</span><span class='fileCount'>  : "
+            + subDir.Length.toLocaleString() + subDirtxt + "</span></div>"
             + "<div class='" + expandClass + "' id=" + subDir.LinkId + ">";
 
         totalPics += subDir.Length;

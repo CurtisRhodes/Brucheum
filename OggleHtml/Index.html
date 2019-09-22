@@ -45,51 +45,49 @@
 
 </head>
 <body>
-    <div>
-        <header></header>
-        <div class="threeColumnLayout">
-            <div id="leftColumn">
-                <div id="boobsLeftColumnList" class="leftColumnList">
-                    <div onclick="window.location.href='transitions.html'">Transitions</div>
-                    <div onclick="window.location.href='Ranker.html'">Boobs Rater</div>
-                    <div onclick="showCustomMessage(38)">Let me Explain</div>
-                    <div onclick="showCatListDialog()">Category List</div>
-                    <div onclick="window.location.href='/album.html?folder=1132'">Every Playboy Centerfold</div>
-                    <div onclick="window.location.href='/Blog.html'">Blog</div>
-                    <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
-                    <div onclick="showCustomMessage(35)">Nasty Porn</div>
-                </div>
-                <div id="pornLeftColumnList" class="leftColumnList">
-                    <div onclick="window.location.href='/'">Tits</div>
-                    <div onclick="showCatListDialog()">Category List</div>
-                    <div onclick="window.location.href='/Blog.html'">Blog</div>
-                    <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
-                </div>
+    <header></header>
+    <div class="threeColumnLayout">
+        <div id="leftColumn">
+            <div id="boobsLeftColumnList" class="leftColumnList">
+                <div onclick="window.location.href='transitions.html'">Transitions</div>
+                <div onclick="window.location.href='Ranker.html'">Boobs Rater</div>
+                <div onclick="showCustomMessage(38)">Let me Explain</div>
+                <div onclick="showCatListDialog()">Category List</div>
+                <div onclick="window.location.href='/album.html?folder=1132'">Every Playboy Centerfold</div>
+                <div onclick="window.location.href='/Blog.html'">Blog</div>
+                <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
+                <div onclick="showCustomMessage(35)">Nasty Porn</div>
             </div>
-            <div id="middleColumn">
-                <div id="customMessage" class="displayHidden customMessageContainer"></div>
-                <div id="divStatusMessage"></div>
-                <div id="dots"></div>
-                <div class="flexContainer">
-                    <div class="floatLeft">
-                        <div id="includeCenterfoldsCheckbox" class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('playboy', $(this).is(':checked'))" /> Include Centerfolds</div>
-                        <div class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('archive', $(this).is(':checked'))" /> Include Archive</div>
-                        <div id="dots"></div>
-                    </div>
-                    <div class="floatLeft" id="carousel">
-                        <div class="centeredDivShell randomImageContainer">
-                            <div class="centeredDivInner">
-                                <!--<div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>-->
-                                <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
-                                <div id="laCarousel" class="carouselContainer">
-                                    <div class="carouselImageContainer">
-                                        <img id="thisCarouselImage" oncontextmenu="carouselContextMenu()" class="carouselImage" src="Images/ingranaggi3.gif" onclick="clickViewGallery()" />
-                                        <div class="imgBottom">
-                                            <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
-                                            <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
-                                            <div id='categoryLabel' class='carouselCategoryLabel' onclick="clickViewParentGallery()"></div>
-                                            <img class="speedButton floatRight" src="Images/speedDialFaster.png" title="faster" onclick="clickSpeed('faster')" />
-                                        </div>
+            <div id="pornLeftColumnList" class="leftColumnList">
+                <div onclick="window.location.href='/'">Tits</div>
+                <div onclick="showCatListDialog()">Category List</div>
+                <div onclick="window.location.href='/Blog.html'">Blog</div>
+                <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
+            </div>
+        </div>
+        <div id="middleColumn">
+            <div id="customMessage" class="displayHidden customMessageContainer"></div>
+            <div id="divStatusMessage"></div>
+            <div id="dots"></div>
+            <div class="flexContainer">
+                <div class="floatLeft">
+                    <div id="includeCenterfoldsCheckbox" class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('playboy', $(this).is(':checked'))" /> Include Centerfolds</div>
+                    <div class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('archive', $(this).is(':checked'))" /> Include Archive</div>
+                    <div id="dots"></div>
+                </div>
+                <div class="floatLeft" id="carousel">
+                    <div class="centeredDivShell randomImageContainer">
+                        <div class="centeredDivInner">
+                            <!--<div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>-->
+                            <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
+                            <div id="laCarousel" class="carouselContainer">
+                                <div class="carouselImageContainer">
+                                    <img id="thisCarouselImage" oncontextmenu="carouselContextMenu()" class="carouselImage" src="Images/ingranaggi3.gif" onclick="clickViewGallery()" />
+                                    <div class="imgBottom">
+                                        <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
+                                        <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
+                                        <div id='categoryLabel' class='carouselCategoryLabel' onclick="clickViewParentGallery()"></div>
+                                        <img class="speedButton floatRight" src="Images/speedDialFaster.png" title="faster" onclick="clickSpeed('faster')" />
                                     </div>
                                 </div>
                             </div>
@@ -97,29 +95,28 @@
                     </div>
                 </div>
             </div>
-            <div id="rightColumn"></div>
         </div>
-
-        <div id="carouselContextMenu" class="ogContextMenu" onmouseleave="considerHidingContextMenu()">
-            <div id="ctxModelName" onclick="carouselContextMenuAction('showDialog')">model name</div>
-            <div id="ctxSeeMore" onclick="carouselContextMenuAction('seeMore')">See More</div>
-            <div onclick="carouselContextMenuAction('explode')">Explode</div>
-            <div onclick="carouselContextMenuAction('comment')">Comment</div>
-            <div onclick="carouselContextMenuAction('tags')">Tags</div>
-            <div id="ctxMove" onclick="carouselContextMenuAction('archive')">Archive</div>
-        </div>
-
-        <div id="dirTreeContainer" class="treeContainer"></div>
-        <div id="promoContainer" class="ogglePromoContainer">
-            <div id="promoContainerTitle" class="ogglePromoTitle"></div>
-            <div id="promoContainerText" class="ogglePromoText"></div>
-            <div onclick="killPromoMessages()" class="tinyDots" onmouseover="$('#killPromoPrompt').show()" onmouseout="$('#killPromoPrompt').hide()">...</div>
-            <div id="killPromoPrompt" class="ogglePromoKillMessage">had enough promo messages?</div>
-        </div>
-        <div id="indexCatTreeContainer" class="oggleHidden"></div>
+        <div id="rightColumn"></div>
     </div>
 
-    <div w3-include-html="Snippets/BoobsFooter.html"></div>
+    <div id="carouselContextMenu" class="ogContextMenu" onmouseleave="considerHidingContextMenu()">
+        <div id="ctxModelName" onclick="carouselContextMenuAction('showDialog')">model name</div>
+        <div id="ctxSeeMore" onclick="carouselContextMenuAction('seeMore')">See More</div>
+        <div onclick="carouselContextMenuAction('explode')">Explode</div>
+        <div onclick="carouselContextMenuAction('comment')">Comment</div>
+        <div onclick="carouselContextMenuAction('tags')">Tags</div>
+        <div id="ctxMove" onclick="carouselContextMenuAction('archive')">Archive</div>
+    </div>
+
+    <div id="dirTreeContainer" class="treeContainer"></div>
+    <div id="promoContainer" class="ogglePromoContainer">
+        <div id="promoContainerTitle" class="ogglePromoTitle"></div>
+        <div id="promoContainerText" class="ogglePromoText"></div>
+        <div onclick="killPromoMessages()" class="tinyDots" onmouseover="$('#killPromoPrompt').show()" onmouseout="$('#killPromoPrompt').hide()">...</div>
+        <div id="killPromoPrompt" class="ogglePromoKillMessage">had enough promo messages?</div>
+    </div>
+    <div id="indexCatTreeContainer" class="oggleHidden"></div>
+    <footer></footer>
     <div w3-include-html="Snippets/AdminDialogs.html"></div>
     <div w3-include-html="Snippets/Login.html"></div>
     <div w3-include-html="Snippets/Register.html"></div>
@@ -143,7 +140,8 @@
             else
                 subdomain = params.subdomain;
 
-            getOggleHeader(subdomain);
+            setOggleHeader(subdomain);
+            setOggleFooter(subdomain);
 
             var dots = ""
             var waiter = setInterval(function () {

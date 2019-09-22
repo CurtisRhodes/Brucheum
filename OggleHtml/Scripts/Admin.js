@@ -387,13 +387,14 @@ function repairLinks() {
 
 function moveFolder() {
     //$('#dataifyInfo').show().html("Preparing to Move Folder");
-    $('#dataifyInfo').show().html("Moveing Folder");
+    $('#dataifyInfo').show().html("Moving Folder");
     //$('#progressBar').show();
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "/api/FtpDashboard/MoveFolder?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + partialViewSelectedItemId,
         success: function (success) {
+            $('#txtNewFolderParent').val('');
             $('#dashBoardLoadingGif').hide();
             if (!success.startsWith("ERROR")) {
                 displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val());

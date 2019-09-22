@@ -1,4 +1,4 @@
-﻿function getOggleHeader(subdomain) {
+﻿function setOggleHeader(subdomain) {
     var headerHtml;
     var lang = "en";
     var subheaderContent;
@@ -39,6 +39,9 @@
             "               <a href='/album.html?folder=357'>cum shots</a>, \n" +
             "               <a href='/album.html?folder=397'>kinky</a> and \n" +
             "               <a href='/album.html?folder=411'>naughty behaviour</a>\n";
+
+
+
     }
 
     headerHtml =
@@ -53,9 +56,8 @@
         "           <div class='boobRankerBanner'>\n" +
         "               <a href='/Ranker.html' title='check out a masterpiece of web design. Spin through the links to land on random portrait images. ' >Boobs Ranker</a>" +
         "           </div>\n" +
-        "           <div id='testtxt'></div>" +
         "           <div class='OggleSearchBox'>\n" +
-        "               <span>search </span><input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
+        "               <span id='notUserName'>search</span> <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
         "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
         "           </div>\n" +
         "       </div>\n" +
@@ -72,6 +74,7 @@
         "           </div>\n" +
         "           <div class='loginArea'>\n" +
         "               <div id='optionLoggedIn' class='displayHidden'>\n" +
+        "                   <div class='menuTab adminLevelRequired displayHidden'><a href='/Dashboard.html'>Dashboard</a></div>\n" +
         "                   <div class='menuTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
         "                   <div class='menuTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
         "               </div>\n" +
@@ -133,8 +136,9 @@ function clearSearch() {
     $('#txtSearch').val("");
     $('#testtxt').text("");
 }
+
 function jumpToSelected(folderId) {
-    alert("lookup: " + folderId);
+    //alert("open(album.html?folder=" + folderId);
     window.open("/album.html?folder=" + folderId, "_blank");
     clearSearch();
 }

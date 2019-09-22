@@ -89,7 +89,7 @@
             else
                 subdomain = params.subdomain;
 
-            getOggleHeader(subdomain);
+            setOggleHeader(subdomain);
             $('#breadcrumbContainer').html(subdomain);
 
             var dots = "";
@@ -221,7 +221,7 @@
             $('#breadcrumbContainer').html(domain);
             rankerLinksArray = [];
             loadBoobsRanker()
-            getOggleHeader(subdomain);
+            setOggleHeader(subdomain);
             $('#breadcrumbContainer').html(domain);
         }
 

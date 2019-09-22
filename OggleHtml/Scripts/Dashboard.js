@@ -259,10 +259,8 @@ function collapseChildFolder() {
 }
 
 function showMoveFolderDialog() {
-
     $('#moveFolderCrud').dialog('open');
     buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
-
 }
 
 function renameFolder() {
@@ -284,7 +282,7 @@ function renameFolder() {
                 displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
                 console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                 //buildDirectoryTree();
-
+                $('.txtLinkPath').val('');
                 var changeLogModel = {
                     PageId: dashboardMainSelectedTreeId,
                     PageName: $('.txtLinkPath').val(),
@@ -318,7 +316,7 @@ function showAddRolesDialog() {
     loadAaddEditRoles();
 }
 
-function moveFolderTreeClick(path, id, treeId) {
+function moveFolderTreeClick(path, id) {
     var displayPath = "";
     if (path.length > path.indexOf(".COM") + 4) {
         displayPath = path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " ");
@@ -331,12 +329,19 @@ function moveFolderTreeClick(path, id, treeId) {
     $('#partialViewTreeContainer').dialog("close");
 }
 
-function dashboardMainClick(path, id, treeId) {
-
+function dashboardMainClick(path, id, linkId) {
     dashboardMainSelectedTreeId = id;
     dashboardMainSelectedPath = path;
     $('.txtLinkPath').val(path.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
 
+    alert("linkId: " + linkId);
+
+    $('.dirTreeSpan').removeClass('selectedDirTreeNode');
+    $('#' + linkId + '').addClass('selectedDirTreeNode');
+
+    //alert("this linkId: " + linkId);
+    //alert('dashboardMainClick');
+    //alert("this: " + $(this).val());
     //if (path.length > Number(path.indexOf(".COM"))) {
     //    if (Number(path.indexOf(".COM")) > 0) {
     //        dashboardMainSelectedPath = path.substring(6).replace(/%20/g, " ");
@@ -386,5 +391,4 @@ function prepareXhamsterPage() {
         }
     });
 }
-
 

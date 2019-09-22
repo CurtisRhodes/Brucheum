@@ -293,7 +293,7 @@ namespace WebApi
     }
 
     [EnableCors("*", "*", "*")]
-    public class CatTreeController : ApiController
+    public class DirTreeController : ApiController
     {
         // dashboard -- returns a fully loaded dir tree
         [HttpGet]
@@ -309,13 +309,13 @@ namespace WebApi
                 vwDirTree = db.VwDirTrees.ToList();
                 //GetCatTreeRecurr(danni, db);
             }
-            GetCatTreeRecurr(dirTree, vwDirTree, "");
+            GetDirTreeRecurr(dirTree, vwDirTree, "");
 
             timer.Stop();
             System.Diagnostics.Debug.WriteLine("RebuildCatTree took: " + timer.Elapsed);
             return dirTree;
         }
-        private void GetCatTreeRecurr(CategoryTreeModel parent, List<VwDirTree> vwDirTree, string path)
+        private void GetDirTreeRecurr(CategoryTreeModel parent, List<VwDirTree> vwDirTree, string path)
         {
             var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
             foreach (VwDirTree vwTree in vwTrees)
@@ -335,7 +335,7 @@ namespace WebApi
 
                 parent.SubDirs.Add(subChild);
 
-                GetCatTreeRecurr(subChild, vwDirTree, (path + "/" + vwTree.FolderName).Replace(" ", "%20"));
+                GetDirTreeRecurr(subChild, vwDirTree, (path + "/" + vwTree.FolderName).Replace(" ", "%20"));
             }
         }
 
