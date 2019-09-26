@@ -16,7 +16,8 @@
         public virtual DbSet<Visitor> Visitors { get; set; }
         public virtual DbSet<Visit> Visits { get; set; }
         public virtual DbSet<PageHit> PageHits { get; set; }
-        public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
+        public virtual DbSet<ChangeLog> ChangeLogs { get; set; }        
+        public virtual DbSet<ImageHit> ImageHits { get; set; }
     }
 
     [Table("webStats.ChangeLog")]
@@ -75,6 +76,7 @@
         public string Region { get; set; }
         public string Country { get; set; }
         public string GeoCode { get; set; }
+        public DateTime InitialVisit { get; set; }
     }
     [Table("webStats.Visit")]
     public partial class Visit
@@ -100,5 +102,17 @@
         public string AppName { get; set; }
         public string PageName { get; set; }
     }
+    [Table("webStats.ImageHit")]
+    public partial class ImageHit
+    {
+        [Key]
+        [Column(Order = 0)]
+        public DateTime HitDateTime { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string VisitorId { get; set; }
+        public string ImageLinkId { get; set; }
+    }
 }
+
 

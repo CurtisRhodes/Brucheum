@@ -68,10 +68,10 @@ header {
 }
 
 .boobRankerBanner {
-    height: 44px;
+    height: 35px;
     border: solid 2px #000;
     border-radius: 10px;
-    font-size: 23px;
+    font-size: 18px;
     padding: 3px;
     color: #000;
     text-decoration: none;

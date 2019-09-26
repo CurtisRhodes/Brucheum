@@ -30,7 +30,7 @@ $(document).ready(function () {
             getBreadCrumbs(staticPageFolderId);
             setOggleHeader(staticPageRootFolderId);
             //alert("logPageHit(" + staticPageFolderName + ")");
-            //logPageHit(staticPageFolderName, "static");
+            logPageHit(staticPageFolderName, "static");
             checkForLink(staticPageFolderId, "babepedia");
             checkForLink(staticPageFolderId, "freeones");
             $('footerMessage').html(staticPageFolderName);

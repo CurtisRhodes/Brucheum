@@ -157,81 +157,74 @@ function logActivity(changeLogModel) {
     });
 }
 
+function setLocalValue(localName, localValue) {
+    setCookieValue(localName, localValue);
+    window.localStorage[localName] = localValue;
+    //alert("window.localStorage[" + localName + "] = " + localValue);
+}
+
+function getLocalValue(localName) {
+    var localValue = getCookieValue(localName);
+    if (isNullorUndefined(localValue)) {
+        localValue = window.localStorage[localName];
+        if (!isNullorUndefined(localValue)) {
+            //alert("cookie didn't work but localStorage did. " + localName + ": " + localValue);
+        }
+    }
+    //alert("window.localStorage[" + localName + "] = " + localValue);
+    return localValue;
+}
+
 // HITCOUNTER
 function logPageHit(pageName, appName) {
-    var verbose = false;
+    var verbose = 0;
 
     $('#footerMessage').html("logging page hit");
     //alert("logging page hit");
 
-    var ipAddress = getCookieValue("IpAddress");
-    var visitorId = getCookieValue("VisitorId");
-    var userName = getCookieValue("User");
+    var ipAddress = getLocalValue("IpAddress");
+    var visitorId = getLocalValue("VisitorId");
+    //if (isNullorUndefined("VisitorId")) {        alert("VisitorId fail");    }
 
-    if (isNullorUndefined(visitorId) || isNullorUndefined(ipAddress)) {
-        //if (userName === "cooler")
-        //    alert(" DEBUG  username: " + userName + " ipAddress : " + ipAddress + " visitorId: " + visitorId);
+    var userName = getLocalValue("User");
 
+    if (isNullorUndefined(visitorId) && isNullorUndefined(ipAddress)) {
+        // REQUIRES A HIT TO IPINFO.IO
         logVisitor(pageName);
-        //deleteCookie();
     }
     else {
-        //if (userName === "cooler")
-          //  alert("logging page hit");
-
-
-        var hitCounterModel = {
+        //alert("logging proper page hit");
+        //public string VisitDate { get; set; }
+        // log page hit
+        var pageHitModel = {
             VisitorId: visitorId,
+            UserName: userName,
             AppName: appName,
             IpAddress: ipAddress,
             PageName: pageName,
-            UserName: getCookieValue("User"),
             Verbose: verbose
         };
         $.ajax({
             type: "PUT",
             url: settingsArray.ApiServer + "api/HitCounter/LogPageHit",
-            data: hitCounterModel,
+            data: pageHitModel,
             success: function (pageHitSuccessModel) {
                 if (pageHitSuccessModel.Success === "ok") {
-
                     //setLoginHeader(getCookieValue("User"));
-
                     if (pageHitSuccessModel.UserHits > freeVisitorHitsAllowed) {
                         alert("you hav now visited " + pageHitSuccessModel.UserHits + " pages." +
                             "\n It's time you Registered and logged in." +
                             "\n you will be placed in manditory comment mode until you log in ");
                     }
-
-                    //alert("pagehits: " + pageHitSuccessModel.PageHits);
-                    $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
-
-                    //alert("visitorId: " + visitorId + "  pageName: " + pageName);
-                    //$.ajax({
-                    //    type: "POST",
-                    //    url: settingsArray.ApiServer + "api/HitCounter/LogVisit?visitorId=" + visitorId + "&pageNme=" + pageName,
-                    //    success: function (visitSuccess) {
-                    //        if (visitSuccess.Success === "ok") {
-                    //            if (visitSuccess.WelcomeMessage === "") {
-                    //                alert("visitSuccess.WelcomeMessage: " + visitSuccess.WelcomeMessage);
-                    //                $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
-                    //            }
-                    //            else
-                    //                $('#headerMessage').html(visitSuccess.WelcomeMessage);
-                    //            //$('#footerMessage').html(visitSuccess.WelcomeMessage);
-                    //        }
-                    //        else {
-                    //            alert("LogVisit : " + visitSuccess.Success);
-                    //        }
-                    //    },
-                    //    error: function (jqXHR, exception) {
-                    //        alert("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
-                    //    }
-                    //});
-                    //$('#footerMessage').html("");
+                    if (pageHitSuccessModel.WelcomeMessage !== null) {
+                        alert("pageHitSuccessModel.WelcomeMessage: " + pageHitSuccessModel.WelcomeMessage);
+                        $('#headerMessage').html(pageHitSuccessModel.WelcomeMessage);
+                    }
+                    else
+                        $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
                 }
                 else {
-                    alert("logPageHit: " + successModel.Success);
+                    alert("logPageHit: " + pageHitSuccessModel.Success);
                 }
             },
             error: function (jqXHR, exception) {
@@ -241,67 +234,88 @@ function logPageHit(pageName, appName) {
     }
 }
 
-function logVisitor(pageName) {
-    $('#footerMessage').html("logging visitor");
+function logImageHit(link) {
+    var visitorId = getLocalValue("VisitorId");
+    if (visitorId != '9bd90468-e633-4ee2-af2a-8bbb8dd47ad1') {
 
-    $.getJSON("https://ipinfo.io?token=ac5da086206dc4", function (data) {
-        //$("#info").html("City: " + data.city + " ,County: " + data.country + " ,IP: " + data.ip + " ,Location: " + data.loc + " ,Organisation: " 
-        //+ data.org + " ,Postal Code: " + data.postal + " ,Region: " + data.region + "")
-
-        var userName = getCookieValue("User");
-
-        //if (userName === "cooler")
-        //    alert("logging visitor");
-
-        var visitorModel = {
-            AppName: "OggleBooble",
-            PageName: pageName,
-            CookieName: userName,
-            City: data.city,
-            Region: data.region,
-            Country: data.country,
-            GeoCode: data.loc,
-            IpAddress: data.ip
-        };
-
-        //alert("logging visitor");
         $.ajax({
             type: "POST",
-            url: settingsArray.ApiServer + "api/HitCounter/LogVisitor",
-            data: visitorModel,
-            success: function (visitModel) {
-                if (visitModel.Success === "ok") {
-
-
-                    //if (userName === "cooler")
-                    //    alert("VisitorId: " + visitModel.VisitorId);
-                    setCookieValue("VisitorId", visitModel.VisitorId);
-                    //alert("IpAddress: " + data.ip);
-                    setCookieValue("IpAddress", data.ip);
-
-                    //if (userName === "cooler")
-                    //    alert("MY document.cookie: " + document.cookie);
-
-
-                    //var xxipAddress = getCookieValue("IpAddress");
-                    //var xxvisitorId = getCookieValue("VisitorId");
-                    //alert("ipAddress: " + xxipAddress + " visitorId: " + xxvisitorId);
-                    //alert("MY document.cookie: " + document.cookie);
-
-                    $('#footerMessage').html("");
-                    if (visitModel.WelcomeMessage !== "") {
-                        $('#headerMessage').html(visitModel.WelcomeMessage);
-                    }
-                }
-                else
-                    alert("ERROR: " + visitModel.Success);
+            url: settingsArray.ApiServer + "api/HitCounter/LogImageHit?visitorId=" + visitorId + "&linkId=" + link,
+            success: function () {
             },
             error: function (jqXHR, exception) {
-                $('#blogLoadingGif').hide();
-                alert("LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                alert("logImageHit error: " + getXHRErrorDetails(jqXHR, exception));
             }
         });
-    });
+    }
+}
+
+var logging = false;
+function logVisitor(pageName) {
+    if (!logging) {
+        logging = true;
+        $('#footerMessage').html("logging visitor");
+
+        //alert("Hitting ip info");
+
+        $.getJSON("https://ipinfo.io?token=ac5da086206dc4", function (data) {
+
+            //$("#info").html("City: " + data.city + " ,County: " + data.country + " ,IP: " + data.ip + " ,Location: " + data.loc + " ,Organisation: "
+            //+ data.org + " ,Postal Code: " + data.postal + " ,Region: " + data.region + "")
+            //var userName = getCookieValue("User");
+            //if (userName === "cooler")
+            //    alert("logging visitor");
+
+            var visitorModel = {
+                AppName: "OggleBooble",
+                PageName: pageName,
+                //UserName: userName,
+                City: data.city,
+                Region: data.region,
+                Country: data.country,
+                GeoCode: data.loc,
+                IpAddress: data.ip
+            };
+
+            $.ajax({
+                type: "POST",
+                url: settingsArray.ApiServer + "api/HitCounter/LogVisitor",
+                data: visitorModel,
+                success: function (visitModel) {
+                    if (visitModel.Success === "ok") {
+                        //if (userName === "cooler")
+                            //alert("VisitorId: " + visitModel.VisitorId);
+
+
+                        setLocalValue("VisitorId", visitModel.VisitorId);
+                        setLocalValue("IpAddress", data.ip);
+
+                        //if (userName === "cooler")
+                        //alert("logoging page hit from Log Visitor. \nvisitModel.VisitorId: " + visitModel.VisitorId + "\ndocument.cookie: " + document.cookie);
+
+                        logPageHit(pageName, "unkown visitor");
+
+                        //var xxipAddress = getCookieValue("IpAddress");
+                        //var xxvisitorId = getCookieValue("VisitorId");
+                        //alert("ipAddress: " + xxipAddress + " visitorId: " + xxvisitorId);
+                        //alert("MY document.cookie: " + document.cookie);
+
+                        $('#footerMessage').html("");
+                        if (visitModel.WelcomeMessage !== "") {
+                            $('#headerMessage').html(visitModel.WelcomeMessage);
+                        }
+                        logging = false;
+                    }
+                    else
+                        alert("ERROR: " + visitModel.Success);
+                },
+                error: function (jqXHR, exception) {
+                    $('#blogLoadingGif').hide();
+                    alert("LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        });
+    }
 }
 
 // COMMON CONTEXTMENU FUNCTIONS
@@ -391,103 +405,4 @@ function getFileDate() {
 
 
 }
-
-// SET HEADER
-function getHeader(subdomain) {
-
-    //$('#replaceableMenuItems').append("<div id='babapediaLink' class='menuTabs'>\n" +
-    //    "              <a href='https://www.babepedia.com' target='_blank'><img src='/Images/babepedia.png' class='freeones'></a>" +
-    //    "           </div>\n");
-
-    var headerHtml;
-    if (subdomain === "boobs" || subdomain === "archive") {
-        headerHtml =
-            "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
-            "       <a href='/'><img src='Images/redballon.png' class='bannerImage' /></a>\n" +
-            "   </div>\n" +
-            "   <div class='headerBodyContainer'>\n" +
-            "       <div class='headerTopRow'>\n" +
-            "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
-            "           <div class='headerSubTitle' id='headerSubTitle'>\n" +
-            "                <a href='/album.html?folder=2'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
-            "                <a href='/album.html?folder=136'> poses,</a>\n" +
-            "                <a href='/album.html?folder=159'> topic,</a>\n" +
-            "                <a href='/album.html?folder=199'> shapes</a> and\n" +
-            "                <a href='/album.html?folder=241'>sizes</a>\n" +
-            "            </div>\n" +
-            "        </div>\n";
-    }
-    if (subdomain === "playboy" || subdomain === "playmates") {
-        headerHtml =
-        "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
-        "       <a href='/'><img src='Images/redballon.png' class='bannerImage' /></a>\n" +
-        "   </div>\n" +
-        "   <div class='headerBodyContainer'>\n" +
-        "       <div class='headerTopRow'>\n" +
-        "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
-        "           <div class='headerSubTitle' id='headerSubTitle'>Every Playboy Centerfold" +
-        "            </div>\n" +
-        "        </div>\n";
-    }
-    if (subdomain === "admin") {
-        headerHtml =
-            "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
-            "       <a href='/'><img src='Images/redballon.png' class='bannerImage' /></a>\n" +
-            "   </div>\n" +
-            "   <div class='headerBodyContainer'>\n" +
-            "       <div class='headerTopRow'>\n" +
-            "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
-            "           <div class='headerSubTitle' id='headerSubTitle'>Admin" +
-            "            </div>\n" +
-            "        </div>\n";
-    }
-
-    if (subdomain === "porn" || subdomain === "sluts") {
-        $('body').addClass('pornBodyColors');
-        headerHtml =
-            "   <div id='divTopLeftLogo' class='pornHeaderColors bannerImageContainer'>\n" +
-            "       <a href='/index.html?subdomain=porn'><img src='Images/csLips02.png' class='bannerImage' /></a>\n" +
-            "   </div>\n" +
-            "   <div class='pornHeaderColors headerBodyContainer'>\n" +
-            "       <div class='headerTopRow'>\n" +
-            "           <div class='headerTitle' id='bannerTitle'>OgglePorn</div>\n" +
-            "           <div class='headerSubTitle' id='headerSubTitle'>\n" +
-            "               <a href='/album.html?folder=243'>cock suckers</a>, \n" +
-            "               <a href='/album.html?folder=420'>boob suckers</a>, \n" +
-            "               <a href='/album.html?folder=357'>cum shots</a>, \n" +
-            "               <a href='/album.html?folder=397'>kinky</a> and \n" +
-            "               <a href='/album.html?folder=411'>naughty behaviour</a>\n" +
-            "           </div>\n" +
-            "       </div>\n";
-    }
-
-    headerHtml+=
-        "   <div class='headerBottomRow'>\n" +
-        "       <div id='headerMessage' class='floatLeft'></div>\n" +
-        "       <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
-        "       <div class='menuTabs replaceableMenuItems'>\n" +
-        "           <div id='freeonesLink' class='menuTabs displayHidden'>\n" +
-        "              <a href='http://www.freeones.com' target='_blank'><img src='/Images/freeones.png' class='freeones'></a>" +
-        "           </div>\n" +
-        "           <div id='babapediaLink' class='menuTabs displayHidden'>\n" +
-        "              <a href='https://www.babepedia.com' target='_blank'><img src='/Images/babepedia.png' class='freeones'></a>" +
-        "           </div>\n" +
-        "       </div>\n" +
-        "       <div id='optionLoggedIn' class='displayHidden'>\n" +
-        "           <div class='menuTab floatRight'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
-        "           <div class='menuTab floatRight' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
-        "       </div>\n" +
-        "       <div id='optionNotLoggedIn'>\n" +
-        "           <div id='btnLayoutRegister' class='menuTab floatRight'><a href='javascript:onRegisterClick()'>Register</a></div>\n" +
-        "               <div id='btnLayoutLogin' class='menuTab floatRight'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
-        "           </div>\n" +
-        "           <div class='menuTabs' id='adminTabs'>\n" +
-        "              <div id='menuTabAdmin' class='menuTab displayHidden loginRequired floatRight'><a href='/Dashboard.html'>dashboard</a></div>\n" +
-        "           </div>\n" +
-        "       </div>\n" +
-        "   </div>\n";
-
-    $('header').html(headerHtml);
-}
-
 

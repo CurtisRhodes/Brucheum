@@ -8,15 +8,13 @@ function showCategoryDialog(folderId) {
     // --alter table OggleBooble.ImageFolder add CatergoryDescription nvarchar(max)
     // 4/30/2019  --first use of jQuery dialog
 
+    $('#btnCatDlgMeta').hide();
+    $('#catDlgSummerNoteContainer').hide();
+    $('#btnCatDlgEdit').hide();
+    $('#catDlgReadOnlyTextArea').show();
+
     if (isPornEditor) {
-        $('#catDlgDescription').summernote({
-            height: 300,
-            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-            toolbar: [
-                ['codeview'],
-                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
-            ]
-        });
+        $("#btnCatDlgEdit").show().html("Edit");
     }
 
     $('#folderCategoryDialog').dialog({
@@ -26,26 +24,27 @@ function showCategoryDialog(folderId) {
         width: "500px"
     });
 
+    $('#catDlgSummerNoteTextArea').summernote({
+        height: 300,
+        codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+        toolbar: [
+            ['codeview']
+            //['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
+        ]
+    });
+
     try {
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/CategoryComment/Get?folderId=" + folderId,
             success: function (categoryComment) {
-
-//<a id="btnCatDlgEdit" class="folderCategoryDialogButton" href="javascript:toggleEditCatDialog()">Edit</a>
-//<a id="btnCatDlgMeta" class="folderCategoryDialogButton" href="javascript:addMetaTags()">add meta tags</a>
-
                 if (categoryComment.Success === "ok") {
                     categoryFolderId = folderId;
-                    if (isPornEditor) {
-                        $('#catDlgDescription').summernote('code', categoryComment.CommentText);
-                        $('.folderCategoryDialogButton').show();
-}
-                    else {
-                        $('#catDlgDescription').val(categoryComment.CommentText);
-                        $('#catDlgDescription').prop("readonly", true);
-                        $('.folderCategoryDialogButton').hide();
-                    }
+
+                    //alert("categoryComment.CommentText: " + categoryComment.CommentText);
+
+                    //$('#catDlgReadOnlyTextArea').html('');
+                    $('#catDlgReadOnlyTextArea').html(categoryComment.CommentText);
 
                     $('#folderCategoryDialog').dialog('option', 'title', categoryComment.FolderName);
                     $('#folderCategoryDialog').show();
@@ -66,39 +65,60 @@ function showCategoryDialog(folderId) {
     }
 }
 
+
+
+
 function toggleEditCatDialog() {
     if ($("#btnCatDlgEdit").html() === "Edit") {
-        $('#catDlgDescription').prop("readonly", false);
+
         $("#btnCatDlgEdit").html("Save");
+        $('#btnCatDlgMeta').show();
+        $('#catDlgReadOnlyTextArea').hide();
+        $('#catDlgSummerNoteContainer').show();
+        $('#catDlgSummerNoteTextArea').summernote('code', $('#catDlgReadOnlyTextArea').html());
+
     }
     else {
-        $.ajax({
-            type: "PUT",
-            url: settingsArray.ApiServer + "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" + $('#catDlgDescription').summernote('code'),
-            success: function (success) {
-                if (success === "ok") {
-                    displayStatusMessage("ok", "category description updated");
-                    $('#btnCatDlgEdit').html("Edit");
-                    $('#catDlgDescription').prop("readonly", true);
-                }
-                else
-                    alert("EditFolderCategory: " + success);
-            },
-            error: function (jqXHR, exception) {
-                alert("EditFolderCategory XHR : " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
+        saveCategoryDialogText();
     }
+    //The server has not found anything matching the requested URI(Uniform Resource Identifier).        GET - http://localhost:56437/Styles/images/ui-icons_f5e175_256x240.png
 }
+
+function saveCategoryDialogText() {
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" + $('#catDlgSummerNoteTextArea').summernote('code'),
+        success: function (success) {
+            if (success === "ok") {
+                displayStatusMessage("ok", "category description updated");
+                $('#btnCatDlgEdit').html("Edit");
+            }
+            else
+                alert("EditFolderCategory: " + success);
+        },
+        error: function (jqXHR, exception) {
+            alert("EditFolderCategory XHR : " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+}
+
 
 function addMetaTags() {
     openMetaTagDialog(categoryFolderId);
 }
 
 function considerClosingCategoryDialog() {
-    if ($('#catDlgDescription').prop("readonly")) {
-        $('#folderCategoryDialog').dialog("close");
+    if (isPornEditor) {
+        if ($("#btnCatDlgEdit").html() === "Edit") {
+            //if ($('#catDlgDescription').prop("readonly")) {
+            $('#folderCategoryDialog').dialog("close");
+
+            //$('#catDlgSummerNoteTextArea').summernote('destroy');
+
+        }
     }
+    else
+        $('#folderCategoryDialog').dialog("close");
 }
 
 function slowlyShowFolderCategoryDialog(folderId) {

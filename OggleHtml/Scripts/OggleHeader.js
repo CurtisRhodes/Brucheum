@@ -2,6 +2,10 @@
     var headerHtml;
     var lang = "en";
     var subheaderContent;
+    var bannerImage = "/Images/redballon.png";
+
+
+
     if (subdomain === "boobs" || subdomain === "archive") {
         if (lang === "en") {
             subheaderContent =
@@ -29,10 +33,16 @@
             "                <a href='/album.html?folder=241'>sizes</a>\n";
     }
     if (subdomain === "admin") {
-        headerHtml = "Admin";
+        subheaderContent = "Admin";
     }
     if (subdomain === "porn" || subdomain === "sluts") {
+
+
+
         $('body').addClass('pornBodyColors');
+        bannerImage = "/Images/cslips02.png";
+
+
         subheaderContent =
             "               <a href='/album.html?folder=243'>cock suckers</a>, \n" +
             "               <a href='/album.html?folder=420'>boob suckers</a>, \n" +
@@ -46,7 +56,7 @@
 
     headerHtml =
         "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
-        "       <a href='/'><img src='/Images/redballon.png' title='home. Find lots of cool things here.' class='bannerImage' /></a>\n" +
+        "       <a href='/'><img src='" + bannerImage + "' title='home. Find lots of cool things here.' class='bannerImage' /></a>\n" +
         "   </div>\n" +
         "   <div class='headerBodyContainer'>\n" +
         "       <div id='' class='headerTopRow'>\n" +

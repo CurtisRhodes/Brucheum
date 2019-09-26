@@ -8,7 +8,7 @@ var windowW = $(window).width();
 var windowH = $(window).height();
 var Xincrimentor = 15;
 var Yincrimentor = 10;
-var exploderSpeed = 15;
+var exploderSpeed = 18;
 var imageViewerSelectedImageArchiveFolderId;
 var imageViewerFolderId;
 var imageViewerArray;
@@ -16,7 +16,7 @@ var imageViewerIndex;
 var imageViewerIntervalTimer;
 var imageViewerFolderName;
 var viewerShowing = false;
-
+var slideShowRunning = false;
 
 function launchViewer(imageArray, imageIndex, folderId, folderName) {
     imageViewerArray = imageArray;
@@ -35,7 +35,8 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
     resizePage();
     resizeViewer();
     $('#imageViewerDialog').show();
-    //$('#imageViewerDialog').dialog("open");
+
+    logImageHit(imageViewerArray[imageViewerIndex].Link);
 
     exploderInterval = setInterval(function () {
         explodeViewer();
@@ -140,6 +141,11 @@ function slide(direction) {
 
         $('#viewerImage').show();
         $('#viewerImage').css("transform", "translateX(0)");
+
+
+        logImageHit(imageViewerArray[imageViewerIndex].Link);
+
+
     }, 450);
     resizeViewer();
     $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
@@ -149,6 +155,7 @@ function runSlideShow(action) {
     //alert("slideShow action: " + action)
 
     if (action === 'start') {
+        slideShowRunning = true;
         if ($('#showSlideshow').attr("Title") === "start slideshow") {
             $('#showSlideshow').attr("Title", "stop slideshow");
         }

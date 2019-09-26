@@ -231,8 +231,13 @@ function intervalBody() {
         //preloadImage = carouselItemArray[imageIndex].Link;
         $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
         //$('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
-        $('#categoryTitle').html(carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
-        $('#categoryLabel').html(carouselItemArray[imageIndex].FolderPath);
+        $('#categoryTitle').html(carouselItemArray[imageIndex].FolderPath + ": " + carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
+
+        // find links see if we know this girl.
+        $('#categoryLabel').html(carouselItemArray[imageIndex].RootFolder);
+
+
+
         $('#laCarousel').fadeIn(intervalSpeed);
         resizeCarousel();
         $('#footerMessage').html("image: " + imageIndex + " of " + numImages);

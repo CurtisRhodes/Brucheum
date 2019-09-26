@@ -327,6 +327,7 @@ namespace WebApi
                     RootFolder = vwTree.RootFolder,
                     DirectoryName = vwTree.FolderName,
                     Link = vwTree.Link,
+                    LinkId = vwTree.LinkId,
                     SubDirCount = vwTree.SubDirCount,
                     Length = vwTree.FileCount + vwTree.TotalFiles + vwTree.GrandTotalFiles,
                     DanniPath = (path + "/" + vwTree.FolderName).Replace(" ", "%20")

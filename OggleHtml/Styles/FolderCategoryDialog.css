@@ -6,6 +6,7 @@
 #folderCategoryDialog .ui-corner-all {
     border-radius: 22px;
 }
+
 .folderCategoryDialogButton {
     text-align: center;
     background: var(--brucheumBlue);
@@ -22,7 +23,7 @@
     font-weight: normal;
 }
 
-.catDlgTextArea {
+.catDlgReadOnlyTextArea {
     height: 350px;
     width: 400px;
     overflow-y: auto;

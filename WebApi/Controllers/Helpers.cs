@@ -152,6 +152,18 @@ namespace WebApi
         //    }
         //}
 
+        public static bool IsNullorUndefined(string testValue)
+        {
+            bool isNullorUndefined = false;
+            if (testValue == null)
+                isNullorUndefined = true;
+            if (testValue == "undefined")
+                isNullorUndefined = true;
+
+            return isNullorUndefined;
+        }
+
+
         public static string GetLocalParentPath(int folderId)
         {
             string parentPath = "";

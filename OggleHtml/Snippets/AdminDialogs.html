@@ -64,15 +64,12 @@
 </div>
 
 <div id="folderCategoryDialog" class="oggleDialogWindow" title="" onmouseleave="considerClosingCategoryDialog()">
-
-    <div id="metatabRow" class="metaTagRow">
-        <input id="txtMetatag" onblur="addMetaTag" />
+    <div id="catDlgReadOnlyTextArea" class="catDlgReadOnlyTextArea"></div>
+    <div id="catDlgSummerNoteContainer">    
+        <div id="catDlgSummerNoteTextArea" class="catDlgSummerNoteTextArea"></div>
     </div>
-
-    <div><textarea id="catDlgDescription" class="catDlgTextArea"></textarea></div>
     <a id="btnCatDlgEdit" class="folderCategoryDialogButton" href="javascript:toggleEditCatDialog()">Edit</a>
     <a id="btnCatDlgMeta" class="folderCategoryDialogButton" href="javascript:addMetaTags()">add meta tags</a>
-
 </div>
 
 <div id="metaTagDialog" class="oggleDialogWindow" title="">

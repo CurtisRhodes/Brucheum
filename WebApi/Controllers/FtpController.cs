@@ -457,7 +457,7 @@ namespace WebApi
         }
 
         [HttpPut]
-        public string RenameFolder(int folderId, string currentF, string newFolderName)
+        public string RenameFolder(int folderId, string newFolderName)
         {
             string success = "";
             try

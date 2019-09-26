@@ -25,14 +25,15 @@ body {
 }
 
 .pornBodyColors {
+
     background-color: #ffcccc;
 }
 
 .selectedDirTreeNode {
-    background-color: #dcd7be;
+    background-color: #dcd7be; /* #b2e5eb; */
 }
-
-.dirTreeSpan {
+.treeLabelDiv {
+    display: inline;
 }
 
 .threeColumnLayout {
@@ -361,3 +362,25 @@ footer {
     box-shadow: 10px 10px rgba(95, 12, 12, 0.5);
     display: none;
 }
+
+.folderCategoryDialogButton {
+    text-align: center;
+    background: var(--brucheumBlue);
+    color: #000;
+    border-radius: 6px;
+    padding: 8px 20px;
+    cursor: pointer;
+}
+
+.catDlgReadOnlyTextArea {
+    height: 350px;
+    width: 400px;
+    overflow-y: auto;
+    background-color: var(--oggleBackgroundColor);
+    padding: 9px;
+    margin: 8px;
+    border-radius: 22px;
+}
+
+
+

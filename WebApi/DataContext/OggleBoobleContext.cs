@@ -115,6 +115,7 @@ namespace WebApi.DataContext
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
         public string Link { get; set; }
+        public string LinkId { get; set; }
         public int SubDirCount { get; set; }
         public int FileCount { get; set; }
         public int TotalFiles { get; set; }

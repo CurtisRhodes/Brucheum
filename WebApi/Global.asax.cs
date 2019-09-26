@@ -9,12 +9,6 @@ using System.Web.Routing;
 
 namespace WebApi
 {
-    //public class Global
-    //{
-    //    public delegate void DelLogMessage(string data);
-    //    public static DelLogMessage LogMessage;
-    //}
-
     public class WebApiApplication : System.Web.HttpApplication
     {
         protected void Application_Start()

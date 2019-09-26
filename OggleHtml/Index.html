@@ -14,6 +14,7 @@
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
+    <script src="Scripts/OggleFooter.js"></script>
     <script src="Scripts/Carousel.js"></script>
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/FolderCategoryDialog.js"></script>
@@ -98,6 +99,7 @@
         </div>
         <div id="rightColumn"></div>
     </div>
+    <footer></footer>
 
     <div id="carouselContextMenu" class="ogContextMenu" onmouseleave="considerHidingContextMenu()">
         <div id="ctxModelName" onclick="carouselContextMenuAction('showDialog')">model name</div>
@@ -116,7 +118,6 @@
         <div id="killPromoPrompt" class="ogglePromoKillMessage">had enough promo messages?</div>
     </div>
     <div id="indexCatTreeContainer" class="oggleHidden"></div>
-    <footer></footer>
     <div w3-include-html="Snippets/AdminDialogs.html"></div>
     <div w3-include-html="Snippets/Login.html"></div>
     <div w3-include-html="Snippets/Register.html"></div>
@@ -140,9 +141,6 @@
             else
                 subdomain = params.subdomain;
 
-            setOggleHeader(subdomain);
-            setOggleFooter(subdomain);
-
             var dots = ""
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
@@ -153,12 +151,17 @@
                     $('#dots').html('');
                     clearInterval(waiter);
                     launchCarousel(subdomain);
+
+                    // hopes for a cookie
                     logPageHit("Index", "OggleHtml");
+
+                    setOggleHeader(subdomain);
+                    setOggleFooter(subdomain);
+
                     if (subdomain == "porn") {
                         $('#pornLeftColumnList').show();
                         $('#boobsLeftColumnList').hide();
                         $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
-                        $('body').addClass('pornBodyColors');
                         $('#includeCenterfoldsCheckbox').hide();
                     }
                     else {

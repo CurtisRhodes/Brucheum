@@ -8,14 +8,6 @@ var dashboardMainSelectedPath = "";
 var partialViewSelectedItemId = 0;
 var dashboardContextMenuFolderId = "";
 
-function buildDirectoryTree() {
-    $('#dirTreeContainer').html("");
-    $('#dataifyInfo').show().html("rebuilding directory tree");
-
-    $('#dashBoardLoadingGif').show();
-    buildDirTree($('#dirTreeContainer'), "dashboardMain", 0);
-}
-
 function resizeDashboardPage() {
     resizePage();
     var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);
@@ -267,10 +259,9 @@ function renameFolder() {
     var start = Date.now();
     $('#dashBoardLoadingGif').fadeIn();
     $('#dataifyInfo').show().html("renaming folder " + $('.txtLinkPath').val() + " to " + $('#txtReName').val());
-
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&currentF=x&newFolderName=" + $('#txtReName').val(),
+        url: settingsArray.ApiServer + "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val(),
         success: function (success) {
             $('#dashBoardLoadingGif').hide();
             //$('#renameFolderCrud').dialog("close");
@@ -329,16 +320,30 @@ function moveFolderTreeClick(path, id) {
     $('#partialViewTreeContainer').dialog("close");
 }
 
+function buildDirectoryTree() {
+    $('#dirTreeContainer').html("");
+    $('#dataifyInfo').show().html("rebuilding directory tree");
+
+    $('#dashBoardLoadingGif').show();
+    buildDirTree($('#dirTreeContainer'), "dashboardMain", 0);
+    //$('.dirTreeSpan').mouseover()
+}
+
 function dashboardMainClick(path, id, linkId) {
     dashboardMainSelectedTreeId = id;
     dashboardMainSelectedPath = path;
     $('.txtLinkPath').val(path.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
 
-    alert("linkId: " + linkId);
+    //$('.treeLabelDiv').removeClass('selectedDirTreeNode');
 
-    $('.dirTreeSpan').removeClass('selectedDirTreeNode');
-    $('#' + linkId + '').addClass('selectedDirTreeNode');
+    //$('#' + linkId + '').addClass('selectedDirTreeNode');
+    //$('#' + linkId + '').addClass('selectedDirTreeNode');
 
+    //alert("$('#" + linkId + "') : " + $('#' + linkId + '').attr("id"));
+
+
+    //alert("linkId: " + $('#L' + linkId + '').attr("id"));
+    //alert("path: " + path);
     //alert("this linkId: " + linkId);
     //alert('dashboardMainClick');
     //alert("this: " + $(this).val());

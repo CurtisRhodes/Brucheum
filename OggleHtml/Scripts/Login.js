@@ -161,19 +161,23 @@ function profilePease() {
 }
 
 function setUserPermissions() {
-    if (document.domain === 'localhost') {
-        $('.loginRequired').show();
-        $('.adminLevelRequired').show();
-        if (typeof isPornEditor === 'boolean') 
-            isPornEditor = true;        
-        if (typeof permissionsSet === "boolean")
-            permissionsSet = true;
-        $('#spnUserName').html("devl");
-        $('#optionLoggedIn').hide();
-        $('#optionNotLoggedIn').hide();
-        //alert("document.domain : " + document.domain);
-    }
-    else
+    //alert("document.domain : " + document.domain);
+    //if (document.domain === 'localhost') {
+
+    //    $('.loginRequired').show();
+    //    $('.adminLevelRequired').show();
+    //    if (typeof isPornEditor === 'boolean') 
+    //        isPornEditor = true;        
+    //    if (typeof permissionsSet === "boolean")
+    //        permissionsSet = true;
+
+    //    setLocalValue("User", "devl");
+    //    $('#spnUserName').html("devl");
+    //    $('#optionLoggedIn').hide();
+    //    $('#optionNotLoggedIn').hide();
+    //    //alert("document.domain : " + document.domain);
+    //}
+    //else
     {
         var userName = getCookieValue("User");
         if (userName !== "") {

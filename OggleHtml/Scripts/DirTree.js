@@ -12,7 +12,7 @@ function buildDirTree(dest, treeId, startNode, endNode) {
         dirTreeContainer = "";
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/CatTree/Get?root=" + startNode,
+            url: settingsArray.ApiServer + "api/DirTree/Get?root=" + startNode,
             success: function (categoryTreeModel) {
                 recurrBuildDirTree(categoryTreeModel, treeId);
                 dest.html(dirTreeContainer);
@@ -60,12 +60,11 @@ function recurrBuildDirTree(dir, treeId) {
             subDirtxt = "";
 
         dirTreeContainer += "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
-            + "<span id=S" + subDir.LinkId + " onclick=toggleDirTree('" + subDir.LinkId + "') >[" + expandMode + "] </span>"
-            + "<span id='" + subDir.linkId + "' class='dirTreeSpan' onclick=" + treeId
-            + "Click('" + subDir.DanniPath + "','" + subDir.FolderId + "','" + subDir.linkId + "') "
+            + "<span id='S" + subDir.LinkId + "' onclick=toggleDirTree('" + subDir.LinkId + "') >[" + expandMode + "] </span>"
+            + "<div id='" + subDir.linkId + "aq' class='treeLabelDiv' onclick=" + treeId + "Click('" + subDir.DanniPath + "','" + subDir.FolderId + "','" + subDir.LinkId + "aq') "
             + "oncontextmenu=showDirTreeContextMenu('" + subDir.LinkId + "','" + subDir.FolderId + "') "
             + "onmouseover=showFolderImage('" + encodeURI(imgSrc) + "') onmouseout=$('.dirTreeImageContainer').hide() >"
-            + subDir.DirectoryName.replace(".OGGLEBOOBLE.COM", "") + "</span><span class='fileCount'>  : "
+            + subDir.DirectoryName.replace(".OGGLEBOOBLE.COM", "") + "</div>       <span class='fileCount'>  : "
             + subDir.Length.toLocaleString() + subDirtxt + "</span></div>"
             + "<div class='" + expandClass + "' id=" + subDir.LinkId + ">";
 

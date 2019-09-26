@@ -29,7 +29,11 @@
             "    <div id='copyright'>&copy; 2019 - <a href='~/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>\n" +
             "</div>\n";
     }
+
     if (subdomain === "porn" || subdomain === "sluts") {
+        alert("setOggleFooter: " + subdomain);
+
+        footerhtml =
         "<div class='flexContainer'>\n" +
             "    <div class='footerCol'>\n" +
             "        <div><a href='~/Home/Index'>Let Me Explain</a></div>\n" +
@@ -56,5 +60,6 @@
             "    <div id='copyright'>&copy; 2019 - <a href='~/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>\n" +
             "</div>\n";
     }
+
     $('footer').html(footerhtml);
 }

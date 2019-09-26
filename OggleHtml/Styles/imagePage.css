@@ -92,7 +92,7 @@
 
 .thumbImage {
     height: 200px;
-    cursor: pointer;
+    cursor: zoom-in;
     /*
         border: dashed thin black;
         margin-bottom: -3px;
