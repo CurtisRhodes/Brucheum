@@ -38,8 +38,8 @@ namespace WebApi
                     else
                     {
                         IPVisitLookup iPVisitLookup = (from v in db.Visitors
-                                         join vi in db.Visits on v.VisitorId equals vi.VisitorId
-                                         select new IPVisitLookup() { VisitDate=vi.VisitDate }).OrderByDescending(v => v).FirstOrDefault();
+                                                       join vi in db.Visits on v.VisitorId equals vi.VisitorId
+                                                       select new IPVisitLookup() { VisitDate = vi.VisitDate }).OrderByDescending(v => v).FirstOrDefault();
                         lastVisitDate = iPVisitLookup.VisitDate;
                     }
                     if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
@@ -51,38 +51,51 @@ namespace WebApi
                             db.Visits.Add(new Visit() { VisitorId = pageHitModel.VisitorId, VisitDate = DateTime.Now });
                             db.SaveChanges();
                         }
-                        // SEND VISIT EMAIL
+
+                    }
+
+                    string pageName = "";
+                    using (OggleBoobleContext odb = new OggleBoobleContext())
+                    {
+                        pageName = odb.CategoryFolders.Where(f => f.Id == pageHitModel.PageId).First().FolderName;
+                    }
+
+                    // SEND VISIT EMAIL
+                    if (pageHitModel.Verbose > 4)
+                    {
                         if (AppDomain.CurrentDomain.BaseDirectory != "F:\\Devl\\WebApi\\")
                         {
-                            if (pageHitModel.PageName != "Julie Woodson" &&
-                                pageHitModel.PageName != "Teri Peterson" &&
-                                pageHitModel.PageName != "Alana Soares" &&
-                                pageHitModel.PageName != "Ola Ray")
+                            if ((pageHitModel.IpAddress != "68.203.90.183") && (pageHitModel.IpAddress != "50.62.160.105"))
                             {
+                                //if (pageHitModel.PageName != "Julie Woodson" &&
+                                //    pageHitModel.PageName != "Teri Peterson" &&
+                                //    pageHitModel.PageName != "Alana Soares" &&
+                                //    pageHitModel.PageName != "Ola Ray")
+                                //{
                                 using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
                                 {
-                                    if (visitor.UserName == null) //"unknown" && visitor.UserName == "")
+
+                                    Visitor visitor = db.Visitors.Where(v => v.VisitorId == pageHitModel.VisitorId).First();
+
+                                    if (Helpers.IsNullorUndefined(pageHitModel.UserName))
                                     {
-                                        //if ((visitor.IpAddress != "68.203.90.183") && (visitor.IpAddress != "50.62.160.105"))
-                                        {
-                                            godaddyEmail.SendEmail("VERY GOOD: Someone came back for another visit",
-                                            pageHitModel.PageName + " hit from " + visitor.City + "," + visitor.Region + " " + visitor.Country + " Ip: " + visitor.IpAddress);
-                                        }
+                                        godaddyEmail.SendEmail("VERY GOOD: Someone came back for another visit",
+                                        pageName + " hit from " + visitor.City + "," + visitor.Region + " " + visitor.Country + " Ip: " + pageHitModel.IpAddress);
                                         pageHitSuccessModel.WelcomeMessage = "Welcome back. Please Log in.";
                                     }
                                     else
                                     {
-                                        //if ((visitor.IpAddress != "68.203.90.183") && (visitor.IpAddress != "50.62.160.105"))
-                                        {
-                                            godaddyEmail.SendEmail("EXCELLENT! " + visitor.UserName + " came back for another visit ",
-                                            pageHitModel.PageName + " hit from " + visitor.City + "," + visitor.Region + " " + visitor.Country);
-                                        }
+                                        godaddyEmail.SendEmail("EXCELLENT! " + visitor.UserName + " came back for another visit ",
+                                        pageName + " hit from " + visitor.City + "," + visitor.Region + " " + visitor.Country);
                                         pageHitSuccessModel.WelcomeMessage = "Welcome back " + visitor.UserName;
                                     }
                                 }
                             }
                         }
                     }
+
+                    pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.PageName == pageName).Count();
+                    pageHitSuccessModel.UserHits = db.PageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
 
                     /// LOG PAGE HIT
                     if ((pageHitModel.IpAddress != "68.203.90.183") && (pageHitModel.IpAddress != "50.62.160.105"))
@@ -91,29 +104,27 @@ namespace WebApi
                         hit.VisitorId = pageHitModel.VisitorId;
                         hit.HitDateTime = DateTime.Now;
                         hit.AppName = pageHitModel.AppName;
-                        hit.PageName = pageHitModel.PageName;
+                        hit.PageName = pageName;
                         db.PageHits.Add(hit);
                         db.SaveChanges();
-                    }
 
-                    pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.PageName == pageHitModel.PageName).Count();
-                    pageHitSuccessModel.UserHits = db.PageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
+                        if (pageName == "Ranker")
+                        {
+                            if (AppDomain.CurrentDomain.BaseDirectory != "F:\\Devl\\WebApi\\")
+                            {
+                                using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
+                                {
+                                    godaddyEmail.SendEmail("ALRIGHT!. Somebody Visited Ranker", "Visitor " + pageHitModel.IpAddress + " visited: " + pageName);
+                                }
+                            }
+                        }
 
-                    if (pageHitModel.PageName == "Ranker")
-                    {
-                        if (AppDomain.CurrentDomain.BaseDirectory != "F:\\Devl\\WebApi\\")
+                        if (pageHitModel.Verbose > 8)
                         {
                             using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
                             {
-                                godaddyEmail.SendEmail("ALRIGHT!. Somebody Visited Ranker", "Visitor " + pageHitModel.IpAddress + " visited: " + pageHitModel.PageName);
+                                godaddyEmail.SendEmail("Page Visit", "Visitor " + pageHitModel.IpAddress + " visited: " + pageName);
                             }
-                        }
-                    }
-                    else if (pageHitModel.Verbose)
-                    {
-                        using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
-                        {
-                            godaddyEmail.SendEmail("Page Visit", "Visitor " + pageHitModel.IpAddress + " visited: " + pageHitModel.PageName);
                         }
                     }
                 }
@@ -182,6 +193,18 @@ namespace WebApi
                     {
                         visitorSuccess.VisitorId = dbExisting.VisitorId;
                     }
+
+                    PageHit hit = new PageHit();
+                    hit.VisitorId = visitorSuccess.VisitorId;
+                    hit.HitDateTime = DateTime.Now;
+                    hit.AppName = visitorModel.AppName;
+                    hit.PageName = visitorModel.PageName;
+                    db.PageHits.Add(hit);
+
+                    db.Visits.Add(new Visit() { VisitorId = visitorSuccess.VisitorId, VisitDate = DateTime.Now });
+
+                    db.SaveChanges();
+
                 }
                 visitorSuccess.Success = "ok";
             }

@@ -136,10 +136,14 @@
 
             //$('#footerLastBuild').html("last build: " + lastBuild + "3");
             params = getParams();
-            if (params.subdomain == undefined)
+            if (params.subdomain == undefined) {
                 subdomain = "boobs";
-            else
+                logPageHit(2);
+            }
+            else {
                 subdomain = params.subdomain;
+                logPageHit(242);
+            }
 
             var dots = ""
             var waiter = setInterval(function () {
@@ -151,9 +155,6 @@
                     $('#dots').html('');
                     clearInterval(waiter);
                     launchCarousel(subdomain);
-
-                    // hopes for a cookie
-                    logPageHit("Index", "OggleHtml");
 
                     setOggleHeader(subdomain);
                     setOggleFooter(subdomain);

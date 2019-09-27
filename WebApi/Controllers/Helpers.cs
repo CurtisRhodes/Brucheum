@@ -159,6 +159,8 @@ namespace WebApi
                 isNullorUndefined = true;
             if (testValue == "undefined")
                 isNullorUndefined = true;
+            if (testValue == "")
+                isNullorUndefined = true;
 
             return isNullorUndefined;
         }

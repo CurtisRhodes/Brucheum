@@ -27,11 +27,11 @@ namespace WebApi.Models
     {
         public string VisitorId { get; set; }
         public string IpAddress { get; set; }
+        public int PageId { get; set; }
+        public string VisitDate { get; set; }
+        public int Verbose { get; set; }
         public string AppName { get; set; }
         public string UserName { get; set; }
-        public string PageName { get; set; }
-        public string VisitDate { get; set; }
-        public bool Verbose { get; set; }
     }
     public class PageHitSuccessModel
     {

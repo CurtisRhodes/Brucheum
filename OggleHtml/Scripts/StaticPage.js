@@ -29,7 +29,7 @@ $(document).ready(function () {
             clearInterval(waiter);
             getBreadCrumbs(staticPageFolderId);
             setOggleHeader(staticPageRootFolderId);
-            //alert("logPageHit(" + staticPageFolderName + ")");
+            alert("logPageHit(" + staticPageFolderName + ")");
             logPageHit(staticPageFolderName, "static");
             checkForLink(staticPageFolderId, "babepedia");
             checkForLink(staticPageFolderId, "freeones");
