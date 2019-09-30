@@ -15,6 +15,7 @@
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
+    <script src="Scripts/HitCounter.js"></script>
     <script src="Scripts/Carousel.js"></script>
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/FolderCategoryDialog.js"></script>
@@ -138,11 +139,9 @@
             params = getParams();
             if (params.subdomain == undefined) {
                 subdomain = "boobs";
-                logPageHit(2);
             }
             else {
                 subdomain = params.subdomain;
-                logPageHit(242);
             }
 
             var dots = ""
@@ -164,13 +163,16 @@
                         $('#boobsLeftColumnList').hide();
                         $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
                         $('#includeCenterfoldsCheckbox').hide();
+                        logSpecialPageHit("Porn");
                     }
                     else {
                         $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
                         $('#boobsLeftColumnList').show();
                         $('#pornLeftColumnList').hide();
                         launchPromoMessages();
+                        logSpecialPageHit("Index");
                     }
+                    
                     setUserPermissions();
                     var waiter2 = setInterval(function () {
                         dots += "* ";

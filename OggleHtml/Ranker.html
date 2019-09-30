@@ -105,12 +105,13 @@
                         dots += "* ";
                         $('#dots').html(dots);
                         if (permissionsSet === true) {
-                            $('#dots').html('');                            
+                            $('#dots').html('');
                             clearInterval(waiter2);
                             $('#footerMessage').html("isPornEditor: " + isPornEditor);
-                            $('#playboyButtonBoobs').addClass('selectedPlayboyButton');                            
+                            $('#playboyButtonBoobs').addClass('selectedPlayboyButton');
                             loadBoobsRanker();
-                            logPageHit("Ranker", "OggleBooble");
+
+                            logSpecialPageHit("Ranker");
                         }
                     }, 300);
                 }

@@ -24,7 +24,7 @@ function directToStaticPage(folderId) {
     });
 }
 
-function getAlbumPageHeader(folderId) {
+function setAlbumPageHeader(folderId) {
     //alert("getAlbumPageHeader");
     $.ajax({
         type: "PATCH",
@@ -33,7 +33,8 @@ function getAlbumPageHeader(folderId) {
         success: function (successModel) {
             if (successModel.Success === "ok") {
                 setOggleHeader(successModel.ReturnValue);
-            }
+                setOggleFooter(successModel.ReturnValue);
+}
             else
                 alert("getAlbumPageHeader " + successModel.Success);
         },

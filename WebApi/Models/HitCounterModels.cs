@@ -40,7 +40,14 @@ namespace WebApi.Models
         public string WelcomeMessage { get; set; }
         public string Success { get; set; }
     }
-    
+
+    public class ImageHitSuccessModel
+    {
+        public int ImageHits { get; set; }
+        public int UserHits { get; set; }
+        public string Success { get; set; }
+    }
+
     public class IPVisitLookup
     {
         public string VisitorId { get; set; }
@@ -60,7 +67,7 @@ namespace WebApi.Models
     public class VisitorModel
     {
         public string AppName { get; set; }
-        public string PageName { get; set; }
+        public int PageId { get; set; }
         public string IpAddress { get; set; }
         public string UserName { get; set; }
         public string City { get; set; }

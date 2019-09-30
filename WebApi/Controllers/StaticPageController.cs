@@ -53,15 +53,16 @@ namespace WebApi.Controllers
                 folderName = Helpers.GetCustomStaticFolderName(folderId, folderName.Replace(".OGGLEBOOBLE.COM", ""));
                 string staticContent =
                     "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, folderName) +
-                    "\n<body style='margin-top:105px'>\n<header></header>" + 
-                    GalleryPageBodyHtml(folderId, rootFolder) +
-                    CommentDialog() + CategoryDialog() + ModelInfoDialog() +
+                    "\n<body style='margin-top:105px'>\n<header></header>" +
+                    GalleryPageBodyHtml(folderId, rootFolder) + "<footer></footer>\n" +
+                    Slideshow() + //CommentDialog() + //CategoryDialog() + ModelInfoDialog() +
                     "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
                     "<script>var staticPageFolderId=" + folderId + "; " +
                     "var staticPageFolderName='" + folderName + "'; " +
                     "var staticPageImagesCount='" + imagesCount + "'; " +
                     "var staticPageRootFolderId='" + rootFolder + "';</script>\n" +
-                    Slideshow() + FooterHtml(rootFolder) +
+                    
+                    //FooterHtml(rootFolder) +
                     "<script src='/scripts/StaticPage.js'></script>\n" +
                     "\n</body>\n</html>";
 
@@ -144,15 +145,16 @@ namespace WebApi.Controllers
                 "   <link href='/Styles/jqueryui.css' rel='stylesheet' />\n" +
                 "   <link rel='icon' type='image/png' href='/static/favicon.png' />" +
                 "   <script src='/Scripts/Login.js' type='text/javascript'></script>\n" +
+                "   <script src='/Scripts/HitCounter.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Common.js' type='text/javascript'></script>\n" +
-                "   <script src='/Scripts/OggleHeader.js'></script>\n"+
+                "   <script src='/Scripts/OggleHeader.js'></script>\n" +
+                "   <script src='/Scripts/OggleFooter.js'></script>\n" +
                 "   <script src='/Scripts/Album.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Slideshow.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/ImageCommentDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/FolderCategoryDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/ModelInfoDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/DirTree.js'></script>\n" +
-
                 "   <link href='/Styles/Common.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/Header.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/Slideshow.css' rel='stylesheet'/>\n" +
@@ -245,14 +247,14 @@ namespace WebApi.Controllers
                     "<span id = 'imageViewerHeaderTitle' class='imageViewerTitle'></span>" +
                     "<div class='viewerButtonsRowSection'>" +
                         "<div class='floatRight' style='margin-left: 44px;' onclick='closeViewer();'><img src='/images/close.png' /></div>\n" +
-                        "<div class='floatRight' onclick=\"runSlideShow('faster')\"><img id='fasterSlideshow' title='faster slideshow' src='/images/slideshowFaster.png' /></div>\n" +
-                        "<div class='floatRight' onclick=\"runSlideShow('start')\"><img id='showSlideshow' title='start slideshow' src='/images/slideshow.png' /></div>\n" +
+                        "<div class='floatRight' onclick=\"runSlideShow('faster')\"><img id='fasterSlideshow' title='faster' src='/images/slideshowFaster.png' /></div>\n" +
+                        "<div id='txtStartSlideShow' class='txtSlideShow floatRight' onclick='runSlideShow(\"start\");'>start slideshow</div>\n"+
                         "<div class='floatRight' onclick=\"runSlideShow('slower')\"><img id='slowerSlideShow' title='slower slideshow' src='/images/slideshowSlower.png' /></div>\n" +
                         "<div class='floatRight' onclick=\"blowupImage()\"><img class='popoutBox' src='/images/expand02.png' /></div>\n" +
                     "</div>\n" +
                 "</div>\n" +
-                "<div id='leftClickArea' class='hiddeClickArea' oncontextmenu='slideshowContexMenu()' onclick='slide(\"prev\")'></div>" +
-                "<div id='rightClickArea' class='hiddeClickArea' oncontextmenu='slideshowContexMenu()' onclick='slide(\"next\")' ></div>\n" +
+                "<div id='leftClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slide(\"prev\")'></div>" +
+                "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slide(\"next\")' ></div>\n" +
                 "<div id='viewerImageContainer' class='expandoImageDiv'>\n" +
                     "<img id='viewerImage' class='expandoImage'/>\n" +
                 "</div>\n" +
@@ -272,100 +274,100 @@ namespace WebApi.Controllers
             "</div>\n";
         }
 
-        private string CategoryDialog()
-        {
-            return "<div id='folderCategoryDialog' class='displayHidden' title='' onmouseleave='considerClosingCategoryDialog()'>\n" +
-            "    <div><textarea id='catDlgDescription' class='catDlgTextArea'></textarea></div>\n" +
-            "</div>\n";
-        }
+        //private string CategoryDialog()
+        //{
+        //    return "<div id='folderCategoryDialog' class='displayHidden' title='' onmouseleave='considerClosingCategoryDialog()'>\n" +
+        //    "    <div><textarea id='catDlgDescription' class='catDlgTextArea'></textarea></div>\n" +
+        //    "</div>\n";
+        //}
 
-        private string ModelInfoDialog()
-        {
-            return "<div id = 'modelInfoDialog' class='oggleDialogWindow' onmouseleave='considerClosingModelInfoDialog()'>\n" +
-            "       <div id = 'modelInfoEditArea' class='displayHidden'>\n" +
-            "        <div class='flexContainer'>\n" +
-            "            <div class='floatLeft'>\n" +
-            "                <div class='modelInfoDialogLabel'>name</div><input id='txtFolderName' class='modelDialogInput' /><br />\n" +
-            "                <div class='modelInfoDialogLabel'>from</div><input id='txtNationality' class='modelDialogInput' /><br />\n" +
-            "                <div class='modelInfoDialogLabel'>born</div><input id='txtBorn' class='modelDialogInput' /><br />\n" +
-            "                <div class='modelInfoDialogLabel'>boobs</div><input id='txtBoobs' class='modelDialogInput' /><br />\n" +
-            "                <div class='modelInfoDialogLabel'>figure</div><input id='txtMeasurements' class='modelDialogInput' />\n" +
-            "            </div>\n" +
-            "            <div class='floatLeft'>\n" +
-            "                <img id = 'modelDialogThumbNailImage' src='/images/redballon.png' class='modelDialogImage' />\n" +
-            "            </div>\n" +
-            "       </div>\n" +
-            "       <div class='modelInfoDialogLabel'>comment</div>\n" +
-            "       <div><textarea id='modelInfoDialogComment' class='modelInfoCommentArea'></textarea></div>\n" +
-            "       <div class='modelInfoDialogLabel'>trackbacks</div>\n" +
-            "       <div id='modelInfoDialogTrackBack'>\n" +
-            "           <div class='hrefLabel'>href</div><input id = 'txtLinkHref' class='modelDialogInput' />\n" +
-            "            <div class='hrefLabel'>label</div><input id = 'txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />\n" +
-            "            <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
-            "       </div>\n" +
-            "        <div id = 'externalLinks' class='trackbackLinksArea'></div>\n" +
-            "    </div>\n" +
-            "    <div id = 'modelInfoViewOnlyArea' class='displayHidden'>\n" +
-            "        <div class='viewOnlyMessage'>If you you know who this is Please click Edit</div>\n" +
-            "        <div id = 'unknownModelLinks' class='smallTextArea'></div>\n" +
-            "    </div>\n" +
-            "    <a id = 'modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Edit</a>\n" +
-            "</div>\n";
-        }
+        //private string ModelInfoDialog()
+        //{
+        //    return "<div id = 'modelInfoDialog' class='oggleDialogWindow' onmouseleave='considerClosingModelInfoDialog()'>\n" +
+        //    "       <div id = 'modelInfoEditArea' class='displayHidden'>\n" +
+        //    "        <div class='flexContainer'>\n" +
+        //    "            <div class='floatLeft'>\n" +
+        //    "                <div class='modelInfoDialogLabel'>name</div><input id='txtFolderName' class='modelDialogInput' /><br />\n" +
+        //    "                <div class='modelInfoDialogLabel'>from</div><input id='txtNationality' class='modelDialogInput' /><br />\n" +
+        //    "                <div class='modelInfoDialogLabel'>born</div><input id='txtBorn' class='modelDialogInput' /><br />\n" +
+        //    "                <div class='modelInfoDialogLabel'>boobs</div><input id='txtBoobs' class='modelDialogInput' /><br />\n" +
+        //    "                <div class='modelInfoDialogLabel'>figure</div><input id='txtMeasurements' class='modelDialogInput' />\n" +
+        //    "            </div>\n" +
+        //    "            <div class='floatLeft'>\n" +
+        //    "                <img id = 'modelDialogThumbNailImage' src='/images/redballon.png' class='modelDialogImage' />\n" +
+        //    "            </div>\n" +
+        //    "       </div>\n" +
+        //    "       <div class='modelInfoDialogLabel'>comment</div>\n" +
+        //    "       <div><textarea id='modelInfoDialogComment' class='modelInfoCommentArea'></textarea></div>\n" +
+        //    "       <div class='modelInfoDialogLabel'>trackbacks</div>\n" +
+        //    "       <div id='modelInfoDialogTrackBack'>\n" +
+        //    "           <div class='hrefLabel'>href</div><input id = 'txtLinkHref' class='modelDialogInput' />\n" +
+        //    "            <div class='hrefLabel'>label</div><input id = 'txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />\n" +
+        //    "            <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
+        //    "       </div>\n" +
+        //    "        <div id = 'externalLinks' class='trackbackLinksArea'></div>\n" +
+        //    "    </div>\n" +
+        //    "    <div id = 'modelInfoViewOnlyArea' class='displayHidden'>\n" +
+        //    "        <div class='viewOnlyMessage'>If you you know who this is Please click Edit</div>\n" +
+        //    "        <div id = 'unknownModelLinks' class='smallTextArea'></div>\n" +
+        //    "    </div>\n" +
+        //    "    <a id = 'modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Edit</a>\n" +
+        //    "</div>\n";
+        //}
 
-        private string FooterHtml(string rootFolder)
-        {
-            if (rootFolder == "porn" || rootFolder == "sluts")
-            {
-                return "\n<footer>\n" +
-                    "<div class='flexContainer'>\n" +
-                          "<div class='footerCol'>\n" +
-                              "<div onclick='showCatListDialog(242)'>Category List</div>\n" +
-                              "<div><a href='https://ogglebooble.com'>Oggle Booble</a></div>\n" +
-                          "</div>\n" +
-                          "<div class='footerCol'>\n" +
-                              "<div><a href='https://ogglebooble.com/Ranker.html?subdomain=porn'>Porn Rater</a></div>\n" +
-                              "<div><a href='https://ogglebooble.com/Videos.html'>Nasty Videos</a></div>\n" +
-                          "</div>\n" +
-                          "<div class='footerCol'>\n" +
-                              "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
-                              "<div><a href='https://ogglebooble.com/Blog.html'>Blog</a></div>\n" +
-                              "<div><a href='" + httpLocation + "sluts/sluts.html'>Archive</a></div>\n" +
-                          "</div>\n" +
-                    "</div>\n" +
-                    "<div class='footerVersionMessage'>built " + DateTime.Now.ToShortDateString() + "</div>\n" +
-                    "<div class='footerFooter'>" +
-                          "<div id='footerMessage'></div>" +
-                          "<div id='copyright'>&copy; 2019 - <a href='/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>" +
-                    "</div>\n" +
-                "</footer>";
-            }
-            else
-                return "\n<footer>\n" +
-                    "<div class='flexContainer'>\n" +
-                        "<div class='footerCol'>\n" +
-                            "<div id='explain'></div>\n" +
-                            "<div onclick='showCatListDialog(2)'>Category List</div>\n" +
-                            "<div><a href='" + httpLocation + "porn/porn.html'>Nasty Porn</a></div>\n" +
-                          "</div>\n" +
-                          "<div class='footerCol'>\n" +
-                              "<div><a href='https://ogglebooble.com/Ranker.html'>Boobs Rater</a></div>\n" +
-                              "<div id='Rejects'></div>\n" +
-                              "<div><a href='" + httpLocation + "playboy/centerfolds.html'>Centerfolds</a></div>\n" +
-                          "</div>\n" +
-                          "<div class='footerCol'>\n" +
-                              "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
-                              "<div><a href='https://ogglebooble.com/Blog.html'>Blog</a></div>\n" +
-                              "<div><a href='" + httpLocation + "sluts/sluts.html'>Archive</a></div>\n" +
-                          "</div>\n" +
-                    "</div>\n" +
-                    "<div class='footerVersionMessage'>built " + DateTime.Now.ToShortDateString() + "</div>\n" +
-                    "<div class='footerFooter'>" +
-                          "<div id='footerMessage'></div>" +
-                          "<div id='copyright'>&copy; 2019 - <a href='/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>" +
-                    "</div>\n" +
-                "</footer>";
-        }
+        //private string FooterHtml(string rootFolder)
+        //{
+        //    if (rootFolder == "porn" || rootFolder == "sluts")
+        //    {
+        //        return "\n<footer>\n" +
+        //            "<div class='flexContainer'>\n" +
+        //                  "<div class='footerCol'>\n" +
+        //                      "<div onclick='showCatListDialog(242)'>Category List</div>\n" +
+        //                      "<div><a href='https://ogglebooble.com'>Oggle Booble</a></div>\n" +
+        //                  "</div>\n" +
+        //                  "<div class='footerCol'>\n" +
+        //                      "<div><a href='https://ogglebooble.com/Ranker.html?subdomain=porn'>Porn Rater</a></div>\n" +
+        //                      "<div><a href='https://ogglebooble.com/Videos.html'>Nasty Videos</a></div>\n" +
+        //                  "</div>\n" +
+        //                  "<div class='footerCol'>\n" +
+        //                      "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
+        //                      "<div><a href='https://ogglebooble.com/Blog.html'>Blog</a></div>\n" +
+        //                      "<div><a href='" + httpLocation + "sluts/sluts.html'>Archive</a></div>\n" +
+        //                  "</div>\n" +
+        //            "</div>\n" +
+        //            "<div class='footerVersionMessage'>built " + DateTime.Now.ToShortDateString() + "</div>\n" +
+        //            "<div class='footerFooter'>" +
+        //                  "<div id='footerMessage'></div>" +
+        //                  "<div id='copyright'>&copy; 2019 - <a href='/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>" +
+        //            "</div>\n" +
+        //        "</footer>";
+        //    }
+        //    else
+        //        return "\n<footer>\n" +
+        //            "<div class='flexContainer'>\n" +
+        //                "<div class='footerCol'>\n" +
+        //                    "<div id='explain'></div>\n" +
+        //                    "<div onclick='showCatListDialog(2)'>Category List</div>\n" +
+        //                    "<div><a href='" + httpLocation + "porn/porn.html'>Nasty Porn</a></div>\n" +
+        //                  "</div>\n" +
+        //                  "<div class='footerCol'>\n" +
+        //                      "<div><a href='https://ogglebooble.com/Ranker.html'>Boobs Rater</a></div>\n" +
+        //                      "<div id='Rejects'></div>\n" +
+        //                      "<div><a href='" + httpLocation + "playboy/centerfolds.html'>Centerfolds</a></div>\n" +
+        //                  "</div>\n" +
+        //                  "<div class='footerCol'>\n" +
+        //                      "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
+        //                      "<div><a href='https://ogglebooble.com/Blog.html'>Blog</a></div>\n" +
+        //                      "<div><a href='" + httpLocation + "sluts/sluts.html'>Archive</a></div>\n" +
+        //                  "</div>\n" +
+        //            "</div>\n" +
+        //            "<div class='footerVersionMessage'>built " + DateTime.Now.ToShortDateString() + "</div>\n" +
+        //            "<div class='footerFooter'>" +
+        //                  "<div id='footerMessage'></div>" +
+        //                  "<div id='copyright'>&copy; 2019 - <a href='/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>" +
+        //            "</div>\n" +
+        //        "</footer>";
+        //}
 
         [HttpGet]
         public SuccessModel HasLink(int folderId, string hrefTextSubstring)

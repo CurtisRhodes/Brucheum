@@ -20,13 +20,24 @@
     z-index: 30;
 }
 
-.hiddeClickArea {
+.hiddenClickArea {
     position: absolute;
     height: 100%;
     width: 50%;
     z-index: 35;
 }
 
+#leftClickArea {
+    cursor: url('https://ogglebooble.com/images/leftArrowcursor.png'), sw-resize;
+}
+#rightClickArea {
+    cursor: url('https://ogglebooble.com/images/rightArrowcursor.png'), ne-resize;
+}
+
+.txtSlideShow {
+    padding:2px;
+    cursor:pointer;
+}
 .imageViewerHeaderRow {
     background-color: var(--ogglgeHeaderBarColor);
     width: 100%;

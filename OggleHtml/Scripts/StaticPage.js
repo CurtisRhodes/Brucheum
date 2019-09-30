@@ -29,8 +29,9 @@ $(document).ready(function () {
             clearInterval(waiter);
             getBreadCrumbs(staticPageFolderId);
             setOggleHeader(staticPageRootFolderId);
-            alert("logPageHit(" + staticPageFolderName + ")");
-            logPageHit(staticPageFolderName, "static");
+            //alert("setOggleFooter(" + staticPageRootFolderId + ")");
+            setOggleFooter(staticPageRootFolderId);
+            logPageHit(staticPageFolderId);
             checkForLink(staticPageFolderId, "babepedia");
             checkForLink(staticPageFolderId, "freeones");
             $('footerMessage').html(staticPageFolderName);

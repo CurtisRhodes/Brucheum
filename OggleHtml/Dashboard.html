@@ -14,6 +14,7 @@
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
+    <script src="Scripts/OggleFooter.js"></script>
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/FolderCategoryDialog.js"></script>
     <script src="Scripts/ModelInfoDialog.js"></script>
@@ -185,7 +186,7 @@
                     setOggleHeader("admin");
                     buildDirectoryTree();
                     setUserPermissions();
-                    logPageHit("Dashboard", "OggleHtml");
+                    logSpecialPageHit("Dashboard");
                 }
             }, 300);
 

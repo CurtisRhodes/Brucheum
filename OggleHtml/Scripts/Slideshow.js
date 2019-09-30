@@ -100,6 +100,20 @@ function explodeViewer() {
     }
 }
 
+function slideClick(direction) {
+    if (slideShowRunning) {
+        $('#txtStartSlideShow').html("start slideshow");
+        clearInterval(imageViewerIntervalTimer);
+        if (direction === 'next') {
+            runSlideShow('start');
+        }
+        else
+            slideShowRunning = false;
+    }
+    else 
+        slide(direction);
+}
+
 function slide(direction) {
     if (direction === 'next') {
         imageViewerIndex++;
@@ -152,21 +166,22 @@ function slide(direction) {
 }
 
 function runSlideShow(action) {
-    //alert("slideShow action: " + action)
+    //alert("slideShow action: " + action);
 
     if (action === 'start') {
-        slideShowRunning = true;
-        if ($('#showSlideshow').attr("Title") === "start slideshow") {
-            $('#showSlideshow').attr("Title", "stop slideshow");
+        if ($('#txtStartSlideShow').html() === "start slideshow") {
+            slideShowRunning = true;
+            $('#txtStartSlideShow').html("stop slideshow");
+            //$('#txtStartSlideShow').attr("Title", "stop slideshow");
         }
         else {
-            $('#showSlideshow').attr("Title", "start slideshow");
-            $('#fasterSlideshow').attr("Title", "faster slideshow");
-            $('#slowerSlideShow').attr("Title", "slower slideshow");
+            $('#txtStartSlideShow').html("start slideshow");
+            slideShowRunning = false;
             clearInterval(imageViewerIntervalTimer);
             return;
         }
     }
+
     if (slideShowSpeed === 0) {
         slideShowSpeed = 5000;
     }
@@ -183,11 +198,15 @@ function runSlideShow(action) {
         clearInterval(imageViewerIntervalTimer);
     }
     else {
+        //alert("slide('next');");
         slide('next');
         $('#fasterSlideshow').attr("Title", "slideshow " + 10 - (slideShowSpeed / 1000) + "x");
         $('#slowerSlideShow').attr("Title", "slideshow " + 10 - (slideShowSpeed / 1000) + "x");
         clearInterval(imageViewerIntervalTimer);
         imageViewerIntervalTimer = setInterval(function () {
+
+            //alert("imageViewerIntervalTimer");
+
             slide('next');
         }, slideShowSpeed);
     }
@@ -280,14 +299,14 @@ $(document).keydown(function (event) {
             case 34:                        // pg down
             case 40:                        // dowm arrow
             case 37:                        // left arrow
-                slide('prev');
+                slideClick('prev');
                 break;
             case 13:                        // enter
             case 38:                        // up arrow
             case 39:                        // right arrow
                 event.preventDefault();
                 window.event.returnValue = false;
-                slide('next');
+                slideClick('next');
                 break;
             //case 122:                       // F11
             //    $('#standardHeader').hide();

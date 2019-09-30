@@ -10,14 +10,14 @@
             <span id="imageViewerHeaderTitle" class="imageViewerTitle"></span>
             <div class="viewerButtonsRowSection">
                 <div class="floatRight" style="margin-left: 44px;" onclick="closeViewer();"><img src="/Images/close.png" /></div>
-                <div class="floatRight" onclick="runSlideShow('faster');"><img id="fasterSlideshow" title="faster slideshow" src="/Images/slideshowFaster.png" /></div>
-                <div class="floatRight" onclick="runSlideShow('start');"><img id="showSlideshow" title="start slideshow" src="/Images/slideshow.png" /></div>
-                <div class="floatRight" onclick="runSlideShow('slower');"><img id="slowerSlideShow" title="slower slideshow" src="/Images/slideshowSlower.png" /></div>
+                <div class="floatRight" onclick="runSlideShow('faster');"><img id="fasterSlideshow" title="faster" src="/Images/slideshowFaster.png" /></div>
+                <div id="txtStartSlideShow" class="txtSlideShow floatRight" onclick="runSlideShow('start');">start slideshow</div>
+                <div class="floatRight" onclick="runSlideShow('slower');"><img id="slowerSlideShow" title="slower" src="/Images/slideshowSlower.png" /></div>
                 <div class="floatRight" onclick="blowupImage()"><img class="popoutBox" src="/Images/expand02.png" /></div>
             </div>
         </div>
-        <div id="leftClickArea" class="hiddeClickArea" oncontextmenu="slideshowContexMenu()" onclick="slide('prev');"></div>
-        <div id="rightClickArea" class="hiddeClickArea" oncontextmenu="slideshowContexMenu()" onclick="slide('next');"></div>
+        <div id="leftClickArea" class="hiddenClickArea" oncontextmenu="slideshowContexMenu()" onclick="slideClick('prev');"></div>
+        <div id="rightClickArea" class="hiddenClickArea" oncontextmenu="slideshowContexMenu()" onclick="slideClick('next');"></div>
 
         <div id="viewerImageContainer" class="expandoImageDiv">
             <img id="viewerImage" class="expandoImage" />

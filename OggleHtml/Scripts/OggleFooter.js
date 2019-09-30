@@ -1,7 +1,8 @@
 ﻿function setOggleFooter(subdomain) {
-    var footerhtml;
+    var footerhtml = "";
 
     if (subdomain === "boobs" || subdomain === "archive") {
+        //alert("setOggleFooter: " + subdomain);
         footerhtml =
             "<div class='flexContainer'>\n" +
             "    <div class='footerCol'>\n" +
@@ -29,10 +30,31 @@
             "    <div id='copyright'>&copy; 2019 - <a href='~/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>\n" +
             "</div>\n";
     }
+    if (subdomain === "playboy") {
+        footerhtml =
+            "<div class='flexContainer'>\n" +
+            "    <div class='footerCol'>\n" +
+            "        <div><a href='~/Home/Index'>Let Me Explain</a></div>\n" +
+            "        <div><a href='#'></a></div>\n" +
+            "    </div>\n" +
+            "    <div class='footerCol'>\n" +
+            "        <div><a href='/Ranker.html'>Playmate Rater</a></div>\n" +
+            "    </div>\n" +
+            "    <div class='footerCol'>\n" +
+            "        <div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
+            "        <div><a href='/Admin/Blog'>Blog</a></div>\n" +
+            "    </div>\n" +
+            "</div>\n" +
+            "<div id='footerLastBuild' class='footerVersionMessage'></div>\n" +
+            "<div class='footerFooter'>\n" +
+            "    <div id='footerMessage'></div>\n" +
+            "    <div id='copyright'>&copy; 2019 - <a href='~/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>\n" +
+            "</div>\n";
+    }
+
 
     if (subdomain === "porn" || subdomain === "sluts") {
-        alert("setOggleFooter: " + subdomain);
-
+       // alert("setOggleFooter: " + subdomain);
         footerhtml =
         "<div class='flexContainer'>\n" +
             "    <div class='footerCol'>\n" +
@@ -61,5 +83,9 @@
             "</div>\n";
     }
 
+    if (footerhtml === "")
+        alert("setOggleFooter unknown: " + subdomain);
+
+    $('footer').html("");
     $('footer').html(footerhtml);
 }

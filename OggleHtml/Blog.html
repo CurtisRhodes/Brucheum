@@ -14,6 +14,7 @@
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
+    <script src="Scripts/HitCounter.js"></script>
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/Blog.js"></script>
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
@@ -133,7 +134,7 @@
             }
             else {
                 clearInterval(waiter);
-                logPageHit("Blog", "OggleHtml");
+                logSpecialPageHit("Blog");
                 setUserPermissions();
                 var waiter2 = setInterval(function () {
                     dots += "* ";
