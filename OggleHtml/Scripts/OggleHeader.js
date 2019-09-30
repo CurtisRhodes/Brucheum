@@ -2,9 +2,7 @@
     var headerHtml;
     var lang = "en";
     var subheaderContent;
-    var bannerImage = "/Images/redballon.png";
-
-
+    var bannerImageLink = "/Images/redballon.png";
 
     if (subdomain === "boobs" || subdomain === "archive") {
         if (lang === "en") {
@@ -23,26 +21,29 @@
                 "                <a href='/album.html?folder=199'> figurer</a> og\n" +
                 "                <a href='/album.html?folder=241'>størrelser</a>\n";
         }
+
+        bannerImageLink = "<a href='/'><img src='/Images/redballon.png' title='home. Find lots of cool things here.' class='bannerImage' /></a>\n";
     }
     if (subdomain === "playboy" || subdomain === "playmates") {
         subheaderContent =
-            "                <a href='/album.html?folder=2'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+            "                <a href='/album.html?folder=2'><span class='everyCenterfold'>Every Playboy Centerfold</span></a>\n" +
             "                <a href='/album.html?folder=136'> poses,</a>\n" +
             "                <a href='/album.html?folder=159'> topic,</a>\n" +
             "                <a href='/album.html?folder=199'> shapes</a> and\n" +
             "                <a href='/album.html?folder=241'>sizes</a>\n";
+
+        bannerImageLink = "<a href='/'><img src='/Images/playboyBallon.png' title='home. Find lots of cool things here.' class='bannerImage' /></a>\n";
+
+
+
+
     }
     if (subdomain === "admin") {
         subheaderContent = "Admin";
+        bannerImageLink = "<a href='/'><img src='/Images/redballon.png' title='home. Find lots of cool things here.' class='bannerImage' /></a>\n";
     }
     if (subdomain === "porn" || subdomain === "sluts") {
-
-
-
         $('body').addClass('pornBodyColors');
-        bannerImage = "/Images/cslips02.png";
-
-
         subheaderContent =
             "               <a href='/album.html?folder=243'>cock suckers</a>, \n" +
             "               <a href='/album.html?folder=420'>boob suckers</a>, \n" +
@@ -50,20 +51,16 @@
             "               <a href='/album.html?folder=397'>kinky</a> and \n" +
             "               <a href='/album.html?folder=411'>naughty behaviour</a>\n";
 
-
-
+        bannerImageLink = "<a href='/Index.html?subdomain=porn'><img src='/Images/cslips02.png' title='porn home.' class='bannerImage' /></a>\n";
     }
 
     headerHtml =
-        "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
-        "       <a href='/'><img src='" + bannerImage + "' title='home. Find lots of cool things here.' class='bannerImage' /></a>\n" +
-        "   </div>\n" +
+        "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" + bannerImageLink + "</div>\n" +
         "   <div class='headerBodyContainer'>\n" +
         "       <div id='' class='headerTopRow'>\n" +
-        "           <div class='headerTitle' id='bannerTitle'>OggleBooble</div>\n" +
-        "           <div class='headerSubTitle' id='headerSubTitle'>\n" + subheaderContent +
-        "           </div>\n" +
-        "           <div class='boobRankerBanner'>\n" +
+        "           <div id='bannerTitle' class='headerTitle'>OggleBooble</div>\n" +
+        "           <div id='headerSubTitle' class='headerSubTitle'>\n" + subheaderContent + "</div>\n" +
+        "           <div id='rankerTag' class='boobRankerBanner'>\n" +
         "               <a href='/Ranker.html' title='check out a masterpiece of web design. Spin through the links to land on random portrait images. ' >Boobs Ranker</a>" +
         "           </div>\n" +
         "           <div class='OggleSearchBox'>\n" +
@@ -93,8 +90,8 @@
         "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
         "               </div>\n" +
         "           </div>\n" +
-        "       </div>\n" +  //  headerBottomRow
-        "   </div>\n"; // headerBodyContainer
+        "       </div>\n" +
+        "   </div>\n"; 
 
     $('header').html(headerHtml);
 }

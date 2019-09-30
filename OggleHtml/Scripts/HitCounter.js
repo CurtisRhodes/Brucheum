@@ -65,8 +65,9 @@ function logPageHit(pageId) {
 }
 
 function logImageHit(link) {
+    $('#footerMessage').html("logging image hit");
     var visitorId = getLocalValue("VisitorId");
-    //if (visitorId !== '9bd90468-e633-4ee2-af2a-8bbb8dd47ad1') 
+    if (visitorId !== '9bd90468-e633-4ee2-af2a-8bbb8dd47ad1') 
     {
         $.ajax({
             type: "POST",
@@ -76,8 +77,8 @@ function logImageHit(link) {
                     var imageHits = imageHitSuccessModel.ImageHits;
                     var userHits = imageHitSuccessModel.UserHits;
                 }
-                else
-                    alert("logImageHit: " + imageHitSuccessModel.Success);
+                //else
+                //    alert("logImageHit: " + imageHitSuccessModel.Success);
             },
             error: function (jqXHR, exception) {
                 alert("logImageHit error: " + getXHRErrorDetails(jqXHR, exception));

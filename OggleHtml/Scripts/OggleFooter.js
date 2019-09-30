@@ -51,10 +51,8 @@
             "    <div id='copyright'>&copy; 2019 - <a href='~/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>\n" +
             "</div>\n";
     }
-
-
     if (subdomain === "porn" || subdomain === "sluts") {
-       // alert("setOggleFooter: " + subdomain);
+        //alert("setOggleFooter: " + subdomain);
         footerhtml =
         "<div class='flexContainer'>\n" +
             "    <div class='footerCol'>\n" +
@@ -73,7 +71,7 @@
             "        <div><a href='#'>About us</a></div>\n" +
             "        <div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
             "        <div><a href='/Admin/Blog'>Blog</a></div>\n" +
-            "        <div><a href='/album.html?folder=3'>Archive</a></div>\n" +
+            "        <div><a href='/album.html?folder=440'>Slut Archive</a></div>\n" +
             "    </div>\n" +
             "</div>\n" +
             "<div id='footerLastBuild' class='footerVersionMessage'></div>\n" +

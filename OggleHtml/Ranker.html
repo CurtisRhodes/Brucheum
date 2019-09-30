@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OggleHtml</title>
+    <title>OggleHtml - Ranker</title>
     <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
 
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -15,6 +15,8 @@
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
+    <script src="Scripts/HitCounter.js"></script>
+    <script src="Scripts/OggleFooter.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
     <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet' />
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
@@ -46,10 +48,16 @@
                         <div id="rankerRightText" class="rankerImageName">rankerRightText</div>
                     </div>
                     <div class="floatLeft">
-                        <div id="playboyButtonBoobs" class="playboyButton" onclick="changeDomain('boobs')">poses and shapes</div>
-                        <div id="playboyButtonplaymates" class="playboyButton" onclick="changeDomain('playmates')">Playboy playmates</div>
-                        <div id="playboyButtonarchive" class="playboyButton" onclick="changeDomain('archive')">archive</div>
-                        <div id="playboyButtonporn" class="playboyButton" onclick="changeDomain('porn')">porn</div>
+                        <!--
+        <div id="playboyButtonBoobs" class="playboyButton" onclick="changeDomain('boobs')">poses and shapes</div>
+        <div id="playboyButtonplaymates" class="playboyButton" onclick="changeDomain('playmates')">Playboy playmates</div>
+        <div id="playboyButtonarchive" class="playboyButton" onclick="changeDomain('archive')">archive</div>
+        <div id="playboyButtonporn" class="playboyButton" onclick="changeDomain('porn')">porn</div>
+    -->
+                        <div class="playboyButton"><input onchange="checkDomain('boobs', $(this).is(':checked'))" type="checkbox" />poses and shapes</div>
+                        <div class="playboyButton"><input onchange="checkDomain('playmates', $(this).is(':checked'))" type="checkbox" />Playboy playmates</div>
+                        <div class="playboyButton"><input onchange="checkDomain('archive', $(this).is(':checked'))" type="checkbox" />poses and shapes</div>
+                        <div class="playboyButton"><input onchange="checkDomain('porn', $(this).is(':checked'))" type="checkbox" />porn</div>
                     </div>
                 </div>
             </div>
@@ -73,7 +81,6 @@
         var permissionsSet = false;
         var isPornEditor = false;
         var userName;
-        var subdomain;
         var skip = 0;
         var take = 40;
         var throttle;
@@ -83,6 +90,7 @@
             resizePage();
 
             params = getParams();
+            var subdomain;
             if (params.subdomain == undefined) {
                 subdomain = "boobs";
             }
@@ -109,8 +117,9 @@
                             clearInterval(waiter2);
                             $('#footerMessage').html("isPornEditor: " + isPornEditor);
                             $('#playboyButtonBoobs').addClass('selectedPlayboyButton');
-                            loadBoobsRanker();
 
+                            loadBoobsRanker(subdomain);
+                            
                             logSpecialPageHit("Ranker");
                         }
                     }, 300);
@@ -132,7 +141,7 @@
             }, 1100);
         }
 
-        function loadBoobsRanker() {
+        function loadBoobsRanker(subdomain) {
             $('#boobsRankerLoadingGif').show();
             $.ajax({
                 type: "GET",
@@ -149,13 +158,14 @@
 
                         if (container.RankerLinks.length < take) {
                             clearInterval(throttle);
-                            alert("rankerLinksArray.length: " + rankerLinksArray.length);
+                            $('#footerMessage').html("done loading: " + rankerLinksArray.length);
+                            //alert("rankerLinksArray.length: " + rankerLinksArray.length);
                         }
 
                         if (skip == 0) {
-                            $('#footerMessage').html("rankerLinksArray.length: " + rankerLinksArray.length);
+                            $('#footerMessage').html(subdomain + " length: " + rankerLinksArray.length);
                             spinTheSlots();
-                            addMore();
+                            addMore(subdomain);
                         }
 
                     }
@@ -168,7 +178,7 @@
             });
         }
 
-        function addMore() {
+        function addMore(subdomain) {
             take = 200;
             throttle = setInterval(function () {
                 skip = rankerLinksArray.length;
@@ -226,6 +236,25 @@
             $('#breadcrumbContainer').html(domain);
         }
 
+        function checkDomain(domain, theThis ) {
+            alert("theThis: " + theThis);
+            subdomain = domain;
+            skip = 0;
+            $('.playboyButton').removeClass('selectedPlayboyButton');
+            //alert("'#playboyButton" + domain + "': " + $('#playboyButton' + domain+'').attr('id'));
+            $('#playboyButton' + domain + '').addClass('selectedPlayboyButton');
+            clearInterval(slotTimer);
+            clearInterval(countDownTimer);
+            clearInterval(throttle);
+            $('#breadcrumbContainer').html(domain);
+            rankerLinksArray = [];
+            loadBoobsRanker()
+            setOggleHeader(subdomain);
+            $('#breadcrumbContainer').html(domain);
+
+            //alert("attr: " + $(this).attr('checked') + "  is: " + $(this).is(':checked'));
+
+        }
         function imageClick(selectedSide) {
             if ($('.rankerImageSlotBox').css('cursor') !== 'not-allowed') {
                 // score it
@@ -270,9 +299,5 @@
             }
         }
     </script>
-
-
-
 </body>
-
 </html>

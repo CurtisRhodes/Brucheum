@@ -52,17 +52,20 @@
         <div id="leftColumn">
             <div id="boobsLeftColumnList" class="leftColumnList">
                 <div onclick="window.location.href='transitions.html'">Transitions</div>
-                <div onclick="window.location.href='Ranker.html'">Boobs Rater</div>
+                <div onclick="window.location.href='Ranker.html'">Boobs Ranker</div>
                 <div onclick="showCustomMessage(38)">Let me Explain</div>
-                <div onclick="showCatListDialog()">Category List</div>
+                <div onclick="showCatListDialog(2)">Category List</div>
                 <div onclick="window.location.href='/album.html?folder=1132'">Every Playboy Centerfold</div>
+                <div onclick="showCustomMessage(35)">Nasty Porn</div>
                 <div onclick="window.location.href='/Blog.html'">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
-                <div onclick="showCustomMessage(35)">Nasty Porn</div>
             </div>
             <div id="pornLeftColumnList" class="leftColumnList">
-                <div onclick="window.location.href='/'">Tits</div>
-                <div onclick="showCatListDialog()">Category List</div>
+                <div onclick="window.location.href='transitions.html?subdomain=porn'">Transition down</div>
+                <div onclick="window.location.href='Ranker.html'">Nastieness Ranker</div>
+                <div onclick="showCustomMessage(38)">Let me Explain</div>
+                <div onclick="showCatListDialog(242)">Category List</div>
+                <div onclick="window.location.href='/'">back to boobs</div>
                 <div onclick="window.location.href='/Blog.html'">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
@@ -122,6 +125,9 @@
     <div w3-include-html="Snippets/AdminDialogs.html"></div>
     <div w3-include-html="Snippets/Login.html"></div>
     <div w3-include-html="Snippets/Register.html"></div>
+
+
+
 
     <script>
         var promoIdx = 0;
@@ -295,12 +301,7 @@
             }
         }
 
-        function showCatListDialog() {
-            var startFolder = 2;
-            if (subdomain === "porn") {
-                startFolder = 242;
-            }
-
+        function showCatListDialog(startFolder) {
             buildDirTree($('#indexCatTreeContainer'), "indexCatTreeContainer", startFolder);
             $('#indexCatTreeContainer').dialog('open');
             $('#indexCatTreeContainer').dialog('option', 'title', subdomain);

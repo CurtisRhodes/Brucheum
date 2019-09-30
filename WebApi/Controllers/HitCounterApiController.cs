@@ -217,6 +217,7 @@ namespace WebApi
             {
                 using (WebStatsContext db = new WebStatsContext())
                 {
+                    var X = DateTime.Now;
                     db.ImageHits.Add(new ImageHit() { HitDateTime = DateTime.Now, VisitorId = visitorId, ImageLinkId = linkId });
                     db.SaveChanges();
 
@@ -224,9 +225,19 @@ namespace WebApi
                     imageHitSuccess.ImageHits = db.ImageHits.Where(h => h.ImageLinkId == linkId).Count();
 
                 }
-                imageHitSuccess.Success= "ok";
+                imageHitSuccess.Success = "ok";
             }
-            catch (Exception ex) { imageHitSuccess.Success = Helpers.ErrorDetails(ex); }
+            catch (DbEntityValidationException dbEx) {
+                imageHitSuccess.Success = Helpers.ErrorDetails(dbEx);
+            }
+            catch (Exception ex)
+            {
+                imageHitSuccess.Success = Helpers.ErrorDetails(ex);
+            }
+
+
+
+
             return imageHitSuccess;
         }
 

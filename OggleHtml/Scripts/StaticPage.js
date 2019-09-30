@@ -16,7 +16,8 @@ var selectedImageLinkId;
 var fullPageName;
 
 $(document).ready(function () {
-    //getHeader(staticPageRootFolder);
+    //alert("staticPage.js");
+
     $('#fileCount').html(staticPageImagesCount);
 
     resizeStaticPage();

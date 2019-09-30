@@ -185,6 +185,11 @@ header {
     */
 }
 
+.everyCenterfold {
+    font-size: 22px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .loginArea {
     position: absolute;
     right: 10px;
