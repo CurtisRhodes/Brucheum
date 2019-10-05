@@ -76,8 +76,21 @@ header {
     color: #000;
     text-decoration: none;
     background-color: aliceblue;
-    margin-left: 70px;
+    margin-left: 40px;
     margin-top: 5px;
+    cursor: pointer;
+}
+.blackCenterfoldsBanner {
+    height: 35px;
+    border: solid 2px red;
+    border-radius: 10px;
+    font-size: 18px;
+    padding: 3px;
+    color: yellow;
+    text-decoration: none;
+    background-color: yellow;
+    margin-left: 40px;
+    margin-bottom: 3px;
     cursor: pointer;
 }
 
@@ -165,15 +178,13 @@ header {
 }
 
 .replaceableMenuItems {
-    float: left;
-    text-align:right;
-    display: flex;
-    margin-left: 15px;
+    display:flex;
 }
 
-.freeones {
+.trackbackImage {
     height: 45px;
     margin-left: 80px;
+    float: left;
 }
 
 .bigTits {

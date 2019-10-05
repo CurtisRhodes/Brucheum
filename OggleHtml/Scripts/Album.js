@@ -88,12 +88,13 @@ function getBreadCrumbs(folderId) {
 }
 
 function showHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
-    //alert("parentId: " + parentId + "  == 506: " + (parentId === "506"));
+    
     if ((rootFolder === "playboy" && index > 4) || (rootFolder === "archive" && index > 2) || (parentId === "506")) {
         showModelInfoDialog(folderName, folderId, 'Images/redballon.png');
     }
-    else
+    else {
         showCategoryDialog(folderId);
+    }
 }
 
 function getAlbumImages(folderId) {
@@ -402,6 +403,7 @@ function contextMenuAction(action) {
             });
             break;
         case "jump":
+            //alert("modelFolderId: " + modelFolderId);
             window.open("/album.html?folder=" + modelFolderId, "_blank");
             break;
         case "comment":

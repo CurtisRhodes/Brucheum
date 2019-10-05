@@ -70,8 +70,7 @@
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
         </div>
-        <div id="middleColumn">
-            <div id="customMessage" class="displayHidden customMessageContainer"></div>
+        <div id="middleColumn">            
             <div id="divStatusMessage"></div>
             <div id="dots"></div>
             <div class="flexContainer">
@@ -121,7 +120,6 @@
         <div onclick="killPromoMessages()" class="tinyDots" onmouseover="$('#killPromoPrompt').show()" onmouseout="$('#killPromoPrompt').hide()">...</div>
         <div id="killPromoPrompt" class="ogglePromoKillMessage">had enough promo messages?</div>
     </div>
-    <div id="indexCatTreeContainer" class="oggleHidden"></div>
     <div w3-include-html="Snippets/AdminDialogs.html"></div>
     <div w3-include-html="Snippets/Login.html"></div>
     <div w3-include-html="Snippets/Register.html"></div>
@@ -266,27 +264,6 @@
             setInterval(function () { showPromoMessages() }, 30000);
         }
 
-        function showCustomMessage(blogId) {
-            if (typeof pause === 'function') {
-                pause();
-            }
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "api/OggleBlog/?blogId=" + blogId,
-                success: function (entry) {
-                    if (entry.Success === "ok") {
-                        $('#customMessage').html(entry.CommentText).show();
-                    }
-                    else
-                        alert(entry.Success);
-                },
-                error: function (xhr) {
-                    alert("showSiteContent xhr: " + getXHRErrorDetails(xhr));
-                }
-            });
-            //if ($('#pornWarning').html() == "")
-        }
-
         function letemPorn(response) {
             // record hit
             //alert("letemPorn: " + response);
@@ -301,20 +278,6 @@
             }
         }
 
-        function showCatListDialog(startFolder) {
-            buildDirTree($('#indexCatTreeContainer'), "indexCatTreeContainer", startFolder);
-            $('#indexCatTreeContainer').dialog('open');
-            $('#indexCatTreeContainer').dialog('option', 'title', subdomain);
-        }
-
-        function indexCatTreeContainerClick(path, id, treeId) {
-            if (treeId == "indexCatTreeContainer") {
-                window.location.href = "/album.html?folder=" + id;
-                $('#indexCatTreeContainer').dialog('close')
-            }
-            else
-                alert("dirTreeClick treeId: " + treeId);
-        }
     </script>
 </body>
 </html>

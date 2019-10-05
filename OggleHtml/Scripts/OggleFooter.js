@@ -1,13 +1,13 @@
 ﻿function setOggleFooter(subdomain) {
+    //alert("subdomain: " + subdomain);
     var footerhtml = "";
-
     if (subdomain === "boobs" || subdomain === "archive") {
         //alert("setOggleFooter: " + subdomain);
         footerhtml =
             "<div class='flexContainer'>\n" +
             "    <div class='footerCol'>\n" +
-            "        <div><a href='~/Home/Index'>Let Me Explain</a></div>\n" +
-            "        <div><a href='~/Book/MyBooks'>Category List</a></div>\n" +
+            "        <div class='clickable' onclick='showCustomMessage(38)'>let me explain</div>\n" +
+            "        <div class='clickable' onclick='showCatListDialog(2)'>Category List</div>\n" +
             "        <div><a href='#'></a></div>\n" +
             "        <div><a href='/index.html?subdomain=porn'>Nasty Porn</a></div>\n" +
             "    </div>\n" +
@@ -31,14 +31,16 @@
             "</div>\n";
     }
     if (subdomain === "playboy") {
+        //alert("subdomain indeed is: " + subdomain);
         footerhtml =
             "<div class='flexContainer'>\n" +
             "    <div class='footerCol'>\n" +
-            "        <div><a href='~/Home/Index'>Let Me Explain</a></div>\n" +
-            "        <div><a href='#'></a></div>\n" +
+            "        <div><a href='/album.html?folder=3796'>Playboy Cybergirls</a></div>\n" +
+            "        <div><a href='/album.html?folder=1986'>Magazine covers</a></div>\n" +
+            "        <div class='clickable' onclick='showCustomMessage(38)'>let me explain</div>\n" +
             "    </div>\n" +
             "    <div class='footerCol'>\n" +
-            "        <div><a href='/Ranker.html'>Playmate Rater</a></div>\n" +
+            "        <div><a href='/Ranker.html?subdomain=playmates'>Playmate Rater</a></div>\n" +
             "    </div>\n" +
             "    <div class='footerCol'>\n" +
             "        <div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
@@ -56,14 +58,11 @@
         footerhtml =
         "<div class='flexContainer'>\n" +
             "    <div class='footerCol'>\n" +
-            "        <div><a href='~/Home/Index'>Let Me Explain</a></div>\n" +
-            "        <div><a href='~/Book/MyBooks'>Category List</a></div>\n" +
-            "        <div><a href='#'></a></div>\n" +
-            "        <div><a href='/index.html?subdomain=porn'>Nasty Porn</a></div>\n" +
+            "        <div class='clickable' onclick='showCustomMessage(38)'>let me explain</div>\n" +
+            "        <div onclick='showCatListDialog(242)'>Category List</div>\n" +
             "    </div>\n" +
             "    <div class='footerCol'>\n" +
-            "        <div><a href='/Ranker.html'>Boobs Rater</a></div>\n" +
-            //"        <div><a href='~/Home/ImagePage?folder=908'>Rejects</a></div>\n" +
+            "        <div><a href='/Ranker.html?subdomain=porn'>Porn Ranker</a></div>\n" +
             "        <div><a href='~/home/Videos'>Nasty Videos</a></div>\n" +
             "        <div><a href='/album.html?folder=1132'>Centerfolds</a></div>\n" +
             "    </div>\n" +

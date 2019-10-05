@@ -179,11 +179,13 @@ namespace WebApi
                         db.SaveChanges();
                         visitorSuccess.WelcomeMessage = "Welcome new visitor!";
                         visitorSuccess.VisitorId = dbVisitor.VisitorId;
-
-                        using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
+                        if (visitorModel.Verbosity > 2)
                         {
-                            godaddyEmail.SendEmail("CONGRATULATIONS: someone new just visited your site",
-                             "viewed " + pageName + " from " + visitorModel.City + "," + visitorModel.Region + " " + visitorModel.Country + "   ip:" + visitorModel.IpAddress);
+                            using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
+                            {
+                                godaddyEmail.SendEmail("CONGRATULATIONS: someone new just visited your site",
+                                 "viewed " + pageName + " from " + visitorModel.City + "," + visitorModel.Region + " " + visitorModel.Country + "   ip:" + visitorModel.IpAddress);
+                            }
                         }
                     }
                     else

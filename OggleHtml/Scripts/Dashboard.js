@@ -18,6 +18,7 @@ function resizeDashboardPage() {
     else
         $('#footerMessage').html("_");
 
+    $('#performanceMetrics').height($('#middleColumn').height() - 122);
     $('#divDashboardContainer').height($('#middleColumn').height() - 122);
     $('.floatingCrud').width($('.workarea').width() - 100);
 }
@@ -397,3 +398,6 @@ function prepareXhamsterPage() {
     });
 }
 
+function showPerfMetrics() {
+    $('#performanceMetrics').fadeIn();
+}

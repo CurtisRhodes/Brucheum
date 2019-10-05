@@ -263,6 +263,7 @@ footer {
     top: 140px;
     height: 110px;
     z-index: 31;
+    display: none;
 }
 
 .ogContextMenu {

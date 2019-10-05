@@ -3,7 +3,6 @@
 
 function showModelInfoDialog(modelName, folderId, currentSrc) {
     FolderDetailModel.FolderId = folderId;
-    //setUserPermissions();
 
     $('#modelInfoDialog').dialog({
         autoOpen: false,

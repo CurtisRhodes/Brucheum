@@ -318,6 +318,15 @@ namespace WebApi
         private void GetDirTreeRecurr(CategoryTreeModel parent, List<VwDirTree> vwDirTree, string path)
         {
             var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
+
+            if (parent.FolderId == 626)
+            {
+                System.Diagnostics.Debug.WriteLine("RebuildCatTree took: ");
+
+            }
+
+
+
             foreach (VwDirTree vwTree in vwTrees)
             {
                 var subChild = new CategoryTreeModel()

@@ -277,6 +277,9 @@ function imageViewerContextMenuAction(action) {
 function closeViewer() {
     $('#imageViewerDialog').effect('blind', { mode: 'hide', direction: 'vertical' }, 500);
     viewerShowing = false;
+    slideShowRunning = false;
+    clearInterval(imageViewerIntervalTimer);
+    $('#txtStartSlideShow').html("start slideshow");
 }
 
 function resizeViewer() {

@@ -33,9 +33,12 @@ $(document).ready(function () {
             //alert("setOggleFooter(" + staticPageRootFolderId + ")");
             setOggleFooter(staticPageRootFolderId);
             logPageHit(staticPageFolderId);
+            
             checkForLink(staticPageFolderId, "babepedia");
             checkForLink(staticPageFolderId, "freeones");
-            $('footerMessage').html(staticPageFolderName);
+            checkForLink(staticPageFolderId, "black centerfolds");
+
+         //   $('footerMessage').html(staticPageFolderName);
         }
     }, 300);
     $(window).resize(resizeStaticPage());
@@ -52,21 +55,21 @@ function resizeStaticPage() {
     //$('#footerMessage').html("8");
 }
 
-function contextMenuActionShow() {
-    showModelInfoDialog($('#staticPagectxModelName').html(), modelFolderId, selectedImage);
-}
-function contextMenuActionJump() {
+//function contextMenuActionShow() {
+//    showModelInfoDialog($('#staticPagectxModelName').html(), modelFolderId, selectedImage);
+//}
+//function contextMenuActionJump() {
 
-    //alert("fullPageName: " + fullPageName);
-    window.open(httpLocation + fullPageName + ".html", "_blank");
-}
-function contextMenuActionComment() {
-    showImageCommentDialog(selectedImage, selectedImageLinkId, staticPageFolderId, staticPageFolderName);
-}
-function contextMenuActionExplode() {
-    //alert("selectedImage: " + selectedImage);
-    window.open(selectedImage, '_blank');
-}
+//    alert("fullPageName: " + fullPageName);
+//    window.open(httpLocation + fullPageName + ".html", "_blank");
+//}
+//function contextMenuActionComment() {
+//    showImageCommentDialog(selectedImage, selectedImageLinkId, staticPageFolderId, staticPageFolderName);
+//}
+//function contextMenuActionExplode() {
+//    //alert("selectedImage: " + selectedImage);
+//    window.open(selectedImage, '_blank');
+//}
 
 function showCustomMessage(blogId) {
     if (typeof pause === 'function') {

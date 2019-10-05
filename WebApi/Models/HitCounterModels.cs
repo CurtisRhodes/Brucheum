@@ -70,6 +70,7 @@ namespace WebApi.Models
         public int PageId { get; set; }
         public string IpAddress { get; set; }
         public string UserName { get; set; }
+        public int Verbosity { get; set; }
         public string City { get; set; }
         public string Region { get; set; }
         public string Country { get; set; }

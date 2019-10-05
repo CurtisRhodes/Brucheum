@@ -1,5 +1,5 @@
 ﻿// HITCOUNTER
-var verbose = 2;
+var verbose = 1;
 
 function logPageHit(pageId) {
 
@@ -97,7 +97,8 @@ function logVisitor(pageId) {
         var visitorModel = {
             AppName: "OggleBooble",
             PageId: pageId,
-            //UserName: getCookieValue("User"),
+            UserName: getCookieValue("User"),
+            Verbosity: verbose,
             City: data.city,
             Region: data.region,
             Country: data.country,

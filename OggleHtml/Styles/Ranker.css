@@ -1,11 +1,27 @@
-﻿.titleContainer {    
-    display: inline-block;
+﻿.titleContainer {
+    display: flex;
 }
-.playboyButton {
-    margin-left:50px;
+.rankerImageContainer {
+    display: flex;
+}
+
+.domCkBox {
+    margin-left: 50px;
     margin-top: 100px;
+    font-weight: bold;
     cursor: pointer;
 }
+
+.underlineMe {
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.noUnderlineMe {
+    text-decoration: none;
+    font-weight: normal;
+}
+
 .selectedPlayboyButton {
     background-color: var(--brucheumBlue);
 }
@@ -20,9 +36,6 @@ input[type=checkbox] {
     margin-right: 12px;
 }
 
-.rankerImageContainer {
-    display: flex;
-}
 .rankerImageName {
     text-align:center;
     font-size: 24px;

@@ -55,7 +55,7 @@ namespace WebApi.Controllers
                     "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, folderName) +
                     "\n<body style='margin-top:105px'>\n<header></header>" +
                     GalleryPageBodyHtml(folderId, rootFolder) + "<footer></footer>\n" +
-                    Slideshow() + //CommentDialog() + //CategoryDialog() + ModelInfoDialog() +
+                    Slideshow() + CommentDialog() + ModelInfoDialog() +
                     "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
                     "<script>var staticPageFolderId=" + folderId + "; " +
                     "var staticPageFolderName='" + folderName + "'; " +
@@ -281,93 +281,39 @@ namespace WebApi.Controllers
         //    "</div>\n";
         //}
 
-        //private string ModelInfoDialog()
-        //{
-        //    return "<div id = 'modelInfoDialog' class='oggleDialogWindow' onmouseleave='considerClosingModelInfoDialog()'>\n" +
-        //    "       <div id = 'modelInfoEditArea' class='displayHidden'>\n" +
-        //    "        <div class='flexContainer'>\n" +
-        //    "            <div class='floatLeft'>\n" +
-        //    "                <div class='modelInfoDialogLabel'>name</div><input id='txtFolderName' class='modelDialogInput' /><br />\n" +
-        //    "                <div class='modelInfoDialogLabel'>from</div><input id='txtNationality' class='modelDialogInput' /><br />\n" +
-        //    "                <div class='modelInfoDialogLabel'>born</div><input id='txtBorn' class='modelDialogInput' /><br />\n" +
-        //    "                <div class='modelInfoDialogLabel'>boobs</div><input id='txtBoobs' class='modelDialogInput' /><br />\n" +
-        //    "                <div class='modelInfoDialogLabel'>figure</div><input id='txtMeasurements' class='modelDialogInput' />\n" +
-        //    "            </div>\n" +
-        //    "            <div class='floatLeft'>\n" +
-        //    "                <img id = 'modelDialogThumbNailImage' src='/images/redballon.png' class='modelDialogImage' />\n" +
-        //    "            </div>\n" +
-        //    "       </div>\n" +
-        //    "       <div class='modelInfoDialogLabel'>comment</div>\n" +
-        //    "       <div><textarea id='modelInfoDialogComment' class='modelInfoCommentArea'></textarea></div>\n" +
-        //    "       <div class='modelInfoDialogLabel'>trackbacks</div>\n" +
-        //    "       <div id='modelInfoDialogTrackBack'>\n" +
-        //    "           <div class='hrefLabel'>href</div><input id = 'txtLinkHref' class='modelDialogInput' />\n" +
-        //    "            <div class='hrefLabel'>label</div><input id = 'txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />\n" +
-        //    "            <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
-        //    "       </div>\n" +
-        //    "        <div id = 'externalLinks' class='trackbackLinksArea'></div>\n" +
-        //    "    </div>\n" +
-        //    "    <div id = 'modelInfoViewOnlyArea' class='displayHidden'>\n" +
-        //    "        <div class='viewOnlyMessage'>If you you know who this is Please click Edit</div>\n" +
-        //    "        <div id = 'unknownModelLinks' class='smallTextArea'></div>\n" +
-        //    "    </div>\n" +
-        //    "    <a id = 'modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Edit</a>\n" +
-        //    "</div>\n";
-        //}
-
-        //private string FooterHtml(string rootFolder)
-        //{
-        //    if (rootFolder == "porn" || rootFolder == "sluts")
-        //    {
-        //        return "\n<footer>\n" +
-        //            "<div class='flexContainer'>\n" +
-        //                  "<div class='footerCol'>\n" +
-        //                      "<div onclick='showCatListDialog(242)'>Category List</div>\n" +
-        //                      "<div><a href='https://ogglebooble.com'>Oggle Booble</a></div>\n" +
-        //                  "</div>\n" +
-        //                  "<div class='footerCol'>\n" +
-        //                      "<div><a href='https://ogglebooble.com/Ranker.html?subdomain=porn'>Porn Rater</a></div>\n" +
-        //                      "<div><a href='https://ogglebooble.com/Videos.html'>Nasty Videos</a></div>\n" +
-        //                  "</div>\n" +
-        //                  "<div class='footerCol'>\n" +
-        //                      "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
-        //                      "<div><a href='https://ogglebooble.com/Blog.html'>Blog</a></div>\n" +
-        //                      "<div><a href='" + httpLocation + "sluts/sluts.html'>Archive</a></div>\n" +
-        //                  "</div>\n" +
-        //            "</div>\n" +
-        //            "<div class='footerVersionMessage'>built " + DateTime.Now.ToShortDateString() + "</div>\n" +
-        //            "<div class='footerFooter'>" +
-        //                  "<div id='footerMessage'></div>" +
-        //                  "<div id='copyright'>&copy; 2019 - <a href='/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>" +
-        //            "</div>\n" +
-        //        "</footer>";
-        //    }
-        //    else
-        //        return "\n<footer>\n" +
-        //            "<div class='flexContainer'>\n" +
-        //                "<div class='footerCol'>\n" +
-        //                    "<div id='explain'></div>\n" +
-        //                    "<div onclick='showCatListDialog(2)'>Category List</div>\n" +
-        //                    "<div><a href='" + httpLocation + "porn/porn.html'>Nasty Porn</a></div>\n" +
-        //                  "</div>\n" +
-        //                  "<div class='footerCol'>\n" +
-        //                      "<div><a href='https://ogglebooble.com/Ranker.html'>Boobs Rater</a></div>\n" +
-        //                      "<div id='Rejects'></div>\n" +
-        //                      "<div><a href='" + httpLocation + "playboy/centerfolds.html'>Centerfolds</a></div>\n" +
-        //                  "</div>\n" +
-        //                  "<div class='footerCol'>\n" +
-        //                      "<div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
-        //                      "<div><a href='https://ogglebooble.com/Blog.html'>Blog</a></div>\n" +
-        //                      "<div><a href='" + httpLocation + "sluts/sluts.html'>Archive</a></div>\n" +
-        //                  "</div>\n" +
-        //            "</div>\n" +
-        //            "<div class='footerVersionMessage'>built " + DateTime.Now.ToShortDateString() + "</div>\n" +
-        //            "<div class='footerFooter'>" +
-        //                  "<div id='footerMessage'></div>" +
-        //                  "<div id='copyright'>&copy; 2019 - <a href='/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>" +
-        //            "</div>\n" +
-        //        "</footer>";
-        //}
+        private string ModelInfoDialog()
+        {
+            return "<div id = 'modelInfoDialog' class='oggleDialogWindow' onmouseleave='considerClosingModelInfoDialog()'>\n" +
+            "       <div id = 'modelInfoEditArea' class='displayHidden'>\n" +
+            "        <div class='flexContainer'>\n" +
+            "            <div class='floatLeft'>\n" +
+            "                <div class='modelInfoDialogLabel'>name</div><input id='txtFolderName' class='modelDialogInput' /><br />\n" +
+            "                <div class='modelInfoDialogLabel'>from</div><input id='txtNationality' class='modelDialogInput' /><br />\n" +
+            "                <div class='modelInfoDialogLabel'>born</div><input id='txtBorn' class='modelDialogInput' /><br />\n" +
+            "                <div class='modelInfoDialogLabel'>boobs</div><input id='txtBoobs' class='modelDialogInput' /><br />\n" +
+            "                <div class='modelInfoDialogLabel'>figure</div><input id='txtMeasurements' class='modelDialogInput' />\n" +
+            "            </div>\n" +
+            "            <div class='floatLeft'>\n" +
+            "                <img id = 'modelDialogThumbNailImage' src='/images/redballon.png' class='modelDialogImage' />\n" +
+            "            </div>\n" +
+            "       </div>\n" +
+            "       <div class='modelInfoDialogLabel'>comment</div>\n" +
+            "       <div><textarea id='modelInfoDialogComment' class='modelInfoCommentArea'></textarea></div>\n" +
+            "       <div class='modelInfoDialogLabel'>trackbacks</div>\n" +
+            "       <div id='modelInfoDialogTrackBack'>\n" +
+            "           <div class='hrefLabel'>href</div><input id = 'txtLinkHref' class='modelDialogInput' />\n" +
+            "            <div class='hrefLabel'>label</div><input id = 'txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />\n" +
+            "            <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
+            "       </div>\n" +
+            "        <div id = 'externalLinks' class='trackbackLinksArea'></div>\n" +
+            "    </div>\n" +
+            "    <div id = 'modelInfoViewOnlyArea' class='displayHidden'>\n" +
+            "        <div class='viewOnlyMessage'>If you you know who this is Please click Edit</div>\n" +
+            "        <div id = 'unknownModelLinks' class='smallTextArea'></div>\n" +
+            "    </div>\n" +
+            "    <a id = 'modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Edit</a>\n" +
+            "</div>\n";
+        }
 
         [HttpGet]
         public SuccessModel HasLink(int folderId, string hrefTextSubstring)

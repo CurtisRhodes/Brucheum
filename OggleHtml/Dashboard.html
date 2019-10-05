@@ -52,121 +52,161 @@
         <div id="middleColumn">
             <img id="dashBoardLoadingGif" class="loadingGif" src="Images/loader.gif" />
 
-            <div id="divDashboardContainer" class="dashBoardContainer">
-                <div class="leftColumnList">
-                    <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
-                    <div class="clickable" onclick="$('#createNewFolderDialog').dialog('open');">Create New Folder</div>
-                    <div class="clickable adminLevelRequired" onclick="showMoveFolderDialog();">Move Folder</div>
-                    <div class="clickable adminLevelRequired" onclick="$('#renameFolderCrud').dialog('open');">Rename Folder</div>
-                    <div class="clickable adminLevelRequired" onclick="loadProperties()">load Properties</div>
-                    <div class="clickable adminLevelRequired" onclick="$('#createStaticPagesCrud').dialog('open');">Create Static Pages</div>
-                    <div class="clickable adminLevelRequired" onclick="repairLinks()">Repair Links</div>
-                    <div class="clickable adminLevelRequired" onclick="showAddRolesDialog()">Add/Edit Roles</div>
-                    <div class="clickable adminLevelRequired" onclick="showAssignRolesDialog()">Assign User Roles</div>
-                    <div class="clickable adminLevelRequired" onclick="prepareXhamsterPage()">Prepare xHamster Page</div>
+            <style>
+                .metricsHeader {
+                    height: 120px;
+                    background-color: var(--oggleBorderColor);
+                    color: #fff;
+                }
+
+                .metricsContainer {
+                    border-left: solid 3px var(--oggleBorderColor);
+                    border-right: solid 3px var(--oggleBorderColor);
+                    border-bottom: solid 0.75px var(--oggleBorderColor);
+                    background-color: var(--oggleContainerBackgroundColor);
+                }
+
+                .metricsRow1 {
+                }
+            </style>
+
+
+            <div id="performanceMetrics" class="metricsContainer displayHidden">
+                <div class="metricsHeader">
+                    Header
+                    <div class="rightCloseButton"></div>
                 </div>
+                <div class="metricsRow1">
 
-                <div class="workarea">
-                    <div id="divStatusMessage"></div>
+                </div>
+                <div class="metricsRow2">
 
-                    <div id="uploadArea" class="oggleh">
-                        <div id="addNewLink" class="addLinkCrudArea">
-                            <div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
-                            <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
-                            <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
+                </div>
+                <div class="metricsRow3">
+
+                </div>
+            </div>
+
+            <div>
+                <div id="divDashboardContainer" class="dashBoardContainer">
+                    <div class="leftColumnList">
+                        <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
+                        <div class="clickable" onclick="$('#createNewFolderDialog').dialog('open');">Create New Folder</div>
+                        <div class="clickable adminLevelRequired" onclick="showMoveFolderDialog();">Move Folder</div>
+                        <div class="clickable adminLevelRequired" onclick="$('#renameFolderCrud').dialog('open');">Rename Folder</div>
+                        <div class="clickable adminLevelRequired" onclick="loadProperties()">load Properties</div>
+                        <div class="clickable adminLevelRequired" onclick="$('#createStaticPagesCrud').dialog('open');">Create Static Pages</div>
+                        <div class="clickable adminLevelRequired" onclick="repairLinks()">Repair Links</div>
+                        <div class="clickable adminLevelRequired" onclick="showAddRolesDialog()">Add/Edit Roles</div>
+                        <div class="clickable adminLevelRequired" onclick="showAssignRolesDialog()">Assign User Roles</div>
+                        <div class="clickable adminLevelRequired" onclick="prepareXhamsterPage()">Prepare xHamster Page</div>
+                        <div class="clickable adminLevelRequired" onclick="showPerfMetrics()">Performance Metrics</div>
+                    </div>
+
+                    <div class="workarea">
+                        <div id="divStatusMessage"></div>
+
+                        <div id="uploadArea" class="oggleh">
+                            <div id="addNewLink" class="addLinkCrudArea">
+                                <div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
+                                <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
+                                <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
+                            </div>
+                            <img id="imgLinkPreview" class="linkImage" />
                         </div>
-                        <img id="imgLinkPreview" class="linkImage" />
+
+                        <div id="progressBar" class="dashboardProgessBar"></div>
+                        <div id="dataifyInfo" class="infoLine"></div>
                     </div>
-
-                    <div id="progressBar" class="dashboardProgessBar"></div>
-                    <div id="dataifyInfo" class="infoLine"></div>
+                    <div id="dirTreeContainer" class="treeContainer"></div>
+                    <img id="getDirTreeLoadingGif" class="smallLoadingGif" src="/Images/loader.gif" />
                 </div>
-                <div id="dirTreeContainer" class="treeContainer"></div>
-                <img id="getDirTreeLoadingGif" class="smallLoadingGif" src="/Images/loader.gif" />
-            </div>
 
-            <div id="createNewFolderDialog" class="dashboardToggle" title="Create New Folder">
-                <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
-                <div><span>parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div class="roundendButton" onclick="createNewFolder()">Create Folder</div>
-            </div>
-
-            <div id="createStaticPagesCrud" class="dashboardToggle" title="Create Static Pages">
-                <div><span>folders to staticify</span><input id="txtFolderToStaticify" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div><span>include all subfolders </span><input type="checkbox" id="ckIncludeSubfolders" checked="checked" /></div>
-                <div class="roundendButton" onclick="createStaticPages($('#ckIncludeSubfolders').is(':checked'))">Build Files</div>
-                <div id="renameFolderReport" class="repairReport"></div>
-            </div>
-
-            <div id="renameFolderCrud" class="dashboardToggle" title="Rename Folder">
-                <div><span>folder to rename</span><input id="txtFolderToRename" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div><span>new name</span><input id="txtReName" class="roundedInput" /></div>
-                <div class="roundendButton" onclick="renameFolder()">Rename Folder</div>
-                <div id="renameFolderReport" class="repairReport"></div>
-            </div>
-
-            <div id="moveFolderCrud" class="dashboardToggle" title="Move Folder">
-                <div>
-                    <span>new parent </span><div onclick="$('#partialViewTreeContainer').dialog('open');" class="toggleButton">...</div>
-                    <input id="txtFolderToMove" class="txtPartialDirTreePath roundedInput" readonly="readonly" />
+                <div id="createNewFolderDialog" class="dashboardToggle" title="Create New Folder">
+                    <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
+                    <div><span>parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                    <div class="roundendButton" onclick="createNewFolder()">Create Folder</div>
                 </div>
-                <div><span>move folder</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
-            </div>
 
-            <div id="partialViewTreeContainer" title="Select Folder to move">
-                <div id="folderToMoveTreeContainer" class="moveDirTreeContainer"></div>
-            </div>
-
-            <div id="addEditRolesDialog" class="dashboardToggle" title="Add Edit Roles">
-                <div class="crudArea">
-                    <label>Role:</label>
-                    <input class="roundedInput" id="txtRoleName" />
-                    <div id="btnAddUpdateRole" class="roundendButton editRolebtn" onclick="addUpdateRole()">Add</div>
-                    <div id="btnRoleToggle" class="roundendButton editRolebtn" onclick="toggleAddButton()">New</div>
+                <div id="createStaticPagesCrud" class="dashboardToggle" title="Create Static Pages">
+                    <div><span>folders to staticify</span><input id="txtFolderToStaticify" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                    <div><span>include all subfolders </span><input type="checkbox" id="ckIncludeSubfolders" checked="checked" /></div>
+                    <div class="roundendButton" onclick="createStaticPages($('#ckIncludeSubfolders').is(':checked'))">Build Files</div>
+                    <div id="renameFolderReport" class="repairReport"></div>
                 </div>
-                <div class="crudItemsList" id="divRoleList"></div>
-            </div>
 
-            <div id="rolesChooseBoxDialog" class="dashboardToggle" title="Assign Roles">
-                <div class="crudContainer AssignRolesContainer">
-                    <div class="crudContainerTitle">Assign Roles</div>
-                    <div class="flexContainer">
-                        <div><select id="ddUsers" class="crudDropDown"></select></div>
+                <div id="renameFolderCrud" class="dashboardToggle" title="Rename Folder">
+                    <div><span>folder to rename</span><input id="txtFolderToRename" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                    <div><span>new name</span><input id="txtReName" class="roundedInput" /></div>
+                    <div class="roundendButton" onclick="renameFolder()">Rename Folder</div>
+                    <div id="renameFolderReport" class="repairReport"></div>
+                </div>
+
+                <div id="moveFolderCrud" class="dashboardToggle" title="Move Folder">
+                    <div>
+                        <span>new parent </span><div onclick="$('#partialViewTreeContainer').dialog('open');" class="toggleButton">...</div>
+                        <input id="txtFolderToMove" class="txtPartialDirTreePath roundedInput" readonly="readonly" />
                     </div>
-                    <div id="divRolesChoose" class="chooseBoxContainer">
+                    <div><span>move folder</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                    <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
+                </div>
 
-                        <div id="divChooseAvailable" class="chooseBox floatLeft"></div>
+                <div id="partialViewTreeContainer" title="Select Folder to move">
+                    <div id="folderToMoveTreeContainer" class="moveDirTreeContainer"></div>
+                </div>
 
-                        <div id="divChooseButtons" class="chooseBtnsContainer floatLeft">
-                            <div><img id="imgAdd" class="chooseBtn" onclick="addUserRole()" src="/Images/sglright.jpg" /></div>
-                            <div><img id="imgAddAll" class="chooseBtn disenabled" src="/Images/dblright.jpg" /></div>
-                            <div><img id="imgRemove" class="chooseBtn" onclick="removeUserRole()" src="/Images/sglleft.jpg" /></div>
-                            <div><img id="imgRemoveAll" class="chooseBtn disenabled" src="/Images/dblleft.jpg" /></div>
+                <div id="addEditRolesDialog" class="dashboardToggle" title="Add Edit Roles">
+                    <div class="crudArea">
+                        <label>Role:</label>
+                        <input class="roundedInput" id="txtRoleName" />
+                        <div id="btnAddUpdateRole" class="roundendButton editRolebtn" onclick="addUpdateRole()">Add</div>
+                        <div id="btnRoleToggle" class="roundendButton editRolebtn" onclick="toggleAddButton()">New</div>
+                    </div>
+                    <div class="crudItemsList" id="divRoleList"></div>
+                </div>
+
+                <div id="rolesChooseBoxDialog" class="dashboardToggle" title="Assign Roles">
+                    <div class="crudContainer AssignRolesContainer">
+                        <div class="crudContainerTitle">Assign Roles</div>
+                        <div class="flexContainer">
+                            <div><select id="ddUsers" class="crudDropDown"></select></div>
                         </div>
-                        <div id="divChooseAssigned" class="chooseBox floatLeft"></div>
+                        <div id="divRolesChoose" class="chooseBoxContainer">
+
+                            <div id="divChooseAvailable" class="chooseBox floatLeft"></div>
+
+                            <div id="divChooseButtons" class="chooseBtnsContainer floatLeft">
+                                <div><img id="imgAdd" class="chooseBtn" onclick="addUserRole()" src="/Images/sglright.jpg" /></div>
+                                <div><img id="imgAddAll" class="chooseBtn disenabled" src="/Images/dblright.jpg" /></div>
+                                <div><img id="imgRemove" class="chooseBtn" onclick="removeUserRole()" src="/Images/sglleft.jpg" /></div>
+                                <div><img id="imgRemoveAll" class="chooseBtn disenabled" src="/Images/dblleft.jpg" /></div>
+                            </div>
+                            <div id="divChooseAssigned" class="chooseBox floatLeft"></div>
+                        </div>
                     </div>
                 </div>
+
+                <!--<div id="videoCrud" class="dashboardToggle">
+            <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
+            <div class="floatingCrudContainer">
+                <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
+                <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
+                <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
+                <div class="roundendButton" onclick="addVideo()">Insert</div>
+            </div>
+        </div>-->
             </div>
 
-            <!--<div id="videoCrud" class="dashboardToggle">
-        <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
-        <div class="floatingCrudContainer">
-            <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
-            <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
-            <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
-            <div class="roundendButton" onclick="addVideo()">Insert</div>
-        </div>
-    </div>-->
-        </div>
-        <div id="rightColumn"></div>
-    </div>
-    <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
-        <div onclick="dashboardContextMenuOpenFolder()">Open Folder</div>
-        <div onclick="dashboardContextMenuShowCategoryDetails()">Show Category Info</div>
-        <div onclick="dashboardContextMenuShowInfoDialog()">Show Model Info</div>
-    </div>
 
+
+            <div id="rightColumn"></div>
+        </div>
+        <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
+            <div onclick="dashboardContextMenuOpenFolder()">Open Folder</div>
+            <div onclick="dashboardContextMenuShowCategoryDetails()">Show Category Info</div>
+            <div onclick="dashboardContextMenuShowInfoDialog()">Show Model Info</div>
+        </div>
+    </div>
     <!--<div w3-include-html="Snippets/BoobsFooter.html"></div>-->
     <div w3-include-html="Snippets/AdminDialogs.html"></div>
     <div w3-include-html="Snippets/Login.html"></div>

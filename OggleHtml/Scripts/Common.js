@@ -234,16 +234,17 @@ function checkForLink(folderId, hrefTextSubstring) {
                 if (successModel.ReturnValue !== "no") {
                     var p = successModel.ReturnValue;
                     if (hrefTextSubstring === "freeones") {
-
-                        //var zp = "<a https://www.freeones.com/html/" + p.substring(p.indexOf("https://www.freeones.com") + 38);  //, p.substring(p.indexOf("https://www.freeones.com", 39)).indexOf('>'));
-                        var zp = "<a https://www.freeones.com/html/" + p.substring(p.indexOf("https://www.freeones.com") + 31);//, (p.substring(p.indexOf("https://www.freeones.com") + 38)).indexOf('>'));
-                        var zp2 = zp.substring(0, zp.indexOf('>') - 1) + " target='_blank'>";
+                        //var zp = "<a https://www.freeones.com/html/" + p.substring(p.indexOf("https://www.freeones.com") + 31);//, (p.substring(p.indexOf("https://www.freeones.com") + 38)).indexOf('>'));
+                        //var zp2 = zp.substring(0, zp.indexOf('>') - 1) + " target='_blank'>";
                         //alert("link: "+  zp2);
 
                         $('#freeonesLink').show();
                     }
                     if (hrefTextSubstring === "babepedia") {
                         $('#babapediaLink').show();
+                    }
+                    if (hrefTextSubstring === "black centerfolds") {
+                        $('#blackCenterfoldsLink').show();
                     }
                 }
             }
@@ -262,4 +263,45 @@ function getFileDate() {
 
 
 }
+
+
+
+function showCatListDialog(startFolder) {
+    buildDirTree($('#indexCatTreeContainer'), "indexCatTreeContainer", startFolder);
+    $('#indexCatTreeContainer').dialog('open');
+    $('#indexCatTreeContainer').dialog('option', 'title', subdomain);
+}
+
+function indexCatTreeContainerClick(path, id, treeId) {
+    if (treeId == "indexCatTreeContainer") {
+        window.location.href = "/album.html?folder=" + id;
+        $('#indexCatTreeContainer').dialog('close')
+    }
+    else
+        alert("dirTreeClick treeId: " + treeId);
+}
+
+
+function showCustomMessage(blogId) {
+    //alert("showCustomMessage(" + blogId + ")");
+    if (typeof pause === 'function') {
+        pause();
+    }
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/OggleBlog/?blogId=" + blogId,
+        success: function (entry) {
+            if (entry.Success === "ok") {
+                $('#customMessage').html(entry.CommentText).show();
+            }
+            else
+                alert(entry.Success);
+        },
+        error: function (xhr) {
+            alert("showSiteContent xhr: " + getXHRErrorDetails(xhr));
+        }
+    });
+    //if ($('#pornWarning').html() == "")
+}
+
 
