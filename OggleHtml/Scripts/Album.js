@@ -88,11 +88,13 @@ function getBreadCrumbs(folderId) {
 }
 
 function showHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
-    
+
     if ((rootFolder === "playboy" && index > 4) || (rootFolder === "archive" && index > 2) || (parentId === "506")) {
+        //alert("showHomeFolderInfoDialog   rootFolder: " + rootFolder);
         showModelInfoDialog(folderName, folderId, 'Images/redballon.png');
     }
     else {
+        //alert("showHomeFolderInfoDialog   rootFolder: " + rootFolder + "  index: " + index);
         showCategoryDialog(folderId);
     }
 }
@@ -181,11 +183,11 @@ function processImages(imageLinksModel) {
 
     if (imageLinksModel.SubDirs.length > 0) {
         $('#fileCount').html(imageLinksModel.SubDirs.length);
-        $('#footerMessage').html(": ");
+        //$('#footerMessage').html(": ");
     }
     else {
         $('#fileCount').html(imageLinksModel.Files.length);
-        $('#footerMessage').html(": " + imageLinksModel.Files.length);
+        //$('#footerMessage').html(": " + imageLinksModel.Files.length);
     }
     if (imageLinksModel.Files.length > 0 && imageLinksModel.SubDirs.length > 0) 
         $('#fileCount').html(imageLinksModel.Files.length + "  (" + imageLinksModel.SubDirs.length + ")");

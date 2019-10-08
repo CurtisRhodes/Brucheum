@@ -1,12 +1,17 @@
 ﻿function onRegisterClick() {
+    $('#customMessage').hide();
+    forgetShowingCustomMessage = true;
     $('#modalContainer').show();
-    $('#registerUserDialog').show();
+    
     $('#registerUserDialog').dialog({
         show: { effect: "fade" },
         hide: { effect: "blind" }
     });
+    $('#registerUserDialog').show();
+
     if (typeof pause === 'function')
         pause();
+
     $('#registerUserDialog').on('dialogclose', function (event) {
         $('#modalContainer').hide();
         $('#registerUserDialog').hide();
@@ -24,8 +29,8 @@ function postRegister() {
             registeredUserModel.Pswrd = $('#txtRegisterClearPassword').val();
             registeredUserModel.FirstName = $('#txtFirstName').val();
             registeredUserModel.LastName = $('#txtLastName').val();
-            registeredUserModel.Email = $('#ddCategory').val();
-            registeredUserModel.IpAddress = $('#txtPhone').val();
+            registeredUserModel.Email = $('#txtEmail').val();
+            registeredUserModel.IpAddress = getCookieValue("IpAddress");
             registeredUserModel.AppName = "OggleBoogle";
 
             $.ajax({
@@ -35,8 +40,9 @@ function postRegister() {
                 success: function (response) {
                     if (response === "ok") {
                         $('#registerUserDialog').dialog('close');
-                        setCookie($('#txtRegisterUserName').val());
-                        setLoginHeader($('#txtRegisterUserName').val());
+
+                        setCookieValue("User", $('#txtRegisterUserName').val());
+                        setLoginHeader();
                     }
                     else {
                         $('#registerValidationSummary').html(response).show();
@@ -77,10 +83,12 @@ function validateRegister() {
 }
 
 function onLogoutClick() {
-    setCookieValue("User", "");
     $('#optionLoggedIn').hide();
     $('#optionNotLoggedIn').show();
     $('.loginRequired').hide();
+
+    deleteCookie();
+
 }
 
 function onLoginClick() {
@@ -102,23 +110,33 @@ function onLoginClick() {
     });
 }
 
-function postLogin() {
-
+function attemptLogin(userName, clearPasswod) {
     if (validateLogin()) {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/Login/VerifyLogin?userName=" + $('#txtLoginUserName').val() + "&passWord=" + $('#txtLoginClearPassword').val(),
+            url: settingsArray.ApiServer + "api/Login/VerifyLogin?userName=" + userName + "&passWord=" + clearPasswod,
             success: function (success) {
                 if (success === "ok") {
                     $('#loginDialog').dialog('close');
 
-                    //alert("setCookie($('#txtLoginUserName').val()); " + $('#txtLoginUserName').val());
+
+                    //alert("attempting login");
+                    // VerifyLogin?userName=" + $('#txtLoginUserName').val() + "&passWord=" + $('#txtLoginClearPassword').val(),
+                    //expiryDate = new Date();
+                    //expiryDate.setMonth(expiryDate.getMonth() + 9);
+                    //var cookieString = "VisitorId=" + visitorId + ";IpAddress=" + ipAddress + ";User=" + user + ";path='/;expires=" + expiryDate.toUTCString();
+                    //var cookieString = "VisitorId:" + visitorId + ",IpAddress:" + ipAddress + ",User:" + user + ",path:'/,expires:" + expiryDate.toUTCString();
+                    //document.cookie = cookieString;
+
 
                     setCookieValue("User", $('#txtLoginUserName').val());
 
                     displayStatusMessage("ok", "thanks for logging in " + getCookieValue("User"));
 
-                    setLoginHeader($('#txtLoginUserName').val());
+                    //alert("thanks for logging in " + getCookieValue("User"));
+                    //alert("setCookie(User: " + $('#txtLoginUserName').val());
+
+                    setLoginHeader();
                     setUserPermissions();
                 }
                 else
@@ -160,27 +178,141 @@ function profilePease() {
     alert("profilePease");
 }
 
+
+// COOKIES
+
+function deleteCookie() {
+    window.localStorage["User"] = null;
+    //window.localStorage["IpAddress"] = null;
+    window.localStorage["VisitorId"] = null;
+    //alert("BEFORE delete document.cookie: " + decodeURIComponent(document.cookie));
+    var expiryDate = new Date();
+    expiryDate.setMonth(expiryDate.getMonth() - 1);
+
+    //document.cookie= "VisitorId:" + visitorId + ",IpAddress:" + ipAddress + ",User:" + user + ",path:'/,expires:" + expiryDate.toUTCString();
+    //document.cookie = "VisitorId:=,IpAddress=,User=,path=,expires:" + expiryDate.toUTCString();
+    document.cookie = "expires:" + expiryDate.toUTCString();
+    //if (document.cookie) {
+    //    alert("cookie failed to delete: " + document.cookie);
+    //}
+
+    //if (getCookieValue("User") !== null)
+    //    alert("After Logout User: " + getCookieValue("User"));
+}
+
+function setCookieValue(elementName, elementValue) {
+    //alert("setCookieValue(" + elementName + "," + elementValue + ")");
+    window.localStorage[elementName] = elementValue;
+    var decodedCookie = "";
+    if (document.cookie) {
+        var ipAddress = getCookieValue("IpAddress");
+        var visitorId = getCookieValue("VisitorId");
+        decodedCookie = decodeURIComponent(document.cookie);
+        var cookieElements = decodedCookie.split(';');
+        var cookieItem; var cookieItemName; var cookieItemValue;
+        for (var i = 0; i < cookieElements.length; i++) {
+            cookieItem = cookieElements[i];
+            cookieItemName = cookieItem.substring(0, cookieItem.indexOf("="));
+            cookieItemValue = cookieItem.substring(cookieItem.indexOf("=") + 1);
+            if (cookieItemName === "User") user = cookieItemValue;
+            if (cookieItemName === "IpAddress") ipAddress = cookieItemValue;
+            if (cookieItemName === "VisitorId") visitorId = cookieItemValue;
+        }
+
+        if (elementName === "User") user = elementValue;
+        if (elementName === "IpAddress") ipAddress = elementValue;
+        if (elementName === "VisitorId") visitorId = elementValue;
+    }
+    //deleteCookie();
+    expiryDate = new Date();
+    expiryDate.setMonth(expiryDate.getMonth() + 9);
+
+    //var cookieString = "VisitorId=" + visitorId + ";IpAddress=" + ipAddress + ";User=" + user + ";path='/;expires=" + expiryDate.toUTCString();
+    var cookieString = "VisitorId:" + visitorId + ",IpAddress:" + ipAddress + ",User:" + user + ",path:'/,expires:" + expiryDate.toUTCString();
+    document.cookie = cookieString;
+
+
+    //alert("setCookieValue(" + elementName + "," + elementValue + ")\ncookie:\n" + document.cookie);
+
+}
+
+function getCookieValue(itemName) {
+    var returnValue = window.localStorage[itemName];
+
+    if (returnValue !== undefined) {
+        //alert(itemName + "=" + returnValue + " found in local storage");
+    }
+    else {
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var cookieElements = decodedCookie.split(',');
+        var cookieItem; var cookieItemName; var cookieItemValue;
+        for (var i = 0; i < cookieElements.length; i++) {
+            cookieItem = cookieElements[i].split(':');
+            cookieItemName = cookieItem[0].trim();//.substring(0, cookieElements[i].indexOf("=")).trim();
+            cookieItemValue = cookieItem[1];//.substring(cookieElements[i].indexOf("=") + 1);
+            if (cookieItemName === itemName) {
+                //if (!isNullorUndefined(cookieItemValue))
+                  //  alert("cookeie value FOUND. " + itemName + " = " + cookieItemValue);
+                returnValue = cookieItemValue;
+                break;
+            }
+        }
+    }
+    if (isNullorUndefined(returnValue)) {
+       // $('#footerMessage').html("getCookieValue FAIL for: " + itemName + " = " + returnValue);
+        //alert("getCookieValue FAIL for: " + itemName + " = " + returnValue + "\ncookie: \n" + document.cookie);
+    }
+    return returnValue;
+}
+
+function setLocalValue(localName, localValue) {
+    alert("setLocalStorage[" + localName + "] = " + localValue);
+    window.localStorage[localName] = localValue;
+}
+
+function getLocalValue(localName) {
+    var localValue = getCookieValue(localName);
+    alert("getLocalValue " + localName + " = " + localValue);
+    return localValue;
+}
+
+// PERMISSIONS
+
 function setUserPermissions() {
-    //alert("document.domain : " + document.domain);
-    if (document.domain === 'localhost') {
+    if (document.domain === 'localhostXXX') {
 
         $('.loginRequired').show();
         $('.adminLevelRequired').show();
-        if (typeof isPornEditor === 'boolean') 
-            isPornEditor = true;        
+
+        //if (typeof permissionLevel === 'object')
+        //{
+        //    isPornEditor = true;        
+        //}
+
+        //NOT FOUND - The server has not found anything matching the requested URI(Uniform Resource Identifier).
+        //  GET - http://localhost:56437/Styles/images/ui-icons_f5e175_256x240.png
+
+
+        if (typeof isPornEditor === 'boolean')
+            isPornEditor = true;
+
         if (typeof permissionsSet === "boolean")
             permissionsSet = true;
+        else {
+            alert("typeof permissionsSet: " + typeof permissionsSet);
+            permissionsSet = true;
+        }
 
-        setLocalValue("User", "devl");
+        //setLocalValue("User", "devl");
         $('#spnUserName').html("devl");
-        $('#optionLoggedIn').hide();
+        $('#optionLoggedIn').show();
         $('#optionNotLoggedIn').hide();
         //alert("document.domain : " + document.domain);
     }
-    else
-    {
+    else {
         var userName = getCookieValue("User");
-        if (userName !== "") {
+        if (!isNullorUndefined(userName)) {
+            //alert("setUserPermissions userName: " + userName);
             $.ajax({
                 type: "GET",
                 url: settingsArray.ApiServer + "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned",
@@ -199,9 +331,14 @@ function setUserPermissions() {
                                 }
                             }
                         });
-                        //setLoginHeader(userName);
+
+                        //setLoginHeader();
                         if (typeof permissionsSet === "boolean")
                             permissionsSet = true;
+                        else {
+                            alert("typeof permissionsSet: " + typeof permissionsSet);
+                            permissionsSet = true;
+                        }
                     }
                     else
                         alert("loadUserRoles: " + roleModel.Success);
@@ -212,8 +349,9 @@ function setUserPermissions() {
             });
         }
         else {
-            if (typeof permissionsSet === "boolean")
-                permissionsSet = true;
+            //if (typeof permissionsSet === "boolean")
+
+            permissionsSet = true;
         }
     }
 }
@@ -225,125 +363,5 @@ function isInRole(roleName) {
     //if (userName !== "" || document.domain === 'localhost') {
 }
 
-function setLoginHeader(userName) {
-    //alert("setLoginHeader: " + userName);
 
-    //var xxuserName = getCookieValue("User");
-    //alert("in setLoginHeader xxuserName:" + xxuserName);
-
-    if (userName === "Unknown" || userName === "unknown" || userName === "") {
-        //alert("userName unknown: " + userName);
-        $('#optionLoggedIn').hide();
-        $('#optionNotLoggedIn').show();
-        //$('.loginRequired').hide();
-    }
-    else {
-        $('#spnUserName').html(userName);
-        $('#optionLoggedIn').show();
-        $('#optionNotLoggedIn').hide();
-    }
-}
-
-function deleteCookie() {
-    //alert("BEFORE delete document.cookie: " + decodeURIComponent(document.cookie));
-    var expiryDate = new Date();
-    expiryDate.setMonth(expiryDate.getMonth() - 1);
-    //document.cookie = "";
-    //document.cookie = "VisitorIdundefined=;VisitorId=;expires=" + expiryDate.toUTCString() + ";";
-    //document.cookie = "VisitorId=;expires=" + expiryDate.toUTCString() + ";";
-    document.cookie = "VisitorId=;IpAddress=;User=;path=;expires=" + expiryDate.toUTCString();
-    //document.cookie = "VisitorId:;IpAddress:;User:;path:;expires=" + expiryDate.toUTCString();
-    //document.cookie = "expires=" + expiryDate.toUTCString() + ";";
-
-    //alert("after delete document.cookie:\n [" + document.cookie + "]");
-}
-
-// COOKIES
-function setCookieValue(elementName, elementValue) {
-    //alert("setCookieValue(" + elementName + "," + elementValue + ")");
-    var decodedCookie = "";
-    if (document.cookie) {
-        var user = "Unknown";
-        var ipAddress = getCookieValue("IpAddress");
-        var visitorId = getCookieValue("VisitorId");
-        decodedCookie = decodeURIComponent(document.cookie);
-        var cookieElements = decodedCookie.split(';');
-        var cookieItem; var cookieItemName; var cookieItemValue;
-        for (var i = 0; i < cookieElements.length; i++) {
-            cookieItem = cookieElements[i];
-            cookieItemName = cookieItem.substring(0, cookieItem.indexOf("="));
-            cookieItemValue = cookieItem.substring(cookieItem.indexOf("=") + 1);
-
-            if (cookieItemName === "User") user = cookieItemValue;
-            if (cookieItemName === "IpAddress") ipAddress = cookieItemValue;
-            if (cookieItemName === "VisitorId") visitorId = cookieItemValue;
-        }
-        if (elementName === "User") user = elementValue;
-        if (elementName === "IpAddress") ipAddress = elementValue;
-        if (elementName === "VisitorId") visitorId = elementValue;
-    }
-    deleteCookie();
-    expiryDate = new Date();
-    expiryDate.setMonth(expiryDate.getMonth() + 9);
-
-    //var cookieString = "VisitorId=" + visitorId + ";IpAddress=" + ipAddress + ";User=" + user + ";path='/;expires=" + expiryDate.toUTCString();
-    var cookieString = "VisitorId:" + visitorId + ",IpAddress:" + ipAddress + ",User:" + user + ",path:'/,expires:" + expiryDate.toUTCString();
-
-    //var cookieObject = { "VisitorId": visitorId, "IpAddress": ipAddress, "User": user, "path": '/', "expires": expiryDate.toUTCString() };
-    //var jsonString = JSON.stringify(cookieObject);
-    //var cookieString = "VisitorId=" + visitorId + ";IpAddress=" + ipAddress + ";User=" + user + ";path='/;expires=" + expiryDate.toUTCString(); 
-    //alert("jsonString: " + jsonString);
-    //document.cookie = "cookieValues=" + jsonString;
-
-    document.cookie = cookieString;
-
-    //if (elementName === "VisitorId" && user === "cooler")
-    //{
-    //    alert("should be: " + cookieString);
-    //    alert("MY document.cookie: " + document.cookie);
-    //}
-}
-
-function getCookieValue(itemName) {
-    //var testUser = "";
-    //alert("getCookieValue: " + itemName);
-    var rtn = "";
-    if (document.cookie) {
-        var decodedCookie = decodeURIComponent(document.cookie);
-        //if (itemName === "VisitorId") alert("decodedCookie: " + decodedCookie);
-        var cookieElements = decodedCookie.split(',');
-        var cookieItem; var cookieItemName; var cookieItemValue;
-        for (var i = 0; i < cookieElements.length; i++) {
-            cookieItem = cookieElements[i].split(':');
-            cookieItemName = cookieItem[0].trim();//.substring(0, cookieElements[i].indexOf("=")).trim();
-            cookieItemValue = cookieItem[1];//.substring(cookieElements[i].indexOf("=") + 1);
-
-            //if (cookieItemName === "User") {
-            //    if (testUser === "") {
-            //        testUser = cookieItemValue;
-            //        i = 0;
-            //    }
-            //}
-            //if (itemName === "VisitorId") alert("cookieItem: " + cookieItem + "   cookieItemName: " + cookieItemName + " cookieItemValue: " + cookieItemValue);
-            if (cookieItemName === itemName) {
-
-                //if (itemName === "VisitorId" && testUser === "cooler")
-                //    alert("FOUND itemName: " + itemName + "  value: " + cookieItemValue);
-
-
-                rtn = cookieItemValue;
-                break;
-            }
-            else {
-                //if (itemName === "VisitorId" && testUser === "cooler")
-                  //  alert("cookie item[" + i + "] name: {" + cookieItemName + "} value  " + cookieItemValue + "  looking for: " + itemName);
-            }
-        }
-        //if (rtn === "" && itemName === "VisitorId") {
-         //   alert("'" + itemName + "' not found  \ngetCookieValue says document.cookie:\n" + document.cookie.toString());
-        //}
-    }
-    //else alert("no cookie found");
-    return rtn;
-}
 

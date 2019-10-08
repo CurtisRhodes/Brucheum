@@ -59,8 +59,9 @@ namespace WebApi.Models
     public class VisitorSuccessModel
     {
         public string VisitorId { get; set; }
-        public string IpAddress { get; set; }
+        public string PageName { get; set; }
         public string WelcomeMessage { get; set; }
+        public bool IsNewVisitor { get; set; }
         public string Success { get; set; }
     }    
 

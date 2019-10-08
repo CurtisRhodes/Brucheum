@@ -17,10 +17,12 @@ var fullPageName;
 
 $(document).ready(function () {
     //alert("staticPage.js");
+    includeHTML();
 
     $('#fileCount').html(staticPageImagesCount);
 
     resizeStaticPage();
+    loadSettings();
     var waiter = setInterval(function () {
         if (settingsArray.ApiServer === undefined) {
            //dots += ". ";
@@ -31,14 +33,14 @@ $(document).ready(function () {
             getBreadCrumbs(staticPageFolderId);
             setOggleHeader(staticPageRootFolderId);
             //alert("setOggleFooter(" + staticPageRootFolderId + ")");
+
             setOggleFooter(staticPageRootFolderId);
-            logPageHit(staticPageFolderId);
-            
+            logPageHit(staticPageFolderId);            
             checkForLink(staticPageFolderId, "babepedia");
             checkForLink(staticPageFolderId, "freeones");
             checkForLink(staticPageFolderId, "black centerfolds");
 
-         //   $('footerMessage').html(staticPageFolderName);
+            //   $('footerMessage').html(staticPageFolderName);
         }
     }, 300);
     $(window).resize(resizeStaticPage());
@@ -71,26 +73,6 @@ function resizeStaticPage() {
 //    window.open(selectedImage, '_blank');
 //}
 
-function showCustomMessage(blogId) {
-    if (typeof pause === 'function') {
-        pause();
-    }
-    $.ajax({
-        type: "GET",
-        url: service + "api/OggleBlog/?blogId=" + blogId,
-        success: function (entry) {
-            if (entry.Success === "ok") {
-                $('#customMessage').html(entry.CommentText).show();
-            }
-            else
-                alert(entry.Success);
-        },
-        error: function (xhr) {
-            alert("showSiteContent xhr: " + getXHRErrorDetails(xhr));
-        }
-    });
-}
-
 function showCatListDialog(root) {
     buildDirTree($('#staticCatTreeContainer'), "staticCatTreeContainer", root);
     $('#staticCatTreeContainer').dialog({
@@ -110,23 +92,23 @@ function staticCatTreeContainerClick(path, id, treeId) {
         alert("dirTreeClick treeId: " + treeId);
 }
 
-function onLoginClick() {
-    alert("due to a path issue with static pages it's best to login from the home page.");
-    window.location.href = "/";
-    //$('#loginDialog').dialog('open');
-    //if (typeof pause === 'function')
-    //    pause();
-}
+//function onLoginClick() {
+//    alert("due to a path issue with static pages it's best to login from the home page.");
+//    window.location.href = "/";
+//    //$('#loginDialog').dialog('open');
+//    //if (typeof pause === 'function')
+//    //    pause();
+//}
 
-function onRegisterClick() {
-    alert("due to a path issue with static pages it's best to Register from the home page.");
-    window.location.href = "/";
-    //$('#registerUserDialog').fadeIn();
-}
+//function onRegisterClick() {
+//    alert("due to a path issue with static pages it's best to Register from the home page.");
+//    window.location.href = "/";
+//    //$('#registerUserDialog').fadeIn();
+//}
 
-function logoutSimple() {
-    //alert("logoutSimple");
-    document.cookie = "cookiename= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
-    $('#divNotLogedIn').show();
-    $('#divLogedIn').hide();
-}
+//function logoutSimple() {
+//    //alert("logoutSimple");
+//    document.cookie = "cookiename= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+//    $('#divNotLogedIn').show();
+//    $('#divLogedIn').hide();
+//}

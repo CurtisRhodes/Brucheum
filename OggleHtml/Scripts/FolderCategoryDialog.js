@@ -1,5 +1,7 @@
 ﻿var categoryFolderId = "";
 var isPornEditor = true;
+var permissionLevel = 0;
+var permissionsSet = false;
 
 function showCategoryDialog(folderId) {
     // 11:11 2/25/19
@@ -8,21 +10,51 @@ function showCategoryDialog(folderId) {
     // --alter table OggleBooble.ImageFolder add CatergoryDescription nvarchar(max)
     // 4/30/2019  --first use of jQuery dialog
 
-    $('#btnCatDlgMeta').hide();
-    $('#catDlgSummerNoteContainer').hide();
-    $('#btnCatDlgEdit').hide();
-    $('#catDlgReadOnlyTextArea').show();
-
-    if (isPornEditor) {
-        $("#btnCatDlgEdit").show().html("Edit");
-    }
-
     $('#folderCategoryDialog').dialog({
         autoOpen: false,
         show: { effect: "fade" },
         hide: { effect: "blind" },
         width: "500px"
     });
+
+    $('#catDlgReadOnlyTextArea').show();
+
+    var dots = "";
+    var waiter = setInterval(function () {
+        if (settingsArray.ApiServer === undefined) {
+            dots += ". ";
+            $('#dots').html(dots);
+        }
+        else {
+            clearInterval(waiter);
+            setUserPermissions();
+            var waiter2 = setInterval(function () {
+                dots += "* ";
+                $('#dots').html(dots);
+                if (permissionsSet === true) {
+                    $('#dots').html('');
+                    clearInterval(waiter2);
+
+                    if (permissionLevel > 9) {
+                        $("#btnCatDlgEdit").show().html("Edit");
+                        $('#catDlgSummerNoteContainer').show();
+                        $('#btnCatDlgEdit').hide();
+                        $('#catDlgReadOnlyTextArea').hide();
+                    }
+                    else {
+                        $('#btnCatDlgMeta').hide();
+                        $('#catDlgSummerNoteContainer').hide();
+                        $('#btnCatDlgEdit').hide();
+                        $('#catDlgReadOnlyTextArea').show();
+                    }
+
+                    $('#folderCategoryDialog').dialog('open');
+
+                    //$('#footerMessage').html("isPornEditor: " + isPornEditor);
+                }
+            }, 300);
+        }
+    }, 300);
 
     $('#catDlgSummerNoteTextArea').summernote({
         height: 300,
@@ -47,8 +79,8 @@ function showCategoryDialog(folderId) {
                     $('#catDlgReadOnlyTextArea').html(categoryComment.CommentText);
 
                     $('#folderCategoryDialog').dialog('option', 'title', categoryComment.FolderName);
-                    $('#folderCategoryDialog').show();
-                    $('#folderCategoryDialog').dialog("open");
+                    //$('#folderCategoryDialog').show();
+                    //$('#folderCategoryDialog').dialog("open");
                 }
                 else {
                     if (categoryComment.Success !== "not found")

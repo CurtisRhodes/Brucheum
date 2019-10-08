@@ -1,36 +1,40 @@
 ﻿
 
     <div id="registerUserDialog" class="modalDialog" title="Register">
-        <div id="registerValidationSummary" class="validationError"></div>
-        <div id="errRegisterUserName" class="validationError">Required</div>
-        <label>user name</label><span class="requiredField" title="required">  *</span><br>
-        <input id="txtRegisterUserName" type="text" class="roundedInput" placeholder="your go by name"><br>
-        <div id="errRegisterPassword" class="validationError">Password Required</div>
-        <label>password</label><span class="requiredField" title="required">  *</span><br>
-        <input id="txtRegisterClearPassword" type="password" class="roundedInput" autocomplete="off" placeholder="********"><br>
-        <label>retype password</label><span class="requiredField" title="retype Password required">  *</span><br>
-        <input id="txtRegisterClearPasswordRetype" type="password" class="roundedInput" autocomplete="off" placeholder="********"><br>
-        <div class="rememberMe">
-            <input id="ckRememberMe" type="checkbox" checked="checked" />  Remember Me ?  (<span>uses a cookie</span>)
-        </div>
-        <!--<div onclick="toggleRegisterDetails()" id="divShowDetails">
-        Extra Details
-        <div class="divCloseButton">
-            <img id="upDownCaret" height="19" src="Images/caretDown.png" />
-        </div>
-    </div>
-    <div id="divExtraDetails">-->
-        <label>First Name</label>
-        <input id="txtFirstName" type="text" class="roundedInput"><br>
-        <label>Last Name</label>
-        <input id="txtLastName" type="text" class="roundedInput"><br>
-        <label>Email</label><br>
-        <input id="txtEmail" type="email" class="roundedInput" placeholder="you@example.org"><br>
-        <!--<label>Phone Number (not required)</label>
-    <input id="txtPhone" type="tel" class="roundedInput"><br>
-    <label>Pin  (not required)</label>
-    <input id="txtPin" type="text" class="roundedInput" placeholder="you may use this in place of your password"><br>-->
-        <button class="roundendButton submitButton" onclick="postRegister()">Submit</button>
+        <form>
+            <div id="registerValidationSummary" class="validationError"></div>
+            <div id="errRegisterUserName" class="validationError">Required</div>
+            <label style="white-space:nowrap;">user name</label><span class="requiredField" title="required">  *</span><br>
+            <input id="txtRegisterUserName" type="text" class="roundedInput" placeholder="your go by name"><br>
+            <div id="errRegisterPassword" class="validationError">Password Required</div>
+            <label>password</label><span class="requiredField" title="required">  *</span><br>
+            <input id="txtRegisterClearPassword" class="roundedInput" placeholder="********"><br>
+            <label style="white-space:nowrap;">retype password</label><span class="requiredField" title="retype Password required">  *</span><br>
+            <input id="txtRegisterClearPasswordRetype" type="password" class="roundedInput" autocomplete="off" placeholder="********"><br>
+            <div class="rememberMe">
+                <input id="ckRememberMe" type="checkbox" checked="checked" />  Remember Me ?  (<span>uses a cookie</span>)
+            </div>
+            <!--<div onclick="toggleRegisterDetails()" id="divShowDetails">
+            Extra Details
+            <div class="divCloseButton">
+                <img id="upDownCaret" height="19" src="Images/caretDown.png" />
+            </div>
+            </div>
+            <div id="divExtraDetails">-->
+            <label style="white-space:nowrap;">First Name</label>
+            <input id="txtFirstName" type="text" class="roundedInput"><br>
+            <label style="white-space:nowrap;">Last Name</label>
+            <input style="white-space:nowrap;" id="txtLastName" type="text" class="roundedInput"><br>
+            <label>Email</label>
+            <input id="txtEmail" type="email" class="roundedInput" placeholder="you@example.org"><br>
+            <!--
+                <label>Phone Number (not required)</label>
+                <input id="txtPhone" type="tel" class="roundedInput"><br>
+                <label>Pin  (not required)</label>
+                <input id="txtPin" type="text" class="roundedInput" placeholder="you may use this in place of your password"><br>
+            -->
+            <button class="roundendButton submitButton" onclick="postRegister()">Submit</button>
+        </form>
     </div>
 
 

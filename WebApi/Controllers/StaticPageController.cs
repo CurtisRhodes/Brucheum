@@ -22,110 +22,6 @@ namespace WebApi.Controllers
         //private int filesProcessed = 0;
         private int imagesCount;
 
-        [HttpGet]
-        public string Build(int folderId, bool recurr)
-        {
-            string success = "";
-            {
-                try
-                { 
-                    using (OggleBoobleContext db = new OggleBoobleContext())
-                    {
-                        //SignalRHost.ProgressHub.PostToClient("Creating static files");
-                        //VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == folderId).First();
-                        //totalFiles = Math.Max(vwDirTree.GrandTotalFiles, vwDirTree.TotalFiles);
-                        //SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
-                        CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                        success = ProcessFolder(folderId, categoryFolder.RootFolder, categoryFolder.FolderName, db, recurr);
-                    }
-                }
-                catch (Exception e) { success = Helpers.ErrorDetails(e); }
-                return success;
-            }
-        }
-
-        private string ProcessFolder(int folderId, string rootFolder, string folderName, OggleBoobleContext db, bool recurr)
-        {
-            string success = "";
-            try
-            {
-                //SignalRHost.ProgressHub.PostToClient("Creating static files: " + folderName + ".html");
-                folderName = Helpers.GetCustomStaticFolderName(folderId, folderName.Replace(".OGGLEBOOBLE.COM", ""));
-                string staticContent =
-                    "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, folderName) +
-                    "\n<body style='margin-top:105px'>\n<header></header>" +
-                    GalleryPageBodyHtml(folderId, rootFolder) + "<footer></footer>\n" +
-                    Slideshow() + CommentDialog() + ModelInfoDialog() +
-                    "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
-                    "<script>var staticPageFolderId=" + folderId + "; " +
-                    "var staticPageFolderName='" + folderName + "'; " +
-                    "var staticPageImagesCount='" + imagesCount + "'; " +
-                    "var staticPageRootFolderId='" + rootFolder + "';</script>\n" +
-                    
-                    //FooterHtml(rootFolder) +
-                    "<script src='/scripts/StaticPage.js'></script>\n" +
-                    "\n</body>\n</html>";
-
-                success = WriteFileToDisk(staticContent, rootFolder, folderName);
-                if (success == "ok")
-                {
-                    if (recurr)
-                    {
-                        List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
-                        foreach (CategoryFolder dbCategoryFolder in categoryFolders)
-                        {
-                            //VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == dbCategoryFolder.Id).First();
-                            //filesProcessed += Math.Max(vwDirTree.TotalFiles, vwDirTree.FileCount);
-                            //filesProcessed += vwDirTree.FileCount;
-                            //SignalRHost.ProgressHub.ShowProgressBar(totalFiles, filesProcessed);
-                            //var cFolderName = Helpers.GetParentPath(dbCategoryFolder.Id) + dbCategoryFolder.FolderName;
-
-                            ProcessFolder(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.FolderName, db, true);
-                        }
-                    }
-                }
-            }
-            catch (Exception e) { success = Helpers.ErrorDetails(e); }
-            return success;
-        }
-
-        private string WriteFileToDisk(string staticContent, string rootFolder, string pageTitle)
-        {
-            string success = "";
-            try
-            {
-                // todo  write the image as a file to x.ogglebooble  4/1/19
-                string tempFilePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data");
-
-                using (var staticFile = System.IO.File.Open(tempFilePath + "/temp.html", System.IO.FileMode.Create))
-                {
-                    Byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(staticContent);
-                    staticFile.Write(byteArray, 0, byteArray.Length);
-                }
-                FtpWebRequest webRequest = null;
-                //string ftpPath = ftpHost + "/pages.OGGLEBOOBLE.COM/";
-                string ftpPath = ftpHost + "oggle/static";
-
-                if (rootFolder == "")
-                    webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + pageTitle + ".html");
-                else
-                    webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + rootFolder + "/" + pageTitle + ".html");
-                webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
-                webRequest.Method = WebRequestMethods.Ftp.UploadFile;
-                using (System.IO.Stream requestStream = webRequest.GetRequestStream())
-                {
-                    byte[] fileContents = System.IO.File.ReadAllBytes(tempFilePath + "/temp.html");
-                    webRequest.ContentLength = fileContents.Length;
-                    requestStream.Write(fileContents, 0, fileContents.Length);
-                    requestStream.Flush();
-                    requestStream.Close();
-                }
-                success = "ok";
-            }
-            catch (Exception e) { success = Helpers.ErrorDetails(e); }
-            return success;
-        }
-
         private string HeadHtml(int folderId, string folderName)
         {
             var articleTagString = "";
@@ -171,6 +67,111 @@ namespace WebApi.Controllers
                 "   <meta property='og:url' content='" + httpLocation + folderName + ".html'/>\n" +
                 "   <meta name='Keywords' content='" + articleTagString + "'/>\n" +
                 "</head>";
+        }
+
+        [HttpGet]
+        public string Build(int folderId, bool recurr)
+        {
+            string success = "";
+            {
+                try
+                { 
+                    using (OggleBoobleContext db = new OggleBoobleContext())
+                    {
+                        //SignalRHost.ProgressHub.PostToClient("Creating static files");
+                        //VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == folderId).First();
+                        //totalFiles = Math.Max(vwDirTree.GrandTotalFiles, vwDirTree.TotalFiles);
+                        //SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
+                        CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                        success = CreatePage(folderId, categoryFolder.RootFolder, categoryFolder.FolderName, db, recurr);
+                    }
+                }
+                catch (Exception e) { success = Helpers.ErrorDetails(e); }
+                return success;
+            }
+        }
+
+        private string CreatePage(int folderId, string rootFolder, string folderName, OggleBoobleContext db, bool recurr)
+        {
+            string success = "";
+            try
+            {
+                //SignalRHost.ProgressHub.PostToClient("Creating static files: " + folderName + ".html");
+                folderName = Helpers.GetCustomStaticFolderName(folderId, folderName.Replace(".OGGLEBOOBLE.COM", ""));
+                string staticContent =
+                    "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, folderName) +
+                    "\n<body style='margin-top:105px'>\n<header></header>" +
+                    GalleryPageBodyHtml(folderId, rootFolder) + "<footer></footer>\n" +
+                   // Slideshow() + CommentDialog() + ModelInfoDialog() +
+                    "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
+                    "<script>var staticPageFolderId=" + folderId + "; " +
+                    "var staticPageFolderName='" + folderName + "'; " +
+                    "var staticPageImagesCount='" + imagesCount + "'; " +
+                    "var staticPageRootFolderId='" + rootFolder + "';</script>\n" +
+                    "<div w3-include-html='/Snippets/Slideshow.html'></div>\n" +
+                    "<div w3-include-html='/Snippets/AdminDialogs.html'></div>\n" +
+                    "<div w3-include-html='/Snippets/Login.html'></div>\n" +
+                    "<div w3-include-html='/Snippets/Register.html'></div>\n" +
+                    "<script src='/scripts/StaticPage.js'></script>\n" +
+                    "\n</body>\n</html>";
+                success = WriteFileToDisk(staticContent, rootFolder, folderName);
+                if (success == "ok")
+                {
+                    if (recurr)
+                    {
+                        List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+                        foreach (CategoryFolder dbCategoryFolder in categoryFolders)
+                        {
+                            //VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == dbCategoryFolder.Id).First();
+                            //filesProcessed += Math.Max(vwDirTree.TotalFiles, vwDirTree.FileCount);
+                            //filesProcessed += vwDirTree.FileCount;
+                            //SignalRHost.ProgressHub.ShowProgressBar(totalFiles, filesProcessed);
+                            //var cFolderName = Helpers.GetParentPath(dbCategoryFolder.Id) + dbCategoryFolder.FolderName;
+
+                            CreatePage(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.FolderName, db, true);
+                        }
+                    }
+                }
+            }
+            catch (Exception e) { success = Helpers.ErrorDetails(e); }
+            return success;
+        }
+
+        private string WriteFileToDisk(string staticContent, string rootFolder, string pageTitle)
+        {
+            string success = "";
+            try
+            {
+                // todo  write the image as a file to x.ogglebooble  4/1/19
+                string tempFilePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data");
+
+                using (var staticFile = System.IO.File.Open(tempFilePath + "/temp.html", System.IO.FileMode.Create))
+                {
+                    Byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(staticContent);
+                    staticFile.Write(byteArray, 0, byteArray.Length);
+                }
+                FtpWebRequest webRequest = null;
+                //string ftpPath = ftpHost + "/pages.OGGLEBOOBLE.COM/";
+                string ftpPath = ftpHost + "oggle/static";
+
+                if (rootFolder == "")
+                    webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + pageTitle + ".html");
+                else
+                    webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + rootFolder + "/" + pageTitle + ".html");
+                webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
+                webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                using (System.IO.Stream requestStream = webRequest.GetRequestStream())
+                {
+                    byte[] fileContents = System.IO.File.ReadAllBytes(tempFilePath + "/temp.html");
+                    webRequest.ContentLength = fileContents.Length;
+                    requestStream.Write(fileContents, 0, fileContents.Length);
+                    requestStream.Flush();
+                    requestStream.Close();
+                }
+                success = "ok";
+            }
+            catch (Exception e) { success = Helpers.ErrorDetails(e); }
+            return success;
         }
 
         private string GalleryPageBodyHtml(int folderId, string rootFolder)
@@ -236,43 +237,43 @@ namespace WebApi.Controllers
             return bodyHtml;
         }
 
-        private string Slideshow()
-        {
-            return
-            "\n<div id='imageViewerDialog' class='fullScreenViewer'>\n" +
-                "<div id = 'viewerButtonsRow' class='imageViewerHeaderRow'>\n" +
-                    "<div class='viewerButtonsRowSection'>\n" +
-                        "<img id = 'imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/images/comment.png' />" +
-                    "</div>\n" +
-                    "<span id = 'imageViewerHeaderTitle' class='imageViewerTitle'></span>" +
-                    "<div class='viewerButtonsRowSection'>" +
-                        "<div class='floatRight' style='margin-left: 44px;' onclick='closeViewer();'><img src='/images/close.png' /></div>\n" +
-                        "<div class='floatRight' onclick=\"runSlideShow('faster')\"><img id='fasterSlideshow' title='faster' src='/images/slideshowFaster.png' /></div>\n" +
-                        "<div id='txtStartSlideShow' class='txtSlideShow floatRight' onclick='runSlideShow(\"start\");'>start slideshow</div>\n"+
-                        "<div class='floatRight' onclick=\"runSlideShow('slower')\"><img id='slowerSlideShow' title='slower slideshow' src='/images/slideshowSlower.png' /></div>\n" +
-                        "<div class='floatRight' onclick=\"blowupImage()\"><img class='popoutBox' src='/images/expand02.png' /></div>\n" +
-                    "</div>\n" +
-                "</div>\n" +
-                "<div id='leftClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slide(\"prev\")'></div>" +
-                "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slide(\"next\")' ></div>\n" +
-                "<div id='viewerImageContainer' class='expandoImageDiv'>\n" +
-                    "<img id='viewerImage' class='expandoImage'/>\n" +
-                "</div>\n" +
-             "</div>\n";
-        }
+        //private string Slideshow()
+        //{
+        //    return
+        //    "\n<div id='imageViewerDialog' class='fullScreenViewer'>\n" +
+        //        "<div id = 'viewerButtonsRow' class='imageViewerHeaderRow'>\n" +
+        //            "<div class='viewerButtonsRowSection'>\n" +
+        //                "<img id = 'imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/images/comment.png' />" +
+        //            "</div>\n" +
+        //            "<span id = 'imageViewerHeaderTitle' class='imageViewerTitle'></span>" +
+        //            "<div class='viewerButtonsRowSection'>" +
+        //                "<div class='floatRight' style='margin-left: 44px;' onclick='closeViewer();'><img src='/images/close.png' /></div>\n" +
+        //                "<div class='floatRight' onclick=\"runSlideShow('faster')\"><img id='fasterSlideshow' title='faster' src='/images/slideshowFaster.png' /></div>\n" +
+        //                "<div id='txtStartSlideShow' class='txtSlideShow floatRight' onclick='runSlideShow(\"start\");'>start slideshow</div>\n"+
+        //                "<div class='floatRight' onclick=\"runSlideShow('slower')\"><img id='slowerSlideShow' title='slower slideshow' src='/images/slideshowSlower.png' /></div>\n" +
+        //                "<div class='floatRight' onclick=\"blowupImage()\"><img class='popoutBox' src='/images/expand02.png' /></div>\n" +
+        //            "</div>\n" +
+        //        "</div>\n" +
+        //        "<div id='leftClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slide(\"prev\")'></div>" +
+        //        "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slide(\"next\")' ></div>\n" +
+        //        "<div id='viewerImageContainer' class='expandoImageDiv'>\n" +
+        //            "<img id='viewerImage' class='expandoImage'/>\n" +
+        //        "</div>\n" +
+        //     "</div>\n";
+        //}
 
-        private string CommentDialog()
-        {
-            return "\n<div id='imageCommentDialog' class='displayHidden commentDialog' title='Write a fantasy about this image'>\n" +
-              "<div class='commentDialogContentArea'>\n" +
-                "<div class='center'><img id='commentDialogImage' class='commentDialogImage' /></div>\n" +
-                "<div><input id='txtCommentTitle' tabindex='1' class='roundedInput commentTitleText' placeholder='Give your comment a title' /></div>\n" +
-                "<div id='imageCommentEditor' tabindex='2'></div>\n" +
-                "<div id='divSaveFantasy' class='roundendButton clickable commentDialogButton inline' onclick='saveComment()'>save</div>\n" +
-                "<div id='commentInstructions' class='loginComment inline'>log in to view comments</div>\n" +
-              "</div>\n" +
-            "</div>\n";
-        }
+        //private string CommentDialog()
+        //{
+        //    return "\n<div id='imageCommentDialog' class='displayHidden commentDialog' title='Write a fantasy about this image'>\n" +
+        //      "<div class='commentDialogContentArea'>\n" +
+        //        "<div class='center'><img id='commentDialogImage' class='commentDialogImage' /></div>\n" +
+        //        "<div><input id='txtCommentTitle' tabindex='1' class='roundedInput commentTitleText' placeholder='Give your comment a title' /></div>\n" +
+        //        "<div id='imageCommentEditor' tabindex='2'></div>\n" +
+        //        "<div id='divSaveFantasy' class='roundendButton clickable commentDialogButton inline' onclick='saveComment()'>save</div>\n" +
+        //        "<div id='commentInstructions' class='loginComment inline'>log in to view comments</div>\n" +
+        //      "</div>\n" +
+        //    "</div>\n";
+        //}
 
         //private string CategoryDialog()
         //{
@@ -281,39 +282,39 @@ namespace WebApi.Controllers
         //    "</div>\n";
         //}
 
-        private string ModelInfoDialog()
-        {
-            return "<div id = 'modelInfoDialog' class='oggleDialogWindow' onmouseleave='considerClosingModelInfoDialog()'>\n" +
-            "       <div id = 'modelInfoEditArea' class='displayHidden'>\n" +
-            "        <div class='flexContainer'>\n" +
-            "            <div class='floatLeft'>\n" +
-            "                <div class='modelInfoDialogLabel'>name</div><input id='txtFolderName' class='modelDialogInput' /><br />\n" +
-            "                <div class='modelInfoDialogLabel'>from</div><input id='txtNationality' class='modelDialogInput' /><br />\n" +
-            "                <div class='modelInfoDialogLabel'>born</div><input id='txtBorn' class='modelDialogInput' /><br />\n" +
-            "                <div class='modelInfoDialogLabel'>boobs</div><input id='txtBoobs' class='modelDialogInput' /><br />\n" +
-            "                <div class='modelInfoDialogLabel'>figure</div><input id='txtMeasurements' class='modelDialogInput' />\n" +
-            "            </div>\n" +
-            "            <div class='floatLeft'>\n" +
-            "                <img id = 'modelDialogThumbNailImage' src='/images/redballon.png' class='modelDialogImage' />\n" +
-            "            </div>\n" +
-            "       </div>\n" +
-            "       <div class='modelInfoDialogLabel'>comment</div>\n" +
-            "       <div><textarea id='modelInfoDialogComment' class='modelInfoCommentArea'></textarea></div>\n" +
-            "       <div class='modelInfoDialogLabel'>trackbacks</div>\n" +
-            "       <div id='modelInfoDialogTrackBack'>\n" +
-            "           <div class='hrefLabel'>href</div><input id = 'txtLinkHref' class='modelDialogInput' />\n" +
-            "            <div class='hrefLabel'>label</div><input id = 'txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />\n" +
-            "            <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
-            "       </div>\n" +
-            "        <div id = 'externalLinks' class='trackbackLinksArea'></div>\n" +
-            "    </div>\n" +
-            "    <div id = 'modelInfoViewOnlyArea' class='displayHidden'>\n" +
-            "        <div class='viewOnlyMessage'>If you you know who this is Please click Edit</div>\n" +
-            "        <div id = 'unknownModelLinks' class='smallTextArea'></div>\n" +
-            "    </div>\n" +
-            "    <a id = 'modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Edit</a>\n" +
-            "</div>\n";
-        }
+        //private string ModelInfoDialog()
+        //{
+        //    return "<div id = 'modelInfoDialog' class='oggleDialogWindow' onmouseleave='considerClosingModelInfoDialog()'>\n" +
+        //    "       <div id = 'modelInfoEditArea' class='displayHidden'>\n" +
+        //    "        <div class='flexContainer'>\n" +
+        //    "            <div class='floatLeft'>\n" +
+        //    "                <div class='modelInfoDialogLabel'>name</div><input id='txtFolderName' class='modelDialogInput' /><br />\n" +
+        //    "                <div class='modelInfoDialogLabel'>from</div><input id='txtNationality' class='modelDialogInput' /><br />\n" +
+        //    "                <div class='modelInfoDialogLabel'>born</div><input id='txtBorn' class='modelDialogInput' /><br />\n" +
+        //    "                <div class='modelInfoDialogLabel'>boobs</div><input id='txtBoobs' class='modelDialogInput' /><br />\n" +
+        //    "                <div class='modelInfoDialogLabel'>figure</div><input id='txtMeasurements' class='modelDialogInput' />\n" +
+        //    "            </div>\n" +
+        //    "            <div class='floatLeft'>\n" +
+        //    "                <img id = 'modelDialogThumbNailImage' src='/images/redballon.png' class='modelDialogImage' />\n" +
+        //    "            </div>\n" +
+        //    "       </div>\n" +
+        //    "       <div class='modelInfoDialogLabel'>comment</div>\n" +
+        //    "       <div><textarea id='modelInfoDialogComment' class='modelInfoCommentArea'></textarea></div>\n" +
+        //    "       <div class='modelInfoDialogLabel'>trackbacks</div>\n" +
+        //    "       <div id='modelInfoDialogTrackBack'>\n" +
+        //    "           <div class='hrefLabel'>href</div><input id = 'txtLinkHref' class='modelDialogInput' />\n" +
+        //    "            <div class='hrefLabel'>label</div><input id = 'txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />\n" +
+        //    "            <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
+        //    "       </div>\n" +
+        //    "        <div id = 'externalLinks' class='trackbackLinksArea'></div>\n" +
+        //    "    </div>\n" +
+        //    "    <div id = 'modelInfoViewOnlyArea' class='displayHidden'>\n" +
+        //    "        <div class='viewOnlyMessage'>If you you know who this is Please click Edit</div>\n" +
+        //    "        <div id = 'unknownModelLinks' class='smallTextArea'></div>\n" +
+        //    "    </div>\n" +
+        //    "    <a id = 'modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Edit</a>\n" +
+        //    "</div>\n";
+        //}
 
         [HttpGet]
         public SuccessModel HasLink(int folderId, string hrefTextSubstring)

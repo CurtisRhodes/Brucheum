@@ -131,6 +131,20 @@ namespace WebApi
             return roleModel;
         }
 
+
+        [HttpPatch]
+        public Boolean IsInRole(string userName, string roleName)
+        {
+            bool isInRole = false;
+            using (WebStatsContext db = new WebStatsContext())
+            {
+                var x = db.UserRoles.Where(r => r.UserName == userName && r.RoleName == roleName).FirstOrDefault();
+                isInRole = x != null;
+            }
+            return isInRole;
+        }
+
+
         [HttpGet]
         public RoleModel GetUserRoles(string userName, string whichType)
         {

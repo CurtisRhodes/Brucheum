@@ -240,7 +240,7 @@ function intervalBody() {
 
         $('#laCarousel').fadeIn(intervalSpeed);
         resizeCarousel();
-        $('#footerMessage').html("image: " + imageIndex + " of " + numImages);
+        //$('#footerMessage').html("image: " + imageIndex + " of " + numImages);
         //$('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link).onload = function () {        };
         //setTimeout(function () { }, 400);
     });

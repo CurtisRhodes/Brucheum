@@ -2,6 +2,9 @@
 //var isPornEditor = false;
 
 function showModelInfoDialog(modelName, folderId, currentSrc) {
+
+    //alert("showModelInfoDialog");
+
     FolderDetailModel.FolderId = folderId;
 
     $('#modelInfoDialog').dialog({

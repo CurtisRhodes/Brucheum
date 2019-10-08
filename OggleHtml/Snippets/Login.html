@@ -1,28 +1,32 @@
 ﻿
 <div id='loginDialog' class="modalDialog" title='Log In to OggleBooble'>
     <div class='dialogBody'>
-        <div id='loginValidationSummary' class='validationError'></div>
-        <div id='errLoginUserName' class='validationError'>Required</div>
-        <label>User Name</label><br>
-        <input id='txtLoginUserName' class='roundedInput'><br>
-        <div id='errLoginPassword' class='validationError'>Required</div>
-        <label>Password</label><br>
-        <input id='txtLoginClearPassword' type='password' class='roundedInput' autocomplete='off' placeholder='********'><br>
-        <button id='btnLoginPopupLogin' class='roundendButton' onclick='postLogin("OggleHtml")'>
-            <img id='btnLoginSpinnerImage' class='btnSpinnerImage' src='/images/loader.gif' />
-            Log in
-        </button>
-        <div class='ckRemember'>
-            <input id='ckRememberMe' type='checkbox' checked='checked' />  Remember Me ?  (<span>uses a cookie</span>)
-        </div>
-        <div class='forgot'>
-            <a id='forgot-pw' href='/users/account-recovery'>forgot password ?</a>
-        </div>
+        
+            <div id='loginValidationSummary' class='validationError'></div>
+            <div id='errLoginUserName' class='validationError'>Required</div>
+            <label>User Name</label><br>
+            <input id='txtLoginUserName' class='roundedInput'><br>
+            <div id='errLoginPassword' class='validationError'>Required</div>
+            <label>Password</label><br>
+            <input id='txtLoginClearPassword' class='roundedInput' placeholder='********'><br>
+            
+            <button id='btnLoginPopupLogin' class='roundendButton' onclick="attemptLogin($('#txtLoginUserName').val(), $('#txtLoginClearPassword').val())">
+                <img id='btnLoginSpinnerImage' class='btnSpinnerImage' src='/images/loader.gif' />
+                Log in
+            </button>
+            
+            <div class='ckRemember'>
+                <input id='ckRememberMe' type='checkbox' checked='checked' />  Remember Me ?  (<span>uses a cookie</span>)
+            </div>
+            <div class='forgot'>
+                <a id='forgot-pw' href='/users/account-recovery'>forgot password ?</a>
+            </div>
 
-        <div>
-            <div class='clickable inline' onclick='transferToRegisterPopup()'>Register</div>
-            <div onclick='$("#loginDialog").dialog("close");' class='clickable inline'>Cancel</div>
-        </div>
+            <div>
+                <div class='clickable inline'>Register</div>
+                <div onclick='$("#loginDialog").dialog("close");' class='clickable inline'>Cancel</div>
+            </div>
+        
         <div class='or'>or</div>
         <div class='externalLogin'>
             <div class='fb-login-button' data-max-rows='1' data-size='medium' data-button-type='login_with'

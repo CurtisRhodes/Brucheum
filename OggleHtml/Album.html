@@ -32,7 +32,7 @@
     <link href="Styles/loginDialog.css" rel="stylesheet" />
     <link href="Styles/Header.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet" />
-    <link href="Styles/Carousel.css" rel="stylesheet" />
+    <link href="Styles/Slideshow.css" rel="stylesheet" />
     <link href="Styles/ImagePage.css" rel="stylesheet" />
     <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
     <link href="Styles/ModelInfoDialog.css" rel="stylesheet" />
@@ -89,6 +89,7 @@
                 window.location.href = "Index.html";
             }
             var dots = "";
+            loadSettings();
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
                     dots += ". ";
@@ -96,7 +97,10 @@
                 }
                 else {
                     clearInterval(waiter);
+
                     setUserPermissions();
+
+
                     var waiter2 = setInterval(function () {
                         dots += "* ";
                         $('#dots').html(dots);
@@ -105,18 +109,18 @@
                             clearInterval(waiter2);
                             $('#footerMessage').html("isPornEditor: " + isPornEditor);
                             //alert("Album.html isPornEditor: " + isPornEditor);
-                            if (!isPornEditor)
-                                directToStaticPage(params.folder);
-                            else {
+
+                            //if (!isPornEditor)
+                            //    directToStaticPage(params.folder);
+                            //else
+                            {
+
                                 setAlbumPageHeader(params.folder);
                                 getAlbumImages(params.folder);
 
                                 checkForLink(params.folder, "black centerfolds");
                                 checkForLink(params.folder, "freeones");
                                 checkForLink(params.folder, "babepedia");
-
-                                setLoginHeader(getCookieValue("User"));
-
                                 logPageHit(params.folder);
                             }
                         }

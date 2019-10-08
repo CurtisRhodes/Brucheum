@@ -84,6 +84,7 @@ body {
 .roundedInput {
     padding: 2px;
     color: #555;
+    margin-bottom: 2px;
     background-color: #ddd;
     border: 1px solid #ccc;
     border-radius: 3px;

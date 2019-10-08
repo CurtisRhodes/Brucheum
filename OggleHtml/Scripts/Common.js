@@ -2,9 +2,9 @@
 var userRoles = [];
 var freeVisitorHitsAllowed = 1500;
 
-$(document).ready(function () {
-    loadSettings();
-});
+//$(document).ready(function () {
+//    loadSettings();
+//});
 
 function loadSettings() {
     $.ajax({
@@ -130,6 +130,8 @@ function getXHRErrorDetails(jqXHR) {
 function isNullorUndefined(val) {
     if (val === "")
         return true;
+    if (val === "null")
+        return true;
     if (val === null)
         return true;
     if (val === undefined)
@@ -157,22 +159,23 @@ function logActivity(changeLogModel) {
     });
 }
 
-function setLocalValue(localName, localValue) {
-    setCookieValue(localName, localValue);
-    window.localStorage[localName] = localValue;
-    //alert("window.localStorage[" + localName + "] = " + localValue);
-}
-
-function getLocalValue(localName) {
-    var localValue = getCookieValue(localName);
-    if (isNullorUndefined(localValue)) {
-        localValue = window.localStorage[localName];
-        if (!isNullorUndefined(localValue)) {
-            //alert("cookie didn't work but localStorage did. " + localName + ": " + localValue);
+function sendEmailToYourself(subject, message) {
+    //alert("sendEmailToYourself(subject: " + subject + ", message: " + message + ")");
+    $.ajax({
+        type: "GET",
+        url: "https://api.curtisrhodes.com/api/GodaddyEmail?subject=" + subject + "&message=" + message,
+        success: function (success) {
+            if (success === "ok") {
+                $('#footerMessage').html("email sent");
+               // displayStatusMessage("ok", "email sent");
+            }
+            else
+                alert("sendEmailToYourself: " + success);
+        },
+        error: function (xhr) {
+            alert("sendEmailToYourself xhr error: " + getXHRErrorDetails(xhr));
         }
-    }
-    //alert("window.localStorage[" + localName + "] = " + localValue);
-    return localValue;
+    });
 }
 
 // COMMON CONTEXTMENU FUNCTIONS
@@ -264,8 +267,6 @@ function getFileDate() {
 
 }
 
-
-
 function showCatListDialog(startFolder) {
     buildDirTree($('#indexCatTreeContainer'), "indexCatTreeContainer", startFolder);
     $('#indexCatTreeContainer').dialog('open');
@@ -273,14 +274,13 @@ function showCatListDialog(startFolder) {
 }
 
 function indexCatTreeContainerClick(path, id, treeId) {
-    if (treeId == "indexCatTreeContainer") {
+    if (treeId === "indexCatTreeContainer") {
         window.location.href = "/album.html?folder=" + id;
         $('#indexCatTreeContainer').dialog('close')
     }
     else
         alert("dirTreeClick treeId: " + treeId);
 }
-
 
 function showCustomMessage(blogId) {
     //alert("showCustomMessage(" + blogId + ")");
