@@ -41,6 +41,13 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
+    public class GetVisitorInfoFromIPAddressSuccessModel
+    {
+        public string VisitorId { get; set; }
+        public string UserName { get; set; }
+        public string Success { get; set; }
+    }
+
     public class ImageHitSuccessModel
     {
         public int ImageHits { get; set; }

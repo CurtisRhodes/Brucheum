@@ -60,6 +60,7 @@ function loadImages(rootFolder, isChecked, skip, take) {
         $('#categoryTitle').hide();
         $.ajax({
             type: "GET",
+            async: true,
             url: settingsArray.ApiServer + "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take,
             success: function (carouselInfo) {
                 if (carouselInfo.Success === "ok") {
@@ -253,6 +254,7 @@ function carouselContextMenu() {
         $('#ctxModelName').html("");
         $.ajax({
             type: "GET",
+            async: true,
             url: settingsArray.ApiServer + "api/ImageCategoryDetail/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId,
             success: function (imageDetails) {
                 if (imageDetails.Success === "ok") {

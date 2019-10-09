@@ -10,6 +10,7 @@ var selectedImageLinkId;
 function directToStaticPage(folderId) {
     $.ajax({
         type: "GET",
+        async: true,
         url: settingsArray.ApiServer + "api/AlbumPage/GetStaticPage?folderId=" + folderId,
         success: function (successModel) {
             if (successModel.Success === "ok") {
@@ -28,7 +29,7 @@ function setAlbumPageHeader(folderId) {
     //alert("getAlbumPageHeader");
     $.ajax({
         type: "PATCH",
-        async: false,
+        async: true,
         url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=" + folderId,
         success: function (successModel) {
             if (successModel.Success === "ok") {
@@ -50,6 +51,7 @@ function getBreadCrumbs(folderId) {
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/BreadCrumbs/Get?folderId=" + folderId,
+        async: true,
         success: function (breadCrumbModel) {
             if (breadCrumbModel.Success === "ok") {
                 $('#breadcrumbContainer').html("");
@@ -106,6 +108,7 @@ function getAlbumImages(folderId) {
         $('#imagePageLoadingGif').show();
         $.ajax({
             type: "GET",
+            async: true,
             url: settingsArray.ApiServer + "/api/ImagePage/GetImageLinks?folderId=" + folderId,
             success: function (imageLinksModel) {
                 currentFolderRoot = imageLinksModel.RootFolder;
@@ -248,6 +251,7 @@ function onRemoveImageClick(btn) {
 
         $.ajax({
             type: "PUT",
+            async: true,
             url: settingsArray.ApiServer + "/api/FtpImageRemove/MoveReject",
             data: rejectLinkModel,
             success: function (success) {
@@ -284,6 +288,7 @@ function removeImage() {
     //    alert("currentContextLinkId: " + currentContextLinkId);
     $.ajax({
         type: "GET",
+        async: true,
         url: settingsArray.ApiServer + "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + selectedImageLinkId,
         success: function (success) {
             if (success === "ok") {
@@ -347,6 +352,7 @@ function ctxSAP(imgId) {
 
     $.ajax({
         type: "GET",
+        async: true,
         url: settingsArray.ApiServer + "api/ImageCategoryDetail/GetModelName?linkId=" + selectedImageLinkId,
         success: function (modelDetails) {
             if (modelDetails.Success === "ok") {

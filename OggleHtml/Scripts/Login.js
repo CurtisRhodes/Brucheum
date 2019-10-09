@@ -104,6 +104,31 @@ function onLoginClick() {
         hide: { effect: "blind" },
         width: 333
     });
+
+    var ipAddress = getCookieValue("IpAddress");
+    if (!isNullorUndefined(ipAddress)) {
+        //alert("Logging In and already know Ip");
+        console.log("Logging In and already know Ip");
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress,
+            success: function (successModel) {
+                if (successModel.Success === "ok") {
+                    setCookieValue("User", successModel.UserName);
+                    console.log("auto fill username: " + getCookieValue("User"));
+                    //alert("auto fill username: " + getCookieValue("User"));
+                    $('#txtLoginUserName').val(successModel.UserName);
+                }
+                else
+                    alert("GetVisitorIdFromIP: " + successl.Success);
+            },
+            error: function (jqXHR, exception) {
+                alert("GetVisitorIdFromIP jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    }
+
+
     $('#loginDialog').show();
     if (typeof pause === 'function')
         pause();

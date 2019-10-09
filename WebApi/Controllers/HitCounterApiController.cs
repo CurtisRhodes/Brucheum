@@ -107,21 +107,39 @@ namespace WebApi
         }
 
         [HttpGet]
-        public SuccessModel GetVisitorIdFromIP(string ipAddress)
+        public GetVisitorInfoFromIPAddressSuccessModel GetVisitorIdFromIP(string ipAddress)
         {
-            SuccessModel success = new SuccessModel();
+            GetVisitorInfoFromIPAddressSuccessModel success = new GetVisitorInfoFromIPAddressSuccessModel();
             try
             {
                 using (WebStatsContext db = new WebStatsContext())
                 {
-                    success.ReturnValue = db.Visitors.Where(v => v.IpAddress == ipAddress).Select(v => v.VisitorId).FirstOrDefault();
+                    Visitor visitor = db.Visitors.Where(v => v.IpAddress == ipAddress).FirstOrDefault();
+                    success.VisitorId = visitor.VisitorId;
+                    success.UserName = visitor.UserName;
                     success.Success = "ok";
                 }
             }
             catch (Exception ex) { success.Success = Helpers.ErrorDetails(ex); }
             return success;
         }
+
+        private static string HashSHA256(string value)
+        {
+            var sha1 = System.Security.Cryptography.SHA256.Create();
+            //sha1.de
+            var inputBytes = System.Text.Encoding.ASCII.GetBytes(value);
+            var hash = sha1.ComputeHash(inputBytes);
+
+            var sb = new System.Text.StringBuilder();
+            for (var i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("X2"));
+            }
+            return sb.ToString();
+        }
     }
+
 
     [EnableCors("*", "*", "*")]
     public class HitCounterController : ApiController
@@ -214,7 +232,7 @@ namespace WebApi
             catch (Exception ex) { visitorSuccess.Success = Helpers.ErrorDetails(ex); }
             return visitorSuccess;
         }
-        
+
         [HttpPost]
         public ImageHitSuccessModel LogImageHit(string visitorId, string linkId)
         {
@@ -233,7 +251,8 @@ namespace WebApi
                 }
                 imageHitSuccess.Success = "ok";
             }
-            catch (DbEntityValidationException dbEx) {
+            catch (DbEntityValidationException dbEx)
+            {
                 imageHitSuccess.Success = Helpers.ErrorDetails(dbEx);
             }
             catch (Exception ex)
@@ -390,6 +409,4 @@ namespace WebApi
             return success;
         }
     }
-
-
 }

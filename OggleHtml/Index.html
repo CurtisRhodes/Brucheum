@@ -160,27 +160,6 @@
                     $('#dots').html('');
                     clearInterval(waiter);
                     launchCarousel(subdomain);
-
-                    setOggleHeader(subdomain);
-                    setOggleFooter(subdomain);
-
-                    if (subdomain == "porn") {
-                        $('#pornLeftColumnList').show();
-                        $('#boobsLeftColumnList').hide();
-                        $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
-                        $('#includeCenterfoldsCheckbox').hide();
-                        //alert("logSpecialPageHit(Porn);")
-                        logSpecialPageHit("Porn");
-                    }
-                    else {
-                        $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
-                        $('#boobsLeftColumnList').show();
-                        $('#pornLeftColumnList').hide();
-                        launchPromoMessages();
-                        //alert("logSpecialPageHit(index);")
-                        logSpecialPageHit("Index");
-                    }
-                    
                     setUserPermissions();
                     var waiter2 = setInterval(function () {
                         dots += "* ";
@@ -190,7 +169,24 @@
                             $('#dots').html("");
                             //$('#footerMessage').html("isPornEditor: " + isPornEditor);
 
-
+                            if (subdomain == "porn") {
+                                $('#pornLeftColumnList').show();
+                                $('#boobsLeftColumnList').hide();
+                                $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
+                                $('#includeCenterfoldsCheckbox').hide();
+                                //alert("logSpecialPageHit(Porn);")
+                                logSpecialPageHit("Porn");
+                            }
+                            else {
+                                $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
+                                $('#boobsLeftColumnList').show();
+                                $('#pornLeftColumnList').hide();
+                                launchPromoMessages();
+                                //alert("logSpecialPageHit(index);")
+                                logSpecialPageHit("Index");
+                            }
+                            setOggleHeader(subdomain);
+                            setOggleFooter(subdomain);
                         }
                     }, 300);
                 }

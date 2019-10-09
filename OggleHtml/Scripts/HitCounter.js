@@ -3,6 +3,7 @@ var verbose = 1;
 
 function logPageHit(pageId) {
     //alert("logging page hit: " + pageId);
+    //console.log("logging page hit: " + pageId);
     var visitorId = getCookieValue("VisitorId");
     var ipAddress = getCookieValue("IpAddress");
 
@@ -10,16 +11,21 @@ function logPageHit(pageId) {
         ipAddress = getCookieValue("IpAddress");
         if (!isNullorUndefined(ipAddress)) {
             //alert("how is it that I know the Ip and not the visitorId?");
-            console.log("how is it that I know the Ip and not the visitorId?");
             $.ajax({
                 type: "GET",
                 url: settingsArray.ApiServer + "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress,
                 success: function (successModel) {
                     if (successModel.Success === "ok") {
-                        setCookieValue("VisitorId", successModel.ReturnValue);
-                        console.log("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));
-                        alert("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));
-                        logPageHit(pageId);
+                        console.log("logPageHit how is it that I know the Ip and not the visitorId? (pre IpInfo) ");
+                        setCookieValue("VisitorId", successModel.VisitorId);
+                        if (getCookieValue("VisitorId") === successModel.VisitorId) {
+                            console.log("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));
+                            //alert("looping in log hit. GetVisitorIdFromIP. (pre IpInfo)  VisitorId: " + getCookieValue("VisitorId"));
+                            setTimeout(function () { logPageHit(pageId); }, 1000);
+                        }
+                        else {
+                            alert("GetVisitorIdFromIP FAIL" + successModel.VisitorId);
+                        }
                     }
                     else
                         alert("GetVisitorIdFromIP: " + successl.Success);
@@ -30,12 +36,14 @@ function logPageHit(pageId) {
             });
         }
         else {
+            console.log("forced to hit IPINFO from regular Log page hit");
+            alert("forced to hit IPINFO from regular Log page hit");
             $.getJSON("https://ipinfo.io?token=ac5da086206dc4", function (data) {
                 setCookieValue("IpAddress", data.ip);
                 if (!isNullorUndefined(getCookieValue("IpAddress"))) {
+                    console.log("looping in log hit  (AFTER IPINFO)  IpAddress: " + getCookieValue("IpAddress"));
+                    //alert("looping in log hit IpAddress: : " + getCookieValue("IpAddress"));
                     logPageHit(pageId);
-                    console.log("looping in log hit IpAddress: : " + getCookieValue("IpAddress"));
-                    alert("looping in log hit IpAddress: : " + getCookieValue("IpAddress"));
                 }
                 else {
                     console.log("getCookieValue('IpAddress') not working in logPageHit + IPINNFO burn : " + getCookieValue("IpAddress"));
@@ -45,8 +53,8 @@ function logPageHit(pageId) {
         }
     }
     else {
-        console.log("logging proper page hit. UserName: [" + userName + "] ip : " + ipAddress);
-        $('#footerMessage').html("logging proper page hit.UserName: " + userName);
+        console.log("logging proper page hit. UserName: [" + userName + "] ip : " + ipAddress + " page: " + pageId);
+        //$('#footerMessage').html("logging proper page hit.UserName: " + userName);
         var userName = getCookieValue("User");
 
         //if ((ipAddress !== "68.203.90.183") && (ipAddress !== "50.62.160.105"))
@@ -75,14 +83,20 @@ function logPageHit(pageId) {
                                 "\n you will be placed in manditory comment mode until you log in ");
                         }
 
-                        if ($('#headerMessage').html() === "") {
-                            if (pageHitSuccessModel.WelcomeMessage !== null) {
-                                //alert("pageHitSuccessModel.WelcomeMessage: " + pageHitSuccessModel.WelcomeMessage);
+                        if (isNullorUndefined($('#headerMessage').html())) {
+                            if (!isNullorUndefined(pageHitSuccessModel.WelcomeMessage)) {
                                 $('#headerMessage').html(pageHitSuccessModel.WelcomeMessage);
+                                //alert("pageHitSuccessModel.WelcomeMessage: " + pageHitSuccessModel.WelcomeMessage);
+                                console.log("headerMessage =  (pageHitSuccessModel.WelcomeMessage): " + pageHitSuccessModel.WelcomeMessage);
                             }
                             else {
+                                //alert("pagehits: " + pageHitSuccessModel.PageHits);
+                                $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
+                                $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
                                 $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
                                 //alert("pagehits: " + pageHitSuccessModel.PageHits);
+                                setTimeout(function () { console.log("headerMessage =  pagehits: " + pageHitSuccessModel.PageHits); }, 500);
+                                
                             }
                         }
                         else
@@ -99,7 +113,6 @@ function logPageHit(pageId) {
         }
     }
 }
-
 
 function logImageHit(link) {
     $('#footerMessage').html("logging image hit");
@@ -212,14 +225,22 @@ function logSpecialPageHit(pageName) {
             //alert("ipAddress: " + ipAddress);
             if (!isNullorUndefined(ipAddress)) {
                 //alert("how is it that I know the Ip and not the visitorId?");
-                console.log("how is it that I know the Ip and not the visitorId?");
+                console.log("logSpecialPageHit  How is it that I know the Ip and not the visitorId? log (pre IpInfo)");
                 $.ajax({
                     type: "GET",
                     url: settingsArray.ApiServer + "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress,
                     success: function (successModel) {
                         if (successModel.Success === "ok") {
-                            setCookieValue("VisitorId", successModel.ReturnValue);
-                            logSpecialPageHit(pageName);
+                            setCookieValue("VisitorId", successModel.VisitorId);
+
+                            if (getCookieValue("VisitorId") === successModel.VisitorId) {
+                                console.log("trying logSpecialPageHit again with visitorId  (pre IpInfo): " + getCookieValue("VisitorId"));
+                                logSpecialPageHit(pageName);
+                            }
+                            else {
+                                //alert("logSpecialPageHit GetVisitorIdFromIP FAIL visitorId:  " + successModel.VisitorId);
+                                console.log("logSpecialPageHit GetVisitorIdFromIP FAIL visitorId:  " + successModel.VisitorId);
+                            }
                         }
                         else
                             alert("logSpecialPageHit: " + pageHitSuccessl.Success);
@@ -232,17 +253,19 @@ function logSpecialPageHit(pageName) {
             }
             else {
                 console.log("forced to hit IPINFO from log special page hit");
-                alert("forced to hit IPINFO from log special page hit");
+                //alert("forced to hit IPINFO from log special page hit");
                 $.getJSON("https://ipinfo.io?token=ac5da086206dc4", function (data) {
 
                     setCookieValue("IpAddress", data.ip);
                     if (!isNullorUndefined(getCookieValue("IpAddress"))) {
+                        console.log("trying logSpecialPageHit again with visitorId after IPINFOP hit.   VisitorId: " + getCookieValue("VisitorId"));
                         logSpecialPageHit(pageName);
                     }
                     else {
                         console.log("getCookieValue('IpAddress'): " + getCookieValue("IpAddress"));
                         alert("getCookieValue('IpAddress'): " + getCookieValue("IpAddress"));
                     }
+                    sendEmailToYourself("forced to hit IPINFO from log special page hit", "page: " + pageName + " IpAddress: " + getCookieValue("IpAddress"));
                     //$("#info").html("City: " + data.city + " ,County: " + data.country + " ,IP: " + data.ip + " ,Location: " + data.loc + " ,Organisation: "
                     //+ data.org + " ,Postal Code: " + data.postal + " ,Region: " + data.region + "")
                 });
