@@ -35,7 +35,7 @@ namespace WebApi
                     DateTime lastVisitDate;
                     if (!Helpers.IsNullorUndefined(pageHitModel.VisitorId))
                     {
-                        lastVisitDate = db.Visits.Where(v => v.VisitorId == pageHitModel.VisitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;                        
+                        lastVisitDate = db.Visits.Where(v => v.VisitorId == pageHitModel.VisitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
                     }
                     else
                     {
@@ -107,6 +107,22 @@ namespace WebApi
                 pageHitSuccessModel.Success = Helpers.ErrorDetails(ex);
             }
             return pageHitSuccessModel;
+        }
+
+        [HttpGet]
+        public SuccessModel GetVisitorIdFromIP(string ipAddress)
+        {
+            SuccessModel success = new SuccessModel();
+            try
+            {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    success.ReturnValue = db.Visitors.Where(v => v.IpAddress == ipAddress).Select(v => v.VisitorId).FirstOrDefault();
+                    success.Success = "ok";
+                }
+            }
+            catch (Exception ex) { success.Success = Helpers.ErrorDetails(ex); }
+            return success;
         }
     }
 

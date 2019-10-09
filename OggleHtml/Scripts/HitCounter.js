@@ -7,12 +7,11 @@ function logPageHit(pageId) {
     //if (isNullorUndefined(visitorId) && isNullorUndefined(ipAddress)) {
     if (isNullorUndefined(ipAddress)) {
         // REQUIRES A HIT TO IPINFO.IO
-        alert("A HIT TO IPINFO.IO  ip: " + ipAddress);
-        $('#footerMessage').html("A HIT TO IPINFO.IO  ip: " + ipAddress);
+        // alert("A HIT TO IPINFO.IO  ip: " + ipAddress);
         logVisitor(pageId);
     }
     else {
-        //alert("logging proper page hit. UserName: " + userName + "] ip : " + ipAddress);
+        console.log("logging proper page hit. UserName: [" + userName + "] ip : " + ipAddress);
         $('#footerMessage').html("logging proper page hit.UserName: " + userName);
         var userName = getCookieValue("User");
 
@@ -94,15 +93,15 @@ function logImageHit(link) {
 }
 
 function logVisitor(pageId) {    
-    
-    //alert("logging visitor  userName: " + userName);
-    //alert("logging visitor  pageId: " + pageId);
-    var ip = getCookieValue("IpAddress");
+    var ipAddress = getCookieValue("IpAddress");
     if (!isNullorUndefined(ip)) {
-        //  alert("no need to Log Visistor I alread know ip: " + ip);
-        $('#footerMessage').append("  no need to Log Visistor I alread know ip: " + ip);
+        console.log("no need to Log Visistor I alread know ip: " + ipAddress);
+        //$('#footerMessage').append("  no need to Log Visistor I alread know ip: " + ip);
     }
     else {
+        $('#footerMessage').html("A HIT TO IPINFO.IO  ip: " + ipAddress);
+        console.log("A HIT TO IPINFO.IO  ip: " + ipAddress);
+
         $.getJSON("https://ipinfo.io?token=ac5da086206dc4", function (data) {
 
             //$("#info").html("City: " + data.city + " ,County: " + data.country + " ,IP: " + data.ip + " ,Location: " + data.loc + " ,Organisation: "
@@ -132,7 +131,7 @@ function logVisitor(pageId) {
                         //alert("setCookieValue('IpAddress'," + data.ip);
                         setCookieValue("IpAddress", data.ip);
 
-                        //alert("setCookieValue('VisitorId'," + visitorSuccess.VisitorId);
+                        alert("setCookieValue('VisitorId'," + visitorSuccess.VisitorId);
                         setCookieValue("VisitorId", visitorSuccess.VisitorId);
 
                         if (visitorSuccess.IsNewVisitor) {
@@ -169,26 +168,58 @@ function logVisitor(pageId) {
 
 function logSpecialPageHit(pageName) {
 
+    //alert("logging special page hit " + pageName);
     $('#footerMessage').html("logging special page hit");
-
-    //var ipAddress = getCookieValue("IpAddress");
-    //if (ipAddress === undefined) {
-    //    alert("logSpecialPageHit  ipAddress: " + ipAddress);
-    //}
-
     //if (ipAddress !== "68.203.90.183" && ipAddress !== "50.62.160.105")
     {
         var visitorId = getCookieValue("VisitorId");
+
         if (isNullorUndefined(visitorId)) {
+            var ipAddress = getCookieValue("IpAddress");
+            //alert("ipAddress: " + ipAddress);
+            if (!isNullorUndefined(ipAddress)) {
+                //alert("how is it that I know the Ip and not the visitorId?");
+                console.log("how is it that I know the Ip and not the visitorId?");
+                $.ajax({
+                    type: "GET",
+                    url: settingsArray.ApiServer + "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress,
+                    success: function (successModel) {
+                        if (successModel.Success === "ok") {
+                            setCookieValue("VisitorId", successModel.ReturnValue);
+                            logSpecialPageHit(pageName);
+                        }
+                        else
+                            alert("logSpecialPageHit: " + pageHitSuccessl.Success);
+                    },
+                    error: function (jqXHR, exception) {
+                        $('#blogLoadingGif').hide();
+                        alert("GetVisitorIdFromIP jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                    }
+                });
+            }
+            else {
+                $.getJSON("https://ipinfo.io?token=ac5da086206dc4", function (data) {
 
-//alert("logSpecialPageHit FAIL: visitorId: " + visitorId);
+                    setCookieValue("IpAddress", data.ip);
+                    if (!isNullorUndefined(getCookieValue("IpAddress"))) {
+                        logSpecialPageHit(pageName);
+                    }
+                    else {
+                        console.log("getCookieValue('IpAddress'): " + getCookieValue("IpAddress"));
+                        alert("getCookieValue('IpAddress'): " + getCookieValue("IpAddress"));
+                    }
+
+                    //$("#info").html("City: " + data.city + " ,County: " + data.country + " ,IP: " + data.ip + " ,Location: " + data.loc + " ,Organisation: "
+                    //+ data.org + " ,Postal Code: " + data.postal + " ,Region: " + data.region + "")
 
 
-            logVisitor(1);
+
+                });
+            }
         }
         else {
-            //alert("logging special page hit  pagename: " + pageName + "   visitorId: " + visitorId);
-
+         //   alert("logging proper special page hit  pagename: " + pageName + "   visitorId: " + visitorId);
+            console.log("logging proper special page hit  pagename: " + pageName + "   visitorId: " + visitorId);
             $.ajax({
                 type: "POST",
                 url: settingsArray.ApiServer + "api/HitCounter/LogSpecialPageHit?pageName=" + pageName + "&visitorId=" + visitorId,

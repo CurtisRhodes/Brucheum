@@ -107,6 +107,7 @@
             setHeaderRowMessage();
             setInitialCheckbox(subdomain);
 
+            loadSettings();
             var dots = "";
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {

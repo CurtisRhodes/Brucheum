@@ -40,11 +40,13 @@ function postRegister() {
                 success: function (response) {
                     if (response === "ok") {
                         $('#registerUserDialog').dialog('close');
-
-                        setCookieValue("User", $('#txtRegisterUserName').val());
-                        setLoginHeader();
+                        console.log("register happened. Attempt Login");
+                        setCookieValue("User", registeredUserModel.UserName);
+                      //  attemptLogin(registeredUserModel.UserName, registeredUserModel.Pswrd );
                     }
                     else {
+                        alert("$('#registerValidationSummary').html(response).show();");
+                        console.log("$('#registerValidationSummary').html(response).show();");
                         $('#registerValidationSummary').html(response).show();
                     }
                 },
@@ -178,7 +180,6 @@ function profilePease() {
     alert("profilePease");
 }
 
-
 // COOKIES
 
 function deleteCookie() {
@@ -207,6 +208,7 @@ function setCookieValue(elementName, elementValue) {
     if (document.cookie) {
         var ipAddress = getCookieValue("IpAddress");
         var visitorId = getCookieValue("VisitorId");
+        var user = getCookieValue("User");
         decodedCookie = decodeURIComponent(document.cookie);
         var cookieElements = decodedCookie.split(';');
         var cookieItem; var cookieItemName; var cookieItemValue;
