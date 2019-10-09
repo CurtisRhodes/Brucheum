@@ -3,12 +3,46 @@ var verbose = 1;
 
 function logPageHit(pageId) {
     //alert("logging page hit: " + pageId);
+    var visitorId = getCookieValue("VisitorId");
     var ipAddress = getCookieValue("IpAddress");
-    //if (isNullorUndefined(visitorId) && isNullorUndefined(ipAddress)) {
-    if (isNullorUndefined(ipAddress)) {
-        // REQUIRES A HIT TO IPINFO.IO
-        // alert("A HIT TO IPINFO.IO  ip: " + ipAddress);
-        logVisitor(pageId);
+
+    if (isNullorUndefined(visitorId)) {
+        ipAddress = getCookieValue("IpAddress");
+        if (!isNullorUndefined(ipAddress)) {
+            //alert("how is it that I know the Ip and not the visitorId?");
+            console.log("how is it that I know the Ip and not the visitorId?");
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress,
+                success: function (successModel) {
+                    if (successModel.Success === "ok") {
+                        setCookieValue("VisitorId", successModel.ReturnValue);
+                        console.log("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));
+                        alert("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));
+                        logPageHit(pageId);
+                    }
+                    else
+                        alert("GetVisitorIdFromIP: " + successl.Success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("GetVisitorIdFromIP jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
+        }
+        else {
+            $.getJSON("https://ipinfo.io?token=ac5da086206dc4", function (data) {
+                setCookieValue("IpAddress", data.ip);
+                if (!isNullorUndefined(getCookieValue("IpAddress"))) {
+                    logPageHit(pageId);
+                    console.log("looping in log hit IpAddress: : " + getCookieValue("IpAddress"));
+                    alert("looping in log hit IpAddress: : " + getCookieValue("IpAddress"));
+                }
+                else {
+                    console.log("getCookieValue('IpAddress') not working in logPageHit + IPINNFO burn : " + getCookieValue("IpAddress"));
+                    alert("getCookieValue('IpAddress') not working in logPageHit + IPINNFO burn : " + getCookieValue("IpAddress"));
+                }
+            });
+        }
     }
     else {
         console.log("logging proper page hit. UserName: [" + userName + "] ip : " + ipAddress);
@@ -17,7 +51,6 @@ function logPageHit(pageId) {
 
         //if ((ipAddress !== "68.203.90.183") && (ipAddress !== "50.62.160.105"))
         {
-            var visitorId = getCookieValue("VisitorId");
             var pageHitModel = {
                 VisitorId: visitorId,
                 UserName: userName,
@@ -66,6 +99,7 @@ function logPageHit(pageId) {
         }
     }
 }
+
 
 function logImageHit(link) {
     $('#footerMessage').html("logging image hit");
@@ -167,7 +201,6 @@ function logVisitor(pageId) {
 }
 
 function logSpecialPageHit(pageName) {
-
     //alert("logging special page hit " + pageName);
     $('#footerMessage').html("logging special page hit");
     //if (ipAddress !== "68.203.90.183" && ipAddress !== "50.62.160.105")
@@ -198,6 +231,8 @@ function logSpecialPageHit(pageName) {
                 });
             }
             else {
+                console.log("forced to hit IPINFO from log special page hit");
+                alert("forced to hit IPINFO from log special page hit");
                 $.getJSON("https://ipinfo.io?token=ac5da086206dc4", function (data) {
 
                     setCookieValue("IpAddress", data.ip);
@@ -208,12 +243,8 @@ function logSpecialPageHit(pageName) {
                         console.log("getCookieValue('IpAddress'): " + getCookieValue("IpAddress"));
                         alert("getCookieValue('IpAddress'): " + getCookieValue("IpAddress"));
                     }
-
                     //$("#info").html("City: " + data.city + " ,County: " + data.country + " ,IP: " + data.ip + " ,Location: " + data.loc + " ,Organisation: "
                     //+ data.org + " ,Postal Code: " + data.postal + " ,Region: " + data.region + "")
-
-
-
                 });
             }
         }

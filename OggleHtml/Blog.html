@@ -105,6 +105,7 @@
         </div>
         <div id="rightColumn"></div>
     </div>
+    <footer></footer>
 
     <div w3-include-html="Snippets/BoobsFooter.html"></div>
     <div w3-include-html="Snippets/Login.html"></div>
@@ -118,23 +119,22 @@
     /// start with a display of blog entries
     $(document).ready(function () {
         includeHTML();
-        $('#headerMessage').html("Blog");
-        $('#blogDisplayCommentTypeSelect').val('BLG')
 
-        params = getParams();
-        if (params.subdomain == undefined)
-            subdomain = "boobs";
-        else
-            subdomain = params.subdomain;
-        setOggleHeader(subdomain);
+        $('#headerMessage').html("blog");
+        $('#blogDisplayCommentTypeSelect').val('BLG');
+        setOggleHeader("blog");
 
+        loadSettings();
         var waiter = setInterval(function () {
             if (settingsArray.ApiServer === undefined) {
                 dots += ". ";
             }
             else {
                 clearInterval(waiter);
-                logSpecialPageHit("Blog");
+                logSpecialPageHit("blog");
+
+                //loadBlogArticles($('#blogDisplayCommentTypeSelect').val());
+                //showBlogDisplay('BLG');
                 setUserPermissions();
                 var waiter2 = setInterval(function () {
                     dots += "* ";
@@ -143,14 +143,20 @@
                         clearInterval(waiter2);
                         $('#dots').html("");
 
-                        $('#footerMessage').html("isPornEditor: " + isPornEditor);
-                        if (!isPornEditor) {
-                            $('.adminOnly').hide();
-                            $('.blogEditButton').hide();                            
-                        }
-                        $('#headerSubTitle').html("Blog");
+
                         loadBlogArticles($('#blogDisplayCommentTypeSelect').val());
                         showBlogDisplay('BLG');
+
+
+                        //$('#footerMessage').html("isPornEditor: " + isPornEditor);
+                        if (!isPornEditor) {
+                            $('.adminOnly').hide();
+                            $('.blogEditButton').hide();
+                            $('#footerMessage').html("admin access");
+                        }
+                        else
+                            $('#footerMessage').html("unknown user");
+                        //$('#headerSubTitle').html("Blog");
                     }
                 }, 300);
             }

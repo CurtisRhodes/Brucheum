@@ -1116,8 +1116,4 @@ namespace WebApi
             return searchResultsModel;
         }
     }
-
-
-
 }
-

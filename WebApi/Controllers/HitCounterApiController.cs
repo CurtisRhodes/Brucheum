@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Linq;
-using System.Net.Mail;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using System.Web.Http.Results;
 using WebApi.Models;
 using WebApi.DataContext;
-using WebApi.AspNet.DataContext;
 
 namespace WebApi
 {
@@ -342,4 +339,57 @@ namespace WebApi
             return success;
         }
     }
+
+    [EnableCors("*", "*", "*")]
+    public class HitMetricsController : ApiController
+    {
+        [HttpGet]
+        public HitCountModel Report1(int pageId)
+        {
+            HitCountModel hit = new HitCountModel();
+            try
+            {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    hit.PageHits = db.PageHits.Where(h => h.PageName == "x").Count();
+                    //Hit hit = db.Hits.Where(h => h.HitId == hitId).First();
+                    //hit.ViewDuration = (DateTime.Now - hit.BeginView).TotalSeconds.ToString();
+                    hit.Success = "ok";
+                }
+            }
+            catch (Exception ex) { hit.Success = Helpers.ErrorDetails(ex); }
+            return hit;
+        }
+
+
+
+        [HttpPost]
+        public string LogActivity(ChangeLogModel changeLog)
+        {
+            string success = "";
+            try
+            {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    ChangeLog alredyExists = db.ChangeLogs.Where(cl => cl.PageId == changeLog.PageId && cl.Activity == changeLog.Activity).FirstOrDefault();
+                    if (alredyExists == null)
+                    {
+                        db.ChangeLogs.Add(new ChangeLog()
+                        {
+                            PageId = changeLog.PageId,
+                            PageName = changeLog.PageName,
+                            Activity = changeLog.Activity,
+                            Occured = DateTime.Now
+                        });
+                        db.SaveChanges();
+                    }
+                }
+                success = "ok";
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+    }
+
+
 }

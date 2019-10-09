@@ -15,12 +15,17 @@ function resizeDashboardPage() {
         $('#middleColumn').height(workAreaHeight);
         $('#footerMessage').html("middleColumn.height: " + $('#middleColumn').height()); //image height: " + $('#imgLinkPreview').height());
     }
-    else
-        $('#footerMessage').html("_");
+    else {
+        //alert("workAreaHeight < $('#middleColumn').height()");
+        console.log("workAreaHeight < $('#middleColumn').height()");
+        //$('#footerMessage').html("_");
+    }
 
-    $('#performanceMetrics').height($('#middleColumn').height() - 122);
-    $('#divDashboardContainer').height($('#middleColumn').height() - 122);
-    $('.floatingCrud').width($('.workarea').width() - 100);
+    $('#divHitMetrics').height($('#middleColumn').height() - 122);
+    $('#divAddImages').height($('#middleColumn').height() - 122);
+    $('#divHitMetrics').width($('#middleColumn').width() - 122);
+    $('#divAddImages').width($('#middleColumn').width() - 122);
+    //$('.floatingCrud').width($('.workarea').width() - 100);
 }
 
 function createStaticPages(justOne) {
@@ -399,5 +404,22 @@ function prepareXhamsterPage() {
 }
 
 function showPerfMetrics() {
-    $('#performanceMetrics').fadeIn();
+    //$('#divWorkArea').height($('#middleColumn').height() - 122);
+    $('#divAddImages').hide();
+    $('#divHitMetrics').fadeIn();
 }
+
+function closeMetrics() {
+    $('#divHitMetrics').hide();
+    $('#divAddImages').fadeIn();
+}
+
+
+
+
+
+
+
+
+
+

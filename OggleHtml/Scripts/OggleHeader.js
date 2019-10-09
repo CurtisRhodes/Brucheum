@@ -23,8 +23,8 @@ function setOggleHeader(subdomain) {
     var headerHtml;
     var lang = "en";
     var subheaderContent;
-    var bannerImageLink = "/Images/redballon.png";
     var boobsRankerLink = "";
+    var bannerImageLink = "<a href='/'><img src='/Images/redballon.png' class='bannerImage' /></a>\n";
 
     switch (subdomain) {
         case "boobs":
@@ -65,13 +65,16 @@ function setOggleHeader(subdomain) {
             break;
         case "admin":
             subheaderContent = "Admin";
-            bannerImageLink = "<a href='/'><img src='/Images/redballon.png' class='bannerImage' /></a>\n";
+            break;
+        case "blog":
+            subheaderContent = "Blog";
             break;
         case "ranker":
             subheaderContent = "Hotness Rater";
-            bannerImageLink = "<a href='/'><img src='/Images/redballon.png' title='home' class='bannerImage' /></a>\n";
             break;
         default:
+            alert("subdomain: " + subdomain + "  not found");
+            console.log("subdomain: " + subdomain + "  not found");
     }
 
     headerHtml =

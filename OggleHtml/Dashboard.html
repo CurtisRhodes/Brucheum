@@ -54,9 +54,10 @@
 
             <style>
                 .metricsHeader {
-                    height: 120px;
-                    background-color: var(--oggleBorderColor);
+                    background-color: var(--brucheumBlue);
                     color: #fff;
+                    display: inline-flex;
+                    width: 100%;
                 }
 
                 .metricsContainer {
@@ -65,19 +66,33 @@
                     border-bottom: solid 0.75px var(--oggleBorderColor);
                     background-color: var(--oggleContainerBackgroundColor);
                 }
+                .metricsCloseButton {
+                    float: right;
+                    padding-top: 15px;
+                    padding-right:15px;
+                    cursor: pointer;
+                }
+                .metricsHeaderLabel {
+                     float:left; 
+                     width:100%; 
+                     text-align:center;
+                     border: solid thin red;
+                }
 
                 .metricsRow1 {
+                    margin-top:1px;
+                    padding: 10px;
                 }
+
             </style>
-
-
-            <div id="performanceMetrics" class="metricsContainer displayHidden">
+            
+            <div id="divHitMetrics" class="metricsContainer displayHidden">
                 <div class="metricsHeader">
-                    Header
-                    <div class="rightCloseButton"></div>
+                    <div class="metricsHeaderLabel" ><h3>Metrics</h3></div>
+                    <div class="metricsCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="closeMetrics()"></div>
                 </div>
                 <div class="metricsRow1">
-
+                    <div id="metricsReport1"></div>
                 </div>
                 <div class="metricsRow2">
 
@@ -87,41 +102,41 @@
                 </div>
             </div>
 
-            <div>
-                <div id="divDashboardContainer" class="dashBoardContainer">
-                    <div class="leftColumnList">
-                        <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
-                        <div class="clickable" onclick="$('#createNewFolderDialog').dialog('open');">Create New Folder</div>
-                        <div class="clickable adminLevelRequired" onclick="showMoveFolderDialog();">Move Folder</div>
-                        <div class="clickable adminLevelRequired" onclick="$('#renameFolderCrud').dialog('open');">Rename Folder</div>
-                        <div class="clickable adminLevelRequired" onclick="loadProperties()">load Properties</div>
-                        <div class="clickable adminLevelRequired" onclick="$('#createStaticPagesCrud').dialog('open');">Create Static Pages</div>
-                        <div class="clickable adminLevelRequired" onclick="repairLinks()">Repair Links</div>
-                        <div class="clickable adminLevelRequired" onclick="showAddRolesDialog()">Add/Edit Roles</div>
-                        <div class="clickable adminLevelRequired" onclick="showAssignRolesDialog()">Assign User Roles</div>
-                        <div class="clickable adminLevelRequired" onclick="prepareXhamsterPage()">Prepare xHamster Page</div>
-                        <div class="clickable adminLevelRequired" onclick="showPerfMetrics()">Performance Metrics</div>
-                    </div>
-
-                    <div class="workarea">
-                        <div id="divStatusMessage"></div>
-
-                        <div id="uploadArea" class="oggleh">
-                            <div id="addNewLink" class="addLinkCrudArea">
-                                <div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
-                                <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
-                                <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
-                            </div>
-                            <img id="imgLinkPreview" class="linkImage" />
-                        </div>
-
-                        <div id="progressBar" class="dashboardProgessBar"></div>
-                        <div id="dataifyInfo" class="infoLine"></div>
-                    </div>
-                    <div id="dirTreeContainer" class="treeContainer"></div>
-                    <img id="getDirTreeLoadingGif" class="smallLoadingGif" src="/Images/loader.gif" />
+            <div id="divAddImages"  class="dashBoardContainer">
+                <div class="leftColumnList">
+                    <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
+                    <div class="clickable" onclick="$('#createNewFolderDialog').dialog('open');">Create New Folder</div>
+                    <div class="clickable adminLevelRequired" onclick="showMoveFolderDialog();">Move Folder</div>
+                    <div class="clickable adminLevelRequired" onclick="$('#renameFolderCrud').dialog('open');">Rename Folder</div>
+                    <div class="clickable adminLevelRequired" onclick="loadProperties()">load Properties</div>
+                    <div class="clickable adminLevelRequired" onclick="$('#createStaticPagesCrud').dialog('open');">Create Static Pages</div>
+                    <div class="clickable adminLevelRequired" onclick="repairLinks()">Repair Links</div>
+                    <div class="clickable adminLevelRequired" onclick="showAddRolesDialog()">Add/Edit Roles</div>
+                    <div class="clickable adminLevelRequired" onclick="showAssignRolesDialog()">Assign User Roles</div>
+                    <div class="clickable adminLevelRequired" onclick="prepareXhamsterPage()">Prepare xHamster Page</div>
+                    <div class="clickable adminLevelRequired" onclick="showPerfMetrics()">Performance Metrics</div>
                 </div>
 
+                <div id="divWorkArea" class="workarea">
+                    <div id="divStatusMessage"></div>
+
+                    <div id="uploadArea" class="oggleh">
+                        <div id="addNewLink" class="addLinkCrudArea">
+                            <div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
+                            <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
+                            <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
+                        </div>
+                        <img id="imgLinkPreview" class="linkImage" />
+                    </div>
+
+                    <div id="progressBar" class="dashboardProgessBar"></div>
+                    <div id="dataifyInfo" class="infoLine"></div>
+                </div>
+                <div id="dirTreeContainer" class="treeContainer"></div>
+                <img id="getDirTreeLoadingGif" class="smallLoadingGif" src="/Images/loader.gif" />
+            </div>
+
+            <div id="divModalDialogs">
                 <div id="createNewFolderDialog" class="dashboardToggle" title="Create New Folder">
                     <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
                     <div><span>parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
@@ -186,19 +201,18 @@
                     </div>
                 </div>
 
-                <!--<div id="videoCrud" class="dashboardToggle">
-            <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
-            <div class="floatingCrudContainer">
-                <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
-                <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
-                <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
-                <div class="roundendButton" onclick="addVideo()">Insert</div>
+                <!--
+                    <div id="videoCrud" class="dashboardToggle">
+                        <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
+                        <div class="floatingCrudContainer">
+                            <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
+                            <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
+                            <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
+                            <div class="roundendButton" onclick="addVideo()">Insert</div>
+                        </div>
+                    </div>
+                -->
             </div>
-        </div>-->
-            </div>
-
-
-
             <div id="rightColumn"></div>
         </div>
         <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">

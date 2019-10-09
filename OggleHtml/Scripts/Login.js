@@ -21,7 +21,7 @@
     });
 }
 
-function postRegister() {
+function attemptRegister() {
     if (validateRegister()) {
         try {
             var registeredUserModel = {};
@@ -40,13 +40,16 @@ function postRegister() {
                 success: function (response) {
                     if (response === "ok") {
                         $('#registerUserDialog').dialog('close');
+                        alert("register happened. Attempt Login");
                         console.log("register happened. Attempt Login");
                         setCookieValue("User", registeredUserModel.UserName);
-                      //  attemptLogin(registeredUserModel.UserName, registeredUserModel.Pswrd );
+                        attemptLogin(registeredUserModel.UserName, registeredUserModel.Pswrd );
                     }
                     else {
                         alert("$('#registerValidationSummary').html(response).show();");
                         console.log("$('#registerValidationSummary').html(response).show();");
+
+
                         $('#registerValidationSummary').html(response).show();
                     }
                 },
@@ -113,6 +116,7 @@ function onLoginClick() {
 }
 
 function attemptLogin(userName, clearPasswod) {
+
     if (validateLogin()) {
         $.ajax({
             type: "GET",
@@ -142,17 +146,12 @@ function attemptLogin(userName, clearPasswod) {
                     setUserPermissions();
                 }
                 else
-
                     $('#loginValidationSummary').html(success).show();
             },
             error: function (jqXHR, exception) {
                 alert("validateLogin XHR error: " + settingsArray.ApiServer + "api/Login/VerifyLogin?userName" + $('#txtLoginUserName').val() + "&passWord=" + $('#txtLoginClearPassword').val() + "  " + getXHRErrorDetails(jqXHR, exception));
             }
         });
-    }
-    else {
-
-        //alert("");
     }
 }
 
@@ -196,7 +195,7 @@ function deleteCookie() {
     //if (document.cookie) {
     //    alert("cookie failed to delete: " + document.cookie);
     //}
-
+    console.log("deleteCookie()");
     //if (getCookieValue("User") !== null)
     //    alert("After Logout User: " + getCookieValue("User"));
 }
