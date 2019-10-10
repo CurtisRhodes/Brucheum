@@ -208,7 +208,7 @@ function profilePease() {
 
 function deleteCookie() {
     window.localStorage["User"] = null;
-    //window.localStorage["IpAddress"] = null;
+    window.localStorage["IpAddress"] = null;
     window.localStorage["VisitorId"] = null;
     //alert("BEFORE delete document.cookie: " + decodeURIComponent(document.cookie));
     var expiryDate = new Date();
@@ -220,7 +220,7 @@ function deleteCookie() {
     //if (document.cookie) {
     //    alert("cookie failed to delete: " + document.cookie);
     //}
-    console.log("deleteCookie()");
+    console.log("deleteCookie()  document.cookie: " + document.cookie);
     //if (getCookieValue("User") !== null)
     //    alert("After Logout User: " + getCookieValue("User"));
 }

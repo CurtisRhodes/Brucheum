@@ -8,6 +8,9 @@ var dashboardMainSelectedPath = "";
 var partialViewSelectedItemId = 0;
 var dashboardContextMenuFolderId = "";
 
+
+
+
 function resizeDashboardPage() {
     resizePage();
     var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);

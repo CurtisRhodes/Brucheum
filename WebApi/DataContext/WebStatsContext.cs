@@ -98,7 +98,7 @@
         [Key]
         [Column(Order = 1)]
         public string VisitorId { get; set; }
-        //public int PageId { get; set; }
+        public int PageId { get; set; }
         public string AppName { get; set; }
         public string PageName { get; set; }
     }

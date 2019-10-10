@@ -36,7 +36,9 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
     resizeViewer();
     $('#imageViewerDialog').show();
 
-    logImageHit(imageViewerArray[imageViewerIndex].Link);
+    //alert("logImageHit true ");
+    //console.log("logImageHit from launchViewer: " + imageViewerArray[imageViewerIndex].Link);
+    logImageHit(imageViewerArray[imageViewerIndex].Link, true);
 
     exploderInterval = setInterval(function () {
         explodeViewer();
@@ -156,8 +158,9 @@ function slide(direction) {
         $('#viewerImage').show();
         $('#viewerImage').css("transform", "translateX(0)");
 
-
-        logImageHit(imageViewerArray[imageViewerIndex].Link);
+        //alert("logImageHit false");
+        //console.log("logImageHit from slide: " + imageViewerArray[imageViewerIndex].Link);
+        logImageHit(imageViewerArray[imageViewerIndex].Link, false);
 
 
     }, 450);

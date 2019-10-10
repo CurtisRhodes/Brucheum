@@ -29,10 +29,12 @@ namespace WebApi
                 using (WebStatsContext db = new WebStatsContext())
                 {
                     #region // LOG VISIT
-                    DateTime lastVisitDate;
+                    DateTime lastVisitDate = DateTime.MinValue;
                     if (!Helpers.IsNullorUndefined(pageHitModel.VisitorId))
                     {
-                        lastVisitDate = db.Visits.Where(v => v.VisitorId == pageHitModel.VisitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
+                        List<Visit> visits = db.Visits.Where(v => v.VisitorId == pageHitModel.VisitorId).ToList();
+                        if (visits.Count > 0)
+                            lastVisitDate = visits.OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
                     }
                     else
                     {
@@ -48,26 +50,17 @@ namespace WebApi
                         {
                             db.Visits.Add(new Visit() { VisitorId = pageHitModel.VisitorId, VisitDate = DateTime.Now });
                             db.SaveChanges();
-                        }
-                        if (Helpers.IsNullorUndefined(pageHitModel.UserName))
-                        {
-                            //godaddyEmail.SendEmail("VERY GOOD: Someone came back for another visit",
-                            //pageName + " hit from " + visitor.City + "," + visitor.Region + " " + visitor.Country + " Ip: " + pageHitModel.IpAddress);
-                            pageHitSuccessModel.WelcomeMessage = "Welcome Back ";
-                        }
-                        else
-                        {
-                            //godaddyEmail.SendEmail("EXCELLENT! " + visitor.UserName + " came back for another visit ",
-                            //pageName + " hit from " + visitor.City + "," + visitor.Region + " " + visitor.Country);                            
-                            pageHitSuccessModel.WelcomeMessage = "Welcome back " + visitor.UserName;
+                            if (Helpers.IsNullorUndefined(pageHitModel.UserName))
+                            {
+                                pageHitSuccessModel.WelcomeMessage = "Welcome Back ";
+                            }
+                            else
+                            {
+                                pageHitSuccessModel.WelcomeMessage = "Welcome back " + visitor.UserName;
+                            }
                         }
                     }
                     #endregion
-                    //            }
-                    //        }
-                    //    }
-                    //}
-
                     string pageName = "";
                     using (OggleBoobleContext odb = new OggleBoobleContext())
                     {
@@ -87,14 +80,6 @@ namespace WebApi
                         hit.PageName = pageName;
                         db.PageHits.Add(hit);
                         db.SaveChanges();
-
-                        //if (pageHitModel.Verbose > 8)
-                        //{
-                        //    using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
-                        //    {
-                        //        godaddyEmail.SendEmail("Page Visit", "Visitor " + pageHitModel.IpAddress + " visited: " + pageName);
-                        //    }
-                        //}
                     }
                 }
                 pageHitSuccessModel.Success = "ok";
@@ -102,6 +87,10 @@ namespace WebApi
             catch (Exception ex)
             {
                 pageHitSuccessModel.Success = Helpers.ErrorDetails(ex);
+                using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
+                {
+                    godaddyEmail.SendEmail("Page Visit ERROR", pageHitSuccessModel.Success);
+                }
             }
             return pageHitSuccessModel;
         }
@@ -123,23 +112,40 @@ namespace WebApi
             catch (Exception ex) { success.Success = Helpers.ErrorDetails(ex); }
             return success;
         }
-
-        private static string HashSHA256(string value)
-        {
-            var sha1 = System.Security.Cryptography.SHA256.Create();
-            //sha1.de
-            var inputBytes = System.Text.Encoding.ASCII.GetBytes(value);
-            var hash = sha1.ComputeHash(inputBytes);
-
-            var sb = new System.Text.StringBuilder();
-            for (var i = 0; i < hash.Length; i++)
-            {
-                sb.Append(hash[i].ToString("X2"));
-            }
-            return sb.ToString();
-        }
     }
 
+    [EnableCors("*", "*", "*")]
+    public class ImageHitController : ApiController
+    {
+        [HttpPost]
+        public ImageHitSuccessModel LogImageHit(string visitorId, string linkId)
+        {
+            ImageHitSuccessModel imageHitSuccess = new ImageHitSuccessModel();
+            try
+            {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    var X = DateTime.Now;
+                    db.ImageHits.Add(new ImageHit() { HitDateTime = DateTime.Now, VisitorId = visitorId, ImageLinkId = linkId });
+                    db.SaveChanges();
+
+                    imageHitSuccess.UserHits = db.ImageHits.Where(h => h.VisitorId == visitorId).Count();
+                    imageHitSuccess.ImageHits = db.ImageHits.Where(h => h.ImageLinkId == linkId).Count();
+
+                }
+                imageHitSuccess.Success = "ok";
+            }
+            catch (DbEntityValidationException dbEx)
+            {
+                imageHitSuccess.Success = Helpers.ErrorDetails(dbEx);
+            }
+            catch (Exception ex)
+            {
+                imageHitSuccess.Success = Helpers.ErrorDetails(ex);
+            }
+            return imageHitSuccess;
+        }
+    }
 
     [EnableCors("*", "*", "*")]
     public class HitCounterController : ApiController
@@ -222,52 +228,22 @@ namespace WebApi
                         hit.VisitorId = visitorSuccess.VisitorId;
                         hit.HitDateTime = DateTime.Now;
                         hit.AppName = visitorModel.AppName;
-                        hit.PageName = pageName;
+                        hit.PageId = visitorModel.PageId;
+                        //hit.PageName = pageName;
                         db.PageHits.Add(hit);
                         db.SaveChanges();
                     }
                 }
                 visitorSuccess.Success = "ok";
             }
-            catch (Exception ex) { visitorSuccess.Success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex) {
+                visitorSuccess.Success = Helpers.ErrorDetails(ex);
+            }
             return visitorSuccess;
         }
 
         [HttpPost]
-        public ImageHitSuccessModel LogImageHit(string visitorId, string linkId)
-        {
-            ImageHitSuccessModel imageHitSuccess = new ImageHitSuccessModel();
-            try
-            {
-                using (WebStatsContext db = new WebStatsContext())
-                {
-                    var X = DateTime.Now;
-                    db.ImageHits.Add(new ImageHit() { HitDateTime = DateTime.Now, VisitorId = visitorId, ImageLinkId = linkId });
-                    db.SaveChanges();
-
-                    imageHitSuccess.UserHits = db.ImageHits.Where(h => h.VisitorId == visitorId).Count();
-                    imageHitSuccess.ImageHits = db.ImageHits.Where(h => h.ImageLinkId == linkId).Count();
-
-                }
-                imageHitSuccess.Success = "ok";
-            }
-            catch (DbEntityValidationException dbEx)
-            {
-                imageHitSuccess.Success = Helpers.ErrorDetails(dbEx);
-            }
-            catch (Exception ex)
-            {
-                imageHitSuccess.Success = Helpers.ErrorDetails(ex);
-            }
-
-
-
-
-            return imageHitSuccess;
-        }
-
-        [HttpPost]
-        public PageHitSuccessModel LogSpecialPageHit(string pageName, string visitorId)
+        public PageHitSuccessModel LogSpecialPageHit(int pageId, string visitorId)
         {
             PageHitSuccessModel pageHitSuccess = new PageHitSuccessModel();
             if (visitorId == "9bd90468-e633-4ee2-af2a-8bbb8dd47ad1")
@@ -282,7 +258,8 @@ namespace WebApi
                         hit.VisitorId = visitorId;
                         hit.HitDateTime = DateTime.Now;
                         //hit.AppName = pageHitModel.AppName;
-                        hit.PageName = pageName;
+                        hit.PageId = pageId;
+                        //hit.PageName = pageName;
                         db.PageHits.Add(hit);
                         db.SaveChanges();
 

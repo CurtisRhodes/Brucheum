@@ -242,7 +242,7 @@
                     setOggleHeader("admin");
                     buildDirectoryTree();
                     setUserPermissions();
-                    logSpecialPageHit("Dashboard");
+                    logSpecialPageHit(4); // milk cows
                 }
             }, 300);
 
@@ -250,7 +250,20 @@
             //setSignalR();
             window.addEventListener("resize", resizeDashboardPage);
             resizeDashboardPage();
+            window.addEventListener("beforeunload", detectUnload());
+
+            //window.addEventListener("beforeunload", function (event) { ... });
+            //window.onbeforeunload = function (event) { ... };
+
+
+
         });
+
+
+        function detectUnload() {
+            alert("detectUnload");
+
+        }
 
         function setSignalR() {
 
