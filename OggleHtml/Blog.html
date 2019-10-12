@@ -132,10 +132,7 @@
             else {
                 clearInterval(waiter);
                 var visitorId = getCookieValue("VisitorId");
-                if (isNullorUndefined(visitorId))
-                    logVisitor(3);
-                else
-                    logSpecialPageHit(3);
+                logSpecialPageHit(3);
 
                 //loadBlogArticles($('#blogDisplayCommentTypeSelect').val());
                 //showBlogDisplay('BLG');

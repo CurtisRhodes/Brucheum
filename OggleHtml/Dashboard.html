@@ -250,8 +250,8 @@
             //setSignalR();
             window.addEventListener("resize", resizeDashboardPage);
             resizeDashboardPage();
-            window.addEventListener("beforeunload", detectUnload());
 
+            //window.addEventListener("beforeunload", detectUnload());
             //window.addEventListener("beforeunload", function (event) { ... });
             //window.onbeforeunload = function (event) { ... };
 
@@ -262,7 +262,6 @@
 
         function detectUnload() {
             alert("detectUnload");
-
         }
 
         function setSignalR() {

@@ -16,6 +16,7 @@ namespace WebApi.DataContext
         public virtual DbSet<ImageLink> ImageLinks { get; set; }
         public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
 
+        public virtual DbSet<VwDirTreeUnion> VwDirTreesUnion { get; set; }
         public virtual DbSet<VwDirTree> VwDirTrees { get; set; }        
         public virtual DbSet<VideoLink> VideoLinks { get; set; }
         public virtual DbSet<VwLink> VwLinks { get; set; }
@@ -39,8 +40,6 @@ namespace WebApi.DataContext
         public string RejectionReason { get; set; }
         public string ExternalLink { get; set; }
     }
-
-
 
     [Table("OggleBooble.CategoryFolder")]
     public partial class CategoryFolder
@@ -106,6 +105,7 @@ namespace WebApi.DataContext
         public string Orientation { get; set; }
         public int LinkCount { get; set; }
     }
+
     [Table("OggleBooble.vwDirtree")]
     public partial class VwDirTree
     {
@@ -167,4 +167,22 @@ namespace WebApi.DataContext
         public string UserId { get; set; }
         public DateTime VoteDate { get; set; }
     }
+
+    [Table("OggleBooble.vwDirtreeUnion")]
+    public partial class VwDirTreeUnion
+    {
+        [Key]
+        public int Id { get; set; }
+        public int Parent { get; set; }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public string Link { get; set; }
+        public string LinkId { get; set; }
+        public int SubDirCount { get; set; }
+        public int FileCount { get; set; }
+        public int TotalFiles { get; set; }
+        public int GrandTotalFiles { get; set; }
+        public int SortOrder { get; set; }
+    }
+
 }

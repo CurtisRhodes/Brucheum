@@ -4,6 +4,9 @@ var dirTreeTabIndent = 22;
 var dirDepth = 3;
 
 function buildDirTree(dest, treeId, startNode, endNode) {  
+
+    //alert("buildDirTree");
+
     try {
         var start = Date.now();
         totalFolders = 0;
@@ -43,7 +46,6 @@ function recurrBuildDirTree(dir, treeId) {
             imgSrc = "Images/redballon.png";
         else
             imgSrc = subDir.Link;
-
         expandMode = "-";
         expandClass = "";
         if (dirTreeTab / dirTreeTabIndent > dirDepth) {
@@ -58,6 +60,10 @@ function recurrBuildDirTree(dir, treeId) {
         }
         else
             subDirtxt = "";
+
+        //if (subDir.FolderId === 1205) {
+        //    alert("treeId: " + treeId +"  subDir.FolderId: "+ subDir.FolderId + "  subDir.DirectoryName: " + subDir.DirectoryName);
+        //}
 
         dirTreeContainer += "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
             + "<span id='S" + subDir.LinkId + "' onclick=toggleDirTree('" + subDir.LinkId + "') >[" + expandMode + "] </span>"

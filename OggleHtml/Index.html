@@ -200,8 +200,30 @@
                 width: 411,
                 height: 600
             });
-            resizePage();
+
+            window.addEventListener("resize", resizeIndexPage);
+            resizeIndexPage();
+
         });
+
+
+        function resizeIndexPage() {
+            resizePage();
+            //var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);
+            //if (workAreaHeight > $('#middleColumn').height()) {
+            //    $('#middleColumn').height(workAreaHeight);
+            //    $('#footerMessage').html("middleColumn.height: " + $('#middleColumn').height()); //image height: " + $('#imgLinkPreview').height());
+            //}
+            //else {
+            //    //alert("workAreaHeight < $('#middleColumn').height()");
+            //    console.log("workAreaHeight < $('#middleColumn').height()");
+            //    //$('#footerMessage').html("_");
+            //}
+
+            //$('#divHitMetrics').height($('#middleColumn').height() - 122);
+            //$('.floatingCrud').width($('.workarea').width() - 100);
+        }
+
 
         function addToCarousel(root, isChecked) {
             if (root == "archive") {

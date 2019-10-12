@@ -30,10 +30,10 @@ namespace WebApi
                     imageLinks.RootFolder = dbCategoryFolder.RootFolder;
                     imageLinks.FolderName = dbCategoryFolder.FolderName;
 
-                    List<VwDirTree> vwTrees = db.VwDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
+                    List<VwDirTreeUnion> vwTrees = db.VwDirTreesUnion.Where(f => f.Parent == folderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
                     string folderImage = null;
 
-                    foreach (VwDirTree vwTree in vwTrees)
+                    foreach (VwDirTreeUnion vwTree in vwTrees)
                     {
                         if (vwTree.Link == null)
                             folderImage = Helpers.GetFirstImage(vwTree.Id);
@@ -318,8 +318,15 @@ namespace WebApi
         private void GetDirTreeRecurr(CategoryTreeModel parent, List<VwDirTree> vwDirTree, string path)
         {
             var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
+
             foreach (VwDirTree vwTree in vwTrees)
             {
+
+                if (vwTree.Parent == 515)
+                {
+                    var x = 0;
+                }
+
                 var subChild = new CategoryTreeModel()
                 {
                     FolderId = vwTree.Id,

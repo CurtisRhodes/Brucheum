@@ -1,19 +1,25 @@
 ﻿function setLoginHeader() {
     setTimeout(function () {
-        var user = getCookieValue("User");
-        if (isNullorUndefined(user)) {
-
-            $('#optionLoggedIn').hide();
-            $('#optionNotLoggedIn').show();
-        }
-
-        else {
-
-    //alert("setLoginHeader user: " + user);
-
-            $('#spnUserName').html(user);
+        //alert("setLoginHeader()");
+        if (document.domain === 'localhost') {  //        if (ipAddress !== "68.203.90.183" && ipAddress !== "50.62.160.105") {
             $('#optionLoggedIn').show();
             $('#optionNotLoggedIn').hide();
+        }
+        else {
+            var user = getCookieValue("User");
+            if (isNullorUndefined(user)) {
+
+                $('#optionLoggedIn').hide();
+                $('#optionNotLoggedIn').show();
+            }
+            else {
+
+                //alert("setLoginHeader user: " + user);
+
+                $('#spnUserName').html(user);
+                $('#optionLoggedIn').show();
+                $('#optionNotLoggedIn').hide();
+            }
         }
     }, 200);
 }

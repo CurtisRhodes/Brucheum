@@ -204,8 +204,8 @@ namespace WebApi.Controllers
                     imagesCount++;
                 }
                 //  SUBFOLDERS
-                List<VwDirTree> subDirs = db.VwDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.SortOrder).ThenBy(f => f.Id).ToList();
-                foreach (VwDirTree subDir in subDirs)
+                List<VwDirTreeUnion> subDirs = db.VwDirTreesUnion.Where(f => f.Parent == folderId).OrderBy(f => f.SortOrder).ThenBy(f => f.Id).ToList();
+                foreach (VwDirTreeUnion subDir in subDirs)
                 {
                     string fullerFolderName = subDir.RootFolder + "/" + Helpers.GetCustomStaticFolderName(subDir.Id, subDir.FolderName);
 

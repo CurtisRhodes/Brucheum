@@ -305,10 +305,13 @@ function getLocalValue(localName) {
 // PERMISSIONS
 
 function setUserPermissions() {
-    if (document.domain === 'localhostXXX') {
+    if (document.domain === 'localhost') {
+
+        //alert("document.domain: " + document.domain);
 
         $('.loginRequired').show();
         $('.adminLevelRequired').show();
+
 
         //if (typeof permissionLevel === 'object')
         //{

@@ -157,8 +157,14 @@ function addImageLink() {
                     resizeDashboardPage();
 
                     if (successModel.ReturnValue === "0") {
+
+
+
                         alert("set folder image: " + successModel.ReturnValue + "," + dashboardMainSelectedTreeId);
                         setFolderImage(successModel.ReturnValue, dashboardMainSelectedTreeId, "folder");
+
+
+
                     }
 
                     var changeLogModel = {

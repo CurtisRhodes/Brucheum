@@ -76,6 +76,7 @@ namespace WebApi
                         PageHit hit = new PageHit();
                         hit.VisitorId = pageHitModel.VisitorId;
                         hit.HitDateTime = DateTime.Now;
+                        hit.PageId = pageHitModel.PageId;
                         hit.AppName = pageHitModel.AppName;
                         hit.PageName = pageName;
                         db.PageHits.Add(hit);
@@ -109,7 +110,9 @@ namespace WebApi
                     success.Success = "ok";
                 }
             }
-            catch (Exception ex) { success.Success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex) {
+                success.Success = Helpers.ErrorDetails(ex);
+            }
             return success;
         }
     }
@@ -125,13 +128,13 @@ namespace WebApi
             {
                 using (WebStatsContext db = new WebStatsContext())
                 {
-                    var X = DateTime.Now;
-                    db.ImageHits.Add(new ImageHit() { HitDateTime = DateTime.Now, VisitorId = visitorId, ImageLinkId = linkId });
-                    db.SaveChanges();
-
+                    if (visitorId != "9bd90468-e633-4ee2-af2a-8bbb8dd47ad1")
+                    {
+                        db.ImageHits.Add(new ImageHit() { HitDateTime = DateTime.Now, VisitorId = visitorId, ImageLinkId = linkId });
+                        db.SaveChanges();
+                    }
                     imageHitSuccess.UserHits = db.ImageHits.Where(h => h.VisitorId == visitorId).Count();
                     imageHitSuccess.ImageHits = db.ImageHits.Where(h => h.ImageLinkId == linkId).Count();
-
                 }
                 imageHitSuccess.Success = "ok";
             }
