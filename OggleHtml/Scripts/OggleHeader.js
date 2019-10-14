@@ -73,7 +73,10 @@
         "           <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
         "           <div class='menuTabs replaceableMenuItems'>\n" +
         "               <div id='twinsLink' class='menuTabs displayHidden'>\n" +
-        "                   <a href='/album.html?folder=3904' target='_blank'><img src='/Images/geminiSymbol1.png' title='Hef likes twins' class='trackbackImage'></a>" +
+        "                   <a href='/album.html?folder=3904'><img src='/Images/geminiSymbol1.png' title='Hef likes twins' class='trackbackImage'></a>" +
+        "               </div>\n" +
+        "               <div id='breastfulPlaymatesLink' class='menuTabs displayHidden'>\n" +
+        "                   <a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='trackbackImage'></a>" +
         "               </div>\n" +
         "               <div id='blackCenterfoldsLink' class='menuTabs displayHidden'>\n" +
         "                   <div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>\n" +
@@ -139,6 +142,9 @@
 
                 if (!isNullorUndefined(folderDetailModel.ExternalLinks)) {
 
+                    if (folderDetailModel.ExternalLinks.indexOf("biggest breasted centerfolds") > 0) {
+                        $('#breastfulPlaymatesLink').show();
+                    }
                     if (folderDetailModel.ExternalLinks.indexOf("black centerfolds") > 0) {
                         $('#blackCenterfoldsLink').show();
                     }
@@ -155,11 +161,12 @@
             }
             else {
                 //alert("checkForLink: " + successModel.Success);
-                sendEmailToYourself("ERROR in OggleHeader ImageCategoryDetail", successModel.Success);
+                sendEmailToYourself("ERROR in OggleHeader ImageCategoryDetail", successModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
             }
         },
         error: function (xhr) {
-            sendEmailToYourself("XHR ERROR in OggleHeader ImageCategoryDetail", getXHRErrorDetails(xhr));
+            sendEmailToYourself("XHR ERROR in OggleHeader ImageCategoryDetail", getXHRErrorDetails(xhr) +
+                "  called from: " + subdomain + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
             //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
         }
     });

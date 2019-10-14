@@ -29,7 +29,7 @@ function logImageHit(link, initialHit) {
     }
 }
 
-function logVisitor(pageId, calledFrom) {
+function logVisitor(pageId) {
     try {
         var ipAddress = getCookieValue("IpAddress");
         if (!isNullorUndefined(ipAddress)) {
@@ -82,14 +82,31 @@ function logVisitor(pageId, calledFrom) {
 
                             if (visitorSuccess.IsNewVisitor) {
                                 console.log("valid HIT TO IPINFO.IO  ip: " + getCookieValue("IpAddress"));
-                                // here I want to redirect boring hits
 
-
+                                switch (pageId) {
+                                    case 1947: // Karin and Mirjam Van Breeschooten
+                                        sendEmailToYourself("Redirecting new visitor from " + visitorSuccess.PageName + " to Hef Likes twins",
+                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        //window.location.href = 'https://ogglebooble.com/static/playboy/Hef%20likes%20twins.html';
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=3904';
+                                        break;
+                                    case 1514: // Gig Gangel
+                                    case 1522: // Lisa Welch
+                                        sendEmailToYourself("Redirecting new visitor from " + visitorSuccess.PageName + " to Biggest Breasted Centerfolds",
+                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=3900';
+                                        break;
+                                    case 1177: // Kylie Johnson
+                                    case 1949: // Renee tenison
+                                        sendEmailToYourself("Redirecting new visitor from " + visitorSuccess.PageName + " to Black Centerfolds",
+                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=3822';
+                                        break;
+                                    default:
+                                        sendEmailToYourself("Someone new visited unboring page: " + visitorSuccess.PageName,
+                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                }
                                 //if ((ipAddress !== "68.203.90.183") && (ipAddress !== "50.62.160.105"))
-
-
-                                //sendEmailToYourself(" Someone new visited " + visitorSuccess.PageName,
-                                //    " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                             }
                             else {
                                 console.log("Unnecessary HIT TO IPINFO.IO  ip: " + getCookieValue("IpAddress"));

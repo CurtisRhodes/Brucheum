@@ -33,18 +33,21 @@ function loadImages(rootFolder, isChecked, skip, take) {
                 if (carouselItemArray[idx].RootFolder === rootFolder) {
                     if (idx < carouselItemArray.length) {
                         if (removedFolders.find(function () { return carouselItemArray[idx].FolderName; }) === undefined) {
-                            alert("not found " + carouselItemArray[idx].FolderName);
+                            //alert("not found " + carouselItemArray[idx].FolderName);
+                            sendEmailToYourself("Problem removing Carousel array items", "not found " + carouselItemArray[idx].FolderName);
                             removedFolders.push(carouselItemArray[idx].FolderName);
                         }
                     }
                     else {
-                        alert("idx: " + idx + " carouselItemArray.length: " + carouselItemArray.length);
+                        //alert("idx: " + idx + " carouselItemArray.length: " + carouselItemArray.length);
+                        sendEmailToYourself("Problem removing Carousel array items", "idx: " + idx + " carouselItemArray.length: " + carouselItemArray.length);
                     }
                 }
                 else
                     newArray.push(carouselItemArray[idx]);
             } catch (e) {
-                alert("idx: " + idx + " error: " + e);
+                sendEmailToYourself("Problem removing Carousel array items", "idx: " + idx + " error: " + e);
+                //alert("idx: " + idx + " error: " + e);
             }
         }
         carouselItemArray = newArray;
@@ -53,7 +56,8 @@ function loadImages(rootFolder, isChecked, skip, take) {
         numFolders = numFolders - removedFolders.length;
         var delta = (Date.now() - start) / 1000;
         console.log("Removing links from (" + rootFolder + ") took: " + delta.toFixed(3));
-        alert("loops: " + k + " spliced: " + spliced + " carouselItemArray.length: " + carouselItemArray.length + " numFolders: " + numFolders + " numImages: " + numImages);
+        sendEmailToYourself("message from loadImages", "loops: " + k + " spliced: " + spliced + " carouselItemArray.length: " + carouselItemArray.length + " numFolders: " + numFolders + " numImages: " + numImages);
+        //alert("loops: " + k + " spliced: " + spliced + " carouselItemArray.length: " + carouselItemArray.length + " numFolders: " + numFolders + " numImages: " + numImages);
     }
     else {
         $('#laCarousel').show();
@@ -95,11 +99,14 @@ function loadImages(rootFolder, isChecked, skip, take) {
                         console.log("loadImages(" + rootFolder + ") take: " +
                             Number(carouselInfo.Links.length - initialTake) + " took: " + delta.toFixed(3));
                 }
-                else
-                    alert("loadImages: " + carouselInfo.Success);
+                else {
+                    //alert("loadImages: " + carouselInfo.Success);
+                    sendEmailToYourself("ERROR in Caraousel", "loadImages: " + carouselInfo.Success);
+                }
             },
             error: function (jqXHR, exception) {
-                alert("loadImages jqXHR : " + settingsArray.ApiServer + "api/Carousel/GetLinks?root=" + rootFolder +
+                sendEmailToYourself("jqXHR exception in Carousel/GetLinks", "loadImages jqXHR : " +
+                    settingsArray.ApiServer + "api/Carousel/GetLinks?root=" + rootFolder +
                     "&skip=" + skip + "&take=" + take + "  " + getXHRErrorDetails(jqXHR, exception));
             }
         });
@@ -109,6 +116,7 @@ function loadImages(rootFolder, isChecked, skip, take) {
 function clickViewGallery() {
     clearInterval(CarouselInterval);
     //alert("clickViewGallery");
+    sendEmailToYourself("Someone clicked on a carousel item", carouselItemArray[imageIndex].FolderId + " clicked by " + getCookieValue("IpAddress"));
     window.location.href = "/album.html?folder=" + carouselItemArray[imageIndex].FolderId;
 }
 
@@ -174,7 +182,8 @@ function carouselContextMenuAction(ctxMenuAction) {
             showMoveCopyDialog("Archive", carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
             break;
         default:
-            alert("invalid: " + ctxMenuAction);
+            sendEmailToYourself("Invalid context menu action", "invalid: " + ctxMenuAction);
+            //alert("invalid: " + ctxMenuAction);
     }
 }
 
@@ -270,11 +279,14 @@ function carouselContextMenu() {
                         $('#ctxSeeMore').hide();
                     }
                 }
-                else
-                    alert("GetModelName: " + imageDetails.Success);
+                else {
+                    //alert("GetModelName: " + imageDetails.Success);
+                    sendEmailToYourself("GetModelName fail", imageDetails.Success);
+                }
             },
             error: function (xhr) {
-                alert("GetNudeModelName xhr error: " + xhr.statusText);
+                sendEmailToYourself("GetNudeModelName xhr error: ", xhr.statusText);
+                //alert("GetNudeModelName xhr error: " + xhr.statusText);
             }
         });
         $('#carouselContextMenu').css("top", event.clientY + 5);
@@ -283,5 +295,6 @@ function carouselContextMenu() {
 }
 
 function onImageNotLoaded() {
-    alert("bk image " + carouselItemArray[imageIndex].Link + " not found");
+    sendEmailToYourself("onImageNotLoaded", "bk image " + carouselItemArray[imageIndex].Link + " not found");
+    //alert("bk image " + carouselItemArray[imageIndex].Link + " not found");
 }

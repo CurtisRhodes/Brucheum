@@ -31,8 +31,10 @@ $(document).ready(function () {
         else {
             clearInterval(waiter);
             getBreadCrumbs(staticPageFolderId);
-            setOggleHeader(staticPageRootFolderId, staticPageFolderId);
 
+            //sendEmailToYourself("Calling setOggleHeader from StaticPage.js", "staticPageFolderId: " + staticPageFolderId);
+
+            setOggleHeader(staticPageRootFolderId, staticPageFolderId);
             setOggleFooter(staticPageRootFolderId);
             logPageHit(staticPageFolderId);            
             //   $('footerMessage').html(staticPageFolderName);

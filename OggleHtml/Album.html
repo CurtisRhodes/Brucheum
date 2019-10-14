@@ -110,17 +110,14 @@
                             clearInterval(waiter2);
                             $('#footerMessage').html("isPornEditor: " + isPornEditor);
                             //alert("Album.html isPornEditor: " + isPornEditor);
-
-
-
-
-                            if (!isPornEditor)
+                            if (!isPornEditor) {
                                 directToStaticPage(params.folder);
+                            }
                             else
                             {
                                 setAlbumPageHeader(params.folder);
                                 getAlbumImages(params.folder);
-                                logPageHit(params.folder);
+                                //logPageHit(params.folder);
                             }
                         }
                     }, 300);

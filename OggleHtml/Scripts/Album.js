@@ -37,6 +37,8 @@ function setAlbumPageHeader(folderId) {
             if (successModel.Success === "ok") {
                 //alert("setAlbumPageHeader: " + successModel.ReturnValue);
                 setOggleHeader(successModel.ReturnValue, folderId);
+                logPageHit(folderId);
+
                 setOggleFooter(successModel.ReturnValue);}
             else
                 alert("getAlbumPageHeader " + successModel.Success);
