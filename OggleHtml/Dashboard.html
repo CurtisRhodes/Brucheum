@@ -239,10 +239,10 @@
                 }
                 else {
                     clearInterval(waiter);
-                    setOggleHeader("admin");
+                    setOggleHeader("admin", 3910);
                     buildDirectoryTree();
                     setUserPermissions();
-                    logSpecialPageHit(4); // milk cows
+                    logPageHit(3910);
                 }
             }, 300);
 

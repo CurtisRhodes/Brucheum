@@ -82,8 +82,14 @@ function logVisitor(pageId, calledFrom) {
 
                             if (visitorSuccess.IsNewVisitor) {
                                 console.log("valid HIT TO IPINFO.IO  ip: " + getCookieValue("IpAddress"));
-                                sendEmailToYourself(" Someone new visited " + visitorSuccess.PageName,
-                                    " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                // here I want to redirect boring hits
+
+
+                                //if ((ipAddress !== "68.203.90.183") && (ipAddress !== "50.62.160.105"))
+
+
+                                //sendEmailToYourself(" Someone new visited " + visitorSuccess.PageName,
+                                //    " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                             }
                             else {
                                 console.log("Unnecessary HIT TO IPINFO.IO  ip: " + getCookieValue("IpAddress"));
@@ -92,8 +98,8 @@ function logVisitor(pageId, calledFrom) {
                                         visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                 }
                                 else {
-                                    sendEmailToYourself("logvisitor from " + calledFrom,
-                                        visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                    //sendEmailToYourself("logvisitor from " + calledFrom,
+                                    //    visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                 }
                             }
                             $('#footerMessage').html("");
@@ -120,7 +126,7 @@ function logVisitor(pageId, calledFrom) {
     }
 }
 
-function logSpecialPageHit(pageId) {
+function XXlogSpecialPageHit(pageId) {
     if (document.domain === 'localhost')
         return;
 
@@ -255,7 +261,7 @@ function logPageHit(pageId) {
                         if (isNullorUndefined(successModel.VisitorId)) {
                             sendEmailToYourself("Trying to get VisitorId from Ip Address failed",
                                 "Forced to call logVisitor(" + pageId + ").  IpAddress: " + ipAddress + " failed to return a visitorId ");
-                            logVisitor(pageId,"failed GetVisitorIdFromIP");
+                            logVisitor(pageId, "failed GetVisitorIdFromIP");
                         }
                         else {
                             console.log("logPageHit how is it that I know the Ip and not the visitorId? (pre IpInfo) ");
@@ -286,57 +292,55 @@ function logPageHit(pageId) {
             //console.log("logging proper page hit.  ip: " + ipAddress + " visitorId: " + visitorId + " pageId: " + pageId);
             //sendEmailToYourself("logging proper page hit", "ip: " + ipAddress + " visitorId: " + visitorId + " pageId: " + pageId);
             console.log("sending email and logging proper page hit.  ip: " + ipAddress + " visitorId: " + visitorId + " pageId: " + pageId);
-            //if ((ipAddress !== "68.203.90.183") && (ipAddress !== "50.62.160.105"))
-            {
-                var pageHitModel = {
-                    VisitorId: visitorId,
-                    UserName: userName,
-                    AppName: "OggleBooble",
-                    IpAddress: ipAddress,
-                    PageId: pageId,
-                    Verbose: verbose
-                };
+            var pageHitModel = {
+                VisitorId: visitorId,
+                UserName: userName,
+                AppName: "OggleBooble",
+                IpAddress: ipAddress,
+                PageId: pageId,
+                Verbose: verbose
+            };
 
-                $.ajax({
-                    type: "POST",
-                    url: settingsArray.ApiServer + "api/PageHit/LogPageHit",
-                    data: pageHitModel,
-                    success: function (pageHitSuccessModel) {
-                        //$('#footerMessage').html("");
-                        if (pageHitSuccessModel.Success === "ok") {
-                            if (pageHitSuccessModel.UserHits > freeVisitorHitsAllowed) {
-                                alert("you hav now visited " + pageHitSuccessModel.UserHits + " pages." +
-                                    "\n It's time you Registered and logged in." +
-                                    "\n you will be placed in manditory comment mode until you log in ");
-                            }
+            $.ajax({
+                type: "POST",
+                url: settingsArray.ApiServer + "api/PageHit/LogPageHit",
+                data: pageHitModel,
+                success: function (pageHitSuccessModel) {
+                    //$('#footerMessage').html("");
+                    if (pageHitSuccessModel.Success === "ok") {
+                        if (pageHitSuccessModel.UserHits > freeVisitorHitsAllowed) {
+                            alert("you hav now visited " + pageHitSuccessModel.UserHits + " pages." +
+                                "\n It's time you Registered and logged in." +
+                                "\n you will be placed in manditory comment mode until you log in ");
+                        }
 
-                            if (isNullorUndefined($('#headerMessage').html())) {
-                                if (!isNullorUndefined(pageHitSuccessModel.WelcomeMessage)) {
-                                    $('#headerMessage').html(pageHitSuccessModel.WelcomeMessage);
-                                    console.log("headerMessage =  (pageHitSuccessModel.WelcomeMessage): " + pageHitSuccessModel.WelcomeMessage);
-                                }
-                                else {
-                                    //$('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
-                                    $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
-                                }
+                        if (isNullorUndefined($('#headerMessage').html())) {
+                            if (!isNullorUndefined(pageHitSuccessModel.WelcomeMessage)) {
+                                $('#headerMessage').html(pageHitSuccessModel.WelcomeMessage);
+                                console.log("headerMessage =  (pageHitSuccessModel.WelcomeMessage): " + pageHitSuccessModel.WelcomeMessage);
                             }
                             else {
-                                sendEmailToYourself("LogPageHit headerMessage is not empty", "$('#headerMessage').html(): " + $('#headerMessage').html());
-                                console.log("headerMessage is not empty: " + $('#headerMessage').html());
+                                //$('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
+                                $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
                             }
                         }
                         else {
-                            console.log("OH MY GOD logPageHit: " + pageHitSuccessModel.Success);
-                            sendEmailToYourself("OH MY GOD logPageHit error: ", pageHitSuccessModel.Success);
+                            sendEmailToYourself("LogPageHit headerMessage is not empty", "$('#headerMessage').html(): " + $('#headerMessage').html());
+                            console.log("headerMessage is not empty: " + $('#headerMessage').html());
                         }
-                    },
-                    error: function (jqXHR, exception) {
-                        // all logging needs to be hidden from users
-                        sendEmailToYourself("logPageHit error", getXHRErrorDetails(jqXHR, exception));
-                        console.log("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
                     }
-                });
-            }
+                    else {
+                        console.log("OH MY GOD logPageHit: " + pageHitSuccessModel.Success);
+                        sendEmailToYourself("OH MY GOD logPageHit error: ", pageHitSuccessModel.Success);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    // all logging needs to be hidden from users
+                    sendEmailToYourself("logPageHit error", getXHRErrorDetails(jqXHR, exception));
+                    console.log("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
+                }
+            });
         }
     }
 }
+

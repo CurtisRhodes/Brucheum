@@ -230,38 +230,6 @@ function setFolderImage(linkId, folderId, level) {
     });
 }
 
-function checkForLink(folderId, hrefTextSubstring) {
-    //alert("containsLink(" + folderId + "," + hrefTextSubstring + ")");
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/StaticPage/HasLink?folderId=" + folderId + "&hrefTextSubstring=" + hrefTextSubstring,
-        success: function (successModel) {
-            if (successModel.Success === "ok") {
-                if (successModel.ReturnValue !== "no") {
-                    var p = successModel.ReturnValue;
-                    if (hrefTextSubstring === "freeones") {
-                        //var zp = "<a https://www.freeones.com/html/" + p.substring(p.indexOf("https://www.freeones.com") + 31);//, (p.substring(p.indexOf("https://www.freeones.com") + 38)).indexOf('>'));
-                        //var zp2 = zp.substring(0, zp.indexOf('>') - 1) + " target='_blank'>";
-                        //alert("link: "+  zp2);
-
-                        $('#freeonesLink').show();
-                    }
-                    if (hrefTextSubstring === "babepedia") {
-                        $('#babapediaLink').show();
-                    }
-                    if (hrefTextSubstring === "black centerfolds") {
-                        $('#blackCenterfoldsLink').show();
-                    }
-                }
-            }
-            else
-                alert("checkForLink: " + successModel.Success);
-        },
-        error: function (xhr) {
-            alert("containsLink xhr: " + getXHRErrorDetails(xhr));
-        }
-    });
-}
 
 // GET BUILD INFO
 function getFileDate() {

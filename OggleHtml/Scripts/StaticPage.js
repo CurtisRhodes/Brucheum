@@ -31,15 +31,10 @@ $(document).ready(function () {
         else {
             clearInterval(waiter);
             getBreadCrumbs(staticPageFolderId);
-            setOggleHeader(staticPageRootFolderId);
-            //alert("setOggleFooter(" + staticPageRootFolderId + ")");
+            setOggleHeader(staticPageRootFolderId, staticPageFolderId);
 
             setOggleFooter(staticPageRootFolderId);
             logPageHit(staticPageFolderId);            
-            checkForLink(staticPageFolderId, "babepedia");
-            checkForLink(staticPageFolderId, "freeones");
-            checkForLink(staticPageFolderId, "black centerfolds");
-
             //   $('footerMessage').html(staticPageFolderName);
         }
     }, 300);

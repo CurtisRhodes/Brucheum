@@ -316,31 +316,6 @@ namespace WebApi.Controllers
         //    "</div>\n";
         //}
 
-        [HttpGet]
-        public SuccessModel HasLink(int folderId, string hrefTextSubstring)
-        {
-            SuccessModel success = new SuccessModel() { ReturnValue = "no" };
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    SuccessModel dbRow = (from f in db.CategoryFolders
-                                 join d in db.CategoryFolderDetails on f.Id equals d.FolderId
-                                 where d.ExternalLinks.Contains(hrefTextSubstring) && f.Id == folderId
-                                 select (new SuccessModel { ReturnValue = d.ExternalLinks })).FirstOrDefault();
-                    if (dbRow != null)
-                    {
-                        success.ReturnValue = dbRow.ReturnValue;
-                    }
-                    success.Success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                success.Success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
     }
 }
 

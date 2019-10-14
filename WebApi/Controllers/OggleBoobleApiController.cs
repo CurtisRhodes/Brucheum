@@ -321,12 +321,6 @@ namespace WebApi
 
             foreach (VwDirTree vwTree in vwTrees)
             {
-
-                if (vwTree.Parent == 515)
-                {
-                    var x = 0;
-                }
-
                 var subChild = new CategoryTreeModel()
                 {
                     FolderId = vwTree.Id,
@@ -800,6 +794,31 @@ namespace WebApi
             catch (Exception ex) { folderDetailModel.Success = Helpers.ErrorDetails(ex); }
             return folderDetailModel;
         }
+        //[HttpGet]
+        //public SuccessModel GetExternalLinksText(int folderId)
+        //{
+        //    SuccessModel success = new SuccessModel() { ReturnValue = "no" };
+        //    try
+        //    {
+        //        using (OggleBoobleContext db = new OggleBoobleContext())
+        //        {
+        //            SuccessModel dbRow = (from f in db.CategoryFolders
+        //                                  join d in db.CategoryFolderDetails on f.Id equals d.FolderId
+        //                                  where d.ExternalLinks.Contains(hrefTextSubstring) && f.Id == folderId
+        //                                  select (new SuccessModel { ReturnValue = d.ExternalLinks })).FirstOrDefault();
+        //            if (dbRow != null)
+        //            {
+        //                success.ReturnValue = dbRow.ReturnValue;
+        //            }
+        //            success.Success = "ok";
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        success.Success = Helpers.ErrorDetails(ex);
+        //    }
+        //    return success;
+        //}
 
         // create new folder in Posers Identified
         [HttpPost]

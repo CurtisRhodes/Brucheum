@@ -1,30 +1,4 @@
-﻿function setLoginHeader() {
-    setTimeout(function () {
-        //alert("setLoginHeader()");
-        if (document.domain === 'localhost') {  //        if (ipAddress !== "68.203.90.183" && ipAddress !== "50.62.160.105") {
-            $('#optionLoggedIn').show();
-            $('#optionNotLoggedIn').hide();
-        }
-        else {
-            var user = getCookieValue("User");
-            if (isNullorUndefined(user)) {
-
-                $('#optionLoggedIn').hide();
-                $('#optionNotLoggedIn').show();
-            }
-            else {
-
-                //alert("setLoginHeader user: " + user);
-
-                $('#spnUserName').html(user);
-                $('#optionLoggedIn').show();
-                $('#optionNotLoggedIn').hide();
-            }
-        }
-    }, 200);
-}
-
-function setOggleHeader(subdomain) {
+﻿function setOggleHeader(subdomain, folderId) {
     //alert("setLoginHeader: " + subdomain);
     var headerHtml;
     var lang = "en";
@@ -98,11 +72,14 @@ function setOggleHeader(subdomain) {
         "           <div id='headerMessage' class='bottomLeftBottomHeaderArea'></div>\n" +
         "           <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
         "           <div class='menuTabs replaceableMenuItems'>\n" +
+        "               <div id='twinsLink' class='menuTabs displayHidden'>\n" +
+        "                   <a href='/album.html?folder=3904' target='_blank'><img src='/Images/geminiSymbol1.png' title='Hef likes twins' class='trackbackImage'></a>" +
+        "               </div>\n" +
         "               <div id='blackCenterfoldsLink' class='menuTabs displayHidden'>\n" +
-        "                   <div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>\n"+
+        "                   <div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>\n" +
         "               </div>\n" +
         "               <div id='freeonesLink' class='menuTabs displayHidden'>\n" +
-      //"                   <a href='http://www.freeones.com' target='_top'><img src='http://www.freeones.com/webmasters/banners/freeones_new.gif' width='120' height='60' title='FreeOnes - The ultimate babes site' alt='models, babes and porn stars'/></a>\n"+
+        //"                   <a href='http://www.freeones.com' target='_top'><img src='http://www.freeones.com/webmasters/banners/freeones_new.gif' width='120' height='60' title='FreeOnes - The ultimate babes site' alt='models, babes and porn stars'/></a>\n"+
         "                   <a href='http://www.freeones.com' target='_blank' text='free porn'><img src='/Images/freeones.png' title='FreeOnes - The ultimate babes site' alt='models, babes and porn stars' class='trackbackImage'></a>" +
         "               </div>\n" +
         "               <div id='babapediaLink' class='menuTabs displayHidden'>\n" +
@@ -125,39 +102,107 @@ function setOggleHeader(subdomain) {
         "<div id='customMessage' class='displayHidden customMessageContainer'></div>\n" +
         "<div id='indexCatTreeContainer' class='oggleHidden'></div>";
     $('header').html(headerHtml);
-    //alert("setLoginHeader");
-    setLoginHeader();
 
+    //  function setLoginHeader(folderId) {
+    if (document.domain === 'localhost') {  //        if (ipAddress !== "68.203.90.183" && ipAddress !== "50.62.160.105") {
+        $('#optionLoggedIn').show();
+        $('#optionNotLoggedIn').hide();
+    }
+    else {
+        var user = getCookieValue("User");
+        if (isNullorUndefined(user)) {
+            $('#optionLoggedIn').hide();
+            $('#optionNotLoggedIn').show();
+        }
+        else {
+            //alert("setLoginHeader user: " + user);
+            $('#spnUserName').html(user);
+            $('#optionLoggedIn').show();
+            $('#optionNotLoggedIn').hide();
+        }
+    }
+    //  function checkForCustomLinks(folderId, hrefTextSubstring) {
 
-            //subheaderContent =
-            //    "                <a href='/album.html?folder=2'><span class='bigTits'>STORE </span>bryster</a> organiseret af\n" +
-            //    "                <a href='/album.html?folder=136'> rejser,</a>\n" +
-            //    "                <a href='/album.html?folder=159'> emne,</a>\n" +
-            //    "                <a href='/album.html?folder=199'> figurer</a> og\n" +
-            //    "                <a href='/album.html?folder=241'>størrelser</a>\n";
+    //alert("settingsArray.ApiServer: " + settingsArray.ApiServer);
+
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
+        //url: settingsArray.ApiServer + "api/StaticPage/HasLink?folderId=" + folderId + "&hrefTextSubstring=" + hrefTextSubstring,
+        success: function (folderDetailModel) {
+            //folderDetailModel.ExternalLinks = categoryFolderDetails.ExternalLinks;
+            if (folderDetailModel.Success === "ok") {
+                //checkForLink(params.folder, "black centerfolds");
+                //checkForLink(params.folder, "freeones");
+                //checkForLink(params.folder, "babepedia");
+                //alert("folderDetailModel.ExternalLinks: " + folderDetailModel.ExternalLinks);
+
+                if (!isNullorUndefined(folderDetailModel.ExternalLinks)) {
+
+                    if (folderDetailModel.ExternalLinks.indexOf("black centerfolds") > 0) {
+                        $('#blackCenterfoldsLink').show();
+                    }
+                    if (folderDetailModel.ExternalLinks.indexOf("Hef likes twins") > 0) {
+                        $('#twinsLink').show();
+                    }
+                    if (folderDetailModel.ExternalLinks.indexOf("www.freeones.com") > 0) {
+                        $('#freeonesLink').show();
+                    }
+                    if (folderDetailModel.ExternalLinks.indexOf("www.babepedia.com") > 0) {
+                        $('#babapediaLink').show();
+                    }
+                }
+            }
+            else {
+                //alert("checkForLink: " + successModel.Success);
+                sendEmailToYourself("ERROR in OggleHeader ImageCategoryDetail", successModel.Success);
+            }
+        },
+        error: function (xhr) {
+            sendEmailToYourself("XHR ERROR in OggleHeader ImageCategoryDetail", getXHRErrorDetails(xhr));
+            //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
+        }
+    });
 }
 
+    //subheaderContent =
+    //    "                <a href='/album.html?folder=2'><span class='bigTits'>STORE </span>bryster</a> organiseret af\n" +
+    //    "                <a href='/album.html?folder=136'> rejser,</a>\n" +
+    //    "                <a href='/album.html?folder=159'> emne,</a>\n" +
+    //    "                <a href='/album.html?folder=199'> figurer</a> og\n" +
+    //    "                <a href='/album.html?folder=241'>størrelser</a>\n";
 
 
 
 
 var busy = false;
 var searchString = "";
-
 function oggleSearchKeyDown(event) {
     var ev = event.keyCode;
     $('#testtxt').text(ev);
-    if (ev === 27) {
+
+    if (ev === 9) {
+
+        alert("tab key pressed  Enter searchbox");
+
+    }
+
+
+    if (ev === 27) {  //  escape
         clearSearch();
         return;
     }
-    if (ev === 8) {
+
+    if (ev === 8) {  // backspace
         searchString = searchString.substring(0, searchString.length - 1);
         $('#testtxt').text(searchString);
     }
     else {
         searchString += String.fromCharCode(ev);
     }
+
+
+
     if (searchString.length > 2) {
         if (!busy) {
             busy = true;
@@ -167,11 +212,17 @@ function oggleSearchKeyDown(event) {
                 success: function (SearchResultsModel) {
                     var kluge = "<ul>";
                     $.each(SearchResultsModel.SearchResults, function (idx, searchResult) {
-                       kluge += "<li onclick='jumpToSelected(" + searchResult.FolderId + ")'>" + searchResult.FolderName + "</li>";
+
+                        kluge += "<li onclick='jumpToSelected(" + searchResult.FolderId + ")'>" + searchResult.FolderName + "</li>";
+
                     });
                     kluge += "</ul>";
+
                     $('#searchResultsDiv').show().html(kluge);
+
+
                     $('.loginArea').hide();
+
                     busy = false;
                 },
                 error: function (xhr) {

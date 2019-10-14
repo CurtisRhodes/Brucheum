@@ -122,7 +122,7 @@
 
         $('#headerMessage').html("blog");
         $('#blogDisplayCommentTypeSelect').val('BLG');
-        setOggleHeader("blog");
+        setOggleHeader("blog", 3911);
 
         loadSettings();
         var waiter = setInterval(function () {
@@ -131,11 +131,8 @@
             }
             else {
                 clearInterval(waiter);
-                var visitorId = getCookieValue("VisitorId");
-                logSpecialPageHit(3);
+                logPageHit(3911);
 
-                //loadBlogArticles($('#blogDisplayCommentTypeSelect').val());
-                //showBlogDisplay('BLG');
                 setUserPermissions();
                 var waiter2 = setInterval(function () {
                     dots += "* ";
@@ -144,10 +141,8 @@
                         clearInterval(waiter2);
                         $('#dots').html("");
 
-
                         loadBlogArticles($('#blogDisplayCommentTypeSelect').val());
                         showBlogDisplay('BLG');
-
 
                         //$('#footerMessage').html("isPornEditor: " + isPornEditor);
                         if (!isPornEditor) {

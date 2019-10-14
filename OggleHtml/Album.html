@@ -111,17 +111,15 @@
                             $('#footerMessage').html("isPornEditor: " + isPornEditor);
                             //alert("Album.html isPornEditor: " + isPornEditor);
 
-                            //if (!isPornEditor)
-                            //    directToStaticPage(params.folder);
-                            //else
-                            {
 
+
+
+                            if (!isPornEditor)
+                                directToStaticPage(params.folder);
+                            else
+                            {
                                 setAlbumPageHeader(params.folder);
                                 getAlbumImages(params.folder);
-
-                                checkForLink(params.folder, "black centerfolds");
-                                checkForLink(params.folder, "freeones");
-                                checkForLink(params.folder, "babepedia");
                                 logPageHit(params.folder);
                             }
                         }
