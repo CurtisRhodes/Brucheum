@@ -98,6 +98,7 @@ function logVisitor(pageId) {
                                         break;
                                     case 1177: // Kylie Johnson
                                     case 1949: // Renee tenison
+                                    case 1477: // Nichole Narin
                                         sendEmailToYourself("Redirecting new visitor from " + visitorSuccess.PageName + " to Black Centerfolds",
                                             " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=3822';
