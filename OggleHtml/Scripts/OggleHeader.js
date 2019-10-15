@@ -127,7 +127,7 @@
     //  function checkForCustomLinks(folderId, hrefTextSubstring) {
 
     //alert("settingsArray.ApiServer: " + settingsArray.ApiServer);
-
+    //  
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
@@ -160,7 +160,7 @@
                 }
             }
             else {
-                //alert("checkForLink: " + successModel.Success);
+                alert("ERROR in OggleHeader ImageCategoryDetail  " + successModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
                 sendEmailToYourself("ERROR in OggleHeader ImageCategoryDetail", successModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
             }
         },

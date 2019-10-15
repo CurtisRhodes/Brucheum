@@ -46,25 +46,34 @@ namespace WebApi
                     if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
                     {
                         Visitor visitor = db.Visitors.Where(v => v.VisitorId == pageHitModel.VisitorId).FirstOrDefault();
-                        if ((visitor.IpAddress != "68.203.90.183") && (visitor.IpAddress != "50.62.160.105"))
+                        if (visitor != null)
                         {
-                            db.Visits.Add(new Visit() { VisitorId = pageHitModel.VisitorId, VisitDate = DateTime.Now });
-                            db.SaveChanges();
-                            if (Helpers.IsNullorUndefined(pageHitModel.UserName))
+                            if ((visitor.IpAddress != "68.203.90.183") && (visitor.IpAddress != "50.62.160.105"))
                             {
-                                pageHitSuccessModel.WelcomeMessage = "Welcome Back ";
-                            }
-                            else
-                            {
-                                pageHitSuccessModel.WelcomeMessage = "Welcome back " + visitor.UserName;
+                                db.Visits.Add(new Visit() { VisitorId = pageHitModel.VisitorId, VisitDate = DateTime.Now });
+                                db.SaveChanges();
+                                if (Helpers.IsNullorUndefined(pageHitModel.UserName))
+                                {
+                                    pageHitSuccessModel.WelcomeMessage = "Welcome Back ";
+                                }
+                                else
+                                {
+                                    pageHitSuccessModel.WelcomeMessage = "Welcome back " + visitor.UserName;
+                                }
                             }
                         }
                     }
                     #endregion
                     string pageName = "";
+
+                    //if (pageHitModel.PageId == null) { pageHitSuccessModel.Success = "nn"; }
                     using (OggleBoobleContext odb = new OggleBoobleContext())
                     {
-                        pageName = odb.CategoryFolders.Where(f => f.Id == pageHitModel.PageId).First().FolderName;
+                        CategoryFolder categoryFolder = odb.CategoryFolders.Where(f => f.Id == pageHitModel.PageId).FirstOrDefault();
+                        if (categoryFolder != null)
+                            pageName = categoryFolder.FolderName;
+                        else
+                            pageName = "not found for " + pageHitModel.PageId;
                     }
                     pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.PageName == pageName).Count();
                     pageHitSuccessModel.UserHits = db.PageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();

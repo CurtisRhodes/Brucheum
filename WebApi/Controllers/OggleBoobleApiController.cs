@@ -786,12 +786,20 @@ namespace WebApi
                         if (folderDetailModel.FolderImageLink == null)
                             folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
                         else
-                            folderDetailModel.FolderImage = db.ImageLinks.Where(g => g.Id == categoryFolderDetails.FolderImage).First().Link;
+                        {
+                            ImageLink imageLink = db.ImageLinks.Where(g => g.Id == categoryFolderDetails.FolderImage).FirstOrDefault();
+                            if (imageLink != null)
+                                folderDetailModel.FolderImage = imageLink.Link;
+                            //folderDetailModel.FolderImage = db.ImageLinks.Where(g => g.Id == categoryFolderDetails.FolderImage).First().Link;
+                        }
                     }
                 }
                 folderDetailModel.Success = "ok";
             }
-            catch (Exception ex) { folderDetailModel.Success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex)
+            {
+                folderDetailModel.Success = Helpers.ErrorDetails(ex);
+            }
             return folderDetailModel;
         }
         //[HttpGet]

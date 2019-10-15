@@ -38,7 +38,8 @@ function logVisitor(pageId) {
             //$('#footerMessage').append("  no need to Log Visistor I alread know ip: " + ip);
             logPageHit(pageId);
         }
-        else {
+        else
+        {
             //$('#footerMessage').html("A HIT TO IPINFO.IO  ip: " + ipAddress);
             //console.log("A HIT TO IPINFO.IO  ip: " + ipAddress);
             //sendEmailToYourself("logvisitor from " + calledFrom, " pageId: " + pageId);
@@ -83,15 +84,37 @@ function logVisitor(pageId) {
                             if (visitorSuccess.IsNewVisitor) {
                                 console.log("valid HIT TO IPINFO.IO  ip: " + getCookieValue("IpAddress"));
 
+                                alert("test  pageId: " + pageId);
+
+
                                 switch (pageId) {
+                                    case 1942: // Jennifer Lyn Jackson
+                                        sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 1989",
+                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=626';
+                                        break;
+                                    case 1555: // Donna Derrico
+                                        sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 1995",
+                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=633';
+                                        break;
+                                    case 1516: // Henriette Allais
+                                    case 1520: // Teri Peterson 
+                                    case 1524: // Jeana Tomasino
+                                        sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 1980",
+                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=616';
+                                        break;
                                     case 1947: // Karin and Mirjam Van Breeschooten
-                                        sendEmailToYourself("Redirecting new visitor from " + visitorSuccess.PageName + " to Hef Likes twins",
+                                        sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to Hef Likes twins",
                                             " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                         //window.location.href = 'https://ogglebooble.com/static/playboy/Hef%20likes%20twins.html';
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=3904';
                                         break;
+                                    case 1115: // Karen Price
                                     case 1514: // Gig Gangel
                                     case 1522: // Lisa Welch
+                                    case 1487: // Lindsey Vuolo
                                         sendEmailToYourself("Redirecting new visitor from " + visitorSuccess.PageName + " to Biggest Breasted Centerfolds",
                                             " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=3900';
@@ -99,12 +122,14 @@ function logVisitor(pageId) {
                                     case 1177: // Kylie Johnson
                                     case 1949: // Renee tenison
                                     case 1477: // Nichole Narin
-                                        sendEmailToYourself("Redirecting new visitor from " + visitorSuccess.PageName + " to Black Centerfolds",
-                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                    case 1519: // Ola Ray
+                                    case 1919: // Julie Woodson
+                                        //sendEmailToYourself("New visitor from " + visitorSuccess.PageName + " redirect to Black Centerfolds",
+                                        //    " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=3822';
                                         break;
                                     default:
-                                        sendEmailToYourself("Someone new visited unboring page: " + visitorSuccess.PageName,
+                                        sendEmailToYourself("Someone new visited: " + visitorSuccess.PageName,
                                             " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                 }
                                 //if ((ipAddress !== "68.203.90.183") && (ipAddress !== "50.62.160.105"))
@@ -138,128 +163,12 @@ function logVisitor(pageId) {
                 });
             });
         }
-
     } catch (e) {
         sendEmailToYourself("Error in Log Visistor", e);
     }
 }
 
-function XXlogSpecialPageHit(pageId) {
-    if (document.domain === 'localhost')
-        return;
-
-    if (ipAddress !== "68.203.90.183" && ipAddress !== "50.62.160.105") {
-        //console.log("logging special page hit " + pageId);
-        var SpecialPageName = "";
-        switch (pageId) {
-            case 1:
-                SpecialPageName = "Transitions";
-                break;
-            case 2:
-                SpecialPageName = "Index";
-                break;
-            case 3:
-                SpecialPageName = "Blog";
-                break;
-            case 4:
-                SpecialPageName = "Dashboard";
-                break;
-            case 5:
-                SpecialPageName = "Ranker";
-                break;
-            case 245:
-                SpecialPageName = "Porn";
-                break;
-            default:
-                sendEmailToYourself("logSpecialPageHit pageId: " + SpecialPageName + " not recognized");
-        }
-
-        //$('#footerMessage').html("logging special page hit");
-        var visitorId = getCookieValue("VisitorId");
-        if (isNullorUndefined(visitorId)) {
-            var ipAddress = getCookieValue("IpAddress");
-            //console.log("ipAddress: " + ipAddress);
-            if (!isNullorUndefined(ipAddress)) {
-                //console.log("logSpecialPageHit  How is it that I know the Ip and not the visitorId? log (pre IpInfo)");
-                $.ajax({
-                    type: "GET",
-                    url: settingsArray.ApiServer + "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress,
-                    success: function (successModel) {
-                        if (successModel.Success === "ok") {
-                            setCookieValue("VisitorId", successModel.VisitorId);
-
-                            if (getCookieValue("VisitorId") === successModel.VisitorId) {
-                                console.log("trying logSpecialPageHit again with visitorId  (pre IpInfo): " + getCookieValue("VisitorId"));
-                                sendEmailToYourself("trying logSpecialPageHit again", "trying logSpecialPageHit again with visitorId(pre IpInfo): " + getCookieValue("VisitorId"));
-                                logSpecialPageHit(pageId);
-                            }
-                            else {
-                                console.log("logSpecialPageHit GetVisitorIdFromIP FAIL visitorId:  " + successModel.VisitorId);
-                                sendEmailToYourself("logSpecialPageHit GetVisitorIdFromIP FAIL", "visitorId:  " + successModel.VisitorId);
-                            }
-                        }
-                        else {
-                            console.log("logSpecialPageHit: " + pageHitSuccessl.Success);
-                            sendEmailToYourself("logSpecialPageHit Error: ", pageHitSuccessl.Success);
-                        }
-                    },
-                    error: function (jqXHR, exception) {
-                        $('#blogLoadingGif').hide();
-                        console.log("GetVisitorIdFromIP jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-                        sendEmailToYourself("GetVisitorIdFromIP jqXHR Error", getXHRErrorDetails(jqXHR, exception));
-                    }
-                });
-            }
-            else {
-                console.log("forced to hit IPINFO from log special page hit");
-                sendEmailToYourself("forced to hit IPINFO from log special page hit", "");
-                logVisitor(pageId, "logSpecialPageHit");
-            }
-        }
-        else {
-            console.log("logging proper special page hit  pageId: " + SpecialPageName + "   visitorId: " + visitorId);
-            $.ajax({
-                type: "POST",
-                url: settingsArray.ApiServer + "api/HitCounter/LogSpecialPageHit?pageId=" + pageId + "&visitorId=" + visitorId,
-                success: function (pageHitSuccess) {
-                    if (pageHitSuccess.Success === "ok") {
-                        $('#footerMessage').html("");
-                        if (!isNullorUndefined(pageHitSuccess.WelcomeMessage)) {
-                            $('#headerMessage').html(pageHitSuccess.WelcomeMessage);
-                        }
-
-                        sendEmailToYourself("Someone visited: " + SpecialPageName, "visitorId: " + visitorId);
-
-                        //if (AppDomain.CurrentDomain.BaseDirectory != "F:\\Devl\\WebApi\\")
-                        //{
-                        //    Visitor visitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
-                        //    using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
-                        //    {
-                        //        godaddyEmail.SendEmail("ALRIGHT!. Somebody Visited " + pageId, visitor.IpAddress +
-                        //            " from " + visitor.City + "," + visitor.Region + " " + visitor.Country + " visited: " + pageId);
-                        //    }
-                        //}
-
-                    }
-                    else {
-                        console.log("logSpecialPageHit: " + pageHitSuccess.Success);
-                        sendEmailToYourself("FA logSpecialPageHit error", pageHitSuccess.Success);
-                    }
-                },
-                error: function (jqXHR, exception) {
-                    $('#blogLoadingGif').hide();
-                    console.log("logSpecialPageHit jqXHR Error : " + getXHRErrorDetails(jqXHR, exception));
-                    sendEmailToYourself("logSpecialPageHit jqXHR error", getXHRErrorDetails(jqXHR, exception));
-                }
-            });
-        }
-    }
-}
-
 function logPageHit(pageId) {
-    //$('#footerMessage').html("logging proper page hit.UserName: " + userName);
-    //console.log("logging page hit: " + pageId);
-
     var ipAddress = getCookieValue("IpAddress");
     if (isNullorUndefined(ipAddress)) {
         console.log("Unable to perform logPageHit for pageId: " + pageId);
@@ -285,10 +194,8 @@ function logPageHit(pageId) {
                             console.log("logPageHit how is it that I know the Ip and not the visitorId? (pre IpInfo) ");
                             setCookieValue("VisitorId", successModel.VisitorId);
                             if (getCookieValue("VisitorId") === successModel.VisitorId) {
-
                                 console.log("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));
                                 sendEmailToYourself("looping in logPageHit", " GetVisitorIdFromIP.VisitorId: " + getCookieValue("VisitorId"));
-
                                 logPageHit(pageId);
                             }
                         }

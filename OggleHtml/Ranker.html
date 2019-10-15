@@ -102,7 +102,6 @@
             else
                 subdomain = params.subdomain;
 
-            setOggleHeader("ranker", 3907);
             setOggleFooter("boobs");
             setHeaderRowMessage();
             setInitialCheckbox(subdomain);
@@ -118,6 +117,8 @@
                     clearInterval(waiter);
                     setUserPermissions();
                     loadBoobsRanker(subdomain);
+
+                    setOggleHeader("ranker", 3907);
 
 
                     var waiter2 = setInterval(function () {
@@ -185,10 +186,12 @@
                         }
 
                     }
-                    else
+                    else {
                         alert("BoobsRanker: " + container.Success);
+                    }
                 },
                 error: function (xhr) {
+
                     alert("BoobsRanker xhr error: " + xhr.statusText);
                 }
             });
