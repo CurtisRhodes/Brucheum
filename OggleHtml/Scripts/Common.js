@@ -206,7 +206,7 @@ function openLink(folderId) {
 
 function setFolderImage(linkId, folderId, level) {
 
-    alert("setFolderImage link: " + linkId + " folderId: " + folderId + " level?: " + level);
+    //alert("setFolderImage link: " + linkId + " folderId: " + folderId + " level?: " + level);
 
     $.ajax({
         type: "PUT",

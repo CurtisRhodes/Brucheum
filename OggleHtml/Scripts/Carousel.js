@@ -116,7 +116,10 @@ function loadImages(rootFolder, isChecked, skip, take) {
 function clickViewGallery() {
     clearInterval(CarouselInterval);
     //alert("clickViewGallery");
-    sendEmailToYourself("Someone clicked on a carousel item", carouselItemArray[imageIndex].FolderId + " clicked by " + getCookieValue("IpAddress"));
+    var ipAddr = getCookieValue("IpAddress");
+    if ((ipAddr !== "68.203.90.183") && (ipAddr !== "50.62.160.105")) {
+        sendEmailToYourself("Someone clicked on a carousel item", carouselItemArray[imageIndex].FolderId + " clicked by " + ipAddr);
+    }
     window.location.href = "/album.html?folder=" + carouselItemArray[imageIndex].FolderId;
 }
 

@@ -83,10 +83,6 @@ function logVisitor(pageId) {
 
                             if (visitorSuccess.IsNewVisitor) {
                                 console.log("valid HIT TO IPINFO.IO  ip: " + getCookieValue("IpAddress"));
-
-                                alert("test  pageId: " + pageId);
-
-
                                 switch (pageId) {
                                     case 1942: // Jennifer Lyn Jackson
                                         sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 1989",
@@ -101,9 +97,20 @@ function logVisitor(pageId) {
                                     case 1516: // Henriette Allais
                                     case 1520: // Teri Peterson 
                                     case 1524: // Jeana Tomasino
+                                    case 1547: // Melissa Holliday 
                                         sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 1980",
                                             " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=616';
+                                        break;
+                                    case 1479: // Lauren Michelle Hill
+                                        sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 2001",
+                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=643';
+                                        break;
+                                    case 1374: // Regina Deutinger
+                                        sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 2008",
+                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=660';
                                         break;
                                     case 1947: // Karin and Mirjam Van Breeschooten
                                         sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to Hef Likes twins",
@@ -115,6 +122,7 @@ function logVisitor(pageId) {
                                     case 1514: // Gig Gangel
                                     case 1522: // Lisa Welch
                                     case 1487: // Lindsey Vuolo
+                                    case 1614: // Nadine Chanz
                                         sendEmailToYourself("Redirecting new visitor from " + visitorSuccess.PageName + " to Biggest Breasted Centerfolds",
                                             " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=3900';
@@ -129,8 +137,8 @@ function logVisitor(pageId) {
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=3822';
                                         break;
                                     default:
-                                        sendEmailToYourself("Someone new visited: " + visitorSuccess.PageName,
-                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        //sendEmailToYourself("Someone new visited: " + visitorSuccess.PageName,
+                                        //    " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                 }
                                 //if ((ipAddress !== "68.203.90.183") && (ipAddress !== "50.62.160.105"))
                             }
@@ -141,7 +149,7 @@ function logVisitor(pageId) {
                                         visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                 }
                                 else {
-                                    //sendEmailToYourself("logvisitor from " + calledFrom,
+                                    //sendEmailToYourself("A visitor came back ",
                                     //    visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                 }
                             }
