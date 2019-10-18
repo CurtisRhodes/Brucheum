@@ -15,6 +15,13 @@
                 "                <a href='/album.html?folder=159'> topic,</a>\n" +
                 "                <a href='/album.html?folder=199'> shapes</a> and\n" +
                 "                <a href='/album.html?folder=241'>sizes</a>\n";
+
+            //subheaderContent =
+            //    "                <a href='/album.html?folder=2'><span class='bigTits'>STORE </span>bryster</a> organiseret af\n" +
+            //    "                <a href='/album.html?folder=136'> rejser,</a>\n" +
+            //    "                <a href='/album.html?folder=159'> emne,</a>\n" +
+            //    "                <a href='/album.html?folder=199'> figurer</a> og\n" +
+            //    "                <a href='/album.html?folder=241'>størrelser</a>\n";
             bannerImageLink = "<a href='/'><img src='/Images/redballon.png' title='home. Find lots of cool things here.' class='bannerImage' /></a>\n";
             boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='/Ranker.html?subdomain=boobs' title='Spin through the links to land on random portrait images. ' >boobs ranker</a></div>\n";
             break;
@@ -124,10 +131,11 @@
             $('#optionNotLoggedIn').hide();
         }
     }
-    //  function checkForCustomLinks(folderId, hrefTextSubstring) {
+    setSpecialLinks(folderId);
+}
 
-    //alert("settingsArray.ApiServer: " + settingsArray.ApiServer);
-    //  
+
+function setSpecialLinks(folderId) {
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
@@ -140,6 +148,7 @@
                 //checkForLink(params.folder, "babepedia");
                 //alert("folderDetailModel.ExternalLinks: " + folderDetailModel.ExternalLinks);
 
+                // 
                 if (!isNullorUndefined(folderDetailModel.ExternalLinks)) {
 
                     if (folderDetailModel.ExternalLinks.indexOf("biggest breasted centerfolds") > 0) {
@@ -161,23 +170,20 @@
             }
             else {
                 alert("ERROR in OggleHeader ImageCategoryDetail  " + successModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
-                sendEmailToYourself("ERROR in OggleHeader ImageCategoryDetail", successModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
+                sendEmailToYourself("ERROR in OggleHeader setSpecialLinks", successModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
             }
         },
-        error: function (xhr) {
-            sendEmailToYourself("XHR ERROR in OggleHeader ImageCategoryDetail", getXHRErrorDetails(xhr) +
-                "  called from: " + subdomain + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
-            //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
+        error: function (jqXHR, exception) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "setSpecialLinks")) {
+                sendEmailToYourself("XHR ERROR IN OggleHeader.JS setSpecialLinks", "/api/ImageCategoryDetail/Get?folderId=" + folderId +
+                    "<br>exception: " + exception + "<br/>Message : " + errorMessage);
+                //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
+            }
         }
     });
 }
 
-    //subheaderContent =
-    //    "                <a href='/album.html?folder=2'><span class='bigTits'>STORE </span>bryster</a> organiseret af\n" +
-    //    "                <a href='/album.html?folder=136'> rejser,</a>\n" +
-    //    "                <a href='/album.html?folder=159'> emne,</a>\n" +
-    //    "                <a href='/album.html?folder=199'> figurer</a> og\n" +
-    //    "                <a href='/album.html?folder=241'>størrelser</a>\n";
 
 
 

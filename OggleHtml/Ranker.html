@@ -190,9 +190,15 @@
                         alert("BoobsRanker: " + container.Success);
                     }
                 },
-                error: function (xhr) {
-
-                    alert("BoobsRanker xhr error: " + xhr.statusText);
+                error: function (jqXHR, exception) {
+                    $('#imagePageLoadingGif').hide();
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "loadBoobsRankers")) {
+                        sendEmailToYourself("XHR ERROR in Ranker.html loadBoobsRanker", "api/BoobsRanker?rootFolder=" + subdomain + "&skip=" + skip + "&take=" + take +
+                            "Called from: " + getCookieValue("IpAddress") +
+                            "<br/>  exception [" + exception + "] <br/>Message: " + errorMessage);
+                    }
+                    //alert("BoobsRanker xhr error: " + xhr.statusText);
                 }
             });
         }

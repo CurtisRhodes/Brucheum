@@ -315,10 +315,18 @@ footer {
     padding: 4px;
 }
 
+.connectionMessage {
+    border: solid thick red;
+    text-align: center;
+}
+
 .customMessageContainer {
+    border: solid thick green;
+    display: block;
     position: fixed;
+    top: 100px;
+    left: 500px;
     z-index: 20;
-    margin: 20px;
     display: none;
 }
 

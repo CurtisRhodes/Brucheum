@@ -17,7 +17,27 @@ var initialTake = 100;
 function launchCarousel(root) {
     $('#footerMessage').html("launching carousel");
     $('.carouselImage').css("height", "150px");
-    loadImages(root, true, 0, initialTake);
+
+    getAconnection(root);
+    //loadImages(root, true, 0, initialTake);
+}
+
+function getAconnection(root) {
+    $.ajax({
+        type: "PATCH",
+        async: true,
+        url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=1",
+        success: function () {
+            loadImages(root, true, 0, initialTake);
+        },
+        error: function (jqXHR, exception) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "getAconnection")) {
+                sendEmailToYourself("XHR ERROR IN ALBUM.JS getAconnection", "api/AlbumPage/GetRootFolder?folderId=1" +
+                    "<br>exception: " + exception + "   directToStaticPage jqXHR : " + errorMessage);
+            }
+        }
+    });
 }
 
 function loadImages(rootFolder, isChecked, skip, take) {
@@ -105,9 +125,11 @@ function loadImages(rootFolder, isChecked, skip, take) {
                 }
             },
             error: function (jqXHR, exception) {
-                sendEmailToYourself("jqXHR exception in Carousel/GetLinks", "loadImages jqXHR : " +
-                    settingsArray.ApiServer + "api/Carousel/GetLinks?root=" + rootFolder +
-                    "&skip=" + skip + "&take=" + take + "  " + getXHRErrorDetails(jqXHR, exception));
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "getAconnection")) {
+                    sendEmailToYourself("XHR ERROR IN Carousel.JS loadImages", "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take +
+                        "<br>exception: " + exception + "   Message: " + errorMessage);
+                }
             }
         });
     }
@@ -287,7 +309,13 @@ function carouselContextMenu() {
                     sendEmailToYourself("GetModelName fail", imageDetails.Success);
                 }
             },
-            error: function (xhr) {
+            error: function (jqXHR, exception) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "carouselContextMenu")) {
+                    sendEmailToYourself("XHR ERROR IN Carousel.JS carouselContextMenu", "api/ImageCategoryDetail/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId +
+                        "<br>exception: " + exception + "<br/>Message : " + errorMessage);
+                    //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
+                }
                 sendEmailToYourself("GetNudeModelName xhr error: ", xhr.statusText);
                 //alert("GetNudeModelName xhr error: " + xhr.statusText);
             }

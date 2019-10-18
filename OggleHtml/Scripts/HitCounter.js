@@ -22,8 +22,13 @@ function logImageHit(link, initialHit) {
                 }
             },
             error: function (jqXHR, exception) {
-                sendEmailToYourself("WHAT THE  logImageHit jqXHR fail ", getXHRErrorDetails(jqXHR, exception));
-                console.log("logImageHit XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "logImageHit")) {
+                    sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logImageHit", "api/ImageHit/LogImageHit?visitorId=" + visitorId + "&linkId=" + link +
+                        "<br>exception: " + exception + "   Message: " + errorMessage);
+                }
+                //sendEmailToYourself("WHAT THE  logImageHit jqXHR fail ", getXHRErrorDetails(jqXHR, exception));
+                //console.log("logImageHit XHR error: " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     }
@@ -137,8 +142,8 @@ function logVisitor(pageId) {
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=3822';
                                         break;
                                     default:
-                                        //sendEmailToYourself("Someone new visited: " + visitorSuccess.PageName,
-                                        //    " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                    //sendEmailToYourself("Someone new visited: " + visitorSuccess.PageName,
+                                    //    " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                 }
                                 //if ((ipAddress !== "68.203.90.183") && (ipAddress !== "50.62.160.105"))
                             }
@@ -165,8 +170,13 @@ function logVisitor(pageId) {
                     },
                     error: function (jqXHR, exception) {
                         $('#blogLoadingGif').hide();
-                        sendEmailToYourself("LogVisit jqXHR", getXHRErrorDetails(jqXHR, exception));
-                        console.log("LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                        var errorMessage = getXHRErrorDetails(jqXHR);
+                        if (!checkFor404(errorMessage, "logVisitor")) {
+                            sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logVisitor", "api/HitCounter/LogVisitor" +
+                                "<br>exception: " + exception + "   Message: " + errorMessage);
+                        }
+                        //sendEmailToYourself("LogVisit jqXHR", getXHRErrorDetails(jqXHR, exception));
+                        //console.log("LogVisit jqXHR : " + getXHRErrorDetails(jqXHR, exception));
                     }
                 });
             });
@@ -214,8 +224,13 @@ function logPageHit(pageId) {
                     }
                 },
                 error: function (jqXHR, exception) {
-                    sendEmailToYourself("GetVisitorIdFromIP XHR ERROR", getXHRErrorDetails(jqXHR, exception));
-                    console.log("GetVisitorIdFromIP jqXHR ERROR: " + getXHRErrorDetails(jqXHR, exception));
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "logPageHit")) {
+                        sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logPageHit", "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress +
+                            "<br>exception: " + exception + "   Message: " + errorMessage);
+                    }
+                    //sendEmailToYourself("GetVisitorIdFromIP XHR ERROR", getXHRErrorDetails(jqXHR, exception));
+                    //console.log("GetVisitorIdFromIP jqXHR ERROR: " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         }
@@ -268,9 +283,14 @@ function logPageHit(pageId) {
                     }
                 },
                 error: function (jqXHR, exception) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage,"logPageHit")) {
+                        sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logPageHit", "api/PageHit/LogPageHit  pageId: " + pageId +
+                            "<br>exception: " + exception + "   Message: " + errorMessage);
+                    }
                     // all logging needs to be hidden from users
-                    sendEmailToYourself("logPageHit error", getXHRErrorDetails(jqXHR, exception));
-                    console.log("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
+                    //sendEmailToYourself("logPageHit error", getXHRErrorDetails(jqXHR, exception));
+                    //console.log("logPageHit error: " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         }

@@ -181,7 +181,10 @@
                                 $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
                                 $('#boobsLeftColumnList').show();
                                 $('#pornLeftColumnList').hide();
+
                                 launchPromoMessages();
+
+
                                 //alert("logSpecialPageHit(index);")
                                 logPageHit(3908);
                             }
@@ -251,12 +254,22 @@
                     }
                     else {
                         $('#blogLoadingGif').hide();
-                        alert("loadPromoMessages: " + blogCommentsContainer.Success)
+                        sendEmailToYourself("FAIL in Index.Html launchPromoMessages", "/api/OggleBlog/GetBlogList?commentType=PRO" +
+                            "Called from: " + getCookieValue("IpAddress") + "  folderId: " + folderId +
+                            "<br/>  exception [" + exception + "] <br/>Message: " + errorMessage);
+                        //alert("loadPromoMessages: " + blogCommentsContainer.Success)
                     }
                 },
                 error: function (jqXHR, exception) {
                     $('#blogLoadingGif').hide();
-                    alert("launchPromoMessages jqXHR : " + getXHRErrorDetails(jqXHR, exception) + "settingsArray.ApiServer: " + settingsArray.ApiServer);
+                    $('#imagePageLoadingGif').hide();
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "launchPromoMessages")) {
+                        sendEmailToYourself("XHR ERROR in Index.Html launchPromoMessages ", "/api/OggleBlog/GetBlogList?commentType=PRO" +
+                            "Called from: " + getCookieValue("IpAddress") + "  folderId: " + folderId +
+                            "<br/>  exception [" + exception + "] <br/>Message: " + errorMessage);
+                    }
+                    //alert("launchPromoMessages jqXHR : " + getXHRErrorDetails(jqXHR, exception) + "settingsArray.ApiServer: " + settingsArray.ApiServer);
                 }
             });
         }

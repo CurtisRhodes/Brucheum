@@ -111,10 +111,16 @@
                             $('#footerMessage').html("isPornEditor: " + isPornEditor);
                             //alert("Album.html isPornEditor: " + isPornEditor);
                             if (!isPornEditor) {
-                                directToStaticPage(params.folder);
+                                if (!directToStaticPage(params.folder)) {
+
+                                    setAlbumPageHeader(params.folder);
+                                    getAlbumImages(params.folder);
+
+
+
+                                }
                             }
-                            else
-                            {
+                            else {
                                 setAlbumPageHeader(params.folder);
                                 getAlbumImages(params.folder);
                                 //logPageHit(params.folder);
