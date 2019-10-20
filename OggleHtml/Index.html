@@ -71,7 +71,7 @@
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
         </div>
-        <div id="middleColumn">            
+        <div id="middleColumn">
             <div id="divStatusMessage"></div>
             <div id="dots"></div>
             <div class="flexContainer">
@@ -84,9 +84,10 @@
                     <div class="centeredDivShell randomImageContainer">
                         <div class="centeredDivInner">
                             <!--<div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>-->
-                            <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
                             <div id="laCarousel" class="carouselContainer">
+                                <!--<div class="assuranceArrows"><img src="Images/leftArrowOpaque02.png" /></div>-->
                                 <div class="carouselImageContainer">
+                                    <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
                                     <img id="thisCarouselImage" oncontextmenu="carouselContextMenu()" class="carouselImage" src="Images/ingranaggi3.gif" onclick="clickViewGallery()" />
                                     <div class="imgBottom">
                                         <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
@@ -95,6 +96,7 @@
                                         <img class="speedButton floatRight" src="Images/speedDialFaster.png" title="faster" onclick="clickSpeed('faster')" />
                                     </div>
                                 </div>
+                                <div class="assuranceArrows"><img src="Images/rightArrowOpaque02.png" /></div>
                             </div>
                         </div>
                     </div>
@@ -124,9 +126,6 @@
     <div w3-include-html="Snippets/AdminDialogs.html"></div>
     <div w3-include-html="Snippets/Login.html"></div>
     <div w3-include-html="Snippets/Register.html"></div>
-
-
-
 
     <script>
         var promoIdx = 0;
@@ -159,7 +158,6 @@
                 else {
                     $('#dots').html('');
                     clearInterval(waiter);
-                    launchCarousel(subdomain);
                     setUserPermissions();
                     var waiter2 = setInterval(function () {
                         dots += "* ";
@@ -168,6 +166,11 @@
                             clearInterval(waiter2);
                             $('#dots').html("");
                             //$('#footerMessage').html("isPornEditor: " + isPornEditor);
+
+                            setOggleHeader(subdomain, 3908);
+                            setOggleFooter(subdomain);
+                            //$('#carousel').hide();
+                            launchCarousel(subdomain);
 
                             if (subdomain == "porn") {
                                 $('#pornLeftColumnList').show();
@@ -183,13 +186,9 @@
                                 $('#pornLeftColumnList').hide();
 
                                 launchPromoMessages();
-
-
                                 //alert("logSpecialPageHit(index);")
                                 logPageHit(3908);
                             }
-                            setOggleHeader(subdomain, 3908);
-                            setOggleFooter(subdomain);
                         }
                     }, 300);
                 }
@@ -255,8 +254,8 @@
                     else {
                         $('#blogLoadingGif').hide();
                         sendEmailToYourself("FAIL in Index.Html launchPromoMessages", "/api/OggleBlog/GetBlogList?commentType=PRO" +
-                            "Called from: " + getCookieValue("IpAddress") + "  folderId: " + folderId +
-                            "<br/>  exception [" + exception + "] <br/>Message: " + errorMessage);
+                            "Called from: " + getCookieValue("IpAddress") +
+                            "\n  exception [" + exception + "] <br/>Message: " + errorMessage);
                         //alert("loadPromoMessages: " + blogCommentsContainer.Success)
                     }
                 },

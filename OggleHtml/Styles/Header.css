@@ -198,7 +198,7 @@ header {
 
 .everyCenterfold {
     font-size: 22px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Comic Sans MS';  /*'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
 }
 
 .loginArea {

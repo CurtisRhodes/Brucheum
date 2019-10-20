@@ -111,19 +111,12 @@
                             $('#footerMessage').html("isPornEditor: " + isPornEditor);
                             //alert("Album.html isPornEditor: " + isPornEditor);
                             if (!isPornEditor) {
-                                if (!directToStaticPage(params.folder)) {
-
-                                    setAlbumPageHeader(params.folder);
-                                    getAlbumImages(params.folder);
-
-
-
-                                }
+                                directToStaticPage(params.folder);
                             }
                             else {
+                                // logPageHit(params.folder); called in setAlbumPageHeader
                                 setAlbumPageHeader(params.folder);
                                 getAlbumImages(params.folder);
-                                //logPageHit(params.folder);
                             }
                         }
                     }, 300);

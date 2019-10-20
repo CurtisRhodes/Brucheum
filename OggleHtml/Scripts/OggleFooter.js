@@ -80,9 +80,10 @@
             "</div>\n";
     }
 
-    if (footerhtml === "")
-        alert("setOggleFooter unknown: " + subdomain);
-
+    if (footerhtml === "") {
+        //alert("setOggleFooter unknown: " + subdomain);
+        sendEmailToYourself("ERROR in Ogglefooter.js setOggleFooter", "subdomain: " + subdomain + "  not found");
+    }
     $('footer').html("");
     $('footer').html(footerhtml);
 }

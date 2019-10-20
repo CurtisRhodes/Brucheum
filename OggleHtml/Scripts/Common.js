@@ -107,31 +107,33 @@ function displayStatusMessage(msgCode, message) {
 }
 
 function checkFor404(errorMessage, calledFrom) {
-
+    var isNotConnected = false;
     //alert("checkFor404() \nerrorMessage: " + errorMessage + ", calledFrom:" + calledFrom);
-    var success = false;
     if (isNullorUndefined(errorMessage)) {
-        alert("checkFor404 called with null errorMessage from: " + calledFrom);
-        sendEmailToYourself("checkFor404 called with null errorMessage from: " + calledFrom, "ip: " + getCookieValue("IpAddress"));
-        return success;
+        //alert("checkFor404 called with null errorMessage from: " + calledFrom);
+        sendEmailToYourself("checkFor404 called with null errorMessage from: " + calledFrom, "ip: " + ipAddr);
     }
 
     if (errorMessage.indexOf("Not connect") > -1) {
-        success = true;
-        //sendEmailToYourself("CAN I GET A CONNECTION " + calledFrom, "ip: " + getCookieValue("IpAddress"));
+        isNotConnected = true;
+
+        var ipAddr = getCookieValue("IpAddress");
+        if (ipAddr !== "68.203.90.199983")
+            sendEmailToYourself("CAN I GET A CONNECTION ", "calledFrom: " + calledFrom + "    ip: " + getCookieValue("IpAddress"));
+
         //showCustomMessage(71);
-
-
-        $('#customMessage').html("<div class='customMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>" +
-            "<br/><a href='.'>Refresh page</a></div></div>");
+        $('#customMessage').html("<div class='centeredDivShell'><div class='centeredDivInner'>"+
+            "<div class='customMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>" +
+            "<br/><a href='.'>Refresh page</a></div></div></div></div>");
         //"<br/><span>Refresh page<span><br/>404 " + calledFrom + "</div></div>");
-        //$('.classRefreshPage').
         $('.customMessageContainer').show();
         console.log("checkFor404: " + calledFrom);
-
     }
-    else alert("checkFor404 errorMessage.indexOf('Not connect'): " + errorMessage.indexOf("Not connect") +"\nerrorMessage: " + errorMessage);    
-    return success;
+    else {
+        //alert("checkFor404 errorMessage.indexOf('Not connect'): " + errorMessage.indexOf("Not connect") + "\nerrorMessage: " + errorMessage);
+        //sendEmailToYourself("checkFor404", "indexOf('Not connect'): " + errorMessage.indexOf("Not connect") + "\nerrorMessage: " + errorMessage);
+    }
+    return isNotConnected;
 }
 
 function getXHRErrorDetails(jqXHR) {
@@ -176,6 +178,8 @@ function logActivity(changeLogModel) {
         data: changeLogModel,
         success: function (success) {
             if (success === "ok")
+
+
                 displayStatusMessage("ok", "add image logged");
             else
                 alert("ChangeLog: " + success);

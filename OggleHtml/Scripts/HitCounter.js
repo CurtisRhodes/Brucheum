@@ -1,5 +1,5 @@
 ﻿// HITCOUNTER
-var verbose = 1;
+var verbosity = 1;
 
 function logImageHit(link, initialHit) {
     //$('#footerMessage').html("logging image hit");
@@ -57,7 +57,7 @@ function logVisitor(pageId) {
                     AppName: "OggleBooble",
                     PageId: pageId,
                     UserName: userName,
-                    Verbosity: verbose,
+                    Verbosity: verbosity,
                     City: data.city,
                     Region: data.region,
                     Country: data.country,
@@ -90,36 +90,41 @@ function logVisitor(pageId) {
                                 console.log("valid HIT TO IPINFO.IO  ip: " + getCookieValue("IpAddress"));
                                 switch (pageId) {
                                     case 1942: // Jennifer Lyn Jackson
-                                        sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 1989",
-                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        if (verbosity > 4)
+                                            sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 1989",
+                                                " hit from " + data.city + ", " + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=626';
                                         break;
                                     case 1555: // Donna Derrico
                                         sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 1995",
-                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                            " hit from " + data.city + ", " + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=633';
                                         break;
                                     case 1516: // Henriette Allais
                                     case 1520: // Teri Peterson 
                                     case 1524: // Jeana Tomasino
                                     case 1547: // Melissa Holliday 
-                                        sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 1980",
-                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        if (verbosity > 4)
+                                            sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 1980",
+                                                " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=616';
                                         break;
                                     case 1479: // Lauren Michelle Hill
-                                        sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 2001",
-                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        if (verbosity > 4)
+                                            sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 2001",
+                                                " hit from " + data.city + ", " + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=643';
                                         break;
                                     case 1374: // Regina Deutinger
-                                        sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 2008",
-                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        if (verbosity > 4)
+                                            sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 2008",
+                                                " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=660';
                                         break;
                                     case 1947: // Karin and Mirjam Van Breeschooten
-                                        sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to Hef Likes twins",
-                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        if (verbosity > 4)
+                                            sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to Hef Likes twins",
+                                                " hit from " + data.city + ", " + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                         //window.location.href = 'https://ogglebooble.com/static/playboy/Hef%20likes%20twins.html';
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=3904';
                                         break;
@@ -128,8 +133,9 @@ function logVisitor(pageId) {
                                     case 1522: // Lisa Welch
                                     case 1487: // Lindsey Vuolo
                                     case 1614: // Nadine Chanz
-                                        sendEmailToYourself("Redirecting new visitor from " + visitorSuccess.PageName + " to Biggest Breasted Centerfolds",
-                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        if (verbosity > 4)
+                                            sendEmailToYourself("Redirecting new visitor from " + visitorSuccess.PageName + " to Biggest Breasted Centerfolds",
+                                                " hit from " + data.city + ", " + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=3900';
                                         break;
                                     case 1177: // Kylie Johnson
@@ -137,13 +143,15 @@ function logVisitor(pageId) {
                                     case 1477: // Nichole Narin
                                     case 1519: // Ola Ray
                                     case 1919: // Julie Woodson
-                                        //sendEmailToYourself("New visitor from " + visitorSuccess.PageName + " redirect to Black Centerfolds",
-                                        //    " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        if (verbosity > 4)
+                                            sendEmailToYourself("New visitor from " + visitorSuccess.PageName + " redirect to Black Centerfolds",
+                                                " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=3822';
                                         break;
                                     default:
-                                    //sendEmailToYourself("Someone new visited: " + visitorSuccess.PageName,
-                                    //    " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        if (verbosity > 4)
+                                            sendEmailToYourself("Someone new visited: " + visitorSuccess.PageName,
+                                                " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                 }
                                 //if ((ipAddress !== "68.203.90.183") && (ipAddress !== "50.62.160.105"))
                             }
@@ -154,14 +162,16 @@ function logVisitor(pageId) {
                                         visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                 }
                                 else {
-                                    //sendEmailToYourself("A visitor came back ",
-                                    //    visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                    if (verbosity > 4)
+                                        sendEmailToYourself("A visitor came back ",
+                                            visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                 }
                             }
                             $('#footerMessage').html("");
                             if (visitorSuccess.WelcomeMessage !== "") {
                                 $('#headerMessage').html(visitorSuccess.WelcomeMessage);
                             }
+                            //sendEmailToYourself("Success in logVisitor ", "Just so you know this happens too, not just the pk violation.");
                         }
                         else {
                             console.log("logVisitor: " + visitorSuccess.Success);
@@ -239,14 +249,14 @@ function logPageHit(pageId) {
             var visitorId = getCookieValue("VisitorId");
             //console.log("logging proper page hit.  ip: " + ipAddress + " visitorId: " + visitorId + " pageId: " + pageId);
             //sendEmailToYourself("logging proper page hit", "ip: " + ipAddress + " visitorId: " + visitorId + " pageId: " + pageId);
-            console.log("sending email and logging proper page hit.  ip: " + ipAddress + " visitorId: " + visitorId + " pageId: " + pageId);
+            console.log("logging proper page hit.  ip: " + ipAddress + " visitorId: " + visitorId + " pageId: " + pageId);
             var pageHitModel = {
                 VisitorId: visitorId,
                 UserName: userName,
                 AppName: "OggleBooble",
                 IpAddress: ipAddress,
                 PageId: pageId,
-                Verbose: verbose
+                Verbose: verbosity
             };
 
             $.ajax({

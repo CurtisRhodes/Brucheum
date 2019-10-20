@@ -23,11 +23,14 @@ function launchCarousel(root) {
 }
 
 function getAconnection(root) {
+    $('#customMessage').html("<div class='customMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>");
+    $('.customMessageContainer').show();
     $.ajax({
         type: "PATCH",
         async: true,
         url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=1",
         success: function () {
+            $('.customMessageContainer').hide();
             loadImages(root, true, 0, initialTake);
         },
         error: function (jqXHR, exception) {
@@ -106,6 +109,16 @@ function loadImages(rootFolder, isChecked, skip, take) {
                         startCarousel();
                         $('#footerMessage').html("starting carousel");
                         resizeCarousel();
+                        $('.assuranceArrows').click(function () {
+                            //alert("move image");
+                            resume();
+
+                            var ipAddr = getCookieValue("IpAddress");
+                            if (ipAddr !== "68.203.90.199983")
+                                sendEmailToYourself("click on carousel arrow", "Ip: " + ipAddr +
+                                "\n  folder: " + carouselItemArray[imageIndex].FolderName + "\n link: " + carouselItemArray[imageIndex].LinkId);
+                            //logActivity
+                        });
                     }
                     numImages = carouselInfo.Links.length;
                     numFolders += carouselInfo.FolderCount;
@@ -229,6 +242,7 @@ function resizeCarousel() {
     $('.carouselImage').css("max-width", $('#middleColumn').width());
     //$('.carouselImage').css("height", $('#middleColumn').innerHeight() - 180);
     $('.carouselImage').css("height", $('#middleColumn').height() - 210);
+    $('.assuranceArrows img').css("height", $('#middleColumn').height() - 210);
 }
 
 function togglePause() {

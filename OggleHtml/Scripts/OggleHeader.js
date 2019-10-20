@@ -6,13 +6,31 @@
     var boobsRankerLink = "";
     var bannerImageLink = "<a href='/'><img src='/Images/redballon.png' class='bannerImage' /></a>\n";
 
+    if (subdomain === "special") {
+        // comming in from staticPage.js
+        switch (folderId) {
+            case 1139: subdomain = "blog"; break;
+            case 3907: subdomain = "ranker"; break;
+            case 3909: subdomain = "ranker"; break;
+            //3906	Transitions
+            //3907	Ranker
+            //3908	Index
+            //3909	Porn Index
+            //3910	Admin Dashboard
+            default: subdomain = "boobs";
+        }
+        sendEmailToYourself("Someone click on a special page from a staic",
+            "special page: " + subdomain + "  folderId: " + folderId + "  ip: " + getCookieValue("IpAddress"));
+    }
+
     switch (subdomain) {
         case "boobs":
         case "archive":
+        //case "special":
             subheaderContent =
                 "                <a href='/album.html?folder=2'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
                 "                <a href='/album.html?folder=136'> poses,</a>\n" +
-                "                <a href='/album.html?folder=159'> topic,</a>\n" +
+                "                <a href='/album.html?folder=159'> positions,</a>\n" +
                 "                <a href='/album.html?folder=199'> shapes</a> and\n" +
                 "                <a href='/album.html?folder=241'>sizes</a>\n";
 
@@ -28,13 +46,12 @@
         case "playboy":
         case "playmates":
             subheaderContent =
-                "                <a href='/album.html?folder=2'><span class='everyCenterfold'>Every Playboy Centerfold</span></a>\n" +
-                "                <a href='/album.html?folder=136'> poses,</a>\n" +
-                "                <a href='/album.html?folder=159'> topic,</a>\n" +
-                "                <a href='/album.html?folder=199'> shapes</a> and\n" +
-                "                <a href='/album.html?folder=241'>sizes</a>\n";
+                "                <a href='/album.html?folder=1132' onclick='reportClick((\"Centerfolds\")'> Centerfolds,</a>\n" +
+                "                <a href='/album.html?folder=1986' onclick='reportClick(\"magazine covers\")'> magazine covers,</a>\n" +
+                "                <a href='/album.html?folder=3796' onclick='reportClick(\"cybergirls\")'> cybergirls,</a> and\n" +
+                "                <a href='/album.html?folder=2601' onclick='reportClick(\"extras\")'> extras</a>\n";
 
-            bannerImageLink = "<a href='/'><img src='/Images/playboyBallon.png' title='home. Find lots of cool things here.' class='bannerImage' /></a>\n";
+            bannerImageLink = "<a href='/'><img src='/Images/playboyBallon2.png' title='home. Find lots of cool things here.' class='bannerImage' /></a>\n";
             boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='/Ranker.html?subdomain=playmates' title='Spin through the links to land on random portrait images. ' >Playmate Ranker</a></div>\n";
             break;
         case "porn":
@@ -60,8 +77,11 @@
             subheaderContent = "Hotness Rater";
             break;
         default:
-            alert("subdomain: " + subdomain + "  not found");
-            console.log("subdomain: " + subdomain + "  not found");
+            sendEmailToYourself("ERROR in OggleHeader setOggleHeader",
+                "Message: " + successModel.Success + "subdomain: " + subdomain + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
+                
+            //alert("subdomain: " + subdomain + "  not found");
+            //console.log("subdomain: " + subdomain + "  not found");
     }
 
     headerHtml =
@@ -131,11 +151,25 @@
             $('#optionNotLoggedIn').hide();
         }
     }
-    setSpecialLinks(folderId);
+    showSpecialHeaderIcons(folderId);
+}
+
+function reportClick(folderId) {
+
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
+        success: function () {
+        }
+    })
+
+    sendEmailToYourself("Click on Banner ", "PageId: " + folderId);
+
+
 }
 
 
-function setSpecialLinks(folderId) {
+function showSpecialHeaderIcons(folderId) {
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
@@ -169,24 +203,24 @@ function setSpecialLinks(folderId) {
                 }
             }
             else {
-                alert("ERROR in OggleHeader ImageCategoryDetail  " + successModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
-                sendEmailToYourself("ERROR in OggleHeader setSpecialLinks", successModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
+                //alert("ERROR in OggleHeader ImageCategoryDetail  " + successModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
+                if (!checkFor404(successModel.Success, "showSpecialHeaderIcons")) {
+                    sendEmailToYourself("ERROR in OggleHeader showSpecialHeaderIcons",
+                        "Message: " + successModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
+                    // verify network
+                }
             }
         },
         error: function (jqXHR, exception) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "setSpecialLinks")) {
-                sendEmailToYourself("XHR ERROR IN OggleHeader.JS setSpecialLinks", "/api/ImageCategoryDetail/Get?folderId=" + folderId +
+                sendEmailToYourself("XHR ERROR IN OggleHeader.JS showSpecialHeaderIcons", "/api/ImageCategoryDetail/Get?folderId=" + folderId +
                     "<br>exception: " + exception + "<br/>Message : " + errorMessage);
                 //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
             }
         }
     });
 }
-
-
-
-
 
 var busy = false;
 var searchString = "";
@@ -195,17 +229,12 @@ function oggleSearchKeyDown(event) {
     $('#testtxt').text(ev);
 
     if (ev === 9) {
-
         alert("tab key pressed  Enter searchbox");
-
     }
-
-
     if (ev === 27) {  //  escape
         clearSearch();
         return;
     }
-
     if (ev === 8) {  // backspace
         searchString = searchString.substring(0, searchString.length - 1);
         $('#testtxt').text(searchString);
@@ -213,8 +242,6 @@ function oggleSearchKeyDown(event) {
     else {
         searchString += String.fromCharCode(ev);
     }
-
-
 
     if (searchString.length > 2) {
         if (!busy) {

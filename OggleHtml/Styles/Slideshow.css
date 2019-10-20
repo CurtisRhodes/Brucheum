@@ -1,11 +1,13 @@
 ﻿.expandoImageDiv {
     position: relative;
+    display: flex;
 }
 
 .expandoImage {
     object-fit: contain;
     transition: all .75s ease-in-out;
     height: 100%;
+    float: left;
 }
 
 .redSides {
@@ -28,10 +30,12 @@
 }
 
 #leftClickArea {
-    cursor: url('https://ogglebooble.com/images/leftArrowcursor.png'), sw-resize;
+    /*cursor: url('https://ogglebooble.com/images/leftArrowcursor.png'), sw-resize;*/
+    cursor: pointer;
 }
 #rightClickArea {
-    cursor: url('https://ogglebooble.com/images/rightArrowcursor.png'), ne-resize;
+    /*cursor: url('https://ogglebooble.com/images/rightArrowcursor.png'), ne-resize;*/
+    cursor: pointer;
 }
 
 .txtSlideShow {

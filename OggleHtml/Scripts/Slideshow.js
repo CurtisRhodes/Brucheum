@@ -36,6 +36,11 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
     resizeViewer();
     $('#imageViewerDialog').show();
 
+    $('.assuranceArrows').click(function () {
+        alert("move image");
+        //sendEmailToYourself("click on carousel arrow", "who");
+    });
+
     //alert("logImageHit true ");
     //console.log("logImageHit from launchViewer: " + imageViewerArray[imageViewerIndex].Link);
     logImageHit(imageViewerArray[imageViewerIndex].Link, true);
@@ -117,6 +122,7 @@ function slideClick(direction) {
 }
 
 function slide(direction) {
+    $('.assuranceArrows').hide();
     if (direction === 'next') {
         imageViewerIndex++;
         if (imageViewerIndex >= imageViewerArray.length)
@@ -136,6 +142,7 @@ function slide(direction) {
     }
 
     setTimeout(function () {
+        $('.assuranceArrows').hide();
         $('#viewerImage').hide();
         if (direction === 'next') {
             $('#viewerImage').css("-ms-transform", "translateX(-2200px)");
@@ -157,6 +164,8 @@ function slide(direction) {
 
         $('#viewerImage').show();
         $('#viewerImage').css("transform", "translateX(0)");
+        setTimeout(function () { $('.assuranceArrows').fadeIn(); }, 1100);
+        
 
         //alert("logImageHit false");
         //console.log("logImageHit from slide: " + imageViewerArray[imageViewerIndex].Link);
@@ -292,6 +301,10 @@ function resizeViewer() {
     $('#imageViewerDialog').width($(window).width());
     $('#imageViewerDialog').height($(window).height());
     $('#viewerImage').height($(window).height() - 30);
+    $('.assuranceArrows img').height($(window).height() - 30);
+
+    //alert("assuranceArrows height: " + $('.assuranceArrows img').height());
+
 }
 
 $(document).keydown(function (event) {

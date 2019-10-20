@@ -315,17 +315,23 @@ footer {
     padding: 4px;
 }
 
+.assuranceArrows {
+    float: left;
+    cursor: pointer;
+}
+
+    .assuranceArrows img {
+        width: 60px;
+    }
+
 .connectionMessage {
     border: solid thick red;
     text-align: center;
 }
 
 .customMessageContainer {
-    border: solid thick green;
-    display: block;
+    /*display: block;*/
     position: fixed;
-    top: 100px;
-    left: 500px;
     z-index: 20;
     display: none;
 }

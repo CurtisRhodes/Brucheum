@@ -8,7 +8,6 @@ var selectedImage;
 var selectedImageLinkId;
 
 function directToStaticPage(folderId) {
-    var success = false;
     if (isNullorUndefined(folderId)) {
         sendEmailToYourself("NULL FOLDERID", " SENDING THEM BACK TO DYNAMIC PAGE");
     }
@@ -19,26 +18,24 @@ function directToStaticPage(folderId) {
             url: settingsArray.ApiServer + "api/AlbumPage/GetStaticPage?folderId=" + folderId,
             success: function (successModel) {
                 if (successModel.Success === "ok") {
-                    success = true;
                     window.location.href = successModel.ReturnValue;
                 }
                 else {
                     //alert("directToStaticPage " + successModel.Success);
-                    sendEmailToYourself("GetStaticPage FAILURE", " SENDING THEM BACK TO DYNAMIC PAGE <br/>  MESSAGE:" + successModel.Success);
+                    sendEmailToYourself("GetStaticPage FAILURE folderId: " + folderId, " SENDING THEM BACK TO DYNAMIC PAGE <br/>  MESSAGE:" + successModel.Success);
                 }
             },
             error: function (jqXHR, exception) {
-                //alert("directToStaticPage jqXHR : " + getXHRErrorDetails(jqXHR, exception));
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errorMessage, "directToStaticPage")) {
                     sendEmailToYourself("XHR ERROR IN ALBUM.JS  ", "api/AlbumPage/GetStaticPage?folderId=" + folderId +
                         "<br>   exception: " + exception + "   directToStaticPage jqXHR : " + errorMessage +
                         "<br/>SENDING THEM BACK TO DYNAMIC PAGE");
                 }
+                //alert("directToStaticPage jqXHR : " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     }
-    return success;
 }
 
 function setAlbumPageHeader(folderId) {
@@ -383,7 +380,7 @@ function removeImage() {
                 if (success === "only link")
                     showDeleteDialog();
                 else {
-                    sendEmailToYourself("ERROR IN ALBUM.JS", "removeImage: " + success);
+                    sendEmailToYourself("ERROR IN ALBUM.JS removeImage", "Message: " + success);
                     //alert(success);
                 }
             }
