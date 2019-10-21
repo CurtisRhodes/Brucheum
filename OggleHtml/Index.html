@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome - OggleBooble</title>
     <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
-
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
@@ -15,6 +14,7 @@
     <script src="Scripts/Autoformfill_ContentScript.js"></script>
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
+    <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
     <script src="Scripts/HitCounter.js"></script>
     <script src="Scripts/Carousel.js"></script>
@@ -38,36 +38,35 @@
     <link href="Styles/ImageCommentDialog.css" rel="stylesheet">
     <link href="Styles/MetaTagDialog.css" rel="stylesheet">
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!--<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
         (adsbygoogle = window.adsbygoogle || []).push({
             google_ad_client: "ca-pub-1620126417602146",
             enable_page_level_ads: true
         });
-    </script>
-
+    </script>-->
 </head>
 <body>
     <header></header>
     <div class="threeColumnLayout">
         <div id="leftColumn">
             <div id="boobsLeftColumnList" class="leftColumnList">
-                <div onclick="window.location.href='transitions.html'">Transitions</div>
-                <div onclick="window.location.href='Ranker.html'">Boobs Ranker</div>
-                <div onclick="showCustomMessage(38)">Let me Explain</div>
-                <div onclick="showCatListDialog(2)">Category List</div>
-                <div onclick="window.location.href='/album.html?folder=1132'">Every Playboy Centerfold</div>
-                <div onclick="showCustomMessage(35)">Nasty Porn</div>
-                <div onclick="window.location.href='/Blog.html'">Blog</div>
+                <div onclick="reportClickEvent('LMC',3906); window.location.href='transitions.html'">Transitions</div>
+                <div onclick="reportClickEvent('LMC',3907); window.location.href='Ranker.html'">Boobs Ranker</div>
+                <div onclick="reportClickEvent('LMC',3942); showCustomMessage(38)">Let me Explain</div>
+                <div onclick="reportClickEvent('LMC',3941); showCatListDialog(2)">Category List</div>
+                <div onclick="reportClickEvent('LMC',1132); window.location.href='/album.html?folder=1132'">Every Playboy Centerfold</div>
+                <div onclick="reportClickEvent('LMC',3909); showCustomMessage(35)">Nasty Porn</div>
+                <div onclick="reportClickEvent('LMC',3911); window.location.href='/Blog.html'">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
             <div id="pornLeftColumnList" class="leftColumnList">
-                <div onclick="window.location.href='transitions.html?subdomain=porn'">Transition down</div>
-                <div onclick="window.location.href='Ranker.html'">Nastieness Ranker</div>
-                <div onclick="showCustomMessage(38)">Let me Explain</div>
-                <div onclick="showCatListDialog(242)">Category List</div>
-                <div onclick="window.location.href='/'">back to boobs</div>
-                <div onclick="window.location.href='/Blog.html'">Blog</div>
+                <div onclick="reportClickEvent('LMC',3906); window.location.href='transitions.html?subdomain=porn'">Transition down</div>
+                <div onclick="reportClickEvent('LMC',3907); window.location.href='Ranker.html'">Nastieness Ranker</div>
+                <div onclick="reportClickEvent('LMC',3942); showCustomMessage(38)">Let me Explain</div>
+                <div onclick="reportClickEvent('LMC',3941); showCatListDialog(242)">Category List</div>
+                <div onclick="reportClickEvent('LMC',3908); window.location.href='/'">back to boobs</div>
+                <div onclick="reportClickEvent('LMC',3911); window.location.href='/Blog.html'">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
         </div>
@@ -194,15 +193,6 @@
                 }
             }, 300);
 
-            $('#indexCatTreeContainer').dialog({
-                autoOpen: false,
-                show: { effect: "fade" },
-                hide: { effect: "blind" },
-                position: ({ my: 'left top', at: 'left top', of: $('#middleColumn') }),
-                width: 411,
-                height: 600
-            });
-
             window.addEventListener("resize", resizeIndexPage);
             resizeIndexPage();
 
@@ -259,14 +249,13 @@
                         //alert("loadPromoMessages: " + blogCommentsContainer.Success)
                     }
                 },
-                error: function (jqXHR, exception) {
+                error: function (jqXHR) {
                     $('#blogLoadingGif').hide();
                     $('#imagePageLoadingGif').hide();
                     var errorMessage = getXHRErrorDetails(jqXHR);
                     if (!checkFor404(errorMessage, "launchPromoMessages")) {
                         sendEmailToYourself("XHR ERROR in Index.Html launchPromoMessages ", "/api/OggleBlog/GetBlogList?commentType=PRO" +
-                            "Called from: " + getCookieValue("IpAddress") + "  folderId: " + folderId +
-                            "<br/>  exception [" + exception + "] <br/>Message: " + errorMessage);
+                            "Called from: " + getCookieValue("IpAddress") + "  folderId: " + folderId + " Message: " + errorMessage);
                     }
                     //alert("launchPromoMessages jqXHR : " + getXHRErrorDetails(jqXHR, exception) + "settingsArray.ApiServer: " + settingsArray.ApiServer);
                 }

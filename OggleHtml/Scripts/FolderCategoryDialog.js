@@ -84,16 +84,21 @@ function showCategoryDialog(folderId) {
                 }
                 else {
                     if (categoryComment.Success !== "not found")
-                        alert("get Category Comment: " + categoryComment.Success);
+                        sendEmailToYourself("jquery fail in FolderCategory.js showCategoryDialog", "get Category Comment: " + categoryComment.Success);
+                        //alert("get Category Comment: " + categoryComment.Success);
                 }
             },
-            error: function (jqXHR, exception) {
-                alert("get Category Comment XHR : " + getXHRErrorDetails(jqXHR, exception));
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "showCategoryDialog")) {
+                    sendEmailToYourself("XHR ERROR in FolderCategory.js showCategoryDialog", "api/CategoryComment/Get?folderId=" + folderId+" Message: " + errorMessage);
+                }
             }
         });
     }
     catch (e) {
-        alert("get NudeModelInfo catch: " + e);
+        sendEmailToYourself("javascript catch in FolderCategory.js showCategoryDialog", "get NudeModelInfo catch: " + e);
+        //alert("get NudeModelInfo catch: " + e);
     }
 }
 
@@ -125,11 +130,18 @@ function saveCategoryDialogText() {
                 displayStatusMessage("ok", "category description updated");
                 $('#btnCatDlgEdit').html("Edit");
             }
-            else
-                alert("EditFolderCategory: " + success);
+            else {
+                sendEmailToYourself("jquery fail in FolderCategory.js saveCategoryDialogText", success);
+                //alert("EditFolderCategory: " + success);
+            }
         },
-        error: function (jqXHR, exception) {
-            alert("EditFolderCategory XHR : " + getXHRErrorDetails(jqXHR, exception));
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "saveCategoryDialogText")) {
+                sendEmailToYourself("XHR ERROR in FolderCategory.js saveCategoryDialogText",
+                    "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" +
+                    $('#catDlgSummerNoteTextArea').summernote('code') + " Message: " + errorMessage);
+            }
         }
     });
 }

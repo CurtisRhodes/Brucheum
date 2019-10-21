@@ -14,6 +14,8 @@
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
+    <script src="Scripts/OggleSearch.js"></script>
+    <script src="Scripts/OggleFooter.js"></script>
     <script src="Scripts/HitCounter.js"></script>
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/Blog.js"></script>
@@ -107,7 +109,6 @@
     </div>
     <footer></footer>
 
-    <div w3-include-html="Snippets/BoobsFooter.html"></div>
     <div w3-include-html="Snippets/Login.html"></div>
     <div w3-include-html="Snippets/Register.html"></div>
 
@@ -123,7 +124,7 @@
         $('#headerMessage').html("blog");
         $('#blogDisplayCommentTypeSelect').val('BLG');
         setOggleHeader("blog", 3911);
-
+        setOggleFooter("boobs");
         loadSettings();
         var waiter = setInterval(function () {
             if (settingsArray.ApiServer === undefined) {

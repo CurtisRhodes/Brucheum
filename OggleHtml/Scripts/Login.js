@@ -122,8 +122,12 @@ function onLoginClick() {
                 else
                     alert("GetVisitorIdFromIP: " + successl.Success);
             },
-            error: function (jqXHR, exception) {
-                alert("GetVisitorIdFromIP jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "onLoginClick")) {
+                    sendEmailToYourself("XHR ERROR IN Login.JS onLoginClick", "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress +
+                        " Message: " + errorMessage);
+                }
             }
         });
     }
@@ -173,8 +177,12 @@ function attemptLogin(userName, clearPasswod) {
                 else
                     $('#loginValidationSummary').html(success).show();
             },
-            error: function (jqXHR, exception) {
-                alert("validateLogin XHR error: " + settingsArray.ApiServer + "api/Login/VerifyLogin?userName" + $('#txtLoginUserName').val() + "&passWord=" + $('#txtLoginClearPassword').val() + "  " + getXHRErrorDetails(jqXHR, exception));
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "onLoginClick")) {
+                    sendEmailToYourself("XHR ERROR IN Login.JS onLoginClick", "api/Login/VerifyLogin?userName=" + userName + "&passWord=" +
+                        " Message: " + errorMessage);
+                }
             }
         });
     }
@@ -372,8 +380,13 @@ function setUserPermissions() {
                     else
                         alert("loadUserRoles: " + roleModel.Success);
                 },
-                error: function (jqXHR, exception) {
-                    alert("loadUserRoles XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                error: function (jqXHR) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "setUserPermissions")) {
+                        sendEmailToYourself("XHR ERROR IN Login.js setUserPermissions", "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned" +
+                            " Message: " + errorMessage);
+                    }
+                    //alert("loadUserRoles XHR error: " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         }

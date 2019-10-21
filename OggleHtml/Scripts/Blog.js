@@ -55,11 +55,16 @@ function showBlogPage(blogId, commentType) {
                             resizePage();
                         }
                     }
-                    else
-                        alert("showBlogPage FLD: " + categoryCommentModel.Success);
+                    else {
+                        sendEmailToYourself("XHR ERROR in Blog.js showBlogPage", "showBlogPage FLD: " + categoryCommentModel.Success);
+                        //alert("showBlogPage FLD: " + categoryCommentModel.Success);                        
+                    }
                 },
-                error: function (jqXHR, exception) {
-                    alert("showBlogPage FLD jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                error: function (jqXHR) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "showBlogPage")) {
+                        sendEmailToYourself("XHR ERROR in Blog.js showBlogPage", "/api/CategoryComment/Get?folderId=" + blogId + " Message: " + errorMessage);
+                    }
                 }
             });
         }
@@ -79,11 +84,16 @@ function showBlogPage(blogId, commentType) {
                             resizePage();
                         }
                     }
-                    else
-                        alert("displayBlogEntry: " + model.Success);
+                    else {
+                        sendEmailToYourself("jQuery fail in Blog.js showBlogPage", "displayBlogEntry: " + model.Success);
+                        //alert("displayBlogEntry: " + model.Success);
+                    }
                 },
-                error: function (jqXHR, exception) {
-                    alert("loadBlogEntry jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                error: function (jqXHR) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "showBlogPage")) {
+                        sendEmailToYourself("XHR ERROR in Blog.js showBlogPage", "/api/OggleBlog?blogId=" + blogId + " Message: " + errorMessage);
+                    }
                 }
             });
         }
@@ -100,7 +110,8 @@ function showBlogPage(blogId, commentType) {
         $('#leftColumnShowBlog').show();
 
     } catch (e) {
-        alert("display BlogEntry catch: " + e);
+        sendEmailToYourself("catch in Blog.js showBlogPage", "display BlogEntry catch: " + e);
+        //alert("display BlogEntry catch: " + e);
     }
 }
 
@@ -135,12 +146,16 @@ function loadBlogArticles(commentType) {
                         });
                         resizeBlogPage();
                     }
-                    else
-                        alert("display Blog: " + BlogCommentContainer.Success);
+                    else {
+                        sendEmailToYourself("jQuery fail in Blog.js showBlogPage", "display Blog: " + BlogCommentContainer.Success);
+                        //alert("display Blog: " + BlogCommentContainer.Success);
+                    }
                 },
-                error: function (jqXHR, exception) {
-                    $('#blogLoadingGif').hide();
-                    alert("showBlogDisplay jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                error: function (jqXHR) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "loadBlogArticles")) {
+                        sendEmailToYourself("XHR ERROR in Blog.js loadBlogArticles", "/api/CategoryComment/GetCategoryComments  Message: " + errorMessage);
+                    }
                 }
             });
         }
@@ -181,18 +196,23 @@ function loadBlogArticles(commentType) {
                     }
                     else {
                         $('#blogLoadingGif').hide();
-                        alert("display Blog: " + blogCommentsContainer.Success);
+                        sendEmailToYourself("jquery fail in Blog.js loadBlogArticles", "display Blog: " + blogCommentsContainer.Success);
+                        //alert("display Blog: " + blogCommentsContainer.Success);
                     }
                 },
-                error: function (jqXHR, exception) {
+                error: function (jqXHR) {
                     $('#blogLoadingGif').hide();
-                    alert("showBlogDisplay jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "loadBlogArticles")) {
+                        sendEmailToYourself("XHR ERROR in Blog.js loadBlogArticles", "/api/OggleBlog/GetBlogList?commentType=" + commentType+"  Message: " + errorMessage);
+                    }
                 }
             });
         }
     } catch (e) {
         $('#blogLoadingGif').hide();
-        alert("display Blog: CATCH " + e);
+        sendEmailToYourself("catch in Blog.js loadBlogArticles", "display Blog: CATCH " + e);
+        //alert("display Blog: CATCH " + e);
     }
     $('#blogListArea').show();
     $('#blogPageArea').hide();
@@ -234,13 +254,17 @@ function loadBlogList(commentType) {
                     }
                     else {
                         $('#blogLoadingGif').hide();
-                        alert("load BlogList: " + categoryCommentContainer.Success);
+                        sendEmailToYourself("jquery fail in Blog.js loadBlogArticles", "load BlogList: " + categoryCommentContainer.Success);
+                        //alert("load BlogList: " + categoryCommentContainer.Success);
                     }
                     resizeBlogPage();
                 },
-                error: function (jqXHR, exception) {
+                error: function (jqXHR) {
                     $('#blogLoadingGif').hide();
-                    alert("loadBlogList jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "loadBlogList")) {
+                        sendEmailToYourself("XHR ERROR in Blog.js loadBlogList", "/api/CategoryComment  Message: " + errorMessage);
+                    }
                 }
             });
         }
@@ -262,17 +286,24 @@ function loadBlogList(commentType) {
                             });
                         }
                     }
-                    else
-                        alert("load BlogList: " + blogCommentModelContainer.Success);
+                    else {
+                        sendEmailToYourself("jquery fail in Blog.js loadBlogArticles", "load BlogList: " + blogCommentModelContainer.Success);
+                        //alert("load BlogList: " + blogCommentModelContainer.Success);
+                    }
                     resizeBlogPage();
                 },
-                error: function (jqXHR, exception) {
-                    alert("loadBlogList jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                error: function (jqXHR) {
+                    $('#blogLoadingGif').hide();
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "loadBlogList")) {
+                        sendEmailToYourself("XHR ERROR in Blog.js loadBlogList", "/api/OggleBlog/GetBlogList?commentType=" + commentType + " Message: " + errorMessage);
+                    }
                 }
             });
         }
     } catch (e) {
-        alert("load BlogList catch: " + e);
+        sendEmailToYourself("catch in Blog.js loadBlogList", "load BlogList catch: " + e);
+        //alert("load BlogList catch: " + e);
     }
 }
 
@@ -294,11 +325,16 @@ function loadBlogEntry(blogId, commentType) {
                         $('#btnAddEdit').html("Save");
                         $('#btnNewCancel').show();
                     }
-                    else
-                        alert("displayBlogEntry: " + categoryCommentModel.Success);
+                    else {
+                        sendEmailToYourself("jquery fail in Blog.js loadBlogEntry", "displayBlogEntry: " + categoryCommentModel.Success);
+                        //alert("displayBlogEntry: " + categoryCommentModel.Success);
+                    }
                 },
-                error: function (jqXHR, exception) {
-                    alert("loadBlogEntry jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                error: function (jqXHR) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "loadBlogList")) {
+                        sendEmailToYourself("XHR ERROR in Blog.js loadBlogEntry", "/api/CategoryComment/Get?folderId=" + blogId + " Message: " + errorMessage);
+                    }
                 }
             });
         }
@@ -318,16 +354,22 @@ function loadBlogEntry(blogId, commentType) {
                         $('#btnAddEdit').html("Save");
                         $('#btnNewCancel').show();
                     }
-                    else
-                        alert("displayBlogEntry: " + model.Success);
+                    else {
+                        sendEmailToYourself("jquery fail in Blog.js displayBlogEntry", model.Success);
+                        //alert("displayBlogEntry: " + model.Success);
+                    }
                 },
-                error: function (jqXHR, exception) {
-                    alert("loadBlogEntry jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                error: function (jqXHR) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "loadBlogEntry")) {
+                        sendEmailToYourself("XHR ERROR in Blog.js loadBlogEntry", "/api/CategoryComment/Get?folderId=" + blogId + " Message: " + errorMessage);
+                    }
                 }
             });
         }
     } catch (e) {
-        alert("display BlogEntry catch: " + e);
+        sendEmailToYourself("Catch ERROR in Blog.js loadBlogEntry", e);
+        //alert("display BlogEntry catch: " + e);
     }
 }
 
@@ -359,11 +401,17 @@ function saveBlogEntry() {
                         $('#btnNewCancel').show();
                         loadBlogList("FLD");
                     }
-                    else
-                        alert("saveBlogEntry: " + success);
+                    else {
+                        sendEmailToYourself("jQuery fail in Blog.js saveBlogEntry", success);
+                        //alert("saveBlogEntry: " + success);
+                    }
                 },
-                error: function (jqXHR, exception) {
-                    alert("saveBlogEntry FLD jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                error: function (jqXHR) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "saveBlogEntry")) {
+                        sendEmailToYourself("XHR ERROR in Blog.js saveBlogEntry", "api/CategoryComment/EditFolderCategory?folderId=" + blogObject.Id + "&commentText=" + $('#blogEditor').summernote('code')
+                            + " Message: " + errorMessage);
+                    }
                 }
             });
         }
@@ -386,11 +434,16 @@ function saveBlogEntry() {
                             loadBlogList(blogObject.CommentType);
                             blogObject.Id = successModel.ReturnValue;
                         }
-                        else
-                            alert("saveBlogEntry: " + successModel.Success);
+                        else {
+                            sendEmailToYourself("jQuery fail in Blog.js saveBlogEntry", "saveBlogEntry: " + successModel.Success);
+                            //alert("saveBlogEntry: " + successModel.Success);
+                        }
                     },
-                    error: function (jqXHR, exception) {
-                        alert("insertBlogEntry jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                    error: function (jqXHR) {
+                        var errorMessage = getXHRErrorDetails(jqXHR);
+                        if (!checkFor404(errorMessage, "loadBlogEntry")) {
+                            sendEmailToYourself("XHR ERROR in Blog.js saveBlogEntry", "/api/OggleBlog Message: " + errorMessage);
+                        }
                     }
                 });
             }
@@ -404,17 +457,23 @@ function saveBlogEntry() {
                             displayStatusMessage("ok", "Entry Updated");
                             loadBlogList(blogObject, blogObject.CommentType);
                         }
-                        else
-                            alert("update blogEntry: " + success);
+                        else {
+                            sendEmailToYourself("jQuery fail in Blog.js saveBlogEntry", "update blogEntry: " + success);
+                            //alert("update blogEntry: " + success);
+                        }
                     },
-                    error: function (jqXHR, exception) {
-                        alert("putBlogEntry jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                    error: function (jqXHR) {
+                        var errorMessage = getXHRErrorDetails(jqXHR);
+                        if (!checkFor404(errorMessage, "putBlogEntry")) {
+                            sendEmailToYourself("XHR ERROR in Blog.js putBlogEntry", "/api/OggleBlog Message: " + errorMessage);
+                        }
                     }
                 });
             }
         }
     } catch (e) {
-        alert("saveBlogEntry catch: " + e);
+        sendEmailToYourself("catch error in Blog.js putBlogEntry", "saveBlogEntry catch: " + e);
+        //alert("saveBlogEntry catch: " + e);
     }
 }
 

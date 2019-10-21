@@ -22,17 +22,15 @@ function directToStaticPage(folderId) {
                 }
                 else {
                     //alert("directToStaticPage " + successModel.Success);
-                    sendEmailToYourself("GetStaticPage FAILURE folderId: " + folderId, " SENDING THEM BACK TO DYNAMIC PAGE <br/>  MESSAGE:" + successModel.Success);
+                    sendEmailToYourself("jQuery fail in Album.js: directToStaticPage", "folderId: " + folderId + " Message: " + successModel.Success);
                 }
             },
-            error: function (jqXHR, exception) {
+            error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errorMessage, "directToStaticPage")) {
                     sendEmailToYourself("XHR ERROR IN ALBUM.JS  ", "api/AlbumPage/GetStaticPage?folderId=" + folderId +
-                        "<br>   exception: " + exception + "   directToStaticPage jqXHR : " + errorMessage +
-                        "<br/>SENDING THEM BACK TO DYNAMIC PAGE");
+                        "Message: " + errorMessage + "SENDING THEM BACK TO DYNAMIC PAGE");
                 }
-                //alert("directToStaticPage jqXHR : " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     }
@@ -45,7 +43,6 @@ function setAlbumPageHeader(folderId) {
         url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=" + folderId,
         success: function (successModel) {
             if (successModel.Success === "ok") {
-                //alert("setAlbumPageHeader: " + successModel.ReturnValue);
                 setOggleHeader(successModel.ReturnValue, folderId);
                 logPageHit(folderId);
                 setOggleFooter(successModel.ReturnValue);
@@ -55,7 +52,7 @@ function setAlbumPageHeader(folderId) {
                     "<br>Message : " + successModel.Success);
             }
         },
-        error: function (jqXHR, exception) {
+        error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (checkFor404(errorMessage, "setAlbumPageHeader")) {
                 //alert("continuing on in setAlbumPageHeader");
@@ -65,7 +62,7 @@ function setAlbumPageHeader(folderId) {
             }
             else
                 sendEmailToYourself("XHR ERROR IN ALBUM.JS setAlbumPageHeader", "api/AlbumPage/GetRootFolder?folderId=" + folderId +
-                    "<br>exception: [" + exception + "] Message" + errorMessage);
+                    " Message" + errorMessage);
         }
     });
 }
@@ -106,18 +103,15 @@ function getBreadCrumbs(folderId) {
             }
             else {
                 //alert("getBreadCrumbs " + breadCrumbModel.Success);
-                sendEmailToYourself("ERROR IN ALBUM.JS", "getBreadCrumbs " + breadCrumbModel.Success);
+                sendEmailToYourself("jQuery fail in Album.js getBreadCrumbs ", breadCrumbModel.Success);
             }
         },
-        error: function (jqXHR, exception) {
+        error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "getBreadCrumbs")) {
-                sendEmailToYourself("XHR ERROR IN ALBUM.JS getBreadCrumbs", "/api/BreadCrumbs/Get?folderId=" + folderId +
-                    "<br>exception: " + exception + "   directToStaticPage jqXHR : " + errorMessage);
+                sendEmailToYourself("XHR ERROR IN ALBUM.JS getBreadCrumbs", "/api/BreadCrumbs/Get?folderId=" + folderId + " Message: " + errorMessage);
             }
-            //alert("getBreadCrumbs jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-            //sendEmailToYourself("ERROR IN ALBUM.JS", "getBreadCrumbs jqXHR : " + getXHRErrorDetails(jqXHR, exception));
         }
     });
 }
@@ -153,27 +147,22 @@ function getAlbumImages(folderId) {
                 }
                 else {
                     $('#imagePageLoadingGif').hide();
-                    sendEmailToYourself("getAlbumImages FAILURE", imageLinksModel.Success);
+                    sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
                     //alert("getImageLinks: " + imageLinksModel.Success);
                 }
             },
-            error: function (jqXHR, exception) {
+            error: function (jqXHR) {
                 $('#imagePageLoadingGif').hide();
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errorMessage, "getAlbumImages")) {
                     sendEmailToYourself("XHR ERROR in Album.js GetImageLinks ",
-                        "Called from: " + getCookieValue("IpAddress") + "  folderId: " + folderId +
-                        "<br/>  exception [" + exception + "] <br/>Message: " + errorMessage);
+                        "Called from: " + getCookieValue("IpAddress") + "  folderId: " + folderId + " Message: " + errorMessage);
                 }
-                //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
-                //alert("getAlbumImages jqXHR : " + getXHRErrorDetails(jqXHR, exception));
             }
         });
     } catch (e) {
         $('#imagePageLoadingGif').hide();
-        sendEmailToYourself("JQUERY ERROR in Album.js GetImageLinks ",
-            "Called from: " + getCookieValue("IpAddress") + "  folderId: " + folderId +
-            "\n\nMessage: " + e);
+        sendEmailToYourself("Catch in Album.js getAlbumImages", e);
         //alert("GetLinkFolders CATCH: " + e);
     }
 }
@@ -314,7 +303,7 @@ function onRemoveImageClick(btn) {
                 }
                 else {
                     //alert("removeLink: " + success);
-                    sendEmailToYourself("ERROR IN ALBUM.JS onRemoveImageClick", "Message: " + success);
+                    sendEmailToYourself("jQuery fail in album.js onRemoveImageClick", "Message: " + success);
                 }
             },
             error: function (xhr) {
@@ -326,8 +315,6 @@ function onRemoveImageClick(btn) {
                 }
                 $('#removeLinkDialog').dialog('close');
                 $('#removeLinkDialog').hide();
-                //alert("delete xhr error: " + xhr.statusText);
-                //sendEmailToYourself("ERROR IN ALBUM.JS", "delete xhr error: " + xhr.statusText);
             }
         });
     }
@@ -363,14 +350,13 @@ function removeImage() {
                         }
                         else {
                             //alert("removeLink: " + success);
-                            sendEmailToYourself("ERROR IN ALBUM.JS removeImage", "RemoveImageLink?folderId = " + currentFolderId + "&imageId=" + selectedImageLinkId +
-                                "<br/>Message: " + success);
+                            sendEmailToYourself("jQuery fail in album.js removeImage", "Message: " + success);
                         }
                     },
                     error: function (xhr) {
                         var errorMessage = getXHRErrorDetails(xhr);
                         if (!checkFor404(errorMessage, "removeImage")) {
-                            sendEmailToYourself("XHR ERROR IN ALBUM.JS setAlbumPageHeader", "RemoveImageLink?folderId=" + currentFolderId + "&imageId=" + selectedImageLinkId +
+                            sendEmailToYourself("XHR error in album.js setAlbumPageHeader", "RemoveImageLink?folderId=" + currentFolderId + "&imageId=" + selectedImageLinkId +
                                 "<br>Message: " + errorMessage);
                         }
                     }
@@ -380,7 +366,7 @@ function removeImage() {
                 if (success === "only link")
                     showDeleteDialog();
                 else {
-                    sendEmailToYourself("ERROR IN ALBUM.JS removeImage", "Message: " + success);
+                    sendEmailToYourself("jQuery fail in album.js removeImage", "Message: " + success);
                     //alert(success);
                 }
             }
@@ -388,11 +374,8 @@ function removeImage() {
         error: function (xhr) {
             var errorMessage = getXHRErrorDetails(xhr);
             if (!checkFor404(errorMessage, "removeImage")) {
-                sendEmailToYourself("XHR ERROR IN ALBUM.JS setAlbumPageHeader", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + selectedImageLinkId +
-                    "<br>Message: " + errorMessage);
+                sendEmailToYourself("XHR ERROR IN ALBUM.JS setAlbumPageHeader", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + selectedImageLinkId + " Message: " + errorMessage);
             }
-            //sendEmailToYourself("ERROR IN ALBUM.JS removeImage", "delete xhr error: " + xhr.statusText);
-            //alert("delete xhr error: " + xhr.statusText);
         }
     });
 }
@@ -455,7 +438,7 @@ function ctxSAP(imgId) {
                 }
             }
             else {
-                sendEmailToYourself("ERROR IN ALBUM.JS GetModelName", "modelDetails.Success: " + modelDetails.Success);
+                sendEmailToYourself("jQuery fail album.js ctxSAP", "modelDetails.Success: " + modelDetails.Success);
                 //alert("GetModelName: " + modelDetails.Success);
             }
         },
@@ -465,7 +448,6 @@ function ctxSAP(imgId) {
                 sendEmailToYourself("XHR ERROR IN ALBUM.JS ctxSAP", "api/ImageCategoryDetail/GetModelName?linkId=" + selectedImageLinkId +
                     "<br>Message: " + errorMessage);
             }
-            //alert("GetModelName xhr error: " + xhr.statusText);
         }
     });
     $('#thumbImageContextMenu').css('z-index', "200");
@@ -486,7 +468,6 @@ function contextMenuAction(action) {
             });
             break;
         case "jump":
-            //alert("modelFolderId: " + modelFolderId);
             window.open("/album.html?folder=" + modelFolderId, "_blank");
             break;
         case "comment":
@@ -525,7 +506,7 @@ function contextMenuAction(action) {
             //showProps($('#' + currentContextLinkId + '').attr("src"));
             break;
         default:
-            sendEmailToYourself("ERROR IN ALBUM.JS contextMenuAction ", "Unhandeled switch case option.  Action: " + action);
+            sendEmailToYourself("error in album.js contextMenuAction ", "Unhandeled switch case option.  Action: " + action);
             //alert("contextMenuAction action: " + action);
     }
 }

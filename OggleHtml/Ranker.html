@@ -15,8 +15,9 @@
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
-    <script src="Scripts/HitCounter.js"></script>
+    <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
+    <script src="Scripts/HitCounter.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
     <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet' />
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
@@ -148,7 +149,8 @@
                     $('#ckBoxPorn').prop('checked', true);
                     break;
                 default:
-                    alert("setInitialCheckbox unknown subdomain: " + subdomain);
+                    sendEmailToYourself("jQuery Fail in Ranker.Html setInitialCheckbox"," unknown subdomain: " + subdomain);
+                    //alert("setInitialCheckbox unknown subdomain: " + subdomain);
                     break;
             }
             setHeaderRowMessage();
@@ -187,18 +189,17 @@
 
                     }
                     else {
-                        alert("BoobsRanker: " + container.Success);
+                        sendEmailToYourself("jQuery Fail in Ranker.Html loadBoobsRanker", " unknown subdomain: " + container.Success);
+                        //alert("BoobsRanker: " + container.Success);
                     }
                 },
-                error: function (jqXHR, exception) {
+                error: function (jqXHR) {
                     $('#imagePageLoadingGif').hide();
                     var errorMessage = getXHRErrorDetails(jqXHR);
                     if (!checkFor404(errorMessage, "loadBoobsRankers")) {
                         sendEmailToYourself("XHR ERROR in Ranker.html loadBoobsRanker", "api/BoobsRanker?rootFolder=" + subdomain + "&skip=" + skip + "&take=" + take +
-                            "Called from: " + getCookieValue("IpAddress") +
-                            "<br/>  exception [" + exception + "] <br/>Message: " + errorMessage);
+                            "Called from: " + getCookieValue("IpAddress") + " Message: " + errorMessage);
                     }
-                    //alert("BoobsRanker xhr error: " + xhr.statusText);
                 }
             });
         }
@@ -222,7 +223,8 @@
                     throttlePorn = false;
                     break;
                 default:
-                    alert("killtimer unknown subdomain: " + subdomain);
+                    sendEmailToYourself("jQuery Fail in Ranker.Html killtimer ", " unknown subdomain: " + subdomain);
+                    //alert("unknown subdomain: " + subdomain);
                     break;
             }
         }
@@ -246,7 +248,7 @@
                             var removeItem = rankerLinksArray.find(a => a.Id == obj.LinkId);
                             if (removeItem != null) {
                                 startLen = rankerLinksArray.length;
-                               rankerLinksArray = jQuery.grep(rankerLinksArray, function (value) { return value != removeItem; });
+                                rankerLinksArray = jQuery.grep(rankerLinksArray, function (value) { return value != removeItem; });
                                 kkk++;
                             }
                         });
@@ -254,11 +256,18 @@
                         //alert("removed " + kkk + " items");
                         $('#footerMessage').html("removed " + kkk + " " + subdomain + " items");
                     }
-                    else
-                        alert("unloadBoobsRanker: " + container.Success);
+                    else {
+                        sendEmailToYourself("jQuery Fail in Ranker.Html unloadBoobsRanker", container.Success);
+                        //alert("unloadBoobsRanker: " + container.Success);
+                    }
+
                 },
-                error: function (xhr) {
-                    alert("unloadBoobsRanker xhr error: " + xhr.statusText);
+                error: function (jqXHR) {
+                    $('#imagePageLoadingGif').hide();
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "loadBoobsRankers")) {
+                        sendEmailToYourself("XHR ERROR in Ranker.html unloadBoobsRanker", "api/BoobsRanker?rootFolder=" + subdomain + "&skip=0&take=50000  Message: " + errorMessage);
+                    }
                 }
             });
         }
@@ -299,7 +308,8 @@
                     }
                     break;
                 default:
-                    alert("Addmore unknown subdomain: " + subdomain);
+                    sendEmailToYourself("jQuery Fail in Ranker.Html Addmore", " unknown subdomain: " + subdomain);
+                    //alert("Addmore unknown subdomain: " + subdomain);
                     break;
             }
         }
@@ -371,7 +381,8 @@
                     textObject.css("color", "#249c40")
                     break;
                 default:
-                    alert("setFolderNameColor unknown subdomain: " + subdomain);
+                    sendEmailToYourself("jQuery Fail in Ranker.Html setFolderNameColor", " unknown subdomain: " + subdomain);
+                    //alert("setFolderNameColor unknown subdomain: " + subdomain);
                     break;
             }
         }
@@ -435,16 +446,24 @@
                         if (success == "ok") {
 
                             //setTimeout(function () {
-                                spinTheSlots();
-                                $('#rankerBox' + selectedSide).removeClass("bigRedBorder");
+                            spinTheSlots();
+                            $('#rankerBox' + selectedSide).removeClass("bigRedBorder");
                             //}, 1500);
 
                         }
-                        else
-                            alert("BoobsRanker POST: " + container.Success);
+                        else {
+                            sendEmailToYourself("jQuery Fail in Ranker.Html imageClick","BoobsRanker POST: " + container.Success);
+                            //alert("BoobsRanker POST: " + container.Success);
+                        }
                     },
-                    error: function (xhr) {
-                        alert("BoobsRanker POST xhr error: " + xhr.statusText);
+                    error: function (jqXHR) {
+                        $('#blogLoadingGif').hide();
+                        $('#imagePageLoadingGif').hide();
+                        var errorMessage = getXHRErrorDetails(jqXHR);
+                        if (!checkFor404(errorMessage, "launchPromoMessages")) {
+                            sendEmailToYourself("XHR ERROR in Ranker.Html imageClick", "api/BoobsRanker.  Message: " + errorMessage); 
+                        }
+                        //alert("launchPromoMessages jqXHR : " + getXHRErrorDetails(jqXHR, exception) + "settingsArray.ApiServer: " + settingsArray.ApiServer);
                     }
                 });
             }

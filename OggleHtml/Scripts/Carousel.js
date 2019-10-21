@@ -18,30 +18,30 @@ function launchCarousel(root) {
     $('#footerMessage').html("launching carousel");
     $('.carouselImage').css("height", "150px");
 
-    getAconnection(root);
-    //loadImages(root, true, 0, initialTake);
+    //getAconnection(root);
+    loadImages(root, true, 0, initialTake);
 }
 
-function getAconnection(root) {
-    $('#customMessage').html("<div class='customMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>");
-    $('.customMessageContainer').show();
-    $.ajax({
-        type: "PATCH",
-        async: true,
-        url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=1",
-        success: function () {
-            $('.customMessageContainer').hide();
-            loadImages(root, true, 0, initialTake);
-        },
-        error: function (jqXHR, exception) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "getAconnection")) {
-                sendEmailToYourself("XHR ERROR IN ALBUM.JS getAconnection", "api/AlbumPage/GetRootFolder?folderId=1" +
-                    "<br>exception: " + exception + "   directToStaticPage jqXHR : " + errorMessage);
-            }
-        }
-    });
-}
+//function getAconnection(root) {
+//    $('#customMessage').html("<div class='customMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>");
+//    $('.customMessageContainer').show();
+//    $.ajax({
+//        type: "PATCH",
+//        async: true,
+//        url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=1",
+//        success: function () {
+//            $('.customMessageContainer').hide();
+//            loadImages(root, true, 0, initialTake);
+//        },
+//        error: function (jqXHR) {
+//            var errorMessage = getXHRErrorDetails(jqXHR);
+//            if (!checkFor404(errorMessage, "getAconnection")) {
+//                sendEmailToYourself("XHR ERROR IN ALBUM.JS getAconnection", "api/AlbumPage/GetRootFolder?folderId=1" +
+//                    " Message: " + errorMessage);
+//            }
+//        }
+//    });
+//}
 
 function loadImages(rootFolder, isChecked, skip, take) {
     var start = Date.now();
@@ -115,6 +115,7 @@ function loadImages(rootFolder, isChecked, skip, take) {
 
                             var ipAddr = getCookieValue("IpAddress");
                             if (ipAddr !== "68.203.90.199983")
+
                                 sendEmailToYourself("click on carousel arrow", "Ip: " + ipAddr +
                                 "\n  folder: " + carouselItemArray[imageIndex].FolderName + "\n link: " + carouselItemArray[imageIndex].LinkId);
                             //logActivity
@@ -137,11 +138,11 @@ function loadImages(rootFolder, isChecked, skip, take) {
                     sendEmailToYourself("ERROR in Caraousel", "loadImages: " + carouselInfo.Success);
                 }
             },
-            error: function (jqXHR, exception) {
+            error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errorMessage, "getAconnection")) {
                     sendEmailToYourself("XHR ERROR IN Carousel.JS loadImages", "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take +
-                        "<br>exception: " + exception + "   Message: " + errorMessage);
+                        "  Message: " + errorMessage);
                 }
             }
         });
@@ -150,11 +151,8 @@ function loadImages(rootFolder, isChecked, skip, take) {
 
 function clickViewGallery() {
     clearInterval(CarouselInterval);
-    //alert("clickViewGallery");
-    var ipAddr = getCookieValue("IpAddress");
-    if ((ipAddr !== "68.203.90.183") && (ipAddr !== "50.62.160.105")) {
-        sendEmailToYourself("Someone clicked on a carousel item", carouselItemArray[imageIndex].FolderId + " clicked by " + ipAddr);
-    }
+    alert("calling reportClickEvent");
+    reportClickEvent("CIC", carouselItemArray[imageIndex].FolderId);
     window.location.href = "/album.html?folder=" + carouselItemArray[imageIndex].FolderId;
 }
 
@@ -296,6 +294,11 @@ function intervalBody() {
 }
 
 function carouselContextMenu() {
+
+    //alert("carouselContextMenu() called");
+    reportClickEvent("CMC", carouselItemArray[imageIndex].FolderId);
+
+
         event.preventDefault();
         window.event.returnValue = false;
         pause();
@@ -323,11 +326,11 @@ function carouselContextMenu() {
                     sendEmailToYourself("GetModelName fail", imageDetails.Success);
                 }
             },
-            error: function (jqXHR, exception) {
+            error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errorMessage, "carouselContextMenu")) {
                     sendEmailToYourself("XHR ERROR IN Carousel.JS carouselContextMenu", "api/ImageCategoryDetail/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId +
-                        "<br>exception: " + exception + "<br/>Message : " + errorMessage);
+                        " Message : " + errorMessage);
                     //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
                 }
                 sendEmailToYourself("GetNudeModelName xhr error: ", xhr.statusText);

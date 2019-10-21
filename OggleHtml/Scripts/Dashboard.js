@@ -8,9 +8,6 @@ var dashboardMainSelectedPath = "";
 var partialViewSelectedItemId = 0;
 var dashboardContextMenuFolderId = "";
 
-
-
-
 function resizeDashboardPage() {
     resizePage();
     var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);
@@ -158,6 +155,7 @@ function addImageLink() {
 
                     if (successModel.ReturnValue === "0") {
                         alert("set folder image: " + successModel.ReturnValue + "," + dashboardMainSelectedTreeId);
+
                         setFolderImage(successModel.ReturnValue, dashboardMainSelectedTreeId, "folder");
                     }
 
@@ -224,9 +222,11 @@ function loadProperties() {
             else
                 alert("GetFileProps: " + success);
         },
-        error: function (jqXHR, exception) {
-            $('#imagePageLoadingGif').hide();
-            alert("GetFileProps jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "loadProperties")) {
+                sendEmailToYourself("XHR ERROR in Blog.js putBlogEntry", "/api/OggleBlog Message: " + errorMessage);
+            }
         }
     });
 }
@@ -248,12 +248,17 @@ function collapseChildFolder() {
                     $('#progressBar').hide();
                     //$('#progressBar').progressbar("destroy");
                 }
-                else
-                    alert("collapseChildFolder: " + success);
+                else {
+                    sendEmailToYourself("jquery fail in FolderCategory.js collapseChildFolder", success);
+                    //alert("collapseChildFolder: " + success);
+                }
             },
-            error: function (xhr) {
+            error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
-                alert("collapseChildFolder xhr error: " + getXHRErrorDetails(xhr));
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "collapseChildFolder")) {
+                    sendEmailToYourself("XHR ERROR in Dashboard.js collapseChildFolder", "/api/MoveImage/CollapseFolder?folderId=" + dashboardMainSelectedTreeId + " Message: " + errorMessage);
+                }
             }
         });
     }
@@ -297,9 +302,12 @@ function renameFolder() {
                 alert("renameFolder: " + repairReport.Success);
             }
         },
-        error: function (xhr) {
-            $('#dashBoardLoadingGif').hide();
-            alert("renameFolder xhr error: " + getXHRErrorDetails(xhr));
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "renameFolder")) {
+                sendEmailToYourself("XHR ERROR in Dashboard.js renameFolder",
+                    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
+            }
         }
     });
 }
@@ -342,37 +350,6 @@ function dashboardMainClick(path, id, linkId) {
     dashboardMainSelectedTreeId = id;
     dashboardMainSelectedPath = path;
     $('.txtLinkPath').val(path.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
-
-    //$('.treeLabelDiv').removeClass('selectedDirTreeNode');
-
-    //$('#' + linkId + '').addClass('selectedDirTreeNode');
-    //$('#' + linkId + '').addClass('selectedDirTreeNode');
-
-    //alert("$('#" + linkId + "') : " + $('#' + linkId + '').attr("id"));
-
-
-    //alert("linkId: " + $('#L' + linkId + '').attr("id"));
-    //alert("path: " + path);
-    //alert("this linkId: " + linkId);
-    //alert('dashboardMainClick');
-    //alert("this: " + $(this).val());
-    //if (path.length > Number(path.indexOf(".COM"))) {
-    //    if (Number(path.indexOf(".COM")) > 0) {
-    //        dashboardMainSelectedPath = path.substring(6).replace(/%20/g, " ");
-    //        displayPath = path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " ");
-    //    }
-    //    else {
-    //        dashboardMainSelectedPath = path.substring(6).replace(/%20/g, " ");
-    //        displayPath = path.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "");
-    //    }
-    //}
-    //else {
-    //    displayPath = path.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "");
-    //    dashboardMainSelectedPath = "/";
-    //}
-    //if (path == "/Root") {
-    //    displayPath = "root";
-    //}
 }
 
 function dashboardContextMenuOpenFolder() {
@@ -399,9 +376,13 @@ function prepareXhamsterPage() {
                 alert("prepareXhamsterPage: " + success);
             }
         },
-        error: function (xhr) {
-            $('#dashBoardLoadingGif').hide();
-            alert("prepareXhamsterPage xhr error: " + getXHRErrorDetails(xhr));
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "prepareXhamsterPage")) {
+                sendEmailToYourself("XHR ERROR in Dashboard.js prepareXhamsterPage",
+                    "/api/xHampster?folderId=" + dashboardMainSelectedTreeId + " Message: " + errorMessage);
+            }
+            alert("prepareXhamsterPage xhr error: " + errorMessage);
         }
     });
 }

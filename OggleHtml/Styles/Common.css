@@ -330,12 +330,14 @@ footer {
 }
 
 .customMessageContainer {
-    /*display: block;*/
-    position: fixed;
     z-index: 20;
     display: none;
 }
-
+.divRefreshPage {
+    background-color: var(--oggleContainerBackgroundColor);
+    font-size: 24px;
+    padding: 4px;
+}
 .blogCrudArea {
     border: solid thin var(--oggleBorderColor);
     padding: 5px;

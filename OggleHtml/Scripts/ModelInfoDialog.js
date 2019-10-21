@@ -86,11 +86,15 @@ function getFolderDetails(modelName, folderId, currentSrc) {
                     $('#modelInfoEdit').html("Save");
                     $('#modelInfoEditArea').show();
                 }
-                else
-                    alert("Get FolderDetail model Info : " + folderDetails.Success);
+                else {
+                    sendEmailToYourself("error in ModelInfo.js", "Get FolderDetail model Info : " + folderDetails.Success);
+                }
             },
-            error: function (jqXHR, exception) {
-                alert("Get Model Info jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "getFolderDetails")) {
+                    sendEmailToYourself("XHR ERROR in MOdelInfoDialog.js getFolderDetails", "/api/ImageCategoryDetail/Get?folderId=" + folderId + " Message: " + errorMessage);
+                }
             }
         });
     }
@@ -177,21 +181,29 @@ function createPosersIdentifiedFolder() {
                             displayStatusMessage("ok", "image moved to newfolder");
                         }
                         else {
-                            alert("createPosersIdentifiedFolder " + success);
+                            //alert("createPosersIdentifiedFolder " + success);
+                            sendEmailToYourself("error in ModelInfo.js", "createPosersIdentifiedFolder " + success);
                         }
                     },
-                    error: function (xhr) {
-                        $('#moveCopyDialogLoadingGif').hide();
-                        alert("createPosersIdentifiedFolder xhr error: " + xhr.statusText);
+                    error: function (jqXHR) {
+                        var errorMessage = getXHRErrorDetails(jqXHR);
+                        if (!checkFor404(errorMessage, "createPosersIdentifiedFolder")) {
+                            sendEmailToYourself("XHR ERROR in Transitions.html createPosersIdentifiedFolder", "/api/MoveImage/MoveImage Message: " + errorMessage);
+                        }
                     }
                 });
             }
-            else
-                alert("CreateVirtualFolder: " + successModel.Success);
+            else {
+                sendEmailToYourself("error in ModelInfo.js", "CreateVirtualFolder: " + successModel.Success);
+                //alert("CreateVirtualFolder: " + successModel.Success);
+            }
         },
-        error: function (xhr) {
-            $('#dashBoardLoadingGif').hide();
-            alert("CreateVirtualFolder xhr error: " + getXHRErrorDetails(xhr));
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "createPosersIdentifiedFolder")) {
+                sendEmailToYourself("XHR ERROR in Transitions.html createPosersIdentifiedFolder",
+                    "/api/FtpDashBoard/CreateFolder?parentId=" + defaultParentFolder + "&newFolderName=" + FolderDetailModel.FolderName + " Message: " + errorMessage);
+            }
         }
     });
 }
@@ -232,11 +244,16 @@ function updateFolderDetail() {
                 if (success === "ok") {
                     displayStatusMessage("ok", "Model info updated");
                 }
-                else
-                    alert("Edit Model info: " + success);
+                else {
+                    sendEmailToYourself("XHR ERROR in ModelInfoDialog.js updateFolderDetail", "Edit Model info: " + success);
+                    //alert("Edit Model info: " + success);
+                }
             },
-            error: function (jqXHR, exception) {
-                alert("Edit ModelInfo jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "updateFolderDetail")) {
+                    sendEmailToYourself("XHR ERROR in ModelInfoDialog.js updateFolderDetail", "/api/ImageCategoryDetail Message: " + errorMessage);
+                }
             }
         });
     }

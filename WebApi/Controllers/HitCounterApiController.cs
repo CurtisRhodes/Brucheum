@@ -346,6 +346,43 @@ namespace WebApi
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
+
+        [HttpPost]
+        public SuccessModel LogEventActivity(string eventCode, int pageId, string visitorId)
+        {
+            SuccessModel successModel = new SuccessModel();
+            try
+            {
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    db.EventLogs.Add(new EventLog()
+                    {
+                        EventCode = eventCode,
+                        PageId = pageId,
+                        VisitorId = visitorId,
+                        Occured = DateTime.Now
+                    });
+                    db.SaveChanges();
+
+                    string pageName;
+                    using (OggleBoobleContext odb = new OggleBoobleContext())
+                    {
+                        pageName = odb.CategoryFolders.Where(f => f.Id == pageId).FirstOrDefault().FolderName;
+                    }
+
+                    string webStatsRef = db.Refs.Where(r => r.RefCode == eventCode).FirstOrDefault().RefDescription;
+                    Visitor visitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                    if (visitor != null)
+                    {
+                        successModel.ReturnValue = "visitor IP: " + visitor.IpAddress + "  from " + visitor.City + ", " +
+                            visitor.Region + " " + visitor.Country + " : [" + webStatsRef + "] for: " + pageName;
+                    }
+                }
+                successModel.Success = "ok";
+            }
+            catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }
+            return successModel;
+        }
     }
 
     [EnableCors("*", "*", "*")]

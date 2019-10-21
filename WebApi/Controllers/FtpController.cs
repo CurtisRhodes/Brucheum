@@ -689,6 +689,8 @@ namespace WebApi
                             var err = Helpers.ErrorDetails(ex);
                             System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
                         }
+                        //string localDestinationPath = repoPath + Helpers.GetLocalParentPath(destinationFolderId) + dbDestinationFolder.FolderName;
+
                         foreach (string fileName in folderContents)
                         {
                             success = FtpUtilies.MoveFile(sourceFtpPath + "/" + fileName, destinationFtpPath + "/" + fileName);
@@ -703,15 +705,14 @@ namespace WebApi
                                     goDaddyrow.Link = newGoDaddyLink;
                                     db.SaveChanges();
                                 }
-                                SignalRHost.ProgressHub.ShowProgressBar(fileCount, ++folderRows);
-                                SignalRHost.ProgressHub.PostToClient("Moving files from: " + dbSourceFolder.FolderName + " to " + dbDestinationFolder.FolderName + "  " +
-                                    folderRows + " of " + fileCount);
+                                //SignalRHost.ProgressHub.ShowProgressBar(fileCount, ++folderRows);
+                                //SignalRHost.ProgressHub.PostToClient("Moving files from: " + dbSourceFolder.FolderName + " to " + dbDestinationFolder.FolderName + "  " + folderRows + " of " + fileCount);
 
                                 // local repository
                                 try
                                 {
                                     sourceFileName = repoPath + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName + "/" + fileName;
-                                    destinationFileName = repoPath + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + destinationPath + "/" + dbDestinationFolder.FolderName + "/" + fileName;
+                                    destinationFileName = repoPath + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + dbDestinationFolder.FolderName + "/" + dbSourceFolder.FolderName  + "/" + fileName;
                                     File.Move(sourceFileName, destinationFileName);
                                 }
                                 catch (Exception ex)

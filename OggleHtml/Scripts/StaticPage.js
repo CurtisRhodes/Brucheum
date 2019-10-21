@@ -85,6 +85,8 @@ function staticCatTreeContainerClick(path, id, treeId) {
         window.location.href = "https://ogglebooble.com/static/" + staticPageRootFolderId + "/" + path.substring(path.lastIndexOf("/") + 1) + ".html";
         $('#staticCatTreeContainer').dialog('close');
     }
+
+
     else
         alert("dirTreeClick treeId: " + treeId);
 }

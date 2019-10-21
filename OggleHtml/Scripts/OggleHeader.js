@@ -4,7 +4,7 @@
     var lang = "en";
     var subheaderContent;
     var boobsRankerLink = "";
-    var bannerImageLink = "<a href='/'><img src='/Images/redballon.png' class='bannerImage' /></a>\n";
+    var bannerImageLink = "<a href='/'><img src='/Images/redballon.png' class='bannerImage' onclick='reportClickEvent(\"HBC\",3908)'/></a>\n";
 
     if (subdomain === "special") {
         // comming in from staticPage.js
@@ -28,11 +28,12 @@
         case "archive":
         //case "special":
             subheaderContent =
-                "                <a href='/album.html?folder=2'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
-                "                <a href='/album.html?folder=136'> poses,</a>\n" +
-                "                <a href='/album.html?folder=159'> positions,</a>\n" +
-                "                <a href='/album.html?folder=199'> shapes</a> and\n" +
-                "                <a href='/album.html?folder=241'>sizes</a>\n";
+                "                <a href='/album.html?folder=2' onclick='reportClickEvent(\"BLC\",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+                "                <a href='/album.html?folder=136' onclick='reportClickEvent(\"BLC\",136)'> poses,</a>\n" +
+                "                <a href='/album.html?folder=3916' onclick='reportClickEvent(\"BLC\",3916)'> positions,</a>\n" +
+                "                <a href='/album.html?folder=159' onclick='reportClickEvent(\"BLC\",159)'> topics,</a>\n" +
+                "                <a href='/album.html?folder=199' onclick='reportClickEvent(\"BLC\",199)'> shapes</a> and\n" +
+                "                <a href='/album.html?folder=241' onclick='reportClickEvent(\"BLC\",241)'>sizes</a>\n";
 
             //subheaderContent =
             //    "                <a href='/album.html?folder=2'><span class='bigTits'>STORE </span>bryster</a> organiseret af\n" +
@@ -40,31 +41,31 @@
             //    "                <a href='/album.html?folder=159'> emne,</a>\n" +
             //    "                <a href='/album.html?folder=199'> figurer</a> og\n" +
             //    "                <a href='/album.html?folder=241'>størrelser</a>\n";
-            bannerImageLink = "<a href='/'><img src='/Images/redballon.png' title='home. Find lots of cool things here.' class='bannerImage' /></a>\n";
+            bannerImageLink = "<a href='/'><img src='/Images/redballon.png' title='home. Find lots of cool things here.' class='bannerImage' onclick='reportClickEvent(\"HBC\",3908)'/></a>\n";
             boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='/Ranker.html?subdomain=boobs' title='Spin through the links to land on random portrait images. ' >boobs ranker</a></div>\n";
             break;
         case "playboy":
         case "playmates":
             subheaderContent =
-                "                <a href='/album.html?folder=1132' onclick='reportClick((\"Centerfolds\")'> Centerfolds,</a>\n" +
-                "                <a href='/album.html?folder=1986' onclick='reportClick(\"magazine covers\")'> magazine covers,</a>\n" +
-                "                <a href='/album.html?folder=3796' onclick='reportClick(\"cybergirls\")'> cybergirls,</a> and\n" +
-                "                <a href='/album.html?folder=2601' onclick='reportClick(\"extras\")'> extras</a>\n";
+                "                <a href='/album.html?folder=1132' onclick='reportClickEvent(\"BLC\",1132)'>mm Centerfolds,</a>\n" +
+                "                <a href='/album.html?folder=1986' onclick='reportClickEvent(\"BLC\",1986)'> magazine covers,</a>\n" +
+                "                <a href='/album.html?folder=3796' onclick='reportClickEvent(\"BLC\",3796)'> cybergirls,</a> and\n" +
+                "                <a href='/album.html?folder=2601' onclick='reportClickEvent(\"BLC\",2601)'> extras</a>\n";
 
-            bannerImageLink = "<a href='/'><img src='/Images/playboyBallon2.png' title='home. Find lots of cool things here.' class='bannerImage' /></a>\n";
+            bannerImageLink = "<a href='/'><img src='/Images/playboyBallon2.png' title='home. Find lots of cool things here.' class='bannerImage' onclick='reportClickEvent(\"HBC\",1132)'/></a>\n";
             boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='/Ranker.html?subdomain=playmates' title='Spin through the links to land on random portrait images. ' >Playmate Ranker</a></div>\n";
             break;
         case "porn":
         case "sluts":
             $('body').addClass('pornBodyColors');
             subheaderContent =
-                "               <a href='/album.html?folder=243'>cock suckers</a>, \n" +
-                "               <a href='/album.html?folder=420'>boob suckers</a>, \n" +
-                "               <a href='/album.html?folder=357'>cum shots</a>, \n" +
-                "               <a href='/album.html?folder=397'>kinky</a> and \n" +
-                "               <a href='/album.html?folder=411'>naughty behaviour</a>\n";
+                "               <a href='/album.html?folder=243' onclick='reportClickEvent(\"BLC\",243)'>cock suckers</a>, \n" +
+                "               <a href='/album.html?folder=420' onclick='reportClickEvent(\"BLC\",420)'>boob suckers</a>, \n" +
+                "               <a href='/album.html?folder=357' onclick='reportClickEvent(\"BLC\",357)'>cum shots</a>, \n" +
+                "               <a href='/album.html?folder=397' onclick='reportClickEvent(\"BLC\",397)'>kinky</a> and \n" +
+                "               <a href='/album.html?folder=411' onclick='reportClickEvent(\"BLC\",411)'>naughty behaviour</a>\n";
 
-            bannerImageLink = "<a href='/Index.html?subdomain=porn'><img src='/Images/cslips02.png' title='porn home.' class='bannerImage' /></a>\n";
+            bannerImageLink = "<a href='/Index.html?subdomain=porn'><img src='/Images/cslips02.png' title='porn home.' class='bannerImage' onclick='reportClickEvent(\"HBC\",3909)'/></a>\n";
             boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='/Ranker.html?subdomain=porn' title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
             break;
         case "admin":
@@ -154,21 +155,6 @@
     showSpecialHeaderIcons(folderId);
 }
 
-function reportClick(folderId) {
-
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
-        success: function () {
-        }
-    })
-
-    sendEmailToYourself("Click on Banner ", "PageId: " + folderId);
-
-
-}
-
-
 function showSpecialHeaderIcons(folderId) {
     $.ajax({
         type: "GET",
@@ -211,93 +197,16 @@ function showSpecialHeaderIcons(folderId) {
                 }
             }
         },
-        error: function (jqXHR, exception) {
+        error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "setSpecialLinks")) {
                 sendEmailToYourself("XHR ERROR IN OggleHeader.JS showSpecialHeaderIcons", "/api/ImageCategoryDetail/Get?folderId=" + folderId +
-                    "<br>exception: " + exception + "<br/>Message : " + errorMessage);
+                    " Message : " + errorMessage);
                 //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
             }
         }
     });
 }
 
-var busy = false;
-var searchString = "";
-function oggleSearchKeyDown(event) {
-    var ev = event.keyCode;
-    $('#testtxt').text(ev);
-
-    if (ev === 9) {
-        alert("tab key pressed  Enter searchbox");
-    }
-    if (ev === 27) {  //  escape
-        clearSearch();
-        return;
-    }
-    if (ev === 8) {  // backspace
-        searchString = searchString.substring(0, searchString.length - 1);
-        $('#testtxt').text(searchString);
-    }
-    else {
-        searchString += String.fromCharCode(ev);
-    }
-
-    if (searchString.length > 2) {
-        if (!busy) {
-            busy = true;
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "api/OggleSearch/GetSearchResults?searchString=" + searchString,
-                success: function (SearchResultsModel) {
-                    var kluge = "<ul>";
-                    $.each(SearchResultsModel.SearchResults, function (idx, searchResult) {
-
-                        kluge += "<li onclick='jumpToSelected(" + searchResult.FolderId + ")'>" + searchResult.FolderName + "</li>";
-
-                    });
-                    kluge += "</ul>";
-
-                    $('#searchResultsDiv').show().html(kluge);
-
-
-                    $('.loginArea').hide();
-
-                    busy = false;
-                },
-                error: function (xhr) {
-                    alert("createNewFolder xhr error: " + getXHRErrorDetails(xhr));
-                }
-            });
-        }
-    }
-}
-
-function clearSearch() {
-    $('#searchResultsDiv').hide().html("");
-    $('.loginArea').show();
-    searchString = "";
-    $('#txtSearch').val("");
-    $('#testtxt').text("");
-}
-
-function jumpToSelected(folderId) {
-    //alert("open(album.html?folder=" + folderId);
-    window.open("/album.html?folder=" + folderId, "_blank");
-    clearSearch();
-}
-
-var forgetShowingCustomMessage = true;
-function slowlyShowCustomMessage(blogId) {
-    forgetShowingCustomMessage = false;
-    setTimeout(function () {
-        if (forgetShowingCustomMessage === false) {
-            if (typeof pause === 'function')
-                pause();
-            //folderCategoryDialogIsOpen = true;
-            showCustomMessage(blogId);
-        }
-    }, 1100);
-}
 
 

@@ -52,11 +52,17 @@ function loadComment() {
                     $('#divSaveFantasy').html("edit");
                 }
             }
-            else
-                alert("saveComment: " + comment.Success);
+            else {
+                sendEmailToYourself("ERROR in ImageCommentDialog.js loadComment", "saveComment: " + comment.Success);
+                //alert("saveComment: " + comment.Success);
+            }
         },
-        error: function (jqXHR, exception) {
-            alert("loadComment XHR : " + getXHRErrorDetails(jqXHR, exception));
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "loadComment")) {
+                sendEmailToYourself("XHR ERROR in ImageCommentDialog.js loadComment",
+                    "/api/OggleBlog?linkId=" + folderDetailModel.LinkId + "&userId=" + folderDetailModel.UserId + " Message: " + errorMessage);
+            }
         }
     });
 }
@@ -81,11 +87,16 @@ function addImageComment() {
                 $('#divSaveFantasy').html("edit");
                 folderDetailModel.Id = successModel.ReturnValue;
             }
-            else
-                alert("saveComment: " + successModel.Success);
+            else {
+                sendEmailToYourself("jquery fail in ImageCommentDialog.js addImageComment", "saveComment: " + successModel.Success);
+                //alert("saveComment: " + successModel.Success);
+            }
         },
-        error: function (jqXHR, exception) {
-            alert("saveComment XHR : " + getXHRErrorDetails(jqXHR, exception));
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "addImageComment")) {
+                sendEmailToYourself("XHR ERROR in ImageCommentDialog.js addImageComment", "/api/OggleBlog Message: " + errorMessage);
+            }
         }
     });
 }
@@ -99,11 +110,16 @@ function editImageComment() {
             if (success === "ok") {
                 displayStatusMessage("ok", "Entry Updated");
             }
-            else
-                alert("editImageComment: " + success);
+            else {
+                sendEmailToYourself("jquery fail in ImageCommentDialog.js addImageComment", "editImageComment: " + success);
+                //alert("editImageComment: " + success);
+            }
         },
-        error: function (jqXHR, exception) {
-            alert("editImageComment XHR : " + getXHRErrorDetails(jqXHR, exception));
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "editImageComment")) {
+                sendEmailToYourself("XHR ERROR in ImageCommentDialog.js editImageComment", "/api/OggleBlog Message: " + errorMessage);
+            }
         }
     });
 }

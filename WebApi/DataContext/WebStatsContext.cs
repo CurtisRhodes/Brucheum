@@ -18,7 +18,34 @@
         public virtual DbSet<PageHit> PageHits { get; set; }
         public virtual DbSet<ChangeLog> ChangeLogs { get; set; }        
         public virtual DbSet<ImageHit> ImageHits { get; set; }
+        public virtual DbSet<EventLog> EventLogs { get; set; }
+        public virtual DbSet<WebStatsRef> Refs { get; set; }
     }
+
+    [Table("webStats.Ref")]
+    public class WebStatsRef
+    {
+        [Key]
+        [Column(Order = 0)]
+        public string RefType { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string RefCode { get; set; }
+        public string RefDescription { get; set; }
+    }
+
+    [Table("webStats.EventLog")]
+    public class EventLog
+    {
+        [Key]
+        public int EventId { get; set; }
+        public string EventCode { get; set; }
+        public int PageId { get; set; }
+        public string LinkId { get; set; }
+        public string VisitorId { get; set; }
+        public DateTime Occured { get; set; }
+    }
+
 
     [Table("webStats.ChangeLog")]
     public class ChangeLog

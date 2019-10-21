@@ -14,8 +14,9 @@
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
-    <script src="Scripts/HitCounter.js"></script>
+    <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
+    <script src="Scripts/HitCounter.js"></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
@@ -165,7 +166,6 @@
         ///  11:11 11:11
         // 1/14/19
         function LoadPicArray() {
-
             try {
                 $.ajax({
                     type: "GET",
@@ -176,12 +176,16 @@
                         pic2 = picArray[1];
                         $('#floatingMessage').css("left", ($('#imageContainer').width() / 2));
                     },
-                    error: function (jqXHR, exception) {
-                        alert("LoadPicArray  XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                    error: function (jqXHR) {
+                        var errorMessage = getXHRErrorDetails(jqXHR);
+                        if (!checkFor404(errorMessage, "LoadPicArray")) {
+                            sendEmailToYourself("XHR ERROR in Transitions.html LoadPicArray", "api/Transitions?folderName=" + subdomain + " Message: " + errorMessage);
+                        }
                     }
                 });
             } catch (e) {
-                alert("LoadPicArray CATCH :" + e.Message);
+                sendEmailToYourself("LoadPicArray","CATCH :" + e.Message);
+                //alert("LoadPicArray CATCH :" + e.Message);
             }
         };
 

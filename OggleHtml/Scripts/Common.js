@@ -16,8 +16,11 @@ function loadSettings() {
                 settingsArray[$(this).attr('name')] = $(this).attr('value');
             });
         },
-        error: function (jqXHR, exception) {
-            alert("getSettings jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "loadSettings")) {
+                sendEmailToYourself("XHR error in common.js loadSettings", "/Data/Settings.xml Message: " + errorMessage);
+            }
         }
     });
 }
@@ -113,25 +116,21 @@ function checkFor404(errorMessage, calledFrom) {
         //alert("checkFor404 called with null errorMessage from: " + calledFrom);
         sendEmailToYourself("checkFor404 called with null errorMessage from: " + calledFrom, "ip: " + ipAddr);
     }
-
     if (errorMessage.indexOf("Not connect") > -1) {
         isNotConnected = true;
 
-        var ipAddr = getCookieValue("IpAddress");
-        if (ipAddr !== "68.203.90.199983")
-            sendEmailToYourself("CAN I GET A CONNECTION ", "calledFrom: " + calledFrom + "    ip: " + getCookieValue("IpAddress"));
+        //var ipAddr = getCookieValue("IpAddress");
+        //if (ipAddr !== "68.203.90.199983")
+        //    sendEmailToYourself("CAN I GET A CONNECTION ", "calledFrom: " + calledFrom + "    ip: " + getCookieValue("IpAddress"));
 
         //showCustomMessage(71);
         $('#customMessage').html("<div class='centeredDivShell'><div class='centeredDivInner'>"+
             "<div class='customMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>" +
-            "<br/><a href='.'>Refresh page</a></div></div></div></div>");
+            "<div class='divRefreshPage'><a href='.'>Refresh page</a></div></div></div></div></div>");
+            //"<br/><a href='.'>Refresh page</a></div></div></div></div>");
         //"<br/><span>Refresh page<span><br/>404 " + calledFrom + "</div></div>");
         $('.customMessageContainer').show();
         console.log("checkFor404: " + calledFrom);
-    }
-    else {
-        //alert("checkFor404 errorMessage.indexOf('Not connect'): " + errorMessage.indexOf("Not connect") + "\nerrorMessage: " + errorMessage);
-        //sendEmailToYourself("checkFor404", "indexOf('Not connect'): " + errorMessage.indexOf("Not connect") + "\nerrorMessage: " + errorMessage);
     }
     return isNotConnected;
 }
@@ -171,26 +170,6 @@ function isNullorUndefined(val) {
     return false;
 }
 
-function logActivity(changeLogModel) {
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "/api/ChangeLog",
-        data: changeLogModel,
-        success: function (success) {
-            if (success === "ok")
-
-
-                displayStatusMessage("ok", "add image logged");
-            else
-                alert("ChangeLog: " + success);
-        },
-        error: function (xhr) {
-            $('#dashBoardLoadingGif').hide();
-            alert("ChangeLog xhr error: " + getXHRErrorDetails(xhr));
-        }
-    });
-}
-
 function sendEmailToYourself(subject, message) {
     //alert("sendEmailToYourself(subject: " + subject + ", message: " + message + ")");
     $.ajax({
@@ -198,14 +177,18 @@ function sendEmailToYourself(subject, message) {
         url: "https://api.curtisrhodes.com/api/GodaddyEmail?subject=" + subject + "&message=" + message,
         success: function (success) {
             if (success === "ok") {
-                $('#footerMessage').html("email sent");
+               // $('#footerMessage').html("email sent");
                // displayStatusMessage("ok", "email sent");
             }
             else
-                alert("sendEmailToYourself: " + success);
+                alert("sendEmail fail: " + success);
         },
-        error: function (xhr) {
-            alert("sendEmailToYourself xhr error: " + getXHRErrorDetails(xhr));
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "sendEmailToYourself")) {
+                //sendEmailToYourself("xhr error in common.js sendEmailToYourself", "/Data/Settings.xml Message: " + errorMessage);
+                alert("xhr error: " + errorMessage);
+            }
         }
     });
 }
@@ -226,8 +209,11 @@ function showLinks(linkId) {
             else
                 alert("showLinks: " + linksModel.Success);
         },
-        error: function (jqXHR, exception) {
-            alert("showLinks error: " + getXHRErrorDetails(jqXHR, exception));
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "showLinks")) {
+                sendEmailToYourself("xhr error in common.js showLinks", "api/ImagePage?linkId=" + linkId + " Message: " + errorMessage);
+            }
         }
     });
 }
@@ -256,33 +242,55 @@ function setFolderImage(linkId, folderId, level) {
                 alert("setFolderImage: " + success);
             }
         },
-        error: function (xhr) {
-            alert("setFolderImage xhr error: " + xhr.statusText);
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "setFolderImage")) {
+                sendEmailToYourself("xhr error in common.js setFolderImage", "/api/ImageCategoryDetail/?linkId=" + linkId +
+                    "&folderId=" + folderId + "&level=" + level + " Message: " + errorMessage);
+            }
         }
     });
 }
 
-
 // GET BUILD INFO
 function getFileDate() {
-    
+     
 
 
 }
 
 function showCatListDialog(startFolder) {
+
     buildDirTree($('#indexCatTreeContainer'), "indexCatTreeContainer", startFolder);
+
+    $('#indexCatTreeContainer').dialog({
+        autoOpen: false,
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        position: ({ my: 'left top', at: 'left top', of: $('#middleColumn') }),
+        width: 411,
+        height: 800
+    });
     $('#indexCatTreeContainer').dialog('open');
     $('#indexCatTreeContainer').dialog('option', 'title', subdomain);
 }
 
 function indexCatTreeContainerClick(path, id, treeId) {
-    if (treeId === "indexCatTreeContainer") {
+    try {
         window.location.href = "/album.html?folder=" + id;
-        $('#indexCatTreeContainer').dialog('close')
+        $('#indexCatTreeContainer').dialog('close');
+
+    } catch (e) {
+        sendEmailToYourself("jQuery fail in indexCatTreeContainerClick", "dirTreeClick path: " + path + " id: " + id + " treeId: " + treeId + "  error: " + e);
     }
-    else
-        alert("dirTreeClick treeId: " + treeId);
+    //if (treeId === "indexCatTreeContainer") {
+    //    window.location.href = "/album.html?folder=" + id;
+    //    $('#indexCatTreeContainer').dialog('close');
+    //}
+    //else {
+    //    alert("dirTreeClick path: " + path + " id: " + id + " treeId: " + treeId);
+    //    sendEmailToYourself("jQuery fail in indexCatTreeContainerClick", "dirTreeClick path: " + path + " id: " + id + " treeId: " + treeId);
+    //}
 }
 
 function showCustomMessage(blogId) {
@@ -297,14 +305,77 @@ function showCustomMessage(blogId) {
             if (entry.Success === "ok") {
                 $('#customMessage').html(entry.CommentText).show();
             }
-            else
-                alert(entry.Success);
+            else {
+                sendEmailToYourself("xhr error in common.js showCustomMessage", entry.Success);
+                //alert(entry.Success);
+            }
         },
-        error: function (xhr) {
-            alert("showSiteContent xhr: " + getXHRErrorDetails(xhr));
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "showCustomMessage")) {
+                sendEmailToYourself("xhr error in common.js showCustomMessage", "api/OggleBlog/?blogId=" + blogId + "Message: " + errorMessage);
+            }
         }
     });
     //if ($('#pornWarning').html() == "")
 }
 
+function logActivity(changeLogModel) {
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "/api/ChangeLog",
+        data: changeLogModel,
+        success: function (success) {
+            if (success === "ok")
+                displayStatusMessage("ok", "add image logged");
+            else {
+                alert("ChangeLog: " + success);
+            }
+        },
+        error: function (jqXHR) {
+            $('#dashBoardLoadingGif').hide();
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "logActivity")) {
+                sendEmailToYourself("xhr error in common.js logActivity", "/api  ChangeLog  Message: " + errorMessage);
+            }
+        }
+    });
+}
+
+function reportClickEvent(eventCode, pageId) {
+    //alert("entering reportClickEvent");
+    //sendEmailToYourself("Someone clicked on a carousel item", carouselItemArray[imageIndex].FolderId + " clicked by " + ipAddr);
+    try {
+        var visitorId = getCookieValue("VisitorId");
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "/api/ChangeLog?eventCode=" + eventCode + "&pageId=" + pageId + "&visitorId=" + visitorId,
+            success: function (successModel) {
+                if (successModel.Success === "ok") {
+                    var ipAddr = getCookieValue("IpAddress");
+
+        alert("retruning from changelog " + ipAddr);
+
+                    if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
+                        alert(successModel.ReturnValue);
+                    else
+                        sendEmailToYourself("Click Event", successModel.ReturnValue);
+                }
+                else {
+                    alert("Error returned from " + successModel.Success);
+                    sendEmailToYourself("jQuery fail in reportClickEvent", successModel.Success);
+                }
+            },
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                alert("xhr error in common.js logActivity : " + errorMessage);
+                if (!checkFor404(errorMessage, "logActivity")) {
+                    sendEmailToYourself("xhr error in common.js logActivity", "/api  ChangeLog  Message: " + errorMessage);
+                }
+            }
+        });
+    } catch (e) {
+        alert("reportClickEvent Catch Error: " + e);
+    }
+}
 

@@ -22,8 +22,11 @@ function loadUsers() {
                 else
                     alert("loadUsers: " + usersModel.Success);
             },
-            error: function (jqXHR, exception) {
-                alert("jqXHR error: " + getXHRErrorDetails(jqXHR, exception));
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "loadUsers")) {
+                    sendEmailToYourself("XHR ERROR IN Admin.JS loadImages", "api/Login/GetUsers Message: " + errorMessage);
+                }
             }
         });
     } catch (e) { alert("catch: " + e); }
@@ -61,11 +64,16 @@ function loadAllUserRoles() {
                         }
                     });
                 }
-                else
-                    alert("loadAllUserRoles: " + roleModel.Success);
+                else {
+                    sendEmailToYourself("XHR ERROR IN Admin.JS loadAllUserRoles", "api/Roles/GetRoles Message: " + roleModel.Success);
+                    //alert("loadAllUserRoles: " + roleModel.Success);
+}
             },
-            error: function (jqXHR, exception) {
-                alert("error: " + getXHRErrorDetails(jqXHR, exception));
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "loadAllUserRoles")) {
+                    sendEmailToYourself("XHR ERROR IN Admin.JS loadAllUserRoles", "api/Login/GetUsers Message: " + errorMessage);
+                }
             }
         });
     } catch (e) {
@@ -129,12 +137,16 @@ function loadUserRoles(whichType) {
                 else
                     alert("loadUserRoles: " + roleModel.Success);
             },
-            error: function (jqXHR, exception) {
-                alert("loadUserRoles XHR error: " + getXHRErrorDetails(jqXHR, exception));
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "loadUserRoles")) {
+                    sendEmailToYourself("XHR ERROR IN Admin.JS loadUserRoles", "api/Roles/GetUserRoles?userName=" + selectedUserName + "&whichType=" + whichType + " Message: " + errorMessage);
+                }
             }
         });
     } catch (e) {
         //displayStatusMessage("error", "catch ERROR: " +e);
+        sendEmailToYourself("Catch ERROR IN Admin.JS loadUserRoles", "api/Roles/GetUserRoles?userName=" + selectedUserName + "&whichType=" + whichType + " Message: " + e);
         alert("catch: " + e);
     }
 }
@@ -210,8 +222,11 @@ function RemoveUserRole(selectedUserName, selectedRoleId) {
                     //displayStatusMessage("error", "ERROR: " + success);
                 }
             },
-            error: function (jqXHR, exception) {
-                alert("RemoveUserRole XHR error : " + getXHRErrorDetails(jqXHR, exception));
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "RemoveUserRole")) {
+                    sendEmailToYourself("XHR ERROR IN Admin.JS loadAllUserRoles", "api/Login/GetUsers Message: " + errorMessage);
+                }
             }
         });
     }
@@ -241,8 +256,11 @@ function loadAaddEditRoles() {
                 else
                     alert(roleModel.Success);
             },
-            error: function (jqXHR, exception) {
-                alert("loadAaddEditRoles : " + getXHRErrorDetails(jqXHR, exception));
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "loadAaddEditRoles")) {
+                    sendEmailToYourself("XHR ERROR IN Admin.JS loadAaddEditRoles", "api/Roles/GetRoles Message: " + errorMessage);
+                }
             }
         });
     } catch (e) {
@@ -282,9 +300,11 @@ function addRole() {
                     //displayStatusMessage("error", "xhr ERROR: " + success);
                 }
             },
-            error: function (jqXHR, exception) {
-                //displayStatusMessage("error", "AddRole error: " + getXHRErrorDetails(jqXHR, exception));
-                alert("AddRole XHR error: " + getXHRErrorDetails(jqXHR, exception));
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "addRole")) {
+                    sendEmailToYourself("XHR ERROR IN Admin.JS addRole", "api/Roles/AddRole?roleName=" + $('#txtRoleName').val() + " Message: " + errorMessage);
+                }
             }
         });
     }
@@ -310,8 +330,11 @@ function updateRole(newName) {
                 else
                     displayStatusMessage("error", "server ERROR: " + success);
             },
-            error: function (jqXHR, exception) {
-                alert("updateRole: " + getXHRErrorDetails(jqXHR, exception));
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "updateRole")) {
+                    sendEmailToYourself("XHR ERROR IN Admin.JS updateRole", "api/Roles/UpdateRole?roleId=" + roleId + "&newName=" + newName + " Message: " + errorMessage);
+                }
             }
         });
     }
