@@ -137,7 +137,7 @@ namespace WebApi
             {
                 using (WebStatsContext db = new WebStatsContext())
                 {
-                    if (visitorId != "9bd90468-e633-4ee2-af2a-8bbb8dd47ad1")
+                    if (logImageHItData.VisitorId != "9bd90468-e633-4ee2-af2a-8bbb8dd47ad1")
                     {
                         db.SlideshowImages.Add(new SlideshowImage()
                         {
