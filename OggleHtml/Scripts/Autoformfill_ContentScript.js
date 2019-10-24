@@ -22,7 +22,7 @@ __gMsEdge.numberOfRequiredFields = 1,
     }();
 __gMsEdge.common = {},
     function () {
-    "use strict";
+        "use strict";
         __gMsEdge.common.SavePersonalAndPaymentData = function () { };
         __gMsEdge.common.JSONSafeObject = function () { };
         __gMsEdge.common.JSONSafeObject.prototype.toJSON = null;
@@ -179,11 +179,11 @@ __gMsEdge.common = {},
         __gMsEdge.common.isNameAndIdContainString = function (n, t) {
             return !n.name || !n.id ? !1 : n.name.toLowerCase().includes(t) && n.id.toLowerCase().includes(t);
         };
-    __gMsEdge.common.getPlaceholder = function (n) {
-        if (!n) return "";
-        let t = n.placeholder;
-        return (t || (t = n.getAttribute("data-placeholder")), t) ? __gMsEdge.common.trim(t) : "";
-    };
+        __gMsEdge.common.getPlaceholder = function (n) {
+            if (!n) return "";
+            let t = n.placeholder;
+            return (t || (t = n.getAttribute("data-placeholder")), t) ? __gMsEdge.common.trim(t) : "";
+        };
     }();
 __gMsEdge.message = {},
     function () {

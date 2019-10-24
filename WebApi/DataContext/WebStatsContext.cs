@@ -17,7 +17,7 @@
         public virtual DbSet<Visit> Visits { get; set; }
         public virtual DbSet<PageHit> PageHits { get; set; }
         public virtual DbSet<ChangeLog> ChangeLogs { get; set; }        
-        public virtual DbSet<ImageHit> ImageHits { get; set; }
+        public virtual DbSet<SlideshowImage> SlideshowImages { get; set; }
         public virtual DbSet<EventLog> EventLogs { get; set; }
         public virtual DbSet<WebStatsRef> Refs { get; set; }
     }
@@ -139,6 +139,17 @@
         [Column(Order = 1)]
         public string VisitorId { get; set; }
         public string ImageLinkId { get; set; }
+    }
+    [Table("webStats.SlideshowImage")]
+    public partial class SlideshowImage
+    {
+        [Key]
+        public string PkId { get; set; }
+        public DateTime HitDateTime { get; set; }
+        public string VisitorId { get; set; }
+        public int PageId { get; set; }
+        public string ImageLinkId { get; set; }
+        public bool IsInitialHit { get; set; }
     }
 }
 

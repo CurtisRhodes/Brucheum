@@ -1,37 +1,50 @@
 ﻿// HITCOUNTER
 var verbosity = 1;
 
-function logImageHit(link, initialHit) {
+function logImageHit(link, pageId, initialHit) {
     //$('#footerMessage').html("logging image hit");
     var visitorId = getCookieValue("VisitorId");    
     //if (visitorId !== '9bd90468-e633-4ee2-af2a-8bbb8dd47ad1') 
-    {
-        $.ajax({
-            type: "POST",            
-            url: "https://api.curtisrhodes.com/api/ImageHit/LogImageHit?visitorId=" + visitorId + "&linkId=" + link,
-            //url: settingsArray.ApiServer + "api/ImageHit/LogImageHit?visitorId=" + visitorId + "&linkId=" + link,
-            success: function (imageHitSuccessModel) {
-                if (imageHitSuccessModel.Success === "ok") {
-                    var imageHits = imageHitSuccessModel.ImageHits;
-                    var userHits = imageHitSuccessModel.UserHits;
-                    console.log(visitorId + " viewed Image imageHits: " + imageHits + " user hits: " + userHits);
+    var linkId = link.substr(link.lastIndexOf("_") + 1, 36);
+    var logImageHItData = {
+        VisitorId: visitorId,
+        PageId: pageId,
+        LinkId: linkId,
+        IsInitialHit: initialHit
+    };
+    $.ajax({
+        type: "POST",
+        //url: "https://api.curtisrhodes.com/api/ImageHit/LogImageHit?visitorId=" + visitorId + "&linkId=" + link,
+        url: settingsArray.ApiServer + "api/ImageHit/LogImageHit",  //?visitorId=" + visitorId + "&pageId=" + pageId + "&linkId=" + linkId,
+        data: logImageHItData,
+        success: function (imageHitSuccessModel) {
+            //alert("imageHitSuccessModel.Success: " + imageHitSuccessModel.Success);
+            if (imageHitSuccessModel.Success === "ok") {
+                var imageHits = imageHitSuccessModel.ImageHits;
+                var userHits = imageHitSuccessModel.UserHits;
+                //alert("logImageHit  pageId: " + pageId + " visitorId: " +
+                //    visitorId + " imageHits: " + imageHits + " user hits: " + userHits);
+                if (verbosity === 1) {
+                    sendEmailToYourself("logImageHit",
+                        "pageId: " + pageId + " visitorId: " + visitorId + " imageHits: " + imageHits + " user hits: " + userHits + "  initialHit: " + initialHit);
                 }
-                else {
-                    console.log("logImageHit: " + imageHitSuccessModel.Success);
-                    sendEmailToYourself("WHAT THE  logImageHit fail ", imageHitSuccessModel.Success);
-                }
-            },
-            error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "logImageHit")) {
-                    sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logImageHit", "api/ImageHit/LogImageHit?visitorId=" + visitorId + "&linkId=" + link +
-                        " Message: " + errorMessage);
-                }
-                //sendEmailToYourself("WHAT THE  logImageHit jqXHR fail ", getXHRErrorDetails(jqXHR, exception));
-                //console.log("logImageHit XHR error: " + getXHRErrorDetails(jqXHR, exception));
+                console.log(visitorId + " viewed Image imageHits: " + imageHits + " user hits: " + userHits);
             }
-        });
-    }
+            else {
+                console.log("logImageHit: " + imageHitSuccessModel.Success);
+                sendEmailToYourself("WHAT THE  logImageHit fail ", imageHitSuccessModel.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "logImageHit")) {
+                sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logImageHit", "api/ImageHit/LogImageHit?visitorId=" + visitorId + "&linkId=" + link +
+                    " Message: " + errorMessage);
+            }
+            //sendEmailToYourself("WHAT THE  logImageHit jqXHR fail ", getXHRErrorDetails(jqXHR, exception));
+            //console.log("logImageHit XHR error: " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
 }
 
 function logVisitor(pageId) {

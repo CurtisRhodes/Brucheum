@@ -48,6 +48,14 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
+    public class logImageHItDataModel
+    {
+        public string VisitorId { get; set; }
+        public int PageId { get; set; }
+        public string LinkId { get; set; }
+        public bool IsInitialHit { get; set; }
+    };
+
     public class ImageHitSuccessModel
     {
         public int ImageHits { get; set; }

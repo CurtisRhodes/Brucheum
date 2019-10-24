@@ -130,7 +130,7 @@ namespace WebApi
     public class ImageHitController : ApiController
     {
         [HttpPost]
-        public ImageHitSuccessModel LogImageHit(string visitorId, string linkId)
+        public ImageHitSuccessModel LogImageHit(logImageHItDataModel logImageHItData)
         {
             ImageHitSuccessModel imageHitSuccess = new ImageHitSuccessModel();
             try
@@ -139,22 +139,24 @@ namespace WebApi
                 {
                     if (visitorId != "9bd90468-e633-4ee2-af2a-8bbb8dd47ad1")
                     {
-                        db.ImageHits.Add(new ImageHit() { HitDateTime = DateTime.Now, VisitorId = visitorId, ImageLinkId = linkId });
+                        db.SlideshowImages.Add(new SlideshowImage()
+                        {
+                            PkId = Guid.NewGuid().ToString(),
+                            HitDateTime = DateTime.Now,
+                            VisitorId = logImageHItData.VisitorId,
+                            PageId = logImageHItData.PageId,
+                            ImageLinkId = logImageHItData.LinkId,
+                            IsInitialHit = logImageHItData.IsInitialHit
+                        });
                         db.SaveChanges();
                     }
-                    imageHitSuccess.UserHits = db.ImageHits.Where(h => h.VisitorId == visitorId).Count();
-                    imageHitSuccess.ImageHits = db.ImageHits.Where(h => h.ImageLinkId == linkId).Count();
+                    imageHitSuccess.UserHits = db.SlideshowImages.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
+                    imageHitSuccess.ImageHits = db.SlideshowImages.Where(h => h.ImageLinkId == logImageHItData.LinkId).Count();
                 }
                 imageHitSuccess.Success = "ok";
             }
-            catch (DbEntityValidationException dbEx)
-            {
-                imageHitSuccess.Success = Helpers.ErrorDetails(dbEx);
-            }
-            catch (Exception ex)
-            {
-                imageHitSuccess.Success = Helpers.ErrorDetails(ex);
-            }
+            catch (DbEntityValidationException dbEx) { imageHitSuccess.Success = Helpers.ErrorDetails(dbEx); }
+            catch (Exception ex) { imageHitSuccess.Success = Helpers.ErrorDetails(ex); }
             return imageHitSuccess;
         }
     }

@@ -151,7 +151,7 @@ function loadImages(rootFolder, isChecked, skip, take) {
 
 function clickViewGallery() {
     clearInterval(CarouselInterval);
-    alert("calling reportClickEvent");
+    //alert("calling reportClickEvent");
     reportClickEvent("CIC", carouselItemArray[imageIndex].FolderId);
     window.location.href = "/album.html?folder=" + carouselItemArray[imageIndex].FolderId;
 }

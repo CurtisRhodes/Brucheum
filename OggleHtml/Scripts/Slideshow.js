@@ -43,7 +43,7 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
 
     //alert("logImageHit true ");
     //console.log("logImageHit from launchViewer: " + imageViewerArray[imageViewerIndex].Link);
-    logImageHit(imageViewerArray[imageViewerIndex].Link, true);
+    logImageHit(imageViewerArray[imageViewerIndex].Link, imageViewerFolderId, true);
 
     exploderInterval = setInterval(function () {
         explodeViewer();
@@ -169,7 +169,7 @@ function slide(direction) {
 
         //alert("logImageHit false");
         //console.log("logImageHit from slide: " + imageViewerArray[imageViewerIndex].Link);
-        logImageHit(imageViewerArray[imageViewerIndex].Link, false);
+        logImageHit(imageViewerArray[imageViewerIndex].Link, imageViewerFolderId, false);
 
 
     }, 450);
