@@ -354,8 +354,13 @@ namespace WebApi
             return success;
         }
 
+    }
+
+    [EnableCors("*", "*", "*")]
+    public class EventLogController : ApiController
+    {
         [HttpPost]
-        public LogEventActivitySuccessModel LogEventActivity(string eventCode, int pageId, string visitorId)
+        public LogEventActivitySuccessModel LogEventActivity(LogEventModel logEventModel)
         {
             LogEventActivitySuccessModel logEventActivitySuccess = new LogEventActivitySuccessModel();
             try
@@ -364,23 +369,23 @@ namespace WebApi
                 {
                     db.EventLogs.Add(new EventLog()
                     {
-                        EventCode = eventCode,
-                        PageId = pageId,
-                        VisitorId = visitorId,
+                        EventCode = logEventModel.EvenCode,
+                        PageId = logEventModel.PageId,
+                        VisitorId = logEventModel.VisitorId,
                         Occured = DateTime.Now
                     });
                     db.SaveChanges();
 
-                    logEventActivitySuccess.EventName = db.Refs.Where(r => r.RefCode == eventCode).FirstOrDefault().RefDescription;
+                    logEventActivitySuccess.EventName = db.Refs.Where(r => r.RefCode == logEventModel.EvenCode).FirstOrDefault().RefDescription;
                     using (OggleBoobleContext odb = new OggleBoobleContext())
                     {
-                        logEventActivitySuccess.PageName = odb.CategoryFolders.Where(f => f.Id == pageId).FirstOrDefault().FolderName;
+                        logEventActivitySuccess.PageName = odb.CategoryFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault().FolderName;
                     }
-                    Visitor visitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                    Visitor visitor = db.Visitors.Where(v => v.VisitorId == logEventModel.VisitorId).FirstOrDefault();
                     if (visitor != null)
                     {
-                        logEventActivitySuccess.SuccessMessage = "IP: " + visitor.IpAddress +
-                            "  from " + visitor.City + ", " + visitor.Region + " " + visitor.Country;
+                        logEventActivitySuccess.IpAddress = visitor.IpAddress;
+                        logEventActivitySuccess.VisitorDetails = visitor.City + ", " + visitor.Region + " " + visitor.Country;
                     }
                 }
                 logEventActivitySuccess.Success = "ok";

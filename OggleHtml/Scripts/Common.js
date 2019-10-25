@@ -2,10 +2,10 @@
 var userRoles = [];
 var freeVisitorHitsAllowed = 1500;
 var waitingForReportClickEvent = true;
+var forgetShowingCustomMessage = true;
+var verbosity = 1;
 
-//$(document).ready(function () {
-//    loadSettings();
-//});
+//if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
 
 function loadSettings() {
     $.ajax({
@@ -113,6 +113,7 @@ function displayStatusMessage(msgCode, message) {
 function checkFor404(errorMessage, calledFrom) {
     var isNotConnected = false;
     //alert("checkFor404() \nerrorMessage: " + errorMessage + ", calledFrom:" + calledFrom);
+    var ipAddr = getCookieValue("IpAddress");
     if (isNullorUndefined(errorMessage)) {
         //alert("checkFor404 called with null errorMessage from: " + calledFrom);
         sendEmailToYourself("checkFor404 called with null errorMessage from: " + calledFrom, "ip: " + ipAddr);
@@ -120,18 +121,15 @@ function checkFor404(errorMessage, calledFrom) {
     if (errorMessage.indexOf("Not connect") > -1) {
         isNotConnected = true;
 
-        //var ipAddr = getCookieValue("IpAddress");
         //if (ipAddr !== "68.203.90.199983")
-        //    sendEmailToYourself("CAN I GET A CONNECTION ", "calledFrom: " + calledFrom + "    ip: " + getCookieValue("IpAddress"));
+        if (ipAddr !== "68.203.90.183")
+            sendEmailToYourself("CAN I GET A CONNECTION ", "calledFrom: " + calledFrom + "    ip: " + ipAddr);
 
-        showCustomMessage(71);
-        //$('#customMessage').html("<div class='centeredDivShell'><div class='centeredDivInner'>"+
-        //    "<div class='customMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>" +
-        //    "<div class='divRefreshPage'><a href='.'>Refresh page</a></div></div></div></div></div>");
+        //showCustomMessage(71);
+        $('#customMessage').html("<div class='centeredDivShell'><div class='centeredDivInner'>"+
+            "<div class='customMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>" +
+            "<div class='divRefreshPage'><a href='.'>Refresh page</a></div></div></div></div></div>");
 
-
-            //"<br/><a href='.'>Refresh page</a></div></div></div></div>");
-        //"<br/><span>Refresh page<span><br/>404 " + calledFrom + "</div></div>");
         $('.customMessageContainer').show();
         console.log("checkFor404: " + calledFrom);
     }
@@ -227,11 +225,11 @@ function openLink(folderId) {
 
 function setFolderImage(linkId, folderId, level) {
 
-    //alert("setFolderImage link: " + linkId + " folderId: " + folderId + " level?: " + level);
+    //alert("setFolderImage. url: " + settingsArray.ApiServer + "/api/ImageCategoryDetail/UpdateFolderImage?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level);
 
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "/api/ImageCategoryDetail/?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level,
+        url: settingsArray.ApiServer + "/api/ImageCategoryDetail/UpdateFolderImage?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level,
         success: function (success) {
             if (success === "ok") {
                 displayStatusMessage("ok", level + " image set");
@@ -296,7 +294,6 @@ function indexCatTreeContainerClick(path, id, treeId) {
     //}
 }
 
-var forgetShowingCustomMessage = true;
 function slowlyShowCustomMessage(blogId) {
     forgetShowingCustomMessage = false;
     setTimeout(function () {
@@ -329,7 +326,7 @@ function showCustomMessage(blogId) {
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "showCustomMessage")) {
-                sendEmailToYourself("xhr error in common.js showCustomMessage", "api/OggleBlog/?blogId=" + blogId + "Message: " + errorMessage);
+                sendEmailToYourself("xhr error in common.js showCustomMessage", "api/OggleBlog/?blogId=" + blogId + ", Message: " + errorMessage);
             }
         }
     });
@@ -345,7 +342,7 @@ function logActivity(changeLogModel) {
             if (success === "ok")
                 displayStatusMessage("ok", "add image logged");
             else {
-                alert("ChangeLog: " + success);
+                //alert("ChangeLog: " + success);
             }
         },
         error: function (jqXHR) {
@@ -363,7 +360,7 @@ function reportThenPerformEvent(eventCode, pageId) {
     var dots;
     reportClickEvent(eventCode, pageId);
     var reportEventWaiter = setInterval(function () {
-        dots += "* ";
+        dots += "x ";
         $('#dots').html(dots);
         if (waitingForReportClickEvent === false) {
             clearInterval(reportEventWaiter);
@@ -378,20 +375,22 @@ function reportThenPerformEvent(eventCode, pageId) {
                 case "CXM":  // carousle context menu opened
                     carouselContextMenuShow();
                     break;
+                case 'SUB': // 'Sub Folder Click'
                 case "BLC":  // banner link clicked
                 case "CIC":  // carousel image clicked
+                case "BCC":  // Breadcrumb Clicked
                     window.location.href = "/album.html?folder=" + pageId;
                     break;
                 case "RNK":
                     switch (pageId) {
-                        case "porn":
-                            window.location.href = "Ranker.html?subdomain=porn";
+                        case 3909:
+                            window.location.href = "/Ranker.html?subdomain=porn";
                             break;
-                        case "playboy":
-                            window.location.href = "Ranker.html?subdomain=playmates";
+                        case 3907:
+                            window.location.href = "/Ranker.html?subdomain=playmates";
                             break;
                         default:
-                            window.location.href = "Ranker.html";
+                            window.location.href = "/Ranker.html";
                             break;
                     }
                     break;
@@ -403,37 +402,74 @@ function reportThenPerformEvent(eventCode, pageId) {
 }
 
 function reportClickEvent(eventCode, pageId) {
-    //var ipAddr = getCookieValue("IpAddress");
-    //sendEmailToYourself("entering reportClickEvent", "EventCode: " + eventCode + "  ip: " + ipAddr + " pageId: " + pageId);
+    //alert("reportClickEvent: eventCode: " + eventCode + " pageId: " + pageId);
 
     try {
+        //var ipAddr = getCookieValue("IpAddress");
         var visitorId = getCookieValue("VisitorId");
+
+        //var ipAddr = getCookieValue("IpAddress");
+        //if (ipAddr === "68.203.90.183") {
+        //    if (eventCode === "BCC") alert("Breadcrumb Clicked: " + pageId);            
+        //}
+
+        var eventClickDdata = {
+            PageId: pageId,
+            EvenCode: eventCode,
+            VisitorId: visitorId
+        };
+
         $.ajax({
             type: "POST",
-            url: settingsArray.ApiServer + "/api/ChangeLog/LogEventActivity?eventCode=" + eventCode + "&pageId=" + pageId + "&visitorId=" + visitorId,
+            //url: settingsArray.ApiServer + "/api/ChangeLog/LogEventActivity?eventCode=" + eventCode + "&pageId=" + pageId + "&visitorId=" + visitorId,
+            url: settingsArray.ApiServer + "/api/EventLog/LogEventActivity",
+            data: eventClickDdata,
             success: function (logEventActivitySuccess) {
+                waitingForReportClickEvent = false;
                 if (logEventActivitySuccess.Success === "ok") {
-
                     //if (eventCode === "CAA") alert("Event " + logEventActivitySuccess.EventName + "  " + logEventActivitySuccess.PageName);
-                    sendEmailToYourself(logEventActivitySuccess.PageName + "  " + logEventActivitySuccess.EventName, logEventActivitySuccess.SuccessMessage);
-                    //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
-                    waitingForReportClickEvent = false;
+                    if (logEventActivitySuccess.IpAddress !== "68.203.90.183")  // && ipAddr !== "50.62.160.105")
+                    {
+                        //if (verbosity > 5)
+                        if (eventCode === "BCC")
+                        {
+                            sendEmailToYourself(logEventActivitySuccess.EventName + ": " + logEventActivitySuccess.PageName,
+                                "Ip: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
+                        }
+                    }
+                    //else alert("suc " + logEventActivitySuccess.EventName + " PageName: " + logEventActivitySuccess.PageName +
+                    //    "  Ip: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
                 }
                 else {
-                    alert("Error returned from " + logEventActivitySuccess.Success);
-                    sendEmailToYourself("jQuery fail in reportClickEvent", logEventActivitySuccess.Success);
+                    var ipAddr = getCookieValue("IpAddress");
+                    if (ipAddr === "68.203.90.183") {
+                        alert("Error returned from reportClickEvent.LogEventActivity " + logEventActivitySuccess.Success);
+                    }
+                    else {
+                        sendEmailToYourself("jQuery 32 fail in reportClickEvent", "Message: " + logEventActivitySuccess.Success);
+                    }
                 }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                alert("xhr error in common.js logActivity : " + errorMessage);
-                if (!checkFor404(errorMessage, "logActivity")) {
-                    sendEmailToYourself("xhr error in common.js logActivity", "/api  ChangeLog  Message: " + errorMessage);
+//               alert("xhr error in common.js logActivity : " + errorMessage);
+                if (!checkFor404(errorMessage, "reportClickEvent")) {
+                    var ipAddr = getCookieValue("IpAddress");
+                    if (ipAddr === "68.203.90.183") {
+                        alert("xhr error in common.js reportClickEvent   /api/ChangeLog/LogEventActivity?eventCode=" + eventCode +
+                            "pageId=" + pageId + "&visitorId=" + visitorId + " Message: " + errorMessage);
+                    }
+                    else {
+                        sendEmailToYourself("xhr error in common.js reportClickEvent", "/api/ChangeLog/LogEventActivity?eventCode=" + eventCode +
+                            "pageId=" + pageId + "&visitorId=" + visitorId + " Message: " + errorMessage);
+                    }
                 }
             }
         });
     } catch (e) {
-        alert("reportClickEvent Catch Error: " + e);
+        waitingForReportClickEvent = false;
+        sendEmailToYourself("Catch Error in reportClickEvent()", e);
+        //alert("reportClickEvent Catch Error: " + e);
     }
 }
 

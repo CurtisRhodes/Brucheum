@@ -83,10 +83,10 @@
                         <div class="centeredDivInner">
                             <!--<div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>-->
                             <div id="laCarousel" class="carouselContainer">
-                                <div class="assuranceArrows" onclick="assuranceArrowClick('back')"><img src="Images/leftArrowOpaque02.png" /></div>
+                                <div class="assuranceArrows" onclick="assuranceArrowClick('back')"><img src="/Images/leftArrowOpaque02.png" /></div>
                                 <div class="carouselImageContainer">
                                     <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
-                                    <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="Images/ingranaggi3.gif" onclick="clickViewGallery()" />
+                                    <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="/Images/ingranaggi3.gif" onclick="clickViewGallery()" />
                                     <div class="imgBottom">
                                         <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
                                         <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
@@ -94,7 +94,7 @@
                                         <img class="speedButton floatRight" src="Images/speedDialFaster.png" title="faster" onclick="clickSpeed('faster')" />
                                     </div>
                                 </div>
-                                <div class="assuranceArrows" onclick="assuranceArrowClick('foward')"><img src="Images/rightArrowOpaque02.png" /></div>
+                                <div class="assuranceArrows" onclick="assuranceArrowClick('foward')"><img src="/Images/rightArrowOpaque02.png" /></div>
                             </div>
                         </div>
                     </div>
@@ -158,7 +158,7 @@
                     clearInterval(waiter);
                     setUserPermissions();
                     var waiter2 = setInterval(function () {
-                        dots += "* ";
+                        dots += ". ";
                         $('#dots').html(dots);
                         if (permissionsSet === true) {
                             clearInterval(waiter2);

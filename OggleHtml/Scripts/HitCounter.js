@@ -4,25 +4,36 @@ var verbosity = 1;
 // verbosity > 4 show new visits redirects
 // verbosity > 5 visitior came back
 
-
-function logImageHit(link, pageId, initialHit) {
+function logImageHit(link, pageId, isInitialHit) {
     //$('#footerMessage').html("logging image hit");
     var visitorId = getCookieValue("VisitorId");    
-    //if (visitorId !== '9bd90468-e633-4ee2-af2a-8bbb8dd47ad1') 
-    if (isNullorUndefined(pageId)) {
-        pageId = 0;
-        sendEmailToYourself("logImageHit pageId came in", "");
+
+    if (isNullorUndefined(visitorId) || visitorId === "unknown") {
+        sendEmailToYourself("ERROR in logImageHit.  VisitorId came in Null or Undefined or Unknown", "visitorId: " + visitorId + ". Sent to logvisitor'");
+        //visitorId = "unknown";
+        logVisitor(pageId);
     }
 
+    //if (visitorId !== '9bd90468-e633-4ee2-af2a-8bbb8dd47ad1') 
+    if (isNullorUndefined(pageId)) {
+        pageId = 1;
+        sendEmailToYourself("ERROR in logImageHit. PageId came in Null or Undefined", "pageId: " + pageId + ". Set to 1");
+    }
+    
     var linkId = link.substr(link.lastIndexOf("_") + 1, 36);
+    //var ipAddr = getCookieValue("IpAddress");
+    //if (ipAddr === "68.203.90.183") {
+    //    alert("logImageHit.  PageId " + pageId);
+    //}
 
     var logImageHItData = {
         VisitorId: visitorId,
         PageId: pageId,
         LinkId: linkId,
-        IsInitialHit: initialHit
+        IsInitialHit: isInitialHit
     };
 
+    //alert("logging image hit. PageId: " + pageId + " isInitialHit: " + isInitialHit);
     $.ajax({
         type: "POST",
         //url: "https://api.curtisrhodes.com/api/ImageHit/LogImageHit?visitorId=" + visitorId + "&linkId=" + link,
@@ -33,27 +44,29 @@ function logImageHit(link, pageId, initialHit) {
             if (imageHitSuccessModel.Success === "ok") {
                 var imageHits = imageHitSuccessModel.ImageHits;
                 var userHits = imageHitSuccessModel.UserHits;
-                if (imageHitSuccessModel.IpAddress !== "68.203.90.183")
-                {
-                    if (verbosity > 30)
-                    {
+                if (imageHitSuccessModel.IpAddress !== "68.203.90.183") {
+                    if (verbosity > 30) {
                         sendEmailToYourself("logImageHit SUCCESS " + imageHitSuccessModel.PageName,
-                            "IpAddress: " + imageHitSuccessModel.IpAddress + " imageHits: " + imageHits + " user hits: " + userHits + "  initialHit: " + initialHit);
+                            "IpAddress: " + imageHitSuccessModel.IpAddress + " imageHits: " + imageHits + " user hits: " + userHits + "  initialHit: " + isInitialHit);
                     }
                 }
+                //else
+                //    alert("logImageHit SUCCESS pageName:" + imageHitSuccessModel.PageName +
+                //        "IpAddress: " + imageHitSuccessModel.IpAddress + " imageHits: " + imageHits + " user hits: " + userHits + "  initialHit: " + isInitialHit);
+                
                 //console.log(visitorId + " viewed Image imageHits: " + imageHits + " user hits: " + userHits);
             }
             else {
                 //console.log("logImageHit: " + imageHitSuccessModel.Success);
-                //sendEmailToYourself("Ajax fail in logImageHit", "LinkId: " + linkId + " PageId: " + pageId + " VisitorId: " + visitorId + " Message: " + imageHitSuccessModel.Success);
-                sendEmailToYourself("Ajax fail in logImageHit", "PageId: " + pageId + " Message: " + imageHitSuccessModel.Success);
+                sendEmailToYourself("Ajax fail in 22 logImageHit", "PageId: " + pageId + " linkId: " + linkId +
+                    "ipAddr: " + getCookieValue("IpAddress") + " VisitorId: " + visitorId + " isInitialHit: " + isInitialHit + " Message: " + imageHitSuccessModel.Success);
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "logImageHit")) {
-                sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logImageHit", "api/ImageHit/LogImageHit?visitorId=" + visitorId + "&linkId=" + link +
-                    " Message: " + errorMessage);
+                sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logImageHit", "api/ImageHit/LogImageHit?visitorId=" + visitorId +
+                    ", pageId: " + pageId + " isInitialHit: " + isInitialHit + ", linkId=" + link + ", Message: " + errorMessage);
             }
             //sendEmailToYourself("WHAT THE  logImageHit jqXHR fail ", getXHRErrorDetails(jqXHR, exception));
             //console.log("logImageHit XHR error: " + getXHRErrorDetails(jqXHR, exception));
@@ -146,7 +159,7 @@ function logVisitor(pageId) {
                                         if (verbosity > 4)
                                             sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 2008",
                                                 " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
-                                        window.location.href = 'https://ogglebooble.com/album.html?folder=660';
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=650';
                                         break;
                                     case 1947: // Karin and Mirjam Van Breeschooten
                                         if (verbosity > 4)
@@ -249,8 +262,8 @@ function logPageHit(pageId) {
                             console.log("logPageHit how is it that I know the Ip and not the visitorId? (pre IpInfo) ");
                             setCookieValue("VisitorId", successModel.VisitorId);
                             if (getCookieValue("VisitorId") === successModel.VisitorId) {
-                                console.log("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));
-                                sendEmailToYourself("looping in logPageHit", " GetVisitorIdFromIP.VisitorId: " + getCookieValue("VisitorId"));
+                                //console.log("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));
+                                sendEmailToYourself("Saved having to call LogVisitor from logPageHit", "Got visitorId from IP. IP: " + ipAddress + "  VisitorId: " + getCookieValue("VisitorId"));
                                 logPageHit(pageId);
                             }
                         }

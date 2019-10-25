@@ -41,7 +41,6 @@
         public int EventId { get; set; }
         public string EventCode { get; set; }
         public int PageId { get; set; }
-        public string LinkId { get; set; }
         public string VisitorId { get; set; }
         public DateTime Occured { get; set; }
     }

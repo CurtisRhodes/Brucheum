@@ -211,8 +211,10 @@ namespace WebApi.Controllers
                     string fullerFolderName = subDir.RootFolder + "/" + Helpers.GetCustomStaticFolderName(subDir.Id, subDir.FolderName);
 
                     int subDirFileCount = subDir.FileCount + subDir.TotalFiles + subDir.GrandTotalFiles;
+
+
                     bodyHtml += "<div class='" + imageFrameClass + "'>" +
-                        "<div class='folderImageFrame' onclick='window.location.href=\"" + httpLocation + fullerFolderName + ".html\"'>" +
+                        "<div class='folderImageFrame' onclick='reportThenPerformEvent(\"SUB\",\"" + subDir.Id + "\")'>" +
                         "<img class='folderImage' src='" + subDir.Link + "'/>" +
                         "<div class='" + subDirLabelClass + "'>" + subDir.FolderName + " (" + subDirFileCount + ")</div></div></div>\n";
                     imagesCount++;

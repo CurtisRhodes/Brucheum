@@ -42,7 +42,7 @@
             //    "                <a href='/album.html?folder=199'> figurer</a> og\n" +
             //    "                <a href='/album.html?folder=241'>størrelser</a>\n";
             bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",3908)'><img  class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
-            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",\"boobs\")' title='Spin through the links to land on random portrait images. ' >boobs ranker</a></div>\n";
+            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",3908)' title='Spin through the links to land on random portrait images. ' >boobs ranker</a></div>\n";
             break;
         case "playboy":
         case "playmates":
@@ -53,7 +53,7 @@
                 "                <a href='javascript:reportThenPerformEvent(\"BLC\",2601)'> extras</a>\n";
 
             bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",1132)'><img  class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
-            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",\"playboy\")' title='Spin through the links to land on random portrait images. ' >Playmate Ranker</a></div>\n";
+            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",3907)' title='Spin through the links to land on random portrait images. ' >Playmate Ranker</a></div>\n";
             break;
         case "porn":
         case "sluts":
@@ -66,7 +66,7 @@
                 "               <a href=''javascript:reportThenPerformEvent(\"BLC\",411)'>naughty behaviour</a>\n";
 
             bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",3909)'><img src='/Images/cslips02.png' title='porn home' class='bannerImage'/></a>\n";
-            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",\"porn\")' title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
+            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",3909)' title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
             break;
         case "admin":
             subheaderContent = "Admin";

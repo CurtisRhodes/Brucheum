@@ -8,6 +8,7 @@ var selectedImage;
 var selectedImageLinkId;
 
 function directToStaticPage(folderId) {
+    currentAlbumFolderId = folderId;
     $.ajax({
         type: "GET",
         async: true,
@@ -30,7 +31,6 @@ function directToStaticPage(folderId) {
         }
     });
 }
-
 
 function setAlbumPageHeader(folderId) {
     $.ajax({
@@ -89,7 +89,7 @@ function getBreadCrumbs(folderId) {
                         }
                         else {
                             $('#breadcrumbContainer').append("<a class='activeBreadCrumb' " +
-                                "href='/album.html?folder=" + breadCrumbModel.BreadCrumbs[i].FolderId + "'>" +
+                                "href='javascript:reportThenPerformEvent(\"BCC\"," + breadCrumbModel.BreadCrumbs[i].FolderId +")'>" +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                     }
@@ -127,6 +127,7 @@ function showHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFol
 
 function getAlbumImages(folderId) {
     try {
+        currentAlbumFolderId = folderId;
         var start = Date.now();
         $('#imagePageLoadingGif').show();
         $.ajax({
@@ -206,8 +207,8 @@ function processImages(imageLinksModel) {
             //alert("subDir: " + subDir.DirectoryName + "  Link==null");
             subDir.Link = "Images/redballon.png";
         }
-
-        $('#imageContainer').append("<div class='" + imageFrameClass + "' onclick=window.location.href='/album.html?folder=" + subDir.FolderId + "'>" +
+        //$('#imageContainer').append("<div class='" + imageFrameClass + "' onclick=window.location.href='/album.html?folder=" + subDir.FolderId + "'>" +
+        $('#imageContainer').append("<div class='" + imageFrameClass + "' onclick='reportThenPerformEvent(\"SUB\",\"" + subDir.FolderId + "\")'>" +
             "<img class='folderImage' src='" + subDir.Link + "'/>" +
             //"<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "</div></div>");
             "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div>");
@@ -260,6 +261,7 @@ function startSlideShow(imageIndex) {
     }
 
     if (isNullorUndefined(currentAlbumFolderId)) {
+        currentAlbumFolderId = 1;
         sendEmailToYourself("PROBLEM in album.js", "currentAlbumFolderId: " + currentAlbumFolderId + "  isStaticPage:" + isStaticPage);
     }
 

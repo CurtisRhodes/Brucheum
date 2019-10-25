@@ -87,7 +87,7 @@ function getFolderDetails(modelName, folderId, currentSrc) {
                     $('#modelInfoEditArea').show();
                 }
                 else {
-                    sendEmailToYourself("error in ModelInfo.js", "Get FolderDetail model Info : " + folderDetails.Success);
+                    sendEmailToYourself("error in ModelInfoDialog.js", "Get FolderDetail model Info : " + folderDetails.Success);
                 }
             },
             error: function (jqXHR) {
@@ -182,7 +182,8 @@ function createPosersIdentifiedFolder() {
                         }
                         else {
                             //alert("createPosersIdentifiedFolder " + success);
-                            sendEmailToYourself("error in ModelInfo.js", "createPosersIdentifiedFolder " + success);
+                            //displayStatusMessage("error", successModel.Success);
+                            sendEmailToYourself("error in ModelInfoDialog.js", "createPosersIdentifiedFolder " + successModel.Success);
                         }
                     },
                     error: function (jqXHR) {

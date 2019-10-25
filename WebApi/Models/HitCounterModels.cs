@@ -41,11 +41,18 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
+    public class LogEventModel {
+        public string VisitorId { get; set; }
+        public string EvenCode { get; set; }
+        public int PageId { get; set; }
+    }
+
     public class LogEventActivitySuccessModel
     {
         public string PageName { get; set; }
         public string EventName { get; set; }
-        public string SuccessMessage { get; set; }
+        public string IpAddress { get; set; }
+        public string VisitorDetails { get; set; }
         public string Success { get; set; }
     }
 
