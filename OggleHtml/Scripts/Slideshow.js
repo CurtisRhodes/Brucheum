@@ -19,9 +19,14 @@ var viewerShowing = false;
 var slideShowRunning = false;
 
 function launchViewer(imageArray, imageIndex, folderId, folderName) {
+    imageViewerFolderId = folderId;
+
+    if (isNullorUndefined(imageViewerFolderId)) {
+        sendEmailToYourself("PROBLEMO in slideshow.js", "imageViewerFolderId: " + imageViewerFolderId + "  folderName: " + folderName);
+    }
+
     imageViewerArray = imageArray;
     imageViewerIndex = imageIndex;
-    imageViewerFolderId = folderId;
     imageViewerFolderName = folderName;
     viewerH = 50;
     viewerW = 50;
@@ -43,7 +48,7 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
 
     //alert("logImageHit true ");
     //console.log("logImageHit from launchViewer: " + imageViewerArray[imageViewerIndex].Link);
-    logImageHit(imageViewerArray[imageViewerIndex].Link, imageViewerFolderId, true);
+    logImageHit(imageViewerArray[imageViewerIndex].Link, folderId, true);
 
     exploderInterval = setInterval(function () {
         explodeViewer();
@@ -141,6 +146,14 @@ function slide(direction) {
         $('#viewerImage').css("transform", "translateX(-1500px)");
     }
 
+    //alert("logImageHit false");
+    //console.log("logImageHit from slide: " + imageViewerArray[imageViewerIndex].Link);
+    if (isNullorUndefined(imageViewerFolderId)) {
+        //sendEmailToYourself("PROBLEM 2 in slideshow.js", "imageViewerFolderId: " + imageViewerFolderId);
+    }
+    else
+        logImageHit(imageViewerArray[imageViewerIndex].Link, imageViewerFolderId, false);
+
     setTimeout(function () {
         $('.assuranceArrows').hide();
         $('#viewerImage').hide();
@@ -165,13 +178,6 @@ function slide(direction) {
         $('#viewerImage').show();
         $('#viewerImage').css("transform", "translateX(0)");
         setTimeout(function () { $('.assuranceArrows').fadeIn(); }, 1100);
-        
-
-        //alert("logImageHit false");
-        //console.log("logImageHit from slide: " + imageViewerArray[imageViewerIndex].Link);
-        logImageHit(imageViewerArray[imageViewerIndex].Link, imageViewerFolderId, false);
-
-
     }, 450);
     resizeViewer();
     $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);

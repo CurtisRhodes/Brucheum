@@ -24,8 +24,7 @@
     <script src="Scripts/ImageCommentDialog.js"></script>
     <script src="Scripts/MoveCopyArchive.js"></script>
     <script src="Scripts/MetaTagDialog.js"></script>
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="Styles/bootstrap.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
     <link href="Styles/jqueryUI.css" rel="stylesheet">
     <link href="Styles/Common.css" rel="stylesheet">
@@ -51,22 +50,22 @@
     <div class="threeColumnLayout">
         <div id="leftColumn">
             <div id="boobsLeftColumnList" class="leftColumnList">
-                <div onclick="reportClickEvent('LMC',3906); window.location.href='transitions.html'">Transitions</div>
-                <div onclick="reportClickEvent('LMC',3907); window.location.href='Ranker.html'">Boobs Ranker</div>
-                <div onclick="reportClickEvent('LMC',3942); showCustomMessage(38)">Let me Explain</div>
-                <div onclick="reportClickEvent('LMC',3941); showCatListDialog(2)">Category List</div>
-                <div onclick="reportClickEvent('LMC',1132); window.location.href='/album.html?folder=1132'">Every Playboy Centerfold</div>
-                <div onclick="reportClickEvent('LMC',3909); showCustomMessage(35)">Nasty Porn</div>
-                <div onclick="reportClickEvent('LMC',3911); window.location.href='/Blog.html'">Blog</div>
+                <div onclick="reportClickEvent('LMC','3906'); window.location.href='transitions.html'">Transitions</div>
+                <div onclick="reportClickEvent('LMC','3907'); window.location.href='Ranker.html'">Boobs Ranker</div>
+                <div onclick="reportClickEvent('LMC','3942'); showCustomMessage(38)">Let me Explain</div>
+                <div onclick="reportClickEvent('LMC','3941'); showCatListDialog(2)">Category List</div>
+                <div onclick="reportClickEvent('LMC','1132'); window.location.href='/album.html?folder=1132'">Every Playboy Centerfold</div>
+                <div onclick="reportClickEvent('LMC','3909'); showCustomMessage(35)">Nasty Porn</div>
+                <div onclick="reportClickEvent('LMC','3911'); window.location.href='/Blog.html'">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
             <div id="pornLeftColumnList" class="leftColumnList">
-                <div onclick="reportClickEvent('LMC',3906); window.location.href='transitions.html?subdomain=porn'">Transition down</div>
-                <div onclick="reportClickEvent('LMC',3907); window.location.href='Ranker.html'">Nastieness Ranker</div>
-                <div onclick="reportClickEvent('LMC',3942); showCustomMessage(38)">Let me Explain</div>
-                <div onclick="reportClickEvent('LMC',3941); showCatListDialog(242)">Category List</div>
-                <div onclick="reportClickEvent('LMC',3908); window.location.href='/'">back to boobs</div>
-                <div onclick="reportClickEvent('LMC',3911); window.location.href='/Blog.html'">Blog</div>
+                <div onclick="reportClickEvent('LMC','3906'); window.location.href='transitions.html?subdomain=porn'">Transition down</div>
+                <div onclick="reportClickEvent('LMC','3907'); window.location.href='Ranker.html'">Nastieness Ranker</div>
+                <div onclick="reportClickEvent('LMC','3942'); showCustomMessage(38)">Let me Explain</div>
+                <div onclick="reportClickEvent('LMC','3941'); showCatListDialog(242)">Category List</div>
+                <div onclick="reportClickEvent('LMC','3908'); window.location.href='/'">back to boobs</div>
+                <div onclick="reportClickEvent('LMC','3911'); window.location.href='/Blog.html'">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
         </div>
@@ -84,10 +83,10 @@
                         <div class="centeredDivInner">
                             <!--<div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>-->
                             <div id="laCarousel" class="carouselContainer">
-                                <!--<div class="assuranceArrows"><img src="Images/leftArrowOpaque02.png" /></div>-->
+                                <div class="assuranceArrows" onclick="assuranceArrowClick('back')"><img src="Images/leftArrowOpaque02.png" /></div>
                                 <div class="carouselImageContainer">
                                     <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
-                                    <img id="thisCarouselImage" oncontextmenu="carouselContextMenu()" class="carouselImage" src="Images/ingranaggi3.gif" onclick="clickViewGallery()" />
+                                    <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="Images/ingranaggi3.gif" onclick="clickViewGallery()" />
                                     <div class="imgBottom">
                                         <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
                                         <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
@@ -95,7 +94,7 @@
                                         <img class="speedButton floatRight" src="Images/speedDialFaster.png" title="faster" onclick="clickSpeed('faster')" />
                                     </div>
                                 </div>
-                                <div class="assuranceArrows"><img src="Images/rightArrowOpaque02.png" /></div>
+                                <div class="assuranceArrows" onclick="assuranceArrowClick('foward')"><img src="Images/rightArrowOpaque02.png" /></div>
                             </div>
                         </div>
                     </div>
@@ -244,8 +243,7 @@
                     else {
                         $('#blogLoadingGif').hide();
                         sendEmailToYourself("FAIL in Index.Html launchPromoMessages", "/api/OggleBlog/GetBlogList?commentType=PRO" +
-                            "Called from: " + getCookieValue("IpAddress") +
-                            "\n  exception [" + exception + "] <br/>Message: " + errorMessage);
+                            "Called from: " + getCookieValue("IpAddress") + "  Message: " + errorMessage);
                         //alert("loadPromoMessages: " + blogCommentsContainer.Success)
                     }
                 },

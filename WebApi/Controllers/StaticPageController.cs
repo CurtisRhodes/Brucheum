@@ -40,10 +40,11 @@ namespace WebApi.Controllers
                 "   <script src='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js'></script>\n" +
                 "   <link href='/Styles/jqueryui.css' rel='stylesheet' />\n" +
                 "   <link rel='icon' type='image/png' href='/static/favicon.png' />" +
+                "   <script src='/Scripts/Common.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Login.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/HitCounter.js' type='text/javascript'></script>\n" +
-                "   <script src='/Scripts/Common.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/OggleHeader.js'></script>\n" +
+                "   <script src='/Scripts/OggleSearch.js'></script>\n" +
                 "   <script src='/Scripts/OggleFooter.js'></script>\n" +
                 "   <script src='/Scripts/Album.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Slideshow.js' type='text/javascript'></script>\n" +

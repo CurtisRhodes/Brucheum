@@ -13,10 +13,16 @@ var imageCommentDialogIsOpen = false;
 var folderCategoryDialogIsOpen = false;
 var forgetShowingCatDialog;
 var initialTake = 100;
+var specialPage;
+var imageHistory = [];
 
 function launchCarousel(root) {
     $('#footerMessage').html("launching carousel");
     $('.carouselImage').css("height", "150px");
+    if (root === "boobs")
+        specialPage = 3908;
+    if (root === "porn")
+        specialPage = 3909;
 
     //getAconnection(root);
     loadImages(root, true, 0, initialTake);
@@ -109,17 +115,6 @@ function loadImages(rootFolder, isChecked, skip, take) {
                         startCarousel();
                         $('#footerMessage').html("starting carousel");
                         resizeCarousel();
-                        $('.assuranceArrows').click(function () {
-                            //alert("move image");
-                            resume();
-
-                            var ipAddr = getCookieValue("IpAddress");
-                            if (ipAddr !== "68.203.90.199983")
-
-                                sendEmailToYourself("click on carousel arrow", "Ip: " + ipAddr +
-                                "\n  folder: " + carouselItemArray[imageIndex].FolderName + "\n link: " + carouselItemArray[imageIndex].LinkId);
-                            //logActivity
-                        });
                     }
                     numImages = carouselInfo.Links.length;
                     numFolders += carouselInfo.FolderCount;
@@ -151,13 +146,12 @@ function loadImages(rootFolder, isChecked, skip, take) {
 
 function clickViewGallery() {
     clearInterval(CarouselInterval);
-    //alert("calling reportClickEvent");
-    reportClickEvent("CIC", carouselItemArray[imageIndex].FolderId);
-    window.location.href = "/album.html?folder=" + carouselItemArray[imageIndex].FolderId;
+    reportThenPerformEvent("CIC", carouselItemArray[imageIndex].FolderId);
 }
 
 function clickViewParentGallery() {
-    window.location.href = "/album.html??folder=" + carouselItemArray[imageIndex].ParentId;
+    clearInterval(CarouselInterval);
+    reportThenPerformEvent("CPC", carouselItemArray[imageIndex].ParentId);
 }
 
 function clickSpeed(speed) {
@@ -169,58 +163,6 @@ function clickSpeed(speed) {
     $('.carouselImage').attr('src', carouselItemArray[imageIndex].Link);
     clearInterval(CarouselInterval);
     startCarousel();
-}
-
-function carouselContextMenuAction(ctxMenuAction) {
-    switch (ctxMenuAction) {
-        case "showDialog":
-            $('#carouselContextMenu').fadeOut();
-            modelInfoDialogIsOpen = true;
-            pause();
-            showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId, carouselItemArray[imageIndex].Link);
-            $('#modelInfoDialog').on('dialogclose', function (event) {
-                modelInfoDialogIsOpen = false;
-                resume();
-            });
-            break;
-        case "seeMore":
-            window.open('/album.html?folder=' + selectedImageArchiveFolderId, '_blank');
-            break;
-        case "explode":
-            window.open(carouselItemArray[imageIndex].Link, "_blank");
-            break;
-        case "comment":
-            $('#carouselContextMenu').fadeOut();
-            imageCommentDialogIsOpen = true;
-            pause();
-            $('#carouselContextMenu').fadeOut();
-            showImageCommentDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].FolderName);
-            $('#imageCommentDialog').on('dialogclose', function (event) {
-                imageCommentDialogIsOpen = false;
-                resume();
-            });
-            break;
-        case "tags":
-            $('#carouselContextMenu').fadeOut();
-            pause();
-            metaTagDialogIsOpen = true;
-            //alert("carouselItemArray[imageIndex].FolderId: " + carouselItemArray[imageIndex].FolderId);
-            openMetaTagDialog(carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].LinkId);
-            $('#metaTagDialog').on('dialogclose', function (event) {
-                metaTagDialogIsOpen = false;
-                resume();
-            });
-            break;
-        case "archive":
-            $('#carouselContextMenu').fadeOut();
-            pause();
-            $('#carouselContextMenu').fadeOut();
-            showMoveCopyDialog("Archive", carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
-            break;
-        default:
-            sendEmailToYourself("Invalid context menu action", "invalid: " + ctxMenuAction);
-            //alert("invalid: " + ctxMenuAction);
-    }
 }
 
 function considerHidingContextMenu() {
@@ -271,6 +213,28 @@ function startCarousel() {
     }, rotationSpeed);
 }
 
+function assuranceArrowClick(direction) {
+    reportClickEvent("CAA", specialPage);
+    if (direction === "foward")
+        resume();
+    else {
+        // pop
+        imageHistory.pop();
+        imageIndex = imageHistory.pop();
+        if (imageIndex > 0) {
+            $('#categoryTitle').fadeOut(intervalSpeed);
+            $('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
+                $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
+                $('#categoryTitle').html(carouselItemArray[imageIndex].FolderPath + ": " + carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
+                $('#laCarousel').fadeIn(intervalSpeed);
+                resizeCarousel();
+            });
+        }
+        else
+            alert("imageIndex: " + imageIndex);
+    }
+}
+
 function intervalBody() {
     $('#categoryTitle').fadeOut(intervalSpeed);
     $('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
@@ -283,7 +247,7 @@ function intervalBody() {
         // find links see if we know this girl.
         $('#categoryLabel').html(carouselItemArray[imageIndex].RootFolder);
 
-
+        imageHistory.push(imageIndex);
 
         $('#laCarousel').fadeIn(intervalSpeed);
         resizeCarousel();
@@ -293,15 +257,16 @@ function intervalBody() {
     });
 }
 
-function carouselContextMenu() {
+function carouselContextMenuClick() {
+    pause();
+    reportThenPerformEvent("CXM", carouselItemArray[imageIndex].FolderId);
+    event.preventDefault();
+    window.event.returnValue = false;
+    $('#carouselContextMenu').css("top", event.clientY + 5);
+    $('#carouselContextMenu').css("left", event.clientX);
+}
 
-    //alert("carouselContextMenu() called");
-    reportClickEvent("CMC", carouselItemArray[imageIndex].FolderId);
-
-
-        event.preventDefault();
-        window.event.returnValue = false;
-        pause();
+function carouselContextMenuShow() {
         $('#ctxModelName').html("");
         $.ajax({
             type: "GET",
@@ -337,9 +302,62 @@ function carouselContextMenu() {
                 //alert("GetNudeModelName xhr error: " + xhr.statusText);
             }
         });
-        $('#carouselContextMenu').css("top", event.clientY + 5);
-        $('#carouselContextMenu').css("left", event.clientX);
         $('#carouselContextMenu').fadeIn();
+}
+
+function carouselContextMenuAction(ctxMenuAction) {
+    reportClickEvent("CMC", carouselItemArray[imageIndex].FolderId);
+    //reportClickEvent("CMC", carouselItemArray[imageIndex].FolderId, ctxMenuAction);
+    //reportThenPerformEvent("CMC", ctxMenuAction);
+    switch (ctxMenuAction) {
+        case "showDialog":
+            $('#carouselContextMenu').fadeOut();
+            modelInfoDialogIsOpen = true;
+            pause();
+            showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId, carouselItemArray[imageIndex].Link);
+            $('#modelInfoDialog').on('dialogclose', function (event) {
+                modelInfoDialogIsOpen = false;
+                resume();
+            });
+            break;
+        case "seeMore":
+            window.open('/album.html?folder=' + selectedImageArchiveFolderId, '_blank');
+            break;
+        case "explode":
+            window.open(carouselItemArray[imageIndex].Link, "_blank");
+            break;
+        case "comment":
+            $('#carouselContextMenu').fadeOut();
+            imageCommentDialogIsOpen = true;
+            pause();
+            $('#carouselContextMenu').fadeOut();
+            showImageCommentDialog(carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].LinkId, carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].FolderName);
+            $('#imageCommentDialog').on('dialogclose', function (event) {
+                imageCommentDialogIsOpen = false;
+                resume();
+            });
+            break;
+        case "tags":
+            $('#carouselContextMenu').fadeOut();
+            pause();
+            metaTagDialogIsOpen = true;
+            //alert("carouselItemArray[imageIndex].FolderId: " + carouselItemArray[imageIndex].FolderId);
+            openMetaTagDialog(carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].LinkId);
+            $('#metaTagDialog').on('dialogclose', function (event) {
+                metaTagDialogIsOpen = false;
+                resume();
+            });
+            break;
+        case "archive":
+            $('#carouselContextMenu').fadeOut();
+            pause();
+            $('#carouselContextMenu').fadeOut();
+            showMoveCopyDialog("Archive", carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
+            break;
+        default:
+            sendEmailToYourself("Invalid context menu action", "invalid: " + ctxMenuAction);
+        //alert("invalid: " + ctxMenuAction);
+    }
 }
 
 function onImageNotLoaded() {

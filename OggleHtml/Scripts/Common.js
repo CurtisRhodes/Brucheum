@@ -1,6 +1,7 @@
 ﻿var settingsArray = {};
 var userRoles = [];
 var freeVisitorHitsAllowed = 1500;
+var waitingForReportClickEvent = true;
 
 //$(document).ready(function () {
 //    loadSettings();
@@ -123,10 +124,12 @@ function checkFor404(errorMessage, calledFrom) {
         //if (ipAddr !== "68.203.90.199983")
         //    sendEmailToYourself("CAN I GET A CONNECTION ", "calledFrom: " + calledFrom + "    ip: " + getCookieValue("IpAddress"));
 
-        //showCustomMessage(71);
-        $('#customMessage').html("<div class='centeredDivShell'><div class='centeredDivInner'>"+
-            "<div class='customMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>" +
-            "<div class='divRefreshPage'><a href='.'>Refresh page</a></div></div></div></div></div>");
+        showCustomMessage(71);
+        //$('#customMessage').html("<div class='centeredDivShell'><div class='centeredDivInner'>"+
+        //    "<div class='customMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>" +
+        //    "<div class='divRefreshPage'><a href='.'>Refresh page</a></div></div></div></div></div>");
+
+
             //"<br/><a href='.'>Refresh page</a></div></div></div></div>");
         //"<br/><span>Refresh page<span><br/>404 " + calledFrom + "</div></div>");
         $('.customMessageContainer').show();
@@ -267,7 +270,7 @@ function showCatListDialog(startFolder) {
         autoOpen: false,
         show: { effect: "fade" },
         hide: { effect: "blind" },
-        position: ({ my: 'left top', at: 'left top', of: $('#middleColumn') }),
+        position: { my: 'left top', at: 'left top', of: $('#middleColumn') },
         width: 411,
         height: 800
     });
@@ -291,6 +294,19 @@ function indexCatTreeContainerClick(path, id, treeId) {
     //    alert("dirTreeClick path: " + path + " id: " + id + " treeId: " + treeId);
     //    sendEmailToYourself("jQuery fail in indexCatTreeContainerClick", "dirTreeClick path: " + path + " id: " + id + " treeId: " + treeId);
     //}
+}
+
+var forgetShowingCustomMessage = true;
+function slowlyShowCustomMessage(blogId) {
+    forgetShowingCustomMessage = false;
+    setTimeout(function () {
+        if (forgetShowingCustomMessage === false) {
+            if (typeof pause === 'function')
+                pause();
+            //folderCategoryDialogIsOpen = true;
+            showCustomMessage(blogId);
+        }
+    }, 1100);
 }
 
 function showCustomMessage(blogId) {
@@ -342,28 +358,70 @@ function logActivity(changeLogModel) {
     });
 }
 
+function reportThenPerformEvent(eventCode, pageId) {
+    //alert("reportThenPerformEvent(eventCode: " + eventCode + ", pageId: " + pageId + ")");
+    var dots;
+    reportClickEvent(eventCode, pageId);
+    var reportEventWaiter = setInterval(function () {
+        dots += "* ";
+        $('#dots').html(dots);
+        if (waitingForReportClickEvent === false) {
+            clearInterval(reportEventWaiter);
+            //alert("done waiting");
+            $('#dots').html("");
+            switch (eventCode) {
+                case "HBC":
+                    window.location.href = "/";
+                    break;
+                case "CMC": // carousle context menu item clicked
+                    break;
+                case "CXM":  // carousle context menu opened
+                    carouselContextMenuShow();
+                    break;
+                case "BLC":  // banner link clicked
+                case "CIC":  // carousel image clicked
+                    window.location.href = "/album.html?folder=" + pageId;
+                    break;
+                case "RNK":
+                    switch (pageId) {
+                        case "porn":
+                            window.location.href = "Ranker.html?subdomain=porn";
+                            break;
+                        case "playboy":
+                            window.location.href = "Ranker.html?subdomain=playmates";
+                            break;
+                        default:
+                            window.location.href = "Ranker.html";
+                            break;
+                    }
+                    break;
+                default:
+                    alert("eventCode " + eventCode + "  not handled in reportThenPerformEvent");
+            }
+        }
+    }, 300);
+}
+
 function reportClickEvent(eventCode, pageId) {
-    //alert("entering reportClickEvent");
-    //sendEmailToYourself("Someone clicked on a carousel item", carouselItemArray[imageIndex].FolderId + " clicked by " + ipAddr);
+    //var ipAddr = getCookieValue("IpAddress");
+    //sendEmailToYourself("entering reportClickEvent", "EventCode: " + eventCode + "  ip: " + ipAddr + " pageId: " + pageId);
+
     try {
         var visitorId = getCookieValue("VisitorId");
         $.ajax({
             type: "POST",
-            url: settingsArray.ApiServer + "/api/ChangeLog?eventCode=" + eventCode + "&pageId=" + pageId + "&visitorId=" + visitorId,
-            success: function (successModel) {
-                if (successModel.Success === "ok") {
-                    var ipAddr = getCookieValue("IpAddress");
+            url: settingsArray.ApiServer + "/api/ChangeLog/LogEventActivity?eventCode=" + eventCode + "&pageId=" + pageId + "&visitorId=" + visitorId,
+            success: function (logEventActivitySuccess) {
+                if (logEventActivitySuccess.Success === "ok") {
 
-        alert("retruning from changelog " + ipAddr);
-
-                    if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
-                        alert(successModel.ReturnValue);
-                    else
-                        sendEmailToYourself("Click Event", successModel.ReturnValue);
+                    //if (eventCode === "CAA") alert("Event " + logEventActivitySuccess.EventName + "  " + logEventActivitySuccess.PageName);
+                    sendEmailToYourself(logEventActivitySuccess.PageName + "  " + logEventActivitySuccess.EventName, logEventActivitySuccess.SuccessMessage);
+                    //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
+                    waitingForReportClickEvent = false;
                 }
                 else {
-                    alert("Error returned from " + successModel.Success);
-                    sendEmailToYourself("jQuery fail in reportClickEvent", successModel.Success);
+                    alert("Error returned from " + logEventActivitySuccess.Success);
+                    sendEmailToYourself("jQuery fail in reportClickEvent", logEventActivitySuccess.Success);
                 }
             },
             error: function (jqXHR) {

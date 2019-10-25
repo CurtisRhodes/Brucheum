@@ -41,6 +41,14 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
+    public class LogEventActivitySuccessModel
+    {
+        public string PageName { get; set; }
+        public string EventName { get; set; }
+        public string SuccessMessage { get; set; }
+        public string Success { get; set; }
+    }
+
     public class GetVisitorInfoFromIPAddressSuccessModel
     {
         public string VisitorId { get; set; }
@@ -58,6 +66,8 @@ namespace WebApi.Models
 
     public class ImageHitSuccessModel
     {
+        public string PageName { get; set; }
+        public string IpAddress { get; set; }
         public int ImageHits { get; set; }
         public int UserHits { get; set; }
         public string Success { get; set; }

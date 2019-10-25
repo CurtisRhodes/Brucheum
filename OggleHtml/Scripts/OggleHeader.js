@@ -4,7 +4,7 @@
     var lang = "en";
     var subheaderContent;
     var boobsRankerLink = "";
-    var bannerImageLink = "<a href='/'><img src='/Images/redballon.png' class='bannerImage' onclick='reportClickEvent(\"HBC\",3908)'/></a>\n";
+    var bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",3908)'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
 
     if (subdomain === "special") {
         // comming in from staticPage.js
@@ -28,12 +28,12 @@
         case "archive":
         //case "special":
             subheaderContent =
-                "                <a href='/album.html?folder=2' onclick='reportClickEvent(\"BLC\",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
-                "                <a href='/album.html?folder=136' onclick='reportClickEvent(\"BLC\",136)'> poses,</a>\n" +
-                "                <a href='/album.html?folder=3916' onclick='reportClickEvent(\"BLC\",3916)'> positions,</a>\n" +
-                "                <a href='/album.html?folder=159' onclick='reportClickEvent(\"BLC\",159)'> topics,</a>\n" +
-                "                <a href='/album.html?folder=199' onclick='reportClickEvent(\"BLC\",199)'> shapes</a> and\n" +
-                "                <a href='/album.html?folder=241' onclick='reportClickEvent(\"BLC\",241)'>sizes</a>\n";
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",136)'> poses,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",3916)'> positions,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",159)'> topics,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",199)'> shapes</a> and\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",241)'>sizes</a>\n";
 
             //subheaderContent =
             //    "                <a href='/album.html?folder=2'><span class='bigTits'>STORE </span>bryster</a> organiseret af\n" +
@@ -41,32 +41,32 @@
             //    "                <a href='/album.html?folder=159'> emne,</a>\n" +
             //    "                <a href='/album.html?folder=199'> figurer</a> og\n" +
             //    "                <a href='/album.html?folder=241'>størrelser</a>\n";
-            bannerImageLink = "<a href='/'><img src='/Images/redballon.png' title='home. Find lots of cool things here.' class='bannerImage' onclick='reportClickEvent(\"HBC\",3908)'/></a>\n";
-            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='/Ranker.html?subdomain=boobs' title='Spin through the links to land on random portrait images. ' >boobs ranker</a></div>\n";
+            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",3908)'><img  class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
+            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",\"boobs\")' title='Spin through the links to land on random portrait images. ' >boobs ranker</a></div>\n";
             break;
         case "playboy":
         case "playmates":
             subheaderContent =
-                "                <a href='/album.html?folder=1132' onclick='reportClickEvent(\"BLC\",1132)'>mm Centerfolds,</a>\n" +
-                "                <a href='/album.html?folder=1986' onclick='reportClickEvent(\"BLC\",1986)'> magazine covers,</a>\n" +
-                "                <a href='/album.html?folder=3796' onclick='reportClickEvent(\"BLC\",3796)'> cybergirls,</a> and\n" +
-                "                <a href='/album.html?folder=2601' onclick='reportClickEvent(\"BLC\",2601)'> extras</a>\n";
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",1132)'>Centerfolds,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",1986)'> magazine covers,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",3796)'> cybergirls,</a> and\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",2601)'> extras</a>\n";
 
-            bannerImageLink = "<a href='/'><img src='/Images/playboyBallon2.png' title='home. Find lots of cool things here.' class='bannerImage' onclick='reportClickEvent(\"HBC\",1132)'/></a>\n";
-            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='/Ranker.html?subdomain=playmates' title='Spin through the links to land on random portrait images. ' >Playmate Ranker</a></div>\n";
+            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",1132)'><img  class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
+            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",\"playboy\")' title='Spin through the links to land on random portrait images. ' >Playmate Ranker</a></div>\n";
             break;
         case "porn":
         case "sluts":
             $('body').addClass('pornBodyColors');
             subheaderContent =
-                "               <a href='/album.html?folder=243' onclick='reportClickEvent(\"BLC\",243)'>cock suckers</a>, \n" +
-                "               <a href='/album.html?folder=420' onclick='reportClickEvent(\"BLC\",420)'>boob suckers</a>, \n" +
-                "               <a href='/album.html?folder=357' onclick='reportClickEvent(\"BLC\",357)'>cum shots</a>, \n" +
-                "               <a href='/album.html?folder=397' onclick='reportClickEvent(\"BLC\",397)'>kinky</a> and \n" +
-                "               <a href='/album.html?folder=411' onclick='reportClickEvent(\"BLC\",411)'>naughty behaviour</a>\n";
+                "               <a href='javascript:reportThenPerformEvent(\"BLC\",243)'>cock suckers</a>, \n" +
+                "               <a href=''javascript:reportThenPerformEvent(\"BLC\",420)'>boob suckers</a>, \n" +
+                "               <a href=''javascript:reportThenPerformEvent(\"BLC\",357)'>cum shots</a>, \n" +
+                "               <a href=''javascript:reportThenPerformEvent(\"BLC\",397)'>kinky</a> and \n" +
+                "               <a href=''javascript:reportThenPerformEvent(\"BLC\",411)'>naughty behaviour</a>\n";
 
-            bannerImageLink = "<a href='/Index.html?subdomain=porn'><img src='/Images/cslips02.png' title='porn home.' class='bannerImage' onclick='reportClickEvent(\"HBC\",3909)'/></a>\n";
-            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='/Ranker.html?subdomain=porn' title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
+            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",3909)'><img src='/Images/cslips02.png' title='porn home' class='bannerImage'/></a>\n";
+            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",\"porn\")' title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
             break;
         case "admin":
             subheaderContent = "Admin";
@@ -85,54 +85,60 @@
             //console.log("subdomain: " + subdomain + "  not found");
     }
 
-    headerHtml =
-        "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" + bannerImageLink + "</div>\n" +
-        "   <div class='headerBodyContainer'>\n" +
-        "       <div id='' class='headerTopRow'>\n" +
-        "           <div id='bannerTitle' class='headerTitle'>OggleBooble</div>\n" +
-        "           <div id='headerSubTitle' class='headerSubTitle'>\n" + subheaderContent + "</div>\n" + boobsRankerLink +
-        "           <div class='OggleSearchBox'>\n" +
-        "               <span id='notUserName'>search</span> <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
-        "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
-        "           </div>\n" +
-        "       </div>\n" +
-        "       <div class='headerBottomRow'>\n" +
-        "           <div id='headerMessage' class='bottomLeftBottomHeaderArea'></div>\n" +
-        "           <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
-        "           <div class='menuTabs replaceableMenuItems'>\n" +
-        "               <div id='twinsLink' class='menuTabs displayHidden'>\n" +
-        "                   <a href='/album.html?folder=3904'><img src='/Images/geminiSymbol1.png' title='Hef likes twins' class='trackbackImage'></a>" +
-        "               </div>\n" +
-        "               <div id='breastfulPlaymatesLink' class='menuTabs displayHidden'>\n" +
-        "                   <a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='trackbackImage'></a>" +
-        "               </div>\n" +
-        "               <div id='blackCenterfoldsLink' class='menuTabs displayHidden'>\n" +
-        "                   <div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>\n" +
-        "               </div>\n" +
-        "               <div id='freeonesLink' class='menuTabs displayHidden'>\n" +
-        //"                   <a href='http://www.freeones.com' target='_top'><img src='http://www.freeones.com/webmasters/banners/freeones_new.gif' width='120' height='60' title='FreeOnes - The ultimate babes site' alt='models, babes and porn stars'/></a>\n"+
-        "                   <a href='http://www.freeones.com' target='_blank' text='free porn'><img src='/Images/freeones.png' title='FreeOnes - The ultimate babes site' alt='models, babes and porn stars' class='trackbackImage'></a>" +
-        "               </div>\n" +
-        "               <div id='babapediaLink' class='menuTabs displayHidden'>\n" +
-        "                   <a href='https://www.babepedia.com' target='_blank'><img src='/Images/babepedia.png' class='trackbackImage'></a>" +
-        "               </div>\n" +
-        "           </div>\n" +
-        "           <div class='loginArea'>\n" +
-        "               <div id='optionLoggedIn' class='displayHidden'>\n" +
-        "                   <div class='menuTab adminLevelRequired displayHidden'><a href='/Dashboard.html'>Dashboard</a></div>\n" +
-        "                   <div class='menuTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
-        "                   <div class='menuTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
-        "               </div>\n" +
-        "               <div id='optionNotLoggedIn'>\n" +
-        "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:onRegisterClick()'  onmouseover='slowlyShowCustomMessage(69)' onmouseout='forgetShowingCustomMessage=true;' >Register</a></div>\n" +
-        "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
-        "               </div>\n" +
-        "           </div>\n" +
-        "       </div>\n" +
-        "   </div>\n" +
-        "<div id='customMessage' class='displayHidden customMessageContainer'></div>\n" +
-        "<div id='indexCatTreeContainer' class='oggleHidden'></div>";
-    $('header').html(headerHtml);
+    if (isNullorUndefined(subheaderContent)) {
+        sendEmailToYourself("ERROR in OggleHeader setOggleHeader", "isNullorUndefined(subheaderContent)");
+        alert("ERROR in OggleHeader setOggleHeader:  isNullorUndefined(subheaderContent)");
+    }
+    else {
+        headerHtml =
+            "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" + bannerImageLink + "</div>\n" +
+            "   <div class='headerBodyContainer'>\n" +
+            "       <div id='' class='headerTopRow'>\n" +
+            "           <div id='bannerTitle' class='headerTitle'>OggleBooble</div>\n" +
+            "           <div id='headerSubTitle' class='headerSubTitle'>\n" + subheaderContent + "</div>\n" + boobsRankerLink +
+            "           <div class='OggleSearchBox'>\n" +
+            "               <span id='notUserName'>search</span> <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
+            "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
+            "           </div>\n" +
+            "       </div>\n" +
+            "       <div class='headerBottomRow'>\n" +
+            "           <div id='headerMessage' class='bottomLeftBottomHeaderArea'></div>\n" +
+            "           <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
+            "           <div class='menuTabs replaceableMenuItems'>\n" +
+            "               <div id='twinsLink' class='menuTabs displayHidden'>\n" +
+            "                   <a href='/album.html?folder=3904'><img src='/Images/geminiSymbol1.png' title='Hef likes twins' class='trackbackImage'></a>" +
+            "               </div>\n" +
+            "               <div id='breastfulPlaymatesLink' class='menuTabs displayHidden'>\n" +
+            "                   <a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='trackbackImage'></a>" +
+            "               </div>\n" +
+            "               <div id='blackCenterfoldsLink' class='menuTabs displayHidden'>\n" +
+            "                   <div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>\n" +
+            "               </div>\n" +
+            "               <div id='freeonesLink' class='menuTabs displayHidden'>\n" +
+            //"                   <a href='http://www.freeones.com' target='_top'><img src='http://www.freeones.com/webmasters/banners/freeones_new.gif' width='120' height='60' title='FreeOnes - The ultimate babes site' alt='models, babes and porn stars'/></a>\n"+
+            "                   <a href='http://www.freeones.com' target='_blank' text='free porn'><img src='/Images/freeones.png' title='FreeOnes - The ultimate babes site' alt='models, babes and porn stars' class='trackbackImage'></a>" +
+            "               </div>\n" +
+            "               <div id='babapediaLink' class='menuTabs displayHidden'>\n" +
+            "                   <a href='https://www.babepedia.com' target='_blank'><img src='/Images/babepedia.png' class='trackbackImage'></a>" +
+            "               </div>\n" +
+            "           </div>\n" +
+            "           <div class='loginArea'>\n" +
+            "               <div id='optionLoggedIn' class='displayHidden'>\n" +
+            "                   <div class='menuTab adminLevelRequired displayHidden'><a href='/Dashboard.html'>Dashboard</a></div>\n" +
+            "                   <div class='menuTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
+            "                   <div class='menuTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
+            "               </div>\n" +
+            "               <div id='optionNotLoggedIn'>\n" +
+            "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:onRegisterClick()'  onmouseover='slowlyShowCustomMessage(69)' onmouseout='forgetShowingCustomMessage=true;' >Register</a></div>\n" +
+            "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
+            "               </div>\n" +
+            "           </div>\n" +
+            "       </div>\n" +
+            "   </div>\n" +
+            "<div id='customMessage' class='displayHidden customMessageContainer'></div>\n" +
+            "<div id='indexCatTreeContainer' class='oggleHidden'></div>";
+        $('header').html(headerHtml);
+    }
 
     //  function setLoginHeader(folderId) {
     if (document.domain === 'localhost') {  //        if (ipAddress !== "68.203.90.183" && ipAddress !== "50.62.160.105") {
@@ -207,6 +213,7 @@ function showSpecialHeaderIcons(folderId) {
         }
     });
 }
+    
 
 
 

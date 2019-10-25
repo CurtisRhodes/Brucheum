@@ -152,6 +152,11 @@ namespace WebApi
                     }
                     imageHitSuccess.UserHits = db.SlideshowImages.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
                     imageHitSuccess.ImageHits = db.SlideshowImages.Where(h => h.ImageLinkId == logImageHItData.LinkId).Count();
+                    imageHitSuccess.IpAddress = db.Visitors.Where(v => v.VisitorId == logImageHItData.VisitorId).FirstOrDefault().IpAddress;
+                    using (OggleBoobleContext odc = new OggleBoobleContext())
+                    {
+                        imageHitSuccess.PageName = odc.CategoryFolders.Where(f => f.Id == logImageHItData.PageId).FirstOrDefault().FolderName;
+                    }
                 }
                 imageHitSuccess.Success = "ok";
             }
@@ -236,14 +241,14 @@ namespace WebApi
                         visitorSuccess.PageName = pageName;
                     }
 
-                    if (visitorSuccess.VisitorId != "9bd90468-e633-4ee2-af2a-8bbb8dd47ad1")
+                    if (visitorSuccess.VisitorId != "ec6fb880-ddc2-4375-8237-021732907510")
                     {
                         PageHit hit = new PageHit();
                         hit.VisitorId = visitorSuccess.VisitorId;
                         hit.HitDateTime = DateTime.Now;
                         hit.AppName = visitorModel.AppName;
                         hit.PageId = visitorModel.PageId;
-                        //hit.PageName = pageName;
+                        hit.PageName = pageName;
                         db.PageHits.Add(hit);
                         db.SaveChanges();
                     }
@@ -350,9 +355,9 @@ namespace WebApi
         }
 
         [HttpPost]
-        public SuccessModel LogEventActivity(string eventCode, int pageId, string visitorId)
+        public LogEventActivitySuccessModel LogEventActivity(string eventCode, int pageId, string visitorId)
         {
-            SuccessModel successModel = new SuccessModel();
+            LogEventActivitySuccessModel logEventActivitySuccess = new LogEventActivitySuccessModel();
             try
             {
                 using (WebStatsContext db = new WebStatsContext())
@@ -366,24 +371,22 @@ namespace WebApi
                     });
                     db.SaveChanges();
 
-                    string pageName;
+                    logEventActivitySuccess.EventName = db.Refs.Where(r => r.RefCode == eventCode).FirstOrDefault().RefDescription;
                     using (OggleBoobleContext odb = new OggleBoobleContext())
                     {
-                        pageName = odb.CategoryFolders.Where(f => f.Id == pageId).FirstOrDefault().FolderName;
+                        logEventActivitySuccess.PageName = odb.CategoryFolders.Where(f => f.Id == pageId).FirstOrDefault().FolderName;
                     }
-
-                    string webStatsRef = db.Refs.Where(r => r.RefCode == eventCode).FirstOrDefault().RefDescription;
                     Visitor visitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
                     if (visitor != null)
                     {
-                        successModel.ReturnValue = "visitor IP: " + visitor.IpAddress + "  from " + visitor.City + ", " +
-                            visitor.Region + " " + visitor.Country + " : [" + webStatsRef + "] for: " + pageName;
+                        logEventActivitySuccess.SuccessMessage = "IP: " + visitor.IpAddress +
+                            "  from " + visitor.City + ", " + visitor.Region + " " + visitor.Country;
                     }
                 }
-                successModel.Success = "ok";
+                logEventActivitySuccess.Success = "ok";
             }
-            catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }
-            return successModel;
+            catch (Exception ex) { logEventActivitySuccess.Success = Helpers.ErrorDetails(ex); }
+            return logEventActivitySuccess;
         }
     }
 

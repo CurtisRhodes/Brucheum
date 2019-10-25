@@ -330,6 +330,7 @@ footer {
 }
 
 .customMessageContainer {
+    position: absolute;
     z-index: 20;
     display: none;
 }

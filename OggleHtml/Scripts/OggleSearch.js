@@ -63,18 +63,4 @@ function jumpToSelected(folderId) {
     clearSearch();
 }
 
-var forgetShowingCustomMessage = true;
-function slowlyShowCustomMessage(blogId) {
-    forgetShowingCustomMessage = false;
-    setTimeout(function () {
-        if (forgetShowingCustomMessage === false) {
-            if (typeof pause === 'function')
-                pause();
-            //folderCategoryDialogIsOpen = true;
-            showCustomMessage(blogId);
-        }
-    }, 1100);
-}
-
-
 

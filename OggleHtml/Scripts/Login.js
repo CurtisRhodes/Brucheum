@@ -40,7 +40,7 @@ function attemptRegister() {
                 success: function (response) {
                     if (response === "ok") {
                         $('#registerUserDialog').dialog('close');
-                        alert("register happened. Attempt Login");
+                        //alert("register happened. Attempt Login");
                         console.log("register happened. Attempt Login");
                         setCookieValue("User", registeredUserModel.UserName);
                         attemptLogin(registeredUserModel.UserName, registeredUserModel.Pswrd );
@@ -236,6 +236,7 @@ function deleteCookie() {
 function setCookieValue(elementName, elementValue) {
     //alert("setCookieValue(" + elementName + "," + elementValue + ")");
     window.localStorage[elementName] = elementValue;
+
     var decodedCookie = "";
     if (document.cookie) {
         var ipAddress = getCookieValue("IpAddress");
@@ -252,22 +253,17 @@ function setCookieValue(elementName, elementValue) {
             if (cookieItemName === "IpAddress") ipAddress = cookieItemValue;
             if (cookieItemName === "VisitorId") visitorId = cookieItemValue;
         }
-
-        if (elementName === "User") user = elementValue;
-        if (elementName === "IpAddress") ipAddress = elementValue;
-        if (elementName === "VisitorId") visitorId = elementValue;
     }
+    if (elementName === "User") user = elementValue;
+    if (elementName === "IpAddress") ipAddress = elementValue;
+    if (elementName === "VisitorId") visitorId = elementValue;
     //deleteCookie();
     expiryDate = new Date();
     expiryDate.setMonth(expiryDate.getMonth() + 9);
-
     //var cookieString = "VisitorId=" + visitorId + ";IpAddress=" + ipAddress + ";User=" + user + ";path='/;expires=" + expiryDate.toUTCString();
     var cookieString = "VisitorId:" + visitorId + ",IpAddress:" + ipAddress + ",User:" + user + ",path:'/,expires:" + expiryDate.toUTCString();
     document.cookie = cookieString;
-
-
     //alert("setCookieValue(" + elementName + "," + elementValue + ")\ncookie:\n" + document.cookie);
-
 }
 
 function getCookieValue(itemName) {

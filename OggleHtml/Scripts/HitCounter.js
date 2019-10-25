@@ -1,17 +1,28 @@
 ﻿// HITCOUNTER
 var verbosity = 1;
 
+// verbosity > 4 show new visits redirects
+// verbosity > 5 visitior came back
+
+
 function logImageHit(link, pageId, initialHit) {
     //$('#footerMessage').html("logging image hit");
     var visitorId = getCookieValue("VisitorId");    
     //if (visitorId !== '9bd90468-e633-4ee2-af2a-8bbb8dd47ad1') 
+    if (isNullorUndefined(pageId)) {
+        pageId = 0;
+        sendEmailToYourself("logImageHit pageId came in", "");
+    }
+
     var linkId = link.substr(link.lastIndexOf("_") + 1, 36);
+
     var logImageHItData = {
         VisitorId: visitorId,
         PageId: pageId,
         LinkId: linkId,
         IsInitialHit: initialHit
     };
+
     $.ajax({
         type: "POST",
         //url: "https://api.curtisrhodes.com/api/ImageHit/LogImageHit?visitorId=" + visitorId + "&linkId=" + link,
@@ -22,17 +33,20 @@ function logImageHit(link, pageId, initialHit) {
             if (imageHitSuccessModel.Success === "ok") {
                 var imageHits = imageHitSuccessModel.ImageHits;
                 var userHits = imageHitSuccessModel.UserHits;
-                //alert("logImageHit  pageId: " + pageId + " visitorId: " +
-                //    visitorId + " imageHits: " + imageHits + " user hits: " + userHits);
-                if (verbosity === 1) {
-                    sendEmailToYourself("logImageHit",
-                        "pageId: " + pageId + " visitorId: " + visitorId + " imageHits: " + imageHits + " user hits: " + userHits + "  initialHit: " + initialHit);
+                if (imageHitSuccessModel.IpAddress !== "68.203.90.183")
+                {
+                    if (verbosity > 30)
+                    {
+                        sendEmailToYourself("logImageHit SUCCESS " + imageHitSuccessModel.PageName,
+                            "IpAddress: " + imageHitSuccessModel.IpAddress + " imageHits: " + imageHits + " user hits: " + userHits + "  initialHit: " + initialHit);
+                    }
                 }
-                console.log(visitorId + " viewed Image imageHits: " + imageHits + " user hits: " + userHits);
+                //console.log(visitorId + " viewed Image imageHits: " + imageHits + " user hits: " + userHits);
             }
             else {
-                console.log("logImageHit: " + imageHitSuccessModel.Success);
-                sendEmailToYourself("WHAT THE  logImageHit fail ", imageHitSuccessModel.Success);
+                //console.log("logImageHit: " + imageHitSuccessModel.Success);
+                //sendEmailToYourself("Ajax fail in logImageHit", "LinkId: " + linkId + " PageId: " + pageId + " VisitorId: " + visitorId + " Message: " + imageHitSuccessModel.Success);
+                sendEmailToYourself("Ajax fail in logImageHit", "PageId: " + pageId + " Message: " + imageHitSuccessModel.Success);
             }
         },
         error: function (jqXHR) {
@@ -162,7 +176,7 @@ function logVisitor(pageId) {
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=3822';
                                         break;
                                     default:
-                                        if (verbosity > 4)
+                                        if (verbosity > 5)
                                             sendEmailToYourself("Someone new visited: " + visitorSuccess.PageName,
                                                 " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                 }
@@ -175,7 +189,7 @@ function logVisitor(pageId) {
                                         visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                 }
                                 else {
-                                    if (verbosity > 4)
+                                    if (verbosity > 5)
                                         sendEmailToYourself("A visitor came back ",
                                             visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                 }
@@ -187,8 +201,8 @@ function logVisitor(pageId) {
                             //sendEmailToYourself("Success in logVisitor ", "Just so you know this happens too, not just the pk violation.");
                         }
                         else {
-                            console.log("logVisitor: " + visitorSuccess.Success);
-                            sendEmailToYourself("DAMN Error in logVisitor ", visitorSuccess.Success);
+                            //console.log("logVisitor: " + visitorSuccess.Success);
+                            sendEmailToYourself("Ajax Error in logVisitor ", "PageId: " + pageId + "  Message: " + visitorSuccess.Success);
                         }
                     },
                     error: function (jqXHR) {
