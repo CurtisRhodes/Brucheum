@@ -135,7 +135,7 @@ function loadImages(rootFolder, isChecked, skip, take) {
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "getAconnection")) {
+                if (!checkFor404(errorMessage, "loadImages")) {
                     sendEmailToYourself("XHR ERROR IN Carousel.JS loadImages", "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take +
                         "  Message: " + errorMessage);
                 }

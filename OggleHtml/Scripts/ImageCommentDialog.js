@@ -112,7 +112,7 @@ function editImageComment() {
             }
             else {
                 sendEmailToYourself("jquery fail in ImageCommentDialog.js addImageComment", "editImageComment: " + success);
-                //alert("editImageComment: " + success);
+                alert("editImageComment: " + success);
             }
         },
         error: function (jqXHR) {

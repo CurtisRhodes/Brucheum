@@ -6,19 +6,26 @@ var verbosity = 1;
 
 function logImageHit(link, pageId, isInitialHit) {
     //$('#footerMessage').html("logging image hit");
-    var visitorId = getCookieValue("VisitorId");    
 
-    if (isNullorUndefined(visitorId) || visitorId === "unknown") {
-        sendEmailToYourself("ERROR in logImageHit.  VisitorId came in Null or Undefined or Unknown", "visitorId: " + visitorId + ". Sent to logvisitor'");
-        //visitorId = "unknown";
-        logVisitor(pageId);
-    }
-
-    //if (visitorId !== '9bd90468-e633-4ee2-af2a-8bbb8dd47ad1') 
     if (isNullorUndefined(pageId)) {
         pageId = 1;
-        sendEmailToYourself("ERROR in logImageHit. PageId came in Null or Undefined", "pageId: " + pageId + ". Set to 1");
+        sendEmailToYourself("TROUBLE in logImageHit. PageId came in Null or Undefined", "pageId: " + pageId + ". Set to 1");
+
     }
+    var ipAddr = getCookieValue("IpAddress");
+    var visitorId = getCookieValue("VisitorId");    
+
+    if (isNullorUndefined(ipAddr)) {
+        sendEmailToYourself("Problem in LogImageHit. IpAddress not found.", "VisitorId: " + visitorId);
+        //logVisitor(pageId);
+        return;
+    }
+    if (isNullorUndefined(visitorId) || visitorId === "unknown") {
+        sendEmailToYourself("SENT TO LOGVISITOR visitorId", "ERROR in logImageHit.  VisitorId came in Null or Undefined or Unknown.  IpAddr: " + ipAddr);
+        logVisitor(pageId);
+        return;
+    }
+    //if (visitorId !== '9bd90468-e633-4ee2-af2a-8bbb8dd47ad1') 
     
     var linkId = link.substr(link.lastIndexOf("_") + 1, 36);
     //var ipAddr = getCookieValue("IpAddress");
@@ -33,10 +40,8 @@ function logImageHit(link, pageId, isInitialHit) {
         IsInitialHit: isInitialHit
     };
 
-    //alert("logging image hit. PageId: " + pageId + " isInitialHit: " + isInitialHit);
     $.ajax({
         type: "POST",
-        //url: "https://api.curtisrhodes.com/api/ImageHit/LogImageHit?visitorId=" + visitorId + "&linkId=" + link,
         url: settingsArray.ApiServer + "api/ImageHit/LogImageHit",  //?visitorId=" + visitorId + "&pageId=" + pageId + "&linkId=" + linkId,
         data: logImageHItData,
         success: function (imageHitSuccessModel) {
@@ -58,8 +63,24 @@ function logImageHit(link, pageId, isInitialHit) {
             }
             else {
                 //console.log("logImageHit: " + imageHitSuccessModel.Success);
-                sendEmailToYourself("Ajax fail in 22 logImageHit", "PageId: " + pageId + " linkId: " + linkId +
-                    "ipAddr: " + getCookieValue("IpAddress") + " VisitorId: " + visitorId + " isInitialHit: " + isInitialHit + " Message: " + imageHitSuccessModel.Success);
+                //if (imageHitSuccessModel.IpAddress !== "68.203.90.183") {
+                if (ipAddr !== "68.203.90.183") {
+                    sendEmailToYourself("Ajax fail in Hitcounter.js logImageHit",
+                        "VisitorId: " + visitorId +
+                        " utc: " + imageHitSuccessModel.HitDateTime +
+                        " isInitialHit: " + isInitialHit +
+                        "PageId: " + pageId +
+                        "\n linkId: " + linkId +
+                        //" imageHitSuccessModel.IpAddress: " + imageHitSuccessModel.IpAddress +
+                        "\n ipAddr: " + ipAddr +
+                        "\n Message: " + imageHitSuccessModel.Success);
+                }
+                else {
+                    sendEmailToYourself("DOUBLE ajax fail in Hitcounter.js logImageHit", "PageId: " + pageId + " linkId: " + linkId +
+                        "\n ipAddr: " + getCookieValue("IpAddress") + " VisitorId: " + visitorId + " isInitialHit: " + isInitialHit + " Message: " + imageHitSuccessModel.Success);
+                }
+                    //alert("Ajax fail in Hitcounter.js logImageHit\nPageId: " + pageId + "\n linkId: " + linkId +
+                    //    "\n ipAddr: " + getCookieValue("IpAddress") + "\n VisitorId: " + visitorId + "\n isInitialHit: " + isInitialHit + " Message: " + imageHitSuccessModel.Success);
             }
         },
         error: function (jqXHR) {
@@ -136,7 +157,8 @@ function logVisitor(pageId) {
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=626';
                                         break;
                                     case 1555: // Donna Derrico
-                                        sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 1995",
+                                        if (verbosity > 4)
+                                            sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 1995",
                                             " hit from " + data.city + ", " + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                                         window.location.href = 'https://ogglebooble.com/album.html?folder=633';
                                         break;
@@ -328,8 +350,13 @@ function logPageHit(pageId) {
                         }
                     }
                     else {
-                        console.log("OH MY GOD logPageHit: " + pageHitSuccessModel.Success);
-                        sendEmailToYourself("OH MY GOD logPageHit error: ", pageHitSuccessModel.Success);
+                        if (pageHitSuccessModel.Success.startsWith("ERROR: Violation of PRIMARY KEY")) {
+                            sendEmailToYourself("ERROR: Violation of PRIMARY KEY: ", pageHitSuccessModel.Success);
+                        }
+                        else {
+                            //console.log("OH MY GOD logPageHit: " + pageHitSuccessModel.Success);
+                            sendEmailToYourself("OH MY GOD logPageHit error: ", pageHitSuccessModel.Success);
+                        }
                     }
                 },
                 error: function (jqXHR) {

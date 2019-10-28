@@ -16,6 +16,11 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
+    public class SortOrderItem {
+        public string ItemId { get; set; }
+        public int InputValue { get; set; }
+    }
+
     public class LinkModel
     {
         public int FolderId { get; set; }

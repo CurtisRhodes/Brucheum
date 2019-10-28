@@ -104,6 +104,7 @@ namespace WebApi.DataContext
         public string RootFolder { get; set; }
         public string Orientation { get; set; }
         public int LinkCount { get; set; }
+        public int SortOrder { get; set; }
     }
 
     [Table("OggleBooble.vwDirtree")]

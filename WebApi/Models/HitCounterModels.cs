@@ -77,6 +77,7 @@ namespace WebApi.Models
         public string IpAddress { get; set; }
         public int ImageHits { get; set; }
         public int UserHits { get; set; }
+        public DateTime HitDateTime { get; set; }
         public string Success { get; set; }
     }
 

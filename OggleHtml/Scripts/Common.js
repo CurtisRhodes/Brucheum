@@ -113,8 +113,8 @@ function displayStatusMessage(msgCode, message) {
 function checkFor404(errorMessage, calledFrom) {
     var isNotConnected = false;
     //alert("checkFor404() \nerrorMessage: " + errorMessage + ", calledFrom:" + calledFrom);
-    var ipAddr = getCookieValue("IpAddress");
     if (isNullorUndefined(errorMessage)) {
+        var ipAddr = getCookieValue("IpAddress");
         //alert("checkFor404 called with null errorMessage from: " + calledFrom);
         sendEmailToYourself("checkFor404 called with null errorMessage from: " + calledFrom, "ip: " + ipAddr);
     }
@@ -122,13 +122,13 @@ function checkFor404(errorMessage, calledFrom) {
         isNotConnected = true;
 
         //if (ipAddr !== "68.203.90.199983")
-        if (ipAddr !== "68.203.90.183")
-            sendEmailToYourself("CAN I GET A CONNECTION ", "calledFrom: " + calledFrom + "    ip: " + ipAddr);
+        //if (ipAddr !== "68.203.90.183")
+        //    sendEmailToYourself("CAN I GET A CONNECTION ", "calledFrom: " + calledFrom + "    ip: " + ipAddr);
 
         //showCustomMessage(71);
         $('#customMessage').html("<div class='centeredDivShell'><div class='centeredDivInner'>"+
             "<div class='customMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>" +
-            "<div class='divRefreshPage'><a href='.'>Refresh page</a></div></div></div></div></div>");
+            "<div class='divRefreshPage'><a href='javascript:reportThenPerformEvent(\"GAX\",1)'>Refresh page</a></div></div></div></div></div>");
 
         $('.customMessageContainer').show();
         console.log("checkFor404: " + calledFrom);
@@ -370,6 +370,9 @@ function reportThenPerformEvent(eventCode, pageId) {
                 case "HBC":
                     window.location.href = "/";
                     break;
+                case "GAX":  // can I get a connection
+                    window.location.href = ".";
+                    break;
                 case "CMC": // carousle context menu item clicked
                     break;
                 case "CXM":  // carousle context menu opened
@@ -413,6 +416,26 @@ function reportClickEvent(eventCode, pageId) {
         //    if (eventCode === "BCC") alert("Breadcrumb Clicked: " + pageId);            
         //}
 
+        //RefType	RefCode	RefDescription
+        //EVT	BCC	Breadcrumb Clicked
+        //EVT	BLC	Banner link Clicked
+        //EVT	CAA	Carousel Arrow Clicked
+        //EVT	CIC	Carousel Item clicked
+        //EVT	CMC	Context menu item clicked
+        //EVT	CXM	Context Menu Opened
+        //EVT	FCC	Fantasy comment
+        //EVT	FLC	Footer link clicked
+        //EVT	GAX	Get a connection
+        //EVT	GIC	Gallery item clicked
+        //EVT	HBC	Home Banner Clicked
+        //EVT	LMC	Left menu item clicked
+        //EVT	MBC	modelInfo banner clicked
+        //EVT	RNK	Ranker banner clicked
+        //EVT	SBC	Slideshow button clicked
+        //EVT	SUB	Sub Folder Click
+
+
+
         var eventClickDdata = {
             PageId: pageId,
             EvenCode: eventCode,
@@ -431,7 +454,7 @@ function reportClickEvent(eventCode, pageId) {
                     if (logEventActivitySuccess.IpAddress !== "68.203.90.183")  // && ipAddr !== "50.62.160.105")
                     {
                         //if (verbosity > 5)
-                        if (eventCode === "BCC")
+                        if (eventCode === "SBC")
                         {
                             sendEmailToYourself(logEventActivitySuccess.EventName + ": " + logEventActivitySuccess.PageName,
                                 "Ip: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
@@ -443,10 +466,19 @@ function reportClickEvent(eventCode, pageId) {
                 else {
                     var ipAddr = getCookieValue("IpAddress");
                     if (ipAddr === "68.203.90.183") {
-                        alert("Error returned from reportClickEvent.LogEventActivity " + logEventActivitySuccess.Success);
+                     //   alert("Error returned from reportClickEvent.LogEventActivity " + logEventActivitySuccess.Success);
+                        sendEmailToYourself("DOUBLE FAIL jQuery 32 fail in reportClickEvent",
+                            "PageId: " + pageId +
+                            "\n  EventCode: " + eventCode +
+                            "\n  VisitorId: " + visitorId +
+                            "\n  Message: " + logEventActivitySuccess.Success);
                     }
                     else {
-                        sendEmailToYourself("jQuery 32 fail in reportClickEvent", "Message: " + logEventActivitySuccess.Success);
+                        sendEmailToYourself("jQuery 32 fail in reportClickEvent",
+                            "PageId: " + pageId +
+                            "\n  EventCode: " + eventCode +
+                            "\n  VisitorId: "+visitorId+
+                            "\n  Message: " + logEventActivitySuccess.Success);
                     }
                 }
             },

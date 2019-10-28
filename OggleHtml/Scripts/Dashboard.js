@@ -398,12 +398,75 @@ function closeMetrics() {
     $('#divAddImages').fadeIn();
 }
 
+function showSortTool() {    
+    $('#divAddImages').hide();
+    $('#divSortTool').fadeIn();
+    loadSortImages();
+}
+function closeSortTool() {
+    $('#divSortTool').hide();
+    $('#divAddImages').fadeIn();
+}
 
+function loadSortImages()
+{
+    $('#sortTableHeader').html(dashboardMainSelectedPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "/api/ImagePage/GetImageLinks?folderId=" + dashboardMainSelectedTreeId,
+        success: function (imageLinksModel) {
+            $('#dashBoardLoadingGif').hide();
+            if (imageLinksModel.Success === "ok") {
+                $.each(imageLinksModel.Files, function (ndx, obj) {
+                    $('#sortToolContainer').append("<div class='sortBox'><img class='sortBoxImage' src='" + obj.Link + "'/>" +
+                        "<br/><input class='sortBoxInput' id=" + obj.LinkId + " value=" + obj.SortOrder + "></div>");
+                });
+            }
+            else {
+                alert("loadSortImages: " + imageLinksModel.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "prepareXhamsterPage")) {
+                sendEmailToYourself("XHR ERROR in Dashboard.js prepareXhamsterPage",
+                    " / api / ImagePage / GetImageLinks ? folderId =" + dashboardMainSelectedTreeId + " Message: " + errorMessage);
+            }
+            alert("loadSortImages xhr error: " + errorMessage);
+        }
+    });
+}
 
+function updateSortOrder() {
+    var sortOrderArray = [];
+    $('#sortToolContainer').children().each(function () {
+        imageArray.push({
+            itemId: $(this).find("input").attr("id"),
+            inputValue: $(this).find("input").val()
+        });
+        $.ajax({
+            type: "PUT",
+            url: settingsArray.ApiServer + "/api/ImagePage/UpdateSortOrder",
+            data: sortOrderArray,
+            success: function (success) {
+                $('#dashBoardLoadingGif').hide();
+                if (success === "ok") {
+                    loadSortImages();
+                }
+                else {
+                    alert("updateSortOrder: " + success);
+                }
+            },
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "updateSortOrder")) {
+                    sendEmailToYourself("XHR ERROR in Dashboard.js updateSortOrder",
+                        "/api/ImagePage/GetImageLinks?folderId=" + dashboardMainSelectedTreeId + " Message: " + errorMessage);
+                }
+                alert("updateSortOrder xhr error: " + errorMessage);
+            }
+        });
+    });
 
-
-
-
-
-
-
+}

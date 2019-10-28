@@ -6,6 +6,7 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using WebApi.Models;
 using WebApi.DataContext;
+using MySql.Data.Types;
 
 namespace WebApi
 {
@@ -75,22 +76,32 @@ namespace WebApi
                         else
                             pageName = "not found for " + pageHitModel.PageId;
                     }
-                    pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.PageName == pageName).Count();
-                    pageHitSuccessModel.UserHits = db.PageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
                     //pageHitSuccessModel.PageName = pageName;
 
                     /// LOG PAGE HIT
-                    if ((pageHitModel.IpAddress != "68.203.90.183") && (pageHitModel.IpAddress != "50.62.160.105"))
+                    using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
                     {
-                        PageHit hit = new PageHit();
-                        hit.VisitorId = pageHitModel.VisitorId;
-                        hit.HitDateTime = DateTime.Now;
-                        hit.PageId = pageHitModel.PageId;
-                        hit.AppName = pageHitModel.AppName;
-                        hit.PageName = pageName;
-                        db.PageHits.Add(hit);
-                        db.SaveChanges();
+                        dbm.MySqlPageHits.Add(new MySqlPageHit()
+                        {
+                            VisitorId = pageHitModel.VisitorId,
+                            PageId = pageHitModel.PageId,
+                            PageName = pageName,
+                            HitDateTime = DateTime.Now
+                        });
+                        dbm.SaveChanges();
+                        pageHitSuccessModel.PageHits = dbm.MySqlPageHits.Where(h => h.PageName == pageName).Count();
+                        pageHitSuccessModel.UserHits = dbm.MySqlPageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
                     }
+                    //{
+                    //    PageHit hit = new PageHit();
+                    //    hit.VisitorId = pageHitModel.VisitorId;
+                    //    hit.HitDateTime = DateTime.Now;
+                    //    hit.PageId = pageHitModel.PageId;
+                    //    hit.AppName = pageHitModel.AppName;
+                    //    hit.PageName = pageName;
+                    //    db.PageHits.Add(hit);
+                    //    db.SaveChanges();
+                    //}
                 }
                 pageHitSuccessModel.Success = "ok";
             }
@@ -135,33 +146,57 @@ namespace WebApi
             ImageHitSuccessModel imageHitSuccess = new ImageHitSuccessModel();
             try
             {
-                using (WebStatsContext db = new WebStatsContext())
+                using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
                 {
-                    if (logImageHItData.VisitorId != "9bd90468-e633-4ee2-af2a-8bbb8dd47ad1")
+                    DateTime utcDateTime = DateTime.UtcNow;
+                    dbm.MySqlImageHits.Add(new MySqlImageHit()
                     {
-                        db.SlideshowImages.Add(new SlideshowImage()
-                        {
-                            PkId = Guid.NewGuid().ToString(),
-                            HitDateTime = DateTime.Now,
-                            VisitorId = logImageHItData.VisitorId,
-                            PageId = logImageHItData.PageId,
-                            ImageLinkId = logImageHItData.LinkId,
-                            IsInitialHit = logImageHItData.IsInitialHit
-                        });
-                        db.SaveChanges();
-                    }
-                    imageHitSuccess.UserHits = db.SlideshowImages.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
-                    imageHitSuccess.ImageHits = db.SlideshowImages.Where(h => h.ImageLinkId == logImageHItData.LinkId).Count();
-                    imageHitSuccess.IpAddress = db.Visitors.Where(v => v.VisitorId == logImageHItData.VisitorId).FirstOrDefault().IpAddress;
-                    using (OggleBoobleContext odc = new OggleBoobleContext())
-                    {
-                        imageHitSuccess.PageName = odc.CategoryFolders.Where(f => f.Id == logImageHItData.PageId).FirstOrDefault().FolderName;
-                    }
+                        VisitorId = logImageHItData.VisitorId,
+                        PageId = logImageHItData.PageId,
+                        ImageLinkId = logImageHItData.LinkId,
+                        HitDateTime = utcDateTime
+                    });
+                    dbm.SaveChanges();
+                    imageHitSuccess.HitDateTime = utcDateTime;
+                    imageHitSuccess.UserHits = dbm.MySqlImageHits.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
+                    imageHitSuccess.ImageHits = dbm.MySqlImageHits.Where(h => h.ImageLinkId == logImageHItData.LinkId).Count();
+                    //imageHitSuccess.IpAddress = db.Visitors.Where(v => v.VisitorId == logImageHItData.VisitorId).FirstOrDefault().IpAddress;
+
                 }
+                //    using (OggleBoobleContext odc = new OggleBoobleContext())
+                //    {
+                //        imageHitSuccess.PageName = odc.CategoryFolders.Where(f => f.Id == logImageHItData.PageId).FirstOrDefault().FolderName;
+                //    }
+
+                //using (WebStatsContext db = new WebStatsContext())
+                //{
+                //    if (logImageHItData.VisitorId != "9bd90468-e633-4ee2-af2a-8bbb8dd47ad1")
+                //    {
+                //        db.SlideshowImages.Add(new SlideshowImage()
+                //        {
+                //            PkId = Guid.NewGuid().ToString(),
+                //            HitDateTime = DateTime.Now,
+                //            VisitorId = logImageHItData.VisitorId,
+                //            PageId = logImageHItData.PageId,
+                //            ImageLinkId = logImageHItData.LinkId,
+                //            IsInitialHit = logImageHItData.IsInitialHit
+                //        });
+                //        db.SaveChanges();
+                //    }
+                //    imageHitSuccess.UserHits = db.SlideshowImages.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
+                //    imageHitSuccess.ImageHits = db.SlideshowImages.Where(h => h.ImageLinkId == logImageHItData.LinkId).Count();
+                //    imageHitSuccess.IpAddress = db.Visitors.Where(v => v.VisitorId == logImageHItData.VisitorId).FirstOrDefault().IpAddress;
+                //    using (OggleBoobleContext odc = new OggleBoobleContext())
+                //    {
+                //        imageHitSuccess.PageName = odc.CategoryFolders.Where(f => f.Id == logImageHItData.PageId).FirstOrDefault().FolderName;
+                //    }
+                //}
                 imageHitSuccess.Success = "ok";
             }
             catch (DbEntityValidationException dbEx) { imageHitSuccess.Success = Helpers.ErrorDetails(dbEx); }
-            catch (Exception ex) { imageHitSuccess.Success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { 
+                imageHitSuccess.Success = Helpers.ErrorDetails(ex); 
+            }
             return imageHitSuccess;
         }
     }

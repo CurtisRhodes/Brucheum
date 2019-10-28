@@ -50,7 +50,7 @@ namespace WebApi
                         });
                     }
                     //string expectedLink = "";
-                    imageLinks.Files = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.LinkId).ToList();
+                    imageLinks.Files = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ToList();
                 }
                 imageLinks.Success = "ok";
             }
@@ -119,6 +119,28 @@ namespace WebApi
             }
             return links;
         }
+
+        [HttpPut]
+        public string UpdateSortOrder(SortOrderItem[] SortOrderItems) 
+        {
+            string success = "";
+            using (OggleBoobleContext db = new OggleBoobleContext())
+            {
+                foreach (SortOrderItem item in SortOrderItems)
+                {
+                    if (item.InputValue != 99)
+                    { 
+                    //var x = db.CategoryFolderDetails.Where(d=>d.)
+                    }
+                
+                }
+
+                
+                success = "ok";
+            }
+            return success;
+        }
+
     }
 
     [EnableCors("*", "*", "*")]
@@ -699,12 +721,14 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    var dbEntry = db.BlogComments.Where(b => b.Id == entry.Id).First();
+                    var dbEntry = db.BlogComments.Where(b => b.Id == entry.Id).FirstOrDefault();
+                    if (dbEntry == null)
+                        return "Entry not found";
+
                     dbEntry.CommentTitle = entry.CommentTitle;
                     dbEntry.CommentText = entry.CommentText;
                     dbEntry.CommentType = entry.CommentType;
                     dbEntry.Link = entry.Link;
-
                     db.SaveChanges();
                     success = "ok";
                 }

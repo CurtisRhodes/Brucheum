@@ -54,56 +54,85 @@
             <img id="dashBoardLoadingGif" class="loadingGif" src="Images/loader.gif" />
 
             <style>
-                .metricsHeader {
+                .workAreaHeader {
+                    border: none;
                     background-color: var(--brucheumBlue);
                     color: #fff;
                     display: inline-flex;
                     width: 100%;
                 }
 
-                .metricsContainer {
+                .workAreaContainer {
                     border-left: solid 3px var(--oggleBorderColor);
                     border-right: solid 3px var(--oggleBorderColor);
                     border-bottom: solid 0.75px var(--oggleBorderColor);
                     background-color: var(--oggleContainerBackgroundColor);
                 }
-                .metricsCloseButton {
+
+                .workAreaCloseButton {
                     float: right;
                     padding-top: 15px;
-                    padding-right:15px;
+                    padding-right: 15px;
                     cursor: pointer;
                 }
-                .metricsHeaderLabel {
-                     float:left; 
-                     width:100%; 
-                     text-align:center;
-                     border: solid thin red;
+
+                .workAreaHeaderLabel {
+                    float: left;
+                    width: 100%;
+                    text-align: center;
+                    border: solid thin red;
                 }
 
-                .metricsRow1 {
-                    margin-top:1px;
+                .workAreaRow1 {
+                    margin-top: 1px;
                     padding: 10px;
                 }
 
+                .sortBox {
+                    border: solid thin red;
+                    text-align: center;
+                    display: inline-block;
+                    background-color: #fff;
+                    padding: 1px;
+                    margin: 2px;
+                }
+                .sortBoxInput {
+                    width: 100px;
+                }
+                .sortBoxImage {
+                    height: 105px;
+                }
+
             </style>
-            
-            <div id="divHitMetrics" class="metricsContainer displayHidden">
-                <div class="metricsHeader">
-                    <div class="metricsHeaderLabel" ><h3>Metrics</h3></div>
-                    <div class="metricsCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="closeMetrics()"></div>
+
+            <div id="divSortTool" class="displayHidden">
+                <div class="workAreaHeader">
+                    <div class="workAreaHeaderLabel"><h3><div id="sortTableHeader"></div></h3></div>
+                    <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="closeSortTool()"></div>
                 </div>
-                <div class="metricsRow1">
+                <div id="sortToolContainer" class="fullScreenArea"></div>
+                <div class="workareaFooter">
+                    <button onclick="updateSortOrder()">ReSort</button>
+                </div>
+            </div>
+
+            <div id="divHitMetrics" class="workAreaContainer displayHidden">
+                <div class="workAreaHeader">
+                    <div class="workAreaHeaderLabel"><h3>Metrics</h3></div>
+                    <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="closeMetrics()"></div>
+                </div>
+                <div class="workAreaRow1">
                     <div id="metricsReport1"></div>
                 </div>
-                <div class="metricsRow2">
+                <div class="workAreaRow2">
 
                 </div>
-                <div class="metricsRow3">
+                <div class="workAreaRow3">
 
                 </div>
             </div>
 
-            <div id="divAddImages"  class="dashBoardContainer">
+            <div id="divAddImages" class="dashBoardContainer">
                 <div class="leftColumnList">
                     <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
                     <div class="clickable" onclick="$('#createNewFolderDialog').dialog('open');">Create New Folder</div>
@@ -116,6 +145,7 @@
                     <div class="clickable adminLevelRequired" onclick="showAssignRolesDialog()">Assign User Roles</div>
                     <div class="clickable adminLevelRequired" onclick="prepareXhamsterPage()">Prepare xHamster Page</div>
                     <div class="clickable adminLevelRequired" onclick="showPerfMetrics()">Performance Metrics</div>
+                    <div class="clickable adminLevelRequired" onclick="showSortTool()">Sort Tool</div>
                 </div>
 
                 <div id="divWorkArea" class="workarea">
@@ -203,16 +233,16 @@
                 </div>
 
                 <!--
-                    <div id="videoCrud" class="dashboardToggle">
-                        <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
-                        <div class="floatingCrudContainer">
-                            <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
-                            <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
-                            <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
-                            <div class="roundendButton" onclick="addVideo()">Insert</div>
-                        </div>
-                    </div>
-                -->
+            <div id="videoCrud" class="dashboardToggle">
+                <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
+                <div class="floatingCrudContainer">
+                    <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
+                    <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
+                    <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
+                    <div class="roundendButton" onclick="addVideo()">Insert</div>
+                </div>
+            </div>
+        -->
             </div>
             <div id="rightColumn"></div>
         </div>

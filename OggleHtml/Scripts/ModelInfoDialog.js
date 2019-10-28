@@ -176,14 +176,14 @@ function createPosersIdentifiedFolder() {
                     type: "PUT",
                     url: settingsArray.ApiServer + "/api/MoveImage/MoveImage",
                     data: MoveCopyImageModel,
-                    success: function (success) {
-                        if (success === "ok") {
+                    success: function (moveImageSuccessModel) {
+                        if (moveImageSuccessModel.Success === "ok") {
                             displayStatusMessage("ok", "image moved to newfolder");
                         }
                         else {
                             //alert("createPosersIdentifiedFolder " + success);
                             //displayStatusMessage("error", successModel.Success);
-                            sendEmailToYourself("error in ModelInfoDialog.js", "createPosersIdentifiedFolder " + successModel.Success);
+                            sendEmailToYourself("error in ModelInfoDialog.js", "createPosersIdentifiedFolder " + moveImageSuccessModel.Success);
                         }
                     },
                     error: function (jqXHR) {
