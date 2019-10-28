@@ -73,6 +73,7 @@ namespace WebApi.DataContext
         [Key]
         [Column(Order = 1)]
         public string ImageLinkId { get; set; }
+        public int SortOrder { get; set; }
     }
 
     [Table("OggleBooble.CategoryFolderDetail")]

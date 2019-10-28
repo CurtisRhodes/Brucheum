@@ -121,7 +121,7 @@ namespace WebApi
         }
 
         [HttpPut]
-        public string UpdateSortOrder(SortOrderItem[] SortOrderItems) 
+        public string UpdateSortOrder(List<SortOrderItem> SortOrderItems) 
         {
             string success = "";
             using (OggleBoobleContext db = new OggleBoobleContext())
@@ -129,18 +129,17 @@ namespace WebApi
                 foreach (SortOrderItem item in SortOrderItems)
                 {
                     if (item.InputValue != 99)
-                    { 
-                    //var x = db.CategoryFolderDetails.Where(d=>d.)
+                    {
+                        CategoryImageLink link = db.CategoryImageLinks.Where(l => l.ImageLinkId == item.ItemId).FirstOrDefault();
+                        if (link != null)
+                            link.SortOrder = item.InputValue;
                     }
-                
                 }
-
-                
+                db.SaveChanges();
                 success = "ok";
             }
             return success;
         }
-
     }
 
     [EnableCors("*", "*", "*")]

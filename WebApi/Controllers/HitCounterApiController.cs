@@ -269,24 +269,38 @@ namespace WebApi
                     db.Visits.Add(new Visit() { VisitorId = visitorSuccess.VisitorId, VisitDate = DateTime.Now });
                     db.SaveChanges();
 
+
                     string pageName = "";
                     using (OggleBoobleContext odb = new OggleBoobleContext())
                     {
                         pageName = odb.CategoryFolders.Where(f => f.Id == visitorModel.PageId).First().FolderName;
                         visitorSuccess.PageName = pageName;
                     }
-
-                    if (visitorSuccess.VisitorId != "ec6fb880-ddc2-4375-8237-021732907510")
+                    
+                    using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
                     {
-                        PageHit hit = new PageHit();
-                        hit.VisitorId = visitorSuccess.VisitorId;
-                        hit.HitDateTime = DateTime.Now;
-                        hit.AppName = visitorModel.AppName;
-                        hit.PageId = visitorModel.PageId;
-                        hit.PageName = pageName;
-                        db.PageHits.Add(hit);
-                        db.SaveChanges();
+                        //DateTime utcDateTime = DateTime.UtcNow;
+                        dbm.MySqlPageHits.Add(new MySqlPageHit()
+                        {
+                            VisitorId = visitorSuccess.VisitorId,
+                            PageId = visitorModel.PageId,
+                            PageName= pageName,
+                            HitDateTime = DateTime.UtcNow
+                        });
+                        dbm.SaveChanges();
                     }
+
+                    //if (visitorSuccess.VisitorId != "ec6fb880-ddc2-4375-8237-021732907510")
+                    //{
+                    //    PageHit hit = new PageHit();
+                    //    hit.VisitorId = visitorSuccess.VisitorId;
+                    //    hit.HitDateTime = DateTime.Now;
+                    //    hit.AppName = visitorModel.AppName;
+                    //    hit.PageId = visitorModel.PageId;
+                    //    hit.PageName = pageName;
+                    //    db.PageHits.Add(hit);
+                    //    db.SaveChanges();
+                    //}
                 }
                 visitorSuccess.Success = "ok";
             }

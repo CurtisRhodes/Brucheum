@@ -438,13 +438,23 @@ function loadSortImages()
     });
 }
 
+var sorting = false;
 function updateSortOrder() {
-    var sortOrderArray = [];
-    $('#sortToolContainer').children().each(function () {
-        imageArray.push({
-            itemId: $(this).find("input").attr("id"),
-            inputValue: $(this).find("input").val()
+    if (!sorting) {
+        sorting = true;
+        var sortOrderArray = [];
+        //alert("$('#sortToolContainer').children(): " + $('#sortToolContainer').children().length);
+        $('#sortToolContainer').children().each(function () {
+
+            //alert("itemId: " + $(this).find("input").attr("id") + " inputValue: " + $(this).find("input").val());
+
+            sortOrderArray.push({
+                itemId: $(this).find("input").attr("id"),
+                inputValue: $(this).find("input").val()
+            });
         });
+
+        alert("updateSortOrder");
         $.ajax({
             type: "PUT",
             url: settingsArray.ApiServer + "/api/ImagePage/UpdateSortOrder",
@@ -453,6 +463,7 @@ function updateSortOrder() {
                 $('#dashBoardLoadingGif').hide();
                 if (success === "ok") {
                     loadSortImages();
+                    sorting = false;
                 }
                 else {
                     alert("updateSortOrder: " + success);
@@ -467,6 +478,5 @@ function updateSortOrder() {
                 alert("updateSortOrder xhr error: " + errorMessage);
             }
         });
-    });
-
+    }
 }
