@@ -21,10 +21,8 @@ function resizeDashboardPage() {
         //$('#footerMessage').html("_");
     }
 
-    $('#divHitMetrics').height($('#middleColumn').height() - 122);
-    $('#divAddImages').height($('#middleColumn').height() - 122);
-    $('#divHitMetrics').width($('#middleColumn').width() - 122);
-    $('#divAddImages').width($('#middleColumn').width() - 122);
+    $('.workAreaContainer').height($('#middleColumn').height() - 177);
+    $('.workAreaContainer').width($('#middleColumn').width() - 122);
     //$('.floatingCrud').width($('.workarea').width() - 100);
 }
 
@@ -411,17 +409,19 @@ function closeSortTool() {
 function loadSortImages()
 {
     $('#sortTableHeader').html(dashboardMainSelectedPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
-    $('#dashBoardLoadingGif').show();
+    $('#dashBoardLoadingGif').fadeIn();
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/ImagePage/GetImageLinks?folderId=" + dashboardMainSelectedTreeId,
         success: function (imageLinksModel) {
             $('#dashBoardLoadingGif').hide();
             if (imageLinksModel.Success === "ok") {
+                $('#sortToolContainer').html("");
                 $.each(imageLinksModel.Files, function (ndx, obj) {
                     $('#sortToolContainer').append("<div class='sortBox'><img class='sortBoxImage' src='" + obj.Link + "'/>" +
                         "<br/><input class='sortBoxInput' id=" + obj.LinkId + " value=" + obj.SortOrder + "></div>");
                 });
+                resizePage();
             }
             else {
                 alert("loadSortImages: " + imageLinksModel.Success);
@@ -443,25 +443,23 @@ function updateSortOrder() {
     if (!sorting) {
         sorting = true;
         var sortOrderArray = [];
-        //alert("$('#sortToolContainer').children(): " + $('#sortToolContainer').children().length);
         $('#sortToolContainer').children().each(function () {
-
-            //alert("itemId: " + $(this).find("input").attr("id") + " inputValue: " + $(this).find("input").val());
-
             sortOrderArray.push({
+                pageId: dashboardMainSelectedTreeId,
                 itemId: $(this).find("input").attr("id"),
                 inputValue: $(this).find("input").val()
             });
         });
 
-        alert("updateSortOrder");
         $.ajax({
             type: "PUT",
             url: settingsArray.ApiServer + "/api/ImagePage/UpdateSortOrder",
-            data: sortOrderArray,
+            contentType: 'application/json',
+            data: JSON.stringify(sortOrderArray),
             success: function (success) {
                 $('#dashBoardLoadingGif').hide();
                 if (success === "ok") {
+                    $('#dashBoardLoadingGif').hide();
                     loadSortImages();
                     sorting = false;
                 }

@@ -130,7 +130,7 @@ namespace WebApi
                 {
                     if (item.InputValue != 99)
                     {
-                        CategoryImageLink link = db.CategoryImageLinks.Where(l => l.ImageLinkId == item.ItemId).FirstOrDefault();
+                        CategoryImageLink link = db.CategoryImageLinks.Where(l => l.ImageCategoryId == item.PageId && l.ImageLinkId == item.ItemId).FirstOrDefault();
                         if (link != null)
                             link.SortOrder = item.InputValue;
                     }

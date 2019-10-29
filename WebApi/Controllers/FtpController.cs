@@ -421,7 +421,6 @@ namespace WebApi
                             Height = fHeight,
                             Size = fSize,
                             Link = "http://" + trimPath + "/" + newFileName
-                            //Link = goDaddyLink + trimPath + "/" + newFileName
                         });
                         db.SaveChanges();
                     }
@@ -436,7 +435,8 @@ namespace WebApi
                         db.CategoryImageLinks.Add(new CategoryImageLink()
                         {
                             ImageCategoryId = newLink.FolderId,
-                            ImageLinkId = imageLinkId
+                            ImageLinkId = imageLinkId,
+                            SortOrder = 99
                         });
                         db.SaveChanges();
                         successModel.Success = "ok";

@@ -17,6 +17,7 @@ namespace WebApi.Models
     }
 
     public class SortOrderItem {
+        public int PageId { get; set; }
         public string ItemId { get; set; }
         public int InputValue { get; set; }
     }

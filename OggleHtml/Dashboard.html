@@ -80,32 +80,39 @@
                     float: left;
                     width: 100%;
                     text-align: center;
-                    border: solid thin red;
                 }
-
+                .fullScreenArea {
+                    height: 100%;
+                    padding: 4px;
+                    background-color: #a9a177;
+                    overflow-y: auto;
+                }
                 .workAreaRow1 {
                     margin-top: 1px;
                     padding: 10px;
                 }
 
                 .sortBox {
-                    border: solid thin red;
+                    border: solid thin #808080;
                     text-align: center;
                     display: inline-block;
-                    background-color: #fff;
+                    background-color: #e5dfc1;
                     padding: 1px;
                     margin: 2px;
                 }
                 .sortBoxInput {
                     width: 100px;
+                    border: none;
+                    text-align: center;
+                    background-color: #e5dfc1;
                 }
                 .sortBoxImage {
-                    height: 105px;
+                    height: 125px;
                 }
 
             </style>
 
-            <div id="divSortTool" class="displayHidden">
+            <div id="divSortTool" class="workAreaContainer displayHidden">
                 <div class="workAreaHeader">
                     <div class="workAreaHeaderLabel"><h3><div id="sortTableHeader"></div></h3></div>
                     <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="closeSortTool()"></div>
@@ -132,7 +139,7 @@
                 </div>
             </div>
 
-            <div id="divAddImages" class="dashBoardContainer">
+            <div id="divAddImages" class="workAreaContainer dashBoardContainer">
                 <div class="leftColumnList">
                     <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
                     <div class="clickable" onclick="$('#createNewFolderDialog').dialog('open');">Create New Folder</div>

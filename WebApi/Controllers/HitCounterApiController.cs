@@ -277,18 +277,18 @@ namespace WebApi
                         visitorSuccess.PageName = pageName;
                     }
                     
-                    using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
-                    {
-                        //DateTime utcDateTime = DateTime.UtcNow;
-                        dbm.MySqlPageHits.Add(new MySqlPageHit()
-                        {
-                            VisitorId = visitorSuccess.VisitorId,
-                            PageId = visitorModel.PageId,
-                            PageName= pageName,
-                            HitDateTime = DateTime.UtcNow
-                        });
-                        dbm.SaveChanges();
-                    }
+                    //using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
+                    //{
+                    //    //DateTime utcDateTime = DateTime.UtcNow;
+                    //    dbm.MySqlPageHits.Add(new MySqlPageHit()
+                    //    {
+                    //        VisitorId = visitorSuccess.VisitorId,
+                    //        PageId = visitorModel.PageId,
+                    //        PageName= pageName,
+                    //        HitDateTime = DateTime.UtcNow
+                    //    });
+                    //    dbm.SaveChanges();
+                    //}
 
                     //if (visitorSuccess.VisitorId != "ec6fb880-ddc2-4375-8237-021732907510")
                     //{

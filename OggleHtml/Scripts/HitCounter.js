@@ -16,7 +16,7 @@ function logImageHit(link, pageId, isInitialHit) {
     var visitorId = getCookieValue("VisitorId");    
 
     if (isNullorUndefined(ipAddr)) {
-        sendEmailToYourself("Problem in LogImageHit. IpAddress not found.", "VisitorId: " + visitorId);
+        //sendEmailToYourself("Problem in LogImageHit. IpAddress not found.", "VisitorId: " + visitorId);
         //logVisitor(pageId);
         return;
     }

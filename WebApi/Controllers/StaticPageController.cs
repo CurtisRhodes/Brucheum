@@ -196,7 +196,7 @@ namespace WebApi.Controllers
                     subDirLabelClass = "pornSubDirLabel";
                 }
                 // IMAGES 
-                List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).ToList();
+                List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ToList();
                 int idx = 0;
                 foreach (VwLink link in vwLinks)
                 {
