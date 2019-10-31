@@ -30,7 +30,7 @@ namespace WebApi.Controllers
             {
                 articleTagString += "," + metaTag.Tag;
             }
-            return "<head>\n" +
+            return "<head lang='en'>\n" +
                 "   <meta charset='utf-8'>\n" +
                 "   <script src='https://code.jquery.com/jquery-latest.min.js' type='text/javascript'></script>\n" +
                 "   <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>\n" +
@@ -43,6 +43,7 @@ namespace WebApi.Controllers
                 "   <script src='/Scripts/Common.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Login.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/HitCounter.js' type='text/javascript'></script>\n" +
+                "   <script src='/Scripts/Permissions.js'></script>\n" +
                 "   <script src='/Scripts/OggleHeader.js'></script>\n" +
                 "   <script src='/Scripts/OggleSearch.js'></script>\n" +
                 "   <script src='/Scripts/OggleFooter.js'></script>\n" +

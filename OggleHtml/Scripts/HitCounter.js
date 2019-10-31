@@ -99,13 +99,18 @@ function logVisitor(pageId) {
     try {
         var ipAddress = getCookieValue("IpAddress");
         if (!isNullorUndefined(ipAddress)) {
-            console.log("no need to Log Visistor I alread know ip: " + ipAddress);
             sendEmailToYourself("no need to Log Visistor", "I alread know ip: " + ipAddress);
+            if (document.domain === 'localhost')  // #DEBUG
+                alert("A HIT TO IPINFO.IO  ip: " + ipAddress);
+            //console.log("no need to Log Visistor I alread know ip: " + ipAddress);
             //$('#footerMessage').append("  no need to Log Visistor I alread know ip: " + ip);
             logPageHit(pageId);
         }
         else
         {
+            if (document.domain === 'localhost')  // #DEBUG
+                alert("A HIT TO IPINFO.IO. From pageId: " + pageId + "  ip: " + ipAddress);
+
             //$('#footerMessage').html("A HIT TO IPINFO.IO  ip: " + ipAddress);
             //console.log("A HIT TO IPINFO.IO  ip: " + ipAddress);
             //sendEmailToYourself("logvisitor from " + calledFrom, " pageId: " + pageId);
@@ -113,7 +118,7 @@ function logVisitor(pageId) {
 
                 //$("#info").html("City: " + data.city + " ,County: " + data.country + " ,IP: " + data.ip + " ,Location: " + data.loc + " ,Organisation: "
                 //+ data.org + " ,Postal Code: " + data.postal + " ,Region: " + data.region + "")
-                var userName = getCookieValue("User");
+                var userName = getCookieValue("UserName");
                 var visitorModel = {
                     AppName: "OggleBooble",
                     PageId: pageId,
@@ -139,7 +144,7 @@ function logVisitor(pageId) {
                             setCookieValue("IpAddress", data.ip);
                             setCookieValue("VisitorId", visitorSuccess.VisitorId);
 
-                            if ((getCookieValue("IpAddress") !== data.ip) || ((getCookieValue("VisitorId") !== visitorSuccess.VisitorId))) {
+                            if (getCookieValue("IpAddress" !== data.ip) || getCookieValue("VisitorId") !== visitorSuccess.VisitorId) {
                                 sendEmailToYourself("COOKIE FAIL",
                                     visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country +
                                     "\n data.ip: " + data.ip + " getCookieValue('IpAddress') " + getCookieValue("IpAddress") +
@@ -261,8 +266,9 @@ function logVisitor(pageId) {
 function logPageHit(pageId) {
     var ipAddress = getCookieValue("IpAddress");
     if (isNullorUndefined(ipAddress)) {
-        console.log("Unable to perform logPageHit for pageId: " + pageId);
+        //console.log("Unable to perform logPageHit for pageId: " + pageId);
         //sendEmailToYourself("calling logVisitor from logPageHit for pageId: " + pageId, "Ipaddress Not found");
+        console.log("calling logVisitor from logPageHit for pageId: " + pageId, "Ipaddress Not found");
         logVisitor(pageId, "logPageHit");
     }
     else {
@@ -307,7 +313,7 @@ function logPageHit(pageId) {
             });
         }
         else {
-            var userName = getCookieValue("User");
+            var userName = getCookieValue("UserName");
             var visitorId = getCookieValue("VisitorId");
             //console.log("logging proper page hit.  ip: " + ipAddress + " visitorId: " + visitorId + " pageId: " + pageId);
             //sendEmailToYourself("logging proper page hit", "ip: " + ipAddress + " visitorId: " + visitorId + " pageId: " + pageId);

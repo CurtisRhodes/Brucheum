@@ -14,6 +14,8 @@
     --oggleHeaderBackgroundColor: #74bac3;
     --oggleHeaderBoarderBottom: #decd6f 11px solid;
     --oggleHeaderSelectBackgroundColor: #74bac3;
+    --topLinkRowDefault: 28px;
+    --topLinkRow14: 14px;
 }
 
 body {
@@ -25,7 +27,6 @@ body {
 }
 
 .pornBodyColors {
-
     background-color: #ffcccc;
 }
 

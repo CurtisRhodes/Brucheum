@@ -17,6 +17,7 @@
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
+    <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/HitCounter.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
     <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet' />
@@ -82,7 +83,6 @@
         var spinCount = 0;
         var leftimageIndex, rightimageIndex;
         var permissionsSet = false;
-        var isPornEditor = false;
         var userName;
         var skip = 0;
         var take = 40;
@@ -116,20 +116,17 @@
                 }
                 else {
                     clearInterval(waiter);
-                    setUserPermissions();
                     loadBoobsRanker(subdomain);
-
                     setOggleHeader("ranker", 3907);
+                    logPageHit(3907);
 
-
+                    setUserPermissions();
                     var waiter2 = setInterval(function () {
                         dots += "* ";
                         $('#dots').html(dots);
                         if (permissionsSet === true) {
                             $('#dots').html('');
                             clearInterval(waiter2);
-                            //$('#footerMessage').html("isPornEditor: " + isPornEditor);
-                            logPageHit(3907);
                         }
                     }, 300);
                 }

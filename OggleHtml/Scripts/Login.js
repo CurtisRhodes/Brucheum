@@ -42,7 +42,7 @@ function attemptRegister() {
                         $('#registerUserDialog').dialog('close');
                         //alert("register happened. Attempt Login");
                         console.log("register happened. Attempt Login");
-                        setCookieValue("User", registeredUserModel.UserName);
+                        setCookieValue("UserName", registeredUserModel.UserName);
                         attemptLogin(registeredUserModel.UserName, registeredUserModel.Pswrd );
                     }
                     else {
@@ -97,30 +97,21 @@ function onLogoutClick() {
 }
 
 function onLoginClick() {
-    $('#modalContainer').show();
-    $('#loginDialog').show();
-    $('#loginDialog').dialog({
-        show: { effect: "fade" },
-        hide: { effect: "blind" },
-        width: 333
-    });
-
     var ipAddress = getCookieValue("IpAddress");
     if (!isNullorUndefined(ipAddress)) {
         //alert("Logging In and already know Ip");
-        console.log("Logging In and already know Ip");
+        //console.log("Logging In and already know Ip");
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress,
             success: function (successModel) {
                 if (successModel.Success === "ok") {
-                    setCookieValue("User", successModel.UserName);
-                    console.log("auto fill username: " + getCookieValue("User"));
-                    //alert("auto fill username: " + getCookieValue("User"));
-                    $('#txtLoginUserName').val(successModel.UserName);
+                    sendEmailToYourself("HOLY COW. " + userName + " is trying to login", "(Had to lookup thier ip address) Ip: " + ipAddress);
                 }
-                else
-                    alert("GetVisitorIdFromIP: " + successl.Success);
+                else {
+                    sendEmailToYourself("ERROR IN LOGIN. GetVisitorIdFromIP Fail", "Message: " + successModel.Success);
+                    //alert("GetVisitorIdFromIP: " + successModel.Success);
+                }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
@@ -131,8 +122,15 @@ function onLoginClick() {
             }
         });
     }
+    else
+        sendEmailToYourself("HOLY COW. Someone is trying to login", "Ip: " + ipAddress);
 
-
+    $('#modalContainer').show();
+    $('#loginDialog').dialog({
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        width: 333
+    });
     $('#loginDialog').show();
     if (typeof pause === 'function')
         pause();
@@ -145,7 +143,6 @@ function onLoginClick() {
 }
 
 function attemptLogin(userName, clearPasswod) {
-
     if (validateLogin()) {
         $.ajax({
             type: "GET",
@@ -153,26 +150,28 @@ function attemptLogin(userName, clearPasswod) {
             success: function (success) {
                 if (success === "ok") {
                     $('#loginDialog').dialog('close');
+                    setCookieValue("UserName", $('#txtLoginUserName').val());
 
+                    var userName = getCookieValue("UserName");
+                    if (isNullorUndefined(userName)) {
+                        sendEmailToYourself("LOGING FAIL", "User cookie not set");
+                        if (document.domain === 'localhost')  // #DEBUG
+                            alert("LOGING FAIL.  User cookie not set");
+                        return;
+                    }
 
-                    //alert("attempting login");
-                    // VerifyLogin?userName=" + $('#txtLoginUserName').val() + "&passWord=" + $('#txtLoginClearPassword').val(),
-                    //expiryDate = new Date();
-                    //expiryDate.setMonth(expiryDate.getMonth() + 9);
-                    //var cookieString = "VisitorId=" + visitorId + ";IpAddress=" + ipAddress + ";User=" + user + ";path='/;expires=" + expiryDate.toUTCString();
-                    //var cookieString = "VisitorId:" + visitorId + ",IpAddress:" + ipAddress + ",User:" + user + ",path:'/,expires:" + expiryDate.toUTCString();
-                    //document.cookie = cookieString;
-
-
-                    setCookieValue("User", $('#txtLoginUserName').val());
-
-                    displayStatusMessage("ok", "thanks for logging in " + getCookieValue("User"));
-
-                    //alert("thanks for logging in " + getCookieValue("User"));
-                    //alert("setCookie(User: " + $('#txtLoginUserName').val());
-
-                    setLoginHeader();
                     setUserPermissions();
+                    window.localStorage["userPermissons"].push("logged in user");
+
+                    //setLoginHeader();
+                    $('#spnUserName').html(user);
+                    $('#optionLoggedIn').show();
+                    $('#optionNotLoggedIn').hide();
+                    sendEmailToYourself("Someone Successfully logged in", "User: " + user);
+
+
+                    //alert("auto fill username: " + getCookieValue("UserName"));
+                    displayStatusMessage("ok", "thanks for logging in " + getCookieValue("UserName"));
                 }
                 else
                     $('#loginValidationSummary').html(success).show();
@@ -215,7 +214,7 @@ function profilePease() {
 // COOKIES
 
 function deleteCookie() {
-    window.localStorage["User"] = null;
+    window.localStorage["UserName"] = null;
     window.localStorage["IpAddress"] = null;
     window.localStorage["VisitorId"] = null;
     //alert("BEFORE delete document.cookie: " + decodeURIComponent(document.cookie));
@@ -229,8 +228,11 @@ function deleteCookie() {
     //    alert("cookie failed to delete: " + document.cookie);
     //}
     console.log("deleteCookie()  document.cookie: " + document.cookie);
-    //if (getCookieValue("User") !== null)
-    //    alert("After Logout User: " + getCookieValue("User"));
+    if (getCookieValue("UserName") !== null) {
+        sendEmailToYourself("Delete Cookie Fail", "After Logout User: " + getCookieValue("UserName"));
+        if (document.domain === 'localhost')  // #DEBUG
+            alert("After Logout User: " + getCookieValue("UserName"));
+    }
 }
 
 function setCookieValue(elementName, elementValue) {
@@ -241,7 +243,7 @@ function setCookieValue(elementName, elementValue) {
     if (document.cookie) {
         var ipAddress = getCookieValue("IpAddress");
         var visitorId = getCookieValue("VisitorId");
-        var user = getCookieValue("User");
+        var userName = getCookieValue("UserName");
         decodedCookie = decodeURIComponent(document.cookie);
         var cookieElements = decodedCookie.split(';');
         var cookieItem; var cookieItemName; var cookieItemValue;
@@ -249,12 +251,12 @@ function setCookieValue(elementName, elementValue) {
             cookieItem = cookieElements[i];
             cookieItemName = cookieItem.substring(0, cookieItem.indexOf("="));
             cookieItemValue = cookieItem.substring(cookieItem.indexOf("=") + 1);
-            if (cookieItemName === "User") user = cookieItemValue;
+            if (cookieItemName === "UserName") userName = cookieItemValue;
             if (cookieItemName === "IpAddress") ipAddress = cookieItemValue;
             if (cookieItemName === "VisitorId") visitorId = cookieItemValue;
         }
     }
-    if (elementName === "User") user = elementValue;
+    if (elementName === "UserName") userName = elementValue;
     if (elementName === "IpAddress") ipAddress = elementValue;
     if (elementName === "VisitorId") visitorId = elementValue;
     //deleteCookie();
@@ -306,100 +308,6 @@ function getLocalValue(localName) {
     return localValue;
 }
 
-// PERMISSIONS
-
-function setUserPermissions() {
-    if (document.domain === 'localhost') {
-
-        //alert("document.domain: " + document.domain);
-
-        $('.loginRequired').show();
-        $('.adminLevelRequired').show();
-
-
-        //if (typeof permissionLevel === 'object')
-        //{
-        //    isPornEditor = true;        
-        //}
-
-        //NOT FOUND - The server has not found anything matching the requested URI(Uniform Resource Identifier).
-        //  GET - http://localhost:56437/Styles/images/ui-icons_f5e175_256x240.png
-
-
-        if (typeof isPornEditor === 'boolean')
-            isPornEditor = true;
-
-        if (typeof permissionsSet === "boolean")
-            permissionsSet = true;
-        else {
-            alert("typeof permissionsSet: " + typeof permissionsSet);
-            permissionsSet = true;
-        }
-
-        //setLocalValue("User", "devl");
-        $('#spnUserName').html("devl");
-        $('#optionLoggedIn').show();
-        $('#optionNotLoggedIn').hide();
-        //alert("document.domain : " + document.domain);
-    }
-    else {
-        var userName = getCookieValue("User");
-        if (!isNullorUndefined(userName)) {
-            //alert("setUserPermissions userName: " + userName);
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned",
-                success: function (roleModel) {
-                    if (roleModel.Success === "ok") {
-                        $.each(roleModel.RoleNames, function (idx, roleName) {
-                            //alert("roleModel.RoleName: " + roleName);
-                            if (roleName === "Oggle Add Images") {
-                                $('.loginRequired').show();
-                            }
-                            if (roleName === "Oggle admin") {
-                                $('.loginRequired').show();
-                                $('.adminLevelRequired').show();
-                                if (typeof isPornEditor === 'boolean') {
-                                    isPornEditor = true;
-                                }
-                            }
-                        });
-
-                        //setLoginHeader();
-                        if (typeof permissionsSet === "boolean")
-                            permissionsSet = true;
-                        else {
-                            alert("typeof permissionsSet: " + typeof permissionsSet);
-                            permissionsSet = true;
-                        }
-                    }
-                    else
-                        alert("loadUserRoles: " + roleModel.Success);
-                },
-                error: function (jqXHR) {
-                    var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "setUserPermissions")) {
-                        sendEmailToYourself("XHR ERROR IN Login.js setUserPermissions", "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned" +
-                            " Message: " + errorMessage);
-                    }
-                    //alert("loadUserRoles XHR error: " + getXHRErrorDetails(jqXHR, exception));
-                }
-            });
-        }
-        else {
-            //if (typeof permissionsSet === "boolean")
-
-            permissionsSet = true;
-        }
-    }
-}
-
-function isInRole(roleName) {
-    var userName = getCookieValue("User");
-    //alert("document.domain: " + document.domain);
-    //window.localStorage()
-    //if (userName !== "" || document.domain === 'localhost') {
-}
 
 
 

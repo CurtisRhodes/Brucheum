@@ -367,6 +367,10 @@ function reportThenPerformEvent(eventCode, pageId) {
             //alert("done waiting");
             $('#dots').html("");
             switch (eventCode) {
+
+                case "PRN":
+                    window.location.href = '/index.html?subdomain=porn';
+                    break;
                 case "HBC":
                     window.location.href = "/";
                     break;
@@ -434,7 +438,7 @@ function reportClickEvent(eventCode, pageId) {
         //EVT	SBC	Slideshow button clicked
         //EVT	SUB	Sub Folder Click
 
-
+        //pageId = undefined;
 
         var eventClickDdata = {
             PageId: pageId,
@@ -451,13 +455,16 @@ function reportClickEvent(eventCode, pageId) {
                 waitingForReportClickEvent = false;
                 if (logEventActivitySuccess.Success === "ok") {
                     //if (eventCode === "CAA") alert("Event " + logEventActivitySuccess.EventName + "  " + logEventActivitySuccess.PageName);
-                    if (logEventActivitySuccess.IpAddress !== "68.203.90.183")  // && ipAddr !== "50.62.160.105")
+                    //if (logEventActivitySuccess.IpAddress !== "68.203.90.183")  // && ipAddr !== "50.62.160.105")
                     {
                         //if (verbosity > 5)
-                        if (eventCode === "SBC")
+                        if (eventCode === "SBC" || eventCode === "MBC")  // slideshow button clicked
                         {
                             sendEmailToYourself(logEventActivitySuccess.EventName + ": " + logEventActivitySuccess.PageName,
                                 "Ip: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
+
+                            alert(logEventActivitySuccess.EventName + ": " + logEventActivitySuccess.PageName +
+                                "  Ip: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
                         }
                     }
                     //else alert("suc " + logEventActivitySuccess.EventName + " PageName: " + logEventActivitySuccess.PageName +
@@ -469,6 +476,12 @@ function reportClickEvent(eventCode, pageId) {
                      //   alert("Error returned from reportClickEvent.LogEventActivity " + logEventActivitySuccess.Success);
                         sendEmailToYourself("DOUBLE FAIL jQuery 32 fail in reportClickEvent",
                             "PageId: " + pageId +
+                            "  EventCode: " + eventCode +
+                            "  VisitorId: " + visitorId +
+                            "  Message: " + logEventActivitySuccess.Success);
+
+                        alert("DOUBLE FAIL jQuery 32 fail in reportClickEvent" +
+                            "PageId: " + pageId +
                             "\n  EventCode: " + eventCode +
                             "\n  VisitorId: " + visitorId +
                             "\n  Message: " + logEventActivitySuccess.Success);
@@ -476,9 +489,9 @@ function reportClickEvent(eventCode, pageId) {
                     else {
                         sendEmailToYourself("jQuery 32 fail in reportClickEvent",
                             "PageId: " + pageId +
-                            "\n  EventCode: " + eventCode +
-                            "\n  VisitorId: "+visitorId+
-                            "\n  Message: " + logEventActivitySuccess.Success);
+                            "  EventCode: " + eventCode +
+                            "  VisitorId: "+visitorId+
+                            "  Message: " + logEventActivitySuccess.Success);
                     }
                 }
             },

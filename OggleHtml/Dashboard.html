@@ -16,6 +16,7 @@
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
+    <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/HitCounter.js"></script>
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/FolderCategoryDialog.js"></script>
@@ -278,9 +279,11 @@
                 else {
                     clearInterval(waiter);
                     setOggleHeader("admin", 3910);
-                    buildDirectoryTree();
-                    setUserPermissions();
+                    buildDirectoryTree();                    
                     logPageHit(3910);
+
+                    //setUserPermissions();
+
                 }
             }, 300);
 

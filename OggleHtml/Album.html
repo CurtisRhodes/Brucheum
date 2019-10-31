@@ -17,6 +17,7 @@
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
+    <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/Carousel.js"></script>
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/HitCounter.js"></script>
@@ -82,10 +83,10 @@
 
     <script>
         var permissionsSet = false;
-        var isPornEditor = false;
         $(document).ready(function () {
             includeHTML();
             resizePage();
+
             params = getParams();
             if (params.folder == undefined) {
                 window.location.href = "Index.html";
@@ -99,32 +100,32 @@
                 }
                 else {
                     clearInterval(waiter);
-
                     setUserPermissions();
-
-
                     var waiter2 = setInterval(function () {
                         dots += "* ";
                         $('#dots').html(dots);
                         if (permissionsSet === true) {
                             $('#dots').html('');
                             clearInterval(waiter2);
-                            $('#footerMessage').html("isPornEditor: " + isPornEditor);
-                            //alert("Album.html isPornEditor: " + isPornEditor);
-                            if (!isPornEditor) {
-                                directToStaticPage(params.folder);
-                            }
-                            else {
-                                // logPageHit(params.folder); called in setAlbumPageHeader
+                            if (document.domain === 'localhost') {
+      //isInRole("not logged in");
+                                //alert("I want to stay in local host");
                                 setAlbumPageHeader(params.folder);
                                 getAlbumImages(params.folder);
+                            }
+                            else {
+                                if (isInRole("not logged in"))
+                                    directToStaticPage(params.folder);
+                                else {
+                                    setAlbumPageHeader(params.folder);
+                                    getAlbumImages(params.folder);
+                                }
                             }
                         }
                     }, 300);
                 }
             }, 300);
         });
-
     </script>
   </body>
 </html>

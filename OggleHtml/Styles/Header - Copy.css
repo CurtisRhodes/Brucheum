@@ -1,4 +1,7 @@
-﻿.classicColors {
+﻿
+
+
+.classicColors {
     background-color: var(--oggleHeaderBackgroundColor);
     border-top: var(--oggleHeaderBoarderTop);
     border-bottom: var(--oggleHeaderBoarderBottom);
@@ -43,29 +46,31 @@ header {
 }
 
 .headerTitle {
-    padding-left: 6px;
+    padding-left: 26px;
     padding-top: 1px;
     font-family: 'Lucida Calligraphy';
     font-size: 33px;
 }
 
-.topLinkRow {
-    font-size: 20px;
+.headerSubTitle {
     display: inline-block;
     font-family: Comic Sans MS;
     color: var(--oggleTitleColor);
     vertical-align: top;
     margin-left: 33px;
     margin-top: 1px;
+    font-size: 28px;
     padding: 0;
     line-height: normal;
 }
 
-.topLinkRow a {
-    color: var(--oggleTitleColor);
-    cursor: pointer;
-    text-decoration: underline;
-}
+    .headerSubTitle a {
+
+        font-size: var(--topLinkRow14);
+        color: var(--oggleTitleColor);
+        cursor: pointer;
+        text-decoration: underline;
+    }
 
 .boobRankerBanner {
     height: 35px;
@@ -160,7 +165,7 @@ header {
     float: left;
     color: var(--ogglgeSubTitleColor);
     font-family: Verdana;
-    font-size: 20px;
+    font-size: 24px;
     margin-left: 20px;
 }
 

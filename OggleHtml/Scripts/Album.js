@@ -1,5 +1,4 @@
 ﻿var viewerShowing = false;
-var isPornEditor = true;
 var currentAlbumFolderId;
 var currentAlbumJSfolderName;
 var currentFolderRoot;
@@ -72,7 +71,9 @@ function getBreadCrumbs(folderId) {
         async: true,
         success: function (breadCrumbModel) {
             if (breadCrumbModel.Success === "ok") {
-                $('#breadcrumbContainer').html("");
+                //$('#breadcrumbContainer').html("");
+                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' " +
+                    "href='javascript:reportThenPerformEvent(\"BCC\",'3908')'>home</a>");
                 for (i = breadCrumbModel.BreadCrumbs.length - 1; i >= 0; i--) {
                     if (breadCrumbModel.BreadCrumbs[i] === null) {
                         breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
@@ -80,11 +81,18 @@ function getBreadCrumbs(folderId) {
                     else {
                         if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder) {
                             $('#breadcrumbContainer').append("<a class='inactiveBreadCrumb' " +
-                                //"onmouseover='slowlyShowCatDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + "); forgetShowingCatDialog=false;' onmouseout='forgetShowingCatDialog=true;' >" +
-                                "onclick='showHomeFolderInfoDialog(" + Number(breadCrumbModel.BreadCrumbs.length - i) +
-                                ",\"" + breadCrumbModel.FolderName + "\",\"" + breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" + breadCrumbModel.BreadCrumbs[i].ParentId
-                                + "\",\"" + breadCrumbModel.RootFolder + "\")' >" +
-                                //"onclick='showCategoryDialog(" + breadCrumbModel.BreadCrumbs[i].FolderId + ");' >" +
+                                "onmouseover='slowlyHomeFolderInfoDialog(" +
+                                Number(breadCrumbModel.BreadCrumbs.length - i) +                                ",\"" +
+                                breadCrumbModel.FolderName + "\",\"" +
+                                breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" +
+                                breadCrumbModel.BreadCrumbs[i].ParentId + "\",\"" +
+                                breadCrumbModel.RootFolder + "\"); forgetHomeFolderInfoDialog=false;' onmouseout='forgetHomeFolderInfoDialog=true;' " +
+                                "onclick='showHomeFolderInfoDialog(" +
+                                Number(breadCrumbModel.BreadCrumbs.length - i) + ",\"" +
+                                breadCrumbModel.FolderName + "\",\"" +
+                                breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" +
+                                breadCrumbModel.BreadCrumbs[i].ParentId + "\",\"" +
+                                breadCrumbModel.RootFolder + "\")' >" +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                         else {
@@ -113,9 +121,20 @@ function getBreadCrumbs(folderId) {
     });
 }
 
-function showHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
+function slowlyHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
+    forgetHomeFolderInfoDialog = false;
+    setTimeout(function () {
+        if (forgetHomeFolderInfoDialog === false) {
+            if (typeof pause === 'function')
+                pause();
+            showHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder);
+        }
+    }, 1100);
+}
 
-    if ((rootFolder === "playboy" && index > 4) || (rootFolder === "archive" && index > 2) || (parentId === "506")) {
+function showHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
+    //alert("showHomeFolderInfoDialog(index: " + index + ", folderName: " + folderName + ", folderId: " + folderId + ", parentId: " + parentId + ", rootFolder: " + rootFolder + ")");
+    if (rootFolder === "playboy" && index > 4 || rootFolder === "archive" && index > 2) {
         //alert("showHomeFolderInfoDialog   rootFolder: " + rootFolder);
         showModelInfoDialog(folderName, folderId, 'Images/redballon.png');
     }
@@ -174,6 +193,12 @@ function processImages(imageLinksModel) {
     }
     $('#imageContainer').html('');
     // IMAGES
+
+    //if (document.domain === 'localhost')  // #DEBUG
+    //    alert("isInRole('logged in user'): " + isInRole("logged in user"));
+
+    var isValidUser = (isInRole("logged in user"));
+    imageFrameClass = "imageFrame";
     $.each(imageLinksModel.Files, function (idx, imageModelFile) {
         // add files to array
         //imageArray.push({
@@ -181,9 +206,8 @@ function processImages(imageLinksModel) {
         //    LinkId: imageModelFile.LinkId
         //});
 
-        var imageFrameClass = "imageFrame";
-
-        if (isPornEditor) {
+        if (isValidUser)
+        {
             if (imageLinksModel.RootFolder === "archive") {
                 if (imageModelFile.LinkCount > 1) {
                     imageFrameClass = "multiLinkImageFrame";
@@ -403,9 +427,6 @@ function ctxSAP(imgId) {
         $('#thumbImageContextMenu').css("left", picLeft);
     }
 
-    if (!isPornEditor)
-        $('.adminLink').hide();
-
     $.ajax({
         type: "GET",
         async: true,
@@ -440,6 +461,10 @@ function ctxSAP(imgId) {
                 }
                 if (modelDetails.RootFolder === "sluts" && currentFolderRoot !== "sluts") {
                     $('#ctxSeeMore').show();
+                }
+                if (userAuthorizationLevel === "not logged in") {
+                    
+                    $('.adminLink').hide();
                 }
             }
             else {

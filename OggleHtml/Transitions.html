@@ -16,6 +16,7 @@
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
+    <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/HitCounter.js"></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -97,7 +98,6 @@
         var picArray = [];
         var curIndex = 0;
         var permissionsSet = false;
-        var isPornEditor = false;
 
         $(document).ready(function () {
 
@@ -125,27 +125,19 @@
                 else {
                     $('#dots').html('');
                     clearInterval(waiter);
-
                     logPageHit(3906);
-
                     LoadPicArray(subdomain);
-                    if (subdomain == "porn") {
-                    }
-                    else {
-                    }
-                    setUserPermissions();
-                    var waiter2 = setInterval(function () {
-                        dots += "* ";
-                        $('#dots').html(dots);
-                        if (permissionsSet === true) {
-                            clearInterval(waiter2);
-                            $('#dots').html("");
-                            //$('#footerMessage').html("isPornEditor: " + isPornEditor);
-                        }
-                    }, 300);
+                    //setUserPermissions();
+                    //var waiter2 = setInterval(function () {
+                    //    dots += "* ";
+                    //    $('#dots').html(dots);
+                    //    if (permissionsSet === true) {
+                    //        clearInterval(waiter2);
+                    //        $('#dots').html("");
+                    //    }
+                    //}, 300);
                 }
             }, 300);
-
             resizePage();
         });
 

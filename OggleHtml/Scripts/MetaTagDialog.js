@@ -19,7 +19,7 @@ function openMetaTagDialog(folderId, linkId) {
 
 function blurMetaTag() {
     //alert("blurMetaTag metaTagModel.TagId: " + metaTagModel.TagId);
-    if (metaTagModel.TagId != undefined)
+    if (metaTagModel.TagId !== undefined)
         editMetaTag();
     else
         addMetaTag();
@@ -32,18 +32,18 @@ function getMetaTags(folderId, linkId) {
             type: "GET",
             url: settingsArray.ApiServer + "/api/MetaTag/GetTags?folderId=" + folderId + "&linkId=" + linkId,
             success: function (metaTagResults) {
-                if (metaTagResults.Success == "ok") {
+                if (metaTagResults.Success === "ok") {
                     $('#metaTagDialog').dialog('option', 'title', "Meta Tags for " + metaTagResults.Source);
                     $('#metaTagsAssignedList').html("");
                     $.each(metaTagResults.MetaTags, function (idx, metaTag) {
 
                         //alert("linkId: " + linkId);
 
-                        if (metaTag.LinkId != null) {
+                        if (metaTag.LinkId !== null) {
                             metagLevelColor = "metaTagLinkColor";
                         }
                         else {
-                            if (metaTag.FolderId == folderId)
+                            if (metaTag.FolderId === folderId)
                                 metagLevelColor = "metaTagFolderColor";
                             else {
                                 //alert("metaTag.FolderId: " + metaTag.FolderId + " folderId: " + folderId);
@@ -52,15 +52,15 @@ function getMetaTags(folderId, linkId) {
                                     metagLevelColor = "metaTagParent1Color";
                                 }
                                 else {
-                                    if (metaTag.FolderId == parent1)
+                                    if (metaTag.FolderId === parent1)
                                         metagLevelColor = "metaTagParent1Color";
                                     else {
-                                        if (parent2 == undefined) {
+                                        if (parent2 === undefined) {
                                             parent2 = metaTag.FolderId;
                                             metagLevelColor = "metaTagParent2Color";
                                         }
                                         else {
-                                            if (metaTag.FolderId == parent2)
+                                            if (metaTag.FolderId === parent2)
                                                 metagLevelColor = "metaTagParent2Color";
                                             else
                                                 metagLevelColor = "metaTagParent3Color";
@@ -112,7 +112,6 @@ function loadMetaTagForEditing(tagId) {
     });
 }
 
-
 function validateMetaTag() {
     if (isNullorUndefined($('#txtMetaTag').val())) {
         metaTagModel.TagId = undefined;
@@ -131,7 +130,7 @@ function editMetaTag() {
             url: settingsArray.ApiServer + "/api/MetaTag",
             data: metaTagModel,
             success: function (success) {
-                if (success == "ok") {
+                if (success === "ok") {
                     metaTagModel.TagId = undefined;
                     $('#txtMetaTag').val("");
                     getMetaTags(metaTagModel.FolderId);
@@ -154,7 +153,7 @@ function addMetaTag() {
             url: settingsArray.ApiServer + "api/MetaTag",
             data: metaTagModel,
             success: function (success) {
-                if (success == "ok") {
+                if (success === "ok") {
                     metaTagModel.TagId = undefined;
                     $('#txtMetaTag').val("");
                     getMetaTags(metaTagModel.FolderId, metaTagModel.LinkId);

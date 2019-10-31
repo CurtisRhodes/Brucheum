@@ -95,7 +95,7 @@
             "   <div class='headerBodyContainer'>\n" +
             "       <div id='' class='headerTopRow'>\n" +
             "           <div id='bannerTitle' class='headerTitle'>OggleBooble</div>\n" +
-            "           <div id='headerSubTitle' class='headerSubTitle'>\n" + subheaderContent + "</div>\n" + boobsRankerLink +
+            "           <div id='headerSubTitle' class='topLinkRow'>\n" + subheaderContent + "</div>\n" + boobsRankerLink +
             "           <div class='OggleSearchBox'>\n" +
             "               <span id='notUserName'>search</span> <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
             "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
@@ -141,19 +141,22 @@
     }
 
     //  function setLoginHeader(folderId) {
-    if (document.domain === 'localhost') {  //        if (ipAddress !== "68.203.90.183" && ipAddress !== "50.62.160.105") {
-        $('#optionLoggedIn').show();
-        $('#optionNotLoggedIn').hide();
-    }
-    else {
-        var user = getCookieValue("User");
-        if (isNullorUndefined(user)) {
+    //if (document.domain === 'localhost') {  //        if (ipAddress !== "68.203.90.183" && ipAddress !== "50.62.160.105") {
+    //    $('#optionLoggedIn').show();
+    //    $('#optionNotLoggedIn').hide();
+    //}
+    //else
+    {
+        var userName = getCookieValue("UserName");
+        if (isNullorUndefined(userName)) {
             $('#optionLoggedIn').hide();
             $('#optionNotLoggedIn').show();
         }
         else {
-            //alert("setLoginHeader user: " + user);
-            $('#spnUserName').html(user);
+            if (document.domain === 'localhost')  // #DEBUG
+                alert("setLoginHeader userName: " + userName);
+
+            $('#spnUserName').html(userName);
             $('#optionLoggedIn').show();
             $('#optionNotLoggedIn').hide();
         }
@@ -198,7 +201,7 @@ function showSpecialHeaderIcons(folderId) {
                 //alert("ERROR in OggleHeader ImageCategoryDetail  " + successModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
                 if (!checkFor404(successModel.Success, "showSpecialHeaderIcons")) {
                     sendEmailToYourself("ERROR in OggleHeader showSpecialHeaderIcons",
-                        "Message: " + successModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
+                        "Message: " + folderDetailModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
                     // verify network
                 }
             }

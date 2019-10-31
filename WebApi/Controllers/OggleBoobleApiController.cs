@@ -394,7 +394,6 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class MetaTagController : ApiController
     {
-
         [HttpGet]
         public MetaTagResultsModel GetTags(int folderId, string linkId)
         {
@@ -423,7 +422,7 @@ namespace WebApi
                     //metaTagResults.MetaDescription = "";
 
 
-                    GetMetaTasRecurr(metaTagResults, folderId, db);
+                    GetMetaTagsRecurr(metaTagResults, folderId, db);
                 }
                 metaTagResults.Success = "ok";
             }
@@ -433,7 +432,7 @@ namespace WebApi
             }
             return metaTagResults;
         }
-        private void GetMetaTasRecurr(MetaTagResultsModel metaTagResults, int folderId, OggleBoobleContext db)
+        private void GetMetaTagsRecurr(MetaTagResultsModel metaTagResults, int folderId, OggleBoobleContext db)
         {
             List<MetaTag> metaTags = db.MetaTags.Where(m => m.FolderId == folderId).ToList();
             metaTagResults.MetaTags.Add(new MetaTagModel()
@@ -447,7 +446,7 @@ namespace WebApi
 
             int parent = db.CategoryFolders.Where(f => f.Id == folderId).Select(f => f.Parent).FirstOrDefault();
             if (parent > 1)
-                GetMetaTasRecurr(metaTagResults, parent, db);
+                GetMetaTagsRecurr(metaTagResults, parent, db);
         }
 
         [HttpGet]

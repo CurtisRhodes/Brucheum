@@ -10,7 +10,6 @@ var modelInfoDialogIsOpen = false;
 var imageCommentDialogIsOpen = false;
 var folderCategoryDialogIsOpen = false;
 var forgetShowingCatDialog;
-var isPornEditor = false;
 //var imageArray = new Array();
 var selectedImageLinkId;
 var fullPageName;

@@ -45,18 +45,18 @@ function ftpMoveCopy() {
                 $('#moveCopyDialog').dialog("close");
 
                 //alert("changeLogModel id: " + MoveCopyImageModel.SourceFolderId + " mode: " + MoveCopyImageModel.Mode + "  name: " + $('#dirTreeResults').html());
-                var changeLogModel = {
-                    PageId: MoveCopyImageModel.SourceFolderId,
-                    PageName: $('#dirTreeResults').html(),
-                    Activity: "link " + MoveCopyImageModel.Link + "   " + MoveCopyImageModel.Mode + "ed"
-                };
-                logActivity(changeLogModel);
+                //var changeLogModel = {
+                //    PageId: MoveCopyImageModel.SourceFolderId,
+                //    PageName: $('#dirTreeResults').html(),
+                //    Activity: "link " + MoveCopyImageModel.Link + "   " + MoveCopyImageModel.Mode + "ed"
+                //};
+                //logActivity(changeLogModel);
 
                 if (successModel.ReturnValue === "0") {
                     var linkId = MoveCopyImageModel.Link.substr(MoveCopyImageModel.Link.lastIndexOf("_") + 1, 36);
+                    displayStatusMessage("warning", "Folder Image Set");
                     //alert("set folder image: " + linkId + "," + MoveCopyImageModel.SourceFolderId);
                     setFolderImage(linkId, MoveCopyImageModel.DestinationFolderId, "folder");
-
                 }
             }
             else {

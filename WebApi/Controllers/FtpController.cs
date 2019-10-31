@@ -207,7 +207,12 @@ namespace WebApi
                                     if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Where(c => c.ImageLinkId == dbImageLink.Id).FirstOrDefault() == null)
                                     {
                                         successModel.ReturnValue = db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Count().ToString();
-                                        CategoryImageLink newCatImageLink = new CategoryImageLink() { ImageCategoryId = model.DestinationFolderId, ImageLinkId = dbImageLink.Id };
+                                        CategoryImageLink newCatImageLink = new CategoryImageLink()
+                                        {
+                                            ImageCategoryId = model.DestinationFolderId,
+                                            ImageLinkId = dbImageLink.Id,
+                                            SortOrder = 999
+                                        };
                                         db.CategoryImageLinks.Add(newCatImageLink);
                                         db.SaveChanges();
                                     }
@@ -662,7 +667,7 @@ namespace WebApi
                         // local repository
                         string linkId = "";
                         string[] folderContents = FtpUtilies.GetFiles(sourceFtpPath);
-                        int folderRows = 0;
+                        //int folderRows = 0;
                         int fileCount = folderContents.Length;
                         ImageLink goDaddyrow = null;
                         string sourceFileName = "";

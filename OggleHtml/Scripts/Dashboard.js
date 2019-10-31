@@ -1,5 +1,4 @@
-﻿var isPornEditor = true;
-var tabIndent = 22;
+﻿var tabIndent = 22;
 var tab = 0;
 var totalPics = 0;
 var totalFolders = 0;
@@ -285,13 +284,15 @@ function renameFolder() {
                 displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
                 console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                 //buildDirectoryTree();
+
                 $('.txtLinkPath').val('');
-                var changeLogModel = {
-                    PageId: dashboardMainSelectedTreeId,
-                    PageName: $('.txtLinkPath').val(),
-                    Activity: "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val()
-                };
-                logActivity(changeLogModel);
+
+                //var changeLogModel = {
+                //    PageId: dashboardMainSelectedTreeId,
+                //    PageName: $('.txtLinkPath').val(),
+                //    Activity: "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val()
+                //};
+                //logActivity(changeLogModel);
 
 
                 $('#dataifyInfo').hide();

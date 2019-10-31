@@ -16,6 +16,7 @@
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
+    <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/HitCounter.js"></script>
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/Blog.js"></script>
@@ -114,7 +115,6 @@
 
     <script>
         var permissionsSet = false;
-        var isPornEditor = false;
     /// 11:19  May 24 20019
     ///  sometimes even I have to take a moment to figure out what I want to do.
     /// start with a display of blog entries
@@ -132,6 +132,8 @@
             }
             else {
                 clearInterval(waiter);
+                loadBlogArticles($('#blogDisplayCommentTypeSelect').val());
+                showBlogDisplay('BLG');
                 logPageHit(3911);
 
                 setUserPermissions();
@@ -141,19 +143,11 @@
                     if (permissionsSet === true) {
                         clearInterval(waiter2);
                         $('#dots').html("");
-
-                        loadBlogArticles($('#blogDisplayCommentTypeSelect').val());
-                        showBlogDisplay('BLG');
-
-                        //$('#footerMessage').html("isPornEditor: " + isPornEditor);
-                        if (!isPornEditor) {
+                        if (isInRole("not logged in")) {
                             $('.adminOnly').hide();
                             $('.blogEditButton').hide();
-                            $('#footerMessage').html("admin access");
+                            //$('#footerMessage').html("admin access");
                         }
-                        else
-                            $('#footerMessage').html("unknown user");
-                        //$('#headerSubTitle').html("Blog");
                     }
                 }, 300);
             }

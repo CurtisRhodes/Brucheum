@@ -1,7 +1,4 @@
 ﻿var categoryFolderId = "";
-var isPornEditor = true;
-var permissionLevel = 0;
-var permissionsSet = false;
 
 function showCategoryDialog(folderId) {
     // 11:11 2/25/19
@@ -14,57 +11,31 @@ function showCategoryDialog(folderId) {
         autoOpen: false,
         show: { effect: "fade" },
         hide: { effect: "blind" },
-        width: "500px"
+        width: 500
     });
 
-    $('#catDlgReadOnlyTextArea').show();
-
-    var dots = "";
-    var waiter = setInterval(function () {
-        if (settingsArray.ApiServer === undefined) {
-            dots += ". ";
-            $('#dots').html(dots);
-        }
-        else {
-            clearInterval(waiter);
-            setUserPermissions();
-            var waiter2 = setInterval(function () {
-                dots += "* ";
-                $('#dots').html(dots);
-                if (permissionsSet === true) {
-                    $('#dots').html('');
-                    clearInterval(waiter2);
-
-                    if (permissionLevel > 9) {
-                        $("#btnCatDlgEdit").show().html("Edit");
-                        $('#catDlgSummerNoteContainer').show();
-                        $('#btnCatDlgEdit').hide();
-                        $('#catDlgReadOnlyTextArea').hide();
-                    }
-                    else {
-                        $('#btnCatDlgMeta').hide();
-                        $('#catDlgSummerNoteContainer').hide();
-                        $('#btnCatDlgEdit').hide();
-                        $('#catDlgReadOnlyTextArea').show();
-                    }
-
-                    $('#folderCategoryDialog').dialog('open');
-
-                    //$('#footerMessage').html("isPornEditor: " + isPornEditor);
-                }
-            }, 300);
-        }
-    }, 300);
-
-    $('#catDlgSummerNoteTextArea').summernote({
-        height: 300,
-        codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-        toolbar: [
-            ['codeview']
-            //['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
-        ]
-    });
-
+    if (isInRole("not logged in")) {
+        $('#btnCatDlgMeta').hide();
+        $('#catDlgSummerNoteContainer').hide();
+        $('#btnCatDlgEdit').hide();
+        $('#catDlgReadOnlyTextArea').show();
+    }
+    else {
+        $('#btnCatDlgEdit').hide();
+        $('#catDlgReadOnlyTextArea').hide();
+        $("#btnCatDlgEdit").show().html("Edit");
+        $('#catDlgSummerNoteContainer').show();
+        $('#catDlgSummerNoteTextArea').summernote({
+            height: 300,
+            width: 500,
+            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+            toolbar: [
+                ['codeview']
+                //['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
+            ]
+        });
+    }
+    $('#folderCategoryDialog').dialog('open');
     try {
         $.ajax({
             type: "GET",
@@ -72,12 +43,9 @@ function showCategoryDialog(folderId) {
             success: function (categoryComment) {
                 if (categoryComment.Success === "ok") {
                     categoryFolderId = folderId;
-
                     //alert("categoryComment.CommentText: " + categoryComment.CommentText);
-
                     //$('#catDlgReadOnlyTextArea').html('');
                     $('#catDlgReadOnlyTextArea').html(categoryComment.CommentText);
-
                     $('#folderCategoryDialog').dialog('option', 'title', categoryComment.FolderName);
                     //$('#folderCategoryDialog').show();
                     //$('#folderCategoryDialog').dialog("open");
@@ -85,25 +53,22 @@ function showCategoryDialog(folderId) {
                 else {
                     if (categoryComment.Success !== "not found")
                         sendEmailToYourself("jquery fail in FolderCategory.js showCategoryDialog", "get Category Comment: " + categoryComment.Success);
-                        //alert("get Category Comment: " + categoryComment.Success);
+                    //alert("get Category Comment: " + categoryComment.Success);
                 }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errorMessage, "showCategoryDialog")) {
-                    sendEmailToYourself("XHR ERROR in FolderCategory.js showCategoryDialog", "api/CategoryComment/Get?folderId=" + folderId+" Message: " + errorMessage);
+                    sendEmailToYourself("XHR ERROR in FolderCategory.js showCategoryDialog", "api/CategoryComment/Get?folderId=" + folderId + " Message: " + errorMessage);
                 }
             }
         });
     }
     catch (e) {
-        sendEmailToYourself("javascript catch in FolderCategory.js showCategoryDialog", "get NudeModelInfo catch: " + e);
-        //alert("get NudeModelInfo catch: " + e);
+        sendEmailToYourself("javascript catch in FolderCategoryDialog.js showCategoryDialog", "get NudeModelInfo catch: " + e);
+        alert("FolderCategoryDialog catch: " + e);
     }
 }
-
-
-
 
 function toggleEditCatDialog() {
     if ($("#btnCatDlgEdit").html() === "Edit") {
@@ -146,23 +111,20 @@ function saveCategoryDialogText() {
     });
 }
 
-
 function addMetaTags() {
     openMetaTagDialog(categoryFolderId);
 }
 
 function considerClosingCategoryDialog() {
-    if (isPornEditor) {
-        if ($("#btnCatDlgEdit").html() === "Edit") {
-            //if ($('#catDlgDescription').prop("readonly")) {
-            $('#folderCategoryDialog').dialog("close");
-
-            //$('#catDlgSummerNoteTextArea').summernote('destroy');
-
-        }
-    }
-    else
+    if (isInRole("not logged in")) {
         $('#folderCategoryDialog').dialog("close");
+        return;
+    }
+    if ($("#btnCatDlgEdit").html() === "Edit") {
+        //if ($('#catDlgDescription').prop("readonly")) {
+        //$('#folderCategoryDialog').dialog("close");
+        //$('#catDlgSummerNoteTextArea').summernote('destroy');
+    }
 }
 
 function slowlyShowFolderCategoryDialog(folderId) {

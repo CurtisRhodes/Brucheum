@@ -35,7 +35,10 @@ namespace WebApi
                 string encryptedPassword = HashSHA256(passWord);
                 RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == userName && u.Pswrd == encryptedPassword).FirstOrDefault();
                 if (dbRegisteredUser != null)
+                {
+                    //--record Login
                     success = "ok";
+                }
                 else
                 {
                     dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == userName).FirstOrDefault();
