@@ -83,13 +83,14 @@
         var spinCount = 0;
         var leftimageIndex, rightimageIndex;
         var permissionsSet = false;
-        var userName;
         var skip = 0;
         var take = 40;
         var throttleBoobs = false;
         var throttlePlayboy = false;
         var throttleArchive = false;
         var throttlePorn = false;
+        var userName;
+        var isLoggedIn = false;
 
         $(document).ready(function () {
             includeHTML();
@@ -120,15 +121,17 @@
                     setOggleHeader("ranker", 3907);
                     logPageHit(3907);
 
-                    setUserPermissions();
-                    var waiter2 = setInterval(function () {
-                        dots += "* ";
-                        $('#dots').html(dots);
-                        if (permissionsSet === true) {
-                            $('#dots').html('');
-                            clearInterval(waiter2);
-                        }
-                    }, 300);
+                    userName = getCookieValue("UserName");
+                    isLoggedIn = !isNullorUndefined(userName);
+                    //setUserPermissions();
+                    //var waiter2 = setInterval(function () {
+                    //    dots += "* ";
+                    //    $('#dots').html(dots);
+                    //    if (permissionsSet === true) {
+                    //        $('#dots').html('');
+                    //        clearInterval(waiter2);
+                    //    }
+                    //}, 300);
                 }
             }, 300);
 
@@ -416,6 +419,11 @@
 
         function imageClick(selectedSide) {
             if ($('.rankerImageSlotBox').css('cursor') !== 'not-allowed') {
+
+                if (!isLoggedIn) {
+                    displayStatusMessage("warning", "please log in to record hotness");                 
+                }
+
                 // score it
                 clearInterval(slotTimer);
                 clearInterval(countDownTimer);

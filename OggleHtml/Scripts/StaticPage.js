@@ -35,8 +35,9 @@ $(document).ready(function () {
 
             setOggleHeader(staticPageRootFolderId, staticPageFolderId);
             setOggleFooter(staticPageRootFolderId);
-            logPageHit(staticPageFolderId);            
-            //   $('footerMessage').html(staticPageFolderName);
+            logPageHit(staticPageFolderId);
+
+            //$('footerMessage').html(staticPageFolderName);
         }
     }, 300);
     $(window).resize(resizeStaticPage());

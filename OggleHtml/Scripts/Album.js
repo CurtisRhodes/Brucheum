@@ -72,8 +72,8 @@ function getBreadCrumbs(folderId) {
         success: function (breadCrumbModel) {
             if (breadCrumbModel.Success === "ok") {
                 //$('#breadcrumbContainer').html("");
-                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' " +
-                    "href='javascript:reportThenPerformEvent(\"BCC\",'3908')'>home</a>");
+                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:reportThenPerformEvent(\"HBX\"," + folderId + ")'>home</a>");
+                //$('#breadcrumbContainer').html("");
                 for (i = breadCrumbModel.BreadCrumbs.length - 1; i >= 0; i--) {
                     if (breadCrumbModel.BreadCrumbs[i] === null) {
                         breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
@@ -82,7 +82,7 @@ function getBreadCrumbs(folderId) {
                         if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder) {
                             $('#breadcrumbContainer').append("<a class='inactiveBreadCrumb' " +
                                 "onmouseover='slowlyHomeFolderInfoDialog(" +
-                                Number(breadCrumbModel.BreadCrumbs.length - i) +                                ",\"" +
+                                Number(breadCrumbModel.BreadCrumbs.length - i) + ",\"" +
                                 breadCrumbModel.FolderName + "\",\"" +
                                 breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" +
                                 breadCrumbModel.BreadCrumbs[i].ParentId + "\",\"" +
@@ -96,8 +96,12 @@ function getBreadCrumbs(folderId) {
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                         else {
+
+                            //href='javascript:reportThenPerformEvent(\"BLC\",136)'>
+
+
                             $('#breadcrumbContainer').append("<a class='activeBreadCrumb' " +
-                                "href='javascript:reportThenPerformEvent(\"BCC\"," + breadCrumbModel.BreadCrumbs[i].FolderId +")'>" +
+                                "href='javascript:reportThenPerformEvent(\"BCC\"," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                     }
@@ -133,7 +137,10 @@ function slowlyHomeFolderInfoDialog(index, folderName, folderId, parentId, rootF
 }
 
 function showHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
+
+    reportThenPerformEvent("CMX", folderId);
     //alert("showHomeFolderInfoDialog(index: " + index + ", folderName: " + folderName + ", folderId: " + folderId + ", parentId: " + parentId + ", rootFolder: " + rootFolder + ")");
+
     if (rootFolder === "playboy" && index > 4 || rootFolder === "archive" && index > 2) {
         //alert("showHomeFolderInfoDialog   rootFolder: " + rootFolder);
         showModelInfoDialog(folderName, folderId, 'Images/redballon.png');
@@ -197,7 +204,11 @@ function processImages(imageLinksModel) {
     //if (document.domain === 'localhost')  // #DEBUG
     //    alert("isInRole('logged in user'): " + isInRole("logged in user"));
 
-    var isValidUser = (isInRole("logged in user"));
+    var imageEditor = (isInRole("Image Editor"));
+
+    imageEditor = true;
+
+
     imageFrameClass = "imageFrame";
     $.each(imageLinksModel.Files, function (idx, imageModelFile) {
         // add files to array
@@ -206,7 +217,7 @@ function processImages(imageLinksModel) {
         //    LinkId: imageModelFile.LinkId
         //});
 
-        if (isValidUser)
+        if (imageEditor)
         {
             if (imageLinksModel.RootFolder === "archive") {
                 if (imageModelFile.LinkCount > 1) {
@@ -462,9 +473,16 @@ function ctxSAP(imgId) {
                 if (modelDetails.RootFolder === "sluts" && currentFolderRoot !== "sluts") {
                     $('#ctxSeeMore').show();
                 }
-                if (userAuthorizationLevel === "not logged in") {
-                    
+                if (isInRole("Oggle admin")) {
+                    alert("WOO HOO");
+                    //$()
+                }
+                else {
                     $('.adminLink').hide();
+                    if (document.domain === 'localhost') {
+                        $('.adminLink').show();
+                        //alert(userName + " gets to see dynamic pages");
+                    }
                 }
             }
             else {

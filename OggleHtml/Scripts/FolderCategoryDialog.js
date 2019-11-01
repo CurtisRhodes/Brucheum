@@ -14,7 +14,7 @@ function showCategoryDialog(folderId) {
         width: 500
     });
 
-    if (isInRole("not logged in")) {
+    if (isInRole("admin")) {
         $('#btnCatDlgMeta').hide();
         $('#catDlgSummerNoteContainer').hide();
         $('#btnCatDlgEdit').hide();

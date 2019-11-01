@@ -357,7 +357,7 @@ function logActivity(changeLogModel) {
 
 function reportThenPerformEvent(eventCode, pageId) {
     //alert("reportThenPerformEvent(eventCode: " + eventCode + ", pageId: " + pageId + ")");
-    var dots;
+    var dots = "";
     reportClickEvent(eventCode, pageId);
     var reportEventWaiter = setInterval(function () {
         dots += "x ";
@@ -371,7 +371,7 @@ function reportThenPerformEvent(eventCode, pageId) {
                 case "PRN":
                     window.location.href = '/index.html?subdomain=porn';
                     break;
-                case "HBC":
+                case "HBC":  //  Red ballon clicked
                     window.location.href = "/";
                     break;
                 case "GAX":  // can I get a connection
@@ -383,10 +383,17 @@ function reportThenPerformEvent(eventCode, pageId) {
                     carouselContextMenuShow();
                     break;
                 case 'SUB': // 'Sub Folder Click'
+                    //alert("Sub Folder Click: " + pageId);
+                    window.location.href = "/album.html?folder=" + pageId;
+                    break;
+                case "BCC":  // Breadcrumb Clicked
                 case "BLC":  // banner link clicked
                 case "CIC":  // carousel image clicked
-                case "BCC":  // Breadcrumb Clicked
                     window.location.href = "/album.html?folder=" + pageId;
+                    break;
+                case "HBX":  // BHome readcrumb Clicked
+                    //alert("HOME BREADCRUMB CLICKED");
+                    window.location.href = "/";
                     break;
                 case "RNK":
                     switch (pageId) {
@@ -409,66 +416,30 @@ function reportThenPerformEvent(eventCode, pageId) {
 }
 
 function reportClickEvent(eventCode, pageId) {
-    //alert("reportClickEvent: eventCode: " + eventCode + " pageId: " + pageId);
-
     try {
-        //var ipAddr = getCookieValue("IpAddress");
         var visitorId = getCookieValue("VisitorId");
-
-        //var ipAddr = getCookieValue("IpAddress");
-        //if (ipAddr === "68.203.90.183") {
-        //    if (eventCode === "BCC") alert("Breadcrumb Clicked: " + pageId);            
-        //}
-
-        //RefType	RefCode	RefDescription
-        //EVT	BCC	Breadcrumb Clicked
-        //EVT	BLC	Banner link Clicked
-        //EVT	CAA	Carousel Arrow Clicked
-        //EVT	CIC	Carousel Item clicked
-        //EVT	CMC	Context menu item clicked
-        //EVT	CXM	Context Menu Opened
-        //EVT	FCC	Fantasy comment
-        //EVT	FLC	Footer link clicked
-        //EVT	GAX	Get a connection
-        //EVT	GIC	Gallery item clicked
-        //EVT	HBC	Home Banner Clicked
-        //EVT	LMC	Left menu item clicked
-        //EVT	MBC	modelInfo banner clicked
-        //EVT	RNK	Ranker banner clicked
-        //EVT	SBC	Slideshow button clicked
-        //EVT	SUB	Sub Folder Click
-
-        //pageId = undefined;
-
         var eventClickDdata = {
             PageId: pageId,
             EvenCode: eventCode,
             VisitorId: visitorId
         };
-
         $.ajax({
             type: "POST",
-            //url: settingsArray.ApiServer + "/api/ChangeLog/LogEventActivity?eventCode=" + eventCode + "&pageId=" + pageId + "&visitorId=" + visitorId,
             url: settingsArray.ApiServer + "/api/EventLog/LogEventActivity",
             data: eventClickDdata,
             success: function (logEventActivitySuccess) {
                 waitingForReportClickEvent = false;
                 if (logEventActivitySuccess.Success === "ok") {
-                    //if (eventCode === "CAA") alert("Event " + logEventActivitySuccess.EventName + "  " + logEventActivitySuccess.PageName);
-                    //if (logEventActivitySuccess.IpAddress !== "68.203.90.183")  // && ipAddr !== "50.62.160.105")
+                    //if (verbosity > 5)
+                    if (eventCode === "HBX" || eventCode === "CXM" || eventCode === "MBC" || eventCode ==="CIC")  
                     {
-                        //if (verbosity > 5)
-                        if (eventCode === "SBC" || eventCode === "MBC")  // slideshow button clicked
-                        {
-                            sendEmailToYourself(logEventActivitySuccess.EventName + ": " + logEventActivitySuccess.PageName,
-                                "Ip: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
+                        sendEmailToYourself(logEventActivitySuccess.EventName + ": " + logEventActivitySuccess.PageName,
+                            "Ip: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
 
+                        if (document.domain === 'localhost')
                             alert(logEventActivitySuccess.EventName + ": " + logEventActivitySuccess.PageName +
                                 "  Ip: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
-                        }
                     }
-                    //else alert("suc " + logEventActivitySuccess.EventName + " PageName: " + logEventActivitySuccess.PageName +
-                    //    "  Ip: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
                 }
                 else {
                     var ipAddr = getCookieValue("IpAddress");

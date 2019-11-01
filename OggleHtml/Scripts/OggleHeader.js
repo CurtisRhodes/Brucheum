@@ -153,8 +153,7 @@
             $('#optionNotLoggedIn').show();
         }
         else {
-            if (document.domain === 'localhost')  // #DEBUG
-                alert("setLoginHeader userName: " + userName);
+            //if (document.domain === 'localhost') alert("setLoginHeader userName: " + userName);
 
             $('#spnUserName').html(userName);
             $('#optionLoggedIn').show();

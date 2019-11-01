@@ -48,8 +48,6 @@ function attemptRegister() {
                     else {
                         alert("$('#registerValidationSummary').html(response).show();");
                         console.log("$('#registerValidationSummary').html(response).show();");
-
-
                         $('#registerValidationSummary').html(response).show();
                     }
                 },
@@ -104,9 +102,13 @@ function onLoginClick() {
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress,
-            success: function (successModel) {
-                if (successModel.Success === "ok") {
-                    sendEmailToYourself("HOLY COW. " + userName + " is trying to login", "(Had to lookup thier ip address) Ip: " + ipAddress);
+            success: function (getVisitorInfoFromIPAddressSuccessModel) {
+                if (getVisitorInfoFromIPAddressSuccessModel.Success === "ok") {
+
+                    setCookieValue("UserName", getVisitorInfoFromIPAddressSuccessModel.UserName);
+                    setCookieValue("VisitorId", getVisitorInfoFromIPAddressSuccessModel.VisitorId);
+
+                    sendEmailToYourself("HOLY COW. " + getVisitorInfoFromIPAddressSuccessModel.UserName + " is trying to login", "(Had to lookup thier ip address) Ip: " + ipAddress);
                 }
                 else {
                     sendEmailToYourself("ERROR IN LOGIN. GetVisitorIdFromIP Fail", "Message: " + successModel.Success);
@@ -150,9 +152,10 @@ function attemptLogin(userName, clearPasswod) {
             success: function (success) {
                 if (success === "ok") {
                     $('#loginDialog').dialog('close');
-                    setCookieValue("UserName", $('#txtLoginUserName').val());
 
+                    setCookieValue("UserName", $('#txtLoginUserName').val());
                     var userName = getCookieValue("UserName");
+
                     if (isNullorUndefined(userName)) {
                         sendEmailToYourself("LOGING FAIL", "User cookie not set");
                         if (document.domain === 'localhost')  // #DEBUG
@@ -160,15 +163,16 @@ function attemptLogin(userName, clearPasswod) {
                         return;
                     }
 
-                    setUserPermissions();
-                    window.localStorage["userPermissons"].push("logged in user");
 
-                    //setLoginHeader();
-                    $('#spnUserName').html(user);
+                    alert("sett user permissions after successfull login");
+                    setUserPermissions();
+
+                    alert("changing login header after successfull login");
+                    //  --setLoginHeader();
+                    $('#spnUserName').html(userName);
                     $('#optionLoggedIn').show();
                     $('#optionNotLoggedIn').hide();
-                    sendEmailToYourself("Someone Successfully logged in", "User: " + user);
-
+                    sendEmailToYourself("Someone Successfully logged in", "User: " + userName);
 
                     //alert("auto fill username: " + getCookieValue("UserName"));
                     displayStatusMessage("ok", "thanks for logging in " + getCookieValue("UserName"));
@@ -217,21 +221,24 @@ function deleteCookie() {
     window.localStorage["UserName"] = null;
     window.localStorage["IpAddress"] = null;
     window.localStorage["VisitorId"] = null;
-    //alert("BEFORE delete document.cookie: " + decodeURIComponent(document.cookie));
+    window.localStorage["UserName"] = null;
+    window.localStorage["userPermissons"] = null;
+    
     var expiryDate = new Date();
     expiryDate.setMonth(expiryDate.getMonth() - 1);
 
-    //document.cookie= "VisitorId:" + visitorId + ",IpAddress:" + ipAddress + ",User:" + user + ",path:'/,expires:" + expiryDate.toUTCString();
-    //document.cookie = "VisitorId:=,IpAddress=,User=,path=,expires:" + expiryDate.toUTCString();
     document.cookie = "expires:" + expiryDate.toUTCString();
-    //if (document.cookie) {
-    //    alert("cookie failed to delete: " + document.cookie);
-    //}
-    console.log("deleteCookie()  document.cookie: " + document.cookie);
-    if (getCookieValue("UserName") !== null) {
-        sendEmailToYourself("Delete Cookie Fail", "After Logout User: " + getCookieValue("UserName"));
+    if (!isNullorUndefined(getCookieValue("UserName"))) 
+    {
+        sendEmailToYourself("Delete Cookie Fail", "After Logout UserName: " + getCookieValue("UserName"));
         if (document.domain === 'localhost')  // #DEBUG
             alert("After Logout User: " + getCookieValue("UserName"));
+
+
+        //if (document.cookie) {
+        //    alert("cookie failed to delete: " + document.cookie);
+        //}
+        //console.log("deleteCookie()  document.cookie: " + document.cookie);
     }
 }
 
@@ -263,7 +270,7 @@ function setCookieValue(elementName, elementValue) {
     expiryDate = new Date();
     expiryDate.setMonth(expiryDate.getMonth() + 9);
     //var cookieString = "VisitorId=" + visitorId + ";IpAddress=" + ipAddress + ";User=" + user + ";path='/;expires=" + expiryDate.toUTCString();
-    var cookieString = "VisitorId:" + visitorId + ",IpAddress:" + ipAddress + ",User:" + user + ",path:'/,expires:" + expiryDate.toUTCString();
+    var cookieString = "VisitorId:" + visitorId + ",IpAddress:" + ipAddress + ",UserName:" + userName + ",path:'/,expires:" + expiryDate.toUTCString();
     document.cookie = cookieString;
     //alert("setCookieValue(" + elementName + "," + elementValue + ")\ncookie:\n" + document.cookie);
 }

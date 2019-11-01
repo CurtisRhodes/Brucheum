@@ -2,36 +2,26 @@
 function setUserPermissions() {
 
     var userpermissons = window.localStorage["userPermissons"];
-    if (isNullorUndefined(userpermissons)) {
-        if (document.domain === 'localhost')  // #DEBUG
-            alert("setUserPermissions().  Userpermissons isNullorUndefined");
-        userpermissons = [];
-        if (isNullorUndefined(getCookieValue("UserName")))
-        {
-            if (document.domain === 'localhost')  // #DEBUG
-                alert("userpermissons   userpermissons.push('not logged in')");
+    //if (isNullorUndefined(userpermissons)) {
+    //    //if (document.domain === 'localhost')  // #DEBUG
+    //    //    alert("setUserPermissions().   Userpermissons isNullorUndefined");
 
-            userpermissons.push("not logged in");
-        }
-        window.localStorage["userPermissons"] = userpermissons;
-        permissionsSet = true;
-        return;
-    }
+    //    userpermissons = [];
+    //    //if (isNullorUndefined(getCookieValue("UserName")))
+    //    //{
+    //    //    if (document.domain === 'localhost')  // #DEBUG
+    //    //        alert("userpermissons   userpermissons.push('not logged in')");
+    //    //}
+    //    window.localStorage["userPermissons"] = userpermissons;
+    //    permissionsSet = true;
+    //    return;
+    //}
+
     var userName = getCookieValue("UserName");
     if (isNullorUndefined(userName)) {
-        if (isNullorUndefined(userpermissons)) {
-            //alert("userName isNullorUndefined even after");
-            userpermissons = [];
-            if (isNullorUndefined(getCookieValue("UserName"))) {
-
-                if (document.domain === 'localhost')  // #DEBUG
-                    alert("userName  userpermissons.push('not logged in')");
-                userpermissons.push("not logged in");
-            }
-            window.localStorage["userPermissons"] = userpermissons;
-            permissionsSet = true;
-            return;
-        }
+        permissionsSet = true;
+        //if (document.domain === 'localhost') alert("unable to set User Permissions.   UserName isNullorUndefined");
+        return;
     }
 
     $.ajax({
@@ -40,8 +30,8 @@ function setUserPermissions() {
         success: function (roleModel) {
             if (roleModel.Success === "ok") {
 
-                if (document.domain === 'localhost')  // #DEBUG
-                    alert("successfull loaded user permissions for " + userName);
+                //if (document.domain === 'localhost')  // #DEBUG
+                //    alert("successfull loaded user permissions for " + userName);
 
                 var userpermissons = [];
                 $.each(roleModel.RoleNames, function (idx, roleName) {
@@ -77,28 +67,15 @@ function setUserPermissions() {
 
 function isInRole(roleName) {
 
-    var userpermissons = window.localStorage["userPermissons"];
-    //userpermissons.each()
-    if (isNullorUndefined(userpermissons)) {
-        if (document.domain === 'localhost') {  // #DEBUG
-            alert("userpermissons not FOUND! Calling setUserPermissions()");
-        }
-        setUserPermissions();
-        if (roleName === "not logged in")
-            return true;
-        return false;
-
-    }
     var userName = getCookieValue("UserName");
     if (isNullorUndefined(userName)) {
-        if (roleName === "not logged in")
-            return true;
-        else {
-            //if (document.domain === 'localhost') {  // #DEBUG
-            //    alert("username undefined. Role: " + roleName + ". Returning false");
-            //}
-            return false;
-        }
+        return false;
+    }
+    var userpermissons = window.localStorage["userPermissons"];
+
+    if (isNullorUndefined(userpermissons)) {
+        if (document.domain === 'localhost') alert("userpermissons not FOUND! Calling setUserPermissions()");
+        setUserPermissions();
     }
 
     for (var i = 0; i < userpermissons.length; i++) {
@@ -111,8 +88,6 @@ function isInRole(roleName) {
 
     if (document.domain === 'localhost')  // #DEBUG
         alert("rolename " + roleName + " not found for: " + getCookieValue("UserName"));
-
-
 
     return false;
 }

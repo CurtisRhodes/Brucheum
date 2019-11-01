@@ -134,9 +134,8 @@ namespace WebApi
             return roleModel;
         }
 
-
         [HttpPatch]
-        public Boolean IsInRole(string userName, string roleName)
+        public bool IsInRole(string userName, string roleName)
         {
             bool isInRole = false;
             using (WebStatsContext db = new WebStatsContext())
@@ -146,7 +145,6 @@ namespace WebApi
             }
             return isInRole;
         }
-
 
         [HttpGet]
         public RoleModel GetUserRoles(string userName, string whichType)

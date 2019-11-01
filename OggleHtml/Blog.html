@@ -143,7 +143,9 @@
                     if (permissionsSet === true) {
                         clearInterval(waiter2);
                         $('#dots').html("");
-                        if (isInRole("not logged in")) {
+
+                        if (isInRole("blog editor")) {
+                            alert("is in role blog editor")
                             $('.adminOnly').hide();
                             $('.blogEditButton').hide();
                             //$('#footerMessage').html("admin access");

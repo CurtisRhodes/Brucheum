@@ -10,19 +10,22 @@ function logImageHit(link, pageId, isInitialHit) {
     if (isNullorUndefined(pageId)) {
         pageId = 1;
         sendEmailToYourself("TROUBLE in logImageHit. PageId came in Null or Undefined", "pageId: " + pageId + ". Set to 1");
-
     }
     var ipAddr = getCookieValue("IpAddress");
     var visitorId = getCookieValue("VisitorId");    
 
-    if (isNullorUndefined(ipAddr)) {
-        //sendEmailToYourself("Problem in LogImageHit. IpAddress not found.", "VisitorId: " + visitorId);
-        //logVisitor(pageId);
+    if (isNullorUndefined(visitorId) || visitorId === "unknown") {
+        if (verbosity > 4) {
+            sendEmailToYourself("SENT TO LOGVISITOR visitorId", "ERROR in logImageHit.  VisitorId came in Null or Undefined or Unknown.  IpAddr: " + ipAddr);
+        }
+        logVisitor(pageId);
         return;
     }
-    if (isNullorUndefined(visitorId) || visitorId === "unknown") {
-        sendEmailToYourself("SENT TO LOGVISITOR visitorId", "ERROR in logImageHit.  VisitorId came in Null or Undefined or Unknown.  IpAddr: " + ipAddr);
-        logVisitor(pageId);
+    if (isNullorUndefined(ipAddr)) {
+        if (pageId > 1) {
+            sendEmailToYourself("SENT TO LOGVISITOR Problem in LogImageHit. IpAddress not found.", "PageId: " + pageId + ". VisitorId: " + visitorId);
+            logVisitor(pageId);
+        }
         return;
     }
     //if (visitorId !== '9bd90468-e633-4ee2-af2a-8bbb8dd47ad1') 
@@ -99,21 +102,17 @@ function logVisitor(pageId) {
     try {
         var ipAddress = getCookieValue("IpAddress");
         if (!isNullorUndefined(ipAddress)) {
-            sendEmailToYourself("no need to Log Visistor", "I alread know ip: " + ipAddress);
-            if (document.domain === 'localhost')  // #DEBUG
-                alert("A HIT TO IPINFO.IO  ip: " + ipAddress);
-            //console.log("no need to Log Visistor I alread know ip: " + ipAddress);
-            //$('#footerMessage').append("  no need to Log Visistor I alread know ip: " + ip);
+            if (verbosity > 3)
+                sendEmailToYourself("looping to logPageHit from logvisitor.", "IpAddress: " + ipAddress);
+            if (document.domain === 'localhost') alert("looping to logPageHit from logImageHit. IpAddress: " + ipAddress);
             logPageHit(pageId);
         }
         else
         {
-            if (document.domain === 'localhost')  // #DEBUG
-                alert("A HIT TO IPINFO.IO. From pageId: " + pageId + "  ip: " + ipAddress);
+            if (verbosity > 3)
+                sendEmailToYourself("LogVisitor call to IP info.", " ip: " + ipAddress);
+            if (document.domain === 'localhost') alert("LogVisitor call to IP info. IpAddress: " + ipAddress);
 
-            //$('#footerMessage').html("A HIT TO IPINFO.IO  ip: " + ipAddress);
-            //console.log("A HIT TO IPINFO.IO  ip: " + ipAddress);
-            //sendEmailToYourself("logvisitor from " + calledFrom, " pageId: " + pageId);
             $.getJSON("https://ipinfo.io?token=ac5da086206dc4", function (data) {
 
                 //$("#info").html("City: " + data.city + " ,County: " + data.country + " ,IP: " + data.ip + " ,Location: " + data.loc + " ,Organisation: "
@@ -267,15 +266,19 @@ function logPageHit(pageId) {
     var ipAddress = getCookieValue("IpAddress");
     if (isNullorUndefined(ipAddress)) {
         //console.log("Unable to perform logPageHit for pageId: " + pageId);
-        //sendEmailToYourself("calling logVisitor from logPageHit for pageId: " + pageId, "Ipaddress Not found");
+        if (verbosity > 4) {
+            sendEmailToYourself("calling logVisitor from logPageHit for pageId: " + pageId, "Ipaddress Not found");
+        }
         console.log("calling logVisitor from logPageHit for pageId: " + pageId, "Ipaddress Not found");
         logVisitor(pageId, "logPageHit");
     }
     else {
         if (isNullorUndefined(getCookieValue("VisitorId"))) {
             //alert("how is it that I know the Ip (" + getCookieValue("IpAddress") + ") and not the visitorId?");
-            console.log("how is it that I know the Ip (" + getCookieValue("IpAddress") + ") and not the visitorId?");
-            sendEmailToYourself("Using Ip: " + ipAddress + " to try to find visitorId", "logPageHit(" + pageId + ")");
+            //console.log("how is it that I know the Ip (" + getCookieValue("IpAddress") + ") and not the visitorId?");
+            if (verbosity > 4) {
+                sendEmailToYourself("Using Ip: " + ipAddress + " to try to find visitorId", "logPageHit(" + pageId + ")");
+            }
             $.ajax({
                 type: "GET",
                 url: settingsArray.ApiServer + "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress,
@@ -287,7 +290,7 @@ function logPageHit(pageId) {
                             logVisitor(pageId, "failed GetVisitorIdFromIP");
                         }
                         else {
-                            console.log("logPageHit how is it that I know the Ip and not the visitorId? (pre IpInfo) ");
+                            //console.log("logPageHit how is it that I know the Ip and not the visitorId? (pre IpInfo) ");
                             setCookieValue("VisitorId", successModel.VisitorId);
                             if (getCookieValue("VisitorId") === successModel.VisitorId) {
                                 //console.log("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));

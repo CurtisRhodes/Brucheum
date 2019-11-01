@@ -125,8 +125,21 @@ function slideClick(direction) {
         else
             slideShowRunning = false;
     }
-    else 
+    else {
         slide(direction);
+
+        //reportThenPerformEvent("SBC", imageViewerFolderId);
+
+
+        //console.log("logImageHit from slide: " + imageViewerArray[imageViewerIndex].Link);
+        if (isNullorUndefined(imageViewerFolderId)) {
+            sendEmailToYourself("PROBLEMO 1 in slideshow.js.slide.  ImageViewerFolderId isNullorUndefined " + "IP: " + getCookieValue("IpAddress"));
+        }
+        else
+            logImageHit(imageViewerArray[imageViewerIndex].Link, imageViewerFolderId, false);
+
+
+    }
 }
 
 function slide(direction) {
@@ -150,14 +163,6 @@ function slide(direction) {
             $('#viewerImage').css("-webkit-transform", "translateX(-1500px)");
             $('#viewerImage').css("transform", "translateX(-1500px)");
         }
-
-        //console.log("logImageHit from slide: " + imageViewerArray[imageViewerIndex].Link);
-        if (isNullorUndefined(imageViewerFolderId)) {
-            sendEmailToYourself("PROBLEMO 1 in slideshow.js.slide.  ImageViewerFolderId isNullorUndefined " + "IP: " + getCookieValue("IpAddress"));
-        }
-        else
-            logImageHit(imageViewerArray[imageViewerIndex].Link, imageViewerFolderId, false);
-
         setTimeout(function () {
             $('.assuranceArrows').hide();
             $('#viewerImage').hide();

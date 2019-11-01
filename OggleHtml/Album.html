@@ -107,16 +107,28 @@
                         if (permissionsSet === true) {
                             $('#dots').html('');
                             clearInterval(waiter2);
-                            if (document.domain === 'localhost') {
-      //isInRole("not logged in");
-                                //alert("I want to stay in local host");
-                                setAlbumPageHeader(params.folder);
-                                getAlbumImages(params.folder);
-                            }
-                            else {
-                                if (isInRole("not logged in"))
-                                    directToStaticPage(params.folder);
+                            //if (document.domain === 'localhost')
+                            //{
+                            //    //isInRole("not logged in");
+                            //    //alert("I want to stay in local host");
+                            //    setAlbumPageHeader(params.folder);
+                            //    getAlbumImages(params.folder);
+                            //}
+                            //else
+                            {
+                                var userName = getCookieValue("UserName");
+                                if (isNullorUndefined(userName)) {
+                                    if (document.domain === 'localhost')  // #DEBUG
+                                    {
+                                        //alert("userName  not found.  normally would direct to static pages");
+                                        setAlbumPageHeader(params.folder);
+                                        getAlbumImages(params.folder);
+                                    }
+                                    else
+                                        directToStaticPage(params.folder);
+                                }
                                 else {
+                                    //if (document.domain === 'localhost') alert(userName + " gets to see dynamic pages");
                                     setAlbumPageHeader(params.folder);
                                     getAlbumImages(params.folder);
                                 }
