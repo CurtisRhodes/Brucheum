@@ -155,7 +155,8 @@ namespace WebApi
                     imageHitControllerBusy = true;
                     using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
                     {
-                        DateTime utcDateTime = DateTime.UtcNow;                        
+                        DateTime utcDateTime = DateTime.UtcNow;
+                        imageHitSuccess.HitDateTime = utcDateTime;
                         dbm.MySqlImageHits.Add(new MySqlImageHit()
                         {
                             VisitorId = logImageHItData.VisitorId,
@@ -164,7 +165,6 @@ namespace WebApi
                             HitDateTime = utcDateTime
                         });
                         dbm.SaveChanges();
-                        imageHitSuccess.HitDateTime = utcDateTime;
                         imageHitSuccess.UserHits = dbm.MySqlImageHits.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
                         imageHitSuccess.ImageHits = dbm.MySqlImageHits.Where(h => h.ImageLinkId == logImageHItData.LinkId).Count();
                         //imageHitSuccess.IpAddress = db.Visitors.Where(v => v.VisitorId == logImageHItData.VisitorId).FirstOrDefault().IpAddress;

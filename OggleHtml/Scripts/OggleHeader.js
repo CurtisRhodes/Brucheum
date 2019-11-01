@@ -208,7 +208,9 @@ function showSpecialHeaderIcons(folderId) {
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "setSpecialLinks")) {
-                sendEmailToYourself("XHR ERROR IN OggleHeader.JS showSpecialHeaderIcons", "/api/ImageCategoryDetail/Get?folderId=" + folderId +
+                sendEmailToYourself("XHR ERROR IN OggleHeader.JS showSpecialHeaderIcons",
+                    "/api/ImageCategoryDetail/Get?folderId=" + folderId +
+                    " IpAddress: " + getCookieValue("IpAddress") +
                     " Message : " + errorMessage);
                 //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
             }

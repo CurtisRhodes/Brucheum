@@ -11,20 +11,13 @@ function showCategoryDialog(folderId) {
         autoOpen: false,
         show: { effect: "fade" },
         hide: { effect: "blind" },
-        width: 500
+        width: "560"
     });
 
-    if (isInRole("admin")) {
-        $('#btnCatDlgMeta').hide();
-        $('#catDlgSummerNoteContainer').hide();
-        $('#btnCatDlgEdit').hide();
-        $('#catDlgReadOnlyTextArea').show();
-    }
-    else {
-        $('#btnCatDlgEdit').hide();
+    if (isInRole("Oggle admin")) {
         $('#catDlgReadOnlyTextArea').hide();
-        $("#btnCatDlgEdit").show().html("Edit");
-        $('#catDlgSummerNoteContainer').show();
+        $('#btnCatDlgMeta').show();
+        $("#btnCatDlgEdit").show();
         $('#catDlgSummerNoteTextArea').summernote({
             height: 300,
             width: 500,
@@ -34,6 +27,13 @@ function showCategoryDialog(folderId) {
                 //['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
             ]
         });
+        $('#catDlgSummerNoteContainer').show();
+    }
+    else {
+        $('#btnCatDlgEdit').hide();
+        $('#btnCatDlgMeta').hide();
+        $('#catDlgSummerNoteContainer').hide();
+        $('#catDlgReadOnlyTextArea').show();
     }
     $('#folderCategoryDialog').dialog('open');
     try {
@@ -43,16 +43,20 @@ function showCategoryDialog(folderId) {
             success: function (categoryComment) {
                 if (categoryComment.Success === "ok") {
                     categoryFolderId = folderId;
-                    //alert("categoryComment.CommentText: " + categoryComment.CommentText);
-                    //$('#catDlgReadOnlyTextArea').html('');
-                    $('#catDlgReadOnlyTextArea').html(categoryComment.CommentText);
                     $('#folderCategoryDialog').dialog('option', 'title', categoryComment.FolderName);
-                    //$('#folderCategoryDialog').show();
-                    //$('#folderCategoryDialog').dialog("open");
+                    if (categoryComment.CommentText === "") {
+                        if (document.domain === 'localhost') alert("categoryComment.CommentText  EMPTY: " + categoryComment.CommentText);
+                    }
+                    else {
+                        $('#catDlgReadOnlyTextArea').html(categoryComment.CommentText);
+                        $('#catDlgSummerNoteTextArea').summernote('code', $('#catDlgReadOnlyTextArea').html());
+                    }
                 }
                 else {
                     if (categoryComment.Success !== "not found")
                         sendEmailToYourself("jquery fail in FolderCategory.js showCategoryDialog", "get Category Comment: " + categoryComment.Success);
+                    if (document.domain === 'localhost')
+                        alert("categoryComment.CommentText  EMPTY: " + categoryComment.CommentText);
                     //alert("get Category Comment: " + categoryComment.Success);
                 }
             },
@@ -66,24 +70,9 @@ function showCategoryDialog(folderId) {
     }
     catch (e) {
         sendEmailToYourself("javascript catch in FolderCategoryDialog.js showCategoryDialog", "get NudeModelInfo catch: " + e);
-        alert("FolderCategoryDialog catch: " + e);
+        if (document.domain === 'localhost')
+            alert("FolderCategoryDialog catch: " + e);
     }
-}
-
-function toggleEditCatDialog() {
-    if ($("#btnCatDlgEdit").html() === "Edit") {
-
-        $("#btnCatDlgEdit").html("Save");
-        $('#btnCatDlgMeta').show();
-        $('#catDlgReadOnlyTextArea').hide();
-        $('#catDlgSummerNoteContainer').show();
-        $('#catDlgSummerNoteTextArea').summernote('code', $('#catDlgReadOnlyTextArea').html());
-
-    }
-    else {
-        saveCategoryDialogText();
-    }
-    //The server has not found anything matching the requested URI(Uniform Resource Identifier).        GET - http://localhost:56437/Styles/images/ui-icons_f5e175_256x240.png
 }
 
 function saveCategoryDialogText() {
@@ -97,7 +86,8 @@ function saveCategoryDialogText() {
             }
             else {
                 sendEmailToYourself("jquery fail in FolderCategory.js saveCategoryDialogText", success);
-                //alert("EditFolderCategory: " + success);
+                if (document.domain === 'localhost')
+                    alert("EditFolderCategory: " + success);
             }
         },
         error: function (jqXHR) {
@@ -116,14 +106,8 @@ function addMetaTags() {
 }
 
 function considerClosingCategoryDialog() {
-    if (isInRole("not logged in")) {
+    if (!isInRole("Oggle admin")) {
         $('#folderCategoryDialog').dialog("close");
-        return;
-    }
-    if ($("#btnCatDlgEdit").html() === "Edit") {
-        //if ($('#catDlgDescription').prop("readonly")) {
-        //$('#folderCategoryDialog').dialog("close");
-        //$('#catDlgSummerNoteTextArea').summernote('destroy');
     }
 }
 

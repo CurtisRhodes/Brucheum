@@ -56,7 +56,7 @@
                 <div onclick="reportClickEvent('LMC','3942'); showCustomMessage(38)">Let me Explain</div>
                 <div onclick="reportClickEvent('LMC','3941'); showCatListDialog(2)">Category List</div>
                 <div onclick="reportClickEvent('LMC','1132'); window.location.href='/album.html?folder=1132'">Every Playboy Centerfold</div>
-                <div onclick="reportClickEvent('LMC','3909'); showCustomMessage(35)">Nasty Porn</div>
+                <div onclick="goToPorn()">Nasty Porn</div>
                 <div onclick="reportClickEvent('LMC','3911'); window.location.href='/Blog.html'">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
@@ -279,18 +279,23 @@
             setInterval(function () { showPromoMessages() }, 30000);
         }
 
-        function letemPorn(response) {
-            // record hit
-            //alert("letemPorn: " + response);
+        function goToPorn() {
+            //if (document.domain === 'localhost') alert("goToPorn()");
+
+            // if user porn status not already set
+            showCustomMessage(35);
+        }
+
+
+        function letemPorn(response, pornType) {
+            if (document.domain === 'localhost')
+                alert("letemPorn: " + pornType);
+
             if (response == "ok") {
 
-                //<a href='javascript:'> poses,</a>\n" +
+                //  setUserPornStatus(pornType);
 
                 reportThenPerformEvent("PRN", 136);
-
-                window.location.href = '/index.html?subdomain=porn';
-
-
             }
             else {
                 $('#customMessage').hide();

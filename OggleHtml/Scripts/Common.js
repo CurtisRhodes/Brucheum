@@ -367,12 +367,16 @@ function reportThenPerformEvent(eventCode, pageId) {
             //alert("done waiting");
             $('#dots').html("");
             switch (eventCode) {
-
-                case "PRN":
+                case "PRN":  //("Porn Option clicked");
                     window.location.href = '/index.html?subdomain=porn';
                     break;
                 case "HBC":  //  Red ballon clicked
-                    window.location.href = "/";
+                    if (pageId === 3909) {
+                        //alert("cocksucker lips clicked");
+                        window.location.href = '/index.html?subdomain=porn';
+                    }
+                    else
+                        window.location.href = "/";
                     break;
                 case "GAX":  // can I get a connection
                     window.location.href = ".";
@@ -392,8 +396,10 @@ function reportThenPerformEvent(eventCode, pageId) {
                     window.location.href = "/album.html?folder=" + pageId;
                     break;
                 case "HBX":  // BHome readcrumb Clicked
-                    //alert("HOME BREADCRUMB CLICKED");
-                    window.location.href = "/";
+                    if (pageId === 3909)
+                        window.location.href = '/index.html?subdomain=porn';
+                    else
+                        window.location.href = "/";
                     break;
                 case "RNK":
                     switch (pageId) {
@@ -429,12 +435,14 @@ function reportClickEvent(eventCode, pageId) {
             data: eventClickDdata,
             success: function (logEventActivitySuccess) {
                 waitingForReportClickEvent = false;
+                var ipAddr = getCookieValue("IpAddress");
                 if (logEventActivitySuccess.Success === "ok") {
                     //if (verbosity > 5)
-                    if (eventCode === "HBX" || eventCode === "CXM" || eventCode === "MBC" || eventCode ==="CIC")  
-                    {
-                        sendEmailToYourself(logEventActivitySuccess.EventName + ": " + logEventActivitySuccess.PageName,
-                            "Ip: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
+                    if (eventCode === "HBX" || eventCode === "CXM" || eventCode === "MBC" || eventCode === "PRN") {
+                        if (ipAddr !== "68.203.90.183") {
+                            sendEmailToYourself(logEventActivitySuccess.EventName + ": " + logEventActivitySuccess.PageName,
+                                "Ip: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
+                        }
 
                         if (document.domain === 'localhost')
                             alert(logEventActivitySuccess.EventName + ": " + logEventActivitySuccess.PageName +
@@ -442,7 +450,6 @@ function reportClickEvent(eventCode, pageId) {
                     }
                 }
                 else {
-                    var ipAddr = getCookieValue("IpAddress");
                     if (ipAddr === "68.203.90.183") {
                      //   alert("Error returned from reportClickEvent.LogEventActivity " + logEventActivitySuccess.Success);
                         sendEmailToYourself("DOUBLE FAIL jQuery 32 fail in reportClickEvent",

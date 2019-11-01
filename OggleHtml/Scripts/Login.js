@@ -91,6 +91,7 @@ function onLogoutClick() {
     $('.loginRequired').hide();
 
     deleteCookie();
+    window.location.href = ".";
 
 }
 
@@ -108,7 +109,9 @@ function onLoginClick() {
                     setCookieValue("UserName", getVisitorInfoFromIPAddressSuccessModel.UserName);
                     setCookieValue("VisitorId", getVisitorInfoFromIPAddressSuccessModel.VisitorId);
 
-                    sendEmailToYourself("HOLY COW. " + getVisitorInfoFromIPAddressSuccessModel.UserName + " is trying to login", "(Had to lookup thier ip address) Ip: " + ipAddress);
+                    sendEmailToYourself("Login Attempt",
+                        "getVisitorInfoFromIPAddressSuccessModel.UserName: " + getVisitorInfoFromIPAddressSuccessModel.UserName +
+                        " (Had to lookup thier ip address) IpAddress: " + ipAddress);
                 }
                 else {
                     sendEmailToYourself("ERROR IN LOGIN. GetVisitorIdFromIP Fail", "Message: " + successModel.Success);
@@ -125,7 +128,7 @@ function onLoginClick() {
         });
     }
     else
-        sendEmailToYourself("HOLY COW. Someone is trying to login", "Ip: " + ipAddress);
+        sendEmailToYourself("Login Attepmt", "Ip: " + ipAddress);
 
     $('#modalContainer').show();
     $('#loginDialog').dialog({
@@ -163,11 +166,14 @@ function attemptLogin(userName, clearPasswod) {
                         return;
                     }
 
+                    //if (document.domain === 'localhost') alert("setting user permissions after successfull login");
 
-                    alert("sett user permissions after successfull login");
                     setUserPermissions();
 
-                    alert("changing login header after successfull login");
+                    if (document.domain === 'localhost')
+                        alert("changing login header after successfull login");
+
+
                     //  --setLoginHeader();
                     $('#spnUserName').html(userName);
                     $('#optionLoggedIn').show();
@@ -176,6 +182,7 @@ function attemptLogin(userName, clearPasswod) {
 
                     //alert("auto fill username: " + getCookieValue("UserName"));
                     displayStatusMessage("ok", "thanks for logging in " + getCookieValue("UserName"));
+                    window.location.href = ".";
                 }
                 else
                     $('#loginValidationSummary').html(success).show();

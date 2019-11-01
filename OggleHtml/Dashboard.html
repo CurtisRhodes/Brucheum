@@ -144,16 +144,16 @@
                 <div class="leftColumnList">
                     <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
                     <div class="clickable" onclick="$('#createNewFolderDialog').dialog('open');">Create New Folder</div>
-                    <div class="clickable adminLevelRequired" onclick="showMoveFolderDialog();">Move Folder</div>
-                    <div class="clickable adminLevelRequired" onclick="$('#renameFolderCrud').dialog('open');">Rename Folder</div>
-                    <div class="clickable adminLevelRequired" onclick="loadProperties()">load Properties</div>
-                    <div class="clickable adminLevelRequired" onclick="$('#createStaticPagesCrud').dialog('open');">Create Static Pages</div>
-                    <div class="clickable adminLevelRequired" onclick="repairLinks()">Repair Links</div>
-                    <div class="clickable adminLevelRequired" onclick="showAddRolesDialog()">Add/Edit Roles</div>
-                    <div class="clickable adminLevelRequired" onclick="showAssignRolesDialog()">Assign User Roles</div>
-                    <div class="clickable adminLevelRequired" onclick="prepareXhamsterPage()">Prepare xHamster Page</div>
-                    <div class="clickable adminLevelRequired" onclick="showPerfMetrics()">Performance Metrics</div>
-                    <div class="clickable adminLevelRequired" onclick="showSortTool()">Sort Tool</div>
+                    <div class="clickable adminLevelOption" onclick="showMoveFolderDialog();">Move Folder</div>
+                    <div class="clickable adminLevelOption" onclick="$('#renameFolderCrud').dialog('open');">Rename Folder</div>
+                    <div class="clickable adminLevelOption" onclick="loadProperties()">load Properties</div>
+                    <div class="clickable adminLevelOption" onclick="$('#createStaticPagesCrud').dialog('open');">Create Static Pages</div>
+                    <div class="clickable adminLevelOption" onclick="repairLinks()">Repair Links</div>
+                    <div class="clickable adminLevelOption" onclick="showAddRolesDialog()">Add/Edit Roles</div>
+                    <div class="clickable adminLevelOption" onclick="showAssignRolesDialog()">Assign User Roles</div>
+                    <div class="clickable adminLevelOption" onclick="prepareXhamsterPage()">Prepare xHamster Page</div>
+                    <div class="clickable adminLevelOption" onclick="showPerfMetrics()">Performance Metrics</div>
+                    <div class="clickable adminLevelOption" onclick="showSortTool()">Sort Tool</div>
                 </div>
 
                 <div id="divWorkArea" class="workarea">
@@ -282,6 +282,10 @@
                     buildDirectoryTree();                    
                     logPageHit(3910);
 
+                    if (isInRole("Oggle admin")) {
+                        $('.adminLevelOption').show();
+
+                    }
                     //setUserPermissions();
 
                 }

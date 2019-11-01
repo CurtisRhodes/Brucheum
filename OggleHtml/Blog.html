@@ -144,11 +144,11 @@
                         clearInterval(waiter2);
                         $('#dots').html("");
 
-                        if (isInRole("blog editor")) {
-                            alert("is in role blog editor")
-                            $('.adminOnly').hide();
-                            $('.blogEditButton').hide();
-                            //$('#footerMessage').html("admin access");
+                        if (isInRole("Blog Editor")) {
+                            //if (document.domain === 'localhost') alert("is in role blog editor");
+                            $('.adminOnly').show();
+                            $('.blogEditButton').show();
+                            $('#footerMessage').html("admin access");
                         }
                     }
                 }, 300);

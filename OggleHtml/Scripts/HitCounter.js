@@ -68,15 +68,21 @@ function logImageHit(link, pageId, isInitialHit) {
                 //console.log("logImageHit: " + imageHitSuccessModel.Success);
                 //if (imageHitSuccessModel.IpAddress !== "68.203.90.183") {
                 if (ipAddr !== "68.203.90.183") {
-                    sendEmailToYourself("Ajax fail in Hitcounter.js logImageHit",
-                        "VisitorId: " + visitorId +
-                        " utc: " + imageHitSuccessModel.HitDateTime +
-                        " isInitialHit: " + isInitialHit +
-                        "PageId: " + pageId +
-                        "\n linkId: " + linkId +
-                        //" imageHitSuccessModel.IpAddress: " + imageHitSuccessModel.IpAddress +
-                        "\n ipAddr: " + ipAddr +
-                        "\n Message: " + imageHitSuccessModel.Success);
+
+                    if (imageHitSuccessModel.Success.Contains("Duplicate entry")) {
+                        sendEmailToYourself("logImageHit Duplicate entry", "utcDateTime: " + imageHitSuccessModel.HitDateTime);
+                    }
+                    else {
+                        sendEmailToYourself("Some other Ajax fail in Hitcounter.js logImageHit",
+                            "VisitorId: " + visitorId +
+                            ".  utc: " + imageHitSuccessModel.HitDateTime +
+                            ".  isInitialHit: " + isInitialHit +
+                            ".  PageId: " + pageId +
+                            "\n.  linkId: " + linkId +
+                            //" imageHitSuccessModel.IpAddress: " + imageHitSuccessModel.IpAddress +
+                            "\n.  ipAddr: " + ipAddr +
+                            "\n.  Message: " + imageHitSuccessModel.Success);
+                    }
                 }
                 else {
                     sendEmailToYourself("DOUBLE ajax fail in Hitcounter.js logImageHit", "PageId: " + pageId + " linkId: " + linkId +
