@@ -14,6 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
+    <script src="Scripts/OggleEventLog.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
@@ -107,14 +108,15 @@
                         if (permissionsSet === true) {
                             $('#dots').html('');
                             clearInterval(waiter2);
-                            //if (document.domain === 'localhost')
-                            //{
-                            //    //isInRole("not logged in");
-                            //    //alert("I want to stay in local host");
-                            //    setAlbumPageHeader(params.folder);
-                            //    getAlbumImages(params.folder);
-                            //}
-                            //else
+                            if (document.domain === 'localhost')
+                            {
+                                //isInRole("not logged in");
+                                console.log("I want to stay in local host");
+                                //alert("I want to stay in local host");
+                                setAlbumPageHeader(params.folder);
+                                getAlbumImages(params.folder);
+                            }
+                            else
                             {
                                 var userName = getCookieValue("UserName");
                                 if (isNullorUndefined(userName)) {

@@ -22,16 +22,70 @@ namespace WebApi.Controllers
         //private int filesProcessed = 0;
         private int imagesCount;
 
+        private void GetMetaTagsRecurr(MetaTagResultsModel metaTagResults, int folderId, OggleBoobleContext db)
+        {
+            CategoryFolder thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+            if (thisFolder.FolderName.IndexOf("OGGLEBOOBLE.COM") > 0)
+            {
+                thisFolder.FolderName = thisFolder.FolderName.Substring(0, thisFolder.FolderName.IndexOf("OGGLEBOOBLE.COM") - 1);
+            }
+            metaTagResults.MetaTags.Add(new MetaTagModel() { Tag = thisFolder.FolderName });
+            List<MetaTag> metaTags = db.MetaTags.Where(m => m.FolderId == folderId).ToList();
+            foreach (MetaTag metaTag in metaTags)
+            {
+                metaTagResults.MetaTags.Add(new MetaTagModel() { Tag = metaTag.Tag });
+            }
+            //metaTagResults.MetaTags.Add(new MetaTagModel() { TagId = metaTag.TagId, FolderId = metaTag.FolderId, Tag = metaTag.Tag });
+
+            if (thisFolder.Parent > 1)
+                GetMetaTagsRecurr(metaTagResults, thisFolder.Parent,  db);
+        }
+
+        //public class MetaTagResultsModel
+        //{
+        //    public MetaTagResultsModel()
+        //    {
+        //        MetaTags = new List<MetaTagModel>();
+        //    }
+        //    public List<MetaTagModel> MetaTags { get; set; }
+        //    public string Source { get; set; }
+        //    public string MetaDescription { get; set; }
+        //    public string Success { get; set; }
+        //}
+
+        //public class MetaTagModel
+        //{
+        //    public int TagId { get; set; }
+        //    public int FolderId { get; set; }
+        //    public string LinkId { get; set; }
+        //    public string Tag { get; set; }
+        //}
+
+
         private string HeadHtml(int folderId, string folderName)
         {
-            var articleTagString = "";
-            MetaTagResultsModel metaTagResults = new MetaTagController().GetTags(folderId, "undefined");
-            foreach (MetaTagModel metaTag in metaTagResults.MetaTags)
+            MetaTagResultsModel metaTagResults = new MetaTagResultsModel();
+            string articleTagString = "";
+            using (OggleBoobleContext db = new OggleBoobleContext())
             {
-                articleTagString += "," + metaTag.Tag;
+                GetMetaTagsRecurr(metaTagResults, folderId, db);
+                foreach (MetaTagModel metaTag in metaTagResults.MetaTags)
+                    articleTagString += metaTag.Tag + ",";
+                CategoryFolderDetail categoryFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                if (categoryFolderDetail != null)
+                    metaTagResults.MetaDescription = categoryFolderDetail.MetaDescription;
+                else
+                    metaTagResults.MetaDescription = folderName;
             }
-            return "<head lang='en'>\n" +
+
+            return "<head>\n" +
                 "   <meta charset='utf-8'>\n" +
+                "   <title>" + folderName + " : OggleBooble</title>" +
+                "   <meta name='Title' content='" + folderName + "' property='og:title'/>\n" +
+                "   <meta name='description' content='" + metaTagResults.MetaDescription + "'/>\n" +
+                "   <meta property='og:type' content='website' />\n" +
+                "   <meta property='og:url' content='" + httpLocation + folderName + ".html'/>\n" +
+                "   <meta name='Keywords' content='" + articleTagString + "'/>\n" +
                 "   <script src='https://code.jquery.com/jquery-latest.min.js' type='text/javascript'></script>\n" +
                 "   <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>\n" +
                 "   <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet'>\n" +
@@ -41,6 +95,7 @@ namespace WebApi.Controllers
                 "   <link href='/Styles/jqueryui.css' rel='stylesheet' />\n" +
                 "   <link rel='icon' type='image/png' href='/static/favicon.png' />" +
                 "   <script src='/Scripts/Common.js' type='text/javascript'></script>\n" +
+                "   <script src='/Scripts/OggleEventLog.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Login.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/HitCounter.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Permissions.js'></script>\n" +
@@ -62,12 +117,6 @@ namespace WebApi.Controllers
                 "   <link href='/Styles/ModelInfoDialog.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/ImagePage.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/LoginDialog.css' rel='stylesheet'/>\n" +
-                "   <title>" + folderName + " : OggleBooble</title>" +
-                "   <meta name='Title' content='" + folderName + "' property='og:title'/>\n" +
-                "   <meta name='description' content='" + metaTagResults.MetaDescription + "'/>\n" +
-                "   <meta property='og:type' content='website' />\n" +
-                "   <meta property='og:url' content='" + httpLocation + folderName + ".html'/>\n" +
-                "   <meta name='Keywords' content='" + articleTagString + "'/>\n" +
                 "</head>";
         }
 
@@ -101,7 +150,7 @@ namespace WebApi.Controllers
                 //SignalRHost.ProgressHub.PostToClient("Creating static files: " + folderName + ".html");
                 folderName = Helpers.GetCustomStaticFolderName(folderId, folderName.Replace(".OGGLEBOOBLE.COM", ""));
                 string staticContent =
-                    "<!DOCTYPE html>\n<html>\n" + HeadHtml(folderId, folderName) +
+                    "<!DOCTYPE html>\n<html lang='en'>\n" + HeadHtml(folderId, folderName) +
                     "\n<body style='margin-top:105px'>\n<header></header>" +
                     GalleryPageBodyHtml(folderId, rootFolder) + "<footer></footer>\n" +
                    // Slideshow() + CommentDialog() + ModelInfoDialog() +

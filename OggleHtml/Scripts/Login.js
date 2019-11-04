@@ -102,16 +102,15 @@ function onLoginClick() {
         //console.log("Logging In and already know Ip");
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress,
+            url: settingsArray.ApiServer + "api/HitCounter/GetVisitorIdFromIP?ipAddress=" + ipAddress,
             success: function (getVisitorInfoFromIPAddressSuccessModel) {
                 if (getVisitorInfoFromIPAddressSuccessModel.Success === "ok") {
-
-                    setCookieValue("UserName", getVisitorInfoFromIPAddressSuccessModel.UserName);
+                    //setCookieValue("UserName", getVisitorInfoFromIPAddressSuccessModel.UserName);
                     setCookieValue("VisitorId", getVisitorInfoFromIPAddressSuccessModel.VisitorId);
-
-                    sendEmailToYourself("Login Attempt",
-                        "getVisitorInfoFromIPAddressSuccessModel.UserName: " + getVisitorInfoFromIPAddressSuccessModel.UserName +
-                        " (Had to lookup thier ip address) IpAddress: " + ipAddress);
+                    if (ipAddress !== "68.203.90.183")// && ipAddress !== "50.62.160.105")
+                        sendEmailToYourself("Login Attempt", "IpAddress: " + ipAddress);
+                        //"getVisitorInfoFromIPAddressSuccessModel.UserName: " + getVisitorInfoFromIPAddressSuccessModel.UserName +
+                        //" (Had to lookup thier ip address) IpAddress: " + ipAddress);
                 }
                 else {
                     sendEmailToYourself("ERROR IN LOGIN. GetVisitorIdFromIP Fail", "Message: " + successModel.Success);
@@ -170,18 +169,17 @@ function attemptLogin(userName, clearPasswod) {
 
                     setUserPermissions();
 
-                    if (document.domain === 'localhost')
-                        alert("changing login header after successfull login");
+                    //if (document.domain === 'localhost') alert("changing login header after successfull login");
 
 
                     //  --setLoginHeader();
                     $('#spnUserName').html(userName);
                     $('#optionLoggedIn').show();
                     $('#optionNotLoggedIn').hide();
-                    sendEmailToYourself("Someone Successfully logged in", "User: " + userName);
+                    if (getCookieValue("ipAddress") !== "68.203.90.183")// && ipAddress !== "50.62.160.105")
+                        sendEmailToYourself("Someone Successfully logged in", "User: " + userName);
 
-                    //alert("auto fill username: " + getCookieValue("UserName"));
-                    displayStatusMessage("ok", "thanks for logging in " + getCookieValue("UserName"));
+                    displayStatusMessage("ok", "thanks for logging in " + userName);
                     window.location.href = ".";
                 }
                 else

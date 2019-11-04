@@ -12,7 +12,7 @@
             case 1139: subdomain = "blog"; break;
             case 3907: subdomain = "ranker"; break;
             case 3909: subdomain = "ranker"; break;
-            //3906	Transitions
+            //case 3906:	Transitions
             //3907	Ranker
             //3908	Index
             //3909	Porn Index
@@ -198,7 +198,7 @@ function showSpecialHeaderIcons(folderId) {
             }
             else {
                 //alert("ERROR in OggleHeader ImageCategoryDetail  " + successModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
-                if (!checkFor404(successModel.Success, "showSpecialHeaderIcons")) {
+                if (!checkFor404(folderDetailModel.Success, "showSpecialHeaderIcons")) {
                     sendEmailToYourself("ERROR in OggleHeader showSpecialHeaderIcons",
                         "Message: " + folderDetailModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
                     // verify network

@@ -11,133 +11,6 @@ using MySql.Data.Types;
 namespace WebApi
 {
     [EnableCors("*", "*", "*")]
-    public class PageHitController : ApiController
-    {
-        [HttpPost]
-        public PageHitSuccessModel LogPageHit(PageHitRequestModel pageHitModel)
-        {
-            PageHitSuccessModel pageHitSuccessModel = new PageHitSuccessModel();
-            try
-            {
-                if (Helpers.IsNullorUndefined(pageHitModel.VisitorId))
-                {
-                    if (Helpers.IsNullorUndefined(pageHitModel.IpAddress))
-                    {
-                        pageHitSuccessModel.Success = "VisitorId fail";
-                        return pageHitSuccessModel;
-                    }
-                }
-                using (WebStatsContext db = new WebStatsContext())
-                {
-                    #region // LOG VISIT
-                    DateTime lastVisitDate = DateTime.MinValue;
-                    if (!Helpers.IsNullorUndefined(pageHitModel.VisitorId))
-                    {
-                        List<Visit> visits = db.Visits.Where(v => v.VisitorId == pageHitModel.VisitorId).ToList();
-                        if (visits.Count > 0)
-                            lastVisitDate = visits.OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
-                    }
-                    else
-                    {
-                        IPVisitLookup iPVisitLookup = (from v in db.Visitors
-                                                       join vi in db.Visits on v.VisitorId equals vi.VisitorId
-                                                       select new IPVisitLookup() { VisitDate = vi.VisitDate }).OrderByDescending(v => v).FirstOrDefault();
-                        lastVisitDate = iPVisitLookup.VisitDate;
-                    }
-                    if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
-                    {
-                        Visitor visitor = db.Visitors.Where(v => v.VisitorId == pageHitModel.VisitorId).FirstOrDefault();
-                        if (visitor != null)
-                        {
-                            if ((visitor.IpAddress != "68.203.90.183") && (visitor.IpAddress != "50.62.160.105"))
-                            {
-                                db.Visits.Add(new Visit() { VisitorId = pageHitModel.VisitorId, VisitDate = DateTime.Now });
-                                db.SaveChanges();
-                                if (Helpers.IsNullorUndefined(pageHitModel.UserName))
-                                {
-                                    pageHitSuccessModel.WelcomeMessage = "Welcome Back ";
-                                }
-                                else
-                                {
-                                    pageHitSuccessModel.WelcomeMessage = "Welcome back " + visitor.UserName;
-                                }
-                            }
-                        }
-                    }
-                    #endregion
-                    string pageName = "";
-
-                    //if (pageHitModel.PageId == null) { pageHitSuccessModel.Success = "nn"; }
-                    using (OggleBoobleContext odb = new OggleBoobleContext())
-                    {
-                        CategoryFolder categoryFolder = odb.CategoryFolders.Where(f => f.Id == pageHitModel.PageId).FirstOrDefault();
-                        if (categoryFolder != null)
-                            pageName = categoryFolder.FolderName;
-                        else
-                            pageName = "not found for " + pageHitModel.PageId;
-                    }
-                    //pageHitSuccessModel.PageName = pageName;
-
-                    /// LOG PAGE HIT
-                    using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
-                    {
-                        dbm.MySqlPageHits.Add(new MySqlPageHit()
-                        {
-                            VisitorId = pageHitModel.VisitorId,
-                            PageId = pageHitModel.PageId,
-                            PageName = pageName,
-                            HitDateTime = DateTime.Now
-                        });
-                        dbm.SaveChanges();
-                        pageHitSuccessModel.PageHits = dbm.MySqlPageHits.Where(h => h.PageName == pageName).Count();
-                        pageHitSuccessModel.UserHits = dbm.MySqlPageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
-                    }
-                    //{
-                    //    PageHit hit = new PageHit();
-                    //    hit.VisitorId = pageHitModel.VisitorId;
-                    //    hit.HitDateTime = DateTime.Now;
-                    //    hit.PageId = pageHitModel.PageId;
-                    //    hit.AppName = pageHitModel.AppName;
-                    //    hit.PageName = pageName;
-                    //    db.PageHits.Add(hit);
-                    //    db.SaveChanges();
-                    //}
-                }
-                pageHitSuccessModel.Success = "ok";
-            }
-            catch (Exception ex)
-            {
-                pageHitSuccessModel.Success = Helpers.ErrorDetails(ex);
-                using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
-                {
-                    godaddyEmail.SendEmail("Page Visit ERROR", pageHitSuccessModel.Success);
-                }
-            }
-            return pageHitSuccessModel;
-        }
-
-        [HttpGet]
-        public GetVisitorInfoFromIPAddressSuccessModel GetVisitorIdFromIP(string ipAddress)
-        {
-            GetVisitorInfoFromIPAddressSuccessModel success = new GetVisitorInfoFromIPAddressSuccessModel();
-            try
-            {
-                using (WebStatsContext db = new WebStatsContext())
-                {
-                    Visitor visitor = db.Visitors.Where(v => v.IpAddress == ipAddress).FirstOrDefault();
-                    success.VisitorId = visitor.VisitorId;
-                    success.UserName = visitor.UserName;
-                    success.Success = "ok";
-                }
-            }
-            catch (Exception ex) {
-                success.Success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-    }
-
-    [EnableCors("*", "*", "*")]
     public class ImageHitController : ApiController
     {
         bool imageHitControllerBusy = false;
@@ -185,6 +58,153 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class HitCounterController : ApiController
     {
+        [HttpPost]
+        public PageHitSuccessModel LogPageHit(PageHitRequestModel pageHitModel)
+        {
+            PageHitSuccessModel pageHitSuccessModel = new PageHitSuccessModel();
+            try
+            {
+                if (Helpers.IsNullorUndefined(pageHitModel.VisitorId))
+                {
+                    if (Helpers.IsNullorUndefined(pageHitModel.IpAddress))
+                    {
+                        pageHitSuccessModel.Success = "VisitorId fail";
+                        return pageHitSuccessModel;
+                    }
+                }
+
+                using (OggleBoobleContext odb = new OggleBoobleContext())
+                {
+                    CategoryFolder categoryFolder = odb.CategoryFolders.Where(f => f.Id == pageHitModel.PageId).FirstOrDefault();
+                    pageHitSuccessModel.RootFolder = categoryFolder.RootFolder;
+                    pageHitSuccessModel.PageName = categoryFolder.FolderName;
+                }
+
+                /// LOG PAGE HIT
+                using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
+                {
+                    dbm.MySqlPageHits.Add(new MySqlPageHit()
+                    {
+                        VisitorId = pageHitModel.VisitorId,
+                        PageId = pageHitModel.PageId,
+                        HitDateTime = DateTime.Now
+                    });
+                    dbm.SaveChanges();
+                    pageHitSuccessModel.PageHits = dbm.MySqlPageHits.Where(h => h.PageId == pageHitModel.PageId).Count();
+                    pageHitSuccessModel.UserHits = dbm.MySqlPageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
+                    DateTime lastVisitDate = DateTime.MinValue;
+                    List<MySqlVisit> visits = dbm.MySqlVisits.Where(v => v.VisitorId == pageHitModel.VisitorId).ToList();
+                    if (visits.Count > 0)
+                        lastVisitDate = visits.OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
+
+                    IPVisitLookup iPVisitLookup = (from v in dbm.MySqlVisitors
+                                                   join vi in dbm.MySqlVisits on v.VisitorId equals vi.VisitorId
+                                                   select new IPVisitLookup() { VisitDate = vi.VisitDate }).OrderByDescending(v => v).FirstOrDefault();
+                    lastVisitDate = iPVisitLookup.VisitDate;
+                    if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
+                    {
+                        MySqlVisitor visitor = dbm.MySqlVisitors.Where(v => v.VisitorId == pageHitModel.VisitorId).FirstOrDefault();
+                        if (visitor != null)
+                        {
+                            pageHitSuccessModel.LogVisitRequired = true;
+                        }
+                    }
+                }
+                
+                using (WebStatsContext db = new WebStatsContext())
+                {
+                    #region // LOG VISIT
+                    DateTime lastVisitDate = DateTime.MinValue;
+                    if (!Helpers.IsNullorUndefined(pageHitModel.VisitorId))
+                    {
+                        List<Visit> visits = db.Visits.Where(v => v.VisitorId == pageHitModel.VisitorId).ToList();
+                        if (visits.Count > 0)
+                            lastVisitDate = visits.OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
+                    }
+                    else
+                    {
+                        IPVisitLookup iPVisitLookup = (from v in db.Visitors
+                                                       join vi in db.Visits on v.VisitorId equals vi.VisitorId
+                                                       select new IPVisitLookup() { VisitDate = vi.VisitDate }).OrderByDescending(v => v).FirstOrDefault();
+                        lastVisitDate = iPVisitLookup.VisitDate;
+                    }
+                    if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
+                    {
+                        Visitor visitor = db.Visitors.Where(v => v.VisitorId == pageHitModel.VisitorId).FirstOrDefault();
+                        if (visitor != null)
+                        {
+                            if ((visitor.IpAddress != "68.203.90.183") && (visitor.IpAddress != "50.62.160.105"))
+                            {                                
+                                db.Visits.Add(new Visit() { VisitorId = pageHitModel.VisitorId, VisitDate = DateTime.Now });
+                                db.SaveChanges();
+                                if (Helpers.IsNullorUndefined(pageHitModel.UserName))
+                                {
+                                    pageHitSuccessModel.WelcomeMessage = "Welcome Back ";
+                                }
+                                else
+                                {
+                                    pageHitSuccessModel.WelcomeMessage = "Welcome back " + visitor.UserName;
+                                }
+                            }
+                        }
+                    }
+                    #endregion
+                    //pageHitSuccessModel.PageName = pageName;
+
+                    //{
+                    //    PageHit hit = new PageHit();
+                    //    hit.VisitorId = pageHitModel.VisitorId;
+                    //    hit.HitDateTime = DateTime.Now;
+                    //    hit.PageId = pageHitModel.PageId;
+                    //    hit.AppName = pageHitModel.AppName;
+                    //    hit.PageName = pageName;
+                    //    db.PageHits.Add(hit);
+                    //    db.SaveChanges();
+                    //}
+                }
+                pageHitSuccessModel.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                pageHitSuccessModel.Success = Helpers.ErrorDetails(ex);
+                //using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
+                //{
+                //    godaddyEmail.SendEmail("Page Visit ERROR", pageHitSuccessModel.Success);
+                //}
+            }
+            return pageHitSuccessModel;
+        }
+
+        [HttpGet]
+        public GetVisitorInfoFromIPAddressSuccessModel GetVisitorIdFromIP(string ipAddress)
+        {
+            GetVisitorInfoFromIPAddressSuccessModel success = new GetVisitorInfoFromIPAddressSuccessModel();
+            try
+            {
+                using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
+                {
+                    MySqlVisitor visitor = dbm.MySqlVisitors.Where(v => v.IpAddress == ipAddress).FirstOrDefault();
+                    success.VisitorId = visitor.VisitorId;
+                    //success.UserName = visitor.UserName;
+                    success.Success = "ok";
+                }
+
+
+                //using (WebStatsContext db = new WebStatsContext())
+                //{
+                //    Visitor visitor = db.Visitors.Where(v => v.IpAddress == ipAddress).FirstOrDefault();
+                //    success.VisitorId = visitor.VisitorId;
+                //    success.UserName = visitor.UserName;
+                //    success.Success = "ok";
+                //}
+            }
+            catch (Exception ex)
+            {
+                success.Success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
         [HttpGet]
         public HitCountModel GetHitCount(int pageId)
         {
@@ -204,95 +224,7 @@ namespace WebApi
         }
 
         [HttpPost]
-        public VisitorSuccessModel LogVisitor(VisitorModel visitorModel)
-        {
-            VisitorSuccessModel visitorSuccess = new VisitorSuccessModel();
-            try
-            {
-                using (WebStatsContext db = new WebStatsContext())
-                {
-                    Visitor dbExisting = db.Visitors.Where(v => v.IpAddress == visitorModel.IpAddress && v.AppName == visitorModel.AppName).FirstOrDefault();
-                    if (dbExisting == null)
-                    {
-                        // WE HAVE A NEW VISITOR
-                        Visitor dbVisitor = new Visitor();
-                        dbVisitor.VisitorId = Guid.NewGuid().ToString();
-                        dbVisitor.UserName = visitorModel.UserName;
-                        dbVisitor.AppName = visitorModel.AppName;
-                        dbVisitor.IpAddress = visitorModel.IpAddress;
-                        dbVisitor.City = visitorModel.City;
-                        dbVisitor.Region = visitorModel.Region;
-                        dbVisitor.Country = visitorModel.Country;
-                        dbVisitor.GeoCode = visitorModel.GeoCode;
-                        dbVisitor.InitialVisit = DateTime.Now;
-
-                        db.Visitors.Add(dbVisitor);
-                        db.SaveChanges();
-                        visitorSuccess.WelcomeMessage = "Welcome new visitor!";
-                        visitorSuccess.IsNewVisitor = true;
-                        visitorSuccess.VisitorId = dbVisitor.VisitorId;
-                        //visitorSuccess.VisitorId = dbVisitor.VisitorId;
-                        //if (visitorModel.Verbosity > 2)
-                        //{
-                        //    using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
-                        //    {
-                        //        godaddyEmail.SendEmail("CONGRATULATIONS: someone new just visited your site",
-                        //         "viewed " + pageName + " from " + visitorModel.City + "," + visitorModel.Region + " " + visitorModel.Country + "   ip:" + visitorModel.IpAddress);
-                        //    }
-                        //}
-                    }
-                    else
-                    {
-                        visitorSuccess.IsNewVisitor = false;
-                        visitorSuccess.VisitorId = dbExisting.VisitorId;
-                    }
-
-                    db.Visits.Add(new Visit() { VisitorId = visitorSuccess.VisitorId, VisitDate = DateTime.Now });
-                    db.SaveChanges();
-
-
-                    string pageName = "";
-                    using (OggleBoobleContext odb = new OggleBoobleContext())
-                    {
-                        pageName = odb.CategoryFolders.Where(f => f.Id == visitorModel.PageId).First().FolderName;
-                        visitorSuccess.PageName = pageName;
-                    }
-                    
-                    //using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
-                    //{
-                    //    //DateTime utcDateTime = DateTime.UtcNow;
-                    //    dbm.MySqlPageHits.Add(new MySqlPageHit()
-                    //    {
-                    //        VisitorId = visitorSuccess.VisitorId,
-                    //        PageId = visitorModel.PageId,
-                    //        PageName= pageName,
-                    //        HitDateTime = DateTime.UtcNow
-                    //    });
-                    //    dbm.SaveChanges();
-                    //}
-
-                    //if (visitorSuccess.VisitorId != "ec6fb880-ddc2-4375-8237-021732907510")
-                    //{
-                    //    PageHit hit = new PageHit();
-                    //    hit.VisitorId = visitorSuccess.VisitorId;
-                    //    hit.HitDateTime = DateTime.Now;
-                    //    hit.AppName = visitorModel.AppName;
-                    //    hit.PageId = visitorModel.PageId;
-                    //    hit.PageName = pageName;
-                    //    db.PageHits.Add(hit);
-                    //    db.SaveChanges();
-                    //}
-                }
-                visitorSuccess.Success = "ok";
-            }
-            catch (Exception ex) {
-                visitorSuccess.Success = Helpers.ErrorDetails(ex);
-            }
-            return visitorSuccess;
-        }
-
-        [HttpPost]
-        public PageHitSuccessModel LogSpecialPageHit(int pageId, string visitorId)
+        public PageHitSuccessModel XXLogSpecialPageHit(int pageId, string visitorId)
         {
             PageHitSuccessModel pageHitSuccess = new PageHitSuccessModel();
             if (visitorId == "9bd90468-e633-4ee2-af2a-8bbb8dd47ad1")
@@ -352,6 +284,92 @@ namespace WebApi
             }
             return success;
         }
+    }
+
+    [EnableCors("*", "*", "*")]
+    public class VisitController : ApiController
+    {
+        [HttpPost]
+        public VisitorSuccessModel LogVisitor(VisitorModel visitorModel)
+        {
+            VisitorSuccessModel visitorSuccess = new VisitorSuccessModel();
+            try
+            {
+                using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
+                {
+                    MySqlVisitor myExisting = dbm.MySqlVisitors.Where(v => v.IpAddress == visitorModel.IpAddress).FirstOrDefault();
+                    if (myExisting == null)
+                    {
+                        // WE HAVE A NEW VISITOR
+                        MySqlVisitor myVisitor = new MySqlVisitor();
+                        myVisitor.VisitorId = Guid.NewGuid().ToString();
+                        myVisitor.IpAddress = visitorModel.IpAddress;
+                        myVisitor.City = visitorModel.City;
+                        myVisitor.Region = visitorModel.Region;
+                        myVisitor.Country = visitorModel.Country;
+                        myVisitor.GeoCode = visitorModel.GeoCode;
+                        myVisitor.InitialPage = visitorModel.PageId;
+                        myVisitor.InitialVisit = DateTime.Now;
+
+                        dbm.MySqlVisitors.Add(myVisitor);
+                        dbm.SaveChanges();
+                        visitorSuccess.WelcomeMessage = "Welcome new visitor!";
+                        visitorSuccess.IsNewVisitor = true;
+                        visitorSuccess.VisitorId = myVisitor.VisitorId;
+
+                        //LogVisit(dbExisting.VisitorId);
+
+                        using (OggleBoobleContext odb = new OggleBoobleContext())
+                        {
+                            visitorSuccess.PageName = odb.CategoryFolders.Where(f => f.Id == visitorModel.PageId).FirstOrDefault().FolderName;
+                        }
+                        //using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
+                        //{
+                        //    godaddyEmail.SendEmail("New visitor added to your site",
+                        //     "viewed " + visitorModel.PageId + " from " + visitorModel.City + "," + visitorModel.Region + " " + visitorModel.Country + "   ip:" + visitorModel.IpAddress);
+                        //}
+                    }
+                    else
+                    {
+                        visitorSuccess.IsNewVisitor = false;
+                        visitorSuccess.VisitorId = myExisting.VisitorId;
+                        LogVisit(myExisting.VisitorId);
+                    }
+                }
+                visitorSuccess.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                visitorSuccess.Success = Helpers.ErrorDetails(ex);
+            }
+            return visitorSuccess;
+        }
+
+        private static readonly Random getrandom = new Random();
+        [HttpPost]
+        public string LogVisit(string visitorId)
+        {
+            string success;
+            try
+            {
+                using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
+                {
+                    dbm.MySqlVisits.Add(new MySqlVisit()
+                    {
+                        VisitorId = visitorId,
+                        VisitDate = DateTime.UtcNow.AddMilliseconds(getrandom.Next())
+                    });
+                    dbm.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
     }
 
     [EnableCors("*", "*", "*")]

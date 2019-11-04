@@ -17,6 +17,33 @@ namespace WebApi.DataContext
 
         public virtual DbSet<MySqlImageHit> MySqlImageHits { get; set; }
         public virtual DbSet<MySqlPageHit> MySqlPageHits { get; set; }
+        public virtual DbSet<MySqlVisitor> MySqlVisitors { get; set; }
+        public virtual DbSet<MySqlVisit> MySqlVisits { get; set; }
+    }
+
+    [Table("OggleBooble.Visitor")]
+    public partial class MySqlVisitor
+    {
+        [Key]
+        public string VisitorId { get; set; }
+        public string IpAddress { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        public string GeoCode { get; set; }
+        public int InitialPage { get; set; }
+        public DateTime InitialVisit { get; set; }
+    }
+
+    [Table("OggleBooble.Visit")]
+    public partial class MySqlVisit
+    {
+        [Key]
+        [Column(Order = 0)]
+        public string VisitorId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public DateTime VisitDate { get; set; }
     }
 
     [Table("OggleBooble.ImageHit")]
@@ -41,8 +68,6 @@ namespace WebApi.DataContext
         [Key]
         [Column(Order = 1)]
         public DateTime HitDateTime { get; set; }
-        public string PageName { get; set; }
         public int PageId { get; set; }
     }
-
 }

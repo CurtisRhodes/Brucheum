@@ -10,8 +10,9 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
-    <script src="Scripts/Common.js"></script>
     <script src="Scripts/Autoformfill_ContentScript.js"></script>
+    <script src="Scripts/Common.js"></script>
+    <script src="Scripts/OggleEventLog.js"></script>
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleSearch.js"></script>
@@ -238,7 +239,7 @@
                     else {
                         $('#blogLoadingGif').hide();
                         sendEmailToYourself("FAIL in Index.Html launchPromoMessages", "/api/OggleBlog/GetBlogList?commentType=PRO" +
-                            "Called from: " + getCookieValue("IpAddress") + "  Message: " + errorMessage);
+                            "Called from: " + getCookieValue("IpAddress") + "  Message: " + blogCommentsContainer.Success);
                         //alert("loadPromoMessages: " + blogCommentsContainer.Success)
                     }
                 },

@@ -41,8 +41,13 @@ function oggleSearchKeyDown(event) {
 
                     busy = false;
                 },
-                error: function (xhr) {
-                    alert("createNewFolder xhr error: " + getXHRErrorDetails(xhr));
+                error: function (jqXHR) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "loadSettings")) {
+                        sendEmailToYourself("XHR error in oggleSearchKeyDown", "/Data/Settings.xml Message: " + errorMessage);
+                        if (document.domain === 'localhost')
+                            alert("oggleSearchKeyDown xhr error: " + getXHRErrorDetails(xhr));
+     }
                 }
             });
         }

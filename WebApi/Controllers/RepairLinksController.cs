@@ -205,7 +205,10 @@ namespace WebApi
                             fileNameInExpectedForm = false;
                     }
                     else
+                    {
                         repairReport.Errors.Add("extension problem");
+                        fileNameInExpectedForm = false;
+                    }
                 }
                 else
                 {
@@ -277,6 +280,7 @@ namespace WebApi
                     else
                     {
                         repairReport.Errors.Add("rename Failed: " + renameSuccess);
+                        anyChangesMade = true;
                     }
                 }
 

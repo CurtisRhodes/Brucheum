@@ -37,6 +37,9 @@ namespace WebApi.Models
     {
         public int PageHits { get; set; }
         public int UserHits { get; set; }
+        public bool LogVisitRequired { get; set; }
+        public string PageName { get; set; }
+        public string RootFolder { get; set; }
         public string WelcomeMessage { get; set; }
         public string Success { get; set; }
     }
