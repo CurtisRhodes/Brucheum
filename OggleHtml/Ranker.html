@@ -120,7 +120,7 @@
                     clearInterval(waiter);
                     loadBoobsRanker(subdomain);
                     setOggleHeader("ranker", 3907);
-                    logPageHit(3907);
+                    logPageHit(3907, getCookieValue("IpAddress"), "Ranker+" + subdomain);
 
                     userName = getCookieValue("UserName");
                     isLoggedIn = !isNullorUndefined(userName);

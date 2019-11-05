@@ -111,12 +111,17 @@ function displayStatusMessage(msgCode, message) {
 }
 
 function checkFor404(errorMessage, calledFrom) {
+
+    //if (document.domain === 'localhost') alert("checkFor404 calledfrom: " + calledFrom);
+
     var isNotConnected = false;
-    //alert("checkFor404() \nerrorMessage: " + errorMessage + ", calledFrom:" + calledFrom);
+    //if (document.domain === 'localhost') alert("checkFor404() \nerrorMessage: " + errorMessage + ", calledFrom:" + calledFrom);
     if (isNullorUndefined(errorMessage)) {
         var ipAddr = getCookieValue("IpAddress");
-        //alert("checkFor404 called with null errorMessage from: " + calledFrom);
         sendEmailToYourself("checkFor404 called with null errorMessage from: " + calledFrom, "ip: " + ipAddr);
+        if (document.domain === 'localhost')
+            alert("checkFor404 called with null errorMessage from: " + calledFrom);
+
     }
     if (errorMessage.indexOf("Not connect") > -1) {
         isNotConnected = true;
@@ -126,14 +131,25 @@ function checkFor404(errorMessage, calledFrom) {
         //    sendEmailToYourself("CAN I GET A CONNECTION ", "calledFrom: " + calledFrom + "    ip: " + ipAddr);
 
         //showCustomMessage(71);
-        $('#customMessage').html("<div class='centeredDivShell'><div class='centeredDivInner'>"+
+        $('#customMessage').html("<div class='centeredDivShell'><div class='centeredDivInner'>" +
             "<div class='customMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>" +
-            "<div class='divRefreshPage'><a href='javascript:reportThenPerformEvent(\"GAX\",1)'>Refresh page</a></div></div></div></div></div>");
+            "<div class='divRefreshPage'><a href='javascript:refreshPage()'>Refresh page</a></div></div></div></div></div>");
 
         $('.customMessageContainer').show();
         console.log("checkFor404: " + calledFrom);
     }
+    else {
+        if (document.domain === 'localhost')
+            alert("checkFor404 called with unexpected errorMessage: " + errorMessage + " from: " + calledFrom);
+    }
     return isNotConnected;
+}
+
+function refreshPage() {
+    //sendEmailToYourself("refreshPage from: " + calledFrom, "ip: " + ipAddr);
+    if (document.domain === 'localhost')
+        alert("checkFor404() refreshPage");
+    window.location.href = ".";
 }
 
 function getXHRErrorDetails(jqXHR) {

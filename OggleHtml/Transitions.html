@@ -125,7 +125,7 @@
                 else {
                     $('#dots').html('');
                     clearInterval(waiter);
-                    logPageHit(3906);
+                    logPageHit(3906, getCookieValue("IpAddress"), "Transitions");
                     LoadPicArray(subdomain);
                     //setUserPermissions();
                     //var waiter2 = setInterval(function () {

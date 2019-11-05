@@ -157,6 +157,15 @@
                 else {
                     $('#dots').html('');
                     clearInterval(waiter);
+
+                    var ipAddress = getCookieValue("IpAddress");
+                    if (isNullorUndefined(ipAddress)) {
+                        if (document.domain === 'localhost')  // #DEBUG
+                            alert("STOP. ipAddress NullorUndefined ");
+                    }
+
+
+
                     setOggleHeader(subdomain, 3908);
                     setOggleFooter(subdomain);
                     launchCarousel(subdomain);
@@ -166,14 +175,14 @@
                         $('#boobsLeftColumnList').hide();
                         $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
                         $('#includeCenterfoldsCheckbox').hide();
-                        logPageHit(3909);
+                        logPageHit(3909, ipAddress, "porn index");
                     }
                     else {
                         $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
                         $('#boobsLeftColumnList').show();
                         $('#pornLeftColumnList').hide();
                         launchPromoMessages();
-                        logPageHit(3908);
+                        logPageHit(3908, ipAddress, "boobs index");
                     }
 
                     setUserPermissions();

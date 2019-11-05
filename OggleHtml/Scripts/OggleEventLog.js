@@ -44,7 +44,11 @@ function reportThenPerformEvent(eventCode, pageId) {
                         window.location.href = "/";
                     break;
                 case "GAX":  // can I get a connection
-                    window.location.href = ".";
+
+                    alert("can I get a connection");
+                    //window.location.href = ".";
+
+
                     break;
                 case "CMC": // carousle context menu item clicked
                     break;

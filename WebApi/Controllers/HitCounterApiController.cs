@@ -10,9 +10,11 @@ using MySql.Data.Types;
 
 namespace WebApi
 {
+
     [EnableCors("*", "*", "*")]
     public class ImageHitController : ApiController
     {
+        private static readonly Random getrandom = new Random();
         bool imageHitControllerBusy = false;
         [HttpPost]
         public ImageHitSuccessModel LogImageHit(logImageHItDataModel logImageHItData)
@@ -28,7 +30,7 @@ namespace WebApi
                     imageHitControllerBusy = true;
                     using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
                     {
-                        DateTime utcDateTime = DateTime.UtcNow;
+                        DateTime utcDateTime = DateTime.UtcNow.AddMilliseconds(getrandom.Next());
                         imageHitSuccess.HitDateTime = utcDateTime;
                         dbm.MySqlImageHits.Add(new MySqlImageHit()
                         {
@@ -46,7 +48,10 @@ namespace WebApi
                 }
                 imageHitSuccess.Success = "ok";
             }
-            catch (DbEntityValidationException dbEx) { imageHitSuccess.Success = Helpers.ErrorDetails(dbEx); }
+            catch (DbEntityValidationException dbEx)
+            {
+                imageHitSuccess.Success = Helpers.ErrorDetails(dbEx);
+            }
             catch (Exception ex)
             {
                 imageHitSuccess.Success = Helpers.ErrorDetails(ex);
@@ -289,6 +294,8 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class VisitController : ApiController
     {
+        private static readonly Random getrandom = new Random();
+
         [HttpPost]
         public VisitorSuccessModel LogVisitor(VisitorModel visitorModel)
         {
@@ -345,7 +352,6 @@ namespace WebApi
             return visitorSuccess;
         }
 
-        private static readonly Random getrandom = new Random();
         [HttpPost]
         public string LogVisit(string visitorId)
         {

@@ -35,7 +35,7 @@ $(document).ready(function () {
 
             setOggleHeader(staticPageRootFolderId, staticPageFolderId);
             setOggleFooter(staticPageRootFolderId);
-            logPageHit(staticPageFolderId);
+            logPageHit(staticPageFolderId, getCookieValue("IpAddress"), "Static Page");
 
             //$('footerMessage').html(staticPageFolderName);
         }

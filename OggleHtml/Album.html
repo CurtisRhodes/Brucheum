@@ -84,6 +84,9 @@
 
     <script>
         var permissionsSet = false;
+            var ipAddress = getCookieValue("IpAddress");
+    var visitorId = getCookieValue("VisitorId");
+
         $(document).ready(function () {
             includeHTML();
             resizePage();
@@ -101,6 +104,14 @@
                 }
                 else {
                     clearInterval(waiter);
+
+                    var ipAddress = getCookieValue("IpAddress");
+                    if (isNullorUndefined(ipAddress)) {
+                        if (document.domain === 'localhost')
+                            alert("Album.html ipAddress NullorUndefined");
+                    }
+                    logPageHit(params.folder, ipAddress, "set AlbumPageHeader success");
+
                     setUserPermissions();
                     var waiter2 = setInterval(function () {
                         dots += "* ";
@@ -108,16 +119,14 @@
                         if (permissionsSet === true) {
                             $('#dots').html('');
                             clearInterval(waiter2);
-                            if (document.domain === 'localhost')
-                            {
+                            if (document.domain === 'localhost') {
                                 //isInRole("not logged in");
                                 console.log("I want to stay in local host");
                                 //alert("I want to stay in local host");
                                 setAlbumPageHeader(params.folder);
                                 getAlbumImages(params.folder);
                             }
-                            else
-                            {
+                            else {
                                 var userName = getCookieValue("UserName");
                                 if (isNullorUndefined(userName)) {
                                     if (document.domain === 'localhost')  // #DEBUG

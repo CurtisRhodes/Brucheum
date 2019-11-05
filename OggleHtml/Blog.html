@@ -134,8 +134,7 @@
                 clearInterval(waiter);
                 loadBlogArticles($('#blogDisplayCommentTypeSelect').val());
                 showBlogDisplay('BLG');
-                logPageHit(3911);
-
+                logPageHit(3911, getCookieValue("IpAddress"), "Blog");
                 setUserPermissions();
                 var waiter2 = setInterval(function () {
                     dots += "* ";

@@ -17,6 +17,9 @@ var imageViewerIntervalTimer;
 var imageViewerFolderName;
 var viewerShowing = false;
 var slideShowRunning = false;
+var ipAddress;
+var visitorId;
+var noIpFlag = true;
 
 function launchViewer(imageArray, imageIndex, folderId, folderName) {
     imageViewerFolderId = folderId;
@@ -51,7 +54,19 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
 
     //alert("logImageHit true ");
     //console.log("logImageHit from launchViewer: " + imageViewerArray[imageViewerIndex].Link);
-    logImageHit(imageViewerArray[imageViewerIndex].Link, folderId, true);
+
+    ipAddress = getCookieValue("IpAddress");
+    visitorId = getCookieValue("VisitorId");
+    if (isNullorUndefined(ipAddress) || isNullorUndefined(visitorId) || isNullorUndefined(folderId)) {
+        if (isNullorUndefined(ipAddress))
+            noIpFlag = true;
+        sendEmailToYourself("830 PROBLEMO 1 in slideshow.js.slide.", "  visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + imageViewerFolderId);
+        logVisitor(folderId, "Entering slideshow");
+    }
+    else {
+        noIpFlag = false;
+        logImageHit(ipAddress, visitorId, imageViewerArray[imageViewerIndex].Link, folderId, true);
+    }
 
     exploderInterval = setInterval(function () {
         explodeViewer();
@@ -133,12 +148,11 @@ function slideClick(direction) {
 
         //console.log("logImageHit from slide: " + imageViewerArray[imageViewerIndex].Link);
         if (isNullorUndefined(imageViewerFolderId)) {
-            sendEmailToYourself("PROBLEMO 1 in slideshow.js.slide.  ImageViewerFolderId isNullorUndefined " + "IP: " + getCookieValue("IpAddress"));
+            sendEmailToYourself("PROBLEMO 2 in slideshow.js.slide.  ImageViewerFolderId isNullorUndefined " + "IP: " + ipAddress);
         }
-        else
-            logImageHit(imageViewerArray[imageViewerIndex].Link, imageViewerFolderId, false);
-
-
+        else {
+            logImageHit(ipAddress, visitorId, imageViewerArray[imageViewerIndex].Link, imageViewerFolderId, false);
+        }
     }
 }
 

@@ -35,8 +35,8 @@ function setUserPermissions() {
             if (!checkFor404(errorMessage, "setUserPermissions()")) {
                 sendEmailToYourself("XHR ERROR IN Login.js setUserPermissions()", "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned" +
                     " Message: " + errorMessage);
+                if (document.domain === 'localhost') alert("XHR error in setUserPermissions(): " + errorMessage);
             }
-            if (document.domain === 'localhost') alert("loadUserRoles XHR error: " + getXHRErrorDetails(jqXHR, exception));
         }
     });
 }

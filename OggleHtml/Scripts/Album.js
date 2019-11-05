@@ -39,7 +39,6 @@ function setAlbumPageHeader(folderId) {
         success: function (successModel) {
             if (successModel.Success === "ok") {
                 setOggleHeader(successModel.ReturnValue, folderId);
-                logPageHit(folderId);
                 setOggleFooter(successModel.ReturnValue);
             }
             else {
@@ -50,9 +49,9 @@ function setAlbumPageHeader(folderId) {
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (checkFor404(errorMessage, "setAlbumPageHeader")) {
-                //alert("continuing on in setAlbumPageHeader");
+                //alert("continuing on in setAlbumPageHeader");                
+                sendEmailToYourself("continuing on in setAlbumPageHeader", "folderId: " + folderId + ", ipAddress: " + ipAddress + ", set AlbumPageHeader");
                 setOggleHeader("boobs", folderId);
-                logPageHit(folderId);
                 setOggleFooter("boobs");
             }
             else
@@ -275,6 +274,9 @@ $(window).resize(function () {
 });
 
 function startSlideShow(imageIndex) {
+    var visitorId = getCookieValue("VisitorId");
+    var ipAddress = getCookieValue("IpAddress");
+
     // get image array from DOM
     var imageArray = new Array();
 
@@ -292,9 +294,8 @@ function startSlideShow(imageIndex) {
         currentAlbumFolderId = staticPageFolderId;
     }
 
-    if (isNullorUndefined(currentAlbumFolderId)) {
-        currentAlbumFolderId = 1;
-        sendEmailToYourself("PROBLEM in album.js", "currentAlbumFolderId: " + currentAlbumFolderId + "  isStaticPage:" + isStaticPage);
+    if (isNullorUndefined(ipAddress) || isNullorUndefined(visitorId) || isNullorUndefined(currentAlbumFolderId)) {
+        sendEmailToYourself("830 PROBLEM Album.js startSlideshow", "  visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + currentAlbumFolderId);
     }
 
     launchViewer(imageArray, imageIndex, currentAlbumFolderId, currentAlbumJSfolderName);

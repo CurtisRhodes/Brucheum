@@ -134,13 +134,16 @@ function loadUserRoles(whichType) {
                     //$('div').remove("#" + pickedRoleId);
 
                 }
-                else
-                    alert("loadUserRoles: " + roleModel.Success);
+                else {
+                    sendEmailToYourself("ERROR in loadUserRoles", "roleModel.Success: " + roleModel.Success);
+                    if (document.domain === 'localhost')
+                        alert("ERROR in loadUserRoles: " + roleModel.Success);
+                }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errorMessage, "loadUserRoles")) {
-                    sendEmailToYourself("XHR ERROR IN Admin.JS loadUserRoles", "api/Roles/GetUserRoles?userName=" + selectedUserName + "&whichType=" + whichType + " Message: " + errorMessage);
+                    sendEmailToYourself("XHR ERROR IN loadUserRoles", "api/Roles/GetUserRoles?userName=" + selectedUserName + "&whichType=" + whichType + " Message: " + errorMessage);
                 }
             }
         });
