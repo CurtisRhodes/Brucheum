@@ -67,7 +67,7 @@ namespace WebApi.DataContext
         public string VisitorId { get; set; }
         [Key]
         [Column(Order = 1)]
-        public DateTime HitDateTime { get; set; }
+        public DateTime HitTimeStamp { get; set; }
         public int PageId { get; set; }
     }
 }

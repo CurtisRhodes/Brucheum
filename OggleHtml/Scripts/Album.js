@@ -295,8 +295,15 @@ function startSlideShow(imageIndex) {
     }
 
     if (isNullorUndefined(ipAddress) || isNullorUndefined(visitorId) || isNullorUndefined(currentAlbumFolderId)) {
-        sendEmailToYourself("830 PROBLEM Album.js startSlideshow", "  visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + currentAlbumFolderId);
+        //sendEmailToYourself("Calling LogVisitor from Album.js/startslideshow", "visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + currentAlbumFolderId);
+        if (document.domain === 'localhost')
+            alert("Calling LogVisitor from Album.js/startslideshow" +
+                "\nvisitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + currentAlbumFolderId);
+
+        logVisitor(imageIndex, "start slideshow");
     }
+    
+    reportClickEvent("GIC", currentAlbumFolderId);
 
     launchViewer(imageArray, imageIndex, currentAlbumFolderId, currentAlbumJSfolderName);
     resizeViewer();

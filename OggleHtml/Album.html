@@ -14,6 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
+    <script src="Scripts/HitCounter.js"></script>
     <script src="Scripts/OggleEventLog.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleSearch.js"></script>
@@ -21,7 +22,6 @@
     <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/Carousel.js"></script>
     <script src="Scripts/DirTree.js"></script>
-    <script src="Scripts/HitCounter.js"></script>
     <script src="Scripts/FolderCategoryDialog.js"></script>
     <script src="Scripts/ModelInfoDialog.js"></script>
     <script src="Scripts/ImageCommentDialog.js"></script>
@@ -105,12 +105,12 @@
                 else {
                     clearInterval(waiter);
 
-                    var ipAddress = getCookieValue("IpAddress");
-                    if (isNullorUndefined(ipAddress)) {
+                    var visitorId = getCookieValue("VisitorId");
+                    if (isNullorUndefined(visitorId)) {
                         if (document.domain === 'localhost')
-                            alert("Album.html ipAddress NullorUndefined");
+                            alert("Album.html visitorId NullorUndefined");
                     }
-                    logPageHit(params.folder, ipAddress, "set AlbumPageHeader success");
+                    logPageHit(params.folder, visitorId, "Album.html");
 
                     setUserPermissions();
                     var waiter2 = setInterval(function () {

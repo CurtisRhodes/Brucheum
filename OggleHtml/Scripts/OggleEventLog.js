@@ -64,7 +64,7 @@ function reportThenPerformEvent(eventCode, pageId) {
                 case "CIC":  // carousel image clicked
                     window.location.href = "/album.html?folder=" + pageId;
                     break;
-                case "HBX":  // BHome readcrumb Clicked
+                case "HBX":  // Home breadcrumb Clicked
                     if (pageId === 3909)
                         window.location.href = '/index.html?subdomain=porn';
                     else
@@ -93,6 +93,14 @@ function reportThenPerformEvent(eventCode, pageId) {
 function reportClickEvent(eventCode, pageId) {
     try {
         var visitorId = getCookieValue("VisitorId");
+        var ipAddress = getCookieValue("IpAddress");
+        if (isNullorUndefined(ipAddress) || isNullorUndefined("visitorId")) {
+        //if (isNullorUndefined("visitorId")) {
+            sendEmailToYourself("In reportClickEvent VisitorId: " + visitorId + " Ip: " + ipAddress, "Calling LogVisitor.  Event: " + eventCode + " pageId: " + pageId);
+            logVisitor(pageId, "reportClickEvent");
+            return;
+        }
+
         var eventClickDdata = {
             PageId: pageId,
             EvenCode: eventCode,
@@ -103,20 +111,31 @@ function reportClickEvent(eventCode, pageId) {
             url: settingsArray.ApiServer + "/api/EventLog/LogEventActivity",
             data: eventClickDdata,
             success: function (logEventActivitySuccess) {
-                waitingForReportClickEvent = false;
                 var ipAddr = getCookieValue("IpAddress");
                 if (logEventActivitySuccess.Success === "ok") {
+
                     //if (verbosity > 5)
-                    if (eventCode === "HBX" || eventCode === "CXM" || eventCode === "MBC" || eventCode === "PRN") {
-                        if (ipAddr !== "68.203.90.183") {
-                            sendEmailToYourself(logEventActivitySuccess.EventName + ": " + logEventActivitySuccess.PageName,
+                    //if (eventCode === "HBX" || eventCode === "CXM" || eventCode === "MBC" || eventCode === "PRN")
+                    {
+                        //if (ipAddr !== "68.203.90.183")
+                        {
+                            sendEmailToYourself("Click Event ["+logEventActivitySuccess.EventName + "] Page: " + logEventActivitySuccess.PageName,
                                 "Ip: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
                         }
 
                         if (document.domain === 'localhost')
-                            alert(logEventActivitySuccess.EventName + ": " + logEventActivitySuccess.PageName +
-                                "  Ip: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
+                            alert("Event [" + logEventActivitySuccess.EventName + "] \nPage: "  + logEventActivitySuccess.PageName +
+                                "\nIp: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
                     }
+
+                    if (isNullorUndefined(visitorId)) {
+                        sendEmailToYourself("In reportClickEvent VisitorId null", "Calling LogVisitor.  Event: " + eventCode + " pageId: " + pageId);
+                        logVisitor(pageId, "reportClickEvent");
+                    }
+
+                    waitingForReportClickEvent = false;
+
+
                 }
                 else {
                     if (ipAddr === "68.203.90.183") {
@@ -152,7 +171,7 @@ function reportClickEvent(eventCode, pageId) {
                             "pageId=" + pageId + "&visitorId=" + visitorId + " Message: " + errorMessage);
                     }
                     else {
-                        sendEmailToYourself("xhr error in common.js reportClickEvent", "/api/ChangeLog/LogEventActivity?eventCode=" + eventCode +
+                        sendEmailToYourself("xhr error in OggleEventLog reportClickEvent", "/api/ChangeLog/LogEventActivity?eventCode=" + eventCode +
                             "pageId=" + pageId + "&visitorId=" + visitorId + " Message: " + errorMessage);
                     }
                 }

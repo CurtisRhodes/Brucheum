@@ -19,7 +19,9 @@ var viewerShowing = false;
 var slideShowRunning = false;
 var ipAddress;
 var visitorId;
-var noIpFlag = true;
+var sessionCount = 0;
+
+
 
 function launchViewer(imageArray, imageIndex, folderId, folderName) {
     imageViewerFolderId = folderId;
@@ -58,16 +60,17 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
     ipAddress = getCookieValue("IpAddress");
     visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(ipAddress) || isNullorUndefined(visitorId) || isNullorUndefined(folderId)) {
-        if (isNullorUndefined(ipAddress))
-            noIpFlag = true;
-        sendEmailToYourself("830 PROBLEMO 1 in slideshow.js.slide.", "  visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + imageViewerFolderId);
+
+        //sendEmailToYourself("830 PROBLEMO 1 in slideshow.js.slide.", "  visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + imageViewerFolderId);
+        if (document.domain === 'localhost')
+            alert("830 PROBLEMO 1 in slideshow.js.slide.\nvisitorId: " + visitorId + "\nIpAddress: " + ipAddress + "\nfolderId: " + imageViewerFolderId);
         logVisitor(folderId, "Entering slideshow");
     }
     else {
-        noIpFlag = false;
+        //if (document.domain === 'localhost') alert("Proper logImageHit of Initial \nslideshow.js.slide.\nvisitorId: " + visitorId + "\nIpAddress: " + ipAddress + "\nfolderId: " + imageViewerFolderId);
         logImageHit(ipAddress, visitorId, imageViewerArray[imageViewerIndex].Link, folderId, true);
+        sessionCount = 1;
     }
-
     exploderInterval = setInterval(function () {
         explodeViewer();
     }, exploderSpeed);
@@ -103,15 +106,12 @@ function explodeViewer() {
 
     if ((viewerT === 0) && (viewerL === 0) && (viewerH === windowH) && (viewerW === windowW)) {
         if (imageViewerFolderName === undefined) {
-
-
             if (typeof staticPageFolderName === 'string') {
                 alert("staticPageFolderName: " + staticPageFolderName);
                 currentfolderName = staticPageFolderName;
             }
             else
                 alert("fked");
-
         }
 
         $('#imageViewerHeaderTitle').html(imageViewerFolderName);
@@ -142,11 +142,8 @@ function slideClick(direction) {
     }
     else {
         slide(direction);
+        sessionCount++;
 
-        //reportThenPerformEvent("SBC", imageViewerFolderId);
-
-
-        //console.log("logImageHit from slide: " + imageViewerArray[imageViewerIndex].Link);
         if (isNullorUndefined(imageViewerFolderId)) {
             sendEmailToYourself("PROBLEMO 2 in slideshow.js.slide.  ImageViewerFolderId isNullorUndefined " + "IP: " + ipAddress);
         }
@@ -318,12 +315,20 @@ function imageViewerContextMenuAction(action) {
     }
 }
 
-function closeViewer() {
+function closeViewer(calledFrom) {
     $('#imageViewerDialog').effect('blind', { mode: 'hide', direction: 'vertical' }, 500);
     viewerShowing = false;
     slideShowRunning = false;
     clearInterval(imageViewerIntervalTimer);
     $('#txtStartSlideShow').html("start slideshow");
+
+    var closeMethod = "click";
+    if (calledFrom !== undefined) {
+        closeMethod = calledFrom;
+    }
+    sendEmailToYourself("Viewer Closed. Images Viewed: " + sessionCount, "Close method: " + closeMethod + ". Ip: " + getCookieValue("IpAddress"));
+    if (document.domain === 'localhost')
+        alert("Viewer Closed " + closeMethod);
 }
 
 function resizeViewer() {
@@ -343,7 +348,7 @@ $(document).keydown(function (event) {
     if (viewerShowing) {
         switch (event.which) {
             case 27:                        // esc
-                closeViewer();
+                closeViewer("escape key");
                 break;
             //case 38: scrollTabStrip('foward'); break;
             //case 33: scrollTabStrip('foward'); break;

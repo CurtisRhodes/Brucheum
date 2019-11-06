@@ -390,6 +390,11 @@ function showPerfMetrics() {
     //$('#divWorkArea').height($('#middleColumn').height() - 122);
     $('#divAddImages').hide();
     $('#divHitMetrics').fadeIn();
+
+
+
+
+
 }
 
 function closeMetrics() {

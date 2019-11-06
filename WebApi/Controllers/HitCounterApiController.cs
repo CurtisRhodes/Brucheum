@@ -63,110 +63,47 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class HitCounterController : ApiController
     {
+        private static readonly Random getrandom = new Random();
+
         [HttpPost]
         public PageHitSuccessModel LogPageHit(PageHitRequestModel pageHitModel)
         {
             PageHitSuccessModel pageHitSuccessModel = new PageHitSuccessModel();
             try
             {
-                if (Helpers.IsNullorUndefined(pageHitModel.VisitorId))
-                {
-                    if (Helpers.IsNullorUndefined(pageHitModel.IpAddress))
-                    {
-                        pageHitSuccessModel.Success = "VisitorId fail";
-                        return pageHitSuccessModel;
-                    }
-                }
-
-                using (OggleBoobleContext odb = new OggleBoobleContext())
-                {
-                    CategoryFolder categoryFolder = odb.CategoryFolders.Where(f => f.Id == pageHitModel.PageId).FirstOrDefault();
-                    pageHitSuccessModel.RootFolder = categoryFolder.RootFolder;
-                    pageHitSuccessModel.PageName = categoryFolder.FolderName;
-                }
-
-                /// LOG PAGE HIT
                 using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
                 {
                     dbm.MySqlPageHits.Add(new MySqlPageHit()
                     {
                         VisitorId = pageHitModel.VisitorId,
                         PageId = pageHitModel.PageId,
-                        HitDateTime = DateTime.Now
+                        HitTimeStamp = DateTime.Now.AddMilliseconds(getrandom.Next())
                     });
                     dbm.SaveChanges();
                     pageHitSuccessModel.PageHits = dbm.MySqlPageHits.Where(h => h.PageId == pageHitModel.PageId).Count();
                     pageHitSuccessModel.UserHits = dbm.MySqlPageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
-                    DateTime lastVisitDate = DateTime.MinValue;
-                    List<MySqlVisit> visits = dbm.MySqlVisits.Where(v => v.VisitorId == pageHitModel.VisitorId).ToList();
-                    if (visits.Count > 0)
-                        lastVisitDate = visits.OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
-
-                    IPVisitLookup iPVisitLookup = (from v in dbm.MySqlVisitors
-                                                   join vi in dbm.MySqlVisits on v.VisitorId equals vi.VisitorId
-                                                   select new IPVisitLookup() { VisitDate = vi.VisitDate }).OrderByDescending(v => v).FirstOrDefault();
-                    lastVisitDate = iPVisitLookup.VisitDate;
-                    if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
-                    {
-                        MySqlVisitor visitor = dbm.MySqlVisitors.Where(v => v.VisitorId == pageHitModel.VisitorId).FirstOrDefault();
-                        if (visitor != null)
-                        {
-                            pageHitSuccessModel.LogVisitRequired = true;
-                        }
-                    }
                 }
-                
-                using (WebStatsContext db = new WebStatsContext())
+
+                new VisitController().LogVisit(pageHitModel.VisitorId);
+
+                using (OggleBoobleContext odb = new OggleBoobleContext())
                 {
-                    #region // LOG VISIT
-                    DateTime lastVisitDate = DateTime.MinValue;
-                    if (!Helpers.IsNullorUndefined(pageHitModel.VisitorId))
-                    {
-                        List<Visit> visits = db.Visits.Where(v => v.VisitorId == pageHitModel.VisitorId).ToList();
-                        if (visits.Count > 0)
-                            lastVisitDate = visits.OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
-                    }
-                    else
-                    {
-                        IPVisitLookup iPVisitLookup = (from v in db.Visitors
-                                                       join vi in db.Visits on v.VisitorId equals vi.VisitorId
-                                                       select new IPVisitLookup() { VisitDate = vi.VisitDate }).OrderByDescending(v => v).FirstOrDefault();
-                        lastVisitDate = iPVisitLookup.VisitDate;
-                    }
-                    if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
-                    {
-                        Visitor visitor = db.Visitors.Where(v => v.VisitorId == pageHitModel.VisitorId).FirstOrDefault();
-                        if (visitor != null)
-                        {
-                            if ((visitor.IpAddress != "68.203.90.183") && (visitor.IpAddress != "50.62.160.105"))
-                            {                                
-                                db.Visits.Add(new Visit() { VisitorId = pageHitModel.VisitorId, VisitDate = DateTime.Now });
-                                db.SaveChanges();
-                                if (Helpers.IsNullorUndefined(pageHitModel.UserName))
-                                {
-                                    pageHitSuccessModel.WelcomeMessage = "Welcome Back ";
-                                }
-                                else
-                                {
-                                    pageHitSuccessModel.WelcomeMessage = "Welcome back " + visitor.UserName;
-                                }
-                            }
-                        }
-                    }
-                    #endregion
-                    //pageHitSuccessModel.PageName = pageName;
+                    CategoryFolder categoryFolder = odb.CategoryFolders.Where(f => f.Id == pageHitModel.PageId).FirstOrDefault();
+                    pageHitSuccessModel.RootFolder = categoryFolder.RootFolder;
+                    pageHitSuccessModel.PageName = categoryFolder.FolderName;
 
-                    //{
-                    //    PageHit hit = new PageHit();
-                    //    hit.VisitorId = pageHitModel.VisitorId;
-                    //    hit.HitDateTime = DateTime.Now;
-                    //    hit.PageId = pageHitModel.PageId;
-                    //    hit.AppName = pageHitModel.AppName;
-                    //    hit.PageName = pageName;
-                    //    db.PageHits.Add(hit);
-                    //    db.SaveChanges();
-                    //}
+                    CategoryFolder parentFolder = odb.CategoryFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
+
+                    if (parentFolder != null)
+                    {
+                        pageHitSuccessModel.ParentName = parentFolder.FolderName;
+                    }
                 }
+                //     if (Helpers.IsNullorUndefined(pageHitModel.UserName))
+                //         pageHitSuccessModel.WelcomeMessage = "Welcome Back ";
+                //     else
+                //         pageHitSuccessModel.WelcomeMessage = "Welcome back " + visitor.UserName;
+
                 pageHitSuccessModel.Success = "ok";
             }
             catch (Exception ex)
@@ -297,9 +234,9 @@ namespace WebApi
         private static readonly Random getrandom = new Random();
 
         [HttpPost]
-        public VisitorSuccessModel LogVisitor(VisitorModel visitorModel)
+        public LogVisitorSuccessModel LogVisitor(LogVisitorModel visitorModel)
         {
-            VisitorSuccessModel visitorSuccess = new VisitorSuccessModel();
+            var visitorSuccess = new LogVisitorSuccessModel();
             try
             {
                 using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
@@ -324,17 +261,14 @@ namespace WebApi
                         visitorSuccess.IsNewVisitor = true;
                         visitorSuccess.VisitorId = myVisitor.VisitorId;
 
-                        //LogVisit(dbExisting.VisitorId);
-
                         using (OggleBoobleContext odb = new OggleBoobleContext())
                         {
-                            visitorSuccess.PageName = odb.CategoryFolders.Where(f => f.Id == visitorModel.PageId).FirstOrDefault().FolderName;
+                            CategoryFolder categoryFolder= odb.CategoryFolders.Where(f => f.Id == visitorModel.PageId).FirstOrDefault();
+                            if (categoryFolder != null)
+                                visitorSuccess.PageName = categoryFolder.FolderName;
                         }
-                        //using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
-                        //{
-                        //    godaddyEmail.SendEmail("New visitor added to your site",
-                        //     "viewed " + visitorModel.PageId + " from " + visitorModel.City + "," + visitorModel.Region + " " + visitorModel.Country + "   ip:" + visitorModel.IpAddress);
-                        //}
+
+                        LogVisit(myVisitor.VisitorId);
                     }
                     else
                     {
@@ -360,12 +294,30 @@ namespace WebApi
             {
                 using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
                 {
-                    dbm.MySqlVisits.Add(new MySqlVisit()
+                    DateTime lastVisitDate = DateTime.MinValue;
+                    List<MySqlVisit> visits = dbm.MySqlVisits.Where(v => v.VisitorId == visitorId).ToList();
+                    if (visits.Count > 0)
                     {
-                        VisitorId = visitorId,
-                        VisitDate = DateTime.UtcNow.AddMilliseconds(getrandom.Next())
-                    });
-                    dbm.SaveChanges();
+                        lastVisitDate = visits.OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
+                    }
+                    
+                    IPVisitLookup iPVisitLookup = (from v in dbm.MySqlVisitors
+                                                   join vi in dbm.MySqlVisits on v.VisitorId equals vi.VisitorId
+                                                   select new IPVisitLookup() { VisitDate = vi.VisitDate }).OrderByDescending(v => v).FirstOrDefault();
+                    lastVisitDate = iPVisitLookup.VisitDate;
+                    if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
+                    {
+                        MySqlVisitor visitor = dbm.MySqlVisitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                        if (visitor != null)
+                        {
+                            dbm.MySqlVisits.Add(new MySqlVisit()
+                            {
+                                VisitorId = visitorId,
+                                VisitDate = DateTime.UtcNow.AddMilliseconds(getrandom.Next())
+                            });
+                            dbm.SaveChanges();
+                        }
+                    }
                     success = "ok";
                 }
             }

@@ -4,11 +4,15 @@ function oggleSearchKeyDown(event) {
     var ev = event.keyCode;
     $('#testtxt').text(ev);
 
-    if (ev === 9) {
+    if (ev === 9) {  //  tab
         alert("tab key pressed  Enter searchbox");
     }
     if (ev === 27) {  //  escape
         clearSearch();
+        return;
+    }
+    if (ev === 38) {  //  down arrow
+        
         return;
     }
     if (ev === 8) {  // backspace
@@ -19,6 +23,11 @@ function oggleSearchKeyDown(event) {
         searchString += String.fromCharCode(ev);
     }
 
+        //<div class='OggleSearchBox'>\n" +
+        //    <span id='notUserName'>search</span> <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
+        //    <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
+        //</div>\n" +
+
     if (searchString.length > 2) {
         if (!busy) {
             busy = true;
@@ -26,13 +35,12 @@ function oggleSearchKeyDown(event) {
                 type: "GET",
                 url: settingsArray.ApiServer + "api/OggleSearch/GetSearchResults?searchString=" + searchString,
                 success: function (SearchResultsModel) {
-                    var kluge = "<ul>";
+                    var kluge = "<ul class='searchResultList>";
                     $.each(SearchResultsModel.SearchResults, function (idx, searchResult) {
-
                         kluge += "<li onclick='jumpToSelected(" + searchResult.FolderId + ")'>" + searchResult.FolderName + "</li>";
-
                     });
                     kluge += "</ul>";
+
 
                     $('#searchResultsDiv').show().html(kluge);
 

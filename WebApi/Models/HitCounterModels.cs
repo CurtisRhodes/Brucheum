@@ -26,12 +26,12 @@ namespace WebApi.Models
     public class PageHitRequestModel
     {
         public string VisitorId { get; set; }
-        public string IpAddress { get; set; }
         public int PageId { get; set; }
-        public string VisitDate { get; set; }
-        public int Verbose { get; set; }
-        public string AppName { get; set; }
-        public string UserName { get; set; }
+        //public string IpAddress { get; set; }
+        //public string VisitDate { get; set; }
+        //public int Verbose { get; set; }
+        //public string AppName { get; set; }
+        //public string UserName { get; set; }
     }
     public class PageHitSuccessModel
     {
@@ -39,6 +39,7 @@ namespace WebApi.Models
         public int UserHits { get; set; }
         public bool LogVisitRequired { get; set; }
         public string PageName { get; set; }
+        public string ParentName { get; set; }
         public string RootFolder { get; set; }
         public string WelcomeMessage { get; set; }
         public string Success { get; set; }
@@ -92,7 +93,7 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
-    public class VisitorSuccessModel
+    public class LogVisitorSuccessModel
     {
         public string VisitorId { get; set; }
         public string PageName { get; set; }
@@ -101,13 +102,11 @@ namespace WebApi.Models
         public string Success { get; set; }
     }    
 
-    public class VisitorModel
+    public class LogVisitorModel
     {
-        public string AppName { get; set; }
         public int PageId { get; set; }
         public string IpAddress { get; set; }
         public string UserName { get; set; }
-        public int Verbosity { get; set; }
         public string City { get; set; }
         public string Region { get; set; }
         public string Country { get; set; }
