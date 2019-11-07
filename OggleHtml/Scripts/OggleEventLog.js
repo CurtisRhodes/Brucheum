@@ -94,9 +94,8 @@ function reportClickEvent(eventCode, pageId) {
     try {
         var visitorId = getCookieValue("VisitorId");
         var ipAddress = getCookieValue("IpAddress");
-        if (isNullorUndefined(ipAddress) || isNullorUndefined("visitorId")) {
-        //if (isNullorUndefined("visitorId")) {
-            sendEmailToYourself("In reportClickEvent VisitorId: " + visitorId + " Ip: " + ipAddress, "Calling LogVisitor.  Event: " + eventCode + " pageId: " + pageId);
+        if (isNullorUndefined(ipAddress) || isNullorUndefined(visitorId)) {
+            //sendEmailToYourself("In reportClickEvent VisitorId: " + visitorId + " Ip: " + ipAddress, "Calling LogVisitor.  Event: " + eventCode + " pageId: " + pageId);
             logVisitor(pageId, "reportClickEvent");
             return;
         }
@@ -106,6 +105,7 @@ function reportClickEvent(eventCode, pageId) {
             EvenCode: eventCode,
             VisitorId: visitorId
         };
+
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "/api/EventLog/LogEventActivity",
@@ -116,26 +116,17 @@ function reportClickEvent(eventCode, pageId) {
 
                     //if (verbosity > 5)
                     //if (eventCode === "HBX" || eventCode === "CXM" || eventCode === "MBC" || eventCode === "PRN")
-                    {
-                        //if (ipAddr !== "68.203.90.183")
-                        {
-                            sendEmailToYourself("Click Event ["+logEventActivitySuccess.EventName + "] Page: " + logEventActivitySuccess.PageName,
-                                "Ip: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
-                        }
+                    if (eventCode !== "GIC" && eventCode !== "SUB" && eventCode !== "BCC") {
+                        sendEmailToYourself("filtered Click Event [" + logEventActivitySuccess.EventName + "] Page: " + logEventActivitySuccess.PageName,
+                            "ipAddress: " + ipAddress + ", visitorId " + visitorId +
+                            "logEventActivitySuccess.IpAddress: " + logEventActivitySuccess.IpAddress +
+                            ", logEventActivitySuccess.VisitorDetails " + logEventActivitySuccess.VisitorDetails);
 
                         if (document.domain === 'localhost')
-                            alert("Event [" + logEventActivitySuccess.EventName + "] \nPage: "  + logEventActivitySuccess.PageName +
+                            alert("Event [" + logEventActivitySuccess.EventName + "] \nPage: " + logEventActivitySuccess.PageName +
                                 "\nIp: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
                     }
-
-                    if (isNullorUndefined(visitorId)) {
-                        sendEmailToYourself("In reportClickEvent VisitorId null", "Calling LogVisitor.  Event: " + eventCode + " pageId: " + pageId);
-                        logVisitor(pageId, "reportClickEvent");
-                    }
-
                     waitingForReportClickEvent = false;
-
-
                 }
                 else {
                     if (ipAddr === "68.203.90.183") {

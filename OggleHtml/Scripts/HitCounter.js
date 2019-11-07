@@ -153,7 +153,6 @@ function logVisitor(pageId, calledFrom) {
 
                             setCookieValue("IpAddress", data.ip);
                             setCookieValue("VisitorId", visitorSuccess.VisitorId);
-
                             if (getCookieValue("IpAddress" !== data.ip) || getCookieValue("VisitorId") !== visitorSuccess.VisitorId) {
                                 sendEmailToYourself("COOKIE FAIL",
                                     visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country +
@@ -162,10 +161,7 @@ function logVisitor(pageId, calledFrom) {
                                 //console.log("COOKIE FAIL.  " + getCookieValue("VisitorId") !== visitorSuccess.VisitorId);
                             }
 
-
-                            //logVisitor(pageId, "reportClickEvent");
-
-
+                            
                             if (calledFrom === "reportClickEvent" ||
                                 //calledFrom === "logPageHit FAIL. VisitorId" ||
                                 calledFrom === "Entering slideshow" ||
@@ -284,6 +280,8 @@ function logVisitor(pageId, calledFrom) {
                             //console.log("logVisitor: " + visitorSuccess.Success);
                             sendEmailToYourself("Ajax Error in logVisitor ", "PageId: " + pageId + "  Message: " + visitorSuccess.Success);
                         }
+
+                        logVisit(visitorSuccess.VisitorId);
                     },
                     error: function (jqXHR) {
                         var errorMessage = getXHRErrorDetails(jqXHR);
@@ -302,6 +300,8 @@ function logVisitor(pageId, calledFrom) {
 
 function logPageHit(pageId, visitorId, calledFrom) {
 
+
+    // TRY GETVISITOR FROM IP IF YOU HAVE IP BUT NO VISITOR ID 
     if (isNullorUndefined(visitorId)) {
         var ipAddress = getCookieValue("IpAddress");
         if (!isNullorUndefined(ipAddress)) {
@@ -322,23 +322,23 @@ function logPageHit(pageId, visitorId, calledFrom) {
                                 if (document.domain === 'localhost') {
                                     alert("Saved having to call LogVisitor from logPageHit. Got visitorId from IP: " + ipAddress + ". VisitorId: " + successModel.VisitorId);
                                     //console.log("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));
-                                }
-                                else {
                                     if (verbosity > 1) {
                                         sendEmailToYourself("Found Viisitor Id from Ip: ", "used IpAddress: " + ipAddress + " to find visitorId: " +
                                             successModel.VisitorId + ". Calling logPageHit again");
                                     }
-                                }
-                                logPageHit(pageId, ipAddress, "inside after GetVisitorIdFromIP");
-                            }
-                            else {
-                                if (document.domain === 'localhost') {
-                                    alert("GetVisitorIdFromIP Failed" + ipAddress + ". VisitorId: " + successModel.VisitorId);
-                                    //console.log("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));
+
+
+                                    logPageHit(pageId, ipAddress, "inside after GetVisitorIdFromIP");
                                 }
                                 else {
-                                    if (verbosity > 1) {
-                                        sendEmailToYourself("GetVisitorIdFromIP Failed", "IpAddress: " + ipAddress + ". VisitorId: " + successModel.VisitorId);
+                                    if (document.domain === 'localhost') {
+                                        alert("GetVisitorIdFromIP Failed" + ipAddress + ". VisitorId: " + successModel.VisitorId);
+                                        //console.log("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));
+                                    }
+                                    else {
+                                        if (verbosity > 1) {
+                                            sendEmailToYourself("GetVisitorIdFromIP Failed", "IpAddress: " + ipAddress + ". VisitorId: " + successModel.VisitorId);
+                                        }
                                     }
                                 }
                             }
@@ -377,7 +377,7 @@ function logPageHit(pageId, visitorId, calledFrom) {
         return;
     }
 
-    //sendEmailToYourself("logging proper page hit", "ip: " + ipAddress + " visitorId: " + visitorId + " pageId: " + pageId);
+    // LOGGING PROPER PAGE HIT
     var pageHitModel = {
         VisitorId: visitorId,
         AppName: "OggleBooble",
@@ -389,16 +389,16 @@ function logPageHit(pageId, visitorId, calledFrom) {
         data: pageHitModel,
         success: function (pageHitSuccessModel) {
             if (pageHitSuccessModel.Success === "ok") {
+
+                // ADD FREE VISITS ALLOWED CLIPPER HERE
                 if (pageHitSuccessModel.UserHits > freeVisitorHitsAllowed) {
                     alert("you have now visited " + pageHitSuccessModel.UserHits + " pages." +
                         "\n It's time you Registered and logged in." +
                         "\n you will be placed in manditory comment mode until you log in ");
                 }
 
-                if (!isNullorUndefined(pageHitSuccessModel.WelcomeMessage)) 
-                    $('#headerMessage').html(pageHitSuccessModel.WelcomeMessage);                
-                else
-                    $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
+                // MOVE PAGE HITS TO FOOTER SOMEDAY
+                $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
             
                 if (verbosity > 11) {
                     if (pageHitSuccessModel.RootFolder !== "playboy") {
@@ -408,6 +408,9 @@ function logPageHit(pageId, visitorId, calledFrom) {
                             " Called from " + calledFrom + " IpAddress: " + ipAddress + ". RootFolder: " + pageHitSuccessModel.RootFolder);
                     }
                 }
+
+                // LOG VISIT
+                logVisit(visitorId);
             }
             else {
                 if (pageHitSuccessModel.Success.startsWith("ERROR: Violation of PRIMARY KEY")) {
@@ -419,8 +422,6 @@ function logPageHit(pageId, visitorId, calledFrom) {
                     return;
                 }
                 sendEmailToYourself("logPageHit error: ", "Message: " + pageHitSuccessModel.Success);
-
-                alert("logPageHit" + pageHitSuccessModel.Success);
             }
         },
         error: function (jqXHR) {
@@ -440,5 +441,40 @@ function logPageHit(pageId, visitorId, calledFrom) {
         }
     });
 }
+
+function logVisit(visitorId) {
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/Visit/LogVisit?visitorId=" + visitorId,
+        success: function (logVisitSuccessModel) {
+            if (logVisitSuccessModel.Success === "ok") {
+                if (logVisitSuccessModel.VisitAdded) {
+                    sendEmailToYourself("Visit Added ", "visitorId: " + visitorId);
+                    if (document.domain === 'localhost') alert("Visit Added ", "visitorId: " + visitorId);
+                }
+                else
+                    if (document.domain === 'localhost') alert("Visit NOT Added ", "visitorId: " + visitorId);
+
+
+                //if (!isNullorUndefined(logVisitSuccessModel.WelcomeMessage))
+                //    $('#headerMessage').html(pageHitSuccessModel.WelcomeMessage);
+                //else
+
+            }
+            else {
+                sendEmailToYourself("Ajax Error in logVisit", "PageId: " + pageId + "  Message: " + logVisitSuccessModel.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "logVisit")) {
+                sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logVisit", "api/HitCounter/LogVisit?visitorId=" + visitorId +
+                    " Message: " + errorMessage);
+            }
+        }
+    });
+}
+
+
 
 

@@ -19,6 +19,20 @@ namespace WebApi.DataContext
         public virtual DbSet<MySqlPageHit> MySqlPageHits { get; set; }
         public virtual DbSet<MySqlVisitor> MySqlVisitors { get; set; }
         public virtual DbSet<MySqlVisit> MySqlVisits { get; set; }
+        public virtual DbSet<VwPageHit> VwPageHits { get; set; }
+    }
+
+    [Table("OggleBooble.vwPageHits")]
+    public partial class VwPageHit
+    {
+        [Key]
+        public int Today { get; set; }
+        public int Yesterday { get; set; }
+        public int Two_Days_ago { get; set; }
+        public int Three_Days_ago { get; set; }
+        public int Four_Days_ago { get; set; }
+        public int Five_Days_ago { get; set; }
+        public int Six_Days_ago { get; set; }
     }
 
     [Table("OggleBooble.Visitor")]

@@ -5,6 +5,19 @@ using System.Web;
 
 namespace WebApi.Models
 {
+
+    public class PageHitModel
+    {   
+        public int Today { get; set; }
+        public int Yesterday { get; set; }
+        public int Two_Days_ago { get; set; }
+        public int Three_Days_ago { get; set; }
+        public int Four_Days_ago { get; set; }
+        public int Five_Days_ago { get; set; }
+        public int Six_Days_ago { get; set; }
+        public string Success { get; set; }
+    }
+
     public class ChangeLogModel
     {
         public int PkId { get; set; }
@@ -37,11 +50,9 @@ namespace WebApi.Models
     {
         public int PageHits { get; set; }
         public int UserHits { get; set; }
-        public bool LogVisitRequired { get; set; }
         public string PageName { get; set; }
         public string ParentName { get; set; }
         public string RootFolder { get; set; }
-        public string WelcomeMessage { get; set; }
         public string Success { get; set; }
     }
 
@@ -97,7 +108,6 @@ namespace WebApi.Models
     {
         public string VisitorId { get; set; }
         public string PageName { get; set; }
-        public string WelcomeMessage { get; set; }
         public bool IsNewVisitor { get; set; }
         public string Success { get; set; }
     }    
@@ -112,4 +122,13 @@ namespace WebApi.Models
         public string Country { get; set; }
         public string GeoCode { get; set; }
     }
+
+    public class LogVisitSuccessModel
+    {
+        public string WelcomeMessage { get; set; }
+        public bool VisitAdded { get; set; }
+        public string Success { get; set; }
+    }
+
+
 }

@@ -326,7 +326,8 @@ function closeViewer(calledFrom) {
     if (calledFrom !== undefined) {
         closeMethod = calledFrom;
     }
-    sendEmailToYourself("Viewer Closed. Images Viewed: " + sessionCount, "Close method: " + closeMethod + ". Ip: " + getCookieValue("IpAddress"));
+    sendEmailToYourself(imageViewerFolderName + ". Images Viewed: " + sessionCount,
+        "Close method: " + closeMethod + ". Ip: " + getCookieValue("IpAddress"));
     if (document.domain === 'localhost')
         alert("Viewer Closed " + closeMethod);
 }

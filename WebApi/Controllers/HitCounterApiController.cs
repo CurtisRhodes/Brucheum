@@ -84,8 +84,6 @@ namespace WebApi
                     pageHitSuccessModel.UserHits = dbm.MySqlPageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
                 }
 
-                new VisitController().LogVisit(pageHitModel.VisitorId);
-
                 using (OggleBoobleContext odb = new OggleBoobleContext())
                 {
                     CategoryFolder categoryFolder = odb.CategoryFolders.Where(f => f.Id == pageHitModel.PageId).FirstOrDefault();
@@ -93,26 +91,15 @@ namespace WebApi
                     pageHitSuccessModel.PageName = categoryFolder.FolderName;
 
                     CategoryFolder parentFolder = odb.CategoryFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
-
                     if (parentFolder != null)
-                    {
                         pageHitSuccessModel.ParentName = parentFolder.FolderName;
-                    }
                 }
-                //     if (Helpers.IsNullorUndefined(pageHitModel.UserName))
-                //         pageHitSuccessModel.WelcomeMessage = "Welcome Back ";
-                //     else
-                //         pageHitSuccessModel.WelcomeMessage = "Welcome back " + visitor.UserName;
 
                 pageHitSuccessModel.Success = "ok";
             }
             catch (Exception ex)
             {
                 pageHitSuccessModel.Success = Helpers.ErrorDetails(ex);
-                //using (GodaddyEmailController godaddyEmail = new GodaddyEmailController())
-                //{
-                //    godaddyEmail.SendEmail("Page Visit ERROR", pageHitSuccessModel.Success);
-                //}
             }
             return pageHitSuccessModel;
         }
@@ -257,7 +244,6 @@ namespace WebApi
 
                         dbm.MySqlVisitors.Add(myVisitor);
                         dbm.SaveChanges();
-                        visitorSuccess.WelcomeMessage = "Welcome new visitor!";
                         visitorSuccess.IsNewVisitor = true;
                         visitorSuccess.VisitorId = myVisitor.VisitorId;
 
@@ -267,14 +253,11 @@ namespace WebApi
                             if (categoryFolder != null)
                                 visitorSuccess.PageName = categoryFolder.FolderName;
                         }
-
-                        LogVisit(myVisitor.VisitorId);
                     }
                     else
                     {
                         visitorSuccess.IsNewVisitor = false;
                         visitorSuccess.VisitorId = myExisting.VisitorId;
-                        LogVisit(myExisting.VisitorId);
                     }
                 }
                 visitorSuccess.Success = "ok";
@@ -287,24 +270,20 @@ namespace WebApi
         }
 
         [HttpPost]
-        public string LogVisit(string visitorId)
+        public LogVisitSuccessModel LogVisit(string visitorId)
         {
-            string success;
+            LogVisitSuccessModel visitSuccessModel = new LogVisitSuccessModel() { VisitAdded = false };
             try
             {
                 using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
                 {
                     DateTime lastVisitDate = DateTime.MinValue;
-                    List<MySqlVisit> visits = dbm.MySqlVisits.Where(v => v.VisitorId == visitorId).ToList();
-                    if (visits.Count > 0)
+                    List<MySqlVisit> visitorVisits = dbm.MySqlVisits.Where(v => v.VisitorId == visitorId).ToList();
+                    if (visitorVisits.Count() > 0)
                     {
-                        lastVisitDate = visits.OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
+                        lastVisitDate = dbm.MySqlVisits.Where(v => v.VisitorId == visitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
+                        //lastVisitDate = dbm.MySqlVisits.Where(v => v.VisitorId == visitorId).OrderBy(v => v.VisitDate).FirstOrDefault().VisitDate;
                     }
-                    
-                    IPVisitLookup iPVisitLookup = (from v in dbm.MySqlVisitors
-                                                   join vi in dbm.MySqlVisits on v.VisitorId equals vi.VisitorId
-                                                   select new IPVisitLookup() { VisitDate = vi.VisitDate }).OrderByDescending(v => v).FirstOrDefault();
-                    lastVisitDate = iPVisitLookup.VisitDate;
                     if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
                     {
                         MySqlVisitor visitor = dbm.MySqlVisitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
@@ -316,18 +295,21 @@ namespace WebApi
                                 VisitDate = DateTime.UtcNow.AddMilliseconds(getrandom.Next())
                             });
                             dbm.SaveChanges();
+                            visitSuccessModel.VisitAdded = true;
+                            visitSuccessModel.WelcomeMessage = "Welcome Back ";
+                            //if(visitor.u)
+                            //pageHitSuccessModel.WelcomeMessage = "Welcome back " + visitor.UserName;
                         }
                     }
-                    success = "ok";
+                    visitSuccessModel.Success= "ok";
                 }
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex);
+                visitSuccessModel.Success= Helpers.ErrorDetails(ex);
             }
-            return success;
+            return visitSuccessModel;
         }
-
     }
 
     [EnableCors("*", "*", "*")]
@@ -359,7 +341,6 @@ namespace WebApi
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
-
     }
 
     [EnableCors("*", "*", "*")]
@@ -407,57 +388,6 @@ namespace WebApi
                 logEventActivitySuccess.Success = Helpers.ErrorDetails(ex);             
             }
             return logEventActivitySuccess;
-        }
-    }
-
-    [EnableCors("*", "*", "*")]
-    public class HitMetricsController : ApiController
-    {
-        [HttpGet]
-        public HitCountModel Report1(int pageId)
-        {
-            HitCountModel hit = new HitCountModel();
-            try
-            {
-                using (WebStatsContext db = new WebStatsContext())
-                {
-                    hit.PageHits = db.PageHits.Where(h => h.PageName == "x").Count();
-                    //Hit hit = db.Hits.Where(h => h.HitId == hitId).First();
-                    //hit.ViewDuration = (DateTime.Now - hit.BeginView).TotalSeconds.ToString();
-                    hit.Success = "ok";
-                }
-            }
-            catch (Exception ex) { hit.Success = Helpers.ErrorDetails(ex); }
-            return hit;
-        }
-
-
-
-        [HttpPost]
-        public string LogActivity(ChangeLogModel changeLog)
-        {
-            string success = "";
-            try
-            {
-                using (WebStatsContext db = new WebStatsContext())
-                {
-                    ChangeLog alredyExists = db.ChangeLogs.Where(cl => cl.PageId == changeLog.PageId && cl.Activity == changeLog.Activity).FirstOrDefault();
-                    if (alredyExists == null)
-                    {
-                        db.ChangeLogs.Add(new ChangeLog()
-                        {
-                            PageId = changeLog.PageId,
-                            PageName = changeLog.PageName,
-                            Activity = changeLog.Activity,
-                            Occured = DateTime.Now
-                        });
-                        db.SaveChanges();
-                    }
-                }
-                success = "ok";
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
         }
     }
 }
