@@ -1,6 +1,11 @@
 ﻿var FolderDetailModel = {};
+var userName;
 
 function showModelInfoDialog(modelName, folderId, currentSrc) {
+
+    //if (document.domain === 'localhost') alert("showModelInfoDialog(\nmodelName: " + modelName + "\nfolderId: " + folderId + "\ncurrentSrc" + currentSrc);
+    userName = getCookieValue("UserName");
+
     FolderDetailModel.FolderId = folderId;
     $('#modelInfoDialog').dialog({
         autoOpen: false,
@@ -10,8 +15,9 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
         width: "615"
     });
     clearGets();
-    //getFolderDetails(modelName, folderId, currentSrc);
-    //alert("modelName: " + modelName + " folderId:" + folderId);
+
+    //userName = getCookieValue("UserName");
+    $('#modelInfoDialog').dialog("open");
     if (modelName === "unknown model") {
         FolderDetailModel.FolderImage = currentSrc;
         $('#modelDialogThumbNailImage').attr("src", currentSrc);
@@ -19,10 +25,9 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
         $('#modelInfoDialog').dialog('option', 'title', "unknown model");
         $('#modelInfoEditArea').hide();
         $('#modelInfoViewOnlyArea').show();
-        $('#modelInfoEdit').html("Edit");
+        $('#modelInfoEdit').hide();
         return;
     }
-    $('#modelInfoDialog').dialog("open");
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
@@ -31,24 +36,29 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
                 if (folderDetails.FolderImage === null) {
                     FolderDetailModel.FolderImage = currentSrc;
                 }
+                $('#modelInfoViewOnlyArea').hide();
                 $('#modelDialogThumbNailImage').attr("src", folderDetails.FolderImage);
                 $('#txtFolderName').val(folderDetails.FolderName);
                 $('#txtBorn').val(folderDetails.Born);
                 $('#txtNationality').val(folderDetails.Nationality);
                 $('#txtMeasurements').val(folderDetails.Measurements);
                 $('#txtBoobs').val(folderDetails.Boobs);
+                $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
 
-                if (userAuthorizationLevel === "not logged in") {
+                if (isNullorUndefined(userName)) {
                     $('#externalLinks').html(folderDetails.ExternalLinks);
                     $('#modelInfoDialogTrackBack').hide();
-                    $('#modelInfoDialogComment').attr("readonly", "readonly");
-                    $('.modelDialogInput').attr("readonly", "readonly");
+                    $('.modelDialogInput').attr("readonly", true);
                     $('#modelInfoEdit').html("Edit");
                     $('#modelInfoEdit').hide();
                     $('#modelInfoDialogComment').summernote({
                         height: 300,
-                        toolbar: "none"
+                        codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+                        toolbar: [['codeview']]
                     });
+                    $('#modelInfoDialogComment').summernote({ toolbar: '[]' });
+                    $('#modelInfoDialogComment').summernote('disable');
+                    //if (document.domain === 'localhost') alert("I WANT THE TOOLBAR GONE");
                 }
                 else {
                     $('#modelInfoViewOnlyArea').hide();
@@ -69,7 +79,6 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
                 }
                 $('#modelInfoDialogComment').summernote("code", folderDetails.CommentText);
 
-                $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
                 $('#modelInfoEditArea').show();
             }
             else
@@ -94,12 +103,16 @@ function addHrefToExternalLinks() {
     $('#txtLinkLabel').val('');
 }
 
+function IdentifyPoser() {
+    $('#modelInfoEdit').show().html("Add");
+    $('#modelInfoEditArea').show();
+    $('#modelInfoViewOnlyArea').hide();
+}
+
 function toggleMode() {
     switch ($('#modelInfoEdit').html()) {
         case "Edit":
-            $('#modelInfoEdit').html("Add");
-            $('#modelInfoEditArea').show();
-            $('#modelInfoViewOnlyArea').hide();
+            alert("vestigual");
             break;
         case "Add":
             createPosersIdentifiedFolder();
@@ -243,7 +256,16 @@ function updateFolderDetail() {
 
 function considerClosingModelInfoDialog() {
     //if ($('#modelInfoEdit').html() === "Edit")
-    if (userAuthorizationLevel === "not logged in") {
+    if (isNullorUndefined(userName)) {
         $('#modelInfoDialog').dialog("close");
     }
 }
+
+function IamThisModel() {
+    alert("IamThisModel clicked");
+
+}
+
+
+
+

@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - OggleBooble</title>
+    <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
+    <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>
+    <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet' />
+    <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js' type="text/javascript"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
+    <script src="Scripts/Common.js"></script>
+    <script src="Scripts/OggleEventLog.js"></script>
+    <script src="Scripts/Login.js"></script>
+    <script src="Scripts/OggleHeader.js"></script>
+    <script src="Scripts/OggleSearch.js"></script>
+    <script src="Scripts/OggleFooter.js"></script>
+    <script src="Scripts/Permissions.js"></script>
+    <script src="Scripts/HitCounter.js"></script>
+    <script src="Scripts/DirTree.js"></script>
+    <script src="Scripts/FolderCategoryDialog.js"></script>
+    <script src="Scripts/ModelInfoDialog.js"></script>
+    <script src="Scripts/ImageCommentDialog.js"></script>
+    <script src="Scripts/MoveCopyArchive.js"></script>
+    <script src="Scripts/MetaTagDialog.js"></script>
+
+    <link href="Styles/jqueryUI.css" rel="stylesheet" />
+    <link href="Styles/loginDialog.css" rel="stylesheet" />
+    <link href="Styles/Header.css" rel="stylesheet" />
+    <link href="Styles/Common.css" rel="stylesheet" />
+    <link href="Styles/Carousel.css" rel="stylesheet" />
+    <link href="Styles/ImagePage.css" rel="stylesheet" />
+    <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
+    <link href="Styles/ModelInfoDialog.css" rel="stylesheet" />
+    <!--
+    <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
+    <link href="Styles/ImageCommentDialog.css" rel="stylesheet" />
+    <link href="Styles/ImageCategoryDialog.css" rel="stylesheet" />
+    <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
+    -->
+    <!--<script src="/signalr/hubs"></script>-->
+    <!--<script src="Scripts/jquery.signalR-2.4.1.min.js"></script>-->
+    <link href="Styles/Dashboard.css" rel="stylesheet" />
+    <link href="Styles/ChooseBox.css" rel="stylesheet" />
+    <script src="Scripts/Dashboard.js"></script>
+    <script src="Scripts/Roles.js"></script>
+
+  </head>
+
+
+
+
+  <body>
+      <style>
+          .vidrow {
+              border: solid thin #444;
+
+          }
+          .vid2Col {
+              border: solid thin #a3531b;
+              height:500px;
+              width:700px;
+          }
+          .vid4Col {
+              height:500px;
+          }
+          .vid4Ctrl {
+              height: 100px;
+          }
+          .viditem {
+              display: inline-block;
+              
+          }
+      </style>
+      <header></header>
+      <div class="threeColumnLayout">
+        <div id="leftColumn"></div>
+        <div id="middleColumn">
+
+            <div>
+                <div class="vidrow">
+                    <div class="viditem">
+                        <video class="vid2Col"
+                               controls="controls" poster="https://cbjpeg.stream.highwebmedia.com/stream?room=caylin&amp;f=0.9385384182003007"
+                               playsinline="" webkit-playsinline="">
+                        </video>
+                    </div>
+                    <div class="viditem">
+                        <video class="vid2Col" src="https://edge339.stream.highwebmedia.com/live-hls/amlst:milkykandy-sd-f711ce8d936f52233813ba8cf5db3e9298219fdd29e9207f98790718007878b2_trns_h264/playlist.m3u8"
+                               controls="controls" poster="https://cbjpeg.stream.highwebmedia.com/stream?room=milkykandy&amp;f=0.4223353379949424"
+                               playsinline="" webkit-playsinline="">
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+            <!--<video width="498" height="312" id="still_video_object"
+                   style="width: 960px; height: 540px;"
+                   src="https://edge206.stream.highwebmedia.com/live-hls/amlst:caylin-sd-8937ba6912ed937e04b8db696878e971b081d644ba83cba4e9b73d5e0af1e0f6_trns_h264/playlist.m3u8"
+                   controls="controls" poster="https://cbjpeg.stream.highwebmedia.com/stream?room=caylin&amp;f=0.9385384182003007"
+                   playsinline="" webkit-playsinline="">
+            </video>-->
+
+            <!--<video width="498" height="407" id="still_video_object" 
+                   style="width: 960px; height: 720px;" 
+                   src="https://edge339.stream.highwebmedia.com/live-hls/amlst:milkykandy-sd-f711ce8d936f52233813ba8cf5db3e9298219fdd29e9207f98790718007878b2_trns_h264/playlist.m3u8" 
+                   controls="controls" poster="https://cbjpeg.stream.highwebmedia.com/stream?room=milkykandy&amp;f=0.4223353379949424" 
+                   playsinline="" webkit-playsinline="">
+            </video>-->
+
+            <img id="dashBoardLoadingGif" class="loadingGif" src="Images/loader.gif" />
+        </div>
+        <div id="rightColumn"></div>
+    </div>
+    <!--<div w3-include-html="Snippets/BoobsFooter.html"></div>-->
+    <div w3-include-html="Snippets/AdminDialogs.html"></div>
+    <div w3-include-html="Snippets/Login.html"></div>
+    <div w3-include-html="Snippets/Register.html"></div>
+
+    <script>
+        $(document).ready(function () {
+            //var caylin = https://edge206.stream.highwebmedia.com/live-hls/amlst:caylin-sd-8937ba6912ed937e04b8db696878e971b081d644ba83cba4e9b73d5e0af1e0f6_trns_h264/playlist.m3u8;
+            var caylin = https://edge206.stream.highwebmedia.com/live-hls/amlst:caylin
+            //-sd - 8937ba6912ed937e04b8db696878e971b081d644ba83cba4e9b73d5e0af1e0f6_trns_h264/playlist.m3u8;
+
+            var milkykandy = "https://edge339.stream.highwebmedia.com/live-hls/amlst:milkykandy-sd-f711ce8d936f52233813ba8cf5db3e9298219fdd29e9207f98790718007878b2_trns_h264/playlist.m3u8";
+            var caylinSrc = "https://edge206.stream.highwebmedia.com/live-hls/amlst:caylin-sd-8937ba6912ed937e04b8db696878e971b081d644ba83cba4e9b73d5e0af1e0f6_trns_h264/playlist.m3u8"
+
+            includeHTML();
+
+            //var dots = "";
+            loadSettings();
+            var waiter = setInterval(function () {
+                if (settingsArray.ApiServer === undefined) {
+                    //dots += ". ";
+                    //$('#text55').html(dots);
+                }
+                else {
+                    clearInterval(waiter);
+                    setOggleHeader("admin", 3910);
+                    buildDirectoryTree();
+                    logPageHit(3910, getCookieValue("VisitorId"), "Dashboard");
+
+                    if (isInRole("Oggle admin")) {
+                        $('.adminLevelOption').show();
+
+                    }
+                    //setUserPermissions();
+
+                }
+            }, 300);
+        });
+
+    </script>
+  </body>
+</html>

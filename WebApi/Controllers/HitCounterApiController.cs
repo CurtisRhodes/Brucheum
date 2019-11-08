@@ -22,12 +22,12 @@ namespace WebApi
             ImageHitSuccessModel imageHitSuccess = new ImageHitSuccessModel();
             try
             {
-                System.Threading.Thread.Sleep(1000);
+                //System.Threading.Thread.Sleep(1000);
                 if (imageHitControllerBusy)
                     imageHitSuccess.Success = "imageHitController Busy";
                 else
                 {
-                    imageHitControllerBusy = true;
+                    //imageHitControllerBusy = true;
                     using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
                     {
                         DateTime utcDateTime = DateTime.UtcNow.AddMilliseconds(getrandom.Next());
@@ -43,7 +43,7 @@ namespace WebApi
                         imageHitSuccess.UserHits = dbm.MySqlImageHits.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
                         imageHitSuccess.ImageHits = dbm.MySqlImageHits.Where(h => h.ImageLinkId == logImageHItData.LinkId).Count();
                         //imageHitSuccess.IpAddress = db.Visitors.Where(v => v.VisitorId == logImageHItData.VisitorId).FirstOrDefault().IpAddress;
-                        imageHitControllerBusy = false;
+                        //imageHitControllerBusy = false;
                     }
                 }
                 imageHitSuccess.Success = "ok";

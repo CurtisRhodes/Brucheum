@@ -96,7 +96,7 @@
         [Key]
         public string VisitorId { get; set; }
         public string UserName { get; set; }
-        public string AppName { get; set; }
+        //public string AppName { get; set; }
         public string IpAddress { get; set; }
         public string City { get; set; }
         public string Region { get; set; }
@@ -125,7 +125,7 @@
         [Column(Order = 1)]
         public string VisitorId { get; set; }
         public int PageId { get; set; }
-        public string AppName { get; set; }
+        //public string AppName { get; set; }
         public string PageName { get; set; }
     }
     [Table("webStats.ImageHit")]

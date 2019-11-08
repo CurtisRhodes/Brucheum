@@ -24,6 +24,10 @@
 function attemptRegister() {
     if (validateRegister()) {
         try {
+
+            if (document.domain === 'localhost')
+                alert("attempting to register");
+
             var registeredUserModel = {};
             registeredUserModel.UserName = $('#txtRegisterUserName').val();
             registeredUserModel.Pswrd = $('#txtRegisterClearPassword').val();
@@ -43,7 +47,21 @@ function attemptRegister() {
                         //alert("register happened. Attempt Login");
                         console.log("register happened. Attempt Login");
                         setCookieValue("UserName", registeredUserModel.UserName);
-                        attemptLogin(registeredUserModel.UserName, registeredUserModel.Pswrd );
+                        attemptLogin(registeredUserModel.UserName, registeredUserModel.Pswrd);
+
+                        if (document.domain === 'localhost')
+                            alert("register success");
+
+                        $('#spnUserName').html(getCookieValue("UserName"));
+                        $('#optionLoggedIn').show();
+                        $('#optionNotLoggedIn').hide();
+
+                        sendEmailToYourself("BIG TIME Someone new actually registered", "User: " + userName);
+
+                        displayStatusMessage("ok", "thanks for Registering in " + userName);
+                        // show welcom to Oggle Booble message.
+
+
                     }
                     else {
                         alert("$('#registerValidationSummary').html(response).show();");
@@ -86,12 +104,17 @@ function validateRegister() {
 }
 
 function onLogoutClick() {
+
+    if (document.domain === 'localhost')
+        alert("logging out");
+
     $('#optionLoggedIn').hide();
     $('#optionNotLoggedIn').show();
     $('.loginRequired').hide();
 
     deleteCookie();
-    window.location.href = ".";
+
+    //window.location.href = ".";
 
 }
 
@@ -180,7 +203,7 @@ function attemptLogin(userName, clearPasswod) {
                         sendEmailToYourself("Someone Successfully logged in", "User: " + userName);
 
                     displayStatusMessage("ok", "thanks for logging in " + userName);
-                    window.location.href = ".";
+                    //window.location.href = ".";
                 }
                 else
                     $('#loginValidationSummary').html(success).show();
@@ -240,9 +263,11 @@ function deleteCookie() {
             alert("After Logout User: " + getCookieValue("UserName"));
 
 
-        //if (document.cookie) {
-        //    alert("cookie failed to delete: " + document.cookie);
-        //}
+        if (document.cookie) {
+            if (document.domain === 'localhost')
+                alert("cookie failed to delete: " + document.cookie);
+
+        }
         //console.log("deleteCookie()  document.cookie: " + document.cookie);
     }
 }

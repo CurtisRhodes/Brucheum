@@ -11,30 +11,10 @@ function showCategoryDialog(folderId) {
         autoOpen: false,
         show: { effect: "fade" },
         hide: { effect: "blind" },
+        position: { my: 'center', at: 'top' },
         width: "560"
     });
 
-    if (isInRole("Oggle admin")) {
-        $('#catDlgReadOnlyTextArea').hide();
-        $('#btnCatDlgMeta').show();
-        $("#btnCatDlgEdit").show();
-        $('#catDlgSummerNoteTextArea').summernote({
-            height: 300,
-            width: 500,
-            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-            toolbar: [
-                ['codeview']
-                //['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
-            ]
-        });
-        $('#catDlgSummerNoteContainer').show();
-    }
-    else {
-        $('#btnCatDlgEdit').hide();
-        $('#btnCatDlgMeta').hide();
-        $('#catDlgSummerNoteContainer').hide();
-        $('#catDlgReadOnlyTextArea').show();
-    }
     $('#folderCategoryDialog').dialog('open');
     try {
         $.ajax({
@@ -44,19 +24,40 @@ function showCategoryDialog(folderId) {
                 if (categoryComment.Success === "ok") {
                     categoryFolderId = folderId;
                     $('#folderCategoryDialog').dialog('option', 'title', categoryComment.FolderName);
+                    $('#catDlgSummerNoteTextArea').summernote('code', categoryComment.CommentText);
+
+                    if (isInRole("Oggle admin")) {
+                        $('#btnCatDlgMeta').show();
+                        $("#btnCatDlgEdit").show();
+                        $('#catDlgSummerNoteTextArea').summernote({
+                            height: 300,
+                            width: 450,
+                            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+                            toolbar: [
+                                ['codeview']
+                                //['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
+                            ]
+                        });
+                        $('#catDlgSummerNoteContainer').show();
+                    }
+                    else {
+                        $('#btnCatDlgEdit').hide();
+                        $('#btnCatDlgMeta').hide();
+                        $('#catDlgSummerNoteTextArea').summernote({
+                            height: 300,
+                            toolbar: "none"
+                        });
+                        $('#catDlgSummerNoteTextArea').summernote('disable');
+                    }
                     if (categoryComment.CommentText === "") {
                         if (document.domain === 'localhost') alert("categoryComment.CommentText  EMPTY: " + categoryComment.CommentText);
                     }
-                    else {
-                        $('#catDlgReadOnlyTextArea').html(categoryComment.CommentText);
-                        $('#catDlgSummerNoteTextArea').summernote('code', $('#catDlgReadOnlyTextArea').html());
-                    }
                 }
                 else {
-                    if (categoryComment.Success !== "not found")
-                        sendEmailToYourself("jquery fail in FolderCategory.js showCategoryDialog", "get Category Comment: " + categoryComment.Success);
+                    //if (categoryComment.Success !== "not found")
+                    sendEmailToYourself("jquery fail in FolderCategory.js showCategoryDialog", "get Category Comment: " + categoryComment.Success);
                     if (document.domain === 'localhost')
-                        alert("categoryComment.CommentText  EMPTY: " + categoryComment.CommentText);
+                        alert("FolderCategoryDialog: " + categoryComment.Success);
                     //alert("get Category Comment: " + categoryComment.Success);
                 }
             },
@@ -106,8 +107,10 @@ function addMetaTags() {
 }
 
 function considerClosingCategoryDialog() {
+
+
     if (!isInRole("Oggle admin")) {
-        $('#folderCategoryDialog').dialog("close");
+    //    $('#folderCategoryDialog').dialog("close");
     }
 }
 

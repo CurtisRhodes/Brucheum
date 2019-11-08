@@ -14,28 +14,36 @@ namespace WebApi.Controllers
     public class MetricsReportsController : ApiController
     {
         [HttpGet]
-        public PageHitModel Report1(int pageId)
+        public DailyHitReport PageHitsReport()
         {
-            PageHitModel pageHitModel = new PageHitModel();
+            DailyHitReport hitReport   = new DailyHitReport();
             try
             {
                 using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
                 {
                     VwPageHit vwPageHit = dbm.VwPageHits.FirstOrDefault();
-                    pageHitModel.Today = vwPageHit.Today;
-                    pageHitModel.Yesterday = vwPageHit.Yesterday;
-                    pageHitModel.Two_Days_ago = vwPageHit.Two_Days_ago;
-                    pageHitModel.Three_Days_ago = vwPageHit.Three_Days_ago;
-                    pageHitModel.Four_Days_ago = vwPageHit.Four_Days_ago;
-                    pageHitModel.Five_Days_ago = vwPageHit.Five_Days_ago;
-                    pageHitModel.Six_Days_ago = vwPageHit.Six_Days_ago;
-                    pageHitModel.Success = "ok";
+                    hitReport.PageHits.Today = vwPageHit.Today;
+                    hitReport.PageHits.Yesterday = vwPageHit.Yesterday;
+                    hitReport.PageHits.Two_Days_ago = vwPageHit.Two_Days_ago;
+                    hitReport.PageHits.Three_Days_ago = vwPageHit.Three_Days_ago;
+                    hitReport.PageHits.Four_Days_ago = vwPageHit.Four_Days_ago;
+                    hitReport.PageHits.Five_Days_ago = vwPageHit.Five_Days_ago;
+                    hitReport.PageHits.Six_Days_ago = vwPageHit.Six_Days_ago;
+
+                    VwImageHit vwImageHit = dbm.VwImageHits.FirstOrDefault();
+                    hitReport.ImageHits.Today = vwImageHit.Today;
+                    hitReport.ImageHits.Yesterday = vwImageHit.Yesterday;
+                    hitReport.ImageHits.Two_Days_ago = vwImageHit.Two_Days_ago;
+                    hitReport.ImageHits.Three_Days_ago = vwImageHit.Three_Days_ago;
+                    hitReport.ImageHits.Four_Days_ago = vwImageHit.Four_Days_ago;
+                    hitReport.ImageHits.Five_Days_ago = vwImageHit.Five_Days_ago;
+                    hitReport.ImageHits.Six_Days_ago = vwImageHit.Six_Days_ago;
+                    hitReport.Success = "ok";
                 }
             }
-            catch (Exception ex) { pageHitModel.Success = Helpers.ErrorDetails(ex); }
-            return pageHitModel;
+            catch (Exception ex) { hitReport.Success = Helpers.ErrorDetails(ex); }
+            return hitReport;
         }
-
 
 
         [HttpPost]

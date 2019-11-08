@@ -56,7 +56,8 @@
                 <div onclick="reportClickEvent('LMC','3907'); window.location.href='Ranker.html'">Boobs Ranker</div>
                 <div onclick="reportClickEvent('LMC','3942'); showCustomMessage(38)">Let me Explain</div>
                 <div onclick="reportClickEvent('LMC','3941'); showCatListDialog(2)">Category List</div>
-                <div onclick="reportClickEvent('LMC','1132'); window.location.href='/album.html?folder=1132'">Every Playboy Centerfold</div>
+                <div onclick="reportClickEvent('LMC','1132'); window.location.href='/album.html?folder=1132'">Playboy Centerfolds</div>
+                <div onclick="reportClickEvent('LMC','3906'); window.location.href='video.html'">Video</div>
                 <div onclick="goToPorn()">Nasty Porn</div>
                 <div onclick="reportClickEvent('LMC','3911'); window.location.href='/Blog.html'">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
@@ -75,7 +76,7 @@
             <div id="divStatusMessage"></div>
             <div id="dots"></div>
             <div class="flexContainer">
-                <div class="floatLeft">
+                <div id="carouselInclude" class="floatLeft adminLevelOption">
                     <div id="includeCenterfoldsCheckbox" class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('playboy', $(this).is(':checked'))" /> Include Centerfolds</div>
                     <div class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('archive', $(this).is(':checked'))" /> Include Archive</div>
                     <div id="dots"></div>
@@ -157,26 +158,8 @@
                 else {
                     $('#dots').html('');
                     clearInterval(waiter);
-
-                    setOggleFooter(subdomain);
                     launchCarousel(subdomain);
-
-                    if (subdomain == "porn") {
-                        setOggleHeader(subdomain, 3909);
-                        $('#pornLeftColumnList').show();
-                        $('#boobsLeftColumnList').hide();
-                        $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
-                        $('#includeCenterfoldsCheckbox').hide();
-                        logPageHit(3909, getCookieValue("VisitorId"), "porn index");
-                    }
-                    else {
-                        setOggleHeader(subdomain, 3908);
-                        $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
-                        $('#boobsLeftColumnList').show();
-                        $('#pornLeftColumnList').hide();
-                        launchPromoMessages();
-                        logPageHit(3908, getCookieValue("VisitorId"), "boobs index");
-                    }
+                    setOggleFooter(subdomain);
 
                     setUserPermissions();
                     var waiter2 = setInterval(function () {
@@ -185,6 +168,28 @@
                         if (permissionsSet === true) {
                             clearInterval(waiter2);
                             $('#dots').html("");
+
+                            if (subdomain == "porn") {
+                                setOggleHeader(subdomain, 3909);
+                                $('#pornLeftColumnList').show();
+                                $('#boobsLeftColumnList').hide();
+                                $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
+                                $('#includeCenterfoldsCheckbox').hide();
+                                logPageHit(3909, getCookieValue("VisitorId"), "porn index");
+                            }
+                            else {
+                                setOggleHeader(subdomain, 3908);
+                                $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
+                                $('#boobsLeftColumnList').show();
+                                $('#pornLeftColumnList').hide();
+                                launchPromoMessages();
+                                logPageHit(3908, getCookieValue("VisitorId"), "boobs index");
+                            }
+
+                            $('#carouselInclude').hide();
+                            if (isInRole("Oggle admin")) {
+                                $('#carouselInclude').show();
+                            }
                         }
                     }, 300);
                 }
@@ -241,7 +246,7 @@
                     else {
                         $('#blogLoadingGif').hide();
                         sendEmailToYourself("FAIL in Index.Html launchPromoMessages", "/api/OggleBlog/GetBlogList?commentType=PRO" +
-                            "Called from: " + getCookieValue("IpAddress") + "  Message: " + blogCommentsContainer.Success);
+                            "<br/>Called from: " + getCookieValue("IpAddress") + "<br/>Message: " + blogCommentsContainer.Success);
                         //alert("loadPromoMessages: " + blogCommentsContainer.Success)
                     }
                 },

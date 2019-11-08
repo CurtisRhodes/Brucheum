@@ -30,6 +30,7 @@ namespace WebApi
                 using (SmtpClient smtp = new SmtpClient("relay-hosting.secureserver.net", 25))
                 {
                     MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "CurtishRhodes@hotmail.com", subject, message);
+                    mailMessage.IsBodyHtml = true;
                     smtp.Send(mailMessage);
                     success = "ok";
                 }

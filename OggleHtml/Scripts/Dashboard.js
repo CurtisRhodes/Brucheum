@@ -264,6 +264,7 @@ function collapseChildFolder() {
 function showMoveFolderDialog() {
     $('#moveFolderCrud').dialog('open');
     buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
+    
 }
 
 function renameFolder() {
@@ -391,10 +392,10 @@ function showPerfMetrics() {
     $('#divAddImages').hide();
     $('#divHitMetrics').fadeIn();
 
+    runPageHitsReport();
 
-
-
-
+    //if (document.domain === 'localhost') alert("runPageHitsReport();");
+   
 }
 
 function closeMetrics() {
@@ -483,4 +484,98 @@ function updateSortOrder() {
             }
         });
     }
+}
+
+function moveFolder() {
+    //$('#dataifyInfo').show().html("Preparing to Move Folder");
+    $('#dataifyInfo').show().html("Moving Folder");
+    //$('#progressBar').show();
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "/api/FtpDashboard/MoveFolder?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + partialViewSelectedItemId,
+        success: function (success) {
+            $('#txtNewFolderParent').val('');
+            $('#dashBoardLoadingGif').hide();
+            if (!success.startsWith("ERROR")) {
+                displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val());
+                //$('#progressBar').hide();
+                //$('#progressBar').progressbar("destroy");
+                $('#dataifyInfo').hide();
+
+                //alert("changeLogModel id: " + MoveCopyImageModel.SourceFolderId + " mode: " + MoveCopyImageModel.Mode + "  name: " + $('#dirTreeResults').html());
+                var changeLogModel = {
+                    PageId: dashboardMainSelectedTreeId,
+                    PageName: $('.txtPartialDirTreePath').val(),
+                    Activity: "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val()
+                };
+                logActivity(changeLogModel);
+
+                $('.txtPartialDirTreePath').val('');
+                $('#moveFolderCrud').dialog("close");
+                buildDirectoryTree();
+            }
+            else
+                alert("Move Folder: " + success);
+        },
+        error: function (xhr) {
+            $('#dashBoardLoadingGif').hide();
+            alert("Move Folder xhr error: " + getXHRErrorDetails(xhr));
+        }
+    });
+    //$('#moveFolderCrud').on('dialogclose', function (event) {
+}
+
+function runPageHitsReport() {
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "/api/MetricsReports",
+        success: function (pageHitModel) {
+            $('#dashBoardLoadingGif').hide();
+            if (pageHitModel.Success === "ok") {
+                //$.each(pageHitModel)
+                //alert("pageHitModel.Success: " + pageHitModel.Success);
+
+                // login and I will let you see 1000 more images.
+                // bookmark my site with link oog?domain=122; to get another 1,000 image views.
+                // put a link to my site on your site or your blog or your  whatever editor publish site and I'll cut you in to the 
+                // use my product
+                // Request extra privdleges 
+                // pay me to do some programming for you and I'll let you in on all my source code
+
+                var kludge = "<table><tr><td></td><td>Today</td><td>Yesterday</td><td>Two_Days_ago</td><td>Three_Days_ago</td><td>Four_Days_ago</td>" +
+                    "<td>Five Days ago</td><td>Six Days ago</td></tr>";
+                kludge +=  "<tr><td>page Hits</td> ";
+                kludge += "<td>" + pageHitModel.PageHits.Today + "</td>";
+                kludge += "<td>" + pageHitModel.PageHits.Yesterday + "</td>";
+                kludge += "<td>" + pageHitModel.PageHits.Two_Days_ago + "</td>";
+                kludge += "<td>" + pageHitModel.PageHits.Three_Days_ago + "</td>";
+                kludge += "<td>" + pageHitModel.PageHits.Four_Days_ago + "</td>";
+                kludge += "<td>" + pageHitModel.PageHits.Five_Days_ago + "</td>";
+                kludge += "<td>" + pageHitModel.PageHits.Six_Days_ago + "</td>";
+                kludge += "</tr><tr><td>image Hits</td> ";
+                kludge += "<td>" + pageHitModel.ImageHits.Today + "</td>";
+                kludge += "<td>" + pageHitModel.ImageHits.Yesterday + "</td>";
+                kludge += "<td>" + pageHitModel.ImageHits.Two_Days_ago + "</td>";
+                kludge += "<td>" + pageHitModel.ImageHits.Three_Days_ago + "</td>";
+                kludge += "<td>" + pageHitModel.ImageHits.Four_Days_ago + "</td>";
+                kludge += "<td>" + pageHitModel.ImageHits.Five_Days_ago + "</td>";
+                kludge += "<td>" + pageHitModel.ImageHits.Six_Days_ago + "</td>";
+                kludge += "</tr></table>";
+                $("#pageHitReport").html(kludge);
+
+            }
+            else {
+                alert("renameFolder: " + repairReport.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "renameFolder")) {
+                sendEmailToYourself("XHR ERROR in Dashboard.js renameFolder",
+                    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
+            }
+        }
+    });
 }

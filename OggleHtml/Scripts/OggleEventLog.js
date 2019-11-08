@@ -117,39 +117,25 @@ function reportClickEvent(eventCode, pageId) {
                     //if (verbosity > 5)
                     //if (eventCode === "HBX" || eventCode === "CXM" || eventCode === "MBC" || eventCode === "PRN")
                     if (eventCode !== "GIC" && eventCode !== "SUB" && eventCode !== "BCC") {
-                        sendEmailToYourself("filtered Click Event [" + logEventActivitySuccess.EventName + "] Page: " + logEventActivitySuccess.PageName,
-                            "ipAddress: " + ipAddress + ", visitorId " + visitorId +
-                            "logEventActivitySuccess.IpAddress: " + logEventActivitySuccess.IpAddress +
-                            ", logEventActivitySuccess.VisitorDetails " + logEventActivitySuccess.VisitorDetails);
 
-                        if (document.domain === 'localhost')
-                            alert("Event [" + logEventActivitySuccess.EventName + "] \nPage: " + logEventActivitySuccess.PageName +
-                                "\nIp: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
+                        if (logEventActivitySuccess.IpAddress !== "68.203.90.183") {
+                            sendEmailToYourself("Click Event [" + logEventActivitySuccess.EventName + "] Page: " + logEventActivitySuccess.PageName,
+                                "ipAddress: " + ipAddress + "<br/>visitorId " + visitorId +
+                                ",<br/>ogEventActivitySuccess.IpAddress: " + logEventActivitySuccess.IpAddress +
+                                ",<br/>from: " + logEventActivitySuccess.VisitorDetails);
+                        }
+                        //if (document.domain === 'localhost')
+                        //    alert("Event [" + logEventActivitySuccess.EventName + "] \nPage: " + logEventActivitySuccess.PageName +
+                        //        "\nIp: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
                     }
                     waitingForReportClickEvent = false;
                 }
                 else {
-                    if (ipAddr === "68.203.90.183") {
-                        //   alert("Error returned from reportClickEvent.LogEventActivity " + logEventActivitySuccess.Success);
-                        sendEmailToYourself("DOUBLE FAIL jQuery 32 fail in reportClickEvent",
-                            "PageId: " + pageId +
-                            "  EventCode: " + eventCode +
-                            "  VisitorId: " + visitorId +
-                            "  Message: " + logEventActivitySuccess.Success);
-
-                        alert("DOUBLE FAIL jQuery 32 fail in reportClickEvent" +
-                            "PageId: " + pageId +
-                            "\n  EventCode: " + eventCode +
-                            "\n  VisitorId: " + visitorId +
-                            "\n  Message: " + logEventActivitySuccess.Success);
-                    }
-                    else {
-                        sendEmailToYourself("jQuery 32 fail in reportClickEvent",
-                            "PageId: " + pageId +
-                            "  EventCode: " + eventCode +
-                            "  VisitorId: " + visitorId +
-                            "  Message: " + logEventActivitySuccess.Success);
-                    }
+                    sendEmailToYourself("jQuery 32 fail in reportClickEvent",
+                        "PageId: " + pageId +
+                        "  EventCode: " + eventCode +
+                        "  VisitorId: " + visitorId +
+                        "  Message: " + logEventActivitySuccess.Success);
                 }
             },
             error: function (jqXHR) {

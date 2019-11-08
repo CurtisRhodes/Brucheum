@@ -21,8 +21,7 @@ var ipAddress;
 var visitorId;
 var sessionCount = 0;
 
-
-
+//if(domain=="localhost")
 function launchViewer(imageArray, imageIndex, folderId, folderName) {
     imageViewerFolderId = folderId;
 
@@ -68,8 +67,9 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
     }
     else {
         //if (document.domain === 'localhost') alert("Proper logImageHit of Initial \nslideshow.js.slide.\nvisitorId: " + visitorId + "\nIpAddress: " + ipAddress + "\nfolderId: " + imageViewerFolderId);
+        sessionCount++;
         logImageHit(ipAddress, visitorId, imageViewerArray[imageViewerIndex].Link, folderId, true);
-        sessionCount = 1;
+        //if (document.domain === 'localhost') alert("sessionCount: " + sessionCount);
     }
     exploderInterval = setInterval(function () {
         explodeViewer();
@@ -107,11 +107,15 @@ function explodeViewer() {
     if ((viewerT === 0) && (viewerL === 0) && (viewerH === windowH) && (viewerW === windowW)) {
         if (imageViewerFolderName === undefined) {
             if (typeof staticPageFolderName === 'string') {
-                alert("staticPageFolderName: " + staticPageFolderName);
+
+                sendEmailToYourself("Issue in SlideShow", "staticPageFolderName: " + staticPageFolderName);
+                if (document.domain === 'localhost') alert("Issue in SlideShow. StaticPageFolderName: " + staticPageFolderName);
                 currentfolderName = staticPageFolderName;
             }
-            else
-                alert("fked");
+            else {
+                sendEmailToYourself("Issue in SlideShow", "staticPageFolderName: " + staticPageFolderName);
+                if (document.domain === 'localhost') alert("Issue in SlideShow  typeof staticPageFolderName");
+            }
         }
 
         $('#imageViewerHeaderTitle').html(imageViewerFolderName);
@@ -144,6 +148,7 @@ function slideClick(direction) {
         slide(direction);
         sessionCount++;
 
+        //if (document.domain === 'localhost') alert("sessionCount: " + sessionCount);
         if (isNullorUndefined(imageViewerFolderId)) {
             sendEmailToYourself("PROBLEMO 2 in slideshow.js.slide.  ImageViewerFolderId isNullorUndefined " + "IP: " + ipAddress);
         }
@@ -155,8 +160,9 @@ function slideClick(direction) {
 
 function slide(direction) {
     try {
-
-        $('.assuranceArrows').hide();
+        $('#thumbImageContextMenu').fadeOut();
+        //$('.assuranceArrows').hide();
+        $('.assuranceArrows').css('visibility', 'hidden');
         if (direction === 'next') {
             imageViewerIndex++;
             if (imageViewerIndex >= imageViewerArray.length)
@@ -175,7 +181,8 @@ function slide(direction) {
             $('#viewerImage').css("transform", "translateX(-1500px)");
         }
         setTimeout(function () {
-            $('.assuranceArrows').hide();
+            $('.assuranceArrows').css('visibility', 'hidden');
+            //$('.assuranceArrows').hide();
             $('#viewerImage').hide();
             if (direction === 'next') {
                 $('#viewerImage').css("-ms-transform", "translateX(-2200px)");
@@ -197,7 +204,8 @@ function slide(direction) {
 
             $('#viewerImage').show();
             $('#viewerImage').css("transform", "translateX(0)");
-            setTimeout(function () { $('.assuranceArrows').fadeIn(); }, 1100);
+            setTimeout(function () { $('.assuranceArrows').css('visibility', 'visible').fadeIn(); }, 1100);
+            
         }, 450);
         resizeViewer();
         $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
@@ -258,7 +266,7 @@ function blowupImage() {
 }
 
 function showImageViewerCommentDialog() {
-    closeViewer();
+    closeViewer("CommentDialog");
     showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, imageViewerFolderName);
 }
 
@@ -270,14 +278,14 @@ function imageViewerContextMenuAction(action) {
     switch (action) {
         case "show":
             showModelInfoDialog($('#ctxImageViewerModelName').html(), imageViewerSelectedImageArchiveFolderId, imageViewerArray[imageViewerIndex].Link);
-            closeViewer();
+            closeViewer("showModelInfoDialog");
             break;
         case "jump":
             window.open("/album.html?folder=" + imageViewerSelectedImageArchiveFolderId, "_blank");
             break;
         case "comment":
             showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, imageViewerSelectedImageArchiveFolderId, imageViewerFolderNamecurrentFolderId);
-            closeViewer();
+            closeViewer("showImageCommentDialog");
             break;
         case "explode":
             window.open(imageViewerArray[imageViewerIndex].Link, "_blank");
@@ -285,24 +293,24 @@ function imageViewerContextMenuAction(action) {
         case "archive":
             $('#imageViewerContextMenu').fadeOut();
             showMoveCopyDialog("Archive", imageViewerArray[imageViewerIndex].Link, imageViewerFolderId);
-            closeViewer();
+            closeViewer("showMoveCopyDialog");
             break;
         case "copy":
             $('#imageViewerContextMenu').fadeOut();
             showMoveCopyDialog("Copy", imageViewerArray[imageViewerIndex].Link, imageViewerFolderId);
-            closeViewer();
+            closeViewer("showMoveCopyDialog");
             break;
         case "move":
             $('#imageViewerContextMenu').fadeOut();
             showMoveCopyDialog("Move", imageViewerArray[imageViewerIndex].Link, imageViewerFolderId);
-            closeViewer();
+            closeViewer("showMoveCopyDialog");
             break;
         case "showLinks":
             showLinks(imageViewerArray[imageViewerIndex].LinkId);
             break;
         case "remove":
             removeImage(imageViewerArray[imageViewerIndex].LinkId);
-            closeViewer();
+            closeViewer("removeImage");
             break;
         case "setF":
             setFolderImage(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, "folder");
@@ -326,10 +334,13 @@ function closeViewer(calledFrom) {
     if (calledFrom !== undefined) {
         closeMethod = calledFrom;
     }
-    sendEmailToYourself(imageViewerFolderName + ". Images Viewed: " + sessionCount,
-        "Close method: " + closeMethod + ". Ip: " + getCookieValue("IpAddress"));
-    if (document.domain === 'localhost')
-        alert("Viewer Closed " + closeMethod);
+    if (sessionCount > 1) {
+        sendEmailToYourself("slideshow: " + imageViewerFolderName + ". Images Viewed: " + sessionCount,
+            "Close method: " + closeMethod + ".<br/>Ip: " + getCookieValue("IpAddress"));
+        if (document.domain === 'localhost')
+            alert("Close Slideshow ." + imageViewerFolderName + ".\nImages Viewed: " + sessionCount,
+                ". Close method: " + closeMethod + ".\nIp: " + getCookieValue("IpAddress"));
+    }
 }
 
 function resizeViewer() {

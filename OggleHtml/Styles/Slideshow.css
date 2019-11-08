@@ -18,7 +18,8 @@
 .fullScreenViewer {
     position: absolute;
     display: none;
-    background-color: var(--oggleBackgroundColor);
+    background-image: url('images/pinkStarsWalllpaper.jpg');
+    /*background-color: var(--oggleBackgroundColor);*/
     z-index: 30;
 }
 

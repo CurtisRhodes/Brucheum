@@ -706,7 +706,13 @@ namespace WebApi
                                 goDaddyrow = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
                                 if (goDaddyrow != null)
                                 {
+                                    
+                                    
                                     newGoDaddyLink = linkPrefix + dbDestinationFolder.FolderName + "/" + dbSourceFolder.FolderName + "/" + dbSourceFolder.FolderName + "_" + linkId + fileName.Substring(fileName.Length - 4);
+
+
+
+
                                     goDaddyrow.Link = newGoDaddyLink;
                                     db.SaveChanges();
                                 }

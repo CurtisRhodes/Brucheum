@@ -37,6 +37,14 @@ body {
     display: inline;
 }
 
+.pinkStarBackground {
+    background-image: url('images/pinkStarsWalllpaper02.jpg');
+}
+
+.catlyn {
+    background-image: url('https://edge206.stream.highwebmedia.com/live-hls/amlst:caylin-sd-8937ba6912ed937e04b8db696878e971b081d644ba83cba4e9b73d5e0af1e0f6_trns_h264/playlist.m3u8');
+}
+
 .threeColumnLayout {
     width: 100%;
     display: flex;
@@ -45,7 +53,7 @@ body {
     .threeColumnLayout #leftColumn {
         float: left;
         /*border-right: solid 5px var(--ogglgeHeaderBarColor);*/
-        min-width: 7%;
+        min-width: 10%;
     }
 
     .threeColumnLayout #middleColumn {
@@ -57,6 +65,7 @@ body {
         float: right;
         min-width: 7%;
     }
+
 
 .modalVail {
     display: none; /*Hidden by default */
@@ -103,6 +112,13 @@ body {
     color: var(--ogglePurple);
     cursor: pointer;
     margin-top: 14px;
+}
+
+.marksLeftColumn {
+    background-color: #F28396;
+    font-size: 24px !important;
+    color: #fff !important;
+    font-family: 'Lucida Calligraphy';
 }
 
 .leftColumnList {

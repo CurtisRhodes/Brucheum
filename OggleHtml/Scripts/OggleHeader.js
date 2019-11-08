@@ -198,11 +198,11 @@ function showSpecialHeaderIcons(folderId) {
             }
             else {
                 //alert("ERROR in OggleHeader ImageCategoryDetail  " + successModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
-                if (!checkFor404(folderDetailModel.Success, "showSpecialHeaderIcons")) {
-                    sendEmailToYourself("ERROR in OggleHeader showSpecialHeaderIcons",
-                        "Message: " + folderDetailModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
+                //if (!checkFor404(folderDetailModel.Success, "showSpecialHeaderIcons")) {
+                sendEmailToYourself("Ajax error in OggleHeader/showSpecialHeaderIcons",
+                    "ip: " + getCookieValue("IpAddress") + "<br/>folderId: " + folderId + "<br/>Message: " + folderDetailModel.Success);
                     // verify network
-                }
+                
             }
         },
         error: function (jqXHR) {

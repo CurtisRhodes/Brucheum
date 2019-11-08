@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="modelInfoDialogLabel">comment</div>
-        <div><div id="modelInfoDialogComment" class="modelInfoCommentArea"></div></div>
+        <div id="modelInfoDialogCommentContainer"><div id="modelInfoDialogComment" class="modelInfoCommentArea"></div></div>
         <div class="modelInfoDialogLabel">trackbacks</div>
         <div id="modelInfoDialogTrackBack">
             <div class="hrefLabel">href</div><input id="txtLinkHref" class="modelDialogInput" />
@@ -29,11 +29,19 @@
 
     </div>
     <div id="modelInfoViewOnlyArea" class="displayHidden">
-        <div class="viewOnlyMessage">If you you know who this is Please click Edit</div>
-        <div id="unknownModelLinks" class="smallTextArea"></div>
+        <div class="viewOnlyMessage">If you you know who this is Please 'Add Info'</div>
+        <div class="viewOnlyMessage clickable" onclick="IamThisModel()">Is this you?  </div>
+        <a class="dialogEditButton" href="javascript:IdentifyPoser()">Add Info</a>
     </div>
     <a id="modelInfoEdit" class="dialogEditButton" href="javascript:toggleMode()">Edit</a>
 </div>
+
+<div id="folderCategoryDialog" class="oggleDialogWindow" title="" onmouseleave="considerClosingCategoryDialog()">
+    <div><div id="catDlgSummerNoteTextArea"></div></div>
+    <a id="btnCatDlgEdit" class="folderCategoryDialogButton" href="javascript:saveCategoryDialogText()">Save</a>
+    <a id="btnCatDlgMeta" class="folderCategoryDialogButton" href="javascript:addMetaTags()">add meta tags</a>
+</div>
+
 
 <div id="moveCopyDialog" class="oggleDialogWindow" title="">
     <div class="inline"><img id="copyDialogImage" class="copyDialogImage" /></div>
@@ -61,15 +69,6 @@
     <div id="imageCommentEditor" tabindex="2"></div>
     <div id="divSaveFantasy" class="roundendButton clickable commentDialogButton inline" onclick="saveComment()">save</div>
     <div id="commentInstructions" class="commentDialogInstructions inline">log in to view comments</div>
-</div>
-
-<div id="folderCategoryDialog" class="oggleDialogWindow" title="" onmouseleave="considerClosingCategoryDialog()">
-    <div id="catDlgReadOnlyTextArea" class="catDlgReadOnlyTextArea"></div>
-    <div id="catDlgSummerNoteContainer">    
-        <div id="catDlgSummerNoteTextArea" class="catDlgSummerNoteTextArea"></div>
-    </div>
-    <a id="btnCatDlgEdit" class="folderCategoryDialogButton" href="javascript:saveCategoryDialogText()">Save</a>
-    <a id="btnCatDlgMeta" class="folderCategoryDialogButton" href="javascript:addMetaTags()">add meta tags</a>
 </div>
 
 <div id="metaTagDialog" class="oggleDialogWindow" title="">

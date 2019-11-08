@@ -30,7 +30,7 @@ namespace WebApi
                     imageLinks.RootFolder = dbCategoryFolder.RootFolder;
                     imageLinks.FolderName = dbCategoryFolder.FolderName;
 
-                    List<VwDirTreeUnion> vwTrees = db.VwDirTreesUnion.Where(f => f.Parent == folderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
+                    List<VwDirTreeUnion> vwTrees = db.VwDirTreesUnion.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
                     string folderImage = null;
 
                     foreach (VwDirTreeUnion vwTree in vwTrees)
@@ -246,10 +246,7 @@ namespace WebApi
                 timer.Start();
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-
-                    var x = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
-
-
+                    //var x = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
                     carouselInfo.Links =
                         (from c in db.CategoryImageLinks
                          join f in db.CategoryFolders on c.ImageCategoryId equals f.Id

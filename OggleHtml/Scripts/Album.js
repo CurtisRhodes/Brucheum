@@ -292,10 +292,20 @@ function startSlideShow(imageIndex) {
         isStaticPage = "true";
         currentAlbumJSfolderName = staticPageFolderName;
         currentAlbumFolderId = staticPageFolderId;
+
+        //if (staticPageFolderName.startsWith("centerfolds"))
+        {
+            if (document.domain === 'localhost')
+                alert("staticPageFolderName: " + staticPageFolderName);
+        }
+
+
     }
 
     if (isNullorUndefined(ipAddress) || isNullorUndefined(visitorId) || isNullorUndefined(currentAlbumFolderId)) {
+
         //sendEmailToYourself("Calling LogVisitor from Album.js/startslideshow", "visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + currentAlbumFolderId);
+
         if (document.domain === 'localhost')
             alert("Calling LogVisitor from Album.js/startslideshow" +
                 "\nvisitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + currentAlbumFolderId);

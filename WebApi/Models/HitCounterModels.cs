@@ -6,7 +6,18 @@ using System.Web;
 namespace WebApi.Models
 {
 
-    public class PageHitModel
+    public class DailyHitReport
+    {
+        public DailyHitReport() {
+            PageHits = new DailyHitModel();
+            ImageHits = new DailyHitModel();
+        }
+        public DailyHitModel PageHits { get; set; }
+        public DailyHitModel ImageHits { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class DailyHitModel
     {   
         public int Today { get; set; }
         public int Yesterday { get; set; }
@@ -15,7 +26,6 @@ namespace WebApi.Models
         public int Four_Days_ago { get; set; }
         public int Five_Days_ago { get; set; }
         public int Six_Days_ago { get; set; }
-        public string Success { get; set; }
     }
 
     public class ChangeLogModel

@@ -69,7 +69,9 @@ function loadImages(rootFolder, isChecked, skip, take) {
                     }
                     else {
                         //alert("idx: " + idx + " carouselItemArray.length: " + carouselItemArray.length);
-                        sendEmailToYourself("Problem removing Carousel array items", "idx: " + idx + " carouselItemArray.length: " + carouselItemArray.length);
+                        if (document.domain === 'localhost')
+                            alert("Problem removing Carousel array items  \nidx: " + idx + " carouselItemArray.length: " + carouselItemArray.length);
+                        //sendEmailToYourself("Problem removing Carousel array items", "idx: " + idx + " carouselItemArray.length: " + carouselItemArray.length);
                     }
                 }
                 else
@@ -130,7 +132,7 @@ function loadImages(rootFolder, isChecked, skip, take) {
                 }
                 else {
                     //alert("loadImages: " + carouselInfo.Success);
-                    sendEmailToYourself("ERROR in Caraousel", "loadImages: " + carouselInfo.Success);
+                    sendEmailToYourself("Error in Caraousel/loadImages", carouselInfo.Success);
                 }
             },
             error: function (jqXHR) {
@@ -307,6 +309,9 @@ function carouselContextMenuShow() {
 
 function carouselContextMenuAction(ctxMenuAction) {
     reportClickEvent("CMC", carouselItemArray[imageIndex].FolderId);
+    //if (document.domain === 'localhost') alert("carouselContextMenuAction(" + ctxMenuAction + ")");
+
+
     //reportClickEvent("CMC", carouselItemArray[imageIndex].FolderId, ctxMenuAction);
     //reportThenPerformEvent("CMC", ctxMenuAction);
     switch (ctxMenuAction) {
@@ -314,7 +319,15 @@ function carouselContextMenuAction(ctxMenuAction) {
             $('#carouselContextMenu').fadeOut();
             modelInfoDialogIsOpen = true;
             pause();
+
+            //if (document.domain === 'localhost')
+            //    alert("showModelInfoDialog(\n$('#ctxModelName').html(): " + $('#ctxModelName').html() +
+            //        "\nselectedImageArchiveFolderId: " + selectedImageArchiveFolderId +
+            //        "\ncarouselItemArray[imageIndex].Link:\n" + carouselItemArray[imageIndex].Link + ");");
+
             showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId, carouselItemArray[imageIndex].Link);
+
+
             $('#modelInfoDialog').on('dialogclose', function (event) {
                 modelInfoDialogIsOpen = false;
                 resume();
