@@ -214,3 +214,16 @@ header {
     margin-top: 20px;
     white-space: nowrap;
 }
+
+.babesArchive {
+    margin: 20px;
+    border: solid thin #444;
+    padding: 3px 5px;
+    background-color: aliceblue;
+    border-radius: 10px;
+    font-size: 16px;
+    color: var(--oggleTitleColor);
+    text-decoration: underline;
+}
+
+

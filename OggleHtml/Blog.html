@@ -13,11 +13,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
+    <script src="Scripts/HitCounter.js"></script>
+    <script src="Scripts/OggleEventLog.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
     <script src="Scripts/Permissions.js"></script>
-    <script src="Scripts/HitCounter.js"></script>
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/Blog.js"></script>
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
@@ -123,8 +124,6 @@
 
         $('#headerMessage').html("blog");
         $('#blogDisplayCommentTypeSelect').val('BLG');
-        setOggleHeader("blog", 3911);
-        setOggleFooter("boobs");
         loadSettings();
         var waiter = setInterval(function () {
             if (settingsArray.ApiServer === undefined) {
@@ -132,6 +131,8 @@
             }
             else {
                 clearInterval(waiter);
+                setOggleHeader("blog", 3911);
+                setOggleFooter("boobs");
                 loadBlogArticles($('#blogDisplayCommentTypeSelect').val());
                 showBlogDisplay('BLG');
                 logPageHit(3911, getCookieValue("VisitorId"), "Blog");

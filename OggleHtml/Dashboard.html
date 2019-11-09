@@ -54,7 +54,7 @@
         <div id="leftColumn"></div>
         <div id="middleColumn">
             <img id="dashBoardLoadingGif" class="loadingGif" src="Images/loader.gif" />
-
+            <div id="dots"></div>
             <style>
 
                 #pageHitReport table td {
@@ -139,6 +139,7 @@
                 </div>
                 <div class="workAreaRow1">
                     <div id="pageHitReport"></div>
+                    <button id="refreshPageHits" class="inline displayHidden" onclick="runPageHitsReport()">refresh</button>
                 </div>
                 <div class="workAreaRow2">
 
@@ -268,6 +269,7 @@
             <div onclick="dashboardContextMenuShowInfoDialog()">Show Model Info</div>
         </div>
     </div>
+    <footer></footer>
     <!--<div w3-include-html="Snippets/BoobsFooter.html"></div>-->
     <div w3-include-html="Snippets/AdminDialogs.html"></div>
     <div w3-include-html="Snippets/Login.html"></div>
@@ -277,19 +279,20 @@
         $(document).ready(function () {
             includeHTML();
 
-            //var dots = "";
+            var dots = "";
             loadSettings();
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
-                    //dots += ". ";
-                    //$('#text55').html(dots);
+                    dots += ". ";
+                    $('dots').html(dots);
                 }
                 else {
                     clearInterval(waiter);
                     setOggleHeader("admin", 3910);
+                    setOggleFooter('boobs');
                     buildDirectoryTree();                    
                     logPageHit(3910, getCookieValue("VisitorId"), "Dashboard");
-
+                        
                     if (isInRole("Oggle admin")) {
                         $('.adminLevelOption').show();
 

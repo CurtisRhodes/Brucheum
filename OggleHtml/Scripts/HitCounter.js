@@ -71,13 +71,13 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
                 else {
                     sendEmailToYourself("Some other Ajax fail in Hitcounter.js logImageHit",
                         "VisitorId: " + visitorId +
-                        ".  utc: " + imageHitSuccessModel.HitDateTime +
-                        ".  isInitialHit: " + isInitialHit +
-                        ".  PageId: " + pageId +
-                        "\n.  linkId: " + linkId +
+                        ".<br/>utc: " + imageHitSuccessModel.HitDateTime +
+                        ".<br/>isInitialHit: " + isInitialHit +
+                        ".<br/>PageId: " + pageId +
+                        "\n.<br/>linkId: " + linkId +
                         //" imageHitSuccessModel.IpAddress: " + imageHitSuccessModel.IpAddress +
-                        "\n.  ipAddr: " + ipAddr +
-                        "\n.  Message: " + imageHitSuccessModel.Success);
+                        "\n.<br/>ipAddr: " + ipAddr +
+                        "\n.<br/>Message: " + imageHitSuccessModel.Success);
                 }
                 //else {
                 //    sendEmailToYourself("DOUBLE ajax fail in Hitcounter.js logImageHit", "PageId: " + pageId + " linkId: " + linkId +
@@ -102,18 +102,18 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
 function logVisitor(pageId, calledFrom) {
     try {
 
-        //if (document.domain === 'localhost') {
-        //    setCookieValue("IpAddress", "68.203.90.183");
-        //    setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-        //    //setCookieValue("UserName", "admin");
-        //    setCookieValue("UserName", "cooler");
-        //    $('#spnUserName').html(getCookieValue("UserName"));
-        //    $('#optionLoggedIn').show();
-        //    $('#optionNotLoggedIn').hide();
-        //    //alert("bypassing logVisitor");
-        //    console.log("bypassing logVisitor");
-        //    return;
-        //}
+        if (document.domain === 'localhost') {
+            setCookieValue("IpAddress", "68.203.90.183");
+            setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
+            //setCookieValue("UserName", "admin");
+            setCookieValue("UserName", "cooler");
+            $('#spnUserName').html(getCookieValue("UserName"));
+            $('#optionLoggedIn').show();
+            $('#optionNotLoggedIn').hide();
+            //alert("bypassing logVisitor");
+            console.log("bypassing logVisitor");
+            return;
+        }
 
         var ipAddress = getCookieValue("IpAddress");
         if (!isNullorUndefined(ipAddress)) {
@@ -186,7 +186,7 @@ function logVisitor(pageId, calledFrom) {
                                     ".\n ipAddress: " + data.ip +
                                     ".\n  visitorId : " + visitorSuccess.VisitorId);
                             }
-                            if (verbosity > 1) {
+                            if (verbosity > 6) {
                                 sendEmailToYourself("LogVisitor called from [" + calledFrom + "]",
                                     "IsNewVisitor: " + visitorSuccess.IsNewVisitor +
                                     ". Initial Page: [" + visitorSuccess.PageName + "] (" + pageId + ") " +
@@ -473,20 +473,19 @@ function logVisit(visitorId) {
         success: function (logVisitSuccessModel) {
             if (logVisitSuccessModel.Success === "ok") {
                 if (logVisitSuccessModel.VisitAdded) {
-                    //sendEmailToYourself("Visit Added ", "visitorId: " + visitorId);
+                    if (verbosity > 4)
+                        sendEmailToYourself("Visit Added ", "visitorId: " + visitorId);
+
                     if (document.domain === 'localhost') alert("Visit Added ", "visitorId: " + visitorId);
                 }
                 //else
                 //    if (document.domain === 'localhost') alert("Visit NOT Added ", "visitorId: " + visitorId);
-
-
                 //if (!isNullorUndefined(logVisitSuccessModel.WelcomeMessage))
                 //    $('#headerMessage').html(pageHitSuccessModel.WelcomeMessage);
                 //else
-
             }
             else {
-                sendEmailToYourself("Ajax Error in logVisit", "PageId: " + pageId + "  Message: " + logVisitSuccessModel.Success);
+                sendEmailToYourself("Ajax Error in logVisit", "PageId: " + pageId + "<br/>Message: " + logVisitSuccessModel.Success);
             }
         },
         error: function (jqXHR) {

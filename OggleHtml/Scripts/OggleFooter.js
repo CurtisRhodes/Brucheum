@@ -6,28 +6,29 @@
         footerhtml =
             "<div class='flexContainer'>\n" +
             "    <div class='footerCol'>\n" +
-            "        <div class='clickable' onclick='reportClickEvent(\"FLC\",3942)'; showCustomMessage(38)'>let me explain</div>\n" +
-            "        <div class='clickable' onclick='reportClickEvent(\"FLC\",3941)'; showCatListDialog(2)'>Category List</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3942)'>about us</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3941)'>Category List</div>\n" +
             "        <div><a href='#'></a></div>\n" +
-            "        <div><a href='/index.html?subdomain=porn' onclick='reportClickEvent(\"FLC\",3909)'>Nasty Porn</a></div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3909)'>Nasty Porn</div>\n" +
             "    </div>\n" + 
 
             "    <div class='footerCol'>\n" +
-            "        <div><a href='/Ranker.html' onclick='reportClickEvent(\"FLC\",3907)'>Boobs Rater</a></div>\n" +
-            "        <div><a href='~/Home/ImagePage?folder=908' onclick='reportClickEvent(\"FLC\",908)'>Rejects</a></div>\n" +
-            "        <div><a href='~/home/Videos'>Nasty Videos</a></div>\n" +
-            "        <div><a href='/album.html?folder=1132' onclick='reportClickEvent(\"FLC\",1132)'>Centerfolds</a></div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3907)'>Boobs Rater</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",908)'>Rejects</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3991)'>Nasty Videos</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",1132)'>Centerfolds</div>\n" +
             "    </div>\n" +
             "    <div class='footerCol'>\n" +
             "        <div><a href='#'>About us</a></div>\n" +
-            "        <div><a href='mailto:curtishrhodes@hotmail.com' onclick='reportClickEvent(\"FLC\",908)'>email site developer</a></div>\n" +
-            "        <div><a href='/Blog.html' onclick='reportClickEvent(\"FLC\",3911)'>Blog</a></div>\n" +
-            "        <div><a href='/album.html?folder=3' onclick='reportClickEvent(\"FLC\",3)'>Archive</a></div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3992)'>email site developer</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3911)'>Blog</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3)'>Archive</div>\n" +
             "    </div>\n" +
             "</div>\n" +
             "<div id='footerLastBuild' class='footerVersionMessage'></div>\n" +
             "<div class='footerFooter'>\n" +
             "    <div id='footerMessage'></div>\n" +
+          //"        <div class='clickable' onclick='reportClickEvent(\"FLC\",3)'>Archive</div>\n" +
             "    <div id='copyright'>&copy; 2019 - <a href='~/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>\n" +
             "</div>\n";
     }

@@ -527,7 +527,8 @@ function moveFolder() {
 }
 
 function runPageHitsReport() {
-    $('#dashBoardLoadingGif').show();
+    $('#dashBoardLoadingGi  f').show();
+
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/MetricsReports",
@@ -564,7 +565,7 @@ function runPageHitsReport() {
                 kludge += "<td>" + pageHitModel.ImageHits.Six_Days_ago + "</td>";
                 kludge += "</tr></table>";
                 $("#pageHitReport").html(kludge);
-
+                $("#refreshPageHits").show();                
             }
             else {
                 alert("renameFolder: " + repairReport.Success);

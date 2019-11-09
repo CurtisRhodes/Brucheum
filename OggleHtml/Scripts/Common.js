@@ -140,7 +140,7 @@ function checkFor404(errorMessage, calledFrom) {
     }
     else {
         if (document.domain === 'localhost')
-            alert("checkFor404 called with unexpected errorMessage: " + errorMessage + " from: " + calledFrom);
+            alert("checkFor404 called with unexpected errorMessage\n " + errorMessage + " from: " + calledFrom);
     }
     return isNotConnected;
 }
@@ -241,7 +241,7 @@ function openLink(folderId) {
 
 function setFolderImage(linkId, folderId, level) {
 
-    //alert("setFolderImage. url: " + settingsArray.ApiServer + "/api/ImageCategoryDetail/UpdateFolderImage?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level);
+    //if (document.domain === 'localhost') alert("calling Updatre from setFolderImage. linkId: " + "&folderId=" + folderId + "&level=" + level);
 
     $.ajax({
         type: "PUT",

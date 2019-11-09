@@ -6,11 +6,10 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using WebApi.Models;
 using WebApi.DataContext;
-using MySql.Data.Types;
+//using MySql.Data.Types;
 
 namespace WebApi
 {
-
     [EnableCors("*", "*", "*")]
     public class ImageHitController : ApiController
     {

@@ -31,6 +31,7 @@ function reportThenPerformEvent(eventCode, pageId) {
             clearInterval(reportEventWaiter);
             //alert("done waiting");
             $('#dots').html("");
+            //if (document.domain === 'localhost') alert("done waiting. EventCode: " + eventCode + ". PageId: " + pageId);
             switch (eventCode) {
                 case "PRN":  //("Porn Option clicked");
                     window.location.href = '/index.html?subdomain=porn';
@@ -44,11 +45,8 @@ function reportThenPerformEvent(eventCode, pageId) {
                         window.location.href = "/";
                     break;
                 case "GAX":  // can I get a connection
-
                     alert("can I get a connection");
                     //window.location.href = ".";
-
-
                     break;
                 case "CMC": // carousle context menu item clicked
                     break;
@@ -59,6 +57,7 @@ function reportThenPerformEvent(eventCode, pageId) {
                     //alert("Sub Folder Click: " + pageId);
                     window.location.href = "/album.html?folder=" + pageId;
                     break;
+                case "BAC":  // Archive Clicked
                 case "BCC":  // Breadcrumb Clicked
                 case "BLC":  // banner link clicked
                 case "CIC":  // carousel image clicked
@@ -80,6 +79,44 @@ function reportThenPerformEvent(eventCode, pageId) {
                             break;
                         default:
                             window.location.href = "/Ranker.html";
+                            break;
+                    }
+                    break;
+
+                case "FLC":  //  footer link clicked
+
+                    //if (document.domain === 'localhost') alert("eventCode: " + eventCode + " pageId: " + pageId);
+
+                    switch (pageId) {
+                        //case 3942:  // let me explain
+                        case 3942:  // about us
+                            showCustomMessage(38);
+                            break;
+                        case 3941:  // dir tree
+                            showCatListDialog(2);
+                            break;
+                        case 3909: // nasty porn
+                            window.location.href = '/index.html?subdomain=porn';
+                            break;
+                        case 3911: // blog
+                            window.location.href = '/Blog.html';
+                            break;
+                        case 3907: // boobs ranker
+                            window.location.href = "/Ranker.html";
+                            break;
+                        case 3: // archive
+                        case 908: // rejects
+                        case 1132: // Centerfolds
+                            window.location.href = "/album.html?folder=" + pageId;
+                            break;
+                        case 3991: // videos
+                            window.location.href = 'video.html';
+                            break;
+                        case 3992: // email site developer
+                            window.location.href = 'mailto:curtishrhodes@hotmail.com';
+                            break;
+                        default:
+                            alert(pageId);
                             break;
                     }
                     break;
@@ -124,18 +161,18 @@ function reportClickEvent(eventCode, pageId) {
                                 ",<br/>ogEventActivitySuccess.IpAddress: " + logEventActivitySuccess.IpAddress +
                                 ",<br/>from: " + logEventActivitySuccess.VisitorDetails);
                         }
-                        //if (document.domain === 'localhost')
-                        //    alert("Event [" + logEventActivitySuccess.EventName + "] \nPage: " + logEventActivitySuccess.PageName +
-                        //        "\nIp: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
+                        if (document.domain === 'localhost')
+                            alert("Event [" + logEventActivitySuccess.EventName + "] \nPage: " + logEventActivitySuccess.PageName +
+                                "\nIp: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
                     }
                     waitingForReportClickEvent = false;
                 }
                 else {
                     sendEmailToYourself("jQuery 32 fail in reportClickEvent",
                         "PageId: " + pageId +
-                        "  EventCode: " + eventCode +
-                        "  VisitorId: " + visitorId +
-                        "  Message: " + logEventActivitySuccess.Success);
+                        "<br/>EventCode: " + eventCode +
+                        "<br/>VisitorId: " + visitorId +
+                        "<br/>Message: " + logEventActivitySuccess.Success);
                 }
             },
             error: function (jqXHR) {

@@ -251,22 +251,19 @@ namespace WebApi
                         (from c in db.CategoryImageLinks
                          join f in db.CategoryFolders on c.ImageCategoryId equals f.Id
                          join p in db.CategoryFolders on f.Parent equals p.Id
-                         // join g in db.CategoryFolders on p.Parent equals g.Id
-                         join l in db.ImageLinks on c.ImageLinkId equals l.Id
+                         join g in db.ImageLinks on c.ImageLinkId equals g.Id
                          where f.RootFolder == root
                          select new CarouselItemModel()
                          {
                              RootFolder = f.RootFolder,
                              FolderId = f.Id,
                              ParentId = p.Id,
-                             LinkId = l.Id,
+                             LinkId = g.Id,
                              FolderName = f.FolderName,
                              FolderPath = p.FolderName,
-                             Link = l.Link.StartsWith("http") ? l.Link : l.ExternalLink
-                         }).OrderBy(l=>l.LinkId).Skip(skip).Take(take).ToList();
+                             Link = g.Link.StartsWith("http") ? g.Link : g.ExternalLink
+                         }).OrderBy(m => m.LinkId).Skip(skip).Take(take).ToList();
                 }
-
-
                 carouselInfo.FolderCount = carouselInfo.Links.GroupBy(l => l.FolderName).Count();
                 timer.Stop();
                 System.Diagnostics.Debug.WriteLine("Select " + take + " from vLinks took: " + timer.Elapsed);

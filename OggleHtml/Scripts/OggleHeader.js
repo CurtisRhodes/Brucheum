@@ -25,8 +25,7 @@
 
     switch (subdomain) {
         case "boobs":
-        case "archive":
-        //case "special":
+            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",3908)'><img  class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
             subheaderContent =
                 "                <a href='javascript:reportThenPerformEvent(\"BLC\",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
                 "                <a href='javascript:reportThenPerformEvent(\"BLC\",136)'> poses,</a>\n" +
@@ -41,7 +40,17 @@
             //    "                <a href='/album.html?folder=159'> emne,</a>\n" +
             //    "                <a href='/album.html?folder=199'> figurer</a> og\n" +
             //    "                <a href='/album.html?folder=241'>størrelser</a>\n";
+            boobsRankerLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\",3)' class='babesArchive'>babes archive</a> <div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",3908)' title='Spin through the links to land on random portrait images. ' >boobs ranker</a></div>\n";
+            break;
+        case "archive":
             bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",3908)'><img  class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
+            subheaderContent =
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",136)'> poses,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",3916)'> positions,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",159)'> topics,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",199)'> shapes</a> and\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\",241)'>sizes</a>\n";
             boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",3908)' title='Spin through the links to land on random portrait images. ' >boobs ranker</a></div>\n";
             break;
         case "playboy":
@@ -160,10 +169,13 @@
             $('#optionNotLoggedIn').hide();
         }
     }
-    showSpecialHeaderIcons(folderId);
+    if (subdomain !== "admin") {
+        showSpecialHeaderIcons(folderId);
+    }
 }
 
 function showSpecialHeaderIcons(folderId) {
+    //if (document.domain === 'localhost') alert("calling 'ImageCategoryDetail/Get?folderId' from oggleHeader/showSpecialHeaderIcons \nfolderId=" + folderId);
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
@@ -207,7 +219,7 @@ function showSpecialHeaderIcons(folderId) {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "setSpecialLinks")) {
+            if (!checkFor404(errorMessage, "showSpecialHeaderIcons")) {
                 sendEmailToYourself("XHR ERROR IN OggleHeader.JS showSpecialHeaderIcons",
                     "/api/ImageCategoryDetail/Get?folderId=" + folderId +
                     " IpAddress: " + getCookieValue("IpAddress") +

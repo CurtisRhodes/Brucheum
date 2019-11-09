@@ -492,7 +492,7 @@ function ctxSAP(imgId) {
                 $('.adminLink').hide();
                 if (isInRole("Image Editor")) {
                     $('.adminLink').show();
-                    if (document.domain === 'localhost') alert(userName + " gets to edit images");                    
+                    //if (document.domain === 'localhost') alert(userName + " gets to edit images");                    
                 }
             }
             else {

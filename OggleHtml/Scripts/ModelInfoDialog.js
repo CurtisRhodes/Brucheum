@@ -28,6 +28,10 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
         $('#modelInfoEdit').hide();
         return;
     }
+
+    if (document.domain === 'localhost')
+        alert("calling ImageCategoryDetail/Get?folderId: from showModelInfoDialog\nfolderId=" + folderId);
+
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
