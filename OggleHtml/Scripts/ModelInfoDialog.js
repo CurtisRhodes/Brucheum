@@ -29,8 +29,7 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
         return;
     }
 
-    if (document.domain === 'localhost')
-        alert("calling ImageCategoryDetail/Get?folderId: from showModelInfoDialog\nfolderId=" + folderId);
+    //if (document.domain === 'localhost') alert("calling ImageCategoryDetail/Get?folderId: from showModelInfoDialog\nfolderId=" + folderId);
 
     $.ajax({
         type: "GET",

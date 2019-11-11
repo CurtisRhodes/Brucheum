@@ -27,7 +27,11 @@ function setUserPermissions() {
             else {
                 sendEmailToYourself("ERROR IN Permissions.js GetUserRoles",
                     "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned" +
-                    " Message: " + errorMessage);
+                    " Message: " + roleModel.Success);
+
+                if (document.domain === 'localhost') alert("ERROR IN Permissions.js GetUserRoles"+
+                    "\napi/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned" +
+                    "\nMessage: " + roleModel.Success);
             }
         },
         error: function (jqXHR) {
@@ -50,7 +54,8 @@ function isInRole(roleName) {
     var userpermissons = window.localStorage["userPermissons"];
     if (isNullorUndefined(userpermissons)) {
         //if (document.domain === 'localhost') alert("userpermissons not FOUND! Calling setUserPermissions()");
-        setUserPermissions(roleName);
+        //setUserPermissions(roleName);
+        return false;
     }
     //if (document.domain === 'localhost') alert("userName: [" + userName + "] having role: [" + roleName + "] searched for");
     var permissonsItems = userpermissons.split(",");

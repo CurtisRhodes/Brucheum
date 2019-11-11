@@ -74,7 +74,6 @@ header {
     font-size: 18px;
     padding: 3px;
     color: #000;
-    text-decoration: none;
     background-color: aliceblue;
     margin-left: 40px;
     margin-top: 5px;
@@ -216,14 +215,15 @@ header {
 }
 
 .babesArchive {
-    margin: 20px;
+    margin-top: 5px;
+    margin-left: 20px;
     border: solid thin #444;
-    padding: 3px 5px;
+    padding: 3px;
+    height: 35px;
     background-color: aliceblue;
     border-radius: 10px;
-    font-size: 16px;
-    color: var(--oggleTitleColor);
-    text-decoration: underline;
+    font-size: 18px;
+    color: var(--oggleTitleColor);    
 }
 
 

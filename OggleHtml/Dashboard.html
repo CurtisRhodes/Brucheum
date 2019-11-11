@@ -154,6 +154,7 @@
                     <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
                     <div class="clickable" onclick="$('#createNewFolderDialog').dialog('open');">Create New Folder</div>
                     <div class="clickable adminLevelOption" onclick="showMoveFolderDialog();">Move Folder</div>
+                    <div class="clickable adminLevelOption" onclick="showCopyFolderDialog();">Copy Folder</div>
                     <div class="clickable adminLevelOption" onclick="$('#renameFolderCrud').dialog('open');">Rename Folder</div>
                     <div class="clickable adminLevelOption" onclick="loadProperties()">load Properties</div>
                     <div class="clickable adminLevelOption" onclick="$('#createStaticPagesCrud').dialog('open');">Create Static Pages</div>
@@ -206,12 +207,21 @@
                 </div>
 
                 <div id="moveFolderCrud" class="dashboardToggle" title="Move Folder">
+                    <div><span>folder to move</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
                     <div>
                         <span>new parent </span><div onclick="$('#partialViewTreeContainer').dialog('open');" class="toggleButton">...</div>
-                        <input id="txtFolderToMove" class="txtPartialDirTreePath roundedInput" readonly="readonly" />
+                        <input class="txtPartialDirTreePath roundedInput" readonly="readonly" />
                     </div>
-                    <div><span>move folder</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
                     <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
+                </div>
+
+                <div id="copyFolderCrud" class="dashboardToggle" title="Copy Folder">
+                    <div><span>folder to copy</span><input id="txtNewStepParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                    <div>
+                        <span>new parent </span><div onclick="$('#partialViewTreeContainer').dialog('open');" class="toggleButton">...</div>
+                        <input class="txtPartialDirTreePath roundedInput" readonly="readonly" />
+                    </div>
+                    <div class="roundendButton" onclick="copyFolder()">Copy Folder</div>
                 </div>
 
                 <div id="partialViewTreeContainer" title="Select Folder to move">
@@ -250,16 +260,16 @@
                 </div>
 
                 <!--
-            <div id="videoCrud" class="dashboardToggle">
-                <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
-                <div class="floatingCrudContainer">
-                    <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
-                    <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
-                    <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
-                    <div class="roundendButton" onclick="addVideo()">Insert</div>
-                </div>
+        <div id="videoCrud" class="dashboardToggle">
+            <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
+            <div class="floatingCrudContainer">
+                <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
+                <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
+                <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
+                <div class="roundendButton" onclick="addVideo()">Insert</div>
             </div>
-        -->
+        </div>
+    -->
             </div>
             <div id="rightColumn"></div>
         </div>
@@ -276,6 +286,7 @@
     <div w3-include-html="Snippets/Register.html"></div>
 
     <script>
+        var permissionsSet = false;
         $(document).ready(function () {
             includeHTML();
 
@@ -291,14 +302,21 @@
                     setOggleHeader("admin", 3910);
                     setOggleFooter('boobs');
                     buildDirectoryTree();                    
-                    logPageHit(3910, getCookieValue("VisitorId"), "Dashboard");
-                        
-                    if (isInRole("Oggle admin")) {
-                        $('.adminLevelOption').show();
+                    //logPageHit(3910, getCookieValue("VisitorId"), "Dashboard");
 
-                    }
-                    //setUserPermissions();
+                    setUserPermissions();
+                    var waiter2 = setInterval(function () {
+                        dots += "* ";
+                        $('#dots').html(dots);
+                        if (permissionsSet === true) {
+                            $('#dots').html('');
+                            clearInterval(waiter2);
 
+                            if (isInRole("Oggle admin")) {
+                                $('.adminLevelOption').show();
+                            }
+                        }
+                    }, 300);
                 }
             }, 300);
 
@@ -310,9 +328,6 @@
             //window.addEventListener("beforeunload", detectUnload());
             //window.addEventListener("beforeunload", function (event) { ... });
             //window.onbeforeunload = function (event) { ... };
-
-
-
         });
 
 
@@ -360,6 +375,7 @@
                 hide: { effect: "blind" },
                 width: "400"
             });
+
             $('#renameFolderCrud').dialog({
                 autoOpen: false,
                 show: { effect: "fade" },
@@ -386,6 +402,13 @@
             });
 
             $('#moveFolderCrud').dialog({
+                autoOpen: false,
+                show: { effect: "fade" },
+                hide: { effect: "blind" },
+                width: "400"
+            });
+
+            $('#copyFolderCrud').dialog({
                 autoOpen: false,
                 show: { effect: "fade" },
                 hide: { effect: "blind" },

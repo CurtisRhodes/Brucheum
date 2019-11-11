@@ -13,6 +13,21 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
+    public class ImageLinksModel
+    {
+        public ImageLinksModel()
+        {
+            Files = new List<VwLink>();
+            SubDirs = new List<CategoryTreeModel>();
+        }
+        public int FoldrerId { get; set; }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public List<VwLink> Files { get; set; }
+        public List<CategoryTreeModel> SubDirs { get; set; }
+        public string Success { get; set; }
+    }
+
     public class CategoryTreeModel
     {
         public CategoryTreeModel()
@@ -21,16 +36,16 @@ namespace WebApi.Models
         }
         public int FolderId { get; set; }
         public int ParentId { get; set; }
-        public long Length { get; set; }
         public string DirectoryName { get; set; }
         public string DanniPath { get; set; }
         public string RootFolder { get; set; }
         public string Link { get; set; }
         public string LinkId { get; set; }
-        public int SubDirCount { get; set; }
         public int FileCount { get; set; }
-        public int TotalFiles { get; set; }
-        public int GrandTotalFiles { get; set; }
+        public int SubDirCount { get; set; }
+        public int ChildFiles { get; set; }
+        public int Links { get; set; }
+        public int IsStepChild { get; set; }
         public List<CategoryTreeModel> SubDirs { get; set; }
     }
 
@@ -73,6 +88,15 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
+    public class StepchildModel
+    {
+        public int Parent { get; set; }
+        public int Child { get; set; }
+        public string Link { get; set; }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public int SortOrder { get; set; }
+    }
     public class AddLinkModel
     {
         public int FolderId { get; set; }

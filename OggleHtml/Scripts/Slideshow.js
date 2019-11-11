@@ -334,7 +334,7 @@ function closeViewer(calledFrom) {
     if (calledFrom !== undefined) {
         closeMethod = calledFrom;
     }
-    if (sessionCount > 1) {
+    if (sessionCount > 10) {
         sendEmailToYourself("slideshow: " + imageViewerFolderName + ". Images Viewed: " + sessionCount,
             "Close method: " + closeMethod + ".<br/>Ip: " + getCookieValue("IpAddress"));
         if (document.domain === 'localhost')

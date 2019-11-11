@@ -241,7 +241,8 @@ function openLink(folderId) {
 
 function setFolderImage(linkId, folderId, level) {
 
-    //if (document.domain === 'localhost') alert("calling Updatre from setFolderImage. linkId: " + "&folderId=" + folderId + "&level=" + level);
+    if (document.domain === 'localhost')
+        alert("setFolderImage. \nlinkId: "+linkId + "\nfolderId=" + folderId + "\nlevel=" + level);
 
     $.ajax({
         type: "PUT",

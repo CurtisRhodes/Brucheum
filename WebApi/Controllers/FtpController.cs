@@ -706,9 +706,19 @@ namespace WebApi
                                 goDaddyrow = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
                                 if (goDaddyrow != null)
                                 {
-                                    
-                                    
-                                    newGoDaddyLink = linkPrefix + dbDestinationFolder.FolderName + "/" + dbSourceFolder.FolderName + "/" + dbSourceFolder.FolderName + "_" + linkId + fileName.Substring(fileName.Length - 4);
+                                    newGoDaddyLink = linkPrefix + dbDestinationFolder.FolderName + "/" +
+                                        
+                                        dbSourceFolder.FolderName + "/" +
+
+                                        dbSourceFolder.FolderName + "_" + linkId + fileName.Substring(fileName.Length - 4);
+
+                                    //newGoDaddyLink = linkPrefix + dbDestinationFolder.FolderName + "/" +
+                                    //    dbSourceFolder.FolderName + "/" +
+                                    //    dbSourceFolder.FolderName + "_" +
+                                    //    linkId + fileName.Substring(fileName.Length - 4);
+
+
+
 
 
 
@@ -957,4 +967,37 @@ namespace WebApi
         }
     }
 
+    [EnableCors("*", "*", "*")]
+    public class FolderController : ApiController
+    {
+        [HttpPost]
+        public SuccessModel CopyFolder(StepchildModel newSubFolder)
+        {
+            SuccessModel successModel = new SuccessModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    var childFolder = db.CategoryFolders.Where(f => f.Id == newSubFolder.Child).FirstOrDefault();
+                    var childFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == childFolder.Id).FirstOrDefault();
+
+                    StepChild stepChild = new StepChild()
+                    {
+                        Parent = newSubFolder.Parent,
+                        Child = newSubFolder.Child,
+                        Link = childFolderDetails.FolderImage,
+                        FolderName = childFolder.FolderName,
+                        RootFolder = childFolder.RootFolder,
+                        SortOrder = 99
+                    };
+                    db.StepChildren.Add(stepChild);
+                    db.SaveChanges();
+                    successModel.Success = "ok";
+                }
+            }
+            catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }
+            return successModel;
+        }
+
+    }
 }

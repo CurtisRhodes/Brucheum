@@ -61,7 +61,6 @@ namespace WebApi.Controllers
         //    public string Tag { get; set; }
         //}
 
-
         private string HeadHtml(int folderId, string folderName)
         {
             MetaTagResultsModel metaTagResults = new MetaTagResultsModel();
@@ -255,14 +254,11 @@ namespace WebApi.Controllers
                     imagesCount++;
                 }
                 //  SUBFOLDERS
-                List<VwDirTreeUnion> subDirs = db.VwDirTreesUnion.Where(f => f.Parent == folderId).OrderBy(f => f.SortOrder).ThenBy(f => f.Id).ToList();
-                foreach (VwDirTreeUnion subDir in subDirs)
+                List<VwDirTree> subDirs = db.VwDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.SortOrder).ThenBy(f => f.Id).ToList();
+                foreach (VwDirTree subDir in subDirs)
                 {
                     string fullerFolderName = subDir.RootFolder + "/" + Helpers.GetCustomStaticFolderName(subDir.Id, subDir.FolderName);
-
-                    int subDirFileCount = subDir.FileCount + subDir.TotalFiles + subDir.GrandTotalFiles;
-
-
+                    int subDirFileCount = Math.Max(subDir.FileCount, subDir.SubDirCount);
                     bodyHtml += "<div class='" + imageFrameClass + "'>" +
                         "<div class='folderImageFrame' onclick='reportThenPerformEvent(\"SUB\",\"" + subDir.Id + "\")'>" +
                         "<img class='folderImage' src='" + subDir.Link + "'/>" +
@@ -289,86 +285,6 @@ namespace WebApi.Controllers
             "</div>";
             return bodyHtml;
         }
-
-        //private string Slideshow()
-        //{
-        //    return
-        //    "\n<div id='imageViewerDialog' class='fullScreenViewer'>\n" +
-        //        "<div id = 'viewerButtonsRow' class='imageViewerHeaderRow'>\n" +
-        //            "<div class='viewerButtonsRowSection'>\n" +
-        //                "<img id = 'imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/images/comment.png' />" +
-        //            "</div>\n" +
-        //            "<span id = 'imageViewerHeaderTitle' class='imageViewerTitle'></span>" +
-        //            "<div class='viewerButtonsRowSection'>" +
-        //                "<div class='floatRight' style='margin-left: 44px;' onclick='closeViewer();'><img src='/images/close.png' /></div>\n" +
-        //                "<div class='floatRight' onclick=\"runSlideShow('faster')\"><img id='fasterSlideshow' title='faster' src='/images/slideshowFaster.png' /></div>\n" +
-        //                "<div id='txtStartSlideShow' class='txtSlideShow floatRight' onclick='runSlideShow(\"start\");'>start slideshow</div>\n"+
-        //                "<div class='floatRight' onclick=\"runSlideShow('slower')\"><img id='slowerSlideShow' title='slower slideshow' src='/images/slideshowSlower.png' /></div>\n" +
-        //                "<div class='floatRight' onclick=\"blowupImage()\"><img class='popoutBox' src='/images/expand02.png' /></div>\n" +
-        //            "</div>\n" +
-        //        "</div>\n" +
-        //        "<div id='leftClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slide(\"prev\")'></div>" +
-        //        "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slide(\"next\")' ></div>\n" +
-        //        "<div id='viewerImageContainer' class='expandoImageDiv'>\n" +
-        //            "<img id='viewerImage' class='expandoImage'/>\n" +
-        //        "</div>\n" +
-        //     "</div>\n";
-        //}
-
-        //private string CommentDialog()
-        //{
-        //    return "\n<div id='imageCommentDialog' class='displayHidden commentDialog' title='Write a fantasy about this image'>\n" +
-        //      "<div class='commentDialogContentArea'>\n" +
-        //        "<div class='center'><img id='commentDialogImage' class='commentDialogImage' /></div>\n" +
-        //        "<div><input id='txtCommentTitle' tabindex='1' class='roundedInput commentTitleText' placeholder='Give your comment a title' /></div>\n" +
-        //        "<div id='imageCommentEditor' tabindex='2'></div>\n" +
-        //        "<div id='divSaveFantasy' class='roundendButton clickable commentDialogButton inline' onclick='saveComment()'>save</div>\n" +
-        //        "<div id='commentInstructions' class='loginComment inline'>log in to view comments</div>\n" +
-        //      "</div>\n" +
-        //    "</div>\n";
-        //}
-
-        //private string CategoryDialog()
-        //{
-        //    return "<div id='folderCategoryDialog' class='displayHidden' title='' onmouseleave='considerClosingCategoryDialog()'>\n" +
-        //    "    <div><textarea id='catDlgDescription' class='catDlgTextArea'></textarea></div>\n" +
-        //    "</div>\n";
-        //}
-
-        //private string ModelInfoDialog()
-        //{
-        //    return "<div id = 'modelInfoDialog' class='oggleDialogWindow' onmouseleave='considerClosingModelInfoDialog()'>\n" +
-        //    "       <div id = 'modelInfoEditArea' class='displayHidden'>\n" +
-        //    "        <div class='flexContainer'>\n" +
-        //    "            <div class='floatLeft'>\n" +
-        //    "                <div class='modelInfoDialogLabel'>name</div><input id='txtFolderName' class='modelDialogInput' /><br />\n" +
-        //    "                <div class='modelInfoDialogLabel'>from</div><input id='txtNationality' class='modelDialogInput' /><br />\n" +
-        //    "                <div class='modelInfoDialogLabel'>born</div><input id='txtBorn' class='modelDialogInput' /><br />\n" +
-        //    "                <div class='modelInfoDialogLabel'>boobs</div><input id='txtBoobs' class='modelDialogInput' /><br />\n" +
-        //    "                <div class='modelInfoDialogLabel'>figure</div><input id='txtMeasurements' class='modelDialogInput' />\n" +
-        //    "            </div>\n" +
-        //    "            <div class='floatLeft'>\n" +
-        //    "                <img id = 'modelDialogThumbNailImage' src='/images/redballon.png' class='modelDialogImage' />\n" +
-        //    "            </div>\n" +
-        //    "       </div>\n" +
-        //    "       <div class='modelInfoDialogLabel'>comment</div>\n" +
-        //    "       <div><textarea id='modelInfoDialogComment' class='modelInfoCommentArea'></textarea></div>\n" +
-        //    "       <div class='modelInfoDialogLabel'>trackbacks</div>\n" +
-        //    "       <div id='modelInfoDialogTrackBack'>\n" +
-        //    "           <div class='hrefLabel'>href</div><input id = 'txtLinkHref' class='modelDialogInput' />\n" +
-        //    "            <div class='hrefLabel'>label</div><input id = 'txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />\n" +
-        //    "            <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
-        //    "       </div>\n" +
-        //    "        <div id = 'externalLinks' class='trackbackLinksArea'></div>\n" +
-        //    "    </div>\n" +
-        //    "    <div id = 'modelInfoViewOnlyArea' class='displayHidden'>\n" +
-        //    "        <div class='viewOnlyMessage'>If you you know who this is Please click Edit</div>\n" +
-        //    "        <div id = 'unknownModelLinks' class='smallTextArea'></div>\n" +
-        //    "    </div>\n" +
-        //    "    <a id = 'modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Edit</a>\n" +
-        //    "</div>\n";
-        //}
-
     }
 }
 

@@ -47,26 +47,19 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
             if (imageHitSuccessModel.Success === "ok") {
                 var imageHits = imageHitSuccessModel.ImageHits;
                 var userHits = imageHitSuccessModel.UserHits;
-                if (imageHitSuccessModel.IpAddress !== "68.203.90.183") {
-                    if (verbosity > 30) {
-                        sendEmailToYourself("logImageHit SUCCESS " + imageHitSuccessModel.PageName,
-                            "IpAddress: " + imageHitSuccessModel.IpAddress + " imageHits: " + imageHits + " user hits: " + userHits + "  initialHit: " + isInitialHit);
-                    }
+                if (verbosity > 10) {
+                    sendEmailToYourself("logImageHit SUCCESS",
+                        "IpAddress: " + imageHitSuccessModel.IpAddress + "<br/>imageHits: " + imageHits + "<br/>user hits: " + userHits + "<br/>initialHit: " + isInitialHit);
+                    if (document.domain === 'localhost')
+                        alert("logImageHit SUCCESS pageName:" + imageHitSuccessModel.Success +
+                            "\nIpAddress: " + imageHitSuccessModel.IpAddress + "\nimageHits: " + imageHits + "\nuser hits: " + userHits + "\ninitialHit: " + isInitialHit);
                 }
-                //else
-                //    alert("logImageHit SUCCESS pageName:" + imageHitSuccessModel.PageName +
-                //        "IpAddress: " + imageHitSuccessModel.IpAddress + " imageHits: " + imageHits + " user hits: " + userHits + "  initialHit: " + isInitialHit);
-
-                //console.log(visitorId + " viewed Image imageHits: " + imageHits + " user hits: " + userHits);
             }
             else {
-                //console.log("logImageHit: " + imageHitSuccessModel.Success);
-                //if (imageHitSuccessModel.IpAddress !== "68.203.90.183") {
-                //if (ipAddr !== "68.203.90.183")
-
-
                 if (imageHitSuccessModel.Success.Contains("Duplicate entry")) {
                     sendEmailToYourself("logImageHit Duplicate entry", "utcDateTime: " + imageHitSuccessModel.HitDateTime);
+                    if (document.domain === 'localhost')
+                        alert("logImageHit Duplicate entry\nutcDateTime: " + imageHitSuccessModel.HitDateTime);
                 }
                 else {
                     sendEmailToYourself("Some other Ajax fail in Hitcounter.js logImageHit",
@@ -422,7 +415,7 @@ function logPageHit(pageId, visitorId, calledFrom) {
                 }
 
                 // MOVE PAGE HITS TO FOOTER SOMEDAY
-                $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits);
+                $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits.toLocaleString());
             
                 if (verbosity > 11) {
                     if (pageHitSuccessModel.RootFolder !== "playboy") {

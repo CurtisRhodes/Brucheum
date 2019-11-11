@@ -125,32 +125,6 @@ function getBreadCrumbs(folderId) {
     });
 }
 
-function slowlyHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
-    forgetHomeFolderInfoDialog = false;
-    setTimeout(function () {
-        if (forgetHomeFolderInfoDialog === false) {
-            if (typeof pause === 'function')
-                pause();
-            showHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder);
-        }
-    }, 1100);
-}
-
-function showHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
-
-    //alert("showHomeFolderInfoDialog(index: " + index + ", folderName: " + folderName + ", folderId: " + folderId + ", parentId: " + parentId + ", rootFolder: " + rootFolder + ")");
-
-    if (rootFolder === "playboy" && index > 4 || rootFolder === "archive" && index > 2) {
-        //alert("showHomeFolderInfoDialog   rootFolder: " + rootFolder);
-        showModelInfoDialog(folderName, folderId, 'Images/redballon.png');
-        reportThenPerformEvent//("CMX", folderId);
-    }
-    else {
-        //alert("showHomeFolderInfoDialog   rootFolder: " + rootFolder + "  index: " + index);
-        showCategoryDialog(folderId);
-    }
-}
-
 function getAlbumImages(folderId) {
     try {
         currentAlbumFolderId = folderId;
@@ -171,7 +145,7 @@ function getAlbumImages(folderId) {
                 else {
                     $('#imagePageLoadingGif').hide();
                     sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
-                    //alert("getImageLinks: " + imageLinksModel.Success);
+                    if (document.domain === 'localhost') alert("jQuery fail in Album.js: getAlbumImages\n" + imageLinksModel.Success);
                 }
             },
             error: function (jqXHR) {
@@ -205,28 +179,20 @@ function processImages(imageLinksModel) {
     //    alert("isInRole('logged in user'): " + isInRole("logged in user"));
 
     var imageEditor = isInRole("Image Editor");
-    imageFrameClass = "imageFrame";
     $.each(imageLinksModel.Files, function (idx, imageModelFile) {
-        // add files to array
-        //imageArray.push({
-        //    Link: imageModelFile.Link.replace(/ /g, "%20"),
-        //    LinkId: imageModelFile.LinkId
-        //});
-
-        if (imageEditor)
-        {
+        imageFrameClass = "imageFrame";
+        if (imageEditor) {
             if (imageLinksModel.RootFolder === "archive") {
                 if (imageModelFile.LinkCount > 1) {
                     imageFrameClass = "multiLinkImageFrame";
                 }
             }
             else {
-                if (imageModelFile.LinkCount > 1) {
+                if (imageModelFile.LinkCount !== "1") {
                     imageFrameClass = "nonLocalImageFrame";
                 }
             }
         }
-
         $('#imageContainer').append("<div id='img" + idx + "' class='" + imageFrameClass + "'><img class='thumbImage' "+
             " oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='startSlideShow(" + idx + ")'" +
             " src='" + imageModelFile.Link + "'/></div>");
@@ -239,10 +205,10 @@ function processImages(imageLinksModel) {
             subDir.Link = "Images/redballon.png";
         }
         //$('#imageContainer').append("<div class='" + imageFrameClass + "' onclick=window.location.href='/album.html?folder=" + subDir.FolderId + "'>" +
-        $('#imageContainer').append("<div class='" + imageFrameClass + "' onclick='reportThenPerformEvent(\"SUB\",\"" + subDir.FolderId + "\")'>" +
+        $('#imageContainer').append("<div class='" + imageFrameClass + "' onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.FolderId + "\")'>" +
             "<img class='folderImage' src='" + subDir.Link + "'/>" +
             //"<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "</div></div>");
-            "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.Length + ")</div></div>");
+            "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + Math.max(subDir.SubDirCount, subDir.FileCount) + ")</div></div>");
     });
 
     if (imageLinksModel.SubDirs.length > 0) {
@@ -258,6 +224,14 @@ function processImages(imageLinksModel) {
 
     $('#imagePageLoadingGif').hide();
     resizeImageContainer();
+}
+
+function subFolderPreClick(isStepChild, folderId) {
+    //alert("subFolderPreClick. folderId: " + folderId + " isStepChild: " + isStepChild);
+    if (isStepChild === "0")
+        reportThenPerformEvent("SUB", folderId);
+    else
+        reportThenPerformEvent("SSB", folderId);
 }
 
 function resizeImageContainer() {
@@ -566,5 +540,31 @@ function contextMenuAction(action) {
         default:
             sendEmailToYourself("error in album.js contextMenuAction ", "Unhandeled switch case option.  Action: " + action);
             //alert("contextMenuAction action: " + action);
+    }
+}
+
+function slowlyHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
+    forgetHomeFolderInfoDialog = false;
+    setTimeout(function () {
+        if (forgetHomeFolderInfoDialog === false) {
+            if (typeof pause === 'function')
+                pause();
+            showHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder);
+        }
+    }, 1100);
+}
+
+function showHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
+
+    //alert("showHomeFolderInfoDialog(index: " + index + ", folderName: " + folderName + ", folderId: " + folderId + ", parentId: " + parentId + ", rootFolder: " + rootFolder + ")");
+
+    if (rootFolder === "playboy" && index > 4 || rootFolder === "archive" && index > 2) {
+        //alert("showHomeFolderInfoDialog   rootFolder: " + rootFolder);
+        showModelInfoDialog(folderName, folderId, 'Images/redballon.png');
+        reportThenPerformEvent//("CMX", folderId);
+    }
+    else {
+        //alert("showHomeFolderInfoDialog   rootFolder: " + rootFolder + "  index: " + index);
+        showCategoryDialog(folderId);
     }
 }

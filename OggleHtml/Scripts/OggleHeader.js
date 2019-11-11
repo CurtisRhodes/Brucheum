@@ -55,14 +55,14 @@
             break;
         case "playboy":
         case "playmates":
+            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",1132)'><img  class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
             subheaderContent =
                 "                <a href='javascript:reportThenPerformEvent(\"BLC\",1132)'>Centerfolds,</a>\n" +
                 "                <a href='javascript:reportThenPerformEvent(\"BLC\",1986)'> magazine covers,</a>\n" +
                 "                <a href='javascript:reportThenPerformEvent(\"BLC\",3796)'> cybergirls,</a> and\n" +
                 "                <a href='javascript:reportThenPerformEvent(\"BLC\",2601)'> extras</a>\n";
 
-            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",1132)'><img  class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
-            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",3907)' title='Spin through the links to land on random portrait images. ' >Playmate Ranker</a></div>\n";
+            boobsRankerLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\",3)' class='babesArchive'>big boobs archive</a> <div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",3908)' title='Spin through the links to land on random portrait images. ' >boobs ranker</a></div>\n";
             break;
         case "porn":
         case "sluts":
@@ -78,6 +78,7 @@
             boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",3909)' title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
             break;
         case "admin":
+            $("#divLoginArea").hide();
             subheaderContent = "Admin";
             break;
         case "blog":
@@ -131,7 +132,7 @@
             "                   <a href='https://www.babepedia.com' target='_blank'><img src='/Images/babepedia.png' class='trackbackImage'></a>" +
             "               </div>\n" +
             "           </div>\n" +
-            "           <div class='loginArea'>\n" +
+            "           <div id='divLoginArea' class='loginArea'>\n" +
             "               <div id='optionLoggedIn' class='displayHidden'>\n" +
             "                   <div class='menuTab adminLevelRequired displayHidden'><a href='/Dashboard.html'>Dashboard</a></div>\n" +
             "                   <div class='menuTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +

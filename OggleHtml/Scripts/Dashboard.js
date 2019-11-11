@@ -267,6 +267,11 @@ function showMoveFolderDialog() {
     
 }
 
+function showCopyFolderDialog() {
+    $('#copyFolderCrud').dialog('open');
+    buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
+}
+
 function renameFolder() {
     var start = Date.now();
     $('#dashBoardLoadingGif').fadeIn();
@@ -526,9 +531,56 @@ function moveFolder() {
     //$('#moveFolderCrud').on('dialogclose', function (event) {
 }
 
-function runPageHitsReport() {
-    $('#dashBoardLoadingGi  f').show();
+function copyFolder() {
+    //$('#dataifyInfo').show().html("Preparing to Move Folder");
+    $('#dataifyInfo').show().html("Copying Folder");
+    //$('#progressBar').show();
+    $('#dashBoardLoadingGif').show();
 
+    var stepchildModel = {
+        Parent: partialViewSelectedItemId,
+        Child: dashboardMainSelectedTreeId,
+        Link: "",
+        RootFolder: "",
+        SortOrder: 99
+    };
+
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/Folder",
+        data: stepchildModel,
+        success: function (successModel) {
+            $('#dashBoardLoadingGif').hide();
+            if (successModel.Success === "ok") {
+
+                displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " copied to " + $('.txtPartialDirTreePath').val());
+
+                $('#txtNewFolderParent').val('');
+                $('#dataifyInfo').hide();
+
+                //var changeLogModel = {
+                //    PageId: dashboardMainSelectedTreeId,
+                //    PageName: $('.txtPartialDirTreePath').val(),
+                //    Activity: "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val()
+                //};
+                //logActivity(changeLogModel);
+
+                $('.txtPartialDirTreePath').val('');
+                $('#moveFolderCrud').dialog("close");
+                buildDirectoryTree();
+            }
+            else
+                alert("copy stepchild: " + successModel.Success);
+        },
+        error: function (xhr) {
+            $('#dashBoardLoadingGif').hide();
+            alert("Move Folder xhr error: " + getXHRErrorDetails(xhr));
+        }
+    });
+    //$('#moveFolderCrud').on('dialogclose', function (event) {
+}
+function runPageHitsReport() {
+    $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/MetricsReports",

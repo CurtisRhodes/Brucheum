@@ -39,7 +39,7 @@ function buildDirTree(dest, treeId, startNode, endNode) {
 function recurrBuildDirTree(dir, treeId) {
     dirTreeTab += dirTreeTabIndent;
     var imgSrc = "";
-    var subDirtxt = "";
+    var txtFileCount = "";
     var expandClass = "";
     $.each(dir.SubDirs, function (idx, subDir) {
         if (isNullorUndefined(subDir.Link))
@@ -54,16 +54,17 @@ function recurrBuildDirTree(dir, treeId) {
                 expandMode = "+";
         }
 
+        txtFileCount = "";
+        if (subDir.FileCount > 0) 
+            txtFileCount = subDir.FileCount.toLocaleString();
         if (subDir.SubDirCount > 0) {
-            subDirtxt = " (" + subDir.SubDirCount + ")";
-            totalFolders += subDir.SubDirCount;
+            if (txtFileCount === "") 
+                txtFileCount = subDir.SubDirCount;            
+            else
+                txtFileCount += " (" + subDir.SubDirCount + ")";
         }
-        else
-            subDirtxt = "";
 
-        //if (subDir.FolderId === 1205) {
-        //    alert("treeId: " + treeId +"  subDir.FolderId: "+ subDir.FolderId + "  subDir.DirectoryName: " + subDir.DirectoryName);
-        //}
+        //if (subDir.FolderId === 3956) { alert("subDir.SubDirCount: " + subDir.SubDirCount); }
 
         dirTreeContainer += "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
             + "<span id='S" + subDir.LinkId + "' onclick=toggleDirTree('" + subDir.LinkId + "') >[" + expandMode + "] </span>"
@@ -71,8 +72,7 @@ function recurrBuildDirTree(dir, treeId) {
             + "oncontextmenu=showDirTreeContextMenu('" + subDir.LinkId + "','" + subDir.FolderId + "') "
             + "onmouseover=showFolderImage('" + encodeURI(imgSrc) + "') onmouseout=$('.dirTreeImageContainer').hide() >"
             + subDir.DirectoryName.replace(".OGGLEBOOBLE.COM", "") + "</div>       <span class='fileCount'>  : "
-            + subDir.Length.toLocaleString() + subDirtxt + "</span></div>"
-            + "<div class='" + expandClass + "' id=" + subDir.LinkId + ">";
+            + txtFileCount + "</span></div>" + "<div class='" + expandClass + "' id=" + subDir.LinkId + ">";
 
         totalPics += subDir.Length;
         //totalFolders++;

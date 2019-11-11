@@ -16,7 +16,6 @@ namespace WebApi.DataContext
         public virtual DbSet<ImageLink> ImageLinks { get; set; }
         public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
 
-        public virtual DbSet<VwDirTreeUnion> VwDirTreesUnion { get; set; }
         public virtual DbSet<VwDirTree> VwDirTrees { get; set; }        
         public virtual DbSet<VideoLink> VideoLinks { get; set; }
         public virtual DbSet<VwLink> VwLinks { get; set; }
@@ -25,10 +24,26 @@ namespace WebApi.DataContext
         public virtual DbSet<MetaTag> MetaTags { get; set; }
         public virtual DbSet<RejectLink> RejectLinks { get; set; }
         public virtual DbSet<RankerVote> RankerVotes { get; set; }
-        
+        public virtual DbSet<StepChild> StepChildren { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
+    }
+
+    [Table("OggleBooble.StepChild")]
+    public partial class StepChild
+    {
+        [Key]
+        [Column(Order = 0)]
+        public int Parent { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public int Child { get; set; }
+        public string Link { get; set; }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public int SortOrder { get; set; }
     }
 
     [Table("OggleBooble.RejectLink")]
@@ -108,23 +123,6 @@ namespace WebApi.DataContext
         public int SortOrder { get; set; }
     }
 
-    [Table("OggleBooble.vwDirtree")]
-    public partial class VwDirTree
-    {
-        [Key]
-        public int Id { get; set; }
-        public int Parent { get; set; }
-        public string FolderName { get; set; }
-        public string RootFolder { get; set; }
-        public string Link { get; set; }
-        public string LinkId { get; set; }
-        public int SubDirCount { get; set; }
-        public int FileCount { get; set; }
-        public int TotalFiles { get; set; }
-        public int GrandTotalFiles { get; set; }
-        public int SortOrder { get; set; }
-    }
-
     [Table("OggleBooble.VideoLink")]
     public partial class VideoLink
     {
@@ -170,20 +168,21 @@ namespace WebApi.DataContext
         public DateTime VoteDate { get; set; }
     }
 
-    [Table("OggleBooble.vwDirtreeUnion")]
-    public partial class VwDirTreeUnion
+    [Table("OggleBooble.vwDirtree")]
+    public partial class VwDirTree
     {
         [Key]
         public int Id { get; set; }
         public int Parent { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
-        public string Link { get; set; }
         public string LinkId { get; set; }
-        public int SubDirCount { get; set; }
+        public string Link { get; set; }
         public int FileCount { get; set; }
-        public int TotalFiles { get; set; }
-        public int GrandTotalFiles { get; set; }
+        public int SubDirCount { get; set; }
+        public int ChildFiles { get; set; }
+        public int Links { get; set; }
+        public int IsStepChild { get; set; }
         public int SortOrder { get; set; }
     }
 

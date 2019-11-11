@@ -30,10 +30,10 @@ namespace WebApi
                     imageLinks.RootFolder = dbCategoryFolder.RootFolder;
                     imageLinks.FolderName = dbCategoryFolder.FolderName;
 
-                    List<VwDirTreeUnion> vwTrees = db.VwDirTreesUnion.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
+                    List<VwDirTree> vwTrees = db.VwDirTrees.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
                     string folderImage = null;
 
-                    foreach (VwDirTreeUnion vwTree in vwTrees)
+                    foreach (VwDirTree vwTree in vwTrees)
                     {
                         if (vwTree.Link == null)
                             folderImage = Helpers.GetFirstImage(vwTree.Id);
@@ -45,7 +45,10 @@ namespace WebApi
                             FolderId = vwTree.Id,
                             DirectoryName = vwTree.FolderName,
                             ParentId = vwTree.Parent,
-                            Length = vwTree.FileCount + vwTree.TotalFiles + vwTree.GrandTotalFiles,
+                            SubDirCount = vwTree.SubDirCount,
+                            FileCount = vwTree.FileCount,
+                            //Length = vwTree.FileCount + vwTree.TotalFiles + vwTree.GrandTotalFiles,
+                            IsStepChild = vwTree.IsStepChild,
                             Link = vwTree.Link
                         });
                     }
@@ -317,14 +320,14 @@ namespace WebApi
             var timer = new System.Diagnostics.Stopwatch();
             timer.Start();
             var dirTree = new CategoryTreeModel() { FolderId = root };
-            List<VwDirTree> vwDirTree = new List<VwDirTree>();
+            List<VwDirTree> vwDirTrees = new List<VwDirTree>();
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
                 // wow did this speed things up
-                vwDirTree = db.VwDirTrees.ToList();
+                vwDirTrees = db.VwDirTrees.ToList();
                 //GetCatTreeRecurr(danni, db);
             }
-            GetDirTreeRecurr(dirTree, vwDirTree, "");
+            GetDirTreeRecurr(dirTree, vwDirTrees, "");
 
             timer.Stop();
             System.Diagnostics.Debug.WriteLine("RebuildCatTree took: " + timer.Elapsed);
@@ -345,7 +348,8 @@ namespace WebApi
                     Link = vwTree.Link,
                     LinkId = vwTree.LinkId,
                     SubDirCount = vwTree.SubDirCount,
-                    Length = vwTree.FileCount + vwTree.TotalFiles + vwTree.GrandTotalFiles,
+                    FileCount = vwTree.FileCount,
+                    IsStepChild = vwTree.IsStepChild,
                     DanniPath = (path + "/" + vwTree.FolderName).Replace(" ", "%20")
                 };
                 subChild.LinkId = subChild.GetHashCode().ToString();

@@ -116,15 +116,6 @@ namespace WebApi
                     //success.UserName = visitor.UserName;
                     success.Success = "ok";
                 }
-
-
-                //using (WebStatsContext db = new WebStatsContext())
-                //{
-                //    Visitor visitor = db.Visitors.Where(v => v.IpAddress == ipAddress).FirstOrDefault();
-                //    success.VisitorId = visitor.VisitorId;
-                //    success.UserName = visitor.UserName;
-                //    success.Success = "ok";
-                //}
             }
             catch (Exception ex)
             {

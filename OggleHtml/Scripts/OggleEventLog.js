@@ -57,10 +57,16 @@ function reportThenPerformEvent(eventCode, pageId) {
                     //alert("Sub Folder Click: " + pageId);
                     window.location.href = "/album.html?folder=" + pageId;
                     break;
+                case "SSB":  //  Stepchild Subfolder Clicked
+                    //alert("Stepchild Subfolder Clicked.  FolderId: " + pageId);
+                    window.open("/album.html?folder=" + pageId, "_blank");
+                    break;
                 case "BAC":  // Archive Clicked
                 case "BCC":  // Breadcrumb Clicked
                 case "BLC":  // banner link clicked
                 case "CIC":  // carousel image clicked
+                    //alert("zzzevent: " + eventCode + "  FolderId: " + pageId);
+                    //window.open("/album.html?folder=" + pageId);
                     window.location.href = "/album.html?folder=" + pageId;
                     break;
                 case "HBX":  // Home breadcrumb Clicked
@@ -161,9 +167,9 @@ function reportClickEvent(eventCode, pageId) {
                                 ",<br/>ogEventActivitySuccess.IpAddress: " + logEventActivitySuccess.IpAddress +
                                 ",<br/>from: " + logEventActivitySuccess.VisitorDetails);
                         }
-                        if (document.domain === 'localhost')
-                            alert("Event [" + logEventActivitySuccess.EventName + "] \nPage: " + logEventActivitySuccess.PageName +
-                                "\nIp: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
+                        //if (document.domain === 'localhost')
+                        //    alert("Event [" + logEventActivitySuccess.EventName + "] \nPage: " + logEventActivitySuccess.PageName +
+                        //        "\nIp: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
                     }
                     waitingForReportClickEvent = false;
                 }
