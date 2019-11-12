@@ -240,10 +240,7 @@ function openLink(folderId) {
 }
 
 function setFolderImage(linkId, folderId, level) {
-
-    if (document.domain === 'localhost')
-        alert("setFolderImage. \nlinkId: "+linkId + "\nfolderId=" + folderId + "\nlevel=" + level);
-
+    //if (document.domain === 'localhost') alert("setFolderImage. \nlinkId: " + linkId + "\nfolderId=" + folderId + "\nlevel=" + level);
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "/api/ImageCategoryDetail/UpdateFolderImage?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level,

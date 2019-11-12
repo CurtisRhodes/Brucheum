@@ -335,7 +335,7 @@ function closeViewer(calledFrom) {
         closeMethod = calledFrom;
     }
     if (sessionCount > 10) {
-        sendEmailToYourself("slideshow: " + imageViewerFolderName + ". Images Viewed: " + sessionCount,
+        sendEmailToYourself("slideshow2: " + imageViewerFolderName + ". Images Viewed: " + sessionCount,
             "Close method: " + closeMethod + ".<br/>Ip: " + getCookieValue("IpAddress"));
         if (document.domain === 'localhost')
             alert("Close Slideshow ." + imageViewerFolderName + ".\nImages Viewed: " + sessionCount,

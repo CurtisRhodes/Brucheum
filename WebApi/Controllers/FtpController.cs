@@ -467,28 +467,27 @@ namespace WebApi
             string success = "";
             try
             {
-                int parentId = 0;
-                int rowsProcessed = 0;
-                int imagesRenamed = 0;
+                //int parentId = 0;
+                //int rowsProcessed = 0;
+                //int imagesRenamed = 0;
                 string godaddyUrlPrefix = "";
-                string sourceFolderName = "";
-                string patentPath = "";
+                //string sourceFolderName = "";
+                string parentPath = "";
                 List<CategoryFolder> subdirs = null;
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     string ftpSubDomain = ftpHost + dbSourceFolder.RootFolder + hostingPath;
-                    parentId = dbSourceFolder.Parent;
-                    godaddyUrlPrefix = "http://" + dbSourceFolder.RootFolder + ".ogglebooble.com/";
+                    //parentId = dbSourceFolder.Parent;
 
-                    sourceFolderName = dbSourceFolder.FolderName;
-                    patentPath = Helpers.GetParentPath(folderId);
+                    parentPath = Helpers.GetParentPath(folderId);
+                    string ftpPath = ftpSubDomain + parentPath + dbSourceFolder.FolderName;
 
-                    #region local repo rename folder
-                    string currentFullPath = ftpSubDomain + patentPath + "/" + dbSourceFolder.FolderName;
-                    success = FtpUtilies.RenameFolder(currentFullPath, newFolderName);
+                    success = FtpUtilies.RenameFolder(ftpPath, newFolderName);
+
                     if (success == "ok")
                     {
+                        // DO IT ON LOCAL 
                         try
                         {
                             string repoFolderCurrent = repoPath + Helpers.GetLocalParentPath(folderId) + "/" + dbSourceFolder.FolderName;
@@ -501,97 +500,18 @@ namespace WebApi
                             var err = Helpers.ErrorDetails(ex);
                             System.Diagnostics.Debug.WriteLine("file.MoveTo didnt work " + err);
                         }
-                    }
-                    #endregion
 
-                    #region rename files
-
-                    if (dbSourceFolder.FolderName.ToUpper() != newFolderName.ToUpper())
-                    {
-                        string linkid = "";
-                        string extension = "";
-                        string expectedfilename = "";
-                        string expectedlinkname = "";
-                        //string folderpath = Helpers.GetParentPath(folderId);
-                        //string parentfolderpath = Helpers.GetParentPath(parentId);
-
-                        string destinationPath = ftpSubDomain + patentPath + "/" + newFolderName;
-                        string localPath = repoPath + Helpers.GetLocalParentPath(folderId) + newFolderName;
-
-                        string[] files = FtpUtilies.GetFiles(destinationPath);
-                        foreach (string filename in files)
+                        godaddyUrlPrefix = "http://" + dbSourceFolder.RootFolder + ".ogglebooble.com/";
+                        if (dbSourceFolder.FolderName.ToUpper() != newFolderName.ToUpper())
                         {
-                            linkid = filename.Substring(filename.LastIndexOf("_") + 1, 36);
-                            extension = filename.Substring(filename.LastIndexOf("."));
-                            expectedfilename = newFolderName + "_" + linkid + extension;
+                            RenameChildFolderLinks(folderId, godaddyUrlPrefix + parentPath, newFolderName, ftpPath = ftpSubDomain + parentPath, db);
+                        }
 
-                            //string sourceFile = destinationPath + "/" + filename;
-                            //string destinationfile = destinationPath + "/" + expectedfilename;
+                        dbSourceFolder.FolderName = newFolderName;
+                        db.SaveChanges();
 
-                            var fileMoveSuccess = FtpUtilies.MoveFile(destinationPath + "/" + filename, destinationPath + "/" + expectedfilename);
-                            if (fileMoveSuccess == "ok")
-                            {
-                                #region move file in repository
-                                try
-                                {
-                                    FileInfo localFile = new FileInfo(localPath + "/" + filename);
-                                    if (localFile.Exists)
-                                    {
-                                        localFile.MoveTo(localPath + "/" + expectedfilename);
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    System.Diagnostics.Debug.WriteLine("move file on local drive : " + Helpers.ErrorDetails(ex));
-                                }
-                                #endregion
-
-                                //expectedlinkname = "http://" + dbSourceFolder.RootFolder + hostingPath + Helpers.GetLocalParentPath(folderId) + newFolderName + expectedfilename;
-                                expectedlinkname = "http://" + Helpers.GetLocalParentPath(folderId) + newFolderName + "/" + expectedfilename;
-
-                                // update database
-                                if (fileMoveSuccess == "ok")
-                                {
-                                    ImageLink godaddylink = db.ImageLinks.Where(g => g.Id == linkid).FirstOrDefault();
-                                    if (godaddylink != null)
-                                    {
-                                        godaddylink.Link = expectedlinkname;
-                                        db.SaveChanges();
-                                        imagesRenamed++;
-                                        SignalRHost.ProgressHub.PostToClient("renaminging files in: " + sourceFolderName + "  images renamed: " + imagesRenamed + " of: " + files.Count());
-                                    }
-                                    else
-                                    {
-                                        //renamereport.errors.add("missing link: " + linkid);
-                                    }
-                                    rowsProcessed++;
-                                }
-                                else
-                                {
-                                    //renamereport.errors.add("unable to rename " + filename + " message: " + success);
-                                    //renamereport.success = "unable to rename ";
-                                }
-                            }
-                        }  // each file
                     }
-                    #endregion
-
-                    dbSourceFolder.FolderName = newFolderName;
-                    db.SaveChanges();
-
-                    subdirs = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
-
-                }  // using
-                if (success == "ok")
-                {
-
-
-
-                    foreach (CategoryFolder subdir in subdirs)
-                    {
-                        //renamechildfolderlinks(subdir, folderpath + "/" + newfoldername, renamereport, db);
-                    }
-               }
+                }
             }
             catch (Exception ex)
             {
@@ -599,42 +519,37 @@ namespace WebApi
             }
             return success;
         }
-        //private void RenameChildFolderLinks(CategoryFolder folder, string newFolderPath, RepairReportModel renameReport, OggleBoobleContext db)
-        //{
-        //    string ftpPath = ftpHost + folder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(folder.Id) + folder.FolderName;
-        //    string linkId = "";
-        //    string expectedLinkName = "";
-        //    string goDaddyPrefix = "http://" + folder.RootFolder + ".ogglebooble.com/";
-        //    string[] files = FtpUtilies.GetFiles(ftpPath);
-        //    int folderRows = 0;
+        private void RenameChildFolderLinks(int parentId, string parentPath, string newFolderName, string ftpPath, OggleBoobleContext db)
+        {
+            string extension = "";
+            string renameSuccess = "";
+            string currentFile = "";
+            CategoryFolder categoryFolder;
+            List<ImageLink> imageLinks = db.ImageLinks.Where(l => l.FolderLocation == parentId).ToList();
 
-        //    foreach (string fileName in files)
-        //    {
-        //        linkId = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
-        //        ImageLink goDaddyLink = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
-        //        if (goDaddyLink != null)
-        //        {
-        //            expectedLinkName = goDaddyPrefix + newFolderPath + "/" + folder.FolderName + "/" + fileName;
-        //            if (goDaddyLink.Link != expectedLinkName)
-        //            {
-        //                goDaddyLink.Link = expectedLinkName;
-        //                db.SaveChanges();
-        //                renameReport.LinksEdited++;
+            foreach (ImageLink imageLink in imageLinks)
+            {
+                extension = imageLink.Link.Substring(imageLink.Link.LastIndexOf("."));
+                categoryFolder = db.CategoryFolders.Where(f => f.Id == imageLink.FolderLocation).First();
+                imageLink.Link = parentPath + newFolderName + "/" + newFolderName + "_" + imageLink.Id + extension;
 
-        //                SignalRHost.ProgressHub.PostToClient("Renaminging files in: " + folder.FolderName + " " + ++folderRows + "  LinksEdited: " + renameReport.LinksEdited);
+                currentFile = ftpPath + categoryFolder.FolderName + "/" + categoryFolder.FolderName + "_" + imageLink.Id + extension;
+                var newFileName = newFolderName + "_" + imageLink.Id + extension;
+                renameSuccess = FtpUtilies.RenameFolder(currentFile, newFolderName + "_" + imageLink.Id + extension);
 
-        //            }
-        //        }
-        //        else
-        //            renameReport.Errors.Add("missing link: " + linkId);
-        //        renameReport.RowsProcessed++;
-        //    }
-        //    List<CategoryFolder> subDirs = db.CategoryFolders.Where(f => f.Parent == folder.Id).ToList();
-        //    foreach (CategoryFolder subDir in subDirs)
-        //    {
-        //        RenameChildFolderLinks(subDir, newFolderPath + "/" + folder.FolderName, renameReport, db);
-        //    }
-        //}
+                if (renameSuccess != "ok") {
+                    System.Diagnostics.Debug.WriteLine("file rename fail");
+                }
+                else
+                    db.SaveChanges();
+            }
+
+            var subDirs = db.CategoryFolders.Where(f => f.Parent == parentId).ToList();
+            foreach (CategoryFolder subDir in subDirs)
+            {
+                RenameChildFolderLinks(subDir.Id, parentPath, newFolderName, ftpPath, db);
+            }
+        }
 
         [HttpPut]
         public string MoveFolder(int sourceFolderId, int destinationFolderId)
@@ -672,9 +587,8 @@ namespace WebApi
                         ImageLink goDaddyrow = null;
                         string sourceFileName = "";
                         string destinationFileName = "";
-                        string newGoDaddyLink = "";
-
-                                // local repository
+                        
+                        // local repository
                         try
                         {
                             string newFolderPath = repoPath + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + dbDestinationFolder.FolderName + "/" + dbSourceFolder.FolderName;
@@ -685,7 +599,6 @@ namespace WebApi
                                 if (repoParentFolder.Exists)
                                 {
                                     newLocalFolder.Create();
-
                                 }
                             }
                         }
@@ -706,24 +619,8 @@ namespace WebApi
                                 goDaddyrow = db.ImageLinks.Where(g => g.Id == linkId).FirstOrDefault();
                                 if (goDaddyrow != null)
                                 {
-                                    newGoDaddyLink = linkPrefix + dbDestinationFolder.FolderName + "/" +
-                                        
-                                        dbSourceFolder.FolderName + "/" +
-
+                                    goDaddyrow.Link = linkPrefix + dbDestinationFolder.FolderName + "/" + dbSourceFolder.FolderName + "/" +
                                         dbSourceFolder.FolderName + "_" + linkId + fileName.Substring(fileName.Length - 4);
-
-                                    //newGoDaddyLink = linkPrefix + dbDestinationFolder.FolderName + "/" +
-                                    //    dbSourceFolder.FolderName + "/" +
-                                    //    dbSourceFolder.FolderName + "_" +
-                                    //    linkId + fileName.Substring(fileName.Length - 4);
-
-
-
-
-
-
-
-                                    goDaddyrow.Link = newGoDaddyLink;
                                     db.SaveChanges();
                                 }
                                 //SignalRHost.ProgressHub.ShowProgressBar(fileCount, ++folderRows);
@@ -733,7 +630,7 @@ namespace WebApi
                                 try
                                 {
                                     sourceFileName = repoPath + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName + "/" + fileName;
-                                    destinationFileName = repoPath + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + dbDestinationFolder.FolderName + "/" + dbSourceFolder.FolderName  + "/" + fileName;
+                                    destinationFileName = repoPath + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + dbDestinationFolder.FolderName + "/" + dbSourceFolder.FolderName + "/" + fileName;
                                     File.Move(sourceFileName, destinationFileName);
                                 }
                                 catch (Exception ex)
@@ -745,7 +642,6 @@ namespace WebApi
                             else
                             {
                                 System.Diagnostics.Debug.WriteLine("wc. download didnt work " + success);
-
                             }
                         }
                     }

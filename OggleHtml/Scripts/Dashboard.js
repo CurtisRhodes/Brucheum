@@ -205,7 +205,7 @@ function createNewFolder() {
     });
 }
 
-function loadProperties() {
+function xxloadProperties() {
     $('#dataifyInfo').show().html("adding size info");
     $.ajax({
         type: "PATCH",
@@ -259,62 +259,6 @@ function collapseChildFolder() {
             }
         });
     }
-}
-
-function showMoveFolderDialog() {
-    $('#moveFolderCrud').dialog('open');
-    buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
-    
-}
-
-function showCopyFolderDialog() {
-    $('#copyFolderCrud').dialog('open');
-    buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
-}
-
-function renameFolder() {
-    var start = Date.now();
-    $('#dashBoardLoadingGif').fadeIn();
-    $('#dataifyInfo').show().html("renaming folder " + $('.txtLinkPath').val() + " to " + $('#txtReName').val());
-    $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val(),
-        success: function (success) {
-            $('#dashBoardLoadingGif').hide();
-            //$('#renameFolderCrud').dialog("close");
-            //$('#renameFolderCrud').hide();
-            if (success === "ok") {
-                var delta = Date.now() - start;
-                var minutes = Math.floor(delta / 60000);
-                var seconds = (delta % 60000 / 1000).toFixed(0);
-                displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
-                console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-                //buildDirectoryTree();
-
-                $('.txtLinkPath').val('');
-
-                //var changeLogModel = {
-                //    PageId: dashboardMainSelectedTreeId,
-                //    PageName: $('.txtLinkPath').val(),
-                //    Activity: "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val()
-                //};
-                //logActivity(changeLogModel);
-
-
-                $('#dataifyInfo').hide();
-            }
-            else {
-                alert("renameFolder: " + repairReport.Success);
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "renameFolder")) {
-                sendEmailToYourself("XHR ERROR in Dashboard.js renameFolder",
-                    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
-            }
-        }
-    });
 }
 
 function showAssignRolesDialog() {
@@ -402,7 +346,6 @@ function showPerfMetrics() {
     //if (document.domain === 'localhost') alert("runPageHitsReport();");
    
 }
-
 function closeMetrics() {
     $('#divHitMetrics').hide();
     $('#divAddImages').fadeIn();
@@ -417,7 +360,6 @@ function closeSortTool() {
     $('#divSortTool').hide();
     $('#divAddImages').fadeIn();
 }
-
 function loadSortImages()
 {
     $('#sortTableHeader').html(dashboardMainSelectedPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
@@ -449,11 +391,7 @@ function loadSortImages()
         }
     });
 }
-
-var sorting = false;
 function updateSortOrder() {
-    if (!sorting) {
-        sorting = true;
         var sortOrderArray = [];
         $('#sortToolContainer').children().each(function () {
             sortOrderArray.push({
@@ -473,7 +411,6 @@ function updateSortOrder() {
                 if (success === "ok") {
                     $('#dashBoardLoadingGif').hide();
                     loadSortImages();
-                    sorting = false;
                 }
                 else {
                     alert("updateSortOrder: " + success);
@@ -489,8 +426,11 @@ function updateSortOrder() {
             }
         });
     }
-}
 
+function showMoveFolderDialog() {
+    $('#moveFolderCrud').dialog('open');
+    buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
+}
 function moveFolder() {
     //$('#dataifyInfo').show().html("Preparing to Move Folder");
     $('#dataifyInfo').show().html("Moving Folder");
@@ -531,6 +471,56 @@ function moveFolder() {
     //$('#moveFolderCrud').on('dialogclose', function (event) {
 }
 
+function renameFolder() {
+    var start = Date.now();
+    $('#dashBoardLoadingGif').fadeIn();
+    $('#dataifyInfo').show().html("renaming folder " + $('.txtLinkPath').val() + " to " + $('#txtReName').val());
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val(),
+        success: function (success) {
+            $('#dashBoardLoadingGif').hide();
+            //$('#renameFolderCrud').dialog("close");
+            //$('#renameFolderCrud').hide();
+            if (success === "ok") {
+                var delta = Date.now() - start;
+                var minutes = Math.floor(delta / 60000);
+                var seconds = (delta % 60000 / 1000).toFixed(0);
+                displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
+                console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+
+                $('.txtLinkPath').val('');
+                $('#renameFolderCrud').dialog("close");
+                buildDirectoryTree();
+
+                //var changeLogModel = {
+                //    PageId: dashboardMainSelectedTreeId,
+                //    PageName: $('.txtLinkPath').val(),
+                //    Activity: "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val()
+                //};
+                //logActivity(changeLogModel);
+
+
+                $('#dataifyInfo').hide();
+            }
+            else {
+                alert("renameFolder: " + repairReport.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "renameFolder")) {
+                sendEmailToYourself("XHR ERROR in Dashboard.js renameFolder",
+                    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
+            }
+        }
+    });
+}
+
+function showCopyFolderDialog() {
+    $('#copyFolderCrud').dialog('open');
+    buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
+}
 function copyFolder() {
     //$('#dataifyInfo').show().html("Preparing to Move Folder");
     $('#dataifyInfo').show().html("Copying Folder");
@@ -579,6 +569,8 @@ function copyFolder() {
     });
     //$('#moveFolderCrud').on('dialogclose', function (event) {
 }
+
+
 function runPageHitsReport() {
     $('#dashBoardLoadingGif').show();
     $.ajax({

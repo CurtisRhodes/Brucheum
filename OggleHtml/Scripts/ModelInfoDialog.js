@@ -1,6 +1,14 @@
 ﻿var FolderDetailModel = {};
 var userName;
 
+
+// called from ModelInfoDialog.js
+//             Album.js
+//             Carousel.js
+//             Dashboard.js
+//             Slideshow.js
+//             StaticPage.js
+
 function showModelInfoDialog(modelName, folderId, currentSrc) {
 
     //if (document.domain === 'localhost') alert("showModelInfoDialog(\nmodelName: " + modelName + "\nfolderId: " + folderId + "\ncurrentSrc" + currentSrc);
@@ -45,7 +53,7 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
                 $('#txtBorn').val(folderDetails.Born);
                 $('#txtNationality').val(folderDetails.Nationality);
                 $('#txtMeasurements').val(folderDetails.Measurements);
-                $('#txtBoobs').val(folderDetails.Boobs);
+                $('#selBoobs').val(folderDetails.Boobs).change();
                 $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
 
                 if (isNullorUndefined(userName)) {
@@ -55,7 +63,7 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
                     $('#modelInfoEdit').html("Edit");
                     $('#modelInfoEdit').hide();
                     $('#modelInfoDialogComment').summernote({
-                        height: 300,
+                        height: 210,
                         codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
                         toolbar: [['codeview']]
                     });
@@ -68,7 +76,7 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
                     $("#txtBorn").datepicker();
                     $('#modelInfoDialogTrackBack').show();
                     $('#modelInfoDialogComment').summernote({
-                        height: 300,
+                        height: 210,
                         codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
                         toolbar: [['codeview']]
                     });

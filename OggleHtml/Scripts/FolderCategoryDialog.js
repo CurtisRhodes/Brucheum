@@ -30,22 +30,23 @@ function showCategoryDialog(folderId) {
                         $('#btnCatDlgMeta').show();
                         $("#btnCatDlgEdit").show();
                         $('#catDlgSummerNoteTextArea').summernote({
-                            height: 300,
-                            width: 450,
+                            height: 210,
                             codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-                            toolbar: [
-                                ['codeview']
-                                //['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
-                            ]
+                            toolbar: [['codeview']]
                         });
                         $('#catDlgSummerNoteContainer').show();
+
+                        //alert("this is the toolbar I want gone");
+                        //codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+
+
                     }
                     else {
                         $('#btnCatDlgEdit').hide();
                         $('#btnCatDlgMeta').hide();
                         $('#catDlgSummerNoteTextArea').summernote({
-                            height: 300,
-                            toolbar: "none"
+                            height: 500,
+                            toolbar: [['codeview']]
                         });
                         $('#catDlgSummerNoteTextArea').summernote('disable');
                     }

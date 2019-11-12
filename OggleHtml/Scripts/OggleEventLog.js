@@ -192,7 +192,7 @@ function reportClickEvent(eventCode, pageId) {
                     }
                     else {
                         sendEmailToYourself("xhr error in OggleEventLog reportClickEvent", "/api/ChangeLog/LogEventActivity?eventCode=" + eventCode +
-                            "pageId=" + pageId + "&visitorId=" + visitorId + " Message: " + errorMessage);
+                            "\npageId=" + pageId + "\nvisitorId=" + visitorId + "\nMessage: " + errorMessage);
                     }
                 }
             }

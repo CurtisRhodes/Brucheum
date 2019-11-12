@@ -87,8 +87,7 @@ function getBreadCrumbs(folderId) {
                                 breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" +
                                 breadCrumbModel.BreadCrumbs[i].ParentId + "\",\"" +
                                 breadCrumbModel.RootFolder + "\"); forgetHomeFolderInfoDialog=false;' onmouseout='forgetHomeFolderInfoDialog=true;' " +
-                                "onclick='showHomeFolderInfoDialog(" +
-                                Number(breadCrumbModel.BreadCrumbs.length - i) + ",\"" +
+                                "onclick='showEitherModelorFolderInfoDialog(" + Number(breadCrumbModel.BreadCrumbs.length - i) + ",\"" +
                                 breadCrumbModel.FolderName + "\",\"" +
                                 breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" +
                                 breadCrumbModel.BreadCrumbs[i].ParentId + "\",\"" +
@@ -188,12 +187,12 @@ function processImages(imageLinksModel) {
                 }
             }
             else {
-                if (imageModelFile.LinkCount !== "1") {
+                if (imageModelFile.LinkCount > 1) {
                     imageFrameClass = "nonLocalImageFrame";
                 }
             }
         }
-        $('#imageContainer').append("<div id='img" + idx + "' class='" + imageFrameClass + "'><img class='thumbImage' "+
+        $('#imageContainer').append("<div id='img" + idx + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
             " oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='startSlideShow(" + idx + ")'" +
             " src='" + imageModelFile.Link + "'/></div>");
     });
@@ -549,22 +548,25 @@ function slowlyHomeFolderInfoDialog(index, folderName, folderId, parentId, rootF
         if (forgetHomeFolderInfoDialog === false) {
             if (typeof pause === 'function')
                 pause();
-            showHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder);
+            showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId, rootFolder);
         }
     }, 1100);
 }
 
-function showHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
+function showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
 
-    //alert("showHomeFolderInfoDialog(index: " + index + ", folderName: " + folderName + ", folderId: " + folderId + ", parentId: " + parentId + ", rootFolder: " + rootFolder + ")");
+    //alert("showEitherModelorFolderInfoDialog(index: " + index + ", folderName: " + folderName + ", folderId: " + folderId + ", parentId: " + parentId + ", rootFolder: " + rootFolder + ")");
+    var cybergirls = "3796";
 
-    if (rootFolder === "playboy" && index > 4 || rootFolder === "archive" && index > 2) {
-        //alert("showHomeFolderInfoDialog   rootFolder: " + rootFolder);
+    //alert("parentId: " + parentId + " parentId === cybergirls: " + parentId === cybergirls);
+
+    if (rootFolder === "playboy" && index > 4 || parentId === cybergirls || rootFolder === "archive" && index > 2) {
+        //alert("showEitherModelorFolderInfoDialog   rootFolder: " + rootFolder);
         showModelInfoDialog(folderName, folderId, 'Images/redballon.png');
-        reportThenPerformEvent//("CMX", folderId);
+        //reportThenPerformEvent//("CMX", folderId);
     }
     else {
-        //alert("showHomeFolderInfoDialog   rootFolder: " + rootFolder + "  index: " + index);
+        //alert("showEitherModelorFolderInfoDialog   rootFolder: " + rootFolder + "  index: " + index);
         showCategoryDialog(folderId);
     }
 }
