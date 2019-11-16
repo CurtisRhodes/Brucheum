@@ -1,4 +1,4 @@
-﻿namespace WebApi.DataContext
+﻿namespace WebApi.WebStatsSqlContext
 {
     using System;
     using System.Data.Entity;

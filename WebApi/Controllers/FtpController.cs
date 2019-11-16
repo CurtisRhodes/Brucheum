@@ -1,4 +1,4 @@
-﻿using System;
+﻿  using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,6 +10,7 @@ using WebApi.DataContext;
 //using static System.Net.WebRequestMethods;
 using WebApi.Ftp;
 using System.Configuration;
+using WebApi.OggleBoobleSqlContext;
 
 namespace WebApi
 {
@@ -353,6 +354,7 @@ namespace WebApi
                             catch (Exception ex)
                             {
                                 successModel.Success = "wc. download didnt work " + ex.Message;
+                                return successModel;
                             }
                         }
                         FtpWebRequest webRequest = null;
@@ -656,6 +658,10 @@ namespace WebApi
                         dbSourceFolder.Parent = dbDestinationFolder.Id;
                         db.SaveChanges();
                         success = "ok";
+
+                        //File.Move(sourceFileName, destinationFileName);
+                        var x = repoPath + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName;
+                        Directory.Delete(repoPath + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName);
                     }
                 }
             }

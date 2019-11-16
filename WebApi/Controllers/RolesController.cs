@@ -5,8 +5,8 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using WebApi.DataContext;
 using WebApi.Models;
+using WebApi.WebStatsSqlContext;
 
 namespace WebApi.Controllers
 {

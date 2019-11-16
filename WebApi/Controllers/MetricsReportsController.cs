@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using WebApi.DataContext;
 using WebApi.Models;
+using WebApi.MySqDataContext;
 
 namespace WebApi.Controllers
 {
@@ -45,32 +46,38 @@ namespace WebApi.Controllers
             return hitReport;
         }
 
-
-        [HttpPost]
-        public string LogActivity(ChangeLogModel changeLog)
+        [HttpGet]
+        [Route("api/MetricsReports/MostVisitedPagesReport")]
+        public MostPopularPagesReportModel MostVisitedPagesReport()
         {
-            string success = "";
+            var mostPopularPages = new MostPopularPagesReportModel();
             try
             {
-                using (WebStatsContext db = new WebStatsContext())
+                using (var db = new OggleBoobleMySqContext())
                 {
-                    ChangeLog alredyExists = db.ChangeLogs.Where(cl => cl.PageId == changeLog.PageId && cl.Activity == changeLog.Activity).FirstOrDefault();
-                    if (alredyExists == null)
+                    var qry = from h in db.PageHits
+                            join f in db.CategoryFolders on h.PageId equals f.Id
+                            group h by f.FolderName into grp
+                            select new
+                            {
+                                FolderName = grp.Key,
+                                Count = grp.Select(x => x.PageId).Distinct().Count()
+                            };
+
+                    //for (int i = 0; i < 100; i++) { }
+                    int i = 0;
+                    foreach (var xrow in qry.OrderBy(x => x.Count))
                     {
-                        db.ChangeLogs.Add(new ChangeLog()
-                        {
-                            PageId = changeLog.PageId,
-                            PageName = changeLog.PageName,
-                            Activity = changeLog.Activity,
-                            Occured = DateTime.Now
-                        });
-                        db.SaveChanges();
+                        mostPopularPages.Items.Add(new MostPopularPagesReportItem()
+                        { PageName = xrow.FolderName, PageHits = xrow.Count });
+                        if (i++ > 200)
+                            break;
                     }
                 }
-                success = "ok";
+                mostPopularPages.Success = "ok";
             }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
+            catch (Exception ex) { mostPopularPages.Success = Helpers.ErrorDetails(ex); }
+            return mostPopularPages;
         }
     }
 }

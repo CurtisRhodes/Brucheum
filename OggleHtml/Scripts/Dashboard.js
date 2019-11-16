@@ -624,3 +624,46 @@ function runPageHitsReport() {
         }
     });
 }
+
+function runPopPages() {
+    //<div id="mostPopularPagesReport"></div>
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "/api/MetricsReports/MostVisitedPagesReport",
+        success: function (popularPages) {
+            $('#dashBoardLoadingGif').hide();
+            if (popularPages.Success === "ok") {
+
+                $("#mostPopularPagesReport").html("");
+                $.each(popularPages.Items, function (idx, obj) {
+                    $("#mostPopularPagesReport").append("<div class=''>" + obj.PageName + " " + obj.PageHits + "</div>");
+                });
+                //$("#refreshPageHits").show();
+            }
+            else {
+                alert("runPopPages: " + popularPages.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "runPopPages")) {
+                alert("runPopPages: " + errorMessage);
+                sendEmailToYourself("XHR ERROR in Dashboard.js runPopPages", "Message: " + errorMessage);
+            }
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

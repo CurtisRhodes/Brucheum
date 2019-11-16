@@ -20,13 +20,13 @@
     <script src="Scripts/OggleFooter.js"></script>
     <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/DirTree.js"></script>
-    <script src="Scripts/Blog.js"></script>
-    <link href="Styles/jqueryUI.css" rel="stylesheet" />
+    <script src="Scripts/OggleBlog.js"></script>
+    <!--<link href="Styles/jqueryUI.css" rel="stylesheet" />-->
     <link href="Styles/loginDialog.css" rel="stylesheet" />
     <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/start/jquery-ui.min.css" rel="stylesheet">
     <link href="Styles/Header.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet" />
-    <link href="Styles/Blog.css" rel="stylesheet" />
+    <link href="Styles/OggleBlog.css" rel="stylesheet" />
 </head>
 <body>
     <header></header>
@@ -56,10 +56,10 @@
                 <div id="blogArticleJogContainer" class="blogArticleJogContainer"></div>
             </div>
 
-            <div id="blogEditArea" class="blogEditArea">
-                <div class="floatLeft">
-                    <div>
-                        <div class="flexContainer">
+            <div id="blogEditArea" class="twoColumnFrame flexContainer">
+                <div id="blogEditor" class="oggleBlogEditor">
+                    <div class="floatLeft">
+                        <div class="oggleBlogCrudArea flexContainer">
                             <div class="floatLeft">
                                 <div style="display:block">
                                     <div class="crudRow">
@@ -88,17 +88,20 @@
                             </div>
                         </div>
                     </div>
-                    <div class="crudRow">
-                        <div id="blogEditor" class="blogEntryTextArea"></div>
-                        <div>
+
+                    <div class="floatLeft">
+                        <div id="oggleBlogSummerNote" class="oggleBlogTextEditor"></div>
+                        <div class="oggleBlogFooterArea">
                             <div id="btnAddEdit" class="roundendButton" onclick="saveBlogEntry()">Add</div>
                             <div id="btnNewCancel" class="roundendButton" onclick="NewCancel()">New</div>
                         </div>
                     </div>
                 </div>
+
                 <div class="floatLeft">
                     <div id="blogList" class="blogItemContainer"></div>
                 </div>
+
             </div>
 
             <div id="blogPageArea" class="singleBlogEntryContainer">
@@ -155,11 +158,12 @@
             }
         }, 300);
 
-        $('#blogEditor').summernote({
+        $('#oggleBlogSummerNote').summernote({
             height: 310,
             width: 900,
             codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
             toolbar: [
+                ['lineWrapping', true],
                 ['codeview'],
                 ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
             ]

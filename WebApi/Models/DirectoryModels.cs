@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using WebApi.OggleBoobleSqlContext;
 using System.IO;
 using System.Linq;
 using System.Web;
-using WebApi.DataContext;
 
 namespace WebApi.Models
 {

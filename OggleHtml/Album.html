@@ -110,7 +110,6 @@
                         if (document.domain === 'localhost')
                             alert("Album.html visitorId NullorUndefined");
                     }
-                    logPageHit(params.folder, visitorId, "Album.html");
 
                     setUserPermissions();
                     var waiter2 = setInterval(function () {
@@ -125,6 +124,7 @@
                                 //alert("I want to stay in local host");
                                 setAlbumPageHeader(params.folder);
                                 getAlbumImages(params.folder);
+                                logPageHit(params.folder, visitorId, "Album.html");
                             }
                             else {
                                 var userName = getCookieValue("UserName");
@@ -134,14 +134,20 @@
                                         //alert("userName  not found.  normally would direct to static pages");
                                         setAlbumPageHeader(params.folder);
                                         getAlbumImages(params.folder);
+                                        alert("logPageHit");
+                                        logPageHit(params.folder, visitorId, "Album.html");
                                     }
-                                    else
+                                    else {
                                         directToStaticPage(params.folder);
+                                    }
                                 }
                                 else {
-                                    //if (document.domain === 'localhost') alert(userName + " gets to see dynamic pages");
                                     setAlbumPageHeader(params.folder);
                                     getAlbumImages(params.folder);
+                                    //if (visitorId === "ec6fb880-ddc2-4375-8237-021732907510") alert("logPageHit");
+                                    $('#footerMessage').html("213");
+                                    //if (document.domain === 'localhost') alert("logPageHit");
+                                    logPageHit(params.folder, visitorId, "Album.html");
                                 }
                             }
                         }

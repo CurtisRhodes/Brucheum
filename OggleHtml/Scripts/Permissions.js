@@ -25,12 +25,13 @@ function setUserPermissions() {
                 permissionsSet = true;
             }
             else {
+                permissionsSet = true;
                 sendEmailToYourself("ERROR IN Permissions.js GetUserRoles",
                     "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned" +
                     " Message: " + roleModel.Success);
 
                 if (document.domain === 'localhost') alert("ERROR IN Permissions.js GetUserRoles"+
-                    "\napi/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned" +
+                    "\napi/Roles/GetUserRoles?userName=" + userName + "\nwhichType=Assigned" +
                     "\nMessage: " + roleModel.Success);
             }
         },

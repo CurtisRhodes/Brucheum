@@ -4,8 +4,8 @@ using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using WebApi.Models;
-using WebApi.DataContext;
 using System.Xml;
+using WebApi.OggleBoobleSqlContext;
 //using System.IO;
 //using System.Net;
 //using System.Text;
@@ -335,8 +335,14 @@ namespace WebApi
         }
         private void GetDirTreeRecurr(CategoryTreeModel parent, List<VwDirTree> vwDirTree, string path)
         {
-            var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
+            var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).Distinct().ToList();
+            if (parent.FolderId == 616)
+            {
+                vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).Distinct().ToList();
 
+                vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
+
+            }
             foreach (VwDirTree vwTree in vwTrees)
             {
                 var subChild = new CategoryTreeModel()

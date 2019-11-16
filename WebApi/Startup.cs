@@ -17,7 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 
-//[assembly: OwinStartup(typeof(WebApi.Startup))]
+[assembly: OwinStartup(typeof(WebApi.Startup))]
 namespace WebApi
 {
     public partial class Startup
@@ -38,6 +38,8 @@ namespace WebApi
             //DefaultFilesOptions DefaultFile = new DefaultFilesOptions();
             //DefaultFile.DefaultFileNames.Clear();
             //DefaultFile.DefaultFileNames.Add("index.html");
+
+            //app.UseWebApi()
 
             //app.UseMvc()
 
@@ -62,7 +64,7 @@ namespace WebApi
 
             DefaultFilesOptions DefaultFile = new DefaultFilesOptions();
             DefaultFile.DefaultFileNames.Clear();
-            DefaultFile.DefaultFileNames.Add("Welcome.html");
+            DefaultFile.DefaultFileNames.Add("Index.html");
             app.UseDefaultFiles(DefaultFile);
             app.UseStaticFiles();
 

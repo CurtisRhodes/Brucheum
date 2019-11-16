@@ -96,15 +96,17 @@ function logVisitor(pageId, calledFrom) {
     try {
 
         if (document.domain === 'localhost') {
-            setCookieValue("IpAddress", "68.203.90.183");
-            setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-            //setCookieValue("UserName", "admin");
-            setCookieValue("UserName", "cooler");
-            $('#spnUserName').html(getCookieValue("UserName"));
-            $('#optionLoggedIn').show();
-            $('#optionNotLoggedIn').hide();
-            //alert("bypassing logVisitor");
-            console.log("bypassing logVisitor");
+            if (isNullorUndefined(getCookieValue("UserName"))) {
+                setCookieValue("IpAddress", "68.203.90.183");
+                setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
+                //setCookieValue("UserName", "admin");
+                setCookieValue("UserName", "cooler");
+                $('#spnUserName').html(getCookieValue("UserName"));
+                $('#optionLoggedIn').show();
+                $('#optionNotLoggedIn').hide();
+                alert("bypassing logVisitor");
+                console.log("bypassing logVisitor");
+            }
             return;
         }
 
@@ -119,6 +121,7 @@ function logVisitor(pageId, calledFrom) {
             }
         }
 
+        if (document.domain === 'localhost') alert("vb3 LogVisitor call to IP info. IpAddress: " + ipAddress);
         if (verbosity > 10) {
             sendEmailToYourself("LogVisitor call to IP info.", " ip: " + ipAddress);
             if (document.domain === 'localhost') alert("vb3 LogVisitor call to IP info. IpAddress: " + ipAddress);
@@ -306,17 +309,18 @@ function logVisitor(pageId, calledFrom) {
 function logPageHit(pageId, visitorId, calledFrom) {
 
     //alert("logPageHit(" + pageId + "," + visitorId + "," + calledFrom + ")");
-    //if (document.domain === 'localhost') {
-    //    setCookieValue("IpAddress", "68.203.90.183");
-    //    setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-    //    //setCookieValue("UserName", "admin");
-    //    setCookieValue("UserName", "cooler");
-    //    console.log("bypassing logVisitor");
-    //    $('#spnUserName').html(getCookieValue("UserName"));
-    //    $('#optionLoggedIn').show();
-    //    $('#optionNotLoggedIn').hide();
-    //    return;
-    //}
+    if (document.domain === 'localhost') {
+        setCookieValue("IpAddress", "68.203.90.183");
+        setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
+        //setCookieValue("UserName", "admin");
+        setCookieValue("UserName", "cooler");
+        console.log("bypassing logVisitor");
+        $('#spnUserName').html(getCookieValue("UserName"));
+        $('#optionLoggedIn').show();
+        $('#optionNotLoggedIn').hide();
+        return;
+    }
+    
 
     // TRY GETVISITOR FROM IP IF YOU HAVE IP BUT NO VISITOR ID 
     if (isNullorUndefined(visitorId)) {
@@ -406,7 +410,7 @@ function logPageHit(pageId, visitorId, calledFrom) {
         data: pageHitModel,
         success: function (pageHitSuccessModel) {
             if (pageHitSuccessModel.Success === "ok") {
-
+                // MOVE PAGE HITS TO FOOTER SOMEDAY
                 // ADD FREE VISITS ALLOWED CLIPPER HERE
                 if (pageHitSuccessModel.UserHits > freeVisitorHitsAllowed) {
                     alert("you have now visited " + pageHitSuccessModel.UserHits + " pages." +
@@ -414,16 +418,16 @@ function logPageHit(pageId, visitorId, calledFrom) {
                         "\n you will be placed in manditory comment mode until you log in ");
                 }
 
-                // MOVE PAGE HITS TO FOOTER SOMEDAY
-                $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits.toLocaleString());
-            
+
+                //if (visitorId === "ec6fb880-ddc2-4375-8237-021732907510") alert("pageHits: " + pageHitSuccessModel.PageHits.toLocaleString() + "\ncalledFrom: " + calledFrom);
+
+
+                $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits.toLocaleString());            
                 if (verbosity > 11) {
-                    if (pageHitSuccessModel.RootFolder !== "playboy") {
-                        var ipAddress = getCookieValue("IpAddress");
-                        sendEmailToYourself(pageHitSuccessModel.PageName + " visited",
-                            "Someone visited a page other than playboy: " + pageHitSuccessModel.ParentName + "/" + pageHitSuccessModel.PageName +
-                            " Called from " + calledFrom + " IpAddress: " + ipAddress + ". RootFolder: " + pageHitSuccessModel.RootFolder);
-                    }
+                    var ipAddress = getCookieValue("IpAddress");
+                    sendEmailToYourself("Just so you know; valid page hits are being recorded.",
+                        "Someone visited a page other than playboy: " + pageHitSuccessModel.ParentName + "/" + pageHitSuccessModel.PageName +
+                        "<br/> Called from " + calledFrom + "<br/>IpAddress: " + ipAddress + ".<br/>RootFolder: " + pageHitSuccessModel.RootFolder);
                 }
 
                 // LOG VISIT
@@ -438,7 +442,8 @@ function logPageHit(pageId, visitorId, calledFrom) {
                 //    sendEmailToYourself("logPageHit error: VisitorId fail: ","VisitorId: "+ pageHitSuccessModel.Success);
                 //    return;
                 //}
-                sendEmailToYourself("logPageHit error: ", "Message: " + pageHitSuccessModel.Success);
+                sendEmailToYourself("logPageHit error: ", pageHitSuccessModel.Success + "<br/>vsitorId: " + visitorId +
+                    "<br/>pageId: " + pageId + "<br/>Called From: " + calledFrom + "<br/>ver: 11.15.02");
             }
         },
         error: function (jqXHR) {
@@ -490,7 +495,3 @@ function logVisit(visitorId) {
         }
     });
 }
-
-
-
-

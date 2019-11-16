@@ -6,8 +6,8 @@ using System.Net;
 using System.Text;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using WebApi.DataContext;
 using WebApi.Models;
+using WebApi.OggleBoobleSqlContext;
 
 namespace WebApi.Controllers
 {

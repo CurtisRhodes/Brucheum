@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using MySql.Data.EntityFramework;
 
-namespace WebApi.DataContext
+namespace WebApi.MySqDataContext
 {
     [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public partial class OggleBoobleMySqContext : DbContext
@@ -15,13 +15,52 @@ namespace WebApi.DataContext
         public OggleBoobleMySqContext()
             : base("GoDaddyMySql") { }
 
-        public virtual DbSet<MySqlImageHit> MySqlImageHits { get; set; }
-        public virtual DbSet<MySqlPageHit> MySqlPageHits { get; set; }
-        public virtual DbSet<MySqlVisitor> MySqlVisitors { get; set; }
-        public virtual DbSet<MySqlVisit> MySqlVisits { get; set; }
+        public virtual DbSet<CategoryFolder> CategoryFolders { get; set; }
+        public virtual DbSet<ImageLink> ImageLinks { get; set; }
+        public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
+        public virtual DbSet<ImageHit> ImageHits { get; set; }
+        public virtual DbSet<PageHit> PageHits { get; set; }
+        public virtual DbSet<Visitor> Visitors { get; set; }
+        public virtual DbSet<Visit> Visits { get; set; }
         public virtual DbSet<VwPageHit> VwPageHits { get; set; }
         public virtual DbSet<VwImageHit> VwImageHits { get; set; }
     }
+
+
+    [Table("OggleBooble.CategoryFolder")]
+    public partial class CategoryFolder
+    {
+        [Key]
+        public int Id { get; set; }
+        public int Parent { get; set; }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+    }
+    [Table("OggleBooble.ImageLink")]
+    public partial class ImageLink
+    {
+        [Key]
+        public string Id { get; set; }
+        public string ExternalLink { get; set; }
+        public string Link { get; set; }
+        public int FolderLocation { get; set; }
+        public int? Width { get; set; }
+        public int? Height { get; set; }
+        public long? Size { get; set; }
+    }
+
+    [Table("OggleBooble.CategoryImageLink")]
+    public partial class CategoryImageLink
+    {
+        [Key]
+        [Column(Order = 0)]
+        public int ImageCategoryId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string ImageLinkId { get; set; }
+        public int SortOrder { get; set; }
+    }
+
 
     [Table("OggleBooble.vwPageHits")]
     public partial class VwPageHit
@@ -49,7 +88,7 @@ namespace WebApi.DataContext
     }
 
     [Table("OggleBooble.Visitor")]
-    public partial class MySqlVisitor
+    public partial class Visitor
     {
         [Key]
         public string VisitorId { get; set; }
@@ -63,7 +102,7 @@ namespace WebApi.DataContext
     }
 
     [Table("OggleBooble.Visit")]
-    public partial class MySqlVisit
+    public partial class Visit
     {
         [Key]
         [Column(Order = 0)]
@@ -74,7 +113,7 @@ namespace WebApi.DataContext
     }
 
     [Table("OggleBooble.ImageHit")]
-    public partial class MySqlImageHit
+    public partial class ImageHit
     {
         [Key]
         [Column(Order = 0)]
@@ -87,7 +126,7 @@ namespace WebApi.DataContext
     }
 
     [Table("OggleBooble.PageHit")]
-    public partial class MySqlPageHit
+    public partial class PageHit
     {
         [Key]
         [Column(Order = 0)]

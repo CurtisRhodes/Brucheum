@@ -319,7 +319,7 @@ function loadBlogEntry(blogId, commentType) {
                         $('#txtCommentTitle').val(categoryCommentModel.FolderName);
                         $('#selBlogEditCommentType').val(commentType);
                         $('#txtLink').val(categoryCommentModel.Link);
-                        $('#blogEditor').summernote('code', categoryCommentModel.CommentText);
+                        $('#oggleBlogSummerNote').summernote('code', categoryCommentModel.CommentText);
                         $('#imgBlogLink').attr("src", categoryCommentModel.Link);
 
                         $('#btnAddEdit').html("Save");
@@ -348,7 +348,7 @@ function loadBlogEntry(blogId, commentType) {
                         $('#txtCommentTitle').val(model.CommentTitle);
                         $('#selBlogEditCommentType').val(model.CommentType);
                         $('#txtLink').val(model.Link);
-                        $('#blogEditor').summernote('code', model.CommentText);
+                        $('#oggleBlogSummerNote').summernote('code', model.CommentText);
                         $('#imgBlogLink').attr("src", model.Link);
 
                         $('#btnAddEdit').html("Save");
@@ -382,7 +382,7 @@ function NewCancel() {
 function clearGets() {
     $('#txtCommentTitle').val("");
     $('#txtLink').val("");
-    $('#blogEditor').summernote('code', "");
+    $('#oggleBlogSummerNote').summernote('code', "");
     $('#imgBlogLink').attr("src", "http://boobs.ogglebooble.com/images/redballon.png");
     blogObject.Id = "";
 }
@@ -393,7 +393,7 @@ function saveBlogEntry() {
         if ($('#selBlogEditCommentType').val() === "FLD") {
             $.ajax({
                 type: "PUT",
-                url: settingsArray.ApiServer + "api/CategoryComment/EditFolderCategory?folderId=" + blogObject.Id + "&commentText=" + $('#blogEditor').summernote('code'),
+                url: settingsArray.ApiServer + "api/CategoryComment/EditFolderCategory?folderId=" + blogObject.Id + "&commentText=" + $('#oggleBlogSummerNote').summernote('code'),
                 success: function (success) {
                     if (success === "ok") {
                         displayStatusMessage("ok", "Entry Saved");
@@ -409,7 +409,7 @@ function saveBlogEntry() {
                 error: function (jqXHR) {
                     var errorMessage = getXHRErrorDetails(jqXHR);
                     if (!checkFor404(errorMessage, "saveBlogEntry")) {
-                        sendEmailToYourself("XHR ERROR in Blog.js saveBlogEntry", "api/CategoryComment/EditFolderCategory?folderId=" + blogObject.Id + "&commentText=" + $('#blogEditor').summernote('code')
+                        sendEmailToYourself("XHR ERROR in Blog.js saveBlogEntry", "api/CategoryComment/EditFolderCategory?folderId=" + blogObject.Id + "&commentText=" + $('#oggleBlogSummerNote').summernote('code')
                             + " Message: " + errorMessage);
                     }
                 }
@@ -419,7 +419,7 @@ function saveBlogEntry() {
             blogObject.CommentTitle = $('#txtCommentTitle').val();
             blogObject.CommentType = $('#selBlogEditCommentType').val();
             blogObject.Link = $('#txtLink').val();
-            blogObject.CommentText = $('#blogEditor').summernote('code');
+            blogObject.CommentText = $('#oggleBlogSummerNote').summernote('code');
 
             if ($('#btnAddEdit').html() === "Add") {
                 $.ajax({
@@ -479,11 +479,17 @@ function saveBlogEntry() {
 
 function resizeBlogPage() {
     resizePage();
-    $('.note-editable').height($('#middleColumn').height() - 300);
-    $('.note-editable').width($('#middleColumn').width() - $('#blogList').width());
-    $('.singleBlogEntryContainer').height($('#middleColumn').height() - 145);
-    $('.blogArticleJogContainer').height($('#middleColumn').height() - 145);
-    $('#blogList').css("max-height", $('#middleColumn').height() - 24);    
+    //$('.note-editable').height($('#middleColumn').height() - 300);
+    var editorWidth = $('.oggleBlogEditor').width("-=6");
+    $('.oggleBlogEditor .note-editable').width(editorWidth);
+
+    $('.oggleBlogEditor').height($('#middleColumn').height() * .95);
+    
+    $('.oggleBlogEditor .note-editable').height($('#middleColumn').height() * .70);
+
+    $('.singleBlogEntryContainer').height($('#middleColumn').height() - 185);
+    $('.blogArticleJogContainer').height($('#middleColumn').height() - 185);
+    //$('#blogList').css("max-height", $('#middleColumn').height() - 24);    
 
 
     

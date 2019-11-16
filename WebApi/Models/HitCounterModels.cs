@@ -5,6 +5,19 @@ using System.Web;
 
 namespace WebApi.Models
 {
+    public class MostPopularPagesReportModel
+    {
+        public MostPopularPagesReportModel()
+        {
+            Items = new List<MostPopularPagesReportItem>();
+        }
+        public List<MostPopularPagesReportItem> Items { get; set; }
+        public string Success{ get; set; }
+    }
+    public class MostPopularPagesReportItem {
+        public string PageName { get; set; }
+        public int PageHits { get; set; }
+    }
 
     public class DailyHitReport
     {

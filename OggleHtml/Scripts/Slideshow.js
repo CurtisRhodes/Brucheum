@@ -24,7 +24,7 @@ var sessionCount = 0;
 //if(domain=="localhost")
 function launchViewer(imageArray, imageIndex, folderId, folderName) {
     imageViewerFolderId = folderId;
-
+    sessionCount = 0;
     if (isNullorUndefined(imageViewerFolderId)) {
         imageViewerFolderId = 1;
         sendEmailToYourself("PROBLEMO in slideshow.js", "imageViewerFolderId: " + imageViewerFolderId + "  folderName: " + folderName +
@@ -324,6 +324,9 @@ function imageViewerContextMenuAction(action) {
 }
 
 function closeViewer(calledFrom) {
+    event.preventDefault();
+    window.event.returnValue = false;
+
     $('#imageViewerDialog').effect('blind', { mode: 'hide', direction: 'vertical' }, 500);
     viewerShowing = false;
     slideShowRunning = false;
@@ -335,12 +338,13 @@ function closeViewer(calledFrom) {
         closeMethod = calledFrom;
     }
     if (sessionCount > 10) {
-        sendEmailToYourself("slideshow2: " + imageViewerFolderName + ". Images Viewed: " + sessionCount,
+        sendEmailToYourself("slidesh0w: " + imageViewerFolderName + ". Images Viewed: " + sessionCount,
             "Close method: " + closeMethod + ".<br/>Ip: " + getCookieValue("IpAddress"));
         if (document.domain === 'localhost')
             alert("Close Slideshow ." + imageViewerFolderName + ".\nImages Viewed: " + sessionCount,
                 ". Close method: " + closeMethod + ".\nIp: " + getCookieValue("IpAddress"));
     }
+    sessionCount = 0;
 }
 
 function resizeViewer() {

@@ -1,6 +1,6 @@
 ﻿var settingsArray = {};
 var userRoles = [];
-var freeVisitorHitsAllowed = 1500;
+var freeVisitorHitsAllowed = 7500;
 var waitingForReportClickEvent = true;
 var forgetShowingCustomMessage = true;
 var verbosity = 1;
