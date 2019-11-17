@@ -22,6 +22,9 @@
 
 function reportThenPerformEvent(eventCode, pageId) {
     //alert("reportThenPerformEvent(eventCode: " + eventCode + ", pageId: " + pageId + ")");
+
+    //EVT	LMC	Left menu item clicked
+
     var dots = "";
     reportClickEvent(eventCode, pageId);
     var reportEventWaiter = setInterval(function () {
@@ -53,20 +56,23 @@ function reportThenPerformEvent(eventCode, pageId) {
                 case "CXM":  // carousle context menu opened
                     carouselContextMenuShow();
                     break;
-                case 'SUB': // 'Sub Folder Click'
-                    //alert("Sub Folder Click: " + pageId);
-                    window.location.href = "/album.html?folder=" + pageId;
+                //case 'SUB': // 'Sub Folder Click'
+                //    //alert("Sub Folder Click: " + pageId);
+                //    window.location.href = "/album.html?folder=" + pageId;
+                //    break;
+                case "EXP":
+                    window.open(pageId, "_blank");
                     break;
                 case "SSB":  //  Stepchild Subfolder Clicked
                     //alert("Stepchild Subfolder Clicked.  FolderId: " + pageId);
                     window.open("/album.html?folder=" + pageId, "_blank");
                     break;
-                case "BAC":  // Archive Clicked
+                case "BAC":  // Babes Archive Clicked
                 case "BCC":  // Breadcrumb Clicked
                 case "BLC":  // banner link clicked
                 case "CIC":  // carousel image clicked
-                    //alert("zzzevent: " + eventCode + "  FolderId: " + pageId);
-                    //window.open("/album.html?folder=" + pageId);
+                case 'SUB': // 'Sub Folder Click'
+                    //window.open("/album.html?folder=" + pageId); 
                     window.location.href = "/album.html?folder=" + pageId;
                     break;
                 case "HBX":  // Home breadcrumb Clicked
@@ -75,7 +81,7 @@ function reportThenPerformEvent(eventCode, pageId) {
                     else
                         window.location.href = "/";
                     break;
-                case "RNK":
+                case "RNK":  // Ranker Banner Clicked
                     switch (pageId) {
                         case 3909:
                             window.location.href = "/Ranker.html?subdomain=porn";
@@ -90,9 +96,7 @@ function reportThenPerformEvent(eventCode, pageId) {
                     break;
 
                 case "FLC":  //  footer link clicked
-
                     //if (document.domain === 'localhost') alert("eventCode: " + eventCode + " pageId: " + pageId);
-
                     switch (pageId) {
                         //case 3942:  // let me explain
                         case 3942:  // about us
@@ -159,12 +163,16 @@ function reportClickEvent(eventCode, pageId) {
 
                     //if (verbosity > 5)
                     //if (eventCode === "HBX" || eventCode === "CXM" || eventCode === "MBC" || eventCode === "PRN")
-                    if (eventCode !== "GIC" && eventCode !== "SUB" && eventCode !== "BCC") {
-
+                    if (eventCode !== "GIC"     // Gallery Item Clicked 
+                        && eventCode !== "SUB"  // Subfolder Clicked
+                        && eventCode !== "BCC"  // Breadcrumb Clicked 
+                        && eventCode !== "BLC"  // Banner Link Clicked 
+                        && eventCode !== "CAA") // Carousel Arrow Clicked
+                    {
                         if (logEventActivitySuccess.IpAddress !== "68.203.90.183") {
-                            sendEmailToYourself("Click Event [" + logEventActivitySuccess.EventName + "] Page: " + logEventActivitySuccess.PageName,
-                                "ipAddress: " + ipAddress + "<br/>visitorId " + visitorId +
-                                ",<br/>ogEventActivitySuccess.IpAddress: " + logEventActivitySuccess.IpAddress +
+                            sendEmailToYourself(logEventActivitySuccess.EventName,
+                                "PageId: "+ pageId,
+                                "<br/>ipAddress: " + ipAddress + //"<br/>visitorId: " + visitorId +
                                 ",<br/>from: " + logEventActivitySuccess.VisitorDetails);
                         }
                         //if (document.domain === 'localhost')

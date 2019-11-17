@@ -87,12 +87,18 @@ namespace WebApi
                     pageHitSuccessModel.RootFolder = categoryFolder.RootFolder;
                     pageHitSuccessModel.PageName = categoryFolder.FolderName;
 
-                    CategoryFolder parentFolder = db.CategoryFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
-                    if (parentFolder != null)
-                        pageHitSuccessModel.ParentName = parentFolder.FolderName;
+                    if (categoryFolder.Parent == -1)
+                    {
+                        pageHitSuccessModel.ParentName = "special";
+                    }
+                    else
+                    {
+                        CategoryFolder parentFolder = db.CategoryFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
+                        if (parentFolder != null)
+                            pageHitSuccessModel.ParentName = parentFolder.FolderName;
+                    }
+                    pageHitSuccessModel.Success = "ok";
                 }
-
-                pageHitSuccessModel.Success = "ok";
             }
             catch (Exception ex)
             {
@@ -257,6 +263,8 @@ namespace WebApi
             LogEventActivitySuccessModel logEventActivitySuccess = new LogEventActivitySuccessModel();
             try
             {
+                //reportClickEvent("EXP", carouselItemArray[imageIndex].Link);
+                // EXP (explode image) passes an image link, not a pageId
                 using (var db = new WebStatsSqlContext.WebStatsContext())
                 {
                     db.EventLogs.Add(new WebStatsSqlContext.EventLog()

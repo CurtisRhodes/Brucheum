@@ -261,54 +261,53 @@ function intervalBody() {
 
 function carouselContextMenuClick() {
     pause();
-    reportThenPerformEvent("CXM", carouselItemArray[imageIndex].FolderId);
+
     event.preventDefault();
     window.event.returnValue = false;
     $('#carouselContextMenu').css("top", event.clientY + 5);
     $('#carouselContextMenu').css("left", event.clientX);
-}
-
-function carouselContextMenuShow() {
-        $('#ctxModelName').html("");
-        $.ajax({
-            type: "GET",
-            async: true,
-            url: settingsArray.ApiServer + "api/ImageCategoryDetail/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId,
-            success: function (imageDetails) {
-                if (imageDetails.Success === "ok") {
-                    if (imageDetails.RootFolder === "archive") {
-                        // this is a known model
-                        selectedImageArchiveFolderId = imageDetails.FolderId;
-                        $('#ctxModelName').html(imageDetails.FolderName);
-                        $('#ctxSeeMore').show();
-                    }
-                    else {
-                        selectedImageArchiveFolderId = 0;
-                        $('#ctxModelName').html("unknown model");
-                        $('#ctxSeeMore').hide();
-                    }
+    //function carouselContextMenuShow() {
+    $('#ctxModelName').html("");
+    $.ajax({
+        type: "GET",
+        async: true,
+        url: settingsArray.ApiServer + "api/ImageCategoryDetail/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId,
+        success: function (imageDetails) {
+            if (imageDetails.Success === "ok") {
+                if (imageDetails.RootFolder === "archive") {
+                    // this is a known model
+                    selectedImageArchiveFolderId = imageDetails.FolderId;
+                    $('#ctxModelName').html(imageDetails.FolderName);
+                    $('#ctxSeeMore').show();
                 }
                 else {
-                    //alert("GetModelName: " + imageDetails.Success);
-                    sendEmailToYourself("GetModelName fail", imageDetails.Success);
+                    selectedImageArchiveFolderId = 0;
+                    $('#ctxModelName').html("unknown model");
+                    $('#ctxSeeMore').hide();
                 }
-            },
-            error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "carouselContextMenu")) {
-                    sendEmailToYourself("XHR ERROR IN Carousel.JS carouselContextMenu", "api/ImageCategoryDetail/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId +
-                        " Message : " + errorMessage);
-                    //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
-                }
-                sendEmailToYourself("GetNudeModelName xhr error: ", xhr.statusText);
-                //alert("GetNudeModelName xhr error: " + xhr.statusText);
             }
-        });
-        $('#carouselContextMenu').fadeIn();
+            else {
+                //alert("GetModelName: " + imageDetails.Success);
+                sendEmailToYourself("GetModelName fail", imageDetails.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "carouselContextMenu")) {
+                sendEmailToYourself("XHR ERROR IN Carousel.JS carouselContextMenu", "api/ImageCategoryDetail/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId +
+                    " Message : " + errorMessage);
+                //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
+            }
+            sendEmailToYourself("GetNudeModelName xhr error: ", xhr.statusText);
+            //alert("GetNudeModelName xhr error: " + xhr.statusText);
+        }
+    });
+    $('#carouselContextMenu').fadeIn();
 }
 
 function carouselContextMenuAction(ctxMenuAction) {
-    reportClickEvent("CMC", carouselItemArray[imageIndex].FolderId);
+    //reportThenPerformEvent("CXM", carouselItemArray[imageIndex].FolderId);
+    //reportClickEvent("CMC", carouselItemArray[imageIndex].FolderId);
     //if (document.domain === 'localhost') alert("carouselContextMenuAction(" + ctxMenuAction + ")");
 
 
@@ -326,8 +325,6 @@ function carouselContextMenuAction(ctxMenuAction) {
             //        "\ncarouselItemArray[imageIndex].Link:\n" + carouselItemArray[imageIndex].Link + ");");
 
             showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId, carouselItemArray[imageIndex].Link);
-
-
             $('#modelInfoDialog').on('dialogclose', function (event) {
                 modelInfoDialogIsOpen = false;
                 resume();
@@ -337,7 +334,11 @@ function carouselContextMenuAction(ctxMenuAction) {
             window.open('/album.html?folder=' + selectedImageArchiveFolderId, '_blank');
             break;
         case "explode":
-            window.open(carouselItemArray[imageIndex].Link, "_blank");
+
+            reportThenPerformEvent("EXP", carouselItemArray[imageIndex].Link);
+            //reportClickEvent("EXP", carouselItemArray[imageIndex].Link);
+            //reportThenPerformEvent("EXP", carouselItemArray[imageIndex].Link);
+            //window.open(carouselItemArray[imageIndex].Link, "_blank");
             break;
         case "comment":
             $('#carouselContextMenu').fadeOut();

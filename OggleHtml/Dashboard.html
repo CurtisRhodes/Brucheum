@@ -57,6 +57,14 @@
             <div id="dots"></div>
             <style>
 
+                .popPagesReportContainer {
+                    display: inline-block;
+                    border: solid thin #000;
+                    padding: 4px;
+                    max-height: 400px;
+                    overflow-y: auto;
+                }
+
                 #pageHitReport table td {
                     border: solid thin #000;
                     padding: 4px;
@@ -142,10 +150,12 @@
                     <button id="refreshPageHits" class="inline displayHidden" onclick="runPageHitsReport()">refresh</button>
                 </div>
                 <div class="workAreaRow2">
-                    <div id="mostPopularPagesReport"></div>
-                    <button class="inline" onclick="runPopPages()">Most Popular Pages</button>
+                    <div id="popPagesContainer" class='popPagesReportContainer displayHidden'>
+                        <div id="mostPopularPagesReport"></div>
+                    </div>
+                    <button id="btnPopPages" class="inline displayHidden" onclick="runPopPages()">Most Popular Pages</button>
 
-                </div>
+                    </div>
                 <div class="workAreaRow3">
 
                 </div>

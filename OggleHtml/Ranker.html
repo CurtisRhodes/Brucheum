@@ -105,8 +105,6 @@
             else
                 subdomain = params.subdomain;
 
-            setOggleFooter("boobs");
-            setHeaderRowMessage();
             setInitialCheckbox(subdomain);
 
             loadSettings();
@@ -120,6 +118,8 @@
                     clearInterval(waiter);
                     loadBoobsRanker(subdomain);
                     setOggleHeader("ranker", 3907);
+                    setOggleFooter("boobs");
+                    setHeaderRowMessage();
                     logPageHit(3907, getCookieValue("IpAddress"), "Ranker+" + subdomain);
 
                     userName = getCookieValue("UserName");

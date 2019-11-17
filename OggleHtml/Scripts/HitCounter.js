@@ -47,6 +47,7 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
             if (imageHitSuccessModel.Success === "ok") {
                 var imageHits = imageHitSuccessModel.ImageHits;
                 var userHits = imageHitSuccessModel.UserHits;
+
                 if (verbosity > 10) {
                     sendEmailToYourself("logImageHit SUCCESS",
                         "IpAddress: " + imageHitSuccessModel.IpAddress + "<br/>imageHits: " + imageHits + "<br/>user hits: " + userHits + "<br/>initialHit: " + isInitialHit);
@@ -442,6 +443,8 @@ function logPageHit(pageId, visitorId, calledFrom) {
                 //    sendEmailToYourself("logPageHit error: VisitorId fail: ","VisitorId: "+ pageHitSuccessModel.Success);
                 //    return;
                 //}
+
+
                 sendEmailToYourself("logPageHit error: ", pageHitSuccessModel.Success + "<br/>vsitorId: " + visitorId +
                     "<br/>pageId: " + pageId + "<br/>Called From: " + calledFrom + "<br/>ver: 11.15.02");
             }

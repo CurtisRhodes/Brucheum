@@ -107,8 +107,6 @@
             else
                 subdomain = params.subdomain;
 
-            setOggleHeader(subdomain, 3096);
-            setOggleFooter(subdomain);
 
             if (subdomain == "boobs")
                 $('#floatingMessage').html("Want to see her tits?")
@@ -125,6 +123,8 @@
                 else {
                     $('#dots').html('');
                     clearInterval(waiter);
+                    setOggleHeader(subdomain, 3096);
+                    setOggleFooter(subdomain);
                     logPageHit(3906, getCookieValue("IpAddress"), "Transitions");
                     LoadPicArray(subdomain);
                     //setUserPermissions();

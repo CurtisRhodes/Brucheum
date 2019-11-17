@@ -338,8 +338,10 @@ function closeViewer(calledFrom) {
         closeMethod = calledFrom;
     }
     if (sessionCount > 10) {
-        sendEmailToYourself("slidesh0w: " + imageViewerFolderName + ". Images Viewed: " + sessionCount,
-            "Close method: " + closeMethod + ".<br/>Ip: " + getCookieValue("IpAddress"));
+        sendEmailToYourself("slideshow: " + imageViewerFolderName + ". Images Viewed: " + sessionCount,
+            "Close method: " + closeMethod +
+            ".<br/>Ip: " + getCookieValue("IpAddress"));
+
         if (document.domain === 'localhost')
             alert("Close Slideshow ." + imageViewerFolderName + ".\nImages Viewed: " + sessionCount,
                 ". Close method: " + closeMethod + ".\nIp: " + getCookieValue("IpAddress"));

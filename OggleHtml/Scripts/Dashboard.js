@@ -336,21 +336,6 @@ function prepareXhamsterPage() {
     });
 }
 
-function showPerfMetrics() {
-    //$('#divWorkArea').height($('#middleColumn').height() - 122);
-    $('#divAddImages').hide();
-    $('#divHitMetrics').fadeIn();
-
-    runPageHitsReport();
-
-    //if (document.domain === 'localhost') alert("runPageHitsReport();");
-   
-}
-function closeMetrics() {
-    $('#divHitMetrics').hide();
-    $('#divAddImages').fadeIn();
-}
-
 function showSortTool() {    
     $('#divAddImages').hide();
     $('#divSortTool').fadeIn();
@@ -571,6 +556,22 @@ function copyFolder() {
 }
 
 
+function showPerfMetrics() {
+    //$('#divWorkArea').height($('#middleColumn').height() - 122);
+    $('#divAddImages').hide();
+    $('#divHitMetrics').fadeIn();
+
+    runPageHitsReport();
+                //$("#refreshPageHits").show();
+
+    //if (document.domain === 'localhost') alert("runPageHitsReport();");
+
+}
+function closeMetrics() {
+    $('#divHitMetrics').hide();
+    $('#divAddImages').fadeIn();
+}
+
 function runPageHitsReport() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
@@ -609,7 +610,9 @@ function runPageHitsReport() {
                 kludge += "<td>" + pageHitModel.ImageHits.Six_Days_ago + "</td>";
                 kludge += "</tr></table>";
                 $("#pageHitReport").html(kludge);
-                $("#refreshPageHits").show();                
+                $("#refreshPageHits").show();
+                $("#btnPopPages").show();
+
             }
             else {
                 alert("renameFolder: " + repairReport.Success);
@@ -634,12 +637,12 @@ function runPopPages() {
         success: function (popularPages) {
             $('#dashBoardLoadingGif').hide();
             if (popularPages.Success === "ok") {
-
-                $("#mostPopularPagesReport").html("");
+                $('#popPagesContainer').show();                
+                $("#mostPopularPagesReport").html("<table>");
                 $.each(popularPages.Items, function (idx, obj) {
-                    $("#mostPopularPagesReport").append("<div class=''>" + obj.PageName + " " + obj.PageHits + "</div>");
+                    $("#mostPopularPagesReport").append("<tr><td>" + obj.PageName + "</td><td>" + obj.PageHits + "</td></tr>");
                 });
-                //$("#refreshPageHits").show();
+                $("#mostPopularPagesReport").append("</table>");
             }
             else {
                 alert("runPopPages: " + popularPages.Success);

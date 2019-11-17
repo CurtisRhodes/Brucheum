@@ -132,7 +132,7 @@ function checkFor404(errorMessage, calledFrom) {
 
         //showCustomMessage(71);
         $('#customMessage').html("<div class='centeredDivShell'><div class='centeredDivInner'>" +
-            "<div class='customMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>" +
+            "<div class='canIgetaConnectionMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>" +
             "<div class='divRefreshPage'><a href='javascript:refreshPage()'>Refresh page</a></div></div></div></div></div>");
 
         $('.customMessageContainer').show();

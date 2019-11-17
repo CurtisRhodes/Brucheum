@@ -346,6 +346,11 @@ footer {
     text-align: center;
 }
 
+.canIgetaConnectionMessageContainer {
+    z-index: 20;
+    display: none;
+}
+
 .customMessageContainer {
     position: absolute;
     z-index: 20;

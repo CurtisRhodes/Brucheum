@@ -51,28 +51,19 @@ namespace WebApi.Controllers
         public MostPopularPagesReportModel MostVisitedPagesReport()
         {
             var mostPopularPages = new MostPopularPagesReportModel();
+
+            //mostPopularPages.
             try
             {
                 using (var db = new OggleBoobleMySqContext())
                 {
-                    var qry = from h in db.PageHits
-                            join f in db.CategoryFolders on h.PageId equals f.Id
-                            group h by f.FolderName into grp
-                            select new
-                            {
-                                FolderName = grp.Key,
-                                Count = grp.Select(x => x.PageId).Distinct().Count()
-                            };
+                    mostPopularPages.Items = db.Database.SqlQuery<MostPopularPagesReportItem>(
+                         "select FolderName PageName, count(*) PageHits " +
+                         "from OggleBooble.PageHit h " +
+                         "join OggleBooble.CategoryFolder f on h.PageId = f.Id " +
+                         "group by PageId " +
+                         "order by PageHits desc limit 200").ToList();
 
-                    //for (int i = 0; i < 100; i++) { }
-                    int i = 0;
-                    foreach (var xrow in qry.OrderBy(x => x.Count))
-                    {
-                        mostPopularPages.Items.Add(new MostPopularPagesReportItem()
-                        { PageName = xrow.FolderName, PageHits = xrow.Count });
-                        if (i++ > 200)
-                            break;
-                    }
                 }
                 mostPopularPages.Success = "ok";
             }
