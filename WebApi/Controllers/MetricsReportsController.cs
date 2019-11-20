@@ -51,8 +51,6 @@ namespace WebApi.Controllers
         public MostPopularPagesReportModel MostVisitedPagesReport()
         {
             var mostPopularPages = new MostPopularPagesReportModel();
-
-            //mostPopularPages.
             try
             {
                 using (var db = new OggleBoobleMySqContext())
@@ -61,6 +59,7 @@ namespace WebApi.Controllers
                          "select FolderName PageName, count(*) PageHits " +
                          "from OggleBooble.PageHit h " +
                          "join OggleBooble.CategoryFolder f on h.PageId = f.Id " +
+                         "where HitTimeStamp between date_add(current_date(), interval -1 day) and current_date()" +
                          "group by PageId " +
                          "order by PageHits desc limit 200").ToList();
 
@@ -69,6 +68,28 @@ namespace WebApi.Controllers
             }
             catch (Exception ex) { mostPopularPages.Success = Helpers.ErrorDetails(ex); }
             return mostPopularPages;
+        }
+
+        [HttpGet]
+        [Route("api/MetricsReports/MostImageHitsReport")]
+        public MostPopularPagesReportModel MostImageHitsReport()
+        {
+            var MostImageHits = new MostPopularPagesReportModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqContext())
+                {
+                    MostImageHits.Items = db.Database.SqlQuery<MostPopularPagesReportItem>(
+                        "select FolderName PageName, count(*) PageHits " +
+                        "from OggleBooble.ImageHit h " +
+                        "join OggleBooble.CategoryFolder f on h.PageId = f.Id " +
+                        "where HitDateTime between date_add(current_date(), interval - 1 day) and current_date() " +
+                        "group by PageId order by PageHits desc limit 200").ToList();
+                }
+                MostImageHits.Success = "ok";
+            }
+            catch (Exception ex) { MostImageHits.Success = Helpers.ErrorDetails(ex); }
+            return MostImageHits;
         }
     }
 }

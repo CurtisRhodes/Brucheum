@@ -57,26 +57,11 @@
             <div id="dots"></div>
             <style>
 
-                .popPagesReportContainer {
-                    display: inline-block;
-                    border: solid thin #000;
-                    padding: 4px;
-                    max-height: 400px;
-                    overflow-y: auto;
-                }
-
                 #pageHitReport table td {
                     border: solid thin #000;
                     padding: 4px;
+                    min-width: 95px;
                     text-align: center;
-                }
-
-                .workAreaHeader {
-                    border: none;
-                    background-color: var(--brucheumBlue);
-                    color: #fff;
-                    display: inline-flex;
-                    width: 100%;
                 }
 
                 .workAreaContainer {
@@ -104,10 +89,6 @@
                     background-color: #a9a177;
                     overflow-y: auto;
                 }
-                .workAreaRow1 {
-                    margin-top: 1px;
-                    padding: 10px;
-                }
 
                 .sortBox {
                     border: solid thin #808080;
@@ -127,6 +108,30 @@
                     height: 125px;
                 }
 
+                .workAreaHeader {
+                    border: none;
+                    background-color: var(--brucheumBlue);
+                    color: #fff;
+                    display: inline-flex;
+                    width: 100%;
+                }
+
+                .workAreaRow {
+                    margin-top: 1px;
+                    padding: 10px;
+                    border-top: solid 5px var(--brucheumBlue);
+                }
+
+                .popPagesReportContainer {
+                    display: none;
+                    border: solid thin #000;
+                    padding: 4px;
+                    max-height: 400px;
+                    overflow-y: auto;
+                }
+                .mostPopularPagesReport {
+                    padding: 5px;
+                }
             </style>
 
             <div id="divSortTool" class="workAreaContainer displayHidden">
@@ -145,18 +150,28 @@
                     <div class="workAreaHeaderLabel"><h3>Metrics</h3></div>
                     <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="closeMetrics()"></div>
                 </div>
-                <div class="workAreaRow1">
+                <div class="workAreaRow">
                     <div id="pageHitReport"></div>
                     <button id="refreshPageHits" class="inline displayHidden" onclick="runPageHitsReport()">refresh</button>
                 </div>
-                <div class="workAreaRow2">
-                    <div id="popPagesContainer" class='popPagesReportContainer displayHidden'>
-                        <div id="mostPopularPagesReport"></div>
-                    </div>
-                    <button id="btnPopPages" class="inline displayHidden" onclick="runPopPages()">Most Popular Pages</button>
 
+                <div class="workAreaRow">
+                    <div class="inline">
+                        <div id="popPagesContainer" class='popPagesReportContainer '>
+                            <div id="mostPopularPagesReport"></div>
+                        </div>
+                        <button id="btnPopPages" class="inline displayHidden" onclick="runPopPages()">Most Popular Pages</button>
                     </div>
-                <div class="workAreaRow3">
+                    <div class="inline">
+                        <div id="mostImageHitsContainer" class='popPagesReportContainer '>
+                            <div id="mostImageHitsReport"></div>
+                        </div>
+                        <button id="btnMostImageHits" class="inline displayHidden" onclick="runMostImageHits()">Most Image Hits</button>
+                    </div>
+                </div>
+
+
+                <div class="workAreaRow">
 
                 </div>
             </div>

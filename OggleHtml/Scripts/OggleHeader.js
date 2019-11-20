@@ -139,7 +139,8 @@
             "                   <div class='menuTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
             "               </div>\n" +
             "               <div id='optionNotLoggedIn'>\n" +
-            "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:onRegisterClick()'  onmouseover='slowlyShowCustomMessage(69)' onmouseout='forgetShowingCustomMessage=true;' >Register</a></div>\n" +
+            "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:onRegisterClick()'"  +
+            "                   onmouseover = 'slowlyShowCustomMessage(69)' onmouseout = 'forgetShowingCustomMessage=true;' > Register</a ></div >\n" +
             "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
             "               </div>\n" +
             "           </div>\n" +

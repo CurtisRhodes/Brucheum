@@ -108,7 +108,7 @@ function logVisitor(pageId, calledFrom) {
                 alert("bypassing logVisitor");
                 console.log("bypassing logVisitor");
             }
-            return;
+            //return;
         }
 
         var ipAddress = getCookieValue("IpAddress");
@@ -122,7 +122,7 @@ function logVisitor(pageId, calledFrom) {
             }
         }
 
-        if (document.domain === 'localhost') alert("vb3 LogVisitor call to IP info. IpAddress: " + ipAddress);
+        //if (document.domain === 'localhost') alert("vb3 LogVisitor call to IP info. IpAddress: " + ipAddress);
         if (verbosity > 10) {
             sendEmailToYourself("LogVisitor call to IP info.", " ip: " + ipAddress);
             if (document.domain === 'localhost') alert("vb3 LogVisitor call to IP info. IpAddress: " + ipAddress);
@@ -177,7 +177,7 @@ function logVisitor(pageId, calledFrom) {
                             calledFrom === "Entering slideshow" ||
                             calledFrom === "start slideshow") {
 
-                            if (document.domain === 'localhost') {
+                            if (document.domain === 'localhostXXX') {
                                 alert("LogVisitor called from [" + calledFrom + "]." +
                                     "\n Initial page: " + visitorSuccess.PageName + "  (" + pageId + ")" +
                                     ".\n ipAddress: " + data.ip +
@@ -319,15 +319,14 @@ function logPageHit(pageId, visitorId, calledFrom) {
         $('#spnUserName').html(getCookieValue("UserName"));
         $('#optionLoggedIn').show();
         $('#optionNotLoggedIn').hide();
-        return;
+        //return;
     }
-    
 
     // TRY GETVISITOR FROM IP IF YOU HAVE IP BUT NO VISITOR ID 
     if (isNullorUndefined(visitorId)) {
         var ipAddress = getCookieValue("IpAddress");
         if (!isNullorUndefined(ipAddress)) {
-            if (document.domain === 'localhost') alert("how is it that I know the Ip (" + getCookieValue("IpAddress") + ") and not the visitorId?");
+            //if (document.domain === 'localhost') alert("how is it that I know the Ip (" + getCookieValue("IpAddress") + ") and not the visitorId?");
             $.ajax({
                 type: "GET",
                 url: settingsArray.ApiServer + "api/HitCounter/GetVisitorIdFromIP?ipAddress=" + ipAddress,
@@ -423,7 +422,7 @@ function logPageHit(pageId, visitorId, calledFrom) {
                 //if (visitorId === "ec6fb880-ddc2-4375-8237-021732907510") alert("pageHits: " + pageHitSuccessModel.PageHits.toLocaleString() + "\ncalledFrom: " + calledFrom);
 
 
-                $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits.toLocaleString());            
+                $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits.toLocaleString());
                 if (verbosity > 11) {
                     var ipAddress = getCookieValue("IpAddress");
                     sendEmailToYourself("Just so you know; valid page hits are being recorded.",

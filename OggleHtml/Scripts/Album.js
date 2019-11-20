@@ -80,8 +80,7 @@ function getBreadCrumbs(folderId) {
                     }
                     else {
                         if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder) {
-                            $('#breadcrumbContainer').append("<a class='inactiveBreadCrumb' " +
-                                "onmouseover='slowlyHomeFolderInfoDialog(" +
+                            $('#breadcrumbContainer').append("<a class='inactiveBreadCrumb' " +// "onmouseover='slowlyHomeFolderInfoDialog(" +
                                 Number(breadCrumbModel.BreadCrumbs.length - i) + ",\"" +
                                 breadCrumbModel.FolderName + "\",\"" +
                                 breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" +
@@ -546,6 +545,7 @@ function slowlyHomeFolderInfoDialog(index, folderName, folderId, parentId, rootF
     forgetHomeFolderInfoDialog = false;
     setTimeout(function () {
         if (forgetHomeFolderInfoDialog === false) {
+            alert("disable this");
             if (typeof pause === 'function')
                 pause();
             showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId, rootFolder);

@@ -590,29 +590,29 @@ function runPageHitsReport() {
                 // Request extra privdleges 
                 // pay me to do some programming for you and I'll let you in on all my source code
 
-                var kludge = "<table><tr><td></td><td>Today</td><td>Yesterday</td><td>Two_Days_ago</td><td>Three_Days_ago</td><td>Four_Days_ago</td>" +
-                    "<td>Five Days ago</td><td>Six Days ago</td></tr>";
+                var kludge = "<table><tr><td></td><td>Today</td><td>Yesterday</td><td>-2 Days</td><td>-3 Days</td><td>-4 Days</td>" +
+                    "<td>-5 Days</td><td>-6 Days</td></tr>";
                 kludge +=  "<tr><td>page Hits</td> ";
-                kludge += "<td>" + pageHitModel.PageHits.Today + "</td>";
-                kludge += "<td>" + pageHitModel.PageHits.Yesterday + "</td>";
-                kludge += "<td>" + pageHitModel.PageHits.Two_Days_ago + "</td>";
-                kludge += "<td>" + pageHitModel.PageHits.Three_Days_ago + "</td>";
-                kludge += "<td>" + pageHitModel.PageHits.Four_Days_ago + "</td>";
-                kludge += "<td>" + pageHitModel.PageHits.Five_Days_ago + "</td>";
-                kludge += "<td>" + pageHitModel.PageHits.Six_Days_ago + "</td>";
+                kludge += "<td>" + pageHitModel.PageHits.Today.toLocaleString() + "</td>";
+                kludge += "<td>" + pageHitModel.PageHits.Yesterday.toLocaleString() + "</td>";
+                kludge += "<td>" + pageHitModel.PageHits.Two_Days_ago.toLocaleString() + "</td>";
+                kludge += "<td>" + pageHitModel.PageHits.Three_Days_ago.toLocaleString() + "</td>";
+                kludge += "<td>" + pageHitModel.PageHits.Four_Days_ago.toLocaleString() + "</td>";
+                kludge += "<td>" + pageHitModel.PageHits.Five_Days_ago.toLocaleString() + "</td>";
+                kludge += "<td>" + pageHitModel.PageHits.Six_Days_ago.toLocaleString() + "</td>";
                 kludge += "</tr><tr><td>image Hits</td> ";
-                kludge += "<td>" + pageHitModel.ImageHits.Today + "</td>";
-                kludge += "<td>" + pageHitModel.ImageHits.Yesterday + "</td>";
-                kludge += "<td>" + pageHitModel.ImageHits.Two_Days_ago + "</td>";
-                kludge += "<td>" + pageHitModel.ImageHits.Three_Days_ago + "</td>";
-                kludge += "<td>" + pageHitModel.ImageHits.Four_Days_ago + "</td>";
-                kludge += "<td>" + pageHitModel.ImageHits.Five_Days_ago + "</td>";
-                kludge += "<td>" + pageHitModel.ImageHits.Six_Days_ago + "</td>";
+                kludge += "<td>" + pageHitModel.ImageHits.Today.toLocaleString() + "</td>";
+                kludge += "<td>" + pageHitModel.ImageHits.Yesterday.toLocaleString() + "</td>";
+                kludge += "<td>" + pageHitModel.ImageHits.Two_Days_ago.toLocaleString() + "</td>";
+                kludge += "<td>" + pageHitModel.ImageHits.Three_Days_ago.toLocaleString() + "</td>";
+                kludge += "<td>" + pageHitModel.ImageHits.Four_Days_ago.toLocaleString() + "</td>";
+                kludge += "<td>" + pageHitModel.ImageHits.Five_Days_ago.toLocaleString() + "</td>";
+                kludge += "<td>" + pageHitModel.ImageHits.Six_Days_ago.toLocaleString() + "</td>";
                 kludge += "</tr></table>";
                 $("#pageHitReport").html(kludge);
                 $("#refreshPageHits").show();
-                $("#btnPopPages").show();
-
+                $("#btnPopPages").show();                
+                $("#btnMostImageHits").show();
             }
             else {
                 alert("renameFolder: " + repairReport.Success);
@@ -629,7 +629,6 @@ function runPageHitsReport() {
 }
 
 function runPopPages() {
-    //<div id="mostPopularPagesReport"></div>
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
@@ -637,7 +636,7 @@ function runPopPages() {
         success: function (popularPages) {
             $('#dashBoardLoadingGif').hide();
             if (popularPages.Success === "ok") {
-                $('#popPagesContainer').show();                
+                $('#popPagesContainer').css("display", "inline-block");
                 $("#mostPopularPagesReport").html("<table>");
                 $.each(popularPages.Items, function (idx, obj) {
                     $("#mostPopularPagesReport").append("<tr><td>" + obj.PageName + "</td><td>" + obj.PageHits + "</td></tr>");
@@ -653,6 +652,35 @@ function runPopPages() {
             if (!checkFor404(errorMessage, "runPopPages")) {
                 alert("runPopPages: " + errorMessage);
                 sendEmailToYourself("XHR ERROR in Dashboard.js runPopPages", "Message: " + errorMessage);
+            }
+        }
+    });
+}
+
+function runMostImageHits() {
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "/api/MetricsReports/MostImageHitsReport",
+        success: function (mostImageHits) {
+            $('#dashBoardLoadingGif').hide();
+            if (mostImageHits.Success === "ok") {
+                $('#mostImageHitsContainer').css("display", "inline-block");
+                $("#mostImageHitsReport").html("<table>");
+                $.each(mostImageHits.Items, function (idx, obj) {
+                    $("#mostImageHitsReport").append("<tr><td>" + obj.PageName + "</td><td>" + obj.PageHits + "</td></tr>");
+                });
+                $("#mostImageHitsReport").append("</table>");
+            }
+            else {
+                alert("runMostImageHits: " + mostImageHits.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "runMostImageHits")) {
+                alert("runMostImageHits: " + errorMessage);
+                sendEmailToYourself("XHR ERROR in Dashboard.js runMostImageHits", "Message: " + errorMessage);
             }
         }
     });

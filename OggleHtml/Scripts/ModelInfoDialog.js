@@ -1,10 +1,8 @@
 ﻿var FolderDetailModel = {};
-var userName;
-
 
 // called from ModelInfoDialog.js
 //             Album.js
-//             Carousel.js
+//             Carousel.js      
 //             Dashboard.js
 //             Slideshow.js
 //             StaticPage.js
@@ -12,7 +10,6 @@ var userName;
 function showModelInfoDialog(modelName, folderId, currentSrc) {
 
     //if (document.domain === 'localhost') alert("showModelInfoDialog(\nmodelName: " + modelName + "\nfolderId: " + folderId + "\ncurrentSrc" + currentSrc);
-    userName = getCookieValue("UserName");
 
     FolderDetailModel.FolderId = folderId;
     $('#modelInfoDialog').dialog({
@@ -24,7 +21,6 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
     });
     clearGets();
 
-    //userName = getCookieValue("UserName");
     $('#modelInfoDialog').dialog("open");
     if (modelName === "unknown model") {
         FolderDetailModel.FolderImage = currentSrc;
@@ -36,9 +32,7 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
         $('#modelInfoEdit').hide();
         return;
     }
-
     //if (document.domain === 'localhost') alert("calling ImageCategoryDetail/Get?folderId: from showModelInfoDialog\nfolderId=" + folderId);
-
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
@@ -54,42 +48,41 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
                 $('#txtNationality').val(folderDetails.Nationality);
                 $('#txtMeasurements').val(folderDetails.Measurements);
                 $('#selBoobs').val(folderDetails.Boobs).change();
-                $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
 
-                if (isNullorUndefined(userName)) {
-                    $('#externalLinks').html(folderDetails.ExternalLinks);
-                    $('#modelInfoDialogTrackBack').hide();
-                    $('.modelDialogInput').attr("readonly", true);
-                    $('#modelInfoEdit').html("Edit");
-                    $('#modelInfoEdit').hide();
-                    $('#modelInfoDialogComment').summernote({
-                        height: 210,
-                        codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-                        toolbar: [['codeview']]
-                    });
-                    $('#modelInfoDialogComment').summernote({ toolbar: '[]' });
-                    $('#modelInfoDialogComment').summernote('disable');
-                    //if (document.domain === 'localhost') alert("I WANT THE TOOLBAR GONE");
-                }
-                else {
+                if (isInRole("Oggle admin")) {  //  if (isNullorUndefined(userName)) {
                     $('#modelInfoViewOnlyArea').hide();
                     $("#txtBorn").datepicker();
                     $('#modelInfoDialogTrackBack').show();
                     $('#modelInfoDialogComment').summernote({
                         height: 210,
-                        codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
                         toolbar: [['codeview']]
                     });
                     $('#externalLinks').summernote({
                         height: 120,
-                        codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
                         toolbar: [['codeview']]
                     });
-                    $('#externalLinks').summernote("code", folderDetails.ExternalLinks);
-                    $('#modelInfoEdit').html("Save");
+                    //$('#modelInfoEdit').html("Save");
+                }
+                else {
+                    $('#modelInfoDialogTrackBack').hide();
+                    $('.modelDialogInput').attr("readonly", true);
+                    //$('#modelInfoEdit').html("Save");  // $('#modelInfoEdit').html("Edit");
+                    $('#modelInfoEdit').html("Exit");
+                    $('#modelInfoDialogComment').summernote({
+                        height: 210,
+                        toolbar: '[]'
+                    });
+                    $('#externalLinks').summernote({
+                        height: 90,
+                        toolbar: '[]'
+                    });
+                    $('#modelInfoDialogComment').summernote('disable');
+                    //if (document.domain === 'localhost') alert("I WANT THE TOOLBAR GONE");
                 }
                 $('#modelInfoDialogComment').summernote("code", folderDetails.CommentText);
+                $('#externalLinks').summernote("code", folderDetails.ExternalLinks);
 
+                $('#modelInfoDialog').dialog('option', 'title', folderDetails.FolderName);
                 $('#modelInfoEditArea').show();
             }
             else
@@ -122,14 +115,14 @@ function IdentifyPoser() {
 
 function toggleMode() {
     switch ($('#modelInfoEdit').html()) {
-        case "Edit":
-            alert("vestigual");
-            break;
         case "Add":
             createPosersIdentifiedFolder();
             break;
         case "Save":
             updateFolderDetail();
+            break;
+        case "Exit":
+            $('#modelInfoDialog').dialog("close");
             break;
         default:
     }
@@ -267,7 +260,7 @@ function updateFolderDetail() {
 
 function considerClosingModelInfoDialog() {
     //if ($('#modelInfoEdit').html() === "Edit")
-    if (isNullorUndefined(userName)) {
+    if (!isInRole("Oggle admin")) {
         $('#modelInfoDialog').dialog("close");
     }
 }

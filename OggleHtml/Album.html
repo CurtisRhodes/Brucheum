@@ -106,10 +106,9 @@
                     clearInterval(waiter);
 
                     var visitorId = getCookieValue("VisitorId");
-                    if (isNullorUndefined(visitorId)) {
-                        if (document.domain === 'localhost')
-                            alert("Album.html visitorId NullorUndefined");
-                    }
+
+                    //logVisitor(params.folder);
+                    if (isNullorUndefined(visitorId)) { if (document.domain === 'localhost') alert("Album.html visitorId NullorUndefined"); }
 
                     setUserPermissions();
                     var waiter2 = setInterval(function () {

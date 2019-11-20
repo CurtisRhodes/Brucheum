@@ -8,6 +8,7 @@
 }
 
 .folderCategoryDialogButton {
+    display: inline-block;
     text-align: center;
     background: var(--brucheumBlue);
     color: #000;

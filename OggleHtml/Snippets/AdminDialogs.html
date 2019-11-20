@@ -18,7 +18,10 @@
             </div>
         </div>
         <div class="modelInfoDialogLabel">comment</div>
-        <div id="modelInfoDialogCommentContainer"><div id="modelInfoDialogComment" class="modelInfoCommentArea"></div></div>
+        <div id="modelInfoDialogCommentContainer">
+            <div id="modelInfoDialogComment" class="modelInfoCommentArea"></div>
+        </div>
+
         <div class="modelInfoDialogLabel">trackbacks</div>
         <div id="modelInfoDialogTrackBack">
             <div class="hrefLabel">href</div><input id="txtLinkHref" class="modelDialogInput" />
@@ -33,15 +36,14 @@
         <div class="viewOnlyMessage clickable" onclick="IamThisModel()">Is this you?  </div>
         <a class="dialogEditButton" href="javascript:IdentifyPoser()">Add Info</a>
     </div>
-    <a id="modelInfoEdit" class="dialogEditButton" href="javascript:toggleMode()">Edit</a>
+    <a id="modelInfoEdit" class="dialogEditButton" href="javascript:toggleMode()">Save</a>
 </div>
 
 <div id="folderCategoryDialog" class="oggleDialogWindow" title="" onmouseleave="considerClosingCategoryDialog()">
-    <div><div id="catDlgSummerNoteTextArea"></div></div>
-    <a id="btnCatDlgEdit" class="folderCategoryDialogButton" href="javascript:saveCategoryDialogText()">Save</a>
-    <a id="btnCatDlgMeta" class="folderCategoryDialogButton" href="javascript:addMetaTags()">add meta tags</a>
+    <div id="catDlgSummerNoteTextArea"></div>
+    <div id="btnCatDlgEdit" class="folderCategoryDialogButton" onclick="editFolderDialog()">Edit</div>
+    <div id="btnCatDlgMeta" class="folderCategoryDialogButton displayHidden" onclick="addMetaTags()">add meta tags</div>
 </div>
-
 
 <div id="moveCopyDialog" class="oggleDialogWindow" title="">
     <div class="inline"><img id="copyDialogImage" class="copyDialogImage" /></div>

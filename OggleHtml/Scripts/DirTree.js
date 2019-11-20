@@ -64,8 +64,6 @@ function recurrBuildDirTree(dir, treeId) {
                 txtFileCount += " (" + subDir.SubDirCount + ")";
         }
 
-        //if (subDir.FolderId === 3956) { alert("subDir.SubDirCount: " + subDir.SubDirCount); }
-
         dirTreeContainer += "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
             + "<span id='S" + subDir.LinkId + "' onclick=toggleDirTree('" + subDir.LinkId + "') >[" + expandMode + "] </span>"
             + "<div id='" + subDir.linkId + "aq' class='treeLabelDiv' onclick=" + treeId + "Click('" + subDir.DanniPath + "','" + subDir.FolderId + "','" + subDir.LinkId + "aq') "
@@ -74,8 +72,7 @@ function recurrBuildDirTree(dir, treeId) {
             + subDir.DirectoryName.replace(".OGGLEBOOBLE.COM", "") + "</div>       <span class='fileCount'>  : "
             + txtFileCount + "</span></div>" + "<div class='" + expandClass + "' id=" + subDir.LinkId + ">";
 
-        totalPics += subDir.Length;
-        //totalFolders++;
+        totalPics += subDir.FileCount;
         recurrBuildDirTree(subDir, treeId);
         dirTreeContainer += "</div>";
         dirTreeTab -= dirTreeTabIndent;

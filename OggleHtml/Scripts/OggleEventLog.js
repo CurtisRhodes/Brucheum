@@ -138,9 +138,13 @@ function reportThenPerformEvent(eventCode, pageId) {
 }
 
 function reportClickEvent(eventCode, pageId) {
+
+
+
     try {
         var visitorId = getCookieValue("VisitorId");
         var ipAddress = getCookieValue("IpAddress");
+
         if (isNullorUndefined(ipAddress) || isNullorUndefined(visitorId)) {
             //sendEmailToYourself("In reportClickEvent VisitorId: " + visitorId + " Ip: " + ipAddress, "Calling LogVisitor.  Event: " + eventCode + " pageId: " + pageId);
             logVisitor(pageId, "reportClickEvent");
@@ -153,6 +157,7 @@ function reportClickEvent(eventCode, pageId) {
             VisitorId: visitorId
         };
 
+
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "/api/EventLog/LogEventActivity",
@@ -160,6 +165,8 @@ function reportClickEvent(eventCode, pageId) {
             success: function (logEventActivitySuccess) {
                 var ipAddr = getCookieValue("IpAddress");
                 if (logEventActivitySuccess.Success === "ok") {
+
+                    //if (document.domain === 'localhost') alert("reportClickEvent 3\nvisitorId: " + visitorId + "\nipAddress: " + ipAddress);
 
                     //if (verbosity > 5)
                     //if (eventCode === "HBX" || eventCode === "CXM" || eventCode === "MBC" || eventCode === "PRN")
@@ -169,15 +176,16 @@ function reportClickEvent(eventCode, pageId) {
                         && eventCode !== "BLC"  // Banner Link Clicked 
                         && eventCode !== "CAA") // Carousel Arrow Clicked
                     {
-                        if (logEventActivitySuccess.IpAddress !== "68.203.90.183") {
+                        if (logEventActivitySuccess.IpAddress !== "68.203.90.183")
+                        {
                             sendEmailToYourself(logEventActivitySuccess.EventName,
-                                "PageId: "+ pageId,
+                                "From page: " + pageId + " PageName: " + logEventActivitySuccess.PageName +
                                 "<br/>ipAddress: " + ipAddress + //"<br/>visitorId: " + visitorId +
-                                ",<br/>from: " + logEventActivitySuccess.VisitorDetails);
+                                ",<br/>visitor details: " + logEventActivitySuccess.VisitorDetails);
                         }
-                        //if (document.domain === 'localhost')
-                        //    alert("Event [" + logEventActivitySuccess.EventName + "] \nPage: " + logEventActivitySuccess.PageName +
-                        //        "\nIp: " + logEventActivitySuccess.IpAddress + ", from " + logEventActivitySuccess.VisitorDetails);
+                        if (document.domain === 'localhost')
+                            alert("Event [" + logEventActivitySuccess.EventName + "] \nPage: " + logEventActivitySuccess.PageName +
+                                "\nIp: " + ipAddress + ", from " + logEventActivitySuccess.VisitorDetails);
                     }
                     waitingForReportClickEvent = false;
                 }

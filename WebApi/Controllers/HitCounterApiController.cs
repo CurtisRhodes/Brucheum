@@ -278,7 +278,14 @@ namespace WebApi
 
                     logEventActivitySuccess.EventName = db.Refs.Where(r => r.RefCode == logEventModel.EvenCode).FirstOrDefault().RefDescription;
 
+                    using (var odb = new OggleBoobleSqlContext.OggleBoobleContext()) {
+                        var catFolder = odb.CategoryFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault();
+                        if (catFolder != null)
+                            logEventActivitySuccess.PageName = catFolder.FolderName;
+                    }
                     //logEventActivitySuccess.PageName = db.CategoryFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault().FolderName;
+                    
+                    
                     WebStatsSqlContext.Visitor visitor = db.Visitors.Where(v => v.VisitorId == logEventModel.VisitorId).FirstOrDefault();
                     if (visitor != null)
                     {

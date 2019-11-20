@@ -6,8 +6,6 @@ using System.Net;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using WebApi.Models;
-using WebApi.DataContext;
-//using static System.Net.WebRequestMethods;
 using WebApi.Ftp;
 using System.Configuration;
 using WebApi.OggleBoobleSqlContext;
@@ -333,7 +331,6 @@ namespace WebApi
                         var appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
                         using (WebClient wc = new WebClient())
                         {
-#if DEBUG
                             try
                             {
                                 DirectoryInfo dirInfo = new DirectoryInfo(repoPath + trimPath);
@@ -346,7 +343,6 @@ namespace WebApi
                                 var err = Helpers.ErrorDetails(ex);
                                 System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
                             }
-#endif
                             try
                             {
                                 wc.DownloadFile(new Uri(newLink.Link), appDataPath + "tempImage" + extension);
@@ -418,7 +414,6 @@ namespace WebApi
 
                         //var goDaddyLink = "http://" + dbCategory.RootFolder + ".ogglebooble.com/";
                         //var goDaddyLinkTest = goDaddyLink + trimPath + "/" + newFileName;
-
                         db.ImageLinks.Add(new ImageLink()
                         {
                             Id = imageLinkId,
@@ -430,7 +425,7 @@ namespace WebApi
                             Link = "http://" + trimPath + "/" + newFileName
                         });
                         db.SaveChanges();
-                    }
+                                            }
                     try
                     {
                         int lnkCount = db.CategoryImageLinks.Where(c => c.ImageCategoryId == newLink.FolderId).Count();
@@ -446,6 +441,7 @@ namespace WebApi
                             SortOrder = 99
                         });
                         db.SaveChanges();
+
                         successModel.Success = "ok";
                     }
                     catch (Exception ex)
@@ -469,13 +465,8 @@ namespace WebApi
             string success = "";
             try
             {
-                //int parentId = 0;
-                //int rowsProcessed = 0;
-                //int imagesRenamed = 0;
                 string godaddyUrlPrefix = "";
-                //string sourceFolderName = "";
                 string parentPath = "";
-                List<CategoryFolder> subdirs = null;
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
@@ -508,10 +499,8 @@ namespace WebApi
                         {
                             RenameChildFolderLinks(folderId, godaddyUrlPrefix + parentPath, newFolderName, ftpPath = ftpSubDomain + parentPath, db);
                         }
-
                         dbSourceFolder.FolderName = newFolderName;
                         db.SaveChanges();
-
                     }
                 }
             }

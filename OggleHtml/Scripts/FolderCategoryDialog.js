@@ -17,6 +17,7 @@ function showCategoryDialog(folderId) {
 
     $('#folderCategoryDialog').dialog('open');
     try {
+        $('#btnCatDlgMeta').hide();
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/CategoryComment/Get?folderId=" + folderId,
@@ -24,35 +25,26 @@ function showCategoryDialog(folderId) {
                 if (categoryComment.Success === "ok") {
                     categoryFolderId = folderId;
                     $('#folderCategoryDialog').dialog('option', 'title', categoryComment.FolderName);
-                    $('#catDlgSummerNoteTextArea').summernote('code', categoryComment.CommentText);
-
                     if (isInRole("Oggle admin")) {
-                        $('#btnCatDlgMeta').show();
-                        $("#btnCatDlgEdit").show();
                         $('#catDlgSummerNoteTextArea').summernote({
-                            height: 210,
-                            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+                            height: 300,
                             toolbar: [['codeview']]
                         });
                         $('#catDlgSummerNoteContainer').show();
-
-                        //alert("this is the toolbar I want gone");
-                        //codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-
-
                     }
                     else {
                         $('#btnCatDlgEdit').hide();
-                        $('#btnCatDlgMeta').hide();
                         $('#catDlgSummerNoteTextArea').summernote({
                             height: 500,
-                            toolbar: [['codeview']]
+                            toolbar: '[]'
                         });
                         $('#catDlgSummerNoteTextArea').summernote('disable');
                     }
+
                     if (categoryComment.CommentText === "") {
                         if (document.domain === 'localhost') alert("categoryComment.CommentText  EMPTY: " + categoryComment.CommentText);
                     }
+                    $('#catDlgSummerNoteTextArea').summernote('code', categoryComment.CommentText);
                 }
                 else {
                     //if (categoryComment.Success !== "not found")
@@ -77,30 +69,37 @@ function showCategoryDialog(folderId) {
     }
 }
 
-function saveCategoryDialogText() {
-    $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" + $('#catDlgSummerNoteTextArea').summernote('code'),
-        success: function (success) {
-            if (success === "ok") {
-                displayStatusMessage("ok", "category description updated");
-                $('#btnCatDlgEdit').html("Edit");
+function editFolderDialog() {
+    if ($('#btnCatDlgEdit').html() === "Save") {
+        $.ajax({
+            type: "PUT",
+            url: settingsArray.ApiServer + "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" + $('#catDlgSummerNoteTextArea').summernote('code'),
+            success: function (success) {
+                if (success === "ok") {
+                    displayStatusMessage("ok", "category description updated");
+                    $('#btnCatDlgEdit').html("Edit");
+                    $('#btnCatDlgMeta').hide();
+                }
+                else {
+                    sendEmailToYourself("jquery fail in FolderCategory.js saveCategoryDialogText", success);
+                    if (document.domain === 'localhost')
+                        alert("EditFolderCategory: " + success);
+                }
+            },
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "saveCategoryDialogText")) {
+                    sendEmailToYourself("XHR ERROR in FolderCategory.js saveCategoryDialogText",
+                        "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" +
+                        $('#catDlgSummerNoteTextArea').summernote('code') + " Message: " + errorMessage);
+                }
             }
-            else {
-                sendEmailToYourself("jquery fail in FolderCategory.js saveCategoryDialogText", success);
-                if (document.domain === 'localhost')
-                    alert("EditFolderCategory: " + success);
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "saveCategoryDialogText")) {
-                sendEmailToYourself("XHR ERROR in FolderCategory.js saveCategoryDialogText",
-                    "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" +
-                    $('#catDlgSummerNoteTextArea').summernote('code') + " Message: " + errorMessage);
-            }
-        }
-    });
+        });
+    }
+    if ($('#btnCatDlgEdit').html() === "Edit") {
+        $('#btnCatDlgEdit').html("Save");
+        $('#btnCatDlgMeta').show();
+    }
 }
 
 function addMetaTags() {
@@ -108,10 +107,8 @@ function addMetaTags() {
 }
 
 function considerClosingCategoryDialog() {
-
-
-    if (!isInRole("Oggle admin")) {
-    //    $('#folderCategoryDialog').dialog("close");
+    if (!isInRole("Oggle admin") || $('#btnCatDlgEdit').html() === "Edit") {
+        $('#folderCategoryDialog').dialog("close");
     }
 }
 
