@@ -214,6 +214,28 @@ namespace WebApi
             }
             return successModel;
         }
+
+        [HttpPatch]
+        public SuccessModel GetRootFolder(int folderId)
+        {
+            SuccessModel successModel = new SuccessModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    successModel.ReturnValue = dbCategoryFolder.RootFolder;
+                    successModel.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                successModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return successModel;
+        }
+
+
     }
 
     [EnableCors("*", "*", "*")]

@@ -14,7 +14,7 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class ImageHitController : ApiController
     {
-        private static readonly Random getrandom = new Random();
+        //private static readonly Random getrandom = new Random();
         bool imageHitControllerBusy = false;
         [HttpPost]
         public ImageHitSuccessModel LogImageHit(logImageHItDataModel logImageHItData)
@@ -27,23 +27,23 @@ namespace WebApi
                     imageHitSuccess.Success = "imageHitController Busy";
                 else
                 {
-                    //imageHitControllerBusy = true;
+                    imageHitControllerBusy = true;
                     using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
                     {
-                        DateTime utcDateTime = DateTime.UtcNow.AddMilliseconds(getrandom.Next());
-                        imageHitSuccess.HitDateTime = utcDateTime;
+                        //DateTime utcDateTime = DateTime.UtcNow.AddMilliseconds(getrandom.Next());
+                        //imageHitSuccess.HitDateTime = utcDateTime;
                         dbm.ImageHits.Add(new ImageHit()
                         {
                             VisitorId = logImageHItData.VisitorId,
                             PageId = logImageHItData.PageId,
                             ImageLinkId = logImageHItData.LinkId,
-                            HitDateTime = utcDateTime
+                            HitDateTime = DateTime.Now
                         });
                         dbm.SaveChanges();
                         imageHitSuccess.UserHits = dbm.ImageHits.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
                         imageHitSuccess.ImageHits = dbm.ImageHits.Where(h => h.ImageLinkId == logImageHItData.LinkId).Count();
                         //imageHitSuccess.IpAddress = db.Visitors.Where(v => v.VisitorId == logImageHItData.VisitorId).FirstOrDefault().IpAddress;
-                        //imageHitControllerBusy = false;
+                        imageHitControllerBusy = false;
                     }
                 }
                 imageHitSuccess.Success = "ok";
@@ -203,7 +203,7 @@ namespace WebApi
                             dbm.Visits.Add(new Visit()
                             {
                                 VisitorId = visitorId,
-                                VisitDate = DateTime.UtcNow.AddMilliseconds(getrandom.Next())
+                                VisitDate = DateTime.Now  //  .AddMilliseconds(getrandom.Next())
                             });
                             dbm.SaveChanges();
                             visitSuccessModel.VisitAdded = true;

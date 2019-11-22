@@ -304,7 +304,7 @@ namespace WebApi
     {
         private readonly string repoPath = "F:/Danni/";
         private readonly string hostingPath = ".ogglebooble.com/";
-        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];  //  ftp://50.62.160.105/
         static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
         static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
@@ -470,12 +470,12 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    string ftpSubDomain = ftpHost + dbSourceFolder.RootFolder + hostingPath;
+                    
+                    string httpPrefix = "http://" + dbSourceFolder.RootFolder + hostingPath;
                     //parentId = dbSourceFolder.Parent;
 
                     parentPath = Helpers.GetParentPath(folderId);
-                    string ftpPath = ftpSubDomain + parentPath + dbSourceFolder.FolderName;
-
+                    string ftpPath = ftpHost + dbSourceFolder.RootFolder + hostingPath + parentPath + dbSourceFolder.FolderName;
                     success = FtpUtilies.RenameFolder(ftpPath, newFolderName);
 
                     if (success == "ok")
@@ -497,7 +497,8 @@ namespace WebApi
                         godaddyUrlPrefix = "http://" + dbSourceFolder.RootFolder + ".ogglebooble.com/";
                         if (dbSourceFolder.FolderName.ToUpper() != newFolderName.ToUpper())
                         {
-                            RenameChildFolderLinks(folderId, godaddyUrlPrefix + parentPath, newFolderName, ftpPath = ftpSubDomain + parentPath, db);
+                            RenameChildFolderLinks(folderId, httpPrefix, newFolderName, db);
+                                //, originalFolderName:"dd", godaddyUrlPrefix + parentPath + dbSourceFolder.FolderName, newFolderName, ftpPath = ftpSubDomain + parentPath, db);
                         }
                         dbSourceFolder.FolderName = newFolderName;
                         db.SaveChanges();
@@ -510,35 +511,44 @@ namespace WebApi
             }
             return success;
         }
-        private void RenameChildFolderLinks(int parentId, string parentPath, string newFolderName, string ftpPath, OggleBoobleContext db)
+        private void RenameChildFolderLinks(int parentId, string httpPrefix, string newFolderName,  OggleBoobleContext db)
         {
-            string extension = "";
-            string renameSuccess = "";
-            string currentFile = "";
-            CategoryFolder categoryFolder;
+            string fileName = "";
+            //string renameSuccess = "";
+
+            CategoryFolder currentSubFolder = db.CategoryFolders.Where(f => f.Id == parentId).FirstOrDefault();
             List<ImageLink> imageLinks = db.ImageLinks.Where(l => l.FolderLocation == parentId).ToList();
 
             foreach (ImageLink imageLink in imageLinks)
             {
-                extension = imageLink.Link.Substring(imageLink.Link.LastIndexOf("."));
-                categoryFolder = db.CategoryFolders.Where(f => f.Id == imageLink.FolderLocation).First();
-                imageLink.Link = parentPath + newFolderName + "/" + newFolderName + "_" + imageLink.Id + extension;
+                fileName = imageLink.Link.Substring(imageLink.Link.LastIndexOf("/"));
+                //extension = imageLink.Link.Substring(imageLink.Link.LastIndexOf("."));
+                //categoryFolder = db.CategoryFolders.Where(f => f.Id == imageLink.FolderLocation).First();
 
-                currentFile = ftpPath + categoryFolder.FolderName + "/" + categoryFolder.FolderName + "_" + imageLink.Id + extension;
-                var newFileName = newFolderName + "_" + imageLink.Id + extension;
-                renameSuccess = FtpUtilies.RenameFolder(currentFile, newFolderName + "_" + imageLink.Id + extension);
+                var oldLink = imageLink.Link;
 
-                if (renameSuccess != "ok") {
-                    System.Diagnostics.Debug.WriteLine("file rename fail");
-                }
-                else
-                    db.SaveChanges();
+                var newlink = httpPrefix + newFolderName + "/" + currentSubFolder.FolderName + fileName;
+
+                imageLink.Link = newlink;
+
+                //currentFile = ftpPath +  categoryFolder.FolderName + "/" + categoryFolder.FolderName + "_" + imageLink.Id + extension;
+                //var newFileName = newFolderName + "_" + imageLink.Id + extension;
+
+
+                //renameSuccess = FtpUtilies.RenameFolder(currentFile, newFolderName + "_" + imageLink.Id + extension);
+                //if (renameSuccess != "ok") {
+                //    System.Diagnostics.Debug.WriteLine("file rename fail");
+                //    return;
+                //}
+                //else
+                //    db.SaveChanges();
             }
+            db.SaveChanges();
 
             var subDirs = db.CategoryFolders.Where(f => f.Parent == parentId).ToList();
             foreach (CategoryFolder subDir in subDirs)
             {
-                RenameChildFolderLinks(subDir.Id, parentPath, newFolderName, ftpPath, db);
+                RenameChildFolderLinks(subDir.Id, httpPrefix, newFolderName, db);
             }
         }
 
