@@ -183,9 +183,9 @@ function reportClickEvent(eventCode, pageId) {
                                 "<br/>ipAddress: " + ipAddress + //"<br/>visitorId: " + visitorId +
                                 ",<br/>visitor details: " + logEventActivitySuccess.VisitorDetails);
                         }
-                        if (document.domain === 'localhost')
-                            alert("Event [" + logEventActivitySuccess.EventName + "] \nPage: " + logEventActivitySuccess.PageName +
-                                "\nIp: " + ipAddress + ", from " + logEventActivitySuccess.VisitorDetails);
+                        //if (document.domain === 'localhost')
+                        //    alert("Event [" + logEventActivitySuccess.EventName + "] \nPage: " + logEventActivitySuccess.PageName +
+                        //        "\nIp: " + ipAddress + ", from " + logEventActivitySuccess.VisitorDetails);
                     }
                     waitingForReportClickEvent = false;
                 }

@@ -24,30 +24,9 @@ function launchCarousel(root) {
     if (root === "porn")
         specialPage = 3909;
 
-    //getAconnection(root);
+    $('#thisCarouselImage').prop("src", "/Images/ingranaggi3.gif");
     loadImages(root, true, 0, initialTake);
 }
-
-//function getAconnection(root) {
-//    $('#customMessage').html("<div class='customMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>");
-//    $('.customMessageContainer').show();
-//    $.ajax({
-//        type: "PATCH",
-//        async: true,
-//        url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=1",
-//        success: function () {
-//            $('.customMessageContainer').hide();
-//            loadImages(root, true, 0, initialTake);
-//        },
-//        error: function (jqXHR) {
-//            var errorMessage = getXHRErrorDetails(jqXHR);
-//            if (!checkFor404(errorMessage, "getAconnection")) {
-//                sendEmailToYourself("XHR ERROR IN ALBUM.JS getAconnection", "api/AlbumPage/GetRootFolder?folderId=1" +
-//                    " Message: " + errorMessage);
-//            }
-//        }
-//    });
-//}
 
 function loadImages(rootFolder, isChecked, skip, take) {
     var start = Date.now();
@@ -93,6 +72,7 @@ function loadImages(rootFolder, isChecked, skip, take) {
     else {
         $('#laCarousel').show();
         $('#categoryTitle').hide();
+        $('#footerMessage').html("loading carousel");
         $.ajax({
             type: "GET",
             async: true,
@@ -256,6 +236,8 @@ function intervalBody() {
         //$('#footerMessage').html("image: " + imageIndex + " of " + numImages);
         //$('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link).onload = function () {        };
         //setTimeout(function () { }, 400);
+        $('#footerMessage').html("image " + imageIndex + " of " + numImages);
+
     });
 }
 

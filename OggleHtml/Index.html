@@ -88,7 +88,7 @@
                                 <div class="assuranceArrows" onclick="assuranceArrowClick('back')"><img src="/Images/leftArrowOpaque02.png" /></div>
                                 <div class="carouselImageContainer">
                                     <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
-                                    <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="/Images/ingranaggi3.gif" onclick="clickViewGallery()" />
+                                    <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="/Images/infinity01.gif" onclick="clickViewGallery()" />
                                     <div class="imgBottom">
                                         <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
                                         <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
@@ -146,49 +146,62 @@
             else {
                 subdomain = params.subdomain;
             }
-
-            loadSettings();
-            var dots = ""
+                    $('#footerMessage').html("loading settings");
+                    //alert("loading settings");
+                    loadSettings();
+                    var dots = ""
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
                     dots += ". ";
                     $('#dots').html(dots);
                 }
                 else {
-                    $('#dots').html('');
                     clearInterval(waiter);
-                    launchCarousel(subdomain);
-                    setOggleFooter(subdomain);
+                    verifyConnection();
+                    var verifyConnectionWaiter = setInterval(function () {
+                        if (!connectionVerified) {
+                            dots += ". ";
+                            $('#dots').html(dots);
+                        }
+                        else {
+                            clearInterval(verifyConnectionWaiter);
+                            $('#footerMessage').html("loading header");
+                            $('#dots').html('');
+                            launchCarousel(subdomain);
+                            setOggleFooter(subdomain);
 
-                    setUserPermissions();
-                    var waiter2 = setInterval(function () {
-                        dots += ". ";
-                        $('#dots').html(dots);
-                        if (permissionsSet === true) {
-                            clearInterval(waiter2);
-                            $('#dots').html("");
+                            setUserPermissions();
+                            var waiter2 = setInterval(function () {
+                                dots += ". ";
+                                $('#dots').html(dots);
+                                if (permissionsSet === true) {
+                                    clearInterval(waiter2);
+                                    $('#dots').html("");
 
-                            if (subdomain == "porn") {
-                                setOggleHeader(subdomain, 3909);
-                                $('#pornLeftColumnList').show();
-                                $('#boobsLeftColumnList').hide();
-                                $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
-                                $('#includeCenterfoldsCheckbox').hide();
-                                logPageHit(3909, getCookieValue("VisitorId"), "porn index");
-                            }
-                            else {
-                                setOggleHeader(subdomain, 3908);
-                                $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
-                                $('#boobsLeftColumnList').show();
-                                $('#pornLeftColumnList').hide();
-                                launchPromoMessages();
-                                logPageHit(3908, getCookieValue("VisitorId"), "boobs index");
-                            }
+                                    if (subdomain == "porn") {
+                                        setOggleHeader(subdomain, 3909);
+                                        $('#pornLeftColumnList').show();
+                                        $('#boobsLeftColumnList').hide();
+                                        $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
+                                        $('#includeCenterfoldsCheckbox').hide();
+                                        logPageHit(3909, getCookieValue("VisitorId"), "porn index");
+                                    }
+                                    else {
+                                        setOggleHeader(subdomain, 3908);
+                                        $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
+                                        $('#boobsLeftColumnList').show();
+                                        $('#pornLeftColumnList').hide();
+                                        launchPromoMessages();
+                                        logPageHit(3908, getCookieValue("VisitorId"), "boobs index");
+                                    }
 
-                            $('#carouselInclude').hide();
-                            if (isInRole("Oggle admin")) {
-                                $('#carouselInclude').show();
-                            }
+                                    $('#carouselInclude').hide();
+                                    if (isInRole("Oggle admin")) {
+                                        $('#carouselInclude').show();
+                                    }
+
+                                }
+                            }, 300);
                         }
                     }, 300);
                 }

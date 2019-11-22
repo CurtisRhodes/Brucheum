@@ -340,10 +340,7 @@ function logPageHit(pageId, visitorId, calledFrom) {
                         else {
                             setCookieValue("VisitorId", successModel.VisitorId);
                             if (getCookieValue("VisitorId") === successModel.VisitorId) {
-                                if (document.domain === 'localhost')
-                                    alert("Saved having to call LogVisitor from logPageHit. Got visitorId from IP: " +
-                                        ipAddress + ". VisitorId: " + successModel.VisitorId);
-
+                                //if (document.domain === 'localhost') alert("Saved having to call LogVisitor from logPageHit. Got visitorId from IP: " + ipAddress + ". VisitorId: " + successModel.VisitorId);
                                 //console.log("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));
                                 if (verbosity > 1) {
                                     sendEmailToYourself("Found Viisitor Id from Ip: ", "used IpAddress: " + ipAddress + " to find visitorId: " +

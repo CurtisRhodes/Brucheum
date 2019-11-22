@@ -4,7 +4,7 @@ var freeVisitorHitsAllowed = 7500;
 var waitingForReportClickEvent = true;
 var forgetShowingCustomMessage = true;
 var verbosity = 1;
-
+var connectionVerified = false;
 //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
 
 function loadSettings() {
@@ -21,6 +21,27 @@ function loadSettings() {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "loadSettings")) {
                 sendEmailToYourself("XHR error in common.js loadSettings", "/Data/Settings.xml Message: " + errorMessage);
+            }
+        }
+    });
+}
+
+function verifyConnection() {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Carousel/VerifyConnection",
+        success: function (successModel) {
+            if (successModel.Success === "ok") {
+                connectionVerified = true;
+            }
+            else
+                alert(successModel.Success);
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "getAconnection")) {
+                sendEmailToYourself("XHR ERROR IN ALBUM.JS getAconnection", "api/AlbumPage/GetRootFolder?folderId=1" +
+                    " Message: " + errorMessage);
             }
         }
     });
@@ -132,7 +153,7 @@ function checkFor404(errorMessage, calledFrom) {
 
         //showCustomMessage(71);
         $('#customMessage').html("<div class='centeredDivShell'><div class='centeredDivInner'>" +
-            "<div class='canIgetaConnectionMessageContainer'><div class='connectionMessage'><img src='http://library.curtisrhodes.com/canigetaconnection.gif'>" +
+            "<div class='canIgetaConnectionMessageContainer'><div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'>" +
             "<div class='divRefreshPage'><a href='javascript:refreshPage()'>Refresh page</a></div></div></div></div></div>");
 
         $('.customMessageContainer').show();
