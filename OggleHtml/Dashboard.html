@@ -119,7 +119,7 @@
                 .workAreaRow {
                     margin-top: 1px;
                     padding: 10px;
-                    border-top: solid 5px var(--brucheumBlue);
+                    border-bottom: solid 5px var(--brucheumBlue);
                 }
 
                 .popPagesReportContainer {
@@ -157,22 +157,25 @@
 
                 <div class="workAreaRow">
                     <div class="inline">
-                        <div id="popPagesContainer" class='popPagesReportContainer '>
+                        <div id="popPagesContainer" class='popPagesReportContainer'>
                             <div id="mostPopularPagesReport"></div>
                         </div>
                         <button id="btnPopPages" class="inline displayHidden" onclick="runPopPages()">Most Popular Pages</button>
                     </div>
                     <div class="inline">
-                        <div id="mostImageHitsContainer" class='popPagesReportContainer '>
+                        <div id="mostImageHitsContainer" class='popPagesReportContainer'>
                             <div id="mostImageHitsReport"></div>
                         </div>
                         <button id="btnMostImageHits" class="inline displayHidden" onclick="runMostImageHits()">Most Image Hits</button>
                     </div>
                 </div>
 
-
                 <div class="workAreaRow">
-
+                    <div id="imageHitActivityReportContainer" class='popPagesReportContainer'>
+                        <div id="imageHitActivityReport"></div>
+                    </div>
+                    <div id="imageHitActivityHits"></div>
+                    <button id="btnImageHitActivityReport" class="inline displayHidden" onclick="runImageHitActivityReport()">Image Hit Activity Report</button>
                 </div>
             </div>
 

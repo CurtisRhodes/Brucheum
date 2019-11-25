@@ -83,12 +83,12 @@
                 <div class="floatLeft" id="carousel">
                     <div class="centeredDivShell randomImageContainer">
                         <div class="centeredDivInner">
-                            <!--<div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>-->
+                            <div id="connectingMsg"><img src="Images/infinity01.gif" /></div>
                             <div id="laCarousel" class="carouselContainer">
                                 <div class="assuranceArrows" onclick="assuranceArrowClick('back')"><img src="/Images/leftArrowOpaque02.png" /></div>
                                 <div class="carouselImageContainer">
                                     <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
-                                    <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="/Images/infinity01.gif" onclick="clickViewGallery()" />
+                                    <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="/Images/redballon.png" onclick="clickViewGallery()" />
                                     <div class="imgBottom">
                                         <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
                                         <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
@@ -137,6 +137,10 @@
 
         $(document).ready(function () {
             includeHTML();
+            //<div id="connectingMsg"><img src="Images/infinity01.gif" /></div>
+
+            $('#laCarousel').hide();
+
 
             //$('#footerLastBuild').html("last build: " + lastBuild + "3");
             params = getParams();
@@ -165,6 +169,8 @@
                         }
                         else {
                             clearInterval(verifyConnectionWaiter);
+                            $('#connectingMsg').hide();
+                            $('#laCarousel').fadeIn();
                             $('#footerMessage').html("loading header");
                             $('#dots').html('');
                             launchCarousel(subdomain);

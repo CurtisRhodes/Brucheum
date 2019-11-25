@@ -7,9 +7,9 @@ using WebApi.Models;
 using System.Xml;
 using WebApi.OggleBoobleSqlContext;
 using System.Data.SqlClient;
-//using System.IO;
-//using System.Net;
-//using System.Text;
+using System.IO;
+using System.Net;
+using System.Text;
 
 namespace WebApi
 {
@@ -54,7 +54,24 @@ namespace WebApi
                         });
                     }
                     //string expectedLink = "";
-                    imageLinks.Files = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ToList();
+                    //imageLinks.Files = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ToList();
+                    List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ToList();
+                    foreach (VwLink vwLink in vwLinks)
+                    {
+                        VwLinkModel vwLinkModel = new VwLinkModel()
+                        {
+                            FolderId = vwLink.FolderId,
+                            FolderName = vwLink.FolderName,
+                            Link = vwLink.Link,
+                            LinkId = vwLink.LinkId,
+                            LinkCount = vwLink.LinkCount,
+                            Orientation = vwLink.Orientation,
+                            RootFolder = vwLink.RootFolder,
+                            SortOrder = vwLink.SortOrder,
+                            ParentName = vwLink.ParentName
+                        };
+                        imageLinks.Files.Add(vwLinkModel);
+                    }
                 }
                 imageLinks.Success = "ok";
             }
@@ -87,12 +104,36 @@ namespace WebApi
         }
         private void GetAllImagesRecurr(CategoryImageModel imageLinks, int folderId, OggleBoobleContext db)
         {
-            imageLinks.Files = db.VwLinks.Where(v => v.FolderId == folderId).ToList();
-            int[] childFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Select(f => f.Id).ToArray();
-            foreach (int childFolderId in childFolders)
+            List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).ToList();
+            foreach (VwLink vwLink in vwLinks)
             {
-                imageLinks.Files.AddRange(db.VwLinks.Where(v => v.FolderId == childFolderId).ToList());
+                VwLinkModel vwLinkModel = new VwLinkModel()
+                {
+                    FolderId = vwLink.FolderId,
+                    FolderName = vwLink.FolderName,
+                    Link = vwLink.Link,
+                    LinkId = vwLink.LinkId,
+                    LinkCount = vwLink.LinkCount,
+                    Orientation = vwLink.Orientation,
+                    RootFolder = vwLink.RootFolder,
+                    SortOrder = vwLink.SortOrder,
+                    ParentName = vwLink.ParentName
+                };
+                imageLinks.Files.Add(vwLinkModel);
             }
+            List<CategoryFolder> childFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+            foreach (CategoryFolder subDir in childFolders)
+            {
+                GetAllImagesRecurr(imageLinks, subDir.Id, db);
+            }
+            //int[] childFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Select(f => f.Id).ToArray();
+            //foreach (int childFolderId in childFolders)
+            //{
+            //    //var xx = db.VwLinks.Where(v => v.FolderId == childFolderId;
+
+            //    imageLinks.Files.Add(x);
+            //    //imageLinks.Files.AddRange(db.VwLinks.Where(v => v.FolderId == childFolderId).ToList());
+            //}
         }
 
         [HttpPatch]
@@ -125,7 +166,7 @@ namespace WebApi
         }
 
         [HttpPut]
-        public string UpdateSortOrder(List<SortOrderItem> SortOrderItems) 
+        public string UpdateSortOrder(List<SortOrderItem> SortOrderItems)
         {
             string success = "";
             using (OggleBoobleContext db = new OggleBoobleContext())
@@ -203,7 +244,7 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    string staticPageFileName =Helpers.GetCustomStaticFolderName(folderId, dbCategoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", ""));
+                    string staticPageFileName = Helpers.GetCustomStaticFolderName(folderId, dbCategoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", ""));
                     successModel.ReturnValue = "http://ogglebooble.com/static/" + dbCategoryFolder.RootFolder + "/" + staticPageFileName + ".html";
                     successModel.Success = "ok";
                 }
@@ -257,7 +298,7 @@ namespace WebApi
                         "join OggleBooble.CategoryFolder f on c.ImageCategoryId = f.Id " +
                         "join OggleBooble.CategoryFolder p on f.Parent = p.Id " +
                         "join OggleBooble.ImageLink g on c.ImageLinkId = g.Id " +
-                        "where f.RootFolder = @param1",new SqlParameter("param1",root)).OrderBy(m => m.LinkId).Skip(skip).Take(take).ToList();
+                        "where f.RootFolder = @param1", new SqlParameter("param1", root)).OrderBy(m => m.LinkId).Skip(skip).Take(take).ToList();
 
                     //var x = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
                     //carouselInfo.Links =
@@ -441,7 +482,8 @@ namespace WebApi
                         metaTagResults.Source = categoryFolderDetail.FolderImage;
                         metaTagResults.MetaDescription = categoryFolderDetail.MetaDescription;
                     }
-                    else {
+                    else
+                    {
                         metaTagResults.Source = linkId;
                         //metaTagResults.MetaDescription = "";
                     }
@@ -784,19 +826,19 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     var expectedImageDetail = (from l in db.ImageLinks
-                                   join f in db.CategoryFolders on l.FolderLocation equals f.Id
-                                   where l.Id == linkId
-                                   select new GetModelNameModel()
-                                   {
-                                       FolderId = f.Id,
-                                       Link = l.Link,
-                                       FolderName = f.FolderName,
-                                       RootFolder = f.RootFolder
-                                   }).FirstOrDefault();
+                                               join f in db.CategoryFolders on l.FolderLocation equals f.Id
+                                               where l.Id == linkId
+                                               select new GetModelNameModel()
+                                               {
+                                                   FolderId = f.Id,
+                                                   Link = l.Link,
+                                                   FolderName = f.FolderName,
+                                                   RootFolder = f.RootFolder
+                                               }).FirstOrDefault();
                     if (expectedImageDetail != null)
                         imageDetail = expectedImageDetail;
                     else
-                        System.Diagnostics.Debug.WriteLine(linkId+ " didnt work ");
+                        System.Diagnostics.Debug.WriteLine(linkId + " didnt work ");
 
                     imageDetail.Success = "ok";
                 }
@@ -911,7 +953,7 @@ namespace WebApi
                         FolderId = newFolderId,
                         Nationality = model.Nationality,
                         Measurements = model.Measurements,
-                        Boobs=model.Boobs,
+                        Boobs = model.Boobs,
                         Born = model.Born
                     });
                     db.SaveChanges();
@@ -1095,7 +1137,7 @@ namespace WebApi
     public class BoobsRankerController : ApiController
     {
         [HttpGet]
-        public ImageRankerModelContainer LoadImages(string rootFolder, int skip, int take )
+        public ImageRankerModelContainer LoadImages(string rootFolder, int skip, int take)
         {
             ImageRankerModelContainer imageRankerModelContainer = new ImageRankerModelContainer();
             try
@@ -1112,7 +1154,7 @@ namespace WebApi
                              join c in db.CategoryFolders on f.Id equals c.Parent
                              join l in db.CategoryImageLinks on f.Id equals l.ImageCategoryId
                              join i in db.ImageLinks on l.ImageLinkId equals i.Id
-                             where gg.FolderName == "centerfolds" 
+                             where gg.FolderName == "centerfolds"
                              where i.Height > i.Width
                              select new ImageRankerModel()
                              {
@@ -1192,7 +1234,7 @@ namespace WebApi
                     List<CategoryFolder> containsSearchResults = db.CategoryFolders.Where(f => f.FolderName.Contains(searchString)).ToList();
                     foreach (CategoryFolder folder in containsSearchResults)
                     {
-                        if(!folder.FolderName.ToLower().StartsWith(searchString.ToLower()))
+                        if (!folder.FolderName.ToLower().StartsWith(searchString.ToLower()))
                             searchResultsModel.SearchResults.Add(new SearchResultModel() { FolderId = folder.Id, FolderName = folder.FolderName });
                     }
                 }

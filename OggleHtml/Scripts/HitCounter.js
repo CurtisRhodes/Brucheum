@@ -421,10 +421,9 @@ function logPageHit(pageId, visitorId, calledFrom) {
 
                 $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits.toLocaleString());
                 if (verbosity > 11) {
-                    var ipAddress = getCookieValue("IpAddress");
                     sendEmailToYourself("Just so you know; valid page hits are being recorded.",
                         "Someone visited a page other than playboy: " + pageHitSuccessModel.ParentName + "/" + pageHitSuccessModel.PageName +
-                        "<br/> Called from " + calledFrom + "<br/>IpAddress: " + ipAddress + ".<br/>RootFolder: " + pageHitSuccessModel.RootFolder);
+                        "<br/> Called from " + calledFrom + "<br/>IpAddress: " + getCookieValue("IpAddress") + ".<br/>RootFolder: " + pageHitSuccessModel.RootFolder);
                 }
 
                 // LOG VISIT
@@ -439,10 +438,8 @@ function logPageHit(pageId, visitorId, calledFrom) {
                 //    sendEmailToYourself("logPageHit error: VisitorId fail: ","VisitorId: "+ pageHitSuccessModel.Success);
                 //    return;
                 //}
-
-
-                sendEmailToYourself("logPageHit error: ", pageHitSuccessModel.Success + "<br/>vsitorId: " + visitorId +
-                    "<br/>pageId: " + pageId + "<br/>Called From: " + calledFrom + "<br/>ver: 11.15.02");
+                sendEmailToYourself("logPageHit error: ", pageHitSuccessModel.Success + "<br/>IpAddress: " + getCookieValue("IpAddress") +
+                    "<br/>pageId: " + pageId + "<br/>Called From: " + calledFrom + "<br/>ver: 11.25.02");
             }
         },
         error: function (jqXHR) {

@@ -557,14 +557,12 @@ function copyFolder() {
 
 
 function showPerfMetrics() {
-    //$('#divWorkArea').height($('#middleColumn').height() - 122);
     $('#divAddImages').hide();
     $('#divHitMetrics').fadeIn();
 
-    runPageHitsReport();
-                //$("#refreshPageHits").show();
+    
 
-    //if (document.domain === 'localhost') alert("runPageHitsReport();");
+    runPageHitsReport();
 
 }
 function closeMetrics() {
@@ -590,8 +588,8 @@ function runPageHitsReport() {
                 // Request extra privdleges 
                 // pay me to do some programming for you and I'll let you in on all my source code
 
-                var kludge = "<table><tr><td></td><td>Today</td><td>Yesterday</td><td>-2 Days</td><td>-3 Days</td><td>-4 Days</td>" +
-                    "<td>-5 Days</td><td>-6 Days</td></tr>";
+                var kludge = "<table><tr><th></th><th>Today</th><th>Yesterday</th><th>-2 Days</th><th>-3 Days</th><th>-4 Days</th>" +
+                    "<th>-5 Days</th><th>-6 Days</th></tr>";
                 kludge +=  "<tr><td>page Hits</td> ";
                 kludge += "<td>" + pageHitModel.PageHits.Today.toLocaleString() + "</td>";
                 kludge += "<td>" + pageHitModel.PageHits.Yesterday.toLocaleString() + "</td>";
@@ -600,7 +598,7 @@ function runPageHitsReport() {
                 kludge += "<td>" + pageHitModel.PageHits.Four_Days_ago.toLocaleString() + "</td>";
                 kludge += "<td>" + pageHitModel.PageHits.Five_Days_ago.toLocaleString() + "</td>";
                 kludge += "<td>" + pageHitModel.PageHits.Six_Days_ago.toLocaleString() + "</td>";
-                kludge += "</tr><tr><td>image Hits</td> ";
+                kludge += "</tr><tr><td>image Hits</td>";
                 kludge += "<td>" + pageHitModel.ImageHits.Today.toLocaleString() + "</td>";
                 kludge += "<td>" + pageHitModel.ImageHits.Yesterday.toLocaleString() + "</td>";
                 kludge += "<td>" + pageHitModel.ImageHits.Two_Days_ago.toLocaleString() + "</td>";
@@ -613,6 +611,7 @@ function runPageHitsReport() {
                 $("#refreshPageHits").show();
                 $("#btnPopPages").show();                
                 $("#btnMostImageHits").show();
+                $("#btnImageHitActivityReport").show();
             }
             else {
                 alert("renameFolder: " + repairReport.Success);
@@ -636,12 +635,12 @@ function runPopPages() {
         success: function (popularPages) {
             $('#dashBoardLoadingGif').hide();
             if (popularPages.Success === "ok") {
-                $('#popPagesContainer').css("display", "inline-block");
                 $("#mostPopularPagesReport").html("<table>");
                 $.each(popularPages.Items, function (idx, obj) {
                     $("#mostPopularPagesReport").append("<tr><td>" + obj.PageName + "</td><td>" + obj.PageHits + "</td></tr>");
                 });
                 $("#mostPopularPagesReport").append("</table>");
+                $('#popPagesContainer').css("display", "inline-block");
             }
             else {
                 alert("runPopPages: " + popularPages.Success);
@@ -665,12 +664,12 @@ function runMostImageHits() {
         success: function (mostImageHits) {
             $('#dashBoardLoadingGif').hide();
             if (mostImageHits.Success === "ok") {
-                $('#mostImageHitsContainer').css("display", "inline-block");
                 $("#mostImageHitsReport").html("<table>");
                 $.each(mostImageHits.Items, function (idx, obj) {
                     $("#mostImageHitsReport").append("<tr><td>" + obj.PageName + "</td><td>" + obj.PageHits + "</td></tr>");
                 });
                 $("#mostImageHitsReport").append("</table>");
+                $('#mostImageHitsContainer').css("display", "inline-block");
             }
             else {
                 alert("runMostImageHits: " + mostImageHits.Success);
@@ -686,7 +685,50 @@ function runMostImageHits() {
     });
 }
 
+function runImageHitActivityReport() {
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/MetricsReports/ImageHitActivityReport",
+        success: function (imageHitActivityReport) {
+            $('#dashBoardLoadingGif').hide();
+            if (imageHitActivityReport.Success === "ok") {
+                //$('#ImageHitActivityReportContainer').css("display", "inline-block");
+                var kludge = "<table>";
+                kludge += "<tr><th>ip</th><th>City</th><th>State</th><th>Country</th><th>hitdate</th><th>hit time</th></tr>";
 
+                //$("#imageHitActivityReport").html("<table>");
+                $.each(imageHitActivityReport.Items, function (idx, obj) {
+                    kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
+                    kludge += "<td>" + obj.Region + "</td><td>" + obj.Country + "</td>";
+                    kludge += "<td>" + obj.hitDate + "</td><td>" + obj.hitTime + "</td></tr>";
+                    //$("#imageHitActivityReport").append("<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>");
+                    //$("#imageHitActivityReport").append("<td>" + obj.Region + "</td><td>" + obj.Country + "</td>");
+                    //$("#imageHitActivityReport").append("<td>" + obj.ImageLinkId + "</td>");
+                    //$("#imageHitActivityReport").append("<td>" + obj.hitDate + "</td><td>" + obj.hitTime + "</td></tr>");
+                });
+                kludge += "</table>";
+
+                $("#imageHitActivityReport").html(kludge);
+
+                $("#imageHitActivityHits").html("Total: " + imageHitActivityReport.HitCount.toLocaleString());
+                
+                $('#imageHitActivityReportContainer').css("display", "block");
+            }
+            else {
+                alert("runMostImageHits: " + mostImageHits.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "runMostImageHits")) {
+                alert("runMostImageHits: " + errorMessage);
+                sendEmailToYourself("XHR ERROR in Dashboard.js runMostImageHits", "Message: " + errorMessage);
+            }
+        }
+    });
+
+}
 
 
 

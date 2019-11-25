@@ -5,6 +5,29 @@ using System.Web;
 
 namespace WebApi.Models
 {
+
+    public class ImageHitActivityReportModel
+    {
+        public ImageHitActivityReportModel()
+        {
+            Items = new List<ImageHitActivityReportItem>();
+        }
+        public List<ImageHitActivityReportItem> Items { get; set; }
+        public int HitCount { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class ImageHitActivityReportItem
+    {
+        public string IpAddress { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        public string ImageLinkId { get; set; }
+        public string hitDate { get; set; }
+        public string hitTime { get; set; }
+    }
+
     public class MostPopularPagesReportModel
     {
         public MostPopularPagesReportModel()

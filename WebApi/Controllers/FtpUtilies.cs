@@ -249,6 +249,28 @@ namespace WebApi.Ftp
             return success;
         }
 
+        public static string RenameFile(string ftpPath, string newFileName)
+        {
+            string success = "";
+            try
+            {
+                FtpWebRequest requestDir = (FtpWebRequest)WebRequest.Create(new Uri(ftpPath));
+                requestDir.Credentials = networkCredentials;
+                requestDir.Method = WebRequestMethods.Ftp.Rename;
+                requestDir.RenameTo = newFileName;
+                FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
+                Stream ftpStream = response.GetResponseStream();
+                ftpStream.Close();
+                response.Close();
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
         public static string RenameFolder(string ftpPath, string newName)
         {
             string success = "";

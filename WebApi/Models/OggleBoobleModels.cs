@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using WebApi.OggleBoobleSqlContext;
 
 namespace WebApi.Models
 {
@@ -37,20 +36,48 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
+    public class ImageLinksModel
+    {
+        public ImageLinksModel()
+        {
+            Files = new List<VwLinkModel>();
+            SubDirs = new List<CategoryTreeModel>();
+        }
+        public int FoldrerId { get; set; }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public List<VwLinkModel> Files { get; set; }
+        public List<CategoryTreeModel> SubDirs { get; set; }
+        public string Success { get; set; }
+    }
+
     public class CategoryImageModel
     {
         public CategoryImageModel()
         {
-            Files = new List<VwLink>();
+            Files = new List<VwLinkModel>();
             SubDirs = new List<CategoryTreeModel>();
         }
         public string LinkId { get; set; }
         public long Length { get; set; }
         public string RootFolder { get; set; }
-        public List<VwLink> Files { get; set; }
+        public List<VwLinkModel> Files { get; set; }
         public List<CategoryTreeModel> SubDirs { get; set; }
         public string Success { get; set; }
     }
+
+    public class VwLinkModel 
+    {
+        public int FolderId { get; set; }
+        public string LinkId { get; set; }
+        public string FolderName { get; set; }
+        public string ParentName { get; set; }
+        public string Link { get; set; }
+        public string RootFolder { get; set; }
+        public string Orientation { get; set; }
+        public int LinkCount { get; set; }
+        public int SortOrder { get; set; }
+   }
 
     public class BlogCommentModelContainer
     {

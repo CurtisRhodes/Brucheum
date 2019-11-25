@@ -24,6 +24,11 @@ namespace WebApi.MySqDataContext
         public virtual DbSet<Visit> Visits { get; set; }
         public virtual DbSet<VwPageHit> VwPageHits { get; set; }
         public virtual DbSet<VwImageHit> VwImageHits { get; set; }
+        public virtual DbSet<StepChild> StepChildren { get; set; }
+        public virtual DbSet<VwDirTree> VwDirTrees { get; set; }
+        public virtual DbSet<VwLink> VwLinks { get; set; }
+        public virtual DbSet<CategoryFolderDetail> CategoryFolderDetails { get; set; }
+        public virtual DbSet<RankerVote> RankerVotes { get; set; }
     }
 
 
@@ -61,6 +66,16 @@ namespace WebApi.MySqDataContext
         public int SortOrder { get; set; }
     }
 
+    [Table("OggleBooble.RankerVote")]
+    public partial class RankerVote
+    {
+        [Key]
+        public string PkId { get; set; }
+        public string Winner { get; set; }
+        public string Looser { get; set; }
+        public string UserId { get; set; }
+        public DateTime VoteDate { get; set; }
+    }
 
     [Table("OggleBooble.vwPageHits")]
     public partial class VwPageHit
@@ -135,5 +150,68 @@ namespace WebApi.MySqDataContext
         [Column(Order = 1)]
         public DateTime HitTimeStamp { get; set; }
         public int PageId { get; set; }
+    }
+
+    [Table("OggleBooble.StepChild")]
+    public partial class StepChild
+    {
+        [Key]
+        [Column(Order = 0)]
+        public int Parent { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public int Child { get; set; }
+        public string Link { get; set; }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public int SortOrder { get; set; }
+    }
+
+    [Table("OggleBooble.vwDirtree")]
+    public partial class VwDirTree
+    {
+        [Key]
+        public int Id { get; set; }
+        public int Parent { get; set; }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public string LinkId { get; set; }
+        public string Link { get; set; }
+        public int FileCount { get; set; }
+        public int SubDirCount { get; set; }
+        public int ChildFiles { get; set; }
+        public int Links { get; set; }
+        public int IsStepChild { get; set; }
+        public int SortOrder { get; set; }
+    }
+
+    [Table("OggleBooble.vwLinks")]
+    public partial class VwLink
+    {
+        public int FolderId { get; set; }
+        [Key]
+        public string LinkId { get; set; }
+        public string FolderName { get; set; }
+        public string ParentName { get; set; }
+        public string Link { get; set; }
+        public string RootFolder { get; set; }
+        public string Orientation { get; set; }
+        public int LinkCount { get; set; }
+        public int SortOrder { get; set; }
+    }
+    [Table("OggleBooble.CategoryFolderDetail")]
+    public partial class CategoryFolderDetail
+    {
+        [Key]
+        public int FolderId { get; set; }
+        public string Nationality { get; set; }
+        public string Measurements { get; set; }
+        public string ExternalLinks { get; set; }
+        public string CommentText { get; set; }
+        public string Born { get; set; }
+        public string Boobs { get; set; }
+        public string FolderImage { get; set; }
+        public string MetaDescription { get; set; }
+        public int SortOrder { get; set; }
     }
 }

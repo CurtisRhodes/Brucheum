@@ -13,21 +13,6 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
-    public class ImageLinksModel
-    {
-        public ImageLinksModel()
-        {
-            Files = new List<VwLink>();
-            SubDirs = new List<CategoryTreeModel>();
-        }
-        public int FoldrerId { get; set; }
-        public string FolderName { get; set; }
-        public string RootFolder { get; set; }
-        public List<VwLink> Files { get; set; }
-        public List<CategoryTreeModel> SubDirs { get; set; }
-        public string Success { get; set; }
-    }
-
     public class CategoryTreeModel
     {
         public CategoryTreeModel()

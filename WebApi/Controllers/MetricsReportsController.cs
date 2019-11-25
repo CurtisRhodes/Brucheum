@@ -91,5 +91,29 @@ namespace WebApi.Controllers
             catch (Exception ex) { MostImageHits.Success = Helpers.ErrorDetails(ex); }
             return MostImageHits;
         }
+
+        [HttpGet]
+        [Route("api/MetricsReports/ImageHitActivityReport")]
+        public ImageHitActivityReportModel ImageHitActivityReport()
+        {
+            var imageHitActivityReport = new ImageHitActivityReportModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqContext())
+                {
+                    imageHitActivityReport.Items = db.Database.SqlQuery<ImageHitActivityReportItem>(
+                        "select IpAddress, City, Region, Country, PageId, ImageLinkId, date_format(HitDateTime, '%m/%d/%Y') as hitDate, date_format(HitDateTime, '%h:%i.%s') as hitTime " +
+                        "from OggleBooble.ImageHit ih " +
+                        "join OggleBooble.Visitor v on ih.VisitorId = v.VisitorId " +
+                        "where ih.HitDateTime between current_date and current_date + 1 " +
+                        "order by hitTime desc, IpAddress limit 500").ToList();
+
+                    imageHitActivityReport.HitCount = db.ImageHits.Where(h => h.HitDateTime > DateTime.Today).Count();
+                }
+                imageHitActivityReport.Success = "ok";
+            }
+            catch (Exception ex) { imageHitActivityReport.Success = Helpers.ErrorDetails(ex); }
+            return imageHitActivityReport;
+        }
     }
 }
