@@ -47,7 +47,22 @@
   <body>
     <header></header>
     <div class="threeColumnLayout">
-        <div id="leftColumn"></div>
+        <div id="leftColumn">
+            <div id="TrackbackLinkArea" class="leftColumnTrackbackArea">
+
+                <div id="babapediaLink" class="babapediaLink displayHidden" >
+                    <a href="https://www.babepedia.com">Babapedia</a>
+                </div>
+                <a id="freeonesLink" class="leftColumnTrackbackLink displayHidden" href='http://www.freeones.com'
+                   target='_blank' text='free porn'>
+                    <img src='/Images/freeones.png' height="40" title='FreeOnes - The ultimate babes site' alt='models, babes and porn stars' class='trackbackImage' />                         
+                </a>
+
+
+                <!--<a href='' target='_top'><img src='http://www.freeones.com/webmasters/banners/freeones_new.gif' width='120' height='60' title='FreeOnes - The ultimate babes site' alt='models, babes and porn stars' /></a>\n"+-->
+
+            </div>
+        </div>
         <div id="middleColumn">
             <div id="divBreadCrumbs"></div>
             <div id="divStatusMessage"></div>
@@ -104,12 +119,6 @@
                 }
                 else {
                     clearInterval(waiter);
-
-                    var visitorId = getCookieValue("VisitorId");
-
-                    //logVisitor(params.folder);
-                    if (isNullorUndefined(visitorId)) { if (document.domain === 'localhost') alert("Album.html visitorId NullorUndefined"); }
-
                     setUserPermissions();
                     var waiter2 = setInterval(function () {
                         dots += "* ";
@@ -117,13 +126,13 @@
                         if (permissionsSet === true) {
                             $('#dots').html('');
                             clearInterval(waiter2);
+                            logPageHit(params.folder);
                             if (document.domain === 'localhost') {
                                 //isInRole("not logged in");
                                 console.log("I want to stay in local host");
                                 //alert("I want to stay in local host");
                                 setAlbumPageHeader(params.folder);
                                 getAlbumImages(params.folder);
-                                logPageHit(params.folder, visitorId, "Album.html");
                             }
                             else {
                                 var userName = getCookieValue("UserName");
@@ -134,7 +143,6 @@
                                         setAlbumPageHeader(params.folder);
                                         getAlbumImages(params.folder);
                                         alert("logPageHit");
-                                        logPageHit(params.folder, visitorId, "Album.html");
                                     }
                                     else {
                                         directToStaticPage(params.folder);
@@ -146,7 +154,6 @@
                                     //if (visitorId === "ec6fb880-ddc2-4375-8237-021732907510") alert("logPageHit");
                                     $('#footerMessage').html("213");
                                     //if (document.domain === 'localhost') alert("logPageHit");
-                                    logPageHit(params.folder, visitorId, "Album.html");
                                 }
                             }
                         }

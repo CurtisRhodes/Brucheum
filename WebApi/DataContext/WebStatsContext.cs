@@ -13,7 +13,7 @@
         public virtual DbSet<RegisteredUser> RegisteredUsers { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
-        public virtual DbSet<Visitor> Visitors { get; set; }
+        //public virtual DbSet<Visitor> Visitors { get; set; }
         public virtual DbSet<Visit> Visits { get; set; }
         public virtual DbSet<PageHit> PageHits { get; set; }
         public virtual DbSet<ChangeLog> ChangeLogs { get; set; }        

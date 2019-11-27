@@ -138,17 +138,15 @@ function reportThenPerformEvent(eventCode, pageId) {
 }
 
 function reportClickEvent(eventCode, pageId) {
-
-
-
     try {
         var visitorId = getCookieValue("VisitorId");
         var ipAddress = getCookieValue("IpAddress");
 
         if (isNullorUndefined(ipAddress) || isNullorUndefined(visitorId)) {
-            //sendEmailToYourself("In reportClickEvent VisitorId: " + visitorId + " Ip: " + ipAddress, "Calling LogVisitor.  Event: " + eventCode + " pageId: " + pageId);
+
+            sendEmailToYourself("In reportClickEvent VisitorId: " + visitorId + " Ip: " + ipAddress, "Calling LogVisitor.  Event: " + eventCode + " pageId: " + pageId);
             logVisitor(pageId, "reportClickEvent");
-            return;
+            //return;
         }
 
         var eventClickDdata = {

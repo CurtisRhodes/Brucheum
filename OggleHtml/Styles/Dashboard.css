@@ -1,29 +1,71 @@
-﻿.linkContainer {
+﻿.dashboardContainer {
+    margin-top: 11px;
+    display: flex;
+    width: 95%;
+    border: solid 4px #cd49d3;    
+}
+
+.dashboardLeftMenu {
+    float: left;
+    display: inline-block;
+    width: 15%;
+    border-right: solid thin #111;
+    border-top: 23px;
+    overflow: auto;
+    padding-right: 36px;
+}
+    .dashboardLeftMenu div {
+        font-size: 17px;
+        cursor: pointer;
+        color: #9a4ea9;
+        margin: 12px 9px;
+        white-space: nowrap;
+    }
+        .dashboardLeftMenu div:hover {
+            text-decoration: underline;
+            color: #333;
+        }
+
+.workAreaContainer {
+    /*border-left: solid 3px var(--oggleBorderColor);
+    border-right: solid 3px var(--oggleBorderColor);
+    border-bottom: solid 0.75px var(--oggleBorderColor);*/
+    /*background-color: var(--oggleContainerBackgroundColor);*/
+
+    float: left;
+    display: inline-block;
+    background-color: springgreen;
+}
+
+.dashboardWorkArea {
+    background-color: red;
+}
+
+.dashboardTreeContainer {
+    float: right;
+    display: inline-block;
+    width: 15%;
+    margin-top: 8px;
+    display: inline-block;
+    border-left: solid .5px #555;
+    min-height: 106px;
+    min-width: 400px;
+    overflow: auto;
+}
+
+.linkContainer {
     display: inline;
     margin-bottom: 4px;
     font-size: 12px;
 }
-
     .linkContainer div {
         display: inline;
         color: #585a38;
         margin-right: 22px;
     }
 
-.dashBoardContainer {
-    margin-top: 11px;
-    display: flex;
-    border: solid 2px #111;
-    background-color: #eee;
-}
-
 .adminLevelOption {
     display: none;
-}
-
-.workarea {
-    float: left;
-    width: 100%;
 }
 
 .collapsable {
@@ -110,15 +152,6 @@
     background-color: #f8e8e8;
     padding-right: 5px;
     text-align: left;
-    overflow-y: auto;
-}
-
-.treeContainer {
-    margin-top: 8px;
-    display: inline-block;
-    border-left: solid .5px #555;
-    min-height: 106px;
-    min-width: 400px;
     overflow-y: auto;
 }
 

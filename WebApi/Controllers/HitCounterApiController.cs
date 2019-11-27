@@ -63,7 +63,7 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class HitCounterController : ApiController
     {
-        private static readonly Random getrandom = new Random();
+        //private static readonly Random getrandom = new Random();
 
         [HttpPost]
         public PageHitSuccessModel LogPageHit(PageHitRequestModel pageHitModel)
@@ -77,7 +77,7 @@ namespace WebApi
                     {
                         VisitorId = pageHitModel.VisitorId,
                         PageId = pageHitModel.PageId,
-                        HitTimeStamp = DateTime.Now.AddMilliseconds(getrandom.Next())
+                        HitTimeStamp = DateTime.Now  //.AddMilliseconds(getrandom.Next())
                     });
                     db.SaveChanges();
                     pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.PageId == pageHitModel.PageId).Count();
@@ -132,17 +132,16 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class VisitController : ApiController
     {
-        private static readonly Random getrandom = new Random();
-
+        //private static readonly Random getrandom = new Random();
         [HttpPost]
         public LogVisitorSuccessModel LogVisitor(LogVisitorModel visitorModel)
         {
             var visitorSuccess = new LogVisitorSuccessModel();
             try
             {
-                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
+                using (OggleBoobleMySqContext mdb = new OggleBoobleMySqContext())
                 {
-                    Visitor myExisting = db.Visitors.Where(v => v.IpAddress == visitorModel.IpAddress).FirstOrDefault();
+                    Visitor myExisting = mdb.Visitors.Where(v => v.IpAddress == visitorModel.IpAddress).FirstOrDefault();
                     if (myExisting == null)
                     {
                         // WE HAVE A NEW VISITOR
@@ -156,17 +155,20 @@ namespace WebApi
                         visitor.InitialPage = visitorModel.PageId;
                         visitor.InitialVisit = DateTime.Now;
 
-                        db.Visitors.Add(visitor);
-                        db.SaveChanges();
+                        mdb.Visitors.Add(visitor);
+                        mdb.SaveChanges();
                         visitorSuccess.IsNewVisitor = true;
                         visitorSuccess.VisitorId = visitor.VisitorId;
 
-                        CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == visitorModel.PageId).FirstOrDefault();
+                        CategoryFolder categoryFolder = mdb.CategoryFolders.Where(f => f.Id == visitorModel.PageId).FirstOrDefault();
                         if (categoryFolder != null)
                             visitorSuccess.PageName = categoryFolder.FolderName;
                     }
                     else
                     {
+                        // FORCE A LOG VISIT 
+                        mdb.Visits.Add(new Visit() { VisitDate = DateTime.Now, VisitorId = myExisting.VisitorId });
+                        mdb.SaveChanges();
                         visitorSuccess.IsNewVisitor = false;
                         visitorSuccess.VisitorId = myExisting.VisitorId;
                     }
@@ -265,18 +267,18 @@ namespace WebApi
             {
                 //reportClickEvent("EXP", carouselItemArray[imageIndex].Link);
                 // EXP (explode image) passes an image link, not a pageId
-                using (var db = new WebStatsSqlContext.WebStatsContext())
+                using (var mdb = new OggleBoobleMySqContext())
                 {
-                    db.EventLogs.Add(new WebStatsSqlContext.EventLog()
+                    mdb.EventLogs.Add(new EventLog()
                     {
                         EventCode = logEventModel.EvenCode,
                         PageId = logEventModel.PageId,
                         VisitorId = logEventModel.VisitorId,
                         Occured = DateTime.Now
                     });
-                    db.SaveChanges();
+                    mdb.SaveChanges();
 
-                    logEventActivitySuccess.EventName = db.Refs.Where(r => r.RefCode == logEventModel.EvenCode).FirstOrDefault().RefDescription;
+                    logEventActivitySuccess.EventName = mdb.Refs.Where(r => r.RefCode == logEventModel.EvenCode).FirstOrDefault().RefDescription;
 
                     using (var odb = new OggleBoobleSqlContext.OggleBoobleContext()) {
                         var catFolder = odb.CategoryFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault();
@@ -286,7 +288,7 @@ namespace WebApi
                     //logEventActivitySuccess.PageName = db.CategoryFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault().FolderName;
                     
                     
-                    WebStatsSqlContext.Visitor visitor = db.Visitors.Where(v => v.VisitorId == logEventModel.VisitorId).FirstOrDefault();
+                    Visitor visitor = mdb.Visitors.Where(v => v.VisitorId == logEventModel.VisitorId).FirstOrDefault();
                     if (visitor != null)
                     {
                         logEventActivitySuccess.IpAddress = visitor.IpAddress;

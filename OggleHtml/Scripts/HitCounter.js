@@ -1,5 +1,5 @@
 ﻿// HITCOUNTER
-var verbosity = 2;
+var verbosity = 5;
 
 // verbosity > 4 show new visits redirects
 // verbosity > 5 visitior came back
@@ -96,32 +96,18 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
 function logVisitor(pageId, calledFrom) {
     try {
 
-        if (document.domain === 'localhost') {
-            if (isNullorUndefined(getCookieValue("UserName"))) {
-                setCookieValue("IpAddress", "68.203.90.183");
-                setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-                //setCookieValue("UserName", "admin");
-                setCookieValue("UserName", "cooler");
-                $('#spnUserName').html(getCookieValue("UserName"));
-                $('#optionLoggedIn').show();
-                $('#optionNotLoggedIn').hide();
-                alert("bypassing logVisitor");
-                console.log("bypassing logVisitor");
-            }
-            //return;
-        }
-
         var ipAddress = getCookieValue("IpAddress");
         if (!isNullorUndefined(ipAddress)) {
             if (!isNullorUndefined(visitorId)) {
-                if (verbosity > 1)
+                if (verbosity > 10)
                     sendEmailToYourself("looping to logPageHit from logvisitor.", "IpAddress: " + ipAddress);
-                if (document.domain === 'localhost') alert("xxxlooping to logPageHit from logvisitor. IpAddress: " + ipAddress);
+                //if (document.domain === 'localhost') alert("xxxlooping to logPageHit from logvisitor. IpAddress: " + ipAddress);
                 logPageHit(pageId);
                 return;
             }
         }
 
+        //logVisitor(pageId, "logPageHit FAIL. VisitorId");
         //if (document.domain === 'localhost') alert("vb3 LogVisitor call to IP info. IpAddress: " + ipAddress);
         if (verbosity > 10) {
             sendEmailToYourself("LogVisitor call to IP info.", " ip: " + ipAddress);
@@ -130,23 +116,19 @@ function logVisitor(pageId, calledFrom) {
 
         $.getJSON("https://ipinfo.io?token=ac5da086206dc4", function (data) {
 
-            // LOG HIT TO IP INFO
-
             if (isNullorUndefined(data.ip)) {
                 sendEmailToYourself("IpInfo came back with no IpAddress.", "setting IpAddress to '68.203.90.183'  Returning");
-                setCookieValue("IpAddress", "68.203.90.183");
+                setCookieValue("IpAddress", "000.000");
                 return;
             }
 
             //$("#info").html("City: " + data.city + " ,County: " + data.country + " ,IP: " + data.ip + " ,Location: " + data.loc + " ,Organisation: "
             //+ data.org + " ,Postal Code: " + data.postal + " ,Region: " + data.region + "")
-            var userName = getCookieValue("UserName");
+
+            //var userName = getCookieValue("UserName");
 
             var visitorModel = {
-                AppName: "OggleBooble",
                 PageId: pageId,
-                UserName: userName,
-                Verbosity: verbosity,
                 City: data.city,
                 Region: data.region,
                 Country: data.country,
@@ -160,7 +142,6 @@ function logVisitor(pageId, calledFrom) {
                 data: visitorModel,
                 success: function (visitorSuccess) {
                     if (visitorSuccess.Success === "ok") {
-
                         setCookieValue("IpAddress", data.ip);
                         setCookieValue("VisitorId", visitorSuccess.VisitorId);
                         if (getCookieValue("IpAddress" !== data.ip) || getCookieValue("VisitorId") !== visitorSuccess.VisitorId) {
@@ -171,29 +152,17 @@ function logVisitor(pageId, calledFrom) {
                             //console.log("COOKIE FAIL.  " + getCookieValue("VisitorId") !== visitorSuccess.VisitorId);
                         }
 
-
-                        if (calledFrom === "reportClickEvent" ||
-                            //calledFrom === "logPageHit FAIL. VisitorId" ||
-                            calledFrom === "Entering slideshow" ||
-                            calledFrom === "start slideshow") {
-
-                            if (document.domain === 'localhostXXX') {
-                                alert("LogVisitor called from [" + calledFrom + "]." +
-                                    "\n Initial page: " + visitorSuccess.PageName + "  (" + pageId + ")" +
-                                    ".\n ipAddress: " + data.ip +
-                                    ".\n  visitorId : " + visitorSuccess.VisitorId);
-                            }
-                            if (verbosity > 6) {
-                                sendEmailToYourself("LogVisitor called from [" + calledFrom + "]",
-                                    "IsNewVisitor: " + visitorSuccess.IsNewVisitor +
-                                    ". Initial Page: [" + visitorSuccess.PageName + "] (" + pageId + ") " +
-                                    ". IpAddress: " + data.ip +
-                                    ". VisitorId : " + visitorSuccess.VisitorId);
-                            }
-                        }
-                        else {
-                            if (calledFrom !== "logPageHit FAIL. VisitorId") {
-                                sendEmailToYourself("LogVisit not caught ", "called from: " + calledFrom);
+                        if (verbosity > 1) {
+                            if (calledFrom === "logPageHit FAIL. VisitorId") {
+                                if (visitorSuccess.IsNewVisitor)
+                                    sendEmailToYourself("Unnsecssary IpInfo hit called from: " + calledFrom,
+                                        visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country +
+                                        " Ip: " + data.ip + ", VisitorId: " + getCookieValue("VisitorId"));
+                                else {
+                                    sendEmailToYourself("New Visitor called from: " + calledFrom,
+                                        visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country +
+                                        " Ip: " + data.ip + ", VisitorId: " + getCookieValue("VisitorId"));
+                                }
                             }
                         }
 
@@ -273,11 +242,12 @@ function logVisitor(pageId, calledFrom) {
                                     visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                             }
                             else {
-                                if (verbosity > 11)
+                                if (verbosity > 1)
                                     sendEmailToYourself("Unnsecssary IpInfo hit called from: " + calledFrom,
                                         visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country +
                                         " Ip: " + data.ip + ", VisitorId: " + getCookieValue("VisitorId"));
                             }
+                            logVisit(visitorSuccess.VisitorId);
                         }
 
                         $('#footerMessage').html("");
@@ -287,10 +257,8 @@ function logVisitor(pageId, calledFrom) {
                         //sendEmailToYourself("Success in logVisitor ", "Just so you know this happens too, not just the pk violation.");
                     }
                     else {
-                        sendEmailToYourself("Api Error in logVisitor ",
-                            "PageId: " + pageId + "<div style='color:red'>Message:</div>" + visitorSuccess.Success);
+                        sendEmailToYourself("Api Error in logVisitor ", "PageId: " + pageId + "<div style='color:red'>Message:</div>" + visitorSuccess.Success);
                     }
-                    logVisit(visitorSuccess.VisitorId);
                 },
                 error: function (jqXHR) {
                     var errorMessage = getXHRErrorDetails(jqXHR);
@@ -307,7 +275,7 @@ function logVisitor(pageId, calledFrom) {
     }
 }
 
-function logPageHit(pageId, visitorId, calledFrom) {
+function logPageHit(pageId) {
 
     //alert("logPageHit(" + pageId + "," + visitorId + "," + calledFrom + ")");
     if (document.domain === 'localhost') {
@@ -323,6 +291,8 @@ function logPageHit(pageId, visitorId, calledFrom) {
     }
 
     // TRY GETVISITOR FROM IP IF YOU HAVE IP BUT NO VISITOR ID 
+
+    var visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(visitorId)) {
         var ipAddress = getCookieValue("IpAddress");
         if (!isNullorUndefined(ipAddress)) {
@@ -389,11 +359,10 @@ function logPageHit(pageId, visitorId, calledFrom) {
         }
         else {
             //if (document.domain === 'localhost') alert("logPageHit fail.\n no VisitorId and no IpAddress. \nlooping to log visitor");
-            if (verbosity > 5)
-                sendEmailToYourself("logPageHit Fail", "no VisitorId and no IpAddress. \nlooping to log visitor");
+            //if (verbosity > 11) sendEmailToYourself("logPageHit Fail", "no VisitorId and no IpAddress. \nlooping to log visitor");
             logVisitor(pageId, "logPageHit FAIL. VisitorId");
         }
-        return;
+        //return;
     }
 
     // LOGGING PROPER PAGE HIT
@@ -408,6 +377,14 @@ function logPageHit(pageId, visitorId, calledFrom) {
         success: function (pageHitSuccessModel) {
             if (pageHitSuccessModel.Success === "ok") {
                 // MOVE PAGE HITS TO FOOTER SOMEDAY
+
+                // login and I will let you see 1000 more images.
+                // bookmark my site with link oog?domain=122; to get another 1,000 image views.
+                // put a link to my site on your site or your blog or your  whatever editor publish site and I'll cut you in to the 
+                // use my product
+                // Request extra privdleges 
+                // pay me to do some programming for you and I'll let you in on all my source code
+
                 // ADD FREE VISITS ALLOWED CLIPPER HERE
                 if (pageHitSuccessModel.UserHits > freeVisitorHitsAllowed) {
                     alert("you have now visited " + pageHitSuccessModel.UserHits + " pages." +
@@ -467,7 +444,7 @@ function logVisit(visitorId) {
         success: function (logVisitSuccessModel) {
             if (logVisitSuccessModel.Success === "ok") {
                 if (logVisitSuccessModel.VisitAdded) {
-                    if (verbosity > 4)
+                    if (verbosity > 3)
                         sendEmailToYourself("Visit Added ", "visitorId: " + visitorId);
 
                     if (document.domain === 'localhost') alert("Visit Added ", "visitorId: " + visitorId);

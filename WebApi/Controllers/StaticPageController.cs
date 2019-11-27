@@ -228,10 +228,19 @@ namespace WebApi.Controllers
         {
             string bodyHtml =
             "<div class='threeColumnLayout'>\n" +
-                "<div id='leftColumn'></div>\n" +
-                "<div id='middleColumn'>\n" +
-                    "<div id='divStatusMessage'></div>\n" +
-                    "<div id='imageContainer' class='flexWrapContainer'>\n";
+            "   <div id='leftColumn'>\n" +
+            "       <div id='TrackbackLinkArea' class='leftColumnTrackbackArea'>\n" +
+            "           <div id='babapediaLink' class='babapediaLink displayHidden'>\n" +
+            "               <a href='https://www.babepedia.com' target='_blank'> Babapedia </a>" +
+            "          </div>\n" +
+            "       <a id='freeonesLink' class='leftColumnTrackbackLink displayHidden' href='http://www.freeones.com' target='_blank' text='free porn'>" +
+            "           <img src = '/Images/freeones.png' height='40' title='FreeOnes - The ultimate babes site' alt='models, babes and porn stars' class='trackbackImage' />" +
+            "       </a>\n" +
+            "   </div>\n" +
+            "</div>\n" +
+            "<div id='middleColumn'>\n" +
+            "   <div id='divStatusMessage'></div>\n" +
+            "   <div id='imageContainer' class='flexWrapContainer'>\n";
 
             //ImageLink[] imageArray = null;
             using (OggleBoobleContext db = new OggleBoobleContext())

@@ -141,7 +141,7 @@
                     clearInterval(waiter);
                     setOggleHeader("admin", 3910);
                     buildDirectoryTree();
-                    logPageHit(3910, getCookieValue("VisitorId"), "Dashboard");
+                    logPageHit(3910);
 
                     if (isInRole("Oggle admin")) {
                         $('.adminLevelOption').show();

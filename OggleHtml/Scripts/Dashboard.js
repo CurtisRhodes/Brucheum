@@ -9,20 +9,23 @@ var dashboardContextMenuFolderId = "";
 
 function resizeDashboardPage() {
     resizePage();
-    var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);
-    if (workAreaHeight > $('#middleColumn').height()) {
-        $('#middleColumn').height(workAreaHeight);
-        $('#footerMessage').html("middleColumn.height: " + $('#middleColumn').height()); //image height: " + $('#imgLinkPreview').height());
-    }
-    else {
-        //alert("workAreaHeight < $('#middleColumn').height()");
-        console.log("workAreaHeight < $('#middleColumn').height()");
-        //$('#footerMessage').html("_");
-    }
 
-    $('.workAreaContainer').height($('#middleColumn').height() - 177);
-    $('.workAreaContainer').width($('#middleColumn').width() - 122);
-    //$('.floatingCrud').width($('.workarea').width() - 100);
+    var mch = $('#middleColumn').height()-150;
+    $('.dashboardContainer').height(mch);
+    $('.dashboardLeftMenu').height(mch);
+    $('.dashboardTreeContainer').height(mch);
+    $('.workAreaContainer').height(mch);
+    var mw = $('.dashboardContainer').width() - $('.dashboardLeftMenu').width() - $('.dashboardTreeContainer').width();
+    $('.workAreaContainer').width(mw + 'px');
+}
+
+function buildDirectoryTree() {
+    $('#dirTreeContainer').html("");
+    $('#dataifyInfo').show().html("rebuilding directory tree");
+
+    $('#dashBoardLoadingGif').show();
+    buildDirTree($('#dirTreeContainer'), "dashboardMain", 0);
+    //$('.dirTreeSpan').mouseover()
 }
 
 function createStaticPages(justOne) {
@@ -284,15 +287,6 @@ function moveFolderTreeClick(path, id) {
     partialViewSelectedItemId = id;
     $('.txtPartialDirTreePath').val(displayPath);
     $('#partialViewTreeContainer').dialog("close");
-}
-
-function buildDirectoryTree() {
-    $('#dirTreeContainer').html("");
-    $('#dataifyInfo').show().html("rebuilding directory tree");
-
-    $('#dashBoardLoadingGif').show();
-    buildDirTree($('#dirTreeContainer'), "dashboardMain", 0);
-    //$('.dirTreeSpan').mouseover()
 }
 
 function dashboardMainClick(path, id, linkId) {
@@ -731,7 +725,51 @@ function runImageHitActivityReport() {
 }
 
 
+function showReports() {
+    $('.workAreaContainer').hide();
+    $('#divReports').show();
+    runPageActivityReport();
+    //        <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick=""></div>
 
+}
+function closeReports() {
+    $('#divReports').hide();
+
+}
+
+function runPageActivityReport() {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "/api/MetricsReports",
+        success: function (pageHitModel) {
+            $('#dashBoardLoadingGif').hide();
+            if (pageHitModel.Success === "ok") {
+                //$.each(pageHitModel)
+                //alert("pageHitModel.Success: " + pageHitModel.Success);
+                $("#pageHitReport").html(kludge);
+                $("#refreshPageHits").show();
+                $("#btnPopPages").show();
+                $("#btnMostImageHits").show();
+                $("#btnImageHitActivityReport").show();
+            }
+            else {
+                alert("renameFolder: " + repairReport.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "renameFolder")) {
+                sendEmailToYourself("XHR ERROR in Dashboard.js renameFolder",
+                    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
+            }
+        }
+    });
+
+
+    //<div id="activityReport"></div>
+    //<button id="refreshActivityReport" class="inline displayHidden" onclick="runPageActivityReport()">refresh</button>
+
+}
 
 
 

@@ -34,8 +34,9 @@ function verifyConnection() {
             if (successModel.Success === "ok") {
                 connectionVerified = true;
             }
-            else
-                alert(successModel.Success);
+            else {
+                alert("Verify Connection: " + successModel.Success);
+            }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);

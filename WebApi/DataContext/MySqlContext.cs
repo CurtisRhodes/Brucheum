@@ -29,8 +29,34 @@ namespace WebApi.MySqDataContext
         public virtual DbSet<VwLink> VwLinks { get; set; }
         public virtual DbSet<CategoryFolderDetail> CategoryFolderDetails { get; set; }
         public virtual DbSet<RankerVote> RankerVotes { get; set; }
+        public virtual DbSet<EventLog> EventLogs { get; set; }
+        public virtual DbSet<Ref> Refs { get; set; }
     }
 
+    [Table("OggleBooble.Ref")]
+    public class Ref
+    {
+        [Key]
+        [Column(Order = 0)]
+        public string RefType { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string RefCode { get; set; }
+        public string RefDescription { get; set; }
+    }
+
+    [Table("OggleBooble.EventLog")]
+    public class EventLog
+    {
+        public string EventCode { get; set; }
+        public int PageId { get; set; }
+        [Key]
+        [Column(Order = 0)]
+        public string VisitorId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public DateTime Occured { get; set; }
+    }
 
     [Table("OggleBooble.CategoryFolder")]
     public partial class CategoryFolder
