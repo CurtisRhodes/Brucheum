@@ -18,7 +18,6 @@
     <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
     <script src="Scripts/Permissions.js"></script>
-    <script src="Scripts/HitCounter.js"></script>
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/FolderCategoryDialog.js"></script>
     <script src="Scripts/ModelInfoDialog.js"></script>
@@ -51,178 +50,107 @@
 <body>
     <header></header>
     <div class="threeColumnLayout">
-        <div id="leftColumn" style="width:10px;"></div>
+        <!--<div id="leftColumn"></div>-->
         <div id="middleColumn">
             <img id="dashBoardLoadingGif" class="loadingGif" src="Images/loader.gif" />
             <div id="dots"></div>
-            <style>
-
-                #pageHitReport table td {
-                    border: solid thin #000;
-                    padding: 4px;
-                    min-width: 95px;
-                    text-align: center;
-                }
-
-                .workAreaCloseButton {
-                    float: right;
-                    padding-top: 15px;
-                    padding-right: 15px;
-                    cursor: pointer;
-                }
-
-                .workAreaHeaderLabel {
-                    float: left;
-                    width: 100%;
-                    text-align: center;
-                }
-
-                .fullScreenArea {
-                    height: 100%;
-                    padding: 4px;
-                    background-color: #a9a177;
-                    overflow-y: auto;
-                }
-
-                .sortBox {
-                    border: solid thin #808080;
-                    text-align: center;
-                    display: inline-block;
-                    background-color: #e5dfc1;
-                    padding: 1px;
-                    margin: 2px;
-                }
-
-                .sortBoxInput {
-                    width: 100px;
-                    border: none;
-                    text-align: center;
-                    background-color: #e5dfc1;
-                }
-
-                .sortBoxImage {
-                    height: 125px;
-                }
-
-                .workAreaHeader {
-                    border: none;
-                    background-color: var(--brucheumBlue);
-                    color: #fff;
-                    display: inline-flex;
-                    width: 100%;
-                }
-
-                .workAreaRow {
-                    margin-top: 1px;
-                    padding: 10px;
-                    border-bottom: solid 5px var(--brucheumBlue);
-                }
-
-                .popPagesReportContainer {
-                    display: none;
-                    border: solid thin #000;
-                    padding: 4px;
-                    max-height: 400px;
-                    overflow-y: auto;
-                }
-
-                .mostPopularPagesReport {
-                    padding: 5px;
-                }
-            </style>
-
             <div id="divStatusMessage"></div>
             <div id="dashboard" class="dashboardContainer">
-                <div class="dashboardLeftMenu">
-                    <div class="clickable" onclick="buildDirectoryTree()">ReBuild Dir Tree</div>
-                    <div class="clickable adminLevelOption" onclick="showReports()">Report</div>
-                    <div class="clickable" onclick="$('#createNewFolderDialog').dialog('open');">Create New Folder</div>
-                    <div class="clickable adminLevelOption" onclick="showMoveFolderDialog();">Move Folder</div>
-                    <div class="clickable adminLevelOption" onclick="showCopyFolderDialog();">Copy Folder</div>
-                    <div class="clickable adminLevelOption" onclick="$('#renameFolderCrud').dialog('open');">Rename Folder</div>
-                    <!--<div class="clickable adminLevelOption" onclick="loadProperties()">load Properties</div>-->
-                    <div class="clickable adminLevelOption" onclick="$('#createStaticPagesCrud').dialog('open');">Create Static Pages</div>
-                    <div class="clickable adminLevelOption" onclick="repairLinks()">Repair Links</div>
-                    <div class="clickable adminLevelOption" onclick="showAddRolesDialog()">Add/Edit Roles</div>
-                    <div class="clickable adminLevelOption" onclick="showAssignRolesDialog()">Assign User Roles</div>
-                    <div class="clickable adminLevelOption" onclick="prepareXhamsterPage()">Prepare xHamster Page</div>
-                    <div class="clickable adminLevelOption" onclick="showPerfMetrics()">Performance Metrics</div>
-                    <div class="clickable adminLevelOption" onclick="showSortTool()">Sort Tool</div>
+                <div id="dashboardContainerRow">
+                    <div id="dashboardLeftMenu" class="oggleHorizontalMenu"></div>
                 </div>
-                <div id="divWorkArea" class="dashboardWorkArea">
-                    <div id="divAddImages" class="workAreaContainer">
-                        <div id="uploadArea" class="oggleh">
-                            <div id="addNewLink" class="addLinkCrudArea">
-                                <div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
-                                <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
-                                <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
-                            </div>
-                            <img id="imgLinkPreview" class="linkImage" />
-                        </div>
-                        <div id="progressBar" class="dashboardProgessBar"></div>
-                    </div>
-                    <div id="divSortTool" class="workAreaContainer displayHidden">
-                        <div class="workAreaHeader">
-                            <div class="workAreaHeaderLabel"><h3><div id="sortTableHeader"></div></h3></div>
-                            <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="closeSortTool()"></div>
-                        </div>
-                        <div id="sortToolContainer" class="fullScreenArea"></div>
-                        <div class="workareaFooter">
-                            <button onclick="updateSortOrder()">ReSort</button>
-                        </div>
-                    </div>
-                    <div id="divHitMetrics" class="workAreaContainer displayHidden">
-                        <div class="workAreaHeader">
-                            <div class="workAreaHeaderLabel"><h3>Metrics</h3></div>
-                            <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="closeMetrics()"></div>
-                        </div>
-                        <div class="workAreaRow">
-                            <div id="pageHitReport"></div>
-                            <button id="refreshPageHits" class="inline displayHidden" onclick="runPageHitsReport()">refresh</button>
-                        </div>
-
-                        <div class="workAreaRow">
-                            <div class="inline">
-                                <div id="popPagesContainer" class='popPagesReportContainer'>
-                                    <div id="mostPopularPagesReport"></div>
+                <div id="dashboardContainerRow">
+                    <div id="divWorkArea" class="dashboardWorkArea">
+                        <div id="divAddImages" class="workAreaContainer">
+                            <div id="uploadArea" class="oggleh">
+                                <div id="addNewLink" class="addLinkCrudArea">
+                                    <div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
+                                    <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
+                                    <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
                                 </div>
-                                <button id="btnPopPages" class="inline displayHidden" onclick="runPopPages()">Most Popular Pages</button>
+                                <img id="imgLinkPreview" class="linkImage" />
                             </div>
-                            <div class="inline">
-                                <div id="mostImageHitsContainer" class='popPagesReportContainer'>
-                                    <div id="mostImageHitsReport"></div>
+                            <div id="progressBar" class="dashboardProgessBar"></div>
+                        </div>
+                        <div id="divSortTool" class="workAreaContainer">
+                            <div class="workAreaHeader">
+                                <div class="workAreaHeaderLabel"><h3><div id="sortTableHeader"></div></h3></div>
+                                <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="$('.workAreaContainer').hide();$('#divAddImages').fadeIn();"></div>
+                            </div>
+                            <div id="sortToolContainer" class="workAreaDisplayContainer"></div>
+                            <div class="workareaFooter">
+                                <button onclick="updateSortOrder()">ReSort</button>
+                            </div>
+                        </div>
+                        <div id="divHitMetrics" class="workAreaContainer">
+                            <div class="workAreaHeader">
+                                <div class="workAreaHeaderLabel"><h3>Metrics</h3></div>
+                                <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="$('.workAreaContainer').hide();$('#divAddImages').fadeIn();"></div>
+                            </div>
+                            <div class="workAreaRow">
+                                <div id="pageHitReport"></div>
+                                <button id="refreshPageHits" class="inline displayHidden" onclick="runPageHitsReport()">refresh</button>
+                            </div>
+                            <div class="workAreaRow flexContainer">
+                                <div>
+                                    <div id="mostImageHitsReport" class="workAreaRowDisplayContainer"></div>
+                                    <button id="btnMostImageHits" class="inline displayHidden" onclick="runMostImageHits()">refresh</button>
                                 </div>
-                                <button id="btnMostImageHits" class="inline displayHidden" onclick="runMostImageHits()">Most Image Hits</button>
+                                <div>
+                                    <div id="mostPopularPagesReport" class="workAreaRowDisplayContainer"></div>
+                                    <button id="btnPopPages" class="inline displayHidden" onclick="runPopPages()">refresh</button>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="workAreaRow">
-                            <div id="imageHitActivityReportContainer" class='popPagesReportContainer'>
-                                <div id="imageHitActivityReport"></div>
+                        <div id="divDailyActivityReport" class="workAreaContainer">
+                            <div class="workAreaHeader">
+                                <div class="workAreaHeaderLabel"><h3>Daily Activity Report</h3></div>
+                                <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="$('.workAreaContainer').hide();$('#divAddImages').fadeIn();"></div>
                             </div>
-                            <div id="imageHitActivityHits"></div>
-                            <button id="btnImageHitActivityReport" class="inline displayHidden" onclick="runImageHitActivityReport()">Image Hit Activity Report</button>
+                            <div class="workAreaDisplayContainer">
+                                <div id="activityReport" class="tightReport"></div>
+                            </div>
+                            <div class="workareaFooter">
+                                <span id="activityReportHits"></span>
+                                <button id="refreshActivityReport" class="inline" onclick="runPageActivityReport()">refresh</button>
+                            </div>
                         </div>
-                    </div>
-                    <div id="divReports" class="workAreaContainer">
-                        <div class="workAreaHeader">
-                            <div class="workAreaHeaderLabel"><h3>Reports</h3></div>
-                            <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="closeReports()"></div>
+                        <div id="divImageHitActivityReport" class="workAreaContainer">
+                            <div class="workAreaHeader">
+                                <div class="workAreaHeaderLabel"><h3>Image Hit Activity Report</h3></div>
+                                <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="$('.workAreaContainer').hide();$('#divAddImages').fadeIn();"></div>
+                            </div>
+                            <div class='workAreaDisplayContainer'>
+                                <div id="imageHitActivityReport" class="tightReport"></div>
+                            </div>
+                            <div class="workareaFooter">
+                                <span id="imageHitActivityHits"></span>
+                                <button id="refreshActivityReport" class="inline" onclick="runImageHitActivityReport()">refresh</button>
+                            </div>
                         </div>
-                        <div class="workAreaRow">
-                            <div id="activityReport"></div>
-
-                            <button id="refreshActivityReport" class="inline displayHidden" onclick="runPageActivityReport()">refresh</button>
+                        <div id="divMostAvtiveUsersReport" class="workAreaContainer">
+                            <div class="workAreaHeader">
+                                <div class="workAreaHeaderLabel"><h3>Most Active Users Report</h3></div>
+                                <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="$('.workAreaContainer').hide();$('#divAddImages').fadeIn();"></div>
+                            </div>
+                            <div class='workAreaDisplayContainer'>
+                                <div id="mostAvtiveUsersReport"></div>
+                            </div>
+                            <div class="workareaFooter">
+                                <span id="mostAvtiveUsersCount"></span>
+                                <button id="refreshActivityReport" class="inline" onclick="runMostActiveUsersReport()">refresh</button>
+                            </div>
                         </div>
                     </div>
                     <div id="dataifyInfo" class="infoLine"></div>
                 </div>
+            <div id="dashboardContainerRow">
                 <div id="dirTreeContainer" class="dashboardTreeContainer">
+                    <img id="getDirTreeLoadingGif" class="smallLoadingGif" src="/Images/loader.gif" />
                     <<div id="dashboardMain"></div>
                 </div>
             </div>
-            <img id="getDirTreeLoadingGif" class="smallLoadingGif" src="/Images/loader.gif" />
-
+        </div>
             <div id="divModalDialogs">
                 <div id="createNewFolderDialog" class="dashboardToggle" title="Create New Folder">
                     <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
@@ -310,8 +238,8 @@
         -->
             </div>
 
-            <div id="rightColumn" style="width:10px;"></div>
         </div>
+        <!--<div id="rightColumn"></div>-->
         <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
             <div onclick="dashboardContextMenuOpenFolder()">Open Folder</div>
             <div onclick="dashboardContextMenuShowCategoryDetails()">Show Category Info</div>
@@ -328,6 +256,7 @@
         var permissionsSet = false;
         $(document).ready(function () {
             includeHTML();
+            $('.txtLinkPath').val('');
             $('.workAreaContainer').hide();
             $('#divAddImages').show();
 
@@ -356,6 +285,12 @@
                             if (isInRole("Oggle admin")) {
                                 $('.adminLevelOption').show();
                             }
+                            setDashboardHeader('Add Images');
+                            $('.breadcrumbContainer').html("");
+                            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Add Images');\">Add Images</a>");
+                            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Manage Folders');\">Manage Folders</a>");
+                            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Reports');\">Reports</a>");
+                            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Admin');\">Admin</a>");
                         }
                     }, 300);
                 }

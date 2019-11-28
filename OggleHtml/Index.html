@@ -1,17 +1,22 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome - OggleBooble</title>
     <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=.07">
+    <meta http-equiv="cache-control" content="max-age=0">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="-1">
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 11:00:00 GMT">
+    <meta http-equiv="pragma" content="no-cache">
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
     <script src="Scripts/Common.js"></script>
-    <script src="Scripts/HitCounter.js"></script>
+    <script src="Scripts/HitCounter.v2.js"></script>
     <script src="Scripts/OggleEventLog.js"></script>
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
@@ -150,10 +155,11 @@
             else {
                 subdomain = params.subdomain;
             }
-                    $('#footerMessage').html("loading settings");
-                    //alert("loading settings");
-                    loadSettings();
-                    var dots = ""
+
+            $('#footerMessage').html("loading settings");
+            //alert("loading settings");
+            loadSettings();
+            var dots = ""
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
                     dots += ". ";

@@ -94,10 +94,6 @@ function getBreadCrumbs(folderId) {
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                         else {
-
-                            //href='javascript:reportThenPerformEvent(\"BLC\",136)'>
-
-
                             $('#breadcrumbContainer').append("<a class='activeBreadCrumb' " +
                                 "href='javascript:reportThenPerformEvent(\"BCC\"," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");

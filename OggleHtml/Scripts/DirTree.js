@@ -21,11 +21,13 @@ function buildDirTree(dest, treeId, startNode, endNode) {
                 dest.html(dirTreeContainer);
                 var delta = (Date.now() - start) / 1000;
                 console.log("rebuildCatTree took: " + delta.toFixed(3));
-                if (treeId === "dashboardMain") {
-                    $('#dataifyInfo').html("rebuildCatTree took: " + delta.toFixed(3) + " total folders: " + totalFolders + " total pics: " + totalPics.toLocaleString());
-                    $('#dashBoardLoadingGif').hide();
-                    setTimeout(function () { $('#dataifyInfo').hide(); }, 5000);
+
+                //alert("typeof onDirTreeComplete: " + typeof onDirTreeComplete);
+
+                if (typeof onDirTreeComplete === "function") {
+                    onDirTreeComplete();
                 }
+
             },
             error: function (xhr) {
                 dest.html("buildCatTree xhr error: " + getXHRErrorDetails(xhr));

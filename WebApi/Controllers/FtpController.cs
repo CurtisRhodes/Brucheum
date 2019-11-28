@@ -761,6 +761,11 @@ namespace WebApi
                             {
                                 db.CategoryFolderDetails.Add(new CategoryFolderDetail() { FolderId = newFolder.Id, SortOrder = 99 });
                                 db.SaveChanges();
+
+                                using (var mdb = new MySqDataContext.OggleBoobleMySqContext()) {
+                                    mdb.CategoryFolderDetails.Add(new MySqDataContext.CategoryFolderDetail() { FolderId = newFolder.Id, SortOrder = 99 });
+                                    mdb.SaveChanges();
+                                }
                             }
                         }
                     }                    

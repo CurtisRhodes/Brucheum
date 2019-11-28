@@ -1,55 +1,77 @@
 ﻿.dashboardContainer {
     margin-top: 11px;
+    margin-left: 15px;
     display: flex;
-    width: 95%;
-    border: solid 4px #cd49d3;    
+    width: 98%;
+    border: solid 4px #cd49d3;
+    background-color: var(--oggleContainerBackgroundColor);
 }
-
-.dashboardLeftMenu {
+.dashboardContainerRow {
     float: left;
     display: inline-block;
-    width: 15%;
+}
+
+.oggleHorizontalMenu {
+    min-width: 15%;
     border-right: solid thin #111;
     border-top: 23px;
     overflow: auto;
     padding-right: 36px;
 }
-    .dashboardLeftMenu div {
+    .oggleHorizontalMenu div {
         font-size: 17px;
         cursor: pointer;
         color: #9a4ea9;
         margin: 12px 9px;
         white-space: nowrap;
     }
-        .dashboardLeftMenu div:hover {
+        .oggleHorizontalMenu div:hover {
             text-decoration: underline;
             color: #333;
         }
 
 .workAreaContainer {
+    
     /*border-left: solid 3px var(--oggleBorderColor);
     border-right: solid 3px var(--oggleBorderColor);
     border-bottom: solid 0.75px var(--oggleBorderColor);*/
     /*background-color: var(--oggleContainerBackgroundColor);*/
-
-    float: left;
-    display: inline-block;
-    background-color: springgreen;
 }
 
-.dashboardWorkArea {
-    background-color: red;
+.workAreaDisplayContainer {
+    /*background-color: #dbe5c1;*/
+    overflow: auto;
+    height: inherit;
 }
+
+.workAreaRowDisplayContainer {
+    border: solid thin #000;
+    padding: 4px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.tightReport {
+    font-size: 14px;
+}
+    .tightReport table th {
+        text-align: center;        
+    }
+    .tightReport table td {
+        border: solid thin #606060;
+        padding: 1px 5px; 
+    }
 
 .dashboardTreeContainer {
+    /*
     float: right;
     display: inline-block;
+    min-width: 400px;
     width: 15%;
-    margin-top: 8px;
-    display: inline-block;
+    background-color: #eae9ae;
+        */
     border-left: solid .5px #555;
     min-height: 106px;
-    min-width: 400px;
     overflow: auto;
 }
 
@@ -178,3 +200,78 @@
     color: aqua;
     background-color: bisque;
 }
+
+#pageHitReport table td {
+    border: solid thin #000;
+    padding: 4px;
+    min-width: 95px;
+    text-align: center;
+}
+
+.workAreaCloseButton {
+    float: right;
+    padding-top: 15px;
+    padding-right: 15px;
+    cursor: pointer;
+}
+
+.workAreaHeaderLabel {
+    float: left;
+    width: 100%;
+    text-align: center;
+}
+
+.sortBox {
+    border: solid thin #808080;
+    text-align: center;
+    display: inline-block;
+    background-color: #e5dfc1;
+    padding: 1px;
+    margin: 2px;
+}
+
+.sortBoxInput {
+    width: 100px;
+    border: none;
+    text-align: center;
+    background-color: #e5dfc1;
+}
+
+.sortBoxImage {
+    height: 125px;
+}
+
+.workAreaHeader {
+    border: none;
+    background-color: var(--brucheumBlue);
+    color: #fff;
+    display: inline-flex;
+    width: 100%;
+}
+
+.workareaFooter {
+    border-top: solid 5px var(--brucheumBlue);
+    padding-top: 3px;
+}
+
+.workAreaRow {
+    margin-top: 1px;
+    padding: 10px;
+    border-bottom: solid 5px var(--brucheumBlue);
+}
+
+.mostPopularPagesReport {
+    padding: 5px;
+}
+
+
+
+
+
+
+
+
+
+
+
+

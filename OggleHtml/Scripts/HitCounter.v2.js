@@ -152,18 +152,22 @@ function logVisitor(pageId, calledFrom) {
                             //console.log("COOKIE FAIL.  " + getCookieValue("VisitorId") !== visitorSuccess.VisitorId);
                         }
 
+                        if (isNullorUndefined(visitorSuccess.PageName)) {
+                            sendEmailToYourself("PageName not found in LogVisitor for PageId:" + pageId, "this sucks");
+                        }
                         if (verbosity > 1) {
                             if (calledFrom === "logPageHit FAIL. VisitorId") {
                                 if (visitorSuccess.IsNewVisitor)
-                                    sendEmailToYourself("Unnsecssary IpInfo hit called from: " + calledFrom,
-                                        visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country +
-                                        " Ip: " + data.ip + ", VisitorId: " + getCookieValue("VisitorId"));
-                                else {
-                                    sendEmailToYourself("New Visitor called from: " + calledFrom,
-                                        visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country +
-                                        " Ip: " + data.ip + ", VisitorId: " + getCookieValue("VisitorId"));
-                                }
+                                    sendEmailToYourself("New Visitor called from logPageHit",
+                                        "PageId: " + pageId + "  visitorSuccess.PageName: " + visitorSuccess.PageName +
+                                        "<br/> hit from " + data.city + "," + data.region + " " + data.country +
+                                        " Ip: " + data.ip + "<br/>getCookieValue('VisitorId'): " + getCookieValue("VisitorId"));
                             }
+                            else
+                                sendEmailToYourself("Unnsecssary IpInfo hit called from logPageHit",
+                                    "PageId: " + pageId + "  visitorSuccess.PageName: " + visitorSuccess.PageName +
+                                    "<br/> hit from " + data.city + "," + data.region + " " + data.country +
+                                    " Ip: " + data.ip + "<br/>getCookieValue('VisitorId'): " + getCookieValue("VisitorId"));
                         }
 
                         if (visitorSuccess.IsNewVisitor) {
@@ -237,6 +241,7 @@ function logVisitor(pageId, calledFrom) {
                         }
                         else {
                             //console.log("Unnecessary HIT TO IPINFO.IO  ip: " + getCookieValue("IpAddress"));
+                            var userName = getCookieValue("UserName");
                             if (!isNullorUndefined(userName)) {
                                 sendEmailToYourself("Unnecessary HIT TO IPINFO.IO.  EXCELLENT! " + userName + " came back for another visit ",
                                     visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
@@ -247,17 +252,18 @@ function logVisitor(pageId, calledFrom) {
                                         visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country +
                                         " Ip: " + data.ip + ", VisitorId: " + getCookieValue("VisitorId"));
                             }
-                            logVisit(visitorSuccess.VisitorId);
                         }
 
                         $('#footerMessage').html("");
                         if (visitorSuccess.WelcomeMessage !== "") {
                             $('#headerMessage').html(visitorSuccess.WelcomeMessage);
                         }
-                        //sendEmailToYourself("Success in logVisitor ", "Just so you know this happens too, not just the pk violation.");
+                        if (verbosity > 3) {
+                            sendEmailToYourself("Success in logVisitor ", "Just so you know this happens too, not just the pk violation.");
+                        }
                     }
                     else {
-                        sendEmailToYourself("Api Error in logVisitor ", "PageId: " + pageId + "<div style='color:red'>Message:</div>" + visitorSuccess.Success);
+                        sendEmailToYourself("Ajax Error in logVisitor ", "PageId: " + pageId + "<br/><div style='color:red'>Message:</div>" + visitorSuccess.Success);
                     }
                 },
                 error: function (jqXHR) {
@@ -358,11 +364,12 @@ function logPageHit(pageId) {
             });
         }
         else {
-            //if (document.domain === 'localhost') alert("logPageHit fail.\n no VisitorId and no IpAddress. \nlooping to log visitor");
-            //if (verbosity > 11) sendEmailToYourself("logPageHit Fail", "no VisitorId and no IpAddress. \nlooping to log visitor");
+            //if (document.domain === 'localhost') alert("logPageHit fail.\n no VisitorId and no IpAddress. \nlooXXXXXXXXXXping to log visitor");
+            //if (verbosity > 11) sendEmailToYourself("logPageHit Fail", "no VisitorId and no IpAddress. \nlXXXXXXXXXXXXXXXXXooping to log visitor");
             logVisitor(pageId, "logPageHit FAIL. VisitorId");
         }
         //return;
+        visitorId = "unknown";
     }
 
     // LOGGING PROPER PAGE HIT
@@ -416,7 +423,7 @@ function logPageHit(pageId) {
                 //    return;
                 //}
                 sendEmailToYourself("logPageHit error: ", pageHitSuccessModel.Success + "<br/>IpAddress: " + getCookieValue("IpAddress") +
-                    "<br/>pageId: " + pageId + "<br/>Called From: " + calledFrom + "<br/>ver: 11.25.02");
+                    "<br/>pageId: " + pageId + "<br/>ver: 11.27");
             }
         },
         error: function (jqXHR) {

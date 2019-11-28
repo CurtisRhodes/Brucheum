@@ -96,24 +96,78 @@ namespace WebApi.Controllers
         [Route("api/MetricsReports/ImageHitActivityReport")]
         public ImageHitActivityReportModel ImageHitActivityReport()
         {
-            var imageHitActivityReport = new ImageHitActivityReportModel();
+            var activityReport = new ImageHitActivityReportModel();
             try
             {
                 using (var db = new OggleBoobleMySqContext())
                 {
-                    imageHitActivityReport.Items = db.Database.SqlQuery<ImageHitActivityReportItem>(
-                        "select IpAddress, City, Region, Country, PageId, ImageLinkId, date_format(HitDateTime, '%m/%d/%Y') as hitDate, date_format(HitDateTime, '%h:%i.%s') as hitTime " +
+                    activityReport.Items = db.Database.SqlQuery<ImageHitActivityReportItem>(
+                        "select IpAddress, City, Region, Country, PageId, ImageLinkId, "+
+                        "date_format(HitDateTime, '%m/%d/%Y') as hitDate, date_format(HitDateTime, '%h:%i.%s') as hitTime " +
                         "from OggleBooble.ImageHit ih " +
                         "join OggleBooble.Visitor v on ih.VisitorId = v.VisitorId " +
                         "where ih.HitDateTime between current_date and current_date + 1 " +
                         "order by hitTime desc, IpAddress limit 500").ToList();
 
-                    imageHitActivityReport.HitCount = db.ImageHits.Where(h => h.HitDateTime > DateTime.Today).Count();
+                    activityReport.HitCount = db.ImageHits.Where(h => h.HitDateTime > DateTime.Today).Count();
                 }
-                imageHitActivityReport.Success = "ok";
+                activityReport.Success = "ok";
             }
-            catch (Exception ex) { imageHitActivityReport.Success = Helpers.ErrorDetails(ex); }
-            return imageHitActivityReport;
+            catch (Exception ex) { activityReport.Success = Helpers.ErrorDetails(ex); }
+            return activityReport;
+        }
+
+        [HttpGet]
+        [Route("api/MetricsReports/ActivityReport")]
+        public ActivityReportModel ActivityReport()
+        {
+            var activityReport = new ActivityReportModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqContext())
+                {
+                    activityReport.Items = db.Database.SqlQuery<ActivityReportItem>(
+                        " select IpAddress, City, Region, Country, RefDescription, FolderName," +
+                        " date_format(Occured, '%m/%d/%Y') as hitDate, date_format(Occured, '%h:%i.%s') as hitTime " +
+                        " from OggleBooble.EventLog e" +
+                        " join OggleBooble.Ref r on e.EventCode = r.RefCode" +
+                        " join OggleBooble.Visitor v on e.VisitorId = v.VisitorId" +
+                        " join OggleBooble.CategoryFolder f on e.PageId = f.Id" +
+                        " where Occured > current_date" +
+                        " order by Occured desc limit 500;").ToList();
+
+                    activityReport.HitCount = db.ImageHits.Where(h => h.HitDateTime > DateTime.Today).Count();
+                }
+                activityReport.Success = "ok";
+            }
+            catch (Exception ex) { activityReport.Success = Helpers.ErrorDetails(ex); }
+            return activityReport;
+        }
+
+        [HttpGet]
+        [Route("api/MetricsReports/MostActiveUsersReport")]
+        public MostActiveUsersModel MostActiveUsersReport()
+        {
+            var mostActiveUsersReport = new MostActiveUsersModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqContext())
+                {
+                    mostActiveUsersReport.Items = db.Database.SqlQuery<MostActiveUsersItem>(
+                        "select IpAddress, City, Region, Country, " +
+                        "max(date_format(HitDateTime, '%m/%d/%Y')) as 'LastHit', max(date_format(HitDateTime, '%h:%i.%s')) as hitTime, count(*) imageHits " +
+                        "from OggleBooble.ImageHit ih " +
+                        "join OggleBooble.Visitor v on ih.VisitorId = v.VisitorId " +
+                        "group by IpAddress, City, Region, Country " +
+                        "order by imageHits desc;").ToList();
+
+
+                    mostActiveUsersReport.HitCount = mostActiveUsersReport.Items.Count();
+                }
+                mostActiveUsersReport.Success = "ok";
+            }
+            catch (Exception ex) { mostActiveUsersReport.Success = Helpers.ErrorDetails(ex); }
+            return mostActiveUsersReport;
         }
     }
 }

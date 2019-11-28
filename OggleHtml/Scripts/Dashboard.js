@@ -9,14 +9,81 @@ var dashboardContextMenuFolderId = "";
 
 function resizeDashboardPage() {
     resizePage();
-
-    var mch = $('#middleColumn').height()-150;
+    var mch = $('#middleColumn').height() - 50;
     $('.dashboardContainer').height(mch);
-    $('.dashboardLeftMenu').height(mch);
+    $('#dashboardLeftMenu').height(mch);
     $('.dashboardTreeContainer').height(mch);
     $('.workAreaContainer').height(mch);
-    var mw = $('.dashboardContainer').width() - $('.dashboardLeftMenu').width() - $('.dashboardTreeContainer').width();
+
+    var mw = $('.dashboardContainer').width() - $('#dashboardLeftMenu').width() - $('.dashboardTreeContainer').width() - 39;
     $('.workAreaContainer').width(mw + 'px');
+
+    $('.workAreaDisplayContainer').height(mch - 100);   
+
+    $('#footerMessage').html("dashboardContainer.width: " + $('.dashboardContainer').width() +
+        "  dashboardTreeContainer.width: " + $('.dashboardTreeContainer').width() +
+        "  dashboardLeftMenu.width: " + $('#dashboardLeftMenu').width() +
+        "  workAreaContainer.width: " + $('.workAreaContainer').width()) +
+        "  mw: " + mw;
+}
+
+function setDashboardHeader(viewId) {
+    $('#headerSubTitle').html(viewId);
+    switch (viewId) {
+        case "Add Images":
+            $('.workAreaContainer').hide();
+            $('#divAddImages').show();
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick='buildDirectoryTree()'>ReBuild Dir Tree</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
+            break;
+        case "Manage Folders":
+            $('.workAreaContainer').hide();
+            $('#divAddImages').show();
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick='buildDirectoryTree()'>ReBuild Dir Tree</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='repairLinks()'>Repair Links</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#createNewFolderDialog').dialog('open');\">Create New Folder</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showCopyFolderDialog()'>Copy Folder</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#renameFolderCrud').dialog('open');\">Rename Folder</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
+            break;
+        case "Reports":
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick='runPageActivityReport()'>Daily Activity</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showPerfMetrics()'>Performance Metrics</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='runImageHitActivityReport()'>Latest Image Hits</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMostActiveUsersReport()'>Most Active Users</div>");
+            break;
+        case "Admin":
+            $('.workAreaContainer').hide();
+            $('#divAddImages').show();
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick='$('#createStaticPagesCrud').dialog('open');'>Create Static Pages</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='prepareXhamsterPage()'>Prepare xHamster Page</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='repairLinks()'>Repair Links</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAssignRolesDialog()'>Assign User Roles</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddRolesDialog()'>Edit Roles</div>");
+            break;
+        default:
+            alert("view not undestood: " + viewId);
+    }
+    resizeDashboardPage();
+}
+
+
+
+function onDirTreeComplete() {
+    //alert("onDirTreeComplete 1");
+
+
+    //$('#dataifyInfo').html("rebuildCatTree took: " + delta.toFixed(3) + " total folders: " + totalFolders + " total pics: " + totalPics.toLocaleString());
+    //setTimeout(function () {
+    //    alert("onDirTreeComplete 3");
+    //}, 5000);
+
+    $('#dataifyInfo').hide();
+    resizeDashboardPage();
+    $('#dashBoardLoadingGif').hide();
+
+    //alert("onDirTreeComplete 2");
 }
 
 function buildDirectoryTree() {
@@ -125,7 +192,6 @@ function addVideo() {
 
 function previewLinkImage() {
     $('#imgLinkPreview').attr('src', $('#txtNewLink').val());
-
     $('#imgLinkPreview').one("load", function () {
         $('#footerMessage').html("image height: " + $('#imgLinkPreview').height());
         resizeDashboardPage();
@@ -175,37 +241,6 @@ function addImageLink() {
             }
         });
     }
-}
-
-function createNewFolder() {
-    $('#dashBoardLoadingGif').fadeIn();
-    var newFolder = {};
-    newFolder.FolderName = $('#txtNewFolderTitle').val();
-    newFolder.Parent = dashboardMainSelectedTreeId;
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "/api/FtpDashBoard/CreateFolder?parentId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtNewFolderTitle').val(),
-        success: function (successModel) {
-            $('#dashBoardLoadingGif').hide();
-            if (successModel.Success === "ok") {
-                displayStatusMessage("ok", "new folder " + newFolder.FolderName + " created");
-
-                var changeLogModel = {
-                    PageId: dashboardMainSelectedTreeId,
-                    PageName: $('#txtNewFolderTitle').val(),
-                    Activity: "new folder created"
-                };
-                logActivity(changeLogModel);
-                $('#txtNewFolderTitle').val('');
-            }
-            else
-                alert("CreateVirtualFolder: " + successModel.Success);
-        },
-        error: function (xhr) {
-            $('#dashBoardLoadingGif').hide();
-            alert("createNewFolder xhr error: " + getXHRErrorDetails(xhr));
-        }
-    });
 }
 
 function xxloadProperties() {
@@ -264,37 +299,25 @@ function collapseChildFolder() {
     }
 }
 
+// ROLES FUNCTION
+
 function showAssignRolesDialog() {
     $('#rolesChooseBoxDialog').dialog('open');
     $('#divChooseAssigned').html("");
     loadUsers();
     loadAllUserRoles();
 }
-
 function showAddRolesDialog() {
     $('#addEditRolesDialog').dialog('open');
     loadAaddEditRoles();
 }
 
-function moveFolderTreeClick(path, id) {
-    var displayPath = "";
-    if (path.length > path.indexOf(".COM") + 4) {
-        displayPath = path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " ");
-    }
-    else {
-        displayPath = path;
-    }
-    partialViewSelectedItemId = id;
-    $('.txtPartialDirTreePath').val(displayPath);
-    $('#partialViewTreeContainer').dialog("close");
-}
-
+// TREE CONTEXT MENU FUNCTIONS
 function dashboardMainClick(path, id, linkId) {
     dashboardMainSelectedTreeId = id;
     dashboardMainSelectedPath = path;
     $('.txtLinkPath').val(path.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
 }
-
 function dashboardContextMenuOpenFolder() {
     window.open("/album.html?folder=" + dashboardContextMenuFolderId, "_blank");
 }
@@ -330,14 +353,16 @@ function prepareXhamsterPage() {
     });
 }
 
+// WORK AREAS
 function showSortTool() {    
-    $('#divAddImages').hide();
+    //alert("dashboardMainSelectedPath: " + dashboardMainSelectedPath);
+    if (isNullorUndefined(dashboardMainSelectedPath)) {
+        alert("select a folder");
+        return;
+    }
+    $('.workAreaContainer').hide();
     $('#divSortTool').fadeIn();
     loadSortImages();
-}
-function closeSortTool() {
-    $('#divSortTool').hide();
-    $('#divAddImages').fadeIn();
 }
 function loadSortImages()
 {
@@ -354,7 +379,7 @@ function loadSortImages()
                     $('#sortToolContainer').append("<div class='sortBox'><img class='sortBoxImage' src='" + obj.Link + "'/>" +
                         "<br/><input class='sortBoxInput' id=" + obj.LinkId + " value=" + obj.SortOrder + "></div>");
                 });
-                resizePage();
+                //resizePage();
             }
             else {
                 alert("loadSortImages: " + imageLinksModel.Success);
@@ -406,164 +431,14 @@ function updateSortOrder() {
         });
     }
 
-function showMoveFolderDialog() {
-    $('#moveFolderCrud').dialog('open');
-    buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
-}
-function moveFolder() {
-    //$('#dataifyInfo').show().html("Preparing to Move Folder");
-    $('#dataifyInfo').show().html("Moving Folder");
-    //$('#progressBar').show();
-    $('#dashBoardLoadingGif').show();
-    $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "/api/FtpDashboard/MoveFolder?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + partialViewSelectedItemId,
-        success: function (success) {
-            $('#txtNewFolderParent').val('');
-            $('#dashBoardLoadingGif').hide();
-            if (!success.startsWith("ERROR")) {
-                displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val());
-                //$('#progressBar').hide();
-                //$('#progressBar').progressbar("destroy");
-                $('#dataifyInfo').hide();
-
-                //alert("changeLogModel id: " + MoveCopyImageModel.SourceFolderId + " mode: " + MoveCopyImageModel.Mode + "  name: " + $('#dirTreeResults').html());
-                var changeLogModel = {
-                    PageId: dashboardMainSelectedTreeId,
-                    PageName: $('.txtPartialDirTreePath').val(),
-                    Activity: "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val()
-                };
-                logActivity(changeLogModel);
-
-                $('.txtPartialDirTreePath').val('');
-                $('#moveFolderCrud').dialog("close");
-                buildDirectoryTree();
-            }
-            else
-                alert("Move Folder: " + success);
-        },
-        error: function (xhr) {
-            $('#dashBoardLoadingGif').hide();
-            alert("Move Folder xhr error: " + getXHRErrorDetails(xhr));
-        }
-    });
-    //$('#moveFolderCrud').on('dialogclose', function (event) {
-}
-
-function renameFolder() {
-    var start = Date.now();
-    $('#dashBoardLoadingGif').fadeIn();
-    $('#dataifyInfo').show().html("renaming folder " + $('.txtLinkPath').val() + " to " + $('#txtReName').val());
-    $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val(),
-        success: function (success) {
-            $('#dashBoardLoadingGif').hide();
-            //$('#renameFolderCrud').dialog("close");
-            //$('#renameFolderCrud').hide();
-            if (success === "ok") {
-                var delta = Date.now() - start;
-                var minutes = Math.floor(delta / 60000);
-                var seconds = (delta % 60000 / 1000).toFixed(0);
-                displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
-                console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-
-                $('.txtLinkPath').val('');
-                $('#renameFolderCrud').dialog("close");
-                buildDirectoryTree();
-
-                //var changeLogModel = {
-                //    PageId: dashboardMainSelectedTreeId,
-                //    PageName: $('.txtLinkPath').val(),
-                //    Activity: "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val()
-                //};
-                //logActivity(changeLogModel);
-
-
-                $('#dataifyInfo').hide();
-            }
-            else {
-                alert("renameFolder: " + repairReport.Success);
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "renameFolder")) {
-                sendEmailToYourself("XHR ERROR in Dashboard.js renameFolder",
-                    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
-            }
-        }
-    });
-}
-
-function showCopyFolderDialog() {
-    $('#copyFolderCrud').dialog('open');
-    buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
-}
-function copyFolder() {
-    //$('#dataifyInfo').show().html("Preparing to Move Folder");
-    $('#dataifyInfo').show().html("Copying Folder");
-    //$('#progressBar').show();
-    $('#dashBoardLoadingGif').show();
-
-    var stepchildModel = {
-        Parent: partialViewSelectedItemId,
-        Child: dashboardMainSelectedTreeId,
-        Link: "",
-        RootFolder: "",
-        SortOrder: 99
-    };
-
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "api/Folder",
-        data: stepchildModel,
-        success: function (successModel) {
-            $('#dashBoardLoadingGif').hide();
-            if (successModel.Success === "ok") {
-
-                displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " copied to " + $('.txtPartialDirTreePath').val());
-
-                $('#txtNewFolderParent').val('');
-                $('#dataifyInfo').hide();
-
-                //var changeLogModel = {
-                //    PageId: dashboardMainSelectedTreeId,
-                //    PageName: $('.txtPartialDirTreePath').val(),
-                //    Activity: "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val()
-                //};
-                //logActivity(changeLogModel);
-
-                $('.txtPartialDirTreePath').val('');
-                $('#moveFolderCrud').dialog("close");
-                buildDirectoryTree();
-            }
-            else
-                alert("copy stepchild: " + successModel.Success);
-        },
-        error: function (xhr) {
-            $('#dashBoardLoadingGif').hide();
-            alert("Move Folder xhr error: " + getXHRErrorDetails(xhr));
-        }
-    });
-    //$('#moveFolderCrud').on('dialogclose', function (event) {
-}
-
 
 function showPerfMetrics() {
-    $('#divAddImages').hide();
+    $('.workAreaContainer').hide();
     $('#divHitMetrics').fadeIn();
-
-    
-
     runPageHitsReport();
-
+    runPopPages();
+    runMostImageHits();
 }
-function closeMetrics() {
-    $('#divHitMetrics').hide();
-    $('#divAddImages').fadeIn();
-}
-
 function runPageHitsReport() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
@@ -620,7 +495,6 @@ function runPageHitsReport() {
         }
     });
 }
-
 function runPopPages() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
@@ -629,7 +503,7 @@ function runPopPages() {
         success: function (popularPages) {
             $('#dashBoardLoadingGif').hide();
             if (popularPages.Success === "ok") {
-                $("#mostPopularPagesReport").html("<table>");
+                $("#mostPopularPagesReport").html("<table><tr colspan=2><th>Most Popular Pages</th></tr>");
                 $.each(popularPages.Items, function (idx, obj) {
                     $("#mostPopularPagesReport").append("<tr><td>" + obj.PageName + "</td><td>" + obj.PageHits + "</td></tr>");
                 });
@@ -649,7 +523,6 @@ function runPopPages() {
         }
     });
 }
-
 function runMostImageHits() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
@@ -658,12 +531,11 @@ function runMostImageHits() {
         success: function (mostImageHits) {
             $('#dashBoardLoadingGif').hide();
             if (mostImageHits.Success === "ok") {
-                $("#mostImageHitsReport").html("<table>");
+                $("#mostImageHitsReport").html("<table><tr colspan=2><th>Most Image Hits</th></tr>");                
                 $.each(mostImageHits.Items, function (idx, obj) {
                     $("#mostImageHitsReport").append("<tr><td>" + obj.PageName + "</td><td>" + obj.PageHits + "</td></tr>");
                 });
                 $("#mostImageHitsReport").append("</table>");
-                $('#mostImageHitsContainer').css("display", "inline-block");
             }
             else {
                 alert("runMostImageHits: " + mostImageHits.Success);
@@ -674,40 +546,72 @@ function runMostImageHits() {
             if (!checkFor404(errorMessage, "runMostImageHits")) {
                 alert("runMostImageHits: " + errorMessage);
                 sendEmailToYourself("XHR ERROR in Dashboard.js runMostImageHits", "Message: " + errorMessage);
+            }
+        }
+    });
+}
+
+function runPageActivityReport() {
+    $('.workAreaContainer').hide();
+    $('#divDailyActivityReport').show();
+    $('#dashBoardLoadingGif').show();
+    $("#activityReport").html("");
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "/api/MetricsReports/ActivityReport",
+        success: function (activityReport) {
+            $('#dashBoardLoadingGif').hide();
+            if (activityReport.Success === "ok") {
+                var kludge = "<table>";
+                kludge += "<tr><th>Ip Address</th><th>City</th><th>State</th><th>Country</th><th>Event</th></th><th>Page</th><th>hitdate</th><th>hit time</th></tr>";
+                $.each(activityReport.Items, function (idx, obj) {
+                    kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
+                    kludge += "<td>" + obj.Region + "</td><td>" + obj.Country + "</td>";
+                    kludge += "<td>" + obj.RefDescription + "</td><td>" + obj.FolderName + "</td>";
+                    kludge += "<td>" + obj.hitDate + "</td><td>" + obj.hitTime + "</td></tr>";
+                });
+                kludge += "</table>";
+                $("#activityReport").html(kludge);
+                $("#activityReportHits").html(" Total: " + activityReport.HitCount.toLocaleString());
+                $('#dashBoardLoadingGif').hide();
+            }
+            else {
+                alert("runMostImageHits: " + mostImageHits.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "ActivityReport")) {
+                sendEmailToYourself("XHR ERROR in Dashboard.js ActivityReport",
+                    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
             }
         }
     });
 }
 
 function runImageHitActivityReport() {
+    $('.workAreaContainer').hide();
+    $('#divImageHitActivityReport').show();
     $('#dashBoardLoadingGif').show();
+    $("#activityReport").html("");
+    $("#imageHitActivityHits").html("");
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/MetricsReports/ImageHitActivityReport",
         success: function (imageHitActivityReport) {
             $('#dashBoardLoadingGif').hide();
             if (imageHitActivityReport.Success === "ok") {
-                //$('#ImageHitActivityReportContainer').css("display", "inline-block");
                 var kludge = "<table>";
                 kludge += "<tr><th>ip</th><th>City</th><th>State</th><th>Country</th><th>hitdate</th><th>hit time</th></tr>";
-
-                //$("#imageHitActivityReport").html("<table>");
                 $.each(imageHitActivityReport.Items, function (idx, obj) {
                     kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
                     kludge += "<td>" + obj.Region + "</td><td>" + obj.Country + "</td>";
                     kludge += "<td>" + obj.hitDate + "</td><td>" + obj.hitTime + "</td></tr>";
-                    //$("#imageHitActivityReport").append("<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>");
-                    //$("#imageHitActivityReport").append("<td>" + obj.Region + "</td><td>" + obj.Country + "</td>");
-                    //$("#imageHitActivityReport").append("<td>" + obj.ImageLinkId + "</td>");
-                    //$("#imageHitActivityReport").append("<td>" + obj.hitDate + "</td><td>" + obj.hitTime + "</td></tr>");
                 });
                 kludge += "</table>";
 
                 $("#imageHitActivityReport").html(kludge);
-
-                $("#imageHitActivityHits").html("Total: " + imageHitActivityReport.HitCount.toLocaleString());
-                
-                $('#imageHitActivityReportContainer').css("display", "block");
+                $("#imageHitActivityHits").html(" Total: " + imageHitActivityReport.HitCount.toLocaleString());
             }
             else {
                 alert("runMostImageHits: " + mostImageHits.Success);
@@ -721,36 +625,227 @@ function runImageHitActivityReport() {
             }
         }
     });
-
 }
 
-
-function showReports() {
+function showMostActiveUsersReport() {
     $('.workAreaContainer').hide();
-    $('#divReports').show();
-    runPageActivityReport();
-    //        <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick=""></div>
-
-}
-function closeReports() {
-    $('#divReports').hide();
-
+    $('#divMostAvtiveUsersReport').show();
+    runMostActiveUsersReport();
 }
 
-function runPageActivityReport() {
+function runMostActiveUsersReport() {
+//    [Route("api/MetricsReports/MostActiveUsersReport")]
+    $('#dashBoardLoadingGif').show();
+    $("#mostAvtiveUsersReport").html("");
+    $("#mostAvtiveUsersCount").html("");
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/MetricsReports",
-        success: function (pageHitModel) {
+        url: settingsArray.ApiServer + "api/MetricsReports/MostActiveUsersReport",
+        success: function (mostActiveUsersReport) {
             $('#dashBoardLoadingGif').hide();
-            if (pageHitModel.Success === "ok") {
-                //$.each(pageHitModel)
-                //alert("pageHitModel.Success: " + pageHitModel.Success);
-                $("#pageHitReport").html(kludge);
-                $("#refreshPageHits").show();
-                $("#btnPopPages").show();
-                $("#btnMostImageHits").show();
-                $("#btnImageHitActivityReport").show();
+            if (mostActiveUsersReport.Success === "ok") {
+                var kludge = "<table>";
+                kludge += "<tr><th>ip</th><th>City</th><th>State</th><th>Country</th><th>Hits</th><th>hitdate</th><th>hit time</th></tr>";
+                $.each(mostActiveUsersReport.Items, function (idx, obj) {
+                    kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
+                    kludge += "<td>" + obj.Region + "</td><td>" + obj.Country + "</td>";
+                    kludge += "<td>" + obj.ImageHits.toLocaleString() + "</td>";                    
+                    kludge += "<td>" + obj.LastHit + "</td><td>" + obj.hitTime + "</td></tr>";
+                });
+                kludge += "</table>";
+
+                $("#mostAvtiveUsersReport").html(kludge);
+                $("#mostAvtiveUsersCount").html(" Total: " + mostActiveUsersReport.HitCount.toLocaleString());
+            }
+            else {
+                alert("mostActiveUsersReport: " + mostActiveUsersReport.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "mostActiveUsersReport")) {
+                alert("runMostImageHits: " + errorMessage);
+                sendEmailToYourself("XHR ERROR in Dashboard.js mostActiveUsersReport", "Message: " + errorMessage);
+            }
+        }
+    });
+}
+
+
+//  DIALOG FUNCTIONS 
+function createNewFolder() {
+    $('#dashBoardLoadingGif').fadeIn();
+    var newFolder = {};
+    newFolder.FolderName = $('#txtNewFolderTitle').val();
+    newFolder.Parent = dashboardMainSelectedTreeId;
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "/api/FtpDashBoard/CreateFolder?parentId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtNewFolderTitle').val(),
+        success: function (successModel) {
+            $('#dashBoardLoadingGif').hide();
+            if (successModel.Success === "ok") {
+                displayStatusMessage("ok", "new folder " + newFolder.FolderName + " created");
+
+                var changeLogModel = {
+                    PageId: dashboardMainSelectedTreeId,
+                    PageName: $('#txtNewFolderTitle').val(),
+                    Activity: "new folder created"
+                };
+                logActivity(changeLogModel);
+                $('#txtNewFolderTitle').val('');
+                $('#createNewFolderDialog').dialog('close');
+                buildDirectoryTree();
+            }
+            else
+                alert("CreateVirtualFolder: " + successModel.Success);
+        },
+        error: function (xhr) {
+            $('#dashBoardLoadingGif').hide();
+            alert("createNewFolder xhr error: " + getXHRErrorDetails(xhr));
+        }
+    });
+}
+
+function showMoveFolderDialog() {
+    $('#moveFolderCrud').dialog('open');
+    buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
+}
+function moveFolder() {
+    //$('#dataifyInfo').show().html("Preparing to Move Folder");
+    $('#dataifyInfo').show().html("Moving Folder");
+    //$('#progressBar').show();
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "/api/FtpDashboard/MoveFolder?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + partialViewSelectedItemId,
+        success: function (success) {
+            $('#txtNewFolderParent').val('');
+            $('#dashBoardLoadingGif').hide();
+            if (!success.startsWith("ERROR")) {
+                displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val());
+                //$('#progressBar').hide();
+                //$('#progressBar').progressbar("destroy");
+                $('#dataifyInfo').hide();
+
+                //alert("changeLogModel id: " + MoveCopyImageModel.SourceFolderId + " mode: " + MoveCopyImageModel.Mode + "  name: " + $('#dirTreeResults').html());
+                var changeLogModel = {
+                    PageId: dashboardMainSelectedTreeId,
+                    PageName: $('.txtPartialDirTreePath').val(),
+                    Activity: "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val()
+                };
+                logActivity(changeLogModel);
+
+                $('.txtPartialDirTreePath').val('');
+                $('#moveFolderCrud').dialog("close");
+                buildDirectoryTree();
+            }
+            else
+                alert("Move Folder: " + success);
+        },
+        error: function (xhr) {
+            $('#dashBoardLoadingGif').hide();
+            alert("Move Folder xhr error: " + getXHRErrorDetails(xhr));
+        }
+    });
+    //$('#moveFolderCrud').on('dialogclose', function (event) {
+}
+function moveFolderTreeClick(path, id) {
+    var displayPath = "";
+    if (path.length > path.indexOf(".COM") + 4) {
+        displayPath = path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " ");
+    }
+    else {
+        displayPath = path;
+    }
+    partialViewSelectedItemId = id;
+    $('.txtPartialDirTreePath').val(displayPath);
+    $('#partialViewTreeContainer').dialog("close");
+}
+
+function showCopyFolderDialog() {
+    $('#copyFolderCrud').dialog('open');
+    buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
+}
+function copyFolder() {
+    //$('#dataifyInfo').show().html("Preparing to Move Folder");
+    $('#dataifyInfo').show().html("Copying Folder");
+    //$('#progressBar').show();
+    $('#dashBoardLoadingGif').show();
+
+    var stepchildModel = {
+        Parent: partialViewSelectedItemId,
+        Child: dashboardMainSelectedTreeId,
+        Link: "",
+        RootFolder: "",
+        SortOrder: 99
+    };
+
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/Folder",
+        data: stepchildModel,
+        success: function (successModel) {
+            $('#dashBoardLoadingGif').hide();
+            if (successModel.Success === "ok") {
+
+                displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " copied to " + $('.txtPartialDirTreePath').val());
+
+                $('#txtNewFolderParent').val('');
+                $('#dataifyInfo').hide();
+
+                //var changeLogModel = {
+                //    PageId: dashboardMainSelectedTreeId,
+                //    PageName: $('.txtPartialDirTreePath').val(),
+                //    Activity: "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val()
+                //};
+                //logActivity(changeLogModel);
+
+                $('.txtPartialDirTreePath').val('');
+                $('#moveFolderCrud').dialog("close");
+                buildDirectoryTree();
+            }
+            else
+                alert("copy stepchild: " + successModel.Success);
+        },
+        error: function (xhr) {
+            $('#dashBoardLoadingGif').hide();
+            alert("Move Folder xhr error: " + getXHRErrorDetails(xhr));
+        }
+    });
+    //$('#moveFolderCrud').on('dialogclose', function (event) {
+}
+
+function renameFolder() {
+    var start = Date.now();
+    $('#dashBoardLoadingGif').fadeIn();
+    $('#dataifyInfo').show().html("renaming folder " + $('.txtLinkPath').val() + " to " + $('#txtReName').val());
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val(),
+        success: function (success) {
+            $('#dashBoardLoadingGif').hide();
+            //$('#renameFolderCrud').dialog("close");
+            //$('#renameFolderCrud').hide();
+            if (success === "ok") {
+                var delta = Date.now() - start;
+                var minutes = Math.floor(delta / 60000);
+                var seconds = (delta % 60000 / 1000).toFixed(0);
+                displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
+                console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+
+                $('.txtLinkPath').val('');
+                $('#renameFolderCrud').dialog("close");
+                buildDirectoryTree();
+
+                //var changeLogModel = {
+                //    PageId: dashboardMainSelectedTreeId,
+                //    PageName: $('.txtLinkPath').val(),
+                //    Activity: "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val()
+                //};
+                //logActivity(changeLogModel);
+
+
+                $('#dataifyInfo').hide();
             }
             else {
                 alert("renameFolder: " + repairReport.Success);
@@ -764,17 +859,5 @@ function runPageActivityReport() {
             }
         }
     });
-
-
-    //<div id="activityReport"></div>
-    //<button id="refreshActivityReport" class="inline displayHidden" onclick="runPageActivityReport()">refresh</button>
-
 }
-
-
-
-
-
-
-
 

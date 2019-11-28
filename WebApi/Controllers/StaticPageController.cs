@@ -82,6 +82,12 @@ namespace WebApi.Controllers
                 "   <title>" + folderName + " : OggleBooble</title>" +
                 "   <meta name='Title' content='" + folderName + "' property='og:title'/>\n" +
                 "   <meta name='description' content='" + metaTagResults.MetaDescription + "'/>\n" +
+                "    <meta name='viewport' content='width=device-width, initial-scale=.07'>\n" +
+                "    <meta http-equiv='cache-control' content='max-age=0'>\n" +
+                "    <meta http-equiv='cache-control' content='no-cache'>\n" +
+                "    <meta http-equiv='expires' content='-1'>\n" +
+                "    <meta http-equiv='expires' content='Tue, 01 Jan 1980 11:00:00 GMT'>\n" +
+                "    <meta http-equiv='pragma' content='no-cache'>\n" +
                 "   <meta property='og:type' content='website' />\n" +
                 "   <meta property='og:url' content='" + httpLocation + folderName + ".html'/>\n" +
                 "   <meta name='Keywords' content='" + articleTagString + "'/>\n" +

@@ -5,6 +5,48 @@ using System.Web;
 
 namespace WebApi.Models
 {
+    public class MostActiveUsersModel
+    {
+        public MostActiveUsersModel()
+        {
+            Items = new List<MostActiveUsersItem>();
+        }
+        public List<MostActiveUsersItem> Items { get; set; }
+        public int HitCount { get; set; }
+        public string Success { get; set; }
+    }
+    public class MostActiveUsersItem
+    {
+        public string IpAddress { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        public int ImageHits { get; set; }
+        public string LastHit { get; set; }
+        public string hitTime { get; set; }
+    }
+
+    public class ActivityReportModel
+    {
+        public ActivityReportModel()
+        {
+            Items = new List<ActivityReportItem>();
+        }
+        public List<ActivityReportItem> Items { get; set; }
+        public int HitCount { get; set; }
+        public string Success { get; set; }
+    }
+    public class ActivityReportItem
+    {
+        public string IpAddress { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        public string RefDescription { get; set; }
+        public string FolderName { get; set; }
+        public string hitDate { get; set; }
+        public string hitTime { get; set; }
+    }
 
     public class ImageHitActivityReportModel
     {
@@ -16,7 +58,6 @@ namespace WebApi.Models
         public int HitCount { get; set; }
         public string Success { get; set; }
     }
-
     public class ImageHitActivityReportItem
     {
         public string IpAddress { get; set; }
