@@ -83,10 +83,10 @@ namespace WebApi
             }
             int folderRowsProcessed = 0;
 
-            if (repairReport.isSubFolder)
-                SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed + "  Total: " + repairReport.RowsProcessed);
-            else
-                SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed);
+            //if (repairReport.isSubFolder)
+            //    SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed + "  Total: " + repairReport.RowsProcessed);
+            //else
+            //    SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed);
 
             List<ImageLink> goDaddyLinks =
                 (from c in db.CategoryImageLinks
@@ -286,10 +286,10 @@ namespace WebApi
 
                 repairReport.RowsProcessed++;
                 folderRowsProcessed++;
-                if (repairReport.isSubFolder)
-                    SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed + "  Total: " + repairReport.RowsProcessed);
-                else
-                    SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed);
+                //if (repairReport.isSubFolder)
+                //    SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed + "  Total: " + repairReport.RowsProcessed);
+                //else
+                //    SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed);
             }
 
             if (anyChangesMade)
@@ -348,10 +348,10 @@ namespace WebApi
                         }
                         repairReport.RowsProcessed++;
                         folderRowsProcessed++;
-                        if (repairReport.isSubFolder)
-                            SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed + "  Total: " + repairReport.RowsProcessed);
-                        else
-                            SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed);
+                        //if (repairReport.isSubFolder)
+                        //    SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed + "  Total: " + repairReport.RowsProcessed);
+                        //else
+                        //    SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed);
                     }
                 }
 

@@ -260,7 +260,7 @@ namespace WebApi
                                                           SourceFolderId = folderId,
                                                           Link = g.Link
                                                       }).ToList();
-                    int i = 0;
+                    //int i = 0;
                     int linkCount = links.Count;
                     foreach (MoveCopyImageModel model in links)
                     {
@@ -268,8 +268,8 @@ namespace WebApi
                         if (success != "ok")
                             System.Diagnostics.Debug.WriteLine("move file on local drive : " + success);
                         //    return success;
-                        SignalRHost.ProgressHub.ShowProgressBar(linkCount, ++i);
-                        SignalRHost.ProgressHub.PostToClient("Moving: " + i + " of " + linkCount);
+                        //SignalRHost.ProgressHub.ShowProgressBar(linkCount, ++i);
+                        //SignalRHost.ProgressHub.PostToClient("Moving: " + i + " of " + linkCount);
                     }
 
                     CategoryFolder emptyFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
@@ -546,7 +546,7 @@ namespace WebApi
                 db.SaveChanges();
 
                 try
-                {                    
+                {
                     oldFileName = repoPath + Helpers.GetLocalParentPath(parentId) + oldName + "/" + oldName + imageLink.Link.Substring(imageLink.Link.LastIndexOf("_"));
                     FileInfo fileInfo = new FileInfo(oldFileName);
                     fileInfo.MoveTo(newFileName);
@@ -690,7 +690,7 @@ namespace WebApi
 
                                 var mdbSourceFolder = mdb.CategoryFolders.Where(f => f.Id == sourceFolderId).FirstOrDefault();
                                 mdbSourceFolder.Parent = destinationFolderId;
-                                mdb.SaveChanges();                               
+                                mdb.SaveChanges();
                             }
                             success = "ok";
                             //File.Move(sourceFileName, destinationFileName);
@@ -762,13 +762,14 @@ namespace WebApi
                                 db.CategoryFolderDetails.Add(new CategoryFolderDetail() { FolderId = newFolder.Id, SortOrder = 99 });
                                 db.SaveChanges();
 
-                                using (var mdb = new MySqDataContext.OggleBoobleMySqContext()) {
+                                using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
+                                {
                                     mdb.CategoryFolderDetails.Add(new MySqDataContext.CategoryFolderDetail() { FolderId = newFolder.Id, SortOrder = 99 });
                                     mdb.SaveChanges();
                                 }
                             }
                         }
-                    }                    
+                    }
                 }
             }
             catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }
@@ -791,7 +792,6 @@ namespace WebApi
                     string[] files = Directory.GetFiles(danniPath);
                     var linkId = "";
                     var extension = "";
-                    int knt = 0;
                     string fullFileName = "";
                     foreach (string rawFileName in files)
                     {
@@ -799,15 +799,8 @@ namespace WebApi
 
                         linkId = fullFileName.Substring(fullFileName.LastIndexOf("_") + 1, 36);
                         extension = fullFileName.Substring(fullFileName.LastIndexOf("."));
-
-
-
-                        SignalRHost.ProgressHub.PostToClient("Processing: " + dbSourceFolder.FolderName + "  : " + ++knt + " of " + files.Count());
-
-
-
-
-                            if (System.IO.File.Exists(fullFileName))
+                        //SignalRHost.ProgressHub.PostToClient("Processing: " + dbSourceFolder.FolderName + "  : " + ++knt + " of " + files.Count());
+                        if (File.Exists(fullFileName))
                         {
                             using (var fileStream = new FileStream(fullFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                             {

@@ -124,13 +124,9 @@
             "               <div id='blackCenterfoldsLink' class='menuTabs displayHidden'>\n" +
             "                   <div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>\n" +
             "               </div>\n" +
-            //"               <div id='freeonesLink' class='menuTabs displayHidden'>\n" +
-            ////"                   <a href='http://www.freeones.com' target='_top'><img src='http://www.freeones.com/webmasters/banners/freeones_new.gif' width='120' height='60' title='FreeOnes - The ultimate babes site' alt='models, babes and porn stars'/></a>\n"+
-            //"                   <a href='http://www.freeones.com' target='_blank' text='free porn'><img src='/Images/freeones.png' title='FreeOnes - The ultimate babes site' alt='models, babes and porn stars' class='trackbackImage'></a>" +
-            //"               </div>\n" +
-            //"               <div id='babapediaLink' class='menuTabs displayHidden'>\n" +
-            //"                   <a href='https://www.babepedia.com' target='_blank'><img src='/Images/babepedia.png' class='trackbackImage'></a>" +
-            //"               </div>\n" +
+            "               <div id='pmoyLink' class='menuTabs displayHidden'>\n" +
+            "                   <a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='trackbackImage'></a>" +
+            "               </div>\n" +
             "           </div>\n" +
             "           <div id='divLoginArea' class='loginArea'>\n" +
             "               <div id='optionLoggedIn' class='displayHidden'>\n" +
@@ -193,13 +189,16 @@ function showSpecialHeaderIcons(folderId) {
                 // 
                 if (!isNullorUndefined(folderDetailModel.ExternalLinks)) {
 
-                    if (folderDetailModel.ExternalLinks.indexOf("biggest breasted centerfolds") > 0) {
+                    if (folderDetailModel.ExternalLinks.indexOf("Playmate Of The Year") > -1) {
+                        $('#pmoyLink').show();
+                    }
+                    if (folderDetailModel.ExternalLinks.indexOf("biggest breasted centerfolds") > -1) {
                         $('#breastfulPlaymatesLink').show();
                     }
-                    if (folderDetailModel.ExternalLinks.indexOf("black centerfolds") > 0) {
+                    if (folderDetailModel.ExternalLinks.indexOf("black centerfolds") > -1) {
                         $('#blackCenterfoldsLink').show();
                     }
-                    if (folderDetailModel.ExternalLinks.indexOf("Hef likes twins") > 0) {
+                    if (folderDetailModel.ExternalLinks.indexOf("Hef likes twins") > -1) {
                         $('#twinsLink').show();
                     }
                     if (folderDetailModel.ExternalLinks.indexOf("www.freeones.com") > 0) {

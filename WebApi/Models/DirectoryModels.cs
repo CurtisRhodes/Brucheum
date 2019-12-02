@@ -82,12 +82,14 @@ namespace WebApi.Models
         public string RootFolder { get; set; }
         public int SortOrder { get; set; }
     }
+
     public class AddLinkModel
     {
         public int FolderId { get; set; }
         public string Link { get; set; }
         public string Path { get; set; }
     }
+
     public class RejectLinkModel
     {
         public string Id { get; set; }

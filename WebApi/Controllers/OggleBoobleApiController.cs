@@ -412,7 +412,14 @@ namespace WebApi
         }
         private void GetDirTreeRecurr(CategoryTreeModel parent, List<VwDirTree> vwDirTree, string path)
         {
-            var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).Distinct().ToList();
+            var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).Distinct();
+
+            //var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId);
+            vwTrees = vwTrees.OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName);
+            if (parent.FolderId == 523)
+            {
+            }
+
             foreach (VwDirTree vwTree in vwTrees)
             {
                 var subChild = new CategoryTreeModel()

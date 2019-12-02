@@ -198,6 +198,7 @@ function processImages(imageLinksModel) {
             //alert("subDir: " + subDir.DirectoryName + "  Link==null");
             subDir.Link = "Images/redballon.png";
         }
+
         //$('#imageContainer').append("<div class='" + imageFrameClass + "' onclick=window.location.href='/album.html?folder=" + subDir.FolderId + "'>" +
         $('#imageContainer').append("<div class='" + imageFrameClass + "' onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.FolderId + "\")'>" +
             "<img class='folderImage' src='" + subDir.Link + "'/>" +

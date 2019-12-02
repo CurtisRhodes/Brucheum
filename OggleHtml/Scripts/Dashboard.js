@@ -56,7 +56,13 @@ function setDashboardHeader(viewId) {
         case "Admin":
             $('.workAreaContainer').hide();
             $('#divAddImages').show();
-            $('#dashboardLeftMenu').html("<div class='clickable' onclick='$('#createStaticPagesCrud').dialog('open');'>Create Static Pages</div>");
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick=\"$('#createStaticPagesCrud').dialog('open');\">Create Static Pages</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='repairLinks()'>Repair Links</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#createNewFolderDialog').dialog('open');\">Create New Folder</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showCopyFolderDialog()'>Copy Folder</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#renameFolderCrud').dialog('open');\">Rename Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='prepareXhamsterPage()'>Prepare xHamster Page</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='repairLinks()'>Repair Links</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAssignRolesDialog()'>Assign User Roles</div>");
@@ -67,8 +73,6 @@ function setDashboardHeader(viewId) {
     }
     resizeDashboardPage();
 }
-
-
 
 function onDirTreeComplete() {
     //alert("onDirTreeComplete 1");
@@ -431,7 +435,7 @@ function updateSortOrder() {
         });
     }
 
-
+// REPORTS
 function showPerfMetrics() {
     $('.workAreaContainer').hide();
     $('#divHitMetrics').fadeIn();
@@ -767,7 +771,6 @@ function showCopyFolderDialog() {
     buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
 }
 function copyFolder() {
-    //$('#dataifyInfo').show().html("Preparing to Move Folder");
     $('#dataifyInfo').show().html("Copying Folder");
     //$('#progressBar').show();
     $('#dashBoardLoadingGif').show();
