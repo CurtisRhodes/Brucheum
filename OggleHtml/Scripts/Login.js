@@ -1,4 +1,4 @@
-﻿function onRegisterClick() {
+﻿function showRegisterDialog() {
     $('#customMessage').hide();
     forgetShowingCustomMessage = true;
     $('#modalContainer').show();

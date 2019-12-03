@@ -80,7 +80,7 @@
             <div id="divStatusMessage"></div>
             <div id="dots"></div>
             <div class="flexContainer">
-                <div id="carouselInclude" class="floatLeft adminLevelOption">
+                <div id="carouselInclude" class="floatLeft displayHidden">
                     <div id="includeCenterfoldsCheckbox" class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('playboy', $(this).is(':checked'))" /> Include Centerfolds</div>
                     <div class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('archive', $(this).is(':checked'))" /> Include Archive</div>
                     <div id="dots"></div>
@@ -146,7 +146,6 @@
 
             $('#laCarousel').hide();
 
-
             //$('#footerLastBuild').html("last build: " + lastBuild + "3");
             params = getParams();
             if (params.subdomain == undefined) {
@@ -156,17 +155,24 @@
                 subdomain = params.subdomain;
             }
 
+
+
             $('#footerMessage').html("loading settings");
             //alert("loading settings");
             loadSettings();
             var dots = ""
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
-                    dots += ". ";
+                    dots += "~ ";
                     $('#dots').html(dots);
                 }
                 else {
                     clearInterval(waiter);
+
+                    setOggleHeader(subdomain, 3908);
+                    setOggleFooter(subdomain);
+
+                    $('#dots').html("");
                     verifyConnection();
                     var verifyConnectionWaiter = setInterval(function () {
                         if (!connectionVerified) {
@@ -180,7 +186,6 @@
                             $('#footerMessage').html("loading header");
                             $('#dots').html('');
                             launchCarousel(subdomain);
-                            setOggleFooter(subdomain);
 
                             setUserPermissions();
                             var waiter2 = setInterval(function () {
@@ -193,7 +198,6 @@
                                     if (subdomain == "porn") {
                                         setOggleHeader(subdomain, 3909);
                                         $('#pornLeftColumnList').show();
-                                        $('#boobsLeftColumnList').hide();
                                         $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
                                         $('#includeCenterfoldsCheckbox').hide();
                                         logPageHit(3909);
@@ -202,7 +206,6 @@
                                         setOggleHeader(subdomain, 3908);
                                         $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
                                         $('#boobsLeftColumnList').show();
-                                        $('#pornLeftColumnList').hide();
                                         launchPromoMessages();
                                         logPageHit(3908);
                                     }

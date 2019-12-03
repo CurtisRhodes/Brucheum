@@ -2,6 +2,7 @@
 <settings>
   <!--<setting name="ApiServer" value="https://api.curtisrhodes.com/"></setting>-->
   <setting name="ApiServer" value="http://localhost:40395/"></setting>
+  <!--<setting name="ApiServer" value="http://localhost:44305/"></setting>-->
   <setting name="Owner" value="Randy Roads"></setting>
   <setting name="ProductName" value="Flitter"></setting>
   <setting name="ColorScheme" value="Hot Pink"></setting>

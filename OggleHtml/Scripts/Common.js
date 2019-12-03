@@ -40,8 +40,9 @@ function verifyConnection() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
+            //alert("verifyConnection: " + errorMessage);
             if (!checkFor404(errorMessage, "getAconnection")) {
-                sendEmailToYourself("XHR ERROR IN ALBUM.JS getAconnection", "api/AlbumPage/GetRootFolder?folderId=1" +
+                sendEmailToYourself("XHR ERROR IN  verifyConnection", "api/AlbumPage/GetRootFolder?folderId=1" +
                     " Message: " + errorMessage);
             }
         }
@@ -133,7 +134,6 @@ function displayStatusMessage(msgCode, message) {
 }
 
 function checkFor404(errorMessage, calledFrom) {
-
     //if (document.domain === 'localhost') alert("checkFor404 calledfrom: " + calledFrom);
 
     var isNotConnected = false;
@@ -152,12 +152,23 @@ function checkFor404(errorMessage, calledFrom) {
         //if (ipAddr !== "68.203.90.183")
         //    sendEmailToYourself("CAN I GET A CONNECTION ", "calledFrom: " + calledFrom + "    ip: " + ipAddr);
 
-        //showCustomMessage(71);
-        $('#customMessage').html("<div class='centeredDivShell'><div class='centeredDivInner'>" +
-            "<div class='canIgetaConnectionMessageContainer'><div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'>" +
-            "<div class='divRefreshPage'><a href='javascript:refreshPage()'>Refresh page</a></div></div></div></div></div>");
 
-        $('.customMessageContainer').show();
+        //"<div id='customMessage' class='displayHidden customMessageContainer'></div>\n" +
+
+        //alert("checkFor404. errorMessage: " + errorMessage + "\ncalledFrom: " + calledFrom);
+
+        $('#customMessage2').width($(window).width());
+        $('#customMessage2').html(
+            "<div class='centeredDivShell2'>\n" +
+            "   <div class='centeredDivInner'>\n" +
+            "       <div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'>\n" +
+            "       <div class='divRefreshPage'><a href='javascript:refreshPage()'>Refresh page</a></div></div>" +
+            "   </div>" +
+            "</div>");
+
+        $('#customMessage2').show();
+
+
         console.log("checkFor404: " + calledFrom);
     }
     else {

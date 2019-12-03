@@ -53,6 +53,8 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "BruchHtml", "BruchHtml\", "
 		SlnRelativePath = "BruchHtml\"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OggleBooble.Api", "OggleBooble.Api\OggleBooble.Api.csproj", "{DE14DAF7-ED5E-4620-A4D9-B96B0A8A9D33}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{5787F365-E98B-482F-A9D3-0702D363B9D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5787F365-E98B-482F-A9D3-0702D363B9D0}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{5787F365-E98B-482F-A9D3-0702D363B9D0}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{DE14DAF7-ED5E-4620-A4D9-B96B0A8A9D33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE14DAF7-ED5E-4620-A4D9-B96B0A8A9D33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE14DAF7-ED5E-4620-A4D9-B96B0A8A9D33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE14DAF7-ED5E-4620-A4D9-B96B0A8A9D33}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

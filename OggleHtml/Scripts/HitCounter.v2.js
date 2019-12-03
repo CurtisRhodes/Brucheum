@@ -99,8 +99,7 @@ function logVisitor(pageId, calledFrom) {
         var ipAddress = getCookieValue("IpAddress");
         if (!isNullorUndefined(ipAddress)) {
             if (!isNullorUndefined(visitorId)) {
-                if (verbosity > 10)
-                    sendEmailToYourself("looping to logPageHit from logvisitor.", "IpAddress: " + ipAddress);
+                if (verbosity > 10) sendEmailToYourself("looping to logPageHit from logvisitor.", "IpAddress: " + ipAddress);
                 //if (document.domain === 'localhost') alert("xxxlooping to logPageHit from logvisitor. IpAddress: " + ipAddress);
                 logPageHit(pageId);
                 return;
@@ -366,7 +365,7 @@ function logPageHit(pageId) {
         else {
             //if (document.domain === 'localhost') alert("logPageHit fail.\n no VisitorId and no IpAddress. \nlooXXXXXXXXXXping to log visitor");
             //if (verbosity > 11) sendEmailToYourself("logPageHit Fail", "no VisitorId and no IpAddress. \nlXXXXXXXXXXXXXXXXXooping to log visitor");
-            logVisitor(pageId, "logPageHit FAIL. VisitorId");
+            logVisitor(pageId, "logPageHit hhhhhFAIL. VisitorId");
         }
         //return;
         visitorId = "unknown";

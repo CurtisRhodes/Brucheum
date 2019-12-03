@@ -102,7 +102,7 @@ namespace WebApi.Controllers
                 "   <script src='/Scripts/Common.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/OggleEventLog.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Login.js' type='text/javascript'></script>\n" +
-                "   <script src='/Scripts/HitCounter.js' type='text/javascript'></script>\n" +
+                "   <script src='/Scripts/HitCounter.v2.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Permissions.js'></script>\n" +
                 "   <script src='/Scripts/OggleHeader.js'></script>\n" +
                 "   <script src='/Scripts/OggleSearch.js'></script>\n" +

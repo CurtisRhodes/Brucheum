@@ -122,6 +122,7 @@ body {
 }
 
 .leftColumnList {
+    display: none;
     margin-top: 123px;
     padding-right: 36px;
 }
@@ -139,6 +140,11 @@ body {
         }
 
 .centeredDivShell {
+    position: absolute;
+    left: 50%;
+    top: 300px;
+}
+.centeredDivShell2 {
     position: absolute;
     left: 50%;
     top: 300px;
@@ -348,7 +354,6 @@ footer {
 
 .canIgetaConnectionMessageContainer {
     z-index: 20;
-    display: none;
 }
 
 .customMessageContainer {

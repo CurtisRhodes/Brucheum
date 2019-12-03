@@ -1,0 +1,105 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>OggleBooble API</title>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    @Styles.Render("~/Content/css")
+</head>
+<body>
+    <div class="jumbotron">
+        <h1>OggleBooble API</h1>
+        <p class="lead">This is a Web Service. Not intended to be accessed directly</p>
+        <div id="divLastBuild" class="msgArea">lastbuild</div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <h2>MySql Data Service</h2>
+            <p>Oracle My SQL Server</p>
+            <p><button onclick="JournalTest()">Test</button></p>
+        </div>
+        <div class="col-md-4">
+            <h2>MsSql Data Service</h2>
+            <p>Microsoft SQL Server</p>
+            <p><button onclick="runMStest()">Test</button></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Web Hosting</h2>
+            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
+        </div>
+    </div>
+    <div id="msgArea" class="timesawasting"></div>
+</body>
+</html>
+
+<script>
+    $(document).ready(function () {
+        $('#divLastBuild').html("LOADING");
+        $.ajax({
+            url: "Home/GetBuildInfo",
+            success: function (lastBuild) {
+                $('#divLastBuild').html("Last build: " + lastBuild);
+            },
+            error: function (jqXHR) {
+                $('#divLastBuild').html(getXHRErrorDetails(jqXHR));
+            }
+        });
+    });
+
+    function runMStest() {
+        try {
+            $('#msgArea').html("testing");
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "home/MsSqlTest/MsSqlTest?parent=4013",
+                success: function (testResults) {
+                    if (testResults.Success === "ok") {
+                        $('#msgArea').html("");
+                        $.each(testResults.Items, function (idx, obj) {
+                            $('#msgArea').append("<div>" + obj.Id + "  " + obj.FolderName + "</div>");
+                        });
+                    }
+                    else {
+                        $('#msgArea').html(testResults.Success);
+                    }
+                },
+                error: function (jqXHR) {
+                    $('#msgArea').html(getXHRErrorDetails(jqXHR));
+                }
+            });
+        } catch (e) {
+            $('#msgArea').html(e);
+        }
+    }
+
+
+    function getXHRErrorDetails(jqXHR) {
+        var msg = '';
+        if (jqXHR.status === 0) {
+            msg = 'Not connect.\n Verify Network.';
+        } else if (jqXHR.status === 404) {
+            msg = 'Requested page not found. [404]';
+        } else if (jqXHR.status === 500) {
+            msg = 'Internal Server Error [500].';
+
+        } else if (jqXHR.responseText === 'parsererror') {
+            msg = 'Requested JSON parse failed.';
+        } else if (jqXHR.responseText === 'timeout') {
+            msg = 'Time out error.';
+        } else if (jqXHR.responseText === 'abort') {
+            msg = 'Ajax request aborted.';
+        } else {
+            msg = 'Uncaught Error.\n' + jqXHR.responseText;
+        }
+        return msg;
+    }
+</script>
