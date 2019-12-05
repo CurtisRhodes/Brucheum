@@ -1,10 +1,13 @@
 ﻿function setOggleHeader(subdomain, folderId) {
-    //alert("setLoginHeader: " + subdomain);
+
+//    alert("setLoginHeader: " + subdomain);
+
     var headerHtml;
     var lang = "en";
     var subheaderContent;
     var boobsRankerLink = "";
-    var bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",3908)'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
+    var archiveLink = "";
+    var bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"boobs\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
 
     if (subdomain === "special") {
         // comming in from staticPage.js
@@ -25,44 +28,53 @@
 
     switch (subdomain) {
         case "boobs":
-            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",3908)'><img  class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
+            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"boobs\")'><img class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
             subheaderContent =
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",136)'> poses,</a>\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",3916)'> positions,</a>\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",159)'> topics,</a>\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",199)'> shapes</a> and\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",241)'>sizes</a>\n";
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",136)'> poses,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",3916)'> positions,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",159)'> topics,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",199)'> shapes</a> and\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",241)'>sizes</a>\n";
 
-            //subheaderContent =
+            //DUTCH subheaderContent =
             //    "                <a href='/album.html?folder=2'><span class='bigTits'>STORE </span>bryster</a> organiseret af\n" +
             //    "                <a href='/album.html?folder=136'> rejser,</a>\n" +
             //    "                <a href='/album.html?folder=159'> emne,</a>\n" +
             //    "                <a href='/album.html?folder=199'> figurer</a> og\n" +
             //    "                <a href='/album.html?folder=241'>størrelser</a>\n";
-            boobsRankerLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\",3)' class='babesArchive'>babes archive</a> <div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",3908)' title='Spin through the links to land on random portrait images. ' >boobs ranker</a></div>\n";
+
+            archiveLink = "<a href='javascript:reportThenPerformEvent(\"BAC\"," + folderId + ",3)' class='babesArchive'>babes archive</a>";
+
+            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>" +
+                "\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + ",\"boobs\")' title='Spin through the links to land on random portrait images. ' >boobs ranker</a></div>\n";
             break;
         case "archive":
-            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",3908)'><img  class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
+            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"archive\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
             subheaderContent =
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",136)'> poses,</a>\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",3916)'> positions,</a>\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",159)'> topics,</a>\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",199)'> shapes</a> and\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",241)'>sizes</a>\n";
-            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",3908)' title='Spin through the links to land on random portrait images. ' >boobs ranker</a></div>\n";
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",136)'> poses,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",3916)'> positions,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",159)'> topics,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",199)'> shapes</a> and\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",241)'>sizes</a>\n";
+
+            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + ",\"archive\")' " +
+                "title='Spin through the links to land on random portrait images. ' >boobs ranker</a></div>\n";
             break;
         case "playboy":
         case "playmates":
-            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",1132)'><img  class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
+            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"playboy\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
+            //bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",1132)'><img  class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
             subheaderContent =
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",1132)'>Centerfolds,</a>\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",1986)'> magazine covers,</a>\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",3796)'> cybergirls,</a> and\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\",2601)'> extras</a>\n";
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",1132)'>Centerfolds,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",1986)'> magazine covers,</a>\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",3796)'> cybergirls,</a> and\n" +
+                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",2601)'> extras</a>\n";
 
-            boobsRankerLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\",3)' class='babesArchive'>big boobs archive</a> <div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",3908)' title='Spin through the links to land on random portrait images. ' >boobs ranker</a></div>\n";
+            archiveLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\",3)' class='babesArchive'>slut archive</a>";
+            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + "\"playboy\")' " +
+                "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
             break;
         case "porn":
         case "sluts":
@@ -74,7 +86,11 @@
                 "               <a href=''javascript:reportThenPerformEvent(\"BLC\",397)'>kinky</a> and \n" +
                 "               <a href=''javascript:reportThenPerformEvent(\"BLC\",411)'>naughty behaviour</a>\n";
 
-            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",3909)'><img src='/Images/cslips02.png' title='porn home' class='bannerImage'/></a>\n";
+            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"porn\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
+            archiveLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\",3)' class='babesArchive'>slut archive</a>";
+            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + ",\"" + subdomain + "\")' " +
+                "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
+            //bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",3909)'><img src='/Images/cslips02.png' title='porn home' class='bannerImage'/></a>\n";
             boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",3909)' title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
             break;
         case "admin":
@@ -105,7 +121,7 @@
             "   <div class='headerBodyContainer'>\n" +
             "       <div id='' class='headerTopRow'>\n" +
             "           <div id='bannerTitle' class='headerTitle'>OggleBooble</div>\n" +
-            "           <div id='headerSubTitle' class='topLinkRow'>\n" + subheaderContent + "</div>\n" + boobsRankerLink +
+        "           <div id='headerSubTitle' class='topLinkRow'>\n" + subheaderContent + "</div>\n" + archiveLink + boobsRankerLink +
             "           <div class='OggleSearchBox'>\n" +
             "               <span id='notUserName'>search</span> <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
             "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
@@ -135,14 +151,14 @@
             "                   <div class='menuTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
             "               </div>\n" +
             "               <div id='optionNotLoggedIn'>\n" +
-            "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:showRegisterDialog()'"  +
-            "                   onmouseover = 'slowlyShowCustomMessage(69)' onmouseout = 'forgetShowingCustomMessage=true;' > Register</a ></div >\n" +
+            "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:showRegisterDialog()'" +
+            "                   onmouseover='slowlyShowCustomMessage(69)' onmouseout='forgetShowingCustomMessage=true;' > Register</a ></div >\n" +
             "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
             "               </div>\n" +
             "           </div>\n" +
             "       </div>\n" +
             "   </div>\n" +
-            "<div id='customMessage'  class='displayHidden customMessageContainer'></div>\n" +
+            "<div id='customMessage' class='displayHidden customMessageContainer'></div>\n" +
             "<div id='customMessage2' class='displayHidden customMessageContainer'></div>\n" +
             "<div id='indexCatTreeContainer' class='oggleHidden'></div>";
         $('header').html(headerHtml);

@@ -34,7 +34,7 @@ $(document).ready(function () {
             //sendEmailToYourself("Calling setOggleHeader from StaticPage.js", "staticPageFolderId: " + staticPageFolderId);
 
             setOggleHeader(staticPageRootFolderId, staticPageFolderId);
-            setOggleFooter(staticPageRootFolderId);
+            setOggleFooter(staticPageFolderId, staticPageRootFolderId);
             logPageHit(staticPageFolderId, getCookieValue("VisitorId"), "Static Page");
 
             //$('footerMessage').html(staticPageFolderName);

@@ -39,7 +39,7 @@ function setAlbumPageHeader(folderId) {
         success: function (successModel) {
             if (successModel.Success === "ok") {
                 setOggleHeader(successModel.ReturnValue, folderId);
-                setOggleFooter(successModel.ReturnValue);
+                setOggleFooter(folderId, successModel.ReturnValue);
             }
             else {
                 sendEmailToYourself("setAlbumPageHeader FAILURE", "api/AlbumPage/GetRootFolder?folderId=" + folderId +
@@ -52,7 +52,7 @@ function setAlbumPageHeader(folderId) {
                 //alert("continuing on in setAlbumPageHeader");                
                 sendEmailToYourself("continuing on in setAlbumPageHeader", "folderId: " + folderId + ", ipAddress: " + ipAddress + ", set AlbumPageHeader");
                 setOggleHeader("boobs", folderId);
-                setOggleFooter("boobs");
+                setOggleFooter(folderId, "boobs");
             }
             else
                 sendEmailToYourself("XHR ERROR IN ALBUM.JS setAlbumPageHeader", "api/AlbumPage/GetRootFolder?folderId=" + folderId +
@@ -70,10 +70,7 @@ function getBreadCrumbs(folderId) {
         async: true,
         success: function (breadCrumbModel) {
             if (breadCrumbModel.Success === "ok") {
-                if (currentFolderRoot === "porn")
-                    $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:reportThenPerformEvent(\"HBX\"," + 3909 + ")'>home</a>");
-                else
-                    $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:reportThenPerformEvent(\"HBX\"," + 3908 + ")'>home</a>");
+                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:reportThenPerformEvent(\"HBX\"," + folderId + ",\"" + currentFolderRoot + "\")'>home</a>");
                 for (i = breadCrumbModel.BreadCrumbs.length - 1; i >= 0; i--) {
                     if (breadCrumbModel.BreadCrumbs[i] === null) {
                         breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
@@ -95,7 +92,8 @@ function getBreadCrumbs(folderId) {
                         }
                         else {
                             $('#breadcrumbContainer').append("<a class='activeBreadCrumb' " +
-                                "href='javascript:reportThenPerformEvent(\"BCC\"," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
+                                //	HBX	Home Breadcrumb Clicked
+                                "href='javascript:reportThenPerformEvent(\"BCC\"," + folderId + "," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                     }
@@ -224,9 +222,9 @@ function processImages(imageLinksModel) {
 function subFolderPreClick(isStepChild, folderId) {
     //alert("subFolderPreClick. folderId: " + folderId + " isStepChild: " + isStepChild);
     if (isStepChild === "0")
-        reportThenPerformEvent("SUB", folderId);
+        reportThenPerformEvent("SUB", currentAlbumFolderId, folderId);
     else
-        reportThenPerformEvent("SSB", folderId);
+        reportThenPerformEvent("SSB", currentAlbumFolderId, folderId);
 }
 
 function resizeImageContainer() {
@@ -248,7 +246,6 @@ function startSlideShow(imageIndex) {
 
     // get image array from DOM
     var imageArray = new Array();
-
     $('#imageContainer').children().each(function () {
         imageArray.push({
             Id: $(this).attr("id"),
@@ -281,8 +278,10 @@ function startSlideShow(imageIndex) {
 
         logVisitor(imageIndex, "start slideshow");
     }
-    
-    reportClickEvent("GIC", currentAlbumFolderId);
+
+    // Gallery Item Clicked
+    //alert("Gallery Item Clicked  folderId: " + currentAlbumFolderId + " currentAlbumFolderId: " + currentAlbumFolderId);
+    //reportThenPerformEvent("GIC", folderId, currentAlbumFolderId);
 
     launchViewer(imageArray, imageIndex, currentAlbumFolderId, currentAlbumJSfolderName);
     resizeViewer();
@@ -491,7 +490,7 @@ function contextMenuAction(action) {
             $('#modelInfoDialog').on('dialogclose', function (event) {
                 viewerShowing = disableViewerKeys;
                 $('#modelInfoDialog').hide();
-                getAlbumImages(currentAlbumFolderId);
+                //getAlbumImages(currentAlbumFolderId);
             });
             break;
         case "jump":
@@ -559,8 +558,8 @@ function showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId
 
     if (rootFolder === "playboy" && index > 4 || parentId === cybergirls || rootFolder === "archive" && index > 2) {
         //alert("showEitherModelorFolderInfoDialog   rootFolder: " + rootFolder);
-        showModelInfoDialog(folderName, folderId, 'Images/redballon.png');
-        //reportThenPerformEvent//("CMX", folderId);
+        //showModelInfoDialog(folderName, folderId, 'Images/redballon.png');
+        reportThenPerformEvent("CMX", folderId, folderName);
     }
     else {
         //alert("showEitherModelorFolderInfoDialog   rootFolder: " + rootFolder + "  index: " + index);

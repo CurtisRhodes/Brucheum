@@ -32,6 +32,9 @@ namespace WebApi
                 map.RunSignalR(new HubConfiguration { EnableJSONP = true });
             });
 
+            //app.UseStaticFiles();
+
+            //IApplicationBuilder applicationBuilder = new IAppBuilder()
 
             //Configure(app);
 
@@ -42,8 +45,8 @@ namespace WebApi
         //public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         public void Configure(IApplicationBuilder app)
         {
-            app.UseDefaultFiles();
-            //app.UseDefaultFiles(new DefaultFilesOptions { DefaultFileNames = new List<string> { "/Index.html" } });
+            //app.UseDefaultFiles();
+            app.UseDefaultFiles(new DefaultFilesOptions { DefaultFileNames = new List<string> { "/Index.html" } });
             app.UseStaticFiles();
         }
     }

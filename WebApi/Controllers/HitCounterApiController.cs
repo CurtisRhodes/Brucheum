@@ -77,7 +77,7 @@ namespace WebApi
                     {
                         VisitorId = pageHitModel.VisitorId,
                         PageId = pageHitModel.PageId,
-                        HitTimeStamp = DateTime.Now  //.AddMilliseconds(getrandom.Next())
+                        Occured = DateTime.Now  //.AddMilliseconds(getrandom.Next())
                     });
                     db.SaveChanges();
                     pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.PageId == pageHitModel.PageId).Count();
@@ -284,6 +284,8 @@ namespace WebApi
                         var catFolder = odb.CategoryFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault();
                         if (catFolder != null)
                             logEventActivitySuccess.PageName = catFolder.FolderName;
+                        else
+                            logEventActivitySuccess.PageName = logEventModel.PageId + " not found";
                     }
                     //logEventActivitySuccess.PageName = db.CategoryFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault().FolderName;
                     

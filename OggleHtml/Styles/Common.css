@@ -358,7 +358,7 @@ footer {
 
 .customMessageContainer {
     position: absolute;
-    z-index: 20;
+    z-index: 200;
     display: none;
 }
 .divRefreshPage {

@@ -1,7 +1,7 @@
 ﻿var settingsArray = {};
 var userRoles = [];
 var freeVisitorHitsAllowed = 7500;
-var waitingForReportClickEvent = true;
+var waitingForReportThenPerformEvent = true;
 var forgetShowingCustomMessage = true;
 var verbosity = 1;
 var connectionVerified = false;
@@ -238,6 +238,30 @@ function sendEmailToYourself(subject, message) {
             if (!checkFor404(errorMessage, "sendEmailToYourself")) {
                 sendEmailToYourself("xhr error in common.js sendEmailToYourself", "/Data/Settings.xml Message: " + errorMessage);
                 //alert("xhr error: " + errorMessage);
+            }
+        }
+    });
+}
+
+//  ACTIVITY LOG
+function logActivity(changeLogModel) {
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "/api/ChangeLog",
+        data: changeLogModel,
+        success: function (success) {
+            if (success === "ok")
+                displayStatusMessage("ok", "add image logged");
+            else {
+                //alert("ChangeLog: " + success);
+                sendEmailToYourself("error in common/logActivity", success);
+            }
+        },
+        error: function (jqXHR) {
+            $('#dashBoardLoadingGif').hide();
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "logActivity")) {
+                sendEmailToYourself("xhr error in common.js logActivity", "/api  ChangeLog  Message: " + errorMessage);
             }
         }
     });

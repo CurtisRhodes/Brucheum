@@ -48,18 +48,12 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
     resizeViewer();
     $('#imageViewerDialog').show();
 
-    $('.assuranceArrows').click(function () {
-        alert("move image");
-        //sendEmailToYourself("click on carousel arrow", "who");
-    });
-
     //alert("logImageHit true ");
     //console.log("logImageHit from launchViewer: " + imageViewerArray[imageViewerIndex].Link);
 
     ipAddress = getCookieValue("IpAddress");
     visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(ipAddress) || isNullorUndefined(visitorId) || isNullorUndefined(folderId)) {
-
         //sendEmailToYourself("830 PROBLEMO 1 in slideshow.js.slide.", "  visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + imageViewerFolderId);
         if (document.domain === 'localhost')
             alert("830 PROBLEMO 1 in slideshow.js.slide.\nvisitorId: " + visitorId + "\nIpAddress: " + ipAddress + "\nfolderId: " + imageViewerFolderId);
@@ -274,9 +268,10 @@ function slideshowContexMenu() {
     ctxSAP(imageViewerArray[imageViewerIndex].Id);
 }
 
-function imageViewerContextMenuAction(action) {
+function XXXimageViewerContextMenuAction(action) {   
     switch (action) {
         case "show":
+            //reportThenPerformEvent("SMD", imageViewerFolderId, $('#ctxImageViewerModelName').html());  // do nothing but report
             showModelInfoDialog($('#ctxImageViewerModelName').html(), imageViewerSelectedImageArchiveFolderId, imageViewerArray[imageViewerIndex].Link);
             closeViewer("showModelInfoDialog");
             break;
@@ -337,14 +332,16 @@ function closeViewer(calledFrom) {
     if (calledFrom !== undefined) {
         closeMethod = calledFrom;
     }
-    if (sessionCount > 10) {
-        sendEmailToYourself("slideshow: " + imageViewerFolderName + ". Images Viewed: " + sessionCount,
-            "Close method: " + closeMethod +
-            ".<br/>Ip: " + getCookieValue("IpAddress"));
-
-        if (document.domain === 'localhost')
+    if (sessionCount > 20) {
+        if (document.domain === 'localhost') {
             alert("Close Slideshow ." + imageViewerFolderName + ".\nImages Viewed: " + sessionCount,
                 ". Close method: " + closeMethod + ".\nIp: " + getCookieValue("IpAddress"));
+        }
+        else {
+            sendEmailToYourself("slideshow: " + imageViewerFolderName + ". Images Viewed: " + sessionCount,
+                "Close method: " + closeMethod +
+                ".<br/>Ip: " + getCookieValue("IpAddress"));
+        }
     }
     sessionCount = 0;
 }

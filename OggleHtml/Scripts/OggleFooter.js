@@ -1,52 +1,52 @@
-﻿function setOggleFooter(subdomain) {
-    //alert("subdomain: " + subdomain);
+﻿function setOggleFooter(pageId, rootFolder) {
+    //alert("setOggleFooter. pageId: " + pageId + "  rootFolder: " + rootFolder);
     var footerhtml = "";
-    if (subdomain === "boobs" || subdomain === "archive") {
-        //alert("setOggleFooter: " + subdomain);
+    if (rootFolder === "boobs" || rootFolder === "archive") {
         footerhtml =
             "<div class='flexContainer'>\n" +
             "    <div class='footerCol'>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3942)'>about us</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3941)'>Category List</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"about us\")'>about us</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"dir tree\")'>Category List</div>\n" +
             "        <div><a href='#'></a></div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3909)'>Nasty Porn</div>\n" +
-            "    </div>\n" + 
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"porn\")'>Nasty Porn</div>\n" +
+            "    </div>\n" +
 
             "    <div class='footerCol'>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3907)'>Boobs Rater</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",908)'>Rejects</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3991)'>Nasty Videos</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",1132)'>Centerfolds</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"ranker\")'>Boobs Rater</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"rejects\")'>Rejects</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"videos\")'>Nasty Videos</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"centerfolds\")'>Centerfolds</div>\n" +
             "    </div>\n" +
             "    <div class='footerCol'>\n" +
-            "        <div><a href='#'>About us</a></div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3992)'>email site developer</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3911)'>Blog</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3)'>Archive</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"mailme\")'>email site developer</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"blog\")'>Blog</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + "\"archive\")'>Archive</div>\n" +
+            "    </div>\n" +
+            "    <div class='footerCol'>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + "\"freedback\")'>Feedback</div>\n" +
             "    </div>\n" +
             "</div>\n" +
             "<div id='footerLastBuild' class='footerVersionMessage'></div>\n" +
             "<div class='footerFooter'>\n" +
             "    <div id='footerMessage'></div>\n" +
-          //"        <div class='clickable' onclick='reportClickEvent(\"FLC\",3)'>Archive</div>\n" +
+            //"waitingForReportThenPerformEvent        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3)'>Archive</div>\n" +
             "    <div id='copyright'>&copy; 2019 - <a href='~/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>\n" +
             "</div>\n";
     }
-    if (subdomain === "playboy") {
-        //alert("subdomain indeed is: " + subdomain);
+    if (rootFolder === "playboy") {
         footerhtml =
             "<div class='flexContainer'>\n" +
             "    <div class='footerCol'>\n" +
-            "        <div><a href='/album.html?folder=3796' onclick='reportClickEvent(\"FLC\",3796)'>Playboy Cybergirls</a></div>\n" +
-            "        <div><a href='/album.html?folder=1986' onclick='reportClickEvent(\"FLC\",1986)'>Magazine covers</a></div>\n" +
-            "        <div class='clickable' onclick='onclick='reportClickEvent(\"FLC\",3942)'; showCustomMessage(38)'>let me explain</div>\n" +
+            "        <div><a href='/album.html?folder=3796' onclick='reportThenPerformEvent(\"FLC\",3796,0)'>Playboy Cybergirls</a></div>\n" +
+            "        <div><a href='/album.html?folder=1986' onclick='reportThenPerformEvent(\"FLC\",1986,0)'>Magazine covers</a></div>\n" +
+            "        <div class='clickable' onclick='onclick='reportThenPerformEvent(\"FLC\",3942,0)'; showCustomMessage(38)'>let me explain</div>\n" +
             "    </div>\n" +
             "    <div class='footerCol'>\n" +
-            "        <div><a href='/Ranker.html?subdomain=playmates'onclick='reportClickEvent(\"FLC\",3907)'; >Playmate Rater</a></div>\n" +
+            "        <div><a href='/Ranker.html?subdomain=playmates'onclick='reportThenPerformEvent(\"FLC\",3907,0)'; >Playmate Rater</a></div>\n" +
             "    </div>\n" +
             "    <div class='footerCol'>\n" +
             "        <div><a href='mailto:curtishrhodes@hotmail.com'>email site developer</a></div>\n" +
-            "        <div><a href='/Blog.html'onclick='onclick='reportClickEvent(\"FLC\",3911)'>Blog</a></div>\n" +
+            "        <div><a href='/Blog.html'onclick='onclick='reportThenPerformEvent(\"FLC\",3911,0)'>Blog</a></div>\n" +
             "    </div>\n" +
             "</div>\n" +
             "<div id='footerLastBuild' class='footerVersionMessage'></div>\n" +
@@ -55,8 +55,7 @@
             "    <div id='copyright'>&copy; 2019 - <a href='~/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>\n" +
             "</div>\n";
     }
-    if (subdomain === "porn" || subdomain === "sluts") {
-        //alert("setOggleFooter: " + subdomain);
+    if (rootFolder === "porn" || rootFolder === "sluts") {
         footerhtml =
         "<div class='flexContainer'>\n" +
             "    <div class='footerCol'>\n" +
@@ -83,8 +82,10 @@
     }
 
     if (footerhtml === "") {
-        //alert("setOggleFooter unknown: " + subdomain);
-        sendEmailToYourself("ERROR in Ogglefooter.js setOggleFooter", "subdomain: " + subdomain + "  not found");
+        if (document.domain === 'localhost')
+            alert("ERROR in Ogglefooter.js setOggleFooter\nrootFolder: " + rootFolder + "  not found");
+        else
+            sendEmailToYourself("ERROR in Ogglefooter.js setOggleFooter", "rootFolder: " + rootFolder + "  not found");
     }
     $('footer').html("");
     $('footer').html(footerhtml);

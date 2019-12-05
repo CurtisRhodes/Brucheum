@@ -47,6 +47,7 @@
 .workAreaRowDisplayContainer {
     border: solid thin #000;
     padding: 4px;
+    margin-left: 5px;
     max-height: 400px;
     overflow-y: auto;
 }

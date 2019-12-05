@@ -440,8 +440,6 @@ function showPerfMetrics() {
     $('.workAreaContainer').hide();
     $('#divHitMetrics').fadeIn();
     runPageHitsReport();
-    runPopPages();
-    runMostImageHits();
 }
 function runPageHitsReport() {
     $('#dashBoardLoadingGif').show();
@@ -485,6 +483,9 @@ function runPageHitsReport() {
                 $("#btnPopPages").show();                
                 $("#btnMostImageHits").show();
                 $("#btnImageHitActivityReport").show();
+
+                runPopPages();
+                runMostImageHits();
             }
             else {
                 alert("renameFolder: " + repairReport.Success);
@@ -674,7 +675,6 @@ function runMostActiveUsersReport() {
         }
     });
 }
-
 
 //  DIALOG FUNCTIONS 
 function createNewFolder() {

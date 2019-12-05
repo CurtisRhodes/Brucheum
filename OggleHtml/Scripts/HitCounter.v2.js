@@ -1,5 +1,5 @@
 ﻿// HITCOUNTER
-var verbosity = 5;
+var verbosity = 1;
 
 // verbosity > 4 show new visits redirects
 // verbosity > 5 visitior came back
@@ -246,7 +246,7 @@ function logVisitor(pageId, calledFrom) {
                                     visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                             }
                             else {
-                                if (verbosity > 1)
+                                if (verbosity > 10)
                                     sendEmailToYourself("Unnsecssary IpInfo hit called from: " + calledFrom,
                                         visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country +
                                         " Ip: " + data.ip + ", VisitorId: " + getCookieValue("VisitorId"));
@@ -257,7 +257,7 @@ function logVisitor(pageId, calledFrom) {
                         if (visitorSuccess.WelcomeMessage !== "") {
                             $('#headerMessage').html(visitorSuccess.WelcomeMessage);
                         }
-                        if (verbosity > 3) {
+                        if (verbosity > 30) {
                             sendEmailToYourself("Success in logVisitor ", "Just so you know this happens too, not just the pk violation.");
                         }
                     }

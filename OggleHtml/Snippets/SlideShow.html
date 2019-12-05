@@ -7,11 +7,11 @@
             </div>
             <span id="imageViewerHeaderTitle" class="imageViewerTitle"></span>
             <div class="viewerButtonsRowSection">
-                <div class="floatRight" style="margin-left: 44px;" onclick="closeViewer('click');"><img src="/Images/close.png" /></div>
+                <div class="floatRight" style="margin-left: 44px;" onclick="closeViewer('click');"><img title="you may use the {esc} key" src="/Images/close.png" /></div>
                 <div class="floatRight" onclick="runSlideShow('faster');"><img id="fasterSlideshow" title="faster" src="/Images/slideshowFaster.png" /></div>
                 <div id="txtStartSlideShow" class="txtSlideShow floatRight" onclick="runSlideShow('start');">start slideshow</div>
                 <div class="floatRight" onclick="runSlideShow('slower');"><img id="slowerSlideShow" title="slower" src="/Images/slideshowSlower.png" /></div>
-                <div class="floatRight" onclick="blowupImage()"><img class="popoutBox" src="/Images/expand02.png" /></div>
+                <div class="floatRight" onclick="blowupImage()"><img class="popoutBox" title="open image in a new window" src="/Images/expand02.png" /></div>
             </div>
         </div>
         <div id="leftClickArea" class="hiddenClickArea" oncontextmenu="slideshowContexMenu()" onclick="slideClick('prev');"></div>

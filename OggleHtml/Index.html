@@ -56,23 +56,23 @@
     <div class="threeColumnLayout">
         <div id="leftColumn">
             <div id="boobsLeftColumnList" class="leftColumnList">
-                <div onclick="reportClickEvent('LMC','3906'); window.location.href='transitions.html'">Transitions</div>
-                <div onclick="reportClickEvent('LMC','3907'); window.location.href='Ranker.html'">Boobs Ranker</div>
-                <div onclick="reportClickEvent('LMC','3942'); showCustomMessage(38)">Let me Explain</div>
-                <div onclick="reportClickEvent('LMC','3941'); showCatListDialog(2)">Category List</div>
-                <div onclick="reportClickEvent('LMC','1132'); window.location.href='/album.html?folder=1132'">Playboy Centerfolds</div>
-                <div onclick="reportClickEvent('LMC','3906'); window.location.href='video.html'">Video</div>
+                <div onclick="reportThenPerformEvent('LMC',3908,'transitions');">Transitions</div>
+                <div onclick="reportThenPerformEvent('LMC',3908,'ranker');">Boobs Ranker</div>
+                <div onclick="reportThenPerformEvent('LMC',3908,'explain');">Let me Explain</div>
+                <div onclick="reportThenPerformEvent('LMC',3908,'dirTreeBoobs');">Category List</div>
+                <div onclick="reportThenPerformEvent('LMC',3908,'centerfolds');">Playboy Centerfolds</div>
+                <div onclick="reportThenPerformEvent('LMC',3908,'video');">Video</div>
                 <div onclick="goToPorn()">Nasty Porn</div>
-                <div onclick="reportClickEvent('LMC','3911'); window.location.href='/Blog.html'">Blog</div>
+                <div onclick="reportThenPerformEvent('LMC',0,'blog'); window.location.href='/Blog.html'">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
             <div id="pornLeftColumnList" class="leftColumnList">
-                <div onclick="reportClickEvent('LMC','3906'); window.location.href='transitions.html?subdomain=porn'">Transition down</div>
-                <div onclick="reportClickEvent('LMC','3907'); window.location.href='Ranker.html'">Nastieness Ranker</div>
-                <div onclick="reportClickEvent('LMC','3942'); showCustomMessage(38)">Let me Explain</div>
-                <div onclick="reportClickEvent('LMC','3941'); showCatListDialog(242)">Category List</div>
-                <div onclick="reportClickEvent('LMC','3908'); window.location.href='/'">back to boobs</div>
-                <div onclick="reportClickEvent('LMC','3911'); window.location.href='/Blog.html'">Blog</div>
+                <div onclick="reportThenPerformEvent('LMC',0,'3906'); window.location.href='transitions.html?subdomain=porn'">Transition down</div>
+                <div onclick="reportThenPerformEvent('LMC',0,'3907'); window.location.href='Ranker.html'">Nastieness Ranker</div>
+                <div onclick="reportThenPerformEvent('LMC',0,'3942'); showCustomMessage(38)">Let me Explain</div>
+                <div onclick="reportThenPerformEvent('LMC',0,'3941'); showCatListDialog(242)">Category List</div>
+                <div onclick="reportThenPerformEvent('LMC',0,'3908'); window.location.href='/'">back to boobs</div>
+                <div onclick="reportThenPerformEvent('LMC',0,'3911'); window.location.href='/Blog.html'">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
         </div>
@@ -154,9 +154,6 @@
             else {
                 subdomain = params.subdomain;
             }
-
-
-
             $('#footerMessage').html("loading settings");
             //alert("loading settings");
             loadSettings();
@@ -170,7 +167,7 @@
                     clearInterval(waiter);
 
                     setOggleHeader(subdomain, 3908);
-                    setOggleFooter(subdomain);
+                    setOggleFooter(3908, subdomain);
 
                     $('#dots').html("");
                     verifyConnection();
@@ -323,14 +320,10 @@
 
 
         function letemPorn(response, pornType) {
-            if (document.domain === 'localhost')
-                alert("letemPorn: " + pornType);
-
+            //if (document.domain === 'localhost') alert("letemPorn: " + pornType);
             if (response == "ok") {
-
                 //  setUserPornStatus(pornType);
-
-                reportThenPerformEvent("PRN", 136);
+                reportThenPerformEvent("PRN", 136, pornType);
             }
             else {
                 $('#customMessage').hide();

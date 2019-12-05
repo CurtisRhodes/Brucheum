@@ -128,12 +128,17 @@ function loadImages(rootFolder, isChecked, skip, take) {
 
 function clickViewGallery() {
     clearInterval(CarouselInterval);
-    reportThenPerformEvent("CIC", carouselItemArray[imageIndex].FolderId);
+
+    reportThenPerformEvent("CIC", 3908, carouselItemArray[imageIndex].FolderId);
 }
 
+//carouselItemArray[imageIndex].ParentId
 function clickViewParentGallery() {
+    if (document.domain === 'localhost') {
+        alert("clickViewParentGallery pageId: " + carouselItemArray[imageIndex].ParentId + "\neventDetail: " + eventDetail);
+    }
     clearInterval(CarouselInterval);
-    reportThenPerformEvent("CPC", carouselItemArray[imageIndex].ParentId);
+    reportThenPerformEvent("CPC", 100, carouselItemArray[imageIndex].ParentId);
 }
 
 function clickSpeed(speed) {
@@ -196,25 +201,25 @@ function startCarousel() {
 }
 
 function assuranceArrowClick(direction) {
-    reportClickEvent("CAA", specialPage);
-    if (direction === "foward")
-        resume();
-    else {
-        // pop
-        imageHistory.pop();
-        imageIndex = imageHistory.pop();
-        if (imageIndex > 0) {
-            $('#categoryTitle').fadeOut(intervalSpeed);
-            $('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
-                $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
-                $('#categoryTitle').html(carouselItemArray[imageIndex].FolderPath + ": " + carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
-                $('#laCarousel').fadeIn(intervalSpeed);
-                resizeCarousel();
-            });
-        }
-        else
-            alert("imageIndex: " + imageIndex);
-    }
+    reportThenPerformEvent("CAA", specialPage, direction);
+    //if (direction === "foward")
+    //    resume();
+    //else {
+    //    // pop
+    //    imageHistory.pop();
+    //    imageIndex = imageHistory.pop();
+    //    if (imageIndex > 0) {
+    //        $('#categoryTitle').fadeOut(intervalSpeed);
+    //        $('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
+    //            $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
+    //            $('#categoryTitle').html(carouselItemArray[imageIndex].FolderPath + ": " + carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
+    //            $('#laCarousel').fadeIn(intervalSpeed);
+    //            resizeCarousel();
+    //        });
+    //    }
+    //    else
+    //        alert("imageIndex: " + imageIndex);
+    //}
 }
 
 function intervalBody() {
@@ -316,8 +321,7 @@ function carouselContextMenuAction(ctxMenuAction) {
             window.open('/album.html?folder=' + selectedImageArchiveFolderId, '_blank');
             break;
         case "explode":
-
-            reportThenPerformEvent("EXP", carouselItemArray[imageIndex].Link);
+            reportThenPerformEvent("EXP", carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].Link);
             //reportClickEvent("EXP", carouselItemArray[imageIndex].Link);
             //reportThenPerformEvent("EXP", carouselItemArray[imageIndex].Link);
             //window.open(carouselItemArray[imageIndex].Link, "_blank");

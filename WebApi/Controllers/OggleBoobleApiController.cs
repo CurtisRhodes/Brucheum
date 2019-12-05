@@ -55,7 +55,7 @@ namespace WebApi
                     }
                     //string expectedLink = "";
                     //imageLinks.Files = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ToList();
-                    List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ToList();
+                    List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.Link).ToList();
                     foreach (VwLink vwLink in vwLinks)
                     {
                         VwLinkModel vwLinkModel = new VwLinkModel()
