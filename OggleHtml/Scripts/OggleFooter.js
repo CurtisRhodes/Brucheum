@@ -20,16 +20,15 @@
             "    <div class='footerCol'>\n" +
             "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"mailme\")'>email site developer</div>\n" +
             "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"blog\")'>Blog</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + "\"archive\")'>Archive</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"archive\")'>Archive</div>\n" +
             "    </div>\n" +
             "    <div class='footerCol'>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + "\"freedback\")'>Feedback</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"freedback\")'>Feedback</div>\n" +
             "    </div>\n" +
             "</div>\n" +
             "<div id='footerLastBuild' class='footerVersionMessage'></div>\n" +
             "<div class='footerFooter'>\n" +
             "    <div id='footerMessage'></div>\n" +
-            //"waitingForReportThenPerformEvent        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",3)'>Archive</div>\n" +
             "    <div id='copyright'>&copy; 2019 - <a href='~/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>\n" +
             "</div>\n";
     }

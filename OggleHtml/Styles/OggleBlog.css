@@ -73,30 +73,37 @@
     color: var(--brucheumBlue);
 }
 
-.blogArticleJogContainer {
-    border: solid .05px var(--oggleBorderColor);
-    overflow-y: auto;
-}
 
 .blogItemContainer {
     height: 200px;
     margin-left: 10px;
     overflow-y: auto;
-    background-color: var(--oggleContainerBackgroundColor);
+    background-color: black; /*var(--oggleContainerBackgroundColor);*/
+    border: solid 5px red;
 }
 
 .blogListItem {
-    font-size: 13px;
-    padding: 4px 2px;
+    padding-right: 24px;
     margin: 3px;
     cursor: pointer;
     background-color: var(--oggleBackgroundColor);
 }
 
+.blogArticleJogContainer {
+    border: solid .05px var(--oggleBorderColor);
+    overflow-y: auto;
+}
+
 .blogArticleJogBody {
     display: inline-block;
     background-color: var(--oggleContainerBackgroundColor);
-    width: 100%;
+    /*width: 100%;*/
+}
+
+.blogArticleJog {
+    margin-bottom: 4px;
+    margin: 2px;
+    border: solid thin green;
 }
 
 .blogArticleImage {
@@ -108,12 +115,10 @@
     text-align: center;
 }
 
-.blogArticleJog {
-    margin-bottom: 4px;
-}
-
 .blogArticleJogImage {
     height: 185px;
+    margin: 2px;
+    border: solid thin var(--oggleContainerBackgroundColor);
     width: 222px;
     cursor: pointer;
 }
@@ -121,7 +126,6 @@
 .blogArticleText {
     padding: 4px;
     display: inline-block;
-    width: 100%;
     height: 124px;
     overflow-y: hidden;
     font-size: 17px;

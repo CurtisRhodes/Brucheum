@@ -32,7 +32,7 @@
     <header></header>
     <div class="threeColumnLayout">
         <div id="leftColumn">
-            <div class="leftColumnList">
+            <div id="blogControls" class="leftColumnList">
                 <div id="leftColumnShowBlog" onclick="showBlogDisplay()">Show Blog</div>
                 <div id="leftColumnEditorNew" onclick="showBlogEditor()">New Entry</div>
                 <div id="leftColumnEditor">Edit</div>
@@ -124,7 +124,7 @@
     /// start with a display of blog entries
     $(document).ready(function () {
         includeHTML();
-
+        
         $('#headerMessage').html("blog");
         $('#blogDisplayCommentTypeSelect').val('BLG');
         loadSettings();
@@ -138,7 +138,7 @@
                 setOggleFooter(3911, "boobs");
                 loadBlogArticles($('#blogDisplayCommentTypeSelect').val());
                 showBlogDisplay('BLG');
-                logPageHit(3911, "Blog");
+                logPageHit(3911);
                 setUserPermissions();
                 var waiter2 = setInterval(function () {
                     dots += "* ";
@@ -151,8 +151,10 @@
                             //if (document.domain === 'localhost') alert("is in role blog editor");
                             $('.adminOnly').show();
                             $('.blogEditButton').show();
-                            $('#footerMessage').html("admin access");
+                            $('#footerMessage').html("blog Editor");
                         }
+
+                        $('#blogControls').show();
                     }
                 }, 300);
             }
@@ -170,9 +172,7 @@
         });
 
         $('#footerMessage').html("loading");
-
         $('#leftColumnEditor').hide();
-        //$('#leftColumnShowPage').hide();
         window.addEventListener("resize", resizeBlogPage);
         resizePage();
         $(window).resize(resizeBlogPage());
