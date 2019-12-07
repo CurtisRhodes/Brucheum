@@ -70,11 +70,8 @@ namespace WebApi.Controllers
                 GetMetaTagsRecurr(metaTagResults, folderId, db);
                 foreach (MetaTagModel metaTag in metaTagResults.MetaTags)
                     articleTagString += metaTag.Tag + ",";
-                CategoryFolderDetail categoryFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
-                if (categoryFolderDetail != null)
-                    metaTagResults.MetaDescription = categoryFolderDetail.MetaDescription;
-                else
-                    metaTagResults.MetaDescription = folderName;
+                
+                metaTagResults.MetaDescription = "free naked pics of " + folderName;
             }
 
             return "<head>\n" +
@@ -99,19 +96,19 @@ namespace WebApi.Controllers
                 "   <script src='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js'></script>\n" +
                 "   <link href='/Styles/jqueryui.css' rel='stylesheet' />\n" +
                 "   <link rel='icon' type='image/png' href='/static/favicon.png' />" +
-                "   <script src='/Scripts/Common.js' type='text/javascript'></script>\n" +
-                "   <script src='/Scripts/Login.js' type='text/javascript'></script>\n" +
-                "   <script src='/Scripts/HitCounter.v2.js' type='text/javascript'></script>\n" +
-                "   <script src='/Scripts/OggleEventLog.js' type='text/javascript'></script>\n" +
-                "   <script src='/Scripts/Permissions.js'></script>\n" +
+                "   <script src='/Scripts/Login.js'></script>\n" +
                 "   <script src='/Scripts/OggleHeader.js'></script>\n" +
+                "   <script src='/Scripts/Common.js'></script>\n" +
+                "   <script src='/Scripts/HitCounter.v2.js'></script>\n" +
+                "   <script src='/Scripts/ModelInfoDialog.js'></script>\n" +
+                "   <script src='/Scripts/OggleEventLog.js'></script>\n" +
                 "   <script src='/Scripts/OggleSearch.js'></script>\n" +
                 "   <script src='/Scripts/OggleFooter.js'></script>\n" +
+                "   <script src='/Scripts/Permissions.js'></script>\n" +
                 "   <script src='/Scripts/Album.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/Slideshow.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/ImageCommentDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/FolderCategoryDialog.js' type='text/javascript'></script>\n" +
-                "   <script src='/Scripts/ModelInfoDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/DirTree.js'></script>\n" +
                 "   <link href='/Styles/Common.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/Header.css' rel='stylesheet'/>\n" +
@@ -275,7 +272,7 @@ namespace WebApi.Controllers
                     string fullerFolderName = subDir.RootFolder + "/" + Helpers.GetCustomStaticFolderName(subDir.Id, subDir.FolderName);
                     int subDirFileCount = Math.Max(subDir.FileCount, subDir.SubDirCount);
                     bodyHtml += "<div class='" + imageFrameClass + "'>" +
-                        "<div class='folderImageFrame' onclick='reportThenPerformEvent(\"SUB\",\"" + subDir.Id + "\")'>" +
+                        "<div class='folderImageFrame' onclick='reportThenPerformEvent(\"SUB\"," + folderId + "," + subDir.Id + ")'>" +
                         "<img class='folderImage' src='" + subDir.Link + "'/>" +
                         "<div class='" + subDirLabelClass + "'>" + subDir.FolderName + " (" + subDirFileCount + ")</div></div></div>\n";
                     imagesCount++;
@@ -296,7 +293,11 @@ namespace WebApi.Controllers
                 "           </div>\n" +
                 "      </div>\n" +
                 "   </div>\n" +
-                "<div id='rightColumn'></div>\n" +
+                "   <div id='rightColumn'>\n" +
+                "      <div id='feedbackBanner' class='fixedMessageButton displayHidden' " +
+                "       title='I built this website entirely by myself\nusing only Html and JavaScript. Any comments or suggestions are greatly appreciated.'>feedback</div>\n" +
+                "   </div>\n" +
+                "</div>\n" +
             "</div>";
             return bodyHtml;
         }

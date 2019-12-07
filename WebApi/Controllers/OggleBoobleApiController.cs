@@ -485,17 +485,21 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    CategoryFolderDetail categoryFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
-                    if (categoryFolderDetail != null)
-                    {
-                        metaTagResults.Source = categoryFolderDetail.FolderImage;
-                        metaTagResults.MetaDescription = categoryFolderDetail.MetaDescription;
-                    }
-                    else
-                    {
-                        metaTagResults.Source = linkId;
-                        //metaTagResults.MetaDescription = "";
-                    }
+                    var catFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    if (catFolder != null)
+                        metaTagResults.MetaDescription = "free naked pics of " + catFolder.FolderName;
+
+                    //CategoryFolderDetail categoryFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                    //if (categoryFolderDetail != null)
+                    //{
+                    //    metaTagResults.Source = categoryFolderDetail.FolderImage;
+                    //    metaTagResults.MetaDescription = categoryFolderDetail.MetaDescription;
+                    //}
+                    //else
+                    //{
+                    //    metaTagResults.Source = linkId;
+                    //    //metaTagResults.MetaDescription = "";
+                    //}
 
                     List<MetaTag> metaTags = db.MetaTags.Where(m => m.LinkId == linkId).ToList();
                     foreach (MetaTag metaTag in metaTags)

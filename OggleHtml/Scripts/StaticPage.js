@@ -17,9 +17,7 @@ var fullPageName;
 $(document).ready(function () {
     //alert("staticPage.js");
     includeHTML();
-
     $('#fileCount').html(staticPageImagesCount);
-
     resizeStaticPage();
     loadSettings();
     var waiter = setInterval(function () {
@@ -30,14 +28,13 @@ $(document).ready(function () {
         else {
             clearInterval(waiter);
             getBreadCrumbs(staticPageFolderId);
-
-            //sendEmailToYourself("Calling setOggleHeader from StaticPage.js", "staticPageFolderId: " + staticPageFolderId);
-
             setOggleHeader(staticPageRootFolderId, staticPageFolderId);
             setOggleFooter(staticPageFolderId, staticPageRootFolderId);
-            logPageHit(staticPageFolderId, getCookieValue("VisitorId"), "Static Page");
+            logPageHit(staticPageFolderId); //, getCookieValue("VisitorId"), "Static Page");
 
-            //$('footerMessage').html(staticPageFolderName);
+            $('footerMessage').html(staticPageFolderName);
+            $('#feedbackBanner').click(showFeedbackDialog).fadeIn();
+
         }
     }, 300);
     $(window).resize(resizeStaticPage());

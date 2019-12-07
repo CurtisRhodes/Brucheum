@@ -22,16 +22,18 @@
 
 function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
     try {
+        //alert("reportThenPerformEvent(eventCode: " + eventCode + ", calledFrom: " + calledFrom + ", eventDetail: " + eventDetail);
         var visitorId = getCookieValue("VisitorId");
         var ipAddress = getCookieValue("IpAddress");
 
         if (isNullorUndefined(ipAddress) || isNullorUndefined(visitorId)) {
-            sendEmailToYourself("In reportThenPerformEvent VisitorId: " + visitorId + " Ip: " + ipAddress, "Calling LogVisitor.  Event: " + eventCode + " calledFrom: " + calledFrom);
+            sendEmailToYourself("In reportThenPerformEvent VisitorId: " + visitorId + " Ip: " + ipAddress,
+                "Calling LogVisitor.  Event: " + eventCode + " calledFrom: " + calledFrom);
             if (document.domain === 'localhost') {
                 alert("Who Are You? \nVisitorId: " + visitorId + " Ip: " + ipAddress, "Calling LogVisitor.  Event: " + eventCode + " calledFrom: " + calledFrom);
             }
-            // logVisitor(calledFrom, "reportThenPerformEvent");
-            //return;
+            logVisitor(calledFrom, "reportThenPerformEvent");
+            return;
         }
         var eventClickDdata = {
             PageId: calledFrom,
@@ -51,10 +53,13 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                     }
 
                     if (eventCode !== "CIC"     // Carousel Item Clicked 
+                        && eventCode !== "FLC"  // Footer Link Clicked 
                         && eventCode !== "BAC"  // Archive Clicked
                         && eventCode !== "SUB"  // Subfolder Clicked
                         && eventCode !== "BCC"  // Breadcrumb Clicked 
                         && eventCode !== "BLC"  // Banner Link Clicked 
+                        && eventCode !== "LMC"  // Left Menu Item Clicked
+                        && eventCode !== "HBX"  // Home Breadcrumb clicked
                         && eventCode !== "CAA"  // Carousel Arrow Clicked
                         && eventCode !== "HBC") // Home Icon Clicked
                     {
@@ -66,8 +71,10 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                         }
                         else {
                             sendEmailToYourself(logEventActivitySuccess.EventName + " {" + eventCode + "}",
-                                "called From: {" + calledFrom + "} pageName: " + logEventActivitySuccess.PageName +
-                                "<br/>ipAddress: " + ipAddress + " visitor details: " + logEventActivitySuccess.VisitorDetails);
+                                "called From: {" + calledFrom + "}: " + logEventActivitySuccess.PageName +
+                                "<br>event detail: " + eventDetail +
+                                "<br/>ipAddress: " + ipAddress +
+                                "<br/>visitor: " + logEventActivitySuccess.VisitorDetails);
                         }
                     }
 
@@ -81,8 +88,10 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                                 //alert("cocksucker lips clicked");
                                 window.location.href = '/index.html?subdomain=porn';
                             }
-                            else
+                            else {
+
                                 window.location.href = "/";
+                            }
                             break;
                         case "GAX":  // can I get a connection
                             alert("can I get a connection");
@@ -114,7 +123,6 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                             }
                             break;
                         case "CXM":  // carousle context menu opened
-                            carouselContextMenuShow();
                             break;
                         case "EXP":
                             window.open(eventDetail, "_blank");
@@ -130,7 +138,7 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                             window.location.href = "/album.html?folder=" + eventDetail;
                             break;
                         case "CMX":
-                            showModelInfoDialog(eventDetail, folderId, 'Images/redballon.png');
+                            showModelInfoDialog(eventDetail, calledFrom, 'Images/redballon.png');
                             //reportThenPerformEvent("CMX", folderId, folderName);
                             break;
                         case "BAC":  // Babes Archive Clicked
@@ -180,6 +188,8 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                             switch (eventDetail) {
                                 case "about us": showCustomMessage(38); break;
                                 case "dir tree": showCatListDialog(2); break;
+                                case "porn dir tree": showCatListDialog(242); break;                                    
+                                case "playmate dir tree": showCatListDialog(472); break;
                                 case "porn": window.location.href = '/index.html?subdomain=porn'; break;
                                 case "blog": window.location.href = '/Blog.html'; break;
                                 case "ranker": window.location.href = "/Ranker.html"; break;
@@ -188,9 +198,7 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                                 case "archive": window.location.href = "/album.html?folder=3"; break;
                                 case "videos": window.location.href = 'video.html'; break;
                                 case "mailme": window.location.href = 'mailto:curtishrhodes@hotmail.com'; break;
-                                case "freedback":
-                                    window.location.href = 'video.html';
-                                    break;
+                                case "freedback": showFeedbackDialog(); break;
                                 default: alert("eventDetail: " + eventDetail); break;
                             }
                             break;
@@ -199,8 +207,11 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                     }
                 }
                 else {
-                    sendEmailToYourself("LogEventActivity fail", "Called from PageId: " + calledFrom + "<br/>EventCode: " + eventCode +
-                        "<br/>VisitorId: " + visitorId + "<br/>Message: " + logEventActivitySuccess.Success);
+                    sendEmailToYourself("LogEventActivity fail", "Called from PageId: " + calledFrom +
+                        "<br/>EventCode: " + eventCode +
+                        "<br/>eventDetail: " + eventDetail +
+                        "<br/>VisitorId: " + visitorId +
+                        "<br/>Message: " + logEventActivitySuccess.Success);
                 }
             },
             error: function (jqXHR) {

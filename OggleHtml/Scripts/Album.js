@@ -7,6 +7,11 @@ var selectedImage;
 var selectedImageLinkId;
 
 function directToStaticPage(folderId) {
+    ///  12/15
+    if (isNullorUndefined(folderId)) {
+        sendEmailToYourself("directToStaticPage folderId isNullorUndefined", "redirecting to poses");
+        folderId = 136;
+    }
     currentAlbumFolderId = folderId;
     $.ajax({
         type: "GET",
@@ -24,41 +29,47 @@ function directToStaticPage(folderId) {
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "directToStaticPage")) {
-                sendEmailToYourself("XHR ERROR IN ALBUM.JS  ", "api/AlbumPage/GetStaticPage?folderId=" + folderId +
-                    "Message: " + errorMessage + "SENDING THEM BACK TO DYNAMIC PAGE");
+                sendEmailToYourself("XHR ERROR IN GetStaticPage", "folderId=" + folderId +
+                    "<br/>" + errorMessage + "<br/>SENDING THEM BACK TO DYNAMIC PAGE");
             }
         }
     });
 }
 
 function setAlbumPageHeader(folderId) {
-    $.ajax({
-        type: "PATCH",
-        async: true,
-        url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=" + folderId,
-        success: function (successModel) {
-            if (successModel.Success === "ok") {
-                setOggleHeader(successModel.ReturnValue, folderId);
-                setOggleFooter(folderId, successModel.ReturnValue);
+    try {
+        $.ajax({
+            type: "PATCH",
+            url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=" + folderId,
+            success: function (successModel) {
+                if (successModel.Success === "ok") {
+                    setOggleHeader(successModel.ReturnValue, folderId);
+                    setOggleFooter(folderId, successModel.ReturnValue);
+                }
+                else {
+                    sendEmailToYourself("setAlbumPageHeader FAILURE", "api/AlbumPage/GetRootFolder?folderId=" + folderId + "<br>" + successModel.Success);
+                }
+            },
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (checkFor404(errorMessage, "setAlbumPageHeader")) {
+                    if (document.domain === 'localhost')
+                        alert("continuing on in setAlbumPageHeader");                
+                    else
+                        sendEmailToYourself("continuing on in setAlbumPageHeader", "folderId: " + folderId);
+                    setOggleHeader("boobs", folderId);
+                    setOggleFooter(folderId, "boobs");
+                }
+                else
+                    sendEmailToYourself("XHR ERROR IN ALBUM.JS setAlbumPageHeader", "api/AlbumPage/GetRootFolder?folderId=" + folderId + " <br/>" + errorMessage);
             }
-            else {
-                sendEmailToYourself("setAlbumPageHeader FAILURE", "api/AlbumPage/GetRootFolder?folderId=" + folderId +
-                    "<br>Message : " + successModel.Success);
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (checkFor404(errorMessage, "setAlbumPageHeader")) {
-                //alert("continuing on in setAlbumPageHeader");                
-                sendEmailToYourself("continuing on in setAlbumPageHeader", "folderId: " + folderId + ", ipAddress: " + ipAddress + ", set AlbumPageHeader");
-                setOggleHeader("boobs", folderId);
-                setOggleFooter(folderId, "boobs");
-            }
-            else
-                sendEmailToYourself("XHR ERROR IN ALBUM.JS setAlbumPageHeader", "api/AlbumPage/GetRootFolder?folderId=" + folderId +
-                    " Message" + errorMessage);
-        }
-    });
+        });
+    } catch (e) {
+        if (document.domain === 'localhost')
+            alert("setAlbumPageHeader: " + e);
+        else
+            sendEmailToYourself("setAlbumPageHeader", e);
+    }
 }
 
 function getBreadCrumbs(folderId) {
@@ -234,6 +245,8 @@ function resizeImageContainer() {
     if (viewerShowing) {
         resizeViewer();
     }
+
+    $('#feedbackBanner').css("top", $('#middleColumn').height() - 150);
 }
 
 $(window).resize(function () {
@@ -269,14 +282,11 @@ function startSlideShow(imageIndex) {
     }
 
     if (isNullorUndefined(ipAddress) || isNullorUndefined(visitorId) || isNullorUndefined(currentAlbumFolderId)) {
-
         //sendEmailToYourself("Calling LogVisitor from Album.js/startslideshow", "visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + currentAlbumFolderId);
-
         if (document.domain === 'localhost')
             alert("Calling LogVisitor from Album.js/startslideshow" +
                 "\nvisitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + currentAlbumFolderId);
-
-        logVisitor(imageIndex, "start slideshow");
+        logVisitor(imageIndex, "startSlideshow");
     }
 
     // Gallery Item Clicked

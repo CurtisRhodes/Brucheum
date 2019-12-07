@@ -224,4 +224,8 @@ header {
     color: var(--oggleTitleColor);    
 }
 
-
+.floatingFlow {
+    position: absolute;
+    height: 100px;
+    cursor: pointer;
+}

@@ -2,7 +2,7 @@
 :root {
     --brucheumBlue: #74bac3;
     --oggleBackgroundColor: #fef; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
-    --oggleContainerBackgroundColor: #fefefe; /*  #f8e8e8 */
+    --oggleContainerBackgroundColor: #f49ce8;
     --oggleBorderColor: #b200ff; /* #f1cff7;       carouselContainer  #b200ff; */
     --ogglePurple: #79078f;
     --normalFont: 17px;
@@ -17,6 +17,12 @@
     --topLinkRowDefault: 28px;
     --topLinkRow14: 14px;
 }
+
+/*
+    background-color: #f49ce8; 
+*/
+
+
 
 body {
     background-color: var(--oggleBackgroundColor);
@@ -84,6 +90,7 @@ body {
 }
 
 .roundendButton {
+    display: inline-block;
     text-align: center;
     background: var(--brucheumBlue);
     color: #000;
@@ -91,6 +98,7 @@ body {
     padding: 8px 20px;
     cursor: pointer;
 }
+
 .roundedInput {
     padding: 2px;
     color: #555;
@@ -419,5 +427,14 @@ footer {
     border-radius: 22px;
 }
 
-
+.fixedMessageButton {
+    position: relative;
+    padding: 20px 15px;
+    margin: 10px;
+    top: 800px;
+    cursor: pointer;
+    color: var(--ogglePurple);
+    background-color: var(--oggleContainerBackgroundColor);
+    border-radius: 8px;
+}
 

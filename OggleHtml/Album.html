@@ -19,8 +19,10 @@
     <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js' type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
     <script src="Scripts/Login.js"></script>
+    <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/HitCounter.v2.js"></script>
+    <script src="Scripts/ModelInfoDialog.js"></script>
     <script src="Scripts/OggleEventLog.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleSearch.js"></script>
@@ -29,7 +31,6 @@
     <script src="Scripts/Carousel.js"></script>
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/FolderCategoryDialog.js"></script>
-    <script src="Scripts/ModelInfoDialog.js"></script>
     <script src="Scripts/ImageCommentDialog.js"></script>
     <script src="Scripts/MoveCopyArchive.js"></script>
     <script src="Scripts/MetaTagDialog.js"></script>
@@ -73,7 +74,10 @@
             <div id="imageContainer" class="flexWrapContainer"></div>
             <div id="fileCount" class="countContainer"></div>
         </div>
-        <div id="rightColumn"></div>
+        <div id="rightColumn">
+            <div id="feedbackBanner" class="fixedMessageButton displayHidden" 
+                 title="I built this website entirely by myself using only PlainOldJavaScript.\nAny comments or suggestions are greatly appreciated">feedback</div>
+        </div>
     </div>
     <footer></footer>
     <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut(); $('#linkInfo').hide();">
@@ -92,7 +96,6 @@
         <div class="adminLink" onclick="contextMenuAction('setF')">Set as Folder Image</div>
         <div class="adminLink" onclick="contextMenuAction('setC')">Set as Category Image</div>
     </div>
-
     <div w3-include-html="Snippets/Slideshow.html"></div>
     <div w3-include-html="Snippets/AdminDialogs.html"></div>
     <div w3-include-html="Snippets/Login.html"></div>
@@ -127,7 +130,12 @@
                         if (permissionsSet === true) {
                             $('#dots').html('');
                             clearInterval(waiter2);
-                            logPageHit(params.folder);
+
+                            if (params.folder == undefined)
+                                logPageHit(params.folder);
+                            else
+                                logPageHit(3908);
+
                             if (document.domain === 'localhost') {
                                 //isInRole("not logged in");
                                 console.log("I want to stay in local host");
@@ -157,6 +165,7 @@
                                     //if (document.domain === 'localhost') alert("logPageHit");
                                 }
                             }
+                            $('#feedbackBanner').click(showFeedbackDialog).fadeIn();
                         }
                     }, 300);
                 }

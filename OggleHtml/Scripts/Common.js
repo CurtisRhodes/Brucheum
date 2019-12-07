@@ -35,7 +35,8 @@ function verifyConnection() {
                 connectionVerified = true;
             }
             else {
-                alert("Verify Connection: " + successModel.Success);
+                checkFor404("Not connect", "verifyConnection");
+                //alert("Verify Connection: " + successModel.Success);
             }
         },
         error: function (jqXHR) {
@@ -340,7 +341,7 @@ function showCatListDialog(startFolder) {
         show: { effect: "fade" },
         hide: { effect: "blind" },
         position: { my: 'left top', at: 'left top', of: $('#middleColumn') },
-        width: 411,
+        width: 500,
         height: 800
     });
     $('#indexCatTreeContainer').dialog('open');

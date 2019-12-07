@@ -104,7 +104,7 @@ namespace WebApi.OggleBoobleSqlContext
         public string Born { get; set; }
         public string Boobs { get; set; }
         public string FolderImage { get; set; }
-        public string MetaDescription { get; set; }
+        public string LinkStatus { get; set; }
         public int SortOrder { get; set; }
     }
 
