@@ -441,6 +441,7 @@ function showPerfMetrics() {
     $('#divHitMetrics').fadeIn();
     runPageHitsReport();
 }
+
 function runPageHitsReport() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
@@ -484,11 +485,11 @@ function runPageHitsReport() {
                 $("#btnMostImageHits").show();
                 $("#btnImageHitActivityReport").show();
 
-                runPopPages();
+                mostVisitedPagesPages();
                 runMostImageHits();
             }
             else {
-                alert("renameFolder: " + repairReport.Success);
+                alert("PageHitsReport: " + pageHitModel.Success);
             }
         },
         error: function (jqXHR) {
@@ -500,7 +501,8 @@ function runPageHitsReport() {
         }
     });
 }
-function runPopPages() {
+
+function mostVisitedPagesPages() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
@@ -508,7 +510,7 @@ function runPopPages() {
         success: function (popularPages) {
             $('#dashBoardLoadingGif').hide();
             if (popularPages.Success === "ok") {
-                $("#mostPopularPagesReport").html("<table><tr colspan=2><th>Most Popular Pages</th></tr>");
+                $("#mostPopularPagesReport").html("<table><tr colspan=2><th>Most Popular Pages " + todayString() + "</th></tr>");
                 $.each(popularPages.Items, function (idx, obj) {
                     $("#mostPopularPagesReport").append("<tr><td>" + obj.PageName + "</td><td>" + obj.PageHits + "</td></tr>");
                 });
@@ -516,7 +518,7 @@ function runPopPages() {
                 $('#popPagesContainer').css("display", "inline-block");
             }
             else {
-                alert("runPopPages: " + popularPages.Success);
+                alert("mostVisitedPagesPages: " + popularPages.Success);
             }
         },
         error: function (jqXHR) {
@@ -528,6 +530,7 @@ function runPopPages() {
         }
     });
 }
+
 function runMostImageHits() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
@@ -568,11 +571,11 @@ function runPageActivityReport() {
             $('#dashBoardLoadingGif').hide();
             if (activityReport.Success === "ok") {
                 var kludge = "<table>";
-                kludge += "<tr><th>Ip Address</th><th>City</th><th>State</th><th>Country</th><th>Event</th></th><th>Page</th><th>hitdate</th><th>hit time</th></tr>";
+                kludge += "<tr><th>Ip Address</th><th>City</th><th>State</th><th>Country</th><th>Event</th><th>Called From</th><th>Details</th><th>hitdate</th><th>hit time</th></tr>";
                 $.each(activityReport.Items, function (idx, obj) {
                     kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
                     kludge += "<td>" + obj.Region + "</td><td>" + obj.Country + "</td>";
-                    kludge += "<td>" + obj.RefDescription + "</td><td>" + obj.FolderName + "</td>";
+                    kludge += "<td>" + obj.RefDescription + "</td><td>" + obj.CalledFrom.replace('OGGLEBOOBLE.COM','') + "</td><td>" + obj.EventDetail + "</td>";
                     kludge += "<td>" + obj.hitDate + "</td><td>" + obj.hitTime + "</td></tr>";
                 });
                 kludge += "</table>";
@@ -581,7 +584,7 @@ function runPageActivityReport() {
                 $('#dashBoardLoadingGif').hide();
             }
             else {
-                alert("runMostImageHits: " + mostImageHits.Success);
+                alert("activityReport: " + activityReport.Success);
             }
         },
         error: function (jqXHR) {
@@ -649,13 +652,13 @@ function runMostActiveUsersReport() {
         success: function (mostActiveUsersReport) {
             $('#dashBoardLoadingGif').hide();
             if (mostActiveUsersReport.Success === "ok") {
-                var kludge = "<table>";
-                kludge += "<tr><th>ip</th><th>City</th><th>State</th><th>Country</th><th>Hits</th><th>hitdate</th><th>hit time</th></tr>";
+                var kludge = "<table class='mostAvtiveUsersTable'>";
+                kludge += "<tr><th>ip</th><th>City</th><th>State</th><th>Country</th><th>Hits</th><th>last hit</th></tr>";
                 $.each(mostActiveUsersReport.Items, function (idx, obj) {
                     kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
                     kludge += "<td>" + obj.Region + "</td><td>" + obj.Country + "</td>";
                     kludge += "<td>" + obj.ImageHits.toLocaleString() + "</td>";                    
-                    kludge += "<td>" + obj.LastHit + "</td><td>" + obj.hitTime + "</td></tr>";
+                    kludge += "<td>" + obj.LastHit + "</td></tr>";
                 });
                 kludge += "</table>";
 
@@ -847,11 +850,10 @@ function renameFolder() {
                 //};
                 //logActivity(changeLogModel);
 
-
                 $('#dataifyInfo').hide();
             }
             else {
-                alert("renameFolder: " + repairReport.Success);
+                alert("renameFolder: " + success);
             }
         },
         error: function (jqXHR) {
@@ -863,4 +865,54 @@ function renameFolder() {
         }
     });
 }
+
+function postImage() {
+    try {
+        //fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
+        //var data = "{'imageName':'" + fileName + "'image':'" + image + "'}";
+        var image = $('#uplImage')[0].files[0];
+        if (image !== null) {
+            $('#dashBoardLoadingGif').fadeIn();
+            $.ajax({
+                type: "POST",
+                url: settingsArray.ApiServer + "/api/FtpDashBoard/SaveFileAs?imageName=" + $('#uplImage').val() + "&destinationPath=" + dashboardMainSelectedPath,
+                enctype: 'multipart/form-data',
+                processData: false,  // Important!
+                contentType: "image/jpeg",
+                async: false,
+                cache: false,
+                data: image,
+                success: function (successModel) {
+                    $('#dashBoardLoadingGif').hide();
+                    if (successModel.Success === "ok") {
+                        displayStatusMessage("ok", "image link added");
+                        $('#txtNewLink').val("");
+                        resizeDashboardPage();
+
+                        var changeLogModel = {
+                            PageId: dashboardMainSelectedTreeId,
+                            PageName: $('.txtLinkPath').val(),
+                            Activity: "new image added " + successModel.ReturnValue
+                        };
+                        logActivity(changeLogModel);
+                    }
+                    else
+                        alert("postImage: " + success);
+                },
+                error: function (xhr) {
+                    $('#dashBoardLoadingGif').hide();
+                    alert("Postimage error: " + xhr.statusText);
+                }
+            });
+        }
+        else {
+            alert("ERROR: image == null");
+        }
+    } catch (e) {
+        //displayStatusMessage("alert-danger", "ERROR t: " + e);
+        alert("try catch ERROR : " + e);
+    }
+}
+
+
 

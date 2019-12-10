@@ -56,13 +56,13 @@
     <div class="threeColumnLayout">
         <div id="leftColumn">
             <div id="TrackbackLinkArea" class="leftColumnTrackbackArea">
-                <div id="babapediaLink" class="babapediaLink displayHidden" >
-                    <a href='https://www.babepedia.com' target='_blank'>Babapedia</a>
-                </div>
-                <a id="freeonesLink" class="leftColumnTrackbackLink displayHidden" href='http://www.freeones.com'
-                   target='_blank' text='free porn'>
-                    <img src='/Images/freeones.png' height="40" title='FreeOnes - The ultimate babes site' alt='models, babes and porn stars' class='trackbackImage' />                         
-                </a>
+                <div id="babapediaLink" class="leftColumnTrackbackLink displayHidden"></div>
+                <div id="freeonesLink" class="leftColumnTrackbackLink displayHidden"></div>
+                <div id="indexxxLink" class="leftColumnTrackbackLink displayHidden"></div>
+                <!--<a id="freeonesLink" class="leftColumnTrackbackLink displayHidden" href='http://www.freeones.com'
+       target='_blank' text='free porn'>
+        <img src='/Images/freeones.png' height="40" title='FreeOnes - The ultimate babes site' alt='models, babes and porn stars' class='trackbackImage' />
+    </a>-->
             </div>
         </div>
         <div id="middleColumn">
@@ -130,11 +130,7 @@
                         if (permissionsSet === true) {
                             $('#dots').html('');
                             clearInterval(waiter2);
-
-                            if (params.folder == undefined)
-                                logPageHit(params.folder);
-                            else
-                                logPageHit(3908);
+                            logPageHit(params.folder);
 
                             if (document.domain === 'localhost') {
                                 //isInRole("not logged in");

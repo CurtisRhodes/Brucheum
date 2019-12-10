@@ -130,14 +130,8 @@
     margin-left: 12px;
 }
 
-.babapediaLink {
+.leftColumnTrackbackLink {
     padding: 22px;
     font-size: 20px;
     font-weight: bold;
-}
-
-.trackbackImage {
-    height: 45px;
-    margin-left: 9px;
-    float: left;
 }

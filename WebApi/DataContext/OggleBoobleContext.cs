@@ -25,10 +25,24 @@ namespace WebApi.OggleBoobleSqlContext
         public virtual DbSet<RejectLink> RejectLinks { get; set; }
         public virtual DbSet<RankerVote> RankerVotes { get; set; }
         public virtual DbSet<StepChild> StepChildren { get; set; }
-
+        public virtual DbSet<TrackbackLink> TrackbackLinks { get; set; }
+        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
+    }
+
+    [Table("OggleBooble.TrackbackLink")]
+    public partial class TrackbackLink
+    {
+        [Key]
+        [Column(Order = 0)]
+        public int PageId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string Site { get; set; }
+        public string TrackBackLink { get; set; }
+        public string LinkStatus { get; set; }
     }
 
     [Table("OggleBooble.StepChild")]

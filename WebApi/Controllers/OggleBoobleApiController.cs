@@ -828,6 +828,88 @@ namespace WebApi
     }
 
     [EnableCors("*", "*", "*")]
+    public class TrackbackLinkController : ApiController
+    {
+        [HttpGet]
+        public TrackBackModel GetTrackBacks(int folderId)
+        {
+            TrackBackModel trackBackModel = new TrackBackModel(); 
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    List<TrackbackLink> trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
+                    foreach (TrackbackLink trackbackLink in trackbackLinks)
+                    {
+                        trackBackModel.TrackBackItems.Add(new TrackBackItem()
+                        {
+                            Site = trackbackLink.Site,
+                            TrackBackLink = trackbackLink.TrackBackLink,
+                            LinkStatus = trackbackLink.LinkStatus
+                        });
+                    }
+                    trackBackModel.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                trackBackModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return trackBackModel;
+        }
+
+        [HttpPost]
+        public string Insert(TrackBackItem trackBackItem)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    db.TrackbackLinks.Add(new TrackbackLink()
+                    {
+                        PageId = trackBackItem.PageId,
+                        LinkStatus = trackBackItem.LinkStatus,
+                        Site = trackBackItem.Site,
+                        TrackBackLink = trackBackItem.TrackBackLink
+                    });
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+        [HttpPut]
+        public string Update(TrackBackItem item)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    TrackbackLink trackbackLink = db.TrackbackLinks.Where(t => t.PageId == item.PageId).FirstOrDefault();
+                    trackbackLink.Site = item.Site;
+                    trackbackLink.LinkStatus = item.LinkStatus;
+                    trackbackLink.Site = item.Site;
+                    trackbackLink.TrackBackLink = item.TrackBackLink;
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+    }
+
+    [EnableCors("*", "*", "*")]
     public class ImageCategoryDetailController : ApiController
     {
         [HttpGet]

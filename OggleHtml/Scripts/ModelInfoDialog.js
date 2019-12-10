@@ -98,13 +98,102 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
 }
 
 function addHrefToExternalLinks() {
-
     //alert("addHrefToExternalLinks: " + $('#txtLinkHref').val());
-    $('#externalLinks').summernote('pasteHTML', "<a href=" + $('#txtLinkHref').val() + " target = '_blank'>" + $('#txtLinkLabel').val() + "</a><br/>");
-
-    //$('#externalLinks').append("<a href=" + $('#txtLinkHref').val() + ">" + $('#txtLinkLabel').val() + " target='_blank'</a><br/>");
+    $('#externalLinks').summernote('pasteHTML', "<a href=" + $('#txtLinkHref').val() + " target = '_blank'>" + $('#txtLinkLabel').val() + "</a><br/>");    
+    addTrackback($('#txtLinkHref').val());
     $('#txtLinkHref').val('');
     $('#txtLinkLabel').val('');
+}
+
+function addTrackback(link) {
+    var site = "";
+    var hLink = "";
+    if ($('#txtLinkHref').val().indexOf('freeones') > -1) {
+        site = "Freeones";
+        hLink = "<a href='" + link + " target='_blank'>free porn</a>";
+    }    
+    if ($('#txtLinkHref').val().indexOf('indexxx') > -1) {
+        site = "Indexxx";
+        hLink = "<a href='" + link + " target='_blank'>indexxx</a>";
+    }
+    if ($('#txtLinkHref').val().indexOf('babepedia') > -1) {
+        site = "Babepedia";
+        hLink = "<a href='" + link + " target='_blank'>Babapedia</a>";
+    }
+
+    if (site !== "") {
+        var trackBackItem = {
+            PageId: FolderDetailModel.FolderId,
+            Site: site,
+            TrackBackLink: hLink,
+            LinkStatus: "unknown"
+        };
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "api/TrackbackLink/Insert",
+            data: trackBackItem,
+            success: function (success) {
+                if (success === "ok") {
+                    displayStatusMessage("ok", "trackback link added");
+                }
+                else {
+                    if (success.indexOf("Violation of PRIMARY KEY") > -1) {
+                        updateTrackback(trackBackItem);
+                    }
+                    else {
+                        if (document.domain === 'localhost')
+                            alert("setTrackbackLinks: " + success);
+                        else
+                            sendEmailToYourself("setTrackbackLinks", success);
+                    }
+                }
+            },
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (document.domain === 'localhost') {
+                    alert("XHR ERROR IN addTrackback\nfolderId=" + folderId +
+                        "\nurl: " + settingsArray.ApiServer + "api/TrackbackLink/Insert" + "\nMessage : " + errorMessage);
+                }
+                else {
+                    if (!checkFor404(errorMessage, "addTrackback")) {
+                        sendEmailToYourself("XHR ERROR IN addTrackback",
+                            "folderId=" + folderId + "<br/>Message : " + errorMessage);
+                    }
+                }
+            }
+        });
+    }
+}
+
+function updateTrackback(trackBackItem) {
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "api/TrackbackLink/Update",
+        data: trackBackItem,
+        success: function (success) {
+            if (success === "ok") {
+                displayStatusMessage("ok", "trackback link updated");
+            }
+            else {
+                if (document.domain === 'localhost')
+                    alert("updateTrackback: " + success);
+                else
+                    sendEmailToYourself("updateTrackback", success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (document.domain === 'localhost') {
+                alert("XHR ERROR IN updateTrackback" + 
+                    "\nurl: " + settingsArray.ApiServer + "api/TrackbackLink/Insert" + "\nMessage : " + errorMessage);
+            }
+            else {
+                if (!checkFor404(errorMessage, "updateTrackback")) {
+                    sendEmailToYourself("XHR ERROR IN updateTrackback", errorMessage);
+                }
+            }
+        }
+    });
 }
 
 function IdentifyPoser() {

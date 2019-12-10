@@ -264,8 +264,17 @@
 .mostPopularPagesReport {
     padding: 5px;
 }
+    .mostAvtiveUsersTable td {
+        padding-left: 16px;
+    }
+    .mostAvtiveUsersTable th {
+        text-align: center;
+    }
 
-
+.imageUpload {
+    height: 32px;
+    width: 100%;
+}
 
 
 

@@ -31,9 +31,10 @@ namespace WebApi.MySqDataContext
         public virtual DbSet<RankerVote> RankerVotes { get; set; }
         public virtual DbSet<EventLog> EventLogs { get; set; }
         public virtual DbSet<Ref> Refs { get; set; }
+        public virtual DbSet<vwMostActiveUsersForToday> MostActiveUsersForToday { get; set; }
     }
 
-    [Table("OggleBooble.Ref")]
+[Table("OggleBooble.Ref")]
     public class Ref
     {
         [Key]
@@ -49,6 +50,7 @@ namespace WebApi.MySqDataContext
     public class EventLog
     {
         public string EventCode { get; set; }
+        public string EventDetail { get; set; }
         public int PageId { get; set; }
         [Key]
         [Column(Order = 0)]
@@ -115,6 +117,7 @@ namespace WebApi.MySqDataContext
         public int Five_Days_ago { get; set; }
         public int Six_Days_ago { get; set; }
     }
+
     [Table("OggleBooble.vwImageHits")]
     public partial class VwImageHit
     {
@@ -239,5 +242,17 @@ namespace WebApi.MySqDataContext
         public string FolderImage { get; set; }
         public string MetaDescription { get; set; }
         public int SortOrder { get; set; }
+    }
+
+    [Table("OggleBooble.vwMostActiveUsersForToday")]
+    public partial class vwMostActiveUsersForToday
+    {
+        [Key]
+        public string IpAddress { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        public string LastHit { get; set; }
+        public int ImageHits { get; set; }
     }
 }

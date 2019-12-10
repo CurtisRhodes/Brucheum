@@ -35,15 +35,18 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
             logVisitor(calledFrom, "reportThenPerformEvent");
             return;
         }
-        var eventClickDdata = {
-            PageId: calledFrom,
-            EvenCode: eventCode,
-            VisitorId: visitorId
+
+        var logEventModel = {
+            VisitorId: visitorId,
+            EventCode: eventCode,
+            EventDetail: eventDetail,
+            PageId: calledFrom
         };
+
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "/api/EventLog/LogEventActivity",
-            data: eventClickDdata,
+            data: logEventModel,
             success: function (logEventActivitySuccess) {
                 var ipAddr = getCookieValue("IpAddress");
                 if (logEventActivitySuccess.Success === "ok") {
@@ -52,32 +55,35 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                         //  setUserPornStatus(pornType);
                     }
 
-                    if (eventCode !== "CIC"     // Carousel Item Clicked 
-                        && eventCode !== "FLC"  // Footer Link Clicked 
-                        && eventCode !== "BAC"  // Archive Clicked
-                        && eventCode !== "SUB"  // Subfolder Clicked
-                        && eventCode !== "BCC"  // Breadcrumb Clicked 
-                        && eventCode !== "BLC"  // Banner Link Clicked 
-                        && eventCode !== "LMC"  // Left Menu Item Clicked
-                        && eventCode !== "HBX"  // Home Breadcrumb clicked
-                        && eventCode !== "CAA"  // Carousel Arrow Clicked
-                        && eventCode !== "HBC") // Home Icon Clicked
+                    //if (ipAddress !== "68.203.90.183")
                     {
-                        if (document.domain === 'localhost') {
-                            alert(logEventActivitySuccess.EventName + " {" + eventCode + "}" +
-                                "\ncalledFrom: {" + calledFrom + "} : " + logEventActivitySuccess.PageName +
-                                "\neventDetail: " + eventDetail +
-                                "\nIp: " + ipAddress + ", from " + logEventActivitySuccess.VisitorDetails);
-                        }
-                        else {
-                            sendEmailToYourself(logEventActivitySuccess.EventName + " {" + eventCode + "}",
-                                "called From: {" + calledFrom + "}: " + logEventActivitySuccess.PageName +
-                                "<br>event detail: " + eventDetail +
-                                "<br/>ipAddress: " + ipAddress +
-                                "<br/>visitor: " + logEventActivitySuccess.VisitorDetails);
+
+                        if (eventCode !== "CIC"     // Carousel Item Clicked 
+                            //&& eventCode !== "FLC"  // Footer Link Clicked 
+                            //&& eventCode !== "BAC"  // Archive Clicked
+                            && eventCode !== "SUB"  // Subfolder Clicked
+                            && eventCode !== "BCC"  // Breadcrumb Clicked 
+                            && eventCode !== "BLC"  // Banner Link Clicked 
+                            && eventCode !== "LMC"  // Left Menu Item Clicked
+                            && eventCode !== "HBX"  // Home Breadcrumb clicked
+                            && eventCode !== "CAA"  // Carousel Arrow Clicked
+                            && eventCode !== "HBC") // Home Icon Clicked
+                        {
+
+                            if (document.domain === 'localhost') {
+                                alert(logEventActivitySuccess.EventName + " {" + eventCode + "}" +
+                                    "\ncalledFrom: {" + calledFrom + "} : " + logEventActivitySuccess.CalledFrom +
+                                    "\neventDetail: {" + eventDetail + "} : " + logEventActivitySuccess.PageBeingCalled +
+                                    "\nIp: " + ipAddress + ", from " + logEventActivitySuccess.VisitorDetails);
+                            }
+                            else {
+                                sendEmailToYourself(logEventActivitySuccess.EventName + " {" + eventCode + "}" ,
+                                    "calledFrom: {" + calledFrom + "} : " + logEventActivitySuccess.CalledFrom +
+                                    "<br/>eventDetail: {" + eventDetail + "} : " + logEventActivitySuccess.PageBeingCalled +
+                                    "<br/>from: " + ipAddress + ", " + logEventActivitySuccess.VisitorDetails);
+                            }
                         }
                     }
-
                     // NOW PERFORM EVENT
                     switch (eventCode) {
                         case "PRN":  //("Porn Option clicked");
@@ -188,7 +194,7 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                             switch (eventDetail) {
                                 case "about us": showCustomMessage(38); break;
                                 case "dir tree": showCatListDialog(2); break;
-                                case "porn dir tree": showCatListDialog(242); break;                                    
+                                case "porn dir tree": showCatListDialog(242); break;
                                 case "playmate dir tree": showCatListDialog(472); break;
                                 case "porn": window.location.href = '/index.html?subdomain=porn'; break;
                                 case "blog": window.location.href = '/Blog.html'; break;

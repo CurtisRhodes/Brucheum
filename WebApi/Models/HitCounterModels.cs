@@ -21,9 +21,8 @@ namespace WebApi.Models
         public string City { get; set; }
         public string Region { get; set; }
         public string Country { get; set; }
-        public int ImageHits { get; set; }
         public string LastHit { get; set; }
-        public string hitTime { get; set; }
+        public int ImageHits { get; set; }
     }
 
     public class ActivityReportModel
@@ -42,8 +41,9 @@ namespace WebApi.Models
         public string City { get; set; }
         public string Region { get; set; }
         public string Country { get; set; }
+        public string EventDetail { get; set; }
         public string RefDescription { get; set; }
-        public string FolderName { get; set; }
+        public string CalledFrom { get; set; }
         public string hitDate { get; set; }
         public string hitTime { get; set; }
     }
@@ -145,13 +145,15 @@ namespace WebApi.Models
 
     public class LogEventModel {
         public string VisitorId { get; set; }
-        public string EvenCode { get; set; }
+        public string EventCode { get; set; }
+        public string EventDetail { get; set; }
         public int PageId { get; set; }
     }
 
     public class LogEventActivitySuccessModel
     {
-        public string PageName { get; set; }
+        public string CalledFrom { get; set; }
+        public string PageBeingCalled { get; set; }
         public string EventName { get; set; }
         public string IpAddress { get; set; }
         public string VisitorDetails { get; set; }

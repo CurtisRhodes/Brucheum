@@ -309,6 +309,116 @@ namespace WebApi
         static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
         static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
 
+        public class NewImageLinkModel
+        {
+            public int FolderId { get; set; }
+            public string ExternalLink { get; set; }
+            public string NewLink { get; set; }
+        }
+        [HttpPost]
+        public SuccessModel SaveFileAs(string destinationFolderName, string destinationPath)
+        {
+            SuccessModel successModel = new SuccessModel();
+            try
+            {
+                //string extension = uploadFileName.Substring(uploadFileName.LastIndexOf("."));
+                string imageLinkId = Guid.NewGuid().ToString();
+                string newFileName = destinationFolderName + "_" + imageLinkId + "xx";
+
+                Byte[] byteArray = Request.Content.ReadAsByteArrayAsync().Result;
+                File.WriteAllBytes(destinationPath + newFileName, byteArray);
+                successModel.ReturnValue = newFileName;
+                successModel.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                successModel.Success = ex.Message;
+            }
+            return successModel;
+        }
+
+        private string SaveImageLink(NewImageLinkModel newLink ) {
+            string success = "";
+            string imageLinkId = Guid.NewGuid().ToString();
+            string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
+            string extension = newLink.ExternalLink.Substring(newLink.ExternalLink.LastIndexOf("."));
+
+            int fWidth = 0;
+            int fHeight = 0;
+            long fSize = 0;
+            try
+            {
+                using (var fileStream = new FileStream(appDataPath + "tempImage" + extension, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    fSize = fileStream.Length;
+                    using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
+                    {
+                        fWidth = image.Width;
+                        fHeight = image.Height;
+                    }
+                }
+                DirectoryInfo directory = new DirectoryInfo(appDataPath);
+                FileInfo tempFile = directory.GetFiles("tempImage" + extension).FirstOrDefault();
+                if (tempFile != null)
+                    tempFile.Delete();
+                System.Diagnostics.Debug.WriteLine("delete worked ");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("delete didn't work " + ex.Message);
+            }
+            
+            using (OggleBoobleContext db = new OggleBoobleContext())
+            {
+                db.ImageLinks.Add(new ImageLink()
+                {
+                    Id = imageLinkId,
+                    FolderLocation = newLink.FolderId,
+                    ExternalLink = newLink.ExternalLink,
+                    Width = fWidth,
+                    Height = fHeight,
+                    Size = fSize,
+                    Link = newLink.NewLink
+                });
+                db.CategoryImageLinks.Add(new CategoryImageLink()
+                {
+                    ImageCategoryId = newLink.FolderId,
+                    ImageLinkId = imageLinkId,
+                    SortOrder = 99
+                });
+                db.SaveChanges();
+            }
+            using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
+            {
+                mdb.ImageLinks.Add(new MySqDataContext.ImageLink()
+                {
+                    Id = imageLinkId,
+                    FolderLocation = newLink.FolderId,
+                    ExternalLink = newLink.ExternalLink,
+                    Width = fWidth,
+                    Height = fHeight,
+                    Size = fSize,
+                    Link = newLink.NewLink
+                });
+                mdb.CategoryImageLinks.Add(new MySqDataContext.CategoryImageLink()
+                {
+                    ImageCategoryId = newLink.FolderId,
+                    ImageLinkId = imageLinkId,
+                    SortOrder = 99
+                });
+                mdb.SaveChanges();
+                success = "ok";
+            }
+            return success;
+        }
+
+        //public class AddLinkModel
+        //{
+        //    public int FolderId { get; set; }
+        //    public string Link { get; set; }
+        //    public string Path { get; set; }
+        //}
+
         [HttpPost]
         public SuccessModel AddImageLink(AddLinkModel newLink)
         {
@@ -327,10 +437,13 @@ namespace WebApi
                         string extension = newLink.Link.Substring(newLink.Link.LastIndexOf("."));
                         string newFileName = dbCategory.FolderName + "_" + imageLinkId + extension;
                         //var trimPath = newLink.Path.Substring(newLink.Path.IndexOf("Root/") + 1);
-                        var trimPath = newLink.Path.Replace("/Root/", "").Replace("%20", " ");
-                        var appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
+                        string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
+                        string trimPath = newLink.Path.Replace("/Root/", "").Replace("%20", " ");
+
+                        // USE WEBCLIENT TO CREATE THE FILE
                         using (WebClient wc = new WebClient())
                         {
+#if DEBUG
                             try
                             {
                                 DirectoryInfo dirInfo = new DirectoryInfo(repoPath + trimPath);
@@ -343,6 +456,7 @@ namespace WebApi
                                 var err = Helpers.ErrorDetails(ex);
                                 System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
                             }
+#endif
                             try
                             {
                                 wc.DownloadFile(new Uri(newLink.Link), appDataPath + "tempImage" + extension);
@@ -354,6 +468,7 @@ namespace WebApi
                             }
                         }
                         FtpWebRequest webRequest = null;
+                        // USE WEBREQUEST TO UPLOAD THE FILE
                         try
                         {
                             // todo  write the image as a file to x.ogglebooble  4/1/19
@@ -363,13 +478,15 @@ namespace WebApi
 
                             webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
                             webRequest.Credentials = networkCredentials;
-                            webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                            var zz = webRequest.Method = WebRequestMethods.Ftp.UploadFile;
                         }
                         catch (Exception ex)
                         {
                             successModel.Success = " webRequest didnt work " + ex.Message;
                             return successModel;
                         }
+                        // TAKE THE WEBREQUEST FILE STREAM TO 
+                        
                         try
                         {
                             using (Stream requestStream = webRequest.GetRequestStream())
@@ -411,6 +528,8 @@ namespace WebApi
                         {
                             System.Diagnostics.Debug.WriteLine("delete didn't work " + ex.Message);
                         }
+                        
+
 
                         //var goDaddyLink = "http://" + dbCategory.RootFolder + ".ogglebooble.com/";
                         //var goDaddyLinkTest = goDaddyLink + trimPath + "/" + newFileName;
@@ -423,6 +542,12 @@ namespace WebApi
                             Height = fHeight,
                             Size = fSize,
                             Link = "http://" + trimPath + "/" + newFileName
+                        });
+                        db.CategoryImageLinks.Add(new CategoryImageLink()
+                        {
+                            ImageCategoryId = newLink.FolderId,
+                            ImageLinkId = imageLinkId,
+                            SortOrder = 99
                         });
                         db.SaveChanges();
 
@@ -438,6 +563,12 @@ namespace WebApi
                                 Size = fSize,
                                 Link = "http://" + trimPath + "/" + newFileName
                             });
+                            mdb.CategoryImageLinks.Add(new MySqDataContext.CategoryImageLink()
+                            {
+                                ImageCategoryId = newLink.FolderId,
+                                ImageLinkId = imageLinkId,
+                                SortOrder = 99
+                            });
                             mdb.SaveChanges();
                         }
 
@@ -450,13 +581,13 @@ namespace WebApi
                         else
                             successModel.ReturnValue = imageLinkId;
 
-                        db.CategoryImageLinks.Add(new CategoryImageLink()
-                        {
-                            ImageCategoryId = newLink.FolderId,
-                            ImageLinkId = imageLinkId,
-                            SortOrder = 99
-                        });
-                        db.SaveChanges();
+                        //db.CategoryImageLinks.Add(new CategoryImageLink()
+                        //{
+                        //    ImageCategoryId = newLink.FolderId,
+                        //    ImageLinkId = imageLinkId,
+                        //    SortOrder = 99
+                        //});
+                        //db.SaveChanges();
 
                         successModel.Success = "ok";
                     }
@@ -744,9 +875,11 @@ namespace WebApi
                         successModel.Success = "folder already exists";
                     else
                     {
-                        successModel.Success = FtpUtilies.CreateDirectory(destinationFtpPath);
-                        if (successModel.Success == "ok")
+                        string createDirSuccess= FtpUtilies.CreateDirectory(destinationFtpPath);
+                        if (createDirSuccess == "ok")
                         {
+
+                            //  add new row to CategoryFolder in sql
                             CategoryFolder newFolder = new CategoryFolder()
                             {
                                 Parent = parentId,
@@ -755,20 +888,30 @@ namespace WebApi
                             };
                             db.CategoryFolders.Add(newFolder);
                             db.SaveChanges();
-                            successModel.ReturnValue = newFolder.Id.ToString();
+                            int newFolderId = newFolder.Id;
 
-                            if (successModel.Success == "ok")
+                            db.CategoryFolderDetails.Add(new CategoryFolderDetail() { FolderId = newFolder.Id, SortOrder = 99 });
+                            db.SaveChanges();
+
+                            // now add it to Oracle
+                            using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
                             {
-                                db.CategoryFolderDetails.Add(new CategoryFolderDetail() { FolderId = newFolder.Id, SortOrder = 99 });
-                                db.SaveChanges();
-
-                                using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
+                                mdb.CategoryFolders.Add(new MySqDataContext.CategoryFolder()
                                 {
-                                    mdb.CategoryFolderDetails.Add(new MySqDataContext.CategoryFolderDetail() { FolderId = newFolder.Id, SortOrder = 99 });
-                                    mdb.SaveChanges();
-                                }
+                                    Id = newFolderId,
+                                    Parent = parentId,
+                                    FolderName = newFolderName.Trim(),
+                                    RootFolder = dbSourceFolder.RootFolder
+                                });
+
+                                mdb.CategoryFolderDetails.Add(new MySqDataContext.CategoryFolderDetail() { FolderId = newFolder.Id, SortOrder = 99 });
+                                mdb.SaveChanges();
                             }
+                            successModel.ReturnValue = newFolderId.ToString();
+                            successModel.Success = "ok";
                         }
+                        else
+                            successModel.Success = createDirSuccess;
                     }
                 }
             }

@@ -177,9 +177,59 @@
     }
 }
 
+function setTrackbackLinks(folderId) {
+    //    PageId int not null,
+    //    TrackBackLink varchar(200) not null,
+    //    LinkStatus varchar(20),
+    //alert("setTrackbackLinks  pageId: " + pageId);
+
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/TrackbackLink/GetTrackBacks?folderId=" + folderId,
+        success: function (trackBackModel) {
+            if (trackBackModel.Success === "ok") {
+                $.each(trackBackModel.TrackBackItems, function (idx, trackBackItem) {
+                    if (trackBackItem.Site === "Babepedia") {
+                        $('#babapediaLink').html(trackBackItem.TrackBackLink);
+                        $('#babapediaLink').show();
+                    }                    
+                    if (trackBackItem.Site === "Freeones") {
+                        $('#freeonesLink').html(trackBackItem.TrackBackLink);
+                        $('#freeonesLink').show();
+                    }
+                    if (trackBackItem.Site === "Indexxx") {
+                        $('#indexxxLink').html(trackBackItem.TrackBackLink);
+                        $('#indexxxLink').show();
+                    }
+                });
+            }
+            else
+                alert("setTrackbackLinks: " + trackBackModel.Success);
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (document.domain === 'localhost') {
+                alert("XHR ERROR IN setTrackbackLinks\nfolderId=" + folderId +
+                    "\nurl: " + settingsArray.ApiServer + "api/TrackbackLink/GetTrackBacks?folderId=" + folderId +
+                    "\nIpAddress: " + getCookieValue("IpAddress") +
+                    "<br/>Message : " + errorMessage);
+            }
+            else {
+                if (!checkFor404(errorMessage, "setTrackbackLinks")) {
+                    sendEmailToYourself("XHR ERROR IN setTrackbackLinks",
+                        "folderId=" + folderId + "<br/>IpAddress: " +
+                        getCookieValue("IpAddress") + "<br/>Message : " + errorMessage);
+                }
+            }
+        }
+    });
+}
+
 function showSpecialHeaderIcons(folderId) {
     //alert("entering showSpecialHeaderIcons.<br/>folderId: " + folderId);
     //if (document.domain === 'localhost') alert("calling 'ImageCategoryDetail/Get?folderId' from oggleHeader/showSpecialHeaderIcons \nfolderId=" + folderId);
+    setTrackbackLinks(folderId);
+
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
@@ -207,23 +257,9 @@ function showSpecialHeaderIcons(folderId) {
                     if (folderDetailModel.ExternalLinks.indexOf("Hef likes twins") > -1) {
                         $('#twinsLink').show();
                     }
-                    if (folderDetailModel.ExternalLinks.indexOf("www.freeones.com") > 0) {
-                        $('#freeonesLink').show();
-                    }
-                    if (folderDetailModel.ExternalLinks.indexOf("www.babepedia.com") > 0) {
-                        $('#babapediaLink').show();
-
-                        //var strt = folderDetailModel.ExternalLinks.indexOf("www.babepedia.com");
-                        //var customLink = folderDetailModel.ExternalLinks.substr(strt, folderDetailModel.ExternalLinks.indexOf("target") - strt);
-                        ////alert("strt: " + strt + " customLink: " + customLink);
-                        //$('#babapediaLink a').attr("src", customLink);
-                        //alert("$('#babapediaLink a').prop('src', customLink): " + $('#babapediaLink a').attr("src"));
-                    }
                 }
             }
             else {
-                //alert("ERROR in OggleHeader ImageCategoryDetail  " + successModel.Success + "  ip: " + getCookieValue("IpAddress") + "  folderId: " + folderId);
-                //if (!checkFor404(folderDetailModel.Success, "showSpecialHeaderIcons")) {
                 sendEmailToYourself("Error in showSpecialHeaderIcons", +
                     "ip: " + getCookieValue("IpAddress") +
                     "<br/>folderId: " + folderId +

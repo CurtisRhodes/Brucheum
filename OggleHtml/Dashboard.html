@@ -66,6 +66,7 @@
                                 <div id="addNewLink" class="addLinkCrudArea">
                                     <div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
                                     <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
+                                    <div>upload<input id="uplImage" type="file" class="imageUpload" onchange="postImage()"/></div>
                                     <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
                                 </div>
                                 <img id="imgLinkPreview" class="linkImage" />
@@ -147,7 +148,7 @@
             <div id="dashboardContainerRow">
                 <div id="dirTreeContainer" class="dashboardTreeContainer">
                     <img id="getDirTreeLoadingGif" class="smallLoadingGif" src="/Images/loader.gif" />
-                    <<div id="dashboardMain"></div>
+                    <div id="dashboardMain"></div>
                 </div>
             </div>
         </div>

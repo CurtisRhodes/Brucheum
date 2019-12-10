@@ -265,36 +265,46 @@ namespace WebApi
             LogEventActivitySuccessModel logEventActivitySuccess = new LogEventActivitySuccessModel();
             try
             {
-                //reportClickEvent("EXP", carouselItemArray[imageIndex].Link);
-                // EXP (explode image) passes an image link, not a pageId
                 using (var mdb = new OggleBoobleMySqContext())
                 {
                     mdb.EventLogs.Add(new EventLog()
                     {
-                        EventCode = logEventModel.EvenCode,
+                        EventCode = logEventModel.EventCode,
+                        EventDetail=logEventModel.EventDetail,
                         PageId = logEventModel.PageId,
                         VisitorId = logEventModel.VisitorId,
                         Occured = DateTime.Now
                     });
                     mdb.SaveChanges();
 
-                    logEventActivitySuccess.EventName = mdb.Refs.Where(r => r.RefCode == logEventModel.EvenCode).FirstOrDefault().RefDescription;
+                    var categoryFolderCalledFromRow = mdb.CategoryFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault();
+                    if (categoryFolderCalledFromRow != null)
+                        logEventActivitySuccess.CalledFrom = categoryFolderCalledFromRow.FolderName;
+                    else
+                        logEventActivitySuccess.CalledFrom = "{" + logEventModel.PageId + " not found}";
 
-                    using (var odb = new OggleBoobleSqlContext.OggleBoobleContext()) {
-                        var catFolder = odb.CategoryFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault();
-                        if (catFolder != null)
-                            logEventActivitySuccess.PageName = catFolder.FolderName;
-                        else
-                            logEventActivitySuccess.PageName = logEventModel.PageId + " not found";
-                    }
-                    //logEventActivitySuccess.PageName = db.CategoryFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault().FolderName;
-                    
-                    
                     Visitor visitor = mdb.Visitors.Where(v => v.VisitorId == logEventModel.VisitorId).FirstOrDefault();
                     if (visitor != null)
                     {
                         logEventActivitySuccess.IpAddress = visitor.IpAddress;
                         logEventActivitySuccess.VisitorDetails = visitor.City + ", " + visitor.Region + " " + visitor.Country;
+                    }
+
+                    var refEventCodeRow = mdb.Refs.Where(r => r.RefCode == logEventModel.EventCode).FirstOrDefault();
+                    if (refEventCodeRow != null) 
+                    {
+                        logEventActivitySuccess.EventName = refEventCodeRow.RefDescription;
+                    }
+
+                    int eventDetailPageId;
+                    bool parseSuccess = int.TryParse(logEventModel.EventDetail, out eventDetailPageId);
+                    if (parseSuccess)
+                    {
+                        var categoryFolderEventDetailRow = mdb.CategoryFolders.Where(f => f.Id == eventDetailPageId).FirstOrDefault();
+                        if (categoryFolderEventDetailRow != null)
+                        {
+                            logEventActivitySuccess.PageBeingCalled = categoryFolderEventDetailRow.FolderName;
+                        }
                     }
                 }
                 logEventActivitySuccess.Success = "ok";

@@ -314,7 +314,7 @@ function logPageHit(pageId) {
         $('#spnUserName').html(getCookieValue("UserName"));
         $('#optionLoggedIn').show();
         $('#optionNotLoggedIn').hide();
-        //return;
+        return;
     }
 
     // TRY GETVISITOR FROM IP IF YOU HAVE IP BUT NO VISITOR ID 
@@ -440,14 +440,14 @@ function logPageHit(pageId) {
             }
             else {
                 if (pageHitSuccessModel.Success.startsWith("ERROR: Duplicate entry")) {
-                    sendEmailToYourself("logPageHit Duplicate entry", "could be a double hit" +
-                        "<br/>IpAddress: " + getCookieValue("IpAddress") +
-                        "<br/>pageId: " + pageId + "<br/>" + pageHitSuccessModel.Success +
-                        "<br/>ver: 12.6");
-                    return;
+                    //sendEmailToYourself("logPageHit Duplicate entry", "could be a double hit" +
+                    //    "<br/>IpAddress: " + getCookieValue("IpAddress") +
+                    //    "<br/>pageId: " + pageId + "<br/>" + pageHitSuccessModel.Success +
+                    //    "<br/>ver: 12.6");
+                    //return;
                 }
-                sendEmailToYourself("logPageHit error", pageHitSuccessModel.Success + "<br/>IpAddress: " + getCookieValue("IpAddress") +
-                    "<br/>pageId: " + pageId + "<br/>ver: 12.6");
+                sendEmailToYourself("logPageHit error", "IpAddress: " + getCookieValue("IpAddress") +
+                    "<br/>pageId: " + pageId + "<br/>ver: 12.6" + pageHitSuccessModel.Success);
             }
         },
         error: function (jqXHR) {
