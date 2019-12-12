@@ -1,4 +1,4 @@
-﻿function setOggleFooter(pageId, rootFolder) {
+﻿function setOggleFooter(rootFolder, pageId) {
     //alert("setOggleFooter. pageId: " + pageId + "  rootFolder: " + rootFolder);
     var footerhtml = "";
     if (rootFolder === "boobs" || rootFolder === "archive") {
@@ -35,13 +35,14 @@
         footerhtml =
             "<div class='flexContainer'>\n" +
             "    <div class='footerCol'>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"freedback\")'>cybergirls</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"freedback\")'>magazine covers</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"about us\")'>about us</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"cybergirls\")'>cybergirls</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"magazine covers\")'>magazine covers</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"extras\")'>Playboy extras</div>\n" +
             "    </div>\n" +
             "    <div class='footerCol'>\n" +
             "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"playmate dir tree\")'>Playmate List</div>\n" +
             "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"ranker\")'; >Playmate Rater</a></div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"about us\")'>about us</div>\n" +
             "    </div>\n" +
             "    <div class='footerCol'>\n" +
             "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"mailme\")'>email site developer</div>\n" +
@@ -62,18 +63,16 @@
         "<div class='flexContainer'>\n" +
             "    <div class='footerCol'>\n" +
             "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"about us\")'>about us</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"dir tree\")'>Category List</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"dir tree\")'>category list</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"blog\")'>blog</div>\n" +
             "    </div>\n" +
             "    <div class='footerCol'>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"ranker\")'; >Porn Rater</a></div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"videos\")'>Nasty Videos</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"ranker\")';>porn rater</a></div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"videos\")'>nasty Videos</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"slut archive\")'>slut archive</div>\n" +
             "    </div>\n" +
             "    <div class='footerCol'>\n" +
-            "        <div><a href='#'>About us</a></div>\n" +
             "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"mailme\")'>email site developer</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"blog\")'>Blog</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"porn dir tree\")'>Category List</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"slut archive\")'>Porn Archive</div>\n" +
             "    </div>\n" +
             "</div>\n" +
             "<div id='footerLastBuild' class='footerVersionMessage'></div>\n" +
@@ -86,8 +85,12 @@
     if (footerhtml === "") {
         if (document.domain === 'localhost')
             alert("ERROR in Ogglefooter.js setOggleFooter\nrootFolder: " + rootFolder + "  not found");
-        else
-            sendEmailToYourself("ERROR in Ogglefooter 126", "pageId: " + pageId + "<br/>rootFolder: " + rootFolder);
+        else {
+
+            sendEmailToYourself("ERROR in Ogglefooter 1212", "pageId: " + pageId +
+                "<br/>rootFolder: " + rootFolder +
+                "<br/>ipAddress: " + getCookieValue("IpAddress"));
+        }
     }
     $('footer').html("");
     $('footer').html(footerhtml);

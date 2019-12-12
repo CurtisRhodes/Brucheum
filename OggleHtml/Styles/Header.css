@@ -67,6 +67,13 @@ header {
     text-decoration: underline;
 }
 
+.badgeImage {
+    height: 45px;
+    margin-left: 9px;
+    float: left;
+}
+
+
 .boobRankerBanner {
     height: 35px;
     border: solid 2px #000;

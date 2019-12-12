@@ -153,11 +153,14 @@ function logVisitor(pageId, calledFrom) {
                     if (visitorSuccess.Success === "ok") {
                         setCookieValue("IpAddress", data.ip);
                         setCookieValue("VisitorId", visitorSuccess.VisitorId);
+
                         if (getCookieValue("IpAddress" !== data.ip) || getCookieValue("VisitorId") !== visitorSuccess.VisitorId) {
                             sendEmailToYourself("COOKIE FAIL",
-                                visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country +
-                                "\n data.ip: " + data.ip + " getCookieValue('IpAddress') " + getCookieValue("IpAddress") +
-                                "\n visitorSuccess.VisitorId: " + visitorSuccess.VisitorId + " getCookieValue('VisitorId') " + getCookieValue("VisitorId"));
+                                visitorSuccess.PageName + " hit " +
+                                "<br/>from " + data.city + "," + data.region + " " + data.country +
+                                "<br/> data.ip: " + data.ip + " getCookieValue('IpAddress') " + getCookieValue("IpAddress") +
+                                "<br/> visitorSuccess.VisitorId: " + visitorSuccess.VisitorId +
+                                "<br/> getCookieValue('VisitorId') " + getCookieValue("VisitorId"));
                             //console.log("COOKIE FAIL.  " + getCookieValue("VisitorId") !== visitorSuccess.VisitorId);
                         }
 
@@ -281,7 +284,7 @@ function logVisitor(pageId, calledFrom) {
                         }
                     }
                     else {
-                        sendEmailToYourself("Ajax Error in logVisitor ", "PageId: " + pageId + "<br/><div style='color:red'>Message:</div>" + visitorSuccess.Success);
+                        sendEmailToYourself("Ajax Error in logVisitor ", "PageId: " + pageId + "<br/>" + visitorSuccess.Success);
                     }
                 },
                 error: function (jqXHR) {
@@ -446,8 +449,10 @@ function logPageHit(pageId) {
                     //    "<br/>ver: 12.6");
                     //return;
                 }
-                sendEmailToYourself("logPageHit error", "IpAddress: " + getCookieValue("IpAddress") +
-                    "<br/>pageId: " + pageId + "<br/>ver: 12.6" + pageHitSuccessModel.Success);
+                else {
+                    sendEmailToYourself("logPageHit error", "IpAddress: " + getCookieValue("IpAddress") +
+                        "<br/>pageId: " + pageId + "<br/>" + pageHitSuccessModel.Success);
+                }
             }
         },
         error: function (jqXHR) {
@@ -469,6 +474,7 @@ function logPageHit(pageId) {
 }
 
 function logVisit(visitorId) {
+
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Visit/LogVisit?visitorId=" + visitorId,
@@ -477,14 +483,8 @@ function logVisit(visitorId) {
                 if (logVisitSuccessModel.VisitAdded) {
                     if (verbosity > 3)
                         sendEmailToYourself("Visit Added ", "visitorId: " + visitorId);
-
                     if (document.domain === 'localhost') alert("Visit Added ", "visitorId: " + visitorId);
                 }
-                //else
-                //    if (document.domain === 'localhost') alert("Visit NOT Added ", "visitorId: " + visitorId);
-                //if (!isNullorUndefined(logVisitSuccessModel.WelcomeMessage))
-                //    $('#headerMessage').html(pageHitSuccessModel.WelcomeMessage);
-                //else
             }
             else {
                 sendEmailToYourself("Ajax Error in logVisit", "PageId: " + pageId + "<br/>Message: " + logVisitSuccessModel.Success);
@@ -493,8 +493,9 @@ function logVisit(visitorId) {
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "logVisit")) {
-                sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logVisit", "api/HitCounter/LogVisit?visitorId=" + visitorId +
-                    " Message: " + errorMessage);
+                sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logVisit",
+                    "api/HitCounter/LogVisit?visitorId=" + visitorId +
+                    "<br/>" + errorMessage);
             }
         }
     });

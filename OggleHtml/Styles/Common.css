@@ -18,6 +18,11 @@
     --topLinkRow14: 14px;
 }
 
+.pornBodyColors {
+    background-color: #ffcccc;
+}
+
+
 /*
     background-color: #f49ce8; 
 */
@@ -32,9 +37,6 @@ body {
     font-size: var(--normalFont);
 }
 
-.pornBodyColors {
-    background-color: #ffcccc;
-}
 
 .selectedDirTreeNode {
     background-color: #dcd7be; /* #b2e5eb; */

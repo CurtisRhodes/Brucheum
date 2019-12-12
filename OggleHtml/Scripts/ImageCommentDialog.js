@@ -5,12 +5,7 @@ function showImageCommentDialog(src, linkId, folderId, folderName) {
     folderDetailModel.Link = src;
     folderDetailModel.FolderId = folderId;
     folderDetailModel.FolderName = folderName;
-
-
     folderDetailModel.UserId = getCookieValue("VisitorId");
-
-
-
     folderDetailModel.CommentType = "CMT";
     $('#commentDialogImage').attr("src", src);
     //$('#imageCommentEditor').summernote('code', "");

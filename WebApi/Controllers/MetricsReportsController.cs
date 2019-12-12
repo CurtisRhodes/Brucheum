@@ -15,35 +15,36 @@ namespace WebApi.Controllers
     public class MetricsReportsController : ApiController
     {
         [HttpGet]
-        public DailyHitReport PageHitsReport()
+        [Route("api/MetricsReports/MetricsMatrixReport")]
+        public MetricsMatrixReport MetricsMatrixReport()
         {
-            DailyHitReport hitReport   = new DailyHitReport();
+            MetricsMatrixReport metricsMatrixReport = new MetricsMatrixReport();
             try
             {
                 using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
                 {
-                    VwPageHit vwPageHit = dbm.VwPageHits.FirstOrDefault();
-                    hitReport.PageHits.Today = vwPageHit.Today;
-                    hitReport.PageHits.Yesterday = vwPageHit.Yesterday;
-                    hitReport.PageHits.Two_Days_ago = vwPageHit.Two_Days_ago;
-                    hitReport.PageHits.Three_Days_ago = vwPageHit.Three_Days_ago;
-                    hitReport.PageHits.Four_Days_ago = vwPageHit.Four_Days_ago;
-                    hitReport.PageHits.Five_Days_ago = vwPageHit.Five_Days_ago;
-                    hitReport.PageHits.Six_Days_ago = vwPageHit.Six_Days_ago;
+                    //VwPageHit vwPageHit = dbm.VwPageHits.FirstOrDefault();
+                    List<MetricsMatrix> matrices = dbm.VwMetricsMatrices.ToList();
+                    foreach (MetricsMatrix matrix in matrices)
+                    {
+                        metricsMatrixReport.MatrixRows.Add(new MatrixRowModel()
+                        {
+                            Column = matrix.Column,
+                            Today = matrix.Today,
+                            Yesterday = matrix.Yesterday,
+                            Two_Days_ago = matrix.Two_Days_ago,
+                            Three_Days_ago = matrix.Three_Days_ago,
+                            Four_Days_ago = matrix.Four_Days_ago,
+                            Five_Days_ago = matrix.Five_Days_ago,
+                            Six_Days_ago = matrix.Six_Days_ago
+                        });
+                    }
 
-                    VwImageHit vwImageHit = dbm.VwImageHits.FirstOrDefault();
-                    hitReport.ImageHits.Today = vwImageHit.Today;
-                    hitReport.ImageHits.Yesterday = vwImageHit.Yesterday;
-                    hitReport.ImageHits.Two_Days_ago = vwImageHit.Two_Days_ago;
-                    hitReport.ImageHits.Three_Days_ago = vwImageHit.Three_Days_ago;
-                    hitReport.ImageHits.Four_Days_ago = vwImageHit.Four_Days_ago;
-                    hitReport.ImageHits.Five_Days_ago = vwImageHit.Five_Days_ago;
-                    hitReport.ImageHits.Six_Days_ago = vwImageHit.Six_Days_ago;
-                    hitReport.Success = "ok";
+                    metricsMatrixReport.Success = "ok";
                 }
             }
-            catch (Exception ex) { hitReport.Success = Helpers.ErrorDetails(ex); }
-            return hitReport;
+            catch (Exception ex) { metricsMatrixReport.Success = Helpers.ErrorDetails(ex); }
+            return metricsMatrixReport;
         }
 
         [HttpGet]
@@ -103,13 +104,13 @@ namespace WebApi.Controllers
                 using (var db = new OggleBoobleMySqContext())
                 {
                     activityReport.Items = db.Database.SqlQuery<ImageHitActivityReportItem>(
-                        "select IpAddress, City, Region, Country, PageId, ImageLinkId, "+
+                        "select IpAddress, City, Region, Country, PageId, g.Link, "+
                         "date_format(HitDateTime, '%m/%d/%Y') as hitDate, date_format(HitDateTime, '%h:%i.%s') as hitTime " +
                         "from OggleBooble.ImageHit ih " +
                         "join OggleBooble.Visitor v on ih.VisitorId = v.VisitorId " +
+                        "left join OggleBooble.ImageLink g on ih.ImageLinkId = g.Id " +
                         "where ih.HitDateTime between current_date and current_date + 1 " +
                         "order by hitTime desc, IpAddress limit 500").ToList();
-
                     activityReport.HitCount = db.ImageHits.Where(h => h.HitDateTime > DateTime.Today).Count();
                 }
                 activityReport.Success = "ok";

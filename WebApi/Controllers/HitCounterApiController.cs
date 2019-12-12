@@ -132,7 +132,6 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class VisitController : ApiController
     {
-        //private static readonly Random getrandom = new Random();
         [HttpPost]
         public LogVisitorSuccessModel LogVisitor(LogVisitorModel visitorModel)
         {
@@ -159,19 +158,17 @@ namespace WebApi
                         mdb.SaveChanges();
                         visitorSuccess.IsNewVisitor = true;
                         visitorSuccess.VisitorId = visitor.VisitorId;
-
-                        CategoryFolder categoryFolder = mdb.CategoryFolders.Where(f => f.Id == visitorModel.PageId).FirstOrDefault();
-                        if (categoryFolder != null)
-                            visitorSuccess.PageName = categoryFolder.FolderName;
                     }
                     else
                     {
-                        // FORCE A LOG VISIT 
-                        mdb.Visits.Add(new Visit() { VisitDate = DateTime.Now, VisitorId = myExisting.VisitorId });
-                        mdb.SaveChanges();
                         visitorSuccess.IsNewVisitor = false;
                         visitorSuccess.VisitorId = myExisting.VisitorId;
+                        // FORCE A LOG VISIT 
+                        LogVisit(myExisting.VisitorId);
                     }
+                    CategoryFolder categoryFolder = mdb.CategoryFolders.Where(f => f.Id == visitorModel.PageId).FirstOrDefault();
+                    if (categoryFolder != null)
+                        visitorSuccess.PageName = categoryFolder.FolderName;
                 }
                 visitorSuccess.Success = "ok";
             }
@@ -271,17 +268,17 @@ namespace WebApi
                     {
                         EventCode = logEventModel.EventCode,
                         EventDetail=logEventModel.EventDetail,
-                        PageId = logEventModel.PageId,
+                        PageId = logEventModel.CalledFrom,
                         VisitorId = logEventModel.VisitorId,
                         Occured = DateTime.Now
                     });
                     mdb.SaveChanges();
 
-                    var categoryFolderCalledFromRow = mdb.CategoryFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault();
+                    var categoryFolderCalledFromRow = mdb.CategoryFolders.Where(f => f.Id == logEventModel.CalledFrom).FirstOrDefault();
                     if (categoryFolderCalledFromRow != null)
                         logEventActivitySuccess.CalledFrom = categoryFolderCalledFromRow.FolderName;
                     else
-                        logEventActivitySuccess.CalledFrom = "{" + logEventModel.PageId + " not found}";
+                        logEventActivitySuccess.CalledFrom = "{" + logEventModel.CalledFrom + " not found}";
 
                     Visitor visitor = mdb.Visitors.Where(v => v.VisitorId == logEventModel.VisitorId).FirstOrDefault();
                     if (visitor != null)

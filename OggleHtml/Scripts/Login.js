@@ -1,4 +1,12 @@
-﻿function showRegisterDialog() {
+﻿
+// login and I will let you see 1000 more images.
+// bookmark my site with link oog?domain=122; to get another 1,000 image views.
+// put a link to my site on your site or your blog or your  whatever editor publish site and I'll cut you in to the 
+// use my product
+// Request extra privdleges 
+// pay me to do some programming for you and I'll let you in on all my source code
+
+function showRegisterDialog() {
     $('#customMessage').hide();
     forgetShowingCustomMessage = true;
     $('#modalContainer').show();
@@ -29,13 +37,14 @@ function attemptRegister() {
                 alert("attempting to register");
 
             var registeredUserModel = {};
+            registeredUserModel.VisitorId = getCookieValue("VisitorId");
             registeredUserModel.UserName = $('#txtRegisterUserName').val();
             registeredUserModel.Pswrd = $('#txtRegisterClearPassword').val();
             registeredUserModel.FirstName = $('#txtFirstName').val();
             registeredUserModel.LastName = $('#txtLastName').val();
             registeredUserModel.Email = $('#txtEmail').val();
             registeredUserModel.IpAddress = getCookieValue("IpAddress");
-            registeredUserModel.AppName = "OggleBoogle";
+            registeredUserModel.Status = "NEW";           
 
             $.ajax({
                 type: "POST",

@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using WebApi.DataContext;
 using WebApi.Models;
-using WebApi.WebStatsSqlContext;
+using WebApi.MySqDataContext;
 
 namespace WebApi
 {
@@ -18,7 +17,7 @@ namespace WebApi
             UsersModel users = new UsersModel();
             try
             {
-                using (WebStatsContext db = new WebStatsContext())
+                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
                     users.UserNames = db.RegisteredUsers.Select(r => r.UserName).ToList();
                     users.Success = "ok";
@@ -32,7 +31,7 @@ namespace WebApi
         public string VerifyLogin(string userName, string passWord)
         {
             string success = "";
-            using (WebStatsContext db = new WebStatsContext())
+            using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
             {
                 string encryptedPassword = HashSHA256(passWord);
                 RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == userName && u.Pswrd == encryptedPassword).FirstOrDefault();
@@ -54,21 +53,21 @@ namespace WebApi
         }
 
         [HttpGet]
-        public List<UserRoleModel> UserPermissions(string userName)
+        public List<UserRoleModel> UserPermissions(string visitorId)
         {
             List<UserRoleModel> roles = null;
-            using (WebStatsContext db = new WebStatsContext())
-            {
-                roles = (from u in db.UserRoles
-                         join r in db.Roles on u.RoleName equals r.RoleName
-                         where u.UserName == userName
-                         select new UserRoleModel()
-                         {
-                             UserName = userName,
-                             RoleName = r.RoleName
-                         }
-                         ).ToList();
-            }
+            //using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
+            //{
+            //    roles = (from u in db.UserRoles
+            //             join r in db.Refs on u.RoleId equals r.RefCode
+            //             where u.VisitorId == visitorId
+            //             select new UserRoleModel()
+            //             {
+            //                 UserName = userName,
+            //                 RoleName = r.RoleName
+            //             }
+            //             ).ToList();
+            //}
             return roles;
         }
 
@@ -78,7 +77,7 @@ namespace WebApi
             string success = "";
             try
             {
-                using (WebStatsContext db = new WebStatsContext())
+                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
                     RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == registeredUserModel.UserName).FirstOrDefault();
                     if (dbRegisteredUser != null)
@@ -86,7 +85,7 @@ namespace WebApi
                     else
                     {
                         registeredUserModel.Pswrd = HashSHA256(registeredUserModel.Pswrd);
-                        registeredUserModel.CreateDate = DateTime.Now;
+                        registeredUserModel.Created = DateTime.Now;
                         //registeredUserModel.IpAddress = Helpers.GetIPAddress();
                         db.RegisteredUsers.Add(registeredUserModel);
                         db.SaveChanges();
@@ -94,6 +93,23 @@ namespace WebApi
                         success = "ok";
                     }
                 }
+
+                //using (WebStatsContext db = new WebStatsContext())
+                //{
+                //    WebStatsSqlContext.RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == registeredUserModel.UserName).FirstOrDefault();
+                //    if (dbRegisteredUser != null)
+                //        success = "user name already exists";
+                //    else
+                //    {
+                //        registeredUserModel.Pswrd = HashSHA256(registeredUserModel.Pswrd);
+                //        registeredUserModel.CreateDate = DateTime.Now;
+                //        //registeredUserModel.IpAddress = Helpers.GetIPAddress();
+                //        db.RegisteredUsers.Add(registeredUserModel);
+                //        db.SaveChanges();
+
+                //        success = "ok";
+                //    }
+                //}
             }
             catch (Exception ex)
             {

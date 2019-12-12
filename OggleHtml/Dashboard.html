@@ -24,6 +24,9 @@
     <script src="Scripts/ImageCommentDialog.js"></script>
     <script src="Scripts/MoveCopyArchive.js"></script>
     <script src="Scripts/MetaTagDialog.js"></script>
+    <script src="Scripts/Dashboard.js"></script>
+    <script src="Scripts/Roles.js"></script>
+    <script src="Scripts/Reports.js"></script>
 
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
     <link href="Styles/loginDialog.css" rel="stylesheet" />
@@ -43,8 +46,6 @@
     <!--<script src="Scripts/jquery.signalR-2.4.1.min.js"></script>-->
     <link href="Styles/Dashboard.css" rel="stylesheet" />
     <link href="Styles/ChooseBox.css" rel="stylesheet" />
-    <script src="Scripts/Dashboard.js"></script>
-    <script src="Scripts/Roles.js"></script>
 
 </head>
 <body>
@@ -271,7 +272,7 @@
                 else {
                     clearInterval(waiter);
                     setOggleHeader("admin", 3910);
-                    setOggleFooter(3910, 'boobs');
+                    setOggleFooter('boobs', 3910);
                     buildDirectoryTree();                    
                     //logPageHit(3910, getCookieValue("VisitorId"), "Dashboard");
 

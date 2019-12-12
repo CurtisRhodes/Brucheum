@@ -44,7 +44,7 @@ function setAlbumPageHeader(folderId) {
             success: function (successModel) {
                 if (successModel.Success === "ok") {
                     setOggleHeader(successModel.ReturnValue, folderId);
-                    setOggleFooter(folderId, successModel.ReturnValue);
+                    setOggleFooter(successModel.ReturnValue, folderId);
                 }
                 else {
                     sendEmailToYourself("setAlbumPageHeader FAILURE", "api/AlbumPage/GetRootFolder?folderId=" + folderId + "<br>" + successModel.Success);
@@ -58,7 +58,7 @@ function setAlbumPageHeader(folderId) {
                     else
                         sendEmailToYourself("continuing on in setAlbumPageHeader", "folderId: " + folderId);
                     setOggleHeader("boobs", folderId);
-                    setOggleFooter(folderId, "boobs");
+                    setOggleFooter("boobs", folderId);
                 }
                 else
                     sendEmailToYourself("XHR ERROR IN ALBUM.JS setAlbumPageHeader", "api/AlbumPage/GetRootFolder?folderId=" + folderId + " <br/>" + errorMessage);
@@ -431,6 +431,8 @@ function ctxSAP(imgId) {
         $('#thumbImageContextMenu').css("left", picLeft);
     }
 
+
+    //alert("calling GetModelName: " + selectedImageLinkId);
     $.ajax({
         type: "GET",
         async: true,
@@ -504,7 +506,9 @@ function contextMenuAction(action) {
             });
             break;
         case "jump":
-            window.open("/album.html?folder=" + modelFolderId, "_blank");
+            //alert("see more of her: calledFrom: " + currentAlbumFolderId + " eventDetail: " + modelFolderId);
+            reportThenPerformEvent("SEE", currentAlbumFolderId, modelFolderId);
+            //window.open("/album.html?folder=" + modelFolderId, "_blank");
             break;
         case "comment":
             $("#thumbImageContextMenu").fadeOut();

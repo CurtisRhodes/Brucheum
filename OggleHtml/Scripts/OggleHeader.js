@@ -1,5 +1,5 @@
 ﻿function setOggleHeader(subdomain, folderId) {
-
+    //alert("setOggleHeader called from ")
 
     var headerHtml;
     var lang = "en";
@@ -9,22 +9,22 @@
     var archiveLink = "";
     var bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"boobs\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
 
-    if (subdomain === "special") {
-        // comming in from staticPage.js
-        switch (folderId) {
-            case 1139: subdomain = "blog"; break;
-            case 3907: subdomain = "ranker"; break;
-            case 3909: subdomain = "ranker"; break;
-            //case 3906:	Transitions
-            //3907	Ranker
-            //3908	Index
-            //3909	Porn Index
-            //3910	Admin Dashboard
-            default: subdomain = "boobs";
-        }
-        sendEmailToYourself("Someone click on a special page from a staic",
-            "special page: " + subdomain + "  folderId: " + folderId + "  ip: " + getCookieValue("IpAddress"));
-    }
+    //if (subdomain === "special") {
+    //    // comming in from staticPage.js
+    //    switch (folderId) {
+    //        case 1139: subdomain = "blog"; break;
+    //        case 3907: subdomain = "ranker"; break;
+    //        case 3909: subdomain = "ranker"; break;
+    //        //case 3906:	Transitions
+    //        //3907	Ranker
+    //        //3908	Index
+    //        //3909	Porn Index
+    //        //3910	Admin Dashboard
+    //        default: subdomain = "boobs";
+    //    }
+    //    sendEmailToYourself("Someone click on a special page from a staic",
+    //        "special page: " + subdomain + "  folderId: " + folderId + "  ip: " + getCookieValue("IpAddress"));
+    //}
 
     switch (subdomain) {
         case "blog":
@@ -68,7 +68,7 @@
                 "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",3796)'> cybergirls,</a> and\n" +
                 "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",2601)'> extras</a>\n";
 
-            archiveLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\",3)' class='babesArchive'>slut archive</a>";
+            archiveLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\"," + folderId + ",3)' class='babesArchive'>slut archive</a>";
             boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + "\"playboy\")' " +
                 "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
             break;
@@ -83,7 +83,7 @@
                 "               <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",411)'>naughty behaviour</a>\n";
 
             bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"porn\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
-            archiveLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\",3)' class='babesArchive'>slut archive</a>";
+            archiveLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\"," + folderId + ",440)' class='babesArchive'>slut archive</a>";
             boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + ",\"" + subdomain + "\")' " +
                 "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
             //bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",3909)'><img src='/Images/cslips02.png' title='porn home' class='bannerImage'/></a>\n";
@@ -122,16 +122,16 @@
             "           <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
             "           <div class='menuTabs replaceableMenuItems'>\n" +
             "               <div id='twinsLink' class='menuTabs displayHidden'>\n" +
-            "                   <a href='/album.html?folder=3904'><img src='/Images/geminiSymbol1.png' title='Hef likes twins' class='trackbackImage'></a>" +
+            "                   <a href='/album.html?folder=3904'><img src='/Images/geminiSymbol1.png' title='Hef likes twins' class='badgeImage'></a>" +
             "               </div>\n" +
             "               <div id='breastfulPlaymatesLink' class='menuTabs displayHidden'>\n" +
-            "                   <a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='trackbackImage'></a>" +
+            "                   <a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>" +
+            "               </div>\n" +
+            "               <div id='pmoyLink' class='menuTabs displayHidden'>\n" +
+            "                   <a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>" +
             "               </div>\n" +
             "               <div id='blackCenterfoldsLink' class='menuTabs displayHidden'>\n" +
             "                   <div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>\n" +
-            "               </div>\n" +
-            "               <div id='pmoyLink' class='menuTabs displayHidden'>\n" +
-            "                   <a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='trackbackImage'></a>" +
             "               </div>\n" +
             "           </div>\n" +
             "           <div id='divLoginArea' class='loginArea'>\n" +
@@ -173,78 +173,22 @@
     }
 
     if (subdomain !== "admin") {
-        showSpecialHeaderIcons(folderId);
+        if (folderId !== 3908) {
+            //alert("folderId: " + folderId + "  subdomain: " + subdomain);
+            showSpecialHeaderIcons(folderId);
+        }
     }
 }
 
-function setTrackbackLinks(folderId) {
-    //    PageId int not null,
-    //    TrackBackLink varchar(200) not null,
-    //    LinkStatus varchar(20),
-    //alert("setTrackbackLinks  pageId: " + pageId);
-
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/TrackbackLink/GetTrackBacks?folderId=" + folderId,
-        success: function (trackBackModel) {
-            if (trackBackModel.Success === "ok") {
-                $.each(trackBackModel.TrackBackItems, function (idx, trackBackItem) {
-                    if (trackBackItem.Site === "Babepedia") {
-                        $('#babapediaLink').html(trackBackItem.TrackBackLink);
-                        $('#babapediaLink').show();
-                    }                    
-                    if (trackBackItem.Site === "Freeones") {
-                        $('#freeonesLink').html(trackBackItem.TrackBackLink);
-                        $('#freeonesLink').show();
-                    }
-                    if (trackBackItem.Site === "Indexxx") {
-                        $('#indexxxLink').html(trackBackItem.TrackBackLink);
-                        $('#indexxxLink').show();
-                    }
-                });
-            }
-            else
-                alert("setTrackbackLinks: " + trackBackModel.Success);
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (document.domain === 'localhost') {
-                alert("XHR ERROR IN setTrackbackLinks\nfolderId=" + folderId +
-                    "\nurl: " + settingsArray.ApiServer + "api/TrackbackLink/GetTrackBacks?folderId=" + folderId +
-                    "\nIpAddress: " + getCookieValue("IpAddress") +
-                    "<br/>Message : " + errorMessage);
-            }
-            else {
-                if (!checkFor404(errorMessage, "setTrackbackLinks")) {
-                    sendEmailToYourself("XHR ERROR IN setTrackbackLinks",
-                        "folderId=" + folderId + "<br/>IpAddress: " +
-                        getCookieValue("IpAddress") + "<br/>Message : " + errorMessage);
-                }
-            }
-        }
-    });
-}
-
 function showSpecialHeaderIcons(folderId) {
-    //alert("entering showSpecialHeaderIcons.<br/>folderId: " + folderId);
-    //if (document.domain === 'localhost') alert("calling 'ImageCategoryDetail/Get?folderId' from oggleHeader/showSpecialHeaderIcons \nfolderId=" + folderId);
     setTrackbackLinks(folderId);
 
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
-        //url: settingsArray.ApiServer + "api/StaticPage/HasLink?folderId=" + folderId + "&hrefTextSubstring=" + hrefTextSubstring,
         success: function (folderDetailModel) {
-            //folderDetailModel.ExternalLinks = categoryFolderDetails.ExternalLinks;
             if (folderDetailModel.Success === "ok") {
-                //checkForLink(params.folder, "black centerfolds");
-                //checkForLink(params.folder, "freeones");
-                //checkForLink(params.folder, "babepedia");
-                //alert("folderDetailModel.ExternalLinks: " + folderDetailModel.ExternalLinks);
-
-                // 
                 if (!isNullorUndefined(folderDetailModel.ExternalLinks)) {
-
                     if (folderDetailModel.ExternalLinks.indexOf("Playmate Of The Year") > -1) {
                         $('#pmoyLink').show();
                     }
@@ -278,7 +222,56 @@ function showSpecialHeaderIcons(folderId) {
         }
     });
 }
-    
+
+function setTrackbackLinks(folderId) {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/TrackbackLink/GetTrackBacks?folderId=" + folderId,
+        success: function (trackBackModel) {
+            if (trackBackModel.Success === "ok") {
+                $.each(trackBackModel.TrackBackItems, function (idx, trackBackItem) {
+                    if (trackBackItem.Site === "Babepedia") {
+                        $('#babapediaLink').html(trackBackItem.TrackBackLink);
+                        $('#babapediaLink').show();
+                    }
+                    if (trackBackItem.Site === "Freeones") {
+                        $('#freeonesLink').html(trackBackItem.TrackBackLink);
+                        $('#freeonesLink').show();
+                    }
+                    if (trackBackItem.Site === "Indexxx") {
+                        $('#indexxxLink').html(trackBackItem.TrackBackLink);
+                        $('#indexxxLink').show();
+                    }
+                });
+            }
+            else {
+                if (trackBackModel.Success.indexOf("Option not supported") > -1) {
+                    sendEmailToYourself("Option not supported", "folderId=" + folderId + "<br/>IpAddress: " +
+                        getCookieValue("IpAddress") + "<br/>Message : " + errorMessage);
+                }
+                else
+                    sendEmailToYourself("setTrackbackLinks", "folderId=" + folderId + "<br/>IpAddress: " +
+                        getCookieValue("IpAddress") + "<br/>Message : " + errorMessage);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (document.domain === 'localhost') {
+                alert("XHR ERROR IN setTrackbackLinks\nfolderId=" + folderId +
+                    "\nurl: " + settingsArray.ApiServer + "api/TrackbackLink/GetTrackBacks?folderId=" + folderId +
+                    "\nIpAddress: " + getCookieValue("IpAddress") +
+                    "<br/>Message : " + errorMessage);
+            }
+            else {
+                if (!checkFor404(errorMessage, "setTrackbackLinks")) {
+                    sendEmailToYourself("XHR ERROR IN setTrackbackLinks",
+                        "folderId=" + folderId + "<br/>IpAddress: " +
+                        getCookieValue("IpAddress") + "<br/>Message : " + errorMessage);
+                }
+            }
+        }
+    });
+}
 
 function showFeedbackDialog() {
 //    alert("showFeedbackDialog1");
@@ -298,6 +291,7 @@ function showFeedbackDialog() {
     alert("showFeedbackDialog2");
 
 }
+
 function saveFeedbackDialog() {
     sendEmailToYourself("FeedBack", "ip: " + getCookieValue("IpAddress") + "<br/>"
         + $('#feedbackDialogSummerNoteTextArea').summernote('code'));

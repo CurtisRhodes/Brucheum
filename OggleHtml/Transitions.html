@@ -124,10 +124,9 @@
                 else {
                     $('#dots').html('');
                     clearInterval(waiter);
-                    if (subdomain == "boobs")
-                        setOggleHeader(subdomain, 3906);
-
-                    setOggleFooter(3906, subdomain);
+                    //if (subdomain == "boobs")
+                    setOggleHeader(subdomain, 3906);
+                    setOggleFooter(subdomain, 3906);
                     logPageHit(3906);
                     LoadPicArray(subdomain);
                     //setUserPermissions();

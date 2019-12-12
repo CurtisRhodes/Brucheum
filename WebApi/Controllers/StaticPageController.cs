@@ -77,14 +77,15 @@ namespace WebApi.Controllers
             return "<head>\n" +
                 "   <meta charset='utf-8'>\n" +
                 "   <title>" + folderName + " : OggleBooble</title>" +
+                "   <link rel='icon' type='image/png' href='/static/favicon.png' />" +
                 "   <meta name='Title' content='" + folderName + "' property='og:title'/>\n" +
                 "   <meta name='description' content='" + metaTagResults.MetaDescription + "'/>\n" +
-                "    <meta name='viewport' content='width=device-width, initial-scale=.07'>\n" +
-                "    <meta http-equiv='cache-control' content='max-age=0'>\n" +
-                "    <meta http-equiv='cache-control' content='no-cache'>\n" +
-                "    <meta http-equiv='expires' content='-1'>\n" +
-                "    <meta http-equiv='expires' content='Tue, 01 Jan 1980 11:00:00 GMT'>\n" +
-                "    <meta http-equiv='pragma' content='no-cache'>\n" +
+                "   <meta name='viewport' content='width=device-width, initial-scale=.07'>\n" +
+                "   <meta http-equiv='cache-control' content='max-age=0'>\n" +
+                "   <meta http-equiv='cache-control' content='no-cache'>\n" +
+                "   <meta http-equiv='expires' content='-1'>\n" +
+                "   <meta http-equiv='expires' content='Tue, 01 Jan 1980 11:00:00 GMT'>\n" +
+                "   <meta http-equiv='pragma' content='no-cache'>\n" +
                 "   <meta property='og:type' content='website' />\n" +
                 "   <meta property='og:url' content='" + httpLocation + folderName + ".html'/>\n" +
                 "   <meta name='Keywords' content='" + articleTagString + "'/>\n" +
@@ -94,12 +95,11 @@ namespace WebApi.Controllers
                 "   <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js'></script>\n" +
                 "   <link href='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css' rel='stylesheet'>\n" +
                 "   <script src='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js'></script>\n" +
-                "   <link href='/Styles/jqueryui.css' rel='stylesheet' />\n" +
-                "   <link rel='icon' type='image/png' href='/static/favicon.png' />" +
-                "   <script src='/Scripts/Login.js'></script>\n" +
-                "   <script src='/Scripts/OggleHeader.js'></script>\n" +
+
                 "   <script src='/Scripts/Common.js'></script>\n" +
                 "   <script src='/Scripts/HitCounter.v2.js'></script>\n" +
+                "   <script src='/Scripts/Login.js'></script>\n" +
+                "   <script src='/Scripts/OggleHeader.js'></script>\n" +
                 "   <script src='/Scripts/ModelInfoDialog.js'></script>\n" +
                 "   <script src='/Scripts/OggleEventLog.js'></script>\n" +
                 "   <script src='/Scripts/OggleSearch.js'></script>\n" +
@@ -110,6 +110,7 @@ namespace WebApi.Controllers
                 "   <script src='/Scripts/ImageCommentDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/FolderCategoryDialog.js' type='text/javascript'></script>\n" +
                 "   <script src='/Scripts/DirTree.js'></script>\n" +
+
                 "   <link href='/Styles/Common.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/Header.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/Slideshow.css' rel='stylesheet'/>\n" +
@@ -119,6 +120,7 @@ namespace WebApi.Controllers
                 "   <link href='/Styles/ModelInfoDialog.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/ImagePage.css' rel='stylesheet'/>\n" +
                 "   <link href='/Styles/LoginDialog.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/jqueryui.css' rel='stylesheet' />\n" +
                 "</head>";
         }
 

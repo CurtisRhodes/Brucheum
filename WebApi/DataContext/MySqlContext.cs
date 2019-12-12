@@ -22,7 +22,7 @@ namespace WebApi.MySqDataContext
         public virtual DbSet<PageHit> PageHits { get; set; }
         public virtual DbSet<Visitor> Visitors { get; set; }
         public virtual DbSet<Visit> Visits { get; set; }
-        public virtual DbSet<VwPageHit> VwPageHits { get; set; }
+        public virtual DbSet<MetricsMatrix> VwMetricsMatrices { get; set; }
         public virtual DbSet<VwImageHit> VwImageHits { get; set; }
         public virtual DbSet<StepChild> StepChildren { get; set; }
         public virtual DbSet<VwDirTree> VwDirTrees { get; set; }
@@ -32,9 +32,37 @@ namespace WebApi.MySqDataContext
         public virtual DbSet<EventLog> EventLogs { get; set; }
         public virtual DbSet<Ref> Refs { get; set; }
         public virtual DbSet<vwMostActiveUsersForToday> MostActiveUsersForToday { get; set; }
+        public virtual DbSet<RegisteredUser> RegisteredUsers { get; set; }
+        public virtual DbSet<UserRole> UserRoles { get; set; }
     }
 
-[Table("OggleBooble.Ref")]
+    [Table("OggleBooble.RegisteredUser")]
+    public class RegisteredUser
+    {
+        [Key]
+        public string VisitorId { get; set; }
+        public string IpAddress { get; set; }
+        public string UserName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public DateTime Created { get; set; }
+        public string Status { get; set; }
+        public string PornPreference { get; set; }
+        public string Pswrd { get; set; }
+    }
+    [Table("OggleBooble.UserRole")]
+    public class UserRole
+    {
+        [Key]
+        [Column(Order = 0)]
+        public string VisitorId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string RoleId { get; set; }
+    }
+
+    [Table("OggleBooble.Ref")]
     public class Ref
     {
         [Key]
@@ -105,10 +133,11 @@ namespace WebApi.MySqDataContext
         public DateTime VoteDate { get; set; }
     }
 
-    [Table("OggleBooble.vwPageHits")]
-    public partial class VwPageHit
+    [Table("OggleBooble.vwMetricsMatrix")]
+    public partial class MetricsMatrix
     {
         [Key]
+        public string Column { get; set; }
         public int Today { get; set; }
         public int Yesterday { get; set; }
         public int Two_Days_ago { get; set; }
@@ -256,3 +285,5 @@ namespace WebApi.MySqDataContext
         public int ImageHits { get; set; }
     }
 }
+
+

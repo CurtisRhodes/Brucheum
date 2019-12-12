@@ -841,10 +841,12 @@ namespace WebApi
                     List<TrackbackLink> trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
                     foreach (TrackbackLink trackbackLink in trackbackLinks)
                     {
+                        var ttrTrackBackLink = trackbackLink.TrackBackLink.Replace("target=\"_blank\"", "'").Replace("target='_blank'", "'");
+
                         trackBackModel.TrackBackItems.Add(new TrackBackItem()
                         {
                             Site = trackbackLink.Site,
-                            TrackBackLink = trackbackLink.TrackBackLink,
+                            TrackBackLink = ttrTrackBackLink,
                             LinkStatus = trackbackLink.LinkStatus
                         });
                     }
@@ -866,12 +868,14 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
+                    var ttrTrackBackLink = trackBackItem.TrackBackLink.Replace("target=\"_blank\"", "");
+
                     db.TrackbackLinks.Add(new TrackbackLink()
                     {
                         PageId = trackBackItem.PageId,
                         LinkStatus = trackBackItem.LinkStatus,
                         Site = trackBackItem.Site,
-                        TrackBackLink = trackBackItem.TrackBackLink
+                        TrackBackLink = ttrTrackBackLink
                     });
                     db.SaveChanges();
                     success = "ok";

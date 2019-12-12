@@ -26,21 +26,31 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
         var visitorId = getCookieValue("VisitorId");
         var ipAddress = getCookieValue("IpAddress");
 
-        if (isNullorUndefined(ipAddress) || isNullorUndefined(visitorId)) {
+        if (isNullorUndefined(ipAddress)) {
+            alert("who ate you");
+
+        }
+        if (isNullorUndefined(visitorId)) {
+
             sendEmailToYourself("In reportThenPerformEvent VisitorId: " + visitorId + " Ip: " + ipAddress,
                 "Calling LogVisitor.  Event: " + eventCode + " calledFrom: " + calledFrom);
+
             if (document.domain === 'localhost') {
                 alert("Who Are You? \nVisitorId: " + visitorId + " Ip: " + ipAddress, "Calling LogVisitor.  Event: " + eventCode + " calledFrom: " + calledFrom);
             }
+
+
             logVisitor(calledFrom, "reportThenPerformEvent");
-            return;
         }
+
+
+
 
         var logEventModel = {
             VisitorId: visitorId,
             EventCode: eventCode,
             EventDetail: eventDetail,
-            PageId: calledFrom
+            CalledFrom: calledFrom
         };
 
         $.ajax({
@@ -48,18 +58,16 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
             url: settingsArray.ApiServer + "/api/EventLog/LogEventActivity",
             data: logEventModel,
             success: function (logEventActivitySuccess) {
-                var ipAddr = getCookieValue("IpAddress");
                 if (logEventActivitySuccess.Success === "ok") {
 
                     if (eventCode === "PRN") {
                         //  setUserPornStatus(pornType);
                     }
 
-                    //if (ipAddress !== "68.203.90.183")
+                    if (ipAddress !== "68.203.90.183")
                     {
-
                         if (eventCode !== "CIC"     // Carousel Item Clicked 
-                            //&& eventCode !== "FLC"  // Footer Link Clicked 
+                            && eventCode !== "FLC"  // Footer Link Clicked 
                             //&& eventCode !== "BAC"  // Archive Clicked
                             && eventCode !== "SUB"  // Subfolder Clicked
                             && eventCode !== "BCC"  // Breadcrumb Clicked 
@@ -86,6 +94,9 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                     }
                     // NOW PERFORM EVENT
                     switch (eventCode) {
+
+
+
                         case "PRN":  //("Porn Option clicked");
                             window.location.href = '/index.html?subdomain=porn';
                             break;
@@ -141,15 +152,13 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                         case "CIC":  // carousel image clicked
                         case "BCC":  // Breadcrumb Clicked
                         case "BLC":  // banner link clicked
+                        case "SEE":  // see more of her
+                        case "BAC":  // Babes Archive Clicked
                             window.location.href = "/album.html?folder=" + eventDetail;
                             break;
                         case "CMX":
                             showModelInfoDialog(eventDetail, calledFrom, 'Images/redballon.png');
                             //reportThenPerformEvent("CMX", folderId, folderName);
-                            break;
-                        case "BAC":  // Babes Archive Clicked
-                            //window.open("/album.html?folder=" + pageId); 
-                            window.location.href = "/album.html?folder=3";
                             break;
                         case "HBX":  // Home breadcrumb Clicked
                             if (eventDetail === "porn")
@@ -201,10 +210,14 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                                 case "ranker": window.location.href = "/Ranker.html"; break;
                                 case "rejects": window.location.href = "/album.html?folder=1132"; break;
                                 case "centerfolds": window.location.href = "/album.html?folder=1132"; break;
+                                case "cybergirls": window.location.href = "/album.html?folder=3796"; break;                                    
+                                case "extras": window.location.href = "/album.html?folder=2601"; break;                                                                        
+                                case "magazine covers": window.location.href = "/album.html?folder=1986"; break;
                                 case "archive": window.location.href = "/album.html?folder=3"; break;
                                 case "videos": window.location.href = 'video.html'; break;
                                 case "mailme": window.location.href = 'mailto:curtishrhodes@hotmail.com'; break;
                                 case "freedback": showFeedbackDialog(); break;
+                                case "slut archive": window.location.href = "/album.html?folder=440"; break;
                                 default: alert("eventDetail: " + eventDetail); break;
                             }
                             break;

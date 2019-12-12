@@ -427,6 +427,12 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
+                    ImageLink imageLink = db.ImageLinks.Where(l => l.Link == newLink.Link).FirstOrDefault();
+                    if (imageLink != null) {
+                        successModel.Success = "Link Already Added";
+                        return successModel;                    
+                    }
+
                     string imageLinkId = Guid.NewGuid().ToString();
                     var existingLink = db.ImageLinks.Where(l => l.ExternalLink == newLink.Link).FirstOrDefault();
                     if (existingLink != null)

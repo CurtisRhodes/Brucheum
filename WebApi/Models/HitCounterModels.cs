@@ -64,7 +64,7 @@ namespace WebApi.Models
         public string City { get; set; }
         public string Region { get; set; }
         public string Country { get; set; }
-        public string ImageLinkId { get; set; }
+        public string Link { get; set; }
         public string hitDate { get; set; }
         public string hitTime { get; set; }
     }
@@ -83,19 +83,18 @@ namespace WebApi.Models
         public int PageHits { get; set; }
     }
 
-    public class DailyHitReport
+    public class MetricsMatrixReport
     {
-        public DailyHitReport() {
-            PageHits = new DailyHitModel();
-            ImageHits = new DailyHitModel();
+        public MetricsMatrixReport() {
+            MatrixRows = new List<MatrixRowModel>();
         }
-        public DailyHitModel PageHits { get; set; }
-        public DailyHitModel ImageHits { get; set; }
+        public List<MatrixRowModel> MatrixRows { get; set; }
         public string Success { get; set; }
     }
 
-    public class DailyHitModel
+    public class MatrixRowModel
     {   
+        public string Column { get; set; }
         public int Today { get; set; }
         public int Yesterday { get; set; }
         public int Two_Days_ago { get; set; }
@@ -147,7 +146,7 @@ namespace WebApi.Models
         public string VisitorId { get; set; }
         public string EventCode { get; set; }
         public string EventDetail { get; set; }
-        public int PageId { get; set; }
+        public int CalledFrom { get; set; }
     }
 
     public class LogEventActivitySuccessModel

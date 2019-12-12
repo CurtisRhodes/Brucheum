@@ -29,7 +29,7 @@ $(document).ready(function () {
             clearInterval(waiter);
             getBreadCrumbs(staticPageFolderId);
             setOggleHeader(staticPageRootFolderId, staticPageFolderId);
-            setOggleFooter(staticPageFolderId, staticPageRootFolderId);
+            setOggleFooter(staticPageRootFolderId, staticPageFolderId);
             logPageHit(staticPageFolderId); //, getCookieValue("VisitorId"), "Static Page");
 
             $('footerMessage').html(staticPageFolderName);

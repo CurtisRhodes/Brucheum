@@ -110,18 +110,21 @@ function addTrackback(link) {
     var hLink = "";
     if ($('#txtLinkHref').val().indexOf('freeones') > -1) {
         site = "Freeones";
-        hLink = "<a href='" + link + " target='_blank'>free porn</a>";
+        hLink = "<a href='" + link + "'>free porn</a>";
     }    
     if ($('#txtLinkHref').val().indexOf('indexxx') > -1) {
         site = "Indexxx";
-        hLink = "<a href='" + link + " target='_blank'>indexxx</a>";
+        hLink = "<a href='" + link + "'>indexxx</a>";
     }
     if ($('#txtLinkHref').val().indexOf('babepedia') > -1) {
         site = "Babepedia";
-        hLink = "<a href='" + link + " target='_blank'>Babapedia</a>";
+        hLink = "<a href='" + link + "'>Babepedia</a>";
     }
 
     if (site !== "") {
+
+        alert("addTrackback  site: " + site + "  link: " + hLink);
+
         var trackBackItem = {
             PageId: FolderDetailModel.FolderId,
             Site: site,
