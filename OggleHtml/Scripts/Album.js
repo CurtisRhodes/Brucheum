@@ -22,8 +22,14 @@ function directToStaticPage(folderId) {
                 window.location.href = successModel.ReturnValue;
             }
             else {
-                //alert("directToStaticPage " + successModel.Success);
-                sendEmailToYourself("jQuery fail in Album.js: directToStaticPage", "folderId: " + folderId + " Message: " + successModel.Success);
+                if (successModel.Success.indexOf("Option not supported") > -1) {
+                    sendEmailToYourself("SERVICE DOWN", "from directToStaticPage" +
+                        "<br/>folderId=" + folderId +
+                        "<br/>IpAddress: " + getCookieValue("IpAddress") +
+                        "<br/>" + successModel.Success);
+                }
+                else
+                    sendEmailToYourself("jQuery fail in directToStaticPage", "folderId: " + folderId + " <br/>" + successModel.Success);
             }
         },
         error: function (jqXHR) {
@@ -114,8 +120,12 @@ function getBreadCrumbs(folderId) {
                 document.title = currentAlbumJSfolderName + " : OggleBooble";
             }
             else {
-                //alert("getBreadCrumbs " + breadCrumbModel.Success);
-                sendEmailToYourself("jQuery fail in Album.js getBreadCrumbs ", breadCrumbModel.Success);
+                if (breadCrumbModel.Success.indexOf("Option not supported") > -1) {
+                    sendEmailToYourself("SERVICE DOWN", "from getBreadCrumbs<br/>folderId=" + folderId + "<br/>IpAddress: " +
+                        getCookieValue("IpAddress") + "<br/> " + breadCrumbModel.Success);
+                }
+                else
+                    sendEmailToYourself("jQuery fail in Album.js getBreadCrumbs", breadCrumbModel.Success);
             }
         },
         error: function (jqXHR) {

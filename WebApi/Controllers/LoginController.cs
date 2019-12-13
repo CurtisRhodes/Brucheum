@@ -53,11 +53,13 @@ namespace WebApi
         }
 
         [HttpGet]
-        public List<UserRoleModel> UserPermissions(string visitorId)
+        public List<string> UserPermissions(string visitorId)
         {
-            List<UserRoleModel> roles = null;
-            //using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
-            //{
+            List<string> roles = null;
+            using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
+            {
+                roles = db.UserRoles.Where(r => r.VisitorId == visitorId).Select(r => r.RoleId).ToList();
+            }
             //    roles = (from u in db.UserRoles
             //             join r in db.Refs on u.RoleId equals r.RefCode
             //             where u.VisitorId == visitorId

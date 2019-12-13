@@ -128,18 +128,10 @@ namespace WebApi.Controllers
             {
                 using (var db = new OggleBoobleMySqContext())
                 {
-                    activityReport.Items = db.Database.SqlQuery<ActivityReportItem>(
-                        " select IpAddress, City, Region, countryCode.RefDescription as Country, EventDetail, r.RefDescription, FolderName as calledFrom," +
-                        " date_format(Occured, '%m/%d/%Y') as hitDate, date_format(Occured, '%h:%i.%s') as hitTime " +
-                        " from OggleBooble.EventLog e" +
-                        " join OggleBooble.Ref r on e.EventCode = r.RefCode" +
-                        " join OggleBooble.Visitor v on e.VisitorId = v.VisitorId" +
-                        " join OggleBooble.Ref countryCode on v.Country = countryCode.RefCode" +
-                        " join OggleBooble.CategoryFolder f on e.PageId = f.Id" +
-                        " where Occured > current_date" +
-                        " order by Occured desc limit 500;").ToList();
+                    //activityReport.Items = db.Database.SqlQuery<ActivityReportItem>().ToList();
+                    activityReport.Items = db.vwDailyActivities.ToList();
 
-                    activityReport.HitCount = db.ImageHits.Where(h => h.HitDateTime > DateTime.Today).Count();
+                    activityReport.HitCount = db.EventLogs.Where(h => h.Occured > DateTime.Today).Count();
                 }
                 activityReport.Success = "ok";
             }

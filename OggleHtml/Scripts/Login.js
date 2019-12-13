@@ -33,8 +33,7 @@ function attemptRegister() {
     if (validateRegister()) {
         try {
 
-            if (document.domain === 'localhost')
-                alert("attempting to register");
+            //if (document.domain === 'localhost') alert("attempting to register");
 
             var registeredUserModel = {};
             registeredUserModel.VisitorId = getCookieValue("VisitorId");
@@ -50,8 +49,8 @@ function attemptRegister() {
                 type: "POST",
                 url: settingsArray.ApiServer + "/api/Login/RegisterUser",
                 data: registeredUserModel,
-                success: function (response) {
-                    if (response === "ok") {
+                success: function (success) {
+                    if (success === "ok") {
                         $('#registerUserDialog').dialog('close');
                         //alert("register happened. Attempt Login");
                         console.log("register happened. Attempt Login");
@@ -69,13 +68,10 @@ function attemptRegister() {
 
                         displayStatusMessage("ok", "thanks for Registering in " + userName);
                         // show welcom to Oggle Booble message.
-
-
                     }
                     else {
-                        alert("$('#registerValidationSummary').html(response).show();");
-                        console.log("$('#registerValidationSummary').html(response).show();");
-                        $('#registerValidationSummary').html(response).show();
+                        if (document.domain === 'localhost') alert("attempting to register" + success);
+                        //$('#registerValidationSummary').html(response).show();
                     }
                 },
                 error: function () {
@@ -108,6 +104,10 @@ function validateRegister() {
         $('#errRegisterPassword').text("password retype does not match").show();
         return false;
     }
+
+    //<input id="txtFirstName" type="text" class="roundedInput"><br>
+    //<input style="white-space:nowrap;" id="txtLastName" type="text" class="roundedInput"><br>
+    //<input id="txtEmail" type="email" class="roundedInput" placeholder="you@example.org"><br>
     $('#errRegisterPassword').hide();
     return true;
 }

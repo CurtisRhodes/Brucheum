@@ -67,7 +67,7 @@
                                 <div id="addNewLink" class="addLinkCrudArea">
                                     <div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
                                     <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
-                                    <div>upload<input id="uplImage" type="file" class="imageUpload" onchange="postImage()"/></div>
+                                    <!--<div>upload<input id="uplImage" type="file" class="imageUpload" onchange="postImage()"/></div>-->
                                     <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
                                 </div>
                                 <img id="imgLinkPreview" class="linkImage" />
@@ -106,7 +106,7 @@
                         </div>
                         <div id="divDailyActivityReport" class="workAreaContainer">
                             <div class="workAreaHeader">
-                                <div class="workAreaHeaderLabel"><h3>Daily Activity Report</h3></div>
+                                <div id="eventActivityReportHeader" class="workAreaHeaderLabel"></div>
                                 <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="$('.workAreaContainer').hide();$('#divAddImages').fadeIn();"></div>
                             </div>
                             <div class="workAreaDisplayContainer">

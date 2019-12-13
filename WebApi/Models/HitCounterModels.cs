@@ -29,23 +29,11 @@ namespace WebApi.Models
     {
         public ActivityReportModel()
         {
-            Items = new List<ActivityReportItem>();
+            Items = new List<MySqDataContext.vwDailyActivity>();
         }
-        public List<ActivityReportItem> Items { get; set; }
+        public List<MySqDataContext.vwDailyActivity> Items { get; set; }
         public int HitCount { get; set; }
         public string Success { get; set; }
-    }
-    public class ActivityReportItem
-    {
-        public string IpAddress { get; set; }
-        public string City { get; set; }
-        public string Region { get; set; }
-        public string Country { get; set; }
-        public string EventDetail { get; set; }
-        public string RefDescription { get; set; }
-        public string CalledFrom { get; set; }
-        public string hitDate { get; set; }
-        public string hitTime { get; set; }
     }
 
     public class ImageHitActivityReportModel

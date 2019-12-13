@@ -194,7 +194,7 @@ function showSpecialHeaderIcons(folderId) {
                     }
                     if (folderDetailModel.ExternalLinks.indexOf("biggest breasted centerfolds") > -1) {
                         $('#breastfulPlaymatesLink').show();
-                    }
+                    } 
                     if (folderDetailModel.ExternalLinks.indexOf("black centerfolds") > -1) {
                         $('#blackCenterfoldsLink').show();
                     }
@@ -204,10 +204,15 @@ function showSpecialHeaderIcons(folderId) {
                 }
             }
             else {
-                sendEmailToYourself("Error in showSpecialHeaderIcons", +
-                    "ip: " + getCookieValue("IpAddress") +
-                    "<br/>folderId: " + folderId +
-                    "<br/>" + folderDetailModel.Success);
+                if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
+                    sendEmailToYourself("SERVICE DOWN", "from getBreadCrumbs<br/>folderId=" + folderId + "<br/>IpAddress: " +
+                        getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
+                }
+                else
+                    sendEmailToYourself("Error in showSpecialHeaderIcons", +
+                        "ip: " + getCookieValue("IpAddress") +
+                        "<br/>folderId: " + folderId +
+                        "<br/>" + folderDetailModel.Success);
             }
         },
         error: function (jqXHR) {

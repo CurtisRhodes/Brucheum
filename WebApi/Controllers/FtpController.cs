@@ -427,16 +427,13 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    ImageLink imageLink = db.ImageLinks.Where(l => l.Link == newLink.Link).FirstOrDefault();
-                    if (imageLink != null) {
-                        successModel.Success = "Link Already Added";
-                        return successModel;                    
-                    }
-
                     string imageLinkId = Guid.NewGuid().ToString();
                     var existingLink = db.ImageLinks.Where(l => l.ExternalLink == newLink.Link).FirstOrDefault();
                     if (existingLink != null)
+                    {
                         imageLinkId = existingLink.Id;
+                        successModel.Success = "Link Already Added";
+                    }
                     else
                     {
                         CategoryFolder dbCategory = db.CategoryFolders.Where(f => f.Id == newLink.FolderId).First();
@@ -492,7 +489,7 @@ namespace WebApi
                             return successModel;
                         }
                         // TAKE THE WEBREQUEST FILE STREAM TO 
-                        
+
                         try
                         {
                             using (Stream requestStream = webRequest.GetRequestStream())
@@ -534,7 +531,7 @@ namespace WebApi
                         {
                             System.Diagnostics.Debug.WriteLine("delete didn't work " + ex.Message);
                         }
-                        
+
 
 
                         //var goDaddyLink = "http://" + dbCategory.RootFolder + ".ogglebooble.com/";
@@ -577,25 +574,31 @@ namespace WebApi
                             });
                             mdb.SaveChanges();
                         }
-
+                        successModel.Success = "ok";
                     }
                     try
                     {
                         int lnkCount = db.CategoryImageLinks.Where(c => c.ImageCategoryId == newLink.FolderId).Count();
                         if (lnkCount == 0)
-                            successModel.ReturnValue = "0";
-                        else
                             successModel.ReturnValue = imageLinkId;
+                        else
+                            successModel.ReturnValue = "0";
 
-                        //db.CategoryImageLinks.Add(new CategoryImageLink()
-                        //{
-                        //    ImageCategoryId = newLink.FolderId,
-                        //    ImageLinkId = imageLinkId,
-                        //    SortOrder = 99
-                        //});
-                        //db.SaveChanges();
-
-                        successModel.Success = "ok";
+                        CategoryImageLink categoryImageLink = db.CategoryImageLinks.Where(c => c.ImageLinkId == imageLinkId && c.ImageCategoryId == newLink.FolderId).FirstOrDefault();
+                        if (categoryImageLink == null)
+                        {
+                            db.CategoryImageLinks.Add(new CategoryImageLink()
+                            {
+                                ImageCategoryId = newLink.FolderId,
+                                ImageLinkId = imageLinkId,
+                                SortOrder = 99
+                            });
+                            db.SaveChanges();
+                            if (successModel.Success == "Link Already Added")
+                            {
+                                successModel.Success = "Link to existing image added to folder";
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {

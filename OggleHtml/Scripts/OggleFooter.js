@@ -87,7 +87,8 @@
             alert("ERROR in Ogglefooter.js setOggleFooter\nrootFolder: " + rootFolder + "  not found");
         else {
 
-            sendEmailToYourself("ERROR in Ogglefooter 1212", "pageId: " + pageId +
+            sendEmailToYourself("Ogglefooter 1212",
+                "pageId: " + pageId +
                 "<br/>rootFolder: " + rootFolder +
                 "<br/>ipAddress: " + getCookieValue("IpAddress"));
         }

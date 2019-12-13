@@ -116,13 +116,9 @@ function logVisitor(pageId, calledFrom) {
             }
         }
 
-        if (document.domain === 'localhost')
-            alert("vb3 LogVisitor call to IP info. IpAddress: " + ipAddress);
-        else {
-            if (verbosity > 10) {
-                sendEmailToYourself("LogVisitor call to IP info is happening.", " ip: " + ipAddress);
-            }
-        }
+        //if (document.domain === 'localhost') alert("vb3 LogVisitor call to IP info. IpAddress: " + ipAddress);
+        if (verbosity > 10) sendEmailToYourself("LogVisitor call to IP info is happening.", " ip: " + ipAddress);
+        
         $.getJSON("https://ipinfo.io?token=ac5da086206dc4", function (data) {
 
             if (isNullorUndefined(data.ip)) {
@@ -262,6 +258,13 @@ function logVisitor(pageId, calledFrom) {
                         }
                         else {
                             //console.log("Unnecessary HIT TO IPINFO.IO  ip: " + getCookieValue("IpAddress"));
+
+                            var userName = getCookieValue("UserName");
+                            //if (calledFrom === "reportThenPerformEvent") {
+                            if (document.domain === 'localhost') alert("LogVisitor calledFrom: " + calledFrom + "userName: " + userName);
+                          
+
+
                             var userName = getCookieValue("UserName");
                             if (!isNullorUndefined(userName)) {
                                 sendEmailToYourself("Unnecessary HIT TO IPINFO.IO.  EXCELLENT! " + userName + " came back for another visit ",
@@ -308,7 +311,7 @@ function logPageHit(pageId) {
         sendEmailToYourself("PageId undefined in LogPageHit.", "visitorId: " + visitorId);
         return;
     }
-    if (document.domain === 'localhost') {
+    if (document.domain === 'XXlocalhost') {
         setCookieValue("IpAddress", "68.203.90.183");
         setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
         //setCookieValue("UserName", "admin");
@@ -388,18 +391,15 @@ function logPageHit(pageId) {
             });
         }
         else {
-            if (document.domain === 'localhost')
-                alert("logPageHit fail.\n no VisitorId and no IpAddress. \nAre you robot");
-            else {
-                if (verbosity > 1)
-                    sendEmailToYourself("no VisitorId and no IpAddress in logPageHit", "Calling LogVisitor");
-                //    if (window.confirm("I am not a robot")) {
-                //        alert("Please Register or Login");
-                //    }
-                //    else
-                //        alert("Please Register or Login");
-                //    window.location.href = "/";
-            }
+            //if (document.domain === 'localhost') alert("logPageHit fail.\n no VisitorId and no IpAddress. \nAre you robot");
+            if (verbosity > 1)
+                sendEmailToYourself("no VisitorId and no IpAddress in logPageHit", "Calling LogVisitor");
+            //    if (window.confirm("I am not a robot")) {
+            //        alert("Please Register or Login");
+            //    }
+            //    else
+            //        alert("Please Register or Login");
+            //    window.location.href = "/";
             logVisitor(pageId, "logPageHit");
             return;
         }
@@ -500,3 +500,243 @@ function logVisit(visitorId) {
         }
     });
 }
+
+
+function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
+    try {
+        //alert("reportThenPerformEvent(eventCode: " + eventCode + ", calledFrom: " + calledFrom + ", eventDetail: " + eventDetail);
+        var visitorId = getCookieValue("VisitorId");
+        var ipAddress = getCookieValue("IpAddress");
+
+        //if (isNullorUndefined(ipAddress)) alert("who ate you");
+        if (isNullorUndefined(visitorId)) {
+            if (document.domain === 'localhost') {
+                alert("Who Are You? \nVisitorId: " + visitorId + " Ip: " + ipAddress, "Calling LogVisitor.  Event: " + eventCode + " calledFrom: " + calledFrom);
+            }
+            else
+                sendEmailToYourself("In reportThenPerformEvent VisitorId: " + visitorId + " Ip: " + ipAddress,
+                    "Calling LogVisitor.  Event: " + eventCode + " calledFrom: " + calledFrom);
+
+            logVisitor(calledFrom, "reportThenPerformEvent");
+        }
+
+
+        var logEventModel = {
+            VisitorId: visitorId,
+            EventCode: eventCode,
+            EventDetail: eventDetail,
+            CalledFrom: calledFrom
+        };
+
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "/api/EventLog/LogEventActivity",
+            data: logEventModel,
+            success: function (logEventActivitySuccess) {
+                if (logEventActivitySuccess.Success === "ok") {
+
+                    if (eventCode === "PRN") {
+                        //  setUserPornStatus(pornType);
+                    }
+                    if (ipAddress !== "68.203.90.183") {
+                        if (eventCode !== "CIC"     // Carousel Item Clicked 
+                            //&& eventCode !== "FLC"  // Footer Link Clicked 
+                            && eventCode !== "BAC"  // Archive Clicked
+                            && eventCode !== "SUB"  // Subfolder Clicked
+                            && eventCode !== "BCC"  // Breadcrumb Clicked 
+                            && eventCode !== "BLC"  // Banner Link Clicked 
+                            && eventCode !== "LMC"  // Left Menu Item Clicked
+                            && eventCode !== "HBX"  // Home Breadcrumb clicked
+                            && eventCode !== "CAA"  // Carousel Arrow Clicked
+                            && eventCode !== "HBC") // Home Icon Clicked
+                        {
+
+                            if (document.domain === 'localhost') {
+                                alert(logEventActivitySuccess.EventName + " {" + eventCode + "}" +
+                                    "\ncalledFrom: {" + calledFrom + "} : " + logEventActivitySuccess.CalledFrom +
+                                    "\neventDetail: {" + eventDetail + "} : " + logEventActivitySuccess.PageBeingCalled +
+                                    "\nIp: " + ipAddress + ", from " + logEventActivitySuccess.VisitorDetails);
+                            }
+                            else {
+                                sendEmailToYourself(logEventActivitySuccess.EventName + " {" + eventCode + "}",
+                                    "calledFrom: {" + calledFrom + "} : " + logEventActivitySuccess.CalledFrom +
+                                    "<br/>eventDetail: {" + eventDetail + "} : " + logEventActivitySuccess.PageBeingCalled +
+                                    "<br/>from: " + ipAddress + ", " + logEventActivitySuccess.VisitorDetails);
+                            }
+                        }
+                    }
+                    // NOW PERFORM EVENT
+                    switch (eventCode) {
+
+
+
+                        case "PRN":  //("Porn Option clicked");
+                            window.location.href = '/index.html?subdomain=porn';
+                            break;
+                        case "HBC":  //  Red ballon clicked
+                            if (eventDetail === 3909) {
+                                //alert("cocksucker lips clicked");
+                                window.location.href = '/index.html?subdomain=porn';
+                            }
+                            else {
+
+                                window.location.href = "/";
+                            }
+                            break;
+                        case "GAX":  // can I get a connection
+                            alert("can I get a connection");
+                            //window.location.href = ".";
+                            break;
+                        case "GIC": // Gallery Item Clicked
+
+                            break;
+                        case "CMC": // carousle context menu item clicked
+                            break;
+                        case "CAA": // carousle context menu item clicked
+                            if (direction === "foward")
+                                resume();
+                            else {
+                                // pop
+                                imageHistory.pop();
+                                imageIndex = imageHistory.pop();
+                                if (imageIndex > 0) {
+                                    $('#categoryTitle').fadeOut(intervalSpeed);
+                                    $('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
+                                        $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
+                                        $('#categoryTitle').html(carouselItemArray[imageIndex].FolderPath + ": " + carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
+                                        $('#laCarousel').fadeIn(intervalSpeed);
+                                        resizeCarousel();
+                                    });
+                                }
+                                else
+                                    alert("imageIndex: " + imageIndex);
+                            }
+                            break;
+                        case "CXM":  // carousle context menu opened
+                            break;
+                        case "EXP":
+                            window.open(eventDetail, "_blank");
+                            break;
+                        case "SSB":  //  Stepchild Subfolder Clicked
+                            window.open("/album.html?folder=" + eventDetail, "_blank");
+                            break;
+                        case "CPC":
+                        case 'SUB': // 'Sub Folder Click'
+                        case "CIC":  // carousel image clicked
+                        case "BCC":  // Breadcrumb Clicked
+                        case "BLC":  // banner link clicked
+                        case "SEE":  // see more of her
+                        case "BAC":  // Babes Archive Clicked
+                            window.location.href = "/album.html?folder=" + eventDetail;
+                            break;
+                        case "CMX":
+                            showModelInfoDialog(eventDetail, calledFrom, 'Images/redballon.png');
+                            //reportThenPerformEvent("CMX", folderId, folderName);
+                            break;
+                        case "HBX":  // Home breadcrumb Clicked
+                            if (eventDetail === "porn")
+                                window.location.href = '/index.html?subdomain=porn';
+                            else
+                                window.location.href = "/";
+                            break;
+                        case "RNK":  // Ranker Banner Clicked
+                            window.location.href = "/Ranker.html?subdomain=" + eventDetail;
+                            break;
+                        case "LMC":  // Left Menu Clicked
+                            switch (eventDetail) {
+                                case "transitions":
+                                    window.location.href = 'transitions.html';
+                                    break;
+                                case "ranker":
+                                    window.location.href = 'ranker.html';
+                                    break;
+                                case "dirTreeBoobs": //  Category List
+                                    showCatListDialog(2);
+                                    break;
+                                case "explain": // Let me Explain
+                                    showCustomMessage(38);
+                                    break;
+                                case "centerfolds":  // Playboy Centerfolds
+                                    window.location.href = '/album.html?folder=1132';
+                                    break;
+                                case "video":  // Video
+                                    window.location.href = 'video.html';
+                                    break;
+                                case "blog":
+                                    window.location.href = '/Blog.html';
+                                    break;
+                                default:
+                                    alert("uncaught switch option Left Menu Click: " + eventDetail);
+                                    break;
+                            }
+                            break;
+
+                        case "FLC":  //  footer link clicked
+                            //if (document.domain === 'localhost') alert("eventCode: " + eventCode + " pageId: " + pageId);
+                            switch (eventDetail) {
+                                case "about us": showCustomMessage(38); break;
+                                case "dir tree": showCatListDialog(2); break;
+                                case "porn dir tree": showCatListDialog(242); break;
+                                case "playmate dir tree": showCatListDialog(472); break;
+                                case "porn": window.location.href = '/index.html?subdomain=porn'; break;
+                                case "blog": window.location.href = '/Blog.html'; break;
+                                case "ranker": window.location.href = "/Ranker.html"; break;
+                                case "rejects": window.location.href = "/album.html?folder=1132"; break;
+                                case "centerfolds": window.location.href = "/album.html?folder=1132"; break;
+                                case "cybergirls": window.location.href = "/album.html?folder=3796"; break;
+                                case "extras": window.location.href = "/album.html?folder=2601"; break;
+                                case "magazine covers": window.location.href = "/album.html?folder=1986"; break;
+                                case "archive": window.location.href = "/album.html?folder=3"; break;
+                                case "videos": window.location.href = 'video.html'; break;
+                                case "mailme": window.location.href = 'mailto:curtishrhodes@hotmail.com'; break;
+                                case "freedback": showFeedbackDialog(); break;
+                                case "slut archive": window.location.href = "/album.html?folder=440"; break;
+                                default: alert("eventDetail: " + eventDetail); break;
+                            }
+                            break;
+                        default:
+                            alert("eventCode " + eventCode + "  not handled in reportThenPerformEvent");
+                    }
+                }
+                else {
+                    sendEmailToYourself("LogEventActivity fail", "Called from PageId: " + calledFrom +
+                        "<br/>EventCode: " + eventCode +
+                        "<br/>eventDetail: " + eventDetail +
+                        "<br/>VisitorId: " + visitorId +
+                        "<br/>Message: " + logEventActivitySuccess.Success);
+                }
+            },
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                //               alert("xhr error in common.js logActivity : " + errorMessage);
+                if (!checkFor404(errorMessage, "reportThenPerformEvent")) {
+                    var ipAddr = getCookieValue("IpAddress");
+                    if (ipAddr === "68.203.90.183") {
+                        alert("xhr error in reportThenPerformEvent\n url:/api/ChangeLog/LogEventActivity?eventCode=" + eventCode +
+                            "\ncalled from pageId=" + calledFrom + "\nIp: " + ipAddr + "\nMessage: " + errorMessage);
+                    }
+                    else {
+                        sendEmailToYourself("xhr error in reportThenPerformEvent", "url:/api/ChangeLog/LogEventActivity?eventCode=" + eventCode +
+                            "<br/>called from pageId: " + calledFrom +
+                            "<br/>Ip: " + ipAddr +
+                            "<br/>Message: " + errorMessage);
+                    }
+                }
+            }
+        });
+    } catch (e) {
+        sendEmailToYourself("Catch Error in OggleEvenLog()", "eventCode: " + eventCode +
+            "<br/>called from pageId: " + calledFrom +
+            "<br/>eventDetail: " + eventDetail +
+            "<br/>VisitorId: " + visitorId +
+            "<br/>Message: " + e);
+        if (document.domain === 'localhost') {
+            alert("reportThenPerformEvent Catch Error: " + e);
+        }
+    }
+}
+
+
+
+
+

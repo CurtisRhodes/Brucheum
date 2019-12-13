@@ -223,9 +223,8 @@ function addImageLink() {
                     $('#txtNewLink').val("");
                     resizeDashboardPage();
 
-                    if (successModel.ReturnValue === "0") {
-                        alert("set folder image: " + successModel.ReturnValue + "," + dashboardMainSelectedTreeId);
-
+                    if (successModel.ReturnValue !== "0") {
+                        alert("set image: " + successModel.ReturnValue + " as folder image for " + dashboardMainSelectedTreeId);
                         setFolderImage(successModel.ReturnValue, dashboardMainSelectedTreeId, "folder");
                     }
 

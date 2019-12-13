@@ -106,6 +106,9 @@ function runPageActivityReport() {
     $('#divDailyActivityReport').show();
     $('#dashBoardLoadingGif').show();
     $("#activityReport").html("");
+    $("#eventActivityReportHeader").html("<h3>Event Activity Report for "+ todayString() +"</h3>");
+
+
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/MetricsReports/ActivityReport",
@@ -117,7 +120,7 @@ function runPageActivityReport() {
                 $.each(activityReport.Items, function (idx, obj) {
                     kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
                     kludge += "<td>" + obj.Region + "</td><td>" + obj.Country + "</td>";
-                    kludge += "<td>" + obj.RefDescription + "</td><td>" + obj.CalledFrom.replace('OGGLEBOOBLE.COM', '') + "</td><td>" + obj.EventDetail + "</td>";
+                    kludge += "<td>" + obj.Event + "</td><td>" + obj.CalledFrom.replace('OGGLEBOOBLE.COM', '') + "</td><td>" + obj.Detail + "</td>";
                     kludge += "<td>" + obj.hitDate + "</td><td>" + obj.hitTime + "</td></tr>";
                 });
                 kludge += "</table>";

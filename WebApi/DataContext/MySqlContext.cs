@@ -34,6 +34,22 @@ namespace WebApi.MySqDataContext
         public virtual DbSet<vwMostActiveUsersForToday> MostActiveUsersForToday { get; set; }
         public virtual DbSet<RegisteredUser> RegisteredUsers { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
+        public virtual DbSet<vwDailyActivity> vwDailyActivities { get; set; }
+    }
+
+    [Table("OggleBooble.vwDailyActivity")]
+    public class vwDailyActivity
+    {
+        [Key]
+        public string IpAddress { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        public string Event { get; set; }
+        public string CalledFrom { get; set; }
+        public string Detail { get; set; }
+        public string hitDate { get; set; }
+        public string hitTime { get; set; }
     }
 
     [Table("OggleBooble.RegisteredUser")]
@@ -41,7 +57,7 @@ namespace WebApi.MySqDataContext
     {
         [Key]
         public string VisitorId { get; set; }
-        public string IpAddress { get; set; }
+        //public string IpAddress { get; set; }
         public string UserName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
