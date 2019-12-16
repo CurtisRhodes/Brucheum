@@ -472,12 +472,12 @@ function ctxSAP(imgId) {
                     $('#ctxSeeMore').show();
                 }
 
-                if (modelDetails.RootFolder === "playboy" && currentFolderRoot !== "playboy") {
-                    $('#ctxSeeMore').show();
-                }
-                if (modelDetails.RootFolder === "sluts" && currentFolderRoot !== "sluts") {
-                    $('#ctxSeeMore').show();
-                }
+                //if (modelDetails.RootFolder === "playboy" && currentFolderRoot !== "playboy") {
+                //    $('#ctxSeeMore').show();
+                //}
+                //if (modelDetails.RootFolder === "sluts" && currentFolderRoot !== "sluts") {
+                //    $('#ctxSeeMore').show();
+                //}
 
                 $('.adminLink').hide();
                 if (isInRole("Image Editor")) {
@@ -486,8 +486,13 @@ function ctxSAP(imgId) {
                 }
             }
             else {
-                sendEmailToYourself("jQuery fail album.js ctxSAP", "modelDetails.Success: " + modelDetails.Success);
-                //alert("GetModelName: " + modelDetails.Success);
+                if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
+                    sendEmailToYourself("SERVICE DOWN", "from album.js/ctxSAP" +
+                        "<br/>currentAlbumJSfolderName=" + currentAlbumJSfolderName + "<br/>IpAddress: " + getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
+                }
+                else
+                    sendEmailToYourself("jQuery fail album.js ctxSAP", 
+                        "<br/>currentAlbumJSfolderName=" + currentAlbumJSfolderName + "<br/>IpAddress: " + getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
             }
         },
         error: function (xhr) {

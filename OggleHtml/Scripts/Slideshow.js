@@ -328,19 +328,21 @@ function closeViewer(calledFrom) {
     clearInterval(imageViewerIntervalTimer);
     $('#txtStartSlideShow').html("start slideshow");
 
-    var closeMethod = "click";
-    if (calledFrom !== undefined) {
-        closeMethod = calledFrom;
-    }
-    if (sessionCount > 20) {
-        if (document.domain === 'localhost') {
-            alert("Close Slideshow ." + imageViewerFolderName + ".\nImages Viewed: " + sessionCount,
-                ". Close method: " + closeMethod + ".\nIp: " + getCookieValue("IpAddress"));
+    if (verbosity > 20) {
+        var closeMethod = "click";
+        if (calledFrom !== undefined) {
+            closeMethod = calledFrom;
         }
-        else {
-            sendEmailToYourself("slideshow: " + imageViewerFolderName + ". Images Viewed: " + sessionCount,
-                "Close method: " + closeMethod +
-                ".<br/>Ip: " + getCookieValue("IpAddress"));
+        if (sessionCount > 20) {
+            if (document.domain === 'localhost') {
+                alert("Close Slideshow ." + imageViewerFolderName + ".\nImages Viewed: " + sessionCount,
+                    ". Close method: " + closeMethod + ".\nIp: " + getCookieValue("IpAddress"));
+            }
+            else {
+                sendEmailToYourself("slideshow: " + imageViewerFolderName + ". Images Viewed: " + sessionCount,
+                    "Close method: " + closeMethod +
+                    ".<br/>Ip: " + getCookieValue("IpAddress"));
+            }
         }
     }
     sessionCount = 0;

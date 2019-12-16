@@ -282,7 +282,7 @@ namespace WebApi.Controllers
                 "   </div>\n" +
                 "       <div id='fileCount' class='countContainer'></div>\n" +
                 "       <div id='thumbImageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut();'>\n" +
-                "           <div id='ctxModelName' onclick='contextMenuActionShow()'>model name</div>\n" +
+                "           <div id='ctxModelName' onclick='contextMenuAction(\"show\")'>model name</div>\n" +
                 "           <div id='ctxSeeMore' onclick='contextMenuAction(\"jump\")'>see more of her</div>\n" +
                 "           <div onclick='contextMenuAction(\"comment\")'>comment</div>\n" +
                 "           <div onclick='contextMenuAction(\"explode\")'>explode</div>\n" +
@@ -296,8 +296,7 @@ namespace WebApi.Controllers
                 "      <div id='feedbackBanner' class='fixedMessageButton displayHidden' " +
                 "       title='I built this website entirely by myself\nusing only Html and JavaScript. Any comments or suggestions are greatly appreciated.'>feedback</div>\n" +
                 "   </div>\n" +
-                "</div>\n" +
-            "</div>";
+                "</div>";
             return bodyHtml;
         }
     }

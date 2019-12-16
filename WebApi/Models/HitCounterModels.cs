@@ -5,6 +5,28 @@ using System.Web;
 
 namespace WebApi.Models
 {
+    public class PageHitReportModel
+    {
+        public PageHitReportModel()
+        {
+            Items = new List<PageHitReportModelItem>();
+        }
+        public List<PageHitReportModelItem> Items { get; set; }
+        public int HitCount { get; set; }
+        public string Success { get; set; }
+    }
+    public class PageHitReportModelItem
+    {
+        public string IpAddress { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        public int PageId { get; set; }
+        public string FolderName { get; set; }
+        public string HitDate { get; set; }
+        public string HitTime { get; set; }
+    }
+
     public class MostActiveUsersModel
     {
         public MostActiveUsersModel()
@@ -29,32 +51,45 @@ namespace WebApi.Models
     {
         public ActivityReportModel()
         {
-            Items = new List<MySqDataContext.vwDailyActivity>();
+            Items = new List<ActiviyItem>();
         }
-        public List<MySqDataContext.vwDailyActivity> Items { get; set; }
+        public List<ActiviyItem> Items { get; set; }
         public int HitCount { get; set; }
         public string Success { get; set; }
     }
-
-    public class ImageHitActivityReportModel
-    {
-        public ImageHitActivityReportModel()
-        {
-            Items = new List<ImageHitActivityReportItem>();
-        }
-        public List<ImageHitActivityReportItem> Items { get; set; }
-        public int HitCount { get; set; }
-        public string Success { get; set; }
-    }
-    public class ImageHitActivityReportItem
+    public class ActiviyItem
     {
         public string IpAddress { get; set; }
         public string City { get; set; }
         public string Region { get; set; }
         public string Country { get; set; }
+        public string Event { get; set; }
+        public string CalledFrom { get; set; }
+        public string Detail { get; set; }
+        public string HitDate { get; set; }
+        public string HitTime { get; set; }
+    }
+
+    public class LatestImageHitsReportModel
+    {
+        public LatestImageHitsReportModel()
+        {
+            Items = new List<LatestImageHitsItem>();
+        }
+        public List<LatestImageHitsItem> Items { get; set; }
+        public int HitCount { get; set; }
+        public string Success { get; set; }
+    }
+    public class LatestImageHitsItem
+    {
+        public string IpAddress { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        public string FolderName { get; set; }
         public string Link { get; set; }
-        public string hitDate { get; set; }
-        public string hitTime { get; set; }
+        public int PageId { get; set; }
+        public string HitTime { get; set; }
     }
 
     public class MostPopularPagesReportModel

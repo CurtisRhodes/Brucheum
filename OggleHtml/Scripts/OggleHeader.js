@@ -8,24 +8,6 @@
     var boobsRankerLink = "";
     var archiveLink = "";
     var bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"boobs\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
-
-    //if (subdomain === "special") {
-    //    // comming in from staticPage.js
-    //    switch (folderId) {
-    //        case 1139: subdomain = "blog"; break;
-    //        case 3907: subdomain = "ranker"; break;
-    //        case 3909: subdomain = "ranker"; break;
-    //        //case 3906:	Transitions
-    //        //3907	Ranker
-    //        //3908	Index
-    //        //3909	Porn Index
-    //        //3910	Admin Dashboard
-    //        default: subdomain = "boobs";
-    //    }
-    //    sendEmailToYourself("Someone click on a special page from a staic",
-    //        "special page: " + subdomain + "  folderId: " + folderId + "  ip: " + getCookieValue("IpAddress"));
-    //}
-
     switch (subdomain) {
         case "blog":
         case "ranker":
@@ -158,6 +140,7 @@
         $('header').html(headerHtml);
     }
 
+    // PERMISSIONS
     var userName = getCookieValue("UserName");
     //alert("userName : " + userName + "  folderId: " + folderId);
     if (isNullorUndefined(userName)) {
@@ -172,6 +155,7 @@
         $('#optionNotLoggedIn').hide();
     }
 
+    // LOOK UP FOLDER DETAIL FOR BADGES AND TRACKBACK LINKS
     if (subdomain !== "admin") {
         if (folderId !== 3908) {
             //alert("folderId: " + folderId + "  subdomain: " + subdomain);

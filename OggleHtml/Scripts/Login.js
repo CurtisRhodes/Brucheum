@@ -159,7 +159,7 @@ function onLoginClick() {
         });
     }
     else
-        sendEmailToYourself("Login Attepmt", "Ip: " + ipAddress);
+        sendEmailToYourself("Login Attepmt with known Ip", "Ip: " + ipAddress);
 
     $('#modalContainer').show();
     $('#loginDialog').dialog({

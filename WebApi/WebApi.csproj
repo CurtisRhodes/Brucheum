@@ -314,7 +314,7 @@
     <Compile Include="Controllers\BookXmlController.cs" />
     <Compile Include="Controllers\BookDbApiController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
-    <Compile Include="Controllers\MetricsReportsController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\RefsController.cs" />
     <Compile Include="Controllers\RepairLinksController.cs" />
     <Compile Include="Controllers\FtpController.cs" />

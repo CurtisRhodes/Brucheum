@@ -91,7 +91,7 @@
                             </div>
                             <div class="workAreaRow">
                                 <div id="pageHitReport"></div>
-                                <button id="refreshPageHits" class="inline displayHidden" onclick="runPageHitsReport()">refresh</button>
+                                <button id="refreshPageHits" class="inline displayHidden" onclick="metricsMatrixReport()">refresh</button>
                             </div>
                             <div class="workAreaRow flexContainer">
                                 <div>
@@ -100,47 +100,21 @@
                                 </div>
                                 <div>
                                     <div id="mostPopularPagesReport" class="workAreaRowDisplayContainer"></div>
-                                    <button id="btnPopPages" class="inline displayHidden" onclick="runPopPages()">refresh</button>
+                                    <button id="btnPopPages" class="inline displayHidden" onclick="mostVisitedPagesPages()">refresh</button>
                                 </div>
                             </div>
                         </div>
-                        <div id="divDailyActivityReport" class="workAreaContainer">
+                        <div id="divStandardReport" class="workAreaContainer">
                             <div class="workAreaHeader">
-                                <div id="eventActivityReportHeader" class="workAreaHeaderLabel"></div>
-                                <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="$('.workAreaContainer').hide();$('#divAddImages').fadeIn();"></div>
-                            </div>
-                            <div class="workAreaDisplayContainer">
-                                <div id="activityReport" class="tightReport"></div>
-                            </div>
-                            <div class="workareaFooter">
-                                <span id="activityReportHits"></span>
-                                <button id="refreshActivityReport" class="inline" onclick="runPageActivityReport()">refresh</button>
-                            </div>
-                        </div>
-                        <div id="divImageHitActivityReport" class="workAreaContainer">
-                            <div class="workAreaHeader">
-                                <div class="workAreaHeaderLabel"><h3>Image Hit Activity Report</h3></div>
+                                <div id="reportLabel"  class="workAreaHeaderLabel"><h3>Most Active Users Report</h3></div>
                                 <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="$('.workAreaContainer').hide();$('#divAddImages').fadeIn();"></div>
                             </div>
                             <div class='workAreaDisplayContainer'>
-                                <div id="imageHitActivityReport" class="tightReport"></div>
+                                <div id="divStandardReportArea"></div>
                             </div>
                             <div class="workareaFooter">
-                                <span id="imageHitActivityHits"></span>
-                                <button id="refreshActivityReport" class="inline" onclick="runImageHitActivityReport()">refresh</button>
-                            </div>
-                        </div>
-                        <div id="divMostAvtiveUsersReport" class="workAreaContainer">
-                            <div class="workAreaHeader">
-                                <div class="workAreaHeaderLabel"><h3>Most Active Users Report</h3></div>
-                                <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="$('.workAreaContainer').hide();$('#divAddImages').fadeIn();"></div>
-                            </div>
-                            <div class='workAreaDisplayContainer'>
-                                <div id="mostAvtiveUsersReport"></div>
-                            </div>
-                            <div class="workareaFooter">
-                                <span id="mostAvtiveUsersCount"></span>
-                                <button id="refreshActivityReport" class="inline" onclick="runMostActiveUsersReport()">refresh</button>
+                                <span id="divStandardReportCount"></span>
+                                <button id="refreshActivityReport" class="inline" onclick="rerunReport()">refresh</button>
                             </div>
                         </div>
                     </div>

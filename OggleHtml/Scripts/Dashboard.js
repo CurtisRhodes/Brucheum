@@ -48,15 +48,17 @@ function setDashboardHeader(viewId) {
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
             break;
         case "Reports":
-            $('#dashboardLeftMenu').html("<div class='clickable' onclick='runPageActivityReport()'>Daily Activity</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showPerfMetrics()'>Performance Metrics</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='runImageHitActivityReport()'>Latest Image Hits</div>");
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick='showPerfMetrics()'>Performance Metrics</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showPageHitReport()'>Page Hit Report</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showEventActivityReport()'>Event Activity</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMostActiveUsersReport()'>Most Active Users</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showLatestImageHitsReport()'>Latest Image Hits</div>");
             break;
         case "Admin":
             $('.workAreaContainer').hide();
             $('#divAddImages').show();
-            $('#dashboardLeftMenu').html("<div class='clickable' onclick=\"$('#createStaticPagesCrud').dialog('open');\">Create Static Pages</div>");
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick='buildDirectoryTree()'>ReBuild Dir Tree</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#createStaticPagesCrud').dialog('open');\">Create Static Pages</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='repairLinks()'>Repair Links</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#createNewFolderDialog').dialog('open');\">Create New Folder</div>");

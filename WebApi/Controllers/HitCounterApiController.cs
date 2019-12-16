@@ -233,8 +233,8 @@ namespace WebApi
             {
                 using (WebStatsSqlContext.WebStatsContext db = new WebStatsSqlContext.WebStatsContext())
                 {
-                    WebStatsSqlContext.ChangeLog alredyExists = db.ChangeLogs.Where(cl => cl.PageId == changeLog.PageId && cl.Activity == changeLog.Activity).FirstOrDefault();
-                    if (alredyExists == null)
+                    //WebStatsSqlContext.ChangeLog alredyExists = db.ChangeLogs.Where(cl => cl.PageId == changeLog.PageId && cl.Activity == changeLog.Activity).FirstOrDefault();
+                    //if (alredyExists == null)
                     {
                         db.ChangeLogs.Add(new WebStatsSqlContext.ChangeLog()
                         {
@@ -248,7 +248,10 @@ namespace WebApi
                 }
                 success = "ok";
             }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex) 
+            {
+                success = Helpers.ErrorDetails(ex); 
+            }
             return success;
         }
     }

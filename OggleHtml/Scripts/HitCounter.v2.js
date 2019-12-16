@@ -1,31 +1,24 @@
-﻿// HITCOUNTER
-var verbosity = 1;
-
-// verbosity > 4 show new visits redirects
-// verbosity > 5 visitior came back
-//if ((ipAddress !== "68.203.90.183") && (ipAddress !== "50.62.160.105"))
-//if (document.domain === 'localhost')
-
+﻿
 function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
     //$('#footerMessage').html("logging image hit");
 
     if (isNullorUndefined(pageId)) {        
-        sendEmailToYourself("TROUBLE in logImageHit. PageId came in Null or Undefined", "pageId: " + pageId + ". Set to 1");
+        sendEmailToYourself("TROUBLE in logImageHit. PageId came in Null or Undefined", "Set to 1 or  something");
         return;
     }
     if (isNullorUndefined(visitorId) || visitorId === "unknown") {
-        if (verbosity > 1) {
-            sendEmailToYourself("NOT SENT TO LOGVISITOR visitorId", "ERROR in logImageHit.  PageId: " + pageId + ". VisitorId: " + visitorId + ".  IpAddr: " + ipAddr);
+        if (verbosity > 0) {
+            sendEmailToYourself("visitorId NOT SENT TO logImageHit", "Sending to LogVisitor. <br/> PageId: " + pageId + "<br/>IpAddr: " + ipAddr);
         }
-        //logVisitor(pageId, "logImageHit-PageId");
+        logVisitor(pageId, "logImageHit-PageId");
         return;
     }
     if (isNullorUndefined(ipAddress)) {
-        if (verbosity > 1) {
-            sendEmailToYourself("NO SENT TO LOGVISITOR ipAddress", "Problem in logImageHit.   PageId: " + pageId + ". VisitorId: " + visitorId + ".  IpAddr: " + ipAddr);
+        if (verbosity > 0) {
+            sendEmailToYourself("NO ipAddress SENT TO logImageHit", "(not that I'm using it).   PageId: " + pageId + ". VisitorId: " + visitorId + ".  IpAddr: " + ipAddr);
         }
         //logVisitor(pageId, "logImageHit-IpAddress");
-        return;
+        //return;
     }
     //if (visitorId !== '9bd90468-e633-4ee2-af2a-8bbb8dd47ad1') 
 
@@ -47,12 +40,15 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
                 var imageHits = imageHitSuccessModel.ImageHits;
                 var userHits = imageHitSuccessModel.UserHits;
 
-                if (verbosity > 10) {
-                    sendEmailToYourself("logImageHit SUCCESS",
-                        "IpAddress: " + imageHitSuccessModel.IpAddress + "<br/>imageHits: " + imageHits + "<br/>user hits: " + userHits + "<br/>initialHit: " + isInitialHit);
+                if (verbosity > 20) {
                     if (document.domain === 'localhost')
-                        alert("logImageHit SUCCESS pageName:" + imageHitSuccessModel.Success +
-                            "\nIpAddress: " + imageHitSuccessModel.IpAddress + "\nimageHits: " + imageHits + "\nuser hits: " + userHits + "\ninitialHit: " + isInitialHit);
+                        alert("logImageHit  \npageName:" + pageId + "\nIpAddress: " + ipAddress + "\nimageHits: " + imageHits + "\nuser hits: " + userHits + "\ninitialHit: " + isInitialHit);
+                    else
+                        sendEmailToYourself("Image Hit", "PageId: " + pageId +
+                            "<br/>IpAddress: " + ipAddress +
+                            "<br/>imageHits: " + imageHits +
+                            "<br/>user hits: " + userHits +
+                            "<br/>initialHit: " + isInitialHit);
                 }
             }
             else {
@@ -258,19 +254,13 @@ function logVisitor(pageId, calledFrom) {
                         }
                         else {
                             //console.log("Unnecessary HIT TO IPINFO.IO  ip: " + getCookieValue("IpAddress"));
-
-                            var userName = getCookieValue("UserName");
-                            //if (calledFrom === "reportThenPerformEvent") {
-                            if (document.domain === 'localhost') alert("LogVisitor calledFrom: " + calledFrom + "userName: " + userName);
-                          
-
-
                             var userName = getCookieValue("UserName");
                             if (!isNullorUndefined(userName)) {
                                 sendEmailToYourself("Unnecessary HIT TO IPINFO.IO.  EXCELLENT! " + userName + " came back for another visit ",
                                     visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                             }
                             else {
+                                if (document.domain === 'localhost') alert("LogVisitor \ncalled From: " + calledFrom + "userName: " + userName);
                                 if (verbosity > 10)
                                     sendEmailToYourself("Unnsecssary IpInfo hit called from: " + calledFrom,
                                         visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country +
@@ -306,12 +296,12 @@ function logVisitor(pageId, calledFrom) {
 }
 
 function logPageHit(pageId) {
-    //alert("logPageHit(" + pageId + "," + visitorId + "," + calledFrom + ")");
+    //alert("logPageHit(" + pageId + ")"; // + "," + visitorId + "," + calledFrom + ")");
     if (isNullorUndefined(pageId)) {
         sendEmailToYourself("PageId undefined in LogPageHit.", "visitorId: " + visitorId);
         return;
     }
-    if (document.domain === 'XXlocalhost') {
+    if (document.domain === 'localhost') {
         setCookieValue("IpAddress", "68.203.90.183");
         setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
         //setCookieValue("UserName", "admin");
@@ -320,7 +310,7 @@ function logPageHit(pageId) {
         $('#spnUserName').html(getCookieValue("UserName"));
         $('#optionLoggedIn').show();
         $('#optionNotLoggedIn').hide();
-        return;
+        //return;
     }
 
     // TRY GETVISITOR FROM IP IF YOU HAVE IP BUT NO VISITOR ID 
@@ -345,11 +335,11 @@ function logPageHit(pageId) {
                             if (getCookieValue("VisitorId") === successModel.VisitorId) {
                                 //if (document.domain === 'localhost') alert("Saved having to call LogVisitor from logPageHit. Got visitorId from IP: " + ipAddress + ". VisitorId: " + successModel.VisitorId);
                                 //console.log("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));
-                                if (verbosity > 1) {
+                                if (verbosity > 0) {
                                     sendEmailToYourself("Found Viisitor Id from Ip: ", "used IpAddress: " + ipAddress + " to find visitorId: " +
                                         successModel.VisitorId + ". Calling logPageHit again");
                                 }
-                                logPageHit(pageId, ipAddress, "inside after GetVisitorIdFromIP");
+                                //logPageHit(pageId); //, ipAddress, "inside after GetVisitorIdFromIP");
                             }
                             else {
                                 if (document.domain === 'localhost') {
@@ -357,7 +347,7 @@ function logPageHit(pageId) {
                                     //console.log("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));
                                 }
                                 else {
-                                    if (verbosity > 1) {
+                                    if (verbosity > 0) {
                                         sendEmailToYourself("GetVisitorIdFromIP Failed", "IpAddress: " + ipAddress + ". VisitorId: " + successModel.VisitorId);
                                     }
                                 }
@@ -418,25 +408,17 @@ function logPageHit(pageId) {
             if (pageHitSuccessModel.Success === "ok") {
                 // MOVE PAGE HITS TO FOOTER SOMEDAY
 
-                // login and I will let you see 1000 more images.
-                // bookmark my site with link oog?domain=122; to get another 1,000 image views.
-                // put a link to my site on your site or your blog or your  whatever editor publish site and I'll cut you in to the 
-                // use my product
-                // Request extra privdleges 
-                // pay me to do some programming for you and I'll let you in on all my source code
-
-                // ADD FREE VISITS ALLOWED CLIPPER HERE
-                if (pageHitSuccessModel.UserHits > freeVisitorHitsAllowed) {
-                    alert("you have now visited " + pageHitSuccessModel.UserHits + " pages." +
-                        "\n It's time you Registered and logged in." +
-                        "\n you will be placed in manditory comment mode until you log in ");
-                }
-
                 $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits.toLocaleString());
-                if (verbosity > 11) {
-                    sendEmailToYourself("Just so you know; valid page hits are being recorded.",
-                        "Someone visited a page other than playboy: " + pageHitSuccessModel.ParentName + "/" + pageHitSuccessModel.PageName +
-                        "<br/> Called from " + calledFrom + "<br/>IpAddress: " + getCookieValue("IpAddress") + ".<br/>RootFolder: " + pageHitSuccessModel.RootFolder);
+
+                if (verbosity > 20) {
+                    if (document.domain === 'localhost')
+                        alert("page hit: (" + pageHitSuccessModel.RootFolder + ") " + pageHitSuccessModel.ParentName + "/" + pageHitSuccessModel.PageName +
+                            "\nIp: " + getCookieValue("IpAddress"));
+                    else
+                        sendEmailToYourself("page hit: (" + pageHitSuccessModel.RootFolder + ") " + pageHitSuccessModel.ParentName + "/" + pageHitSuccessModel.PageName,
+                            "PageId: " + pageId +
+                            "<br/>VisitorId: " + visitorId +
+                            "<br/>IpAddress: " + getCookieValue("IpAddress"));
                 }
                 // LOG VISIT
                 logVisit(visitorId);
@@ -501,7 +483,6 @@ function logVisit(visitorId) {
     });
 }
 
-
 function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
     try {
         //alert("reportThenPerformEvent(eventCode: " + eventCode + ", calledFrom: " + calledFrom + ", eventDetail: " + eventDetail);
@@ -513,13 +494,14 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
             if (document.domain === 'localhost') {
                 alert("Who Are You? \nVisitorId: " + visitorId + " Ip: " + ipAddress, "Calling LogVisitor.  Event: " + eventCode + " calledFrom: " + calledFrom);
             }
-            else
-                sendEmailToYourself("In reportThenPerformEvent VisitorId: " + visitorId + " Ip: " + ipAddress,
-                    "Calling LogVisitor.  Event: " + eventCode + " calledFrom: " + calledFrom);
-
+            if (verbosity > 4) {
+                sendEmailToYourself("Calling LogVisitor from reportThenPerformEvent",
+                    " VisitorId: " + visitorId + "<br/> Ip: " + ipAddress,
+                    "<br/>Event: " + eventCode + " calledFrom: " + calledFrom);
+            }
             logVisitor(calledFrom, "reportThenPerformEvent");
+            visitorId = "---";
         }
-
 
         var logEventModel = {
             VisitorId: visitorId,
@@ -568,8 +550,6 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                     // NOW PERFORM EVENT
                     switch (eventCode) {
 
-
-
                         case "PRN":  //("Porn Option clicked");
                             window.location.href = '/index.html?subdomain=porn';
                             break;
@@ -593,7 +573,7 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                         case "CMC": // carousle context menu item clicked
                             break;
                         case "CAA": // carousle context menu item clicked
-                            if (direction === "foward")
+                            if (eventDetail === "foward")
                                 resume();
                             else {
                                 // pop
@@ -699,11 +679,17 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                     }
                 }
                 else {
-                    sendEmailToYourself("LogEventActivity fail", "Called from PageId: " + calledFrom +
-                        "<br/>EventCode: " + eventCode +
-                        "<br/>eventDetail: " + eventDetail +
-                        "<br/>VisitorId: " + visitorId +
-                        "<br/>Message: " + logEventActivitySuccess.Success);
+                    if (logEventActivitySuccess.Success.indexOf("Option not supported") > -1)
+                        sendEmailToYourself("SERVICE DOWN", "from " + logEventActivitySuccess.EventName + " {" + eventCode + "}",
+                            "calledFrom: {" + calledFrom + "} : " + logEventActivitySuccess.CalledFrom +
+                            "<br/>eventDetail: {" + eventDetail + "} : " + logEventActivitySuccess.PageBeingCalled +
+                            "<br/>from: " + ipAddress + ", " + logEventActivitySuccess.VisitorDetails);
+                    else
+                        sendEmailToYourself("LogEventActivity fail", "Called from PageId: " + calledFrom +
+                            "<br/>EventCode: " + eventCode +
+                            "<br/>eventDetail: " + eventDetail +
+                            "<br/>VisitorId: " + visitorId +
+                            "<br/>Message: " + logEventActivitySuccess.Success);
                 }
             },
             error: function (jqXHR) {
@@ -736,7 +722,33 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
     }
 }
 
+function checkForHitLimit(visitorId, userHits) {
+
+    if (pageHitSuccessModel.UserHits > freeVisitorHitsAllowed) {
+        alert("you have now visited " + pageHitSuccessModel.UserHits + " pages." +
+            "\n It's time you Registered and logged in." +
+            "\n you will be placed in manditory comment mode until you log in ");
+    }
+
+    if (userHits > userHitLimit) {
+        alert("you have now visited " + pageHitSuccessModel.UserHits + " pages." +
+            "\n It's time you Registered and logged in." +
+            "\n you will be placed in manditory comment mode until you log in ");
+
+    }
+
+    // login and I will let you see 1000 more images.
+    // bookmark my site with link oog?domain=122; to get another 1,000 image views.
+    // put a link to my site on your site or your blog or your  whatever editor publish site and I'll cut you in to the 
+    // use my product
+    // Request extra privdleges 
+    // pay me to do some programming for you and I'll let you in on all my source code
+
+    // ADD FREE VISITS ALLOWED CLIPPER HERE
 
 
 
 
+
+
+}

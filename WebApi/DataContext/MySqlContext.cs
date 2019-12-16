@@ -23,7 +23,7 @@ namespace WebApi.MySqDataContext
         public virtual DbSet<Visitor> Visitors { get; set; }
         public virtual DbSet<Visit> Visits { get; set; }
         public virtual DbSet<MetricsMatrix> VwMetricsMatrices { get; set; }
-        public virtual DbSet<VwImageHit> VwImageHits { get; set; }
+        public virtual DbSet<vwImageHit> vwImageHits { get; set; }
         public virtual DbSet<StepChild> StepChildren { get; set; }
         public virtual DbSet<VwDirTree> VwDirTrees { get; set; }
         public virtual DbSet<VwLink> VwLinks { get; set; }
@@ -35,21 +35,50 @@ namespace WebApi.MySqDataContext
         public virtual DbSet<RegisteredUser> RegisteredUsers { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<vwDailyActivity> vwDailyActivities { get; set; }
+        public virtual DbSet<vwPageHit> vwPageHits { get; set; }
+    }
+
+    [Table("OggleBooble.vwPageHits")]
+    public class vwPageHit
+    {
+        [Key]
+        [Column(Order = 0)]
+        public string IpAddress { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public int PageId { get; set; }
+        public string FolderName { get; set; }
+        [Key]
+        [Column(Order = 2)]
+        public string HitDate { get; set; }
+        [Key]
+        [Column(Order = 3)]
+        public string HitTime { get; set; }
     }
 
     [Table("OggleBooble.vwDailyActivity")]
     public class vwDailyActivity
     {
         [Key]
+        [Column(Order = 0)]
         public string IpAddress { get; set; }
         public string City { get; set; }
         public string Region { get; set; }
         public string Country { get; set; }
+        [Key]
+        [Column(Order = 1)]
         public string Event { get; set; }
         public string CalledFrom { get; set; }
         public string Detail { get; set; }
-        public string hitDate { get; set; }
-        public string hitTime { get; set; }
+        [Key]
+        [Column(Order = 2)]
+        public string HitDate { get; set; }
+        [Key]
+        [Column(Order = 3)]
+        public string HitTime { get; set; }
     }
 
     [Table("OggleBooble.RegisteredUser")]
@@ -164,16 +193,20 @@ namespace WebApi.MySqDataContext
     }
 
     [Table("OggleBooble.vwImageHits")]
-    public partial class VwImageHit
+    public partial class vwImageHit
     {
         [Key]
-        public int Today { get; set; }
-        public int Yesterday { get; set; }
-        public int Two_Days_ago { get; set; }
-        public int Three_Days_ago { get; set; }
-        public int Four_Days_ago { get; set; }
-        public int Five_Days_ago { get; set; }
-        public int Six_Days_ago { get; set; }
+        [Column(Order = 0)]
+        public string IpAddress { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        public string FolderName { get; set; }
+        public int PageId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string HitTime { get; set; }
+        public string Link { get; set; }
     }
 
     [Table("OggleBooble.Visitor")]

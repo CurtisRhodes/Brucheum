@@ -1,9 +1,10 @@
 ﻿// REPORTS
+var activeReport = "";
 function metricsMatrixReport() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/MetricsReports/MetricsMatrixReport",
+        url: settingsArray.ApiServer + "api/Reports/MetricsMatrixReport",
         success: function (metricsMatrixReport) {
             $('#dashBoardLoadingGif').hide();
             if (metricsMatrixReport.Success === "ok") {
@@ -25,7 +26,6 @@ function metricsMatrixReport() {
                 $("#refreshPageHits").show();
                 $("#btnPopPages").show();
                 $("#btnMostImageHits").show();
-                $("#btnImageHitActivityReport").show();
 
                 mostVisitedPagesPages();
                 runMostImageHits();
@@ -48,7 +48,7 @@ function mostVisitedPagesPages() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/MetricsReports/MostVisitedPagesReport",
+        url: settingsArray.ApiServer + "/api/Reports/MostVisitedPagesReport",
         success: function (popularPages) {
             $('#dashBoardLoadingGif').hide();
             if (popularPages.Success === "ok") {
@@ -77,7 +77,7 @@ function runMostImageHits() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/MetricsReports/MostImageHitsReport",
+        url: settingsArray.ApiServer + "/api/Reports/MostImageHitsReport",
         success: function (mostImageHits) {
             $('#dashBoardLoadingGif').hide();
             if (mostImageHits.Success === "ok") {
@@ -101,17 +101,22 @@ function runMostImageHits() {
     });
 }
 
-function runPageActivityReport() {
+
+function showEventActivityReport() {
+    $("#divStandardReportArea").addClass("tightReport");
+    activeReport = "EventActivity";
     $('.workAreaContainer').hide();
-    $('#divDailyActivityReport').show();
+    $('#divStandardReport').show();
+    $("#reportLabel").html("<h3>Event Activity Report for " + todayString() + "</h3>");
+    runEventActivityReport();
+}
+function runEventActivityReport() {
     $('#dashBoardLoadingGif').show();
-    $("#activityReport").html("");
-    $("#eventActivityReportHeader").html("<h3>Event Activity Report for "+ todayString() +"</h3>");
-
-
+    $("#divStandardReportArea").html("");
+    $("#divStandardReportCount").html("");
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/MetricsReports/ActivityReport",
+        url: settingsArray.ApiServer + "/api/Reports/ActivityReport",
         success: function (activityReport) {
             $('#dashBoardLoadingGif').hide();
             if (activityReport.Success === "ok") {
@@ -121,12 +126,11 @@ function runPageActivityReport() {
                     kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
                     kludge += "<td>" + obj.Region + "</td><td>" + obj.Country + "</td>";
                     kludge += "<td>" + obj.Event + "</td><td>" + obj.CalledFrom.replace('OGGLEBOOBLE.COM', '') + "</td><td>" + obj.Detail + "</td>";
-                    kludge += "<td>" + obj.hitDate + "</td><td>" + obj.hitTime + "</td></tr>";
+                    kludge += "<td>" + obj.HitDate + "</td><td>" + obj.HitTime + "</td></tr>";
                 });
                 kludge += "</table>";
-                $("#activityReport").html(kludge);
+                $("#divStandardReportArea").html(kludge);
                 $("#activityReportHits").html(" Total: " + activityReport.HitCount.toLocaleString());
-                $('#dashBoardLoadingGif').hide();
             }
             else {
                 alert("activityReport: " + activityReport.Success);
@@ -142,33 +146,36 @@ function runPageActivityReport() {
     });
 }
 
-function runImageHitActivityReport() {
+function showLatestImageHitsReport() {
+    activeReport = "LatestImageHits";
     $('.workAreaContainer').hide();
-    $('#divImageHitActivityReport').show();
+    $('#divStandardReport').show();
+    $('#reportLabel').html("<h3>Images Viewed " + todayString() + "</h3>");
+    runLatestImageHitsReport();
+}
+function runLatestImageHitsReport() {
     $('#dashBoardLoadingGif').show();
-    $("#activityReport").html("");
-    $("#imageHitActivityHits").html("");
+    $("#divStandardReportArea").html("");
+    $("#divStandardReportCount").html("");
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/MetricsReports/ImageHitActivityReport",
+        url: settingsArray.ApiServer + "api/Reports/LatestImageHits",
         success: function (imageHitActivityReport) {
             $('#dashBoardLoadingGif').hide();
             if (imageHitActivityReport.Success === "ok") {
                 var kludge = "<table>";
-                kludge += "<tr><th>ip</th><th>City</th><th>State</th><th>Country</th><th>link</th><th>hitdate</th><th>hit time</th></tr>";
+                kludge += "<tr><th>ip</th><th>From</th><th>Page</th><th>link</th><th>hit</th></tr>";
                 $.each(imageHitActivityReport.Items, function (idx, obj) {
-                    kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
-                    kludge += "<td>" + obj.Region + "</td><td>" + obj.Country + "</td>";
-                    kludge += "<td><img height=90 src='" + obj.Link + "'></td>";
-                    kludge += "<td>" + obj.hitDate + "</td><td>" + obj.hitTime + "</td></tr>";
+                    kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + ",<br/>" + obj.Region + "<br/>" + obj.Country + "</td>";
+                    kludge += "<td>" + obj.FolderName + "</td><td><img height=90 src='" + obj.Link + "'></td>";
+                    kludge += "<td>" + obj.HitTime + "</td></tr>";
                 });
                 kludge += "</table>";
-
-                $("#imageHitActivityReport").html(kludge);
-                $("#imageHitActivityHits").html(" Total: " + imageHitActivityReport.HitCount.toLocaleString());
+                $("#divStandardReportArea").html(kludge);
+                $("#divStandardReportCount").html(" Total: " + imageHitActivityReport.HitCount.toLocaleString());
             }
             else {
-                alert("runMostImageHits: " + mostImageHits.Success);
+                alert("ImageHitActivityReport: " + mostImageHits.Success);
             }
         },
         error: function (jqXHR) {
@@ -182,19 +189,30 @@ function runImageHitActivityReport() {
 }
 
 function showMostActiveUsersReport() {
+    activeReport = "MostActiveUsers";
     $('.workAreaContainer').hide();
-    $('#divMostAvtiveUsersReport').show();
+    $('#divStandardReport').show();
+    $('#reportLabel').html("<h3>Most Active Users " + todayString() + "</h3>");
     runMostActiveUsersReport();
+}
+function showPageHitReport() {
+    activeReport = "PageHitReport";
+    $("#divStandardReportArea").removeClass("tightReport");
+
+    $('.workAreaContainer').hide();
+    $('#divStandardReport').show();    
+    $('#reportLabel').html("<h3>Page Hit Report for " + todayString() + "</h3>");
+    runPageHitReport();
 }
 
 function runMostActiveUsersReport() {
-    //    [Route("api/MetricsReports/MostActiveUsersReport")]
+    $("#divStandardReportCount").html("");
+    $("#divStandardReportArea").removeClass("tightReport");
     $('#dashBoardLoadingGif').show();
-    $("#mostAvtiveUsersReport").html("");
-    $("#mostAvtiveUsersCount").html("");
+    $("#divStandardReportArea").html("");
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/MetricsReports/MostActiveUsersReport",
+        url: settingsArray.ApiServer + "api/Reports/MostActiveUsersReport",
         success: function (mostActiveUsersReport) {
             $('#dashBoardLoadingGif').hide();
             if (mostActiveUsersReport.Success === "ok") {
@@ -208,8 +226,8 @@ function runMostActiveUsersReport() {
                 });
                 kludge += "</table>";
 
-                $("#mostAvtiveUsersReport").html(kludge);
-                $("#mostAvtiveUsersCount").html(" Total: " + mostActiveUsersReport.HitCount.toLocaleString());
+                $("#divStandardReportArea").html(kludge);
+                $("#divStandardReportCount").html(" Total: " + mostActiveUsersReport.HitCount.toLocaleString());
             }
             else {
                 alert("mostActiveUsersReport: " + mostActiveUsersReport.Success);
@@ -223,4 +241,51 @@ function runMostActiveUsersReport() {
             }
         }
     });
+}
+
+function runPageHitReport() {
+    $('#dashBoardLoadingGif').show();
+    $("#divStandardReportArea").removeClass("tightReport");
+    $("#divStandardReportArea").html("");
+    $("#divStandardReportCount").html("");
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Reports/PageHitReport",
+        success: function (pageHitReportModel) {
+            $('#dashBoardLoadingGif').hide();
+            if (pageHitReportModel.Success === "ok") {
+                var kludge = "<table class='mostAvtiveUsersTable'>";
+                kludge += "<tr><th>ip</th><th>City</th><th>State</th><th>Country</th><th>Page</th><th>Hit</th></tr>";
+                $.each(pageHitReportModel.Items, function (idx, obj) {
+                    kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
+                    kludge += "<td>" + obj.Region + "</td><td>" + obj.Country + "</td>";
+                    kludge += "<td>" + obj.FolderName + "</td>";
+                    kludge += "<td>" + obj.HitTime + "</td></tr>";
+                });
+                kludge += "</table>";
+                $("#divStandardReportArea").html(kludge);
+                $("#divStandardReportCount").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
+            }            
+            else {
+                alert("PageHitsReport: " + pageHitReportModel.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "renameFolder")) {
+                sendEmailToYourself("XHR ERROR in Dashboard.js renameFolder",
+                    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
+            }
+        }
+    });
+}
+
+function rerunReport() {
+    switch (activeReport) {
+        case "PageHitReport": runPageHitReport(); break;
+        case "MostActiveUsers": runMostActiveUsersReport(); break;
+        case "LatestImageHits": runLatestImageHitsReport(); break;
+        case "EventActivity": runEventActivityReport(); break;
+        default: alert("activeReport [" + activeReport + "] not found");
+    }
 }
