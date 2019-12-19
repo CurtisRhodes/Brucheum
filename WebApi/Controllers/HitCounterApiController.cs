@@ -40,9 +40,9 @@ namespace WebApi
                             HitDateTime = DateTime.Now
                         });
                         dbm.SaveChanges();
-                        imageHitSuccess.UserHits = dbm.ImageHits.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
+                        imageHitSuccess.UserImageHits = dbm.ImageHits.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
+                        imageHitSuccess.UserPageHits = dbm.PageHits.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
                         imageHitSuccess.ImageHits = dbm.ImageHits.Where(h => h.ImageLinkId == logImageHItData.LinkId).Count();
-                        //imageHitSuccess.IpAddress = db.Visitors.Where(v => v.VisitorId == logImageHItData.VisitorId).FirstOrDefault().IpAddress;
                         imageHitControllerBusy = false;
                     }
                 }
@@ -81,7 +81,8 @@ namespace WebApi
                     });
                     db.SaveChanges();
                     pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.PageId == pageHitModel.PageId).Count();
-                    pageHitSuccessModel.UserHits = db.PageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
+                    pageHitSuccessModel.UserPageHits = db.PageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
+                    pageHitSuccessModel.UserImageHits = db.ImageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
 
                     CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == pageHitModel.PageId).FirstOrDefault();
                     pageHitSuccessModel.RootFolder = categoryFolder.RootFolder;
@@ -192,7 +193,7 @@ namespace WebApi
                     if (visitorVisits.Count() > 0)
                     {
                         lastVisitDate = dbm.Visits.Where(v => v.VisitorId == visitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
-                        //lastVisitDate = dbm.MySqlVisits.Where(v => v.VisitorId == visitorId).OrderBy(v => v.VisitDate).FirstOrDefault().VisitDate;
+                        visitSuccessModel.WelcomeMessage = "ok";
                     }
                     if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
                     {
@@ -206,9 +207,13 @@ namespace WebApi
                             });
                             dbm.SaveChanges();
                             visitSuccessModel.VisitAdded = true;
-                            visitSuccessModel.WelcomeMessage = "Welcome Back ";
-                            //if(visitor.u)
-                            //pageHitSuccessModel.WelcomeMessage = "Welcome back " + visitor.UserName;
+                            if (lastVisitDate == DateTime.MinValue)
+                                visitSuccessModel.WelcomeMessage = "Welcome New Visitor";
+                            else
+                            {
+                                //if(v)
+                                visitSuccessModel.WelcomeMessage = "Welcome Back ";
+                            }
                         }
                     }
                     visitSuccessModel.Success= "ok";
@@ -309,17 +314,48 @@ namespace WebApi
                 }
                 logEventActivitySuccess.Success = "ok";
             }
-            catch (SystemException sex) {
-                //if (ex.Message.Contains("reference not set"))
-                {
-                    logEventActivitySuccess.Success = "reference not set. Source: " + sex.Source;
-                }
-            }
+            //catch (SystemException sex) {
+            //    //if (ex.Message.Contains("reference not set"))
+            //    {
+            //        logEventActivitySuccess.Success = "reference not set. Source: " + sex.Source;
+            //    }
+            //}
             catch (Exception ex)
             {
                 logEventActivitySuccess.Success = Helpers.ErrorDetails(ex);             
             }
             return logEventActivitySuccess;
+        }
+    }
+
+    [EnableCors("*", "*", "*")]
+    public class FeedBackController : ApiController
+    {
+        [HttpPost]
+        public string LogEventActivity(FeedBackModel feedBackModel)
+        {
+            string success = "";
+            try
+            {
+                using (var mdb = new OggleBoobleMySqContext())
+                {
+                    mdb.FeedBacks.Add(new FeedBack()
+                    {
+                        FeedBackComment=feedBackModel.FeedBackComment,
+                        FeedBackType=feedBackModel.FeedBackType,
+                        PageId = feedBackModel.PageId,
+                        VisitorId = feedBackModel.VisitorId,
+                        Occured = DateTime.Now
+                    });
+                    mdb.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
         }
     }
 }

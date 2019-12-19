@@ -12,6 +12,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
     <script src="Scripts/Common.js"></script>
+    <script src="Scripts/HitCounter.v2.js"></script>
     <script src="Scripts/OggleEventLog.js"></script>
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
@@ -229,7 +230,6 @@
     <div w3-include-html="Snippets/Register.html"></div>
 
     <script>
-        var permissionsSet = false;
         $(document).ready(function () {
             includeHTML();
             $('.txtLinkPath').val('');
@@ -245,30 +245,21 @@
                 }
                 else {
                     clearInterval(waiter);
+                    $('dots').html("");
+                    buildDirectoryTree();
                     setOggleHeader("admin", 3910);
                     setOggleFooter('boobs', 3910);
-                    buildDirectoryTree();                    
-                    //logPageHit(3910, getCookieValue("VisitorId"), "Dashboard");
+                    logPageHit(3910);
 
-                    setUserPermissions();
-                    var waiter2 = setInterval(function () {
-                        dots += "* ";
-                        $('#dots').html(dots);
-                        if (permissionsSet === true) {
-                            $('#dots').html('');
-                            clearInterval(waiter2);
-
-                            if (isInRole("Oggle admin")) {
-                                $('.adminLevelOption').show();
-                            }
-                            setDashboardHeader('Add Images');
-                            $('.breadcrumbContainer').html("");
-                            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Add Images');\">Add Images</a>");
-                            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Manage Folders');\">Manage Folders</a>");
-                            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Reports');\">Reports</a>");
-                            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Admin');\">Admin</a>");
-                        }
-                    }, 300);
+                    if (isInRole("Oggle admin")) {
+                        $('.adminLevelOption').show();
+                    }
+                    setDashboardHeader('Add Images');
+                    $('.breadcrumbContainer').html("");
+                    $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Add Images');\">Add Images</a>");
+                    $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Manage Folders');\">Manage Folders</a>");
+                    $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Reports');\">Reports</a>");
+                    $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Admin');\">Admin</a>");
                 }
             }, 300);
 

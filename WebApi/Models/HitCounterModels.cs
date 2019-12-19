@@ -158,7 +158,8 @@ namespace WebApi.Models
     public class PageHitSuccessModel
     {
         public int PageHits { get; set; }
-        public int UserHits { get; set; }
+        public int UserImageHits { get; set; }
+        public int UserPageHits { get; set; }
         public string PageName { get; set; }
         public string ParentName { get; set; }
         public string RootFolder { get; set; }
@@ -182,6 +183,15 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
+    public class FeedBackModel
+    {
+        public string VisitorId { get; set; }
+        public int PageId { get; set; }
+        public string FeedBackComment { get; set; }
+        public string FeedBackType { get; set; }
+        public DateTime Occured { get; set; }
+    }
+
     public class GetVisitorInfoFromIPAddressSuccessModel
     {
         public string VisitorId { get; set; }
@@ -199,10 +209,11 @@ namespace WebApi.Models
 
     public class ImageHitSuccessModel
     {
+        public int ImageHits { get; set; }
+        public int UserImageHits { get; set; }
+        public int UserPageHits { get; set; }
         public string PageName { get; set; }
         public string IpAddress { get; set; }
-        public int ImageHits { get; set; }
-        public int UserHits { get; set; }
         public DateTime HitDateTime { get; set; }
         public string Success { get; set; }
     }
@@ -240,6 +251,4 @@ namespace WebApi.Models
         public bool VisitAdded { get; set; }
         public string Success { get; set; }
     }
-
-
 }

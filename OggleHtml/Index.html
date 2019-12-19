@@ -56,23 +56,24 @@
     <div class="threeColumnLayout">
         <div id="leftColumn">
             <div id="boobsLeftColumnList" class="leftColumnList">
-                <div onclick="reportThenPerformEvent('LMC',3908,'transitions');">Transitions</div>
-                <div onclick="reportThenPerformEvent('LMC',3908,'ranker');">Boobs Ranker</div>
-                <div onclick="reportThenPerformEvent('LMC',3908,'explain');">Let me Explain</div>
+                <div onclick="reportThenPerformEvent('LMC',3908,'boobTransitions');">Transitions</div>
+                <div onclick="reportThenPerformEvent('LMC',3908,'boobsRanker');">Boobs Ranker</div>
+                <div onclick="reportThenPerformEvent('LMC',3908,'explainBoobs');">Let me Explain</div>
                 <div onclick="reportThenPerformEvent('LMC',3908,'dirTreeBoobs');">Category List</div>
                 <div onclick="reportThenPerformEvent('LMC',3908,'centerfolds');">Playboy Centerfolds</div>
                 <div onclick="reportThenPerformEvent('LMC',3908,'video');">Video</div>
-                <div onclick="goToPorn()">Nasty Porn</div>
+                <div onclick="reportThenPerformEvent('LMC',3908,'porn');">Nasty Porn</div>
                 <div onclick="reportThenPerformEvent('LMC',0,'blog'); window.location.href='/Blog.html'">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
             <div id="pornLeftColumnList" class="leftColumnList">
-                <div onclick="reportThenPerformEvent('LMC',0,'3906'); window.location.href='transitions.html?subdomain=porn'">Transition down</div>
-                <div onclick="reportThenPerformEvent('LMC',0,'3907'); window.location.href='Ranker.html'">Nastieness Ranker</div>
-                <div onclick="reportThenPerformEvent('LMC',0,'3942'); showCustomMessage(38)">Let me Explain</div>
-                <div onclick="reportThenPerformEvent('LMC',0,'3941'); showCatListDialog(242)">Category List</div>
-                <div onclick="reportThenPerformEvent('LMC',0,'3908'); window.location.href='/'">back to boobs</div>
-                <div onclick="reportThenPerformEvent('LMC',0,'3911'); window.location.href='/Blog.html'">Blog</div>
+                <div onclick="reportThenPerformEvent('LMC',3909,'back');">back to boobs</div><br/>
+                <div onclick="reportThenPerformEvent('LMC',3909,'pornTransitions');">Transition down</div>
+                <div onclick="reportThenPerformEvent('LMC',3909,'pornRanker');">Nastieness Ranker</div>
+                <div onclick="reportThenPerformEvent('LMC',3909,'explainPorn');">Let me Explain</div>
+                <div onclick="reportThenPerformEvent('LMC',3909,'dirTreePorn');">Category List</div>
+                <div onclick="reportThenPerformEvent('LMC',3909,'back');">back to boobs</div>
+                <div onclick="reportThenPerformEvent('LMC',3909,'blog');">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
         </div>
@@ -137,15 +138,13 @@
         var promoIdx = 0;
         var promoMessagesArray = new Array();
         var promoMessageRotator;
-        var promoMessageRotationSpeed = 8000;
+        var promoMessageRotationSpeed = 15000;
         var subdomain;
-        var permissionsSet = false;
 
         $(document).ready(function () {
             includeHTML();
-            //<div id="connectingMsg"><img src="Images/infinity01.gif" /></div>
-
             $('#laCarousel').hide();
+            $('#carouselInclude').hide();
 
             //$('#footerLastBuild').html("last build: " + lastBuild + "3");
             params = getParams();
@@ -156,7 +155,6 @@
                 subdomain = params.subdomain;
             }
             $('#footerMessage').html("loading settings");
-            //alert("loading settings");
             loadSettings();
             var dots = ""
             var waiter = setInterval(function () {
@@ -167,8 +165,8 @@
                 else {
                     clearInterval(waiter);
 
-                    setOggleHeader(subdomain, 3908);
-                    setOggleFooter(subdomain, 3908);
+                    //setOggleHeader(subdomain, 3908);
+                    //setOggleFooter(subdomain, 3908);
 
                     $('#dots').html("");
                     verifyConnection();
@@ -178,53 +176,37 @@
                             $('#dots').html(dots);
                         }
                         else {
+                            launchCarousel(subdomain);
                             clearInterval(verifyConnectionWaiter);
                             $('#connectingMsg').hide();
                             $('#laCarousel').fadeIn();
-                            $('#footerMessage').html("loading header");
+                            //$('#footerMessage').html("loading header");
                             $('#dots').html('');
-                            launchCarousel(subdomain);
 
-                            setUserPermissions();
-                            var waiter2 = setInterval(function () {
-                                dots += ". ";
-                                $('#dots').html(dots);
-                                if (permissionsSet === true) {
-                                    clearInterval(waiter2);
-                                    $('#dots').html("");
-
-                                    if (subdomain == "porn") {
-                                        setOggleHeader(subdomain, 3909);
-                                        $('#pornLeftColumnList').show();
-                                        $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
-                                        $('#includeCenterfoldsCheckbox').hide();
-                                        logPageHit(3909);
-                                    }
-                                    else {
-                                        setOggleHeader(subdomain, 3908);
-                                        $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
-                                        $('#boobsLeftColumnList').show();
-                                        launchPromoMessages();
-                                        logPageHit(3908);
-                                    }
-
-                                    $('#carouselInclude').hide();
-                                    if (isInRole("Oggle admin")) {
-                                        $('#carouselInclude').show();
-                                    }
-
-                                }
-                            }, 300);
+                            if (subdomain == "porn") {
+                                setOggleHeader(subdomain, 3909);
+                                $('#pornLeftColumnList').show();
+                                $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
+                                $('#includeCenterfoldsCheckbox').hide();
+                                logPageHit(3909);
+                            }
+                            else {
+                                setOggleHeader(subdomain, 3908);
+                                $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
+                                $('#boobsLeftColumnList').show();
+                                launchPromoMessages();
+                                logPageHit(3908);
+                            }
+                            if (isInRole("Oggle admin")) {
+                                $('#carouselInclude').show();
+                            }
                         }
                     }, 300);
                 }
             }, 300);
-
             window.addEventListener("resize", resizeIndexPage);
             resizeIndexPage();
-
         });
-
 
         function resizeIndexPage() {
             resizePage();
@@ -242,7 +224,6 @@
             //$('#divHitMetrics').height($('#middleColumn').height() - 122);
             //$('.floatingCrud').width($('.workarea').width() - 100);
         }
-
 
         function addToCarousel(root, isChecked) {
             if (root == "archive") {
@@ -313,6 +294,8 @@
         }
 
         function goToPorn() {
+
+            //if(hasPorn)
             //if (document.domain === 'localhost') alert("goToPorn()");
 
             // if user porn status not already set
@@ -320,10 +303,13 @@
         }
 
 
+
         function letemPorn(response, pornType) {
-            //if (document.domain === 'localhost') alert("letemPorn: " + pornType);
+           // if (document.domain === 'localhost') alert("letemPorn: " + pornType);
             if (response == "ok") {
                 //  setUserPornStatus(pornType);
+                //<div onclick="goToPorn()">Nasty Porn</div>
+                //window.location.href = '/index.html?subdomain=porn';
                 reportThenPerformEvent("PRN", 136, pornType);
             }
             else {

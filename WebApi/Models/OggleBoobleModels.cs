@@ -232,15 +232,16 @@ namespace WebApi.Models
     public class SearchResultsModel
     {
         public SearchResultsModel() {
-            SearchResults = new List<SearchResultModel>();
+            SearchResults = new List<SearchResult>();
         }
-        public List<SearchResultModel> SearchResults{ get; set; }
+        public List<SearchResult> SearchResults{ get; set; }
         public string Success { get; set; }
     }
 
-    public class SearchResultModel
+    public class SearchResult
     {
         public string FolderName { get; set; }
+        public string Parent { get; set; }
         public int FolderId { get; set; }
     }
 }

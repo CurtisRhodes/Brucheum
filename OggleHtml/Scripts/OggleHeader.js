@@ -1,6 +1,5 @@
 ﻿function setOggleHeader(subdomain, folderId) {
-    //alert("setOggleHeader called from ")
-
+    //alert("setOggleHeader called from " + folderId);
     var headerHtml;
     var lang = "en";
     var subheaderContent;
@@ -10,9 +9,13 @@
     var bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"boobs\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
     switch (subdomain) {
         case "blog":
+            subheaderContent = "blog";
+            $('header').switchClass('pornHeader', 'boobsHeader');
+            break;
         case "ranker":
         case "archive":
         case "boobs":
+            $('header').switchClass('pornHeader', 'boobsHeader');
             bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"boobs\")'>" +
                 "<img class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
             subheaderContent =
@@ -42,7 +45,8 @@
             break;
         case "playboy":
         case "playmates":
-            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"playboy\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
+            $('header').switchClass('pornHeader', 'boobsHeader');
+            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"playboy\")'><img src='/Images/playboyBallon.png' class='bannerImage'/></a>\n";
             //bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",1132)'><img  class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
             subheaderContent =
                 "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",1132)'>Centerfolds,</a>\n" +
@@ -50,12 +54,13 @@
                 "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",3796)'> cybergirls,</a> and\n" +
                 "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",2601)'> extras</a>\n";
 
-            archiveLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\"," + folderId + ",3)' class='babesArchive'>slut archive</a>";
+            archiveLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\"," + folderId + ",3)' class='babesArchive'>big tit archive</a>";
             boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + "\"playboy\")' " +
                 "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
             break;
         case "porn":
         case "sluts":
+            $('header').switchClass('boobsHeader', 'pornHeader');
             $('body').addClass('pornBodyColors');
             subheaderContent =
                 "               <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",243)'>cock suckers</a>, \n" +
@@ -64,14 +69,16 @@
                 "               <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",397)'>kinky</a> and \n" +
                 "               <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",411)'>naughty behaviour</a>\n";
 
-            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"porn\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
+            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"porn\")'><img src='/Images/csLips02.png' class='bannerImage'/></a>\n";
             archiveLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\"," + folderId + ",440)' class='babesArchive'>slut archive</a>";
             boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + ",\"" + subdomain + "\")' " +
                 "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
             //bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",3909)'><img src='/Images/cslips02.png' title='porn home' class='bannerImage'/></a>\n";
             boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",3909)' title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
+            websiteName = "OgglePorn";
             break;
         case "admin":
+            $('header').switchClass('pornHeader', 'boobsHeader');
             $("#divLoginArea").hide();
             subheaderContent = "Admin";
             break;
@@ -124,41 +131,46 @@
             "               </div>\n" +
             "               <div id='optionNotLoggedIn'>\n" +
             "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
-            "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:onLoginClick()'>Log In</a></div>\n" +
+            "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:showLoginDialog()'>Log In</a></div>\n" +
             "               </div>\n" +
             "           </div>\n" +
             "       </div>\n" +
             "   </div>\n" +
+            "<div id='draggableDialog' class='oggleDraggableDialog'>\n" +
+            "   <div id='draggableDialogHeader'class='oggleDraggableDialogHeader'>" +
+            "       <div id='draggableDialogTitle' class='oggleDraggableDialogTitle'></div>" +
+            "       <div id='draggableDialogCloseButton' class='oggleDraggableDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'></div>\n" +
+            "   </div>\n" +
+            "   <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
+            "</div>\n" +
             "<div id='customMessage' class='displayHidden customMessageContainer'></div>\n" +
-            "<div id='customMessage2' class='displayHidden customMessageContainer'></div>\n" +
+            "<div id='notConnectMessage' class='displayHidden customMessageContainer'></div>\n" +
             "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
             "<div id='feedbackDialog' class='modalDialog' title='Feedback'>\n" +
-            "    <div id='feedbackDialogSummerNoteTextArea'></div>\n" +
-            "    <div id='btnfeedbackDialogSave' class='roundendButton' onclick='saveFeedbackDialog()'>Send</div>\n" +
-            "    <div id='btnfeedbackDialogCancel' class='roundendButton' onclick='closeFeedbackDialog()'>Cancel</div>\n" +
+            "   <div><input type='radio' name='feedbackRadio' value='complement' checked='checked'> complement\n" +
+            "       <input type='radio' name='feedbackRadio' value='suggestion'> suggestion\n" +
+            "       <input type='radio' name='feedbackRadio' value='report error'> report error" +
+            "   </div>\n" +
+            "   <div id='feedbackDialogSummerNoteTextArea'></div>\n" +
+            "   <div id='btnfeedbackDialogSave' class='roundendButton' onclick='saveFeedbackDialog(" + folderId + ")'>Send</div>\n" +
+            "   <div id='btnfeedbackDialogCancel' class='roundendButton' onclick='closeFeedbackDialog()'>Cancel</div>\n" +
             "</div>";
         $('header').html(headerHtml);
     }
 
-    // PERMISSIONS
-    var userName = getCookieValue("UserName");
-    //alert("userName : " + userName + "  folderId: " + folderId);
-    if (isNullorUndefined(userName)) {
-        $('#optionLoggedIn').hide();
-        $('#optionNotLoggedIn').show();
-    }
-    else {
-        //if (document.domain === 'localhost') alert("setLoginHeader userName: " + userName);
-        //alert("  I know userName : " + userName + "  folderId: " + folderId);
-        $('#spnUserName').html(userName);
+    if (isLoggedIn()) {
+        $('#spnUserName').html(getCookieValue("UserName"));
         $('#optionLoggedIn').show();
         $('#optionNotLoggedIn').hide();
+    }
+    else {
+        $('#optionLoggedIn').hide();
+        $('#optionNotLoggedIn').show();
     }
 
     // LOOK UP FOLDER DETAIL FOR BADGES AND TRACKBACK LINKS
     if (subdomain !== "admin") {
-        if (folderId !== 3908) {
-            //alert("folderId: " + folderId + "  subdomain: " + subdomain);
+        if (folderId !== 3908 && folderId !== 3909) {
             showSpecialHeaderIcons(folderId);
         }
     }
@@ -263,8 +275,6 @@ function setTrackbackLinks(folderId) {
 }
 
 function showFeedbackDialog() {
-//    alert("showFeedbackDialog1");
-
     $('#feedbackDialog').dialog({
         show: { effect: "fade" },
         hide: { effect: "blind" },
@@ -275,43 +285,48 @@ function showFeedbackDialog() {
         height: 300,
         toolbar: [['codeview']]
     });
-
-    $('#feedbackDialog').dialog("show");
-    alert("showFeedbackDialog2");
-
+    //$('#feedbackDialog').dialog("show");
+    //alert("showFeedbackDialog2");
 }
 
-function saveFeedbackDialog() {
-    sendEmailToYourself("FeedBack", "ip: " + getCookieValue("IpAddress") + "<br/>"
-        + $('#feedbackDialogSummerNoteTextArea').summernote('code'));
-    $('#feedbackDialog').dialog("close");
+function saveFeedbackDialog(pageId) {
 
-    setTimeout(function () { alert("Thank you for your feedback"); }, 800);
+    alert("radio: " + $('#feedbackDialog input[type=\'radio\']:checked').val());
+    var feedBackModel = {
+        VisitorId: getCookieValue("VisitorId"),
+        PageId: pageId,
+        FeedBackComment: $('#feedbackDialogSummerNoteTextArea').summernote('code'),
+        FeedBackType: $('#feedbackDialog input[type=\'radio\']:checked').val()
+    };
 
-    //$.ajax({
-    //    type: "PUT",
-    //    url: settingsArray.ApiServer + "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" + $('#catDlgSummerNoteTextArea').summernote('code'),
-    //    success: function (success) {
-    //        if (success === "ok") {
-    //            displayStatusMessage("ok", "category description updated");
-    //            $('#btnCatDlgEdit').html("Edit");
-    //            $('#btnCatDlgMeta').hide();
-    //        }
-    //        else {
-    //            sendEmailToYourself("jquery fail in FolderCategory.js saveCategoryDialogText", success);
-    //            if (document.domain === 'localhost')
-    //                alert("EditFolderCategory: " + success);
-    //        }
-    //    },
-    //    error: function (jqXHR) {
-    //        var errorMessage = getXHRErrorDetails(jqXHR);
-    //        if (!checkFor404(errorMessage, "saveCategoryDialogText")) {
-    //            sendEmailToYourself("XHR ERROR in FolderCategory.js saveCategoryDialogText",
-    //                "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" +
-    //                $('#catDlgSummerNoteTextArea').summernote('code') + " Message: " + errorMessage);
-    //        }
-    //    }
-    //});
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/FeedBack",
+        data: feedBackModel,
+        success: function (success) {
+            if (success === "ok") {
+                sendEmailToYourself("FeedBack", "ip: " + getCookieValue("IpAddress") + "<br/>"
+                    + $('#feedbackDialogSummerNoteTextArea').summernote('code'));
+                $('#feedbackDialog').dialog("close");
+                alert("Thank you for your feedback");
+            }
+            else {
+                sendEmailToYourself("jquery fail in FolderCategory.js saveCategoryDialogText", success);
+                if (document.domain === 'localhost')
+                    alert("EditFolderCategory: " + success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "saveCategoryDialogText")) {
+                sendEmailToYourself("XHR ERROR in FolderCategory.js saveCategoryDialogText",
+                    "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" +
+                    $('#catDlgSummerNoteTextArea').summernote('code') + " Message: " + errorMessage);
+            }
+        }
+    });
+
+
 }
 function closeFeedbackDialog() {
     $("#feedbackDialog").dialog('close');

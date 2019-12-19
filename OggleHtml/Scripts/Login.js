@@ -32,9 +32,7 @@ function showRegisterDialog() {
 function attemptRegister() {
     if (validateRegister()) {
         try {
-
             //if (document.domain === 'localhost') alert("attempting to register");
-
             var registeredUserModel = {};
             registeredUserModel.VisitorId = getCookieValue("VisitorId");
             registeredUserModel.UserName = $('#txtRegisterUserName').val();
@@ -57,25 +55,45 @@ function attemptRegister() {
                         setCookieValue("UserName", registeredUserModel.UserName);
                         attemptLogin(registeredUserModel.UserName, registeredUserModel.Pswrd);
 
-                        if (document.domain === 'localhost')
-                            alert("register success");
-
+                        //if (document.domain === 'localhost') alert("register success");
                         $('#spnUserName').html(getCookieValue("UserName"));
                         $('#optionLoggedIn').show();
                         $('#optionNotLoggedIn').hide();
 
-                        sendEmailToYourself("BIG TIME Someone new actually registered", "User: " + userName);
+                        //if (document.domain === 'localhost')
+                        //    alert("BIG TIME Someone new actually registered\nUser: " + registeredUserModel.UserName);
+                        //else
+                        //    sendEmailToYourself("BIG TIME Someone new actually registered", "User: " + registeredUserModel.UserName);
 
-                        displayStatusMessage("ok", "thanks for Registering in " + userName);
+                        //
+                        registerEmail = $('#txtEmail').val();
+                        alert("registerEmail: " + registerEmail);
+                        showCustomMessage(96, false);
+
+                        //setTimeout(function () { $('#userEmail').text($('#txtEmail').val()); }, 2000);
+                        
+
+                        //displayStatusMessage("ok", "thanks for Registering in " + getCookieValue("UserName"));
                         // show welcom to Oggle Booble message.
                     }
                     else {
-                        if (document.domain === 'localhost') alert("attempting to register" + success);
-                        //$('#registerValidationSummary').html(response).show();
+                        if (success === "user name already exists")
+                            alert("user name already exists");
+                        else {
+                            //if (document.domain === 'localhost')
+                            alert("attempting to register fail: " + success);
+                            //$('#registerValidationSummary').html(response).show();
+                        }
                     }
                 },
-                error: function () {
-                    alert("Login Post failed");
+                error: function (jqXHR) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "onLoginClick")) {
+                        alert("XHR ERROR IN Login.JS attemptRegister\n" + errorMessage);
+
+                        sendEmailToYourself("XHR ERROR IN Login.JS onLoginClick", "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress +
+                            "<br/>" + errorMessage);
+                    }
                 }
             });
         } catch (e) {
@@ -113,21 +131,14 @@ function validateRegister() {
 }
 
 function onLogoutClick() {
-
-    if (document.domain === 'localhost')
-        alert("logging out");
-
+    //if (document.domain === 'localhost') alert("logging out");
     $('#optionLoggedIn').hide();
     $('#optionNotLoggedIn').show();
     $('.loginRequired').hide();
-
     deleteCookie();
-
-    //window.location.href = ".";
-
 }
 
-function onLoginClick() {
+function showLoginDialog() {
     var ipAddress = getCookieValue("IpAddress");
     if (!isNullorUndefined(ipAddress)) {
         //alert("Logging In and already know Ip");
@@ -196,14 +207,6 @@ function attemptLogin(userName, clearPasswod) {
                             alert("LOGING FAIL.  User cookie not set");
                         return;
                     }
-
-                    //if (document.domain === 'localhost') alert("setting user permissions after successfull login");
-
-                    setUserPermissions();
-
-                    //if (document.domain === 'localhost') alert("changing login header after successfull login");
-
-
                     //  --setLoginHeader();
                     $('#spnUserName').html(userName);
                     $('#optionLoggedIn').show();
@@ -229,6 +232,7 @@ function attemptLogin(userName, clearPasswod) {
 }
 
 function validateLogin() {
+    //alert("validateLogin");
     if ($('#txtLoginUserName').val() === "") {
         $('#errLoginUserName').show();
         return false;

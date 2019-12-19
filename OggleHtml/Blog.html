@@ -46,12 +46,6 @@
 
             <div id="blogListArea" class="blogDisplayArea">
                 <select id="blogDisplayCommentTypeSelect" class="roundedInput" onchange="loadBlogArticles($(this).val())">
-                    <option value="BLG">Blog Entry</option>
-                    <option value="CMT">Comment on an Image</option>
-                    <option class="adminOnly" value="PGM">Programmer Notes</option>
-                    <option class="adminOnly" value="FLD">Folder Comments</option>
-                    <option class="adminOnly" value="PRO">Promo Messages</option>
-                    <option class="adminOnly" value="CON">Site Content</option>
                 </select>
                 <div id="blogArticleJogContainer" class="blogArticleJogContainer"></div>
             </div>
@@ -69,12 +63,6 @@
                                     <div class="crudRow">
                                         <div class="crudLabel inline">Type</div>
                                         <select id="selBlogEditCommentType" class="roundedInput" onchange="loadBlogList($(this).val())">
-                                            <option value="BLG">Blog Entry</option>
-                                            <option value="CMT">Comment on an Image</option>
-                                            <option class="adminOnly" value="PGM">Programmer Notes</option>
-                                            <option class="adminOnly" value="FLD">Folder Comments</option>
-                                            <option class="adminOnly" value="PRO">Promo Messages</option>
-                                            <option class="adminOnly" value="CON">Site Content</option>
                                         </select>
                                     </div>
                                     <div class="crudRow">
@@ -118,65 +106,88 @@
     <div w3-include-html="Snippets/Register.html"></div>
 
     <script>
-        var permissionsSet = false;
     /// 11:19  May 24 20019
     ///  sometimes even I have to take a moment to figure out what I want to do.
     /// start with a display of blog entries
-    $(document).ready(function () {
-        includeHTML();
-        
-        $('#headerMessage').html("blog");
-        $('#blogDisplayCommentTypeSelect').val('BLG');
-        loadSettings();
-        var waiter = setInterval(function () {
-            if (settingsArray.ApiServer === undefined) {
-                dots += ". ";
-            }
-            else {
-                clearInterval(waiter);
-                setOggleHeader("blog", 3911);
-                setOggleFooter("boobs", 3911);
-                loadBlogArticles($('#blogDisplayCommentTypeSelect').val());
-                showBlogDisplay('BLG');
-                logPageHit(3911);
-                setUserPermissions();
-                var waiter2 = setInterval(function () {
-                    dots += "* ";
-                    $('#dots').html(dots);
-                    if (permissionsSet === true) {
-                        clearInterval(waiter2);
-                        $('#dots').html("");
-
-                        if (isInRole("Blog Editor")) {
-                            //if (document.domain === 'localhost') alert("is in role blog editor");
-                            $('.adminOnly').show();
-                            $('.blogEditButton').show();
-                            $('#footerMessage').html("blog Editor");
-                        }
-
-                        $('#blogControls').show();
+        $(document).ready(function () {
+            includeHTML();
+            $('#blogDisplayCommentTypeSelect').val('BLG');
+            loadSettings();
+            var waiter = setInterval(function () {
+                if (settingsArray.ApiServer === undefined) {
+                    dots += ". ";
+                }
+                else {
+                    clearInterval(waiter);
+                    setOggleHeader("blog", 3911);
+                    setOggleFooter("boobs", 3911);
+                    loadBlogDropDowns();
+                    loadBlogArticles("BLG");
+                    showBlogDisplay('BLG');
+                    logPageHit(3911);
+                    if (isInRole("Blog Editor")) {
+                        //if (document.domain === 'localhost') alert("is in role blog editor");
+                        $('.adminOnly').show();
+                        $('.blogEditButton').show();
+                        $('#footerMessage').html("blog Editor");
                     }
-                }, 300);
-            }
-        }, 300);
+                    $('#blogControls').show();
+                }
+            }, 300);
 
-        $('#oggleBlogSummerNote').summernote({
-            height: 310,
-            width: 900,
-            codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-            toolbar: [
-                ['lineWrapping', true],
-                ['codeview'],
-                ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
-            ]
+            $('#oggleBlogSummerNote').summernote({
+                codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+                toolbar: [
+                    ['lineWrapping', true],
+                    ['codeview'],
+                    ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
+                ]
+            });
+
+            $('#footerMessage').html("loading");
+            $('#leftColumnEditor').hide();
+            window.addEventListener("resize", resizeBlogPage);
+            resizePage();
+            $(window).resize(resizeBlogPage());
         });
 
-        $('#footerMessage').html("loading");
-        $('#leftColumnEditor').hide();
-        window.addEventListener("resize", resizeBlogPage);
-        resizePage();
-        $(window).resize(resizeBlogPage());
-    });
+        function loadBlogDropDowns() {
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/Ref/Get?refType=BLG",
+                success: function (refs) {
+                    if (refs.Success === "ok") {
+                        //<select id="blogDisplayCommentTypeSelect" class="roundedInput" onchange="loadBlogArticles($(this).val())">
+                        //    <option value="BLG">Blog Entry</option>
+                        //    <option value="CMT">Comment on an Image</option>
+                        //    <option class="adminOnly" value="PGM">Programmer Notes</option>
+                        //    <option class="adminOnly" value="FLD">Folder Comments</option>
+                        //    <option class="adminOnly" value="PRO">Promo Messages</option>
+                        //    <option class="adminOnly" value="CON">Site Content</option>
+                        //</select>
+                        //var isBlogEditor = isInRole("Blog Editor")
+
+                        $.each(refs.refItems, function (idx, obj) {
+                            $('#blogDisplayCommentTypeSelect').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
+                            $('#selBlogEditCommentType').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
+                        });
+                    }
+                    else {
+                        alert("loadBlogDropDowns\n" + refs.Success);
+                    }
+                },
+                error: function (jqXHR) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "getRefValues()")) {
+                        sendEmailToYourself("XHR ERROR IN getRefValues", "api/Ref/Get?refType=" + refType +
+                            "<br/>" + errorMessage);
+                        if (document.domain === 'localhost') alert("XHR error in getRefValues\n" + errorMessage);
+                    }
+                    return false;
+                }
+            });
+        }
+
     </script>
 </body>
 </html>

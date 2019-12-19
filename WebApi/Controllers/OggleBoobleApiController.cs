@@ -1173,7 +1173,7 @@ namespace WebApi
         }
 
         [HttpGet]
-        public CategoryCommentContainer GetCategoryComments(string categoryType)
+        public CategoryCommentContainer GetCategoryComments()
         {
             CategoryCommentContainer categoryCommentContainer = new CategoryCommentContainer();
             try
@@ -1325,16 +1325,29 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    List<CategoryFolder> startsWithSearchResults = db.CategoryFolders.Where(f => f.FolderName.StartsWith(searchString)).ToList();
-                    foreach (CategoryFolder folder in startsWithSearchResults)
+                    searchResultsModel.SearchResults =
+                        (from f in db.CategoryFolders
+                         join p in db.CategoryFolders on f.Parent equals p.Id
+                         where f.FolderName.StartsWith(searchString)
+                         select new SearchResult() { FolderId = f.Id, FolderName = f.FolderName, Parent = p.FolderName }).ToList();
+
+
+                    //.Where(f => f.FolderName.StartsWith(searchString)).ToList();
+                    //foreach (CategoryFolder folder in startsWithSearchResults)
+                    //{
+                    //    searchResultsModel.SearchResults.Add(new SearchResultModel() { FolderId = folder.Id, FolderName = folder.FolderName });
+                    //}
+                    List<SearchResult> containsSearchResults = (from f in db.CategoryFolders
+                                             join p in db.CategoryFolders on f.Parent equals p.Id
+                                             where f.FolderName.Contains(searchString)
+                                             select new SearchResult() { FolderId = f.Id, FolderName = f.FolderName, Parent = p.FolderName }).ToList();
+
+                    //List <CategoryFolder> containsSearchResults = db.CategoryFolders.Where(f => f.FolderName.Contains(searchString)).ToList();
+                    foreach (SearchResult searchResult in containsSearchResults)
                     {
-                        searchResultsModel.SearchResults.Add(new SearchResultModel() { FolderId = folder.Id, FolderName = folder.FolderName });
-                    }
-                    List<CategoryFolder> containsSearchResults = db.CategoryFolders.Where(f => f.FolderName.Contains(searchString)).ToList();
-                    foreach (CategoryFolder folder in containsSearchResults)
-                    {
-                        if (!folder.FolderName.ToLower().StartsWith(searchString.ToLower()))
-                            searchResultsModel.SearchResults.Add(new SearchResultModel() { FolderId = folder.Id, FolderName = folder.FolderName });
+                        if (!searchResult.FolderName.ToLower().StartsWith(searchString.ToLower()))
+                            searchResultsModel.SearchResults.Add(searchResult);
+                        //searchResultsModel.SearchResults.Add(new SearchResultModel() { FolderId = folder.Id, FolderName = folder.FolderName });
                     }
                 }
                 searchResultsModel.Success = "ok";

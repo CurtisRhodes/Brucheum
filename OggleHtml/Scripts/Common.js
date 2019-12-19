@@ -158,8 +158,8 @@ function checkFor404(errorMessage, calledFrom) {
 
         //alert("checkFor404. errorMessage: " + errorMessage + "\ncalledFrom: " + calledFrom);
 
-        $('#customMessage2').width($(window).width());
-        $('#customMessage2').html(
+        $('#notConnectMessage').width($(window).width());
+        $('#notConnectMessage').html(
             "<div class='centeredDivShell2'>\n" +
             "   <div class='centeredDivInner'>\n" +
             "       <div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'>\n" +
@@ -167,7 +167,7 @@ function checkFor404(errorMessage, calledFrom) {
             "   </div>" +
             "</div>");
 
-        $('#customMessage2').show();
+        $('#notConnectMessage').show();
 
 
         console.log("checkFor404: " + calledFrom);
@@ -333,9 +333,7 @@ function getFileDate() {
 }
 
 function showCatListDialog(startFolder) {
-
     buildDirTree($('#indexCatTreeContainer'), "indexCatTreeContainer", startFolder);
-
     $('#indexCatTreeContainer').dialog({
         autoOpen: false,
         show: { effect: "fade" },
@@ -352,18 +350,9 @@ function indexCatTreeContainerClick(path, id, treeId) {
     try {
         window.location.href = "/album.html?folder=" + id;
         $('#indexCatTreeContainer').dialog('close');
-
     } catch (e) {
         sendEmailToYourself("jQuery fail in indexCatTreeContainerClick", "dirTreeClick path: " + path + " id: " + id + " treeId: " + treeId + "  error: " + e);
     }
-    //if (treeId === "indexCatTreeContainer") {
-    //    window.location.href = "/album.html?folder=" + id;
-    //    $('#indexCatTreeContainer').dialog('close');
-    //}
-    //else {
-    //    alert("dirTreeClick path: " + path + " id: " + id + " treeId: " + treeId);
-    //    sendEmailToYourself("jQuery fail in indexCatTreeContainerClick", "dirTreeClick path: " + path + " id: " + id + " treeId: " + treeId);
-    //}
 }
 
 function slowlyShowCustomMessage(blogId) {
@@ -372,13 +361,12 @@ function slowlyShowCustomMessage(blogId) {
         if (forgetShowingCustomMessage === false) {
             if (typeof pause === 'function')
                 pause();
-            //folderCategoryDialogIsOpen = true;
             showCustomMessage(blogId);
         }
     }, 1100);
 }
 
-function showCustomMessage(blogId) {
+function showCustomMessage(blogId, allowClickAnywhere) {
     //alert("showCustomMessage(" + blogId + ")");
     if (typeof pause === 'function') {
         pause();
@@ -388,11 +376,29 @@ function showCustomMessage(blogId) {
         url: settingsArray.ApiServer + "api/OggleBlog/?blogId=" + blogId,
         success: function (entry) {
             if (entry.Success === "ok") {
-                $('#customMessage').html(entry.CommentText).show();
+                $('#draggableDialog').css("top", 200);
+
+                $('#draggableDialog').draggable();
+                $('#draggableDialogTitle').html(entry.CommentTitle);
+                $('#draggableDialogContents').html(entry.CommentText);
+
+                //var x = window.innerWidth * .5 - $('#draggableDialog').width() * .5;              
+                //var x = (window.innerWidth - $('#draggableDialog').width()) * .5;              
+                //alert("window.innerWidth: " + window.innerWidth + " Dialog.width: " + $('#draggableDialog').width() + "  Left: " + x);
+                $('#draggableDialog').css("left", (window.innerWidth - $('#draggableDialog').width()) * .5);
+                $('#draggableDialog').show();
+
+                if (allowClickAnywhere) {
+                    $('#draggableDialogCloseButton').prop('title', 'click anywhere on dialog to close');
+                    $('#draggableDialogContents').click(function () { dragableDialogClose(); });
+                }
+                else {
+                    $('#draggableDialogContents').prop("onclick", null).off("click");
+                    $('#draggableDialogCloseButton').removeProp('title');
+                }
             }
             else {
-                sendEmailToYourself("xhr error in common.js showCustomMessage", entry.Success);
-                //alert(entry.Success);
+                sendEmailToYourself("showCustomMessage", entry.Success);
             }
         },
         error: function (jqXHR) {
@@ -402,7 +408,75 @@ function showCustomMessage(blogId) {
             }
         }
     });
-    //if ($('#pornWarning').html() == "")
+}
+
+var registerEmail;
+var requestedPrivileges = [];
+function authenticateEmail(usersEmail) {
+    var privileges = "";
+    $.each(requestedPrivileges, function (idx,obj) {
+        privileges += obj + ", ";
+    });
+    sendEmailToYourself("Acess Requested", " user: " + getCookieValue("UserName") + " has requsted " + privileges);
+
+    alert("Thank you for registering " + getCookieValue("UserName") + "\please reply to the two factor authentitifcation email sent to you" +
+        "\nYou will then be granted the access you requested."+"\nThe menu item 'Dashboard' will appear next to your 'Hello' message");
+    dragableDialogClose();
+
+    //alert("authenticateEmail: " + usersEmail + " Privileges: " + test);
+
+}
+function requestPrivilege(privilege) {
+    requestedPrivileges.push(privilege);
+    //alert("requestPrivilege: " + privilege);
+}
+
+
+function dragableDialogClose() {
+    $('#draggableDialog').fadeOut();
+    if (typeof resume === 'function')
+        resume();
+}
+
+function dragElement(elmnt) {
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    if (document.getElementById(elmnt.id + "header")) {
+        // if present, the header is where you move the DIV from:
+        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+    } else {
+        // otherwise, move the DIV from anywhere inside the DIV:
+        elmnt.onmousedown = dragMouseDown;
+    }
+}
+
+function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
+}
+
+function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+}
+
+function closeDragElement() {
+    // stop moving when mouse button is released:
+    document.onmouseup = null;
+    document.onmousemove = null;
 }
 
 function todayString() {

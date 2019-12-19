@@ -74,20 +74,21 @@
 }
 
 
-.blogItemContainer {
-    height: 200px;
-    margin-left: 10px;
+.blogItemContainer {    
     overflow-y: auto;
-    background-color: black; /*var(--oggleContainerBackgroundColor);*/
-    border: solid 5px red;
+    width: 100%;
 }
 
 .blogListItem {
-    padding-right: 24px;
-    margin: 3px;
+    padding: 3px 24px;
     cursor: pointer;
-    background-color: var(--oggleBackgroundColor);
+    margin: 4px;
+    white-space: nowrap;
+    background-color: var(--oggleContainerBackgroundColor);
 }
+    .blogListItem:hover {
+        background-color: #c5f6f7;
+    }
 
 .blogArticleJogContainer {
     border: solid .05px var(--oggleBorderColor);
@@ -97,7 +98,7 @@
 .blogArticleJogBody {
     display: inline-block;
     background-color: var(--oggleContainerBackgroundColor);
-    /*width: 100%;*/
+    width: 100%;
 }
 
 .blogArticleJog {

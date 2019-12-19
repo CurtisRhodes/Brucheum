@@ -15,10 +15,55 @@ header {
     top: 0;
     width: 100%;
     display: flex;
+    z-index: 31;
+}
+
+.boobsHeader {
     background: var(--brucheumBlue);
     border-top: #40767d 3px solid;
     border-bottom: #decd6f 3px solid;
-    z-index: 10;
+}
+
+.pornHeader {
+    background: #d0a783;
+    border-top: #40767d 3px solid;
+    border-bottom: #decd6f 3px solid;
+}
+
+
+.oggleDraggableDialog {
+    position: absolute;
+    z-index: 11;
+    display: none;
+    /*width: 60%;*/
+    border: solid 2px var(--oggleBorderColor);
+    background-color: var(--oggleContainerBackgroundColor);
+}
+.oggleDraggableDialogHeader {
+    border: none;
+    background-color: var(--brucheumBlue);
+    color: #fff;
+    display: inline-flex;
+    width: 100%;
+    cursor: grab;
+}
+.oggleDraggableDialogTitle {
+    float: left;
+    width: 100%;
+    font-size: 24px;
+    text-align: center;
+}
+.oggleDraggableDialogCloseButton {
+    float: right;
+    padding-top: 5px;
+    padding-right: 15px;
+    cursor: pointer;
+}
+    .oggleDraggableDialogCloseButton img {
+        height: 25px;
+    }
+.oggleDraggableDialogContents {
+    padding: 5px;
 }
 
 .bannerImageContainer {

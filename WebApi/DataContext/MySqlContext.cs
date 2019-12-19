@@ -36,6 +36,21 @@ namespace WebApi.MySqDataContext
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<vwDailyActivity> vwDailyActivities { get; set; }
         public virtual DbSet<vwPageHit> vwPageHits { get; set; }
+        public virtual DbSet<FeedBack> FeedBacks { get; set; }
+    }
+
+    [Table("OggleBooble.FeedBack")]
+    public class FeedBack
+    {
+        [Key]
+        [Column(Order = 0)]
+        public string VisitorId { get; set; }
+        public string FeedBackComment { get; set; }
+        public string FeedBackType { get; set; }
+        public int PageId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public DateTime Occured { get; set; }
     }
 
     [Table("OggleBooble.vwPageHits")]

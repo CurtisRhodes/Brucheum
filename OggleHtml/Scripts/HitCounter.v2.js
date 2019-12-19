@@ -1,7 +1,11 @@
-﻿
+﻿var userPageHits;
+var freePageHitsAllowed = 500;
+var freeImageHitsAllowed = 2500;
+var userImageHits;
+
 function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
     //$('#footerMessage').html("logging image hit");
-
+    //alert("logImageHit");
     if (isNullorUndefined(pageId)) {        
         sendEmailToYourself("TROUBLE in logImageHit. PageId came in Null or Undefined", "Set to 1 or  something");
         return;
@@ -37,17 +41,20 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
         success: function (imageHitSuccessModel) {
             //alert("imageHitSuccessModel.Success: " + imageHitSuccessModel.Success);
             if (imageHitSuccessModel.Success === "ok") {
-                var imageHits = imageHitSuccessModel.ImageHits;
-                var userHits = imageHitSuccessModel.UserHits;
+
+                userPageHits = imageHitSuccessModel.UserPageHits;
+                userImageHits = imageHitSuccessModel.UserImageHits;
+                checkForHitLimit("images");
 
                 if (verbosity > 20) {
                     if (document.domain === 'localhost')
-                        alert("logImageHit  \npageName:" + pageId + "\nIpAddress: " + ipAddress + "\nimageHits: " + imageHits + "\nuser hits: " + userHits + "\ninitialHit: " + isInitialHit);
+                        alert("logImageHit  \npageName:" + pageId + "\nIpAddress: " + ipAddress + "\nimageHits: " + imageHitSuccessModel.ImageHits +
+                            "\nuser hits: " + imageHitSuccessModel.UserHits + "\ninitialHit: " + isInitialHit);
                     else
                         sendEmailToYourself("Image Hit", "PageId: " + pageId +
                             "<br/>IpAddress: " + ipAddress +
-                            "<br/>imageHits: " + imageHits +
-                            "<br/>user hits: " + userHits +
+                            "<br/>imageHits: " + imageHitSuccessModel.ImageHits +
+                            "<br/>user hits: " + imageHitSuccessModel.UserHits +
                             "<br/>initialHit: " + isInitialHit);
                 }
             }
@@ -63,10 +70,9 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
                         ".<br/>utc: " + imageHitSuccessModel.HitDateTime +
                         ".<br/>isInitialHit: " + isInitialHit +
                         ".<br/>PageId: " + pageId +
-                        "\n.<br/>linkId: " + linkId +
-                        //" imageHitSuccessModel.IpAddress: " + imageHitSuccessModel.IpAddress +
-                        "\n.<br/>ipAddr: " + ipAddr +
-                        "\n.<br/>Message: " + imageHitSuccessModel.Success);
+                        ".<br/>linkId: " + linkId +
+                        ".<br/>ipAddr: " + ipAddr +
+                        ".<br/>Message: " + imageHitSuccessModel.Success);
                 }
                 //else {
                 //    sendEmailToYourself("DOUBLE ajax fail in Hitcounter.js logImageHit", "PageId: " + pageId + " linkId: " + linkId +
@@ -260,7 +266,7 @@ function logVisitor(pageId, calledFrom) {
                                     visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                             }
                             else {
-                                if (document.domain === 'localhost') alert("LogVisitor \ncalled From: " + calledFrom + "userName: " + userName);
+                                if (document.domain === 'localhost') alert("IpInfo Hit in LogVisitor \n called From: " + calledFrom + "\n userName unknown\nVisitorId: " + getCookieValue("VisitorId"));
                                 if (verbosity > 10)
                                     sendEmailToYourself("Unnsecssary IpInfo hit called from: " + calledFrom,
                                         visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country +
@@ -301,7 +307,7 @@ function logPageHit(pageId) {
         sendEmailToYourself("PageId undefined in LogPageHit.", "visitorId: " + visitorId);
         return;
     }
-    if (document.domain === 'localhost') {
+    if (document.domain === 'xxlocalhost') {
         setCookieValue("IpAddress", "68.203.90.183");
         setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
         //setCookieValue("UserName", "admin");
@@ -314,7 +320,6 @@ function logPageHit(pageId) {
     }
 
     // TRY GETVISITOR FROM IP IF YOU HAVE IP BUT NO VISITOR ID 
-
     var visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(visitorId)) {
         var ipAddress = getCookieValue("IpAddress");
@@ -343,14 +348,15 @@ function logPageHit(pageId) {
                             }
                             else {
                                 if (document.domain === 'localhost') {
-                                    alert("GetVisitorIdFromIP Failed" + ipAddress + ". VisitorId: " + successModel.VisitorId);
+                                    alert("GetVisitorIdFromIP in logPageHit Failed\nipAddress: " + ipAddress + "\nVisitorId: " + successModel.VisitorId + "\nCalling logVisitor");
                                     //console.log("looping in log hit. GetVisitorIdFromIP. VisitorId: " + getCookieValue("VisitorId"));
                                 }
                                 else {
                                     if (verbosity > 0) {
-                                        sendEmailToYourself("GetVisitorIdFromIP Failed", "IpAddress: " + ipAddress + ". VisitorId: " + successModel.VisitorId);
+                                        sendEmailToYourself("GetVisitorIdFromIP Failed", "IpAddress: " + ipAddress + "<br/>VisitorId: " + successModel.VisitorId + "<br/>Calling logVisitor");
                                     }
                                 }
+                                logVisitor(pageId, "logPageHit");
                             }
                         }
                     }
@@ -409,6 +415,10 @@ function logPageHit(pageId) {
                 // MOVE PAGE HITS TO FOOTER SOMEDAY
 
                 $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits.toLocaleString());
+                userPageHits = pageHitSuccessModel.UserPageHits;
+                userImageHits = pageHitSuccessModel.UserImageHits;
+
+                checkForHitLimit("pages");
 
                 if (verbosity > 20) {
                     if (document.domain === 'localhost')
@@ -456,13 +466,15 @@ function logPageHit(pageId) {
 }
 
 function logVisit(visitorId) {
-
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Visit/LogVisit?visitorId=" + visitorId,
         success: function (logVisitSuccessModel) {
             if (logVisitSuccessModel.Success === "ok") {
                 if (logVisitSuccessModel.VisitAdded) {
+                    if (logVisitSuccessModel.WelcomeMessage !== "ok") {
+                        $('#headerMessage').html(logVisitSuccessModel.WelcomeMessage);
+                    }
                     if (verbosity > 3)
                         sendEmailToYourself("Visit Added ", "visitorId: " + visitorId);
                     if (document.domain === 'localhost') alert("Visit Added ", "visitorId: " + visitorId);
@@ -484,8 +496,8 @@ function logVisit(visitorId) {
 }
 
 function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
+    //alert("reportThenPerformEvent(eventCode: " + eventCode + ", calledFrom: " + calledFrom + ", eventDetail: " + eventDetail);
     try {
-        //alert("reportThenPerformEvent(eventCode: " + eventCode + ", calledFrom: " + calledFrom + ", eventDetail: " + eventDetail);
         var visitorId = getCookieValue("VisitorId");
         var ipAddress = getCookieValue("IpAddress");
 
@@ -522,7 +534,7 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                     }
                     if (ipAddress !== "68.203.90.183") {
                         if (eventCode !== "CIC"     // Carousel Item Clicked 
-                            //&& eventCode !== "FLC"  // Footer Link Clicked 
+                            && eventCode !== "FLC"  // Footer Link Clicked 
                             && eventCode !== "BAC"  // Archive Clicked
                             && eventCode !== "SUB"  // Subfolder Clicked
                             && eventCode !== "BCC"  // Breadcrumb Clicked 
@@ -553,15 +565,11 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                         case "PRN":  //("Porn Option clicked");
                             window.location.href = '/index.html?subdomain=porn';
                             break;
-                        case "HBC":  //  Red ballon clicked
-                            if (eventDetail === 3909) {
-                                //alert("cocksucker lips clicked");
+                        case "HBC":  //  header banner clicked
+                            if (eventDetail === "porn")
                                 window.location.href = '/index.html?subdomain=porn';
-                            }
-                            else {
-
+                            else
                                 window.location.href = "/";
-                            }
                             break;
                         case "GAX":  // can I get a connection
                             alert("can I get a connection");
@@ -624,33 +632,27 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                             break;
                         case "LMC":  // Left Menu Clicked
                             switch (eventDetail) {
-                                case "transitions":
-                                    window.location.href = 'transitions.html';
+                                case "boobTransitions": window.location.href = 'transitions.html'; break;
+                                case "pornTransitions": window.location.href = "transitions.html?subdomain=porn"; break;
+                                case "boobsRanker": window.location.href = 'ranker.html'; break;
+                                case "pornRanker": window.location.href = 'ranker.html?subdomain=porn'; break;
+                                case "dirTreeBoobs": showCatListDialog(2); break;
+                                case "dirTreePorn": showCatListDialog(242); break;
+                                case "explainBoobs": showCustomMessage(38, true); break;
+                                case "explainPorn": showCustomMessage(94, true); break;
+                                case "back": window.location.href = "/"; break;
+                                case "centerfolds": window.location.href = '/album.html?folder=1132'; break;
+                                case "video": window.location.href = 'video.html'; break;
+                                case "blog": window.location.href = '/Blog.html'; break;
+                                case "porn":
+                                    if (isLoggedIn())
+                                        window.location.href = '/index.html?subdomain=porn';
+                                    else
+                                        showCustomMessage(35, false);
                                     break;
-                                case "ranker":
-                                    window.location.href = 'ranker.html';
-                                    break;
-                                case "dirTreeBoobs": //  Category List
-                                    showCatListDialog(2);
-                                    break;
-                                case "explain": // Let me Explain
-                                    showCustomMessage(38);
-                                    break;
-                                case "centerfolds":  // Playboy Centerfolds
-                                    window.location.href = '/album.html?folder=1132';
-                                    break;
-                                case "video":  // Video
-                                    window.location.href = 'video.html';
-                                    break;
-                                case "blog":
-                                    window.location.href = '/Blog.html';
-                                    break;
-                                default:
-                                    alert("uncaught switch option Left Menu Click: " + eventDetail);
-                                    break;
+                                default: alert("uncaught switch option Left Menu Click\nEventDetail: " + eventDetail); break;
                             }
                             break;
-
                         case "FLC":  //  footer link clicked
                             //if (document.domain === 'localhost') alert("eventCode: " + eventCode + " pageId: " + pageId);
                             switch (eventDetail) {
@@ -658,7 +660,7 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                                 case "dir tree": showCatListDialog(2); break;
                                 case "porn dir tree": showCatListDialog(242); break;
                                 case "playmate dir tree": showCatListDialog(472); break;
-                                case "porn": window.location.href = '/index.html?subdomain=porn'; break;
+                                case "porn": showCustomMessage(35, false); break;
                                 case "blog": window.location.href = '/Blog.html'; break;
                                 case "ranker": window.location.href = "/Ranker.html"; break;
                                 case "rejects": window.location.href = "/album.html?folder=1132"; break;
@@ -684,12 +686,20 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                             "calledFrom: {" + calledFrom + "} : " + logEventActivitySuccess.CalledFrom +
                             "<br/>eventDetail: {" + eventDetail + "} : " + logEventActivitySuccess.PageBeingCalled +
                             "<br/>from: " + ipAddress + ", " + logEventActivitySuccess.VisitorDetails);
-                    else
-                        sendEmailToYourself("LogEventActivity fail", "Called from PageId: " + calledFrom +
-                            "<br/>EventCode: " + eventCode +
-                            "<br/>eventDetail: " + eventDetail +
-                            "<br/>VisitorId: " + visitorId +
-                            "<br/>Message: " + logEventActivitySuccess.Success);
+                    else {
+                        if (document.domain === 'localhost')
+                            alert("LogEventActivity\nCalled from PageId: " + calledFrom +
+                                "\nEventCode: " + eventCode +
+                                "\neventDetail: " + eventDetail +
+                                "\nVisitorId: " + visitorId +
+                                "\nMessage: " + logEventActivitySuccess.Success);
+                        else
+                            sendEmailToYourself("LogEventActivity", "Called from PageId: " + calledFrom +
+                                "<br/>EventCode: " + eventCode +
+                                "<br/>eventDetail: " + eventDetail +
+                                "<br/>VisitorId: " + visitorId +
+                                "<br/>Message: " + logEventActivitySuccess.Success);
+                    }
                 }
             },
             error: function (jqXHR) {
@@ -722,20 +732,38 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
     }
 }
 
-function checkForHitLimit(visitorId, userHits) {
+function checkForHitLimit(calledFrom) {
 
-    if (pageHitSuccessModel.UserHits > freeVisitorHitsAllowed) {
-        alert("you have now visited " + pageHitSuccessModel.UserHits + " pages." +
-            "\n It's time you Registered and logged in." +
-            "\n you will be placed in manditory comment mode until you log in ");
+    //showCustomMessage(97, true);
+
+    if (!isLoggedIn()) {
+        if (calledFrom === "pages") {
+            if (userPageHits > freePageHitsAllowed)
+                showCustomMessage(98, true);
+        }
+        if (calledFrom === "images") {
+            if (userImageHits > freeImageHitsAllowed)
+                showCustomMessage(97, true);
+        }
     }
 
-    if (userHits > userHitLimit) {
-        alert("you have now visited " + pageHitSuccessModel.UserHits + " pages." +
-            "\n It's time you Registered and logged in." +
-            "\n you will be placed in manditory comment mode until you log in ");
 
-    }
+    //if (isLoggedIn()) {
+    //    freeVisitorHitsAllowed += 1000;
+    //}
+
+    //if (userPageHits > freeVisitorHitsAllowed) {
+    //    showCustomMessage(97, true);
+    //    //alert("you have now visited " + userHits + " pages." +
+    //    //    "\n It's time you Registered and logged in." +
+    //    //    "\n you will be placed in manditory comment mode until you log in ");
+    //}
+
+    //if (userHits > userHitLimit) {
+    //    alert("you have now visited " + pageHitSuccessModel.UserHits + " pages." +
+    //        "\n It's time you Registered and logged in." +
+    //        "\n you will be placed in manditory comment mode until you log in ");
+    //}
 
     // login and I will let you see 1000 more images.
     // bookmark my site with link oog?domain=122; to get another 1,000 image views.
@@ -743,12 +771,5 @@ function checkForHitLimit(visitorId, userHits) {
     // use my product
     // Request extra privdleges 
     // pay me to do some programming for you and I'll let you in on all my source code
-
-    // ADD FREE VISITS ALLOWED CLIPPER HERE
-
-
-
-
-
 
 }

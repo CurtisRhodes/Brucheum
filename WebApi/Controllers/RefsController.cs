@@ -5,8 +5,8 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using WebApi.DataContext;
 using WebApi.Models;
+using WebApi.MySqDataContext;
 
 namespace WebApi
 {
@@ -14,84 +14,95 @@ namespace WebApi
     public class RefController : ApiController
     {
         [HttpGet]
-        public List<RefModel> Get(string refType)
+        public RefModel Get(string refType)
         {
-            var refs = new List<RefModel>();
+            var refs = new RefModel();
             try
             {
-                using (WebSiteContext db = new WebSiteContext())
+                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
                     IList<Ref> dbrefs = db.Refs.Where(r => r.RefType == refType).OrderBy(r => r.RefDescription).ToList();
                     foreach (Ref r in dbrefs)
                     {
-                        refs.Add(new RefModel() { RefCode = r.RefCode, RefDescription = r.RefDescription });
+                        refs.refItems.Add(new RefItem()
+                        {
+                            RefCode = r.RefCode,
+                            RefType = r.RefType,
+                            RefDescription = r.RefDescription
+                        });
                     }
+                    refs.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                refs.Add(new RefModel() { RefCode = "ERR", RefType = "ERR", RefDescription = Helpers.ErrorDetails(ex) });
+                refs.Success = Helpers.ErrorDetails(ex);
             }
             return refs;
         }
 
         [HttpGet]
-        public RefModel Get(string refCode, string refType)
+        public RefItem Get(string refCode, string refType)
         {
-            var refModel = new RefModel();
+            var refItem = new RefItem();
             try
             {
-                using (WebSiteContext db = new WebSiteContext())
+                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
-                    Ref dbref = db.Refs.Where(r => r.RefCode == refCode).FirstOrDefault();
-                    refModel.RefType = dbref.RefType;
-                    refModel.RefCode = dbref.RefCode;
-                    refModel.RefDescription = dbref.RefDescription;
-                    refModel.Success = "ok";
+                    Ref dbref = db.Refs.Where(r => r.RefType == refType && r.RefCode == refCode).FirstOrDefault();
+                    if (dbref == null)
+                        refItem.Success = "ref not found";
+                    else
+                    {
+                        refItem.RefCode = dbref.RefCode;
+                        refItem.RefDescription = dbref.RefDescription;
+                        refItem.Success = "ok";
+                    }
                 }
             }
             catch (Exception ex)
             {
-                refModel.Success = Helpers.ErrorDetails(ex);
+                refItem.Success = Helpers.ErrorDetails(ex);
             }
-            return refModel;
+            return refItem;
         }
 
         [HttpPost]
-        public RefModel Post(RefModel refModel)
-        {
-            try
-            {
-                using (WebSiteContext db = new WebSiteContext())
-                {
-                    Ref @ref = new Ref();
-                    @ref.RefType = refModel.RefType;
-                    @ref.RefCode = GetUniqueRefCode(refModel.RefDescription, db);
-                    @ref.RefDescription = refModel.RefDescription;
-
-                    db.Refs.Add(@ref);
-                    db.SaveChanges();
-                    refModel.RefCode = @ref.RefCode;
-                    refModel.Success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                refModel.Success = ex.Message;
-            }
-            return refModel;
-        }
-
-        [HttpPut]
-        public string Put(RefModel refModel)
+        public string Post(RefItem refItem)
         {
             string success = "";
             try
             {
-                using (WebSiteContext db = new WebSiteContext())
+                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
-                    Ref @ref = db.Refs.Where(r => r.RefCode == refModel.RefCode).First();
-                    @ref.RefDescription = refModel.RefDescription;
+                    Ref @ref = new Ref();
+                    @ref.RefType = refItem.RefType;
+                    @ref.RefCode = GetUniqueRefCode(refItem.RefDescription, db);
+                    @ref.RefDescription = refItem.RefDescription;
+
+                    db.Refs.Add(@ref);
+                    db.SaveChanges();
+                    //refModel.RefCode = @ref.RefCode;
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = ex.Message;
+            }
+            return success;
+        }
+
+        [HttpPut]
+        public string Put(RefItem refItem)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
+                {
+                    Ref @ref = db.Refs.Where(r => r.RefCode == refItem.RefCode).First();
+                    @ref.RefDescription = refItem.RefDescription;
                     db.SaveChanges();
                     success = "ok";
                 }
@@ -101,7 +112,7 @@ namespace WebApi
         }
 
         /// helper apps
-        private string GetUniqueRefCode(string refDescription, WebSiteContext db)
+        private string GetUniqueRefCode(string refDescription, OggleBoobleMySqContext db)
         {
             if (refDescription.Length < 3)
                 refDescription = refDescription.PadRight(3, 'A');

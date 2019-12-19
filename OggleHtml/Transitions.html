@@ -97,7 +97,6 @@
         var mode = "play";
         var picArray = [];
         var curIndex = 0;
-        var permissionsSet = false;
 
         $(document).ready(function () {
 
@@ -129,11 +128,9 @@
                     setOggleFooter(subdomain, 3906);
                     logPageHit(3906);
                     LoadPicArray(subdomain);
-                    //setUserPermissions();
                     //var waiter2 = setInterval(function () {
                     //    dots += "* ";
                     //    $('#dots').html(dots);
-                    //    if (permissionsSet === true) {
                     //        clearInterval(waiter2);
                     //        $('#dots').html("");
                     //    }

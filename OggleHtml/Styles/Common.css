@@ -1,8 +1,8 @@
 ﻿
 :root {
     --brucheumBlue: #74bac3;
-    --oggleBackgroundColor: #fef; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
-    --oggleContainerBackgroundColor: #f49ce8;
+    --oggleBackgroundColor: #fef; /* #f7eef7  #b081b1 #f8e8e8 */
+    --oggleContainerBackgroundColor: #d1f5f3;
     --oggleBorderColor: #b200ff; /* #f1cff7;       carouselContainer  #b200ff; */
     --ogglePurple: #79078f;
     --normalFont: 17px;
@@ -21,13 +21,6 @@
 .pornBodyColors {
     background-color: #ffcccc;
 }
-
-
-/*
-    background-color: #f49ce8; 
-*/
-
-
 
 body {
     background-color: var(--oggleBackgroundColor);
