@@ -9,6 +9,7 @@
 
 function showModelInfoDialog(modelName, folderId, currentSrc) {
 
+
     //if (document.domain === 'localhost') alert("showModelInfoDialog(\nmodelName: " + modelName + "\nfolderId: " + folderId + "\ncurrentSrc" + currentSrc);
 
     FolderDetailModel.FolderId = folderId;
@@ -33,6 +34,12 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
         return;
     }
     //if (document.domain === 'localhost') alert("calling ImageCategoryDetail/Get?folderId: from showModelInfoDialog\nfolderId=" + folderId);
+    if (isNullorUndefined(folderId)) {
+        sendEmailToYourself("Error in showModelInfoDialog", "isNullorUndefined(folderId)" +
+            "<br/>modelName: " + modelName +
+            "<br/>currentSrc: " + currentSrc);
+        return;
+    }
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
@@ -58,7 +65,7 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
                         toolbar: [['codeview']]
                     });
                     $('#externalLinks').summernote({
-                        height: 120,
+                        height: 110,
                         toolbar: [['codeview']]
                     });
                     //$('#modelInfoEdit').html("Save");
@@ -72,10 +79,10 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
                         height: 210,
                         toolbar: '[]'
                     });
-                    $('#externalLinks').summernote({
-                        height: 90,
-                        toolbar: '[]'
-                    });
+                    //$('#externalLinks').summernote({
+                    //    height: 90,
+                    //    toolbar: '[]'
+                    //});
                     $('#modelInfoDialogComment').summernote('disable');
                     //if (document.domain === 'localhost') alert("I WANT THE TOOLBAR GONE");
                 }
@@ -91,7 +98,8 @@ function showModelInfoDialog(modelName, folderId, currentSrc) {
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "getFolderDetails")) {
-                sendEmailToYourself("XHR ERROR in MOdelInfoDialog.js getFolderDetails", "/api/ImageCategoryDetail/Get?folderId=" + folderId + " Message: " + errorMessage);
+                sendEmailToYourself("XHR ERROR in ModelInfoDialog.js getFolderDetails", "/api/ImageCategoryDetail/Get?folderId=" + folderId +
+                    "<br/>Message: " + errorMessage);
             }
         }
     });

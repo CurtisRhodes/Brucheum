@@ -67,7 +67,7 @@ function attemptRegister() {
 
                         //
                         registerEmail = $('#txtEmail').val();
-                        alert("registerEmail: " + registerEmail);
+                        //alert("registerEmail: " + registerEmail);
                         showCustomMessage(96, false);
 
                         //setTimeout(function () { $('#userEmail').text($('#txtEmail').val()); }, 2000);
@@ -140,6 +140,7 @@ function onLogoutClick() {
 
 function showLoginDialog() {
     var ipAddress = getCookieValue("IpAddress");
+
     if (!isNullorUndefined(ipAddress)) {
         //alert("Logging In and already know Ip");
         //console.log("Logging In and already know Ip");
@@ -321,10 +322,7 @@ function setCookieValue(elementName, elementValue) {
 function getCookieValue(itemName) {
     var returnValue = window.localStorage[itemName];
 
-    if (returnValue !== undefined) {
-        //alert(itemName + "=" + returnValue + " found in local storage");
-    }
-    else {
+    if (isNullorUndefined(returnValue)) {
         var decodedCookie = decodeURIComponent(document.cookie);
         var cookieElements = decodedCookie.split(',');
         var cookieItem; var cookieItemName; var cookieItemValue;
@@ -334,15 +332,11 @@ function getCookieValue(itemName) {
             cookieItemValue = cookieItem[1];//.substring(cookieElements[i].indexOf("=") + 1);
             if (cookieItemName === itemName) {
                 //if (!isNullorUndefined(cookieItemValue))
-                  //  alert("cookeie value FOUND. " + itemName + " = " + cookieItemValue);
+                //  alert("cookeie value FOUND. " + itemName + " = " + cookieItemValue);
                 returnValue = cookieItemValue;
                 break;
             }
         }
-    }
-    if (isNullorUndefined(returnValue)) {
-       // $('#footerMessage').html("getCookieValue FAIL for: " + itemName + " = " + returnValue);
-        //alert("getCookieValue FAIL for: " + itemName + " = " + returnValue + "\ncookie: \n" + document.cookie);
     }
     return returnValue;
 }

@@ -33,7 +33,7 @@ header {
 
 .oggleDraggableDialog {
     position: absolute;
-    z-index: 11;
+    z-index: 36;
     display: none;
     /*width: 60%;*/
     border: solid 2px var(--oggleBorderColor);

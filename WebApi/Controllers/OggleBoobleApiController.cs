@@ -1327,9 +1327,9 @@ namespace WebApi
                 {
                     searchResultsModel.SearchResults =
                         (from f in db.CategoryFolders
-                         join p in db.CategoryFolders on f.Parent equals p.Id
+                         //join p in db.CategoryFolders on f.Parent equals p.Id
                          where f.FolderName.StartsWith(searchString)
-                         select new SearchResult() { FolderId = f.Id, FolderName = f.FolderName, Parent = p.FolderName }).ToList();
+                         select new SearchResult() { FolderId = f.Id, FolderName = f.FolderName, Parent = f.RootFolder }).ToList();
 
 
                     //.Where(f => f.FolderName.StartsWith(searchString)).ToList();
@@ -1338,9 +1338,9 @@ namespace WebApi
                     //    searchResultsModel.SearchResults.Add(new SearchResultModel() { FolderId = folder.Id, FolderName = folder.FolderName });
                     //}
                     List<SearchResult> containsSearchResults = (from f in db.CategoryFolders
-                                             join p in db.CategoryFolders on f.Parent equals p.Id
+                                             //join p in db.CategoryFolders on f.Parent equals p.Id
                                              where f.FolderName.Contains(searchString)
-                                             select new SearchResult() { FolderId = f.Id, FolderName = f.FolderName, Parent = p.FolderName }).ToList();
+                                             select new SearchResult() { FolderId = f.Id, FolderName = f.FolderName, Parent = f.RootFolder }).ToList();
 
                     //List <CategoryFolder> containsSearchResults = db.CategoryFolders.Where(f => f.FolderName.Contains(searchString)).ToList();
                     foreach (SearchResult searchResult in containsSearchResults)

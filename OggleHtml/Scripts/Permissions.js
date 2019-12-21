@@ -58,12 +58,13 @@ function isInRoleStep2(userPermissons, roleName) {
 
     var permissonsItems = userPermissons.split(",");
     for (var i = 0; i < permissonsItems.length; i++) {
+        //if (document.domain === 'localhost') alert("role found: " + permissonsItems[i]);
         if (permissonsItems[i] === "Oggle admin") {
-            if (document.domain === 'localhost') alert("admin override");
+            //if (document.domain === 'localhost') alert("admin override");
             return true;
         }
         if (permissonsItems[i] === roleName) {
-            if (document.domain === 'localhost') alert("rolename " + roleName + " FOUND!");
+            //if (document.domain === 'localhost') alert("rolename " + roleName + " FOUND!");
             return true;
         }
     }

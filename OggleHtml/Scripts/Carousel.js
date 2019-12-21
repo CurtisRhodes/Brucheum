@@ -201,6 +201,9 @@ function startCarousel() {
 }
 
 function assuranceArrowClick(direction) {
+
+    //alert("assuranceArrowClick direction: " + direction);
+
     reportThenPerformEvent("CAA", specialPage, direction);
     //if (direction === "foward")
     //    resume();

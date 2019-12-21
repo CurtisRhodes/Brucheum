@@ -25,6 +25,7 @@ namespace WebApi.Controllers
                 {
                     db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
                     db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
+                    db.SaveChanges();
                     //VwPageHit vwPageHit = dbm.VwPageHits.FirstOrDefault();
                     List<MetricsMatrix> matrices = db.VwMetricsMatrices.ToList();
                     foreach (MetricsMatrix matrix in matrices)
@@ -59,7 +60,7 @@ namespace WebApi.Controllers
                 using (var db = new OggleBoobleMySqContext())
                 {
                     mostPopularPages.Items = db.Database.SqlQuery<MostPopularPagesReportItem>(
-                         "select FolderName PageName, count(*) PageHits " +
+                         "select FolderName PageName, f.Id FolderId, count(*) PageHits " +
                          "from OggleBooble.PageHit h " +
                          "join OggleBooble.CategoryFolder f on h.PageId = f.Id " +
                          "where Occured between date_add(current_date(), interval -1 day) and current_date()" +
@@ -84,7 +85,7 @@ namespace WebApi.Controllers
                     // select * from OggleBooble.vwImageHitsForToday;
 
                     MostImageHits.Items = db.Database.SqlQuery<MostPopularPagesReportItem>(
-                        "select FolderName PageName, count(*) PageHits " +
+                        "select FolderName PageName, f.Id FolderId, count(*) PageHits " +
                         "from OggleBooble.ImageHit h " +
                         "join OggleBooble.CategoryFolder f on h.PageId = f.Id " +
                         "where HitDateTime between date_add(current_date(), interval - 1 day) and current_date() " +
@@ -140,7 +141,7 @@ namespace WebApi.Controllers
                 using (var db = new OggleBoobleMySqContext())
                 {
                     db.EventLogs.RemoveRange(db.EventLogs.Where(e => e.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
-
+                    db.SaveChanges();
                     var activityItems = db.vwDailyActivities.Distinct().ToList();
                     foreach (var activityItem in activityItems)
                     {
@@ -217,7 +218,7 @@ namespace WebApi.Controllers
                 using (var db = new OggleBoobleMySqContext())
                 {
                     db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
-
+                    db.SaveChanges();
                     var pageHits = db.vwPageHits.ToList();
                     pageHitReportModel.HitCount = pageHits.Count();
                     foreach (vwPageHit item in pageHits)

@@ -362,7 +362,7 @@ function resizeViewer() {
 }
 
 $(document).keydown(function (event) {
-    if (viewerShowing) {
+    if (viewerShowing && slideShowButtonsActive) {
         switch (event.which) {
             case 27:                        // esc
                 closeViewer("escape key");

@@ -54,7 +54,7 @@ function mostVisitedPagesPages() {
             if (popularPages.Success === "ok") {
                 $("#mostPopularPagesReport").html("<table><tr colspan=2><th>Most Popular Pages " + todayString() + "</th></tr>");
                 $.each(popularPages.Items, function (idx, obj) {
-                    $("#mostPopularPagesReport").append("<tr><td>" + obj.PageName + "</td><td>" + obj.PageHits + "</td></tr>");
+                    $("#mostPopularPagesReport").append("<tr><td><a href='/album.html?folder=" + obj.FolderId + "' target='\_blank\''>" + obj.PageName + "</a></td><td>" + obj.PageHits + "</td></tr>");
                 });
                 $("#mostPopularPagesReport").append("</table>");
                 $('#popPagesContainer').css("display", "inline-block");
@@ -75,15 +75,17 @@ function mostVisitedPagesPages() {
 
 function runMostImageHits() {
     $('#dashBoardLoadingGif').show();
+    $("#mostImageHitsReport").html("");
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/Reports/MostImageHitsReport",
         success: function (mostImageHits) {
             $('#dashBoardLoadingGif').hide();
             if (mostImageHits.Success === "ok") {
-                $("#mostImageHitsReport").html("<table><tr colspan=2><th>Most Image Hits</th></tr>");
+                $("#mostImageHitsReport").html("<table><tr colspan=2><th>Most Image Hits" + todayString() + "</th></tr>");
                 $.each(mostImageHits.Items, function (idx, obj) {
-                    $("#mostImageHitsReport").append("<tr><td>" + obj.PageName + "</td><td>" + obj.PageHits + "</td></tr>");
+                    $("#mostImageHitsReport").append("<tr><td><a href='/album.html?folder=" + obj.FolderId + "' target='\_blank\''>" +
+                        obj.PageName + "</a></td><td>" + obj.PageHits + "</td></tr>");
                 });
                 $("#mostImageHitsReport").append("</table>");
             }
@@ -100,7 +102,6 @@ function runMostImageHits() {
         }
     });
 }
-
 
 function showEventActivityReport() {
     $("#divStandardReportArea").addClass("tightReport");
@@ -130,7 +131,7 @@ function runEventActivityReport() {
                 });
                 kludge += "</table>";
                 $("#divStandardReportArea").html(kludge);
-                $("#activityReportHits").html(" Total: " + activityReport.HitCount.toLocaleString());
+                $("#divStandardReportCount").html(" Total: " + activityReport.HitCount.toLocaleString());
             }
             else {
                 alert("activityReport: " + activityReport.Success);
@@ -195,16 +196,6 @@ function showMostActiveUsersReport() {
     $('#reportLabel').html("<h3>Most Active Users " + todayString() + "</h3>");
     runMostActiveUsersReport();
 }
-function showPageHitReport() {
-    activeReport = "PageHitReport";
-    $("#divStandardReportArea").removeClass("tightReport");
-
-    $('.workAreaContainer').hide();
-    $('#divStandardReport').show();    
-    $('#reportLabel').html("<h3>Page Hit Report for " + todayString() + "</h3>");
-    runPageHitReport();
-}
-
 function runMostActiveUsersReport() {
     $("#divStandardReportCount").html("");
     $("#divStandardReportArea").removeClass("tightReport");
@@ -243,6 +234,15 @@ function runMostActiveUsersReport() {
     });
 }
 
+function showPageHitReport() {
+    activeReport = "PageHitReport";
+    $("#divStandardReportArea").removeClass("tightReport");
+
+    $('.workAreaContainer').hide();
+    $('#divStandardReport').show();
+    $('#reportLabel').html("<h3>Page Hit Report for " + todayString() + "</h3>");
+    runPageHitReport();
+}
 function runPageHitReport() {
     $('#dashBoardLoadingGif').show();
     $("#divStandardReportArea").removeClass("tightReport");

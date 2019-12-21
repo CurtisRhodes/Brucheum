@@ -44,7 +44,7 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
 
                 userPageHits = imageHitSuccessModel.UserPageHits;
                 userImageHits = imageHitSuccessModel.UserImageHits;
-                checkForHitLimit("images");
+                checkForHitLimit("images", pageId);
 
                 if (verbosity > 20) {
                     if (document.domain === 'localhost')
@@ -85,11 +85,13 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "logImageHit")) {
-                sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logImageHit", "api/ImageHit/LogImageHit?visitorId=" + visitorId +
-                    ", pageId: " + pageId + " isInitialHit: " + isInitialHit + ", linkId=" + link + ", Message: " + errorMessage);
+                sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logImageHit",
+                    "api/ImageHit/LogImageHit?visitorId=" + visitorId +
+                    ",<br/>pageId: " + pageId +
+                    "<br/>isInitialHit: " + isInitialHit +
+                    ",<br/> linkId=" + link +
+                    ",<br/>Message: " + errorMessage);
             }
-            //sendEmailToYourself("WHAT THE  logImageHit jqXHR fail ", getXHRErrorDetails(jqXHR, exception));
-            //console.log("logImageHit XHR error: " + getXHRErrorDetails(jqXHR, exception));
         }
     });
 }
@@ -266,7 +268,7 @@ function logVisitor(pageId, calledFrom) {
                                     visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
                             }
                             else {
-                                if (document.domain === 'localhost') alert("IpInfo Hit in LogVisitor \n called From: " + calledFrom + "\n userName unknown\nVisitorId: " + getCookieValue("VisitorId"));
+                                //if (document.domain === 'localhost') alert("IpInfo Hit in LogVisitor \n called From: " + calledFrom + "\n userName unknown\nVisitorId: " + getCookieValue("VisitorId"));
                                 if (verbosity > 10)
                                     sendEmailToYourself("Unnsecssary IpInfo hit called from: " + calledFrom,
                                         visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country +
@@ -289,8 +291,9 @@ function logVisitor(pageId, calledFrom) {
                 error: function (jqXHR) {
                     var errorMessage = getXHRErrorDetails(jqXHR);
                     if (!checkFor404(errorMessage, "logVisitor")) {
-                        sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logVisitor", "api/HitCounter/LogVisitor" +
-                            " Message: " + errorMessage);
+                        sendEmailToYourself("XHR ERROR in logVisitor", "IpAddress: " + data.ip +
+                            "<br/>pageId: " + pageId +
+                            "<br/>Message: " + errorMessage);
                     }
                 }
             });
@@ -307,7 +310,7 @@ function logPageHit(pageId) {
         sendEmailToYourself("PageId undefined in LogPageHit.", "visitorId: " + visitorId);
         return;
     }
-    if (document.domain === 'xxlocalhost') {
+    if (document.domain === 'localhost') {
         setCookieValue("IpAddress", "68.203.90.183");
         setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
         //setCookieValue("UserName", "admin");
@@ -418,7 +421,7 @@ function logPageHit(pageId) {
                 userPageHits = pageHitSuccessModel.UserPageHits;
                 userImageHits = pageHitSuccessModel.UserImageHits;
 
-                checkForHitLimit("pages");
+                checkForHitLimit("pages", pageId);
 
                 if (verbosity > 20) {
                     if (document.domain === 'localhost')
@@ -536,6 +539,7 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                         if (eventCode !== "CIC"     // Carousel Item Clicked 
                             && eventCode !== "FLC"  // Footer Link Clicked 
                             && eventCode !== "BAC"  // Archive Clicked
+                            && eventCode !== "CMX"  // Show Model Info Dialog
                             && eventCode !== "SUB"  // Subfolder Clicked
                             && eventCode !== "BCC"  // Breadcrumb Clicked 
                             && eventCode !== "BLC"  // Banner Link Clicked 
@@ -581,20 +585,22 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                         case "CMC": // carousle context menu item clicked
                             break;
                         case "CAA": // carousle context menu item clicked
-                            if (eventDetail === "foward")
+                            if (eventDetail === "foward") {
+                                //alert("reportThenPerformEvent eventCode: " + eventCode + " eventDetail: " + eventDetail);
                                 resume();
+                            }
                             else {
                                 // pop
                                 imageHistory.pop();
                                 imageIndex = imageHistory.pop();
                                 if (imageIndex > 0) {
-                                    $('#categoryTitle').fadeOut(intervalSpeed);
-                                    $('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
-                                        $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
-                                        $('#categoryTitle').html(carouselItemArray[imageIndex].FolderPath + ": " + carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
-                                        $('#laCarousel').fadeIn(intervalSpeed);
-                                        resizeCarousel();
-                                    });
+                                    //$('#categoryTitle').fadeOut(intervalSpeed);
+                                    //$('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
+                                    $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
+                                    $('#categoryTitle').html(carouselItemArray[imageIndex].FolderPath + ": " + carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
+                                    //$('#laCarousel').fadeIn(intervalSpeed);
+                                    resizeCarousel();
+                                    //});
                                 }
                                 else
                                     alert("imageIndex: " + imageIndex);
@@ -693,12 +699,14 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                                 "\neventDetail: " + eventDetail +
                                 "\nVisitorId: " + visitorId +
                                 "\nMessage: " + logEventActivitySuccess.Success);
-                        else
-                            sendEmailToYourself("LogEventActivity", "Called from PageId: " + calledFrom +
+                        else {
+                            if (logEventActivitySuccess.Success.indexOf("Duplicate entry") < 0)
+                                sendEmailToYourself("LogEventActivity", "Called from PageId: " + calledFrom +
                                 "<br/>EventCode: " + eventCode +
                                 "<br/>eventDetail: " + eventDetail +
                                 "<br/>VisitorId: " + visitorId +
                                 "<br/>Message: " + logEventActivitySuccess.Success);
+                        }
                     }
                 }
             },
@@ -713,7 +721,8 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                     }
                     else {
                         sendEmailToYourself("xhr error in reportThenPerformEvent", "url:/api/ChangeLog/LogEventActivity?eventCode=" + eventCode +
-                            "<br/>called from pageId: " + calledFrom +
+                            "<br/>eventDetail: " + eventDetail +
+                            "<br/>called from: " + calledFrom +
                             "<br/>Ip: " + ipAddr +
                             "<br/>Message: " + errorMessage);
                     }
@@ -732,20 +741,41 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
     }
 }
 
-function checkForHitLimit(calledFrom) {
-
+function checkForHitLimit(calledFrom, pageId) {
     //showCustomMessage(97, true);
+    //alert("checkForHitLimit userPageHits: " + userPageHits);
+    //userPageHits = 501;
 
     if (!isLoggedIn()) {
-        if (calledFrom === "pages") {
-            if (userPageHits > freePageHitsAllowed)
-                showCustomMessage(98, true);
+        var ipAddress = getCookieValue("IpAddress");
+        if (ipAddress === "68.203.90.183"  ||
+            ipAddress === "70.184.167.211" ||  // page hits
+          //ipAddress === "24.165.20.22"   ||  // page hits
+          //ipAddress === "73.181.156.170" ||  // page hits
+          //ipAddress === "99.189.25.139"  ||  // page hits
+          //ipAddress === "184.176.88.28"  ||  // page hits
+            ipAddress === "73.98.11.244"   ||  // page hits
+            ipAddress === "90.213.105.243" ||  // page hits
+            ipAddress === "174.48.120.252" ||  // page hits
+            ipAddress === "107.15.179.45") {   // image hits
+            // delete this 
         }
-        if (calledFrom === "images") {
-            if (userImageHits > freeImageHitsAllowed)
-                showCustomMessage(97, true);
+        else {
+            if (calledFrom === "pages") {
+                if (userPageHits > freePageHitsAllowed) {
+                    showCustomMessage(98, true);
+                    sendEmailToYourself("Page Hit Message Displayed", "userPageHits: " + userPageHits + "<br>pageId: " + pageId + "<br>Ip: " + ipAddress);
+                }
+            }
+            if (calledFrom === "images") {
+                if (userImageHits > freeImageHitsAllowed) {
+                    showCustomMessage(97, true);
+                    sendEmailToYourself("Image Hit Message Displayed", "userImageHits: " + userImageHits + "<br>pageId: " + pageId + "<br>Ip: " + ipAddress);
+                }
+            }
         }
     }
+}
 
 
     //if (isLoggedIn()) {
@@ -772,4 +802,3 @@ function checkForHitLimit(calledFrom) {
     // Request extra privdleges 
     // pay me to do some programming for you and I'll let you in on all my source code
 
-}

@@ -30,7 +30,7 @@ $(document).ready(function () {
             getBreadCrumbs(staticPageFolderId);
             setOggleHeader(staticPageRootFolderId, staticPageFolderId);
             setOggleFooter(staticPageRootFolderId, staticPageFolderId);
-            logPageHit(staticPageFolderId); //, getCookieValue("VisitorId"), "Static Page");
+            //logPageHit(staticPageFolderId, "Static Page"); //, getCookieValue("VisitorId"), "Static Page");
 
             $('footerMessage').html(staticPageFolderName);
             $('#feedbackBanner').click(showFeedbackDialog).fadeIn();

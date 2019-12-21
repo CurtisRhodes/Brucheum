@@ -1,5 +1,7 @@
 ﻿var busy = false;
 var searchString = "";
+
+
 function oggleSearchKeyDown(event) {
     var ev = event.keyCode;
     $('#testtxt').text(ev);
@@ -41,7 +43,7 @@ function oggleSearchKeyDown(event) {
                 success: function (SearchResultsModel) {
                     var kluge = "<ul class='searchResultList>";
                     $.each(SearchResultsModel.SearchResults, function (idx, searchResult) {
-                        kluge += "<li onclick='jumpToSelected(" + searchResult.FolderId + ")'>" + searchResult.Patent + "/" + searchResult.FolderName + "</li>";
+                        kluge += "<li onclick='jumpToSelected(" + searchResult.FolderId + ")'>" + searchResult.Parent + "/" + searchResult.FolderName + "</li>";
                     });
                     kluge += "</ul>";
                     $('#searchResultsDiv').show().html(kluge);

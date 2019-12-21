@@ -1,5 +1,10 @@
-﻿.adminRow div {
-    margin: 3px; 
+﻿
+.selectedSearchItem {
+    background-color: var(--thumbnailBorderColor);
+}
+
+.adminRow div {
+    margin: 3px;
 }
 
 .imageFrame {

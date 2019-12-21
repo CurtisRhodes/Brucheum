@@ -5,19 +5,24 @@
     var subheaderContent;
     var websiteName = "OggleBooble";
     var boobsRankerLink = "";
-    var archiveLink = "";
     var bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"boobs\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
+    var archiveLink = "";
+
+    $('header').switchClass('pornHeader', 'boobsHeader');
     switch (subdomain) {
         case "blog":
             subheaderContent = "blog";
-            $('header').switchClass('pornHeader', 'boobsHeader');
             break;
         case "ranker":
+            subheaderContent = "ranker";
+            break;
         case "archive":
+            subheaderContent = "Archive";
+            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>" +
+                "\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + ",\"archive\")'" +
+                " title='Spin through the links to land on random portrait images.'>babes ranker</a></div>\n";
+            break;
         case "boobs":
-            $('header').switchClass('pornHeader', 'boobsHeader');
-            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"boobs\")'>" +
-                "<img class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
             subheaderContent =
                 "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
                 "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",136)'> poses,</a>\n" +
@@ -32,11 +37,11 @@
             //    "                <a href='/album.html?folder=159'> emne,</a>\n" +
             //    "                <a href='/album.html?folder=199'> figurer</a> og\n" +
             //    "                <a href='/album.html?folder=241'>størrelser</a>\n";
-
             archiveLink = "<a href='javascript:reportThenPerformEvent(\"BAC\"," + folderId + ",3)' class='babesArchive'>babes archive</a>";
+
             boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>" +
-                "\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + ",\'boobs\')'" +
-                " title='Spin through the links to land on random portrait images. ' >boobs ranker</a></div>\n";
+                "\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + ",\"boobs\")'" +
+                " title='Spin through the links to land on random portrait images.'>boobs ranker</a></div>\n";
 
 
             //alert("setLoginHeader. top strings built.<br/>subdomain: " + subdomain + "  folderId: " + folderId);
@@ -55,8 +60,8 @@
                 "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",2601)'> extras</a>\n";
 
             archiveLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\"," + folderId + ",3)' class='babesArchive'>big tit archive</a>";
-            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + "\"playboy\")' " +
-                "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
+            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + ",\"playboy\")' " +
+                "title='Spin through the links to land on random portrait images.'>playmate ranker</a></div>\n";
             break;
         case "porn":
         case "sluts":
@@ -125,7 +130,7 @@
             "           </div>\n" +
             "           <div id='divLoginArea' class='loginArea'>\n" +
             "               <div id='optionLoggedIn' class='displayHidden'>\n" +
-            "                   <div class='menuTab adminLevelRequired displayHidden'><a href='/Dashboard.html'>Dashboard</a></div>\n" +
+            "                   <div class='menuTab' id='dashboardMenuItem' class='displayHidden'><a href='/Dashboard.html'>DashXboard</a></div>\n" +
             "                   <div class='menuTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
             "                   <div class='menuTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
             "               </div>\n" +
@@ -157,17 +162,21 @@
             "</div>";
         $('header').html(headerHtml);
     }
-
     if (isLoggedIn()) {
         $('#spnUserName').html(getCookieValue("UserName"));
         $('#optionLoggedIn').show();
+        //alert(getCookieValue("UserName") + " isLoggedIn(): " + isLoggedIn());
         $('#optionNotLoggedIn').hide();
+        if (isInRole("add images")) {
+            //alert("show dashboard link");
+            $('#dashboardMenuItem').show();
+        }
     }
     else {
+        $('#dashboardMenuItem').hide();
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').show();
     }
-
     // LOOK UP FOLDER DETAIL FOR BADGES AND TRACKBACK LINKS
     if (subdomain !== "admin") {
         if (folderId !== 3908 && folderId !== 3909) {

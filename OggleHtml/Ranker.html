@@ -34,6 +34,7 @@
     <div class="threeColumnLayout">
         <div id="leftColumn"></div>
         <div id="middleColumn">
+            <div id="divStatusMessage"></div>
             <img id="boobsRankerLoadingGif" class="loadingGif" src="Images/loader.gif" />
             <div id="dots"></div>
 
@@ -90,7 +91,6 @@
         var throttleArchive = false;
         var throttlePorn = false;
         var userName;
-        var isLoggedIn = false;
 
         $(document).ready(function () {
             includeHTML();
@@ -122,7 +122,7 @@
                     logPageHit(3907);
 
                     userName = getCookieValue("UserName");
-                    isLoggedIn = !isNullorUndefined(userName);
+                    //isLoggedIn = !isNullorUndefined(userName);
 
                 }
             }, 300);
@@ -140,9 +140,12 @@
                 case "porn":
                     $('#ckBoxPorn').prop('checked', true);
                     break;
+                case "archive":
+                    $('#ckBoxArchive').prop('checked', true);
+                    break;
                 default:
                     sendEmailToYourself("jQuery Fail in Ranker.Html setInitialCheckbox"," unknown subdomain: " + subdomain);
-                    //alert("setInitialCheckbox unknown subdomain: " + subdomain);
+                    alert("setInitialCheckbox unknown subdomain: " + subdomain);
                     break;
             }
             setHeaderRowMessage();
@@ -412,7 +415,7 @@
         function imageClick(selectedSide) {
             if ($('.rankerImageSlotBox').css('cursor') !== 'not-allowed') {
 
-                if (!isLoggedIn) {
+                if (!isLoggedIn()) {
                     displayStatusMessage("warning", "please log in to record hotness");                 
                 }
 

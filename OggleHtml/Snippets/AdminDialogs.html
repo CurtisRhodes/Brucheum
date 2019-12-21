@@ -21,15 +21,15 @@
         <div id="modelInfoDialogCommentContainer">
             <div id="modelInfoDialogComment" class="modelInfoCommentArea"></div>
         </div>
-
-        <div class="modelInfoDialogLabel">trackbacks</div>
         <div id="modelInfoDialogTrackBack">
-            <div class="hrefLabel">href</div><input id="txtLinkHref" class="modelDialogInput" />
-            <div class="hrefLabel">label</div><input id="txtLinkLabel" class="modelDialogInput" onblur="addHrefToExternalLinks()" />
-            <span class="addLinkIcon" onclick="addHrefToExternalLinks()">+</span>
+            <div class="modelInfoDialogLabel">trackbacks</div>
+            <div>
+                <div class="hrefLabel">href</div><input id="txtLinkHref" class="modelDialogInput" />
+                <div class="hrefLabel">label</div><input id="txtLinkLabel" class="modelDialogInput" onblur="addHrefToExternalLinks()" />
+                <span class="addLinkIcon" onclick="addHrefToExternalLinks()">+</span>
+            </div>
+            <div id="externalLinks" class="trackbackLinksArea"></div>
         </div>
-        <div id="externalLinks" class="trackbackLinksArea"></div>
-
     </div>
     <div id="modelInfoViewOnlyArea" class="displayHidden">
         <div class="viewOnlyMessage">If you you know who this is Please 'Add Info'</div>

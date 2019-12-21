@@ -905,6 +905,14 @@ namespace WebApi
                             // now add it to Oracle
                             using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
                             {
+                                MySqDataContext.CategoryFolder categoryFolder = new MySqDataContext.CategoryFolder();
+                                categoryFolder.Id = newFolderId;
+                                categoryFolder.Parent = parentId;
+                                categoryFolder.FolderName = newFolderName.Trim();
+                                categoryFolder.RootFolder = dbSourceFolder.RootFolder;
+                                mdb.CategoryFolders.Add(categoryFolder);
+                                mdb.SaveChanges();
+
                                 mdb.CategoryFolders.Add(new MySqDataContext.CategoryFolder()
                                 {
                                     Id = newFolderId,
@@ -913,6 +921,7 @@ namespace WebApi
                                     RootFolder = dbSourceFolder.RootFolder
                                 });
 
+                                mdb.SaveChanges();
                                 mdb.CategoryFolderDetails.Add(new MySqDataContext.CategoryFolderDetail() { FolderId = newFolder.Id, SortOrder = 99 });
                                 mdb.SaveChanges();
                             }

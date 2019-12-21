@@ -20,7 +20,7 @@
     display: none;
     /*background-image: url('images/pinkStarsWalllpaper.jpg');*/
     background-color: var(--oggleBackgroundColor);
-    z-index: 30;
+    z-index: 32;
 }
 
 .hiddenClickArea {
