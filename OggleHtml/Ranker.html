@@ -116,7 +116,7 @@
                 else {
                     clearInterval(waiter);
                     loadBoobsRanker(subdomain);
-                    setOggleHeader("ranker", 3907);
+                    setOggleHeader("ranker", 3907, false);
                     setOggleFooter("boobs", 3907);
                     setHeaderRowMessage();
                     logPageHit(3907);
@@ -134,7 +134,7 @@
                 case "boobs":
                     $('#ckBoxBoobs').prop('checked', true);
                     break;
-                case "playmates":
+                case "playboy":
                     $('#ckBoxPlayboy').prop('checked', true);
                     break;
                 case "porn":
@@ -205,7 +205,7 @@
                     clearInterval(throttleBoobs);
                     throttleBoobs = false;
                     break;
-                case "playmates":
+                case "playboy":
                     clearInterval(throttlePlayboy);
                     throttlePlayboy = false;
                     break;

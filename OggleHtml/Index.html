@@ -164,10 +164,6 @@
                 }
                 else {
                     clearInterval(waiter);
-
-                    //setOggleHeader(subdomain, 3908);
-                    //setOggleFooter(subdomain, 3908);
-
                     $('#dots').html("");
                     verifyConnection();
                     var verifyConnectionWaiter = setInterval(function () {
@@ -184,14 +180,14 @@
                             $('#dots').html('');
 
                             if (subdomain == "porn") {
-                                setOggleHeader(subdomain, 3909);
+                                setOggleHeader(subdomain, 3909, false);
                                 $('#pornLeftColumnList').show();
                                 $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
                                 $('#includeCenterfoldsCheckbox').hide();
                                 logPageHit(3909);
                             }
                             else {
-                                setOggleHeader(subdomain, 3908);
+                                setOggleHeader(subdomain, 3908, false);
                                 $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
                                 $('#boobsLeftColumnList').show();
                                 launchPromoMessages();

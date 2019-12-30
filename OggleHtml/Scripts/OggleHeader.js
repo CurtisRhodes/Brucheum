@@ -1,4 +1,5 @@
-﻿function setOggleHeader(subdomain, folderId) {
+﻿
+function setOggleHeader(subdomain, folderId, containsImageLinks, isStaticPage) {
     //alert("setOggleHeader called from " + folderId);
     var headerHtml;
     var lang = "en";
@@ -7,6 +8,8 @@
     var boobsRankerLink = "";
     var bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"boobs\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
     var archiveLink = "";
+
+    //if (getCookieValue("IpAddress") === "68.203.90.183") alert("setOggleHeader subdomain " + subdomain + "  folderId: " + folderId + " containsImageLinks: " + containsImageLinks);
 
     $('header').switchClass('pornHeader', 'boobsHeader');
     switch (subdomain) {
@@ -88,7 +91,7 @@
             subheaderContent = "Admin";
             break;
         default:
-            sendEmailToYourself("OggleHeader switch", "subdomain: " + subdomain);
+            sendEmailToYourself("OggleHeader switch ","folderId: " + folderId+ "<br/>subdomain: " + subdomain);
 
         //alert("subdomain: " + subdomain + "  not found");
         //console.log("subdomain: " + subdomain + "  not found");
@@ -107,7 +110,8 @@
             //"                   \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
             "           <div id='headerSubTitle' class='topLinkRow'>\n" + subheaderContent + "</div>\n" + archiveLink + boobsRankerLink +
             "           <div class='OggleSearchBox'>\n" +
-            "               <span id='notUserName'>search</span> <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
+            "               <span id='notUserName' title='this is a progressive single letter search. Do not paste multipe chars. Esc clears search.'>search</span>" +
+            "                   <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
             "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
             "           </div>\n" +
             "       </div>\n" +
@@ -167,10 +171,10 @@
         $('#optionLoggedIn').show();
         //alert(getCookieValue("UserName") + " isLoggedIn(): " + isLoggedIn());
         $('#optionNotLoggedIn').hide();
-        if (isInRole("add images")) {
-            //alert("show dashboard link");
-            $('#dashboardMenuItem').show();
-        }
+
+        setTimeout(function () { if (isInRole("Oggle admin")) { $('#dashboardMenuItem').show(); } }, 400);
+            
+
     }
     else {
         $('#dashboardMenuItem').hide();
@@ -178,16 +182,17 @@
         $('#optionNotLoggedIn').show();
     }
     // LOOK UP FOLDER DETAIL FOR BADGES AND TRACKBACK LINKS
-    if (subdomain !== "admin") {
-        if (folderId !== 3908 && folderId !== 3909) {
-            showSpecialHeaderIcons(folderId);
+    if (containsImageLinks) {
+        //if (getCookieValue("IpAddress") === "68.203.90.183") alert("isStaticPage: " + isStaticPage);
+        showSpecialHeaderIcons(folderId);
+        if (!isStaticPage) {
+            setTrackbackLinks(folderId);
         }
     }
 }
 
 function showSpecialHeaderIcons(folderId) {
-    setTrackbackLinks(folderId);
-
+    //alert("showSpecialHeaderIcons: " + folderId);
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
@@ -210,7 +215,8 @@ function showSpecialHeaderIcons(folderId) {
             }
             else {
                 if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
-                    sendEmailToYourself("SERVICE DOWN", "from getBreadCrumbs<br/>folderId=" + folderId + "<br/>IpAddress: " +
+                    checkFor404(folderDetailModel.Success, "showSpecialHeaderIcons");
+                    sendEmailToYourself("SERVICE DOWN", "from showSpecialHeaderIcons<br/>folderId=" + folderId + "<br/>IpAddress: " +
                         getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
                 }
                 else
@@ -256,8 +262,9 @@ function setTrackbackLinks(folderId) {
             }
             else {
                 if (trackBackModel.Success.indexOf("Option not supported") > -1) {
-                    sendEmailToYourself("Option not supported", "folderId=" + folderId + "<br/>IpAddress: " +
-                        getCookieValue("IpAddress") + "<br/>Message : " + errorMessage);
+                    checkFor404(trackBackModel.Success, "setTrackbackLinks");
+                    sendEmailToYourself("SERVICE DOWN", "from setTrackbackLinks<br/>folderId=" + folderId + "<br/>IpAddress: " +
+                        getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
                 }
                 else
                     sendEmailToYourself("setTrackbackLinks", "folderId=" + folderId + "<br/>IpAddress: " +

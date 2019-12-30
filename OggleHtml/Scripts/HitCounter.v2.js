@@ -480,7 +480,7 @@ function logVisit(visitorId) {
                     }
                     if (verbosity > 3)
                         sendEmailToYourself("Visit Added ", "visitorId: " + visitorId);
-                    if (document.domain === 'localhost') alert("Visit Added ", "visitorId: " + visitorId);
+                    //if (document.domain === 'localhost') alert("Visit Added ", "visitorId: " + visitorId);
                 }
             }
             else {
@@ -687,11 +687,13 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                     }
                 }
                 else {
-                    if (logEventActivitySuccess.Success.indexOf("Option not supported") > -1)
+                    if (logEventActivitySuccess.Success.indexOf("Option not supported") > -1) {
+                        checkFor404(logEventActivitySuccess.Success, "logEventActivity");
                         sendEmailToYourself("SERVICE DOWN", "from " + logEventActivitySuccess.EventName + " {" + eventCode + "}",
                             "calledFrom: {" + calledFrom + "} : " + logEventActivitySuccess.CalledFrom +
                             "<br/>eventDetail: {" + eventDetail + "} : " + logEventActivitySuccess.PageBeingCalled +
                             "<br/>from: " + ipAddress + ", " + logEventActivitySuccess.VisitorDetails);
+                    }
                     else {
                         if (document.domain === 'localhost')
                             alert("LogEventActivity\nCalled from PageId: " + calledFrom +
@@ -702,10 +704,10 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                         else {
                             if (logEventActivitySuccess.Success.indexOf("Duplicate entry") < 0)
                                 sendEmailToYourself("LogEventActivity", "Called from PageId: " + calledFrom +
-                                "<br/>EventCode: " + eventCode +
-                                "<br/>eventDetail: " + eventDetail +
-                                "<br/>VisitorId: " + visitorId +
-                                "<br/>Message: " + logEventActivitySuccess.Success);
+                                    "<br/>EventCode: " + eventCode +
+                                    "<br/>eventDetail: " + eventDetail +
+                                    "<br/>VisitorId: " + visitorId +
+                                    "<br/>Message: " + logEventActivitySuccess.Success);
                         }
                     }
                 }
@@ -753,22 +755,24 @@ function checkForHitLimit(calledFrom, pageId) {
           //ipAddress === "24.165.20.22"   ||  // page hits
           //ipAddress === "73.181.156.170" ||  // page hits
           //ipAddress === "99.189.25.139"  ||  // page hits
-          //ipAddress === "184.176.88.28"  ||  // page hits
+            ipAddress === "75.139.185.10"  ||  // page hits
             ipAddress === "73.98.11.244"   ||  // page hits
             ipAddress === "90.213.105.243" ||  // page hits
             ipAddress === "174.48.120.252" ||  // page hits
+            ipAddress === "86.85.60.27"    ||  // image hits
+            ipAddress === "172.88.217.213" ||  // image hits
             ipAddress === "107.15.179.45") {   // image hits
             // delete this 
         }
         else {
-            if (calledFrom === "pages") {
-                if (userPageHits > freePageHitsAllowed) {
+            if (calledFrom === "pages") {                
+                if (userPageHits > freePageHitsAllowed && userPageHits < freePageHitsAllowed + 10) {
                     showCustomMessage(98, true);
                     sendEmailToYourself("Page Hit Message Displayed", "userPageHits: " + userPageHits + "<br>pageId: " + pageId + "<br>Ip: " + ipAddress);
                 }
             }
             if (calledFrom === "images") {
-                if (userImageHits > freeImageHitsAllowed) {
+                if (userImageHits > freeImageHitsAllowed && userImageHits < freeImageHitsAllowed + 10) {
                     showCustomMessage(97, true);
                     sendEmailToYourself("Image Hit Message Displayed", "userImageHits: " + userImageHits + "<br>pageId: " + pageId + "<br>Ip: " + ipAddress);
                 }

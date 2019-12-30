@@ -23,6 +23,7 @@ function directToStaticPage(folderId) {
             }
             else {
                 if (successModel.Success.indexOf("Option not supported") > -1) {
+                    checkFor404(successModel.Success, "directToStaticPage");
                     sendEmailToYourself("SERVICE DOWN", "from directToStaticPage" +
                         "<br/>folderId=" + folderId +
                         "<br/>IpAddress: " + getCookieValue("IpAddress") +
@@ -42,28 +43,34 @@ function directToStaticPage(folderId) {
     });
 }
 
-function setAlbumPageHeader(folderId) {
+function setAlbumPageHeader(folderId, isStaticPage) {
     try {
         $.ajax({
             type: "PATCH",
             url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=" + folderId,
-            success: function (successModel) {
-                if (successModel.Success === "ok") {
-                    setOggleHeader(successModel.ReturnValue, folderId);
-                    setOggleFooter(successModel.ReturnValue, folderId);
+            success: function (rootFolderModel) {
+                if (rootFolderModel.Success === "ok") {
+                    setOggleHeader(rootFolderModel.RootFolder, folderId, rootFolderModel.ContainsImageLinks, isStaticPage);
+                    setOggleFooter(rootFolderModel.RootFolder, folderId);
                 }
                 else {
-                    sendEmailToYourself("setAlbumPageHeader FAILURE", "api/AlbumPage/GetRootFolder?folderId=" + folderId + "<br>" + successModel.Success);
+                    if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
+                        checkFor404(folderDetailModel.Success, "setAlbumPageHeader");
+                        sendEmailToYourself("SERVICE DOWN", "from getBreadCrumbs<br/>folderId=" + folderId + "<br/>IpAddress: " +
+                            getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
+                    }
+                    else
+                        sendEmailToYourself("setAlbumPageHeader FAILURE", "api/AlbumPage/GetRootFolder?folderId=" + folderId + "<br>" + successModel.Success);
                 }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (checkFor404(errorMessage, "setAlbumPageHeader")) {
                     if (document.domain === 'localhost')
-                        alert("continuing on in setAlbumPageHeader");                
+                        alert("continuing on to setAlbumPageHeader");
                     else
-                        sendEmailToYourself("continuing on in setAlbumPageHeader", "folderId: " + folderId);
-                    setOggleHeader("boobs", folderId);
+                        sendEmailToYourself("continuing on to setAlbumPageHeader", "folderId: " + folderId + "<br/>" + errorMessage);
+                    setOggleHeader("boobs", folderId, false);
                     setOggleFooter("boobs", folderId);
                 }
                 else
@@ -121,6 +128,7 @@ function getBreadCrumbs(folderId) {
             }
             else {
                 if (breadCrumbModel.Success.indexOf("Option not supported") > -1) {
+                    checkFor404(breadCrumbModel.Success, "getBreadCrumbs");
                     sendEmailToYourself("SERVICE DOWN", "from getBreadCrumbs<br/>folderId=" + folderId + "<br/>IpAddress: " +
                         getCookieValue("IpAddress") + "<br/> " + breadCrumbModel.Success);
                 }
@@ -440,9 +448,6 @@ function ctxSAP(imgId) {
         $('#thumbImageContextMenu').css("top", picpos.top + 5);
         $('#thumbImageContextMenu').css("left", picLeft);
     }
-
-
-    //alert("calling GetModelName: " + selectedImageLinkId);
     $.ajax({
         type: "GET",
         async: true,
@@ -455,7 +460,7 @@ function ctxSAP(imgId) {
 
                 $('#ctxModelName').html("unknown model");
                 $('#ctxSeeMore').hide();
-
+                var canSeeMore = false;
 
                 if (typeof staticPageFolderName === 'string') {
                     currentAlbumJSfolderName = staticPageFolderName;
@@ -470,6 +475,7 @@ function ctxSAP(imgId) {
                 if (modelDetails.RootFolder === "archive" && currentFolderRoot !== "archive") {
                     //alert("archive   modelDetails.RootFolder == " + modelDetails.RootFolder + " and currentFolderRoot = " + currentFolderRoot);
                     $('#ctxSeeMore').show();
+                    canSeeMore = true;
                 }
 
                 //if (modelDetails.RootFolder === "playboy" && currentFolderRoot !== "playboy") {
@@ -487,6 +493,7 @@ function ctxSAP(imgId) {
             }
             else {
                 if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
+                    checkFor404(folderDetailModel.Success, "ctxSAP");
                     sendEmailToYourself("SERVICE DOWN", "from album.js/ctxSAP" +
                         "<br/>currentAlbumJSfolderName=" + currentAlbumJSfolderName + "<br/>IpAddress: " + getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
                 }
@@ -513,6 +520,10 @@ function contextMenuAction(action) {
             var disableViewerKeys = viewerShowing;
             viewerShowing = false;
             $("#thumbImageContextMenu").fadeOut();
+
+            alert("showModelInfoDialog from contextMenuAction");
+
+
             showModelInfoDialog($('#ctxModelName').html(), modelFolderId, selectedImage);// $('#' + currentContextLinkId + '').attr("src"));
             $('#modelInfoDialog').on('dialogclose', function (event) {
                 viewerShowing = disableViewerKeys;

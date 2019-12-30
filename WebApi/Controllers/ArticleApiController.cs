@@ -14,9 +14,9 @@ namespace WebApi
     public class DbArticleController : ApiController
     {
         [HttpGet]
-        public IEnumerable<DbArticleModel> Get(int pageLen, int page, string filterType, string filter)
+        public ArticlesModel Get(int pageLen, int page, string filterType, string filter)
         {
-            var articleList = new List<DbArticleModel>();
+            var articles = new ArticlesModel();
             try
             {
                 using (WebSiteContext db = new WebSiteContext())
@@ -35,43 +35,48 @@ namespace WebApi
                             break;
                     }
 
+                    string byLineLabel = "";
+                    string catLabel = "";
+                    string subCatLabel = "";
                     foreach (Article dbArticle in dbArticles)
                     {
-                        var articleModel = new DbArticleModel();
-                        articleModel.Id = dbArticle.Id.ToString();
-                        articleModel.Title = dbArticle.Title;
-                        articleModel.ByLineRef = dbArticle.ByLineRef;
-                        articleModel.CategoryRef = dbArticle.CategoryRef;
-                        articleModel.SubCategoryRef = dbArticle.SubCategoryRef;
+                        try { byLineLabel = db.Refs.Where(r => r.RefCode == dbArticle.ByLineRef).FirstOrDefault().RefDescription; }
+                        catch (Exception) { byLineLabel = "0"; }
+                        try { catLabel = db.Refs.Where(r => r.RefCode == dbArticle.CategoryRef).FirstOrDefault().RefDescription; }
+                        catch (Exception ex) { catLabel = Helpers.ErrorDetails(ex); }
+                        try { subCatLabel = db.Refs.Where(r => r.RefCode == dbArticle.SubCategoryRef).FirstOrDefault().RefDescription; }
+                        catch (Exception ex) { subCatLabel = Helpers.ErrorDetails(ex); }
 
-                        try { articleModel.ByLineLabel = db.Refs.Where(r => r.RefCode == dbArticle.ByLineRef).FirstOrDefault().RefDescription; }
-                        catch (Exception) { articleModel.ByLineLabel = "0"; }
-
-                        try { articleModel.CategoryLabel = db.Refs.Where(r => r.RefCode == dbArticle.CategoryRef).FirstOrDefault().RefDescription; }
-                        catch (Exception ex) { articleModel.CategoryLabel = Helpers.ErrorDetails(ex); }
-
-                        try { articleModel.SubCategoryLabel = db.Refs.Where(r => r.RefCode == dbArticle.SubCategoryRef).FirstOrDefault().RefDescription; }
-                        catch (Exception ex) { articleModel.SubCategoryLabel = Helpers.ErrorDetails(ex); }
-
-                        articleModel.ImageName = dbArticle.ImageName;
-                        articleModel.Summary = dbArticle.Summary;
-                        articleModel.Contents = dbArticle.Content;
-                        articleModel.LastUpdated = dbArticle.LastUpdated.ToShortDateString();
-                        articleList.Add(articleModel);
+                        articles.ArticleList.Add(new ArticleModel()
+                        {
+                            Id = dbArticle.Id.ToString(),
+                            Title = dbArticle.Title,
+                            ByLineRef = dbArticle.ByLineRef,
+                            CategoryRef = dbArticle.CategoryRef,
+                            SubCategoryRef = dbArticle.SubCategoryRef,
+                            ByLineLabel = byLineLabel,
+                            CategoryLabel = catLabel,
+                            SubCategoryLabel = subCatLabel,
+                            ImageName = dbArticle.ImageName,
+                            Summary = dbArticle.Summary,
+                            Contents = dbArticle.Content,
+                            LastUpdated = dbArticle.LastUpdated.ToShortDateString()
+                        });
                     }
+                    articles.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                articleList.Add(new DbArticleModel() { Title = "ERROR", Summary = Helpers.ErrorDetails(ex) });
+                articles.Success = Helpers.ErrorDetails(ex);
             }
-            return articleList;
+            return articles;
         }
 
         [HttpGet]
-        public DbArticleModel Get(string articleId)
+        public ArticleModel Get(string articleId)
         {
-            var articleModel = new DbArticleModel();
+            var articleModel = new ArticleModel();
             try
             {
                 using (WebSiteContext db = new WebSiteContext())
@@ -113,7 +118,7 @@ namespace WebApi
         }
 
         [HttpPost]
-        public string Post(DbArticleModel articleModel)
+        public string Post(ArticleModel articleModel)
         {
             var success = "";
             try
@@ -151,7 +156,7 @@ namespace WebApi
         }
 
         [HttpPut]
-        public string Put(DbArticleModel editArticle)
+        public string Put(ArticleModel editArticle)
         {
             var success = "";
             try

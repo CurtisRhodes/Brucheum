@@ -162,7 +162,7 @@ namespace WebApi.Controllers
                     "<script>var staticPageFolderId=" + folderId + "; " +
                     "var staticPageFolderName='" + folderName + "'; " +
                     "var staticPageImagesCount='" + imagesCount + "'; " +
-                    "var staticPageRootFolderId='" + rootFolder + "';</script>\n" +
+                    "var currentFolderRoot='" + rootFolder + "';</script>\n" +
                     "<div w3-include-html='/Snippets/Slideshow.html'></div>\n" +
                     "<div w3-include-html='/Snippets/AdminDialogs.html'></div>\n" +
                     "<div w3-include-html='/Snippets/Login.html'></div>\n" +
@@ -231,18 +231,34 @@ namespace WebApi.Controllers
 
         private string GalleryPageBodyHtml(int folderId, string rootFolder)
         {
-            string bodyHtml =
+            StringBuilder bodyHtml = new StringBuilder(
             "<div class='threeColumnLayout'>\n" +
             "   <div id='leftColumn'>\n" +
-            "       <div id = 'TrackbackLinkArea' class='leftColumnTrackbackArea'>\n" +
-            "           <div id='babapediaLink' class='leftColumnTrackbackLink displayHidden'></div>\n" +
-            "           <div id='freeonesLink' class='leftColumnTrackbackLink displayHidden'></div>\n" +
-            "           <div id='indexxxLink' class='leftColumnTrackbackLink displayHidden'></div>\n" +
-            "      </div>\n" +
+            "       <div id = 'TrackbackLinkArea' class='leftColumnTrackbackArea'>\n");
+            TrackBackModel trackBackModel = new TrackbackLinkController().GetTrackBacks(folderId);
+            if (trackBackModel.Success == "ok")
+            {
+                foreach(TrackBackItem trackBackItem in trackBackModel.TrackBackItems) { 
+                    if (trackBackItem.Site == "Babepedia")
+                    {
+                        bodyHtml.Append("           <div id='babapediaLink' class='leftColumnTrackbackLink'>" + trackBackItem.TrackBackLink + "</div>\n");
+                    }
+                    if (trackBackItem.Site == "Freeones")
+                    {
+                        bodyHtml.Append("           <div id='freeonesLink' class='leftColumnTrackbackLink'>" + trackBackItem.TrackBackLink + "</div>\n");
+                    }
+                    if (trackBackItem.Site == "Indexxx")
+                    {
+                        bodyHtml.Append("           <div id='indexxxLink' class='leftColumnTrackbackLink'>"+ trackBackItem.TrackBackLink + "</div>\n");
+                    }
+                }
+            }
+
+            bodyHtml.Append("      </div>\n" +
             "   </div>\n" +
             "<div id='middleColumn'>\n" +
             "   <div id='divStatusMessage'></div>\n" +
-            "   <div id='imageContainer' class='flexWrapContainer'>\n";
+            "   <div id='imageContainer' class='flexWrapContainer'>\n");
 
             //ImageLink[] imageArray = null;
             using (OggleBoobleContext db = new OggleBoobleContext())
@@ -256,12 +272,12 @@ namespace WebApi.Controllers
                     subDirLabelClass = "pornSubDirLabel";
                 }
                 // IMAGES 
-                List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ToList();
+                List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
                 int idx = 0;
                 foreach (VwLink link in vwLinks)
                 {
-                    bodyHtml += "<div id='img" + idx + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
-                         "oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='startSlideShow(" + idx++ + ")' src='" + link.Link + "'/></div>\n";
+                    bodyHtml.Append("<div id='img" + idx + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
+                         "oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='startSlideShow(" + idx++ + ")' src='" + link.Link + "'/></div>\n");
                     imagesCount++;
                 }
                 //  SUBFOLDERS
@@ -270,16 +286,15 @@ namespace WebApi.Controllers
                 {
                     string fullerFolderName = subDir.RootFolder + "/" + Helpers.GetCustomStaticFolderName(subDir.Id, subDir.FolderName);
                     int subDirFileCount = Math.Max(subDir.FileCount, subDir.SubDirCount);
-                    bodyHtml += "<div class='" + imageFrameClass + "'>" +
+                    bodyHtml.Append("<div class='" + imageFrameClass + "'>" +
                         "<div class='folderImageFrame' onclick='reportThenPerformEvent(\"SUB\"," + folderId + "," + subDir.Id + ")'>" +
                         "<img class='folderImage' src='" + subDir.Link + "'/>" +
-                        "<div class='" + subDirLabelClass + "'>" + subDir.FolderName + " (" + subDirFileCount + ")</div></div></div>\n";
+                        "<div class='" + subDirLabelClass + "'>" + subDir.FolderName + " (" + subDirFileCount + ")</div></div></div>\n");
                     imagesCount++;
                 }
             }
 
-            bodyHtml +=
-                "   </div>\n" +
+            bodyHtml.Append("   </div>\n" +
                 "       <div id='fileCount' class='countContainer'></div>\n" +
                 "       <div id='thumbImageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut();'>\n" +
                 "           <div id='ctxModelName' onclick='contextMenuAction(\"show\")'>model name</div>\n" +
@@ -296,9 +311,10 @@ namespace WebApi.Controllers
                 "      <div id='feedbackBanner' class='fixedMessageButton displayHidden' " +
                 "       title='I built this website entirely by myself\nusing only Html and JavaScript. Any comments or suggestions are greatly appreciated.'>feedback</div>\n" +
                 "   </div>\n" +
-                "</div>";
-            return bodyHtml;
+                "</div>");
+            return bodyHtml.ToString();
         }
+
     }
 }
 

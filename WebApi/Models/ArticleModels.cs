@@ -12,9 +12,20 @@ namespace WebApi.Models
         public string TagCategoryRef { get; set; }
     }
 
-    public class DbArticleModel
+    public class ArticlesModel
     {
-        public DbArticleModel() {
+        public ArticlesModel()
+        {
+            ArticleList = new List<ArticleModel>();
+        }
+        public List<ArticleModel> ArticleList { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class ArticleModel 
+    {
+        public ArticleModel()
+        {
             Tags = new List<DbArticleTagModel>();
         }
         public string Id { get; set; }

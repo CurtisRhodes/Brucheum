@@ -72,6 +72,8 @@ namespace WebApi.MySqDataContext
         [Key]
         [Column(Order = 3)]
         public string HitTime { get; set; }
+        public int PageHits { get; set; }
+        public int ImageHits { get; set; }
     }
 
     [Table("OggleBooble.vwDailyActivity")]
@@ -345,8 +347,13 @@ namespace WebApi.MySqDataContext
         public string City { get; set; }
         public string Region { get; set; }
         public string Country { get; set; }
+        public int ImageHitsToday { get; set; }
+        public int TotalImageHits { get; set; }
+        public int PageHitsToday { get; set; }
+        public int TotalPageHits { get; set; }
         public string LastHit { get; set; }
-        public int ImageHits { get; set; }
+        public string InitialVisit { get; set; }
+        public string UserName { get; set; }
     }
 }
 

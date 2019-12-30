@@ -147,7 +147,7 @@ function checkFor404(errorMessage, calledFrom) {
             alert("checkFor404 called with null errorMessage from: " + calledFrom);
 
     }
-    if (errorMessage.indexOf("Not connect") > -1) {
+    if (errorMessage.indexOf("Not connect") > -1 || errorMessage.indexOf("Option not supported") > -1) {
         isNotConnected = true;
 
         //if (ipAddr !== "68.203.90.199983")
@@ -169,8 +169,6 @@ function checkFor404(errorMessage, calledFrom) {
             "</div>");
 
         $('#notConnectMessage').show();
-
-
         console.log("checkFor404: " + calledFrom);
     }
     else {

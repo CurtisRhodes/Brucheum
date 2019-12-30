@@ -182,6 +182,8 @@ namespace WebApi.Models
         public string ImageLinkId { get; set; }
         public string FolderImageLink { get; set; }
         public string FolderImage { get; set; }
+        public string LinkStatus { get; set; }
+        public bool IsLandscape { get; set; }
         public string Success { get; set; }
     }
     

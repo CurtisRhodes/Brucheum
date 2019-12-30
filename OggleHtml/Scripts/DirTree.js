@@ -5,7 +5,7 @@ var dirDepth = 3;
 
 function buildDirTree(dest, treeId, startNode, endNode) {  
 
-    //alert("buildDirTree");
+    //alert("buildDirTreez");
 
     try {
         var start = Date.now();
@@ -21,13 +21,9 @@ function buildDirTree(dest, treeId, startNode, endNode) {
                 dest.html(dirTreeContainer);
                 var delta = (Date.now() - start) / 1000;
                 console.log("rebuildCatTree took: " + delta.toFixed(3));
-
-                //alert("typeof onDirTreeComplete: " + typeof onDirTreeComplete);
-
                 if (typeof onDirTreeComplete === "function") {
                     onDirTreeComplete();
                 }
-
             },
             error: function (xhr) {
                 dest.html("buildCatTree xhr error: " + getXHRErrorDetails(xhr));

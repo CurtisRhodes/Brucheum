@@ -83,6 +83,8 @@ namespace WebApi.Models
         public string Country { get; set; }
         public int PageId { get; set; }
         public string FolderName { get; set; }
+        public int PageHits { get; set; }
+        public int ImageHits { get; set; }
         public string HitDate { get; set; }
         public string HitTime { get; set; }
     }
@@ -103,8 +105,13 @@ namespace WebApi.Models
         public string City { get; set; }
         public string Region { get; set; }
         public string Country { get; set; }
+        public int ImageHitsToday { get; set; }
+        public int TotalImageHits { get; set; }
+        public int PageHitsToday { get; set; }
+        public int TotalPageHits { get; set; }
         public string LastHit { get; set; }
-        public int ImageHits { get; set; }
+        public string InitialVisit { get; set; }
+        public string UserName { get; set; }
     }
 
     public class ActivityReportModel

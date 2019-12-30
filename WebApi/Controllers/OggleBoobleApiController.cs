@@ -257,26 +257,24 @@ namespace WebApi
         }
 
         [HttpPatch]
-        public SuccessModel GetRootFolder(int folderId)
+        public RootFolderModel GetRootFolder(int folderId)
         {
-            SuccessModel successModel = new SuccessModel();
+            RootFolderModel rootFolderModel = new RootFolderModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    successModel.ReturnValue = dbCategoryFolder.RootFolder;
-                    successModel.Success = "ok";
+                    rootFolderModel.ContainsImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
+                    rootFolderModel.RootFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault().RootFolder;
+                    rootFolderModel.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                successModel.Success = Helpers.ErrorDetails(ex);
+                rootFolderModel.Success = Helpers.ErrorDetails(ex);
             }
-            return successModel;
+            return rootFolderModel;
         }
-
-
     }
 
     [EnableCors("*", "*", "*")]
@@ -412,15 +410,15 @@ namespace WebApi
         }
         private void GetDirTreeRecurr(CategoryTreeModel parent, List<VwDirTree> vwDirTree, string path)
         {
-            
-            //var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).Distinct();
-            var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId);
-
-            //var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId);
-            vwTrees = vwTrees.OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName);
-            if (parent.FolderId == 603)
+            if (parent.FolderId == 528)
             {
             }
+
+            //var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).Distinct();
+            var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).Distinct().OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName);
+
+            //var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId);
+            //vwTrees = vwTrees.OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName);
 
             foreach (VwDirTree vwTree in vwTrees)
             {
@@ -963,6 +961,11 @@ namespace WebApi
                 {
                     using (OggleBoobleContext db = new OggleBoobleContext())
                     {
+                        //CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                        
+                        //if(categoryFolder.w)
+
+
                         CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(xn => xn.FolderId == folderId).FirstOrDefault();
                         //CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                         if (categoryFolderDetails == null)
@@ -978,6 +981,7 @@ namespace WebApi
                             folderDetailModel.Boobs = categoryFolderDetails.Boobs;
                             folderDetailModel.FolderName = db.CategoryFolders.Where(f => f.Id == folderId).First().FolderName;
                             folderDetailModel.FolderId = categoryFolderDetails.FolderId;
+                            folderDetailModel.LinkStatus = categoryFolderDetails.LinkStatus;
                         }
                         if (folderDetailModel.FolderImageLink == null)
                             folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
@@ -985,7 +989,10 @@ namespace WebApi
                         {
                             ImageLink imageLink = db.ImageLinks.Where(g => g.Id == categoryFolderDetails.FolderImage).FirstOrDefault();
                             if (imageLink != null)
+                            {
                                 folderDetailModel.FolderImage = imageLink.Link;
+                                folderDetailModel.IsLandscape = (imageLink.Width > imageLink.Height);
+                            }
                             //folderDetailModel.FolderImage = db.ImageLinks.Where(g => g.Id == categoryFolderDetails.FolderImage).First().Link;
                         }
                     }
@@ -1053,6 +1060,7 @@ namespace WebApi
                         Nationality = model.Nationality,
                         Measurements = model.Measurements,
                         Boobs = model.Boobs,
+                        LinkStatus = model.LinkStatus,
                         Born = model.Born
                     });
                     db.SaveChanges();
@@ -1082,6 +1090,7 @@ namespace WebApi
                     dbFolderDetail.ExternalLinks = model.ExternalLinks;
                     dbFolderDetail.CommentText = model.CommentText;
                     dbFolderDetail.Measurements = model.Measurements;
+                    dbFolderDetail.LinkStatus = model.LinkStatus;
                     db.SaveChanges();
                     success = "ok";
                 }

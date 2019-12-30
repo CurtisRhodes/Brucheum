@@ -95,10 +95,8 @@ function onDirTreeComplete() {
 function buildDirectoryTree() {
     $('#dirTreeContainer').html("");
     $('#dataifyInfo').show().html("rebuilding directory tree");
-
     $('#dashBoardLoadingGif').show();
     buildDirTree($('#dirTreeContainer'), "dashboardMain", 0);
-    //$('.dirTreeSpan').mouseover()
 }
 
 function createStaticPages(justOne) {
@@ -435,13 +433,6 @@ function updateSortOrder() {
             }
         });
     }
-
-// REPORTS
-function showPerfMetrics() {
-    $('.workAreaContainer').hide();
-    $('#divHitMetrics').fadeIn();
-    metricsMatrixReport();
-}
 
 //  DIALOG FUNCTIONS 
 function createNewFolder() {

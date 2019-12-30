@@ -13,6 +13,13 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
+    public class RootFolderModel
+    {
+        public string RootFolder { get; set; }
+        public bool ContainsImageLinks { get; set; }
+        public string Success { get; set; }
+    }
+
     public class CategoryTreeModel
     {
         public CategoryTreeModel()

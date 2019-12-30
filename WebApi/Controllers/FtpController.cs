@@ -754,7 +754,7 @@ namespace WebApi
                                 if (!newLocalFolder.Exists)
                                 {
                                     DirectoryInfo repoParentFolder = new DirectoryInfo(repoPath + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + dbDestinationFolder.FolderName);
-                                    if (repoParentFolder.Exists)
+                                    if (!repoParentFolder.Exists)
                                     {
                                         newLocalFolder.Create();
                                     }
@@ -816,7 +816,7 @@ namespace WebApi
                             }
 
 
-                            if (success == "ok")
+                                if (success == "ok")
                             {
                                 subdirs = db.CategoryFolders.Where(f => f.Parent == dbSourceFolder.Id).ToList();
                                 foreach (CategoryFolder subdir in subdirs)
@@ -834,8 +834,15 @@ namespace WebApi
                             }
                             success = "ok";
                             //File.Move(sourceFileName, destinationFileName);
-                            var x = repoPath + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName;
-                            Directory.Delete(repoPath + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName);
+                            try
+                            {
+                                var x = repoPath + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName;
+                                Directory.Delete(repoPath + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originPath + dbSourceFolder.FolderName);
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine("deleting local folder didnt work " + ex);
+                            }
                         }
                     }
                 }
@@ -920,8 +927,6 @@ namespace WebApi
                                     FolderName = newFolderName.Trim(),
                                     RootFolder = dbSourceFolder.RootFolder
                                 });
-
-                                mdb.SaveChanges();
                                 mdb.CategoryFolderDetails.Add(new MySqDataContext.CategoryFolderDetail() { FolderId = newFolder.Id, SortOrder = 99 });
                                 mdb.SaveChanges();
                             }

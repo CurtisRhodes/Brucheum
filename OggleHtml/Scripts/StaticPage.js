@@ -10,7 +10,6 @@ var modelInfoDialogIsOpen = false;
 var imageCommentDialogIsOpen = false;
 var folderCategoryDialogIsOpen = false;
 var forgetShowingCatDialog;
-//var imageArray = new Array();
 var selectedImageLinkId;
 var fullPageName;
 
@@ -27,9 +26,15 @@ $(document).ready(function () {
         }
         else {
             clearInterval(waiter);
-            getBreadCrumbs(staticPageFolderId);
-            setOggleHeader(staticPageRootFolderId, staticPageFolderId);
-            setOggleFooter(staticPageRootFolderId, staticPageFolderId);
+            setAlbumPageHeader(staticPageFolderId, true);
+
+            //setOggleHeader(currentFolderRoot, staticPageFolderId, false);
+            //setOggleFooter(currentFolderRoot, staticPageFolderId);
+
+            setTimeout(function () { getBreadCrumbs(staticPageFolderId)}, 800);
+
+            //setOggleHeader(currentFolderRoot, staticPageFolderId);
+            //setOggleFooter(currentFolderRoot, staticPageFolderId);
             //logPageHit(staticPageFolderId, "Static Page"); //, getCookieValue("VisitorId"), "Static Page");
 
             $('footerMessage').html(staticPageFolderName);
@@ -51,22 +56,6 @@ function resizeStaticPage() {
     //$('#footerMessage').html("8");
 }
 
-//function contextMenuActionShow() {
-//    showModelInfoDialog($('#staticPagectxModelName').html(), modelFolderId, selectedImage);
-//}
-//function contextMenuActionJump() {
-
-//    alert("fullPageName: " + fullPageName);
-//    window.open(httpLocation + fullPageName + ".html", "_blank");
-//}
-//function contextMenuActionComment() {
-//    showImageCommentDialog(selectedImage, selectedImageLinkId, staticPageFolderId, staticPageFolderName);
-//}
-//function contextMenuActionExplode() {
-//    //alert("selectedImage: " + selectedImage);
-//    window.open(selectedImage, '_blank');
-//}
-
 function showCatListDialog(root) {
     buildDirTree($('#staticCatTreeContainer'), "staticCatTreeContainer", root);
     $('#staticCatTreeContainer').dialog({
@@ -79,32 +68,9 @@ function showCatListDialog(root) {
 }
 function staticCatTreeContainerClick(path, id, treeId) {
     if (treeId === "staticCatTreeContainer") {
-        window.location.href = "https://ogglebooble.com/static/" + staticPageRootFolderId + "/" + path.substring(path.lastIndexOf("/") + 1) + ".html";
+        window.location.href = "https://ogglebooble.com/static/" + currentFolderRoot + "/" + path.substring(path.lastIndexOf("/") + 1) + ".html";
         $('#staticCatTreeContainer').dialog('close');
     }
-
-
     else
         alert("dirTreeClick treeId: " + treeId);
 }
-
-//function onLoginClick() {
-//    alert("due to a path issue with static pages it's best to login from the home page.");
-//    window.location.href = "/";
-//    //$('#loginDialog').dialog('open');
-//    //if (typeof pause === 'function')
-//    //    pause();
-//}
-
-//function onRegisterClick() {
-//    alert("due to a path issue with static pages it's best to Register from the home page.");
-//    window.location.href = "/";
-//    //$('#registerUserDialog').fadeIn();
-//}
-
-//function logoutSimple() {
-//    //alert("logoutSimple");
-//    document.cookie = "cookiename= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
-//    $('#divNotLogedIn').show();
-//    $('#divLogedIn').hide();
-//}

@@ -1,6 +1,13 @@
 ﻿function setOggleFooter(rootFolder, pageId) {
     //alert("setOggleFooter. pageId: " + pageId + "  rootFolder: " + rootFolder);
     var footerhtml = "";
+    if (isNullorUndefined(rootFolder)) {
+        sendEmailToYourself("Ogglefooter problem 1111",
+            "rootFolder undefined" + "<br/>pageId: " + pageId +
+            "<br/>ipAddress: " + getCookieValue("IpAddress"));
+        rootFolder = "boobs";
+    }
+
     if (rootFolder === "boobs" || rootFolder === "archive") {
         footerhtml =
             "<div class='flexContainer'>\n" +
@@ -86,13 +93,11 @@
         if (document.domain === 'localhost')
             alert("ERROR in Ogglefooter.js setOggleFooter\nrootFolder: " + rootFolder + "  not found");
         else {
-
-            sendEmailToYourself("Ogglefooter 1212",
+            sendEmailToYourself("Ogglefooter 12:28",
                 "pageId: " + pageId +
                 "<br/>rootFolder: " + rootFolder +
                 "<br/>ipAddress: " + getCookieValue("IpAddress"));
         }
     }
-    $('footer').html("");
     $('footer').html(footerhtml);
 }

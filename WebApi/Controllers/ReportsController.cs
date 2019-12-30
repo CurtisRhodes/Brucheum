@@ -186,8 +186,13 @@ namespace WebApi.Controllers
                             City = mostActiveUserItem.City,
                             Region = mostActiveUserItem.Region,
                             Country = mostActiveUserItem.Country,
+                            ImageHitsToday = mostActiveUserItem.ImageHitsToday,
+                            TotalImageHits = mostActiveUserItem.TotalImageHits,
+                            PageHitsToday = mostActiveUserItem.PageHitsToday,
+                            TotalPageHits = mostActiveUserItem.TotalPageHits,
                             LastHit = mostActiveUserItem.LastHit,
-                            ImageHits = mostActiveUserItem.ImageHits
+                            InitialVisit = mostActiveUserItem.InitialVisit,
+                            UserName = mostActiveUserItem.UserName
                         });
                     }
                     //mostActiveUsersReport.Items = db.Database.SqlQuery<MostActiveUsersItem>(
@@ -233,6 +238,8 @@ namespace WebApi.Controllers
                                 Country = item.Country,
                                 PageId = item.PageId,
                                 FolderName = item.FolderName.Replace("OGGLEBOOBLE.COM", ""),
+                                PageHits = item.PageHits,
+                                ImageHits = item.ImageHits,
                                 HitDate = item.HitDate,
                                 HitTime = item.HitTime
                             });

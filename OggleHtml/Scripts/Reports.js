@@ -1,5 +1,11 @@
 ﻿// REPORTS
 var activeReport = "";
+
+function showPerfMetrics() {
+    $('.workAreaContainer').hide();
+    $('#divHitMetrics').fadeIn();
+    metricsMatrixReport();
+}
 function metricsMatrixReport() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
@@ -44,6 +50,7 @@ function metricsMatrixReport() {
     });
 }
 
+// in perfMetrics
 function mostVisitedPagesPages() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
@@ -72,7 +79,6 @@ function mostVisitedPagesPages() {
         }
     });
 }
-
 function runMostImageHits() {
     $('#dashBoardLoadingGif').show();
     $("#mostImageHitsReport").html("");
@@ -208,12 +214,25 @@ function runMostActiveUsersReport() {
             $('#dashBoardLoadingGif').hide();
             if (mostActiveUsersReport.Success === "ok") {
                 var kludge = "<table class='mostAvtiveUsersTable'>";
-                kludge += "<tr><th>ip</th><th>City</th><th>State</th><th>Country</th><th>Hits</th><th>last hit</th></tr>";
+                kludge += "<tr><th>ip</th><th>City</th><th>image hits today</th><th>total image hits</th><th>page hits today</th>" +
+                    "<th>total page hits</th><th>last hit</th><th>initial visit</th><th>user name</th></tr>";
+                var lastIp = "";
                 $.each(mostActiveUsersReport.Items, function (idx, obj) {
-                    kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
-                    kludge += "<td>" + obj.Region + "</td><td>" + obj.Country + "</td>";
-                    kludge += "<td>" + obj.ImageHits.toLocaleString() + "</td>";
-                    kludge += "<td>" + obj.LastHit + "</td></tr>";
+                    if (obj.IpAddress === lastIp) {
+                        kludge += "<tr><td></td><td></td>";
+                    }
+                    else {
+                        kludge += "<tr><td>" + obj.IpAddress + "</td>";
+                        kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td>";
+                        lastIp = obj.IpAddress;
+                    }
+                    kludge += "<td>" + obj.ImageHitsToday.toLocaleString() + "</td>";
+                    kludge += "<td>" + obj.TotalImageHits.toLocaleString() + "</td>";
+                    kludge += "<td>" + obj.PageHitsToday.toLocaleString() + "</td>";
+                    kludge += "<td>" + obj.TotalPageHits.toLocaleString() + "</td>";
+                    kludge += "<td>" + obj.LastHit + "</td>";
+                    kludge += "<td>" + obj.InitialVisit + "</td>";
+                    kludge += "<td>" + obj.UserName + "</td></tr>";
                 });
                 kludge += "</table>";
 
@@ -237,7 +256,6 @@ function runMostActiveUsersReport() {
 function showPageHitReport() {
     activeReport = "PageHitReport";
     $("#divStandardReportArea").removeClass("tightReport");
-
     $('.workAreaContainer').hide();
     $('#divStandardReport').show();
     $('#reportLabel').html("<h3>Page Hit Report for " + todayString() + "</h3>");
@@ -255,11 +273,24 @@ function runPageHitReport() {
             $('#dashBoardLoadingGif').hide();
             if (pageHitReportModel.Success === "ok") {
                 var kludge = "<table class='mostAvtiveUsersTable'>";
-                kludge += "<tr><th>ip</th><th>City</th><th>State</th><th>Country</th><th>Page</th><th>Hit</th></tr>";
+                kludge += "<tr><th>ip</th><th>City</th><th>Page</th><th>Pages Visited </th><th>&nbsp;  Images Hit</th><th>Hit</th></tr>";
+                var lastIp = "";
                 $.each(pageHitReportModel.Items, function (idx, obj) {
-                    kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
-                    kludge += "<td>" + obj.Region + "</td><td>" + obj.Country + "</td>";
-                    kludge += "<td>" + obj.FolderName + "</td>";
+                    if (obj.IpAddress === lastIp) {
+                        kludge += "<tr><td></td><td></td>";
+                    }
+                    else {
+                        kludge += "<tr><td>" + obj.IpAddress + "</td>";
+                        kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td>";
+                    }
+                    kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
+                    if (obj.IpAddress === lastIp) {
+                        kludge += "<td></td><td></td>";
+                    } else {
+                        kludge += "<td>" + obj.PageHits + "</td>";
+                        kludge += "<td>" + obj.ImageHits + "</td>";
+                        lastIp = obj.IpAddress;
+                    }
                     kludge += "<td>" + obj.HitTime + "</td></tr>";
                 });
                 kludge += "</table>";

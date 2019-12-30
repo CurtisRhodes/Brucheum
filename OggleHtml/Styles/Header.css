@@ -147,14 +147,12 @@ header {
         color: yellow;
     }
 
-
-
-    .OggleSearchBox {
-        position: absolute;
-        right: 10px;
-        margin-top: 8px;
-        margin-right: 20px;
-    }
+.OggleSearchBox {
+    position: absolute;
+    right: 10px;
+    margin-top: 8px;
+    margin-right: 20px;
+}
 
 .OggleSearchBoxText {
     border-radius: 10px;
@@ -166,18 +164,19 @@ header {
     border: solid thin black;
     padding: 2px;
     z-index: 200;
+    max-height:555px;
+    overflow-y: auto;
 }
-    .searchResultsDropdown ul {
-        list-style-type: none;
-    }
 
     .searchResultsDropdown li {
+        list-style-type: none;
+        padding: 3px;
         cursor: pointer;
     }
-    .searchResultsDropdown li:hover {
-        color: red;
-        cursor: pointer;
-    }
+        .searchResultsDropdown li:hover {
+            color: red;
+            cursor: pointer;
+        }
 
 
 .headerBottomRow {

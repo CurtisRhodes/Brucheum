@@ -7,11 +7,11 @@ var Carousel;
 var currentArticleId = 0;
 
 function loadAndStartCarousel() {
-    //alert("in rotator loadAndStartCarousel");
+    //alert("in rotator loadAndStartCarousel\nurl: " + settingsArray.ApiServer + "api/DbArticle?pageLen=" + numArticles + "&page=1&filterType=null&filter=null");
 
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/DbArticle?pageLen=" + numArticles + "&page=1&filterType=null&filter=null",
+        url: settingsArray.ApiServer + "api/DbArticle?pageLen=" + numArticles + "&page=1&filterType=null&filter=null",
         //url: settingsArray.ApiServer + "/api/ArticleXml?pageLen=" + numArticles + "&page=0&filterType=none&filter=none",
         success: function (articleList) {
             $.each(articleList, function (idx, article) {
