@@ -172,8 +172,14 @@ function checkFor404(errorMessage, calledFrom) {
         console.log("checkFor404: " + calledFrom);
     }
     else {
-        if (document.domain === 'localhost')
+        if (document.domain === 'localhost') {
             alert("checkFor404 called with unexpected errorMessage\n " + errorMessage + " from: " + calledFrom);
+        }
+        else {
+            sendEmailToYourself("checkFor404 called with unexpected errorMessage", "errorMessage: " + errorMessage +
+                "<br/>calledFrom from: " + calledFrom +
+                "<br/>isNotConnected: " + isNotConnected);
+        }
     }
     return isNotConnected;
 }

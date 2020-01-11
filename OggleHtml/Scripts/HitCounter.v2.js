@@ -3,6 +3,11 @@ var freePageHitsAllowed = 500;
 var freeImageHitsAllowed = 2500;
 var userImageHits;
 
+
+//<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  //  <div class="g-recaptcha" data-sitekey="6LfaZzEUAAAAAMbgdAUmSHAHzv-dQaBAMYkR4h8L"></div>
+
+
 function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
     //$('#footerMessage').html("logging image hit");
     //alert("logImageHit");
@@ -191,6 +196,14 @@ function logVisitor(pageId, calledFrom) {
                             }
                         }
 
+                        //logVisitor(folderId, "setAlbumPageHeader");
+                        if (calledFrom === "setAlbumPageHeader") {
+                            sendEmailToYourself("LogVisitor called from setAlbumPageHeader" +
+                                "<br/>pageId: " + pageId +
+                                "<br/>IsNewVisitor: " + visitorSuccess.IsNewVisitor +
+                                "<br/>IpAddress: " + data.ip);
+                        }
+
                         if (visitorSuccess.IsNewVisitor) {
                             //console.log("valid HIT TO IPINFO.IO  ip: " + getCookieValue("IpAddress"));
                             switch (pageId) {
@@ -319,6 +332,8 @@ function logPageHit(pageId) {
         $('#spnUserName').html(getCookieValue("UserName"));
         $('#optionLoggedIn').show();
         $('#optionNotLoggedIn').hide();
+        $('#dashboardMenuItem').show();
+
         //return;
     }
 
@@ -498,14 +513,202 @@ function logVisit(visitorId) {
     });
 }
 
+function letemPorn(response, pornType) {
+    // if (document.domain === 'localhost') alert("letemPorn: " + pornType);
+    if (response === "ok") {
+        //  setUserPornStatus(pornType);
+        //<div onclick="goToPorn()">Nasty Porn</div>
+        //window.location.href = '/index.html?subdomain=porn';
+        reportThenPerformEvent("PRN", 136, pornType);
+    }
+    else {
+        $('#customMessage').hide();
+        if (typeof resume === 'function') {
+            resume();
+        }
+    }
+}
+
+function performEventController(eventCode, calledFrom, eventDetail) {
+    var ipAddress = getCookieValue("IpAddress");
+
+    if (eventCode === "PRN") {
+        //  setUserPornStatus(pornType);
+    }
+    if (ipAddress !== "68.203.90.183") {
+        if (eventCode !== "CIC"     // Carousel Item Clicked 
+            && eventCode !== "FLC"  // Footer Link Clicked 
+            && eventCode !== "BAC"  // Archive Clicked
+            && eventCode !== "CMX"  // Show Model Info Dialog
+            && eventCode !== "SUB"  // Subfolder Clicked
+            && eventCode !== "BCC"  // Breadcrumb Clicked 
+            && eventCode !== "BLC"  // Banner Link Clicked 
+            && eventCode !== "LMC"  // Left Menu Item Clicked
+            && eventCode !== "HBX"  // Home Breadcrumb clicked
+            && eventCode !== "RNK"  // Ranker Banner Clicked
+            && eventCode !== "CAA"  // Carousel Arrow Clicked
+            && eventCode !== "CPC") // Carousel ParentGallery clicked
+        {
+
+            if (document.domain === 'localhost') {
+                alert(logEventActivitySuccess.EventName + " {" + eventCode + "}" +
+                    "\ncalledFrom: {" + calledFrom + "} : " + logEventActivitySuccess.CalledFrom +
+                    "\neventDetail: {" + eventDetail + "} : " + logEventActivitySuccess.PageBeingCalled +
+                    "\nIp: " + ipAddress + ", from " + logEventActivitySuccess.VisitorDetails);
+            }
+            else {
+
+                var pageBeingCalled = "";
+                if (!isNullorUndefined(logEventActivitySuccess.PageBeingCalled)) {
+                    pageBeingCalled = ": " + logEventActivitySuccess.PageBeingCalled;
+                }
+
+                sendEmailToYourself(logEventActivitySuccess.EventName + " {" + eventCode + "}",
+                    "calledFrom: {" + calledFrom + "} : " + logEventActivitySuccess.CalledFrom +
+                    "<br/>eventDetail: {" + eventDetail + "} " + pageBeingCalled +
+                    "<br/>from: " + ipAddress + ", " + logEventActivitySuccess.VisitorDetails);
+            }
+        }
+    }
+    // NOW PERFORM EVENT
+    switch (eventCode) {
+
+        case "PRN":  //("Porn Option clicked");
+            window.location.href = '/index.html?subdomain=porn';
+            break;
+        case "HBC":  //  header banner clicked
+            if (eventDetail === "porn")
+                window.location.href = '/index.html?subdomain=porn';
+            else
+                window.location.href = "/";
+            break;
+        case "GAX":  // can I get a connection
+            alert("can I get a connection");
+            //window.location.href = ".";
+            break;
+        case "GIC": // Gallery Item Clicked
+
+            break;
+        case "CMC": // carousle context menu item clicked
+            break;
+        case "CAA": // carousle context menu item clicked
+            if (eventDetail === "foward") {
+                //alert("reportThenPerformEvent eventCode: " + eventCode + " eventDetail: " + eventDetail);
+                resume();
+            }
+            else {
+                // pop
+                imageHistory.pop();
+                imageIndex = imageHistory.pop();
+                if (imageIndex > 0) {
+                    //$('#categoryTitle').fadeOut(intervalSpeed);
+                    //$('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
+                    $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
+                    $('#categoryTitle').html(carouselItemArray[imageIndex].FolderPath + ": " + carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
+                    //$('#laCarousel').fadeIn(intervalSpeed);
+                    resizeCarousel();
+                    //});
+                }
+                else
+                    alert("imageIndex: " + imageIndex);
+            }
+            break;
+        case "CXM":  // carousle context menu opened
+            break;
+        case "EXP":
+            window.open(eventDetail, "_blank");
+            break;
+        case "SSB":  //  Stepchild Subfolder Clicked
+            window.open("/album.html?folder=" + eventDetail, "_blank");
+            break;
+        case "SEE":  // see more of her
+
+            // the EventDetail could pass the external link
+            //window.open("/album.html?folder=" + eventDetail, "_blank");
+            window.location.href = "/album.html?folder=" + eventDetail;
+            break;
+
+
+        case "CPC":  // carousel ParentGallery clicked
+        case 'SUB':  // 'Sub Folder Click'
+        case "CIC":  // carousel image clicked
+        case "BCC":  // Breadcrumb Clicked
+        case "BLC":  // banner link clicked
+        case "BAC":  // Babes Archive Clicked
+            window.location.href = "/album.html?folder=" + eventDetail;
+            break;
+        case "CMX":
+            showModelInfoDialog(eventDetail, calledFrom, 'Images/redballon.png');
+            //reportThenPerformEvent("CMX", folderId, folderName);
+            break;
+        case "HBX":  // Home breadcrumb Clicked
+            if (eventDetail === "porn")
+                window.location.href = '/index.html?subdomain=porn';
+            else
+                window.location.href = "/";
+            break;
+        case "RNK":  // Ranker Banner Clicked
+            window.location.href = "/Ranker.html?subdomain=" + eventDetail;
+            break;
+        case "LMC":  // Left Menu Clicked
+            switch (eventDetail) {
+                case "boobTransitions": window.location.href = 'transitions.html'; break;
+                case "pornTransitions": window.location.href = "transitions.html?subdomain=porn"; break;
+                case "boobsRanker": window.location.href = 'ranker.html'; break;
+                case "pornRanker": window.location.href = 'ranker.html?subdomain=porn'; break;
+                case "dirTreeBoobs": showCatListDialog(2); break;
+                case "dirTreePorn": showCatListDialog(242); break;
+                case "explainBoobs": showCustomMessage(38, true); break;
+                case "explainPorn": showCustomMessage(94, true); break;
+                case "back": window.location.href = "/"; break;
+                case "centerfolds": window.location.href = '/album.html?folder=1132'; break;
+                case "video": window.location.href = 'video.html'; break;
+                case "blog": window.location.href = '/Blog.html'; break;
+                case "porn":
+                    if (isLoggedIn())
+                        window.location.href = '/index.html?subdomain=porn';
+                    else
+                        showCustomMessage(35, false);
+                    break;
+                default: alert("uncaught switch option Left Menu Click\nEventDetail: " + eventDetail); break;
+            }
+            break;
+        case "FLC":  //  footer link clicked
+            //if (document.domain === 'localhost') alert("eventCode: " + eventCode + " pageId: " + pageId);
+            switch (eventDetail) {
+                case "about us": showCustomMessage(38); break;
+                case "dir tree": showCatListDialog(2); break;
+                case "porn dir tree": showCatListDialog(242); break;
+                case "playmate dir tree": showCatListDialog(472); break;
+                case "porn": showCustomMessage(35, false); break;
+                case "blog": window.location.href = '/Blog.html'; break;
+                case "ranker": window.location.href = "/Ranker.html"; break;
+                case "rejects": window.location.href = "/album.html?folder=1132"; break;
+                case "centerfolds": window.location.href = "/album.html?folder=1132"; break;
+                case "cybergirls": window.location.href = "/album.html?folder=3796"; break;
+                case "extras": window.location.href = "/album.html?folder=2601"; break;
+                case "magazine covers": window.location.href = "/album.html?folder=1986"; break;
+                case "archive": window.location.href = "/album.html?folder=3"; break;
+                case "videos": window.location.href = 'video.html'; break;
+                case "mailme": window.location.href = 'mailto:curtishrhodes@hotmail.com'; break;
+                case "freedback": showFeedbackDialog(); break;
+                case "slut archive": window.location.href = "/album.html?folder=440"; break;
+                default: alert("eventDetail: " + eventDetail); break;
+            }
+            break;
+        default:
+            alert("eventCode " + eventCode + "  not handled in reportThenPerformEvent");
+    }
+}
+
 function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
     //alert("reportThenPerformEvent(eventCode: " + eventCode + ", calledFrom: " + calledFrom + ", eventDetail: " + eventDetail);
     try {
         var visitorId = getCookieValue("VisitorId");
-        var ipAddress = getCookieValue("IpAddress");
 
         //if (isNullorUndefined(ipAddress)) alert("who ate you");
         if (isNullorUndefined(visitorId)) {
+            var ipAddress = getCookieValue("IpAddress");
             if (document.domain === 'localhost') {
                 alert("Who Are You? \nVisitorId: " + visitorId + " Ip: " + ipAddress, "Calling LogVisitor.  Event: " + eventCode + " calledFrom: " + calledFrom);
             }
@@ -531,162 +734,10 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
             data: logEventModel,
             success: function (logEventActivitySuccess) {
                 if (logEventActivitySuccess.Success === "ok") {
-
-                    if (eventCode === "PRN") {
-                        //  setUserPornStatus(pornType);
-                    }
-                    if (ipAddress !== "68.203.90.183") {
-                        if (eventCode !== "CIC"     // Carousel Item Clicked 
-                            && eventCode !== "FLC"  // Footer Link Clicked 
-                            && eventCode !== "BAC"  // Archive Clicked
-                            && eventCode !== "CMX"  // Show Model Info Dialog
-                            && eventCode !== "SUB"  // Subfolder Clicked
-                            && eventCode !== "BCC"  // Breadcrumb Clicked 
-                            && eventCode !== "BLC"  // Banner Link Clicked 
-                            && eventCode !== "LMC"  // Left Menu Item Clicked
-                            && eventCode !== "HBX"  // Home Breadcrumb clicked
-                            && eventCode !== "CAA"  // Carousel Arrow Clicked
-                            && eventCode !== "HBC") // Home Icon Clicked
-                        {
-
-                            if (document.domain === 'localhost') {
-                                alert(logEventActivitySuccess.EventName + " {" + eventCode + "}" +
-                                    "\ncalledFrom: {" + calledFrom + "} : " + logEventActivitySuccess.CalledFrom +
-                                    "\neventDetail: {" + eventDetail + "} : " + logEventActivitySuccess.PageBeingCalled +
-                                    "\nIp: " + ipAddress + ", from " + logEventActivitySuccess.VisitorDetails);
-                            }
-                            else {
-                                sendEmailToYourself(logEventActivitySuccess.EventName + " {" + eventCode + "}",
-                                    "calledFrom: {" + calledFrom + "} : " + logEventActivitySuccess.CalledFrom +
-                                    "<br/>eventDetail: {" + eventDetail + "} : " + logEventActivitySuccess.PageBeingCalled +
-                                    "<br/>from: " + ipAddress + ", " + logEventActivitySuccess.VisitorDetails);
-                            }
-                        }
-                    }
-                    // NOW PERFORM EVENT
-                    switch (eventCode) {
-
-                        case "PRN":  //("Porn Option clicked");
-                            window.location.href = '/index.html?subdomain=porn';
-                            break;
-                        case "HBC":  //  header banner clicked
-                            if (eventDetail === "porn")
-                                window.location.href = '/index.html?subdomain=porn';
-                            else
-                                window.location.href = "/";
-                            break;
-                        case "GAX":  // can I get a connection
-                            alert("can I get a connection");
-                            //window.location.href = ".";
-                            break;
-                        case "GIC": // Gallery Item Clicked
-
-                            break;
-                        case "CMC": // carousle context menu item clicked
-                            break;
-                        case "CAA": // carousle context menu item clicked
-                            if (eventDetail === "foward") {
-                                //alert("reportThenPerformEvent eventCode: " + eventCode + " eventDetail: " + eventDetail);
-                                resume();
-                            }
-                            else {
-                                // pop
-                                imageHistory.pop();
-                                imageIndex = imageHistory.pop();
-                                if (imageIndex > 0) {
-                                    //$('#categoryTitle').fadeOut(intervalSpeed);
-                                    //$('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
-                                    $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
-                                    $('#categoryTitle').html(carouselItemArray[imageIndex].FolderPath + ": " + carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
-                                    //$('#laCarousel').fadeIn(intervalSpeed);
-                                    resizeCarousel();
-                                    //});
-                                }
-                                else
-                                    alert("imageIndex: " + imageIndex);
-                            }
-                            break;
-                        case "CXM":  // carousle context menu opened
-                            break;
-                        case "EXP":
-                            window.open(eventDetail, "_blank");
-                            break;
-                        case "SSB":  //  Stepchild Subfolder Clicked
-                            window.open("/album.html?folder=" + eventDetail, "_blank");
-                            break;
-                        case "CPC":
-                        case 'SUB': // 'Sub Folder Click'
-                        case "CIC":  // carousel image clicked
-                        case "BCC":  // Breadcrumb Clicked
-                        case "BLC":  // banner link clicked
-                        case "SEE":  // see more of her
-                        case "BAC":  // Babes Archive Clicked
-                            window.location.href = "/album.html?folder=" + eventDetail;
-                            break;
-                        case "CMX":
-                            showModelInfoDialog(eventDetail, calledFrom, 'Images/redballon.png');
-                            //reportThenPerformEvent("CMX", folderId, folderName);
-                            break;
-                        case "HBX":  // Home breadcrumb Clicked
-                            if (eventDetail === "porn")
-                                window.location.href = '/index.html?subdomain=porn';
-                            else
-                                window.location.href = "/";
-                            break;
-                        case "RNK":  // Ranker Banner Clicked
-                            window.location.href = "/Ranker.html?subdomain=" + eventDetail;
-                            break;
-                        case "LMC":  // Left Menu Clicked
-                            switch (eventDetail) {
-                                case "boobTransitions": window.location.href = 'transitions.html'; break;
-                                case "pornTransitions": window.location.href = "transitions.html?subdomain=porn"; break;
-                                case "boobsRanker": window.location.href = 'ranker.html'; break;
-                                case "pornRanker": window.location.href = 'ranker.html?subdomain=porn'; break;
-                                case "dirTreeBoobs": showCatListDialog(2); break;
-                                case "dirTreePorn": showCatListDialog(242); break;
-                                case "explainBoobs": showCustomMessage(38, true); break;
-                                case "explainPorn": showCustomMessage(94, true); break;
-                                case "back": window.location.href = "/"; break;
-                                case "centerfolds": window.location.href = '/album.html?folder=1132'; break;
-                                case "video": window.location.href = 'video.html'; break;
-                                case "blog": window.location.href = '/Blog.html'; break;
-                                case "porn":
-                                    if (isLoggedIn())
-                                        window.location.href = '/index.html?subdomain=porn';
-                                    else
-                                        showCustomMessage(35, false);
-                                    break;
-                                default: alert("uncaught switch option Left Menu Click\nEventDetail: " + eventDetail); break;
-                            }
-                            break;
-                        case "FLC":  //  footer link clicked
-                            //if (document.domain === 'localhost') alert("eventCode: " + eventCode + " pageId: " + pageId);
-                            switch (eventDetail) {
-                                case "about us": showCustomMessage(38); break;
-                                case "dir tree": showCatListDialog(2); break;
-                                case "porn dir tree": showCatListDialog(242); break;
-                                case "playmate dir tree": showCatListDialog(472); break;
-                                case "porn": showCustomMessage(35, false); break;
-                                case "blog": window.location.href = '/Blog.html'; break;
-                                case "ranker": window.location.href = "/Ranker.html"; break;
-                                case "rejects": window.location.href = "/album.html?folder=1132"; break;
-                                case "centerfolds": window.location.href = "/album.html?folder=1132"; break;
-                                case "cybergirls": window.location.href = "/album.html?folder=3796"; break;
-                                case "extras": window.location.href = "/album.html?folder=2601"; break;
-                                case "magazine covers": window.location.href = "/album.html?folder=1986"; break;
-                                case "archive": window.location.href = "/album.html?folder=3"; break;
-                                case "videos": window.location.href = 'video.html'; break;
-                                case "mailme": window.location.href = 'mailto:curtishrhodes@hotmail.com'; break;
-                                case "freedback": showFeedbackDialog(); break;
-                                case "slut archive": window.location.href = "/album.html?folder=440"; break;
-                                default: alert("eventDetail: " + eventDetail); break;
-                            }
-                            break;
-                        default:
-                            alert("eventCode " + eventCode + "  not handled in reportThenPerformEvent");
-                    }
+                    performEventController(eventCode, calledFrom, eventDetail);
                 }
                 else {
+                    var ipAddress = getCookieValue("IpAddress");
                     if (logEventActivitySuccess.Success.indexOf("Option not supported") > -1) {
                         checkFor404(logEventActivitySuccess.Success, "logEventActivity");
                         sendEmailToYourself("SERVICE DOWN", "from " + logEventActivitySuccess.EventName + " {" + eventCode + "}",

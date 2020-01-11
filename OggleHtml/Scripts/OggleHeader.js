@@ -134,7 +134,7 @@ function setOggleHeader(subdomain, folderId, containsImageLinks, isStaticPage) {
             "           </div>\n" +
             "           <div id='divLoginArea' class='loginArea'>\n" +
             "               <div id='optionLoggedIn' class='displayHidden'>\n" +
-            "                   <div class='menuTab' id='dashboardMenuItem' class='displayHidden'><a href='/Dashboard.html'>DashXboard</a></div>\n" +
+            "                   <div class='menuTab' id='dashboardMenuItem' class='displayHidden'><a href='/Dashboard.html'>Dashboard</a></div>\n" +
             "                   <div class='menuTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
             "                   <div class='menuTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
             "               </div>\n" +
@@ -171,10 +171,9 @@ function setOggleHeader(subdomain, folderId, containsImageLinks, isStaticPage) {
         $('#optionLoggedIn').show();
         //alert(getCookieValue("UserName") + " isLoggedIn(): " + isLoggedIn());
         $('#optionNotLoggedIn').hide();
-
-        setTimeout(function () { if (isInRole("Oggle admin")) { $('#dashboardMenuItem').show(); } }, 400);
-            
-
+        //setTimeout(function () { if (isInRole("Oggle admin")) { $('#dashboardMenuItem').show(); } }, 400);
+        if (isInRole("Oggle admin"))
+            $('#dashboardMenuItem').show();
     }
     else {
         $('#dashboardMenuItem').hide();

@@ -106,6 +106,9 @@ namespace WebApi.Ftp
             string success = "";
             try
             {
+                if (!FtpUtilies.DirectoryExists(destination))
+                    FtpUtilies.CreateDirectory(destination);
+
                 FtpWebRequest requestDir = (FtpWebRequest)WebRequest.Create(source);
                 requestDir.Credentials = networkCredentials;
                 requestDir.UseBinary = true;

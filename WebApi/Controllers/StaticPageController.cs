@@ -152,7 +152,14 @@ namespace WebApi.Controllers
             try
             {
                 //SignalRHost.ProgressHub.PostToClient("Creating static files: " + folderName + ".html");
-                folderName = Helpers.GetCustomStaticFolderName(folderId, folderName.Replace(".OGGLEBOOBLE.COM", ""));
+
+                string staticFolderName = "";
+                if (rootFolder == "sluts")
+                    staticFolderName = folderName;
+                else
+                    staticFolderName = Helpers.GetCustomStaticFolderName(folderId, folderName.Replace(".OGGLEBOOBLE.COM", ""));
+
+
                 string staticContent =
                     "<!DOCTYPE html>\n<html lang='en'>\n" + HeadHtml(folderId, folderName) +
                     "\n<body style='margin-top:105px'>\n<header></header>" +
@@ -160,7 +167,7 @@ namespace WebApi.Controllers
                    // Slideshow() + CommentDialog() + ModelInfoDialog() +
                     "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
                     "<script>var staticPageFolderId=" + folderId + "; " +
-                    "var staticPageFolderName='" + folderName + "'; " +
+                    "var staticPageFolderName='" + staticFolderName + "'; " +
                     "var staticPageImagesCount='" + imagesCount + "'; " +
                     "var currentFolderRoot='" + rootFolder + "';</script>\n" +
                     "<div w3-include-html='/Snippets/Slideshow.html'></div>\n" +
@@ -169,7 +176,7 @@ namespace WebApi.Controllers
                     "<div w3-include-html='/Snippets/Register.html'></div>\n" +
                     "<script src='/scripts/StaticPage.js'></script>\n" +
                     "\n</body>\n</html>";
-                success = WriteFileToDisk(staticContent, rootFolder, folderName);
+                success = WriteFileToDisk(staticContent, rootFolder, staticFolderName);
                 if (success == "ok")
                 {
                     if (recurr)

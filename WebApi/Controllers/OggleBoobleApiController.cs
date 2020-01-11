@@ -256,7 +256,8 @@ namespace WebApi
             return successModel;
         }
 
-        [HttpPatch]
+        [HttpGet]
+        [Route("api/AlbumPage/GetRootFolder")]
         public RootFolderModel GetRootFolder(int folderId)
         {
             RootFolderModel rootFolderModel = new RootFolderModel();
@@ -410,7 +411,7 @@ namespace WebApi
         }
         private void GetDirTreeRecurr(CategoryTreeModel parent, List<VwDirTree> vwDirTree, string path)
         {
-            if (parent.FolderId == 528)
+            if (parent.FolderId == 440)
             {
             }
 

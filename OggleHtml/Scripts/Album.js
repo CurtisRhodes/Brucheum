@@ -46,7 +46,7 @@ function directToStaticPage(folderId) {
 function setAlbumPageHeader(folderId, isStaticPage) {
     try {
         $.ajax({
-            type: "PATCH",
+            type: "GET",
             url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=" + folderId,
             success: function (rootFolderModel) {
                 if (rootFolderModel.Success === "ok") {
@@ -66,10 +66,21 @@ function setAlbumPageHeader(folderId, isStaticPage) {
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (checkFor404(errorMessage, "setAlbumPageHeader")) {
+
                     if (document.domain === 'localhost')
                         alert("continuing on to setAlbumPageHeader");
-                    else
-                        sendEmailToYourself("continuing on to setAlbumPageHeader", "folderId: " + folderId + "<br/>" + errorMessage);
+                    else {
+                        if (isNullorUndefined(getCookieValue("IpAddress")))
+                            logVisitor(folderId, "setAlbumPageHeader");
+                        else {
+                            sendEmailToYourself("ajax error 1/1", "calling logVisitor" +
+                                "settingsArray.ApiServer: " + settingsArray.ApiServer +
+                                "<br/>folderId: " + folderId +
+                                "<br/>isStaticPage: " + isStaticPage +
+                                "<br/>IpAddress: " + getCookieValue("IpAddress") +
+                                "<br/>" + errorMessage);
+                        }
+                    }
                     setOggleHeader("boobs", folderId, false);
                     setOggleFooter("boobs", folderId);
                 }
@@ -165,8 +176,17 @@ function getAlbumImages(folderId) {
                 }
                 else {
                     $('#imagePageLoadingGif').hide();
-                    sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
-                    if (document.domain === 'localhost') alert("jQuery fail in Album.js: getAlbumImages\n" + imageLinksModel.Success);
+                    if (successModel.Success.indexOf("Option not supported") > -1) {
+                        checkFor404(successModel.Success, "getAlbumImages");
+                        sendEmailToYourself("SERVICE DOWN", "from getAlbumImages" +
+                            "<br/>folderId=" + folderId +
+                            "<br/>IpAddress: " + getCookieValue("IpAddress") +
+                            "<br/>" + successModel.Success);
+                    }
+                    else {
+                        sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
+                        if (document.domain === 'localhost') alert("jQuery fail in Album.js: getAlbumImages\n" + imageLinksModel.Success);
+                    }
                 }
             },
             error: function (jqXHR) {
@@ -520,10 +540,7 @@ function contextMenuAction(action) {
             var disableViewerKeys = viewerShowing;
             viewerShowing = false;
             $("#thumbImageContextMenu").fadeOut();
-
-            alert("showModelInfoDialog from contextMenuAction");
-
-
+            //alert("showModelInfoDialog from contextMenuAction");
             showModelInfoDialog($('#ctxModelName').html(), modelFolderId, selectedImage);// $('#' + currentContextLinkId + '').attr("src"));
             $('#modelInfoDialog').on('dialogclose', function (event) {
                 viewerShowing = disableViewerKeys;

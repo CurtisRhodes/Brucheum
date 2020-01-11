@@ -330,12 +330,12 @@ namespace WebApi.MySqDataContext
         public int FolderId { get; set; }
         public string Nationality { get; set; }
         public string Measurements { get; set; }
+        public string Born { get; set; }
         public string ExternalLinks { get; set; }
         public string CommentText { get; set; }
-        public string Born { get; set; }
         public string Boobs { get; set; }
         public string FolderImage { get; set; }
-        public string MetaDescription { get; set; }
+        public string LinkStatus { get; set; }
         public int SortOrder { get; set; }
     }
 

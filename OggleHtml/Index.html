@@ -298,24 +298,6 @@
             showCustomMessage(35);
         }
 
-
-
-        function letemPorn(response, pornType) {
-           // if (document.domain === 'localhost') alert("letemPorn: " + pornType);
-            if (response == "ok") {
-                //  setUserPornStatus(pornType);
-                //<div onclick="goToPorn()">Nasty Porn</div>
-                //window.location.href = '/index.html?subdomain=porn';
-                reportThenPerformEvent("PRN", 136, pornType);
-            }
-            else {
-                $('#customMessage').hide();
-                if (typeof resume === 'function') {
-                    resume();
-                }
-            }
-        }
-
     </script>
 </body>
 </html>

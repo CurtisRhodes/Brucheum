@@ -496,8 +496,8 @@ function moveFolder() {
                     Activity: "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val()
                 };
                 logActivity(changeLogModel);
-
-                $('.txtPartialDirTreePath').val('');
+                $('.txtLinkPath').val('');
+                //$('.txtPartialDirTreePath').val('');
                 $('#moveFolderCrud').dialog("close");
                 buildDirectoryTree();
             }
