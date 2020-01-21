@@ -275,7 +275,7 @@ namespace WebApi
                     mdb.EventLogs.Add(new EventLog()
                     {
                         EventCode = logEventModel.EventCode,
-                        EventDetail=logEventModel.EventDetail,
+                        EventDetail = logEventModel.EventDetail,
                         PageId = logEventModel.CalledFrom,
                         VisitorId = logEventModel.VisitorId,
                         Occured = DateTime.Now
@@ -332,7 +332,7 @@ namespace WebApi
     public class FeedBackController : ApiController
     {
         [HttpPost]
-        public string LogEventActivity(FeedBackModel feedBackModel)
+        public string LogFeedBack(FeedBackModel feedBackModel)
         {
             string success = "";
             try

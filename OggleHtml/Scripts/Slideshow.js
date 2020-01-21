@@ -57,7 +57,7 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
         //sendEmailToYourself("830 PROBLEMO 1 in slideshow.js.slide.", "  visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + imageViewerFolderId);
         if (document.domain === 'localhost')
             alert("830 PROBLEMO 1 in slideshow.js.slide.\nvisitorId: " + visitorId + "\nIpAddress: " + ipAddress + "\nfolderId: " + imageViewerFolderId);
-        logVisitor(folderId, "Entering slideshow");
+        logVisitor(folderId, "launch viewer");
     }
     else {
         //if (document.domain === 'localhost') alert("Proper logImageHit of Initial \nslideshow.js.slide.\nvisitorId: " + visitorId + "\nIpAddress: " + ipAddress + "\nfolderId: " + imageViewerFolderId);

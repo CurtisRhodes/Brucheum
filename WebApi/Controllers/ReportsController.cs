@@ -142,7 +142,7 @@ namespace WebApi.Controllers
                 {
                     db.EventLogs.RemoveRange(db.EventLogs.Where(e => e.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
                     db.SaveChanges();
-                    var activityItems = db.vwDailyActivities.Distinct().ToList();
+                    List<DailyActivityReport> activityItems = db.DailyActivity.ToList();
                     foreach (var activityItem in activityItems)
                     {
                         activityReport.Items.Add(new ActiviyItem()

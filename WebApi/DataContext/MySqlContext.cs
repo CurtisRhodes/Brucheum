@@ -34,7 +34,7 @@ namespace WebApi.MySqDataContext
         public virtual DbSet<vwMostActiveUsersForToday> MostActiveUsersForToday { get; set; }
         public virtual DbSet<RegisteredUser> RegisteredUsers { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
-        public virtual DbSet<vwDailyActivity> vwDailyActivities { get; set; }
+        public virtual DbSet<DailyActivityReport> DailyActivity { get; set; }
         public virtual DbSet<vwPageHit> vwPageHits { get; set; }
         public virtual DbSet<FeedBack> FeedBacks { get; set; }
     }
@@ -77,7 +77,7 @@ namespace WebApi.MySqDataContext
     }
 
     [Table("OggleBooble.vwDailyActivity")]
-    public class vwDailyActivity
+    public class DailyActivityReport
     {
         [Key]
         [Column(Order = 0)]

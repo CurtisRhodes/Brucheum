@@ -89,13 +89,22 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "logImageHit")) {
-                sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logImageHit",
+            if (errorMessage.includes("Requested page not found")) {
+                sendEmailToYourself("XHR ERROR Requested page not found in logImageHit",
                     "api/ImageHit/LogImageHit?visitorId=" + visitorId +
                     ",<br/>pageId: " + pageId +
                     "<br/>isInitialHit: " + isInitialHit +
                     ",<br/> linkId=" + link +
                     ",<br/>Message: " + errorMessage);
+            } else {
+                if (!checkFor404(errorMessage, "logImageHit")) {
+                    sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logImageHit",
+                        "api/ImageHit/LogImageHit?visitorId=" + visitorId +
+                        ",<br/>pageId: " + pageId +
+                        "<br/>isInitialHit: " + isInitialHit +
+                        ",<br/> linkId=" + link +
+                        ",<br/>Message: " + errorMessage);
+                }
             }
         }
     });
@@ -105,24 +114,17 @@ function logVisitor(pageId, calledFrom) {
     try {
 
         var ipAddress = getCookieValue("IpAddress");
-
         if (!isNullorUndefined(ipAddress)) {
-            if (!isNullorUndefined(visitorId)) {
-                if (calledFrom === "reportThenPerformEvent") {
-                    sendEmailToYourself("logVisitor  called from reportThenPerformEvent ", "IpAddress: " + ipAddress + "<br/>viditorId: " + visitorId);
-                    return;
-                }
-                if (calledFrom === "logPageHit") {
-                    if (verbosity > 0)
-                        sendEmailToYourself("looping back to logPageHit from logvisitor.", "IpAddress: " + ipAddress + "<br/>viditorId: " + visitorId + "<br/>PageId: " + pageId);
-                    logPageHit(pageId);
-                    return;
-                }
-                if (calledFrom === "startSlideshow") {
-                    sendEmailToYourself("logVisitor called from startSlideshow", "IpAddress: " + ipAddress + "<br/>viditorId: " + visitorId);
-                    return;
-                }
+            if (verbosity > 2) {
+                sendEmailToYourself("calling logVisitor but I already know IP",
+                    "called from: " + calledFrom +
+                    "<br/>Ip: " + ipAddress +
+                    "<br/>vid: " + getCookieValue("VisitorId") +
+                    "<br/>Page Id: " + pageId + "<br/>return");
             }
+            return;
+            //if (!isNullorUndefined(visitorId)) {
+            //}
         }
 
         //if (document.domain === 'localhost') alert("vb3 LogVisitor call to IP info. IpAddress: " + ipAddress);
@@ -172,120 +174,120 @@ function logVisitor(pageId, calledFrom) {
                         if (isNullorUndefined(visitorSuccess.PageName)) {
                             sendEmailToYourself("PageName not found in LogVisitor for PageId:" + pageId, "this sucks");
                         }
-                        if (verbosity > 1) {
-
-                            if (calledFrom === "logPageHit FAIL. VisitorId") {
-                                if (visitorSuccess.IsNewVisitor) {
-                                    sendEmailToYourself("New Visitor called from logPageHit",
-                                        "PageId: " + pageId + "  visitorSuccess.PageName: " + visitorSuccess.PageName +
-                                        "<br/> hit from " + data.city + "," + data.region + " " + data.country +
-                                        " Ip: " + data.ip + "<br/>getCookieValue('VisitorId'): " + getCookieValue("VisitorId"));
-                                }
-                                else {
-                                    sendEmailToYourself("Unnsecssary IpInfo hit called from logPageHit",
-                                        "PageId: " + pageId + "  visitorSuccess.PageName: " + visitorSuccess.PageName +
-                                        "<br/> hit from " + data.city + "," + data.region + " " + data.country +
-                                        " Ip: " + data.ip + "<br/>getCookieValue('VisitorId'): " + getCookieValue("VisitorId"));
-                                }
-                            }
-                            else {
-                                alert("called from: " + calledFrom + "\n\nIP: " + data.ip);
-                                //alert("cookie fail\nIP: " + data.ip);
 
 
-                            }
+                        if (calledFrom === "reportThenPerformEvent") {
+                            sendEmailToYourself("logVisitor called from reportThenPerformEvent ", "IpAddress: " + ipAddress + "<br/>viditorId: " + visitorId);
+                            return;
+                        }
+                        if (calledFrom === "logPageHit") {
+                            if (verbosity > 5)
+                                sendEmailToYourself("looping back to logPageHit from logvisitor.", "IpAddress: " + ipAddress + "<br/>viditorId: " + visitorId + "<br/>PageId: " + pageId);
+                            logPageHit(pageId);
+                            return;
+                        }
+                        if (calledFrom === "launch viewer") {
+                            //launchViewer(imageArray, imageIndex, folderId, folderName)
+                            //--sendEmailToYourself("logVisitor called from startSlideshow", "IpAddress: " + ipAddress + "<br/>viditorId: " + visitorId);
+                            //return;
                         }
 
-                        //logVisitor(folderId, "setAlbumPageHeader");
-                        if (calledFrom === "setAlbumPageHeader") {
-                            sendEmailToYourself("LogVisitor called from setAlbumPageHeader" +
-                                "<br/>pageId: " + pageId +
-                                "<br/>IsNewVisitor: " + visitorSuccess.IsNewVisitor +
-                                "<br/>IpAddress: " + data.ip);
+                        if (verbosity > 1) {
+                            var visitorStatus = "Existing User";
+                            if (visitorSuccess.IsNewVisitor)
+                                visitorStatus = "New Visitor";
+
+                            sendEmailToYourself("get IpInfo hit for " + visitorStatus,
+                                "called from " + calledFrom +
+                                "<br/>" + data.ip + " from " + data.city + "," + data.region + " " + data.country +
+                                "<br/>PageId: " + pageId + "  PageName: " + visitorSuccess.PageName);
                         }
 
                         if (visitorSuccess.IsNewVisitor) {
                             //console.log("valid HIT TO IPINFO.IO  ip: " + getCookieValue("IpAddress"));
-                            switch (pageId) {
-                                case 1942: // Jennifer Lyn Jackson
-                                    if (verbosity > 4)
+                            if (verbosity > 4) {
+                                switch (pageId) {
+                                    case 1942: // Jennifer Lyn Jackson
                                         sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 1989",
                                             " hit from " + data.city + ", " + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
-                                    window.location.href = 'https://ogglebooble.com/album.html?folder=626';
-                                    break;
-                                case 1555: // Donna Derrico
-                                    if (verbosity > 4)
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=626';
+                                        break;
+                                    case 1555: // Donna Derrico
                                         sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 1995",
                                             " hit from " + data.city + ", " + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
-                                    window.location.href = 'https://ogglebooble.com/album.html?folder=633';
-                                    break;
-                                case 1516: // Henriette Allais
-                                case 1520: // Teri Peterson 
-                                case 1524: // Jeana Tomasino
-                                case 1547: // Melissa Holliday 
-                                    if (verbosity > 4)
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=633';
+                                        break;
+                                    case 1516: // Henriette Allais
+                                    case 1520: // Teri Peterson 
+                                    case 1524: // Jeana Tomasino
+                                    case 1547: // Melissa Holliday 
                                         sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 1980",
                                             " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
-                                    window.location.href = 'https://ogglebooble.com/album.html?folder=616';
-                                    break;
-                                case 1479: // Lauren Michelle Hill
-                                    if (verbosity > 4)
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=616';
+                                        break;
+                                    case 1479: // Lauren Michelle Hill
                                         sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 2001",
                                             " hit from " + data.city + ", " + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
-                                    window.location.href = 'https://ogglebooble.com/album.html?folder=643';
-                                    break;
-                                case 1374: // Regina Deutinger
-                                    if (verbosity > 4)
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=643';
+                                        break;
+                                    case 1374: // Regina Deutinger
                                         sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to 2008",
                                             " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
-                                    window.location.href = 'https://ogglebooble.com/album.html?folder=650';
-                                    break;
-                                case 1947: // Karin and Mirjam Van Breeschooten
-                                    if (verbosity > 4)
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=650';
+                                        break;
+                                    case 1947: // Karin and Mirjam Van Breeschooten
                                         sendEmailToYourself("New visitor to " + visitorSuccess.PageName + " redirected to Hef Likes twins",
                                             " hit from " + data.city + ", " + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
-                                    //window.location.href = 'https://ogglebooble.com/static/playboy/Hef%20likes%20twins.html';
-                                    window.location.href = 'https://ogglebooble.com/album.html?folder=3904';
-                                    break;
-                                case 1115: // Karen Price
-                                case 1514: // Gig Gangel
-                                case 1522: // Lisa Welch
-                                case 1487: // Lindsey Vuolo
-                                case 1614: // Nadine Chanz
-                                    if (verbosity > 4)
+                                        //window.location.href = 'https://ogglebooble.com/static/playboy/Hef%20likes%20twins.html';
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=3904';
+                                        break;
+                                    case 1115: // Karen Price
+                                    case 1514: // Gig Gangel
+                                    case 1522: // Lisa Welch
+                                    case 1487: // Lindsey Vuolo
+                                    case 1614: // Nadine Chanz
                                         sendEmailToYourself("Redirecting new visitor from " + visitorSuccess.PageName + " to Biggest Breasted Centerfolds",
                                             " hit from " + data.city + ", " + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
-                                    window.location.href = 'https://ogglebooble.com/album.html?folder=3900';
-                                    break;
-                                case 1177: // Kylie Johnson
-                                case 1949: // Renee tenison
-                                case 1477: // Nichole Narin
-                                case 1519: // Ola Ray
-                                case 1919: // Julie Woodson
-                                    if (verbosity > 4)
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=3900';
+                                        break;
+                                    case 1177: // Kylie Johnson
+                                    case 1949: // Renee tenison
+                                    case 1477: // Nichole Narin
+                                    case 1519: // Ola Ray
+                                    case 1919: // Julie Woodson
                                         sendEmailToYourself("New visitor from " + visitorSuccess.PageName + " redirect to Black Centerfolds",
                                             " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
-                                    window.location.href = 'https://ogglebooble.com/album.html?folder=3822';
-                                    break;
-                                default:
-                                    if (verbosity > 4)
-                                        sendEmailToYourself("Someone new visited: " + visitorSuccess.PageName,
-                                            " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
+                                        window.location.href = 'https://ogglebooble.com/album.html?folder=3822';
+                                        break;
+                                    default:
+                                        if (verbosity > 4) {
+                                            sendEmailToYourself("Someone new visited. Initial Page: " + visitorSuccess.PageName,
+                                                "Ip: " + data.ip + " from " + data.city + "," + data.region + " " + data.country +
+                                                "<br/>Initial Page: " + pageId +
+                                                "<br/>VisitorId: " + getCookieValue("VisitorId"));
+                                        }
+                                }
                             }
                         }
                         else {
-                            //console.log("Unnecessary HIT TO IPINFO.IO  ip: " + getCookieValue("IpAddress"));
-                            var userName = getCookieValue("UserName");
-                            if (!isNullorUndefined(userName)) {
-                                sendEmailToYourself("Unnecessary HIT TO IPINFO.IO.  EXCELLENT! " + userName + " came back for another visit ",
-                                    visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country + " Ip: " + data.ip, "VisitorId: " + getCookieValue("VisitorId"));
-                            }
-                            else {
-                                //if (document.domain === 'localhost') alert("IpInfo Hit in LogVisitor \n called From: " + calledFrom + "\n userName unknown\nVisitorId: " + getCookieValue("VisitorId"));
-                                if (verbosity > 10)
-                                    sendEmailToYourself("Unnsecssary IpInfo hit called from: " + calledFrom,
-                                        visitorSuccess.PageName + " hit from " + data.city + "," + data.region + " " + data.country +
-                                        " Ip: " + data.ip + ", VisitorId: " + getCookieValue("VisitorId"));
+                            if (verbosity > 1) {
+                                //console.log("Unnecessary HIT TO IPINFO.IO  ip: " + getCookieValue("IpAddress"));
+                                var userName = getCookieValue("UserName");
+                                if (!isNullorUndefined(userName)) {
+                                    sendEmailToYourself("Unnecessary HIT TO IPINFO.IO.  EXCELLENT! " +
+                                        "ip: " + data.ip + "  username(" + userName + ") came back for another visit ",
+                                        "<br/>page: " + ageId + " " + visitorSuccess.PageName +
+                                        "<br/>hit from " + data.city + "," + data.region + " " + data.country +
+                                        "VisitorId: " + getCookieValue("VisitorId"));
+                                }
+                                else {
+                                    //if (document.domain === 'localhost') alert("IpInfo Hit in LogVisitor \n called From: " + calledFrom + "\n userName unknown\nVisitorId: " + getCookieValue("VisitorId"));
+                                    sendEmailToYourself("Unnsecssary IpInfo hit", "called from: " + calledFrom +
+                                        "<br/>ip: " + data.ip +
+                                        "<br/>page: " + pageId + " " + visitorSuccess.PageName +
+                                        "<br/>hit from " + data.city + "," + data.region + " " + data.country +
+                                        "<br/>visitorId: " + getCookieValue("VisitorId"));
+                                }
                             }
                         }
 
@@ -303,15 +305,22 @@ function logVisitor(pageId, calledFrom) {
                 },
                 error: function (jqXHR) {
                     var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "logVisitor")) {
-                        sendEmailToYourself("XHR ERROR in logVisitor", "IpAddress: " + data.ip +
-                            "<br/>pageId: " + pageId +
-                            "<br/>Message: " + errorMessage);
+                    if (errorMessage.includes("Requested page not found")) {
+                        sendEmailToYourself("XHR ERROR Requested page not found in LogVisitor?",
+                            "Ip: " + data.ip +
+                            ",<br/>pageId: " + pageId +
+                            ",<br/>Message: " + errorMessage);
+                    } else {
+                        if (!checkFor404(errorMessage, "logVisitor")) {
+                            sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logVisitor",
+                                "Ip: " + data.ip +
+                                ",<br/>pageId: " + pageId +
+                                ",<br/>Message: " + errorMessage);
+                        }
                     }
                 }
             });
         });
-
     } catch (e) {
         sendEmailToYourself("Error CAUGHT in Log Visistor", e);
     }
@@ -406,7 +415,7 @@ function logPageHit(pageId) {
         }
         else {
             //if (document.domain === 'localhost') alert("logPageHit fail.\n no VisitorId and no IpAddress. \nAre you robot");
-            if (verbosity > 1)
+            if (verbosity > 5)
                 sendEmailToYourself("no VisitorId and no IpAddress in logPageHit", "Calling LogVisitor");
             //    if (window.confirm("I am not a robot")) {
             //        alert("Please Register or Login");
@@ -493,8 +502,10 @@ function logVisit(visitorId) {
                     if (logVisitSuccessModel.WelcomeMessage !== "ok") {
                         $('#headerMessage').html(logVisitSuccessModel.WelcomeMessage);
                     }
-                    if (verbosity > 3)
-                        sendEmailToYourself("Visit Added ", "visitorId: " + visitorId);
+                    if (verbosity > 5)
+                        sendEmailToYourself("Visit Added ",
+                            "visitorId: " + visitorId +
+                            "<br/>Initial Page: ");
                     //if (document.domain === 'localhost') alert("Visit Added ", "visitorId: " + visitorId);
                 }
             }
@@ -519,6 +530,10 @@ function letemPorn(response, pornType) {
         //  setUserPornStatus(pornType);
         //<div onclick="goToPorn()">Nasty Porn</div>
         //window.location.href = '/index.html?subdomain=porn';
+        if (isNullorUndefined(pornType)) {
+            sendEmailToYourself("letemPorn problem", "pornType missing");
+            pornType = "UNK";
+        }
         reportThenPerformEvent("PRN", 136, pornType);
     }
     else {
@@ -528,6 +543,113 @@ function letemPorn(response, pornType) {
         }
     }
 }
+
+function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
+    //alert("reportThenPerformEvent(eventCode: " + eventCode + ", calledFrom: " + calledFrom + ", eventDetail: " + eventDetail);
+    try {
+        var visitorId = getCookieValue("VisitorId");
+        //if (isNullorUndefined(ipAddress)) alert("who are you");
+        if (isNullorUndefined(visitorId)) {
+            if (document.domain === 'localhost') {
+                alert("Who Are You? \nVisitorId: " + visitorId + " Ip: " + getCookieValue("IpAddress"), "Calling LogVisitor.  Event: " + eventCode + " calledFrom: " + calledFrom);
+            }
+            if (verbosity > 2) {
+                sendEmailToYourself("Calling LogVisitor from reportThenPerformEvent",
+                    "VisitorId: " + visitorId +
+                    "<br/> Ip: " + getCookieValue("IpAddress") +
+                    "<br/>Event: " + eventCode + 
+                    "<br/>EventDetail: " + eventDetail +
+                    "<br/>calledFrom: " + calledFrom);
+            }
+            logVisitor(calledFrom, "reportThenPerformEvent");
+            visitorId = "---";
+        }
+
+        var logEventModel = {
+            VisitorId: visitorId,
+            EventCode: eventCode,
+            EventDetail: eventDetail,
+            CalledFrom: calledFrom
+        };
+        logEventActivity(logEventModel);
+    } catch (e) {
+        sendEmailToYourself("Catch Error in OggleEvenLog()", "eventCode: " + eventCode +
+            "<br/>called from pageId: " + calledFrom +
+            "<br/>eventDetail: " + eventDetail +
+            "<br/>VisitorId: " + visitorId +
+            "<br/>Message: " + e);
+        if (document.domain === 'localhost') {
+            alert("reportThenPerformEvent Catch Error: " + e);
+        }
+    }
+}
+
+function logEventActivity(logEventModel) {
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "/api/EventLog/LogEventActivity",
+        data: logEventModel,
+        success: function (logEventActivitySuccess) {
+            if (logEventActivitySuccess.Success === "ok") {
+                performEventController(logEventModel.EventCode, logEventModel.CalledFrom, logEventModel.EventDetail);
+            }
+            else {
+                if (logEventActivitySuccess.Success.indexOf("Option not supported") > -1) {
+                    checkFor404(logEventActivitySuccess.Success, "logEventActivity");
+                    sendEmailToYourself("SERVICE DOWN", "from " + logEventActivitySuccess.EventName + " {" + logEventModel.EventCode + "}",
+                        "calledFrom: {" + logEventModel.CalledFrom + "} : " + logEventActivitySuccess.CalledFrom +
+                        "<br/>eventDetail: {" + logEventModel.EventDetail + "} : " + logEventActivitySuccess.PageBeingCalled +
+                        "<br/>from: " + getCookieValue("IpAddress") + ", " + logEventActivitySuccess.VisitorDetails);
+                }
+                else {
+                    if (document.domain === 'localhost')
+                        alert("LogEventActivity\nCalled from PageId: " + calledFrom +
+                            "\nEventCode: " + logEventModel.EventCode +
+                            "\neventDetail: " + logEventModel.EventDetail +
+                            "\nVisitorId: " + logEventModel.VisitorId +
+                            "\nMessage: " + logEventActivitySuccess.Success);
+                    else {
+                        if (logEventActivitySuccess.Success.indexOf("Duplicate entry") < 0)
+                            sendEmailToYourself("LogEventActivity", "Called from PageId: " + calledFrom +
+                                "<br/>EventCode: " + logEventModel.EventCode +
+                                "<br/>eventDetail: " + logEventModel.EventDetail +
+                                "<br/>VisitorId: " + logEventModel.VisitorId +
+                                "<br/>Message: " + logEventActivitySuccess.Success);
+                    }
+                }
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (errorMessage.includes("Requested page not found")) {
+                sendEmailToYourself("Requested page not found XHR ERROR in LogEventActivity",
+                    "url: " + settingsArray.ApiServer + "/api/EventLog/LogEventActivity" +
+                    "<br/>Ip: " + getCookieValue("IpAddress") +
+                    "<br/>EventCode: " + logEventModel.EventCode +
+                    "<br/>eventDetail: " + logEventModel.EventDetail +
+                    "<br/>VisitorId: " + logEventModel.VisitorId +
+                    "<br/>Message: " + errorMessage);
+            } else {
+                if (!checkFor404(errorMessage, "reportThenPerformEvent")) {
+                    if (getCookieValue("IpAddress") === "68.203.90.183") {
+                        alert("xhr error in reportThenPerformEvent\n url:/api/ChangeLog/LogEventActivity?eventCode=" + eventCode +
+                            "\ncalled from pageId=" + calledFrom + "\nIp: " + getCookieValue("IpAddress") + "\nMessage: " + errorMessage);
+                    }
+                    else {
+                        sendEmailToYourself("XHR ERROR in reportThenPerformEvent",
+                            "url: " + settingsArray.ApiServer + "/api/EventLog/LogEventActivity" +
+                            "<br/>Ip: " + getCookieValue("IpAddress") +
+                            "<br/>EventCode: " + logEventModel.EventCode +
+                            "<br/>eventDetail: " + logEventModel.EventDetail +
+                            "<br/>VisitorId: " + logEventModel.VisitorId +
+                            "<br/>Message: " + errorMessage);
+                    }
+                }
+            }
+        }
+    });
+}
+
 
 function performEventController(eventCode, calledFrom, eventDetail) {
     var ipAddress = getCookieValue("IpAddress");
@@ -573,6 +695,8 @@ function performEventController(eventCode, calledFrom, eventDetail) {
     // NOW PERFORM EVENT
     switch (eventCode) {
 
+        case "XLC":  // external link clicked
+            break;
         case "PRN":  //("Porn Option clicked");
             window.location.href = '/index.html?subdomain=porn';
             break;
@@ -587,7 +711,6 @@ function performEventController(eventCode, calledFrom, eventDetail) {
             //window.location.href = ".";
             break;
         case "GIC": // Gallery Item Clicked
-
             break;
         case "CMC": // carousle context menu item clicked
             break;
@@ -622,13 +745,10 @@ function performEventController(eventCode, calledFrom, eventDetail) {
             window.open("/album.html?folder=" + eventDetail, "_blank");
             break;
         case "SEE":  // see more of her
-
             // the EventDetail could pass the external link
             //window.open("/album.html?folder=" + eventDetail, "_blank");
             window.location.href = "/album.html?folder=" + eventDetail;
             break;
-
-
         case "CPC":  // carousel ParentGallery clicked
         case 'SUB':  // 'Sub Folder Click'
         case "CIC":  // carousel image clicked
@@ -697,100 +817,7 @@ function performEventController(eventCode, calledFrom, eventDetail) {
             }
             break;
         default:
-            alert("eventCode " + eventCode + "  not handled in reportThenPerformEvent");
-    }
-}
-
-function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
-    //alert("reportThenPerformEvent(eventCode: " + eventCode + ", calledFrom: " + calledFrom + ", eventDetail: " + eventDetail);
-    try {
-        var visitorId = getCookieValue("VisitorId");
-
-        //if (isNullorUndefined(ipAddress)) alert("who ate you");
-        if (isNullorUndefined(visitorId)) {
-            var ipAddress = getCookieValue("IpAddress");
-            if (document.domain === 'localhost') {
-                alert("Who Are You? \nVisitorId: " + visitorId + " Ip: " + ipAddress, "Calling LogVisitor.  Event: " + eventCode + " calledFrom: " + calledFrom);
-            }
-            if (verbosity > 4) {
-                sendEmailToYourself("Calling LogVisitor from reportThenPerformEvent",
-                    " VisitorId: " + visitorId + "<br/> Ip: " + ipAddress,
-                    "<br/>Event: " + eventCode + " calledFrom: " + calledFrom);
-            }
-            logVisitor(calledFrom, "reportThenPerformEvent");
-            visitorId = "---";
-        }
-
-        var logEventModel = {
-            VisitorId: visitorId,
-            EventCode: eventCode,
-            EventDetail: eventDetail,
-            CalledFrom: calledFrom
-        };
-
-        $.ajax({
-            type: "POST",
-            url: settingsArray.ApiServer + "/api/EventLog/LogEventActivity",
-            data: logEventModel,
-            success: function (logEventActivitySuccess) {
-                if (logEventActivitySuccess.Success === "ok") {
-                    performEventController(eventCode, calledFrom, eventDetail);
-                }
-                else {
-                    var ipAddress = getCookieValue("IpAddress");
-                    if (logEventActivitySuccess.Success.indexOf("Option not supported") > -1) {
-                        checkFor404(logEventActivitySuccess.Success, "logEventActivity");
-                        sendEmailToYourself("SERVICE DOWN", "from " + logEventActivitySuccess.EventName + " {" + eventCode + "}",
-                            "calledFrom: {" + calledFrom + "} : " + logEventActivitySuccess.CalledFrom +
-                            "<br/>eventDetail: {" + eventDetail + "} : " + logEventActivitySuccess.PageBeingCalled +
-                            "<br/>from: " + ipAddress + ", " + logEventActivitySuccess.VisitorDetails);
-                    }
-                    else {
-                        if (document.domain === 'localhost')
-                            alert("LogEventActivity\nCalled from PageId: " + calledFrom +
-                                "\nEventCode: " + eventCode +
-                                "\neventDetail: " + eventDetail +
-                                "\nVisitorId: " + visitorId +
-                                "\nMessage: " + logEventActivitySuccess.Success);
-                        else {
-                            if (logEventActivitySuccess.Success.indexOf("Duplicate entry") < 0)
-                                sendEmailToYourself("LogEventActivity", "Called from PageId: " + calledFrom +
-                                    "<br/>EventCode: " + eventCode +
-                                    "<br/>eventDetail: " + eventDetail +
-                                    "<br/>VisitorId: " + visitorId +
-                                    "<br/>Message: " + logEventActivitySuccess.Success);
-                        }
-                    }
-                }
-            },
-            error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                //               alert("xhr error in common.js logActivity : " + errorMessage);
-                if (!checkFor404(errorMessage, "reportThenPerformEvent")) {
-                    var ipAddr = getCookieValue("IpAddress");
-                    if (ipAddr === "68.203.90.183") {
-                        alert("xhr error in reportThenPerformEvent\n url:/api/ChangeLog/LogEventActivity?eventCode=" + eventCode +
-                            "\ncalled from pageId=" + calledFrom + "\nIp: " + ipAddr + "\nMessage: " + errorMessage);
-                    }
-                    else {
-                        sendEmailToYourself("xhr error in reportThenPerformEvent", "url:/api/ChangeLog/LogEventActivity?eventCode=" + eventCode +
-                            "<br/>eventDetail: " + eventDetail +
-                            "<br/>called from: " + calledFrom +
-                            "<br/>Ip: " + ipAddr +
-                            "<br/>Message: " + errorMessage);
-                    }
-                }
-            }
-        });
-    } catch (e) {
-        sendEmailToYourself("Catch Error in OggleEvenLog()", "eventCode: " + eventCode +
-            "<br/>called from pageId: " + calledFrom +
-            "<br/>eventDetail: " + eventDetail +
-            "<br/>VisitorId: " + visitorId +
-            "<br/>Message: " + e);
-        if (document.domain === 'localhost') {
-            alert("reportThenPerformEvent Catch Error: " + e);
-        }
+            sendEmailToYourself("Uncaught Case: " + eventCode, "eventCode " + eventCode + "  not handled in reportThenPerformEvent");
     }
 }
 
@@ -800,37 +827,20 @@ function checkForHitLimit(calledFrom, pageId) {
     //userPageHits = 501;
 
     if (!isLoggedIn()) {
-        var ipAddress = getCookieValue("IpAddress");
-        if (ipAddress === "68.203.90.183"  ||
-            ipAddress === "70.184.167.211" ||  // page hits
-          //ipAddress === "24.165.20.22"   ||  // page hits
-          //ipAddress === "73.181.156.170" ||  // page hits
-          //ipAddress === "99.189.25.139"  ||  // page hits
-            ipAddress === "75.139.185.10"  ||  // page hits
-            ipAddress === "73.98.11.244"   ||  // page hits
-            ipAddress === "90.213.105.243" ||  // page hits
-            ipAddress === "174.48.120.252" ||  // page hits
-            ipAddress === "86.85.60.27"    ||  // image hits
-            ipAddress === "172.88.217.213" ||  // image hits
-            ipAddress === "107.15.179.45") {   // image hits
-            // delete this 
+        if (calledFrom === "pages") {
+            if (userPageHits > freePageHitsAllowed) {
+                showCustomMessage(98, true);
+            }
+            if (userPageHits > freePageHitsAllowed && userPageHits % 10 === 0)
+                sendEmailToYourself("Page Hit Message Displayed", "userPageHits: " + userPageHits + "<br>pageId: " + pageId + "<br>Ip: " + getCookieValue("IpAddress"));
         }
-        else {
-            if (calledFrom === "pages") {                
-                if (userPageHits > freePageHitsAllowed && userPageHits < freePageHitsAllowed + 10) {
-                    showCustomMessage(98, true);
-                    sendEmailToYourself("Page Hit Message Displayed", "userPageHits: " + userPageHits + "<br>pageId: " + pageId + "<br>Ip: " + ipAddress);
-                }
-            }
-            if (calledFrom === "images") {
-                if (userImageHits > freeImageHitsAllowed && userImageHits < freeImageHitsAllowed + 10) {
-                    showCustomMessage(97, true);
-                    sendEmailToYourself("Image Hit Message Displayed", "userImageHits: " + userImageHits + "<br>pageId: " + pageId + "<br>Ip: " + ipAddress);
-                }
-            }
+        if (calledFrom === "images") {
+            if (userImageHits > freeImageHitsAllowed)
+                showCustomMessage(97, true);
+            if (userImageHits > freeImageHitsAllowed && userImageHits % 10 === 0 && userImageHits < 3000)
+                sendEmailToYourself("Image Hit Message Displayed", "userImageHits: " + userImageHits + "<br>pageId: " + pageId + "<br>Ip: " + getCookieValue("IpAddress"));
         }
     }
-}
 
 
     //if (isLoggedIn()) {
@@ -857,3 +867,4 @@ function checkForHitLimit(calledFrom, pageId) {
     // Request extra privdleges 
     // pay me to do some programming for you and I'll let you in on all my source code
 
+}

@@ -245,7 +245,7 @@ namespace WebApi
                 {
                     CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     string staticPageFileName = Helpers.GetCustomStaticFolderName(folderId, dbCategoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", ""));
-                    successModel.ReturnValue = "http://ogglebooble.com/static/" + dbCategoryFolder.RootFolder + "/" + staticPageFileName + ".html";
+                    successModel.ReturnValue = "http://ogglebooble.com/static/" + dbCategoryFolder.RootFolder + "/" + staticPageFileName + ".html?calledFrom=internal";
                     successModel.Success = "ok";
                 }
             }
@@ -411,15 +411,18 @@ namespace WebApi
         }
         private void GetDirTreeRecurr(CategoryTreeModel parent, List<VwDirTree> vwDirTree, string path)
         {
-            if (parent.FolderId == 440)
+            //var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).Distinct();
+            //var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).Distinct().OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
+            //var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
+
+            var unsoredList = vwDirTree.Where(f => f.Parent == parent.FolderId);
+            //var vwTrees = test1.OrderBy(f => f.SortOrder).ToList();
+
+            if (parent.FolderId == 12 || parent.FolderId == 610)
             {
             }
 
-            //var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).Distinct();
-            var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).Distinct().OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName);
-
-            //var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId);
-            //vwTrees = vwTrees.OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName);
+            List<VwDirTree> vwTrees = unsoredList.OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).Distinct().ToList();
 
             foreach (VwDirTree vwTree in vwTrees)
             {

@@ -1,9 +1,9 @@
-﻿var settingsArray = {};
-var userRoles = [];
+﻿var verbosity = 5;
 var freeVisitorHitsAllowed = 7500;
+var settingsArray = {};
+var userRoles = [];
 var waitingForReportThenPerformEvent = true;
 var forgetShowingCustomMessage = true;
-var verbosity = 1;
 var connectionVerified = false;
 var slideShowButtonsActive = true;
 //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")

@@ -28,16 +28,39 @@ $(document).ready(function () {
             clearInterval(waiter);
             setAlbumPageHeader(staticPageFolderId, true);
 
+            params = getParams();
+            var calledFrom = params.calledFrom;
+            if (calledFrom !== "internal") {
+                logPageHit(staticPageFolderId);
+                //sendEmailToYourself("calledFrom === undefined", "log visit, log page hit");
+                if (calledFrom === undefined)
+                    calledFrom = "old link";
+
+                if (verbosity > 6) {
+                        sendEmailToYourself("external link call ", staticPageFolderName + "<br/>called From: " + calledFrom + "<br/>ip: " + getCookieValue("IpAddress"));
+                }
+                var logEventModel = {
+                    VisitorId: getCookieValue("VisitorId"),
+                    EventCode: "XLC",
+                    EventDetail: calledFrom,
+                    CalledFrom: staticPageFolderId
+                };
+                logEventActivity(logEventModel);
+
+            }
+
             //setOggleHeader(currentFolderRoot, staticPageFolderId, false);
             //setOggleFooter(currentFolderRoot, staticPageFolderId);
 
-            setTimeout(function () { getBreadCrumbs(staticPageFolderId)}, 800);
+            setTimeout(function () { getBreadCrumbs(staticPageFolderId);}, 800);
+
+
 
             //setOggleHeader(currentFolderRoot, staticPageFolderId);
             //setOggleFooter(currentFolderRoot, staticPageFolderId);
             //logPageHit(staticPageFolderId, "Static Page"); //, getCookieValue("VisitorId"), "Static Page");
 
-            $('footerMessage').html(staticPageFolderName);
+            //$('#footerMessage').html("staticPageFolderName: " + ipAddress);
             $('#feedbackBanner').click(showFeedbackDialog).fadeIn();
 
         }

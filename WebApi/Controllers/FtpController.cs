@@ -895,7 +895,7 @@ namespace WebApi
                                 //});
 
 
-                                mdb.CategoryFolderDetails.Add(new MySqDataContext.CategoryFolderDetail() { FolderId = newFolder.Id, SortOrder = 99 });
+                                mdb.CategoryFolderDetails.Add(new MySqDataContext.CategoryFolderDetail() { FolderId = newFolderId, SortOrder = 99 });
                                 mdb.SaveChanges();
                             }
                             successModel.ReturnValue = newFolderId.ToString();
