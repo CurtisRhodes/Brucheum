@@ -214,7 +214,7 @@ namespace WebApi.Ftp
 
         public static string DeleteFile(string fileToDelete)
         {
-            string success = "";
+            string success;
             try
             {
                 FtpWebRequest requestDir = (FtpWebRequest)WebRequest.Create(fileToDelete);

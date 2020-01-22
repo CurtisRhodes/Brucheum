@@ -245,12 +245,14 @@ function processImages(imageLinksModel) {
             //alert("subDir: " + subDir.DirectoryName + "  Link==null");
             subDir.Link = "Images/redballon.png";
         }
-
+        //$('#fileCount').html(getAlbumChildFileCounts(subDir).toLocaleString());
         //$('#imageContainer').append("<div class='" + imageFrameClass + "' onclick=window.location.href='/album.html?folder=" + subDir.FolderId + "'>" +
         $('#imageContainer').append("<div class='" + imageFrameClass + "' onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.FolderId + "\")'>" +
             "<img class='folderImage' src='" + subDir.Link + "'/>" +
+            //"<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + childFiles.toLocaleString() + ")</div></div>");
             //"<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "</div></div>");
-            "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + Math.max(subDir.SubDirCount, subDir.FileCount) + ")</div></div>");
+            //"<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + Math.max(subDir.SubDirCount, subDir.FileCount) + ")</div></div>");
+            "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + Math.max(subDir.SubDirCount, Math.max(subDir.FileCount, subDir.ChildFiles)) + ")</div></div>");
     });
 
     if (imageLinksModel.SubDirs.length > 0) {

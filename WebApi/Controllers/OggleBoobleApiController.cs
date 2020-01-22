@@ -16,6 +16,22 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class ImagePageController : ApiController
     {
+        int totalChildren = 0;
+        private int GetTotalChildFiles(int folderId)
+        {
+            using (OggleBoobleContext db = new OggleBoobleContext())
+            {
+                totalChildren += db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
+                var childFolders = db.CategoryFolders.Where(f => f.Parent == folderId);
+                foreach (CategoryFolder subDir in childFolders)
+                {
+                    GetTotalChildFiles(subDir.Id);
+                }
+            }
+            return totalChildren;
+        }
+
+
         // used by ImagePage
         [HttpGet]
         public ImageLinksModel GetImageLinks(int folderId)
@@ -39,6 +55,9 @@ namespace WebApi
                         if (vwTree.Link == null)
                             folderImage = Helpers.GetFirstImage(vwTree.Id);
 
+                        totalChildren = 0;
+                        //int childFilesCount = GetTotalChildFiles(folderId);
+
                         imageLinks.SubDirs.Add(new CategoryTreeModel()
                         {
                             LinkId = Guid.NewGuid().ToString(),
@@ -48,6 +67,8 @@ namespace WebApi
                             ParentId = vwTree.Parent,
                             SubDirCount = vwTree.SubDirCount,
                             FileCount = vwTree.FileCount,
+                            ChildFiles = vwTree.ChildFiles,
+                            //FileCount = childFilesCount,
                             //Length = vwTree.FileCount + vwTree.TotalFiles + vwTree.GrandTotalFiles,
                             IsStepChild = vwTree.IsStepChild,
                             Link = vwTree.Link
@@ -418,7 +439,7 @@ namespace WebApi
             var unsoredList = vwDirTree.Where(f => f.Parent == parent.FolderId);
             //var vwTrees = test1.OrderBy(f => f.SortOrder).ToList();
 
-            if (parent.FolderId == 12 || parent.FolderId == 610)
+            if (parent.FolderId == 635)
             {
             }
 

@@ -2,6 +2,7 @@
 var dirTreeTab, totalPics, totalFolders;
 var dirTreeTabIndent = 22;
 var dirDepth = 3;
+var totalFiles = 0;
 
 function buildDirTree(dest, treeId, startNode, endNode) {  
 
@@ -52,15 +53,17 @@ function recurrBuildDirTree(dir, treeId) {
                 expandMode = "+";
         }
 
-        txtFileCount = "";
-        if (subDir.FileCount > 0) 
-            txtFileCount = subDir.FileCount.toLocaleString();
-        if (subDir.SubDirCount > 0) {
-            if (txtFileCount === "") 
-                txtFileCount = subDir.SubDirCount;            
-            else
-                txtFileCount += " (" + subDir.SubDirCount + ")";
-        }
+        totalFiles = 0;
+        txtFileCount = getAllChildFileCounts(subDir).toLocaleString();
+        //txtFileCount = "";
+        //if (subDir.FileCount > 0) 
+        //    txtFileCount = subDir.FileCount.toLocaleString();
+        //if (subDir.SubDirCount > 0) {
+        //    if (txtFileCount === "") 
+        //        txtFileCount = subDir.SubDirCount;            
+        //    else
+        //        txtFileCount += " (" + subDir.SubDirCount + ")";
+        //}
 
         dirTreeContainer += "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
             + "<span id='S" + subDir.LinkId + "' onclick=toggleDirTree('" + subDir.LinkId + "') >[" + expandMode + "] </span>"
@@ -76,6 +79,16 @@ function recurrBuildDirTree(dir, treeId) {
         dirTreeTab -= dirTreeTabIndent;
     });
 }
+
+function getAllChildFileCounts(dir) {    
+    totalFiles += dir.FileCount;
+    
+    $.each(dir.SubDirs, function (idx, subDir) {
+        getAllChildFileCounts(subDir);
+    });
+    return totalFiles;
+}
+
 
 function toggleDirTree(id) {
     if ($('#' + id + '').css("display") === "none")
