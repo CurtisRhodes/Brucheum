@@ -177,7 +177,8 @@ function logVisitor(pageId, calledFrom) {
 
 
                         if (calledFrom === "reportThenPerformEvent") {
-                            sendEmailToYourself("logVisitor called from reportThenPerformEvent ", "IpAddress: " + ipAddress + "<br/>viditorId: " + visitorId);
+                            if (verbosity > 4)
+                                sendEmailToYourself("logVisitor called from reportThenPerformEvent ", "IpAddress: " + ipAddress + "<br/>viditorId: " + visitorId);
                             return;
                         }
                         if (calledFrom === "logPageHit") {
@@ -192,7 +193,7 @@ function logVisitor(pageId, calledFrom) {
                             //return;
                         }
 
-                        if (verbosity > 1) {
+                        if (verbosity > 5) {
                             var visitorStatus = "Existing User";
                             if (visitorSuccess.IsNewVisitor)
                                 visitorStatus = "New Visitor";
@@ -553,7 +554,7 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
             if (document.domain === 'localhost') {
                 alert("Who Are You? \nVisitorId: " + visitorId + " Ip: " + getCookieValue("IpAddress"), "Calling LogVisitor.  Event: " + eventCode + " calledFrom: " + calledFrom);
             }
-            if (verbosity > 2) {
+            if (verbosity > 5) {
                 sendEmailToYourself("Calling LogVisitor from reportThenPerformEvent",
                     "VisitorId: " + visitorId +
                     "<br/> Ip: " + getCookieValue("IpAddress") +
@@ -563,6 +564,7 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
             }
             logVisitor(calledFrom, "reportThenPerformEvent");
             visitorId = "---";
+            return;
         }
 
         var logEventModel = {
@@ -649,7 +651,6 @@ function logEventActivity(logEventModel) {
         }
     });
 }
-
 
 function performEventController(eventCode, calledFrom, eventDetail) {
     var ipAddress = getCookieValue("IpAddress");

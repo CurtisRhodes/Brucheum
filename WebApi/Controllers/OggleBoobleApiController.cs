@@ -439,7 +439,7 @@ namespace WebApi
             var unsoredList = vwDirTree.Where(f => f.Parent == parent.FolderId);
             //var vwTrees = test1.OrderBy(f => f.SortOrder).ToList();
 
-            if (parent.FolderId == 635)
+            if (parent.FolderId == 650)
             {
             }
 
