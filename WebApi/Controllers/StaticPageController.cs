@@ -153,11 +153,11 @@ namespace WebApi.Controllers
             {
                 //SignalRHost.ProgressHub.PostToClient("Creating static files: " + folderName + ".html");
 
-                string staticFolderName = "";
-                if (rootFolder == "sluts")
-                    staticFolderName = folderName;
-                else
-                    staticFolderName = Helpers.GetCustomStaticFolderName(folderId, folderName.Replace(".OGGLEBOOBLE.COM", ""));
+                //string staticFolderName = "";
+                //if (rootFolder == "sluts")
+                //    staticFolderName = folderName;
+                //else
+                //    staticFolderName = Helpers.GetCustomStaticFolderName(folderId, folderName.Replace(".OGGLEBOOBLE.COM", ""));
 
 
                 string staticContent =
@@ -167,7 +167,8 @@ namespace WebApi.Controllers
                    // Slideshow() + CommentDialog() + ModelInfoDialog() +
                     "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
                     "<script>var staticPageFolderId=" + folderId + "; " +
-                    "var staticPageFolderName='" + staticFolderName + "'; " +
+                    //"var staticPageFolderName='" + staticFolderName + "'; " +
+                    "var staticPageFolderName='" + folderName + "'; " +
                     "var staticPageImagesCount='" + imagesCount + "'; " +
                     "var currentFolderRoot='" + rootFolder + "';</script>\n" +
                     "<div w3-include-html='/Snippets/Slideshow.html'></div>\n" +
@@ -176,7 +177,8 @@ namespace WebApi.Controllers
                     "<div w3-include-html='/Snippets/Register.html'></div>\n" +
                     "<script src='/scripts/StaticPage.js'></script>\n" +
                     "\n</body>\n</html>";
-                success = WriteFileToDisk(staticContent, rootFolder, staticFolderName);
+                //success = WriteFileToDisk(staticContent, rootFolder, staticFolderName);
+                success = WriteFileToDisk(staticContent, rootFolder, folderName);
                 if (success == "ok")
                 {
                     if (recurr)
@@ -291,7 +293,8 @@ namespace WebApi.Controllers
                 List<VwDirTree> subDirs = db.VwDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
                 foreach (VwDirTree subDir in subDirs)
                 {
-                    string fullerFolderName = subDir.RootFolder + "/" + Helpers.GetCustomStaticFolderName(subDir.Id, subDir.FolderName);
+                    string fullerFolderName = subDir.RootFolder + "/" + Helpers.GetParentPath(folderId).Replace(".OGGLEBOOBLE.COM", "");                    
+                    //string fullerFolderName = subDir.RootFolder + "/" + Helpers.GetCustomStaticFolderName(subDir.Id, subDir.FolderName);
                     int subDirFileCount = Math.Max(subDir.FileCount, subDir.SubDirCount);
                     bodyHtml.Append("<div class='" + imageFrameClass + "'>" +
                         "<div class='folderImageFrame' onclick='reportThenPerformEvent(\"SUB\"," + folderId + "," + subDir.Id + ")'>" +

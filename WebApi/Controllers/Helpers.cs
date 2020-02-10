@@ -246,18 +246,18 @@ namespace WebApi
             return goodLink;
         }
 
-        public static string GetCustomStaticFolderName(int folderId, string folderName)
-        {
-            string filePath = Helpers.GetParentPath(folderId);
-            if (filePath.Contains("centerfolds"))
-                folderName = "centerfolds/" + folderName;
-            if (filePath.Contains("magazine"))
-                folderName = "covers/" + folderName;
-            if (filePath.Contains("plus"))
-                folderName = "plus/" + folderName;
-            if (filePath.Contains("porn"))
-                folderName = "porn/" + folderName;
-            return folderName;
-        }
+        //public static string GetCustomStaticFolderName(int folderId, string folderName)
+        //{
+        //    string filePath = Helpers.GetParentPath(folderId);
+        //    if (filePath.Contains("centerfolds"))
+        //        folderName = "centerfolds/" + folderName;
+        //    if (filePath.Contains("magazine"))
+        //        folderName = "covers/" + folderName;
+        //    if (filePath.Contains("plus"))
+        //        folderName = "plus/" + folderName;
+        //    if (filePath.Contains("porn"))
+        //        folderName = "porn/" + folderName;
+        //    return folderName;
+        //}
     }
 }

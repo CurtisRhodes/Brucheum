@@ -141,9 +141,11 @@ namespace WebApi.OggleBoobleSqlContext
     public partial class VideoLink
     {
         [Key]
+        public string Id { get; set; }
         public string Link { get; set; }
-        public string Image { get; set; }
+        public string ImageId { get; set; }
         public string Title { get; set; }
+        public int FolderId { get; set; }
     }
 
     [Table("OggleBooble.BlogComment")]

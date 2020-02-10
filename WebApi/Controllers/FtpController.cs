@@ -119,6 +119,7 @@ namespace WebApi
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
 
         [HttpPut]
+        [Route("api/MoveImage/MoveImage")]
         public SuccessModel MoveImage(MoveCopyImageModel model)
         {
             SuccessModel successModel = new SuccessModel();
@@ -238,6 +239,35 @@ namespace WebApi
                 successModel.Success = Helpers.ErrorDetails(ex);
             }
             return successModel;
+        }
+
+        [HttpPut]
+        [Route("api/MoveImage/MoveMany")]
+        public string MoveMany(MoveManyImagesModel moveManyModel)
+        {
+            string success;
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    foreach (string imageLinkId in moveManyModel.ImageLinkIds)
+                    {
+                        MoveImage(new MoveCopyImageModel()
+                        {
+                            DestinationFolderId = moveManyModel.DestinationFolderId,
+                            SourceFolderId = moveManyModel.SourceFolderId,
+                            Link = db.ImageLinks.Where(i => i.Id == imageLinkId).First().Link,
+                            Mode = "Move"
+                        });
+                    }
+                }
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
         }
 
         [HttpGet]
@@ -412,12 +442,13 @@ namespace WebApi
             return success;
         }
 
-        //public class AddLinkModel
-        //{
-        //    public int FolderId { get; set; }
-        //    public string Link { get; set; }
-        //    public string Path { get; set; }
-        //}
+        public class OriginFolderModel
+        {
+            public int FolderId { get; set; }
+            public string RootFolder { get; set; }
+            public string FolderName { get; set; }
+            public string Path { get; set; }            
+        }
 
         [HttpPost]
         public SuccessModel AddImageLink(AddLinkModel newLink)
@@ -710,6 +741,35 @@ namespace WebApi
             return success;
         }
 
+        private string CreateDirectoryTree(int sourceFolderId, int destinationFolderId,string originParentPath, string destinationParentPath, OggleBoobleContext db)
+        {
+            string success = "";
+            try
+            {
+
+                CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == sourceFolderId).FirstOrDefault();
+                CategoryFolder dbDestinationParent = db.CategoryFolders.Where(f => f.Id == destinationFolderId).FirstOrDefault();
+
+                string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originParentPath + dbSourceFolder.FolderName;
+                string destinationFtpPath = ftpHost + dbDestinationParent.RootFolder + ".ogglebooble.com/" + destinationParentPath + dbDestinationParent.FolderName + "/" + dbSourceFolder.FolderName;
+
+                //string createDirectorySuccess = "ok";
+
+
+                int[] childFolders = db.CategoryFolders.Where(c => c.Parent == sourceFolderId).Select(c => c.Id).ToArray();
+
+                //foreach()
+
+
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
         [HttpPut]
         public string MoveFolder(int sourceFolderId, int destinationFolderId)
         {
@@ -723,6 +783,7 @@ namespace WebApi
                 {
                     using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
                     {
+
                         //  NO RENAMING OF FILES, ONLY LINK PATHS
                         CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == sourceFolderId).FirstOrDefault();
                         CategoryFolder dbDestinationParent = db.CategoryFolders.Where(f => f.Id == destinationFolderId).FirstOrDefault();
@@ -731,6 +792,9 @@ namespace WebApi
                         string destinationFtpPath = ftpHost + dbDestinationParent.RootFolder + ".ogglebooble.com/" + destinationParentPath + dbDestinationParent.FolderName + "/" + dbSourceFolder.FolderName;
 
                         string createDirectorySuccess = "ok";
+
+
+
                         if (!FtpUtilies.DirectoryExists(destinationFtpPath))
                         {
                             createDirectorySuccess = FtpUtilies.CreateDirectory(destinationFtpPath);
@@ -850,7 +914,7 @@ namespace WebApi
                         successModel.Success = "folder already exists";
                     else
                     {
-                        string createDirSuccess= FtpUtilies.CreateDirectory(destinationFtpPath);
+                        string createDirSuccess = FtpUtilies.CreateDirectory(destinationFtpPath);
                         if (createDirSuccess == "ok")
                         {
 
@@ -870,33 +934,30 @@ namespace WebApi
                             db.SaveChanges();
 
                             // now add it to Oracle
-                            using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
+                            try
                             {
 
-                                MySqDataContext.CategoryFolder newOracleRow = new MySqDataContext.CategoryFolder();
-                                newOracleRow.Id = newFolderId;
-                                newOracleRow.Parent = parentId;
-                                newOracleRow.FolderName = newFolderName.Trim();
-                                newOracleRow.RootFolder = dbSourceFolder.RootFolder;
-                                mdb.CategoryFolders.Add(newOracleRow);
-                                
-                                
-                                
-                                mdb.SaveChanges();
+                                using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
+                                {
 
+                                    MySqDataContext.CategoryFolder newOracleRow = new MySqDataContext.CategoryFolder();
+                                    newOracleRow.Id = newFolderId;
+                                    newOracleRow.Parent = parentId;
+                                    newOracleRow.FolderName = newFolderName.Trim();
+                                    newOracleRow.RootFolder = dbSourceFolder.RootFolder;
+                                    mdb.CategoryFolders.Add(newOracleRow);
+                                    mdb.SaveChanges();
 
-
-                                //mdb.CategoryFolders.Add(new MySqDataContext.CategoryFolder()
-                                //{
-                                //    Id = newFolderId,
-                                //    Parent = parentId,
-                                //    FolderName = newFolderName.Trim(),
-                                //    RootFolder = dbSourceFolder.RootFolder
-                                //});
-
-
-                                mdb.CategoryFolderDetails.Add(new MySqDataContext.CategoryFolderDetail() { FolderId = newFolderId, SortOrder = 99 });
-                                mdb.SaveChanges();
+                                    MySqDataContext.CategoryFolderDetail oraCategoryFolderDetail = new MySqDataContext.CategoryFolderDetail();
+                                    oraCategoryFolderDetail.FolderId = newFolderId;
+                                    oraCategoryFolderDetail.SortOrder = 998;
+                                    mdb.CategoryFolderDetails.Add(oraCategoryFolderDetail);
+                                    mdb.SaveChanges();
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                //console.
                             }
                             successModel.ReturnValue = newFolderId.ToString();
                             successModel.Success = "ok";

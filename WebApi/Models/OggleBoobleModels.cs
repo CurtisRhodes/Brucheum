@@ -124,9 +124,11 @@ namespace WebApi.Models
 
     public class VideoLinkModel
     {
+        public string Id { get; set; }
         public string Link { get; set; }
-        public string Image { get; set; }
+        public string ImageId { get; set; }
         public string Title { get; set; }
+        public int FolderId { get; set; }
     }
         
     public class RankerVoteModel

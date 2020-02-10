@@ -127,7 +127,7 @@
                             </div>
                             <div class="editArticleRow">
                                 <div class="editArticleLabel">Image:</div>
-                                <div class="editArticleInput" style="width:91px"><input id="uplImage" type="file" class="imageUpload" onchange="loadImage()" /></div>
+                                <div class="editArticleInput" style="width:91px"><input id="uplImage" type="file" class="imageUpload" onchange="loadImage($(this).val())" /></div>
                             </div>
                             <div class="editArticleRow">
                                 <div class="editArticleLabel">Meta Tag:</div>
@@ -145,7 +145,7 @@
                 <div id="articleContentEditor"></div>
                 <div id="divStatusMessage"></div>
                 <div class="btnRow">
-                    <img id="updateArticleSpinner" class="btnSpinnerImage articleSaveSpinner" src="~/Images/loader.gif" />
+                    <img id="updateArticleSpinner" class="btnSpinnerImage articleSaveSpinner" src="Images/loader.gif" />
                     <button id="btnSave" class="roundendButton" onclick="addUpdateArticle()">Save</button>
                     <button id="btnView" class="roundendButton" onclick="saveAndView()">View</button>
                 </div>
@@ -201,8 +201,8 @@
                 else {
                     $('#dots').html('');
                     clearInterval(waiter);
-                    logVisit();
-                    setUserPermissions();
+                    //logVisit();
+                    //setUserPermissions();
 
                     if (params.ArticleViewId != undefined) {
                         loadArticle(params.ArticleViewId);
@@ -212,18 +212,17 @@
                         getArticle(params.ArticleEditId);
                     }
                     if (params.ArticleList !== undefined) {
-
                         getArticleList(params.ArticleList,params.filter);
                     }
 
-                    var waiter2 = setInterval(function () {
-                        dots += "* ";
-                        $('#dots').html(dots);
-                        if (permissionsSet === true) {
-                            clearInterval(waiter2);
-                            $('#dots').html("");
-                        }
-                    }, 300);
+                    //var waiter2 = setInterval(function () {
+                    //    dots += "* ";
+                    //    $('#dots').html(dots);
+                    //    if (permissionsSet === true) {
+                    //        clearInterval(waiter2);
+                    //        $('#dots').html("");
+                    //    }
+                    //}, 300);
                 }
             }, 300);
         });

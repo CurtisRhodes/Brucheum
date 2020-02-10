@@ -42,7 +42,7 @@ function resizePage() {
     //set page height
     var winH = $(window).height();
     var headerH = $('header').height();
-    $('#middleColumn').height(winH - headerH - 45);
+    $('#middleColumn').height(winH - headerH - 42);
 }
 function getParams() {
     var params = {},
@@ -54,11 +54,13 @@ function getParams() {
     return params;
 }
 function loadSettings() {
+    console.log("entering loadSettings");
     $.ajax({
         type: "GET",
         url: "Data/Settings.xml",
         dataType: "xml",
         success: function (xml) {
+            console.log("loadSettings success");
             $(xml).find('setting').each(function () {
                 settingsArray[$(this).attr('name')] = $(this).attr('value');
             });

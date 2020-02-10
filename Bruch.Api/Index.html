@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
+    <meta name="viewport" content="width=device-width, initial-scale=.07">
+    <title>Bruch.Api</title>
+    <link href="Style/Site.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="Scripts/Helpers.js"></script>
+</head>
+<body>
+    <div class="Jumbotron">
+        <h1>Brucheum API</h1>
+        <h3>This is a Web Service. Not intended to be accessed directly</h3>
+        <h5 id="divLastBuild">lastbuild</h5>
+    </div>
+
+    <div class="testArea">
+        <div class="floatLeft">
+            <h3>MsSql Data Service</h3>
+            <p>Microsoft SQL Server</p>
+            <p><button onclick="runMStest()">Test</button></p>
+        </div>
+        <div class="floatLeft">
+            <h3>MySql Data Service</h3>
+            <p>Oracle My SQL Server</p>
+            <p><button onclick="JournalTest()">Test</button></p>
+        </div>
+        <div class="floatLeft">
+            <h3>Email Service</h3>
+            <p>Use Ms Sql to manage Flitter Engine. </p>
+            <p><button onclick="runTest('insert')">Test Insert</button></p>
+            <p><button onclick="runTest('edit')">Test Edit</button></p>
+            <p></p>
+        </div>
+    </div>
+    <div id="msgArea" class="timesawasting"></div>
+
+
+
+    <script>
+        $(document).ready(function () {
+            //$.ajax({
+            //    url: "Home/GetBuildInfo",
+            //    success: function (lastBuild) {
+            //        $('#divLastBuild').html("Last build: " + lastBuild);
+            //    },
+            //    error: function (jqXHR) {
+            //        $('#divLastBuild').html(getXHRErrorDetails(jqXHR));
+            //    }
+            //});
+        });
+
+
+        //int pageLen, int page, string filterType, string filter)
+        //url: settingsArray.ApiServer + "api/Article?pageLen=" + numArticles + "&page=1&filterType=null&filter=null",
+        function runMStest() {
+            try {
+                $('#msgArea').html("testing");
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "api/Article/Get?pageLen=10&page=1&filterType=null&filter=null",
+                    success: function (testResults) {
+                        if (testResults.Success === "ok") {
+                            $('#msgArea').html("");
+                            $.each(testResults.Items, function (idx, obj) {
+                                $('#msgArea').append("<div>" + obj.Id + "  " + obj.FolderName + "</div>");
+                            });
+                        }
+                        else {
+                            $('#msgArea').html(testResults.Success);
+                        }
+                    },
+                    error: function (jqXHR) {
+                        $('#msgArea').html(getXHRErrorDetails(jqXHR));
+                    }
+                });
+            } catch (e) {
+                $('#msgArea').html(e);
+            }
+        }
+
+
+    </script>
+
+
+</body>
+</html>

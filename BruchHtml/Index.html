@@ -2,37 +2,40 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Get a Gig</title>
+    <title>CurtisRhodes.com</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='shortcut icon' href='Images/Brucheum.ico' type='image/x-icon' />
 
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
+    <!--<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>-->
+    <!--<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />-->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>-->
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/Headers.js"></script>
-    <script src="Scripts/ArticleRotator.js"></script>
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
-    <link href="Styles/jqueryUI.css" rel="stylesheet">
+    <script src="Scripts/Carousel.js"></script>
+    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">-->
+    <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">-->
+    <!--<link href="Styles/jqueryUI.css" rel="stylesheet">-->
+    <link href="Styles/Carousel.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet">
     <link href="Styles/loginDialog.css" rel="stylesheet">
     <link href="Styles/Header.css" rel="stylesheet">
     <link href="Styles/Footer.css" rel="stylesheet">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
+    <!--<script async src="ttps://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>-->
+    <!--<script>
         (adsbygoogle = window.adsbygoogle || []).push({
             google_ad_client: "ca-pub-1620126417602146",
             enable_page_level_ads: true
         });
-    </script>
+    </script>-->
 </head>
 <body>
     <style>
+        body {
+            background-color: #eeddbb;
+        }
+
         .caveImage {
             border: solid #444;
             background-image: url("Images/caveStairsWide.jpg");
@@ -50,48 +53,6 @@
             width: 166px;
             height: 62px;
             cursor: pointer;
-        }
-        .animatedGears {
-            display: none;
-            position: relative;
-            top: 100px;
-            left: 100px;
-        }
-
-        .carouselLabel {
-            position: absolute;
-            display: inline-block;
-            color: #fff;
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 5px;
-            padding: 3px;
-            font-size: 22px;
-            white-space: nowrap;
-            z-index: 7;
-        }
-
-        .centeredDivShell {
-            top: 230px;
-        }
-
-        .carosuelContainer {
-            border: solid 6px #a16728;
-        }
-
-        .carouselImage {
-            height: 350px;
-            width: 500px;
-            cursor: pointer;
-        }
-
-        .arrowButton {
-            position: absolute;
-            height: 70px;
-            cursor: pointer;
-        }
-
-        #leftFbutton {
-            margin-left: -60px;
         }
 
     </style>
@@ -125,7 +86,7 @@
         <div id="middleColumn" class="caveImage">
             <div id="customMessage" class="displayHidden customMessageContainer"></div>
             <div id="divStatusMessage"></div>
-            <div id="dots"></div>
+            <div id="dots" style="color:white"></div>
             <div class="centeredDivShell">
                 <div class="centeredDivInner">
                     <div id="carosuelContainer" class="carosuelContainer">
@@ -135,7 +96,7 @@
                         <div id='articleCat' class='carouselLabel'></div>
 
                         <div class="carouselImageContainer">
-                            <img id="carouselImage" class="carouselImage" src="~/Images/ingranaggi3.gif" onclick="viewArticle()" />
+                            <img id="carouselImage" onclick="viewArticle()" />
                         </div>
                     </div>
                 </div>
@@ -160,7 +121,6 @@
                 subdomain = params.subdomain;
 
             getHeader(subdomain);
-
             var dots = ""
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
@@ -170,17 +130,18 @@
                 else {
                     $('#dots').html('');
                     clearInterval(waiter);
-                    logVisit();
-                    setUserPermissions();
+                    //logVisit();
+                    //setUserPermissions();
+                    
                     loadAndStartCarousel();
-                    var waiter2 = setInterval(function () {
-                        dots += "* ";
-                        $('#dots').html(dots);
-                        if (permissionsSet === true) {
-                            clearInterval(waiter2);
-                            $('#dots').html("");
-                        }
-                    }, 300);
+                    //var waiter2 = setInterval(function () {
+                    //    dots += "* ";
+                    //    $('#dots').html(dots);
+                    //    if (permissionsSet === true) {
+                    //        clearInterval(waiter2);
+                    //        $('#dots').html("");
+                    //    }
+                    //}, 300);
                 }
             }, 300);
         });

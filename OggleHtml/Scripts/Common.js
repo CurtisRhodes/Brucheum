@@ -403,7 +403,15 @@ function showCustomMessage(blogId, allowClickAnywhere) {
                 }
             }
             else {
-                sendEmailToYourself("showCustomMessage", entry.Success);
+                if (entry.Success.indexOf("Option not supported") > -1) {
+                    checkFor404(successModel.Success, "showCustomMessage");
+                    sendEmailToYourself("SERVICE DOWN", "from showCustomMessage" +
+                        "<br/>folderId=" + folderId +
+                        "<br/>IpAddress: " + getCookieValue("IpAddress") +
+                        "<br/>" + entry.Success);
+                }
+                else
+                    sendEmailToYourself("showCustomMessage", entry.Success);
             }
         },
         error: function (jqXHR) {

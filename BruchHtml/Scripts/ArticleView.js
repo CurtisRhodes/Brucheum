@@ -6,7 +6,6 @@
 //var ipAddress = '@ViewBag.IpAddress';
 var thisArticleId;
 var hitSession = "";
-
 function loadArticle(articleId) {
     thisArticleId = articleId;
     $('#lnkPermalink').hide();
@@ -14,12 +13,13 @@ function loadArticle(articleId) {
     try {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "/api/DbArticle?articleId=" + articleId,
+            url: settingsArray.ApiServer + "/api/Article?articleId=" + articleId,
             //dataType: "json",
             success: function (article) {
                 if (article.Success === "ok") {
                     thisArticle = article;
-                    $('#divImage').attr("src", "https://api.curtisrhodes.com" + "/App_Data/Images/" + article.ImageName);
+                    
+                    $('#divImage').attr("src", settingsArray.ImageArchive + article.ImageName);
                     $('#divCategory').html(thisArticle.CategoryLabel);
                     $('#divTitle').html(thisArticle.Title);
                     $('#divArticleDate').html(thisArticle.LastUpdated);

@@ -1,4 +1,15 @@
-﻿
+﻿function changeFavicon(src) {
+    var link = document.createElement('link'),
+        oldLink = document.getElementById('dynamic-favicon');
+    link.id = 'dynamic-favicon';
+    link.rel = 'shortcut icon';
+    link.href = src;
+    if (oldLink) {
+        document.head.removeChild(oldLink);
+    }
+    document.head.appendChild(link);
+}
+
 function setOggleHeader(subdomain, folderId, containsImageLinks, isStaticPage) {
     //alert("setOggleHeader called from " + folderId);
     var headerHtml;
@@ -69,6 +80,9 @@ function setOggleHeader(subdomain, folderId, containsImageLinks, isStaticPage) {
         case "porn":
         case "sluts":
             $('header').switchClass('boobsHeader', 'pornHeader');
+
+            //changeFavicon(src);
+
             $('body').addClass('pornBodyColors');
             subheaderContent =
                 "               <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",243)'>cock suckers</a>, \n" +
@@ -110,7 +124,7 @@ function setOggleHeader(subdomain, folderId, containsImageLinks, isStaticPage) {
             //"                   \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
             "           <div id='headerSubTitle' class='topLinkRow'>\n" + subheaderContent + "</div>\n" + archiveLink + boobsRankerLink +
             "           <div class='OggleSearchBox'>\n" +
-            "               <span id='notUserName' title='this is a progressive single letter search. Do not paste multipe chars. Esc clears search.'>search</span>" +
+            "               <span id='notUserName' title='this is a progressive single letter search. Esc clears search.'>search</span>" +
             "                   <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
             "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
             "           </div>\n" +

@@ -73,7 +73,7 @@ function setAlbumPageHeader(folderId, isStaticPage) {
                         if (isNullorUndefined(getCookieValue("IpAddress")))
                             logVisitor(folderId, "setAlbumPageHeader");
                         else {
-                            sendEmailToYourself("ajax error 1/1", "calling logVisitor" +
+                            sendEmailToYourself("XHR Error setAlbumPageHeader",
                                 "settingsArray.ApiServer: " + settingsArray.ApiServer +
                                 "<br/>folderId: " + folderId +
                                 "<br/>isStaticPage: " + isStaticPage +

@@ -3,10 +3,8 @@ var freePageHitsAllowed = 500;
 var freeImageHitsAllowed = 2500;
 var userImageHits;
 
-
 //<script src="https://www.google.com/recaptcha/api.js" async defer></script>
   //  <div class="g-recaptcha" data-sitekey="6LfaZzEUAAAAAMbgdAUmSHAHzv-dQaBAMYkR4h8L"></div>
-
 
 function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
     //$('#footerMessage').html("logging image hit");
@@ -180,6 +178,7 @@ function logVisitor(pageId, calledFrom) {
                             if (verbosity > 4)
                                 sendEmailToYourself("logVisitor called from reportThenPerformEvent ", "IpAddress: " + ipAddress + "<br/>viditorId: " + visitorId);
                             return;
+
                         }
                         if (calledFrom === "logPageHit") {
                             if (verbosity > 5)
@@ -563,7 +562,6 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                     "<br/>calledFrom: " + calledFrom);
             }
             logVisitor(calledFrom, "reportThenPerformEvent");
-            visitorId = "---";
             return;
         }
 
@@ -653,12 +651,13 @@ function logEventActivity(logEventModel) {
 }
 
 function performEventController(eventCode, calledFrom, eventDetail) {
-    var ipAddress = getCookieValue("IpAddress");
+    //var ipAddress = getCookieValue("IpAddress");
 
     if (eventCode === "PRN") {
         //  setUserPornStatus(pornType);
     }
-    if (ipAddress !== "68.203.90.183") {
+    //if (ipAddress !== "68.203.90.183")
+    {
         if (eventCode !== "CIC"     // Carousel Item Clicked 
             && eventCode !== "FLC"  // Footer Link Clicked 
             && eventCode !== "BAC"  // Archive Clicked
@@ -674,22 +673,15 @@ function performEventController(eventCode, calledFrom, eventDetail) {
         {
 
             if (document.domain === 'localhost') {
-                alert(logEventActivitySuccess.EventName + " {" + eventCode + "}" +
-                    "\ncalledFrom: {" + calledFrom + "} : " + logEventActivitySuccess.CalledFrom +
-                    "\neventDetail: {" + eventDetail + "} : " + logEventActivitySuccess.PageBeingCalled +
-                    "\nIp: " + ipAddress + ", from " + logEventActivitySuccess.VisitorDetails);
+                alert("eventcode: " + eventCode + 
+                    "\ncalledFrom: " + calledFrom +
+                    "\neventDetail: " + eventDetail);
+                    
             }
             else {
-
-                var pageBeingCalled = "";
-                if (!isNullorUndefined(logEventActivitySuccess.PageBeingCalled)) {
-                    pageBeingCalled = ": " + logEventActivitySuccess.PageBeingCalled;
-                }
-
-                sendEmailToYourself(logEventActivitySuccess.EventName + " {" + eventCode + "}",
-                    "calledFrom: {" + calledFrom + "} : " + logEventActivitySuccess.CalledFrom +
-                    "<br/>eventDetail: {" + eventDetail + "} " + pageBeingCalled +
-                    "<br/>from: " + ipAddress + ", " + logEventActivitySuccess.VisitorDetails);
+                sendEmailToYourself("Interesing Event","eventcode: " + eventCode + "}" +
+                    "\ncalledFrom: " + calledFrom +
+                    "\neventDetail: " + eventDetail);
             }
         }
     }
@@ -744,6 +736,7 @@ function performEventController(eventCode, calledFrom, eventDetail) {
             break;
         case "SSB":  //  Stepchild Subfolder Clicked
             window.open("/album.html?folder=" + eventDetail, "_blank");
+            
             break;
         case "SEE":  // see more of her
             // the EventDetail could pass the external link

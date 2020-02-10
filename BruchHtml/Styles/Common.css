@@ -1,6 +1,6 @@
 :root {
     --brucheumBlue: #74bac3;
-    --oggleBackgroundColor: #fef; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
+    --brucheumBackgroundColor: #fef; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
     --oggleContainerBackgroundColor: #fefefe; /*  #f8e8e8 */
     --oggleBorderColor: #b200ff; /* #f1cff7;       carouselContainer  #b200ff; */
     --ogglePurple: #79078f;
@@ -15,7 +15,7 @@
     --oggleHeaderSelectBackgroundColor: #74bac3;
 }
 body {
-    background-color: var(--oggleBackgroundColor);
+    background-color: var(--brucheumBackgroundColor);
     font-family: Verdana;
     box-sizing: border-box;
     margin-top: 100px !important;
@@ -23,7 +23,6 @@ body {
 }
 
 .threeColumnLayout {
-    background-color: #eeddbb;
     width: 100%;
     display: flex;    
 }

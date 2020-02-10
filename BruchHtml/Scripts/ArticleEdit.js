@@ -31,7 +31,7 @@ function getArticle(articleId) {
     article.Id = articleId;
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/DbArticle?articleId=" + articleId,
+        url: settingsArray.ApiServer + "/api/Article?articleId=" + articleId,
         success: function (response) {
             if (response.Success === "ok") {
                 bind(response);
@@ -60,7 +60,7 @@ function bind(response) {
         $('#articleSummaryEditor').summernote('code', response.Summary);
         $('#articleContentEditor').summernote('code', response.Contents);
         article.ImageName = response.ImageName;
-        $('#imgArticleJog').attr("src", settingsArray.ApiServer + "/App_Data/Images/" + response.ImageName);
+        $('#imgArticleJog').attr("src", settingsArray.ImageArchive + response.ImageName);
 
         $.each(response.Tags, function (idx, tag) {
             if (tag.TagName !== null)
@@ -89,7 +89,7 @@ function unBind() {
             dbArticleTagModel.Id = $(this).attr("Id");
             //alert("dbArticleTagModel.Id: " + dbArticleTagModel.Id);
             article.Tags.push(dbArticleTagModel);
-        })
+        });
     }
     catch (e) {
         alert("unBind: " + e);
@@ -120,7 +120,7 @@ function postArticle(view) {
             return;
         }
         $.ajax({
-            url: settingsArray.ApiServer + "/api/DbArticle",
+            url: settingsArray.ApiServer + "/api/Article",
             type: "post",
             dataType: "Json",
             data: article,
@@ -148,7 +148,7 @@ function updateArticle(view) {
         unBind();
         $.ajax({
             type: "PUT",
-            url: settingsArray.ApiServer + "/api/DbArticle",
+            url: settingsArray.ApiServer + "/api/Article",
             //async: "false",
             //dataType: "json",
             data: article,
@@ -173,7 +173,7 @@ function updateArticle(view) {
 
 function getCategories() {
     $.ajax({
-        url: settingsArray.ApiServer + "/api/Ref?refType=CAT",
+        url: settingsArray.ApiServer + "/api/Refs?refType=CAT",
         type: "get",
         dataType: "json",
         success: function (response) {
@@ -191,7 +191,7 @@ function getCategories() {
 
 function getAvatars() {
     $.ajax({
-        url: settingsArray.ApiServer + "/api/Ref?refType=AVT",
+        url: settingsArray.ApiServer + "/api/Refs?refType=AVT",
         type: "get",
         dataType: "json",
         success: function (response) {
@@ -210,16 +210,37 @@ function getAvatars() {
 $('#txtMetaTag').blur(function () {
     if ($('#txtMetaTag').val() !== "") {
         metaTagsStringArray.push($('#txtMetaTag').val());
-        $('#divTagContainer').append("<div class='tagItem'>" + $('#txtMetaTag').val() + "</div>");;
+        $('#divTagContainer').append("<div class='tagItem'>" + $('#txtMetaTag').val() + "</div>");
         $('#txtMetaTag').val("");
     }
 });
 
-function loadImage() {
-    article.ImageName = postImage(settingsArray.ApiServer, $('#uplImage').val());
+function loadImage(imageFullFileName) {
+    //article.ImageName = postImage($('#uplImage').val());
     //alert("article.ImageName: " + article.ImageName)
-    $('#imgArticleJog').attr("src", settingsArray.ApiServer + "/App_Data/Images/" + article.ImageName);
+    //$('#imgArticleJog').attr("src", settingsArray.ApiServer + "/App_Data/Images/" + article.ImageName);
     //setTimeout(function () { adjust() }, 1000);
+    alert("loadImage url: " + settingsArray.ApiServer + "api/Images/AddImage?imageFullFileName=" + imageFullFileName);
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Images/AddImage?imageFullFileName=" + imageFullFileName,
+        success: function (response) {
+            if (response.Success === "ok") {
+                bind(response);
+                article.ImageName = response.ImageName;
+                $('#btnSave').text("Update");
+                //setTimeout(function () { adjust() }, 1000);
+            }
+            else
+                alert("getArticle: " + response.Success);
+        },
+        error: function (jqXHR, exception) {
+            alert("loadImage jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+
+
+
 }
 
 function adjust() {

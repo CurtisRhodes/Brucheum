@@ -1,75 +1,5 @@
 ﻿
 <style>
-    /*.maxSize {
-        height: 100%;
-    }*/
-
-    /*.carouselImageContainer {
-        position: absolute;
-        top: 20px;
-        left: 50px;
-    }*/
-
-    .carouselContainer {
-        /*display: block;
-        margin-top: 12%;
-        margin-left: 25%;
-        width: 52%;
-        height: 45%;
-        padding: 1px;
-        border: solid thin #ada267;
-        background-color: rgba(164, 168, 169, 0.75);*/
-        z-index: 10;
-    }
-
-    .animatedGears {
-        display: none;
-        position: relative;
-        top: 100px;
-        left: 100px;
-    }
-
-    .carouselLabel {
-        position: absolute;
-        display: inline-block;
-        color: #fff;
-        background-color: rgba(0, 0, 0, 0.5);
-        border-radius: 5px;
-        padding: 3px;
-        font-size: 22px;
-        white-space: nowrap;
-        z-index: 7;
-    }
-
-    .centeredDivShell {
-        top: 230px;
-    }
-
-    .carosuelContainer {
-        border: solid 6px #a16728;
-        /*width: 500px;
-        height: 350px;*/
-        z-index: 6;
-    }
-
-    .carouselImage {
-        height: 350px;
-        width: 500px;
-        /*
-            object-fit: contain;
-        */
-        cursor: pointer;
-    }
-
-    .carouselImageContainer {
-        z-index: 7;
-    }
-    .arrowButton {
-        position: absolute;
-        z-index: 2;
-        height: 70px;
-        cursor: pointer;
-    }
 </style>
 
 
@@ -92,7 +22,7 @@
 
 <script>
     var service = '@ViewBag.Service';
-    var webService = "https://api.curtisrhodes.com";
+    //var webService = "https://api.curtisrhodes.com";
     var numArticles = 21;
     var rotationSpeed = 15000;
     var carouselItemArray = new Array();
@@ -141,34 +71,34 @@
         return false;
     }
 
-    function loadAndStartCarousel() {
-        $.ajax({
-            type: "GET",
-            url: service + "/api/DbArticle?pageLen=" + numArticles + "&page=1&filterType=null&filter=null",
-            //url: service + "/api/ArticleXml?pageLen=" + numArticles + "&page=0&filterType=none&filter=none",
-            success: function (articles) {
-                $.each(articles, function (idx, article) {
-                    carouselItemArray.push(article);
-                });
+    //function loadAndStartCarousel() {
+    //    $.ajax({
+    //        type: "GET",
+    //        url: service + "/api/DbArticle?pageLen=" + numArticles + "&page=1&filterType=null&filter=null",
+    //        //url: service + "/api/ArticleXml?pageLen=" + numArticles + "&page=0&filterType=none&filter=none",
+    //        success: function (articles) {
+    //            $.each(articles, function (idx, article) {
+    //                carouselItemArray.push(article);
+    //            });
 
-                $('.centeredDivShell').show();
-                var carouselArrayItem = carouselItemArray[imageNum];
-                currentArticleId = carouselArrayItem.Id;
-                var fullImageName = webService + "/App_Data/Images/" + carouselArrayItem.ImageName;
-                $('#articleTitle').html(carouselArrayItem.Title);
-                $('#articleCat').html(carouselArrayItem.CategoryLabel.trim());
-                $('#carouselImage').attr('src', fullImageName).fadeIn("slow");;
-                $('#carouselImage').css('z-index', 10);
+    //            $('.centeredDivShell').show();
+    //            var carouselArrayItem = carouselItemArray[imageNum];
+    //            currentArticleId = carouselArrayItem.Id;
+    //            var fullImageName = webService + "/App_Data/Images/" + carouselArrayItem.ImageName;
+    //            $('#articleTitle').html(carouselArrayItem.Title);
+    //            $('#articleCat').html(carouselArrayItem.CategoryLabel.trim());
+    //            $('#carouselImage').attr('src', fullImageName).fadeIn("slow");;
+    //            $('#carouselImage').css('z-index', 10);
 
-                adjustCarousel();
-                rotate();
-                //setTimeout(function () { adjustCarousel() }, 2000);
-            },
-            error: function (xhr) {
-                alert("loadAndStartCarousel error: " + xhr.statusText);
-            }
-        });
-    };
+    //            adjustCarousel();
+    //            rotate();
+    //            //setTimeout(function () { adjustCarousel() }, 2000);
+    //        },
+    //        error: function (xhr) {
+    //            alert("loadAndStartCarousel error: " + xhr.statusText);
+    //        }
+    //    });
+    //};
 
     function adjustCarousel() {
         //adjustCarousel();

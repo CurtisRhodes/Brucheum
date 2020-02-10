@@ -105,6 +105,16 @@ namespace WebApi.Models
         public string ExternalLink { get; set; }
     }
 
+    public class MoveManyImagesModel
+    {
+        public MoveManyImagesModel() {
+            ImageLinkIds = new List<string>();
+        }
+        public int SourceFolderId { get; set; }
+        public int DestinationFolderId { get; set; }
+        public List<string> ImageLinkIds { get; set; }
+    }   
+
     public class MoveCopyImageModel
     {
         public int SourceFolderId { get; set; }

@@ -265,7 +265,8 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    string staticPageFileName = Helpers.GetCustomStaticFolderName(folderId, dbCategoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", ""));
+                    string staticPageFileName = Helpers.GetParentPath(folderId).Replace(".OGGLEBOOBLE.COM", "");
+                    //string staticPageFileName = Helpers.GetCustomStaticFolderName(folderId, dbCategoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", ""));
                     successModel.ReturnValue = "http://ogglebooble.com/static/" + dbCategoryFolder.RootFolder + "/" + staticPageFileName + ".html?calledFrom=internal";
                     successModel.Success = "ok";
                 }
@@ -417,11 +418,11 @@ namespace WebApi
             var timer = new System.Diagnostics.Stopwatch();
             timer.Start();
             var dirTree = new CategoryTreeModel() { FolderId = root };
-            List<VwDirTree> vwDirTrees = new List<VwDirTree>();
+            IEnumerable<VwDirTree> vwDirTrees = new List<VwDirTree>();
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
                 // wow did this speed things up
-                vwDirTrees = db.VwDirTrees.ToList();
+                vwDirTrees = db.VwDirTrees.ToList().OrderBy(v => v.Id);
                 //GetCatTreeRecurr(danni, db);
             }
             GetDirTreeRecurr(dirTree, vwDirTrees, "");
@@ -430,7 +431,7 @@ namespace WebApi
             System.Diagnostics.Debug.WriteLine("RebuildCatTree took: " + timer.Elapsed);
             return dirTree;
         }
-        private void GetDirTreeRecurr(CategoryTreeModel parent, List<VwDirTree> vwDirTree, string path)
+        private void GetDirTreeRecurr(CategoryTreeModel parent, IEnumerable<VwDirTree> vwDirTree, string path)
         {
             //var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).Distinct();
             //var vwTrees = vwDirTree.Where(f => f.Parent == parent.FolderId).Distinct().OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
@@ -662,7 +663,7 @@ namespace WebApi
     {
         [HttpGet]
         public List<VideoLinkModel> Get()
-        {
+        {            
             var videoLinks = new List<VideoLinkModel>();
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
@@ -671,8 +672,10 @@ namespace WebApi
                 {
                     videoLinks.Add(new VideoLinkModel()
                     {
-                        Image = videoLink.Image,
+                        Id = Guid.NewGuid().ToString(),
+                        ImageId = videoLink.ImageId,
                         Title = videoLink.Title,
+                        FolderId = videoLink.FolderId,
                         Link = videoLink.Link
                     });
                 }
@@ -681,14 +684,21 @@ namespace WebApi
         }
 
         [HttpPost]
-        public string Write(VideoLink videoLink)
+        public string Write(VideoLinkModel videoLinkModel)
         {
             string success = "";
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    db.VideoLinks.Add(videoLink);
+                    db.VideoLinks.Add(new VideoLink()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Link = videoLinkModel.Link,
+                        FolderId = videoLinkModel.FolderId,
+                        ImageId = videoLinkModel.ImageId,
+                        Title = videoLinkModel.Title
+                    });
                     db.SaveChanges();
                     success = "ok";
                 }

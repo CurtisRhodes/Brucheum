@@ -69,6 +69,8 @@ function setDashboardHeader(viewId) {
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='repairLinks()'>Repair Links</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAssignRolesDialog()'>Assign User Roles</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddRolesDialog()'>Edit Roles</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='$('.workAreaContainer').hide();$('#divAddVideo').show();\">Add Video Link</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveManyTool();'>Move Many</div>");
             break;
         default:
             alert("view not undestood: " + viewId);
@@ -165,13 +167,18 @@ function xxcreateStaticIndexPages() {
     });
 }
 
-function addVideo() {
+function addVideoLink() {
     try {
         $('#dashBoardLoadingGif').show();
+
+         var ImageId= $('#txtVideoImage').val();
+
         var videoLink = {};
         videoLink.Link = $('#txtVideoLink').val();
-        videoLink.Image = $('#txtVideoImage').val();
+        videoLink.ImageId = ImageId;
         videoLink.Title = $('#txtVideoTitle').val();
+        videoLink.FolderId = dashboardMainSelectedTreeId;
+
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/VideoLink",
@@ -357,7 +364,91 @@ function prepareXhamsterPage() {
 }
 
 // WORK AREAS
-function showSortTool() {    
+function showMoveManyTool() {
+
+    if (isNullorUndefined(dashboardMainSelectedPath)) {
+        alert("select a folder");
+        return;
+    }
+    $('.workAreaContainer').hide();
+    $('#divMoveManyTool').show();
+    //function loadManyImagesCheckboxes() {
+    $('#moveManyHeader').html(dashboardMainSelectedPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
+    //$('#sortTableHeader').html(dashboardMainSelectedPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
+    $('#dashBoardLoadingGif').fadeIn();
+    buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
+
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "/api/ImagePage/GetImageLinks?folderId=" + dashboardMainSelectedTreeId,
+        success: function (imageLinksModel) {
+            $('#dashBoardLoadingGif').hide();
+            if (imageLinksModel.Success === "ok") {
+                $('#moveManyToolContainer').html("");
+                $.each(imageLinksModel.Files, function (ndx, obj) {
+                    $('#moveManyToolContainer').append("<div class='sortBox'><img class='sortBoxImage' src='" + obj.Link + "'/>" +
+                        "<br/><input type='checkbox' class='loadManyCheckbox' imageId=" + obj.LinkId + "></div>");
+                });
+                //resizePage();
+            }
+            else {
+                alert("showMoveManyTool: " + imageLinksModel.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "showMoveManyTool")) 
+                sendEmailToYourself("XHR ERROR in Dashboard.js showMoveManyTool", "Message: " + errorMessage);            
+            alert("showMoveManyTool xhr error: " + errorMessage);
+        }
+    });
+}
+
+function moveCheckedImages() {
+    //alert("entering move many");    
+    console.log("entering move many");
+    if (partialViewSelectedItemId === 0) {
+        alert("select a destination");
+        return;
+    }
+    var checkedImages = [];
+    $('#moveManyToolContainer').children().each(function (ndx, obj) {
+        if ($(this).find("input").is(":checked")) {
+            checkedImages.push($(this).find("input").attr("imageId"));
+        }
+    });
+    var moveManyModel = {
+        SourceFolderId: dashboardMainSelectedTreeId,
+        DestinationFolderId: partialViewSelectedItemId,
+        ImageLinkIds: checkedImages
+    };
+    if (confirm("move " + checkedImages.length + " images to " + $('.txtPartialDirTreePath').val())) {
+        $('#dashBoardLoadingGif').fadeIn();
+        $.ajax({
+            type: "PUT",
+            url: settingsArray.ApiServer + "api/MoveImage/MoveMany",
+            data: moveManyModel,
+            success: function (success) {
+                if (success === "ok") {
+                    $('#dashBoardLoadingGif').hide();
+                    buildDirectoryTree();
+                    showMoveManyTool();
+                }
+                else
+                    alert("moveCheckedImages: " + success);
+            },
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "moveCheckedImages"))
+                    sendEmailToYourself("XHR ERROR in Dashboard.js moveCheckedImages", "Message: " + errorMessage);
+                alert("moveCheckedImages xhr error: " + errorMessage);
+            }
+        });
+    }
+    console.log("leaving move many");
+}
+
+function showSortTool() {
     //alert("dashboardMainSelectedPath: " + dashboardMainSelectedPath);
     if (isNullorUndefined(dashboardMainSelectedPath)) {
         alert("select a folder");
@@ -487,7 +578,6 @@ function moveFolder() {
                 displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val());
                 //$('#progressBar').hide();
                 //$('#progressBar').progressbar("destroy");
-                $('#dataifyInfo').hide();
 
                 //alert("changeLogModel id: " + MoveCopyImageModel.SourceFolderId + " mode: " + MoveCopyImageModel.Mode + "  name: " + $('#dirTreeResults').html());
                 var changeLogModel = {
@@ -496,9 +586,10 @@ function moveFolder() {
                     Activity: "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val()
                 };
                 logActivity(changeLogModel);
-                $('.txtLinkPath').val('');
                 //$('.txtPartialDirTreePath').val('');
                 $('#moveFolderCrud').dialog("close");
+                $('.txtLinkPath').val('');
+                $('#dataifyInfo').hide();
                 buildDirectoryTree();
             }
             else

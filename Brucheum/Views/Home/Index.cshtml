@@ -69,7 +69,20 @@
     <div id="middleColumn">
         <div id="divStatusMessage"></div>
         <div id="carousel">
-            @Html.Partial("_Carousel")
+            <div class="centeredDivShell">
+                <div class="centeredDivInner">
+                    <div id="carosuelContainer" class="carosuelContainer">
+                        <img id="leftFbutton" class="arrowButton" src="~/Images/blueCircleLeft.png" onclick="clickPrevious()" />
+                        <img id="rightFbutton" class="arrowButton" src="~/Images/blueCircleRight.png" onclick="clickNext()" />
+                        <div id='articleTitle' class='carouselLabel'></div>
+                        <div id='articleCat' class='carouselLabel'></div>
+                        <div class="carouselImageContainer">
+                            <img id="carouselImage" class="carouselImage" src="Images/ingranaggi3.gif" onclick="viewArticle()" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
     <div id="rightColumn">

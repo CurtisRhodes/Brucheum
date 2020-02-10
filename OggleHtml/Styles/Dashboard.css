@@ -250,6 +250,18 @@
     width: 100%;
 }
 
+.moveManyDestination {
+    background-color: var(--brucheumBlue);
+    display: inline-block;
+    color: #fff;
+    width: 100%;
+}
+    .moveManyDestination input {
+        width: 77%;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
 .workareaFooter {
     border-top: solid 5px var(--brucheumBlue);
     padding-top: 3px;
