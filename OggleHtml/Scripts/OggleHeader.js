@@ -9,9 +9,10 @@
     }
     document.head.appendChild(link);
 }
-
+var currentFolderId;
 function setOggleHeader(subdomain, folderId, containsImageLinks, isStaticPage) {
     //alert("setOggleHeader called from " + folderId);
+    currentFolderId = folderId;
     var headerHtml;
     var lang = "en";
     var subheaderContent;

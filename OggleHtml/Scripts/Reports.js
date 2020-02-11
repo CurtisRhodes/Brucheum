@@ -114,7 +114,7 @@ function showEventActivityReport() {
     activeReport = "EventActivity";
     $('.workAreaContainer').hide();
     $('#divStandardReport').show();
-    $("#reportLabel").html("<h3>Event Activity Report for " + todayString() + "</h3>");
+    $("#reportLabel").html("Event Activity Report for " + todayString());
     runEventActivityReport();
 }
 function runEventActivityReport() {
@@ -157,7 +157,7 @@ function showLatestImageHitsReport() {
     activeReport = "LatestImageHits";
     $('.workAreaContainer').hide();
     $('#divStandardReport').show();
-    $('#reportLabel').html("<h3>Images Viewed " + todayString() + "</h3>");
+    $('#reportLabel').html("Images Viewed " + todayString());
     runLatestImageHitsReport();
 }
 function runLatestImageHitsReport() {
@@ -199,7 +199,7 @@ function showMostActiveUsersReport() {
     activeReport = "MostActiveUsers";
     $('.workAreaContainer').hide();
     $('#divStandardReport').show();
-    $('#reportLabel').html("<h3>Most Active Users " + todayString() + "</h3>");
+    $('#reportLabel').html("Most Active Users " + todayString());
     runMostActiveUsersReport();
 }
 function runMostActiveUsersReport() {
@@ -258,7 +258,7 @@ function showPageHitReport() {
     $("#divStandardReportArea").removeClass("tightReport");
     $('.workAreaContainer').hide();
     $('#divStandardReport').show();
-    $('#reportLabel').html("<h3>Page Hit Report for " + todayString() + "</h3>");
+    $('#reportLabel').html("Page Hit Report for " + todayString());
     runPageHitReport();
 }
 function runPageHitReport() {

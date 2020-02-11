@@ -47,7 +47,7 @@ function setAlbumPageHeader(folderId, isStaticPage) {
     try {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/AlbumPage/GetRootFolder?folderId=" + folderId,
+            url: settingsArray.ApiServer + "api/AlbumPage/GetFolderInfo?folderId=" + folderId,
             success: function (rootFolderModel) {
                 if (rootFolderModel.Success === "ok") {
                     setOggleHeader(rootFolderModel.RootFolder, folderId, rootFolderModel.ContainsImageLinks, isStaticPage);
@@ -60,7 +60,7 @@ function setAlbumPageHeader(folderId, isStaticPage) {
                             getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
                     }
                     else
-                        sendEmailToYourself("setAlbumPageHeader FAILURE", "api/AlbumPage/GetRootFolder?folderId=" + folderId + "<br>" + successModel.Success);
+                        sendEmailToYourself("setAlbumPageHeader FAILURE", "api/AlbumPage/GetFolderInfo?folderId=" + folderId + "<br>" + successModel.Success);
                 }
             },
             error: function (jqXHR) {
@@ -271,7 +271,8 @@ function processImages(imageLinksModel) {
 }
 
 function subFolderPreClick(isStepChild, folderId) {
-    //alert("subFolderPreClick. folderId: " + folderId + " isStepChild: " + isStepChild);
+    //function performEvent(eventCode, calledFrom, eventDetail) {
+    //alert("subFolderPreClick.\nfolderId(callledFrom): " + folderId + "\ncurrentAlbumFolderId(eventDetail): " + currentAlbumFolderId+ "\nisStepChild: " + isStepChild);
     if (isStepChild === "0")
         reportThenPerformEvent("SUB", currentAlbumFolderId, folderId);
     else

@@ -272,6 +272,10 @@ namespace WebApi
             {
                 using (var mdb = new OggleBoobleMySqContext())
                 {
+                    if (int.TryParse(logEventModel.EventDetail, out int numericEventDetail))
+                    { 
+                        logEventModel.EventDetail = mdb.CategoryFolders.Where(f => f.Id == numericEventDetail).FirstOrDefault().FolderName;
+                    }
                     mdb.EventLogs.Add(new EventLog()
                     {
                         EventCode = logEventModel.EventCode,

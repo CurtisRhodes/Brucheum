@@ -257,6 +257,7 @@ namespace WebApi
     public class AlbumPageController : ApiController
     {
         [HttpGet]
+        [Route("api/AlbumPage/GetStaticPage")]
         public SuccessModel GetStaticPage(int folderId)
         {
             SuccessModel successModel = new SuccessModel();
@@ -265,7 +266,7 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    string staticPageFileName = Helpers.GetParentPath(folderId).Replace(".OGGLEBOOBLE.COM", "");
+                    string staticPageFileName = dbCategoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
                     //string staticPageFileName = Helpers.GetCustomStaticFolderName(folderId, dbCategoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", ""));
                     successModel.ReturnValue = "http://ogglebooble.com/static/" + dbCategoryFolder.RootFolder + "/" + staticPageFileName + ".html?calledFrom=internal";
                     successModel.Success = "ok";
@@ -279,26 +280,28 @@ namespace WebApi
         }
 
         [HttpGet]
-        [Route("api/AlbumPage/GetRootFolder")]
-        public RootFolderModel GetRootFolder(int folderId)
+        [Route("api/AlbumPage/GetFolderInfo")]
+        public FolderModel GetFolderInfo(int folderId)
         {
-            RootFolderModel rootFolderModel = new RootFolderModel();
+            FolderModel folderModel = new FolderModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    rootFolderModel.ContainsImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
-                    rootFolderModel.RootFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault().RootFolder;
-                    rootFolderModel.Success = "ok";
+                    CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    folderModel.ContainsImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
+                    folderModel.RootFolder = categoryFolder.RootFolder;
+                    folderModel.FolderName = categoryFolder.FolderName;
+                    folderModel.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                rootFolderModel.Success = Helpers.ErrorDetails(ex);
+                folderModel.Success = Helpers.ErrorDetails(ex);
             }
-            return rootFolderModel;
+            return folderModel;
         }
-    }
+    }   
 
     [EnableCors("*", "*", "*")]
     public class CarouselController : ApiController

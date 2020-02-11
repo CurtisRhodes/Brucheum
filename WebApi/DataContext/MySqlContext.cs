@@ -154,8 +154,13 @@ namespace WebApi.MySqDataContext
     public partial class CategoryFolder
     {
         [Key]
+        [Column(Order = 0)]
         public int Id { get; set; }
+        [Key]
+        [Column(Order = 1)]
         public int Parent { get; set; }
+        [Key]
+        [Column(Order = 2)]
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
     }

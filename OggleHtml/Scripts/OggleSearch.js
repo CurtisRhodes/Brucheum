@@ -43,7 +43,8 @@ function performSearch(searchString) {
                 success: function (SearchResultsModel) {
                     $('#searchResultsDiv').html("<ul class='searchResultList>");
                     $.each(SearchResultsModel.SearchResults, function (idx, searchResult) {
-                        $('#searchResultsDiv').append("<li onclick='jumpToSelected(" + searchResult.FolderId + ")' onkeydown='linkItemKeyDown(event)'  >" + searchResult.Parent + "/" + searchResult.FolderName + "</li>");
+                        $('#searchResultsDiv').append("<li onclick='jumpToSelected(" + searchResult.FolderId + ")' onkeydown='linkItemKeyDown(event)'  >" +
+                            searchResult.Parent + "/" + searchResult.FolderName + "</li>");
                     });
                     $('#searchResultsDiv').append("</ul>").show();
                     //var kluge = "<ul class='searchResultList>";
@@ -79,9 +80,9 @@ function clearSearch() {
     $('#testtxt').text("");
 }
 
-function jumpToSelected(folderId) {
-    //reportThenPerformEvent(eventCode, calledFrom, eventDetail)
-    window.open("/album.html?folder=" + folderId, "_blank");
+function jumpToSelected(selectedFolderId) {
+    reportThenPerformEvent('SRC', currentFolderId, selectedFolderId);
+    //window.open("/album.html?folder=" + selectedFolderId, "_blank");
     clearSearch();
 }
 

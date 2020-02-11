@@ -36,14 +36,14 @@ $(document).ready(function () {
                 if (calledFrom === undefined)
                     calledFrom = "old link";
 
-                if (verbosity > 6) {
+                if (verbosity > 4) {
                         sendEmailToYourself("external link call ", staticPageFolderName + "<br/>called From: " + calledFrom + "<br/>ip: " + getCookieValue("IpAddress"));
                 }
                 var logEventModel = {
                     VisitorId: getCookieValue("VisitorId"),
                     EventCode: "XLC",
-                    EventDetail: calledFrom,
-                    CalledFrom: staticPageFolderId
+                    EventDetail: staticPageFolderId,
+                    CalledFrom: calledFrom
                 };
                 logEventActivity(logEventModel);
 

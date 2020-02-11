@@ -571,7 +571,13 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
             EventDetail: eventDetail,
             CalledFrom: calledFrom
         };
+
+        //if (logEventModel.EventCode === "SUBX") {
+        //    getFolderInfoAndLogActivity(logEventModel, "SUB");
+        //    return;
+        //}
         logEventActivity(logEventModel);
+
     } catch (e) {
         sendEmailToYourself("Catch Error in OggleEvenLog()", "eventCode: " + eventCode +
             "<br/>called from pageId: " + calledFrom +
@@ -584,6 +590,36 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
     }
 }
 
+
+function getFolderInfoAndLogActivity(logEventModel, correctEventCode) {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/AlbumPage/GetFolderInfo?folderId=" + logEventModel.EventDetail,
+        success: function (folderModel) {
+            if (folderModel.Success === "ok") {
+                logEventModel.EventCode = correctEventCode;
+                logEventModel.CalledFrom = logEventModel.EventDetail;
+                logEventModel.EventDetail = folderModel.FolderName;
+                logEventActivity(logEventModel);
+            }
+            else {
+                sendEmailToYourself("getFolderInfoAndLogActivity error", folderModel.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            //if (checkFor404(errorMessage, "GetFolderInfo"))
+            {
+                sendEmailToYourself("XHR ERROR IN GetFolderInfo", settingsArray.ApiServer + "api/AlbumPage/GetFolderInfo?folderId=" + eventDetail +
+                    "<br/>calledFrom: " + calledFrom +
+                    "<br/>eventDetail: " + eventDetail +
+                    "<br/>Message: " + errorMessage);
+            }
+        }
+    });
+}
+
+
 function logEventActivity(logEventModel) {
     $.ajax({
         type: "POST",
@@ -591,7 +627,7 @@ function logEventActivity(logEventModel) {
         data: logEventModel,
         success: function (logEventActivitySuccess) {
             if (logEventActivitySuccess.Success === "ok") {
-                performEventController(logEventModel.EventCode, logEventModel.CalledFrom, logEventModel.EventDetail);
+                performEvent(logEventModel.EventCode, logEventModel.CalledFrom, logEventModel.EventDetail);
             }
             else {
                 if (logEventActivitySuccess.Success.indexOf("Option not supported") > -1) {
@@ -650,7 +686,7 @@ function logEventActivity(logEventModel) {
     });
 }
 
-function performEventController(eventCode, calledFrom, eventDetail) {
+function performEvent(eventCode, calledFrom, eventDetail) {
     //var ipAddress = getCookieValue("IpAddress");
 
     if (eventCode === "PRN") {
@@ -666,28 +702,89 @@ function performEventController(eventCode, calledFrom, eventDetail) {
             && eventCode !== "BCC"  // Breadcrumb Clicked 
             && eventCode !== "BLC"  // Banner Link Clicked 
             && eventCode !== "LMC"  // Left Menu Item Clicked
-            && eventCode !== "HBX"  // Home Breadcrumb clicked
+            && eventCode !== "HBC"  // Header Banner Clicked
+            && eventCode !== "HBX"  // Home Breadcrumb Clicked
             && eventCode !== "RNK"  // Ranker Banner Clicked
             && eventCode !== "CAA"  // Carousel Arrow Clicked
             && eventCode !== "CPC") // Carousel ParentGallery clicked
         {
 
             if (document.domain === 'localhost') {
-                alert("eventcode: " + eventCode + 
+                alert("Monitored Event\neventcode: " + eventCode +
                     "\ncalledFrom: " + calledFrom +
                     "\neventDetail: " + eventDetail);
-                    
+
             }
             else {
-                sendEmailToYourself("Interesing Event","eventcode: " + eventCode + "}" +
-                    "\ncalledFrom: " + calledFrom +
-                    "\neventDetail: " + eventDetail);
+                switch (eventCode) {
+                    case "XLC": // external link call
+                        //if (calledFrom === 0)
+                        {
+                            sendEmailToYourself("External link called",
+                                "page: " + folderModel.FolderName +
+                                "<br/>called from: " + calledFrom +
+                                "<br/>eventDetail: " + eventDetail);
+
+                        }
+                        //else
+                        {
+                            $.ajax({
+                                type: "GET",
+                                url: settingsArray.ApiServer + "api/AlbumPage/GetFolderInfo?folderId=" + eventDetail,
+                                success: function (folderModel) {
+                                    if (folderModel.Success === "ok") {
+                                        if (folderModel.RootFolder !== "playboy") {
+                                            sendEmailToYourself("Non-Playboy External link called",
+                                                "page: " + folderModel.FolderName +
+                                                "<br/>called from: " + calledFrom);
+                                        }
+
+                                        sendEmailToYourself("External link called",
+                                            "page: " + folderModel.FolderName +
+                                            "<br/>called from: " + calledFrom +
+                                            "<br/>eventDetail: " + eventDetail);
+
+                                    }
+                                    else {
+                                        sendEmailToYourself("GetFolderName error", "folderId: " + eventDetail + "<br/>" + successModel.Success);
+                                    }
+                                },
+                                error: function (jqXHR) {
+                                    var errorMessage = getXHRErrorDetails(jqXHR);
+                                    //if (checkFor404(errorMessage, "GetFolderInfo"))
+                                    {
+                                        sendEmailToYourself("XHR ERROR IN GetFolderInfo", settingsArray.ApiServer + "api/AlbumPage/GetFolderInfo?folderId=" + eventDetail +
+                                            "<br/>calledFrom: " + calledFrom +
+                                            "<br/>eventDetail: " + eventDetail +
+                                            "<br/>Message: " + errorMessage);
+                                    }
+                                }
+                            });
+                        }
+                        break;
+                    case "SSB": //  Stepchild Subfolder Clicked
+
+                        sendEmailToYourself("Stepchild Subfolder Clicked",
+                            "calledFrom: " + calledFrom +
+                            "\neventDetail: " + eventDetail);
+
+                        break;
+
+                    default:
+                        sendEmailToYourself("Monitored Event",
+                            "eventcode: " + eventCode +
+                            "\ncalledFrom: " + calledFrom +
+                            "\neventDetail: " + eventDetail);
+                }
             }
         }
     }
     // NOW PERFORM EVENT
     switch (eventCode) {
 
+        case "GIC": // Gallery Item Clicked
+        case "CMC": // carousle context menu item clicked
+        case "CXM":  // carousle context menu opened
         case "XLC":  // external link clicked
             break;
         case "PRN":  //("Porn Option clicked");
@@ -702,10 +799,6 @@ function performEventController(eventCode, calledFrom, eventDetail) {
         case "GAX":  // can I get a connection
             alert("can I get a connection");
             //window.location.href = ".";
-            break;
-        case "GIC": // Gallery Item Clicked
-            break;
-        case "CMC": // carousle context menu item clicked
             break;
         case "CAA": // carousle context menu item clicked
             if (eventDetail === "foward") {
@@ -729,31 +822,24 @@ function performEventController(eventCode, calledFrom, eventDetail) {
                     alert("imageIndex: " + imageIndex);
             }
             break;
-        case "CXM":  // carousle context menu opened
-            break;
-        case "EXP":
+        case "EXP":  // explode
             window.open(eventDetail, "_blank");
             break;
-        case "SSB":  //  Stepchild Subfolder Clicked
-            window.open("/album.html?folder=" + eventDetail, "_blank");
-            
-            break;
-        case "SEE":  // see more of her
-            // the EventDetail could pass the external link
-            //window.open("/album.html?folder=" + eventDetail, "_blank");
-            window.location.href = "/album.html?folder=" + eventDetail;
-            break;
-        case "CPC":  // carousel ParentGallery clicked
         case 'SUB':  // 'Sub Folder Click'
+        case "SRC":  // Search Performed
+            window.open("/album.html?folder=" + eventDetail, "_blank");            
+            break;
         case "CIC":  // carousel image clicked
+        case "SSB":  //  Stepchild Subfolder Clicked
+        case "SEE":  // see more of her
+        case "CPC":  // carousel ParentGallery clicked
         case "BCC":  // Breadcrumb Clicked
         case "BLC":  // banner link clicked
         case "BAC":  // Babes Archive Clicked
-            window.location.href = "/album.html?folder=" + eventDetail;
+            window.location.href = "/album.html?folder=" + eventDetail;  // same as open window blank
             break;
         case "CMX":
             showModelInfoDialog(eventDetail, calledFrom, 'Images/redballon.png');
-            //reportThenPerformEvent("CMX", folderId, folderName);
             break;
         case "HBX":  // Home breadcrumb Clicked
             if (eventDetail === "porn")

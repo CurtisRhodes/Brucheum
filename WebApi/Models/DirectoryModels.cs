@@ -13,8 +13,9 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
-    public class RootFolderModel
+    public class FolderModel
     {
+        public string FolderName { get; set; }
         public string RootFolder { get; set; }
         public bool ContainsImageLinks { get; set; }
         public string Success { get; set; }

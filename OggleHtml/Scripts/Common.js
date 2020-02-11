@@ -44,8 +44,8 @@ function verifyConnection() {
             var errorMessage = getXHRErrorDetails(jqXHR);
             //alert("verifyConnection: " + errorMessage);
             if (!checkFor404(errorMessage, "getAconnection")) {
-                sendEmailToYourself("XHR ERROR IN  verifyConnection", "api/AlbumPage/GetRootFolder?folderId=1" +
-                    " Message: " + errorMessage);
+                sendEmailToYourself("XHR ERROR IN  verifyConnection", "url: " + settingsArray.ApiServer + "api/Carousel/VerifyConnection" +
+                    "<br/>Message: " + errorMessage);
             }
         }
     });
@@ -171,16 +171,16 @@ function checkFor404(errorMessage, calledFrom) {
         $('#notConnectMessage').show();
         console.log("checkFor404: " + calledFrom);
     }
-    else {
-        if (document.domain === 'localhost') {
-            alert("checkFor404 called with unexpected errorMessage\n " + errorMessage + " from: " + calledFrom);
-        }
-        else {
-            sendEmailToYourself("checkFor404 called with unexpected errorMessage", "errorMessage: " + errorMessage +
-                "<br/>calledFrom from: " + calledFrom +
-                "<br/>isNotConnected: " + isNotConnected);
-        }
-    }
+    //else {
+    //    if (document.domain === 'localhost') {
+    //        alert("checkFor404 called with unexpected errorMessage\n " + errorMessage + " from: " + calledFrom);
+    //    }
+    //    else {
+    //        sendEmailToYourself("checkFor404 called with unexpected errorMessage", "errorMessage: " + errorMessage +
+    //            "<br/>calledFrom from: " + calledFrom +
+    //            "<br/>isNotConnected: " + isNotConnected);
+    //    }
+    //}
     return isNotConnected;
 }
 
