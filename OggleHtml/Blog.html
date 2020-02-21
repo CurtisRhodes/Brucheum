@@ -112,6 +112,9 @@
         $(document).ready(function () {
             includeHTML();
             $('#blogDisplayCommentTypeSelect').val('BLG');
+
+            params = getParams();
+
             loadSettings();
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
@@ -122,9 +125,16 @@
                     setOggleHeader("blog", 3911, false);
                     setOggleFooter("boobs", 3911);
                     loadBlogDropDowns();
-                    loadBlogArticles("BLG");
-                    showBlogDisplay('BLG');
-                    logPageHit(3911);
+                    logPageHit(3911, "blog");
+
+                    if (params.blogId == undefined) {
+                        loadBlogArticles("BLG");
+                        showBlogDisplay('BLG');
+                    }
+                    else {
+                        //alert("Calling Blog for blogId: " + params.blogId);
+                        showBlogPage(params.blogId);
+                    }
                     if (isInRole("Blog Editor")) {
                         //if (document.domain === 'localhost') alert("is in role blog editor");
                         $('.adminOnly').show();

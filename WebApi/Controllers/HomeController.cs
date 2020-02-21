@@ -13,6 +13,7 @@ namespace WebApi
         //ResponseModel pageResponse = new ResponseModel();
 
         [HttpGet]
+        [Route("api/Home/GetBuildInfo")]
         public string GetBuildInfo()
         {
             string lastBuild = "11:11";
@@ -23,6 +24,19 @@ namespace WebApi
             }
             return lastBuild;
         }
+
+        [HttpGet]
+        [Route("api/Home/EmailTest")]
+        public string EmailTest()
+        {
+            string success;
+            using (GodaddyEmailController godaddyEmailController = new GodaddyEmailController())
+            {
+                success= godaddyEmailController.SendEmail("this is a test", "message 8");
+            }
+            return success;
+        }
+
 
         [HttpGet]
         public JsonResult MsSqlTest(int parent)

@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using WebApi.Models;
@@ -20,20 +21,59 @@ namespace WebApi
             string success = "";
             try
             {
-                //SmtpClient smtpClient = new SmtpClient("smpt.gmail.com", 587)
+                //
+                //using (SmtpClient smtpClient = new SmtpClient("smtpout.secureserver.net", 587))
                 //{
                 //    Credentials = new NetworkCredential("curtis.rhodes@gmail.com", "R@quel11"),
                 //    EnableSsl = true
-                //};
+                //})o
+                //using (SmtpClient smtpClient = new SmtpClient("relay-hosting.secureserver.net", 25))
+                //using (SmtpClient smtpClient = new SmtpClient("outlook.office365.com", 587))
+                //using (
+
+                //using (SmtpClient smtpClient = new SmtpClient("smtp.office365.com", 587) {
+                //SmtpClient smtpClient = new SmtpClient("smtp.office365.com", 587);
+                //smtpClient.Credentials = new NetworkCredential("info@curtisrhodes.com", "R@quel11");
+                //smtpClient.EnableSsl = true;
+
+
+                if (HttpContext.Current.Request.IsLocal)
+                {
+                    using (SmtpClient smtpClient = new SmtpClient("smtp.office365.com", 587)
+                    {
+                        Credentials = new NetworkCredential("info@curtisrhodes.com", "R@quel11"),
+                        EnableSsl = true
+                    })
+                    {
+                        MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "CurtishRhodes@hotmail.com", "(local) " + subject, message);
+                        mailMessage.IsBodyHtml = true;
+                        smtpClient.Send(mailMessage);
+                        success = "ok";
+                    }
+                }
+                else
+                {
+                    using (SmtpClient smtpClient = new SmtpClient("relay-hosting.secureserver.net", 25))
+                    {
+                        MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "info@curtisrhodes.com", subject, message);
+                        mailMessage.IsBodyHtml = true;
+                        smtpClient.Send(mailMessage);
+                        success = "ok";
+                    }
+                }
+                //MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "nitesh8266@godaddy.com", subject, message);
+
                 //smtpClient.Send("curtis.rhodes@gmail.com", "curtis.rhodes@gmail.com", emailMessage.Subject, emailMessage.Body);
                 //using (SmtpClient smtp = new SmtpClient("smtpout.secureserver.net", 25))
-                using (SmtpClient smtp = new SmtpClient("relay-hosting.secureserver.net", 25))
-                {
-                    MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "CurtishRhodes@hotmail.com", subject, message);
-                    mailMessage.IsBodyHtml = true;
-                    smtp.Send(mailMessage);
-                    success = "ok";
-                }
+                //using (SmtpClient smtp = new SmtpClient("relay-hosting.secureserver.net", 25))
+                //using (SmtpClient smtp = new SmtpClient("relay-hosting.secureserver.net", 25))
+                //using (SmtpClient smtp = new SmtpClient("smtpout.secureserver.net", 587))
+                //{
+                //    MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "CurtishRhodes@hotmail.com", subject, message);
+                //    mailMessage.IsBodyHtml = true;
+                //    smtp.Send(mailMessage);
+                //    success = "ok";
+                //}
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;

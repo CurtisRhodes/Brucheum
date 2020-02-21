@@ -122,6 +122,7 @@ namespace WebApi.Models
         public int DestinationFolderId { get; set; }
         public string Link { get; set; }
         public string Mode { get; set; }
+        public int SortOrder { get; set; }
     }
 
     public class RepairLinkModel

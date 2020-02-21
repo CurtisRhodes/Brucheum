@@ -198,12 +198,19 @@ function updateTrackback(trackBackItem) {
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (document.domain === 'localhost') {
-                alert("XHR ERROR IN updateTrackback" + 
+                alert("XHR ERROR IN updateTrackback" +
                     "\nurl: " + settingsArray.ApiServer + "api/TrackbackLink/Insert" + "\nMessage : " + errorMessage);
             }
             else {
                 if (!checkFor404(errorMessage, "updateTrackback")) {
-                    sendEmailToYourself("XHR ERROR IN updateTrackback", errorMessage);
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 3,
+                        ErrorMessage: "XHR ERROR IN updateTrackback: " + errorMessage,
+                        CalledFrom: "ModelInfoDialgo updateTrackback"
+                    });
+                    //sendEmailToYourself("XHR ERROR IN updateTrackback", errorMessage);
                 }
             }
         }

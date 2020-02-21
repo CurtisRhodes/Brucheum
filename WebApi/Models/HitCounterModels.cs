@@ -39,6 +39,15 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
+    public class LogErrorModel
+    {
+        public string VisitorId { get; set; }
+        public string ActivityCode { get; set; }
+        public int Severity { get; set; }
+        public string ErrorMessage { get; set; }
+        public string CalledFrom { get; set; }
+    }
+
     public class LogEventModel {
         public string VisitorId { get; set; }
         public string EventCode { get; set; }

@@ -57,9 +57,10 @@
                 </div>
                 <div class="floatLeft">
                     <div class="domCkBox"><input id="ckBoxBoobs" onchange="checkDomain('boobs', $(this).is(':checked'))" type="checkbox" />poses and shapes</div>
-                    <div class="domCkBox"><input id="ckBoxPlayboy" onchange="checkDomain('playmates', $(this).is(':checked'))" type="checkbox" />Playboy playmates</div>
+                    <div class="domCkBox"><input id="ckBoxPlayboy" onchange="checkDomain('playboy', $(this).is(':checked'))" type="checkbox" />Playboy playmates</div>
                     <div class="domCkBox"><input id="ckBoxArchive" onchange="checkDomain('archive', $(this).is(':checked'))" type="checkbox" />archive</div>
                     <div class="domCkBox"><input id="ckBoxPorn" onchange="checkDomain('porn', $(this).is(':checked'))" type="checkbox" />porn</div>
+                    <div class="domCkBox"><input id="ckBoxSluts" onchange="checkDomain('sluts', $(this).is(':checked'))" type="checkbox" />sluts</div>
                 </div>
             </div>
         </div>
@@ -90,6 +91,7 @@
         var throttlePlayboy = false;
         var throttleArchive = false;
         var throttlePorn = false;
+        var throttleSluts = false;
         var userName;
 
         $(document).ready(function () {
@@ -119,7 +121,7 @@
                     setOggleHeader("ranker", 3907, false);
                     setOggleFooter("boobs", 3907);
                     setHeaderRowMessage();
-                    logPageHit(3907);
+                    logPageHit(3907, "Ranker");
 
                     userName = getCookieValue("UserName");
                     //isLoggedIn = !isNullorUndefined(userName);
@@ -140,10 +142,20 @@
                 case "porn":
                     $('#ckBoxPorn').prop('checked', true);
                     break;
+                case "sluts":
+                    $('#ckBoxSluts').prop('checked', true);
+                    break;
                 case "archive":
                     $('#ckBoxArchive').prop('checked', true);
                     break;
                 default:
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "CDE",
+                        Severity: 2,
+                        ErrorMessage: "unknown subdomain: " + subdomain,
+                        CalledFrom: "Ranker.Html setInitialCheckbox"
+                    });
                     sendEmailToYourself("jQuery Fail in Ranker.Html setInitialCheckbox"," unknown subdomain: " + subdomain);
                     alert("setInitialCheckbox unknown subdomain: " + subdomain);
                     break;
@@ -184,6 +196,13 @@
 
                     }
                     else {
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "CDE",
+                            Severity: 2,
+                            ErrorMessage: " unknown subdomain: " + container.Success,
+                            CalledFrom: "Ranker.Html loadBoobsRanker"
+                        });
                         sendEmailToYourself("jQuery Fail in Ranker.Html loadBoobsRanker", " unknown subdomain: " + container.Success);
                         //alert("BoobsRanker: " + container.Success);
                     }
@@ -206,16 +225,21 @@
                     throttleBoobs = false;
                     break;
                 case "playboy":
+                case "playmates":
                     clearInterval(throttlePlayboy);
                     throttlePlayboy = false;
                     break;
                 case "archive":
                     clearInterval(throttleArchive);
                     throttleArchive = false;
-                    break;
+                    break;                
                 case "porn":
                     clearInterval(throttlePorn);
                     throttlePorn = false;
+                    break;
+                case "sluts":
+                    clearInterval(throttleSluts);
+                    throttleSluts = false;
                     break;
                 default:
                     sendEmailToYourself("jQuery Fail in Ranker.Html killtimer ", " unknown subdomain: " + subdomain);
@@ -278,6 +302,7 @@
                         }, 15000);
                     }
                     break;
+                case "playboy":
                 case "playmates":
                     if (!throttlePlayboy) {
                         throttlePlayboy = setInterval(function () {
@@ -297,6 +322,14 @@
                 case "porn":
                     if (!throttlePorn) {
                         throttlePorn = setInterval(function () {
+                            skip = rankerLinksArray.length;
+                            loadBoobsRanker(subdomain);
+                        }, 15000);
+                    }
+                    break;
+                case "sluts":
+                    if (!throttleSluts) {
+                        throttleSluts = setInterval(function () {
                             skip = rankerLinksArray.length;
                             loadBoobsRanker(subdomain);
                         }, 15000);
@@ -374,6 +407,7 @@
                     textObject.css("color", "#63ac44")
                     break;
                 case "porn":
+                case "sluts":
                     textObject.css("color", "#249c40")
                     break;
                 default:
@@ -401,6 +435,11 @@
                 if (breadcrumbMessage !== "")
                     breadcrumbMessage += ", ";
                 breadcrumbMessage += "Porn";
+            }
+            if ($('#ckBoxSluts').is(':checked')) {
+                if (breadcrumbMessage !== "")
+                    breadcrumbMessage += ", ";
+                breadcrumbMessage += "Sluts";
             }
             $('#breadcrumbContainer').html(breadcrumbMessage);
         }

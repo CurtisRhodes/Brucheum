@@ -396,6 +396,9 @@ function repairLinks() {
                     //repairReport.BadLinks.forEach(function (element) {
                     //    $('#repairReport').append("<div> bad link: " + element.id + "</div>");
                     //});
+
+                    setTimeout(function () { $('#dataifyInfo').hide(); }, 3000);
+
                 }
                 catch (e) {
                     alert("problem displaying repair report: " + e);

@@ -120,7 +120,6 @@
                 else {
                     clearInterval(waiter);
                     $('#dots').html('');
-                    logPageHit(params.folder);
 
                     if (document.domain === 'localhost') {
                         //isInRole("not logged in");
@@ -144,6 +143,7 @@
                             }
                         }
                         else {
+                            logPageHit(params.folder, "Album.html");
                             setAlbumPageHeader(params.folder);
                             getAlbumImages(params.folder);
                             //if (visitorId === "ec6fb880-ddc2-4375-8237-021732907510") alert("logPageHit");

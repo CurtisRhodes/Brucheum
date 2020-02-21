@@ -141,7 +141,7 @@
     background-color: var(--oggleContainerBackgroundColor);
     display: block;
     border: solid thin black;
-    height: 400px;
+    
     padding: 6px;
     overflow-y: auto;
 }

@@ -30,20 +30,21 @@ $(document).ready(function () {
 
             params = getParams();
             var calledFrom = params.calledFrom;
-            if (calledFrom !== "internal") {
-                logPageHit(staticPageFolderId);
-                //sendEmailToYourself("calledFrom === undefined", "log visit, log page hit");
+            if (calledFrom === "internal")
+                logPageHit(staticPageFolderId, "static internal");
+            else {
+                //if (verbosity > 14) {
+                //    sendEmailToYourself("external link call ", staticPageFolderName + "<br/>called From: " + calledFrom + "<br/>ip: " + getCookieValue("IpAddress"));
+                //}
+
                 if (calledFrom === undefined)
                     calledFrom = "old link";
 
-                if (verbosity > 4) {
-                        sendEmailToYourself("external link call ", staticPageFolderName + "<br/>called From: " + calledFrom + "<br/>ip: " + getCookieValue("IpAddress"));
-                }
                 var logEventModel = {
                     VisitorId: getCookieValue("VisitorId"),
                     EventCode: "XLC",
-                    EventDetail: staticPageFolderId,
-                    CalledFrom: calledFrom
+                    EventDetail: calledFrom,
+                    CalledFrom: staticPageFolderId
                 };
                 logEventActivity(logEventModel);
 

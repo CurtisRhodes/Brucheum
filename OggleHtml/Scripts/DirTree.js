@@ -53,17 +53,18 @@ function recurrBuildDirTree(dir, treeId) {
                 expandMode = "+";
         }
 
+        if (subDir.FolderId === 56) {
+            cv = 2;
+        }
+
         totalFiles = 0;
-        txtFileCount = getAllChildFileCounts(subDir).toLocaleString();
-        //txtFileCount = "";
-        //if (subDir.FileCount > 0) 
-        //    txtFileCount = subDir.FileCount.toLocaleString();
-        //if (subDir.SubDirCount > 0) {
-        //    if (txtFileCount === "") 
-        //        txtFileCount = subDir.SubDirCount;            
-        //    else
-        //        txtFileCount += " (" + subDir.SubDirCount + ")";
-        //}
+        if (subDir.SubDirCount > 0) {
+            subDir.FileCount = 0;
+            txtFileCount = subDir.SubDirCount.toLocaleString() + "/" + getAllChildFileCounts(subDir).toLocaleString();
+        }
+        else
+            txtFileCount = getAllChildFileCounts(subDir).toLocaleString();
+
 
         dirTreeContainer += "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
             + "<span id='S" + subDir.LinkId + "' onclick=toggleDirTree('" + subDir.LinkId + "') >[" + expandMode + "] </span>"
@@ -80,11 +81,11 @@ function recurrBuildDirTree(dir, treeId) {
     });
 }
 
-function getAllChildFileCounts(dir) {    
-    totalFiles += dir.FileCount;
+function getAllChildFileCounts(thisFolder) {    
+    totalFiles += thisFolder.FileCount;
     
-    $.each(dir.SubDirs, function (idx, subDir) {
-        getAllChildFileCounts(subDir);
+    $.each(thisFolder.SubDirs, function (idx, subDirObj) {
+        getAllChildFileCounts(subDirObj);
     });
     return totalFiles;
 }

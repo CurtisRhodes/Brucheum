@@ -19,17 +19,22 @@
           <div id="divLastBuild" class="msgArea">lastbuild</div>
       </div>
       <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-5">
               <h2>MsSql Data Service</h2>
               <p>Microsoft SQL Server</p>
               <p><button onclick="runMStest()">Test</button></p>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
               <h2>MySql Data Service</h2>
               <p>Oracle My SQL Server</p>
               <p><button onclick="JournalTest()">Test</button></p>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
+              <h2>Email Test</h2>
+              <p>smtp.office365.com</p>
+              <p><button onclick="emailTest()">Test</button></p>
+          </div>
+          <div class="col-md-5">
               <h2>Image Service</h2>
               <p>Use Ms Sql to manage Flitter Engine. </p>
               <p><button onclick="runTest('insert')">Test Insert</button></p>
@@ -79,6 +84,20 @@
               }
           }
 
+          function emailTest() {              
+              $('#msgArea').html("running email test");
+
+              $.ajax({
+                  url: "Home/EmailTest",
+                  success: function (success) {
+                      $('#msgArea').html("email test: " + success);
+
+                  },
+                  error: function (jqXHR) {
+                      $('#msgArea').html(getXHRErrorDetails(jqXHR));
+                  }
+              });
+          }
 
           function getXHRErrorDetails(jqXHR) {
               var msg = '';

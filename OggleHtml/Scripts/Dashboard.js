@@ -60,7 +60,6 @@ function setDashboardHeader(viewId) {
             $('#dashboardLeftMenu').html("<div class='clickable' onclick='buildDirectoryTree()'>ReBuild Dir Tree</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#createStaticPagesCrud').dialog('open');\">Create Static Pages</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='repairLinks()'>Repair Links</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#createNewFolderDialog').dialog('open');\">Create New Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showCopyFolderDialog()'>Copy Folder</div>");
@@ -546,8 +545,7 @@ function createNewFolder() {
                 };
                 logActivity(changeLogModel);
                 $('#txtNewFolderTitle').val('');
-                $('#createNewFolderDialog').dialog('close');
-                buildDirectoryTree();
+                //$('#createNewFolderDialog').dialog('close');
             }
             else
                 alert("CreateVirtualFolder: " + successModel.Success);

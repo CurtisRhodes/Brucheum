@@ -1,22 +1,20 @@
 ﻿var viewerShowing = false;
-var currentAlbumFolderId;
 var currentAlbumJSfolderName;
 var currentFolderRoot;
 var modelFolderId;
 var selectedImage;
 var selectedImageLinkId;
 
-function directToStaticPage(folderId) {
+function directToStaticPage(directToStaticPageFolderId) {
     ///  12/15
-    if (isNullorUndefined(folderId)) {
+    if (isNullorUndefined(directToStaticPageFolderId)) {
         sendEmailToYourself("directToStaticPage folderId isNullorUndefined", "redirecting to poses");
-        folderId = 136;
+        directToStaticPageFolderId = 136;
     }
-    currentAlbumFolderId = folderId;
     $.ajax({
         type: "GET",
         async: true,
-        url: settingsArray.ApiServer + "api/AlbumPage/GetStaticPage?folderId=" + folderId,
+        url: settingsArray.ApiServer + "api/AlbumPage/GetStaticPage?folderId=" + directToStaticPageFolderId,
         success: function (successModel) {
             if (successModel.Success === "ok") {
                 window.location.href = successModel.ReturnValue;
@@ -25,42 +23,42 @@ function directToStaticPage(folderId) {
                 if (successModel.Success.indexOf("Option not supported") > -1) {
                     checkFor404(successModel.Success, "directToStaticPage");
                     sendEmailToYourself("SERVICE DOWN", "from directToStaticPage" +
-                        "<br/>folderId=" + folderId +
+                        "<br/>folderId=" + directToStaticPageFolderId +
                         "<br/>IpAddress: " + getCookieValue("IpAddress") +
                         "<br/>" + successModel.Success);
                 }
                 else
-                    sendEmailToYourself("jQuery fail in directToStaticPage", "folderId: " + folderId + " <br/>" + successModel.Success);
+                    sendEmailToYourself("jQuery fail in directToStaticPage", "folderId: " + directToStaticPageFolderId + " <br/>" + successModel.Success);
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "directToStaticPage")) {
-                sendEmailToYourself("XHR ERROR IN GetStaticPage", "folderId=" + folderId +
+                sendEmailToYourself("XHR ERROR IN GetStaticPage", "folderId=" + directToStaticPageFolderId +
                     "<br/>" + errorMessage + "<br/>SENDING THEM BACK TO DYNAMIC PAGE");
             }
         }
     });
 }
 
-function setAlbumPageHeader(folderId, isStaticPage) {
+function setAlbumPageHeader(setAlbumPageHeaderFolderId, isStaticPage) {
     try {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/AlbumPage/GetFolderInfo?folderId=" + folderId,
+            url: settingsArray.ApiServer + "api/AlbumPage/GetFolderInfo?folderId=" + setAlbumPageHeaderFolderId,
             success: function (rootFolderModel) {
                 if (rootFolderModel.Success === "ok") {
-                    setOggleHeader(rootFolderModel.RootFolder, folderId, rootFolderModel.ContainsImageLinks, isStaticPage);
-                    setOggleFooter(rootFolderModel.RootFolder, folderId);
+                    setOggleHeader(rootFolderModel.RootFolder, setAlbumPageHeaderFolderId, rootFolderModel.ContainsImageLinks, isStaticPage);
+                    setOggleFooter(rootFolderModel.RootFolder, setAlbumPageHeaderFolderId);
                 }
                 else {
                     if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
                         checkFor404(folderDetailModel.Success, "setAlbumPageHeader");
-                        sendEmailToYourself("SERVICE DOWN", "from getBreadCrumbs<br/>folderId=" + folderId + "<br/>IpAddress: " +
+                        sendEmailToYourself("SERVICE DOWN", "from getBreadCrumbs<br/>folderId=" + setAlbumPageHeaderFolderId + "<br/>IpAddress: " +
                             getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
                     }
                     else
-                        sendEmailToYourself("setAlbumPageHeader FAILURE", "api/AlbumPage/GetFolderInfo?folderId=" + folderId + "<br>" + successModel.Success);
+                        sendEmailToYourself("setAlbumPageHeader FAILURE", "api/AlbumPage/GetFolderInfo?folderId=" + setAlbumPageHeaderFolderId + "<br>" + successModel.Success);
                 }
             },
             error: function (jqXHR) {
@@ -71,21 +69,21 @@ function setAlbumPageHeader(folderId, isStaticPage) {
                         alert("continuing on to setAlbumPageHeader");
                     else {
                         if (isNullorUndefined(getCookieValue("IpAddress")))
-                            logVisitor(folderId, "setAlbumPageHeader");
+                            logVisitor(setAlbumPageHeaderFolderId, "setAlbumPageHeader");
                         else {
                             sendEmailToYourself("XHR Error setAlbumPageHeader",
                                 "settingsArray.ApiServer: " + settingsArray.ApiServer +
-                                "<br/>folderId: " + folderId +
+                                "<br/>folderId: " + setAlbumPageHeaderFolderId +
                                 "<br/>isStaticPage: " + isStaticPage +
                                 "<br/>IpAddress: " + getCookieValue("IpAddress") +
                                 "<br/>" + errorMessage);
                         }
                     }
-                    setOggleHeader("boobs", folderId, false);
-                    setOggleFooter("boobs", folderId);
+                    setOggleHeader("boobs", setAlbumPageHeaderFolderId, false);
+                    setOggleFooter("boobs", setAlbumPageHeaderFolderId);
                 }
                 else
-                    sendEmailToYourself("XHR ERROR IN ALBUM.JS setAlbumPageHeader", "api/AlbumPage/GetRootFolder?folderId=" + folderId + " <br/>" + errorMessage);
+                    sendEmailToYourself("XHR ERROR IN ALBUM.JS setAlbumPageHeader", "api/AlbumPage/GetRootFolder?folderId=" + setAlbumPageHeaderFolderId + " <br/>" + errorMessage);
             }
         });
     } catch (e) {
@@ -96,16 +94,16 @@ function setAlbumPageHeader(folderId, isStaticPage) {
     }
 }
 
-function getBreadCrumbs(folderId) {
+function getBreadCrumbs(getBreadCrumbsFolderId) {
     // a woman commited suicide when pictures of her "came out"
     // title: I do not remember having been Invited)
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/BreadCrumbs/Get?folderId=" + folderId,
+        url: settingsArray.ApiServer + "/api/BreadCrumbs/Get?folderId=" + getBreadCrumbsFolderId,
         async: true,
         success: function (breadCrumbModel) {
             if (breadCrumbModel.Success === "ok") {
-                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:reportThenPerformEvent(\"HBX\"," + folderId + ",\"" + currentFolderRoot + "\")'>home</a>");
+                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:reportThenPerformEvent(\"HBX\"," + getBreadCrumbsFolderId + ",\"" + currentFolderRoot + "\")'>home</a>");
                 for (i = breadCrumbModel.BreadCrumbs.length - 1; i >= 0; i--) {
                     if (breadCrumbModel.BreadCrumbs[i] === null) {
                         breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
@@ -128,19 +126,19 @@ function getBreadCrumbs(folderId) {
                         else {
                             $('#breadcrumbContainer').append("<a class='activeBreadCrumb' " +
                                 //	HBX	Home Breadcrumb Clicked
-                                "href='javascript:reportThenPerformEvent(\"BCC\"," + folderId + "," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
+                                "href='javascript:reportThenPerformEvent(\"BCC\"," + getBreadCrumbsFolderId + "," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                     }
                 }
-                staticPageFolderId = folderId;
+                staticPageFolderId = getBreadCrumbsFolderId;
                 currentAlbumJSfolderName = breadCrumbModel.FolderName;
                 document.title = currentAlbumJSfolderName + " : OggleBooble";
             }
             else {
                 if (breadCrumbModel.Success.indexOf("Option not supported") > -1) {
                     checkFor404(breadCrumbModel.Success, "getBreadCrumbs");
-                    sendEmailToYourself("SERVICE DOWN", "from getBreadCrumbs<br/>folderId=" + folderId + "<br/>IpAddress: " +
+                    sendEmailToYourself("SERVICE DOWN", "from getBreadCrumbs<br/>folderId=" + getBreadCrumbsFolderId + "<br/>IpAddress: " +
                         getCookieValue("IpAddress") + "<br/> " + breadCrumbModel.Success);
                 }
                 else
@@ -151,35 +149,34 @@ function getBreadCrumbs(folderId) {
             $('#imagePageLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "getBreadCrumbs")) {
-                sendEmailToYourself("XHR ERROR IN ALBUM.JS getBreadCrumbs", "/api/BreadCrumbs/Get?folderId=" + folderId + " Message: " + errorMessage);
+                sendEmailToYourself("XHR ERROR IN ALBUM.JS getBreadCrumbs", "/api/BreadCrumbs/Get?folderId=" + getBreadCrumbsFolderId + " Message: " + errorMessage);
             }
         }
     });
 }
 
-function getAlbumImages(folderId) {
+function getAlbumImages(getAlbumImagesFolderId) {
     try {
-        currentAlbumFolderId = folderId;
         var start = Date.now();
         $('#imagePageLoadingGif').show();
         $.ajax({
             type: "GET",
             async: true,
-            url: settingsArray.ApiServer + "/api/ImagePage/GetImageLinks?folderId=" + folderId,
+            url: settingsArray.ApiServer + "/api/ImagePage/GetImageLinks?folderId=" + getAlbumImagesFolderId,
             success: function (imageLinksModel) {
                 currentFolderRoot = imageLinksModel.RootFolder;
                 if (imageLinksModel.Success === "ok") {
                     processImages(imageLinksModel);
-                    getBreadCrumbs(folderId);
+                    getBreadCrumbs(getAlbumImagesFolderId);
                     var delta = (Date.now() - start) / 1000;
-                    console.log("GetImageLinks?folder=" + folderId + " took: " + delta.toFixed(3));
+                    console.log("GetImageLinks?folder=" + getAlbumImagesFolderId + " took: " + delta.toFixed(3));
                 }
                 else {
                     $('#imagePageLoadingGif').hide();
                     if (successModel.Success.indexOf("Option not supported") > -1) {
                         checkFor404(successModel.Success, "getAlbumImages");
                         sendEmailToYourself("SERVICE DOWN", "from getAlbumImages" +
-                            "<br/>folderId=" + folderId +
+                            "<br/>folderId=" + getAlbumImagesFolderId +
                             "<br/>IpAddress: " + getCookieValue("IpAddress") +
                             "<br/>" + successModel.Success);
                     }
@@ -194,7 +191,7 @@ function getAlbumImages(folderId) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errorMessage, "getAlbumImages")) {
                     sendEmailToYourself("XHR ERROR in Album.js GetImageLinks ",
-                        "Called from: " + getCookieValue("IpAddress") + "  folderId: " + folderId + " Message: " + errorMessage);
+                        "Called from: " + getCookieValue("IpAddress") + "  folderId: " + getAlbumImagesFolderId + " Message: " + errorMessage);
                 }
             }
         });
@@ -206,7 +203,6 @@ function getAlbumImages(folderId) {
 }
 
 function processImages(imageLinksModel) {
-
     var imageFrameClass = "folderImageOutterFrame";
     var subDirLabel = "subDirLabel";
     if (imageLinksModel.RootFolder === "porn" || imageLinksModel.RootFolder === "sluts") {
@@ -270,13 +266,14 @@ function processImages(imageLinksModel) {
     resizeImageContainer();
 }
 
-function subFolderPreClick(isStepChild, folderId) {
+function subFolderPreClick(isStepChild, subFolderPreClickFolderId) {
     //function performEvent(eventCode, calledFrom, eventDetail) {
-    //alert("subFolderPreClick.\nfolderId(callledFrom): " + folderId + "\ncurrentAlbumFolderId(eventDetail): " + currentAlbumFolderId+ "\nisStepChild: " + isStepChild);
+    //alert("subFolderPreClick.\nfolderId(callledFrom): " + subFolderPreClickFolderId + "\ncurrentFolderId(eventDetail): " + this.currentFolderId + "\nisStepChild: " + isStepChild);
     if (isStepChild === "0")
-        reportThenPerformEvent("SUB", currentAlbumFolderId, folderId);
-    else
-        reportThenPerformEvent("SSB", currentAlbumFolderId, folderId);
+        reportThenPerformEvent("SUB", this.currentFolderId, subFolderPreClickFolderId);
+    else {
+        reportThenPerformEvent("SSB", this.currentFolderId, subFolderPreClickFolderId);
+    }
 }
 
 function resizeImageContainer() {
@@ -311,7 +308,6 @@ function startSlideShow(imageIndex) {
     if (typeof staticPageFolderName === 'string') {
         isStaticPage = "true";
         currentAlbumJSfolderName = staticPageFolderName;
-        currentAlbumFolderId = staticPageFolderId;
 
         //if (staticPageFolderName.startsWith("centerfolds"))
         {
@@ -322,19 +318,18 @@ function startSlideShow(imageIndex) {
 
     }
 
-    if (isNullorUndefined(ipAddress) || isNullorUndefined(visitorId) || isNullorUndefined(currentAlbumFolderId)) {
-        //sendEmailToYourself("Calling LogVisitor from Album.js/startslideshow", "visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + currentAlbumFolderId);
+    if (isNullorUndefined(ipAddress) || isNullorUndefined(visitorId) || isNullorUndefined(this.currentFolderId)) {
+        //sendEmailToYourself("Calling LogVisitor from Album.js/startslideshow", "visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + this.currentFolderId);
         if (document.domain === 'localhost')
             alert("Calling LogVisitor from Album.js/startslideshow" +
-                "\nvisitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + currentAlbumFolderId);
+                "\nvisitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + this.currentFolderId);
         logVisitor(imageIndex, "startSlideshow");
     }
 
     // Gallery Item Clicked
-    //alert("Gallery Item Clicked  folderId: " + currentAlbumFolderId + " currentAlbumFolderId: " + currentAlbumFolderId);
-    //reportThenPerformEvent("GIC", folderId, currentAlbumFolderId);
+    //reportThenPerformEvent("GIC", folderId, this.currentFolderId);
 
-    launchViewer(imageArray, imageIndex, currentAlbumFolderId, currentAlbumJSfolderName);
+    launchViewer(imageArray, imageIndex, this.currentFolderId, currentAlbumJSfolderName);
     resizeViewer();
     viewerShowing = true;
 }
@@ -352,7 +347,7 @@ function onRemoveImageClick(btn) {
     if (btn === "ok") {
         var rejectLinkModel = {};
         rejectLinkModel.Id = selectedImageLinkId;
-        rejectLinkModel.PreviousLocation = currentAlbumFolderId;
+        rejectLinkModel.PreviousLocation = this.currentFolderId;
         rejectLinkModel.RejectionReason = $('input[name=rdoRejectImageReasons]:checked').val();
         rejectLinkModel.ExternalLink = selectedImage;// $('#' + selectedImageLinkId + '').attr("src");
 
@@ -367,9 +362,9 @@ function onRemoveImageClick(btn) {
                 if (success === "ok") {
                     if (viewerShowing)
                         slide("next");
-                    getAlbumImages(currentAlbumFolderId);
+                    getAlbumImages(this.currentFolderId);
                     var changeLogModel = {
-                        PageId: currentAlbumFolderId,
+                        PageId: this.currentFolderId,
                         PageName: currentAlbumJSfolderName,
                         Activity: "link removed " + selectedImageLinkId
                     };
@@ -399,7 +394,7 @@ function onRemoveImageClick(btn) {
 }
 
 function removeImage() {
-    //    alert("currentContextLinkId: " + currentContextLinkId);
+    //alert("currentFolderId: " + currentFolderId);
     $.ajax({
         type: "GET",
         async: true,
@@ -408,29 +403,29 @@ function removeImage() {
             if (success === "ok") {
                 $.ajax({
                     type: "DELETE",
-                    url: settingsArray.ApiServer + "api/FtpImageRemove/RemoveImageLink?folderId=" + currentAlbumFolderId + "&imageId=" + selectedImageLinkId,
+                    url: settingsArray.ApiServer + "api/FtpImageRemove/RemoveImageLink?folderId=" + currentFolderId + "&imageId=" + selectedImageLinkId,
                     success: function (success) {
                         if (success === "ok") {
                             if (viewerShowing)
                                 slide("next");
-                            getAlbumImages(currentAlbumFolderId);
+                            getAlbumImages(currentFolderId);
 
                             var changeLogModel = {
-                                PageId: currentAlbumFolderId,
+                                PageId: currentFolderId,
                                 PageName: currentAlbumJSfolderName,
                                 Activity: "link removed " + selectedImageLinkId
                             };
                             logActivity(changeLogModel);
                         }
                         else {
-                            //alert("removeLink: " + success);
+                            alert("removeLink: " + success);
                             sendEmailToYourself("jQuery fail in album.js removeImage", "Message: " + success);
                         }
                     },
                     error: function (xhr) {
                         var errorMessage = getXHRErrorDetails(xhr);
                         if (!checkFor404(errorMessage, "removeImage")) {
-                            sendEmailToYourself("XHR error in album.js setAlbumPageHeader", "RemoveImageLink?folderId=" + currentAlbumFolderId + "&imageId=" + selectedImageLinkId +
+                            sendEmailToYourself("XHR error in album.js setAlbumPageHeader", "RemoveImageLink?folderId=" + this.currentFolderId + "&imageId=" + selectedImageLinkId +
                                 "<br>Message: " + errorMessage);
                         }
                     }
@@ -528,8 +523,16 @@ function ctxSAP(imgId) {
         error: function (xhr) {
             var errorMessage = getXHRErrorDetails(xhr);
             if (!checkFor404(errorMessage, "ctxSAP")) {
-                sendEmailToYourself("XHR ERROR IN ALBUM.JS ctxSAP", "api/ImageCategoryDetail/GetModelName?linkId=" + selectedImageLinkId +
-                    "<br>Message: " + errorMessage);
+
+                logError({
+                    VisitorId: visitorId,
+                    ActivityCode: "XHR",
+                    Severity: 2,
+                    ErrorMessage: "GetModelName?linkId=" + selectedImageLinkId + " Message: " + errorMessage,
+                    CalledFrom: "ALBUM.JS ctxSAP"
+                });
+                //sendEmailToYourself("XHR ERROR IN ALBUM.JS ctxSAP", "api/ImageCategoryDetail/GetModelName?linkId=" + selectedImageLinkId +
+                //    "<br>Message: " + errorMessage);
             }
         }
     });
@@ -548,18 +551,15 @@ function contextMenuAction(action) {
             $('#modelInfoDialog').on('dialogclose', function (event) {
                 viewerShowing = disableViewerKeys;
                 $('#modelInfoDialog').hide();
-                //getAlbumImages(currentAlbumFolderId);
             });
             break;
         case "jump":
-            //alert("see more of her: calledFrom: " + currentAlbumFolderId + " eventDetail: " + modelFolderId);
-            reportThenPerformEvent("SEE", currentAlbumFolderId, modelFolderId);
+            reportThenPerformEvent("SEE", this.currentFolderId, modelFolderId);
             //window.open("/album.html?folder=" + modelFolderId, "_blank");
             break;
         case "comment":
             $("#thumbImageContextMenu").fadeOut();
-            showImageCommentDialog(selectedImage, selectedImageLinkId, currentAlbumFolderId, currentAlbumJSfolderName);
-            //showImageCommentDialog($('#' + selectedImageLinkId + '').attr("src"), selectedImageLinkId, currentAlbumFolderId, folderName);
+            showImageCommentDialog(selectedImage, selectedImageLinkId, this.currentFolderId, currentAlbumJSfolderName);
             break;
         case "explode":
             window.open(selectedImage, "_blank");
@@ -567,25 +567,25 @@ function contextMenuAction(action) {
             break;
         case "archive":
             $("#thumbImageContextMenu").fadeOut();
-            showMoveCopyDialog("Archive", selectedImage, currentAlbumFolderId);
+            showMoveCopyDialog("Archive", selectedImage, this.currentFolderId);
             break;
         case "copy":
             $("#thumbImageContextMenu").fadeOut();
-            showMoveCopyDialog("Copy", selectedImage, currentAlbumFolderId);
+            showMoveCopyDialog("Copy", selectedImage, this.currentFolderId);
             break;
         case "move":
             $("#thumbImageContextMenu").fadeOut();
-            showMoveCopyDialog("Move", selectedImage, currentAlbumFolderId);
+            showMoveCopyDialog("Move", selectedImage, this.currentFolderId);
             break;
         case "remove":
             $("#thumbImageContextMenu").fadeOut();
             removeImage();
             break;
         case "setF":
-            setFolderImage(selectedImageLinkId, currentAlbumFolderId, "folder");
+            setFolderImage(selectedImageLinkId, this.currentFolderId, "folder");
             break;
         case "setC":
-            setFolderImage(selectedImageLinkId, currentAlbumFolderId, "parent");
+            setFolderImage(selectedImageLinkId, this.currentFolderId, "parent");
             break;
         case "showLinks":
             showLinks(selectedImageLinkId);
@@ -597,19 +597,19 @@ function contextMenuAction(action) {
     }
 }
 
-function slowlyHomeFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
+function slowlyHomeFolderInfoDialog(index, folderName, slowlyHomeFolderInfoDialogFolderId, parentId, rootFolder) {
     forgetHomeFolderInfoDialog = false;
     setTimeout(function () {
         if (forgetHomeFolderInfoDialog === false) {
             alert("disable this");
             if (typeof pause === 'function')
                 pause();
-            showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId, rootFolder);
+            showEitherModelorFolderInfoDialog(index, folderName, slowlyHomeFolderInfoDialogFolderId, parentId, rootFolder);
         }
     }, 1100);
 }
 
-function showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
+function showEitherModelorFolderInfoDialog(index, folderName, showEitherModelorFolderInfoDialogFolderId, parentId, rootFolder) {
 
     //alert("showEitherModelorFolderInfoDialog(index: " + index + ", folderName: " + folderName + ", folderId: " + folderId + ", parentId: " + parentId + ", rootFolder: " + rootFolder + ")");
     var cybergirls = "3796";
@@ -619,10 +619,10 @@ function showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId
     if (rootFolder === "playboy" && index > 4 || parentId === cybergirls || rootFolder === "archive" && index > 2) {
         //alert("showEitherModelorFolderInfoDialog   rootFolder: " + rootFolder);
         //showModelInfoDialog(folderName, folderId, 'Images/redballon.png');
-        reportThenPerformEvent("CMX", folderId, folderName);
+        reportThenPerformEvent("CMX", showEitherModelorFolderInfoDialogFolderId, folderName);
     }
     else {
         //alert("showEitherModelorFolderInfoDialog   rootFolder: " + rootFolder + "  index: " + index);
-        showCategoryDialog(folderId);
+        showCategoryDialog(showEitherModelorFolderInfoDialogFolderId);
     }
 }

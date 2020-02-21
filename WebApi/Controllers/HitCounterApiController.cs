@@ -362,4 +362,37 @@ namespace WebApi
             return success;
         }
     }
+
+    [EnableCors("*", "*", "*")]
+    public class ErrorLogController : ApiController
+    {
+        [HttpPost]
+        public string LogError(LogErrorModel logErrorModel)
+        {
+            string success;
+            try
+            {
+                using (var mdb = new OggleBoobleMySqContext())
+                {
+                    mdb.ErrorLogs.Add(new ErrorLog()
+                    {
+                        PkId = Guid.NewGuid().ToString(),
+                        ActivityCode = logErrorModel.ActivityCode,
+                        ErrorMessage = logErrorModel.ErrorMessage,
+                        CalledFrom = logErrorModel.CalledFrom,
+                        Severity = logErrorModel.Severity,
+                        VisitorId = logErrorModel.VisitorId ?? "unknown",
+                        Occured = DateTime.Now
+                    });
+                    mdb.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+    }
 }

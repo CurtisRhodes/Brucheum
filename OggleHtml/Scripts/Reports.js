@@ -110,7 +110,7 @@ function runMostImageHits() {
 }
 
 function showEventActivityReport() {
-    $("#divStandardReportArea").addClass("tightReport");
+    //$("#divStandardReportArea").addClass("tightReport");
     activeReport = "EventActivity";
     $('.workAreaContainer').hide();
     $('#divStandardReport').show();
@@ -128,10 +128,12 @@ function runEventActivityReport() {
             $('#dashBoardLoadingGif').hide();
             if (activityReport.Success === "ok") {
                 var kludge = "<table>";
-                kludge += "<tr><th>Ip Address</th><th>City</th><th>State</th><th>Country</th><th>Event</th><th>Called From</th><th>Details</th><th>hitdate</th><th>hit time</th></tr>";
+                //kludge += "<tr><th>Ip Address</th><th>City</th><th>State</th><th>Country</th><th>Event</th><th>Called From</th><th>Details</th><th>hitdate</th><th>hit time</th></tr>";
+                kludge += "<tr><th>Ip Address</th><th>City</th><th>Country</th><th>Event</th><th>Called From</th><th>Details</th><th>hitdate</th><th>hit time</th></tr>";
                 $.each(activityReport.Items, function (idx, obj) {
                     kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
-                    kludge += "<td>" + obj.Region + "</td><td>" + obj.Country + "</td>";
+                    //kludge += "<td>" + obj.Region + "</td>;
+                    kludge += "<td>" + obj.Country + "</td>";
                     kludge += "<td>" + obj.Event + "</td><td>" + obj.CalledFrom.replace('OGGLEBOOBLE.COM', '') + "</td><td>" + obj.Detail + "</td>";
                     kludge += "<td>" + obj.HitDate + "</td><td>" + obj.HitTime + "</td></tr>";
                 });
@@ -320,3 +322,9 @@ function rerunReport() {
         default: alert("activeReport [" + activeReport + "] not found");
     }
 }
+
+function playmateChecklist() {
+    
+
+}
+

@@ -94,10 +94,9 @@ function setOggleHeader(subdomain, folderId, containsImageLinks, isStaticPage) {
 
             bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"porn\")'><img src='/Images/csLips02.png' class='bannerImage'/></a>\n";
             archiveLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\"," + folderId + ",440)' class='babesArchive'>slut archive</a>";
+            //boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + "," + subdomain + ")' " +
             boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + ",\"" + subdomain + "\")' " +
                 "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
-            //bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",3909)'><img src='/Images/cslips02.png' title='porn home' class='bannerImage'/></a>\n";
-            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\",3909)' title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
             websiteName = "OgglePorn";
             break;
         case "admin":
@@ -196,7 +195,8 @@ function setOggleHeader(subdomain, folderId, containsImageLinks, isStaticPage) {
         $('#optionNotLoggedIn').show();
     }
     // LOOK UP FOLDER DETAIL FOR BADGES AND TRACKBACK LINKS
-    if (containsImageLinks) {
+    //if (containsImageLinks)
+    {
         //if (getCookieValue("IpAddress") === "68.203.90.183") alert("isStaticPage: " + isStaticPage);
         showSpecialHeaderIcons(folderId);
         if (!isStaticPage) {
@@ -321,7 +321,7 @@ function showFeedbackDialog() {
 
 function saveFeedbackDialog(pageId) {
 
-    alert("radio: " + $('#feedbackDialog input[type=\'radio\']:checked').val());
+    //alert("radio: " + $('#feedbackDialog input[type=\'radio\']:checked').val());
     var feedBackModel = {
         VisitorId: getCookieValue("VisitorId"),
         PageId: pageId,
@@ -337,6 +337,7 @@ function saveFeedbackDialog(pageId) {
             if (success === "ok") {
                 sendEmailToYourself("FeedBack", "ip: " + getCookieValue("IpAddress") + "<br/>"
                     + $('#feedbackDialogSummerNoteTextArea').summernote('code'));
+                console.log("is email working?");
                 $('#feedbackDialog').dialog("close");
                 alert("Thank you for your feedback");
             }

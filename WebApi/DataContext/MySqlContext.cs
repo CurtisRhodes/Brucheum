@@ -37,6 +37,20 @@ namespace WebApi.MySqDataContext
         public virtual DbSet<DailyActivityReport> DailyActivity { get; set; }
         public virtual DbSet<vwPageHit> vwPageHits { get; set; }
         public virtual DbSet<FeedBack> FeedBacks { get; set; }
+        public virtual DbSet<ErrorLog> ErrorLogs { get; set; }
+    }
+
+    [Table("OggleBooble.ErrorLog")]
+    public class ErrorLog
+    {
+        [Key]
+        public string PkId { get; set; }
+        public string VisitorId { get; set; }
+        public string ActivityCode { get; set; }
+        public int Severity { get; set; }
+        public string ErrorMessage { get; set; }
+        public DateTime Occured { get; set; }
+        public string CalledFrom { get; set; }
     }
 
     [Table("OggleBooble.FeedBack")]
@@ -85,8 +99,6 @@ namespace WebApi.MySqDataContext
         public string City { get; set; }
         public string Region { get; set; }
         public string Country { get; set; }
-        [Key]
-        [Column(Order = 1)]
         public string Event { get; set; }
         public string CalledFrom { get; set; }
         public string Detail { get; set; }
@@ -94,7 +106,7 @@ namespace WebApi.MySqDataContext
         [Column(Order = 2)]
         public string HitDate { get; set; }
         [Key]
-        [Column(Order = 3)]
+        [Column(Order = 1)]
         public string HitTime { get; set; }
     }
 
@@ -156,11 +168,9 @@ namespace WebApi.MySqDataContext
         [Key]
         [Column(Order = 0)]
         public int Id { get; set; }
-        [Key]
-        [Column(Order = 1)]
         public int Parent { get; set; }
         [Key]
-        [Column(Order = 2)]
+        [Column(Order = 1)]
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
     }

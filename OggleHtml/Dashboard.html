@@ -294,7 +294,7 @@
                     buildDirectoryTree();
                     setOggleHeader("admin", 3910, false);
                     setOggleFooter('boobs', 3910);
-                    logPageHit(3910);
+                    logPageHit(3910, "dashboard");
 
                     if (isInRole("Oggle admin")) {
                         $('.adminLevelOption').show();
@@ -380,6 +380,10 @@
                 if (event.keyCode === 13) {
                     createNewFolder();
                 }
+            });
+            $('#createNewFolderDialog').on('dialogclose', function (event) {
+                buildDirectoryTree();
+                $('#createNewFolderDialog').hide();
             });
 
             $('#createStaticPagesCrud').dialog({

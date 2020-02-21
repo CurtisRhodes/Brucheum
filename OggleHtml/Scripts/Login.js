@@ -153,8 +153,8 @@ function showLoginDialog() {
                     setCookieValue("VisitorId", getVisitorInfoFromIPAddressSuccessModel.VisitorId);
                     if (ipAddress !== "68.203.90.183")// && ipAddress !== "50.62.160.105")
                         sendEmailToYourself("Login Attempt", "IpAddress: " + ipAddress);
-                        //"getVisitorInfoFromIPAddressSuccessModel.UserName: " + getVisitorInfoFromIPAddressSuccessModel.UserName +
-                        //" (Had to lookup thier ip address) IpAddress: " + ipAddress);
+                    //"getVisitorInfoFromIPAddressSuccessModel.UserName: " + getVisitorInfoFromIPAddressSuccessModel.UserName +
+                    //" (Had to lookup thier ip address) IpAddress: " + ipAddress);
                 }
                 else {
                     sendEmailToYourself("ERROR IN LOGIN. GetVisitorIdFromIP Fail", "Message: " + successModel.Success);
@@ -170,8 +170,15 @@ function showLoginDialog() {
             }
         });
     }
-    else
-        sendEmailToYourself("Login Attepmt with known Ip", "Ip: " + ipAddress);
+    else {
+        logEventActivity({
+            VisitorId: visitorSuccess.VisitorId,
+            EventCode: "LOG",
+            EventDetail: "Login Attepmt with known Ip: " + ipAddress,
+            CalledFrom: "showLoginDialog"
+        });
+        //sendEmailToYourself("Login Attepmt with known Ip", "Ip: " + ipAddress);
+    }
 
     $('#modalContainer').show();
     $('#loginDialog').dialog({
@@ -212,9 +219,15 @@ function attemptLogin(userName, clearPasswod) {
                     $('#spnUserName').html(userName);
                     $('#optionLoggedIn').show();
                     $('#optionNotLoggedIn').hide();
-                    if (getCookieValue("ipAddress") !== "68.203.90.183")// && ipAddress !== "50.62.160.105")
-                        sendEmailToYourself("Someone Successfully logged in", "User: " + userName);
+                    //if (getCookieValue("ipAddress") !== "68.203.90.183")// && ipAddress !== "50.62.160.105")
 
+                    logEventActivity({
+                        VisitorId: visitorSuccess.VisitorId,
+                        EventCode: "LOG",
+                        EventDetail: "Someone Successfully logged in: " + userName,
+                        CalledFrom: "showLoginDialog"
+                    });
+                    //sendEmailToYourself("Someone Successfully logged in", "User: " + userName);
                     displayStatusMessage("ok", "thanks for logging in " + userName);
                     //window.location.href = ".";
                 }

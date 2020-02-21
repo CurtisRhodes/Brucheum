@@ -136,10 +136,7 @@ function displayStatusMessage(msgCode, message) {
 }
 
 function checkFor404(errorMessage, calledFrom) {
-    //if (document.domain === 'localhost') alert("checkFor404 calledfrom: " + calledFrom);
-
     var isNotConnected = false;
-    //if (document.domain === 'localhost') alert("checkFor404() \nerrorMessage: " + errorMessage + ", calledFrom:" + calledFrom);
     if (isNullorUndefined(errorMessage)) {
         var ipAddr = getCookieValue("IpAddress");
         sendEmailToYourself("checkFor404 called with null errorMessage from: " + calledFrom, "ip: " + ipAddr);
@@ -149,16 +146,6 @@ function checkFor404(errorMessage, calledFrom) {
     }
     if (errorMessage.indexOf("Not connect") > -1 || errorMessage.indexOf("Option not supported") > -1) {
         isNotConnected = true;
-
-        //if (ipAddr !== "68.203.90.199983")
-        //if (ipAddr !== "68.203.90.183")
-        //    sendEmailToYourself("CAN I GET A CONNECTION ", "calledFrom: " + calledFrom + "    ip: " + ipAddr);
-
-
-        //"<div id='customMessage' class='displayHidden customMessageContainer'></div>\n" +
-
-        //alert("checkFor404. errorMessage: " + errorMessage + "\ncalledFrom: " + calledFrom);
-
         $('#notConnectMessage').width($(window).width());
         $('#notConnectMessage').html(
             "<div class='centeredDivShell2'>\n" +
@@ -170,17 +157,14 @@ function checkFor404(errorMessage, calledFrom) {
 
         $('#notConnectMessage').show();
         console.log("checkFor404: " + calledFrom);
+        logError({
+            VisitorId: getCookieValue("VisitorId"),
+            ActivityCode: "404",
+            Severity: 2,
+            ErrorMessage: "checkFor404",
+            CalledFrom: "checkFor404/" + calledFrom
+        });
     }
-    //else {
-    //    if (document.domain === 'localhost') {
-    //        alert("checkFor404 called with unexpected errorMessage\n " + errorMessage + " from: " + calledFrom);
-    //    }
-    //    else {
-    //        sendEmailToYourself("checkFor404 called with unexpected errorMessage", "errorMessage: " + errorMessage +
-    //            "<br/>calledFrom from: " + calledFrom +
-    //            "<br/>isNotConnected: " + isNotConnected);
-    //    }
-    //}
     return isNotConnected;
 }
 
@@ -233,19 +217,49 @@ function sendEmailToYourself(subject, message) {
         url: "https://api.curtisrhodes.com/api/GodaddyEmail?subject=" + subject + "&message=" + message,
         success: function (success) {
             if (success === "ok") {
-               // $('#footerMessage').html("email sent");
-               // displayStatusMessage("ok", "email sent");
+                //$('#footerMessage').html("email sent");
+                //displayStatusMessage("ok", "email sent");
+                logError({
+                    VisitorId: getCookieValue("VisiorId"),
+                    ActivityCode: "SEY",
+                    Severity: 2,
+                    ErrorMessage: subject + " Message: " + message,
+                    CalledFrom: "sendEmailToYourself"
+                });
             }
-            else
-                alert("sendEmail fail: " + success);
+            //else
+            //    alert("sendEmail fail: " + success);
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "sendEmailToYourself")) {
-                sendEmailToYourself("xhr error in common.js sendEmailToYourself", "/Data/Settings.xml Message: " + errorMessage);
-                //alert("xhr error: " + errorMessage);
+                //sendEmailToYourself("xhr error in common.js sendEmailToYourself", "/Data/Settings.xml Message: " + errorMessage);
+                //alert("sendEmailToYourself xhr error: " + errorMessage);
             }
         }
+    });
+}
+
+function logError(logErrorModel) {
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "/api/ErrorLog",
+        data: logErrorModel
+        //success: function (success) {
+        //    if (success === "ok")
+        //        //displayStatusMessage("ok", "error message logged");
+        //    else {
+        //        //alert("ChangeLog: " + success);
+        //        sendEmailToYourself("error in common/logActivity", success);
+        //    }
+        //},
+        //error: function (jqXHR) {
+        //    $('#dashBoardLoadingGif').hide();
+        //    var errorMessage = getXHRErrorDetails(jqXHR);
+        //    if (!checkFor404(errorMessage, "logActivity")) {
+        //        sendEmailToYourself("xhr error in common.js logActivity", "/api  ChangeLog  Message: " + errorMessage);
+        //    }
+        //}
     });
 }
 

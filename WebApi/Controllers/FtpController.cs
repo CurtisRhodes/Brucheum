@@ -126,48 +126,55 @@ namespace WebApi
             try
             {
                 if (model.SourceFolderId == model.DestinationFolderId)
-                    successModel.Success = "Source and Destination the same";
-                else
                 {
-                    using (OggleBoobleContext db = new OggleBoobleContext())
-                    {
-                        string link = model.Link.Replace("%20", " ");
-                        ImageLink dbImageLink = db.ImageLinks.Where(l => l.Link.Replace("%20", " ") == link.Replace("%20", " ")).FirstOrDefault();
-                        if (dbImageLink == null)
-                            successModel.Success = "link [" + link + "] not found";
-                        else
-                        {
-                            string linkId = dbImageLink.Id;
-                            List<CategoryImageLink> categoryImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == model.DestinationFolderId).ToList();
-                            if (model.Mode == "Copy")
-                            {
-                                //CategoryImageLink existingLink = db.CategoryImageLinks
-                                //    .Where(l => l.ImageCategoryId == model.DestinationFolderId)
-                                //    .Where(l => l.ImageLinkId == dbImageLink.Id).FirstOrDefault();
+                    successModel.Success = "Source and Destination the same";
+                    return successModel;
+                }
 
-                                CategoryImageLink existingLink = categoryImageLinks.Where(l => l.ImageLinkId == dbImageLink.Id).FirstOrDefault();
-                                if (existingLink != null)
-                                    successModel.Success = "Link already exists";
-                                else
-                                {
-                                    db.CategoryImageLinks.Add(new CategoryImageLink()
-                                    {
-                                        ImageCategoryId = model.DestinationFolderId,
-                                        ImageLinkId = dbImageLink.Id
-                                    });
-                                    db.SaveChanges();
-                                    successModel.Success = "ok";
-                                }
-                            }
-                            else  // Archive / Move
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    string link = model.Link.Replace("%20", " ");
+                    ImageLink dbImageLink = db.ImageLinks.Where(l => l.Link.Replace("%20", " ") == link.Replace("%20", " ")).FirstOrDefault();
+                    if (dbImageLink == null)
+                        successModel.Success = "link [" + link + "] not found";
+                    else
+                    {
+                        string linkId = dbImageLink.Id;
+                        List<CategoryImageLink> categoryImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == model.DestinationFolderId).ToList();
+                        if (model.Mode == "Copy")
+                        {
+                            //CategoryImageLink existingLink = db.CategoryImageLinks
+                            //    .Where(l => l.ImageCategoryId == model.DestinationFolderId)
+                            //    .Where(l => l.ImageLinkId == dbImageLink.Id).FirstOrDefault();
+
+                            CategoryImageLink existingLink = categoryImageLinks.Where(l => l.ImageLinkId == dbImageLink.Id).FirstOrDefault();
+                            if (existingLink != null)
+                                successModel.Success = "Link already exists";
+                            else
                             {
-                                CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.SourceFolderId).First();
+                                db.CategoryImageLinks.Add(new CategoryImageLink()
+                                {
+                                    ImageCategoryId = model.DestinationFolderId,
+                                    ImageLinkId = dbImageLink.Id,
+                                    SortOrder = 999
+                                });
+                                db.SaveChanges();
+                                successModel.Success = "ok";
+                            }
+                        }
+                        else  // Archive / Move
+                        {
+                            CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.SourceFolderId).First();
+                            int fileLocation = db.ImageLinks.Where(i => i.Id == model.Link).FirstOrDefault().FolderLocation; //. Link.Substring(link.LastIndexOf("_", 36));
+                            if (model.SourceFolderId == fileLocation)
+                            {
                                 CategoryFolder dbDestinationFolder = db.CategoryFolders.Where(f => f.Id == model.DestinationFolderId).First();
                                 string extension = model.Link.Substring(model.Link.LastIndexOf("."));
                                 string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName;
                                 string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.SourceFolderId) + dbSourceFolder.FolderName;
                                 string newFileName = dbDestinationFolder.FolderName + "_" + dbImageLink.Id + extension;
                                 string sourceFileName = model.Link.Substring(model.Link.LastIndexOf("/") + 1);
+
 
                                 if (!FtpUtilies.DirectoryExists(destinationFtpPath))
                                     FtpUtilies.CreateDirectory(destinationFtpPath);
@@ -202,37 +209,31 @@ namespace WebApi
                                     goDaddyrow.Link = goDaddyLink;
                                     goDaddyrow.FolderLocation = dbDestinationFolder.Id;
                                     db.SaveChanges();
-
-                                    //3 create new link for new location if necessary
-                                    if (db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Where(c => c.ImageLinkId == dbImageLink.Id).FirstOrDefault() == null)
-                                    {
-                                        successModel.ReturnValue = db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Count().ToString();
-                                        CategoryImageLink newCatImageLink = new CategoryImageLink()
-                                        {
-                                            ImageCategoryId = model.DestinationFolderId,
-                                            ImageLinkId = dbImageLink.Id,
-                                            SortOrder = 999
-                                        };
-                                        db.CategoryImageLinks.Add(newCatImageLink);
-                                        db.SaveChanges();
-                                    }
-                                    if (model.Mode == "Move")
-                                    {
-                                        // remove current link
-                                        CategoryImageLink oldCatImageLink = db.CategoryImageLinks
-                                             .Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == dbImageLink.Id).First();
-                                        db.CategoryImageLinks.Remove(oldCatImageLink);
-                                        db.SaveChanges();
-                                        successModel.ReturnValue = categoryImageLinks.Count().ToString();
-                                    }
-                                    successModel.Success = "ok";
                                 }
-                                else
-                                    successModel.Success = "file not found";
                             }
+                            if (model.Mode == "Move")
+                            {
+                                // ImageCategoryId is part of the key and can't be modified
+                                CategoryImageLink oldCatImageLink = db.CategoryImageLinks
+                                     .Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == dbImageLink.Id).First();
+
+                                CategoryImageLink newCatImageLink = new CategoryImageLink()
+                                {
+                                    ImageCategoryId = model.DestinationFolderId,
+                                    ImageLinkId = dbImageLink.Id,
+                                    SortOrder = oldCatImageLink.SortOrder
+                                };
+                                db.CategoryImageLinks.Add(newCatImageLink);
+                                db.CategoryImageLinks.Remove(oldCatImageLink);
+                                db.SaveChanges();
+                            }
+                            //else successModel.Success = "file not found";
                         }
                     }
+                    successModel.ReturnValue = db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Count().ToString();
+                    successModel.Success = "ok";
                 }
+
             }
             catch (Exception ex)
             {
@@ -250,13 +251,16 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
+                    ImageLink imageLink = null;
                     foreach (string imageLinkId in moveManyModel.ImageLinkIds)
                     {
+                        imageLink = db.ImageLinks.Where(i => i.Id == imageLinkId).First();
                         MoveImage(new MoveCopyImageModel()
                         {
                             DestinationFolderId = moveManyModel.DestinationFolderId,
                             SourceFolderId = moveManyModel.SourceFolderId,
-                            Link = db.ImageLinks.Where(i => i.Id == imageLinkId).First().Link,
+                            Link = imageLink.Link,
+                            //SortOrder =imageLink.
                             Mode = "Move"
                         });
                     }
@@ -779,96 +783,93 @@ namespace WebApi
                 List<CategoryFolder> subdirs = null;
                 string originParentPath = Helpers.GetParentPath(sourceFolderId);
                 string destinationParentPath = Helpers.GetParentPath(destinationFolderId);
+
+
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
+                    //  NO RENAMING OF FILES, ONLY LINK PATHS
+                    CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == sourceFolderId).FirstOrDefault();
+                    CategoryFolder dbDestinationParent = db.CategoryFolders.Where(f => f.Id == destinationFolderId).FirstOrDefault();
+                    // local repository
+                    try
+                    {
+                        string localSourcePath = repoPath + Helpers.GetLocalParentPath(sourceFolderId) + dbSourceFolder.FolderName;
+                        string localDestinationPath = repoPath + Helpers.GetLocalParentPath(destinationFolderId) + dbDestinationParent.FolderName + "/" + dbSourceFolder.FolderName;
+                        if (!Directory.Exists(localDestinationPath))
+                            Directory.CreateDirectory(localDestinationPath);
+                        DirectoryInfo directoryInfo = new DirectoryInfo(localSourcePath);
+                        directoryInfo.MoveTo(localDestinationPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        var err = Helpers.ErrorDetails(ex);
+                        System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
+                    }
+
+                    string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originParentPath + dbSourceFolder.FolderName;
+                    string destinationFtpPath = ftpHost + dbDestinationParent.RootFolder + ".ogglebooble.com/" + destinationParentPath + dbDestinationParent.FolderName + "/" + dbSourceFolder.FolderName;
+                    string createDirectorySuccess = "ok";
+                    if (!FtpUtilies.DirectoryExists(destinationFtpPath))
+                    {
+                        createDirectorySuccess = FtpUtilies.CreateDirectory(destinationFtpPath);
+                    }
+                    if (createDirectorySuccess == "ok")
+                    {
+                        string[] serverSideFiles = FtpUtilies.GetFiles(sourceFtpPath);
+                        //string fileNameGuid = "";
+                        string fileMoveSuccess = "ok";
+                        foreach (string serverSideFile in serverSideFiles)
+                        {
+                            fileMoveSuccess = FtpUtilies.MoveFile(sourceFtpPath + "/" + serverSideFile, destinationFtpPath + "/" + serverSideFile);
+                            if (fileMoveSuccess != "ok")
+                                return fileMoveSuccess;
+                        }
+                        success = FtpUtilies.RemoveDirectory(sourceFtpPath);
+                    }
+                    else
+                        success = createDirectorySuccess;
+
+                    // update links
+                    string destinationHttpPath = "http://" + dbDestinationParent.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(destinationFolderId) + dbDestinationParent.FolderName + "/" + dbSourceFolder.FolderName;
+                    string fileName = "";
+                    List<ImageLink> imageLinks = db.ImageLinks.Where(l => l.FolderLocation == sourceFolderId).ToList();
+                    {
+                        foreach (ImageLink imageLink in imageLinks)
+                        {
+                            fileName = dbSourceFolder.FolderName + imageLink.Link.Substring(imageLink.Link.IndexOf("_"));
+                            imageLink.Link = destinationHttpPath + "/" + fileName;
+                        }
+                    }
+                    db.SaveChanges();
+                    dbSourceFolder.Parent = destinationFolderId;
+                    dbSourceFolder.RootFolder = dbDestinationParent.RootFolder;
+                    db.SaveChanges();
+
                     using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
                     {
-
-                        //  NO RENAMING OF FILES, ONLY LINK PATHS
-                        CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == sourceFolderId).FirstOrDefault();
-                        CategoryFolder dbDestinationParent = db.CategoryFolders.Where(f => f.Id == destinationFolderId).FirstOrDefault();
-
-                        string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originParentPath + dbSourceFolder.FolderName;
-                        string destinationFtpPath = ftpHost + dbDestinationParent.RootFolder + ".ogglebooble.com/" + destinationParentPath + dbDestinationParent.FolderName + "/" + dbSourceFolder.FolderName;
-
-                        string createDirectorySuccess = "ok";
-
-
-
-                        if (!FtpUtilies.DirectoryExists(destinationFtpPath))
+                        List<MySqDataContext.ImageLink> imageLinks1 = mdb.ImageLinks.Where(l => l.FolderLocation == sourceFolderId).ToList();
                         {
-                            createDirectorySuccess = FtpUtilies.CreateDirectory(destinationFtpPath);
-                        }
-                        if (createDirectorySuccess == "ok")
-                        {
-                            string[] serverSideFiles = FtpUtilies.GetFiles(sourceFtpPath);
-                            //string fileNameGuid = "";
-                            string fileMoveSuccess = "ok";
-                            foreach (string serverSideFile in serverSideFiles)
+                            foreach (MySqDataContext.ImageLink imageLink in imageLinks1)
                             {
-                                fileMoveSuccess = FtpUtilies.MoveFile(sourceFtpPath + "/" + serverSideFile, destinationFtpPath + "/" + serverSideFile);
-                                if (fileMoveSuccess != "ok")
-                                    return fileMoveSuccess;
+                                fileName = imageLink.Link.Substring(imageLink.Link.IndexOf("_"));
+                                imageLink.Link = destinationHttpPath + fileName;
                             }
-                            success = FtpUtilies.RemoveDirectory(sourceFtpPath);
+                            //mdb.SaveChanges();
                         }
-                        else
-                            success = createDirectorySuccess;
-
-                        // local repository
-                        try
+                        mdb.SaveChanges();
+                        var mdbSourceFolder = mdb.CategoryFolders.Where(f => f.Id == sourceFolderId).FirstOrDefault();
+                        mdbSourceFolder.Parent = destinationFolderId;
+                        mdbSourceFolder.RootFolder = dbDestinationParent.RootFolder;
+                        mdb.SaveChanges();
+                        subdirs = db.CategoryFolders.Where(f => f.Parent == dbSourceFolder.Id).ToList();
+                        foreach (CategoryFolder subdir in subdirs)
                         {
-                            string localSourcePath = repoPath + Helpers.GetLocalParentPath(sourceFolderId) + dbSourceFolder.FolderName;
-                            string localDestinationPath = repoPath + Helpers.GetLocalParentPath(destinationFolderId) + dbDestinationParent.FolderName + "/" + dbSourceFolder.FolderName;
-                            DirectoryInfo directoryInfo = new DirectoryInfo(localSourcePath);
-                            directoryInfo.MoveTo(localDestinationPath);
-                        }
-                        catch (Exception ex)
-                        {
-                            var err = Helpers.ErrorDetails(ex);
-                            System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
-                        }
-
-                        // update links
-                        if (success == "ok")
-                        {
-                            string destinationHttpPath = "http://" + dbDestinationParent.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(destinationFolderId) + dbDestinationParent.FolderName + "/" + dbSourceFolder.FolderName;
-                            string fileName = "";
-                            List<ImageLink> imageLinks = db.ImageLinks.Where(l => l.FolderLocation == sourceFolderId).ToList();
-                            {
-                                foreach (ImageLink imageLink in imageLinks)
-                                {
-                                    fileName = dbSourceFolder.FolderName + imageLink.Link.Substring(imageLink.Link.IndexOf("_"));
-                                    imageLink.Link = destinationHttpPath + "/" + fileName;
-                                }
-                                //db.SaveChanges();
-                            }
-                            dbSourceFolder.Parent = destinationFolderId;
-                            dbSourceFolder.RootFolder = dbDestinationParent.RootFolder;
-                            db.SaveChanges();
-
-                            List<MySqDataContext.ImageLink> imageLinks1 = mdb.ImageLinks.Where(l => l.FolderLocation == sourceFolderId).ToList();
-                            {
-                                foreach (MySqDataContext.ImageLink imageLink in imageLinks1)
-                                {
-                                    fileName = imageLink.Link.Substring(imageLink.Link.IndexOf("_"));
-                                    imageLink.Link = destinationHttpPath + fileName;
-                                }
-                                //mdb.SaveChanges();
-                            }
-                            var mdbSourceFolder = mdb.CategoryFolders.Where(f => f.Id == sourceFolderId).FirstOrDefault();
-                            mdbSourceFolder.Parent = destinationFolderId;
-                            mdbSourceFolder.RootFolder = dbDestinationParent.RootFolder;
-                            mdb.SaveChanges();
-                            subdirs = db.CategoryFolders.Where(f => f.Parent == dbSourceFolder.Id).ToList();
-                            foreach (CategoryFolder subdir in subdirs)
-                            {
-                                // destinationFolderId is the current folder Id
-                                MoveFolder(subdir.Id, destinationFolderId);
-                            }
+                            // destinationFolderId is the current folder Id
+                            MoveFolder(subdir.Id, destinationFolderId);
                         }
                     }
                 }
+
             }
             catch (Exception ex)
             {

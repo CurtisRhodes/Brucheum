@@ -145,7 +145,11 @@
             includeHTML();
             $('#laCarousel').hide();
             $('#carouselInclude').hide();
-
+            $('#connectingMsg').hide();
+            setTimeout(function () {
+                if (!connectionVerified)
+                    $('#connectingMsg').fadeIn();
+            }, 2000);
             //$('#footerLastBuild').html("last build: " + lastBuild + "3");
             params = getParams();
             if (params.subdomain == undefined) {
@@ -184,14 +188,14 @@
                                 $('#pornLeftColumnList').show();
                                 $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
                                 $('#includeCenterfoldsCheckbox').hide();
-                                logPageHit(3909);
+                                logPageHit(3909, "Index");
                             }
                             else {
                                 setOggleHeader(subdomain, 3908, false);
                                 $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
                                 $('#boobsLeftColumnList').show();
                                 launchPromoMessages();
-                                logPageHit(3908);
+                                logPageHit(3908, "Index");
                             }
                             if (isInRole("Oggle admin")) {
                                 $('#carouselInclude').show();
