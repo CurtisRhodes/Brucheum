@@ -3,11 +3,34 @@ var dirTreeTab, totalPics, totalFolders;
 var dirTreeTabIndent = 22;
 var dirDepth = 3;
 var totalFiles = 0;
+var categoryTreeModel = null;
+var dirTreeComplete = false;
 
-function buildDirTree(dest, treeId, startNode, endNode) {  
 
-    //alert("buildDirTreez");
+function backgroundreBuild(dest, treeId, startNode) {
+    if (categoryTreeModel === null) {
+        categoryTreeModel = getDirTree(dest, treeId, startNode, false);
+        setTimeout(function () {
+            if(dirTreeComplete)
+                if (typeof onDirTreeComplete === "function") {
+                        onDirTreeComplete();
+                }
+                return categoryTreeModel;
+        }, 300);
+    }
+    else {
+        //first  initiate rebuild
+        var newDirTree = getDirTree(dest, treeId, startNode, true);
+        if (typeof onDirTreeComplete === "function") {
+            if (!isRebuild)
+                onDirTreeComplete();
+        }
+        return categoryTreeModel;
 
+    }
+}
+
+function getDirTree(dest, treeId, startNode, isRebuild) {
     try {
         var start = Date.now();
         totalFolders = 0;
@@ -17,14 +40,14 @@ function buildDirTree(dest, treeId, startNode, endNode) {
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/DirTree/Get?root=" + startNode,
-            success: function (categoryTreeModel) {
+            success: function (results) {
+                categoryTreeModel = results;
                 recurrBuildDirTree(categoryTreeModel, treeId);
-                dest.html(dirTreeContainer);
+                //   dest.html(dirTreeContainer);
+
                 var delta = (Date.now() - start) / 1000;
                 console.log("rebuildCatTree took: " + delta.toFixed(3));
-                if (typeof onDirTreeComplete === "function") {
-                    onDirTreeComplete();
-                }
+                dirTreeComplete = true;
             },
             error: function (xhr) {
                 dest.html("buildCatTree xhr error: " + getXHRErrorDetails(xhr));
@@ -33,6 +56,13 @@ function buildDirTree(dest, treeId, startNode, endNode) {
     } catch (e) {
         dest.html("buildCatTree catch: " + e);
     }
+}
+
+function buildDirTree(dest, treeId, startNode, endNode) {  
+
+
+    //alert("buildDirTreez");
+
 }
 
 function recurrBuildDirTree(dir, treeId) {

@@ -139,6 +139,7 @@ namespace WebApi
                         successModel.Success = "link [" + link + "] not found";
                     else
                     {
+                        int fileLocation = 0;
                         string linkId = dbImageLink.Id;
                         List<CategoryImageLink> categoryImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == model.DestinationFolderId).ToList();
                         if (model.Mode == "Copy")
@@ -165,7 +166,11 @@ namespace WebApi
                         else  // Archive / Move
                         {
                             CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.SourceFolderId).First();
-                            int fileLocation = db.ImageLinks.Where(i => i.Id == model.Link).FirstOrDefault().FolderLocation; //. Link.Substring(link.LastIndexOf("_", 36));
+
+                            ImageLink imageLink = db.ImageLinks.Where(i => i.Id == model.Link).FirstOrDefault(); //. Link.Substring(link.LastIndexOf("_", 36));
+                            if(imageLink!=null)
+                                 fileLocation = imageLink.FolderLocation; //. Link.Substring(link.LastIndexOf("_", 36));
+
                             if (model.SourceFolderId == fileLocation)
                             {
                                 CategoryFolder dbDestinationFolder = db.CategoryFolders.Where(f => f.Id == model.DestinationFolderId).First();

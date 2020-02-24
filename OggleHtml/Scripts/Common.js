@@ -271,7 +271,7 @@ function logActivity(changeLogModel) {
         data: changeLogModel,
         success: function (success) {
             if (success === "ok")
-                displayStatusMessage("ok", "add image logged");
+                displayStatusMessage("ok", "activity" + changeLogModel.ActivityCode + " logged");
             else {
                 //alert("ChangeLog: " + success);
                 sendEmailToYourself("error in common/logActivity", success);

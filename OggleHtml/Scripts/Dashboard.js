@@ -375,6 +375,7 @@ function showMoveManyTool() {
     $('#moveManyHeader').html(dashboardMainSelectedPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
     //$('#sortTableHeader').html(dashboardMainSelectedPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
     $('#dashBoardLoadingGif').fadeIn();
+
     buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
 
     $.ajax({
@@ -430,7 +431,8 @@ function moveCheckedImages() {
             success: function (success) {
                 if (success === "ok") {
                     $('#dashBoardLoadingGif').hide();
-                    buildDirectoryTree();
+                    partialViewSelectedItemId = 0;
+                    //buildDirectoryTree();
                     showMoveManyTool();
                 }
                 else

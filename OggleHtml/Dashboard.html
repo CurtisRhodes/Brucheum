@@ -85,6 +85,7 @@
                                 <button onclick="updateSortOrder()">ReSort</button>
                             </div>
                         </div>
+
                         <div id="divMoveManyTool" class="workAreaContainer">
                             <div class="workAreaHeader">
                                 <div class="workAreaHeaderLabel"><h3 id="moveManyHeader"></h3></div>
@@ -92,10 +93,18 @@
                             </div>
                             <div class="moveManyDestination">
                                 <span>destination</span>
-                                <input class="txtPartialDirTreePath roundedInput" readonly="readonly" />
+
+                                <input id="moveManyDirTree" class="txtPartialDirTreePath roundedInput" readonly="readonly" />
+                              
+                                
+                                
                                 <div onclick="$('#partialViewTreeContainer').dialog('open');" class="toggleButton">...</div>
                             </div>
+                            
+                            
                             <div id="moveManyToolContainer" class="workAreaDisplayContainer"></div>
+
+
                             <div class="workareaFooter">
                                 <button onclick="moveCheckedImages()">Move Checked</button>
                             </div>
@@ -317,7 +326,6 @@
             //window.addEventListener("beforeunload", function (event) { ... });
             //window.onbeforeunload = function (event) { ... };
         });
-
 
         function detectUnload() {
             alert("detectUnload");
