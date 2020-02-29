@@ -43,14 +43,12 @@ function ftpMoveCopy() {
             if (successModel.Success === "ok") {
                 displayStatusMessage("ok", "link " + MoveCopyImageModel.Mode + "ed to " + $('#dirTreeResults').html());
                 $('#moveCopyDialog').dialog("close");
-
                 //alert("changeLogModel id: " + MoveCopyImageModel.SourceFolderId + " mode: " + MoveCopyImageModel.Mode + "  name: " + $('#dirTreeResults').html());
-                //var changeLogModel = {
-                //    PageId: MoveCopyImageModel.SourceFolderId,
-                //    PageName: $('#dirTreeResults').html(),
-                //    Activity: "link " + MoveCopyImageModel.Link + "   " + MoveCopyImageModel.Mode + "ed"
-                //};
-                //logActivity(changeLogModel);
+                logActivity({
+                    PageId: MoveCopyImageModel.SourceFolderId,
+                    PageName: $('#dirTreeResults').html(),
+                    Activity: MoveCopyImageModel.Mode + " link " + MoveCopyImageModel.Link
+                });
 
                 if (successModel.ReturnValue === "0") {
                     var linkId = MoveCopyImageModel.Link.substr(MoveCopyImageModel.Link.lastIndexOf("_") + 1, 36);

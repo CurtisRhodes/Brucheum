@@ -20,11 +20,11 @@ function resizeDashboardPage() {
 
     $('.workAreaDisplayContainer').height(mch - 100);   
 
-    $('#footerMessage').html("dashboardContainer.width: " + $('.dashboardContainer').width() +
-        "  dashboardTreeContainer.width: " + $('.dashboardTreeContainer').width() +
-        "  dashboardLeftMenu.width: " + $('#dashboardLeftMenu').width() +
-        "  workAreaContainer.width: " + $('.workAreaContainer').width()) +
-        "  mw: " + mw;
+    //$('#footerMessage').html("dashboardContainer.width: " + $('.dashboardContainer').width() +
+    //    "  dashboardTreeContainer.width: " + $('.dashboardTreeContainer').width() +
+    //    "  dashboardLeftMenu.width: " + $('#dashboardLeftMenu').width() +
+    //    "  workAreaContainer.width: " + $('.workAreaContainer').width()) +
+    //    "  mw: " + mw;
 }
 
 function setDashboardHeader(viewId) {
@@ -70,6 +70,7 @@ function setDashboardHeader(viewId) {
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddRolesDialog()'>Edit Roles</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='$('.workAreaContainer').hide();$('#divAddVideo').show();\">Add Video Link</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveManyTool();'>Move Many</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
             break;
         default:
             alert("view not undestood: " + viewId);
@@ -362,7 +363,7 @@ function prepareXhamsterPage() {
     });
 }
 
-// WORK AREAS
+// MOVE MANY
 function showMoveManyTool() {
 
     if (isNullorUndefined(dashboardMainSelectedPath)) {
@@ -371,13 +372,19 @@ function showMoveManyTool() {
     }
     $('.workAreaContainer').hide();
     $('#divMoveManyTool').show();
-    //function loadManyImagesCheckboxes() {
     $('#moveManyHeader').html(dashboardMainSelectedPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
-    //$('#sortTableHeader').html(dashboardMainSelectedPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
+    $('#txtMoveManyDestination').val("");
     $('#dashBoardLoadingGif').fadeIn();
 
-    buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
-
+    $('#moveManyDestinationDirTree').dialog({
+        autoOpen: false,
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        position: ({ my: 'top', at: 'left', of: $('#moveManyToggleButton') }),
+        width: "400",
+        height: "550"
+    });
+    buildDirTree($('#moveManyDestinationDirTree'), 'moveManyFolderTree', 0);
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/ImagePage/GetImageLinks?folderId=" + dashboardMainSelectedTreeId,
@@ -403,11 +410,23 @@ function showMoveManyTool() {
         }
     });
 }
-
+var moveManyDestinationFolderId = 0;
+function moveManyFolderTreeClick(path, id) {
+    var displayPath = "";
+    if (path.length > path.indexOf(".COM") + 4) {
+        displayPath = path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " ");
+    }
+    else {
+        displayPath = path;
+    }
+    moveManyDestinationFolderId = id;
+    $('#txtMoveManyDestination').val(displayPath);
+    $('#moveManyDestinationDirTree').dialog("close");
+}
 function moveCheckedImages() {
     //alert("entering move many");    
     console.log("entering move many");
-    if (partialViewSelectedItemId === 0) {
+    if (moveManyDestinationFolderId === 0) {
         alert("select a destination");
         return;
     }
@@ -419,19 +438,18 @@ function moveCheckedImages() {
     });
     var moveManyModel = {
         SourceFolderId: dashboardMainSelectedTreeId,
-        DestinationFolderId: partialViewSelectedItemId,
+        DestinationFolderId: moveManyDestinationFolderId,
         ImageLinkIds: checkedImages
     };
-    if (confirm("move " + checkedImages.length + " images to " + $('.txtPartialDirTreePath').val())) {
+    if (confirm("move " + checkedImages.length + " images to " + $('#txtMoveManyDestination').val())) {
         $('#dashBoardLoadingGif').fadeIn();
         $.ajax({
             type: "PUT",
             url: settingsArray.ApiServer + "api/MoveImage/MoveMany",
             data: moveManyModel,
             success: function (success) {
+                $('#dashBoardLoadingGif').hide();
                 if (success === "ok") {
-                    $('#dashBoardLoadingGif').hide();
-                    partialViewSelectedItemId = 0;
                     //buildDirectoryTree();
                     showMoveManyTool();
                 }
@@ -449,6 +467,7 @@ function moveCheckedImages() {
     console.log("leaving move many");
 }
 
+// SORT TOOL
 function showSortTool() {
     //alert("dashboardMainSelectedPath: " + dashboardMainSelectedPath);
     if (isNullorUndefined(dashboardMainSelectedPath)) {
@@ -526,7 +545,7 @@ function updateSortOrder() {
         });
     }
 
-//  DIALOG FUNCTIONS 
+//  CREATE NEW FOLDER
 function createNewFolder() {
     $('#dashBoardLoadingGif').fadeIn();
     var newFolder = {};
@@ -539,13 +558,11 @@ function createNewFolder() {
             $('#dashBoardLoadingGif').hide();
             if (successModel.Success === "ok") {
                 displayStatusMessage("ok", "new folder " + newFolder.FolderName + " created");
-
-                var changeLogModel = {
+                logActivity({
                     PageId: dashboardMainSelectedTreeId,
                     PageName: $('#txtNewFolderTitle').val(),
-                    Activity: "new folder created"
-                };
-                logActivity(changeLogModel);
+                    Activity: "new folder " + newFolder.FolderName + " created"
+                });
                 $('#txtNewFolderTitle').val('');
                 //$('#createNewFolderDialog').dialog('close');
             }
@@ -559,9 +576,42 @@ function createNewFolder() {
     });
 }
 
+
+
+
+// MOVE FOLDER
 function showMoveFolderDialog() {
-    $('#moveFolderCrud').dialog('open');
-    buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
+    $('#moveFolderCrud').dialog({
+        autoOpen: true,
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        width: "400"
+    });
+    $('#moveFolderCrud').on('dialogclose', function (event) {
+        buildDirectoryTree();
+    });
+    $('#moveFolderDestDirTree').dialog({
+        autoOpen: false,
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        position: ({ my: 'right', at: 'left', of: $('#moveFolderCrud') }),
+        width: "400",
+        height: "550"
+    });
+    buildDirTree($('#moveFolderDestDirTree'), 'moveFolderTree', 0);
+}
+var moveFolderSelectedParentId = 0;
+function moveFolderTreeClick(path, id) {
+    var displayPath = "";
+    if (path.length > path.indexOf(".COM") + 4) {
+        displayPath = path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " ");
+    }
+    else {
+        displayPath = path;
+    }
+    moveFolderSelectedParentId = id;
+    $('#txtMoveFolderDest').val(displayPath);
+    $('#moveFolderDestDirTree').dialog("close");
 }
 function moveFolder() {
     //$('#dataifyInfo').show().html("Preparing to Move Folder");
@@ -570,27 +620,20 @@ function moveFolder() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "/api/FtpDashboard/MoveFolder?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + partialViewSelectedItemId,
+        url: settingsArray.ApiServer + "/api/FtpDashboard/MoveFolder?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + moveFolderSelectedParentId,
         success: function (success) {
-            $('#txtNewFolderParent').val('');
             $('#dashBoardLoadingGif').hide();
             if (!success.startsWith("ERROR")) {
-                displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val());
-                //$('#progressBar').hide();
+                displayStatusMessage("ok", "folder " + $('#txtMoveFolderDest').val() + " moved to " + $('.txtPartialDirTreePath').val());
                 //$('#progressBar').progressbar("destroy");
-
-                //alert("changeLogModel id: " + MoveCopyImageModel.SourceFolderId + " mode: " + MoveCopyImageModel.Mode + "  name: " + $('#dirTreeResults').html());
                 var changeLogModel = {
                     PageId: dashboardMainSelectedTreeId,
                     PageName: $('.txtPartialDirTreePath').val(),
-                    Activity: "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val()
+                    Activity: "folder " + $('#txtNewFolderParent').val() + " moved to " + $('#txtMoveFolderDest').val()
                 };
                 logActivity(changeLogModel);
-                //$('.txtPartialDirTreePath').val('');
-                $('#moveFolderCrud').dialog("close");
-                $('.txtLinkPath').val('');
+                $('#txtMoveFolderDest').val('');
                 $('#dataifyInfo').hide();
-                buildDirectoryTree();
             }
             else
                 alert("Move Folder: " + success);
@@ -602,7 +645,31 @@ function moveFolder() {
     });
     //$('#moveFolderCrud').on('dialogclose', function (event) {
 }
-function moveFolderTreeClick(path, id) {
+
+// COPY FOLDER
+function showCopyFolderDialog() {
+    $('#copyFolderCrud').dialog({
+        autoOpen: true,
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        width: "600"
+    });
+    $('#copyFolderCrud').on('dialogclose', function (event) {
+        buildDirectoryTree();
+        //$('#copyFolderCrud').hide();
+    });
+    $('#copyFolderParentDirTree').dialog({
+        autoOpen: false,
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        position: ({ my: 'right', at: 'left', of: $('#copyFolderCrud') }),
+        width: "400",
+        height: "550"
+    });
+    buildDirTree($('#copyFolderParentDirTree'), 'copyFolderParent', 0);
+}
+var copyFolderSelectedParentId = 0;
+function copyFolderParentClick(path, id) {
     var displayPath = "";
     if (path.length > path.indexOf(".COM") + 4) {
         displayPath = path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " ");
@@ -610,51 +677,38 @@ function moveFolderTreeClick(path, id) {
     else {
         displayPath = path;
     }
-    partialViewSelectedItemId = id;
-    $('.txtPartialDirTreePath').val(displayPath);
-    $('#partialViewTreeContainer').dialog("close");
-}
-
-function showCopyFolderDialog() {
-    $('#copyFolderCrud').dialog('open');
-    buildDirTree($('#folderToMoveTreeContainer'), 'moveFolderTree', 0);
+    copyFolderSelectedParentId = id;
+    $('#txtCopyFolderParent').val(displayPath);
+    $('#copyFolderParentDirTree').dialog("close");
 }
 function copyFolder() {
     $('#dataifyInfo').show().html("Copying Folder");
     //$('#progressBar').show();
     $('#dashBoardLoadingGif').show();
-
     var stepchildModel = {
-        Parent: partialViewSelectedItemId,
+        Parent: copyFolderSelectedParentId,
         Child: dashboardMainSelectedTreeId,
-        Link: "",
-        RootFolder: "",
-        SortOrder: 99
+        Link: $('#txtNewLink').val(),
+        FolderName: $('#txtNewFolderName').val(),
+        SortOrder: 998
     };
-
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Folder",
         data: stepchildModel,
         success: function (successModel) {
             $('#dashBoardLoadingGif').hide();
+            $('#dataifyInfo').hide();
             if (successModel.Success === "ok") {
-
                 displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " copied to " + $('.txtPartialDirTreePath').val());
-
+                logActivity({
+                    PageId: dashboardMainSelectedTreeId,
+                    PageName: $('.txtPartialDirTreePath').val(),
+                    Activity: "copied folder " + $('#txtNewFolderParent').val() + " to " + $('.txtPartialDirTreePath').val()
+                });
                 $('#txtNewFolderParent').val('');
-                $('#dataifyInfo').hide();
-
-                //var changeLogModel = {
-                //    PageId: dashboardMainSelectedTreeId,
-                //    PageName: $('.txtPartialDirTreePath').val(),
-                //    Activity: "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val()
-                //};
-                //logActivity(changeLogModel);
-
                 $('.txtPartialDirTreePath').val('');
-                $('#moveFolderCrud').dialog("close");
-                buildDirectoryTree();
+                //$('#moveFolderCrud').dialog("close");
             }
             else
                 alert("copy stepchild: " + successModel.Success);
@@ -664,7 +718,37 @@ function copyFolder() {
             alert("Move Folder xhr error: " + getXHRErrorDetails(xhr));
         }
     });
-    //$('#moveFolderCrud').on('dialogclose', function (event) {
+}
+
+
+function addFileDates() {
+    $('#dataifyInfo').show().html("adding file dates");
+    //$('#progressBar').show();
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/RepairLinks/UpdateDates?startFolderId=" + dashboardMainSelectedTreeId,
+        success: function (results) {
+            $('#dashBoardLoadingGif').hide();
+            if (results.Success === "ok") {
+                displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val());
+                //$('#progressBar').hide();
+                //$('#progressBar').progressbar("destroy");
+                alert("addFileDates : " + results.Success);
+                //logActivity({
+                //    PageId: dashboardMainSelectedTreeId,
+                //    PageName: $('.txtPartialDirTreePath').val(),
+                //    Activity: "folder " + $('#txtNewFolderParent').val() + " moved to " + $('.txtPartialDirTreePath').val()
+                //});
+            }
+            else
+                alert("addFileDates : " + results.Success);
+        },
+        error: function (xhr) {
+            $('#dashBoardLoadingGif').hide();
+            alert("Move Folder xhr error: " + getXHRErrorDetails(xhr));
+        }
+    });
 }
 
 function renameFolder() {

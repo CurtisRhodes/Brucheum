@@ -43,7 +43,9 @@ function getDirTree(dest, treeId, startNode, isRebuild) {
             success: function (results) {
                 categoryTreeModel = results;
                 recurrBuildDirTree(categoryTreeModel, treeId);
-                //   dest.html(dirTreeContainer);
+
+                dest.html(dirTreeContainer);
+                onDirTreeComplete();
 
                 var delta = (Date.now() - start) / 1000;
                 console.log("rebuildCatTree took: " + delta.toFixed(3));
@@ -60,7 +62,7 @@ function getDirTree(dest, treeId, startNode, isRebuild) {
 
 function buildDirTree(dest, treeId, startNode, endNode) {  
 
-
+    getDirTree(dest, treeId, startNode);
     //alert("buildDirTreez");
 
 }
@@ -88,8 +90,7 @@ function recurrBuildDirTree(dir, treeId) {
         }
 
         totalFiles = 0;
-        if (subDir.SubDirCount > 0) {
-            subDir.FileCount = 0;
+        if (subDir.SubDirCount > 0) {            
             txtFileCount = subDir.SubDirCount.toLocaleString() + "/" + getAllChildFileCounts(subDir).toLocaleString();
         }
         else
@@ -115,7 +116,8 @@ function getAllChildFileCounts(thisFolder) {
     totalFiles += thisFolder.FileCount;
     
     $.each(thisFolder.SubDirs, function (idx, subDirObj) {
-        getAllChildFileCounts(subDirObj);
+        if (!subDirObj.IsStepChild)
+            getAllChildFileCounts(subDirObj);
     });
     return totalFiles;
 }

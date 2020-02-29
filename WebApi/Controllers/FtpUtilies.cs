@@ -70,6 +70,31 @@ namespace WebApi.Ftp
             }
         }
 
+        public static DateTime GetLastModified(string ftpPath)
+        {
+            DateTime fileDate = DateTime.MinValue;
+            IList<string> fileProperties = new List<string>();
+            try
+            {
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpPath);
+                request.Method = WebRequestMethods.Ftp.GetDateTimestamp;
+                request.Credentials = networkCredentials;
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+                //fileProperties.Add(response.LastModified.ToShortDateString());
+
+                fileDate = response.LastModified;
+
+                response.Close();
+            }
+            catch (Exception ex)
+            {
+                fileProperties.Add(Helpers.ErrorDetails(ex));
+            }
+            return fileDate;
+        }
+
+
         public static string[] GetFiles(string ftpPath)
         {
             IList<string> ftpFiles = new List<string>();

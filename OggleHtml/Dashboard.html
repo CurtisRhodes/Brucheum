@@ -93,18 +93,11 @@
                             </div>
                             <div class="moveManyDestination">
                                 <span>destination</span>
-
-                                <input id="moveManyDirTree" class="txtPartialDirTreePath roundedInput" readonly="readonly" />
-                              
-                                
-                                
-                                <div onclick="$('#partialViewTreeContainer').dialog('open');" class="toggleButton">...</div>
+                                <input id="txtMoveManyDestination" class="roundedInput" readonly="readonly" />
+                                <div id="moveManyToggleButton" onclick="$('#moveManyDestinationDirTree').dialog('open');" class="toggleButton">...</div>
+                                <div id="moveManyDestinationDirTree" class="dirTreeContainer" title="Select Destination Folder"></div>
                             </div>
-                            
-                            
                             <div id="moveManyToolContainer" class="workAreaDisplayContainer"></div>
-
-
                             <div class="workareaFooter">
                                 <button onclick="moveCheckedImages()">Move Checked</button>
                             </div>
@@ -206,23 +199,23 @@
                 <div id="moveFolderCrud" class="dashboardToggle" title="Move Folder">
                     <div><span>folder to move</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
                     <div>
-                        <span>new parent </span><div onclick="$('#partialViewTreeContainer').dialog('open');" class="toggleButton">...</div>
-                        <input class="txtPartialDirTreePath roundedInput" readonly="readonly" />
+                        <span>new parent </span><div onclick="$('#moveFolderDestDirTree').dialog('open');" class="toggleButton">...</div>
+                        <div id="moveFolderDestDirTree" class="moveDirTreeContainer" title="Select Parent Folder"></div>
+                        <input id="txtMoveFolderDest" class="roundedInput" readonly="readonly" />
                     </div>
                     <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
                 </div>
 
                 <div id="copyFolderCrud" class="dashboardToggle" title="Copy Folder">
                     <div><span>folder to copy</span><input id="txtNewStepParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                    <div><span>new name</span><input id="txtNewFolderName" class="roundedInput" /></div>
+                    <div><span>link</span><input id="txtNewLink" class="roundedInput" /></div>
                     <div>
-                        <span>new parent </span><div onclick="$('#partialViewTreeContainer').dialog('open');" class="toggleButton">...</div>
-                        <input class="txtPartialDirTreePath roundedInput" readonly="readonly" />
+                        <span>new parent </span><div id="copyFolderToggleButton" onclick="$('#copyFolderParentDirTree').dialog('open');" class="toggleButton">...</div>
+                        <div id="copyFolderParentDirTree" class="moveDirTreeContainer" title="Select Parent Folder"></div>
+                        <input id="txtCopyFolderParent" class="roundedInput" readonly="readonly" />
                     </div>
                     <div class="roundendButton" onclick="copyFolder()">Copy Folder</div>
-                </div>
-
-                <div id="partialViewTreeContainer" title="Select Folder to move">
-                    <div id="folderToMoveTreeContainer" class="moveDirTreeContainer"></div>
                 </div>
 
                 <div id="addEditRolesDialog" class="dashboardToggle" title="Add Edit Roles">
@@ -304,16 +297,22 @@
                     setOggleHeader("admin", 3910, false);
                     setOggleFooter('boobs', 3910);
                     logPageHit(3910, "dashboard");
-
-                    if (isInRole("Oggle admin")) {
-                        $('.adminLevelOption').show();
-                    }
-                    setDashboardHeader('Add Images');
                     $('.breadcrumbContainer').html("");
                     $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Add Images');\">Add Images</a>");
                     $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Manage Folders');\">Manage Folders</a>");
                     $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Reports');\">Reports</a>");
                     $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Admin');\">Admin</a>");
+
+                    if (isInRole("Oggle admin")) {
+                        //alert("isInRole Oggle admin")
+                        $('.adminLevelOption').show();
+                        setDashboardHeader('Admin');
+                    }
+                    else {
+                        //alert("NOT In Role Oggle admin");
+                        setDashboardHeader('Add Images');
+                    }
+                    
                 }
             }, 300);
 
@@ -365,12 +364,6 @@
                 }
             });
 
-            $('#moveFolderCrud').dialog({
-                autoOpen: false,
-                show: { effect: "fade" },
-                hide: { effect: "blind" },
-                width: "400"
-            });
 
             $('#renameFolderCrud').dialog({
                 autoOpen: false,

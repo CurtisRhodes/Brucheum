@@ -169,8 +169,6 @@ namespace WebApi.MySqDataContext
         [Column(Order = 0)]
         public int Id { get; set; }
         public int Parent { get; set; }
-        [Key]
-        [Column(Order = 1)]
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
     }

@@ -975,6 +975,17 @@ function performEvent(eventCode, calledFrom, eventDetail) {
                     "\neventDetail: " + eventDetail);
             }
         }
+
+        if (eventCode === "SSXXXBP") {
+            if (eventDetail) {
+                showCustomMessage(22);
+            }
+
+        }
+
+
+
+
     }
     // NOW PERFORM EVENT
     switch (eventCode) {

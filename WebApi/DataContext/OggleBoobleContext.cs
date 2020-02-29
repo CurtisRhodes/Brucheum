@@ -91,6 +91,7 @@ namespace WebApi.OggleBoobleSqlContext
         public int? Width { get; set; }
         public int? Height { get; set; }
         public long? Size { get; set; }
+        public DateTime? LastModified { get; set; }
     }
 
     [Table("OggleBooble.CategoryImageLink")]

@@ -218,7 +218,7 @@ namespace WebApi
                     expectedFileName = dbCategoryFolder.FolderName + "_" + linkId + ext;
                 }
                 if (!fileNameInExpectedForm)
-                { 
+                {
                     // rename file
                     string renameSuccess = FtpUtilies.MoveFile(ftpPath + "/" + fileName, ftpPath + "/" + expectedFileName);
                     if (renameSuccess == "ok")
@@ -401,5 +401,73 @@ namespace WebApi
             return success;
         }
 
+        [HttpGet]
+        [Route("api/RepairLinks/UpdateDates")]
+        public RepairReportModel UpdateDates(int startFolderId)
+        {
+            RepairReportModel results = new RepairReportModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    var timer = new System.Diagnostics.Stopwatch();
+                    timer.Start();
+                    UpDateDatesRecurr(startFolderId, results, db);
+                    timer.Stop();
+                    System.Diagnostics.Debug.WriteLine("VerifyLinksRecurr took: " + timer.Elapsed);
+                }
+                results.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                results.Success = Helpers.ErrorDetails(ex);
+            }
+            return results;
+        }
+        private string UpDateDatesRecurr(int folderId, RepairReportModel results, OggleBoobleContext db)
+        {
+            string success = "";
+            try
+            {
+                //CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                //string ftpPath = ftpHost + "/" + dbCategoryFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(folderId);
+                List<ImageLink> imageLinks = db.ImageLinks.Where(l => l.FolderLocation == folderId).ToList();
+                DateTime imageFileDateTime= DateTime.MinValue;
+                foreach (ImageLink imageLink in imageLinks)
+                {
+                    if (imageLink.LastModified == null)
+                    {
+                        try
+                        {
+                            imageFileDateTime = FtpUtilies.GetLastModified(imageLink.Link.Replace("http://", ftpHost));
+                            imageLink.LastModified = imageFileDateTime;
+                            db.SaveChanges();
+                            results.NewLinksAdded++;
+                        }
+                        catch (Exception ex)
+                        {
+                            success = Helpers.ErrorDetails(ex);
+                            results.Errors.Add(imageLink.Id + " date: " + imageFileDateTime + " error: " + success);
+                            results.LinksRemoved++;
+                        }
+                    }
+                    else {
+                        results.ImagesRenamed++;
+                    }
+                    results.RowsProcessed++;
+                }
+
+                foreach (int subDirId in db.CategoryFolders.Where(f => f.Parent == folderId).Select(f => f.Id).ToArray())
+                {
+                    UpDateDatesRecurr(subDirId, results, db);
+                }
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
     }
 }

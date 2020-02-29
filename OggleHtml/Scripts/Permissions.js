@@ -1,10 +1,20 @@
 ﻿function isInRole(roleName) {
-    if (!isLoggedIn())
+
+
+    //alert("isInRole roleName: " + roleName);
+
+
+    if (!isLoggedIn()) {
+       // alert("not logged in");
         return false;
+    }
     
     var userpermissons = window.localStorage["userPermissons"];
-    if (!isNullorUndefined(userpermissons))
+    if (!isNullorUndefined(userpermissons)) {
+        //alert("!isNullorUndefined(userpermissons)");
         return isInRoleStep2(userpermissons, roleName);
+    }
+
 
     $.ajax({
         type: "GET",
@@ -23,10 +33,11 @@
                 if (document.domain === 'localhost') alert("ERROR IN Permissions.js GetUserRoles" +
                     "\napi/Roles/GetUserRoles?userName=" + userName + "\nwhichType=Assigned" +
                     "\nMessage: " + roleModel.Success);
-                else
+                else {
                     sendEmailToYourself("ERROR IN Permissions.js GetUserRoles",
                         "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned" +
                         " Message: " + roleModel.Success);
+                }
                 return false;
             }
         },
@@ -46,12 +57,14 @@ function isInRoleStep2(userPermissons, roleName) {
     //alert("isInRoleStep2  \nuserpermissons: " + userPermissons + "\nroleName: " + roleName);
     if (isNullorUndefined(roleName)) {
         if (document.domain === 'localhost') alert("ERROR IN isInRoleStep2\nroleName not working");
-        else
-            sendEmailToYourself("ERROR IN isInRoleStep2", "roleName not working");
+        else {
+            //sendEmailToYourself("ERROR IN isInRoleStep2", "roleName not working");
+            alert("roleName not working");
+        }
         return false;
     }
     if (isNullorUndefined(userPermissons)) {
-        //if (document.domain === 'localhost') alert("ERROR IN isInRoleStep2\nuserpermissons[] not working");
+        if (document.domain === 'localhost') alert("ERROR IN isInRoleStep2\nuserpermissons[] not working");
         //else sendEmailToYourself("ERROR IN isInRoleStep2", "userpermissons[] not working");
         return false;
     }
