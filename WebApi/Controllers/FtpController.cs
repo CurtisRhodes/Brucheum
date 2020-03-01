@@ -207,7 +207,7 @@ namespace WebApi
 
                             //2. update ImageLink 
                             string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
-                            string goDaddyLink = linkPrefix + Helpers.GetParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName + "/" + dbDestinationFolder.FolderName + "_" + dbImageLink.Id + extension;
+                            string goDaddyLink = linkPrefix + Helpers.GetParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName + "/" + newFileName + "_" + dbImageLink.Id + extension;
                             ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == dbImageLink.Id).FirstOrDefault();
                             goDaddyrow.Link = goDaddyLink;
                             goDaddyrow.FolderLocation = dbDestinationFolder.Id;
@@ -570,9 +570,6 @@ namespace WebApi
                         {
                             System.Diagnostics.Debug.WriteLine("delete didn't work " + ex.Message);
                         }
-
-
-
                         //var goDaddyLink = "http://" + dbCategory.RootFolder + ".ogglebooble.com/";
                         //var goDaddyLinkTest = goDaddyLink + trimPath + "/" + newFileName;
                         db.ImageLinks.Add(new ImageLink()
@@ -583,13 +580,14 @@ namespace WebApi
                             Width = fWidth,
                             Height = fHeight,
                             Size = fSize,
+                            LastModified = DateTime.Now,
                             Link = "http://" + trimPath + "/" + newFileName
                         });
                         db.CategoryImageLinks.Add(new CategoryImageLink()
                         {
                             ImageCategoryId = newLink.FolderId,
                             ImageLinkId = imageLinkId,
-                            SortOrder = 99
+                            SortOrder = 999
                         });
                         db.SaveChanges();
 
@@ -795,11 +793,12 @@ namespace WebApi
                 string originParentPath = Helpers.GetParentPath(sourceFolderId);
                 //string ftpSourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + originParentPath + dbSourceFolder.FolderName;
                 string sourcePath = dbSourceFolder.RootFolder + ".ogglebooble.com/" + originParentPath + dbSourceFolder.FolderName;
-                MoveFolderRecurr(sourceFolderId, destinationFolderId, sourcePath, destinationPath);                
+                success = MoveFolderRecurr(sourceFolderId, destinationFolderId, sourcePath, destinationPath);
+                if (success == "ok")
+                    FtpUtilies.RemoveDirectory(ftpHost + sourcePath);
             }
             return success;
         }
-
         private string MoveFolderRecurr(int sourceFolderId, int destinationFolderId, string sourcePath, string destinationPath)
         {
             string success = "";
@@ -811,21 +810,6 @@ namespace WebApi
 
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    // local repository
-                    //try
-                    //{
-                    //    string localSourcePath = repoPath + Helpers.GetLocalParentPath(sourceFolderId) + dbSourceFolder.FolderName;
-                    //    string localDestinationPath = repoPath + Helpers.GetLocalParentPath(destinationFolderId) + dbDestinationParent.FolderName + "/" + dbSourceFolder.FolderName;
-                    //    if (!Directory.Exists(localDestinationPath))
-                    //        Directory.CreateDirectory(localDestinationPath);
-                    //    DirectoryInfo directoryInfo = new DirectoryInfo(localSourcePath);
-                    //    directoryInfo.MoveTo(localDestinationPath);
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    var err = Helpers.ErrorDetails(ex);
-                    //    System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
-                    //}
                     if (!FtpUtilies.DirectoryExists(ftpDestinationPath))
                     {
                         string createDirectorySuccess = FtpUtilies.CreateDirectory(ftpDestinationPath);
@@ -839,9 +823,12 @@ namespace WebApi
                     // FTP Move Files
                     foreach (string serverSideFile in serverSideFiles)
                     {
-                        fileMoveSuccess = FtpUtilies.MoveFile(ftpSourcePath + "/" + serverSideFile, ftpDestinationPath + "/" + serverSideFile);
-                        if (fileMoveSuccess != "ok")
-                            return fileMoveSuccess;
+                        if (ftpSourcePath != ftpDestinationPath)
+                        {
+                            fileMoveSuccess = FtpUtilies.MoveFile(ftpSourcePath + "/" + serverSideFile, ftpDestinationPath + "/" + serverSideFile);
+                            if (fileMoveSuccess != "ok")
+                                return fileMoveSuccess;
+                        }
                     }
                     // success = FtpUtilies.RemoveDirectory(sourceFtpPath);
 
@@ -849,47 +836,54 @@ namespace WebApi
                     List<CategoryFolder> subdirs = db.CategoryFolders.Where(f => f.Parent == sourceFolderId).ToList();
                     foreach (CategoryFolder subdir in subdirs)
                     {
-                        sourcePath += "/" + subdir.FolderName;
-                        destinationPath += "/" + subdir.FolderName;
-                        // destinationFolderId is the current folder Id
-                        MoveFolderRecurr(subdir.Id, sourceFolderId, sourcePath, destinationPath);
-
+                        MoveFolderRecurr(subdir.Id, sourceFolderId, sourcePath + "/" + subdir.FolderName, destinationPath + "/" + subdir.FolderName);
 
                         // update links
                         //string destinationHttpPath = "http://" + dbDestinationParent.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(destinationFolderId) + dbDestinationParent.FolderName + "/" + dbSourceFolder.FolderName;
                         string fileName = "", newLink = "";
-                        List<ImageLink> imageLinks = db.ImageLinks.Where(l => l.FolderLocation == sourceFolderId).ToList();
+                        List<ImageLink> imageLinks = db.ImageLinks.Where(l => l.FolderLocation == subdir.Id).ToList();
                         foreach (ImageLink imageLink in imageLinks)
                         {
                             fileName = imageLink.Link.Substring(imageLink.Link.LastIndexOf("/"));
-                            newLink = "http://" + destinationPath + fileName;
-                            imageLink.Link = "http://" + destinationPath + fileName;
+                            newLink = "http://" + destinationPath + "/" + subdir.FolderName + fileName;
+                            imageLink.Link = newLink;
                         }
-                        db.SaveChanges();
-
                         CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == sourceFolderId).FirstOrDefault();
+                        string localSourcePath = repoPath + Helpers.GetLocalParentPath(sourceFolderId) + dbSourceFolder.FolderName;
                         CategoryFolder dbDestinationParent = db.CategoryFolders.Where(f => f.Id == destinationFolderId).FirstOrDefault();
                         dbSourceFolder.Parent = destinationFolderId;
                         dbSourceFolder.RootFolder = dbDestinationParent.RootFolder;
                         db.SaveChanges();
+
                         // update links on mysql
                         using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
                         {
-                            List<MySqDataContext.ImageLink> imageLinks1 = mdb.ImageLinks.Where(l => l.FolderLocation == sourceFolderId).ToList();
+                            List<MySqDataContext.ImageLink> imageLinks1 = mdb.ImageLinks.Where(l => l.FolderLocation == subdir.Id).ToList();
+                            foreach (MySqDataContext.ImageLink imageLink in imageLinks1)
                             {
-                                foreach (MySqDataContext.ImageLink imageLink in imageLinks1)
-                                {
-                                    fileName = imageLink.Link.Substring(imageLink.Link.LastIndexOf("/"));
-                                    newLink = "http://" + destinationPath + fileName;
-                                    imageLink.Link = newLink;
-                                }
-                                //mdb.SaveChanges();
+                                fileName = imageLink.Link.Substring(imageLink.Link.LastIndexOf("/"));
+                                newLink = "http://" + destinationPath + "/" + subdir.FolderName + fileName;
+                                imageLink.Link = newLink;
                             }
-                            mdb.SaveChanges();
                             var mdbSourceFolder = mdb.CategoryFolders.Where(f => f.Id == sourceFolderId).FirstOrDefault();
                             mdbSourceFolder.Parent = destinationFolderId;
                             mdbSourceFolder.RootFolder = dbDestinationParent.RootFolder;
                             mdb.SaveChanges();
+                        }
+
+                        // local repository
+                        try
+                        {
+                            string localDestinationPath = repoPath + Helpers.GetLocalParentPath(destinationFolderId) + dbDestinationParent.FolderName + "/" + dbSourceFolder.FolderName;
+                            if (!Directory.Exists(localDestinationPath))
+                                Directory.CreateDirectory(localDestinationPath);
+                            DirectoryInfo directoryInfo = new DirectoryInfo(localSourcePath);
+                            directoryInfo.MoveTo(localDestinationPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            var err = Helpers.ErrorDetails(ex);
+                            System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
                         }
                     }
                 }
@@ -902,7 +896,7 @@ namespace WebApi
             return success;
         }
 
-        private string RecurrisivlyRemoveFtpFolders(string ftpPath)
+        private string RecursivelyRemoveFtpFolders(string ftpPath)
         {
             string success = "ok";
             try
