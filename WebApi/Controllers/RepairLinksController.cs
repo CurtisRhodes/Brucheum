@@ -437,5 +437,71 @@ namespace WebApi
             }
             return success;
         }
+
+        [HttpPut]
+        public RepairReportModel EmergencyFolderLocationFix(int root)
+        {
+            RepairReportModel repairReportModel = new RepairReportModel();
+            EmergencyFolderLocationRecurr(root, repairReportModel);
+            return repairReportModel;
+        }
+        private void EmergencyFolderLocationRecurr(int root, RepairReportModel repairReportModel)
+        {
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == root).ToList();
+                    string linkId;
+                    foreach (CategoryFolder categoryFolder in categoryFolders)
+                    {
+                        string ftpPath = ftpHost + "/" + categoryFolder.RootFolder + ".ogglebooble.com/"
+                            + Helpers.GetParentPath(categoryFolder.Id) + categoryFolder.FolderName;
+                        string[] files = FtpUtilies.GetFiles(ftpPath);
+                        foreach (string fileName in files)
+                        {
+                            if (fileName.LastIndexOf("_") > 0)
+                            {
+                                linkId = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
+                                ImageLink imageLink = db.ImageLinks.Where(l => l.Id == linkId).FirstOrDefault();
+                                if (imageLink != null)
+                                {
+                                    if (imageLink.FolderLocation != categoryFolder.Id)
+                                    {
+                                        imageLink.FolderLocation = categoryFolder.Id;
+                                        db.SaveChanges();
+                                        repairReportModel.LinksEdited++;
+                                    }
+                                    else
+                                    {
+                                        repairReportModel.ImagesMoved++;
+                                        if (imageLink.FolderLocation == 4267)
+                                            Console.WriteLine("imageLink.FolderLocation() != categoryFolder.Id()");
+                                    }
+                                }
+                                else
+                                {
+                                    repairReportModel.Errors.Add("no imagelink found for link " + linkId + " folder: " + categoryFolder.FolderName);
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("bad filename?: " + fileName);
+                                repairReportModel.Errors.Add("bad filename ?: " + fileName);
+                            }
+                            repairReportModel.RowsProcessed++;
+                        }
+                        EmergencyFolderLocationRecurr(categoryFolder.Id, repairReportModel);
+                    }
+                    repairReportModel.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                repairReportModel.Success = Helpers.ErrorDetails(ex);
+            }
+        }
+
+
     }
 }

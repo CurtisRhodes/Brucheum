@@ -397,7 +397,7 @@ function repairLinks() {
                     //    $('#repairReport').append("<div> bad link: " + element.id + "</div>");
                     //});
 
-                    setTimeout(function () { $('#dataifyInfo').hide(); }, 3000);
+                    //setTimeout(function () { $('#dataifyInfo').hide(); }, 3000);
 
                 }
                 catch (e) {

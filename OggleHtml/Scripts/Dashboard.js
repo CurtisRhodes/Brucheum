@@ -71,6 +71,11 @@ function setDashboardHeader(viewId) {
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='$('.workAreaContainer').hide();$('#divAddVideo').show();\">Add Video Link</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveManyTool();'>Move Many</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
+
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='emergencyFolderLocationFix()'>emergencyFolderLocationFix</div>");
+
+            
+
             break;
         default:
             alert("view not undestood: " + viewId);
@@ -576,9 +581,6 @@ function createNewFolder() {
     });
 }
 
-
-
-
 // MOVE FOLDER
 function showMoveFolderDialog() {
     $('#moveFolderCrud').dialog({
@@ -620,7 +622,7 @@ function moveFolder() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "/api/FtpDashboard/MoveFolder?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + moveFolderSelectedParentId,
+        url: settingsArray.ApiServer + "/api/Folder/MoveFolder?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + moveFolderSelectedParentId,
         success: function (success) {
             $('#dashBoardLoadingGif').hide();
             if (!success.startsWith("ERROR")) {
@@ -842,6 +844,42 @@ function postImage() {
         //displayStatusMessage("alert-danger", "ERROR t: " + e);
         alert("try catch ERROR : " + e);
     }
+}
+
+function emergencyFolderLocationFix() {
+    var start = Date.now();
+    $('#dashBoardLoadingGif').show();
+    $('#dataifyInfo').show().html("fixing folder location " + $('.txtLinkPath').val());
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "/api/RepairLinks/EmergencyFolderLocationFix?root=" + dashboardMainSelectedTreeId,
+        success: function (repairReportModel) {
+            $('#dashBoardLoadingGif').hide();
+            if (repairReportModel.Success === "ok") {
+                var delta = Date.now() - start;
+                var minutes = Math.floor(delta / 60000);
+                var seconds = (delta % 60000 / 1000).toFixed(0);
+
+                console.log("emergencyFolderLocationFix took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+
+                $('#dataifyInfo').show().html("loc fix took: " + minutes + ":" + seconds + " rows processed  " + repairReportModel.RowsProcessed + " recs fixed: " + repairReportModel.LinksEdited + " Errors: " + repairReportModel.Errors.length);
+
+                //
+            }
+            else {
+                alert("emergencyFolderLocationFix: " + repairReportModel.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "emergencyFolderLocationFix")) {
+                alert("XHR ERROR in Dashboard.js renameFolder" + errorMessage);
+            }
+        }
+    });
+
+    // hot 4223
+
 }
 
 

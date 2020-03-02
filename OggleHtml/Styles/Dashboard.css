@@ -153,6 +153,7 @@
     border: solid .5px #555;
     height: 32px;
     min-width: 610px;
+    cursor: pointer;
     background-color: #f8e8e8;
     /*vertical-align: bottom;*/
 }
