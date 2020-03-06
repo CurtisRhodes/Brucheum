@@ -21,7 +21,14 @@ function loadSettings() {
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "loadSettings")) {
-                sendEmailToYourself("XHR error in common.js loadSettings", "/Data/Settings.xml Message: " + errorMessage);
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "XHR",
+                    Severity: 1,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "common.js loadSettings"
+                });
+                //sendEmailToYourself("XHR error in common.js loadSettings", "/Data/Settings.xml Message: " + errorMessage);
             }
         }
     });
@@ -44,8 +51,8 @@ function verifyConnection() {
             var errorMessage = getXHRErrorDetails(jqXHR);
             //alert("verifyConnection: " + errorMessage);
             if (!checkFor404(errorMessage, "getAconnection")) {
-                sendEmailToYourself("XHR ERROR IN  verifyConnection", "url: " + settingsArray.ApiServer + "api/Carousel/VerifyConnection" +
-                    "<br/>Message: " + errorMessage);
+                //sendEmailToYourself("XHR ERROR IN  verifyConnection", "url: " + settingsArray.ApiServer + "api/Carousel/VerifyConnection" +
+                //    "<br/>Message: " + errorMessage);
             }
         }
     });
@@ -139,13 +146,22 @@ function checkFor404(errorMessage, calledFrom) {
     var isNotConnected = false;
     if (isNullorUndefined(errorMessage)) {
         var ipAddr = getCookieValue("IpAddress");
-        sendEmailToYourself("checkFor404 called with null errorMessage from: " + calledFrom, "ip: " + ipAddr);
+        logError({
+            VisitorId: getCookieValue("VisitorId"),
+            ActivityCode: "404",
+            Severity: 2,
+            ErrorMessage: "checkFor404 called with null errorMessage",
+            CalledFrom: "checkFor404/" + calledFrom
+        });
+        //sendEmailToYourself("checkFor404 called with null errorMessage from: " + calledFrom, "ip: " + ipAddr);
         if (document.domain === 'localhost')
             alert("checkFor404 called with null errorMessage from: " + calledFrom);
-
     }
     if (errorMessage.indexOf("Not connect") > -1 || errorMessage.indexOf("Option not supported") > -1) {
         isNotConnected = true;
+        if (ipAddr === "68.203.90.183") //if (document.domain === 'localhost')
+            alert("checkFor404 isNotConnected = true called from: " + calledFrom);
+
         $('#notConnectMessage').width($(window).width());
         $('#notConnectMessage').html(
             "<div class='centeredDivShell2'>\n" +
@@ -154,15 +170,15 @@ function checkFor404(errorMessage, calledFrom) {
             "       <div class='divRefreshPage'><a href='javascript:refreshPage()'>Refresh page</a></div></div>" +
             "   </div>" +
             "</div>");
-
         $('#notConnectMessage').show();
         console.log("checkFor404: " + calledFrom);
+
         logError({
             VisitorId: getCookieValue("VisitorId"),
             ActivityCode: "404",
             Severity: 2,
-            ErrorMessage: "checkFor404",
-            CalledFrom: "checkFor404/" + calledFrom
+            ErrorMessage: "SERVICE DOWN?",
+            CalledFrom: "checkFor404 / " + calledFrom
         });
     }
     return isNotConnected;
@@ -233,6 +249,13 @@ function sendEmailToYourself(subject, message) {
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "sendEmailToYourself")) {
+                logError({
+                    VisitorId: getCookieValue("VisiorId"),
+                    ActivityCode: "XHR",
+                    Severity: 1,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "common.js sendEmailToYourself"
+                });
                 //sendEmailToYourself("xhr error in common.js sendEmailToYourself", "/Data/Settings.xml Message: " + errorMessage);
                 //alert("sendEmailToYourself xhr error: " + errorMessage);
             }
@@ -274,14 +297,28 @@ function logActivity(changeLogModel) {
                 displayStatusMessage("ok", "activity" + changeLogModel.ActivityCode + " logged");
             else {
                 //alert("ChangeLog: " + success);
-                sendEmailToYourself("error in common/logActivity", success);
+                logError({
+                    VisitorId: getCookieValue("VisiorId"),
+                    ActivityCode: "OMG",
+                    Severity: 1,
+                    ErrorMessage: success,
+                    CalledFrom: "logActivity"
+                });
+                //sendEmailToYourself("error in common/logActivity", success);
             }
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "logActivity")) {
-                sendEmailToYourself("xhr error in common.js logActivity", "/api  ChangeLog  Message: " + errorMessage);
+                logError({
+                    VisitorId: getCookieValue("VisiorId"),
+                    ActivityCode: "XHR",
+                    Severity: 1,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "logActivity"
+                });
+                //sendEmailToYourself("xhr error in common.js logActivity", "/api  ChangeLog  Message: " + errorMessage);
             }
         }
     });
@@ -306,7 +343,14 @@ function showLinks(linkId) {
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "showLinks")) {
-                sendEmailToYourself("xhr error in common.js showLinks", "api/ImagePage?linkId=" + linkId + " Message: " + errorMessage);
+                logError({
+                    VisitorId: getCookieValue("VisiorId"),
+                    ActivityCode: "XHR",
+                    Severity: 1,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "showLinks(" + linkId + ")"
+                });
+                //sendEmailToYourself("xhr error in common.js showLinks", "api/ImagePage?linkId=" + linkId + " Message: " + errorMessage);
             }
         }
     });
@@ -337,8 +381,15 @@ function setFolderImage(linkId, folderId, level) {
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "setFolderImage")) {
-                sendEmailToYourself("xhr error in common.js setFolderImage", "/api/ImageCategoryDetail/?linkId=" + linkId +
-                    "&folderId=" + folderId + "&level=" + level + " Message: " + errorMessage);
+                logError({
+                    VisitorId: getCookieValue("VisiorId"),
+                    ActivityCode: "XHR",
+                    Severity: 1,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "common.js setFolderImage"
+                });
+                //sendEmailToYourself("xhr error in common.js setFolderImage", "/api/ImageCategoryDetail/?linkId=" + linkId +
+                //    "&folderId=" + folderId + "&level=" + level + " Message: " + errorMessage);
             }
         }
     });
@@ -370,7 +421,14 @@ function indexCatTreeContainerClick(path, id, treeId) {
         window.location.href = "/album.html?folder=" + id;
         $('#indexCatTreeContainer').dialog('close');
     } catch (e) {
-        sendEmailToYourself("jQuery fail in indexCatTreeContainerClick", "dirTreeClick path: " + path + " id: " + id + " treeId: " + treeId + "  error: " + e);
+        logError({
+            VisitorId: getCookieValue("VisiorId"),
+            ActivityCode: "CAT",
+            Severity: 1,
+            ErrorMessage: e,
+            CalledFrom: "common.js indexCatTreeContainerClick"
+        });
+        //sendEmailToYourself("jQuery fail in indexCatTreeContainerClick", "dirTreeClick path: " + path + " id: " + id + " treeId: " + treeId + "  error: " + e);
     }
 }
 
@@ -417,21 +475,32 @@ function showCustomMessage(blogId, allowClickAnywhere) {
                 }
             }
             else {
-                if (entry.Success.indexOf("Option not supported") > -1) {
-                    checkFor404(successModel.Success, "showCustomMessage");
-                    sendEmailToYourself("SERVICE DOWN", "from showCustomMessage" +
-                        "<br/>folderId=" + folderId +
-                        "<br/>IpAddress: " + getCookieValue("IpAddress") +
-                        "<br/>" + entry.Success);
-                }
-                else
-                    sendEmailToYourself("showCustomMessage", entry.Success);
+                //if (entry.Success.indexOf("Option not supported") > -1) {
+                checkFor404(successModel.Success, "showCustomMessage");
+                logError({
+                    VisitorId: getCookieValue("VisiorId"),
+                    ActivityCode: "JQR",
+                    Severity: 1,
+                    ErrorMessage: entry.Success,
+                    CalledFrom: "common.js showCustomMessage"
+                });
+                //sendEmailToYourself("SERVICE DOWN", "from showCustomMessage" +
+                //    "<br/>folderId=" + folderId +
+                //    "<br/>IpAddress: " + getCookieValue("IpAddress") +
+                //    "<br/>" + entry.Success);
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "showCustomMessage")) {
-                sendEmailToYourself("xhr error in common.js showCustomMessage", "api/OggleBlog/?blogId=" + blogId + ", Message: " + errorMessage);
+                logError({
+                    VisitorId: getCookieValue("VisiorId"),
+                    ActivityCode: "XHR",
+                    Severity: 1,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "common.js showCustomMessage"
+                });
+                //sendEmailToYourself("xhr error in common.js showCustomMessage", "api/OggleBlog/?blogId=" + blogId + ", Message: " + errorMessage);
             }
         }
     });
@@ -444,20 +513,21 @@ function authenticateEmail(usersEmail) {
     $.each(requestedPrivileges, function (idx,obj) {
         privileges += obj + ", ";
     });
+    logEventActivity({
+        VisitorId: getCookieValue("VisiorId"),
+        EventCode: usersEmail + privileges,
+        EventDetail: "Acess Requested",
+        CalledFrom: "authenticateEmail"
+    });
     sendEmailToYourself("Acess Requested", " user: " + getCookieValue("UserName") + " has requsted " + privileges);
-
     alert("Thank you for registering " + getCookieValue("UserName") + "\please reply to the two factor authentitifcation email sent to you" +
         "\nYou will then be granted the access you requested."+"\nThe menu item 'Dashboard' will appear next to your 'Hello' message");
     dragableDialogClose();
-
-    //alert("authenticateEmail: " + usersEmail + " Privileges: " + test);
-
 }
 function requestPrivilege(privilege) {
     requestedPrivileges.push(privilege);
     //alert("requestPrivilege: " + privilege);
 }
-
 
 function dragableDialogClose() {
     $('#draggableDialog').fadeOut();

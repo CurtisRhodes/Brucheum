@@ -60,7 +60,15 @@ function attemptRegister() {
                         $('#optionLoggedIn').show();
                         $('#optionNotLoggedIn').hide();
 
-                        //if (document.domain === 'localhost')
+                        if (document.domain !== 'localhost') {
+                            logEventActivity({
+                                VisitorId: getCookieValue("VisitorId"),
+                                EventCode: eventCode,
+                                EventDetail: "BIG TIME Someone new actually registered\nUser: " + registeredUserModel.UserName,
+                                CalledFrom: "attemptRegister"
+                            });
+
+                        }
                         //    alert("BIG TIME Someone new actually registered\nUser: " + registeredUserModel.UserName);
                         //else
                         //    sendEmailToYourself("BIG TIME Someone new actually registered", "User: " + registeredUserModel.UserName);
@@ -69,10 +77,7 @@ function attemptRegister() {
                         registerEmail = $('#txtEmail').val();
                         //alert("registerEmail: " + registerEmail);
                         showCustomMessage(96, false);
-
                         //setTimeout(function () { $('#userEmail').text($('#txtEmail').val()); }, 2000);
-                        
-
                         //displayStatusMessage("ok", "thanks for Registering in " + getCookieValue("UserName"));
                         // show welcom to Oggle Booble message.
                     }
@@ -80,6 +85,13 @@ function attemptRegister() {
                         if (success === "user name already exists")
                             alert("user name already exists");
                         else {
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "KLG",
+                                Severity: 2,
+                                ErrorMessage: "attempting to register fail: " + success,
+                                CalledFrom: "attemptRegister()"
+                            });
                             //if (document.domain === 'localhost')
                             alert("attempting to register fail: " + success);
                             //$('#registerValidationSummary').html(response).show();
@@ -88,16 +100,28 @@ function attemptRegister() {
                 },
                 error: function (jqXHR) {
                     var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "onLoginClick")) {
-                        alert("XHR ERROR IN Login.JS attemptRegister\n" + errorMessage);
-
-                        sendEmailToYourself("XHR ERROR IN Login.JS onLoginClick", "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress +
-                            "<br/>" + errorMessage);
+                    if (!checkFor404(errorMessage, "attemptRegister")) {
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "XHR",
+                            Severity: 1,
+                            ErrorMessage: errorMessage,
+                            CalledFrom: "attemptRegister()"
+                        });
+                        //alert("XHR ERROR IN Login.JS attemptRegister\n" + errorMessage);
+                        //sendEmailToYourself("XHR ERROR IN Login.JS onLoginClick", "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress + "<br/>" + errorMessage);
                     }
                 }
             });
         } catch (e) {
-            alert("Login Post error: " + e);
+            logError({
+                VisitorId: getCookieValue("VisitorId"),
+                ActivityCode: "CAT",
+                Severity: 1,
+                ErrorMessage: e,
+                CalledFrom: "CATCH error attemptRegister() Login Post"
+            });
+            //alert("Login Post error: " + e);
         }
     }
 }
@@ -147,12 +171,19 @@ function showLoginDialog() {
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/HitCounter/GetVisitorIdFromIP?ipAddress=" + ipAddress,
-            success: function (getVisitorInfoFromIPAddressSuccessModel) {
-                if (getVisitorInfoFromIPAddressSuccessModel.Success === "ok") {
-                    //setCookieValue("UserName", getVisitorInfoFromIPAddressSuccessModel.UserName);
-                    setCookieValue("VisitorId", getVisitorInfoFromIPAddressSuccessModel.VisitorId);
+            success: function (loginSuccessModel) {
+                if (loginSuccessModel.Success === "ok") {
+                    setCookieValue("UserName", loginSuccessModel.UserName);
+                    setCookieValue("VisitorId", loginSuccessModel.VisitorId);
                     if (ipAddress !== "68.203.90.183")// && ipAddress !== "50.62.160.105")
-                        sendEmailToYourself("Login Attempt", "IpAddress: " + ipAddress);
+                        logEventActivity({
+                            VisitorId: loginSuccessModel.VisitorId,
+                            EventCode: "LOG",
+                            EventDetail: loginSuccessModel.UserName + " logged in Ip: " + ipAddress,
+                            CalledFrom: "showLoginDialog"
+                        });
+
+                        //sendEmailToYourself("Login Attempt", "IpAddress: " + ipAddress);
                     //"getVisitorInfoFromIPAddressSuccessModel.UserName: " + getVisitorInfoFromIPAddressSuccessModel.UserName +
                     //" (Had to lookup thier ip address) IpAddress: " + ipAddress);
                 }
@@ -172,7 +203,7 @@ function showLoginDialog() {
     }
     else {
         logEventActivity({
-            VisitorId: visitorSuccess.VisitorId,
+            VisitorId: getCookieValue("VisitorId"),
             EventCode: "LOG",
             EventDetail: "Login Attepmt with known Ip: " + ipAddress,
             CalledFrom: "showLoginDialog"
@@ -231,14 +262,21 @@ function attemptLogin(userName, clearPasswod) {
                     displayStatusMessage("ok", "thanks for logging in " + userName);
                     //window.location.href = ".";
                 }
-                else
+                else {
                     $('#loginValidationSummary').html(success).show();
+                }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errorMessage, "onLoginClick")) {
-                    sendEmailToYourself("XHR ERROR IN Login.JS onLoginClick", "api/Login/VerifyLogin?userName=" + userName + "&passWord=" +
-                        " Message: " + errorMessage);
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 2,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "showLoginDialog"
+                    });
+                    //sendEmailToYourself("XHR ERROR IN Login.JS onLoginClick", "api/Login/VerifyLogin?userName=" + userName + "&passWord=" + " Message: " + errorMessage);
                 }
             }
         });

@@ -58,6 +58,7 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
 
     //alert("logImageHit true ");
     //console.log("logImageHit from launchViewer: " + imageViewerArray[imageViewerIndex].Link);
+
     if (isNullorUndefined(imageViewerFolderId)) {
         //sendEmailToYourself("830 PROBLEMO 1 in slideshow.js.slide.", "  visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + imageViewerFolderId);
         if (document.domain === 'localhost')
@@ -72,21 +73,21 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
         //logVisitor(folderId, "launch viewer");
     }
 
-    ipAddress = getCookieValue("IpAddress");
     //if (isNullorUndefined(ipAddress) || isNullorUndefined(visitorId) || isNullorUndefined(folderId)) {
-
+    ipAddress = getCookieValue("IpAddress");
     if (isNullorUndefined(ipAddress)) {
-        //sendEmailToYourself("830 PROBLEMO 1 in slideshow.js.slide.", "  visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + imageViewerFolderId);
+        visitorId = getCookieValue("VisitorId");
         if (document.domain === 'localhost')
             alert("830 PROBLEMO 1 in slideshow.js.slide.\nvisitorId: " + visitorId + "\nIpAddress: " + ipAddress + "\nfolderId: " + imageViewerFolderId);
         logError({
             VisitorId: visitorId,
-            ActivityCode: "SLD",
+            ActivityCode: "SIP",
             Severity: 4,
-            ErrorMessage: "ipAddress isNullorUndefined().Not Calling LogVisitor",
+            ErrorMessage: "ipAddress isNullorUndefined(). Calling LogVisitor",
             CalledFrom: "slideshow.js.slide"
         });
-        //logVisitor(folderId, "launch viewer");
+        //sendEmailToYourself("830 PROBLEMO 1 in slideshow.js.slide.", "  visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + imageViewerFolderId);
+        logVisitor(folderId, "launch viewer");
     }
     visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(visitorId)) {
@@ -95,13 +96,13 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
             alert("830 PROBLEMO 1 in slideshow.js.slide.\nvisitorId: " + visitorId + "\nIpAddress: " + ipAddress + "\nfolderId: " + imageViewerFolderId);
         if (!isNullorUndefined(ipAddress)) {
             logError({
-                VisitorId: visitorId,
-                ActivityCode: "SLD",
+                VisitorId: getCookieValue("VisitorId"),
+                ActivityCode: "SVD",
                 Severity: 4,
-                ErrorMessage: "visitorId isNullorUndefined().Calling getVisitorIdFromIp",
+                ErrorMessage: "visitorId isNullorUndefined().Calling LogVisitor",
                 CalledFrom: "slideshow.js.slide"
             });
-            getVisitorIdFromIp(ipAddress);
+            logVisitor(folderId, "launch viewer");
         }
         //logVisitor(folderId, "launch viewer");  next time
     }
@@ -145,13 +146,26 @@ function explodeViewer() {
     if ((viewerT === 0) && (viewerL === 0) && (viewerH === windowH) && (viewerW === windowW)) {
         if (imageViewerFolderName === undefined) {
             if (typeof staticPageFolderName === 'string') {
-
-                sendEmailToYourself("Issue in SlideShow", "staticPageFolderName: " + staticPageFolderName);
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "BAD",
+                    Severity: 4,
+                    ErrorMessage: "Issue in SlideShow. StaticPageFolderName: " + staticPageFolderName,
+                    CalledFrom: "slideshow.js explodeViewer"
+                });
+                //sendEmailToYourself("Issue in SlideShow", "staticPageFolderName: " + staticPageFolderName);
                 if (document.domain === 'localhost') alert("Issue in SlideShow. StaticPageFolderName: " + staticPageFolderName);
                 currentfolderName = staticPageFolderName;
             }
             else {
-                sendEmailToYourself("Issue in SlideShow", "staticPageFolderName: " + staticPageFolderName);
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "BAD",
+                    Severity: 4,
+                    ErrorMessage: "Issue in SlideShow  typeof staticPageFolderName",
+                    CalledFrom: "slideshow.js explodeViewer"
+                });
+                //sendEmailToYourself("Issue in SlideShow", "staticPageFolderName: " + staticPageFolderName);
                 if (document.domain === 'localhost') alert("Issue in SlideShow  typeof staticPageFolderName");
             }
         }
@@ -188,7 +202,14 @@ function slideClick(direction) {
 
         //if (document.domain === 'localhost') alert("sessionCount: " + sessionCount);
         if (isNullorUndefined(imageViewerFolderId)) {
-            sendEmailToYourself("PROBLEMO 2 in slideshow.js.slide.  ImageViewerFolderId isNullorUndefined " + "IP: " + ipAddress);
+            logError({
+                VisitorId: getCookieValue("VisitorId"),
+                ActivityCode: "SVD",
+                Severity: 4,
+                ErrorMessage: "PROBLEMO 2 in slideshow.js.slide.  ImageViewerFolderId isNullorUndefined " + "IP: " + ipAddress,
+                CalledFrom: "slideshow.js.slideClick"
+            });
+            //sendEmailToYourself("PROBLEMO 2 in slideshow.js.slide.  ImageViewerFolderId isNullorUndefined " + "IP: " + ipAddress);
         }
         else {
             logImageHit(ipAddress, visitorId, imageViewerArray[imageViewerIndex].Link, imageViewerFolderId, false);
@@ -249,7 +270,14 @@ function slide(direction) {
         sessionCount++;
         $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
     } catch (e) {
-        sendEmailToYourself("CATCH ERROR in slideshow.js.slide " + "Error: " + e);
+        logError({
+            VisitorId: getCookieValue("VisitorId"),
+            ActivityCode: "CAT",
+            Severity: 4,
+            ErrorMessage: e,
+            CalledFrom: "slideshow.js.slide"
+        });
+        //sendEmailToYourself("CATCH ERROR in slideshow.js.slide " + "Error: " + e);
     }
 }
 
@@ -307,10 +335,22 @@ function blowupImage() {
 function showImageViewerCommentDialog() {
     closeViewer("CommentDialog");
     showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, imageViewerFolderName);
+    logEventActivity({
+        VisitorId: getCookieValue("VisitorId"),
+        EventCode: "SVC",
+        EventDetail: "WOW! Someone tried to make a comment",
+        CalledFrom: "Sideshow"
+    });
 }
 
 function slideshowContexMenu() {
     ctxSAP(imageViewerArray[imageViewerIndex].Id);
+    logEventActivity({
+        VisitorId: getCookieValue("VisitorId"),
+        EventCode: "SVC",
+        EventDetail: "slideshowContexMenu clicked item: " + imageViewerArray[imageViewerIndex].Id,
+        CalledFrom: "Sideshow"
+    });
 }
 
 function XXXimageViewerContextMenuAction(action) {   
@@ -378,14 +418,12 @@ function closeViewer(calledFrom) {
         if (calledFrom !== undefined) {
             closeMethod = calledFrom;
         }
-
-        var logEventModel = {
+        logEventActivity({
             VisitorId: getCookieValue("VisitorId"),
             EventCode: "SVC",
-            EventDetail: "Images Viewed: " + sessionCount + " close method: " + closeMethod,
+            EventDetail: "Images Viewed: " + sessionCount + " closed: " + closeMethod,
             CalledFrom: imageViewerFolderId
-        };
-        logEventActivity(logEventModel);
+        });
 
         //if (sessionCount > 20) {
         //    if (document.domain === 'localhost') {

@@ -109,25 +109,50 @@ namespace WebApi
         }
 
         [HttpGet]
-        public GetVisitorInfoFromIPAddressSuccessModel GetVisitorIdFromIP(string ipAddress)
+        [Route("api/HitCounter/GetVisitorIdFromIP")]
+        public GetInfoSuccessModel GetVisitorIdFromIP(string ipAddress)
         {
-            GetVisitorInfoFromIPAddressSuccessModel success = new GetVisitorInfoFromIPAddressSuccessModel();
+            GetInfoSuccessModel getInfoSuccess = new GetInfoSuccessModel();
             try
             {
                 using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
                 {
                     Visitor visitor = dbm.Visitors.Where(v => v.IpAddress == ipAddress).FirstOrDefault();
-                    success.VisitorId = visitor.VisitorId;
+                    getInfoSuccess.VisitorId = visitor.VisitorId;
                     //success.UserName = visitor.UserName;
-                    success.Success = "ok";
+                    getInfoSuccess.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                success.Success = Helpers.ErrorDetails(ex);
+                getInfoSuccess.Success = Helpers.ErrorDetails(ex);
             }
-            return success;
+            return getInfoSuccess;
         }
+
+        [HttpGet]
+        [Route("api/HitCounter/GetIpFromVisitorId")]
+        public GetInfoSuccessModel GeIpFromtVisitorId(string visistorId)
+        {
+            GetInfoSuccessModel getInfoSuccess = new GetInfoSuccessModel();
+            try
+            {
+                using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
+                {
+                    Visitor visitor = dbm.Visitors.Where(v => v.VisitorId == visistorId).FirstOrDefault();
+                    getInfoSuccess.IpAddress = visitor.IpAddress;
+                    //success.UserName = visitor.UserName;
+                    getInfoSuccess.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                getInfoSuccess.Success = Helpers.ErrorDetails(ex);
+            }
+            return getInfoSuccess;
+        }
+
+
     }
 
     [EnableCors("*", "*", "*")]

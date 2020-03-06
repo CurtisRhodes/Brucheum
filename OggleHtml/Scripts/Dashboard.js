@@ -73,8 +73,8 @@ function setDashboardHeader(viewId) {
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
 
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='emergencyFolderLocationFix()'>emergencyFolderLocationFix</div>");
-
-            
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='MoveManyCleanup()'>MoveManyCleanup</div>");
+           
 
             break;
         default:
@@ -877,10 +877,37 @@ function emergencyFolderLocationFix() {
             }
         }
     });
-
-    // hot 4223
-
 }
+
+function MoveManyCleanup() {
+    var start = Date.now();
+    $('#dashBoardLoadingGif').show();
+    $('#dataifyInfo').show().html("fixing folder location " + $('.txtLinkPath').val());
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "/api/RepairLinks/MoveManyCleanup?root=" + dashboardMainSelectedTreeId,
+        success: function (repairReportModel) {
+            $('#dashBoardLoadingGif').hide();
+            if (repairReportModel.Success === "ok") {
+                var delta = Date.now() - start;
+                var minutes = Math.floor(delta / 60000);
+                var seconds = (delta % 60000 / 1000).toFixed(0);
+                console.log("emergencyFolderLocationFix took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+                $('#dataifyInfo').show().html("loc fix took: " + minutes + ":" + seconds + " rows processed  " + repairReportModel.RowsProcessed + " recs fixed: " + repairReportModel.LinksEdited + " Errors: " + repairReportModel.Errors.length);
+            }
+            else {
+                alert("emergencyFolderLocationFix: " + repairReportModel.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "emergencyFolderLocationFix")) {
+                alert("XHR ERROR in Dashboard.js renameFolder" + errorMessage);
+            }
+        }
+    });
+}
+
 
 
 

@@ -74,9 +74,10 @@ namespace WebApi.Models
         public DateTime Occured { get; set; }
     }
 
-    public class GetVisitorInfoFromIPAddressSuccessModel
+    public class GetInfoSuccessModel
     {
         public string VisitorId { get; set; }
+        public string IpAddress { get; set; }
         public string UserName { get; set; }
         public string Success { get; set; }
     }

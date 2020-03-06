@@ -439,6 +439,7 @@ namespace WebApi
         }
 
         [HttpPut]
+        [Route("api/RepairLinks/EmergencyFolderLocationFix")]
         public RepairReportModel EmergencyFolderLocationFix(int root)
         {
             RepairReportModel repairReportModel = new RepairReportModel();
@@ -502,6 +503,93 @@ namespace WebApi
             }
         }
 
+        [HttpPut]
+        [Route("api/RepairLinks/MoveManyCleanup")]
+        public RepairReportModel MoveManyCleanup(int root)
+        {
+            RepairReportModel repairReportModel = new RepairReportModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    CategoryFolder startFolder = db.CategoryFolders.Where(f => f.Id == root).FirstOrDefault();
+                    string ftpPath = ftpHost + "/" + startFolder.RootFolder + ".ogglebooble.com/"
+                        + Helpers.GetParentPath(startFolder.Id) + startFolder.FolderName;
+                    string[] rootFiles = FtpUtilies.GetFiles(ftpPath);
+                    //List<string> rootFileLinks = new List<string>();
+                    //foreach (string fileName in rootFiles) rootFileLinks.Add(fileName.Substring(fileName.LastIndexOf("_") + 1, 36));
+                    List<CategoryFolder> subDirs = db.CategoryFolders.Where(f => f.Parent == root).ToList();
+                    string sourcePath = startFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(startFolder.Id) + startFolder.FolderName;
+                    string moveFileSuccess, newLink, linkId, destinationPath;
+                    string imageFileName = "";
+                    foreach (CategoryFolder subDir in subDirs)
+                    {
+                        destinationPath = subDir.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(subDir.Id) + subDir.FolderName;
+                        List<CategoryImageLink> subFolderLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == subDir.Id).ToList();
+                        foreach (CategoryImageLink subFolderLink in subFolderLinks) 
+                        {
+                            bool found = false;
+                            foreach (string fileName in rootFiles)
+                            {
+                                linkId = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
+                                if (linkId == subFolderLink.ImageLinkId) {
+                                    found = true;
+                                    imageFileName = fileName;
+                                    break;
+                                }
+                            }
+                            //if (rootFiles.Contains(subFolderLink.ImageLinkId))
+                            if (found)
+                            {
+                                ImageLink imageLink = db.ImageLinks.Where(i => i.Id == subFolderLink.ImageLinkId).FirstOrDefault();
+                                string ext = imageFileName.Substring(imageFileName.LastIndexOf("."));
+                                string newImageFileName = subDir.FolderName + "_" + subFolderLink.ImageLinkId + imageFileName.Substring(imageFileName.LastIndexOf("."));
+
+
+                                if (FtpUtilies.DirectoryExists(ftpHost + sourcePath + "/" + imageFileName))
+                                {
+                                    moveFileSuccess = FtpUtilies.MoveFile(ftpHost + sourcePath + "/" + imageFileName, ftpHost + destinationPath + "/" + newImageFileName);
+                                    if (moveFileSuccess == "ok")
+                                    {
+                                        if (imageLink != null)
+                                        {
+                                            newLink = "http://" + destinationPath + "/" + newImageFileName;
+                                            imageLink.Link = newLink;
+                                            imageLink.FolderLocation = subDir.Id;
+                                            db.SaveChanges();
+                                            repairReportModel.LinksEdited++;
+                                            CategoryImageLink badCategoryImageLink = db.CategoryImageLinks
+                                                .Where(c => c.ImageLinkId == subFolderLink.ImageLinkId && c.ImageCategoryId == root).FirstOrDefault();
+                                            if (badCategoryImageLink != null)
+                                            {
+                                                db.CategoryImageLinks.Remove(badCategoryImageLink);
+                                                db.SaveChanges();
+                                                repairReportModel.LinksRemoved++;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            repairReportModel.Errors.Add("no imagelink found for link " + subFolderLink.ImageLinkId + " folder: " + startFolder.FolderName);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        repairReportModel.Errors.Add("link " + ftpHost + sourcePath + imageFileName + " error: " + moveFileSuccess);
+                                    }
+                                }
+                            }
+                            repairReportModel.RowsProcessed++;
+                        }
+                    }
+                    repairReportModel.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                repairReportModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return repairReportModel;
+        }
 
     }
 }
