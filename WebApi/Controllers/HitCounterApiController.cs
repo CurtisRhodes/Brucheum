@@ -118,9 +118,13 @@ namespace WebApi
                 using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
                 {
                     Visitor visitor = dbm.Visitors.Where(v => v.IpAddress == ipAddress).FirstOrDefault();
-                    getInfoSuccess.VisitorId = visitor.VisitorId;
-                    //success.UserName = visitor.UserName;
-                    getInfoSuccess.Success = "ok";
+                    if (visitor != null)
+                    {
+                        getInfoSuccess.VisitorId = visitor.VisitorId;
+                        getInfoSuccess.Success = "ok";
+                    }
+                    else
+                        getInfoSuccess.Success = "not found";
                 }
             }
             catch (Exception ex)
@@ -152,6 +156,31 @@ namespace WebApi
             return getInfoSuccess;
         }
 
+        [HttpGet]
+        [Route("api/HitCounter/GeFolderIdFromtPageName")]
+        public GetInfoSuccessModel GeFolderIdFromtPageName(string folderName)
+        {
+            GetInfoSuccessModel getInfoSuccess = new GetInfoSuccessModel();
+            try
+            {
+                using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
+                {
+                    CategoryFolder categoryFolder = dbm.CategoryFolders.Where(f => f.FolderName == folderName).FirstOrDefault();
+                    if (categoryFolder != null)
+                    {
+                        getInfoSuccess.PageId = categoryFolder.Id;
+                        getInfoSuccess.Success = "ok";
+                    }
+                    else
+                        getInfoSuccess.Success = "page not found";
+                }
+            }
+            catch (Exception ex)
+            {
+                getInfoSuccess.Success = Helpers.ErrorDetails(ex);
+            }
+            return getInfoSuccess;
+        }
 
     }
 

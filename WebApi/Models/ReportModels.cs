@@ -65,6 +65,52 @@ namespace WebApi.Models
         public int Five_Days_ago { get; set; }
         public int Six_Days_ago { get; set; }
     }
+
+    public class ErrorLogReportModel
+    {
+        public ErrorLogReportModel()
+        {
+            ErrorRows = new List<ErrorLogItem>();
+        }
+        public List<ErrorLogItem> ErrorRows { get; set; }
+        public string Success { get; set; }
+    }
+    public class ErrorLogItem
+    {
+        public string IpAddress { get; set; }
+        public string City { get; set; }
+        public string Country { get; set; }
+        public string CalledFrom { get; set; }
+        public string ActivityCode { get; set; }
+        public int Severity { get; set; }
+        public string ErrorMessage { get; set; }
+        public DateTime Occured { get; set; }
+        public string InDay { get; set; }
+        public string OnTime { get; set; }
+    }
+
+    public class FeedbackReportModel
+    {
+        public FeedbackReportModel()
+        {
+            FeedbackRows = new List<FeedbackModel>();
+        }
+        public List<FeedbackModel> FeedbackRows{ get; set; }
+        public string Success { get; set; }
+    }
+    
+    public class FeedbackModel
+    {
+        public string IpAddress { get; set; }
+        public string Parent { get; set; }
+        public string Folder { get; set; }
+        public string FeedBackType { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string FeedBackComment { get; set; }
+        public DateTime Occured { get; set; }
+    }
+
     public class PageHitReportModel
     {
         public PageHitReportModel()

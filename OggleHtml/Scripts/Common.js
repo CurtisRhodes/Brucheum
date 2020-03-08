@@ -97,6 +97,8 @@ function getParams() {
 }
 
 function resizePage() {
+    //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
+
     // set page width
     var winW = $(window).width();
     var lcW = $('#leftColumn').width();
@@ -143,6 +145,8 @@ function displayStatusMessage(msgCode, message) {
 }
 
 function checkFor404(errorMessage, calledFrom) {
+    if (document.domain === 'localhost')
+        alert("checkFor404 " + errorMessage + " calledFrom: " + calledFrom);
     var isNotConnected = false;
     if (isNullorUndefined(errorMessage)) {
         var ipAddr = getCookieValue("IpAddress");
@@ -166,8 +170,8 @@ function checkFor404(errorMessage, calledFrom) {
         $('#notConnectMessage').html(
             "<div class='centeredDivShell2'>\n" +
             "   <div class='centeredDivInner'>\n" +
-            "       <div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'>\n" +
-            "       <div class='divRefreshPage'><a href='javascript:refreshPage()'>Refresh page</a></div></div>" +
+            "       <div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'></div>\n" +
+            "       <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
             "   </div>" +
             "</div>");
         $('#notConnectMessage').show();

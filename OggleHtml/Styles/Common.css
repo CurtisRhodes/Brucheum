@@ -368,6 +368,8 @@ footer {
     background-color: var(--oggleContainerBackgroundColor);
     font-size: 24px;
     padding: 4px;
+    text-align: center;
+    cursor: pointer;
 }
 .blogCrudArea {
     border: solid thin var(--oggleBorderColor);

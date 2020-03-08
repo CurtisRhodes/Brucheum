@@ -235,15 +235,26 @@ function showSpecialHeaderIcons(folderId) {
                 }
             }
             else {
-                //if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
-                checkFor404(folderDetailModel.Success, "showSpecialHeaderIcons");
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "BUG",
-                    Severity: 1,
-                    ErrorMessage: folderDetailModel.Success,
-                    CalledFrom: "OggleHeader showSpecialHeaderIcons"
-                });
+                if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
+                    if (!checkFor404(folderDetailModel.Success, "showSpecialHeaderIcons")) {
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "BUG",
+                            Severity: 1,
+                            ErrorMessage: folderDetailModel.Success,
+                            CalledFrom: "OggleHeader showSpecialHeaderIcons"
+                        });
+                    }
+                }
+                else {
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "BUG",
+                        Severity: 1,
+                        ErrorMessage: folderDetailModel.Success,
+                        CalledFrom: "OggleHeader showSpecialHeaderIcons"
+                    });
+                }
                 //sendEmailToYourself("SERVICE DOWN", "from showSpecialHeaderIcons<br/>folderId=" + folderId + "<br/>IpAddress: " +
                 //    getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
             }
@@ -347,7 +358,6 @@ function showFeedbackDialog() {
     //$('#feedbackDialog').dialog("show");
     //alert("showFeedbackDialog2");
 }
-
 function saveFeedbackDialog(pageId) {
 
     //alert("radio: " + $('#feedbackDialog input[type=\'radio\']:checked').val());
@@ -379,7 +389,7 @@ function saveFeedbackDialog(pageId) {
             else {
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "BUG",
+                    ActivityCode: "DBL",
                     Severity: 3,
                     ErrorMessage: success,
                     CalledFrom: "OggleHeader saveFeedbackDialog"

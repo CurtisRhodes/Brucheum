@@ -1063,13 +1063,30 @@ namespace WebApi
                         }
                     }
 
+                    CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == sourceFolderId).FirstOrDefault();
+                    string localSourcePath = repoPath + Helpers.GetLocalParentPath(sourceFolderId) + dbSourceFolder.FolderName;
+                    CategoryFolder dbDestinationParent = db.CategoryFolders.Where(f => f.Id == destinationFolderId).FirstOrDefault();
+                    // local repository
+                    try
+                    {
+                        string localDestinationPath = repoPath + Helpers.GetLocalParentPath(destinationFolderId) + dbDestinationParent.FolderName;
+                        if (!Directory.Exists(localDestinationPath))
+                            Directory.CreateDirectory(localDestinationPath);
+                        localDestinationPath = repoPath + Helpers.GetLocalParentPath(destinationFolderId) + dbDestinationParent.FolderName + "/" + dbSourceFolder.FolderName;
+                        DirectoryInfo directoryInfo = new DirectoryInfo(localSourcePath);
+                        directoryInfo.MoveTo(localDestinationPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        var err = Helpers.ErrorDetails(ex);
+                        System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
+                    }
                     // RECURR HERE BEFORE RENAMING LINKS
                     List<CategoryFolder> subdirs = db.CategoryFolders.Where(f => f.Parent == sourceFolderId).ToList();
                     foreach (CategoryFolder subdir in subdirs)
                     {
-                        MoveFolderRecurr(subdir.Id, sourceFolderId, sourcePath + "/" + subdir.FolderName, destinationPath + "/" + subdir.FolderName);
+                        MoveFolderRecurr(subdir.Id, destinationFolderId, sourcePath + "/" + subdir.FolderName, destinationPath + "/" + subdir.FolderName);
                     }
-                    CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == sourceFolderId).FirstOrDefault();
 
                     // update links
                     //string destinationHttpPath = "http://" + dbDestinationParent.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(destinationFolderId) + dbDestinationParent.FolderName + "/" + dbSourceFolder.FolderName;
@@ -1077,13 +1094,14 @@ namespace WebApi
                     List<ImageLink> imageLinks = db.ImageLinks.Where(l => l.FolderLocation == sourceFolderId).ToList();
                     foreach (ImageLink imageLink in imageLinks)
                     {
-                        fileName = imageLink.Link.Substring(imageLink.Link.LastIndexOf("/"));
-                        //newLink = "http://" + destinationPath + "/" + dbSourceFolder.FolderName + fileName;
-                        newLink = "http://" + destinationPath + "/" + fileName;
-                        imageLink.Link = newLink;
+                        if (imageLink.Link.Contains(dbSourceFolder.FolderName))
+                        {
+                            fileName = imageLink.Link.Substring(imageLink.Link.LastIndexOf("/"));
+                            //newLink = "http://" + destinationPath + "/" + dbSourceFolder.FolderName + fileName;
+                            newLink = "http://" + destinationPath + fileName;
+                            imageLink.Link = newLink;
+                        }
                     }
-                    string localSourcePath = repoPath + Helpers.GetLocalParentPath(sourceFolderId) + dbSourceFolder.FolderName;
-                    CategoryFolder dbDestinationParent = db.CategoryFolders.Where(f => f.Id == destinationFolderId).FirstOrDefault();
                     dbSourceFolder.Parent = destinationFolderId;
                     dbSourceFolder.RootFolder = dbDestinationParent.RootFolder;
                     db.SaveChanges();
@@ -1094,29 +1112,18 @@ namespace WebApi
                         List<MySqDataContext.ImageLink> imageLinks1 = mdb.ImageLinks.Where(l => l.FolderLocation == sourceFolderId).ToList();
                         foreach (MySqDataContext.ImageLink imageLink in imageLinks1)
                         {
-                            fileName = imageLink.Link.Substring(imageLink.Link.LastIndexOf("/"));
-                            newLink = "http://" + destinationPath + fileName;
-                            imageLink.Link = newLink;
+                            if (imageLink.Link.Contains(dbSourceFolder.FolderName))
+                            {
+                                fileName = imageLink.Link.Substring(imageLink.Link.LastIndexOf("/"));
+                                //newLink = "http://" + destinationPath + "/" + dbSourceFolder.FolderName + fileName;
+                                newLink = "http://" + destinationPath + fileName;
+                                imageLink.Link = newLink;
+                            }
                         }
                         var mdbSourceFolder = mdb.CategoryFolders.Where(f => f.Id == sourceFolderId).FirstOrDefault();
                         mdbSourceFolder.Parent = destinationFolderId;
                         mdbSourceFolder.RootFolder = dbDestinationParent.RootFolder;
                         mdb.SaveChanges();
-                    }
-
-                    // local repository
-                    try
-                    {
-                        string localDestinationPath = repoPath + Helpers.GetLocalParentPath(destinationFolderId) + dbDestinationParent.FolderName + "/" + dbSourceFolder.FolderName;
-                        //if (!Directory.Exists(localDestinationPath))
-                          //  Directory.CreateDirectory(localDestinationPath);
-                        DirectoryInfo directoryInfo = new DirectoryInfo(localSourcePath);
-                        directoryInfo.MoveTo(localDestinationPath);
-                    }
-                    catch (Exception ex)
-                    {
-                        var err = Helpers.ErrorDetails(ex);
-                        System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
                     }
 
                     success = FtpUtilies.RemoveDirectory(ftpSourcePath);

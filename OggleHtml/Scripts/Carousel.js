@@ -128,7 +128,6 @@ function loadImages(rootFolder, isChecked, skip, take) {
 
 function clickViewGallery() {
     clearInterval(CarouselInterval);
-
     reportThenPerformEvent("CIC", 3908, carouselItemArray[imageIndex].FolderId);
 }
 

@@ -1,9 +1,10 @@
 ﻿var MoveCopyImageModel = {};
 
-function showMoveCopyDialog(mode, link, folderId) {
+function showMoveCopyDialog(mode, link, sourceFolderId) {
     MoveCopyImageModel.Mode = mode;
     MoveCopyImageModel.Link = link;
-    MoveCopyImageModel.SourceFolderId = folderId;
+    MoveCopyImageModel.SourceFolderId = sourceFolderId;
+
     $('#btnGo').html(mode);
     $('#copyDialogImage').attr("src", link);
 
@@ -24,7 +25,7 @@ function showMoveCopyDialog(mode, link, folderId) {
     $('#moveCopyDialog').dialog('option', 'title', mode + " Image Link");
     $('#moveCopyDialog').on('dialogclose', function (event) {
         if (typeof getAlbumImages === 'function') {
-            getAlbumImages(folderId);
+            getAlbumImages(sourceFolderId);
             if (viewerShowing)
                 slide("next");
         }
@@ -34,6 +35,14 @@ function showMoveCopyDialog(mode, link, folderId) {
 function ftpMoveCopy() {
     //alert("MoveCopyImageModel.DestinationFolderId: " + MoveCopyImageModel.DestinationFolderId);
     $('#imagePageLoadingGif').show();
+
+        //public int SourceFolderId { get; set; }
+        //public string Link { get; set; }
+        //public string Mode { get; set; }
+
+        //public int DestinationFolderId { get; set; }
+        //public int SortOrder { get; set; }
+
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "/api/MoveImage/MoveImage",
@@ -42,14 +51,20 @@ function ftpMoveCopy() {
             $('#imagePageLoadingGif').hide();
             if (successModel.Success === "ok") {
                 displayStatusMessage("ok", "link " + MoveCopyImageModel.Mode + "ed to " + $('#dirTreeResults').html());
-                $('#moveCopyDialog').dialog("close");
                 //alert("changeLogModel id: " + MoveCopyImageModel.SourceFolderId + " mode: " + MoveCopyImageModel.Mode + "  name: " + $('#dirTreeResults').html());
+                var activityDesc;
+                if (MoveCopyImageModel.Mode === "Copy") 
+                    activityDesc = "link copied from " + MoveCopyImageModel.SourceFolderId + " to: " + MoveCopyImageModel.DestinationFolderId;
+                if (MoveCopyImageModel.Mode === "Move")
+                    activityDesc = "link moved from " + MoveCopyImageModel.SourceFolderId + " to: " + MoveCopyImageModel.DestinationFolderId;
+                if (MoveCopyImageModel.Mode === "Archive")
+                    activityDesc = "link Archived from " + MoveCopyImageModel.SourceFolderId + " to: " + MoveCopyImageModel.DestinationFolderId;
                 logActivity({
                     PageId: MoveCopyImageModel.SourceFolderId,
-                    PageName: $('#dirTreeResults').html(),
-                    Activity: MoveCopyImageModel.Mode + " link " + MoveCopyImageModel.Link
+                    PageName: $('#dirTreeResults').html(),                    
+                    Activity: activityDesc
                 });
-
+                $('#moveCopyDialog').dialog("close");
                 if (successModel.ReturnValue === "0") {
                     var linkId = MoveCopyImageModel.Link.substr(MoveCopyImageModel.Link.lastIndexOf("_") + 1, 36);
                     displayStatusMessage("warning", "Folder Image Set");

@@ -263,8 +263,7 @@ function logVisitor(pageId, calledFrom) {
                                 logEventActivity({
                                     VisitorId: visitorSuccess.VisitorId,
                                     EventCode: "NEW",
-                                    EventDetail: "New Visitor. Initial Page: " + visitorSuccess.PageName + " Ip: " + data.ip +
-                                        + " from " + data.city + "," + data.region + " " + data.country,
+                                    EventDetail: "New Visitor. Initial Page: " + visitorSuccess.PageName,
                                     CalledFrom: "logVisitor / " + calledFrom
                                 });
                             }
@@ -289,9 +288,7 @@ function logVisitor(pageId, calledFrom) {
                                         Severity: 2,
                                         ErrorMessage: "Unnsecssary IpInfo hit " +
                                             "userName: " + userName +
-                                            " ip: " + data.ip +
-                                            " page: " + pageId + " " + visitorSuccess.PageName +
-                                            " hit from " + data.city + "," + data.region + " " + data.country,
+                                            " page: " + pageId + " " + visitorSuccess.PageName,
                                         CalledFrom: "logVisitor / " + calledFrom
                                     });
                                     //if (document.domain === 'localhost') alert("IpInfo Hit in LogVisitor \n called From: " + calledFrom + "\n userName unknown\nVisitorId: " + getCookieValue("VisitorId"));
@@ -321,9 +318,9 @@ function logVisitor(pageId, calledFrom) {
                             if (verbosity > 0) {
                                 logError({
                                     VisitorId: visitorSuccess.VisitorId,
-                                    ActivityCode: "UNK",
+                                    ActivityCode: "NLP",
                                     Severity: 2,
-                                    ErrorMessage: "logVisitor called from reportThenPerformEvent IpAddress: " + ipAddress + "<br/>viditorId: " + visitorId,
+                                    ErrorMessage: "logVisitor called from reportThenPerformEvent. new visitor: " + visitorSuccess.IsNewVisitor,
                                     CalledFrom: "logVisitor / reportThenPerformEvent"
                                 });
                                 //sendEmailToYourself("logVisitor called from reportThenPerformEvent ", "IpAddress: " + ipAddress + "<br/>viditorId: " + visitorId);
@@ -928,6 +925,9 @@ function logEventActivity(logEventModel) {
         success: function (logEventActivitySuccess) {
             if (logEventActivitySuccess.Success !== "ok") {
                 //if (logEventActivitySuccess.Success.indexOf("Option not supported") > -1) {
+
+                alert("logEventActivitySuccess.Success: " + logEventActivitySuccess.Success);
+
                 if (!checkFor404(logEventActivitySuccess.Success, "logEventActivity")) {
                     if (document.domain === 'localhost')
                         alert("LogEventActivity\nCalled from PageId: " + logEventModel.CalledFrom +
@@ -958,6 +958,8 @@ function logEventActivity(logEventModel) {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
+            if (document.domain === 'localhost')
+                alert("logEventActivity XHR: " + errorMessage);
             if (!checkFor404(errorMessage, "LogEventActivity")) {
                 logError({
                     VisitorId: visitorId,

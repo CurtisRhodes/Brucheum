@@ -264,7 +264,6 @@ function showPageHitReport() {
     runPageHitReport();
 }
 function runPageHitReport() {
-    $('#dashBoardLoadingGif').show();
     $("#divStandardReportArea").removeClass("tightReport");
     $("#divStandardReportArea").html("");
     $("#divStandardReportCount").html("");
@@ -319,6 +318,8 @@ function rerunReport() {
         case "MostActiveUsers": runMostActiveUsersReport(); break;
         case "LatestImageHits": runLatestImageHitsReport(); break;
         case "EventActivity": runEventActivityReport(); break;
+        case "Feedback": FeedbackReport(); break;
+        case "ErrorLog": runErrorLogReport(); break;
         default: alert("activeReport [" + activeReport + "] not found");
     }
 }
@@ -328,3 +329,93 @@ function playmateChecklist() {
 
 }
 
+function runErrorLogReport() {
+    //    [Route("api/Reports/")]
+    activeReport = "ErrorLog";
+    $('.workAreaContainer').hide();
+    $('#divStandardReport').show();
+    $('#reportLabel').html("Error Log");
+    $('#dashBoardLoadingGif').show();
+    $("#divStandardReportArea").html("");
+    $("#divStandardReportCount").html("");
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Reports/ErrorLogReport",
+        success: function (errorLogReport) {
+            $('#dashBoardLoadingGif').hide();
+            if (errorLogReport.Success === "ok") {
+                var kludge = "<table class='mostAvtiveUsersTable'>";
+                kludge += "<tr><th>ip</th><th>Location</th><th>Called From</th><th>Actity</th><th>Occured</th><th>Severity</th></tr>";
+                $.each(errorLogReport.ErrorRows, function (idx, obj) {
+                    kludge += "<tr><td>" + obj.IpAddress + "</td>";
+                    kludge += "<td>" + obj.City + "," + obj.Country + "</td>";
+                    //kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
+                    kludge += "<td class='smallColumn'>" + obj.CalledFrom + "</td>";
+                    kludge += "<td>" + obj.ActivityCode + "</td>";
+                    kludge += "<td>" + obj.Severity + "</td>";
+                    kludge += "<td>" + obj.InDay + ":" + obj.OnTime + "</td></tr>";
+                    kludge += "<tr><td class='detailRow' colspan=6>" + obj.ErrorMessage + "</td></tr>";
+                });
+                kludge += "</table>";
+                $("#divStandardReportArea").html(kludge);
+                //$("#divStandardReportCount").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
+            }
+            else {
+                alert("PageHitsReport: " + errorLogReport.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "runErrorLogReport")) {
+                //sendEmailToYourself("XHR ERROR in Dashboard.js FeedbackReport"                    + errorMessage);
+            }
+        }
+    });
+}
+
+function FeedbackReport() {
+    activeReport = "Feedback";
+    $('.workAreaContainer').hide();
+    $('#divStandardReport').show();
+    $('#reportLabel').html("Feedback Report");
+    $('#dashBoardLoadingGif').show();
+    $("#divStandardReportArea").html("");
+    $("#divStandardReportCount").html("");
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Reports/FeedbackReport",
+        success: function (feedbackReport) {
+            $('#dashBoardLoadingGif').hide();
+            if (feedbackReport.Success === "ok") {
+                var kludge = "<table class='mostAvtiveUsersTable'>";
+                kludge += "<tr><th>ip</th><th>Page</th><th>Type</th><th>Occured</th><th>User</th><th>Email</th><th>Comment</th></tr>";
+
+                $.each(feedbackReport.FeedbackRows, function (idx, obj) {
+
+                    kludge += "<tr><td>" + obj.IpAddress + "</td>";
+                    kludge += "<td>" + obj.Parent + "/" + obj.Folder + "</td>";
+                    //kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
+                    kludge += "<td>" + obj.FeedBackType  + "</td>";
+                    kludge += "<td>" + obj.Occured+ "</td>";
+                    kludge += "<td>" + obj.UserName + "</td>";
+                    kludge += "<td>" + obj.Email + "</td></tr>";
+                    kludge += "<tr><td colspan=6>" + obj.FeedBackComment + "</td></tr>";
+                });
+                kludge += "</table>";
+                $("#divStandardReportArea").html(kludge);
+                //$("#divStandardReportCount").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
+            }
+            else {
+                alert("PageHitsReport: " + feedbackReport.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "FeedbackReport")) {
+                //sendEmailToYourself("XHR ERROR in Dashboard.js FeedbackReport"                    + errorMessage);
+            }
+        }
+    });
+}

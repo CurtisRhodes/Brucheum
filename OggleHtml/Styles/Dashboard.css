@@ -307,7 +307,15 @@
     width: 100%;
 }
 
+.smallColumn {
+    font-size: 14px;
+}
 
+.detailRow {
+    font-size :14px;
+    background-color: #c1c5ef;
+    padding-left: 33px;
+}
 
 
 

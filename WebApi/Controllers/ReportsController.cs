@@ -255,5 +255,83 @@ namespace WebApi.Controllers
             }
             return pageHitReportModel;
         }
+
+        [HttpGet]
+        [Route("api/Reports/FeedbackReport")]
+        public FeedbackReportModel FeedbackReport()
+        {
+            FeedbackReportModel feedbackReport = new FeedbackReportModel();
+            try
+            {
+                using (var mdb = new OggleBoobleMySqContext())
+                {
+                    feedbackReport.FeedbackRows =
+                        (from f in mdb.FeedBacks
+                         join v in mdb.Visitors on f.VisitorId equals v.VisitorId
+                         join c in mdb.CategoryFolders on f.PageId equals c.Id
+                         join p in mdb.CategoryFolders on c.Parent equals p.Id
+                         join r in mdb.RegisteredUsers on f.VisitorId equals r.VisitorId into sr
+                         from u in sr.DefaultIfEmpty()
+                         where (v.IpAddress != "68.203.90.183")
+                         select new FeedbackModel()
+                         {
+                             IpAddress = v.IpAddress,
+                             Parent = p.FolderName,
+                             Folder = c.FolderName,
+                             FeedBackType = f.FeedBackType,
+                             Occured = f.Occured,
+                             FeedBackComment = f.FeedBackComment,
+                             UserName = u.UserName == null ? "unregistered" : u.UserName,
+                             Email = u.Email == null ? "" : u.Email
+                         }).OrderByDescending(f => f.Occured).ToList();
+                    feedbackReport.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                feedbackReport.Success=Helpers.ErrorDetails(ex);
+            }
+            return feedbackReport;
+        }
+
+        [HttpGet]
+        [Route("api/Reports/ErrorLogReport")]
+        public ErrorLogReportModel ErrorLogReport() {
+            ErrorLogReportModel errorLog = new ErrorLogReportModel();
+            try
+            {
+                using (var mdb = new OggleBoobleMySqContext())
+                {
+                    errorLog.ErrorRows =
+                        (from e in mdb.ErrorLogs
+                         join v in mdb.Visitors on e.VisitorId equals v.VisitorId
+                         select new ErrorLogItem()
+                         {
+                             IpAddress = v.IpAddress,
+                             City = v.City,
+                             Country = v.Country,
+                             CalledFrom = e.CalledFrom,
+                             ActivityCode = e.ActivityCode,
+                             Severity = e.Severity,
+                             Occured = e.Occured,
+                             ErrorMessage = e.ErrorMessage
+                         }).OrderByDescending(e => e.Occured).Take(500).ToList();
+
+                    foreach (ErrorLogItem row in errorLog.ErrorRows)
+                    {
+                        row.InDay = row.Occured.ToShortDateString();
+                        row.OnTime = row.Occured.AddHours(2).ToShortTimeString();
+                    }
+
+                    errorLog.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                errorLog.Success = Helpers.ErrorDetails(ex);
+            }
+            return errorLog;
+        }
+
     }
 }

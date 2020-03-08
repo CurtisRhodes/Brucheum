@@ -79,6 +79,7 @@ namespace WebApi.Models
         public string VisitorId { get; set; }
         public string IpAddress { get; set; }
         public string UserName { get; set; }
+        public int PageId { get; set; }
         public string Success { get; set; }
     }
 

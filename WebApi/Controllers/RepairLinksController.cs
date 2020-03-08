@@ -469,9 +469,12 @@ namespace WebApi
                                 {
                                     if (imageLink.FolderLocation != categoryFolder.Id)
                                     {
-                                        imageLink.FolderLocation = categoryFolder.Id;
-                                        db.SaveChanges();
-                                        repairReportModel.LinksEdited++;
+                                        if (imageLink.FolderLocation == 4267)
+                                        {
+                                            imageLink.FolderLocation = categoryFolder.Id;
+                                            db.SaveChanges();
+                                            repairReportModel.LinksEdited++;
+                                        }
                                     }
                                     else
                                     {

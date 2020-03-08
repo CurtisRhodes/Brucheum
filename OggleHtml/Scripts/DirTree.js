@@ -45,8 +45,9 @@ function getDirTree(dest, treeId, startNode, isRebuild) {
                 recurrBuildDirTree(categoryTreeModel, treeId);
 
                 dest.html(dirTreeContainer);
-                onDirTreeComplete();
-
+                if (typeof onDirTreeComplete === "function") {
+                    onDirTreeComplete();
+                }
                 var delta = (Date.now() - start) / 1000;
                 console.log("rebuildCatTree took: " + delta.toFixed(3));
                 dirTreeComplete = true;

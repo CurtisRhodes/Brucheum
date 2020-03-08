@@ -53,6 +53,8 @@ function setDashboardHeader(viewId) {
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showEventActivityReport()'>Event Activity</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMostActiveUsersReport()'>Most Active Users</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showLatestImageHitsReport()'>Latest Image Hits</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='FeedbackReport()'>Feedback</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='runErrorLogReport()'>Error Log</div>");
             break;
         case "Admin":
             $('.workAreaContainer').hide();
@@ -239,13 +241,11 @@ function addImageLink() {
                         alert("set image: " + successModel.ReturnValue + " as folder image for " + dashboardMainSelectedTreeId);
                         setFolderImage(successModel.ReturnValue, dashboardMainSelectedTreeId, "folder");
                     }
-
-                    var changeLogModel = {
+                    logActivity({
                         PageId: dashboardMainSelectedTreeId,
                         PageName: $('.txtLinkPath').val(),
                         Activity: "new image added " + successModel.ReturnValue
-                    };
-                    logActivity(changeLogModel);
+                    });
                 }
                 else
                     alert("addImageLink: " + successModel.Success);
@@ -566,7 +566,7 @@ function createNewFolder() {
                 logActivity({
                     PageId: dashboardMainSelectedTreeId,
                     PageName: $('#txtNewFolderTitle').val(),
-                    Activity: "new folder " + newFolder.FolderName + " created"
+                    Activity: "new folder created: " + newFolder.FolderName
                 });
                 $('#txtNewFolderTitle').val('');
                 //$('#createNewFolderDialog').dialog('close');
@@ -628,12 +628,11 @@ function moveFolder() {
             if (!success.startsWith("ERROR")) {
                 displayStatusMessage("ok", "folder " + $('#txtMoveFolderDest').val() + " moved to " + $('.txtPartialDirTreePath').val());
                 //$('#progressBar').progressbar("destroy");
-                var changeLogModel = {
+                logActivity({
                     PageId: dashboardMainSelectedTreeId,
                     PageName: $('.txtPartialDirTreePath').val(),
-                    Activity: "folder " + $('#txtNewFolderParent').val() + " moved to " + $('#txtMoveFolderDest').val()
-                };
-                logActivity(changeLogModel);
+                    Activity: "folder moved from:" + $('#txtNewFolderParent').val() + " to: " + $('#txtMoveFolderDest').val()
+                });
                 $('#txtMoveFolderDest').val('');
                 $('#dataifyInfo').hide();
             }
@@ -774,15 +773,12 @@ function renameFolder() {
                 $('.txtLinkPath').val('');
                 $('#renameFolderCrud').dialog("close");
                 buildDirectoryTree();
-
-                //var changeLogModel = {
-                //    PageId: dashboardMainSelectedTreeId,
-                //    PageName: $('.txtLinkPath').val(),
-                //    Activity: "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val()
-                //};
-                //logActivity(changeLogModel);
-
-                $('#dataifyInfo').hide();
+                logActivity({
+                    PageId: dashboardMainSelectedTreeId,
+                    PageName: $('.txtLinkPath').val(),
+                    Activity: "folder renamed from: " + $('.txtLinkPath').val() + " to " + $('#txtReName').val()
+                });
+                //$('#dataifyInfo').hide();
             }
             else {
                 alert("renameFolder: " + success);
@@ -820,13 +816,11 @@ function postImage() {
                         displayStatusMessage("ok", "image link added");
                         $('#txtNewLink').val("");
                         resizeDashboardPage();
-
-                        var changeLogModel = {
+                        logActivity({
                             PageId: dashboardMainSelectedTreeId,
                             PageName: $('.txtLinkPath').val(),
-                            Activity: "new image added " + successModel.ReturnValue
-                        };
-                        logActivity(changeLogModel);
+                            Activity: "new image added "
+                        });
                     }
                     else
                         alert("postImage: " + success);
