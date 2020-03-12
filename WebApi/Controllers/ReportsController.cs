@@ -217,34 +217,32 @@ namespace WebApi.Controllers
         public PageHitReportModel PageHitReport()
         {
             var pageHitReportModel = new PageHitReportModel();
-            int errCount = 0;
+            //int errCount = 0;
             try
             {
                 using (var db = new OggleBoobleMySqContext())
                 {
                     db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
                     db.SaveChanges();
-                    var pageHits = db.vwPageHits.ToList();
-                    pageHitReportModel.HitCount = pageHits.Count();
-                    foreach (vwPageHit item in pageHits)
+                    List<vwPageHit> vwPageHits = db.vwPageHits.Take(500).ToList();
+
+                    pageHitReportModel.HitCount = db.PageHits.Count();
+
+                    foreach (vwPageHit item in vwPageHits)
                     {
-                        try
+                        pageHitReportModel.Items.Add(new PageHitReportModelItem()
                         {
-                            pageHitReportModel.Items.Add(new PageHitReportModelItem()
-                            {
-                                IpAddress = item.IpAddress,
-                                City = item.City,
-                                Region = item.Region,
-                                Country = item.Country,
-                                PageId = item.PageId,
-                                FolderName = item.FolderName.Replace("OGGLEBOOBLE.COM", ""),
-                                PageHits = item.PageHits,
-                                ImageHits = item.ImageHits,
-                                HitDate = item.HitDate,
-                                HitTime = item.HitTime
-                            });
-                        }
-                        catch (Exception) { errCount++; }
+                            IpAddress = item.IpAddress,
+                            City = item.City,
+                            Region = item.Region,
+                            Country = item.Country,
+                            PageId = item.PageId,
+                            FolderName = item.FolderName.Replace("OGGLEBOOBLE.COM", ""),
+                            PageHits = item.PageHits,
+                            ImageHits = item.ImageHits,
+                            HitDate = item.HitDate,
+                            HitTime = item.HitTime
+                        });
                     }
                 }
                 pageHitReportModel.Success = "ok";

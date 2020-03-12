@@ -1006,7 +1006,7 @@ namespace WebApi
     public class FolderController : ApiController
     {
         private readonly string repoPath = "F:/Danni/";
-        private readonly string hostingPath = ".ogglebooble.com/";
+        //private readonly string hostingPath = ".ogglebooble.com/";
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];  //  ftp://50.62.160.105/
         static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
@@ -1085,7 +1085,11 @@ namespace WebApi
                     List<CategoryFolder> subdirs = db.CategoryFolders.Where(f => f.Parent == sourceFolderId).ToList();
                     foreach (CategoryFolder subdir in subdirs)
                     {
-                        MoveFolderRecurr(subdir.Id, destinationFolderId, sourcePath + "/" + subdir.FolderName, destinationPath + "/" + subdir.FolderName);
+                        //MoveFolderRecurr(int sourceFolderId, int destinationFolderId, string sourcePath, string destinationPath)
+
+                        MoveFolderRecurr(destinationFolderId, subdir.Id, sourcePath + "/" + subdir.FolderName, destinationPath + "/" + subdir.FolderName);
+
+
                     }
 
                     // update links
@@ -1150,14 +1154,14 @@ namespace WebApi
                     var childFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == childFolder.Id).FirstOrDefault();
 
                     var newFolderLink = newSubFolder.Link ?? childFolderDetails.FolderImage;
-                    //    newSubFolder.Link = childFolderDetails.FolderImage;
+                    var newFolderName = newSubFolder.FolderName ?? childFolder.FolderName;
 
                     StepChild stepChild = new StepChild()
                     {
                         Parent = newSubFolder.Parent,
                         Child = newSubFolder.Child,
                         Link = newFolderLink,
-                        FolderName = newSubFolder.FolderName,
+                        FolderName = newFolderName,
                         RootFolder = childFolder.RootFolder,
                         SortOrder = newSubFolder.SortOrder
                     };
@@ -1171,7 +1175,7 @@ namespace WebApi
                             Parent = newSubFolder.Parent,
                             Child = newSubFolder.Child,
                             Link = newFolderLink,
-                            FolderName = newSubFolder.FolderName,
+                            FolderName = newFolderName,
                             RootFolder = childFolder.RootFolder,
                             SortOrder = newSubFolder.SortOrder
                         };

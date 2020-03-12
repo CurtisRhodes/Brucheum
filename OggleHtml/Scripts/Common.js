@@ -44,12 +44,12 @@ function verifyConnection() {
             }
             else {
                 checkFor404("Not connect", "verifyConnection");
-                //alert("Verify Connection: " + successModel.Success);
+                alert("Verify Connection: " + successModel.Success);
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            //alert("verifyConnection: " + errorMessage);
+            alert("verifyConnection: " + errorMessage);
             if (!checkFor404(errorMessage, "getAconnection")) {
                 //sendEmailToYourself("XHR ERROR IN  verifyConnection", "url: " + settingsArray.ApiServer + "api/Carousel/VerifyConnection" +
                 //    "<br/>Message: " + errorMessage);
