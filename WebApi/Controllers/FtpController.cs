@@ -211,21 +211,12 @@ namespace WebApi
                             {
                                 goDaddyrow.Link = goDaddyLink;
                                 goDaddyrow.FolderLocation = dbDestinationFolder.Id;
-                                db.SaveChanges();
                             }
                             else
                                 Console.WriteLine("imageLink.FolderLocation() != categoryFolder.Id()");
-                        }
-                        else {
-                            successModel.Success = ftpMoveSuccess;
-                            return successModel;
-                        }
 
-                        if (model.Mode == "Move")
-                        {
                             CategoryImageLink oldCatImageLink = db.CategoryImageLinks
                                  .Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == dbImageLink.Id).First();
-
                             CategoryImageLink newCatImageLink = new CategoryImageLink()
                             {
                                 ImageCategoryId = model.DestinationFolderId,
@@ -233,8 +224,16 @@ namespace WebApi
                                 SortOrder = oldCatImageLink.SortOrder
                             };
                             db.CategoryImageLinks.Add(newCatImageLink);
-                            db.CategoryImageLinks.Remove(oldCatImageLink);
+
+                            if (model.Mode == "Move")
+                            {
+                                db.CategoryImageLinks.Remove(oldCatImageLink);
+                            }
                             db.SaveChanges();
+                        }
+                        else {
+                            successModel.Success = ftpMoveSuccess;
+                            return successModel;
                         }
                     }
                     // determine if this is the first image added to folder 

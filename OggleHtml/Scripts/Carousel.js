@@ -18,7 +18,6 @@ var imageHistory = [];
 
 function launchCarousel(root) {
     $('#footerMessage').html("launching carousel");
-    $('.carouselImage').css("height", "150px");
     if (root === "boobs")
         specialPage = 3908;
     if (root === "porn")
@@ -97,6 +96,8 @@ function loadImages(rootFolder, isChecked, skip, take) {
                         startCarousel();
                         $('#footerMessage').html("starting carousel");
                         resizeCarousel();
+                        $('.newsSection').show();
+                        resizeIndexPage();
                     }
                     numImages = carouselInfo.Links.length;
                     numFolders += carouselInfo.FolderCount;
@@ -165,10 +166,13 @@ function considerHidingContextMenu() {
 }
 
 function resizeCarousel() {
-    $('.carouselImage').css("max-width", $('#middleColumn').width());
+
+    //$('.carouselImage').css("width", $('#middleColumn').width());
+    //$('.carouselImage').css("max-width", $('#middleColumn').width());
     //$('.carouselImage').css("height", $('#middleColumn').innerHeight() - 180);
-    $('.carouselImage').css("height", $('#middleColumn').height() - 210);
-    $('.assuranceArrows img').css("height", $('#middleColumn').height() - 210);
+    //$('.carouselImage').css("height", $('#middleColumn').height() - 210);
+    //$('.carouselImage').css("height", $('#middleColumn').height() - 210);
+    //$('.assuranceArrows img').css("height", $('#middleColumn').height() - 210);
 }
 
 function togglePause() {
@@ -200,28 +204,7 @@ function startCarousel() {
 }
 
 function assuranceArrowClick(direction) {
-
-    //alert("assuranceArrowClick direction: " + direction);
-
     reportThenPerformEvent("CAA", specialPage, direction);
-    //if (direction === "foward")
-    //    resume();
-    //else {
-    //    // pop
-    //    imageHistory.pop();
-    //    imageIndex = imageHistory.pop();
-    //    if (imageIndex > 0) {
-    //        $('#categoryTitle').fadeOut(intervalSpeed);
-    //        $('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
-    //            $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
-    //            $('#categoryTitle').html(carouselItemArray[imageIndex].FolderPath + ": " + carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
-    //            $('#laCarousel').fadeIn(intervalSpeed);
-    //            resizeCarousel();
-    //        });
-    //    }
-    //    else
-    //        alert("imageIndex: " + imageIndex);
-    //}
 }
 
 function intervalBody() {

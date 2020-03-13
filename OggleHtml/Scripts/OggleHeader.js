@@ -219,10 +219,12 @@ function setOggleHeader(subdomain, folderId, containsImageLinks, isStaticPage) {
     // LOOK UP FOLDER DETAIL FOR BADGES AND TRACKBACK LINKS
     //if (containsImageLinks)
     {
-        //if (getCookieValue("IpAddress") === "68.203.90.183") alert("isStaticPage: " + isStaticPage);
-        showSpecialHeaderIcons(folderId);
-        if (!isStaticPage) {
-            setTrackbackLinks(folderId);
+        if (settingsArray.ApiServer !== undefined) {
+            //if (getCookieValue("IpAddress") === "68.203.90.183") alert("isStaticPage: " + isStaticPage);
+            showSpecialHeaderIcons(folderId);
+            if (!isStaticPage) {
+                setTrackbackLinks(folderId);
+            }
         }
     }
 }

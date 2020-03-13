@@ -924,13 +924,9 @@ function performEvent(eventCode, calledFrom, eventDetail) {
                 imageHistory.pop();
                 imageIndex = imageHistory.pop();
                 if (imageIndex > 0) {
-                    //$('#categoryTitle').fadeOut(intervalSpeed);
-                    //$('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
                     $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
                     $('#categoryTitle').html(carouselItemArray[imageIndex].FolderPath + ": " + carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
-                    //$('#laCarousel').fadeIn(intervalSpeed);
                     resizeCarousel();
-                    //});
                 }
                 else
                     alert("imageIndex: " + imageIndex);
