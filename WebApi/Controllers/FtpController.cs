@@ -1064,6 +1064,7 @@ namespace WebApi
                     }
 
                     CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == sourceFolderId).FirstOrDefault();
+
                     string localSourcePath = repoPath + Helpers.GetLocalParentPath(sourceFolderId) + dbSourceFolder.FolderName;
                     CategoryFolder dbDestinationParent = db.CategoryFolders.Where(f => f.Id == destinationFolderId).FirstOrDefault();
                     // local repository
@@ -1085,25 +1086,26 @@ namespace WebApi
                     List<CategoryFolder> subdirs = db.CategoryFolders.Where(f => f.Parent == sourceFolderId).ToList();
                     foreach (CategoryFolder subdir in subdirs)
                     {
-                        //MoveFolderRecurr(int sourceFolderId, int destinationFolderId, string sourcePath, string destinationPath)
-
-                        MoveFolderRecurr(destinationFolderId, subdir.Id, sourcePath + "/" + subdir.FolderName, destinationPath + "/" + subdir.FolderName);
-
-
+                        MoveFolderRecurr(subdir.Id, sourceFolderId, sourcePath + "/" + subdir.FolderName, destinationPath + "/" + subdir.FolderName);
                     }
 
                     // update links
                     //string destinationHttpPath = "http://" + dbDestinationParent.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(destinationFolderId) + dbDestinationParent.FolderName + "/" + dbSourceFolder.FolderName;
                     string fileName = "", newLink = "";
-                    List<ImageLink> imageLinks = db.ImageLinks.Where(l => l.FolderLocation == sourceFolderId).ToList();
-                    foreach (ImageLink imageLink in imageLinks)
+                    //List<ImageLink> imageLinks = db.ImageLinks.Where(l => l.FolderLocation == sourceFolderId).ToList();
+                    ImageLink gdRow = null;
+                    List<CategoryImageLink> imageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == sourceFolderId).ToList();
+                    foreach (CategoryImageLink imageLink in imageLinks)
                     {
-                        if (imageLink.Link.Contains(dbSourceFolder.FolderName))
+                        gdRow = db.ImageLinks.Where(gd => gd.Id == imageLink.ImageLinkId).FirstOrDefault();
+                        if (gdRow.Link.Contains(dbSourceFolder.FolderName))
                         {
-                            fileName = imageLink.Link.Substring(imageLink.Link.LastIndexOf("/"));
-                            //newLink = "http://" + destinationPath + "/" + dbSourceFolder.FolderName + fileName;
+                            fileName = gdRow.Link.Substring(gdRow.Link.LastIndexOf("/"));
                             newLink = "http://" + destinationPath + fileName;
-                            imageLink.Link = newLink;
+                            gdRow.Link = newLink;
+                        }
+                        else {
+                            System.Diagnostics.Debug.WriteLine("true link detected");
                         }
                     }
                     dbSourceFolder.Parent = destinationFolderId;
@@ -1113,18 +1115,18 @@ namespace WebApi
                     // update links on mysql
                     using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
                     {
-                        List<MySqDataContext.ImageLink> imageLinks1 = mdb.ImageLinks.Where(l => l.FolderLocation == sourceFolderId).ToList();
-                        foreach (MySqDataContext.ImageLink imageLink in imageLinks1)
+                        var mdbSourceFolder = mdb.CategoryFolders.Where(f => f.Id == sourceFolderId).FirstOrDefault();
+                        List<MySqDataContext.CategoryImageLink> myImageLinks = mdb.CategoryImageLinks.Where(l => l.ImageCategoryId == sourceFolderId).ToList();
+                        foreach (MySqDataContext.CategoryImageLink myImageLink in myImageLinks)
                         {
-                            if (imageLink.Link.Contains(dbSourceFolder.FolderName))
+                            gdRow = db.ImageLinks.Where(gd => gd.Id == myImageLink.ImageLinkId).FirstOrDefault();
+                            if (gdRow.Link.Contains(mdbSourceFolder.FolderName))
                             {
-                                fileName = imageLink.Link.Substring(imageLink.Link.LastIndexOf("/"));
-                                //newLink = "http://" + destinationPath + "/" + dbSourceFolder.FolderName + fileName;
+                                fileName = gdRow.Link.Substring(gdRow.Link.LastIndexOf("/"));
                                 newLink = "http://" + destinationPath + fileName;
-                                imageLink.Link = newLink;
+                                gdRow.Link = newLink;
                             }
                         }
-                        var mdbSourceFolder = mdb.CategoryFolders.Where(f => f.Id == sourceFolderId).FirstOrDefault();
                         mdbSourceFolder.Parent = destinationFolderId;
                         mdbSourceFolder.RootFolder = dbDestinationParent.RootFolder;
                         mdb.SaveChanges();

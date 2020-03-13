@@ -831,29 +831,28 @@ function logEventActivity(logEventModel) {
         data: logEventModel,
         success: function (logEventActivitySuccess) {
             if (logEventActivitySuccess.Success !== "ok") {
-                //if (logEventActivitySuccess.Success.indexOf("Option not supported") > -1) {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "ER2",
-                    Severity: 2,
-                    ErrorMessage: logEventActivitySuccess.Success,
-                    CalledFrom: "LogEventActivity"
-                });
+                if (logEventActivitySuccess.Success.indexOf("Duplicate Entry") === 0) {
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "ER2",
+                        Severity: 2,
+                        ErrorMessage: logEventActivitySuccess.Success,
+                        CalledFrom: "LogEventActivity"
+                    });
+                }
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (document.domain === 'localhost')
-                alert("logEventActivity XHR: " + errorMessage);
-            //if (!checkFor404(errorMessage, "LogEventActivity")) {
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "XHR",
-                Severity: 2,
-                ErrorMessage: errorMessage,
-                CalledFrom: "LogEventActivity"
-            });
-            //}
+            if (!checkFor404(errorMessage, "LogEventActivity")) {
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "XHR",
+                    Severity: 2,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "LogEventActivity"
+                });
+            }
         }
     });
 }

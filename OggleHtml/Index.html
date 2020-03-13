@@ -158,6 +158,18 @@
             else {
                 subdomain = params.subdomain;
             }
+
+            if (subdomain == "porn") {
+                setOggleHeader(subdomain, 3909, false);
+            }
+            else {
+                setOggleHeader(subdomain, 3908, false);
+            }
+
+
+
+
+
             $('#footerMessage').html("loading settings");
             loadSettings();
             var dots = ""

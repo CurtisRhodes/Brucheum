@@ -34,30 +34,6 @@ function loadSettings() {
     });
 }
 
-function verifyConnection() {
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Carousel/VerifyConnection",
-        success: function (successModel) {
-            if (successModel.Success === "ok") {
-                connectionVerified = true;
-            }
-            else {
-                checkFor404("Not connect", "verifyConnection");
-                alert("Verify Connection: " + successModel.Success);
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            alert("verifyConnection: " + errorMessage);
-            if (!checkFor404(errorMessage, "getAconnection")) {
-                //sendEmailToYourself("XHR ERROR IN  verifyConnection", "url: " + settingsArray.ApiServer + "api/Carousel/VerifyConnection" +
-                //    "<br/>Message: " + errorMessage);
-            }
-        }
-    });
-}
-
 function includeHTML() {
     var z, i, elmnt, file, xhttp;
     /* Loop through a collection of all HTML elements: */
@@ -142,50 +118,6 @@ function displayStatusMessage(msgCode, message) {
     else {
         setTimeout(function () { $('#divStatusMessage').hide("slow"); }, 15000);
     }
-}
-
-function checkFor404(errorMessage, calledFrom) {
-    if (document.domain === 'localhost')
-        alert("checkFor404 " + errorMessage + " calledFrom: " + calledFrom);
-    var isNotConnected = false;
-    if (isNullorUndefined(errorMessage)) {
-        var ipAddr = getCookieValue("IpAddress");
-        logError({
-            VisitorId: getCookieValue("VisitorId"),
-            ActivityCode: "404",
-            Severity: 2,
-            ErrorMessage: "checkFor404 called with null errorMessage",
-            CalledFrom: "checkFor404/" + calledFrom
-        });
-        //sendEmailToYourself("checkFor404 called with null errorMessage from: " + calledFrom, "ip: " + ipAddr);
-        if (document.domain === 'localhost')
-            alert("checkFor404 called with null errorMessage from: " + calledFrom);
-    }
-    if (errorMessage.indexOf("Not connect") > -1 || errorMessage.indexOf("Option not supported") > -1) {
-        isNotConnected = true;
-        if (ipAddr === "68.203.90.183") //if (document.domain === 'localhost')
-            alert("checkFor404 isNotConnected = true called from: " + calledFrom);
-
-        $('#notConnectMessage').width($(window).width());
-        $('#notConnectMessage').html(
-            "<div class='centeredDivShell2'>\n" +
-            "   <div class='centeredDivInner'>\n" +
-            "       <div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'></div>\n" +
-            "       <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
-            "   </div>" +
-            "</div>");
-        $('#notConnectMessage').show();
-        console.log("checkFor404: " + calledFrom);
-
-        logError({
-            VisitorId: getCookieValue("VisitorId"),
-            ActivityCode: "404",
-            Severity: 2,
-            ErrorMessage: "SERVICE DOWN?",
-            CalledFrom: "checkFor404 / " + calledFrom
-        });
-    }
-    return isNotConnected;
 }
 
 function refreshPage() {
@@ -587,3 +519,85 @@ function todayString() {
     var yyyy = today.getFullYear();
     return mm + '/' + dd + '/' + yyyy;
 }
+
+function checkFor404(errorMessage, calledFrom) {
+    //if (document.domain === 'localhost')
+    //    alert("checkFor404 " + errorMessage + " calledFrom: " + calledFrom);
+    var isNotConnected = false;
+    if (isNullorUndefined(errorMessage)) {
+        var ipAddr = getCookieValue("IpAddress");
+        logError({
+            VisitorId: getCookieValue("VisitorId"),
+            ActivityCode: "404",
+            Severity: 2,
+            ErrorMessage: "checkFor404 called with null errorMessage",
+            CalledFrom: "checkFor404/" + calledFrom
+        });
+        //sendEmailToYourself("checkFor404 called with null errorMessage from: " + calledFrom, "ip: " + ipAddr);
+        if (document.domain === 'localhost')
+            alert("checkFor404 called with null errorMessage from: " + calledFrom);
+    }
+    if (errorMessage.indexOf("Not connect") > -1
+        || errorMessage.indexOf("Option not supported") > -1
+        || errorMessage.indexOf("Verify Network") > -1
+        || errorMessage.indexOf("404") > -1) {
+
+        connectionVerified = false;
+        verifyConnection();
+        setTimeout(function () {
+            if (!connectionVerified) {
+                $('#notConnectMessage').width($(window).width());
+                $('#notConnectMessage').html(
+                    "<div class='centeredDivShell2'>\n" +
+                    "   <div class='centeredDivInner'>\n" +
+                    "       <div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'></div>\n" +
+                    "       <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
+                    "   </div>" +
+                    "</div>");
+                $('#notConnectMessage').show();
+                console.log("checkFor404: message should be showing " + calledFrom);
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "404",
+                    Severity: 2,
+                    ErrorMessage: "SERVICE DOWN?",
+                    CalledFrom: "checkFor404 / " + calledFrom
+                });
+            }
+        }, 5000);
+    }
+    return connectionVerified;
+}
+
+function verifyConnection() {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Carousel/VerifyConnection",
+        success: function (successModel) {
+            if (successModel.Success === "ok") {
+                connectionVerified = true;
+            }
+            else {
+                checkFor404("Not connect", "verifyConnection");
+                //alert("Verify Connection: " + successModel.Success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            //alert("verifyConnection: " + errorMessage);
+            if (!checkFor404(errorMessage, "getAconnection")) {
+                //sendEmailToYourself("XHR ERROR IN  verifyConnection", "url: " + settingsArray.ApiServer + "api/Carousel/VerifyConnection" +
+                //    "<br/>Message: " + errorMessage);
+            }
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
