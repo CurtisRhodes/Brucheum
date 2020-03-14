@@ -267,6 +267,7 @@ function runPageHitReport() {
     $("#divStandardReportArea").removeClass("tightReport");
     $("#divStandardReportArea").html("");
     $("#divStandardReportCount").html("");
+    $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Reports/PageHitReport",
@@ -277,13 +278,13 @@ function runPageHitReport() {
                 kludge += "<tr><th>ip</th><th>City</th><th>Page</th><th>Pages Visited </th><th>&nbsp;  Images Hit</th><th>Hit</th></tr>";
                 var lastIp = "";
                 $.each(pageHitReportModel.Items, function (idx, obj) {
-                    if (obj.IpAddress === lastIp) {
-                        kludge += "<tr><td></td><td></td>";
-                    }
-                    else {
+                    //if (obj.IpAddress === lastIp) {
+                    //    kludge += "<tr><td></td><td></td>";
+                    //}
+                    //else {
                         kludge += "<tr><td>" + obj.IpAddress + "</td>";
                         kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td>";
-                    }
+                    //}
                     kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
                     if (obj.IpAddress === lastIp) {
                         kludge += "<td></td><td></td>";
@@ -346,7 +347,7 @@ function runErrorLogReport() {
             $('#dashBoardLoadingGif').hide();
             if (errorLogReport.Success === "ok") {
                 var kludge = "<table class='mostAvtiveUsersTable'>";
-                kludge += "<tr><th>ip</th><th>Location</th><th>Called From</th><th>Actity</th><th>Occured</th><th>Severity</th></tr>";
+                kludge += "<tr><th>ip</th><th>Location</th><th>Called From</th><th>Actity</th><th>Severity</th><th>Occured</th></tr>";
                 $.each(errorLogReport.ErrorRows, function (idx, obj) {
                     kludge += "<tr><td>" + obj.IpAddress + "</td>";
                     kludge += "<td>" + obj.City + "," + obj.Country + "</td>";

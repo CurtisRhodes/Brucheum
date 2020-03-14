@@ -50,6 +50,34 @@
             enable_page_level_ads: true
         });
     </script>-->
+    <style>
+        .newsSection {
+            border: solid thin red;
+            padding: 3px;
+            display: none;
+        }
+
+        .newContentBox {
+            display: inline-block;
+            height: 300px;
+            width: 500px;
+            border: solid 3px black;
+        }
+
+        .carouselContainer {
+            padding: 1px;
+            border: solid 2px var(--oggleBorderColor);
+            /*border: solid 2px #b200ff;
+            background-color: rgba(164, 168, 169, 0.75);*/            
+            /*display: none;*/
+            /*display: inline-block;*/         
+        }
+        .carouselImage {
+            height: 500px;
+            width: 800px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <header></header>
@@ -67,7 +95,7 @@
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
             <div id="pornLeftColumnList" class="leftColumnList">
-                <div onclick="reportThenPerformEvent('LMC',3909,'back');">back to boobs</div><br/>
+                <div onclick="reportThenPerformEvent('LMC',3909,'back');">back to boobs</div><br />
                 <div onclick="reportThenPerformEvent('LMC',3909,'pornTransitions');">Transition down</div>
                 <div onclick="reportThenPerformEvent('LMC',3909,'pornRanker');">Nastieness Ranker</div>
                 <div onclick="reportThenPerformEvent('LMC',3909,'explainPorn');">Let me Explain</div>
@@ -80,32 +108,40 @@
         <div id="middleColumn">
             <div id="divStatusMessage"></div>
             <div id="dots"></div>
-            <div class="flexContainer">
-                <div id="carouselInclude" class="floatLeft displayHidden">
-                    <div id="includeCenterfoldsCheckbox" class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('playboy', $(this).is(':checked'))" /> Include Centerfolds</div>
-                    <div class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('archive', $(this).is(':checked'))" /> Include Archive</div>
-                    <div id="dots"></div>
-                </div>
-                <div class="floatLeft" id="carousel">
-                    <div class="centeredDivShell randomImageContainer">
-                        <div class="centeredDivInner">                            
-                            <div id="connectingMsg"><img src="https://media.giphy.com/media/ZFiRiRg60SjhipvdCz/giphy.gif" /></div>
-                            <!--<div id="connectingMsg"><img src="https://media.giphy.com/media/ls5bix63j3H53E1Ebp/giphy.gif" /></div>-->
-                            <div id="laCarousel" class="carouselContainer">
-                                <div class="assuranceArrows" onclick="assuranceArrowClick('back')"><img src="/Images/leftArrowOpaque02.png" /></div>
-                                <div class="carouselImageContainer">
-                                    <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
-                                    <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="/Images/redballon.png" onclick="clickViewGallery()" />
-                                    <div class="imgBottom">
-                                        <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
-                                        <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
-                                        <div id='categoryLabel' class='carouselCategoryLabel' onclick="clickViewParentGallery()"></div>
-                                        <img class="speedButton floatRight" src="Images/speedDialFaster.png" title="faster" onclick="clickSpeed('faster')" />
-                                    </div>
-                                </div>
-                                <div class="assuranceArrows" onclick="assuranceArrowClick('foward')"><img src="/Images/rightArrowOpaque02.png" /></div>
-                            </div>
+            <div >
+                random galleries
+                <div id="laCarousel" class="carouselContainer flexContainer">
+                    <div class="assuranceArrows" onclick="assuranceArrowClick('back')"><img src="/Images/leftArrowOpaque02.png" /></div>
+                    <div class="carouselImageContainer">
+                        <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
+                        <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="/Images/redballon.png" onclick="clickViewGallery()" />
+                        <div class="imgBottom">
+                            <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
+                            <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
+                            <div id='categoryLabel' class='carouselCategoryLabel' onclick="clickViewParentGallery()"></div>
+                            <img class="speedButton floatRight" src="Images/speedDialFaster.png" title="faster" onclick="clickSpeed('faster')" />
                         </div>
+                    </div>
+                    <div class="assuranceArrows" onclick="assuranceArrowClick('foward')"><img src="/Images/rightArrowOpaque02.png" /></div>
+                </div>
+            </div>
+            <div>
+                latest updates
+                <div id="newsSection" class="newsSection">
+                </div>
+            </div>
+
+            <div id="carouselInclude" class="floatLeft displayHidden">
+                <div id="includeCenterfoldsCheckbox" class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('playboy', $(this).is(':checked'))" /> Include Centerfolds</div>
+                <div class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('archive', $(this).is(':checked'))" /> Include Archive</div>
+                <div id="dots"></div>
+            </div>
+
+            <div class="floatLeft">
+                <div class="centeredDivShell randomImageContainer">
+                    <div class="centeredDivInner">
+                        <div id="connectingMsg"><img src="https://media.giphy.com/media/ZFiRiRg60SjhipvdCz/giphy.gif" /></div>
+                        <!--<div id="connectingMsg"><img src="https://media.giphy.com/media/ls5bix63j3H53E1Ebp/giphy.gif" /></div>-->
                     </div>
                 </div>
             </div>
@@ -161,10 +197,13 @@
 
             if (subdomain == "porn") {
                 setOggleHeader(subdomain, 3909, false);
+                setOggleFooter(subdomain, 3909);
             }
             else {
                 setOggleHeader(subdomain, 3908, false);
+                setOggleFooter(subdomain, 3908);
             }
+                                
 
             $('#footerMessage').html("loading settings");
             loadSettings();
@@ -184,6 +223,7 @@
                             $('#dots').html(dots);
                         }
                         else {
+                            loadNewsBoxes();
                             launchCarousel(subdomain);
                             clearInterval(verifyConnectionWaiter);
                             $('#connectingMsg').hide();
@@ -199,10 +239,11 @@
                                 logPageHit(3909, "Index");
                             }
                             else {
+
                                 //setOggleHeader(subdomain, 3908, false);
                                 $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
                                 $('#boobsLeftColumnList').show();
-                                launchPromoMessages();
+                                //launchPromoMessages();
                                 logPageHit(3908, "Index");
                             }
                             if (isInRole("Oggle admin")) {
@@ -216,8 +257,82 @@
             resizeIndexPage();
         });
 
+        function loadNewsBoxes() {
+
+            $('#newsSection').html("");
+            for (i = 0; i < 10; i++) {
+                $('#newsSection').append("<div class='newsSection'>")
+                $('#newsSection').append("box " + i);
+                $('#newsSection').append("</div>");
+
+            }
+
+            //$.ajax({
+            //    type: "GET",
+            //    url: settingsArray.ApiServer + "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take,
+            //    success: function (carouselInfo) {
+            //        if (carouselInfo.Success === "ok") {
+            //            $.each(carouselInfo.Links, function (idx, obj) {
+            //                carouselItemArray.push({
+            //                    FolderId: obj.FolderId,
+            //                    RootFolder: obj.RootFolder,
+            //                    ParentId: obj.ParentId,
+            //                    FolderName: obj.FolderName,
+            //                    Link: obj.Link,
+            //                    LinkId: obj.LinkId,
+            //                    FolderPath: obj.FolderPath
+            //                });
+            //            });
+
+            //            $('#categoryTitle').show();
+
+            //            if (numImages === 0) {
+            //                startCarousel();
+            //                $('#footerMessage').html("starting carousel");
+            //                resizeCarousel();
+            //                $('.newsSection').show();
+            //                resizeIndexPage();
+            //            }
+            //            numImages = carouselInfo.Links.length;
+            //            numFolders += carouselInfo.FolderCount;
+
+            //            var delta = (Date.now() - start) / 1000;
+            //            if (take === initialTake) {
+            //                console.log("loadImages(" + rootFolder + ") take: " + initialTake + " took: " + delta.toFixed(3));
+            //                loadImages(rootFolder, isChecked, initialTake, 80000);
+            //            }
+            //            else
+            //                console.log("loadImages(" + rootFolder + ") take: " +
+            //                    Number(carouselInfo.Links.length - initialTake) + " took: " + delta.toFixed(3));
+            //        }
+            //        else {
+            //            //alert("loadImages: " + carouselInfo.Success);
+            //            sendEmailToYourself("Error in Caraousel/loadImages", carouselInfo.Success);
+            //        }
+            //    },
+            //    error: function (jqXHR) {
+            //        var errorMessage = getXHRErrorDetails(jqXHR);
+            //        if (!checkFor404(errorMessage, "loadImages")) {
+            //            sendEmailToYourself("XHR ERROR IN Carousel.JS loadImages", "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take +
+            //                "  Message: " + errorMessage);
+            //        }
+            //    }
+            //});
+        }
+
+
         function resizeIndexPage() {
             resizePage();
+            $('.newContentBox').css("width", $('#middleColumn').width() / 3 - 10);
+            //alert("padding: " + $('#middleColumn').width() - $('.carouselContainer').width() / 3);
+            $('#middleColumn').height($('#middleColumn').height() + $('#newsSection').height());
+            $('.carouselContainer').css("padding-left", ($('#middleColumn').width() - $('.carouselContainer').width()) * .5);
+            $('.assuranceArrows').height($('.carouselImageContainer').height());
+
+            //$('.carouselImage').css("height", $('#middleColumn').innerHeight() - 180);
+            //$('#categoryTitle').fadeOut(intervalSpeed);
+            //$('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
+            //$('#laCarousel').fadeIn(intervalSpeed);
             //var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);
             //if (workAreaHeight > $('#middleColumn').height()) {
             //    $('#middleColumn').height(workAreaHeight);

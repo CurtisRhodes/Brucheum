@@ -50,6 +50,7 @@ function ftpMoveCopy() {
         success: function (successModel) {
             $('#imagePageLoadingGif').hide();
             if (successModel.Success === "ok") {
+
                 displayStatusMessage("ok", "link " + MoveCopyImageModel.Mode + "ed to " + $('#dirTreeResults').html());
                 //alert("changeLogModel id: " + MoveCopyImageModel.SourceFolderId + " mode: " + MoveCopyImageModel.Mode + "  name: " + $('#dirTreeResults').html());
                 var activityDesc;
@@ -73,7 +74,14 @@ function ftpMoveCopy() {
                 }
             }
             else {
-                alert("ftpMoveCopy: " + successModel.Success);
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "BUG",
+                    Severity: 2,
+                    ErrorMessage: successModel.Success,
+                    CalledFrom: "MoveCopyArchive.js ftpMoveCopy"
+                });
+                //alert("ftpMoveCopy: " + successModel.Success);
             }
         },
         error: function (xhr) {

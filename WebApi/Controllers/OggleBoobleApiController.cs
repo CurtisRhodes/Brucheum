@@ -322,7 +322,8 @@ namespace WebApi
                         "join OggleBooble.CategoryFolder f on c.ImageCategoryId = f.Id " +
                         "join OggleBooble.CategoryFolder p on f.Parent = p.Id " +
                         "join OggleBooble.ImageLink g on c.ImageLinkId = g.Id " +
-                        "where f.RootFolder = @param1", new SqlParameter("param1", root)).OrderBy(m => m.LinkId).Skip(skip).Take(take).ToList();
+                        "where f.RootFolder = @param1 and g.Width > g.Height"
+                        , new SqlParameter("param1", root)).OrderBy(m => m.LinkId).Skip(skip).Take(take).ToList();
 
                     //var x = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
                     //carouselInfo.Links =
