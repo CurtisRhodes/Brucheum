@@ -248,4 +248,23 @@ namespace WebApi.Models
         public string Parent { get; set; }
         public int FolderId { get; set; }
     }
+
+    public class LatestUpdatesModel
+    {
+        public LatestUpdatesModel()
+        {
+            LatestUpdates = new List<LatestUpdate>();
+        }
+        public List<LatestUpdate> LatestUpdates { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class LatestUpdate
+    {
+        public int FolderId { get; set; }
+        public string FolderName { get; set; }
+        public DateTime LastModified { get; set; }
+        public string FolderImage { get; set; }
+    }
+
 }

@@ -54,28 +54,41 @@
         .newsSection {
             border: solid thin red;
             padding: 3px;
+            background-color: #988519;
             display: none;
+            justify-items:center;            
+            text-align:justify;
         }
 
-        .newContentBox {
+        .newsContentBox {
             display: inline-block;
+            margin: 2px;
+            background-color: #3b0e56;
             height: 300px;
-            width: 500px;
-            border: solid 3px black;
         }
 
         .carouselContainer {
             padding: 1px;
             border: solid 2px var(--oggleBorderColor);
-            /*border: solid 2px #b200ff;
-            background-color: rgba(164, 168, 169, 0.75);*/            
-            /*display: none;*/
-            /*display: inline-block;*/         
         }
         .carouselImage {
             height: 500px;
             width: 800px;
             cursor: pointer;
+        }
+        .newsContentBoxLabel {
+            position: absolute;
+            color: #d883e4;
+            background-color: #686666;
+        }
+        .newsContentBoxImage {
+            height: 299px;
+            cursor: pointer;
+        }
+        .newsContentBoxDateLabel {
+            position: relative;
+            color: #d883e4;
+            background-color: #686666;
         }
     </style>
 </head>
@@ -91,7 +104,7 @@
                 <div onclick="reportThenPerformEvent('LMC',3908,'centerfolds');">Playboy Centerfolds</div>
                 <div onclick="reportThenPerformEvent('LMC',3908,'video');">Video</div>
                 <div onclick="reportThenPerformEvent('LMC',3908,'porn');">Nasty Porn</div>
-                <div onclick="reportThenPerformEvent('LMC',0,'blog'); window.location.href='/Blog.html'">Blog</div>
+                <div onclick="reportThenPerformEvent('LMC',0,'blog');">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
             <div id="pornLeftColumnList" class="leftColumnList">
@@ -108,10 +121,10 @@
         <div id="middleColumn">
             <div id="divStatusMessage"></div>
             <div id="dots"></div>
-            <div >
+            <div>
                 random galleries
                 <div id="laCarousel" class="carouselContainer flexContainer">
-                    <div class="assuranceArrows" onclick="assuranceArrowClick('back')"><img src="/Images/leftArrowOpaque02.png" /></div>
+                    <div onclick="assuranceArrowClick('back')"><img class="assuranceArrows" src="/Images/leftArrowOpaque02.png" /></div>
                     <div class="carouselImageContainer">
                         <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
                         <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="/Images/redballon.png" onclick="clickViewGallery()" />
@@ -122,7 +135,7 @@
                             <img class="speedButton floatRight" src="Images/speedDialFaster.png" title="faster" onclick="clickSpeed('faster')" />
                         </div>
                     </div>
-                    <div class="assuranceArrows" onclick="assuranceArrowClick('foward')"><img src="/Images/rightArrowOpaque02.png" /></div>
+                    <div onclick="assuranceArrowClick('foward')"><img class="assuranceArrows" src="/Images/rightArrowOpaque02.png" /></div>
                 </div>
             </div>
             <div>
@@ -257,78 +270,80 @@
             resizeIndexPage();
         });
 
-        function loadNewsBoxes() {
-
-            $('#newsSection').html("");
-            for (i = 0; i < 10; i++) {
-                $('#newsSection').append("<div class='newsSection'>")
-                $('#newsSection').append("box " + i);
-                $('#newsSection').append("</div>");
-
+        $.date = function (dateObject) {
+            var d = new Date(dateObject);
+            var day = d.getDate();
+            var month = d.getMonth() + 1;
+            var year = d.getFullYear();
+            if (day < 10) {
+                day = "0" + day;
             }
+            if (month < 10) {
+                month = "0" + month;
+            }
+            var date = month + "/" + day + "/" + year;
 
-            //$.ajax({
-            //    type: "GET",
-            //    url: settingsArray.ApiServer + "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take,
-            //    success: function (carouselInfo) {
-            //        if (carouselInfo.Success === "ok") {
-            //            $.each(carouselInfo.Links, function (idx, obj) {
-            //                carouselItemArray.push({
-            //                    FolderId: obj.FolderId,
-            //                    RootFolder: obj.RootFolder,
-            //                    ParentId: obj.ParentId,
-            //                    FolderName: obj.FolderName,
-            //                    Link: obj.Link,
-            //                    LinkId: obj.LinkId,
-            //                    FolderPath: obj.FolderPath
-            //                });
-            //            });
+            return date;
+        };
 
-            //            $('#categoryTitle').show();
 
-            //            if (numImages === 0) {
-            //                startCarousel();
-            //                $('#footerMessage').html("starting carousel");
-            //                resizeCarousel();
-            //                $('.newsSection').show();
-            //                resizeIndexPage();
-            //            }
-            //            numImages = carouselInfo.Links.length;
-            //            numFolders += carouselInfo.FolderCount;
-
-            //            var delta = (Date.now() - start) / 1000;
-            //            if (take === initialTake) {
-            //                console.log("loadImages(" + rootFolder + ") take: " + initialTake + " took: " + delta.toFixed(3));
-            //                loadImages(rootFolder, isChecked, initialTake, 80000);
-            //            }
-            //            else
-            //                console.log("loadImages(" + rootFolder + ") take: " +
-            //                    Number(carouselInfo.Links.length - initialTake) + " took: " + delta.toFixed(3));
-            //        }
-            //        else {
-            //            //alert("loadImages: " + carouselInfo.Success);
-            //            sendEmailToYourself("Error in Caraousel/loadImages", carouselInfo.Success);
-            //        }
-            //    },
-            //    error: function (jqXHR) {
-            //        var errorMessage = getXHRErrorDetails(jqXHR);
-            //        if (!checkFor404(errorMessage, "loadImages")) {
-            //            sendEmailToYourself("XHR ERROR IN Carousel.JS loadImages", "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take +
-            //                "  Message: " + errorMessage);
-            //        }
-            //    }
-            //});
+        function loadNewsBoxes() {
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/ImagePage/GetLatestUpdates",
+                success: function (latestUpdates) {
+                    if (latestUpdates.Success === "ok") {
+                        $.each(latestUpdates.LatestUpdates, function (idx, LatestUpdate) {
+                            $('#newsSection').append("<div class='newsContentBox'>" +
+                                "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
+                                "<img class='newsContentBoxImage' src='" + LatestUpdate.FolderImage + "'" +
+                                "onclick='javascript:window.location.href=\"/album.html?folder=" + LatestUpdate.FolderId + "\";'/>" +
+                                "<div class='newsContentBoxDateLabel'>Last Updated: " + $.date(LatestUpdate.LastModified) + "</span></div>" +
+                                "</div>");
+                        });
+                    }
+                    else {
+                        //alert("loadImages: " + carouselInfo.Success);
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "ERR",
+                            Severity: 12,
+                            ErrorMessage: latestUpdates.Success,
+                            CalledFrom: "loadNewsBoxes"
+                        });
+                        //sendEmailToYourself("Error in Caraousel/loadImages", carouselInfo.Success);
+                    }
+                },
+                error: function (jqXHR) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "loadImages")) {
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "XHR",
+                            Severity: 1,
+                            ErrorMessage: errorMessage,
+                            CalledFrom: "HitCounter.js getVisitorIdFromIp"
+                        });
+                        //sendEmailToYourself("XHR ERROR IN Carousel.JS loadImages", "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take +
+                        //    "  Message: " + errorMessage);
+                    }
+                }
+            });
+            resizeIndexPage();
         }
-
 
         function resizeIndexPage() {
             resizePage();
-            $('.newContentBox').css("width", $('#middleColumn').width() / 3 - 10);
+            //$('.newsContentBox').css("width", $('#middleColumn').width() / 3 - 10);
             //alert("padding: " + $('#middleColumn').width() - $('.carouselContainer').width() / 3);
-            $('#middleColumn').height($('#middleColumn').height() + $('#newsSection').height());
-            $('.carouselContainer').css("padding-left", ($('#middleColumn').width() - $('.carouselContainer').width()) * .5);
-            $('.assuranceArrows').height($('.carouselImageContainer').height());
 
+            $('#middleColumn').height($('#middleColumn').height() + $('#newsSection').height());
+            $('.carouselContainer').css("padding-left", ($('#middleColumn').width() - $('.carouselContainer').width()) * .4);
+
+            //var cc = $('.carouselImageContainer').height();
+            //alert("carouselImageContainer').height(): " + cc);
+            $('.assuranceArrows').height($('.carouselImageContainer').height());
+            //$('.assuranceArrows').height(cc);
             //$('.carouselImage').css("height", $('#middleColumn').innerHeight() - 180);
             //$('#categoryTitle').fadeOut(intervalSpeed);
             //$('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
@@ -343,7 +358,6 @@
             //    console.log("workAreaHeight < $('#middleColumn').height()");
             //    //$('#footerMessage').html("_");
             //}
-
             //$('#divHitMetrics').height($('#middleColumn').height() - 122);
             //$('.floatingCrud').width($('.workarea').width() - 100);
         }

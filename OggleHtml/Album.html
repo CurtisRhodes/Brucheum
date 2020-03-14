@@ -111,7 +111,11 @@
             if (params.folder == undefined) {
                 window.location.href = "Index.html";
             }
+
+            //setOggleHeader("boobs", setAlbumPageHeaderFolderId, false);
+            //setOggleFooter("boobs", setAlbumPageHeaderFolderId);
             setAlbumPageHeader(params.folder);
+
             var dots = "";
             loadSettings();
             var waiter = setInterval(function () {

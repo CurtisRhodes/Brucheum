@@ -31,7 +31,6 @@ namespace WebApi
             return totalChildren;
         }
 
-
         // used by ImagePage
         [HttpGet]
         public ImageLinksModel GetImageLinks(int folderId)
@@ -206,6 +205,32 @@ namespace WebApi
             }
             return success;
         }
+
+        [HttpGet]
+        public LatestUpdatesModel GetLatestUpdates()
+        {
+            LatestUpdatesModel updatesModel = new LatestUpdatesModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    updatesModel.LatestUpdates = db.Database.SqlQuery<LatestUpdate>(
+                        "select top 20 max(f.Id) FolderId, f.FolderName, max(i.LastModified) LastModified, max(i2.Link) FolderImage " +
+                        "from OggleBooble.ImageLink i " +
+                        "join OggleBooble.CategoryFolder f on i.FolderLocation = f.Id " +
+                        "join OggleBooble.CategoryFolderDetail d on i.FolderLocation = d.FolderId " +
+                        "join OggleBooble.ImageLink i2 on d.FolderImage = i2.Id " +
+                        "group by f.FolderName " +
+                        "order by LastModified desc").ToList();
+                }
+                updatesModel.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                updatesModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return updatesModel;
+        }
     }
 
     [EnableCors("*", "*", "*")]
@@ -257,7 +282,6 @@ namespace WebApi
     public class AlbumPageController : ApiController
     {
         [HttpGet]
-        [Route("api/AlbumPage/GetStaticPage")]
         public SuccessModel GetStaticPage(int folderId)
         {
             SuccessModel successModel = new SuccessModel();
@@ -279,29 +303,7 @@ namespace WebApi
             return successModel;
         }
 
-        [HttpGet]
-        [Route("api/AlbumPage/GetFolderInfo")]
-        public FolderModel GetFolderInfo(int folderId)
-        {
-            FolderModel folderModel = new FolderModel();
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    folderModel.ContainsImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
-                    folderModel.RootFolder = categoryFolder.RootFolder;
-                    folderModel.FolderName = categoryFolder.FolderName;
-                    folderModel.Success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                folderModel.Success = Helpers.ErrorDetails(ex);
-            }
-            return folderModel;
-        }
-    }   
+    }
 
     [EnableCors("*", "*", "*")]
     public class CarouselController : ApiController
@@ -667,7 +669,7 @@ namespace WebApi
     {
         [HttpGet]
         public List<VideoLinkModel> Get()
-        {            
+        {
             var videoLinks = new List<VideoLinkModel>();
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
@@ -870,7 +872,7 @@ namespace WebApi
         [HttpGet]
         public TrackBackModel GetTrackBacks(int folderId)
         {
-            TrackBackModel trackBackModel = new TrackBackModel(); 
+            TrackBackModel trackBackModel = new TrackBackModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
@@ -1001,7 +1003,7 @@ namespace WebApi
                     using (OggleBoobleContext db = new OggleBoobleContext())
                     {
                         //CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                        
+
                         //if(categoryFolder.w)
 
 
@@ -1375,7 +1377,7 @@ namespace WebApi
                 {
                     searchResultsModel.SearchResults =
                         (from f in db.CategoryFolders
-                         //join p in db.CategoryFolders on f.Parent equals p.Id
+                             //join p in db.CategoryFolders on f.Parent equals p.Id
                          where f.FolderName.StartsWith(searchString)
                          select new SearchResult() { FolderId = f.Id, FolderName = f.FolderName, Parent = f.RootFolder }).ToList();
 
@@ -1386,9 +1388,9 @@ namespace WebApi
                     //    searchResultsModel.SearchResults.Add(new SearchResultModel() { FolderId = folder.Id, FolderName = folder.FolderName });
                     //}
                     List<SearchResult> containsSearchResults = (from f in db.CategoryFolders
-                                             //join p in db.CategoryFolders on f.Parent equals p.Id
-                                             where f.FolderName.Contains(searchString)
-                                             select new SearchResult() { FolderId = f.Id, FolderName = f.FolderName, Parent = f.RootFolder }).ToList();
+                                                                    //join p in db.CategoryFolders on f.Parent equals p.Id
+                                                                where f.FolderName.Contains(searchString)
+                                                                select new SearchResult() { FolderId = f.Id, FolderName = f.FolderName, Parent = f.RootFolder }).ToList();
 
                     //List <CategoryFolder> containsSearchResults = db.CategoryFolders.Where(f => f.FolderName.Contains(searchString)).ToList();
                     foreach (SearchResult searchResult in containsSearchResults)

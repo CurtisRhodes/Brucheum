@@ -1197,5 +1197,26 @@ namespace WebApi
             return successModel;
         }
 
+        [HttpGet]
+        public FolderModel GetFolderInfo(int folderId)
+        {
+            FolderModel folderModel = new FolderModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    folderModel.ContainsImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
+                    folderModel.RootFolder = categoryFolder.RootFolder;
+                    folderModel.FolderName = categoryFolder.FolderName;
+                    folderModel.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                folderModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return folderModel;
+        }
     }
 }

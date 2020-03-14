@@ -21,7 +21,7 @@ function changeFavoriteIcon () {
 
 
 var currentFolderId;
-function setOggleHeader(subdomain, folderId, containsImageLinks, isStaticPage) {
+function setOggleHeader(subdomain, folderId, isStaticPage) {
     //alert("setOggleHeader called from " + folderId);
     currentFolderId = folderId;
     var headerHtml;
