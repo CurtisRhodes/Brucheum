@@ -158,6 +158,14 @@
             else {
                 subdomain = params.subdomain;
             }
+
+            if (subdomain == "porn") {
+                setOggleHeader(subdomain, 3909, false);
+            }
+            else {
+                setOggleHeader(subdomain, 3908, false);
+            }
+
             $('#footerMessage').html("loading settings");
             loadSettings();
             var dots = ""
@@ -184,14 +192,14 @@
                             $('#dots').html('');
 
                             if (subdomain == "porn") {
-                                setOggleHeader(subdomain, 3909, false);
+                                //setOggleHeader(subdomain, 3909, false);
                                 $('#pornLeftColumnList').show();
                                 $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
                                 $('#includeCenterfoldsCheckbox').hide();
                                 logPageHit(3909, "Index");
                             }
                             else {
-                                setOggleHeader(subdomain, 3908, false);
+                                //setOggleHeader(subdomain, 3908, false);
                                 $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
                                 $('#boobsLeftColumnList').show();
                                 launchPromoMessages();

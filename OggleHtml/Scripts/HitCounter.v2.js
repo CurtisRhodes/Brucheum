@@ -926,7 +926,8 @@ function logEventActivity(logEventModel) {
             if (logEventActivitySuccess.Success !== "ok") {
                 //if (logEventActivitySuccess.Success.indexOf("Option not supported") > -1) {
 
-                alert("logEventActivitySuccess.Success: " + logEventActivitySuccess.Success);
+
+                //alert("logEventActivitySuccess.Success: " + logEventActivitySuccess.Success);
 
                 if (!checkFor404(logEventActivitySuccess.Success, "logEventActivity")) {
                     if (document.domain === 'localhost')

@@ -214,29 +214,40 @@ function setOggleHeader(subdomain, folderId, containsImageLinks, isStaticPage) {
 
 function showSpecialHeaderIcons(folderId) {
     //alert("showSpecialHeaderIcons: " + folderId);
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
-        success: function (folderDetailModel) {
-            if (folderDetailModel.Success === "ok") {
-                if (!isNullorUndefined(folderDetailModel.ExternalLinks)) {
-                    if (folderDetailModel.ExternalLinks.indexOf("Playmate Of The Year") > -1) {
-                        $('#pmoyLink').show();
-                    }
-                    if (folderDetailModel.ExternalLinks.indexOf("biggest breasted centerfolds") > -1) {
-                        $('#breastfulPlaymatesLink').show();
-                    }
-                    if (folderDetailModel.ExternalLinks.indexOf("black centerfolds") > -1) {
-                        $('#blackCenterfoldsLink').show();
-                    }
-                    if (folderDetailModel.ExternalLinks.indexOf("Hef likes twins") > -1) {
-                        $('#twinsLink').show();
+    if (!isNullorUndefined(settingsArray.ApiServer)) {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "/api/ImageCategoryDetail/Get?folderId=" + folderId,
+            success: function (folderDetailModel) {
+                if (folderDetailModel.Success === "ok") {
+                    if (!isNullorUndefined(folderDetailModel.ExternalLinks)) {
+                        if (folderDetailModel.ExternalLinks.indexOf("Playmate Of The Year") > -1) {
+                            $('#pmoyLink').show();
+                        }
+                        if (folderDetailModel.ExternalLinks.indexOf("biggest breasted centerfolds") > -1) {
+                            $('#breastfulPlaymatesLink').show();
+                        }
+                        if (folderDetailModel.ExternalLinks.indexOf("black centerfolds") > -1) {
+                            $('#blackCenterfoldsLink').show();
+                        }
+                        if (folderDetailModel.ExternalLinks.indexOf("Hef likes twins") > -1) {
+                            $('#twinsLink').show();
+                        }
                     }
                 }
-            }
-            else {
-                if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
-                    if (!checkFor404(folderDetailModel.Success, "showSpecialHeaderIcons")) {
+                else {
+                    if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
+                        if (!checkFor404(folderDetailModel.Success, "showSpecialHeaderIcons")) {
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "BUG",
+                                Severity: 1,
+                                ErrorMessage: folderDetailModel.Success,
+                                CalledFrom: "OggleHeader showSpecialHeaderIcons"
+                            });
+                        }
+                    }
+                    else {
                         logError({
                             VisitorId: getCookieValue("VisitorId"),
                             ActivityCode: "BUG",
@@ -245,103 +256,98 @@ function showSpecialHeaderIcons(folderId) {
                             CalledFrom: "OggleHeader showSpecialHeaderIcons"
                         });
                     }
+                    //sendEmailToYourself("SERVICE DOWN", "from showSpecialHeaderIcons<br/>folderId=" + folderId + "<br/>IpAddress: " +
+                    //    getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
                 }
-                else {
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
-                        Severity: 1,
-                        ErrorMessage: folderDetailModel.Success,
-                        CalledFrom: "OggleHeader showSpecialHeaderIcons"
-                    });
-                }
-                //sendEmailToYourself("SERVICE DOWN", "from showSpecialHeaderIcons<br/>folderId=" + folderId + "<br/>IpAddress: " +
-                //    getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "showSpecialHeaderIcons")) {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "OggleHeader showSpecialHeaderIcons"
-                });
-                //sendEmailToYourself("XHR ERROR IN OggleHeader.JS showSpecialHeaderIcons",
-                //    "/api/ImageCategoryDetail/Get?folderId=" + folderId +
-                //    " IpAddress: " + getCookieValue("IpAddress") +
-                //    " Message : " + errorMessage);
-                //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
-            }
-        }
-    });
-}
-
-function setTrackbackLinks(folderId) {
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/TrackbackLink/GetTrackBacks?folderId=" + folderId,
-        success: function (trackBackModel) {
-            if (trackBackModel.Success === "ok") {
-                $.each(trackBackModel.TrackBackItems, function (idx, trackBackItem) {
-                    if (trackBackItem.Site === "Babepedia") {
-                        $('#babapediaLink').html(trackBackItem.TrackBackLink);
-                        $('#babapediaLink').show();
-                    }
-                    if (trackBackItem.Site === "Freeones") {
-                        $('#freeonesLink').html(trackBackItem.TrackBackLink);
-                        $('#freeonesLink').show();
-                    }
-                    if (trackBackItem.Site === "Indexxx") {
-                        $('#indexxxLink').html(trackBackItem.TrackBackLink);
-                        $('#indexxxLink').show();
-                    }
-                });
-            }
-            else {
-                //if (trackBackModel.Success.indexOf("Option not supported") > -1) {
-                //checkFor404(trackBackModel.Success, "setTrackbackLinks");
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "BUG",
-                    Severity: 3,
-                    ErrorMessage: trackBackModel.Success,
-                    CalledFrom: "OggleHeader setTrackbackLinks"
-                });
-                //sendEmailToYourself("SERVICE DOWN", "from setTrackbackLinks<br/>folderId=" + folderId + "<br/>IpAddress: " +
-                //    getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
-                //}
-                //else
-                //    sendEmailToYourself("setTrackbackLinks", "folderId=" + folderId + "<br/>IpAddress: " +
-                //        getCookieValue("IpAddress") + "<br/>Message : " + errorMessage);
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (document.domain === 'localhost') {
-                alert("XHR ERROR IN setTrackbackLinks\nfolderId=" + folderId +
-                    "\nurl: " + settingsArray.ApiServer + "api/TrackbackLink/GetTrackBacks?folderId=" + folderId +
-                    "\nIpAddress: " + getCookieValue("IpAddress") +
-                    "<br/>Message : " + errorMessage);
-            }
-            else {
-                if (!checkFor404(errorMessage, "setTrackbackLinks")) {
+            },
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "showSpecialHeaderIcons")) {
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "XHR",
-                        Severity: 3,
+                        Severity: 1,
                         ErrorMessage: errorMessage,
-                        CalledFrom: "OggleHeader setTrackbackLinks"
+                        CalledFrom: "OggleHeader showSpecialHeaderIcons"
                     });
-                    //sendEmailToYourself("XHR ERROR IN setTrackbackLinks",
-                    //    "folderId=" + folderId + "<br/>IpAddress: " +
-                    //    getCookieValue("IpAddress") + "<br/>Message : " + errorMessage);
+                    //sendEmailToYourself("XHR ERROR IN OggleHeader.JS showSpecialHeaderIcons",
+                    //    "/api/ImageCategoryDetail/Get?folderId=" + folderId +
+                    //    " IpAddress: " + getCookieValue("IpAddress") +
+                    //    " Message : " + errorMessage);
+                    //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
                 }
             }
-        }
-    });
+        });
+    }
+}
+
+function setTrackbackLinks(folderId) {
+    if (!isNullorUndefined(settingsArray.ApiServer)) {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/TrackbackLink/GetTrackBacks?folderId=" + folderId,
+            success: function (trackBackModel) {
+                if (trackBackModel.Success === "ok") {
+                    $.each(trackBackModel.TrackBackItems, function (idx, trackBackItem) {
+                        if (trackBackItem.Site === "Babepedia") {
+                            $('#babapediaLink').html(trackBackItem.TrackBackLink);
+                            $('#babapediaLink').show();
+                        }
+                        if (trackBackItem.Site === "Freeones") {
+                            $('#freeonesLink').html(trackBackItem.TrackBackLink);
+                            $('#freeonesLink').show();
+                        }
+                        if (trackBackItem.Site === "Indexxx") {
+                            $('#indexxxLink').html(trackBackItem.TrackBackLink);
+                            $('#indexxxLink').show();
+                        }
+                    });
+                }
+                else {
+                    //if (trackBackModel.Success.indexOf("Option not supported") > -1) {
+                    //checkFor404(trackBackModel.Success, "setTrackbackLinks");
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "BUG",
+                        Severity: 3,
+                        ErrorMessage: trackBackModel.Success,
+                        CalledFrom: "OggleHeader setTrackbackLinks"
+                    });
+                    //sendEmailToYourself("SERVICE DOWN", "from setTrackbackLinks<br/>folderId=" + folderId + "<br/>IpAddress: " +
+                    //    getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
+                    //}
+                    //else
+                    //    sendEmailToYourself("setTrackbackLinks", "folderId=" + folderId + "<br/>IpAddress: " +
+                    //        getCookieValue("IpAddress") + "<br/>Message : " + errorMessage);
+                }
+            },
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (document.domain === 'localhost') {
+                    alert("XHR ERROR IN setTrackbackLinks\nfolderId=" + folderId +
+                        "\nurl: " + settingsArray.ApiServer + "api/TrackbackLink/GetTrackBacks?folderId=" + folderId +
+                        "\nIpAddress: " + getCookieValue("IpAddress") +
+                        "<br/>Message : " + errorMessage);
+                }
+                else {
+                    if (!checkFor404(errorMessage, "setTrackbackLinks")) {
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "XHR",
+                            Severity: 3,
+                            ErrorMessage: errorMessage,
+                            CalledFrom: "OggleHeader setTrackbackLinks"
+                        });
+                        //sendEmailToYourself("XHR ERROR IN setTrackbackLinks",
+                        //    "folderId=" + folderId + "<br/>IpAddress: " +
+                        //    getCookieValue("IpAddress") + "<br/>Message : " + errorMessage);
+
+                        //http://localhost:56437/undefined/api/ImageCategoryDetail/Get?folderId=3908
+                    }
+                }
+            }
+        });
+    }
 }
 
 function showFeedbackDialog() {

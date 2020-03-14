@@ -104,15 +104,14 @@
 
         //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
 
-
         $(document).ready(function () {
             includeHTML();
             resizePage();
-
             params = getParams();
             if (params.folder == undefined) {
                 window.location.href = "Index.html";
             }
+            setAlbumPageHeader(params.folder);
             var dots = "";
             loadSettings();
             var waiter = setInterval(function () {
@@ -128,7 +127,6 @@
                         //isInRole("not logged in");
                         console.log("I want to stay in local host");
                         //alert("I want to stay in local host");
-                        setAlbumPageHeader(params.folder);
                         getAlbumImages(params.folder);
                     }
                     else {
@@ -137,7 +135,6 @@
                             if (document.domain === 'localhost')  // #DEBUG
                             {
                                 //alert("userName  not found.  normally would direct to static pages");
-                                setAlbumPageHeader(params.folder);
                                 getAlbumImages(params.folder);
                                 alert("logPageHit");
                             }

@@ -126,6 +126,7 @@ function directToStaticPage(directToStaticPageFolderId) {
 
 function setAlbumPageHeader(setAlbumPageHeaderFolderId, isStaticPage) {
     try {
+        //if (!isNullorUndefined(settingsArray.ApiServer)) {
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/AlbumPage/GetFolderInfo?folderId=" + setAlbumPageHeaderFolderId,
@@ -141,7 +142,7 @@ function setAlbumPageHeader(setAlbumPageHeaderFolderId, isStaticPage) {
                                 VisitorId: getCookieValue("VisitorId"),
                                 ActivityCode: "ERR",
                                 Severity: 1,
-                                ErrorMessage: folderDetailModel.Success ,
+                                ErrorMessage: folderDetailModel.Success,
                                 CalledFrom: "Album.js setAlbumPageHeader"
                             });
                         }
@@ -199,6 +200,7 @@ function setAlbumPageHeader(setAlbumPageHeaderFolderId, isStaticPage) {
                 }
             }
         });
+        //}
     } catch (e) {
         if (document.domain === 'localhost')
             alert("setAlbumPageHeader: " + e);

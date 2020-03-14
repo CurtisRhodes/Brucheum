@@ -1107,6 +1107,9 @@ namespace WebApi
                     db.SaveChanges();
 
                     // update links on mysql
+                    try
+                    {
+
                     using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
                     {
                         List<MySqDataContext.ImageLink> imageLinks1 = mdb.ImageLinks.Where(l => l.FolderLocation == sourceFolderId).ToList();
@@ -1125,9 +1128,12 @@ namespace WebApi
                         mdbSourceFolder.RootFolder = dbDestinationParent.RootFolder;
                         mdb.SaveChanges();
                     }
-
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("MySql fkup: " + Helpers.ErrorDetails(ex));
+                    }
                     success = FtpUtilies.RemoveDirectory(ftpSourcePath);
-
                 }
                 success = "ok";
             }

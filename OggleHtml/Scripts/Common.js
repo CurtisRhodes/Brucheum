@@ -50,7 +50,7 @@ function verifyConnection() {
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             //alert("verifyConnection: " + errorMessage);
-            if (!checkFor404(errorMessage, "getAconnection")) {
+            if (!checkFor404("Not connect", "getAconnection")) {
                 //sendEmailToYourself("XHR ERROR IN  verifyConnection", "url: " + settingsArray.ApiServer + "api/Carousel/VerifyConnection" +
                 //    "<br/>Message: " + errorMessage);
             }
@@ -145,10 +145,12 @@ function displayStatusMessage(msgCode, message) {
 }
 
 function checkFor404(errorMessage, calledFrom) {
-    if (document.domain === 'localhost')
-        alert("checkFor404 " + errorMessage + " calledFrom: " + calledFrom);
+    //if (document.domain === 'localhost')
+    //    alert("checkFor404 " + errorMessage + " calledFrom: " + calledFrom);
     var isNotConnected = false;
     if (isNullorUndefined(errorMessage)) {
+        if (document.domain === 'localhost')
+            alert("isNullorUndefined(errorMessage)");
         var ipAddr = getCookieValue("IpAddress");
         logError({
             VisitorId: getCookieValue("VisitorId"),
@@ -163,8 +165,8 @@ function checkFor404(errorMessage, calledFrom) {
     }
     if (errorMessage.indexOf("Not connect") > -1 || errorMessage.indexOf("Option not supported") > -1) {
         isNotConnected = true;
-        if (ipAddr === "68.203.90.183") //if (document.domain === 'localhost')
-            alert("checkFor404 isNotConnected = true called from: " + calledFrom);
+        //if (ipAddr === "68.203.90.183") //if (document.domain === 'localhost')
+        //if (document.domain === 'localhost') alert("canIgetaConnection message should show");
 
         $('#notConnectMessage').width($(window).width());
         $('#notConnectMessage').html(
@@ -175,8 +177,11 @@ function checkFor404(errorMessage, calledFrom) {
             "   </div>" +
             "</div>");
         $('#notConnectMessage').show();
-        console.log("checkFor404: " + calledFrom);
-
+        console.log("checkFor404 : " + calledFrom);
+        $('#dots').html('');
+    }
+    else {
+        //if (document.domain === 'localhost') alert("checkFor404 called from: " + calledFrom + " errorMessage: " + errorMessage);
         logError({
             VisitorId: getCookieValue("VisitorId"),
             ActivityCode: "404",
@@ -297,10 +302,7 @@ function logActivity(changeLogModel) {
         url: settingsArray.ApiServer + "/api/ChangeLog",
         data: changeLogModel,
         success: function (success) {
-            if (success === "ok")
-                displayStatusMessage("ok", "activity" + changeLogModel.ActivityCode + " logged");
-            else {
-                //alert("ChangeLog: " + success);
+            if (success !== "ok") {
                 logError({
                     VisitorId: getCookieValue("VisiorId"),
                     ActivityCode: "OMG",

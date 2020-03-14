@@ -233,7 +233,7 @@ function addImageLink() {
             success: function (successModel) {
                 $('#dashBoardLoadingGif').hide();
                 if (successModel.Success === "ok") {
-                    displayStatusMessage("ok", "image link added");
+                    //displayStatusMessage("ok", "image link added");
                     $('#txtNewLink').val("");
                     resizeDashboardPage();
 
@@ -244,7 +244,7 @@ function addImageLink() {
                     logActivity({
                         PageId: dashboardMainSelectedTreeId,
                         PageName: $('.txtLinkPath').val(),
-                        Activity: "new image added " + successModel.ReturnValue
+                        Activity: "new image added "
                     });
                 }
                 else
@@ -562,11 +562,11 @@ function createNewFolder() {
         success: function (successModel) {
             $('#dashBoardLoadingGif').hide();
             if (successModel.Success === "ok") {
-                displayStatusMessage("ok", "new folder " + newFolder.FolderName + " created");
+                displayStatusMessage("ok", "new folder " + $('#txtNewFolderTitle').val() + " created");
                 logActivity({
                     PageId: dashboardMainSelectedTreeId,
-                    PageName: $('#txtNewFolderTitle').val(),
-                    Activity: "new folder created: " + newFolder.FolderName
+                    PageName: $('.txtLinkPath').val(),
+                    Activity: "new folder created: " + $('#txtNewFolderTitle').val()
                 });
                 $('#txtNewFolderTitle').val('');
                 //$('#createNewFolderDialog').dialog('close');
@@ -590,6 +590,7 @@ function showMoveFolderDialog() {
         width: "400"
     });
     $('#moveFolderCrud').on('dialogclose', function (event) {
+        $('.txtLinkPath').val("");
         buildDirectoryTree();
     });
     $('#moveFolderDestDirTree').dialog({
@@ -624,8 +625,17 @@ function moveFolder() {
         type: "PUT",
         url: settingsArray.ApiServer + "/api/Folder/MoveFolder?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + moveFolderSelectedParentId,
         success: function (success) {
+            if (success !== "ok") {
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "MYQ",
+                    Severity: 1,
+                    ErrorMessage: success,
+                    CalledFrom: "dashboard.js movefolder"
+                });
+            }
             $('#dashBoardLoadingGif').hide();
-            if (!success.startsWith("ERROR")) {
+            //if (!success.startsWith("ERROR")) {
                 displayStatusMessage("ok", "folder " + $('#txtMoveFolderDest').val() + " moved to " + $('.txtPartialDirTreePath').val());
                 //$('#progressBar').progressbar("destroy");
                 logActivity({
@@ -635,9 +645,9 @@ function moveFolder() {
                 });
                 $('#txtMoveFolderDest').val('');
                 $('#dataifyInfo').hide();
-            }
-            else
-                alert("Move Folder: " + success);
+            //}
+            //else
+            //    alert("Move Folder: " + success);
         },
         error: function (xhr) {
             $('#dashBoardLoadingGif').hide();
@@ -752,6 +762,7 @@ function addFileDates() {
     });
 }
 
+// RENAME FOLDER
 function renameFolder() {
     var start = Date.now();
     $('#dashBoardLoadingGif').fadeIn();
