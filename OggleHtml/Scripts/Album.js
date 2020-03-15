@@ -124,117 +124,6 @@ function directToStaticPage(directToStaticPageFolderId) {
     });
 }
 
-function setAlbumPageHeader(setAlbumPageHeaderFolderId, isStaticPage) {
-    try {
-        if (!isNullorUndefined(settingsArray.ApiServer)) {
-            // [Route("api/AlbumPage/GetFolderInfo")]
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "/api/Folder/GetFolderInfo?folderId=" + setAlbumPageHeaderFolderId,
-                success: function (rootFolderModel) {
-                    if (rootFolderModel.Success === "ok") {
-                        setOggleHeader(rootFolderModel.RootFolder, setAlbumPageHeaderFolderId, rootFolderModel.ContainsImageLinks, isStaticPage);
-                        setOggleFooter(rootFolderModel.RootFolder, setAlbumPageHeaderFolderId);
-                    }
-                    else {
-                        if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
-                            if (!checkFor404(folderDetailModel.Success, "setAlbumPageHeader")) {
-                                logError({
-                                    VisitorId: getCookieValue("VisitorId"),
-                                    ActivityCode: "ERR",
-                                    Severity: 1,
-                                    ErrorMessage: folderDetailModel.Success,
-                                    CalledFrom: "Album.js setAlbumPageHeader"
-                                });
-                            }
-                            //sendEmailToYourself("SERVICE DOWN", "from getBreadCrumbs<br/>folderId=" + setAlbumPageHeaderFolderId + "<br/>IpAddress: " +
-                            //    getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
-                        }
-                        else {
-                            logError({
-                                VisitorId: getCookieValue("VisitorId"),
-                                ActivityCode: "ERR",
-                                Severity: 1,
-                                ErrorMessage: folderDetailModel.Success,
-                                CalledFrom: "Album.js setAlbumPageHeader"
-                            });
-                            //sendEmailToYourself("setAlbumPageHeader FAILURE", "api/AlbumPage/GetFolderInfo?folderId=" + setAlbumPageHeaderFolderId + "<br>" + successModel.Success);
-                        }
-                    }
-                },
-                error: function (jqXHR) {
-                    var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "setAlbumPageHeader")) {
-                        if (document.domain === 'localhost')
-                            alert("GetFolderInfo XHR: " + errorMessage + " id:" + setAlbumPageHeaderFolderId + "settingsArray.ApiServer: " + settingsArray.ApiServer);
-
-
-                        else {
-                            if (isNullorUndefined(getCookieValue("IpAddress")))
-                                logVisitor(setAlbumPageHeaderFolderId, "setAlbumPageHeader");
-                            else {
-                                logError({
-                                    VisitorId: getCookieValue("VisitorId"),
-                                    ActivityCode: "XHR",
-                                    Severity: 1,
-                                    ErrorMessage: errorMessage,
-                                    CalledFrom: "Album.js setAlbumPageHeader"
-                                });
-                                //sendEmailToYourself("XHR Error setAlbumPageHeader",
-                                //    "settingsArray.ApiServer: " + settingsArray.ApiServer +
-                                //    "<br/>folderId: " + setAlbumPageHeaderFolderId +
-                                //    "<br/>isStaticPage: " + isStaticPage +
-                                //    "<br/>IpAddress: " + getCookieValue("IpAddress") +
-                                //    "<br/>" + errorMessage);
-                            }
-                        }
-                        setOggleHeader("boobs", setAlbumPageHeaderFolderId, false);
-                        setOggleFooter("boobs", setAlbumPageHeaderFolderId);
-                    }
-                    else {
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 1,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "Album.js setAlbumPageHeader"
-                        });
-                        //sendEmailToYourself("XHR ERROR IN ALBUM.JS setAlbumPageHeader", "api/AlbumPage/GetRootFolder?folderId=" + setAlbumPageHeaderFolderId + " <br/>" + errorMessage);
-                    }
-                }
-            });
-        }
-        else {
-            if (document.domain === 'localhost')
-                alert("settingsArray null");
-            //else {
-            //    logError({
-            //        VisitorId: getCookieValue("VisitorId"),
-            //        ActivityCode: "XHR",
-            //        Severity: 1,
-            //        ErrorMessage: errorMessage,
-            //        CalledFrom: "Album.js setAlbumPageHeader"
-            //    });
-            //}
-            setOggleHeader("boobs", setAlbumPageHeaderFolderId, isStaticPage);
-            setOggleFooter("boobs", setAlbumPageHeaderFolderId);
-        }
-    } catch (e) {
-        if (document.domain === 'localhost')
-            alert("setAlbumPageHeader: " + e);
-        else {
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "CAT",
-                Severity: 1,
-                ErrorMessage: e,
-                CalledFrom: "Album.js setAlbumPageHeader"
-            });
-            //sendEmailToYourself("setAlbumPageHeader", e);
-        }
-    }
-}
-
 function getBreadCrumbs(getBreadCrumbsFolderId) {
     // a woman commited suicide when pictures of her "came out"
     // title: I do not remember having been Invited)
@@ -244,7 +133,7 @@ function getBreadCrumbs(getBreadCrumbsFolderId) {
         async: true,
         success: function (breadCrumbModel) {
             if (breadCrumbModel.Success === "ok") {
-                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:reportThenPerformEvent(\"HBX\"," + getBreadCrumbsFolderId + ",\"" + currentFolderRoot + "\")'>home</a>");
+                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + getBreadCrumbsFolderId + ",\"" + currentFolderRoot + "\")'>home</a>");
                 for (i = breadCrumbModel.BreadCrumbs.length - 1; i >= 0; i--) {
                     if (breadCrumbModel.BreadCrumbs[i] === null) {
                         breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
@@ -267,7 +156,7 @@ function getBreadCrumbs(getBreadCrumbsFolderId) {
                         else {
                             $('#breadcrumbContainer').append("<a class='activeBreadCrumb' " +
                                 //	HBX	Home Breadcrumb Clicked
-                                "href='javascript:reportThenPerformEvent(\"BCC\"," + getBreadCrumbsFolderId + "," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
+                                "href='javascript:rtpe(\"BCC\"," + getBreadCrumbsFolderId + "," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                     }
@@ -405,9 +294,9 @@ function processImages(imageLinksModel) {
 function subFolderPreClick(isStepChild, subFolderPreClickFolderId) {
     //function performEvent(eventCode, calledFrom, eventDetail) {
     if (isStepChild === "0")
-        reportThenPerformEvent("SUB", albumFolderId, subFolderPreClickFolderId);
+        rtpe("SUB", albumFolderId, subFolderPreClickFolderId);
     else {
-        reportThenPerformEvent("SSB", albumFolderId, subFolderPreClickFolderId);
+        rtpe("SSB", albumFolderId, subFolderPreClickFolderId);
     }
 }
 
@@ -804,7 +693,7 @@ function contextMenuAction(action) {
                 EventDetail: "see more of her: " + modelFolderName,
                 CalledFrom: albumFolderId
             });
-            reportThenPerformEvent("SEE", albumFolderId, modelFolderId);
+            rtpe("SEE", albumFolderId, modelFolderId);
             //window.open("/album.html?folder=" + modelFolderId, "_blank");
             break;
         case "comment":
@@ -883,7 +772,7 @@ function showEitherModelorFolderInfoDialog(index, folderName, showEitherModelorF
 
 
     if (rootFolder === "playboy" && index > 4 || parentId === cybergirls || rootFolder === "archive" && index > 2) {
-        reportThenPerformEvent("CMX", showEitherModelorFolderInfoDialogFolderId, folderName);
+        rtpe("CMX", showEitherModelorFolderInfoDialogFolderId, folderName);
     }
     else {
         showCategoryDialog(showEitherModelorFolderInfoDialogFolderId);

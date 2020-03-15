@@ -100,14 +100,12 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
                 VisitorId: "undefined",
                 ActivityCode: "SVD",
                 Severity: 2,
-                ErrorMessage: "No visitorId and no Ip. Calling LogVisitor",
+                ErrorMessage: "No visitorId and no Ip. NOT Calling LogVisitor",
                 CalledFrom: "slideshow.js / launchViewer"
             });
-            logVisitor(folderId, "launch viewer");
+            //logVisitor(folderId, "launch viewer");
         }
     }
-
-
     ipAddress = getCookieValue("IpAddress");
     if (isNullorUndefined(ipAddress)) {
         if (isNullorUndefined(visitorId)) {
@@ -128,6 +126,13 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
     if (isNullorUndefined(imageViewerFolderId)) {
         if (!isNullorUndefined(folderName)) {
             getPageIdFromPageName("launchViewer");
+            logError({
+                VisitorId: visitorId,
+                ActivityCode: "DBJ",
+                Severity: 2,
+                ErrorMessage: "tried to get page Id from folder Name",
+                CalledFrom: "slideshow.js / launchViewer"
+            });
         }
         //logVisitor(folderId, "launch viewer");
     }
@@ -209,12 +214,10 @@ function explodeViewer() {
         $('#imageViewerDialog').width(viewerW);
         $('#imageViewerDialog').height(viewerH);
 
-        setTimeout(function () {
-            //alert("done here start slideshow");
-            runSlideShow("start");
-        }, 2000);
-        
-
+        //setTimeout(function () {
+        //    //alert("done here start slideshow");
+        //    runSlideShow("start");
+        //}, 2000);
     }
 }
 

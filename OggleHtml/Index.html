@@ -68,8 +68,8 @@
         }
 
         .carouselContainer {
-            padding: 1px;
-            border: solid 2px var(--oggleBorderColor);
+            /*padding: 1px;
+            border: solid 2px var(--oggleBorderColor);*/
         }
         .carouselImage {
             height: 500px;
@@ -97,29 +97,30 @@
     <div class="threeColumnLayout">
         <div id="leftColumn">
             <div id="boobsLeftColumnList" class="leftColumnList">
-                <div onclick="reportThenPerformEvent('LMC',3908,'boobTransitions');">Transitions</div>
-                <div onclick="reportThenPerformEvent('LMC',3908,'boobsRanker');">Boobs Ranker</div>
-                <div onclick="reportThenPerformEvent('LMC',3908,'explainBoobs');">Let me Explain</div>
-                <div onclick="reportThenPerformEvent('LMC',3908,'dirTreeBoobs');">Category List</div>
-                <div onclick="reportThenPerformEvent('LMC',3908,'centerfolds');">Playboy Centerfolds</div>
-                <div onclick="reportThenPerformEvent('LMC',3908,'video');">Video</div>
-                <div onclick="reportThenPerformEvent('LMC',3908,'porn');">Nasty Porn</div>
-                <div onclick="reportThenPerformEvent('LMC',0,'blog');">Blog</div>
+                <div onclick="rtpe('LMC',3908,'boobTransitions');">Transitions</div>
+                <div onclick="rtpe('LMC',3908,'boobsRanker');">Boobs Ranker</div>
+                <div onclick="rtpe('LMC',3908,'explainBoobs');">Let me Explain</div>
+                <div onclick="rtpe('LMC',3908,'dirTreeBoobs');">Category List</div>
+                <div onclick="rtpe('LMC',3908,'centerfolds');">Playboy Centerfolds</div>
+                <div onclick="rtpe('LMC',3908,'video');">Video</div>
+                <div onclick="rtpe('LMC',3908,'porn');">Nasty Porn</div>
+                <div onclick="rtpe('LMC',0,'blog');">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
             <div id="pornLeftColumnList" class="leftColumnList">
-                <div onclick="reportThenPerformEvent('LMC',3909,'back');">back to boobs</div><br />
-                <div onclick="reportThenPerformEvent('LMC',3909,'pornTransitions');">Transition down</div>
-                <div onclick="reportThenPerformEvent('LMC',3909,'pornRanker');">Nastieness Ranker</div>
-                <div onclick="reportThenPerformEvent('LMC',3909,'explainPorn');">Let me Explain</div>
-                <div onclick="reportThenPerformEvent('LMC',3909,'dirTreePorn');">Category List</div>
-                <div onclick="reportThenPerformEvent('LMC',3909,'back');">back to boobs</div>
-                <div onclick="reportThenPerformEvent('LMC',3909,'blog');">Blog</div>
+                <div onclick="rtpe('LMC',3909,'back');">back to boobs</div><br />
+                <div onclick="rtpe('LMC',3909,'pornTransitions');">Transition down</div>
+                <div onclick="rtpe('LMC',3909,'pornRanker');">Nastieness Ranker</div>
+                <div onclick="rtpe('LMC',3909,'explainPorn');">Let me Explain</div>
+                <div onclick="rtpe('LMC',3909,'dirTreePorn');">Category List</div>
+                <div onclick="rtpe('LMC',3909,'back');">back to boobs</div>
+                <div onclick="rtpe('LMC',3909,'blog');">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
         </div>
         <div id="middleColumn">
             <div id="divStatusMessage"></div>
+            <div id='notConnectMessage' class='displayHidden customMessageContainer'></div>
             <div id="dots"></div>
             <div>
                 random galleries
@@ -189,7 +190,7 @@
         var promoMessageRotator;
         var promoMessageRotationSpeed = 15000;
         var subdomain;
-
+        var homePageId = 3908;
         $(document).ready(function () {
             includeHTML();
             $('#laCarousel').hide();
@@ -201,22 +202,15 @@
             }, 2000);
             //$('#footerLastBuild').html("last build: " + lastBuild + "3");
             params = getParams();
-            if (params.subdomain == undefined) {
+            if (params.subdomain === undefined)
                 subdomain = "boobs";
-            }
-            else {
+            else
                 subdomain = params.subdomain;
-            }
+            if (subdomain == "porn") 
+                homePageId = 3909;
 
-            if (subdomain == "porn") {
-                setOggleHeader(subdomain, 3909, false);
-                setOggleFooter(subdomain, 3909);
-            }
-            else {
-                setOggleHeader(subdomain, 3908, false);
-                setOggleFooter(subdomain, 3908);
-            }
-                                
+            setOggleFooter(subdomain, homePageId);
+                               
 
             $('#footerMessage').html("loading settings");
             loadSettings();
@@ -229,35 +223,30 @@
                 else {
                     clearInterval(waiter);
                     $('#dots').html("");
-                    verifyConnection();
+                    verifyConnection("index.html");
+                    //$('#footerMessage').html("loading header");
                     var verifyConnectionWaiter = setInterval(function () {
                         if (!connectionVerified) {
                             dots += ". ";
                             $('#dots').html(dots);
                         }
                         else {
-                            loadNewsBoxes();
-                            launchCarousel(subdomain);
                             clearInterval(verifyConnectionWaiter);
+                            $('#dots').html('');
                             $('#connectingMsg').hide();
                             $('#laCarousel').fadeIn();
-                            //$('#footerMessage').html("loading header");
-                            $('#dots').html('');
-
+                            loadNewsBoxes();
+                            launchCarousel(subdomain);
+                            setOggleHeader(homePageId);
+                            logPageHit(homePageId, "Index");
+                                $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
                             if (subdomain == "porn") {
-                                //setOggleHeader(subdomain, 3909, false);
                                 $('#pornLeftColumnList').show();
-                                $('#indexPageCatTreeContainer').dialog('option', 'title', "porn");
                                 $('#includeCenterfoldsCheckbox').hide();
-                                logPageHit(3909, "Index");
                             }
                             else {
-
-                                //setOggleHeader(subdomain, 3908, false);
-                                $('#indexPageCatTreeContainer').dialog('option', 'title', "boobs");
                                 $('#boobsLeftColumnList').show();
                                 //launchPromoMessages();
-                                logPageHit(3908, "Index");
                             }
                             if (isInRole("Oggle admin")) {
                                 $('#carouselInclude').show();
@@ -286,7 +275,6 @@
             return date;
         };
 
-
         function loadNewsBoxes() {
             $.ajax({
                 type: "GET",
@@ -297,10 +285,13 @@
                             $('#newsSection').append("<div class='newsContentBox'>" +
                                 "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
                                 "<img class='newsContentBoxImage' src='" + LatestUpdate.FolderImage + "'" +
-                                "onclick='javascript:window.location.href=\"/album.html?folder=" + LatestUpdate.FolderId + "\";'/>" +
+                                "onclick='rtpe(\"LUP\",\"home page\"," + LatestUpdate.FolderId + ")'/>" +
+                                //rtpe(eventCode, calledFrom, eventDetail)
+                                //"onclick='javascript:window.location.href=\"/album.html?folder=" + LatestUpdate.FolderId + "\";'/>" +
                                 "<div class='newsContentBoxDateLabel'>Last Updated: " + $.date(LatestUpdate.LastModified) + "</span></div>" +
                                 "</div>");
                         });
+                        console.log("loaded " + latestUpdates.LatestUpdates.length + " news boxes");
                     }
                     else {
                         //alert("loadImages: " + carouselInfo.Success);
@@ -334,32 +325,15 @@
 
         function resizeIndexPage() {
             resizePage();
-            //$('.newsContentBox').css("width", $('#middleColumn').width() / 3 - 10);
-            //alert("padding: " + $('#middleColumn').width() - $('.carouselContainer').width() / 3);
 
             $('#middleColumn').height($('#middleColumn').height() + $('#newsSection').height());
-            $('.carouselContainer').css("padding-left", ($('#middleColumn').width() - $('.carouselContainer').width()) * .4);
 
-            //var cc = $('.carouselImageContainer').height();
-            //alert("carouselImageContainer').height(): " + cc);
+            var carouselPadding = ($('#middleColumn').width() - $('.carouselContainer').width()) * .64;
+            console.log("resizeIndexPage carousel padding: " + carouselPadding)
+            $('.carouselContainer').css("padding-left", carouselPadding);
             $('.assuranceArrows').height($('.carouselImageContainer').height());
-            //$('.assuranceArrows').height(cc);
-            //$('.carouselImage').css("height", $('#middleColumn').innerHeight() - 180);
-            //$('#categoryTitle').fadeOut(intervalSpeed);
-            //$('#laCarousel').fadeOut(intervalSpeed, "linear", function () {
-            //$('#laCarousel').fadeIn(intervalSpeed);
-            //var workAreaHeight = $('#dashboardTop').height() + ($('#dashboardTop').height() + $('#imgLinkPreview').height() + 300);
-            //if (workAreaHeight > $('#middleColumn').height()) {
-            //    $('#middleColumn').height(workAreaHeight);
-            //    $('#footerMessage').html("middleColumn.height: " + $('#middleColumn').height()); //image height: " + $('#imgLinkPreview').height());
-            //}
-            //else {
-            //    //alert("workAreaHeight < $('#middleColumn').height()");
-            //    console.log("workAreaHeight < $('#middleColumn').height()");
-            //    //$('#footerMessage').html("_");
-            //}
-            //$('#divHitMetrics').height($('#middleColumn').height() - 122);
-            //$('.floatingCrud').width($('.workarea').width() - 100);
+
+
         }
 
         function addToCarousel(root, isChecked) {

@@ -24,6 +24,7 @@ namespace WebApi
     {
         public void Configuration(IAppBuilder app)
         {
+            //app.UseCors(CorsOptions.AllowAll);
             //app.MapSignalR();
 
             app.Map("/signalr", map =>
@@ -33,14 +34,9 @@ namespace WebApi
             });
 
             //app.UseStaticFiles();
-
             //IApplicationBuilder applicationBuilder = new IAppBuilder()
-
             //Configure(app);
-
-
         }
-
 
         //public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         public void Configure(IApplicationBuilder app)

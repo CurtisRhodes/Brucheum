@@ -26,7 +26,8 @@ $(document).ready(function () {
         }
         else {
             clearInterval(waiter);
-            setAlbumPageHeader(staticPageFolderId, true);
+            //setAlbumPageHeader(staticPageFolderId, true);
+            setOggleHeader(staticPageFolderId);
 
             params = getParams();
             var calledFrom = params.calledFrom;

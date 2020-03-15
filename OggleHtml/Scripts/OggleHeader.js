@@ -1,4 +1,5 @@
-﻿function changeFavicon(src) {
+﻿
+function changeFavicon(src) {
     var link = document.createElement('link'),
         oldLink = document.getElementById('dynamic-favicon');
     link.id = 'dynamic-favicon';
@@ -10,7 +11,6 @@
     document.head.appendChild(link);
 }
 
-
 function changeFavoriteIcon () {
     var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
     link.type = 'image/x-icon';
@@ -19,132 +19,35 @@ function changeFavoriteIcon () {
     document.getElementsByTagName('head')[0].appendChild(link);
 }
 
+function setAlbumPageHeader(folderId) {
+    setOggleHeader(folderId);
+}
 
 var currentFolderId;
-function setOggleHeader(subdomain, folderId, isStaticPage) {
+function setOggleHeader(folderId) {
+
     //alert("setOggleHeader called from " + folderId);
     currentFolderId = folderId;
     var headerHtml;
     var lang = "en";
-    var subheaderContent;
-    var websiteName = "OggleBooble";
-    var boobsRankerLink = "";
-    var bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"boobs\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
-    var archiveLink = "";
 
     //if (getCookieValue("IpAddress") === "68.203.90.183") alert("setOggleHeader subdomain " + subdomain + "  folderId: " + folderId + " containsImageLinks: " + containsImageLinks);
 
     $('header').switchClass('pornHeader', 'boobsHeader');
-    switch (subdomain) {
-        case "blog":
-            subheaderContent = "blog";
-            break;
-        case "ranker":
-            subheaderContent = "ranker";
-            break;
-        case "archive":
-            subheaderContent = "Archive";
-            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>" +
-                "\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + ",\"archive\")'" +
-                " title='Spin through the links to land on random portrait images.'>babes ranker</a></div>\n";
-            break;
-        case "boobs": {
-            subheaderContent =
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",136)'> poses,</a>\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",3916)'> positions,</a>\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",159)'> topics,</a>\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",199)'> shapes</a> and\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",241)'>sizes</a>\n";
-
-            //DUTCH subheaderContent =
-            //    "                <a href='/album.html?folder=2'><span class='bigTits'>STORE </span>bryster</a> organiseret af\n" +
-            //    "                <a href='/album.html?folder=136'> rejser,</a>\n" +
-            //    "                <a href='/album.html?folder=159'> emne,</a>\n" +
-            //    "                <a href='/album.html?folder=199'> figurer</a> og\n" +
-            //    "                <a href='/album.html?folder=241'>størrelser</a>\n";
-            archiveLink = "<a href='javascript:reportThenPerformEvent(\"BAC\"," + folderId + ",3)' class='babesArchive'>babes archive</a>";
-
-            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>" +
-                "\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + ",\"boobs\")'" +
-                " title='Spin through the links to land on random portrait images.'>boobs ranker</a></div>\n";
-
-
-            //alert("setLoginHeader. top strings built.<br/>subdomain: " + subdomain + "  folderId: " + folderId);
-
-        }
-            break;
-        case "playboy":
-        case "playmates": {
-            $('header').switchClass('pornHeader', 'boobsHeader');
-            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"playboy\")'><img src='/Images/playboyBallon.png' class='bannerImage'/></a>\n";
-            //bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\",1132)'><img  class='bannerImage' src='/Images/redballon.png' title='home. Find lots of cool things here.'/></a>\n";
-            subheaderContent =
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",1132)'>Centerfolds,</a>\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",1986)'> magazine covers,</a>\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",3796)'> cybergirls,</a> and\n" +
-                "                <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",2601)'> extras</a>\n";
-
-            archiveLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\"," + folderId + ",3)' class='babesArchive'>big tit archive</a>";
-            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + ",\"playboy\")' " +
-                "title='Spin through the links to land on random portrait images.'>playmate ranker</a></div>\n";
-            break;
-        }
-        case "porn":
-        case "sluts":
-            $('header').switchClass('boobsHeader', 'pornHeader');
-
-            //changeFavicon(src);
-            //<link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
-            changeFavoriteIcon();
-
-
-            $('body').addClass('pornBodyColors');
-            subheaderContent =
-                "               <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",243)'>cock suckers</a>, \n" +
-                "               <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",420)'>boob suckers</a>, \n" +
-                "               <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",357)'>cum shots</a>, \n" +
-                "               <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",397)'>kinky</a> and \n" +
-                "               <a href='javascript:reportThenPerformEvent(\"BLC\"," + folderId + ",411)'>naughty behaviour</a>\n";
-
-            bannerImageLink = "<a href='javascript:reportThenPerformEvent(\"HBC\"," + folderId + ",\"porn\")'><img src='/Images/csLips02.png' class='bannerImage'/></a>\n";
-            archiveLink = "  <a href='javascript:reportThenPerformEvent(\"BAC\"," + folderId + ",440)' class='babesArchive'>slut archive</a>";
-            //boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + "," + subdomain + ")' " +
-            boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:reportThenPerformEvent(\"RNK\"," + folderId + ",\"" + subdomain + "\")' " +
-                "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
-            websiteName = "OgglePorn";
-            break;
-        case "admin":
-            $('header').switchClass('pornHeader', 'boobsHeader');
-            $("#divLoginArea").hide();
-            subheaderContent = "Admin";
-            break;
-        default:
-            logError({
-                VisitorId: visitorId,
-                ActivityCode: "BUG",
-                Severity: 2,
-                ErrorMessage: "switch case not handled. FolderId: " + folderId + ", Subdomain: " + subdomain,
-                CalledFrom: "OggleHeader setOggleHeader"
-            });
-            //sendEmailToYourself("OggleHeader switch ","folderId: " + folderId+ "<br/>subdomain: " + subdomain);
-
-        //alert("subdomain: " + subdomain + "  not found");
-        //console.log("subdomain: " + subdomain + "  not found");
-    }
 
     // HEADER HTML
     {
         headerHtml =
-            "   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" + bannerImageLink + "</div>\n" +
+            "   <div id='divTopLeftLogo' class='bannerImageContainer'></div>\n" +
             "   <div class='headerBodyContainer'>\n" +
             "       <div id='' class='headerTopRow'>\n" +
-            "           <div id='bannerTitle' class='headerTitle'>" + websiteName + "</div >\n" +
+            "           <div id='bannerTitle' class='headerTitle'></div >\n" +
             //"                  <img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
             //"                   title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +
             //"                   \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
             //"                   \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
-            "           <div id='headerSubTitle' class='topLinkRow'>\n" + subheaderContent + "</div>\n" + archiveLink + boobsRankerLink +
+            //"           <div id='headerSubTitle' class='topLinkRow'>\n" + subheaderContent + "</div>\n" + archiveLink + boobsRankerLink +
+            "           <div id='subheaderContent' class='topLinkRow'></div>\n<span id='archiveLink'></span><span id='rankerLink'></span>\n" +
             "           <div class='OggleSearchBox'>\n" +
             "               <span id='notUserName' title='this is a progressive single letter search. Esc clears search.'>search</span>" +
             "                   <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
@@ -189,7 +92,6 @@ function setOggleHeader(subdomain, folderId, isStaticPage) {
             "   <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
             "</div>\n" +
             "<div id='customMessage' class='displayHidden customMessageContainer'></div>\n" +
-            "<div id='notConnectMessage' class='displayHidden customMessageContainer'></div>\n" +
             "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
             "<div id='feedbackDialog' class='modalDialog' title='Feedback'>\n" +
             "   <div><input type='radio' name='feedbackRadio' value='complement' checked='checked'> complement\n" +
@@ -202,6 +104,9 @@ function setOggleHeader(subdomain, folderId, isStaticPage) {
             "</div>";
         $('header').html(headerHtml);
     }
+
+    getFolderInfo(folderId);
+
     if (isLoggedIn()) {
         $('#spnUserName').html(getCookieValue("UserName"));
         $('#optionLoggedIn').show();
@@ -222,11 +127,216 @@ function setOggleHeader(subdomain, folderId, isStaticPage) {
         if (settingsArray.ApiServer !== undefined) {
             //if (getCookieValue("IpAddress") === "68.203.90.183") alert("isStaticPage: " + isStaticPage);
             showSpecialHeaderIcons(folderId);
-            if (!isStaticPage) {
-                setTrackbackLinks(folderId);
-            }
+            setTrackbackLinks(folderId);
         }
     }
+}
+
+function getFolderInfo(folderId) {
+    try {
+        if (!isNullorUndefined(settingsArray.ApiServer)) {
+            // [Route("api/AlbumPage/GetFolderInfo")]
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "/api/Folder/GetFolderInfo?folderId=" + folderId,
+                success: function (rootFolderModel) {
+                    if (rootFolderModel.Success === "ok") {
+                        setHeaderDetails(rootFolderModel.RootFolder, folderId);
+                        setOggleFooter(rootFolderModel.RootFolder, folderId);
+                    }
+                    else {
+                        if (document.domain === 'localhost')
+                            alert("GetFolderInfo: " + rootFolderModel.Success);
+                        if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
+                            if (!checkFor404(folderDetailModel.Success, "setAlbumPageHeader")) {
+                                logError({
+                                    VisitorId: getCookieValue("VisitorId"),
+                                    ActivityCode: "ERR",
+                                    Severity: 1,
+                                    ErrorMessage: folderDetailModel.Success,
+                                    CalledFrom: "Album.js setAlbumPageHeader"
+                                });
+                            }
+                            //sendEmailToYourself("SERVICE DOWN", "from getBreadCrumbs<br/>folderId=" + folderId + "<br/>IpAddress: " +
+                            //    getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
+                        }
+                        else {
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "ERR",
+                                Severity: 1,
+                                ErrorMessage: folderDetailModel.Success,
+                                CalledFrom: "Album.js setAlbumPageHeader"
+                            });
+                            //sendEmailToYourself("setAlbumPageHeader FAILURE", "api/AlbumPage/GetFolderInfo?folderId=" + folderId + "<br>" + successModel.Success);
+                        }
+                    }
+                },
+                error: function (jqXHR) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "setAlbumPageHeader")) {
+                        if (document.domain === 'localhost')
+                            alert("GetFolderInfo XHR: " + errorMessage + " id:" + folderId + "\nsettingsArray.ApiServer: " + settingsArray.ApiServer);
+                        else {
+                            if (isNullorUndefined(getCookieValue("IpAddress")))
+                                logVisitor(folderId, "setAlbumPageHeader");
+                            else {
+                                logError({
+                                    VisitorId: getCookieValue("VisitorId"),
+                                    ActivityCode: "XHR",
+                                    Severity: 1,
+                                    ErrorMessage: errorMessage,
+                                    CalledFrom: "Album.js setAlbumPageHeader"
+                                });
+                                //sendEmailToYourself("XHR Error setAlbumPageHeader",
+                                //    "settingsArray.ApiServer: " + settingsArray.ApiServer +
+                                //    "<br/>folderId: " + folderId +
+                                //    "<br/>isStaticPage: " + isStaticPage +
+                                //    "<br/>IpAddress: " + getCookieValue("IpAddress") +
+                                //    "<br/>" + errorMessage);
+                            }
+                        }
+                        setHeaderDetails("boobs", folderId);
+                        setOggleFooter("boobs", folderId);
+                    }
+                    else {
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "XHR",
+                            Severity: 1,
+                            ErrorMessage: errorMessage,
+                            CalledFrom: "Album.js setAlbumPageHeader"
+                        });
+                        //sendEmailToYourself("XHR ERROR IN ALBUM.JS setAlbumPageHeader", "api/AlbumPage/GetRootFolder?folderId=" + folderId + " <br/>" + errorMessage);
+                    }
+                }
+            });
+        }
+        else {
+            if (document.domain === 'localhost')
+                alert("settingsArray null");
+            //else {
+            //    logError({
+            //        VisitorId: getCookieValue("VisitorId"),
+            //        ActivityCode: "XHR",
+            //        Severity: 1,
+            //        ErrorMessage: errorMessage,
+            //        CalledFrom: "Album.js setAlbumPageHeader"
+            //    });
+            //}
+            setHeaderDetails("boobs", folderId);
+            setOggleFooter("boobs", folderId);
+        }
+    } catch (e) {
+        if (document.domain === 'localhost')
+            alert("setAlbumPageHeader: " + e);
+        else {
+            logError({
+                VisitorId: getCookieValue("VisitorId"),
+                ActivityCode: "CAT",
+                Severity: 1,
+                ErrorMessage: e,
+                CalledFrom: "Album.js setAlbumPageHeader"
+            });
+            //sendEmailToYourself("setAlbumPageHeader", e);
+        }
+    }
+}
+
+function setHeaderDetails(subdomain, folderId) {
+    $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"boobs\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n");
+    $('#bannerTitle').html("OggleBooble");
+    switch (subdomain) {
+        case "admin":
+            $('header').switchClass('pornHeader', 'boobsHeader');
+            $("#divLoginArea").hide();
+            $('#subheaderContent').html("admin");
+            break;
+        case "blog":
+            $('#subheaderContent').html("blog");
+            break;
+        case "ranker":
+            $('#subheaderContent').html("ranker");
+            break;
+        case "archive":
+            $('#subheaderContent').html("Archive");
+            $('#boobsRankerLink').html("<div id='rankerTag' class='boobRankerBanner'>" +
+                "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"archive\")'" +
+                " title='Spin through the links to land on random portrait images.'>babes ranker</a></div>\n");
+            break;
+        case "special":
+        case "boobs": {
+            $('#subheaderContent').html(
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",136)'> poses,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",3916)'> positions,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",159)'> topics,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",199)'> shapes</a> and\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",241)'>sizes</a>\n");
+
+            //DUTCH subheaderContent =
+            //    "                <a href='/album.html?folder=2'><span class='bigTits'>STORE </span>bryster</a> organiseret af\n" +
+            //    "                <a href='/album.html?folder=136'> rejser,</a>\n" +
+            //    "                <a href='/album.html?folder=159'> emne,</a>\n" +
+            //    "                <a href='/album.html?folder=199'> figurer</a> og\n" +
+            //    "                <a href='/album.html?folder=241'>størrelser</a>\n";
+
+            $('#archiveLink').html("<a href='javascript:rtpe(\"BAC\"," + folderId + ",3)' class='babesArchive'>babes archive</a>");
+            
+            $('#rankerLink').html("<div id='rankerTag' class='boobRankerBanner'>" +
+                "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"boobs\")'" +
+                " title='Spin through the links to land on random portrait images.'>boobs ranker</a></div>\n");
+        }
+            break;
+        case "playboy":
+        case "playmates": {
+            $('header').switchClass('pornHeader', 'boobsHeader');
+            $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"playboy\")'><img src='/Images/playboyBallon.png' class='bannerImage'/></a>\n");
+            $('#subheaderContent').html(
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1132)'>Centerfolds,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1986)'> magazine covers,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",3796)'> cybergirls,</a> and\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",2601)'> extras</a>\n");
+
+            $('#archiveLink').html("<a href='javascript:rtpe(\"BAC\"," + folderId + ",3)' class='babesArchive'>big tit archive</a>");
+            $('#rankerLink').html("<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"playboy\")' " +
+                "title='Spin through the links to land on random portrait images.'>playmate ranker</a></div>\n");
+            break;
+        }
+        case "porn":
+        case "sluts":
+            $('header').switchClass('boobsHeader', 'pornHeader');
+            changeFavoriteIcon();
+            $('body').addClass('pornBodyColors');
+            $('#subheaderContent').html(
+                "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",243)'>cock suckers</a>, \n" +
+                "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",420)'>boob suckers</a>, \n" +
+                "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",357)'>cum shots</a>, \n" +
+                "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",397)'>kinky</a> and \n" +
+                "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",411)'>naughty behaviour</a>\n");
+
+            $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"porn\")'><img src='/Images/csLips02.png' class='bannerImage'/></a>\n");
+            $('#archiveLink').html("<a href='javascript:rtpe(\"BAC\"," + folderId + ",440)' class='babesArchive'>slut archive</a>");
+            //boobsRankerLink = "<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + "," + subdomain + ")' " +
+            $('#rankerLink').html("<div id='rankerTag' class='boobRankerBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"" + subdomain + "\")' " +
+                "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n");
+            $('#bannerTitle').html("OgglePorn");
+            break;
+        default:
+            logError({
+                VisitorId: getCookieValue("VisitorId"),
+                ActivityCode: "BUG",
+                Severity: 2,
+                ErrorMessage: "switch case not handled. FolderId: " + folderId + ", Subdomain: " + subdomain,
+                CalledFrom: "OggleHeader setOggleHeader"
+            });
+        //sendEmailToYourself("OggleHeader switch ","folderId: " + folderId+ "<br/>subdomain: " + subdomain);
+        //alert("subdomain: " + subdomain + "  not found");
+        //console.log("subdomain: " + subdomain + "  not found");
+    }
+
+
+
 }
 
 function showSpecialHeaderIcons(folderId) {
@@ -444,5 +554,3 @@ function saveFeedbackDialog(pageId) {
 function closeFeedbackDialog() {
     $("#feedbackDialog").dialog('close');
 }
-
-

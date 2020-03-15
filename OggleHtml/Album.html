@@ -77,27 +77,28 @@
         </div>
     </div>
     <footer></footer>
-    <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut(); $('#linkInfo').hide();">
-        <div id="ctxModelName" onclick="contextMenuAction('show')">model name</div>
-        <div id="ctxSeeMore" onclick="contextMenuAction('jump')">see more of her</div>
-        <div onclick="contextMenuAction('comment')">Comment</div>
-        <div onclick="contextMenuAction('explode')">explode</div>
-        <div onclick="contextMenuAction('showLinks')">Show Links</div>
-        <div id="linkInfo" class="innerContextMenuInfo">
-            <div id="linkInfoContainer"></div>
+    <div>
+        <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut(); $('#linkInfo').hide();">
+            <div id="ctxModelName" onclick="contextMenuAction('show')">model name</div>
+            <div id="ctxSeeMore" onclick="contextMenuAction('jump')">see more of her</div>
+            <div onclick="contextMenuAction('comment')">Comment</div>
+            <div onclick="contextMenuAction('explode')">explode</div>
+            <div onclick="contextMenuAction('showLinks')">Show Links</div>
+            <div id="linkInfo" class="innerContextMenuInfo">
+                <div id="linkInfoContainer"></div>
+            </div>
+            <div id="ctxArchive" class="adminLink" onclick="contextMenuAction('archive')">Archive</div>
+            <div class="adminLink" onclick="contextMenuAction('copy')">Copy Link</div>
+            <div class="adminLink" onclick="contextMenuAction('move')">Move Image</div>
+            <div class="adminLink" onclick="contextMenuAction('remove')">Remove Link</div>
+            <div class="adminLink" onclick="contextMenuAction('setF')">Set as Folder Image</div>
+            <div class="adminLink" onclick="contextMenuAction('setC')">Set as Category Image</div>
         </div>
-        <div id="ctxArchive" class="adminLink" onclick="contextMenuAction('archive')">Archive</div>
-        <div class="adminLink" onclick="contextMenuAction('copy')">Copy Link</div>
-        <div class="adminLink" onclick="contextMenuAction('move')">Move Image</div>
-        <div class="adminLink" onclick="contextMenuAction('remove')">Remove Link</div>
-        <div class="adminLink" onclick="contextMenuAction('setF')">Set as Folder Image</div>
-        <div class="adminLink" onclick="contextMenuAction('setC')">Set as Category Image</div>
+        <div w3-include-html="Snippets/Slideshow.html"></div>
+        <div w3-include-html="Snippets/AdminDialogs.html"></div>
+        <div w3-include-html="Snippets/Login.html"></div>
+        <div w3-include-html="Snippets/Register.html"></div>
     </div>
-    <div w3-include-html="Snippets/Slideshow.html"></div>
-    <div w3-include-html="Snippets/AdminDialogs.html"></div>
-    <div w3-include-html="Snippets/Login.html"></div>
-    <div w3-include-html="Snippets/Register.html"></div>
-
     <script>
         var ipAddress = getCookieValue("IpAddress");
         var visitorId = getCookieValue("VisitorId");
@@ -112,10 +113,6 @@
                 window.location.href = "Index.html";
             }
 
-            //setOggleHeader("boobs", setAlbumPageHeaderFolderId, false);
-            //setOggleFooter("boobs", setAlbumPageHeaderFolderId);
-            setAlbumPageHeader(params.folder);
-
             var dots = "";
             loadSettings();
             var waiter = setInterval(function () {
@@ -127,6 +124,8 @@
                     clearInterval(waiter);
                     $('#dots').html('');
 
+                    setOggleHeader(params.folder);
+
                     if (document.domain === 'localhost') {
                         //isInRole("not logged in");
                         console.log("I want to stay in local host");
@@ -134,8 +133,13 @@
                         getAlbumImages(params.folder);
                     }
                     else {
+
+                        //if (isInRole("Show Dynamic Pages"))
+
+
                         var userName = getCookieValue("UserName");
                         if (isNullorUndefined(userName)) {
+
                             if (document.domain === 'localhost')  // #DEBUG
                             {
                                 //alert("userName  not found.  normally would direct to static pages");

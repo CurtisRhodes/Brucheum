@@ -8,7 +8,7 @@
         rootFolder = "boobs";
     }
 
-    if (rootFolder === "boobs" || rootFolder === "archive") {
+    if (rootFolder === "boobs" || rootFolder === "archive" || rootFolder === "special") {
         footerhtml =
             "<div class='flexContainer'>\n" +
             "    <div class='footerCol'>\n" +

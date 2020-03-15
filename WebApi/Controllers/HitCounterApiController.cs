@@ -80,30 +80,43 @@ namespace WebApi
                         Occured = DateTime.Now  //.AddMilliseconds(getrandom.Next())
                     });
                     db.SaveChanges();
-                    pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.PageId == pageHitModel.PageId).Count();
-                    pageHitSuccessModel.UserPageHits = db.PageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
-                    pageHitSuccessModel.UserImageHits = db.ImageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
-
-                    CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == pageHitModel.PageId).FirstOrDefault();
-                    pageHitSuccessModel.RootFolder = categoryFolder.RootFolder;
-                    pageHitSuccessModel.PageName = categoryFolder.FolderName;
-
-                    if (categoryFolder.Parent == -1)
-                    {
-                        pageHitSuccessModel.ParentName = "special";
-                    }
-                    else
-                    {
-                        CategoryFolder parentFolder = db.CategoryFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
-                        if (parentFolder != null)
-                            pageHitSuccessModel.ParentName = parentFolder.FolderName;
-                    }
                     pageHitSuccessModel.Success = "ok";
+                    try
+                    {
+                        pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.PageId == pageHitModel.PageId).Count();
+                        pageHitSuccessModel.UserPageHits = db.PageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
+                        pageHitSuccessModel.UserImageHits = db.ImageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
+
+                        CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == pageHitModel.PageId).FirstOrDefault();
+                        pageHitSuccessModel.RootFolder = categoryFolder.RootFolder;
+                        pageHitSuccessModel.PageName = categoryFolder.FolderName;
+
+                        if (categoryFolder.Parent == -1)
+                        {
+                            pageHitSuccessModel.ParentName = "special";
+                        }
+                        else
+                        {
+                            CategoryFolder parentFolder = db.CategoryFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
+                            if (parentFolder != null)
+                                pageHitSuccessModel.ParentName = parentFolder.FolderName;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        pageHitSuccessModel.Success = "unrelate to insert, but: " + Helpers.ErrorDetails(ex);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                pageHitSuccessModel.Success = Helpers.ErrorDetails(ex);
+                string err = Helpers.ErrorDetails(ex);
+                if (err.Contains("Object reference not set to an instance of an object."))
+                {
+                    err = "Null reference. PageId: " + pageHitModel.PageId + " visId: " + pageHitModel.VisitorId;
+                }
+                pageHitSuccessModel.Success = err;
+
             }
             return pageHitSuccessModel;
         }

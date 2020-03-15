@@ -32,7 +32,6 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
         logVisitor(pageId, "logImageHit-PageId");
         return;
     }
-
     if (isNullorUndefined(ipAddress)) {
         logError({
             VisitorId: visitorId,
@@ -157,7 +156,6 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
 
 function logVisitor(pageId, calledFrom) {
     try {
-
         var visitorId = getCookieValue("VisitorId");
         var ipAddress = getCookieValue("IpAddress");
         if (isNullorUndefined(ipAddress)) {
@@ -632,7 +630,7 @@ function logPageHit(pageId, calledFrom) {
                     else
                         logError({
                             VisitorId: visitorId,
-                            ActivityCode: "PGH",
+                            ActivityCode: "PG2",
                             Severity: 2,
                             ErrorMessage: "Page hit: " + pageHitSuccessModel.PageName + " Called From: " + calledFrom,
                             CalledFrom: "HitCounter.js logPageHit"
@@ -767,6 +765,10 @@ function letemPorn(response, pornType) {
             resume();
         }
     }
+}
+
+function rtpe(eventCode, calledFrom, eventDetail) {
+    reportThenPerformEvent(eventCode, calledFrom, eventDetail);
 }
 
 function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
@@ -946,6 +948,7 @@ function performEvent(eventCode, calledFrom, eventDetail) {
         case "BCC":  // Breadcrumb Clicked
         case "BLC":  // banner link clicked
         case "BAC":  // Babes Archive Clicked
+        case "LUP":  // Update Box click
             window.location.href = "/album.html?folder=" + eventDetail;  //  open page in same window
             break;
         case "CMX":
@@ -1043,30 +1046,29 @@ function checkForHitLimit(calledFrom, pageId) {
     if (!isLoggedIn()) {
         if (calledFrom === "pages") {
             if (userPageHits > freePageHitsAllowed) {
-                showCustomMessage(98, true);
-            }
-            if (userPageHits > freePageHitsAllowed && userPageHits % 10 === 0) {
                 logEventActivity({
-                    VisitorId: visitorSuccess.VisitorId,
+                    VisitorId: getCookieValue("VisitorId"),
                     EventCode: "PAY",
                     EventDetail: "Page Hit Message Displayed. UserPageHits: " + userPageHits + " pageId: " + pageId,
                     CalledFrom: calledFrom
                 });
-                //sendEmailToYourself("Page Hit Message Displayed", "userPageHits: " + userPageHits + "<br>pageId: " + pageId + "<br>Ip: " + getCookieValue("IpAddress"));
+                if (userPageHits > freePageHitsAllowed && userPageHits % 10 === 0) {
+                    if (getCookieValue("IpAddress") !== "68.203.90.183")                    //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
+                        showCustomMessage(98, true);
+                }
             }
-
         }
         if (calledFrom === "images") {
-            if (userImageHits > freeImageHitsAllowed)
-                showCustomMessage(97, true);
-            if (userImageHits > freeImageHitsAllowed && userImageHits % 10 === 0 && userImageHits < 3000) {
+            if (userImageHits > freeImageHitsAllowed) {
                 logEventActivity({
-                    VisitorId: visitorSuccess.VisitorId,
+                    VisitorId: getCookieValue("VisitorId"),
                     EventCode: "PAY",
                     EventDetail: "Image Hit Limit Message Displayed userImageHits: " + userImageHits + " pageId: " + pageId,
                     CalledFrom: calledFrom
                 });
-                //sendEmailToYourself("Image Hit Limit Message Displayed", "userImageHits: " + userImageHits + "<br>pageId: " + pageId + "<br>Ip: " + getCookieValue("IpAddress"));
+                //if (userImageHits > freeImageHitsAllowed && userImageHits % 10 === 0 && userImageHits < 3000) {
+                showCustomMessage(97, true);
+                //sendEmailToYourself("Image Hit Limit Message Displayed", "userImageHits: " + userImageHits + "<br>pageId: " + pageId + "<br>Ip: " + getCookieValue("IpAddress"));               
             }
         }
     }
