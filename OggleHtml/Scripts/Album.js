@@ -250,18 +250,18 @@ function processImages(imageLinksModel) {
             " src='" + imageModelFile.Link + "'/></div>");
     });
 
-    if (imageLinksModel.SubDirs.length > 1) {
+    if (imageLinksModel.SubDirs.length > 0) {
         var totalChildImages = 0;
         $.each(imageLinksModel.SubDirs, function (idx, obj) {
-            totalChildImages += obj.ChildFiles;
+            totalChildImages += obj.FileCount;
         });
         $('#fileCount').html(imageLinksModel.SubDirs.length + "/" + totalChildImages.toLocaleString());
     }
     else {
         $('#fileCount').html(imageLinksModel.Files.length);
     }
-    //if (imageLinksModel.Files.length > 0 && imageLinksModel.SubDirs.length > 0) 
-    //    $('#fileCount').html(imageLinksModel.Files.length + "  (" + imageLinksModel.SubDirs.length + ")");
+    if (imageLinksModel.Files.length > 0 && imageLinksModel.SubDirs.length > 0) 
+        $('#fileCount').html(imageLinksModel.Files.length + "  (" + imageLinksModel.SubDirs.length + ")");
 
     //  SUBFOLDERS
     $.each(imageLinksModel.SubDirs, function (idx, subDir) {
@@ -269,8 +269,6 @@ function processImages(imageLinksModel) {
             subDir.Link = "Images/redballon.png";
         var kludge = "<div class='" + imageFrameClass + "' onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.FolderId + "\")'>" +
             "<img class='folderImage' src='" + subDir.Link + "'/>";
-
-        //alert(subDir.DirectoryName + "subDir.SubDirCount: " + subDir.SubDirCount);
 
         if (subDir.SubDirCount === 0)
             kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.FileCount + ")</div></div>";

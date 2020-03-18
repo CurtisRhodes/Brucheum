@@ -15,7 +15,7 @@ function changeFavoriteIcon () {
     var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
     link.type = 'image/x-icon';
     link.rel = 'shortcut icon';    
-    link.href = 'http://porn.ogglebooble.com/csLips03.png';
+    link.href = 'https://ogglebooble.com/images/cslips03.png';
     document.getElementsByTagName('head')[0].appendChild(link);
 }
 
@@ -363,8 +363,19 @@ function showSpecialHeaderIcons(folderId) {
                     }
                 }
                 else {
-                    if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
-                        if (!checkFor404(folderDetailModel.Success, "showSpecialHeaderIcons")) {
+                    if (verbosity > 20) {
+                        if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
+                            if (!checkFor404(folderDetailModel.Success, "showSpecialHeaderIcons")) {
+                                logError({
+                                    VisitorId: getCookieValue("VisitorId"),
+                                    ActivityCode: "404",
+                                    Severity: 1,
+                                    ErrorMessage: folderDetailModel.Success,
+                                    CalledFrom: "OggleHeader showSpecialHeaderIcons"
+                                });
+                            }
+                        }
+                        else {
                             logError({
                                 VisitorId: getCookieValue("VisitorId"),
                                 ActivityCode: "BUG",
@@ -373,18 +384,9 @@ function showSpecialHeaderIcons(folderId) {
                                 CalledFrom: "OggleHeader showSpecialHeaderIcons"
                             });
                         }
+                        //sendEmailToYourself("SERVICE DOWN", "from showSpecialHeaderIcons<br/>folderId=" + folderId + "<br/>IpAddress: " +
+                        //    getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
                     }
-                    else {
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "BUG",
-                            Severity: 1,
-                            ErrorMessage: folderDetailModel.Success,
-                            CalledFrom: "OggleHeader showSpecialHeaderIcons"
-                        });
-                    }
-                    //sendEmailToYourself("SERVICE DOWN", "from showSpecialHeaderIcons<br/>folderId=" + folderId + "<br/>IpAddress: " +
-                    //    getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
                 }
             },
             error: function (jqXHR) {
@@ -431,21 +433,17 @@ function setTrackbackLinks(folderId) {
                     });
                 }
                 else {
-                    //if (trackBackModel.Success.indexOf("Option not supported") > -1) {
-                    //checkFor404(trackBackModel.Success, "setTrackbackLinks");
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
-                        Severity: 3,
-                        ErrorMessage: trackBackModel.Success,
-                        CalledFrom: "OggleHeader setTrackbackLinks"
-                    });
-                    //sendEmailToYourself("SERVICE DOWN", "from setTrackbackLinks<br/>folderId=" + folderId + "<br/>IpAddress: " +
-                    //    getCookieValue("IpAddress") + "<br/> " + folderDetailModel.Success);
-                    //}
-                    //else
-                    //    sendEmailToYourself("setTrackbackLinks", "folderId=" + folderId + "<br/>IpAddress: " +
-                    //        getCookieValue("IpAddress") + "<br/>Message : " + errorMessage);
+                    if (verbosity > 20) {
+                        //if (trackBackModel.Success.indexOf("Option not supported") > -1) {
+                        //checkFor404(trackBackModel.Success, "setTrackbackLinks");
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "BUG",
+                            Severity: 3,
+                            ErrorMessage: trackBackModel.Success,
+                            CalledFrom: "OggleHeader setTrackbackLinks"
+                        });
+                    }
                 }
             },
             error: function (jqXHR) {

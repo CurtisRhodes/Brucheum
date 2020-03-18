@@ -237,7 +237,7 @@ namespace WebApi.Controllers
                             Region = item.Region,
                             Country = item.Country,
                             PageId = item.PageId,
-                            FolderName = item.FolderName.Replace("OGGLEBOOBLE.COM", ""),
+                            FolderName = item.FolderName, // ?? "?",item.FolderName.Replace("OGGLEBOOBLE.COM", ""),
                             PageHits = item.PageHits,
                             ImageHits = item.ImageHits,
                             HitDate = item.HitDate,

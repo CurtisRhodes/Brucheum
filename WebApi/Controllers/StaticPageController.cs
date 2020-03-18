@@ -163,8 +163,8 @@ namespace WebApi.Controllers
                 string staticContent =
                     "<!DOCTYPE html>\n<html lang='en'>\n" + HeadHtml(folderId, folderName) +
                     "\n<body style='margin-top:105px'>\n<header></header>" +
-                    GalleryPageBodyHtml(folderId, rootFolder) + "<footer></footer>\n" +
-                   // Slideshow() + CommentDialog() + ModelInfoDialog() +
+                    GalleryPageBodyHtml(folderId, folderName, rootFolder) + "<footer></footer>\n" +
+                    // Slideshow() + CommentDialog() + ModelInfoDialog() +
                     "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
                     "<script>var staticPageFolderId=" + folderId + "; " +
                     //"var staticPageFolderName='" + staticFolderName + "'; " +
@@ -238,7 +238,7 @@ namespace WebApi.Controllers
             return success;
         }
 
-        private string GalleryPageBodyHtml(int folderId, string rootFolder)
+        private string GalleryPageBodyHtml(int folderId, string folderName, string rootFolder)
         {
             StringBuilder bodyHtml = new StringBuilder(
             "<div class='threeColumnLayout'>\n" +
@@ -266,13 +266,17 @@ namespace WebApi.Controllers
             bodyHtml.Append("      </div>\n" +
             "   </div>\n" +
             "<div id='middleColumn'>\n" +
+            "   <div class='floatLeft' id='googleSearchText'>" + folderName + "</div>\n" +
+            "   <div class='displayHidden'>" + folderName + " naked</div>\n" +
+            "   <div class='displayHidden'>free pics of " + folderName + "</div>\n" +
             "   <div id='divStatusMessage'></div>\n" +
+            "   <div class='floatRight' title='include all child folders' style='cursor: pointer;' onclick='startSlideShow(-1);'>slideshow</div>\n" +
             "   <div id='imageContainer' class='flexWrapContainer'>\n");
 
             //ImageLink[] imageArray = null;
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
-                imagesCount = 0;
+                //imagesCount = 0;
                 string imageFrameClass = "folderImageOutterFrame";
                 string subDirLabelClass = "subDirLabel";
                 if (rootFolder == "porn" && rootFolder == "sluts")
@@ -287,21 +291,32 @@ namespace WebApi.Controllers
                 {
                     bodyHtml.Append("<div id='img" + idx + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
                          "oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='startSlideShow(" + idx++ + ")' src='" + link.Link + "'/></div>\n");
-                    imagesCount++;
+                    //imagesCount++;
                 }
                 //  SUBFOLDERS
                 List<VwDirTree> subDirs = db.VwDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
+                string countText, fullerFolderName;
                 foreach (VwDirTree subDir in subDirs)
                 {
-                    string fullerFolderName = subDir.RootFolder + "/" + Helpers.GetParentPath(folderId).Replace(".OGGLEBOOBLE.COM", "");                    
+                    fullerFolderName = subDir.RootFolder + "/" + Helpers.GetParentPath(folderId).Replace(".OGGLEBOOBLE.COM", "");
                     //string fullerFolderName = subDir.RootFolder + "/" + Helpers.GetCustomStaticFolderName(subDir.Id, subDir.FolderName);
-                    int subDirFileCount = Math.Max(subDir.FileCount, subDir.SubDirCount);
+
+                    countText = subDir.FileCount.ToString();
+                    //int subDirFileCount = Math.Max(subDir.FileCount, subDir.SubDirCount);
+                    if (subDir.SubDirCount > 0)
+                    {
+                        deepChildCount = 0;
+                        GetDeepChildCount(subDir, db);
+                        countText = subDir.SubDirCount + "/" + String.Format("{0:n0}", deepChildCount);
+                    }
+
                     bodyHtml.Append("<div class='" + imageFrameClass + "'>" +
                         //"<div class='folderImageFrame' onclick='reportThenPerformEvent(\"SUB\"," + folderId + "," + subDir.Id + ")'>" +
                         "<div class='folderImageFrame' onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.Id + "\")'>" +
                         "<img class='folderImage' src='" + subDir.Link + "'/>" +
-                        "<div class='" + subDirLabelClass + "'>" + subDir.FolderName + " (" + subDirFileCount + ")</div></div></div>\n");
-                    imagesCount++;
+                        "<div class='" + subDirLabelClass + "'>" + subDir.FolderName +
+                        " (" + countText + ")</div></div></div>\n");
+                    //imagesCount++;
                 }
             }
 
@@ -326,6 +341,17 @@ namespace WebApi.Controllers
             return bodyHtml.ToString();
         }
 
+
+       int deepChildCount = 0;
+        private void GetDeepChildCount(VwDirTree parentDir, OggleBoobleContext db) 
+        {
+            deepChildCount += parentDir.FileCount;
+            List<VwDirTree> subDirs = db.VwDirTrees.Where(f => f.Parent == parentDir.Id).ToList();
+            foreach (VwDirTree dirTree in subDirs)
+            {
+                GetDeepChildCount(dirTree, db);
+            }
+        }
     }
 }
 

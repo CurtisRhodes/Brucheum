@@ -282,10 +282,13 @@ function runPageHitReport() {
                     //    kludge += "<tr><td></td><td></td>";
                     //}
                     //else {
-                        kludge += "<tr><td>" + obj.IpAddress + "</td>";
-                        kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td>";
+                    kludge += "<tr><td>" + obj.IpAddress + "</td>";
+                    kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td>";
                     //}
-                    kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
+                    if (isNullorUndefined(obj.FolderName))
+                        kludge += "<td>null</a></td>";
+                    else
+                        kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
                     if (obj.IpAddress === lastIp) {
                         kludge += "<td></td><td></td>";
                     } else {
@@ -298,7 +301,7 @@ function runPageHitReport() {
                 kludge += "</table>";
                 $("#divStandardReportArea").html(kludge);
                 $("#divStandardReportCount").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
-            }            
+            }
             else {
                 alert("PageHitsReport: " + pageHitReportModel.Success);
             }

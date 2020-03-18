@@ -6,6 +6,7 @@ var waitingForReportThenPerformEvent = true;
 var forgetShowingCustomMessage = true;
 var connectionVerified = false;
 var slideShowButtonsActive = true;
+var connectionMessageShowing = false;
 //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
 
 function loadSettings() {
@@ -543,25 +544,31 @@ function checkFor404(errorMessage, calledFrom) {
         verifyConnection("checkFor404");
         setTimeout(function () {
             if (!connectionVerified) {
-                $('#notConnectMessage').width($(window).width());
-                $('#notConnectMessage').html(
-                    "<div class='centeredDivShell2'>\n" +
-                    "   <div class='centeredDivInner'>\n" +
-                    "       <div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'></div>\n" +
-                    "       <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
-                    "   </div>" +
-                    "</div>");
+                if (!connectionMessageShowing) {
+                    $('#notConnectMessage').width($(window).width());
+                    $('#notConnectMessage').html(
+                        "<div class='centeredDivShell2'>\n" +
+                        "   <div class='centeredDivInner'>\n" +
+                        "       <div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'></div>\n" +
+                        "       <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
+                        "   </div>" +
+                        "</div>");
 
-                $('#notConnectMessage').show();
-
-                console.log("checkFor404: message should be showing " + calledFrom);
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "404",
-                    Severity: 2,
-                    ErrorMessage: "SERVICE DOWN?",
-                    CalledFrom: "checkFor404 / " + calledFrom
-                });
+                    $('#notConnectMessage').show();
+                    console.log("checkFor404: message showing " + calledFrom);
+                    connectionMessageShowing = true;
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "404",
+                        Severity: 2,
+                        ErrorMessage: "SERVICE DOWN?",
+                        CalledFrom: "checkFor404 / " + calledFrom
+                    });
+                }
+            }
+            else {
+                $('#notConnectMessage').hide();
+                connectionMessageShowing = false;
             }
         }, 5000);
     }
@@ -579,7 +586,7 @@ function verifyConnection(calledFrom) {
             }
             else {
                 console.log("verifyConnection success: " + successModel.Success);
-                //checkFor404("Not connect", "verifyConnection");
+                checkFor404("Not connect", "verifyConnection");
                 //alert("Verify Connection: " + successModel.Success);
             }
         },

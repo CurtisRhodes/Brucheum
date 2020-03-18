@@ -26,6 +26,14 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
     imageViewerFolderId = folderId;
     sessionCount = 0;
     imageViewerArray = imageArray;
+    if (imageIndex === -1) {
+        // here I want to rebuild imageViewerArray with images from every child folder
+        imageIndex = 0;
+        setTimeout(function () {
+            //alert("done here start slideshow");
+            runSlideShow("start");
+        }, 2500);
+    }
     imageViewerIndex = imageIndex;
     imageViewerFolderName = folderName;
     viewerH = 50;
@@ -213,11 +221,6 @@ function explodeViewer() {
 
         $('#imageViewerDialog').width(viewerW);
         $('#imageViewerDialog').height(viewerH);
-
-        //setTimeout(function () {
-        //    //alert("done here start slideshow");
-        //    runSlideShow("start");
-        //}, 2000);
     }
 }
 

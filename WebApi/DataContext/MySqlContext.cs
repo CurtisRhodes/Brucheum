@@ -76,15 +76,13 @@ namespace WebApi.MySqDataContext
         public string City { get; set; }
         public string Region { get; set; }
         public string Country { get; set; }
-        [Key]
-        [Column(Order = 1)]
         public int PageId { get; set; }
         public string FolderName { get; set; }
         [Key]
-        [Column(Order = 2)]
+        [Column(Order = 1)]
         public string HitDate { get; set; }
         [Key]
-        [Column(Order = 3)]
+        [Column(Order = 2)]
         public string HitTime { get; set; }
         public int PageHits { get; set; }
         public int ImageHits { get; set; }
