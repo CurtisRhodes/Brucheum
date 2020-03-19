@@ -303,12 +303,12 @@ namespace WebApi
             string success = "";
             try
             {
-                using (WebStatsSqlContext.WebStatsContext db = new WebStatsSqlContext.WebStatsContext())
+                using (var db = new OggleBoobleSqlContext.OggleBoobleContext())
                 {
                     //WebStatsSqlContext.ChangeLog alredyExists = db.ChangeLogs.Where(cl => cl.PageId == changeLog.PageId && cl.Activity == changeLog.Activity).FirstOrDefault();
                     //if (alredyExists == null)
                     {
-                        db.ChangeLogs.Add(new WebStatsSqlContext.ChangeLog()
+                        db.ChangeLogs.Add(new OggleBoobleSqlContext.ChangeLog()
                         {
                             PageId = changeLog.PageId,
                             PageName = changeLog.PageName,

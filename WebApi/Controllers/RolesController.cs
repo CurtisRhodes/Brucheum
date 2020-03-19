@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using WebApi.Models;
-using WebApi.WebStatsSqlContext;
+using WebApi.MySqDataContext;
 
 namespace WebApi.Controllers
 {
@@ -19,7 +19,7 @@ namespace WebApi.Controllers
             var roleModel = new RoleModel();
             try
             {
-                using (WebStatsContext db = new WebStatsContext())
+                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
                     roleModel.RoleNames = db.Roles.Select(r => r.RoleName).ToList();
                     roleModel.Success = "ok";
@@ -33,10 +33,14 @@ namespace WebApi.Controllers
         public bool IsInRole(string userName, string roleName)
         {
             bool isInRole = false;
-            using (WebStatsContext db = new WebStatsContext())
+            using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
             {
-                var x = db.UserRoles.Where(r => r.UserName == userName && r.RoleName == roleName).FirstOrDefault();
-                isInRole = x != null;
+                var isAdmin = db.UserRoles.Where(r => r.UserName == userName && r.RoleName == "Oggle Admin");
+                if (isAdmin != null)
+                    return true;
+
+                UserRole userRole = db.UserRoles.Where(r => r.UserName == userName && r.RoleName == roleName).FirstOrDefault();
+                isInRole = userRole != null;
             }
             return isInRole;
         }
@@ -47,7 +51,7 @@ namespace WebApi.Controllers
             RoleModel roleModel = new RoleModel();
             try
             {
-                using (WebStatsContext db = new WebStatsContext())
+                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
                     if (whichType == "Assigned")
                         roleModel.RoleNames = db.UserRoles.Where(ur => ur.UserName == userName).Select(ur => ur.RoleName).ToList();
@@ -75,7 +79,7 @@ namespace WebApi.Controllers
             string success = "";
             try
             {
-                using (WebStatsContext db = new WebStatsContext())
+                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
                     db.Roles.Add(new Role() { RoleName = roleName });
                     db.SaveChanges();
@@ -92,7 +96,7 @@ namespace WebApi.Controllers
             string success = "";
             try
             {
-                using (WebStatsContext db = new WebStatsContext())
+                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
                     db.UserRoles.Add(new UserRole() { UserName = userName, RoleName = roleName });
                     db.SaveChanges();
@@ -109,7 +113,7 @@ namespace WebApi.Controllers
             string success = "";
             try
             {
-                using (WebStatsContext db = new WebStatsContext())
+                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
                     Role roleToUpdate = db.Roles.Where(r => r.RoleName == roleName).First();
                     roleToUpdate.RoleName = newName;
@@ -127,7 +131,7 @@ namespace WebApi.Controllers
             string success = "";
             try
             {
-                using (WebStatsContext db = new WebStatsContext())
+                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
                     UserRole roleToDelete = db.UserRoles.Where(r => r.UserName == userName && r.RoleName == roleName).First();
                     db.UserRoles.Remove(roleToDelete);

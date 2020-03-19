@@ -4,7 +4,7 @@ var settingsArray = {};
 var userRoles = [];
 var waitingForReportThenPerformEvent = true;
 var forgetShowingCustomMessage = true;
-var connectionVerified = false;
+var connectionNotVerified = true;
 var slideShowButtonsActive = true;
 var connectionMessageShowing = false;
 //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
@@ -540,10 +540,10 @@ function checkFor404(errorMessage, calledFrom) {
         || errorMessage.indexOf("Verify Network") > -1
         || errorMessage.indexOf("404") > -1) {
 
-        connectionVerified = false;
+        connectionNotVerified = true;
         verifyConnection("checkFor404");
         setTimeout(function () {
-            if (!connectionVerified) {
+            if (connectionNotVerified) {
                 if (!connectionMessageShowing) {
                     $('#notConnectMessage').width($(window).width());
                     $('#notConnectMessage').html(
@@ -572,7 +572,7 @@ function checkFor404(errorMessage, calledFrom) {
             }
         }, 5000);
     }
-    return connectionVerified;
+    return connectionNotVerified;
 }
 
 function verifyConnection(calledFrom) {
@@ -581,20 +581,38 @@ function verifyConnection(calledFrom) {
         url: settingsArray.ApiServer + "api/Carousel/VerifyConnection",
         success: function (successModel) {
             if (successModel.Success === "ok") {
-                connectionVerified = true;
-                console.log("verifyConnection connectionVerified: " + connectionVerified);
+                connectionNotVerified = false;
+                console.log("verifyConnection: connection verified");
             }
             else {
+                if (document.domain === 'localhost')
+                    alert("verifyConnection success: " + successModel.Success);
                 console.log("verifyConnection success: " + successModel.Success);
-                checkFor404("Not connect", "verifyConnection");
+                //checkFor404("Not connect", "verifyConnection");
                 //alert("Verify Connection: " + successModel.Success);
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "BUG",
+                    Severity: 2,
+                    ErrorMessage: successModel.Success,
+                    CalledFrom: "checkFor404 / " + calledFrom
+                });
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            console.log("verifyConnection XHR: " + errorMessage);
-            //alert("verifyConnection: " + errorMessage);
-            //if (!checkFor404(errorMessage, "VerifyConnection / " + calledFrom)) {
+            //console.log("verifyConnection XHR: " + errorMessage);
+            if (!checkFor404(errorMessage, "VerifyConnection / " + calledFrom)) {
+                if (document.domain === 'localhost')
+                    alert("verifyConnection XHR: " + errorMessage + " calledFrom:" + calledFrom);
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "XHR",
+                    Severity: 2,
+                    ErrorMessage: "some other type error: " + errorMessage,
+                    CalledFrom: "checkFor404 / " + calledFrom
+                });
+            }
             //sendEmailToYourself("XHR ERROR IN  verifyConnection", "url: " + settingsArray.ApiServer + "api/Carousel/VerifyConnection" +
             //    "<br/>Message: " + errorMessage);
         }

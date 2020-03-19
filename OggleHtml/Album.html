@@ -123,44 +123,25 @@
                 else {
                     clearInterval(waiter);
                     $('#dots').html('');
-
                     setOggleHeader(params.folder);
-
+                    logPageHit(params.folder, "Album.html");
                     if (document.domain === 'localhost') {
-                        //isInRole("not logged in");
                         console.log("I want to stay in local host");
-                        //alert("I want to stay in local host");
+                        //setTimeout(function () {$('#footerMessage').html("I want to stay in local host"); }, 1000);                        
                         getAlbumImages(params.folder);
                     }
                     else {
-
-                        //if (isInRole("Show Dynamic Pages"))
-
-
-                        var userName = getCookieValue("UserName");
-                        if (isNullorUndefined(userName)) {
-
-                            if (document.domain === 'localhost')  // #DEBUG
-                            {
-                                //alert("userName  not found.  normally would direct to static pages");
-                                getAlbumImages(params.folder);
-                                alert("logPageHit");
-                            }
-                            else {
-                                directToStaticPage(params.folder);
-                            }
+                        //if (visitorId === "ec6fb880-ddc2-4375-8237-021732907510") alert("logPageHit");
+                        //$('#footerMessage').html("213");
+                        if (isInRole("view dynamic")) {
+                            getAlbumImages(params.folder);
                         }
                         else {
-                            logPageHit(params.folder, "Album.html");
-                            setAlbumPageHeader(params.folder);
-                            getAlbumImages(params.folder);
-                            //if (visitorId === "ec6fb880-ddc2-4375-8237-021732907510") alert("logPageHit");
-                            $('#footerMessage').html("213");
-                            //if (document.domain === 'localhost') alert("logPageHit");
+                            directToStaticPage(params.folder);
                         }
                     }
-                    $('#feedbackBanner').click(showFeedbackDialog).fadeIn();
                 }
+                $('#feedbackBanner').click(showFeedbackDialog).fadeIn();
             }, 300);
         });
     </script>

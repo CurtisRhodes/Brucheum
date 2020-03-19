@@ -53,7 +53,18 @@ function getDirTree(dest, treeId, startNode, isRebuild) {
                 dirTreeComplete = true;
             },
             error: function (xhr) {
-                dest.html("buildCatTree xhr error: " + getXHRErrorDetails(xhr));
+                $('#dashBoardLoadingGif').hide();
+                var errorMessage = getXHRErrorDetails(xhr);
+                if (!checkFor404(errorMessage, "getDirTree")) {
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 3,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "getDirTree"
+                    });
+                }
+                //dest.html("buildCatTree xhr error: " + getXHRErrorDetails(xhr));
             }
         });
     } catch (e) {

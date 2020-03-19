@@ -113,8 +113,12 @@ function setOggleHeader(folderId) {
         //alert(getCookieValue("UserName") + " isLoggedIn(): " + isLoggedIn());
         $('#optionNotLoggedIn').hide();
         //setTimeout(function () { if (isInRole("Oggle admin")) { $('#dashboardMenuItem').show(); } }, 400);
-        if (isInRole("Oggle admin"))
+        if (isInRole("Oggle admin")) {
+            //alert("is in role Oggle admin");
             $('#dashboardMenuItem').show();
+        }
+        else
+            $('#dashboardMenuItem').hide();
     }
     else {
         $('#dashboardMenuItem').hide();
@@ -448,27 +452,19 @@ function setTrackbackLinks(folderId) {
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (document.domain === 'localhost') {
-                    alert("XHR ERROR IN setTrackbackLinks\nfolderId=" + folderId +
-                        "\nurl: " + settingsArray.ApiServer + "api/TrackbackLink/GetTrackBacks?folderId=" + folderId +
-                        "\nIpAddress: " + getCookieValue("IpAddress") +
-                        "<br/>Message : " + errorMessage);
-                }
-                else {
-                    if (!checkFor404(errorMessage, "setTrackbackLinks")) {
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 3,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "OggleHeader setTrackbackLinks"
-                        });
-                        //sendEmailToYourself("XHR ERROR IN setTrackbackLinks",
-                        //    "folderId=" + folderId + "<br/>IpAddress: " +
-                        //    getCookieValue("IpAddress") + "<br/>Message : " + errorMessage);
+                if (!checkFor404(errorMessage, "setTrackbackLinks")) {
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 3,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "OggleHeader setTrackbackLinks"
+                    });
+                    //sendEmailToYourself("XHR ERROR IN setTrackbackLinks",
+                    //    "folderId=" + folderId + "<br/>IpAddress: " +
+                    //    getCookieValue("IpAddress") + "<br/>Message : " + errorMessage);
 
-                        //http://localhost:56437/undefined/api/ImageCategoryDetail/Get?folderId=3908
-                    }
+                    //http://localhost:56437/undefined/api/ImageCategoryDetail/Get?folderId=3908
                 }
             }
         });

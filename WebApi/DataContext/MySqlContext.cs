@@ -33,6 +33,7 @@ namespace WebApi.MySqDataContext
         public virtual DbSet<Ref> Refs { get; set; }
         public virtual DbSet<vwMostActiveUsersForToday> MostActiveUsersForToday { get; set; }
         public virtual DbSet<RegisteredUser> RegisteredUsers { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<DailyActivityReport> DailyActivity { get; set; }
         public virtual DbSet<vwPageHit> vwPageHits { get; set; }
@@ -123,15 +124,24 @@ namespace WebApi.MySqDataContext
         public string PornPreference { get; set; }
         public string Pswrd { get; set; }
     }
+
+
+    [Table("webStats.Role")]
+    public partial class Role
+    {
+        [Key]
+        public string RoleName { get; set; }
+    }
+
     [Table("OggleBooble.UserRole")]
     public class UserRole
     {
         [Key]
         [Column(Order = 0)]
-        public string VisitorId { get; set; }
+        public string UserName { get; set; }
         [Key]
         [Column(Order = 1)]
-        public string RoleId { get; set; }
+        public string RoleName { get; set; }
     }
 
     [Table("OggleBooble.Ref")]

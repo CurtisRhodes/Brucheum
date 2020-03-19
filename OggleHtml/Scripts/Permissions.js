@@ -1,8 +1,11 @@
 ﻿function isInRole(roleName) {
 
-
-    //alert("isInRole roleName: " + roleName);
-
+    if (isNullorUndefined(roleName)) {
+        alert("isInRole called with NullorUndefined roleName");
+        //alert("isInRole roleName: " + roleName);
+        console.error("isInRole called with NullorUndefined roleName");
+        return false;
+    }
 
     if (!isLoggedIn()) {
        // alert("not logged in");
@@ -11,6 +14,8 @@
     
     var userpermissons = window.localStorage["userPermissons"];
     if (!isNullorUndefined(userpermissons)) {
+
+
         //alert("!isNullorUndefined(userpermissons)");
         return isInRoleStep2(userpermissons, roleName);
     }

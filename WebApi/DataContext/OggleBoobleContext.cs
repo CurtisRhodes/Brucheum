@@ -26,10 +26,22 @@ namespace WebApi.OggleBoobleSqlContext
         public virtual DbSet<RankerVote> RankerVotes { get; set; }
         public virtual DbSet<StepChild> StepChildren { get; set; }
         public virtual DbSet<TrackbackLink> TrackbackLinks { get; set; }
-        
+        public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
+    }
+    [Table("OggleBooble.ChangeLog")]
+    public class ChangeLog
+    {
+        [Key]
+        public int PkId { get; set; }
+        public int PageId { get; set; }
+        public string PageName { get; set; }
+        public string Activity { get; set; }
+        public DateTime Occured { get; set; }
+        public bool StaticRebuild { get; set; }
     }
 
     [Table("OggleBooble.TrackbackLink")]

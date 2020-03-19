@@ -53,23 +53,13 @@ namespace WebApi
         }
 
         [HttpGet]
-        public List<string> UserPermissions(string visitorId)
+        public List<string> UserPermissions(string userName)
         {
             List<string> roles = null;
             using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
             {
-                roles = db.UserRoles.Where(r => r.VisitorId == visitorId).Select(r => r.RoleId).ToList();
+                roles = db.UserRoles.Where(r => r.UserName == userName).Select(r => r.RoleName).ToList();
             }
-            //    roles = (from u in db.UserRoles
-            //             join r in db.Refs on u.RoleId equals r.RefCode
-            //             where u.VisitorId == visitorId
-            //             select new UserRoleModel()
-            //             {
-            //                 UserName = userName,
-            //                 RoleName = r.RoleName
-            //             }
-            //             ).ToList();
-            //}
             return roles;
         }
 
@@ -95,23 +85,6 @@ namespace WebApi
                         success = "ok";
                     }
                 }
-
-                //using (WebStatsContext db = new WebStatsContext())
-                //{
-                //    WebStatsSqlContext.RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == registeredUserModel.UserName).FirstOrDefault();
-                //    if (dbRegisteredUser != null)
-                //        success = "user name already exists";
-                //    else
-                //    {
-                //        registeredUserModel.Pswrd = HashSHA256(registeredUserModel.Pswrd);
-                //        registeredUserModel.CreateDate = DateTime.Now;
-                //        //registeredUserModel.IpAddress = Helpers.GetIPAddress();
-                //        db.RegisteredUsers.Add(registeredUserModel);
-                //        db.SaveChanges();
-
-                //        success = "ok";
-                //    }
-                //}
             }
             catch (Exception ex)
             {

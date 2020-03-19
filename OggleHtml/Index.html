@@ -54,7 +54,8 @@
         .newsSection {
             border: solid thin red;
             padding: 3px;
-            background-color: #988519;
+            /*background-color: #988519;*/
+            background-color: var(--oggleContainerBackgroundColor);
             display: none;
             justify-items:center;            
             text-align:justify;
@@ -64,7 +65,11 @@
             display: inline-block;
             margin: 2px;
             background-color: #3b0e56;
-            height: 300px;
+            height: 280px;
+        }
+
+        .floatingContainerElement {
+            position: absolute;
         }
 
         .carouselContainer {
@@ -80,9 +85,10 @@
             position: absolute;
             color: #d883e4;
             background-color: #686666;
+
         }
         .newsContentBoxImage {
-            height: 299px;
+            height: 272px;
             cursor: pointer;
         }
         .newsContentBoxDateLabel {
@@ -97,24 +103,24 @@
     <div class="threeColumnLayout">
         <div id="leftColumn">
             <div id="boobsLeftColumnList" class="leftColumnList">
-                <div onclick="rtpe('LMC',3908,'boobTransitions');">Transitions</div>
+                <!--<div onclick="rtpe('LMC',3908,'boobTransitions');">Transitions</div>-->
                 <div onclick="rtpe('LMC',3908,'boobsRanker');">Boobs Ranker</div>
-                <div onclick="rtpe('LMC',3908,'explainBoobs');">Let me Explain</div>
+                <!--<div onclick="rtpe('LMC',3908,'explainBoobs');">Let me Explain</div>-->
                 <div onclick="rtpe('LMC',3908,'dirTreeBoobs');">Category List</div>
                 <div onclick="rtpe('LMC',3908,'centerfolds');">Playboy Centerfolds</div>
-                <div onclick="rtpe('LMC',3908,'video');">Video</div>
+                <!--<div onclick="rtpe('LMC',3908,'video');">Video</div>-->
                 <div onclick="rtpe('LMC',3908,'porn');">Nasty Porn</div>
                 <div onclick="rtpe('LMC',0,'blog');">Blog</div>
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
             <div id="pornLeftColumnList" class="leftColumnList">
                 <div onclick="rtpe('LMC',3909,'back');">back to boobs</div><br />
-                <div onclick="rtpe('LMC',3909,'pornTransitions');">Transition down</div>
+                <!--<div onclick="rtpe('LMC',3909,'pornTransitions');">Transition down</div>-->
                 <div onclick="rtpe('LMC',3909,'pornRanker');">Nastieness Ranker</div>
-                <div onclick="rtpe('LMC',3909,'explainPorn');">Let me Explain</div>
+                <!--<div onclick="rtpe('LMC',3909,'explainPorn');">Let me Explain</div>-->
                 <div onclick="rtpe('LMC',3909,'dirTreePorn');">Category List</div>
-                <div onclick="rtpe('LMC',3909,'back');">back to boobs</div>
-                <div onclick="rtpe('LMC',3909,'blog');">Blog</div>
+                <!--<div onclick="rtpe('LMC',3909,'back');">back to boobs</div>-->
+                <!--<div onclick="rtpe('LMC',3909,'blog');">Blog</div>-->
                 <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
             </div>
         </div>
@@ -123,7 +129,7 @@
             <div id='notConnectMessage' class='displayHidden customMessageContainer'></div>
             <div id="dots"></div>
             <div>
-                random galleries
+                <div class="indexSectionLabel floatingContainerElement">random galleries</div>
                 <div id="laCarousel" class="carouselContainer flexContainer">
                     <div onclick="assuranceArrowClick('back')"><img class="assuranceArrows" src="/Images/leftArrowOpaque02.png" /></div>
                     <div class="carouselImageContainer">
@@ -137,20 +143,15 @@
                         </div>
                     </div>
                     <div onclick="assuranceArrowClick('foward')"><img class="assuranceArrows" src="/Images/rightArrowOpaque02.png" /></div>
-                </div>
-            </div>
-            <div>
-                latest updates
-                <div id="newsSection" class="newsSection">
+                    <div id="carouselInclude" class="indexSectionLabel floatingContainerElement">
+                        <div id="includeCenterfoldsCheckbox" class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('playboy', $(this).is(':checked'))" /> Include Centerfolds</div>
+                        <div class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('archive', $(this).is(':checked'))" /> Include Archive</div>
+                    </div>
                 </div>
             </div>
 
-            <div id="carouselInclude" class="floatLeft displayHidden">
-                <div id="includeCenterfoldsCheckbox" class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('playboy', $(this).is(':checked'))" /> Include Centerfolds</div>
-                <div class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('archive', $(this).is(':checked'))" /> Include Archive</div>
-                <div id="dots"></div>
-            </div>
-
+            <div class="indexSectionLabel">latest updates</div>
+            <div id="newsSection" class="newsSection"></div>
             <div class="floatLeft">
                 <div class="centeredDivShell randomImageContainer">
                     <div class="centeredDivInner">
@@ -196,11 +197,9 @@
             $('#laCarousel').hide();
             $('#carouselInclude').hide();
             $('#connectingMsg').hide();
-            setTimeout(function () {
-                if (!connectionVerified)
-                    $('#connectingMsg').fadeIn();
-            }, 2000);
+            $('.indexSectionLabel').hide();
             //$('#footerLastBuild').html("last build: " + lastBuild + "3");
+            $('#footerMessage').html("loading settings");
             params = getParams();
             if (params.subdomain === undefined)
                 subdomain = "boobs";
@@ -210,15 +209,13 @@
                 homePageId = 3909;
 
             setOggleFooter(subdomain, homePageId);
-                               
-
-            $('#footerMessage').html("loading settings");
             loadSettings();
             var dots = ""
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
                     dots += "~ ";
                     $('#dots').html(dots);
+                    //console.log("loadSettings: " + settingsArray.ApiServer);
                 }
                 else {
                     clearInterval(waiter);
@@ -226,9 +223,10 @@
                     verifyConnection("index.html");
                     //$('#footerMessage').html("loading header");
                     var verifyConnectionWaiter = setInterval(function () {
-                        if (!connectionVerified) {
+                        if (connectionNotVerified) {
                             dots += ". ";
                             $('#dots').html(dots);
+                            //console.log("connectionNotVerified: " + connectionNotVerified);
                         }
                         else {
                             clearInterval(verifyConnectionWaiter);
@@ -239,7 +237,7 @@
                             launchCarousel(subdomain);
                             setOggleHeader(homePageId);
                             logPageHit(homePageId, "Index");
-                                $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
+                            $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
                             if (subdomain == "porn") {
                                 $('#pornLeftColumnList').show();
                                 $('#includeCenterfoldsCheckbox').hide();
@@ -248,9 +246,9 @@
                                 $('#boobsLeftColumnList').show();
                                 //launchPromoMessages();
                             }
-                            if (isInRole("Oggle admin")) {
-                                $('#carouselInclude').show();
-                            }
+                            //if (isInRole("Oggle admin")) {
+                            //    $('#carouselInclude').show();
+                            //}
                         }
                     }, 300);
                 }
@@ -292,6 +290,7 @@
                                 "</div>");
                         });
                         console.log("loaded " + latestUpdates.LatestUpdates.length + " news boxes");
+                        $('.indexSectionLabel').show();
                     }
                     else {
                         //alert("loadImages: " + carouselInfo.Success);
