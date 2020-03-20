@@ -16,7 +16,7 @@ var fullPageName;
 $(document).ready(function () {
     //alert("staticPage.js");
     includeHTML();
-    $('#fileCount').html(staticPageImagesCount);
+    //$('#fileCount').html(staticPageImagesCount);
     resizeStaticPage();
     loadSettings();
     var waiter = setInterval(function () {

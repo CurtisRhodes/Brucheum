@@ -20,7 +20,6 @@ namespace WebApi.Controllers
         private readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
         //private int totalFiles = 0;
         //private int filesProcessed = 0;
-        private int imagesCount;
 
         private void GetMetaTagsRecurr(MetaTagResultsModel metaTagResults, int folderId, OggleBoobleContext db)
         {
@@ -167,9 +166,8 @@ namespace WebApi.Controllers
                     // Slideshow() + CommentDialog() + ModelInfoDialog() +
                     "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
                     "<script>var staticPageFolderId=" + folderId + "; " +
-                    //"var staticPageFolderName='" + staticFolderName + "'; " +
                     "var staticPageFolderName='" + folderName + "'; " +
-                    "var staticPageImagesCount='" + imagesCount + "'; " +
+                    //"var staticPageImagesCount='" + imagesCount + "'; " +
                     "var currentFolderRoot='" + rootFolder + "';</script>\n" +
                     "<div w3-include-html='/Snippets/Slideshow.html'></div>\n" +
                     "<div w3-include-html='/Snippets/AdminDialogs.html'></div>\n" +
@@ -274,9 +272,9 @@ namespace WebApi.Controllers
             "   <div id='imageContainer' class='flexWrapContainer'>\n");
 
             //ImageLink[] imageArray = null;
+            int imagesCount = 0;
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
-                //imagesCount = 0;
                 string imageFrameClass = "folderImageOutterFrame";
                 string subDirLabelClass = "subDirLabel";
                 if (rootFolder == "porn" && rootFolder == "sluts")
@@ -291,8 +289,10 @@ namespace WebApi.Controllers
                 {
                     bodyHtml.Append("<div id='img" + idx + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
                          "oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='startSlideShow(" + idx++ + ")' src='" + link.Link + "'/></div>\n");
-                    //imagesCount++;
+                    imagesCount++;
                 }
+                //$('#fileCount').html(imagesCount);
+
                 //  SUBFOLDERS
                 List<VwDirTree> subDirs = db.VwDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
                 string countText, fullerFolderName;
@@ -305,23 +305,24 @@ namespace WebApi.Controllers
                     //int subDirFileCount = Math.Max(subDir.FileCount, subDir.SubDirCount);
                     if (subDir.SubDirCount > 0)
                     {
+                        int subDirCnt = subDir.SubDirCount;
+                        if (subDir.FileCount > 0)
+                            subDirCnt++;
                         deepChildCount = 0;
                         GetDeepChildCount(subDir, db);
-                        countText = subDir.SubDirCount + "/" + String.Format("{0:n0}", deepChildCount);
+                        countText = subDirCnt + "/" + String.Format("{0:n0}", deepChildCount);
                     }
-
                     bodyHtml.Append("<div class='" + imageFrameClass + "'>" +
                         //"<div class='folderImageFrame' onclick='reportThenPerformEvent(\"SUB\"," + folderId + "," + subDir.Id + ")'>" +
                         "<div class='folderImageFrame' onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.Id + "\")'>" +
                         "<img class='folderImage' src='" + subDir.Link + "'/>" +
                         "<div class='" + subDirLabelClass + "'>" + subDir.FolderName +
                         " (" + countText + ")</div></div></div>\n");
-                    //imagesCount++;
                 }
             }
 
             bodyHtml.Append("   </div>\n" +
-                "       <div id='fileCount' class='countContainer'></div>\n" +
+                "       <div id='fileCount' class='countContainer'>" + imagesCount + "</div>\n" +
                 "       <div id='thumbImageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut();'>\n" +
                 "           <div id='ctxModelName' onclick='contextMenuAction(\"show\")'>model name</div>\n" +
                 "           <div id='ctxSeeMore' onclick='contextMenuAction(\"jump\")'>see more of her</div>\n" +

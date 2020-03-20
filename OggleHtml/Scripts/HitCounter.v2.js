@@ -1045,40 +1045,30 @@ function checkForHitLimit(calledFrom, pageId) {
 
     if (!isLoggedIn()) {
         if (calledFrom === "pages") {
-            if (userPageHits > freePageHitsAllowed) {
-                logEventActivity({
-                    VisitorId: getCookieValue("VisitorId"),
-                    EventCode: "PAY",
-                    EventDetail: "Page Hit Message Displayed. UserPageHits: " + userPageHits,
-                    CalledFrom: pageId
-                });
-                if (userPageHits > freePageHitsAllowed && userPageHits % 10 === 0) {
-                    if (getCookieValue("IpAddress") !== "68.203.90.183")                    //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
-                        showCustomMessage(98, true);
+            if (userPageHits > freePageHitsAllowed && userPageHits % 10 === 0) {
+                if (getCookieValue("IpAddress") !== "68.203.90.183") {                   //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
+                    showCustomMessage(98, true);
+                    logEventActivity({
+                        VisitorId: getCookieValue("VisitorId"),
+                        EventCode: "PAY",
+                        EventDetail: "Page Hit Message Displayed. UserPageHits: " + userPageHits,
+                        CalledFrom: pageId
+                    });
                 }
             }
         }
         if (calledFrom === "images") {
-            if (userImageHits > freeImageHitsAllowed) {
+            if (userImageHits > freeImageHitsAllowed && userPageHits % 10 === 0) {
                 logEventActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     EventCode: "PAY",
                     EventDetail: "Image Hit Limit Message Displayed userImageHits: " + userImageHits,
                     CalledFrom: pageId
                 });
-                //if (userImageHits > freeImageHitsAllowed && userImageHits % 10 === 0 && userImageHits < 3000) {
                 showCustomMessage(97, true);
-                //sendEmailToYourself("Image Hit Limit Message Displayed", "userImageHits: " + userImageHits + "<br>pageId: " + pageId + "<br>Ip: " + getCookieValue("IpAddress"));               
             }
         }
     }
-
-    //if (isLoggedIn()) {
-    //    freeVisitorHitsAllowed += 1000;
-    //}
-
-    //if (userPageHits > freeVisitorHitsAllowed) {
-    //    showCustomMessage(97, true);
     //    //alert("you have now visited " + userHits + " pages." +
     //    //    "\n It's time you Registered and logged in." +
     //    //    "\n you will be placed in manditory comment mode until you log in ");
@@ -1096,5 +1086,4 @@ function checkForHitLimit(calledFrom, pageId) {
     // use my product
     // Request extra privdleges 
     // pay me to do some programming for you and I'll let you in on all my source code
-
 }

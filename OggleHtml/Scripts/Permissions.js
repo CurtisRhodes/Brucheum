@@ -30,7 +30,7 @@
                 });
                 //if (document.domain === 'localhost') alert("set user roles for " + getCookieValue("UserName") + ". " + roleModel.RoleNames.length + " added");
                 window.localStorage["userPermissons"] = userPermissons;
-                return isInRoleStep2(userpermissons, roleName);
+                return isInRoleStep2(userPermissons, roleName);
             }
             else {
                 if (document.domain === 'localhost')

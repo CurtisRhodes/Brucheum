@@ -73,9 +73,18 @@
         }
 
         .carouselContainer {
-            /*padding: 1px;
-            border: solid 2px var(--oggleBorderColor);*/
+            padding: 2px;
         }
+        .carouselShell {
+            position: absolute;
+            left: 50%;
+        }
+        .carouselInternals {
+            position: relative;
+            left: -50%;
+            min-height: 200px;
+        }
+
         .carouselImage {
             height: 500px;
             width: 800px;
@@ -83,9 +92,11 @@
         }
         .newsContentBoxLabel {
             position: absolute;
-            color: #d883e4;
-            background-color: #686666;
-
+            display: inline-block;
+            padding: 1px 12px 2px 30px;
+            padding: 2px;
+            background-color:rgba(178, 0, 255, 0.66);
+            color: #d6fcfa;
         }
         .newsContentBoxImage {
             height: 272px;
@@ -93,9 +104,22 @@
         }
         .newsContentBoxDateLabel {
             position: relative;
-            color: #d883e4;
+            bottom: 2px;
+            color: #d6fcfa;
             background-color: #686666;
         }
+
+        .floatBelow {
+            margin-top: 559px;
+        }
+
+        .slideshowCheckboxes {
+            position:absolute;
+            bottom: 1px;
+            right: -41px;            
+        }
+
+
     </style>
 </head>
 <body>
@@ -129,38 +153,48 @@
             <div id='notConnectMessage' class='displayHidden customMessageContainer'></div>
             <div id="dots"></div>
             <div>
-                <div class="indexSectionLabel floatingContainerElement">random galleries</div>
-                <div id="laCarousel" class="carouselContainer flexContainer">
-                    <div onclick="assuranceArrowClick('back')"><img class="assuranceArrows" src="/Images/leftArrowOpaque02.png" /></div>
-                    <div class="carouselImageContainer">
-                        <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
+                <div style="display:block;">
+                    <div class="indexSectionLabel floatingContainerElement">random galleries</div>
+                    <div class="carouselContainer">
+                        <div class="carouselShell">
+                            <div id="laCarousel" class="carouselInternals flexContainer">
+                                <div onclick="assuranceArrowClick('back')"><img class="assuranceArrows" src="/Images/leftArrowOpaque02.png" /></div>
+                                <div class="carouselImageContainer">
+                                    <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
 
-                        <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="/Images/redballon.png" onclick="clickViewGallery()" />
-                        
-                        
-                        <div class="imgBottom">
-                            <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
-                            <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
-                            <div id='categoryLabel' class='carouselCategoryLabel' onclick="clickViewParentGallery()"></div>
-                            <img class="speedButton floatRight" src="Images/speedDialFaster.png" title="faster" onclick="clickSpeed('faster')" />
+                                    <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="/Images/redballon.png" onclick="clickViewGallery()" />
+
+
+                                    <div class="imgBottom">
+                                        <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
+                                        <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
+                                        <div id='categoryLabel' class='carouselCategoryLabel' onclick="clickViewParentGallery()"></div>
+                                        <img class="speedButton floatRight" src="Images/speedDialFaster.png" title="faster" onclick="clickSpeed('faster')" />
+                                    </div>
+                                </div>
+                                <div onclick="assuranceArrowClick('foward')"><img class="assuranceArrows" src="/Images/rightArrowOpaque02.png" /></div>
+                                <div id="carouselInclude" class="slideshowCheckboxes">
+                                    <div id="includeCenterfoldsCheckbox" class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('playboy', $(this).is(':checked'))" /> Include Centerfolds</div>
+                                    <div class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('archive', $(this).is(':checked'))" /> Include Archive</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div onclick="assuranceArrowClick('foward')"><img class="assuranceArrows" src="/Images/rightArrowOpaque02.png" /></div>
-                    <div id="carouselInclude" class="indexSectionLabel floatingContainerElement">
-                        <div id="includeCenterfoldsCheckbox" class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('playboy', $(this).is(':checked'))" /> Include Centerfolds</div>
-                        <div class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('archive', $(this).is(':checked'))" /> Include Archive</div>
-                    </div>
                 </div>
-            </div>
 
-            <div class="indexSectionLabel">latest updates</div>
-            <div id="newsSection" class="newsSection"></div>
+                <div class="floatBelow">
+                    <div class="indexSectionLabel">latest updates</div>
+                    <div id="newsSection" class="newsSection ">
 
-            <div class="floatLeft">
-                <div class="centeredDivShell randomImageContainer">
-                    <div class="centeredDivInner">
-                        <div id="connectingMsg" class="displayHidden"><img src="https://media.giphy.com/media/ZFiRiRg60SjhipvdCz/giphy.gif" /></div>
-                        <!--<div id="connectingMsg"><img src="https://media.giphy.com/media/ls5bix63j3H53E1Ebp/giphy.gif" /></div>-->
+                    </div>
+
+                    <div class="floatLeft">
+                        <div class="centeredDivShell randomImageContainer">
+                            <div class="centeredDivInner">
+                                <div id="connectingMsg" class="displayHidden"><img src="https://media.giphy.com/media/ZFiRiRg60SjhipvdCz/giphy.gif" /></div>
+                                <!--<div id="connectingMsg"><img src="https://media.giphy.com/media/ls5bix63j3H53E1Ebp/giphy.gif" /></div>-->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -256,6 +290,7 @@
                             if (isInRole("Oggle admin")) {
                                 $('#carouselInclude').show();
                             }
+                            $('#carouselInclude').show();
                         }
                     }, 300);
                 }
@@ -293,7 +328,7 @@
                                 "onclick='rtpe(\"LUP\",\"home page\"," + LatestUpdate.FolderId + ")'/>" +
                                 //rtpe(eventCode, calledFrom, eventDetail)
                                 //"onclick='javascript:window.location.href=\"/album.html?folder=" + LatestUpdate.FolderId + "\";'/>" +
-                                "<div class='newsContentBoxDateLabel'>Last Updated: " + $.date(LatestUpdate.LastModified) + "</span></div>" +
+                                "<div class='newsContentBoxDateLabel'>updated: " + $.date(LatestUpdate.LastModified) + "</span></div>" +
                                 "</div>");
                         });
                         console.log("loaded " + latestUpdates.LatestUpdates.length + " news boxes");
@@ -333,12 +368,11 @@
             resizePage();
 
             $('#middleColumn').height($('#middleColumn').height() + $('#newsSection').height());
-
-            var carouselPadding = ($('#middleColumn').width() - $('.carouselContainer').width()) * .64;
-            console.log("resizeIndexPage carousel padding: " + carouselPadding)
-            $('.carouselContainer').css("padding-left", carouselPadding);
             $('.assuranceArrows').height($('.carouselImageContainer').height());
 
+            //var carouselPadding = ($('#middleColumn').width() - $('#newsSection').width()) * .464;
+            //$('#laCarousel').css("padding-left", carouselPadding);
+            //console.log("resizeIndexPage carousel padding: " + carouselPadding)
 
         }
 
