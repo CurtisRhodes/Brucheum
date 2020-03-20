@@ -149,8 +149,8 @@ body {
 }
 .centeredDivShell2 {
     position: absolute;
-    left: 50%;
-    top: 300px;
+    left: 40%;
+    top: 0;
 }
 
 .centeredDivInner {
@@ -353,6 +353,7 @@ footer {
 .connectionMessage {
     border: solid thick red;
     text-align: center;
+    top: 210px;
 }
 
 .canIgetaConnectionMessageContainer {

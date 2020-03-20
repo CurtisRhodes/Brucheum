@@ -64,7 +64,6 @@ namespace WebApi
     public class HitCounterController : ApiController
     {
         //private static readonly Random getrandom = new Random();
-
         [HttpPost]
         public PageHitSuccessModel LogPageHit(PageHitRequestModel pageHitModel)
         {
@@ -88,23 +87,28 @@ namespace WebApi
                         pageHitSuccessModel.UserImageHits = db.ImageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
 
                         CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == pageHitModel.PageId).FirstOrDefault();
-                        pageHitSuccessModel.RootFolder = categoryFolder.RootFolder;
-                        pageHitSuccessModel.PageName = categoryFolder.FolderName;
-
-                        if (categoryFolder.Parent == -1)
+                        if (categoryFolder != null)
                         {
-                            pageHitSuccessModel.ParentName = "special";
+                            pageHitSuccessModel.RootFolder = categoryFolder.RootFolder;
+                            pageHitSuccessModel.PageName = categoryFolder.FolderName;
+
+                            if (categoryFolder.Parent == -1)
+                            {
+                                pageHitSuccessModel.ParentName = "special";
+                            }
+                            else
+                            {
+                                CategoryFolder parentFolder = db.CategoryFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
+                                if (parentFolder != null)
+                                    pageHitSuccessModel.ParentName = parentFolder.FolderName;
+                            }                            
                         }
                         else
-                        {
-                            CategoryFolder parentFolder = db.CategoryFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
-                            if (parentFolder != null)
-                                pageHitSuccessModel.ParentName = parentFolder.FolderName;
-                        }
+                            pageHitSuccessModel.PageName = "Not Found";
                     }
                     catch (Exception ex)
                     {
-                        pageHitSuccessModel.Success = "unrelate to insert, but: " + Helpers.ErrorDetails(ex);
+                        pageHitSuccessModel.Success = "unrelated to insert, but: " + Helpers.ErrorDetails(ex);
                     }
                 }
             }
@@ -194,7 +198,6 @@ namespace WebApi
             }
             return getInfoSuccess;
         }
-
     }
 
     [EnableCors("*", "*", "*")]

@@ -840,10 +840,8 @@ namespace WebApi
                             // now add it to Oracle
                             try
                             {
-
                                 using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
                                 {
-
                                     MySqDataContext.CategoryFolder newOracleRow = new MySqDataContext.CategoryFolder();
                                     newOracleRow.Id = newFolderId;
                                     newOracleRow.Parent = parentId;
@@ -859,9 +857,9 @@ namespace WebApi
                                     mdb.SaveChanges();
                                 }
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
-                                //console.
+                                Console.WriteLine("Oracle Insert fail in CreateFolder: " + Helpers.ErrorDetails(ex));
                             }
                             successModel.ReturnValue = newFolderId.ToString();
                             successModel.Success = "ok";

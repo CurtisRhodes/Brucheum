@@ -14,12 +14,10 @@
     
     var userpermissons = window.localStorage["userPermissons"];
     if (!isNullorUndefined(userpermissons)) {
-
-
         //alert("!isNullorUndefined(userpermissons)");
-        return isInRoleStep2(userpermissons, roleName);
+        return false;
+        //isInRoleStep2(userpermissons, roleName);
     }
-
 
     $.ajax({
         type: "GET",
@@ -30,26 +28,27 @@
                 $.each(roleModel.RoleNames, function (idx, roleName) {
                     userPermissons.push(roleName);
                 });
-                //if (document.domain === 'localhost') alert("set user roles for " + userName + ". " + roleModel.RoleNames.length + " added");
+                //if (document.domain === 'localhost') alert("set user roles for " + getCookieValue("UserName") + ". " + roleModel.RoleNames.length + " added");
                 window.localStorage["userPermissons"] = userPermissons;
                 return isInRoleStep2(userpermissons, roleName);
             }
             else {
-                if (document.domain === 'localhost') alert("ERROR IN Permissions.js GetUserRoles" +
-                    "\napi/Roles/GetUserRoles?userName=" + userName + "\nwhichType=Assigned" +
-                    "\nMessage: " + roleModel.Success);
-                else {
-                    sendEmailToYourself("ERROR IN Permissions.js GetUserRoles",
-                        "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned" +
-                        " Message: " + roleModel.Success);
-                }
+                if (document.domain === 'localhost')
+                    alert("ERROR IN Permissions.js GetUserRoles" +
+                        "\napi/Roles/GetUserRoles?userName=" + getCookieValue("UserName") + "\nwhichType=Assigned" +
+                        "\nMessage: " + roleModel.Success);
+                //else {
+                //    sendEmailToYourself("ERROR IN Permissions.js GetUserRoles",
+                //        "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned" +
+                //        " Message: " + roleModel.Success);
+                //}
                 return false;
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "getUserPermissions()")) {
-                sendEmailToYourself("XHR ERROR IN Login.js getUserPermissions()", "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned" +
+                sendEmailToYourself("XHR ERROR IN Login.js getUserPermissions()", "api/Roles/GetUserRoles?userName=" + getCookieValue("UserName") + "&whichType=Assigned" +
                     " Message: " + errorMessage);
                 if (document.domain === 'localhost') alert("XHR error in getUserPermissions(): " + errorMessage);
             }
@@ -64,12 +63,14 @@ function isInRoleStep2(userPermissons, roleName) {
         if (document.domain === 'localhost') alert("ERROR IN isInRoleStep2\nroleName not working");
         else {
             //sendEmailToYourself("ERROR IN isInRoleStep2", "roleName not working");
-            alert("roleName not working");
+            if (document.domain === 'localhost')
+                alert("roleName not working");
         }
         return false;
     }
     if (isNullorUndefined(userPermissons)) {
-        if (document.domain === 'localhost') alert("ERROR IN isInRoleStep2\nuserpermissons[] not working");
+        if (document.domain === 'localhost')
+            alert("ERROR IN isInRoleStep2 userPermissons: " + userPermissons);
         //else sendEmailToYourself("ERROR IN isInRoleStep2", "userpermissons[] not working");
         return false;
     }
@@ -82,7 +83,7 @@ function isInRoleStep2(userPermissons, roleName) {
             return true;
         }
         if (permissonsItems[i] === roleName) {
-            //if (document.domain === 'localhost') alert("rolename " + roleName + " FOUND!");
+            if (document.domain === 'localhost') alert("rolename " + roleName + " FOUND!");
             return true;
         }
     }

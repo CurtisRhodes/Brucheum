@@ -119,18 +119,6 @@ header {
 }
 
 
-.boobRankerBanner {
-    height: 35px;
-    border: solid 2px #000;
-    border-radius: 10px;
-    font-size: 18px;
-    padding: 3px;
-    color: #000;
-    background-color: aliceblue;
-    margin-left: 40px;
-    margin-top: 5px;
-    cursor: pointer;
-}
 .blackCenterfoldsBanner {
     height: 35px;
     border: solid 2px red;
@@ -263,9 +251,23 @@ header {
     white-space: nowrap;
 }
 
+.headerFeatureBanner {
+    height: 35px;
+    border: solid 2px #000;
+    border-radius: 10px;
+    font-size: 18px;
+    padding: 3px;
+    color: #000;
+    background-color: aliceblue;
+    margin-left: 40px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+
 .babesArchive {
     margin-top: 5px;
     margin-left: 20px;
+
     border: solid thin #444;
     padding: 3px;
     height: 35px;

@@ -704,7 +704,7 @@ function logVisit(visitorId, pageName) {
                     logEventActivity({
                         VisitorId: visitorId,
                         EventCode: "VIS",
-                        EventDetail: "Visit Added visitorId: " + visitorId + " Page: " + pageName,
+                        EventDetail: "Page: " + pageName,
                         CalledFrom: "HitCounter.js logVisit"
                     });
                     //sendEmailToYourself("Visit Added ", "visitorId: " + visitorId + "<br/>Initial Page: ");
@@ -1049,8 +1049,8 @@ function checkForHitLimit(calledFrom, pageId) {
                 logEventActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     EventCode: "PAY",
-                    EventDetail: "Page Hit Message Displayed. UserPageHits: " + userPageHits + " pageId: " + pageId,
-                    CalledFrom: calledFrom
+                    EventDetail: "Page Hit Message Displayed. UserPageHits: " + userPageHits,
+                    CalledFrom: pageId
                 });
                 if (userPageHits > freePageHitsAllowed && userPageHits % 10 === 0) {
                     if (getCookieValue("IpAddress") !== "68.203.90.183")                    //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
@@ -1063,8 +1063,8 @@ function checkForHitLimit(calledFrom, pageId) {
                 logEventActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     EventCode: "PAY",
-                    EventDetail: "Image Hit Limit Message Displayed userImageHits: " + userImageHits + " pageId: " + pageId,
-                    CalledFrom: calledFrom
+                    EventDetail: "Image Hit Limit Message Displayed userImageHits: " + userImageHits,
+                    CalledFrom: pageId
                 });
                 //if (userImageHits > freeImageHitsAllowed && userImageHits % 10 === 0 && userImageHits < 3000) {
                 showCustomMessage(97, true);

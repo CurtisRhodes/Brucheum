@@ -670,7 +670,7 @@ function contextMenuAction(action) {
         case "show":
             logEventActivity({
                 VisitorId: getCookieValue("VisitorId"),
-                EventCode: "CMC",
+                EventCode: "CM1",
                 EventDetail: "showModelInfoDialog called. Viewer showing: " + viewerShowing,
                 CalledFrom: albumFolderId
             });
@@ -687,7 +687,7 @@ function contextMenuAction(action) {
         case "jump":
             logEventActivity({
                 VisitorId: getCookieValue("VisitorId"),
-                EventCode: "CMC",
+                EventCode: "CM2",
                 EventDetail: "see more of her: " + modelFolderName,
                 CalledFrom: albumFolderId
             });
@@ -696,17 +696,23 @@ function contextMenuAction(action) {
             break;
         case "comment":
             $("#thumbImageContextMenu").fadeOut();
+            logEventActivity({
+                VisitorId: getCookieValue("VisitorId"),
+                EventCode: "CM3",
+                EventDetail: "showImageCommentDialog: " + modelFolderName,
+                CalledFrom: albumFolderId
+            });
             showImageCommentDialog(selectedImage, selectedImageLinkId, albumFolderId, currentAlbumJSfolderName);
             break;
         case "explode":
-            var explodeCalledFrom = currentAlbumJSfolderName;
+            var explodeEventDetail = "explode";
             if (viewerShowing)
-                explodeCalledFrom = "(Viewer) " + albumFolderId;
+                explodeEventDetail = "viewer explode";
             logEventActivity({
                 VisitorId: getCookieValue("VisitorId"),
-                EventCode: "CMC",
-                EventDetail: "explode: " + selectedImage,
-                CalledFrom: explodeCalledFrom
+                EventCode: "CM4",
+                EventDetail: explodeEventDetail,
+                CalledFrom: albumFolderId
             });
             window.open(selectedImage, "_blank");
             break;
@@ -733,8 +739,13 @@ function contextMenuAction(action) {
             setFolderImage(selectedImageLinkId, albumFolderId, "parent");
             break;
         case "showLinks":
+            logEventActivity({
+                VisitorId: getCookieValue("VisitorId"),
+                EventCode: "CM5",
+                EventDetail: "show links",
+                CalledFrom: albumFolderId
+            });
             showLinks(selectedImageLinkId);
-            //showProps($('#' + currentContextLinkId + '').attr("src"));
             break;
         default:
             logError({

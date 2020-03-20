@@ -134,7 +134,10 @@
                     <div onclick="assuranceArrowClick('back')"><img class="assuranceArrows" src="/Images/leftArrowOpaque02.png" /></div>
                     <div class="carouselImageContainer">
                         <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
+
                         <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="/Images/redballon.png" onclick="clickViewGallery()" />
+                        
+                        
                         <div class="imgBottom">
                             <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
                             <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
@@ -152,10 +155,11 @@
 
             <div class="indexSectionLabel">latest updates</div>
             <div id="newsSection" class="newsSection"></div>
+
             <div class="floatLeft">
                 <div class="centeredDivShell randomImageContainer">
                     <div class="centeredDivInner">
-                        <div id="connectingMsg"><img src="https://media.giphy.com/media/ZFiRiRg60SjhipvdCz/giphy.gif" /></div>
+                        <div id="connectingMsg" class="displayHidden"><img src="https://media.giphy.com/media/ZFiRiRg60SjhipvdCz/giphy.gif" /></div>
                         <!--<div id="connectingMsg"><img src="https://media.giphy.com/media/ls5bix63j3H53E1Ebp/giphy.gif" /></div>-->
                     </div>
                 </div>
@@ -196,7 +200,6 @@
             includeHTML();
             $('#laCarousel').hide();
             $('#carouselInclude').hide();
-            $('#connectingMsg').hide();
             $('.indexSectionLabel').hide();
             //$('#footerLastBuild').html("last build: " + lastBuild + "3");
             $('#footerMessage').html("loading settings");
@@ -211,6 +214,10 @@
             setOggleFooter(subdomain, homePageId);
             loadSettings();
             var dots = ""
+            setTimeout(function () {
+                if (connectionNotVerified)
+                    $('#connectingMsg').show();
+            }, 3000);
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
                     dots += "~ ";
@@ -233,7 +240,7 @@
                             $('#dots').html('');
                             $('#connectingMsg').hide();
                             $('#laCarousel').fadeIn();
-                            loadNewsBoxes();
+                            loadNewsBoxes(40);
                             launchCarousel(subdomain);
                             setOggleHeader(homePageId);
                             logPageHit(homePageId, "Index");
@@ -246,9 +253,9 @@
                                 $('#boobsLeftColumnList').show();
                                 //launchPromoMessages();
                             }
-                            //if (isInRole("Oggle admin")) {
-                            //    $('#carouselInclude').show();
-                            //}
+                            if (isInRole("Oggle admin")) {
+                                $('#carouselInclude').show();
+                            }
                         }
                     }, 300);
                 }
@@ -273,10 +280,10 @@
             return date;
         };
 
-        function loadNewsBoxes() {
+        function loadNewsBoxes(numItmes) {
             $.ajax({
                 type: "GET",
-                url: settingsArray.ApiServer + "api/ImagePage/GetLatestUpdates",
+                url: settingsArray.ApiServer + "api/ImagePage/GetLatestUpdates?items=" + numItmes,
                 success: function (latestUpdates) {
                     if (latestUpdates.Success === "ok") {
                         $.each(latestUpdates.LatestUpdates, function (idx, LatestUpdate) {

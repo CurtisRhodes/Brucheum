@@ -207,7 +207,7 @@ namespace WebApi
         }
 
         [HttpGet]
-        public LatestUpdatesModel GetLatestUpdates()
+        public LatestUpdatesModel GetLatestUpdates(int items)
         {
             LatestUpdatesModel updatesModel = new LatestUpdatesModel();
             try
@@ -215,7 +215,7 @@ namespace WebApi
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     updatesModel.LatestUpdates = db.Database.SqlQuery<LatestUpdate>(
-                        "select top 20 max(f.Id) FolderId, f.FolderName, max(i.LastModified) LastModified, max(i2.Link) FolderImage " +
+                        "select top " + items + " max(f.Id) FolderId, f.FolderName, max(i.LastModified) LastModified, max(i2.Link) FolderImage " +
                         "from OggleBooble.ImageLink i " +
                         "join OggleBooble.CategoryFolder f on i.FolderLocation = f.Id " +
                         "join OggleBooble.CategoryFolderDetail d on i.FolderLocation = d.FolderId " +
