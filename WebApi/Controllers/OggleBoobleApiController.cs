@@ -994,48 +994,28 @@ namespace WebApi
             FolderDetailModel folderDetailModel = new FolderDetailModel();
             try
             {
-                if (folderId == 0)
+                using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    folderDetailModel.FolderName = "Unknown";
-                }
-                else
-                {
-                    using (OggleBoobleContext db = new OggleBoobleContext())
+                    CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                    folderDetailModel.FolderName = dbFolder.FolderName;
+                    CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                    if (categoryFolderDetails != null)
                     {
-                        //CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-
-                        //if(categoryFolder.w)
-
-                        string folderImageLink = null;
-                        CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(xn => xn.FolderId == folderId).FirstOrDefault();
-                        //CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                        if (categoryFolderDetails == null)
-                            folderDetailModel.FolderName = "";
-                        else
-                        {
-                            folderDetailModel.Measurements = categoryFolderDetails.Measurements;
-                            folderDetailModel.Nationality = categoryFolderDetails.Nationality;
-                            folderDetailModel.ExternalLinks = categoryFolderDetails.ExternalLinks;
-                            //folderDetailModel.FolderImageLink = categoryFolderDetails.FolderImage;
-                            folderDetailModel.CommentText = categoryFolderDetails.CommentText;
-                            folderDetailModel.Born = categoryFolderDetails.Born;
-                            folderDetailModel.Boobs = categoryFolderDetails.Boobs;
-                            folderDetailModel.FolderName = db.CategoryFolders.Where(f => f.Id == folderId).First().FolderName;
-                            folderDetailModel.FolderId = categoryFolderDetails.FolderId;
-                            folderDetailModel.LinkStatus = categoryFolderDetails.LinkStatus;
-
-                            folderImageLink = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault().FolderImage;
-
-                        }
-                        if (folderImageLink == null)
-                            folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
-
-                        ImageLink imageLink = db.ImageLinks.Where(g => g.Id == folderImageLink).FirstOrDefault();
-                        if (imageLink != null)
-                        {
-                            folderDetailModel.FolderImage = imageLink.Link;
-                            folderDetailModel.IsLandscape = (imageLink.Width > imageLink.Height);
-                        }
+                        folderDetailModel.Measurements = categoryFolderDetails.Measurements;
+                        folderDetailModel.Nationality = categoryFolderDetails.Nationality;
+                        folderDetailModel.ExternalLinks = categoryFolderDetails.ExternalLinks;
+                        folderDetailModel.CommentText = categoryFolderDetails.CommentText;
+                        folderDetailModel.Born = categoryFolderDetails.Born;
+                        folderDetailModel.Boobs = categoryFolderDetails.Boobs;
+                        folderDetailModel.FolderId = categoryFolderDetails.FolderId;
+                        folderDetailModel.LinkStatus = categoryFolderDetails.LinkStatus;
+                        //folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
+                    }
+                    ImageLink imageLink = db.ImageLinks.Where(g => g.Id == dbFolder.FolderImage).FirstOrDefault();
+                    if (imageLink != null)
+                    {
+                        folderDetailModel.FolderImage = imageLink.Link;
+                        folderDetailModel.IsLandscape = (imageLink.Width > imageLink.Height);
                     }
                 }
                 folderDetailModel.Success = "ok";
@@ -1046,31 +1026,6 @@ namespace WebApi
             }
             return folderDetailModel;
         }
-        //[HttpGet]
-        //public SuccessModel GetExternalLinksText(int folderId)
-        //{
-        //    SuccessModel success = new SuccessModel() { ReturnValue = "no" };
-        //    try
-        //    {
-        //        using (OggleBoobleContext db = new OggleBoobleContext())
-        //        {
-        //            SuccessModel dbRow = (from f in db.CategoryFolders
-        //                                  join d in db.CategoryFolderDetails on f.Id equals d.FolderId
-        //                                  where d.ExternalLinks.Contains(hrefTextSubstring) && f.Id == folderId
-        //                                  select (new SuccessModel { ReturnValue = d.ExternalLinks })).FirstOrDefault();
-        //            if (dbRow != null)
-        //            {
-        //                success.ReturnValue = dbRow.ReturnValue;
-        //            }
-        //            success.Success = "ok";
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        success.Success = Helpers.ErrorDetails(ex);
-        //    }
-        //    return success;
-        //}
 
         // create new folder in Posers Identified
         [HttpPost]
@@ -1081,23 +1036,23 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    int newFolderId = 0;
-                    CategoryFolder dbParent = db.CategoryFolders.Where(f => f.FolderName == "posers identified").First();
-                    CategoryFolder poser = new CategoryFolder()
-                    {
-                        FolderName = model.FolderName,
-                        RootFolder = dbParent.RootFolder,
-                        Parent = dbParent.Id
-                    };
-                    db.CategoryFolders.Add(poser);
-                    db.SaveChanges();
-                    newFolderId = poser.Id;
+                    //int newFolderId = 0;
+                    //CategoryFolder dbParent = db.CategoryFolders.Where(f => f.FolderName == "posers identified").First();
+                    //CategoryFolder poser = new CategoryFolder()
+                    //{
+                    //    FolderName = model.FolderName,
+                    //    RootFolder = dbParent.RootFolder,
+                    //    Parent = dbParent.Id
+                    //};
+                    //db.CategoryFolders.Add(poser);
+                    //db.SaveChanges();
+                    //newFolderId = poser.Id;
 
                     db.CategoryFolderDetails.Add(new CategoryFolderDetail()
                     {
                         CommentText = model.CommentText,
                         ExternalLinks = model.ExternalLinks,
-                        FolderId = newFolderId,
+                        FolderId = model.FolderId,
                         Nationality = model.Nationality,
                         Measurements = model.Measurements,
                         Boobs = model.Boobs,
@@ -1124,16 +1079,21 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    CategoryFolderDetail dbFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == model.FolderId).First();
-                    dbFolderDetail.Born = model.Born;
-                    dbFolderDetail.Boobs = model.Boobs;
-                    dbFolderDetail.Nationality = model.Nationality;
-                    dbFolderDetail.ExternalLinks = model.ExternalLinks;
-                    dbFolderDetail.CommentText = model.CommentText;
-                    dbFolderDetail.Measurements = model.Measurements;
-                    dbFolderDetail.LinkStatus = model.LinkStatus;
-                    db.SaveChanges();
-                    success = "ok";
+                    CategoryFolderDetail dbFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == model.FolderId).FirstOrDefault();
+                    if (dbFolderDetail == null)
+                        success = Insert(model);
+                    else
+                    {
+                        dbFolderDetail.Born = model.Born;
+                        dbFolderDetail.Boobs = model.Boobs;
+                        dbFolderDetail.Nationality = model.Nationality;
+                        dbFolderDetail.ExternalLinks = model.ExternalLinks;
+                        dbFolderDetail.CommentText = model.CommentText;
+                        dbFolderDetail.Measurements = model.Measurements;
+                        dbFolderDetail.LinkStatus = model.LinkStatus;
+                        db.SaveChanges();
+                        success = "ok";
+                    }
                 }
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
@@ -1181,23 +1141,23 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    CategoryCommentModel dbCategoryComment =
-                        (from f in db.CategoryFolders
-                         join d in db.CategoryFolderDetails on f.Id equals d.FolderId
-                         join l in db.ImageLinks on f.FolderImage equals l.Id
-                         where f.Id == folderId
-                         select new CategoryCommentModel()
-                         {
-                             FolderId = f.Id,
-                             Link = l.Link,
-                             FolderName = f.FolderName,
-                             CommentText = d.CommentText
-                         }).FirstOrDefault();
-
-                    if (dbCategoryComment != null)
-                    {
-                        categoryComment = dbCategoryComment;
-                    }
+                    categoryComment.FolderId = folderId;
+                    CategoryFolder categoryFolder= db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    categoryComment.FolderName = categoryFolder.FolderName;
+                    categoryComment.Link = db.ImageLinks.Where(i => i.Id == categoryFolder.FolderImage).FirstOrDefault().Link;
+                    categoryComment.CommentText = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault().CommentText;
+                    //CategoryCommentModel dbCategoryComment =
+                    //    (from f in db.CategoryFolders
+                    //     join d in db.CategoryFolderDetails on f.Id equals d.FolderId
+                    //     join l in db.ImageLinks on f.FolderImage equals l.Id
+                    //     where f.Id == folderId
+                    //     select new CategoryCommentModel()
+                    //     {
+                    //         FolderId = f.Id,
+                    //         Link = l.Link,
+                    //         FolderName = f.FolderName,
+                    //         CommentText = d.CommentText
+                    //     }).FirstOrDefault();
                     //else
                     //    categoryComment.Success = "not found";
                     categoryComment.Success = "ok";
