@@ -174,11 +174,13 @@ namespace WebApi.MySqDataContext
     public partial class CategoryFolder
     {
         [Key]
-        [Column(Order = 0)]
+        public string PkId { get; set; }
         public int Id { get; set; }
         public int Parent { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
+        public string FolderImage { get; set; }
+        public int SortOrder { get; set; }
     }
     [Table("OggleBooble.ImageLink")]
     public partial class ImageLink
@@ -355,9 +357,7 @@ namespace WebApi.MySqDataContext
         public string ExternalLinks { get; set; }
         public string CommentText { get; set; }
         public string Boobs { get; set; }
-        public string FolderImage { get; set; }
         public string LinkStatus { get; set; }
-        public int SortOrder { get; set; }
     }
 
     [Table("OggleBooble.vwMostActiveUsersForToday")]

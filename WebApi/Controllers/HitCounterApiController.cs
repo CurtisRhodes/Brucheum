@@ -235,7 +235,7 @@ namespace WebApi
                         visitorSuccess.IsNewVisitor = false;
                         visitorSuccess.VisitorId = myExisting.VisitorId;
                         // FORCE A LOG VISIT 
-                        LogVisit(myExisting.VisitorId);
+                        //LogVisit(myExisting.VisitorId);
                     }
                     CategoryFolder categoryFolder = mdb.CategoryFolders.Where(f => f.Id == visitorModel.PageId).FirstOrDefault();
                     if (categoryFolder != null)

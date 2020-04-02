@@ -15,8 +15,7 @@
     var userpermissons = window.localStorage["userPermissons"];
     if (!isNullorUndefined(userpermissons)) {
         //alert("!isNullorUndefined(userpermissons)");
-        return false;
-        //isInRoleStep2(userpermissons, roleName);
+        return isInRoleStep2(userpermissons, roleName);
     }
 
     $.ajax({

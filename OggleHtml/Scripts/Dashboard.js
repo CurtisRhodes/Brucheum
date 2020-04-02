@@ -59,6 +59,7 @@ function setDashboardHeader(viewId) {
         case "Admin":
             $('.workAreaContainer').hide();
             $('#divAddImages').show();
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showUpLoadDialog()'>Upload a file</div>");
             $('#dashboardLeftMenu').html("<div class='clickable' onclick='buildDirectoryTree()'>ReBuild Dir Tree</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#createStaticPagesCrud').dialog('open');\">Create Static Pages</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
@@ -85,6 +86,14 @@ function setDashboardHeader(viewId) {
     resizeDashboardPage();
 }
 
+function showUpLoadDialog() {
+
+    $('.workAreaContainer').hide();
+    $('#divAddFile').show();
+
+}
+
+
 function onDirTreeComplete() {
     //alert("onDirTreeComplete 1");
 
@@ -105,6 +114,7 @@ function buildDirectoryTree() {
     $('#dirTreeContainer').html("");
     $('#dataifyInfo').show().html("rebuilding directory tree");
     $('#dashBoardLoadingGif').show();
+    // call func in dirTree.js
     buildDirTree($('#dirTreeContainer'), "dashboardMain", 0);
 }
 
@@ -281,7 +291,7 @@ function xxloadProperties() {
     });
 }
 
-function collapseChildFolder() {
+function mergeFolders() {
     if (confirm("collapse " + $('.txtLinkPath').val())) {
         $('#dashBoardLoadingGif').fadeIn();
         $('#dataifyInfo').show().html("collapse Child Folder");
@@ -315,7 +325,6 @@ function collapseChildFolder() {
 }
 
 // ROLES FUNCTION
-
 function showAssignRolesDialog() {
     $('#rolesChooseBoxDialog').dialog('open');
     $('#divChooseAssigned').html("");
@@ -377,6 +386,11 @@ function showMoveManyTool() {
     }
     $('.workAreaContainer').hide();
     $('#divMoveManyTool').show();
+
+    $('#btnSelectAll').click(function () {
+        $('.loadManyCheckbox').prop('checked', true);
+    });
+
     $('#moveManyHeader').html(dashboardMainSelectedPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
     $('#txtMoveManyDestination').val("");
     $('#dashBoardLoadingGif').fadeIn();
@@ -385,7 +399,7 @@ function showMoveManyTool() {
         autoOpen: false,
         show: { effect: "fade" },
         hide: { effect: "blind" },
-        position: ({ my: 'top', at: 'left', of: $('#moveManyToggleButton') }),
+        position: { my: 'top', at: 'left', of: $('#moveManyToggleButton') },
         width: "400",
         height: "550"
     });
@@ -558,7 +572,7 @@ function createNewFolder() {
     newFolder.Parent = dashboardMainSelectedTreeId;
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "/api/FtpDashBoard/CreateFolder?parentId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtNewFolderTitle').val(),
+        url: settingsArray.ApiServer + "/api/Folder/Create?parentId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtNewFolderTitle').val(),
         success: function (successModel) {
             $('#dashBoardLoadingGif').hide();
             if (successModel.Success === "ok") {
@@ -597,7 +611,7 @@ function showMoveFolderDialog() {
         autoOpen: false,
         show: { effect: "fade" },
         hide: { effect: "blind" },
-        position: ({ my: 'right', at: 'left', of: $('#moveFolderCrud') }),
+        position: { my: 'right', at: 'left', of: $('#moveFolderCrud') },
         width: "400",
         height: "550"
     });
@@ -623,7 +637,7 @@ function moveFolder() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "/api/Folder/MoveFolder?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + moveFolderSelectedParentId,
+        url: settingsArray.ApiServer + "/api/Folder/Move?sourceFolderId=" + dashboardMainSelectedTreeId + "&destinationFolderId=" + moveFolderSelectedParentId,
         success: function (success) {
             if (success !== "ok") {
                 logError({
@@ -654,7 +668,6 @@ function moveFolder() {
             alert("Move Folder xhr error: " + getXHRErrorDetails(xhr));
         }
     });
-    //$('#moveFolderCrud').on('dialogclose', function (event) {
 }
 
 // COPY FOLDER
@@ -673,7 +686,7 @@ function showCopyFolderDialog() {
         autoOpen: false,
         show: { effect: "fade" },
         hide: { effect: "blind" },
-        position: ({ my: 'right', at: 'left', of: $('#copyFolderCrud') }),
+        position: { my: 'right', at: 'left', of: $('#copyFolderCrud') },
         width: "400",
         height: "550"
     });
@@ -731,6 +744,51 @@ function copyFolder() {
     });
 }
 
+// RENAME FOLDER
+function renameFolder() {
+    var start = Date.now();
+    $('#dashBoardLoadingGif').fadeIn();
+    $('#dataifyInfo').show().html("renaming folder " + $('.txtLinkPath').val() + " to " + $('#txtReName').val());
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "api/Folder/Rename?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val(),
+        success: function (success) {
+            $('#dashBoardLoadingGif').hide();
+            //$('#renameFolderCrud').dialog("close");
+            //$('#renameFolderCrud').hide();
+            if (success === "ok") {
+                var delta = Date.now() - start;
+                var minutes = Math.floor(delta / 60000);
+                var seconds = (delta % 60000 / 1000).toFixed(0);
+                displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
+                console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+
+                $('.txtLinkPath').val('');
+                $('#renameFolderCrud').dialog("close");
+                logActivity({
+                    PageId: dashboardMainSelectedTreeId,
+                    PageName: $('.txtLinkPath').val(),
+                    Activity: "folder renamed from: " + $('.txtLinkPath').val() + " to " + $('#txtReName').val()
+                });
+                //$('#dataifyInfo').hide();
+            }
+            else {
+                alert("renameFolder: " + success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "renameFolder")) {
+                sendEmailToYourself("XHR ERROR in Dashboard.js renameFolder",
+                    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
+            }
+        }
+    });
+}
+
+
+
+
 
 function addFileDates() {
     $('#dataifyInfo').show().html("adding file dates");
@@ -762,53 +820,49 @@ function addFileDates() {
     });
 }
 
-// RENAME FOLDER
-function renameFolder() {
-    var start = Date.now();
-    $('#dashBoardLoadingGif').fadeIn();
-    $('#dataifyInfo').show().html("renaming folder " + $('.txtLinkPath').val() + " to " + $('#txtReName').val());
-    $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val(),
-        success: function (success) {
-            $('#dashBoardLoadingGif').hide();
-            //$('#renameFolderCrud').dialog("close");
-            //$('#renameFolderCrud').hide();
-            if (success === "ok") {
-                var delta = Date.now() - start;
-                var minutes = Math.floor(delta / 60000);
-                var seconds = (delta % 60000 / 1000).toFixed(0);
-                displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
-                console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-
-                $('.txtLinkPath').val('');
-                $('#renameFolderCrud').dialog("close");
-                buildDirectoryTree();
-                logActivity({
-                    PageId: dashboardMainSelectedTreeId,
-                    PageName: $('.txtLinkPath').val(),
-                    Activity: "folder renamed from: " + $('.txtLinkPath').val() + " to " + $('#txtReName').val()
-                });
-                //$('#dataifyInfo').hide();
-            }
-            else {
-                alert("renameFolder: " + success);
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "renameFolder")) {
-                sendEmailToYourself("XHR ERROR in Dashboard.js renameFolder",
-                    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
-            }
-        }
-    });
-}
-
-function postImage() {
+function SaveFileAs() {
     try {
         //fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
         //var data = "{'imageName':'" + fileName + "'image':'" + image + "'}";
+
+        //try {
+        //    fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
+        //    var image = $('#uplImage')[0].files[0];
+        //    //var data = "{'imageName':'" + fileName + "'image':'" + image + "'}";
+        //    if (image !== null) {
+        //        //alert("url: " + service + "/api/Images");
+        //        $.ajax({
+        //            type: "POST",
+        //            url: settingsArray.ApiServer + "/api/Images?oFileName=" + fileName,
+        //            enctype: 'multipart/form-data',
+        //            processData: false,  // Important!
+        //            contentType: false,
+        //            async: false,
+        //            cache: false,
+        //            data: image,
+        //            success: function (success) {
+        //                if (success !== "ok")
+        //                    alert("postImage: " + success);
+        //            },
+        //            error: function (xhr) {
+        //                alert("PostTimage error: " + xhr.statusText);
+        //            }
+        //        });
+        //    }
+        //    else {
+        //        alert("ERROR: image == null")
+        //        //displayStatusMessage("alert-danger", "ERROR: not working");
+        //    }
+        //    return fileName;
+        //} catch (e) {
+        //    //displayStatusMessage("alert-danger", "ERROR t: " + e);
+        //    alert("try catch ERROR : " + e);
+        //}
+
+
+
+
+
         var image = $('#uplImage')[0].files[0];
         if (image !== null) {
             $('#dashBoardLoadingGif').fadeIn();

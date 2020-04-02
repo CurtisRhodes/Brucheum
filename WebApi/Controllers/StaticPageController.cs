@@ -137,7 +137,7 @@ namespace WebApi.Controllers
                         //totalFiles = Math.Max(vwDirTree.GrandTotalFiles, vwDirTree.TotalFiles);
                         //SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
                         CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                        success = CreatePage(folderId, categoryFolder.RootFolder, categoryFolder.FolderName, db, recurr);
+                        success = CreatePage(folderId, categoryFolder.RootFolder, categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM",""), db, recurr);
                     }
                 }
                 catch (Exception e) { success = Helpers.ErrorDetails(e); }

@@ -151,13 +151,14 @@ function getFolderInfo(folderId) {
                         if (document.domain === 'localhost')
                             alert("GetFolderInfo: " + rootFolderModel.Success);
                         if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
+
                             if (!checkFor404(folderDetailModel.Success, "setAlbumPageHeader")) {
                                 logError({
                                     VisitorId: getCookieValue("VisitorId"),
                                     ActivityCode: "ERR",
                                     Severity: 1,
                                     ErrorMessage: folderDetailModel.Success,
-                                    CalledFrom: "Album.js setAlbumPageHeader"
+                                    CalledFrom: "OggleHeader.js getFolderInfo"
                                 });
                             }
                             //sendEmailToYourself("SERVICE DOWN", "from getBreadCrumbs<br/>folderId=" + folderId + "<br/>IpAddress: " +
@@ -169,7 +170,7 @@ function getFolderInfo(folderId) {
                                 ActivityCode: "ERR",
                                 Severity: 1,
                                 ErrorMessage: folderDetailModel.Success,
-                                CalledFrom: "Album.js setAlbumPageHeader"
+                                CalledFrom: "OggleHeader.js getFolderInfo"
                             });
                             //sendEmailToYourself("setAlbumPageHeader FAILURE", "api/AlbumPage/GetFolderInfo?folderId=" + folderId + "<br>" + successModel.Success);
                         }

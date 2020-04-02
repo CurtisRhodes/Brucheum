@@ -218,8 +218,8 @@ namespace WebApi
                         "select top " + items + " max(f.Id) FolderId, f.FolderName, max(i.LastModified) LastModified, max(i2.Link) FolderImage " +
                         "from OggleBooble.ImageLink i " +
                         "join OggleBooble.CategoryFolder f on i.FolderLocation = f.Id " +
-                        "join OggleBooble.CategoryFolderDetail d on i.FolderLocation = d.FolderId " +
-                        "join OggleBooble.ImageLink i2 on d.FolderImage = i2.Id " +
+                        //"join OggleBooble.CategoryFolderDetail d on i.FolderLocation = d.FolderId " +
+                        "join OggleBooble.ImageLink i2 on f.FolderImage = i2.Id " +
                         "group by f.FolderName " +
                         "order by LastModified desc").ToList();
                 }
@@ -358,22 +358,22 @@ namespace WebApi
         }
 
         [HttpGet]
-        public SuccessModel VerifyConnection()
+        public VerifyConnectionSuccessModel VerifyConnection()
         {
             var timer = new System.Diagnostics.Stopwatch();
             timer.Start();
-            SuccessModel successModel = new SuccessModel();
+            VerifyConnectionSuccessModel successModel = new VerifyConnectionSuccessModel() { ConnectionVerified = false };
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     var test = db.CategoryFolders.Count().ToString();
-                    successModel.Success = "ok";
+                    successModel.ConnectionVerified = true;
                 }
                 timer.Stop();
-
-                successModel.ReturnValue = timer.Elapsed.ToString();
+                //successModel.ReturnValue = timer.Elapsed.ToString();
                 System.Diagnostics.Debug.WriteLine("VerifyConnection took: " + timer.Elapsed);
+                successModel.Success = "ok";
             }
             catch (Exception ex)
             {
@@ -471,7 +471,8 @@ namespace WebApi
 
                 parent.SubDirs.Add(subChild);
 
-                GetDirTreeRecurr(subChild, vwDirTree, (path + "/" + vwTree.FolderName).Replace(" ", "%20"));
+                if (vwTree.IsStepChild == 0)
+                    GetDirTreeRecurr(subChild, vwDirTree, (path + "/" + vwTree.FolderName).Replace(" ", "%20"));
             }
         }
 
@@ -1006,7 +1007,7 @@ namespace WebApi
 
                         //if(categoryFolder.w)
 
-
+                        string folderImageLink = null;
                         CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(xn => xn.FolderId == folderId).FirstOrDefault();
                         //CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                         if (categoryFolderDetails == null)
@@ -1016,25 +1017,25 @@ namespace WebApi
                             folderDetailModel.Measurements = categoryFolderDetails.Measurements;
                             folderDetailModel.Nationality = categoryFolderDetails.Nationality;
                             folderDetailModel.ExternalLinks = categoryFolderDetails.ExternalLinks;
-                            folderDetailModel.FolderImageLink = categoryFolderDetails.FolderImage;
+                            //folderDetailModel.FolderImageLink = categoryFolderDetails.FolderImage;
                             folderDetailModel.CommentText = categoryFolderDetails.CommentText;
                             folderDetailModel.Born = categoryFolderDetails.Born;
                             folderDetailModel.Boobs = categoryFolderDetails.Boobs;
                             folderDetailModel.FolderName = db.CategoryFolders.Where(f => f.Id == folderId).First().FolderName;
                             folderDetailModel.FolderId = categoryFolderDetails.FolderId;
                             folderDetailModel.LinkStatus = categoryFolderDetails.LinkStatus;
+
+                            folderImageLink = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault().FolderImage;
+
                         }
-                        if (folderDetailModel.FolderImageLink == null)
+                        if (folderImageLink == null)
                             folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
-                        else
+
+                        ImageLink imageLink = db.ImageLinks.Where(g => g.Id == folderImageLink).FirstOrDefault();
+                        if (imageLink != null)
                         {
-                            ImageLink imageLink = db.ImageLinks.Where(g => g.Id == categoryFolderDetails.FolderImage).FirstOrDefault();
-                            if (imageLink != null)
-                            {
-                                folderDetailModel.FolderImage = imageLink.Link;
-                                folderDetailModel.IsLandscape = (imageLink.Width > imageLink.Height);
-                            }
-                            //folderDetailModel.FolderImage = db.ImageLinks.Where(g => g.Id == categoryFolderDetails.FolderImage).First().Link;
+                            folderDetailModel.FolderImage = imageLink.Link;
+                            folderDetailModel.IsLandscape = (imageLink.Width > imageLink.Height);
                         }
                     }
                 }
@@ -1148,27 +1149,15 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
+                    CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                     if (level == "folder")
                     {
-                        CategoryFolderDetail dbCategoryFolderDetail = db.CategoryFolderDetails.Where(n => n.FolderId == folderId).FirstOrDefault();
-                        if (dbCategoryFolderDetail == null)
-                            db.CategoryFolderDetails.Add(new CategoryFolderDetail() { FolderId = folderId, FolderImage = linkId });
-                        else
-                            dbCategoryFolderDetail.FolderImage = linkId;
+                        dbCategoryFolder.FolderImage = linkId;
                     }
                     else
                     {
-                        int parent = db.CategoryFolders.Where(f => f.Id == folderId).First().Parent;
-                        CategoryFolderDetail dbCategoryFolderDetail = db.CategoryFolderDetails.Where(n => n.FolderId == parent).FirstOrDefault();
-                        if (dbCategoryFolderDetail == null)
-                        {
-                            CategoryFolderDetail CategoryFolderDetail = new CategoryFolderDetail() { FolderId = parent, FolderImage = linkId };
-                            db.CategoryFolderDetails.Add(CategoryFolderDetail);
-                        }
-                        else
-                        {
-                            dbCategoryFolderDetail.FolderImage = linkId;
-                        }
+                        CategoryFolder dbParentCategoryFolder = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
+                        dbParentCategoryFolder.FolderImage = linkId;
                     }
                     db.SaveChanges();
                     success = "ok";
@@ -1196,7 +1185,7 @@ namespace WebApi
                     CategoryCommentModel dbCategoryComment =
                         (from f in db.CategoryFolders
                          join d in db.CategoryFolderDetails on f.Id equals d.FolderId
-                         join l in db.ImageLinks on d.FolderImage equals l.Id
+                         join l in db.ImageLinks on f.FolderImage equals l.Id
                          where f.Id == folderId
                          select new CategoryCommentModel()
                          {
@@ -1233,7 +1222,7 @@ namespace WebApi
                     categoryCommentContainer.CategoryComments =
                     (from f in db.CategoryFolders
                      join d in db.CategoryFolderDetails on f.Id equals d.FolderId
-                     join l in db.ImageLinks on d.FolderImage equals l.Id
+                     join l in db.ImageLinks on f.FolderImage equals l.Id
                      //where d.
                      select new CategoryCommentModel()
                      {
