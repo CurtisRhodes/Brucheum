@@ -181,8 +181,7 @@ namespace WebApi.Models
         public string CommentText { get; set; }
         public string Born { get; set; }
         public string Boobs { get; set; }
-        public string ImageLinkId { get; set; }
-        public string FolderImageLink { get; set; }
+        public string ImageLinkIdLink { get; set; }
         public string FolderImage { get; set; }
         public string LinkStatus { get; set; }
         public bool IsLandscape { get; set; }

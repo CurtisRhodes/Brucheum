@@ -69,13 +69,26 @@
                                 <div id="addNewLink" class="addLinkCrudArea">
                                     <div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
                                     <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
-                                    <!--<div>upload<input id="uplImage" type="file" class="imageUpload" onchange="postImage()"/></div>-->
                                     <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
                                 </div>
                                 <img id="imgLinkPreview" class="linkImage" />
                             </div>
                             <div id="progressBar" class="dashboardProgessBar"></div>
                         </div>
+                        <div id="divAddFile" class="workAreaContainer">
+                            <div id="uploadArea" class="oggleh">
+                                <div id="addNewLink" class="addLinkCrudArea">
+                                    <!--<div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>-->
+                                    <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
+                                    <div>upload<input id="uplImage" type="file" class="imageUpload" onchange="SaveFileAs()"/></div>
+                                    <div class="roundendButton" tabindex="2" onclick="saveFileAsLink()">Insert</div>
+                                </div>
+                                <img id="imgLinkPreview" class="linkImage" />
+                            </div>
+                            <div id="progressBar" class="dashboardProgessBar"></div>
+                        </div>
+
+
                         <div id="divSortTool" class="workAreaContainer">
                             <div class="workAreaHeader">
                                 <div class="workAreaHeaderLabel"><h3 id="sortTableHeader"></h3></div>
@@ -91,6 +104,9 @@
                             <div class="workAreaHeader">
                                 <div class="workAreaHeaderLabel"><h3 id="moveManyHeader"></h3></div>
                                 <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="$('.workAreaContainer').hide();$('#divAddImages').fadeIn();"></div>
+
+                                <div><span id="btnSelectAll" class="button">select all</span></div>
+
                             </div>
                             <div class="moveManyDestination">
                                 <span>destination</span>
@@ -106,9 +122,9 @@
                         <div id="divAddVideo" class="workAreaContainer">
 
                             <!--var videoLink = {};
-                    videoLink.Link = $('#txtVideoLink').val();
-                    videoLink.Image = $('#txtVideoImage').val();
-                    videoLink.Title = $('#txtVideoTitle').val();-->
+        videoLink.Link = $('#txtVideoLink').val();
+        videoLink.Image = $('#txtVideoImage').val();
+        videoLink.Title = $('#txtVideoTitle').val();-->
 
 
                             <div class="workAreaHeader">

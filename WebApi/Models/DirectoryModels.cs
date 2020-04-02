@@ -7,6 +7,12 @@ using System.Web;
 
 namespace WebApi.Models
 {
+    
+    public class VerifyConnectionSuccessModel
+    {
+        public bool ConnectionVerified { get; set; }
+        public string Success { get; set; }
+    }
     public class SuccessModel
     {
         public string ReturnValue { get; set; }

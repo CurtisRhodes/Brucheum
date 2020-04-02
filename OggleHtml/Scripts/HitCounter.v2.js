@@ -196,7 +196,6 @@ function logVisitor(pageId, calledFrom) {
             //sendEmailToYourself("LogVisitor call to IP info is happening.", " ip: " + ipAddress);
         }        
         $.getJSON("https://ipinfo.io?token=ac5da086206dc4", function (data) {
-
             if (isNullorUndefined(data.ip)) {
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
@@ -259,7 +258,14 @@ function logVisitor(pageId, calledFrom) {
                             }
                         }
                         else {
-                            if (verbosity > 0) {
+                            logEventActivity({
+                                VisitorId: visitorSuccess.VisitorId,
+                                EventCode: "REV",
+                                EventDetail: "Returning Visitor?: " + getCookieValue("IpAddress") + " pageName: " + visitorSuccess.PageName,
+                                CalledFrom: "logVisitor / " + calledFrom
+                            });
+
+                            if (verbosity > 50) {
                                 if (!navigator.cookieEnabled) {
                                     logError({
                                         VisitorId: visitorSuccess.VisitorId,
@@ -812,7 +818,7 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
             VisitorId: visitorId,
             ActivityCode: "CAT",
             Severity: 2,
-            ErrorMessage: "Catch Error in reportThenPerformEvent. eventCode: " + eventCode + "eventDetail: " + eventDetail + "Message: " + e,
+            ErrorMessage: "Catch Error in reportThenPerformEvent. EventCode: " + eventCode + ". EventDetail: " + eventDetail + "Message: " + e,
             CalledFrom: calledFrom
         });
         //sendEmailToYourself("Catch Error in OggleEvenLog()", "eventCode: " + eventCode +

@@ -42,30 +42,6 @@ namespace WebApi
             catch (Exception ex) { repairReport.Success = Helpers.ErrorDetails(ex); }
             return repairReport;
         }
-        private string EnsureCorrectFileName(string suspectFileName, string folderName, string ftpPath)
-        {
-            string correctFileName = "";
-            string ext = suspectFileName.Substring(suspectFileName.Length - 4);
-            if (!ext.StartsWith("."))
-                correctFileName = "Unexpected extension";
-            else
-            {
-                if ((suspectFileName.LastIndexOf("_") > 0) && (suspectFileName.Substring(suspectFileName.LastIndexOf("_")).Length > 40))
-                {
-                    correctFileName = suspectFileName;
-                }
-                else
-                {
-                    correctFileName = folderName + Guid.NewGuid().ToString() + ext;
-
-
-
-                    FtpUtilies.MoveFile(ftpPath + suspectFileName, ftpPath + correctFileName);
-                }
-            }
-
-            return correctFileName;
-        }
         private void RepairLinksRecurr(int folderId, RepairReportModel repairReport, OggleBoobleContext db)
         {
             try
@@ -268,27 +244,48 @@ namespace WebApi
                 {
                     if (goDaddyLinks.Count() > imageFiles.Count())
                     {
+
                         string expectedFileName = "";
                         foreach (ImageLink goDaddyLink in goDaddyLinks)
                         {
                             expectedFileName = goDaddyLink.Link.Substring(goDaddyLink.Link.LastIndexOf("/") + 1);
+                            linkId = goDaddyLink.Link.Substring(goDaddyLink.Link.LastIndexOf("_") + 1, 36);
                             if (!imageFiles.Contains(expectedFileName))
                             {
-                                string downLoadSuccess = DownLoadImage(ftpPath, goDaddyLink.ExternalLink, expectedFileName);
-                                if (downLoadSuccess == "ok")
-                                    repairReport.ImagesDownLoaded++;
-                                else
+                                ImageLink imageLink = db.ImageLinks.Where(i => i.Id == linkId).FirstOrDefault();
+                                if (imageLink == null)
                                 {
-                                    // problem with links to child folder files
-                                    repairReport.Errors.Add(goDaddyLink.ExternalLink + " " + downLoadSuccess);
-                                    db.ImageLinks.Remove(goDaddyLink);
-                                    var badCatFolderImageLink = db.CategoryImageLinks.Where(c => c.ImageCategoryId == dbCategoryFolder.Id && c.ImageLinkId == goDaddyLink.Id).FirstOrDefault();
-                                    if (badCatFolderImageLink != null)
+                                    repairReport.Errors.Add("image file in folder with no imageLink row");
+                                }
+                                else 
+                                {
+                                    if (imageLink.FolderLocation == folderId)
                                     {
-                                        db.CategoryImageLinks.Remove(badCatFolderImageLink);
+                                        CategoryImageLink categoryImageLink = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId && l.ImageLinkId == linkId).FirstOrDefault();
+                                        //if (categoryImageLink == null)
+                                        {
+                                            //repairReport.Errors.Add("image file in folder with no imageLink row");
+                                            List<ImageLink> flinks = db.ImageLinks.Where(i => i.ExternalLink == imageLink.ExternalLink).ToList();
+
+
+                                            string downLoadSuccess = DownLoadImage(ftpPath, goDaddyLink.ExternalLink, expectedFileName);
+                                            if (downLoadSuccess == "ok")
+                                                repairReport.ImagesDownLoaded++;
+                                            else
+                                            {
+                                                // problem with links to child folder files
+                                                repairReport.Errors.Add(goDaddyLink.ExternalLink + " " + downLoadSuccess);
+                                                db.ImageLinks.Remove(goDaddyLink);
+                                                var badCatFolderImageLink = db.CategoryImageLinks.Where(c => c.ImageCategoryId == dbCategoryFolder.Id && c.ImageLinkId == goDaddyLink.Id).FirstOrDefault();
+                                                if (badCatFolderImageLink != null)
+                                                {
+                                                    db.CategoryImageLinks.Remove(badCatFolderImageLink);
+                                                }
+                                                db.SaveChanges();
+                                                repairReport.LinksRemoved++;
+                                            }
+                                        }
                                     }
-                                    db.SaveChanges();
-                                    repairReport.LinksRemoved++;
                                 }
                             }
                             //if (repairReport.isSubFolder)
@@ -414,9 +411,6 @@ namespace WebApi
             }
             return success;
         }
-
-
-
 
         [HttpPut]
         [Route("api/RepairLinks/EmergencyFolderLocationFix")]

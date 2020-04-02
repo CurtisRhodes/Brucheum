@@ -90,6 +90,8 @@ namespace WebApi.OggleBoobleSqlContext
         public int Parent { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
+        public int SortOrder { get; set; }
+        public string FolderImage { get; set; }
     }
 
     [Table("OggleBooble.ImageLink")]
@@ -130,9 +132,7 @@ namespace WebApi.OggleBoobleSqlContext
         public string CommentText { get; set; }
         public string Born { get; set; }
         public string Boobs { get; set; }
-        public string FolderImage { get; set; }
         public string LinkStatus { get; set; }
-        public int SortOrder { get; set; }
     }
 
     [Table("OggleBooble.vwLinks")]
