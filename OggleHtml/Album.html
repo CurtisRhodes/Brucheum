@@ -125,18 +125,21 @@
                     $('#dots').html('');
                     setOggleHeader(params.folder);
                     logPageHit(params.folder, "Album.html");
-                    if (document.domain === 'localhost') {
-                        console.log("I want to stay in local host");
-                        //setTimeout(function () {$('#footerMessage').html("I want to stay in local host"); }, 1000);                        
-                        getAlbumImages(params.folder);
-                    }
-                    else {
+                    //if (document.domain === 'localhost') {
+                    //    console.log("I want to stay in local host");
+                    //    //setTimeout(function () {$('#footerMessage').html("I want to stay in local host"); }, 1000);                        
+                    //    getAlbumImages(params.folder);
+                    //}
+                    //else
+                    {
                         //if (visitorId === "ec6fb880-ddc2-4375-8237-021732907510") alert("logPageHit");
                         //$('#footerMessage').html("213");
                         if (isInRole("view dynamic")) {
+                            //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) TruE");
                             getAlbumImages(params.folder);
                         }
                         else {
+                            //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) FALSE");
                             directToStaticPage(params.folder);
                         }
                     }

@@ -21,7 +21,6 @@ namespace WebApi
             string success = "";
             try
             {
-                //
                 //using (SmtpClient smtpClient = new SmtpClient("smtpout.secureserver.net", 587))
                 //{
                 //    Credentials = new NetworkCredential("curtis.rhodes@gmail.com", "R@quel11"),
@@ -29,8 +28,6 @@ namespace WebApi
                 //})o
                 //using (SmtpClient smtpClient = new SmtpClient("relay-hosting.secureserver.net", 25))
                 //using (SmtpClient smtpClient = new SmtpClient("outlook.office365.com", 587))
-                //using (
-
                 //using (SmtpClient smtpClient = new SmtpClient("smtp.office365.com", 587) {
                 //SmtpClient smtpClient = new SmtpClient("smtp.office365.com", 587);
                 //smtpClient.Credentials = new NetworkCredential("info@curtisrhodes.com", "R@quel11");

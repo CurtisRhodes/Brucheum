@@ -150,13 +150,13 @@ function getFolderInfo(folderId) {
                     else {
                         if (document.domain === 'localhost')
                             alert("GetFolderInfo: " + rootFolderModel.Success);
-                        if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
-                            if (!checkFor404(folderDetailModel.Success, "setAlbumPageHeader")) {
+                        if (rootFolderModel.Success.indexOf("Option not supported") > -1) {
+                            if (!checkFor404(rootFolderModel.Success, "setAlbumPageHeader")) {
                                 logError({
                                     VisitorId: getCookieValue("VisitorId"),
                                     ActivityCode: "ERR",
                                     Severity: 1,
-                                    ErrorMessage: folderDetailModel.Success,
+                                    ErrorMessage: rootFolderModel.Success,
                                     CalledFrom: "Album.js setAlbumPageHeader"
                                 });
                             }

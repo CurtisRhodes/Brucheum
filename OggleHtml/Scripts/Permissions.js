@@ -1,22 +1,22 @@
 ﻿function isInRole(roleName) {
 
     if (isNullorUndefined(roleName)) {
-        alert("isInRole called with NullorUndefined roleName");
-        //alert("isInRole roleName: " + roleName);
+        //if (document.domain === 'localhost') alert("isInRole roleName: " + roleName);
         console.error("isInRole called with NullorUndefined roleName");
         return false;
     }
 
     if (!isLoggedIn()) {
-       // alert("not logged in");
+        if (document.domain === 'localhost')
+            alert("not logged in");
         return false;
     }
     
     var userpermissons = window.localStorage["userPermissons"];
     if (!isNullorUndefined(userpermissons)) {
-        //alert("!isNullorUndefined(userpermissons)");
-        return false;
-        //isInRoleStep2(userpermissons, roleName);
+        // if (document.domain === 'localhost') alert("already have userPermissions in local storage");
+        console.log("already have userPermissions in local storage");
+        return isInRoleStep2(userpermissons, roleName);
     }
 
     $.ajax({
@@ -58,9 +58,10 @@
 }
 
 function isInRoleStep2(userPermissons, roleName) {
-    //alert("isInRoleStep2  \nuserpermissons: " + userPermissons + "\nroleName: " + roleName);
+    //if (getCookieValue("IpAddress") === "68.203.90.183") alert("isInRoleStep2  \nuserpermissons: " + userPermissons + "\nroleName: " + roleName);
+
     if (isNullorUndefined(roleName)) {
-        if (document.domain === 'localhost') alert("ERROR IN isInRoleStep2\nroleName not working");
+        if (getCookieValue("IpAddress") === "68.203.90.183") alert("ERROR IN isInRoleStep2\nroleName not working");
         else {
             //sendEmailToYourself("ERROR IN isInRoleStep2", "roleName not working");
             if (document.domain === 'localhost')
@@ -69,8 +70,7 @@ function isInRoleStep2(userPermissons, roleName) {
         return false;
     }
     if (isNullorUndefined(userPermissons)) {
-        if (document.domain === 'localhost')
-            alert("ERROR IN isInRoleStep2 userPermissons: " + userPermissons);
+        if (getCookieValue("IpAddress") === "68.203.90.183") alert("ERROR IN isInRoleStep2 userPermissons: " + userPermissons);
         //else sendEmailToYourself("ERROR IN isInRoleStep2", "userpermissons[] not working");
         return false;
     }
@@ -79,15 +79,15 @@ function isInRoleStep2(userPermissons, roleName) {
     for (var i = 0; i < permissonsItems.length; i++) {
         //if (document.domain === 'localhost') alert("role found: " + permissonsItems[i]);
         if (permissonsItems[i] === "Oggle admin") {
-            //if (document.domain === 'localhost') alert("admin override");
+            //if (getCookieValue("IpAddress") === "68.203.90.183") alert("admin override");
             return true;
         }
         if (permissonsItems[i] === roleName) {
-            if (document.domain === 'localhost') alert("rolename " + roleName + " FOUND!");
+            //if (document.domain === 'localhost') alert("rolename " + roleName + " FOUND!");
             return true;
         }
     }
-    if (document.domain === 'localhost') alert("rolename " + roleName + " not found ");
+    if (getCookieValue("IpAddress") === "68.203.90.183") alert("rolename " + roleName + " not found ");
     return false;
 }
 

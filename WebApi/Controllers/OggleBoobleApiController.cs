@@ -382,7 +382,6 @@ namespace WebApi
             return successModel;
         }
 
-
         [HttpPost]
         public string XMLPost(CarouselInfoModel model)
         {

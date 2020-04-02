@@ -54,8 +54,10 @@ namespace WebApi.Controllers
                 using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
                     if (whichType == "Assigned")
+                    {
+                        var x = db.UserRoles.Where(ur => ur.UserName == userName).Select(ur => ur.RoleName).ToList();
                         roleModel.RoleNames = db.UserRoles.Where(ur => ur.UserName == userName).Select(ur => ur.RoleName).ToList();
-
+                    }
                     if (whichType == "Available")
                     {
                         List<string> assigned = db.UserRoles.Where(ur => ur.UserName == userName).Select(ur => ur.RoleName).ToList();
@@ -69,7 +71,11 @@ namespace WebApi.Controllers
                     roleModel.Success = "ok";
                 }
             }
-            catch (Exception ex) { roleModel.Success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { 
+                roleModel.Success = Helpers.ErrorDetails(ex); 
+            
+            
+            }
             return roleModel;
         }
 
