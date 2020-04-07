@@ -7,8 +7,7 @@
     }
 
     if (!isLoggedIn()) {
-        if (document.domain === 'localhost')
-            alert("not logged in");
+        //if (document.domain === 'localhost') alert("not logged in");
         return false;
     }
     
@@ -33,10 +32,10 @@
                 return isInRoleStep2(userPermissons, roleName);
             }
             else {
-                if (document.domain === 'localhost')
-                    alert("ERROR IN Permissions.js GetUserRoles" +
-                        "\napi/Roles/GetUserRoles?userName=" + getCookieValue("UserName") + "\nwhichType=Assigned" +
-                        "\nMessage: " + roleModel.Success);
+                //if (document.domain === 'localhost')
+                //    alert("ERROR IN Permissions.js GetUserRoles" +
+                //        "\napi/Roles/GetUserRoles?userName=" + getCookieValue("UserName") + "\nwhichType=Assigned" +
+                //        "\nMessage: " + roleModel.Success);
                 //else {
                 //    sendEmailToYourself("ERROR IN Permissions.js GetUserRoles",
                 //        "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned" +
@@ -87,7 +86,7 @@ function isInRoleStep2(userPermissons, roleName) {
             return true;
         }
     }
-    if (getCookieValue("IpAddress") === "68.203.90.183") alert("rolename " + roleName + " not found ");
+    //if (getCookieValue("IpAddress") === "68.203.90.183") alert("rolename " + roleName + " not found ");
     return false;
 }
 

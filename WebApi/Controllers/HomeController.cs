@@ -8,12 +8,12 @@ using WebApi.OggleBoobleSqlContext;
 
 namespace WebApi
 {
-    public class HomeController : Controller
+    public class LocalController : Controller
     {
         //ResponseModel pageResponse = new ResponseModel();
 
         [HttpGet]
-        [Route("api/Home/GetBuildInfo")]
+        //[Route("api/Home/GetBuildInfo")]
         public string GetBuildInfo()
         {
             string lastBuild = "11:11";
@@ -26,7 +26,7 @@ namespace WebApi
         }
 
         [HttpGet]
-        [Route("api/Home/EmailTest")]
+        //[Route("api/Home/EmailTest")]
         public string EmailTest()
         {
             string success;

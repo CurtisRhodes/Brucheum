@@ -611,6 +611,7 @@ namespace WebApi
                                 Width = fWidth,
                                 Height = fHeight,
                                 Size = fSize,
+                                LastModified = DateTime.Now,
                                 Link = "http://" + trimPath + "/" + newFileName
                             });
                             mdb.CategoryImageLinks.Add(new MySqDataContext.CategoryImageLink()

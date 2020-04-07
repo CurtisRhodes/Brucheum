@@ -71,10 +71,9 @@ namespace WebApi.Controllers
                     roleModel.Success = "ok";
                 }
             }
-            catch (Exception ex) { 
-                roleModel.Success = Helpers.ErrorDetails(ex); 
-            
-            
+            catch (Exception ex)
+            {
+                roleModel.Success = Helpers.ErrorDetails(ex);                        
             }
             return roleModel;
         }

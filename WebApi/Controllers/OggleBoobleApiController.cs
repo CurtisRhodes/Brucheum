@@ -367,7 +367,7 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    var test = db.CategoryFolders.Count().ToString();
+                    var test = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
                     successModel.ConnectionVerified = true;
                 }
                 timer.Stop();

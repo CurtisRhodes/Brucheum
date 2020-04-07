@@ -253,7 +253,7 @@ function attemptLogin(userName, clearPasswod) {
                     //if (getCookieValue("ipAddress") !== "68.203.90.183")// && ipAddress !== "50.62.160.105")
 
                     logEventActivity({
-                        VisitorId: visitorSuccess.VisitorId,
+                        VisitorId: getCookieValue("VisitorId"),
                         EventCode: "LOG",
                         EventDetail: "Someone Successfully logged in: " + userName,
                         CalledFrom: "showLoginDialog"

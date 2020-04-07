@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Data.Entity;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using MySql.Data.EntityFramework;
+//using Oracle.ManagedDataAccess.EntityFramework;
+using MySql.Data.Entity;
 
 namespace WebApi.MySqDataContext
 {
     [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public partial class OggleBoobleMySqContext : DbContext
     {
-        public OggleBoobleMySqContext()
-            : base("GoDaddyMySql") { }
+        public OggleBoobleMySqContext() : base("name=GoDaddyMySql") { }
 
         public virtual DbSet<CategoryFolder> CategoryFolders { get; set; }
         public virtual DbSet<ImageLink> ImageLinks { get; set; }
@@ -193,6 +190,7 @@ namespace WebApi.MySqDataContext
         public int? Width { get; set; }
         public int? Height { get; set; }
         public long? Size { get; set; }
+        public DateTime? LastModified { get; set; }
     }
 
     [Table("OggleBooble.CategoryImageLink")]

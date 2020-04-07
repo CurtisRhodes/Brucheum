@@ -116,7 +116,7 @@ function launchViewer(imageArray, imageIndex, folderId, folderName) {
     }
     ipAddress = getCookieValue("IpAddress");
     if (isNullorUndefined(ipAddress)) {
-        if (isNullorUndefined(visitorId)) {
+        if (!isNullorUndefined(visitorId)) {
             getIpFromVisitorId(visitorId, "launchViewer");
         }
         else {

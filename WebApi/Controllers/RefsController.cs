@@ -82,6 +82,7 @@ namespace WebApi
 
                     db.Refs.Add(@ref);
                     db.SaveChanges();
+
                     //refModel.RefCode = @ref.RefCode;
                     success = "ok";
                 }

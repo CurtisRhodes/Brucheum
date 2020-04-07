@@ -621,17 +621,15 @@ function verifyConnection(calledFrom) {
                 else {
                     if (calledFrom !== "checkFor404") {
                         console.log("calling checkFor404 from verifyConnection. calledFrom: " + calledFrom);
-                        alert("calling checkFor404 from verifyConnection. calledFrom: " + calledFrom);
+                        //alert("calling checkFor404 from verifyConnection. calledFrom: " + calledFrom);
                         //checkFor404("Not connect", "verifyConnection");
                     }
                 }
             }
             else {
-                alert("verifyConnection. Called From: " + calledFrom + " Success: " + successModel.Success);
+                //alert("verifyConnection. Called From: " + calledFrom + " Success: " + successModel.Success);
                 console.log("verifyConnection. Success: " + successModel.Success);
-                if (document.domain === 'localhost') {
-                    alert("verifyConnection success: " + successModel.Success);
-                }
+                //if (document.domain === 'localhost') alert("verifyConnection success: " + successModel.Success);
                 if (successModel.Success.indexOf("Not connect") > -1
                     || successModel.Success.indexOf("Option not supported") > -1
                     || successModel.Success.indexOf("Verify Network") > -1

@@ -1,12 +1,13 @@
-namespace OggleBooble.Api.MsSQLDataContext
-{
-    using System;
-    using System.Data.Entity;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
-    using System.ComponentModel.DataAnnotations;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
+using System.Linq;
+using System.Web;
 
+namespace OggleBooble.Api.DataContext
+{
     public partial class OggleBoobleContext : DbContext
     {
         public OggleBoobleContext()
@@ -16,7 +17,7 @@ namespace OggleBooble.Api.MsSQLDataContext
         public virtual DbSet<ImageLink> ImageLinks { get; set; }
         public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
 
-        public virtual DbSet<VwDirTree> VwDirTrees { get; set; }        
+        public virtual DbSet<VwDirTree> VwDirTrees { get; set; }
         public virtual DbSet<VideoLink> VideoLinks { get; set; }
         public virtual DbSet<VwLink> VwLinks { get; set; }
         public virtual DbSet<BlogComment> BlogComments { get; set; }
@@ -25,10 +26,36 @@ namespace OggleBooble.Api.MsSQLDataContext
         public virtual DbSet<RejectLink> RejectLinks { get; set; }
         public virtual DbSet<RankerVote> RankerVotes { get; set; }
         public virtual DbSet<StepChild> StepChildren { get; set; }
+        public virtual DbSet<TrackbackLink> TrackbackLinks { get; set; }
+        public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
+    }
+    [Table("OggleBooble.ChangeLog")]
+    public class ChangeLog
+    {
+        [Key]
+        public int PkId { get; set; }
+        public int PageId { get; set; }
+        public string PageName { get; set; }
+        public string Activity { get; set; }
+        public DateTime Occured { get; set; }
+        public bool StaticRebuild { get; set; }
+    }
+
+    [Table("OggleBooble.TrackbackLink")]
+    public partial class TrackbackLink
+    {
+        [Key]
+        [Column(Order = 0)]
+        public int PageId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string Site { get; set; }
+        public string TrackBackLink { get; set; }
+        public string LinkStatus { get; set; }
     }
 
     [Table("OggleBooble.StepChild")]
@@ -64,6 +91,8 @@ namespace OggleBooble.Api.MsSQLDataContext
         public int Parent { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
+        public int SortOrder { get; set; }
+        public string FolderImage { get; set; }
     }
 
     [Table("OggleBooble.ImageLink")]
@@ -77,6 +106,7 @@ namespace OggleBooble.Api.MsSQLDataContext
         public int? Width { get; set; }
         public int? Height { get; set; }
         public long? Size { get; set; }
+        public DateTime? LastModified { get; set; }
     }
 
     [Table("OggleBooble.CategoryImageLink")]
@@ -103,9 +133,7 @@ namespace OggleBooble.Api.MsSQLDataContext
         public string CommentText { get; set; }
         public string Born { get; set; }
         public string Boobs { get; set; }
-        public string FolderImage { get; set; }
-        public string MetaDescription { get; set; }
-        public int SortOrder { get; set; }
+        public string LinkStatus { get; set; }
     }
 
     [Table("OggleBooble.vwLinks")]
@@ -113,7 +141,7 @@ namespace OggleBooble.Api.MsSQLDataContext
     {
         public int FolderId { get; set; }
         [Key]
-        public string LinkId { get; set; }        
+        public string LinkId { get; set; }
         public string FolderName { get; set; }
         public string ParentName { get; set; }
         public string Link { get; set; }
@@ -127,9 +155,11 @@ namespace OggleBooble.Api.MsSQLDataContext
     public partial class VideoLink
     {
         [Key]
+        public string Id { get; set; }
         public string Link { get; set; }
-        public string Image { get; set; }
+        public string ImageId { get; set; }
         public string Title { get; set; }
+        public int FolderId { get; set; }
     }
 
     [Table("OggleBooble.BlogComment")]
@@ -172,7 +202,10 @@ namespace OggleBooble.Api.MsSQLDataContext
     public partial class VwDirTree
     {
         [Key]
+        [Column(Order = 0)]
         public int Id { get; set; }
+        [Key]
+        [Column(Order = 1)]
         public int Parent { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }

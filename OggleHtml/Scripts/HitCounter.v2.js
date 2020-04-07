@@ -24,7 +24,7 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
                 VisitorId: "",
                 ActivityCode: "CDE",
                 Severity: 2,
-                ErrorMessage: "visitorId NOT SENT TO logImageHit. Sending to LogVisitor. PageId: " + pageId + " IpAddr: " + ipAddr,
+                ErrorMessage: "visitorId NOT SENT TO logImageHit. Sending to LogVisitor. PageId: " + pageId + " IpAddr: " + ipAddress,
                 CalledFrom: "HitCounter.js logImageHit"
             });
             //sendEmailToYourself("visitorId NOT SENT TO logImageHit", "Sending to LogVisitor. <br/> PageId: " + pageId + "<br/>IpAddr: " + ipAddr);
@@ -79,6 +79,9 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
                 //}
             }
             else {
+
+                if (document.domain === 'localhost') alert("LogImageHit: " + imageHitSuccessModel.Success);
+
                 if (imageHitSuccessModel.Success.Contains("Duplicate entry")) {
                     logError({
                         VisitorId: visitorId,
@@ -101,7 +104,7 @@ function logImageHit(ipAddress, visitorId, link, pageId, isInitialHit) {
                             " isInitialHit: " + isInitialHit +
                             " PageId: " + pageId +
                             " linkId: " + linkId +
-                            " ipAddr: " + ipAddr +
+                            //" ipAddr: " + ipAddr +
                             " Message: " + imageHitSuccessModel.Success,
                         CalledFrom: "HitCounter.js logImageHit"
                     });
@@ -456,6 +459,10 @@ function getVisitorIdFromIp(ipAddress, calledFrom) {
 }
 
 function getIpFromVisitorId(visitorId, calledFrom) {
+    if (visitorId === undefined) {
+        alert("wtf " + calledFrom);
+        return;
+    }
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/HitCounter/GetIpFromVisitorId?visitorId=" + visitorId,
