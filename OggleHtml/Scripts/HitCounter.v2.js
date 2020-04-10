@@ -211,6 +211,8 @@ function logVisitor(pageId, calledFrom) {
                 setCookieValue("IpAddress", "000.000");
                 return;
             }
+
+
             //$("#info").html("City: " + data.city + " ,County: " + data.country + " ,IP: " + data.ip + " ,Location: " + data.loc + " ,Organisation: "
             //+ data.org + " ,Postal Code: " + data.postal + " ,Region: " + data.region + "")
             $.ajax({
@@ -810,7 +812,7 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
                 //    "<br/>calledFrom: " + calledFrom);
             }
             logVisitor(calledFrom, "reportThenPerformEvent");
-            return;
+            //return;
         }
         logEventActivity({
             VisitorId: visitorId,

@@ -1092,10 +1092,11 @@ namespace WebApi
             string success = "";
             try
             {
+                string oldName; ;
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    string oldName = dbSourceFolder.FolderName;
+                    oldName = dbSourceFolder.FolderName;
                     string parentPath = Helpers.GetParentPath(folderId);
                     string ftpPath = ftpHost + dbSourceFolder.RootFolder + hostingPath + parentPath + oldName;
 
@@ -1111,19 +1112,17 @@ namespace WebApi
                     success = FtpUtilies.RenameFolder(ftpPath, newFolderName);
                     if (success == "ok")
                     {
-
-                        using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
-                        {
-                            success = RenameFolderLinks(folderId, oldName, newFolderName, db, mdb);
-                            if (success == "ok")
-                            {
-                                dbSourceFolder.FolderName = newFolderName;
-                                db.SaveChanges();
-                                MySqDataContext.CategoryFolder categoryFolder1 = mdb.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                                categoryFolder1.FolderName = newFolderName;
-                                mdb.SaveChanges();
-                            }
-                        }
+                        dbSourceFolder.FolderName = newFolderName;
+                        db.SaveChanges();
+                    }
+                }
+                if (success == "ok")
+                {
+                    using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
+                    {
+                        MySqDataContext.CategoryFolder mySqlCategoryFolder = mdb.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                        mySqlCategoryFolder.FolderName = newFolderName;
+                        mdb.SaveChanges();
                     }
                 }
             }
@@ -1133,26 +1132,36 @@ namespace WebApi
             }
             return success;
         }
-        private string RenameFolderLinks(int folderId, string oldName, string newName, OggleBoobleContext db, MySqDataContext.OggleBoobleMySqContext mdb)
+        private string xxRenameFolderLinks(int folderId, string oldName, string newName)
         {
             string success = "";
             try
             {
-                List<ImageLink> imageLinks = db.ImageLinks.Where(l => l.FolderLocation == folderId).ToList();
-                foreach (ImageLink imageLink in imageLinks)
+                using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
                 {
-                    imageLink.Link = imageLink.Link.Replace(oldName, newName);
-                    //db.SaveChanges();
+                    List<MySqDataContext.ImageLink> msimageLinks = mdb.ImageLinks.Where(l => l.FolderLocation == folderId).ToList();
+                    foreach (MySqDataContext.ImageLink msqlImageLink in msimageLinks)
+                    {
+                        msqlImageLink.Link.Replace(oldName, newName);
+                        //mdb.SaveChanges();
+                    }
+                    mdb.SaveChanges();
                 }
-                db.SaveChanges();
-                List<MySqDataContext.ImageLink> msimageLinks = mdb.ImageLinks.Where(l => l.FolderLocation == folderId).ToList();
-                foreach (MySqDataContext.ImageLink msqlImageLink in msimageLinks)
+                using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    msqlImageLink.Link.Replace(oldName, newName);
-                    //mdb.SaveChanges();
+                    List<ImageLink> imageLinks = db.ImageLinks.Where(l => l.FolderLocation == folderId).ToList();
+                    foreach (ImageLink imageLink in imageLinks)
+                    {
+                        imageLink.Link = imageLink.Link.Replace(oldName, newName);
+                        //db.SaveChanges();
+                    }
+                    db.SaveChanges();
+                    //List<CategoryFolder> subFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+                    //foreach (CategoryFolder subFolder in subFolders)
+                    //{
+                    //    success = RenameFolderLinks(subFolder.Id, subFolder.FolderName, newName);
+                    //}
                 }
-                mdb.SaveChanges();
-
                 try   // LOCAL REPO
                 {
                     string LocalSourceFolder = repoPath + Helpers.GetLocalParentPath(folderId) + oldName;
@@ -1168,13 +1177,6 @@ namespace WebApi
                     var err = Helpers.ErrorDetails(ex);
                     System.Diagnostics.Debug.WriteLine("file.MoveTo didnt work " + err);
                 }
-
-                success = "ok";
-                List<CategoryFolder> subFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
-                foreach (CategoryFolder subFolder in subFolders)
-                {
-                    success = RenameFolderLinks(subFolder.Id, oldName, newName, db, mdb);
-                }
             }
             catch (Exception ex)
             {
@@ -1182,7 +1184,6 @@ namespace WebApi
             }
             return success;
         }
-
         private string CreateDirectoryTree(int sourceFolderId, int destinationFolderId, string originParentPath, string destinationParentPath, OggleBoobleContext db)
         {
             string success = "";
@@ -1211,7 +1212,5 @@ namespace WebApi
             }
             return success;
         }
-
-
     }
 }

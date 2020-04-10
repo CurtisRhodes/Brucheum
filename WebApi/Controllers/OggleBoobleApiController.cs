@@ -1106,6 +1106,13 @@ namespace WebApi
             string success = "";
             try
             {
+                using (var mdb = new MySqDataContext.OggleBoobleMySqContext())
+                {
+                    var dbCategoryFolder = mdb.CategoryFolders.Where(f => f.Id == folderId).First();
+                    var dbParentCategoryFolder = mdb.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
+                    dbParentCategoryFolder.FolderImage = linkId;
+                    mdb.SaveChanges();
+                }
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();

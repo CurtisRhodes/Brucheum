@@ -250,7 +250,7 @@ function processImages(imageLinksModel) {
             " src='" + imageModelFile.Link + "'/></div>");
     });
 
-    if (imageLinksModel.SubDirs.length > 0) {
+    if (imageLinksModel.SubDirs.length > 1) {
         var totalChildImages = 0;
         $.each(imageLinksModel.SubDirs, function (idx, obj) {
             totalChildImages += obj.FileCount;
@@ -277,8 +277,12 @@ function processImages(imageLinksModel) {
             getDeepChildCount(subDir);
             if (deepChildCount === 0) // this must be just a collection of stepchildren
                 kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.SubDirCount + ")</div></div>";
-            else
-                kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.SubDirCount + "/" + deepChildCount.toLocaleString() + ")</div></div>";
+            else {
+                if (subDir.SubDirCount > 1)
+                    kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.SubDirCount + "/" + deepChildCount.toLocaleString() + ")</div></div>";
+                else
+                    kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + deepChildCount.toLocaleString() + ")</div></div>";
+            }
         }
         $('#imageContainer').append(kludge);
     });

@@ -303,7 +303,7 @@ namespace WebApi.Controllers
 
                     countText = subDir.FileCount.ToString();
                     //int subDirFileCount = Math.Max(subDir.FileCount, subDir.SubDirCount);
-                    if (subDir.SubDirCount > 0)
+                    if (subDir.SubDirCount > 1)
                     {
                         int subDirCnt = subDir.SubDirCount;
                         if (subDir.FileCount > 0)
@@ -350,7 +350,8 @@ namespace WebApi.Controllers
             List<VwDirTree> subDirs = db.VwDirTrees.Where(f => f.Parent == parentDir.Id).ToList();
             foreach (VwDirTree dirTree in subDirs)
             {
-                GetDeepChildCount(dirTree, db);
+                if (dirTree.IsStepChild == 0)
+                    GetDeepChildCount(dirTree, db);
             }
         }
     }
