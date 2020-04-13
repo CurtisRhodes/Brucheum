@@ -880,12 +880,10 @@ namespace WebApi
                     List<TrackbackLink> trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
                     foreach (TrackbackLink trackbackLink in trackbackLinks)
                     {
-                        var ttrTrackBackLink = trackbackLink.TrackBackLink.Replace("target=\"_blank\"", "'").Replace("target='_blank'", "'");
-
                         trackBackModel.TrackBackItems.Add(new TrackBackItem()
                         {
                             Site = trackbackLink.Site,
-                            TrackBackLink = ttrTrackBackLink,
+                            TrackBackLink = trackbackLink.TrackBackLink,
                             LinkStatus = trackbackLink.LinkStatus
                         });
                     }
@@ -907,14 +905,12 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    var ttrTrackBackLink = trackBackItem.TrackBackLink.Replace("target=\"_blank\"", "");
-
                     db.TrackbackLinks.Add(new TrackbackLink()
                     {
                         PageId = trackBackItem.PageId,
                         LinkStatus = trackBackItem.LinkStatus,
                         Site = trackBackItem.Site,
-                        TrackBackLink = ttrTrackBackLink
+                        TrackBackLink = trackBackItem.TrackBackLink
                     });
                     db.SaveChanges();
                     success = "ok";
@@ -1152,21 +1148,9 @@ namespace WebApi
                     CategoryFolder categoryFolder= db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     categoryComment.FolderName = categoryFolder.FolderName;
                     categoryComment.Link = db.ImageLinks.Where(i => i.Id == categoryFolder.FolderImage).FirstOrDefault().Link;
-                    categoryComment.CommentText = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault().CommentText;
-                    //CategoryCommentModel dbCategoryComment =
-                    //    (from f in db.CategoryFolders
-                    //     join d in db.CategoryFolderDetails on f.Id equals d.FolderId
-                    //     join l in db.ImageLinks on f.FolderImage equals l.Id
-                    //     where f.Id == folderId
-                    //     select new CategoryCommentModel()
-                    //     {
-                    //         FolderId = f.Id,
-                    //         Link = l.Link,
-                    //         FolderName = f.FolderName,
-                    //         CommentText = d.CommentText
-                    //     }).FirstOrDefault();
-                    //else
-                    //    categoryComment.Success = "not found";
+                    var dbCategoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                    if(dbCategoryFolderDetails!=null)
+                        categoryComment.CommentText = dbCategoryFolderDetails.CommentText;
                     categoryComment.Success = "ok";
                 }
             }

@@ -92,19 +92,22 @@ function directToStaticPage(directToStaticPageFolderId) {
             else {
                 if (successModel.Success.indexOf("Option not supported") > -1) {
                     checkFor404(successModel.Success, "directToStaticPage");
+
                     //sendEmailToYourself("SERVICE DOWN", "from directToStaticPage" +
                     //    "<br/>folderId=" + directToStaticPageFolderId +
                     //    "<br/>IpAddress: " + getCookieValue("IpAddress") +
                     //    "<br/>" + successModel.Success);
                 }
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "ERR",
-                    Severity: 1,
-                    ErrorMessage: successModel.Success,
-                    CalledFrom: "Album.js directToStaticPage"
-                });
-                //sendEmailToYourself("jQuery fail in directToStaticPage", "folderId: " + directToStaticPageFolderId + " <br/>" + successModel.Success);
+                else {
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "ERR",
+                        Severity: 1,
+                        ErrorMessage: successModel.Success,
+                        CalledFrom: "Album.js directToStaticPage"
+                    });
+                    //sendEmailToYourself("jQuery fail in directToStaticPage", "folderId: " + directToStaticPageFolderId + " <br/>" + successModel.Success);
+                }
             }
         },
         error: function (jqXHR) {
@@ -133,7 +136,7 @@ function getBreadCrumbs(getBreadCrumbsFolderId) {
         async: true,
         success: function (breadCrumbModel) {
             if (breadCrumbModel.Success === "ok") {
-                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + getBreadCrumbsFolderId + ",\"" + currentFolderRoot + "\")'>home</a>");
+                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + getBreadCrumbsFolderId + ",\"" + currentFolderRoot + "\")'>home  &#187</a>");
                 for (i = breadCrumbModel.BreadCrumbs.length - 1; i >= 0; i--) {
                     if (breadCrumbModel.BreadCrumbs[i] === null) {
                         breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
@@ -154,10 +157,10 @@ function getBreadCrumbs(getBreadCrumbsFolderId) {
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                         else {
-                            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' " +
+                            $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
                                 //	HBX	Home Breadcrumb Clicked
                                 "href='javascript:rtpe(\"BCC\"," + getBreadCrumbsFolderId + "," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
-                                breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
+                                breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
                         }
                     }
                 }

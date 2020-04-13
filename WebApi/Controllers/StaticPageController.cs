@@ -152,13 +152,6 @@ namespace WebApi.Controllers
             {
                 //SignalRHost.ProgressHub.PostToClient("Creating static files: " + folderName + ".html");
 
-                //string staticFolderName = "";
-                //if (rootFolder == "sluts")
-                //    staticFolderName = folderName;
-                //else
-                //    staticFolderName = Helpers.GetCustomStaticFolderName(folderId, folderName.Replace(".OGGLEBOOBLE.COM", ""));
-
-
                 string staticContent =
                     "<!DOCTYPE html>\n<html lang='en'>\n" + HeadHtml(folderId, folderName) +
                     "\n<body style='margin-top:105px'>\n<header></header>" +
@@ -248,15 +241,15 @@ namespace WebApi.Controllers
                 foreach(TrackBackItem trackBackItem in trackBackModel.TrackBackItems) { 
                     if (trackBackItem.Site == "Babepedia")
                     {
-                        bodyHtml.Append("           <div id='babapediaLink' class='leftColumnTrackbackLink'>" + trackBackItem.TrackBackLink + "</div>\n");
+                        bodyHtml.Append("           <div id='babapediaLink' class='leftColumnTrackbackLink'>" + trackBackItem.TrackBackLink + " target='_blank'</div>\n");
                     }
                     if (trackBackItem.Site == "Freeones")
                     {
-                        bodyHtml.Append("           <div id='freeonesLink' class='leftColumnTrackbackLink'>" + trackBackItem.TrackBackLink + "</div>\n");
+                        bodyHtml.Append("           <div id='freeonesLink' class='leftColumnTrackbackLink'>" + trackBackItem.TrackBackLink + " target='_blank'</div>\n");
                     }
                     if (trackBackItem.Site == "Indexxx")
                     {
-                        bodyHtml.Append("           <div id='indexxxLink' class='leftColumnTrackbackLink'>"+ trackBackItem.TrackBackLink + "</div>\n");
+                        bodyHtml.Append("           <div id='indexxxLink' class='leftColumnTrackbackLink'>"+ trackBackItem.TrackBackLink + " target='_blank'</div>\n");
                     }
                 }
             }

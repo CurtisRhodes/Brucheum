@@ -121,7 +121,7 @@ function addTrackback(link) {
     var hLink = "";
     if ($('#txtLinkHref').val().indexOf('freeones') > -1) {
         site = "Freeones";
-        hLink = "<a href='" + link + "'>free porn</a>";
+        hLink = "<a href='" + link + "' target='_blank'>free porn</a>";
     }    
     if ($('#txtLinkHref').val().indexOf('indexxx') > -1) {
         site = "Indexxx";
@@ -129,7 +129,7 @@ function addTrackback(link) {
     }
     if ($('#txtLinkHref').val().indexOf('babepedia') > -1) {
         site = "Babepedia";
-        hLink = "<a href='" + link + "'>Babepedia</a>";
+        hLink = "<a href='" + link + "' target='_blank'>Babepedia</a>";
     }
 
     if (site !== "") {

@@ -36,6 +36,7 @@ namespace WebApi.MySqDataContext
         public virtual DbSet<vwPageHit> vwPageHits { get; set; }
         public virtual DbSet<FeedBack> FeedBacks { get; set; }
         public virtual DbSet<ErrorLog> ErrorLogs { get; set; }
+        public virtual DbSet<PageHitTotals> PageHitTotal { get; set; }
     }
 
     [Table("OggleBooble.ErrorLog")]
@@ -49,6 +50,15 @@ namespace WebApi.MySqDataContext
         public string ErrorMessage { get; set; }
         public DateTime Occured { get; set; }
         public string CalledFrom { get; set; }
+    }
+
+
+    [Table("OggleBooble.PageHitTotals")]
+    public class PageHitTotals
+    {
+        [Key]
+        public int PageId { get; set; }
+        public int Hits { get; set; }
     }
 
     [Table("OggleBooble.FeedBack")]

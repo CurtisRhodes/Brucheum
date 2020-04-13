@@ -1092,7 +1092,7 @@ namespace WebApi
             string success = "";
             try
             {
-                string oldName; ;
+                string oldName;
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();

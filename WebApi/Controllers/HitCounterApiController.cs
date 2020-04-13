@@ -72,17 +72,27 @@ namespace WebApi
             {
                 using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
-                    db.PageHits.Add(new PageHit()
+                    var twoMinutesAgo = DateTime.Now.AddMinutes(-2);
+
+                    var lastHit = db.PageHits.Where(h => h.VisitorId == pageHitModel.VisitorId && h.PageId == pageHitModel.PageId && h.Occured > twoMinutesAgo).FirstOrDefault();
+                    if (lastHit == null)
                     {
-                        VisitorId = pageHitModel.VisitorId,
-                        PageId = pageHitModel.PageId,
-                        Occured = DateTime.Now  //.AddMilliseconds(getrandom.Next())
-                    });
-                    db.SaveChanges();
+                        db.PageHits.Add(new PageHit()
+                        {
+                            VisitorId = pageHitModel.VisitorId,
+                            PageId = pageHitModel.PageId,
+                            Occured = DateTime.Now  //.AddMilliseconds(getrandom.Next())
+                        });
+                        db.SaveChanges();
+                    }
                     pageHitSuccessModel.Success = "ok";
                     try
                     {
                         pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.PageId == pageHitModel.PageId).Count();
+                        var dbPageHitTotals = db.PageHitTotal.Where(h => h.PageId == pageHitModel.PageId).FirstOrDefault();
+                        if (dbPageHitTotals != null) {
+                            pageHitSuccessModel.PageHits += dbPageHitTotals.Hits;
+                        }
                         pageHitSuccessModel.UserPageHits = db.PageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
                         pageHitSuccessModel.UserImageHits = db.ImageHits.Where(h => h.VisitorId == pageHitModel.VisitorId).Count();
 
