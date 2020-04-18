@@ -129,7 +129,6 @@ body {
     margin-top: 123px;
     padding-right: 36px;
 }
-
     .leftColumnList div {
         font-size: 17px;
         cursor: pointer;
@@ -145,8 +144,8 @@ body {
 .centeredDivShell {
     position: absolute;
     left: 50%;
-    top: 300px;
 }
+
 .centeredDivShell2 {
     position: absolute;
     left: 40%;
@@ -344,16 +343,12 @@ footer {
 .assuranceArrows {
     float: left;
     cursor: pointer;
+    width: 50px;
 }
-
-    .assuranceArrows img {
-        width: 60px;
-    }
 
 .connectionMessage {
     border: solid thick red;
     text-align: center;
-    top: 210px;
 }
 
 .canIgetaConnectionMessageContainer {
@@ -363,8 +358,8 @@ footer {
 .customMessageContainer {
     position: absolute;
     z-index: 200;
-    display: none;
 }
+
 .divRefreshPage {
     background-color: var(--oggleContainerBackgroundColor);
     font-size: 24px;

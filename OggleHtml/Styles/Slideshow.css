@@ -1,9 +1,26 @@
-﻿.expandoImageDiv {
-    position: relative;
-    display: flex;
+﻿
+.slideshowImageLabel {
+    position: absolute;
+    bottom: 50px;
+    right: 255px;
+    color: #fff;
+    background-color: rgba(178, 0, 255, 0.66);
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 20px;
+    white-space: nowrap;
+    cursor: pointer;
+    z-index: 200;
 }
 
-.expandoImage {
+.slideshowNavgArrows {
+    float: left;
+}
+.slideshowNavgArrows img {
+    width: 50px;
+}
+
+.slideshowImage {
     object-fit: contain;
     transition: all .75s ease-in-out;
     height: 100%;

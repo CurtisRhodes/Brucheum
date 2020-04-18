@@ -254,7 +254,7 @@ function addImageLink() {
                     logActivity({
                         PageId: dashboardMainSelectedTreeId,
                         PageName: $('.txtLinkPath').val(),
-                        Activity: "new image added "
+                        Activity: "new image added"
                     });
                 }
                 else

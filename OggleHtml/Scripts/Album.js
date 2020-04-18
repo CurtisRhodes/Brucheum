@@ -18,8 +18,41 @@ function getAlbumImages(folderId) {
             url: settingsArray.ApiServer + "/api/ImagePage/GetImageLinks?folderId=" + folderId,
             success: function (imageLinksModel) {
                 $('#imagePageLoadingGif').hide();
-                currentFolderRoot = imageLinksModel.RootFolder;
                 if (imageLinksModel.Success === "ok") {
+                    currentFolderRoot = imageLinksModel.RootFolder;
+
+                    setOggleHeader(folderId, imageLinksModel.RootFolder);
+
+                    if (!isNullorUndefined(imageLinksModel.ExternalLinks)) {
+                        if (imageLinksModel.ExternalLinks.indexOf("Playmate Of The Year") > -1) {
+                            $('#pmoyLink').show();
+                        }
+                        if (imageLinksModel.ExternalLinks.indexOf("biggest breasted centerfolds") > -1) {
+                            $('#breastfulPlaymatesLink').show();
+                        }
+                        if (imageLinksModel.ExternalLinks.indexOf("black centerfolds") > -1) {
+                            $('#blackCenterfoldsLink').show();
+                        }
+                        if (imageLinksModel.ExternalLinks.indexOf("Hef likes twins") > -1) {
+                            $('#twinsLink').show();
+                        }
+                    }
+
+                    $.each(imageLinksModel.TrackBackItems, function (idx, trackBackItem) {
+                        if (trackBackItem.Site === "Babepedia") {
+                            $('#babapediaLink').html(trackBackItem.TrackBackLink);
+                            $('#babapediaLink').show();
+                        }
+                        if (trackBackItem.Site === "Freeones") {
+                            $('#freeonesLink').html(trackBackItem.TrackBackLink);
+                            $('#freeonesLink').show();
+                        }
+                        if (trackBackItem.Site === "Indexxx") {
+                            $('#indexxxLink').html(trackBackItem.TrackBackLink);
+                            $('#indexxxLink').show();
+                        }
+                    });
+
                     processImages(imageLinksModel);
                     getBreadCrumbs(folderId);
                     var delta = (Date.now() - start) / 1000;
@@ -234,6 +267,8 @@ function processImages(imageLinksModel) {
 
     // IMAGES
     var imageEditor = isInRole("Image Editor");
+
+
     $.each(imageLinksModel.Files, function (idx, imageModelFile) {
         imageFrameClass = "imageFrame";
         if (imageEditor) {
@@ -246,10 +281,10 @@ function processImages(imageLinksModel) {
                 if (imageModelFile.LinkCount > 1) {
                     imageFrameClass = "nonLocalImageFrame";
                 }
-            }
+            }// imageModelFile
         }
-        $('#imageContainer').append("<div id='img" + idx + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
-            " oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='startSlideShow2(" + albumFolderId + "," + idx + ")'" +
+        $('#imageContainer').append("<div id='" + imageModelFile.LinkId + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
+            " oncontextmenu='ctxSAP(\"" + imageModelFile.LinkId + "\")' onclick='startSlideShow2(" + albumFolderId + ",\"" + imageModelFile.LinkId + "\")'" +
             " src='" + imageModelFile.Link + "'/></div>");
     });
 
@@ -330,7 +365,7 @@ function startSlideShow(imageIndex) {
         albumFolderId = staticPageFolderId;
     }
     //if (albumFolderId == 0) {    }
-    startSlideShow2(albumFolderId, imageIndex);
+    startSlideShow2(albumFolderId, imageIndex, currentAlbumJSfolderName);
 }
 
 function startSlideShow2(folderId2, imageIndex) {
@@ -400,7 +435,9 @@ function startSlideShow2(folderId2, imageIndex) {
         }
     }
     //sendEmailToYourself("Calling LogVisitor from Album.js/startslideshow", "visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId:
-    launchViewer(imageArray, imageIndex, folderId2, currentAlbumJSfolderName);
+
+    launchViewer(albumFolderId, imageIndex, false);
+
     resizeViewer();
     viewerShowing = true;
 }

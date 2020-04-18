@@ -336,6 +336,7 @@
     <Compile Include="Controllers\BlogXmlController.cs" />
     <Compile Include="Controllers\ResumeApiController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
+    <Compile Include="Controllers\SlideshowController.cs" />
     <Compile Include="Controllers\StaticPageController.cs" />
     <Compile Include="Controllers\xAspNetController.cs" />
     <Compile Include="Controllers\OggleBoobleApiController.cs" />

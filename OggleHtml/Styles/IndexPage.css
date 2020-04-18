@@ -1,0 +1,76 @@
+﻿
+/*@media (min-width: 768px) {
+    background-color: red;
+}*/
+
+.updatedGalleriesSection {
+    /*
+        padding: 3px;
+        background-color: #988519;
+        border: solid thin red;
+        background-color: var(--oggleContainerBackgroundColor);
+    */ 
+}
+
+.newsContentBox {
+    display: inline-block;
+    margin: 2px;
+    background-color: #3b0e56;
+    height: 280px;
+}
+
+.floatingContainerElement {
+    position: absolute;
+}
+
+.carouselContainer {
+    padding: 2px;
+}
+
+.carouselShell {
+    position: absolute;
+    left: 50%;
+}
+
+.carouselInternals {
+    position: relative;
+    left: -50%;
+    min-height: 200px;
+}
+
+.carouselImage {
+    height: 500px;
+    width: 800px;
+    cursor: pointer;
+}
+
+.newsContentBoxLabel {
+    position: absolute;
+    display: inline-block;
+    padding: 1px 12px 2px 30px;
+    padding: 2px;
+    background-color: rgba(178, 0, 255, 0.66);
+    color: #d6fcfa;
+}
+
+.newsContentBoxImage {
+    height: 272px;
+    cursor: pointer;
+}
+
+.newsContentBoxDateLabel {
+    position: relative;
+    bottom: 2px;
+    color: #d6fcfa;
+    background-color: #686666;
+}
+
+.floatBelow {
+    margin-top: 559px;
+}
+
+.slideshowCheckboxes {
+    position: absolute;
+    bottom: 1px;
+    right: -41px;
+}

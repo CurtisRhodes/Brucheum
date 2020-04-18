@@ -102,6 +102,7 @@ namespace WebApi.Controllers
                 "   <script src='/Scripts/ModelInfoDialog.js'></script>\n" +
                 "   <script src='/Scripts/OggleEventLog.js'></script>\n" +
                 "   <script src='/Scripts/OggleSearch.js'></script>\n" +
+                "   <script src='/Scripts/Slideshow.js'></script>\n" +
                 "   <script src='/Scripts/OggleFooter.js'></script>\n" +
                 "   <script src='/Scripts/Permissions.js'></script>\n" +
                 "   <script src='/Scripts/Album.js' type='text/javascript'></script>\n" +
@@ -281,9 +282,10 @@ namespace WebApi.Controllers
                 foreach (VwLink link in vwLinks)
                 {
                     bodyHtml.Append("<div id='img" + idx + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
-                         "oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='startSlideShow(" + idx++ + ")' src='" + link.Link + "'/></div>\n");
+                         "oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='launchViewer(" + folderId + ",\"" + link.LinkId + "\")' src='" + link.Link + "'/></div>\n");
                     imagesCount++;
                 }
+                
                 //$('#fileCount').html(imagesCount);
 
                 //  SUBFOLDERS

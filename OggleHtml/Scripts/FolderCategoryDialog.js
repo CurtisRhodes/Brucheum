@@ -63,9 +63,15 @@ function showCategoryDialog(folderId) {
         });
     }
     catch (e) {
-        sendEmailToYourself("javascript catch in FolderCategoryDialog.js showCategoryDialog", "get NudeModelInfo catch: " + e);
-        if (document.domain === 'localhost')
-            alert("FolderCategoryDialog catch: " + e);
+        logError({
+            VisitorId: getCookieValue("VisitorId"),
+            ActivityCode: "ERR",
+            Severity: 12,
+            ErrorMessage: "get NudeModelInfo catch: " + e,
+            CalledFrom: "showCategoryDialog"
+        });
+        //sendEmailToYourself("javascript catch in FolderCategoryDialog.js showCategoryDialog", "get NudeModelInfo catch: " + e);
+        if (document.domain === 'localhost') alert("FolderCategoryDialog catch: " + e);
     }
 }
 

@@ -81,12 +81,13 @@ function loadImages(rootFolder, isChecked, skip, take) {
                     $.each(carouselInfo.Links, function (idx, obj) {
                         carouselItemArray.push({
                             FolderId: obj.FolderId,
-                            RootFolder: obj.RootFolder,
                             ParentId: obj.ParentId,
                             FolderName: obj.FolderName,
+                            FolderPath: obj.FolderPath,
                             Link: obj.Link,
                             LinkId: obj.LinkId,
-                            FolderPath: obj.FolderPath
+                            ModelFolderId: obj.ModelFolderId,
+                            ModelName: obj.ModelName
                         });
                     });
 
@@ -96,13 +97,13 @@ function loadImages(rootFolder, isChecked, skip, take) {
                         startCarousel();
                         $('#footerMessage').html("starting carousel");
                         resizeCarousel();
-                        $('.newsSection').show();
+                        $('#latestGalleriesContainer').show();
                         resizeIndexPage();
                     }
                     numImages = carouselInfo.Links.length;
                     numFolders += carouselInfo.FolderCount;
-
                     var delta = (Date.now() - start) / 1000;
+
                     if (take === initialTake) {
                         console.log("loadImages(" + rootFolder + ") take: " + initialTake + " took: " + delta.toFixed(3));
                         loadImages(rootFolder, isChecked, initialTake, 80000);
@@ -129,7 +130,7 @@ function loadImages(rootFolder, isChecked, skip, take) {
 
 function clickViewGallery() {
     clearInterval(CarouselInterval);
-    reportThenPerformEvent("CIC", 3908, carouselItemArray[imageIndex].FolderId);
+    rtpe("CIC", 3908, carouselItemArray[imageIndex].FolderId);
 }
 
 //carouselItemArray[imageIndex].ParentId
@@ -217,6 +218,11 @@ function intervalBody() {
         $('#categoryTitle').html(carouselItemArray[imageIndex].FolderPath + ": " + carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
 
         // find links see if we know this girl.
+        $('#knownModelLabel').hide();
+        if (carouselItemArray[imageIndex].ModelFolderId !== carouselItemArray[imageIndex].FolderId) {
+            $('#knownModelLabel').html(carouselItemArray[imageIndex].ModelName).fadeIn(intervalSpeed);
+        }
+
         $('#categoryLabel').html(carouselItemArray[imageIndex].RootFolder);
 
         imageHistory.push(imageIndex);
@@ -230,6 +236,12 @@ function intervalBody() {
 
     });
 }
+
+function knownModelLabelClick() {
+    //alert("knownModelLabelClick(" + carouselItemArray[imageIndex].ModelFolderId + ")");
+    rtpe("CMN", "index", carouselItemArray[imageIndex].ModelFolderId);
+}
+
 
 function carouselContextMenuClick() {
     pause();

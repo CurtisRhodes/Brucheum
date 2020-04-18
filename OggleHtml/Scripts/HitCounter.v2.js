@@ -875,43 +875,9 @@ function logEventActivity(logEventModel) {
 }
 
 function performEvent(eventCode, calledFrom, eventDetail) {
-    //var ipAddress = getCookieValue("IpAddress");
-
     if (eventCode === "PRN") {
         //  setUserPornStatus(pornType);
     }
-    //if (ipAddress !== "68.203.90.183")
-    {
-        if (eventCode !== "CIC"     // Carousel Item Clicked 
-            && eventCode !== "FLC"  // Footer Link Clicked 
-            && eventCode !== "BAC"  // Archive Clicked
-            && eventCode !== "CMX"  // Show Model Info Dialog
-            && eventCode !== "SUB"  // Subfolder Clicked
-            && eventCode !== "BCC"  // Breadcrumb Clicked 
-            && eventCode !== "BLC"  // Banner Link Clicked 
-            && eventCode !== "LMC"  // Left Menu Item Clicked
-            && eventCode !== "HBC"  // Header Banner Clicked
-            && eventCode !== "HBX"  // Home Breadcrumb Clicked
-            && eventCode !== "RNK"  // Ranker Banner Clicked
-            && eventCode !== "CAA"  // Carousel Arrow Clicked
-            && eventCode !== "CPC") // Carousel ParentGallery clicked
-        {
-
-            //if (document.domain === 'localhost') {
-            //    alert("Monitored Event\neventcode: " + eventCode +
-            //        "\ncalledFrom: " + calledFrom +
-            //        "\neventDetail: " + eventDetail);
-            //}
-        }
-
-        if (eventCode === "SSXXXBP") {
-            if (eventDetail) {
-                showCustomMessage(22);
-            }
-
-        }
-    }
-    // NOW PERFORM EVENT
     switch (eventCode) {
         case "GIC": // Gallery Item Clicked
         case "CMC": // carousle context menu item clicked
@@ -949,15 +915,17 @@ function performEvent(eventCode, calledFrom, eventDetail) {
                     alert("imageIndex: " + imageIndex);
             }
             break;
-        case "EXP":  // explode
+        case "EXP":  // Explode
             window.open(eventDetail, "_blank");
             break;
         case "SRC":  // Search Performed
         case "SSB":
+        case "SSC":
             window.open("/album.html?folder=" + eventDetail, "_blank");            
             break;
         case 'SUB':  // 'Sub Folder Click'
         case "CIC":  // carousel image clicked
+        case "CMN":  // carousel model nameclicked
         case "SEE":  // see more of her
         case "CPC":  // carousel ParentGallery clicked
         case "BCC":  // Breadcrumb Clicked

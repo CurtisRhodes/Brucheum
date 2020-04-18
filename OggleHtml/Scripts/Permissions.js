@@ -74,16 +74,28 @@ function isInRoleStep2(userPermissons, roleName) {
         return false;
     }
 
-    var permissonsItems = userPermissons.split(",");
-    for (var i = 0; i < permissonsItems.length; i++) {
-        //if (document.domain === 'localhost') alert("role found: " + permissonsItems[i]);
-        if (permissonsItems[i] === "Oggle admin") {
-            //if (getCookieValue("IpAddress") === "68.203.90.183") alert("admin override");
-            return true;
-        }
-        if (permissonsItems[i] === roleName) {
-            //if (document.domain === 'localhost') alert("rolename " + roleName + " FOUND!");
-            return true;
+    // if (document.domain === 'localhost') alert("userPermissons.length: " + userPermissons.length);
+    if (userPermissons.length === 0) {
+        console.log("userPermissons.length: " + userPermissons.length);
+        if (document.domain === 'localhost') alert("userPermissons.length: " + userPermissons.length);
+    }
+    else {
+        var permissonsItems = userPermissons.split(",");
+        for (var i = 0; i < permissonsItems.length; i++) {
+            //if (document.domain === 'localhost') alert("role found: " + permissonsItems[i]);
+            console.log("role found: " + permissonsItems[i]);
+            if (permissonsItems[i] === "Oggle admin") {
+                //if (getCookieValue("IpAddress") === "68.203.90.183") alert("admin override");
+                console.log("admin override");
+                return true;
+            }
+            if (permissonsItems[i] === roleName) {
+                console.log("rolename " + roleName + " FOUND!");
+                //if (document.domain === 'localhost') alert("rolename " + roleName + " FOUND!");
+                return true;
+            }
+            else
+                console.log("rolename " + roleName + " not found ");
         }
     }
     //if (getCookieValue("IpAddress") === "68.203.90.183") alert("rolename " + roleName + " not found ");

@@ -24,9 +24,12 @@ function setAlbumPageHeader(folderId) {
 }
 
 var currentFolderId;
-function setOggleHeader(folderId) {
+function setOggleHeader(folderId, subdomain) {
 
-    //alert("setOggleHeader called from " + folderId);
+    if (subdomain === undefined) {
+        //if (document.domain === 'localhost') alert("subdomain === undefined");
+        subdomain = "boobs";
+    }
     currentFolderId = folderId;
     var headerHtml;
     var lang = "en";
@@ -90,8 +93,12 @@ function setOggleHeader(folderId) {
             "   </div>\n" +
             "   <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
             "</div>\n" +
-            "<div id='customMessage' class='displayHidden customMessageContainer'></div>\n" +
             "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
+            "<div id='customMessageContainer' class='centeredDivShell'>\n" +
+            "   <div class='centeredDivInner'>\n" +
+            "       <div id='customMessage' class='displayHidden' ></div>\n" +
+            "   </div>\n" +
+            "</div>\n" +
             "<div id='feedbackDialog' class='modalDialog' title='Feedback'>\n" +
             "   <div><input type='radio' name='feedbackRadio' value='complement' checked='checked'> complement\n" +
             "       <input type='radio' name='feedbackRadio' value='suggestion'> suggestion\n" +
@@ -104,7 +111,12 @@ function setOggleHeader(folderId) {
         $('header').html(headerHtml);
     }
 
-    getFolderInfo(folderId);
+    //getFolderInfo(folderId);
+    //setHeaderDetails(rootFolderModel.RootFolder, folderId);
+    //setOggleFooter(rootFolderModel.RootFolder, folderId);
+
+    setHeaderDetails(folderId, subdomain);
+    setOggleFooter(folderId, subdomain);
 
     if (isLoggedIn()) {
         $('#spnUserName').html(getCookieValue("UserName"));
@@ -126,16 +138,17 @@ function setOggleHeader(folderId) {
     }
     // LOOK UP FOLDER DETAIL FOR BADGES AND TRACKBACK LINKS
     //if (containsImageLinks)
-    {
-        if (settingsArray.ApiServer !== undefined) {
-            //if (getCookieValue("IpAddress") === "68.203.90.183") alert("isStaticPage: " + isStaticPage);
-            showSpecialHeaderIcons(folderId);
-            setTrackbackLinks(folderId);
-        }
-    }
+    //if (settingsArray.ApiServer !== undefined) {
+    //    //if (getCookieValue("IpAddress") === "68.203.90.183") alert("isStaticPage: " + isStaticPage);
+    //    showSpecialHeaderIcons(folderId);
+    //    setTrackbackLinks(folderId);
+    //}
 }
 
-function getFolderInfo(folderId) {
+
+
+
+function XXXgetFolderInfo(folderId) {
     try {
         if (!isNullorUndefined(settingsArray.ApiServer)) {
             // [Route("api/AlbumPage/GetFolderInfo")]
@@ -199,8 +212,7 @@ function getFolderInfo(folderId) {
                                 //    "<br/>" + errorMessage);
                             }
                         }
-                        setHeaderDetails("boobs", folderId);
-                        setOggleFooter("boobs", folderId);
+                        setHeaderDetails(folderId, "boobs");
                     }
                     else {
                         logError({
@@ -246,7 +258,8 @@ function getFolderInfo(folderId) {
     }
 }
 
-function setHeaderDetails(subdomain, folderId) {
+// requires no database call
+function setHeaderDetails(folderId, subdomain) {
     $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"boobs\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n");
     $('#bannerTitle').html("OggleBooble");
     switch (subdomain) {
@@ -254,6 +267,12 @@ function setHeaderDetails(subdomain, folderId) {
             $('header').switchClass('pornHeader', 'boobsHeader');
             $("#divLoginArea").hide();
             $('#subheaderContent').html("admin");
+            break;
+        case "blank":
+            $('#subheaderContent').html("loading");
+            break;
+        case "dashboard":
+            $('#subheaderContent').html("dashboard");
             break;
         case "blog":
             $('#subheaderContent').html("blog");
@@ -349,11 +368,9 @@ function setHeaderDetails(subdomain, folderId) {
         //alert("subdomain: " + subdomain + "  not found");
         //console.log("subdomain: " + subdomain + "  not found");
     }
-
-
-
 }
 
+// move this to album load
 function showSpecialHeaderIcons(folderId) {
     //alert("showSpecialHeaderIcons: " + folderId);
     if (!isNullorUndefined(settingsArray.ApiServer)) {
@@ -425,6 +442,7 @@ function showSpecialHeaderIcons(folderId) {
     }
 }
 
+// move this to album load
 function setTrackbackLinks(folderId) {
     if (!isNullorUndefined(settingsArray.ApiServer)) {
         $.ajax({

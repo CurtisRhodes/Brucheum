@@ -16,6 +16,7 @@
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>-->
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/HitCounter.v2.js"></script>
+    <script src="Scripts/IndexPage.js"></script>
     <script src="Scripts/OggleEventLog.js"></script>
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
@@ -33,6 +34,7 @@
     <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">-->
     <link href="Styles/jqueryUI.css" rel="stylesheet">
     <link href="Styles/Common.css" rel="stylesheet">
+    <link href="Styles/IndexPage.css" rel="stylesheet">
     <link href="Styles/loginDialog.css" rel="stylesheet">
     <link href="Styles/Header.css" rel="stylesheet">
     <link href="Styles/Carousel.css" rel="stylesheet">
@@ -49,77 +51,6 @@
             enable_page_level_ads: true
         });
     </script>-->
-    <style>
-        .newsSection {
-            border: solid thin red;
-            padding: 3px;
-            /*background-color: #988519;*/
-            background-color: var(--oggleContainerBackgroundColor);
-            display: none;
-            justify-items:center;            
-            text-align:justify;
-        }
-
-        .newsContentBox {
-            display: inline-block;
-            margin: 2px;
-            background-color: #3b0e56;
-            height: 280px;
-        }
-
-        .floatingContainerElement {
-            position: absolute;
-        }
-
-        .carouselContainer {
-            padding: 2px;
-        }
-        .carouselShell {
-            position: absolute;
-            left: 50%;
-        }
-        .carouselInternals {
-            position: relative;
-            left: -50%;
-            min-height: 200px;
-        }
-
-        .carouselImage {
-            height: 500px;
-            width: 800px;
-            cursor: pointer;
-        }
-        .newsContentBoxLabel {
-            position: absolute;
-            display: inline-block;
-            padding: 1px 12px 2px 30px;
-            padding: 2px;
-            background-color:rgba(178, 0, 255, 0.66);
-            color: #d6fcfa;
-        }
-        .newsContentBoxImage {
-            height: 272px;
-            cursor: pointer;
-        }
-        .newsContentBoxDateLabel {
-            position: relative;
-            bottom: 2px;
-            color: #d6fcfa;
-            background-color: #686666;
-        }
-
-        .floatBelow {
-            margin-top: 559px;
-        }
-
-        .slideshowCheckboxes {
-            position:absolute;
-            bottom: 1px;
-            right: -41px;            
-        }
-
-
-    </style>
 </head>
 <body>
     <header></header>
@@ -149,58 +80,63 @@
         </div>
         <div id="middleColumn">
             <div id="divStatusMessage"></div>
-            <div id='notConnectMessage' class='displayHidden customMessageContainer'></div>
             <div id="dots"></div>
             <div>
-                <div style="display:block;">
+                <div id="carouselOutterContainer" style="display:block;">
                     <div class="indexSectionLabel floatingContainerElement">random galleries</div>
                     <div class="carouselContainer">
                         <div class="carouselShell">
                             <div id="laCarousel" class="carouselInternals flexContainer">
                                 <div onclick="assuranceArrowClick('back')"><img class="assuranceArrows" src="/Images/leftArrowOpaque02.png" /></div>
                                 <div class="carouselImageContainer">
-                                    <div id="categoryTitle" class="floatingLabel" onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;" onmouseout="forgetShowingCatDialog=true;"></div>
 
+                                    <div id="knownModelLabel" class="knownModelLabel" onclick="knownModelLabelClick()"></div>
+
+                                    <div id="categoryTitle" class="categoryTitleLabel"
+                                         onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;"
+                                         onmouseout="forgetShowingCatDialog=true;">
+                                    </div>
                                     <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="/Images/redballon.png" onclick="clickViewGallery()" />
-
 
                                     <div class="imgBottom">
                                         <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
                                         <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
                                         <div id='categoryLabel' class='carouselCategoryLabel' onclick="clickViewParentGallery()"></div>
                                         <img class="speedButton floatRight" src="Images/speedDialFaster.png" title="faster" onclick="clickSpeed('faster')" />
+                                        <img class="speedButton floatRight" src="Images/Settings-icon.png" title="carousel settings" onclick="showCarouelSettingsDialog()" />
                                     </div>
                                 </div>
                                 <div onclick="assuranceArrowClick('foward')"><img class="assuranceArrows" src="/Images/rightArrowOpaque02.png" /></div>
-                                <div id="carouselInclude" class="slideshowCheckboxes">
-                                    <div id="includeCenterfoldsCheckbox" class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('playboy', $(this).is(':checked'))" /> Include Centerfolds</div>
-                                    <div class="galleryCheckBox"><input type="checkbox" onchange="addToCarousel('archive', $(this).is(':checked'))" /> Include Archive</div>
+
+                                <div id="carouselSettingsDialog" class="dashboardToggle" title="Carousel Settings">
+                                    <div id="includeCenterfoldsCheckbox" class="galleryCheckBox">
+                                    <input type="checkbox" onchange="addToCarousel('playboy', $(this).is(':checked'))" /> Include Centerfolds</div>
+                                    <div class="galleryCheckBox">
+                                    <input type="checkbox" onchange="addToCarousel('archive', $(this).is(':checked'))" /> Include Archive</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="floatBelow">
+                <div id="latestGalleriesContainer" class="floatBelow displayHidden">
                     <div class="indexSectionLabel">latest updates</div>
-                    <div id="newsSection" class="newsSection ">
-
-                    </div>
-
-                    <div class="floatLeft">
-                        <div class="centeredDivShell randomImageContainer">
-                            <div class="centeredDivInner">
-                                <div id="connectingMsg" class="displayHidden"><img src="https://media.giphy.com/media/ZFiRiRg60SjhipvdCz/giphy.gif" /></div>
-                                <!--<div id="connectingMsg"><img src="https://media.giphy.com/media/ls5bix63j3H53E1Ebp/giphy.gif" /></div>-->
-                            </div>
-                        </div>
-                    </div>
+                    <div id="updatedGalleriesSection" class="updatedGalleriesSection"></div>
+                    <div class="clickable" onclick="onShowMoreGalleries()" >show more updated galleries</div>
                 </div>
             </div>
         </div>
         <div id="rightColumn"></div>
     </div>
     <footer></footer>
+
+    <div id="launchingService" class="floatLeft">
+        <div class="centeredDivShell randomImageContainer">
+            <div class="centeredDivInner">
+                <div id="connectingMsg" class="displayHidden"><img src="https://media.giphy.com/media/ZFiRiRg60SjhipvdCz/giphy.gif" /></div>
+                <!--<div id="connectingMsg"><img src="https://media.giphy.com/media/ls5bix63j3H53E1Ebp/giphy.gif" /></div>-->
+            </div>
+        </div>
+    </div>
 
     <div id="carouselContextMenu" class="ogContextMenu" onmouseleave="considerHidingContextMenu()">
         <div id="ctxModelName" onclick="carouselContextMenuAction('showDialog')">model name</div>
@@ -229,6 +165,7 @@
         var promoMessageRotationSpeed = 15000;
         var subdomain;
         var homePageId = 3908;
+        var updatedGalleriesCount = 15;
         $(document).ready(function () {
             includeHTML();
             $('#laCarousel').hide();
@@ -241,7 +178,7 @@
                 subdomain = "boobs";
             else
                 subdomain = params.subdomain;
-            if (subdomain == "porn") 
+            if (subdomain == "porn")
                 homePageId = 3909;
 
             setOggleFooter(subdomain, homePageId);
@@ -273,9 +210,9 @@
                             $('#dots').html('');
                             $('#connectingMsg').hide();
                             $('#laCarousel').fadeIn();
-                            loadNewsBoxes(40);
+                            loadUpdatedGalleriesBoxes(updatedGalleriesCount);
                             launchCarousel(subdomain);
-                            setOggleHeader(homePageId);
+                            setOggleHeader(homePageId, subdomain);
                             logPageHit(homePageId, "Index");
                             $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
                             if (subdomain == "porn") {
@@ -296,153 +233,14 @@
             }, 300);
             window.addEventListener("resize", resizeIndexPage);
             resizeIndexPage();
+
+            $('#carouselSettingsDialog').dialog({
+                autoOpen: false,
+                show: { effect: "fade" },
+                hide: { effect: "blind" },
+                width: "400"
+            });
         });
-
-        $.date = function (dateObject) {
-            var d = new Date(dateObject);
-            var day = d.getDate();
-            var month = d.getMonth() + 1;
-            var year = d.getFullYear();
-            if (day < 10) {
-                day = "0" + day;
-            }
-            if (month < 10) {
-                month = "0" + month;
-            }
-            var date = month + "/" + day + "/" + year;
-
-            return date;
-        };
-
-        function loadNewsBoxes(numItmes) {
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "api/ImagePage/GetLatestUpdates?items=" + numItmes,
-                success: function (latestUpdates) {
-                    if (latestUpdates.Success === "ok") {
-                        $.each(latestUpdates.LatestUpdates, function (idx, LatestUpdate) {
-                            $('#newsSection').append("<div class='newsContentBox'>" +
-                                "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
-                                "<img class='newsContentBoxImage' src='" + LatestUpdate.FolderImage + "'" +
-                                "onclick='rtpe(\"LUP\",\"home page\"," + LatestUpdate.FolderId + ")'/>" +
-                                //rtpe(eventCode, calledFrom, eventDetail)
-                                //"onclick='javascript:window.location.href=\"/album.html?folder=" + LatestUpdate.FolderId + "\";'/>" +
-                                "<div class='newsContentBoxDateLabel'>updated: " + $.date(LatestUpdate.LastModified) + "</span></div>" +
-                                "</div>");
-                        });
-                        console.log("loaded " + latestUpdates.LatestUpdates.length + " news boxes");
-                        $('.indexSectionLabel').show();
-                        resizeIndexPage();
-                    }
-                    else {
-                        //alert("loadImages: " + carouselInfo.Success);
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "ERR",
-                            Severity: 12,
-                            ErrorMessage: latestUpdates.Success,
-                            CalledFrom: "loadNewsBoxes"
-                        });
-                        //sendEmailToYourself("Error in Caraousel/loadImages", carouselInfo.Success);
-                    }
-                },
-                error: function (jqXHR) {
-                    var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "loadImages")) {
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 1,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "HitCounter.js getVisitorIdFromIp"
-                        });
-                        //sendEmailToYourself("XHR ERROR IN Carousel.JS loadImages", "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take +
-                        //    "  Message: " + errorMessage);
-                    }
-                }
-            });
-            resizeIndexPage();
-        }
-
-        function resizeIndexPage() {
-            resizePage();
-
-            $('#middleColumn').height($('#middleColumn').height() + $('#newsSection').height());
-            $('.assuranceArrows').height($('.carouselImageContainer').height());
-
-            //var carouselPadding = ($('#middleColumn').width() - $('#newsSection').width()) * .464;
-            //$('#laCarousel').css("padding-left", carouselPadding);
-            //console.log("resizeIndexPage carousel padding: " + carouselPadding)
-
-        }
-
-        function addToCarousel(root, isChecked) {
-            if (root == "archive") {
-                if (subdomain == "porn")
-                    root = "sluts";
-            }
-            loadImages(root, isChecked, 0, 50000);
-        }
-
-        function launchPromoMessages() {
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "/api/OggleBlog/GetBlogList?commentType=PRO",
-                success: function (blogCommentsContainer) {
-                    if (blogCommentsContainer.Success == "ok") {
-                        $.each(blogCommentsContainer.blogComments, function (idx, blogComment) {
-                            promoMessagesArray.push({
-                                FolderId: blogComment.Id,
-                                Link: blogComment.Link,
-                                CommentTitle: blogComment.CommentTitle,
-                                CommentText: blogComment.CommentText
-                            });
-                        });
-                        showPromoMessages();
-                    }
-                    else {
-                        $('#blogLoadingGif').hide();
-                        sendEmailToYourself("FAIL in Index.Html launchPromoMessages", "/api/OggleBlog/GetBlogList?commentType=PRO" +
-                            "<br/>Called from: " + getCookieValue("IpAddress") + "<br/>Message: " + blogCommentsContainer.Success);
-                        //alert("loadPromoMessages: " + blogCommentsContainer.Success)
-                    }
-                },
-                error: function (jqXHR) {
-                    $('#blogLoadingGif').hide();
-                    $('#imagePageLoadingGif').hide();
-                    var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "launchPromoMessages")) {
-                        sendEmailToYourself("XHR ERROR in Index.Html launchPromoMessages ", "/api/OggleBlog/GetBlogList?commentType=PRO" +
-                            "Called from: " + getCookieValue("IpAddress") + "  folderId: " + folderId + " Message: " + errorMessage);
-                    }
-                    //alert("launchPromoMessages jqXHR : " + getXHRErrorDetails(jqXHR, exception) + "settingsArray.ApiServer: " + settingsArray.ApiServer);
-                }
-            });
-        }
-
-        function showPromoMessages() {
-            $('#promoContainer').fadeIn();
-            var currentItem = promoMessagesArray[promoIdx];
-            $('#promoContainerTitle').html(currentItem.CommentTitle);
-            $('#promoContainerText').html(currentItem.CommentText);
-
-            promoMessageRotator = setInterval(function () {
-
-                if (promoIdx === promoMessagesArray.length) {
-                    promoIdx = 0;
-                }
-                currentItem = promoMessagesArray[promoIdx];
-                $('#promoContainerTitle').html(currentItem.CommentTitle);
-                $('#promoContainerText').html(currentItem.CommentText);
-                promoIdx++;
-            }, promoMessageRotationSpeed);
-        }
-
-        function killPromoMessages() {
-            $('#promoContainer').fadeOut();
-            clearInterval(promoMessageRotator);
-            setInterval(function () { showPromoMessages() }, 30000);
-        }
 
         function goToPorn() {
 

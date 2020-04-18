@@ -54,18 +54,34 @@ namespace WebApi.Models
         public string LinkStatus { get; set; }
     }
 
+    public class SlideshowItemsModel
+    {
+        public SlideshowItemsModel()
+        {
+            SlideshowItems = new List<OggleBoobleSqlContext.vwSlideshowItem>();
+        }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public List<OggleBoobleSqlContext.vwSlideshowItem> SlideshowItems { get; set; }
+        public string Success { get; set; }
+    }
+
+
     public class ImageLinksModel
     {
         public ImageLinksModel()
         {
             Files = new List<VwLinkModel>();
             SubDirs = new List<CategoryTreeModel>();
+            TrackBackItems = new List<TrackBackItem>();
         }
         public int FoldrerId { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
+        public List<TrackBackItem> TrackBackItems { get; set; }
         public List<VwLinkModel> Files { get; set; }
         public List<CategoryTreeModel> SubDirs { get; set; }
+        public string ExternalLinks { get; set; }
         public string Success { get; set; }
     }
 

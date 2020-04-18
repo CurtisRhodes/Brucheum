@@ -33,7 +33,6 @@ namespace WebApi
                 //smtpClient.Credentials = new NetworkCredential("info@curtisrhodes.com", "R@quel11");
                 //smtpClient.EnableSsl = true;
 
-
                 if (HttpContext.Current.Request.IsLocal)
                 {
                     using (SmtpClient smtpClient = new SmtpClient("smtp.office365.com", 587)
@@ -42,7 +41,7 @@ namespace WebApi
                         EnableSsl = true
                     })
                     {
-                        MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "CurtishRhodes@hotmail.com", "(local) " + subject, message);
+                        MailMessage mailMessage = new MailMessage("CurtishRhodes@hotmail.com", "info@curtisrhodes.com",  "(local) " + subject, message);
                         mailMessage.IsBodyHtml = true;
                         smtpClient.Send(mailMessage);
                         success = "ok";
@@ -52,7 +51,8 @@ namespace WebApi
                 {
                     using (SmtpClient smtpClient = new SmtpClient("relay-hosting.secureserver.net", 25))
                     {
-                        MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "info@curtisrhodes.com", subject, message);
+                        //MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "info@curtisrhodes.com", subject, message);
+                        MailMessage mailMessage = new MailMessage("curtis.rhodes@gmail.com", "info@curtisrhodes.com", subject, message);
                         mailMessage.IsBodyHtml = true;
                         smtpClient.Send(mailMessage);
                         success = "ok";

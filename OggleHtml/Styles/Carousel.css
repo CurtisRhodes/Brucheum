@@ -3,11 +3,25 @@
     height: 300px;
 }
 
-.floatingLabel {
+.knownModelLabel {
+    position: absolute;
+    bottom: 50px;
+    right: 55px;
+    color: #fff;
+    background-color: rgba(178, 0, 255, 0.66);
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 20px;
+    white-space: nowrap;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.categoryTitleLabel {
     position: absolute;
     display: inline-block;
     color: #fff;
-    background-color:rgba(178, 0, 255, 0.66);
+    background-color: rgba(178, 0, 255, 0.66);
     border-radius: 5px;
     padding: 5px;
     font-size: 22px;

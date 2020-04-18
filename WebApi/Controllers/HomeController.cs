@@ -8,7 +8,7 @@ using WebApi.OggleBoobleSqlContext;
 
 namespace WebApi
 {
-    public class LocalController : Controller
+    public class HomeController : Controller
     {
         //ResponseModel pageResponse = new ResponseModel();
 

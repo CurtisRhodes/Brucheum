@@ -143,24 +143,27 @@ namespace WebApi.Models
         //public string FileName { get; set; }
         //public string Link { get; set; }
     }
-    public class CarouselItemModel
-    {
-        public int FolderId { get; set; }
-        public int ParentId { get; set; }
-        public string FolderName { get; set; }
-        public string ModelName { get; set; }
-        public string FolderPath { get; set; }
-        public string RootFolder { get; set; }
-        public string Link { get; set; }
-        public string LinkId { get; set; }
-    }
+    //public class CarouselItemModel
+    //{
+    //    public string RootFolder { get; set; }
+    //    public int FolderId { get; set; }
+    //    public int ParentId { get; set; }
+    //    public string LinkId { get; set; }
+    //    public string FolderName { get; set; }
+    //    public string FolderPath { get; set; }
+    //    public string Link { get; set; }
+    //    public int ModelFolderId { get; set; }
+    //    public string ModelName { get; set; }
+    //    public int Height { get; set; }
+    //    public int Width { get; set; }
+    //}
 
     public class CarouselInfoModel
     {
         public CarouselInfoModel() {
-            Links = new List<CarouselItemModel>();
+            Links = new List<vwCarouselItem>();
         }
-        public List<CarouselItemModel> Links { get; set; }
+        public List<vwCarouselItem> Links { get; set; }
         public int FolderCount { get; set; }
         public string Success { get; set; }
     }

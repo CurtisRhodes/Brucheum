@@ -5,7 +5,6 @@ var userRoles = [];
 var waitingForReportThenPerformEvent = true;
 var forgetShowingCustomMessage = true;
 var connectionNotVerified = true;
-var slideShowButtonsActive = true;
 var connectionMessageShowing = false;
 var canIgetaConnectionIntervalRunning = false;
 //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
@@ -72,6 +71,22 @@ function getParams() {
     }
     return params;
 }
+
+$.date = function (dateObject) {
+    var d = new Date(dateObject);
+    var day = d.getDate();
+    var month = d.getMonth() + 1;
+    var year = d.getFullYear();
+    if (day < 10) {
+        day = "0" + day;
+    }
+    if (month < 10) {
+        month = "0" + month;
+    }
+    var date = month + "/" + day + "/" + year;
+
+    return date;
+};
 
 function resizePage() {
     //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
@@ -231,7 +246,7 @@ function logActivity(changeLogModel) {
         data: changeLogModel,
         success: function (success) {
             if (success === "ok")
-                displayStatusMessage("ok", "activity" + changeLogModel.ActivityCode + " logged");
+                displayStatusMessage("ok", "activity" + changeLogModel.Activity + " logged");
             else {
                 //alert("ChangeLog: " + success);
                 logError({
@@ -306,10 +321,6 @@ function setFolderImage(linkId, folderId, level) {
             if (success === "ok") {
                 displayStatusMessage("ok", level + " image set");
                 $('#thumbImageContextMenu').fadeOut();
-                if (typeof viewerShowing === "boolean") {
-                    if (viewerShowing)
-                        slide("next");
-                }
             }
             else {
                 alert("setFolderImage: " + success);
@@ -461,6 +472,7 @@ function authenticateEmail(usersEmail) {
         "\nYou will then be granted the access you requested."+"\nThe menu item 'Dashboard' will appear next to your 'Hello' message");
     dragableDialogClose();
 }
+
 function requestPrivilege(privilege) {
     requestedPrivileges.push(privilege);
     //alert("requestPrivilege: " + privilege);
@@ -565,19 +577,17 @@ function checkFor404(errorMessage, calledFrom) {
             CanIgetaConnectionInterval = setInterval(function () {
                 canIgetaConnectionIntervalRunning = true;
                 if (connectionNotVerified) {
-                    console.log("CanIgetaConnectionInterval");
+                    //console.log("CanIgetaConnectionInterval");
                     if (!connectionMessageShowing) {
                         connectionMessageShowing = true;
                         console.log("showing CanIgetaConnection message");
-                        $('#notConnectMessage').width($(window).width());
-                        $('#notConnectMessage').html(
-                            "<div class='centeredDivShell2'>\n" +
-                            "   <div class='centeredDivInner'>\n" +
-                            "       <div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'></div>\n" +
-                            "       <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
-                            "   </div>" +
-                            "</div>");
-                        $('#notConnectMessage').show();
+                        //$('#notConnectMessage').width($(window).width());
+
+                        $('#customMessageContainer').prop("top", "300");
+                        $('#customMessage').html(
+                            "<div><div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'></div>\n" +
+                            "     <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
+                            "</div>").show();
 
                         logError({
                             VisitorId: getCookieValue("VisitorId"),
@@ -597,7 +607,7 @@ function checkFor404(errorMessage, calledFrom) {
                     canIgetaConnectionIntervalRunning = false;
                     connectionMessageShowing = false;
                 }
-            }, 15000);
+            }, 5000);
         }
         else {
             console.log("CanIgetaConnectionInterval looping?");
@@ -607,7 +617,7 @@ function checkFor404(errorMessage, calledFrom) {
 }
 
 function verifyConnection(calledFrom) {
-    console.log("verifying connection " + calledFrom);
+    if (calledFrom !== "checkFor404") console.log("verifying connection " + calledFrom);
 
     $.ajax({
         type: "GET",
@@ -654,14 +664,24 @@ function verifyConnection(calledFrom) {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "XHR",
-                Severity: 2,
-                ErrorMessage: errorMessage,
-                CalledFrom: "checkFor404 / " + calledFrom
-            });
-            console.log("verifyConnection XHR: " + errorMessage);
+            if (errorMessage.indexOf("Not connect") > -1
+                || errorMessage.indexOf("Option not supported") > -1
+                || errorMessage.indexOf("Verify Network") > -1
+                || errorMessage.indexOf("404") > -1) {
+                if (calledFrom !== "checkFor404") {
+                    checkFor404(errorMessage, calledFrom);
+                }
+            }
+            else {
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "XHR",
+                    Severity: 2,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "checkFor404 / " + calledFrom
+                });
+            }
+            if (calledFrom !== "checkFor404") console.log("verifyConnection XHR: " + errorMessage);
         }
     });
 }
