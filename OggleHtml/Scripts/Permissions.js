@@ -18,42 +18,62 @@
         return isInRoleStep2(userpermissons, roleName);
     }
 
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Roles/GetUserRoles?userName=" + getCookieValue("UserName") + "&whichType=Assigned",
-        success: function (roleModel) {
-            if (roleModel.Success === "ok") {
-                var userPermissons = [];
-                $.each(roleModel.RoleNames, function (idx, roleName) {
-                    userPermissons.push(roleName);
-                });
-                //if (document.domain === 'localhost') alert("set user roles for " + getCookieValue("UserName") + ". " + roleModel.RoleNames.length + " added");
-                window.localStorage["userPermissons"] = userPermissons;
-                return isInRoleStep2(userPermissons, roleName);
-            }
-            else {
-                //if (document.domain === 'localhost')
-                //    alert("ERROR IN Permissions.js GetUserRoles" +
-                //        "\napi/Roles/GetUserRoles?userName=" + getCookieValue("UserName") + "\nwhichType=Assigned" +
-                //        "\nMessage: " + roleModel.Success);
-                //else {
-                //    sendEmailToYourself("ERROR IN Permissions.js GetUserRoles",
-                //        "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned" +
-                //        " Message: " + roleModel.Success);
-                //}
+    var userName = getCookieValue("UserName");
+    if (isNullorUndefined(userName)) {
+        logError({
+            VisitorId: getCookieValue("VisiorId"),
+            ActivityCode: "017",
+            Severity: 1,
+            ErrorMessage: "cookieFail userName",
+            CalledFrom: "isInRole()"
+        });
+        return false;
+    }
+    else {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned",
+            success: function (roleModel) {
+                if (roleModel.Success === "ok") {
+                    var userPermissons = [];
+                    $.each(roleModel.RoleNames, function (idx, roleName) {
+                        userPermissons.push(roleName);
+                    });
+                    //if (document.domain === 'localhost') alert("set user roles for " + getCookieValue("UserName") + ". " + roleModel.RoleNames.length + " added");
+                    window.localStorage["userPermissons"] = userPermissons;
+                    return isInRoleStep2(userPermissons, roleName);
+                }
+                else {
+                    //if (document.domain === 'localhost')
+                    //    alert("ERROR IN Permissions.js GetUserRoles" +
+                    //        "\napi/Roles/GetUserRoles?userName=" + getCookieValue("UserName") + "\nwhichType=Assigned" +
+                    //        "\nMessage: " + roleModel.Success);
+                    //else {
+                    //    sendEmailToYourself("ERROR IN Permissions.js GetUserRoles",
+                    //        "api/Roles/GetUserRoles?userName=" + userName + "&whichType=Assigned" +
+                    //        " Message: " + roleModel.Success);
+                    //}
+                    return false;
+                }
+            },
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "getUserPermissions()")) {
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "004XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "isInRole()"
+                    });
+                    //sendEmailToYourself("XHR ERROR IN Login.js getUserPermissions()", "api/Roles/GetUserRoles?userName=" + getCookieValue("UserName") + "&whichType=Assigned" +
+                    //  " Message: " + errorMessage);
+                    if (document.domain === 'localhost') alert("XHR error in getUserPermissions(): " + errorMessage);
+                }
                 return false;
             }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "getUserPermissions()")) {
-                sendEmailToYourself("XHR ERROR IN Login.js getUserPermissions()", "api/Roles/GetUserRoles?userName=" + getCookieValue("UserName") + "&whichType=Assigned" +
-                    " Message: " + errorMessage);
-                if (document.domain === 'localhost') alert("XHR error in getUserPermissions(): " + errorMessage);
-            }
-            return false;
-        }
-    });
+        });
+    }
 }
 
 function isInRoleStep2(userPermissons, roleName) {

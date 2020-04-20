@@ -242,29 +242,25 @@ namespace WebApi.Controllers
                 foreach(TrackBackItem trackBackItem in trackBackModel.TrackBackItems) { 
                     if (trackBackItem.Site == "Babepedia")
                     {
-                        bodyHtml.Append("           <div id='babapediaLink' class='leftColumnTrackbackLink'>" + trackBackItem.TrackBackLink + " target='_blank'</div>\n");
+                        bodyHtml.Append("           <div id='babapediaLink' class='leftColumnTrackbackLink'>" + trackBackItem.TrackBackLink + "</div>\n");
                     }
                     if (trackBackItem.Site == "Freeones")
                     {
-                        bodyHtml.Append("           <div id='freeonesLink' class='leftColumnTrackbackLink'>" + trackBackItem.TrackBackLink + " target='_blank'</div>\n");
+                        bodyHtml.Append("           <div id='freeonesLink' class='leftColumnTrackbackLink'>" + trackBackItem.TrackBackLink + "</div>\n");
                     }
                     if (trackBackItem.Site == "Indexxx")
                     {
-                        bodyHtml.Append("           <div id='indexxxLink' class='leftColumnTrackbackLink'>"+ trackBackItem.TrackBackLink + " target='_blank'</div>\n");
+                        bodyHtml.Append("           <div id='indexxxLink' class='leftColumnTrackbackLink'>"+ trackBackItem.TrackBackLink + "</div>\n");
                     }
                 }
             }
-
             bodyHtml.Append("      </div>\n" +
             "   </div>\n" +
             "<div id='middleColumn'>\n" +
             "   <div class='floatLeft' id='googleSearchText'>" + folderName + "</div>\n" +
             "   <div class='displayHidden'>" + folderName + " naked</div>\n" +
             "   <div class='displayHidden'>free pics of " + folderName + "</div>\n" +
-            "   <div id='divStatusMessage'></div>\n" +
-            "   <div class='floatRight' title='include all child folders' style='cursor: pointer;' onclick='startSlideShow(-1);'>slideshow</div>\n" +
-            "   <div id='imageContainer' class='flexWrapContainer'>\n");
-
+            "   <div id='divStatusMessage'></div>\n");
             //ImageLink[] imageArray = null;
             int imagesCount = 0;
             using (OggleBoobleContext db = new OggleBoobleContext())
@@ -276,26 +272,33 @@ namespace WebApi.Controllers
                     imageFrameClass = "pornFolderImageOutterFrame";
                     subDirLabelClass = "pornSubDirLabel";
                 }
+                List<VwDirTree> subDirs = db.VwDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
+                if (subDirs.Count() > 1)
+                {
+                    foreach (VwDirTree subDir in subDirs) {
+                        if (subDir.FileCount > 1) {
+                            bodyHtml.Append("   <div id='staticPageDeepSlideshow' class='floatRight displayHiddes' title='include all child folders'" +
+                            " style='cursor: pointer;' onclick='launchViewer(" + folderId + ", 1, true);'>slideshow</div>\n");
+                            break;
+                        }
+                    }
+                }
+                bodyHtml.Append("   <div id='imageContainer' class='flexWrapContainer'>\n");
+
                 // IMAGES 
                 List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
                 int idx = 0;
                 foreach (VwLink link in vwLinks)
                 {
                     bodyHtml.Append("<div id='img" + idx + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
-                         "oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='launchViewer(" + folderId + ",\"" + link.LinkId + "\")' src='" + link.Link + "'/></div>\n");
+                         "oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='launchViewer(" + folderId + ",\"" + link.LinkId + "\",false)' src='" + link.Link + "'/></div>\n");
                     imagesCount++;
                 }
-                
-                //$('#fileCount').html(imagesCount);
-
                 //  SUBFOLDERS
-                List<VwDirTree> subDirs = db.VwDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
                 string countText, fullerFolderName;
                 foreach (VwDirTree subDir in subDirs)
                 {
                     fullerFolderName = subDir.RootFolder + "/" + Helpers.GetParentPath(folderId).Replace(".OGGLEBOOBLE.COM", "");
-                    //string fullerFolderName = subDir.RootFolder + "/" + Helpers.GetCustomStaticFolderName(subDir.Id, subDir.FolderName);
-
                     countText = subDir.FileCount.ToString();
                     //int subDirFileCount = Math.Max(subDir.FileCount, subDir.SubDirCount);
                     if (subDir.SubDirCount > 1)

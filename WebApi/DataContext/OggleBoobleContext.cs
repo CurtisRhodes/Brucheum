@@ -42,6 +42,7 @@ namespace WebApi.OggleBoobleSqlContext
         public string Link { get; set; }
         public int FolderId { get; set; }
         public int ImageFolderId { get; set; }
+        public int ImageParentId { get; set; }
         public string ImageFolderName { get; set; }
         public int SortOrder { get; set; }
     }

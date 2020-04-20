@@ -127,15 +127,16 @@ function runEventActivityReport() {
         success: function (activityReport) {
             $('#dashBoardLoadingGif').hide();
             if (activityReport.Success === "ok") {
-                var kludge = "<table>";
+                var kludge = "<table class='noWrap' >";
                 //kludge += "<tr><th>Ip Address</th><th>City</th><th>State</th><th>Country</th><th>Event</th><th>Called From</th><th>Details</th><th>hitdate</th><th>hit time</th></tr>";
-                kludge += "<tr><th>Ip Address</th><th>City</th><th>Country</th><th>Event</th><th>Called From</th><th>Details</th><th>hitdate</th><th>hit time</th></tr>";
+                kludge += "<tr><th>Ip Address</th><th>City</th><th>Country</th><th>hit time </th><th>Event</th><th>Called From</th><th>Details</th></tr>";
                 $.each(activityReport.Items, function (idx, obj) {
                     kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
                     //kludge += "<td>" + obj.Region + "</td>;
                     kludge += "<td>" + obj.Country + "</td>";
-                    kludge += "<td>" + obj.Event + "</td><td>" + obj.CalledFrom.replace('OGGLEBOOBLE.COM', '') + "</td><td>" + obj.Detail + "</td>";
-                    kludge += "<td>" + obj.HitDate + "</td><td>" + obj.HitTime + "</td></tr>";
+                    kludge += "<td>" + obj.HitTime + "  </td>";
+                    kludge += "<td>  " + obj.Event + "</td><td>" + obj.CalledFrom.replace('OGGLEBOOBLE.COM', '') + "</td><td>" + obj.Detail + "</td></tr>";
+                    //kludge += "<td>" + obj.HitDate + "</td><td>" + obj.HitTime + "</td></tr>";
                 });
                 kludge += "</table>";
                 $("#divStandardReportArea").html(kludge);

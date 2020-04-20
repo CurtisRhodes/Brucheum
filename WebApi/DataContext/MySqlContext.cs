@@ -100,7 +100,7 @@ namespace WebApi.MySqDataContext
     public class DailyActivityReport
     {
         [Key]
-        [Column(Order = 0)]
+        public string PkId { get; set; }
         public string IpAddress { get; set; }
         public string City { get; set; }
         public string Region { get; set; }
@@ -108,11 +108,7 @@ namespace WebApi.MySqDataContext
         public string Event { get; set; }
         public string CalledFrom { get; set; }
         public string Detail { get; set; }
-        [Key]
-        [Column(Order = 2)]
         public string HitDate { get; set; }
-        [Key]
-        [Column(Order = 1)]
         public string HitTime { get; set; }
     }
 

@@ -17,31 +17,20 @@ $(document).ready(function () {
     //alert("staticPage.js");
     includeHTML();
     //$('#fileCount').html(staticPageImagesCount);
-    resizeStaticPage();
+    params = getParams();
+    var calledFrom = params.calledFrom;
+    setOggleHeader(params.folder, "blank");
+    var dots = "";
     loadSettings();
-    var waiter = setInterval(function () {
+    var loadSettingsWaiter = setInterval(function () {
         if (settingsArray.ApiServer === undefined) {
-           //dots += ". ";
-           // $('#dots').html(dots);
+            dots += "?. ";
+            $('#dots').html(dots);
         }
         else {
-            clearInterval(waiter);
-            //setAlbumPageHeader(staticPageFolderId, true);
-            setOggleHeader(staticPageFolderId);
-            //setOggleFooter(currentFolderRoot, staticPageFolderId);
-
-            params = getParams();
-            var calledFrom = params.calledFrom;
-            if (calledFrom === "internal")
-                logPageHit(staticPageFolderId, "static internal");
-            else {
-                //if (verbosity > 14) {
-                //    sendEmailToYourself("external link call ", staticPageFolderName + "<br/>called From: " + calledFrom + "<br/>ip: " + getCookieValue("IpAddress"));
-                //}
-
-                if (calledFrom === undefined)
-                    calledFrom = "old link";
-
+            clearInterval(loadSettingsWaiter);
+            $('#dots').html('');
+            if (!isNullorUndefined(calledFrom)) {
                 var logEventModel = {
                     VisitorId: getCookieValue("VisitorId"),
                     EventCode: "XLC",
@@ -49,26 +38,14 @@ $(document).ready(function () {
                     CalledFrom: staticPageFolderId
                 };
                 logEventActivity(logEventModel);
-
             }
-
-            //setOggleHeader(currentFolderRoot, staticPageFolderId, false);
-            //setOggleFooter(currentFolderRoot, staticPageFolderId);
-
-            setTimeout(function () { getBreadCrumbs(staticPageFolderId);}, 800);
-
-
-
-            //setOggleHeader(currentFolderRoot, staticPageFolderId);
-            //setOggleFooter(currentFolderRoot, staticPageFolderId);
-            //logPageHit(staticPageFolderId, "Static Page"); //, getCookieValue("VisitorId"), "Static Page");
-
-            //$('#footerMessage').html("staticPageFolderName: " + ipAddress);
+            logPageHit(staticPageFolderId, "static page");
+            getBreadCrumbs(staticPageFolderId);
+            resizeStaticPage();
+            $(window).resize(resizeStaticPage());
             $('#feedbackBanner').click(showFeedbackDialog).fadeIn();
-
         }
     }, 300);
-    $(window).resize(resizeStaticPage());
 });
 
 function resizeStaticPage() {

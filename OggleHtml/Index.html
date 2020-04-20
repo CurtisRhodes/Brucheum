@@ -165,7 +165,7 @@
         var promoMessageRotationSpeed = 15000;
         var subdomain;
         var homePageId = 3908;
-        var updatedGalleriesCount = 15;
+        var updatedGalleriesCount = 25;
         $(document).ready(function () {
             includeHTML();
             $('#laCarousel').hide();
@@ -181,13 +181,9 @@
             if (subdomain == "porn")
                 homePageId = 3909;
 
-            setOggleFooter(subdomain, homePageId);
+            setOggleHeader(homePageId, subdomain);
             loadSettings();
             var dots = ""
-            setTimeout(function () {
-                if (connectionNotVerified)
-                    $('#connectingMsg').show();
-            }, 3000);
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
                     dots += "~ ";
@@ -196,23 +192,16 @@
                 }
                 else {
                     clearInterval(waiter);
-                    $('#dots').html("");
-                    verifyConnection("index.html");
                     //$('#footerMessage').html("loading header");
+                    checkFor404("start", "Index");
                     var verifyConnectionWaiter = setInterval(function () {
-                        if (connectionNotVerified) {
-                            dots += ". ";
-                            $('#dots').html(dots);
-                            //console.log("connectionNotVerified: " + connectionNotVerified);
-                        }
-                        else {
+                        if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
                             $('#dots').html('');
                             $('#connectingMsg').hide();
                             $('#laCarousel').fadeIn();
                             loadUpdatedGalleriesBoxes(updatedGalleriesCount);
                             launchCarousel(subdomain);
-                            setOggleHeader(homePageId, subdomain);
                             logPageHit(homePageId, "Index");
                             $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
                             if (subdomain == "porn") {
@@ -228,7 +217,11 @@
                             }
                             $('#carouselInclude').show();
                         }
-                    }, 300);
+                        else {
+                            dots += ". ";
+                            $('#dots').html(dots);
+                        }
+                    }, 600);
                 }
             }, 300);
             window.addEventListener("resize", resizeIndexPage);

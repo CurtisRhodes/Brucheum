@@ -11,7 +11,7 @@ var Yincrimentor = 10;
 var exploderSpeed = 18;
 var imageViewerFolderId;
 var imageViewerArray = {};
-var imageViewerIndex = 0;
+var imageViewerIndex = 1;
 var imageViewerIntervalTimer;
 var imageViewerFolderName;
 var albumFolderId;
@@ -21,19 +21,19 @@ var ipAddress;
 var visitorId;
 var sessionCount = 0;
 var slideShowButtonsActive = true;
+var includeSubFolders;
 
-function launchViewer(folderId, startItem, folderName) {
-
-    var includeSubFolders = false;
-    imageViewerFolderName = folderName;
+function launchViewer(folderId, startItem, showAllChildren) {
     imageViewerFolderId = folderId;
+    includeSubFolders = showAllChildren;
+    if (isNullorUndefined(includeSubFolders))
+        includeSubFolders = false;
     sessionCount = 0;
     $('#imageContainer').fadeOut();
-
-    getFolderArray(folderId, startItem, includeSubFolders);
+    getFolderArray(folderId, startItem);
 }
 
-function getFolderArray(folderId, startItem, includeSubFolders) {
+function getFolderArray(folderId, startItem) {
     try {
         albumFolderId = folderId;
         var start = Date.now();
@@ -45,21 +45,26 @@ function getFolderArray(folderId, startItem, includeSubFolders) {
             success: function (slideshowItemModel) {
                 //$('#imagePageLoadingGif').hide();
                 if (slideshowItemModel.Success === "ok") {
-
+                    imageViewerFolderName = slideshowItemModel.FolderName;
                     imageViewerArray = slideshowItemModel.SlideshowItems;
                     //$('#imageViewerHeaderTitle').html(slideshowItemModel.RootFolder + "/" + slideshowItemModel.FolderName + "/" + slideshowItemModel.ImageFolderName);
                     $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName);
 
-                    for (var i = 0; i < imageViewerArray.length; i++) {
-                        if (imageViewerArray[i].LinkId === startItem) {
-                            imageViewerIndex = i;
-                            break;
-                        }
-                    };
+                    if (!includeSubFolders) {
+                        for (var i = 0; i < imageViewerArray.length; i++) {
+                            if (imageViewerArray[i].LinkId === startItem) {
+                                imageViewerIndex = i;
+                                break;
+                            }
+                        };
+                    }
                     $('#imageViewerDialog').show();
                     resizePage();
                     resizeViewer();
                     explodeViewer();
+
+                    if (includeSubFolders)
+                        runSlideShow('start');
 
                     //$('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
                     var delta = (Date.now() - start) / 1000;
@@ -111,84 +116,89 @@ function getFolderArray(folderId, startItem, includeSubFolders) {
 function verifyUser() {
     visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(visitorId)) {
-        if (!isNullorUndefined(ipAddress)) {
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "api/HitCounter/GetVisitorIdFromIP?ipAddress=" + ipAddress,
-                success: function (getInfoModel) {
-                    if (getInfoModel.Success === "ok") {
-                        visitorId = getInfoModel.VisitorId;
-                        setCookieValue("VisitorId", visitorId);
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "WER",
-                            Severity: 2,
-                            ErrorMessage: "had to get visitorId from ip: " + ipAddress,
-                            CalledFrom: "SlideShow.js launchViewer"
-                        });
-                    }
-                    else {
-                        if (getInfoModel.Success === "not found") {
-                            logError({
-                                VisitorId: getCookieValue("VisitorId"),
-                                ActivityCode: "BAD",
-                                Severity: 2,
-                                ErrorMessage: "could not even find visitorId with Ip: " + ipAddress,
-                                CalledFrom: "SlideShow.js launchViewer GetVisitorIdFromIP"
-                            });
-                        }
-                        else {
-                            logError({
-                                VisitorId: getCookieValue("VisitorId"),
-                                ActivityCode: "BAD",
-                                Severity: 2,
-                                ErrorMessage: getInfoModel.Success,
-                                CalledFrom: "SlideShow.js launchViewer GetVisitorIdFromIP"
-                            });
-                        }
-                    }
-                },
-                error: function (jqXHR) {
-                    var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "launchViewer")) {
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 2,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "SlideShow.js launchViewer GetVisitorIdFromIP"
-                        });
-                    }
-                }
-            });
-        }
-        else {
-            logError({
-                VisitorId: "undefined",
-                ActivityCode: "SVD",
-                Severity: 2,
-                ErrorMessage: "No visitorId and no Ip. NOT Calling LogVisitor",
-                CalledFrom: "slideshow.js / launchViewer"
-            });
-            //logVisitor(folderId, "launch viewer");
-        }
+        // trmporary kludege while getIPinfo down
+        visitorId = "unknown";
+        setCookieValue("VisitorId", "unknown");
+        //if (!isNullorUndefined(ipAddress)) {
+        //    $.ajax({
+        //        type: "GET",
+        //        url: settingsArray.ApiServer + "api/HitCounter/GetVisitorIdFromIP?ipAddress=" + ipAddress,
+        //        success: function (getInfoModel) {
+        //            if (getInfoModel.Success === "ok") {
+        //                visitorId = getInfoModel.VisitorId;
+        //                setCookieValue("VisitorId", visitorId);
+        //                logError({
+        //                    VisitorId: getCookieValue("VisitorId"),
+        //                    ActivityCode: "WER",
+        //                    Severity: 2,
+        //                    ErrorMessage: "had to get visitorId from ip: " + ipAddress,
+        //                    CalledFrom: "SlideShow.js launchViewer"
+        //                });
+        //            }
+        //            else {
+        //                if (getInfoModel.Success === "not found") {
+        //                    logError({
+        //                        VisitorId: getCookieValue("VisitorId"),
+        //                        ActivityCode: "BAD",
+        //                        Severity: 2,
+        //                        ErrorMessage: "could not even find visitorId with Ip: " + ipAddress,
+        //                        CalledFrom: "SlideShow.js launchViewer GetVisitorIdFromIP"
+        //                    });
+        //                }
+        //                else {
+        //                    logError({
+        //                        VisitorId: getCookieValue("VisitorId"),
+        //                        ActivityCode: "BAD",
+        //                        Severity: 2,
+        //                        ErrorMessage: getInfoModel.Success,
+        //                        CalledFrom: "SlideShow.js launchViewer GetVisitorIdFromIP"
+        //                    });
+        //                }
+        //            }
+        //        },
+        //        error: function (jqXHR) {
+        //            var errorMessage = getXHRErrorDetails(jqXHR);
+        //            if (!checkFor404(errorMessage, "launchViewer")) {
+        //                logError({
+        //                    VisitorId: getCookieValue("VisitorId"),
+        //                    ActivityCode: "XHR",
+        //                    Severity: 2,
+        //                    ErrorMessage: errorMessage,
+        //                    CalledFrom: "SlideShow.js launchViewer GetVisitorIdFromIP"
+        //                });
+        //            }
+        //        }
+        //    });
+        //}
+        //else {
+        //    logError({
+        //        VisitorId: "undefined",
+        //        ActivityCode: "SVD",
+        //        Severity: 2,
+        //        ErrorMessage: "No visitorId and no Ip. NOT Calling LogVisitor",
+        //        CalledFrom: "slideshow.js / launchViewer"
+        //    });
+        //    //logVisitor(folderId, "launch viewer");
+        //}
     }
     ipAddress = getCookieValue("IpAddress");
     if (isNullorUndefined(ipAddress)) {
-        if (!isNullorUndefined(visitorId)) {
-            getIpFromVisitorId(visitorId, "launchViewer");
-        }
-        else {
-            logError({
-                VisitorId: visitorId,
-                ActivityCode: "SIP",
-                Severity: 4,
-                ErrorMessage: "ipAddress AND visitorid undefined",
-                CalledFrom: "slideshow.js / launchViewer"
-            });
-        }
-        //sendEmailToYourself("830 PROBLEMO 1 in slideshow.js.slide.", "  visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + imageViewerFolderId);
-        // logVisitor(imageViewerFolderId, "launch viewer");
+        // trmporary kludege while getIPinfo down
+        ipAddress = "unknown";
+        setCookieValue("IpAddress", "unknown");
+        //if (!isNullorUndefined(visitorId)) {
+        //    getIpFromVisitorId(visitorId, "launchViewer");
+        //}
+        //else {
+        //    logError({
+        //        VisitorId: visitorId,
+        //        ActivityCode: "SIP",
+        //        Severity: 4,
+        //        ErrorMessage: "ipAddress AND visitorid undefined",
+        //        CalledFrom: "slideshow.js / launchViewer"
+        //    });
+        //}
+        //sendEmailToYourself("830 PROBLEMO 1 in slideshow.js.slide.", " ");
     }
     if (isNullorUndefined(imageViewerFolderId)) {
         if (!isNullorUndefined(folderName)) {
@@ -248,7 +258,7 @@ function incrimentExplode() {
             if (typeof staticPageFolderName === 'string') {
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "BAD",
+                    ActivityCode: "IS1",
                     Severity: 4,
                     ErrorMessage: "Issue in SlideShow. StaticPageFolderName: " + staticPageFolderName,
                     CalledFrom: "slideshow.js explodeViewer"
@@ -260,7 +270,7 @@ function incrimentExplode() {
             else {
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "BAD",
+                    ActivityCode: "IS2",
                     Severity: 4,
                     ErrorMessage: "Issue in SlideShow  typeof staticPageFolderName",
                     CalledFrom: "slideshow.js explodeViewer"
@@ -305,7 +315,7 @@ function getPageIdFromPageName(calledFrom) {
                     if (getInfoModel.Success === "page not found") {
                         logError({
                             VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "BAD",
+                            ActivityCode: "P2F",
                             Severity: 2,
                             ErrorMessage: "unable to get pageId from folderName: " + imageViewerFolderName,
                             CalledFrom: calledFrom
@@ -314,7 +324,7 @@ function getPageIdFromPageName(calledFrom) {
                     else {
                         logError({
                             VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "BAD",
+                            ActivityCode: "P3F",
                             Severity: 2,
                             ErrorMessage: getInfoModel.Success,
                             CalledFrom: calledFrom
@@ -413,6 +423,10 @@ function slide(direction) {
             $('#viewerImageContainer').css('left', ($(window).width() - $('#viewerImage').width()) / 2);
 
             $('#viewerImage').show();
+            if (includeSubFolders) {
+                $('#imageViewerHeaderTitle').html(imageViewerArray[imageViewerIndex].ImageFolderName);
+
+            }
             resizeViewer();
             sessionCount++;
             $('#viewerImage').css("transform", "translateX(0)");
@@ -461,7 +475,6 @@ function runSlideShow(action) {
     }
     if (action === 'pause') {
         if (slideShowRunning) {
-
             clearInterval(imageViewerIntervalTimer);
             $('#txtStartSlideShow').html("||");
         }
@@ -620,7 +633,7 @@ function slideshowCtxMnuAction(action) {
             break;
         case "showImageCommentDialog":
             if (slideShowRunning) {
-                alert("pause here");
+                //alert("pause here");
                 runSlideShow('pause');
             }
             slideShowButtonsActive = false;
@@ -638,7 +651,11 @@ function slideshowCtxMnuAction(action) {
             });
             break;
         case "explode":
-            rtpe("EXP", albumFolderId, imageViewerArray[imageViewerIndex].Link);
+            if (!isLoggedIn()) {
+                alert("You must be logged in to use this feature");
+            }
+            else
+                rtpe("EXP", albumFolderId, imageViewerArray[imageViewerIndex].Link);
             break;
         case "Archive":
         case "Copy":

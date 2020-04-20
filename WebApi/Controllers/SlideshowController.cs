@@ -10,15 +10,17 @@ using WebApi.OggleBoobleSqlContext;
 
 namespace WebApi.Controllers
 {
+
     [EnableCors("*", "*", "*")]
     public class SlideshowController : ApiController
     {
+        SlideshowItemsModel slideshowItemModel = null;
         [HttpGet]
         public SlideshowItemsModel GetSlideShowItems(int folderId, bool includeSubFolders)
         {
             var timer = new System.Diagnostics.Stopwatch();
             timer.Start();
-            var slideshowItemModel = new SlideshowItemsModel();
+            slideshowItemModel = new SlideshowItemsModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
@@ -38,13 +40,7 @@ namespace WebApi.Controllers
 
                     if (includeSubFolders)
                     {
-                        List<CategoryFolder> subFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
-                        foreach (CategoryFolder subFolder in subFolders)
-                        {
-                            slideshowItemModel.SlideshowItems.AddRange(db.Database.SqlQuery<vwSlideshowItem>(
-                                "select row_number() over(order by SortOrder, FolderId, LinkId) 'Index', * from OggleBooble.vwSlideshowItems " +
-                                "where FolderId = " + subFolder.Id).ToList());
-                        }
+                        GetChildGalleryItems(folderId, db);
                     }
                 }
                 slideshowItemModel.Success = "ok";
@@ -57,5 +53,20 @@ namespace WebApi.Controllers
             System.Diagnostics.Debug.WriteLine("GetImageLinks took: " + timer.Elapsed);
             return slideshowItemModel;
         }
+
+        private void GetChildGalleryItems(int parentFolderId, OggleBoobleContext db)
+        {
+            slideshowItemModel.SlideshowItems.AddRange(db.Database.SqlQuery<vwSlideshowItem>(
+                "select row_number() over(order by LinkId) 'Index', * from OggleBooble.vwSlideshowItems " +
+                "where ImageParentId = " + parentFolderId).ToList());
+            
+            List<CategoryFolder> subFolders = db.CategoryFolders.Where(f => f.Parent == parentFolderId).ToList();
+            foreach (CategoryFolder subFolder in subFolders)
+            {
+                GetChildGalleryItems(subFolder.Id, db);
+            }
+        }
     }
+
+
 }

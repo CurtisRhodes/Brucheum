@@ -1,4 +1,9 @@
-﻿.dashboardContainer {
+﻿.noWrap td {
+    white-space: nowrap;
+    padding-right: 4px;
+}
+
+.dashboardContainer {
     margin-top: 11px;
     margin-left: 15px;
     display: flex;

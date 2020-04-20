@@ -182,21 +182,34 @@ function showLoginDialog() {
                             EventDetail: loginSuccessModel.UserName + " logged in Ip: " + ipAddress,
                             CalledFrom: "showLoginDialog"
                         });
-
-                        //sendEmailToYourself("Login Attempt", "IpAddress: " + ipAddress);
+                    //sendEmailToYourself("Login Attempt", "IpAddress: " + ipAddress);
                     //"getVisitorInfoFromIPAddressSuccessModel.UserName: " + getVisitorInfoFromIPAddressSuccessModel.UserName +
                     //" (Had to lookup thier ip address) IpAddress: " + ipAddress);
                 }
                 else {
-                    sendEmailToYourself("ERROR IN LOGIN. GetVisitorIdFromIP Fail", "Message: " + successModel.Success);
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "JQE",
+                        Severity: 1,
+                        ErrorMessage: successModel.Success,
+                        CalledFrom: "showLoginDialog()"
+                    });
+                    //sendEmailToYourself("ERROR IN LOGIN. GetVisitorIdFromIP Fail", "Message: " + successModel.Success);
                     //alert("GetVisitorIdFromIP: " + successModel.Success);
                 }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errorMessage, "onLoginClick")) {
-                    sendEmailToYourself("XHR ERROR IN Login.JS onLoginClick", "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress +
-                        " Message: " + errorMessage);
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "showLoginDialog()"
+                    });
+                    //sendEmailToYourself("XHR ERROR IN Login.JS onLoginClick", "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress +
+                    //    " Message: " + errorMessage);
                 }
             }
         });
@@ -241,7 +254,14 @@ function attemptLogin(userName, clearPasswod) {
                     var userName = getCookieValue("UserName");
 
                     if (isNullorUndefined(userName)) {
-                        sendEmailToYourself("LOGING FAIL", "User cookie not set");
+                        logError({
+                            VisitorId: getCookieValue("VisiorId"),
+                            ActivityCode: "Q12",
+                            Severity: 13,
+                            ErrorMessage: "User cookie not set",
+                            CalledFrom: "attemptLogin()"
+                        });
+                        //sendEmailToYourself("LOGING FAIL", "User cookie not set");
                         if (document.domain === 'localhost')  // #DEBUG
                             alert("LOGING FAIL.  User cookie not set");
                         return;
@@ -323,15 +343,19 @@ function deleteCookie() {
     document.cookie = "expires:" + expiryDate.toUTCString();
     if (!isNullorUndefined(getCookieValue("UserName"))) 
     {
-        sendEmailToYourself("Delete Cookie Fail", "After Logout UserName: " + getCookieValue("UserName"));
+        logError({
+            VisitorId: getCookieValue("VisitorId"),
+            ActivityCode: "JQ6",
+            Severity: 2,
+            ErrorMessage: "Delete Cookie Fail After Logout UserName: " + getCookieValue("UserName"),
+            CalledFrom: "showLoginDialog"
+        });
+        //sendEmailToYourself("Delete Cookie Fail", "After Logout UserName: " + getCookieValue("UserName"));
         if (document.domain === 'localhost')  // #DEBUG
             alert("After Logout User: " + getCookieValue("UserName"));
-
-
         if (document.cookie) {
             if (document.domain === 'localhost')
                 alert("cookie failed to delete: " + document.cookie);
-
         }
         //console.log("deleteCookie()  document.cookie: " + document.cookie);
     }
