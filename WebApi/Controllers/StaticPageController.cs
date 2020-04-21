@@ -37,7 +37,7 @@ namespace WebApi.Controllers
             //metaTagResults.MetaTags.Add(new MetaTagModel() { TagId = metaTag.TagId, FolderId = metaTag.FolderId, Tag = metaTag.Tag });
 
             if (thisFolder.Parent > 1)
-                GetMetaTagsRecurr(metaTagResults, thisFolder.Parent,  db);
+                GetMetaTagsRecurr(metaTagResults, thisFolder.Parent, db);
         }
 
         //public class MetaTagResultsModel
@@ -69,7 +69,7 @@ namespace WebApi.Controllers
                 GetMetaTagsRecurr(metaTagResults, folderId, db);
                 foreach (MetaTagModel metaTag in metaTagResults.MetaTags)
                     articleTagString += metaTag.Tag + ",";
-                
+
                 metaTagResults.MetaDescription = "free naked pics of " + folderName;
             }
 
@@ -130,7 +130,7 @@ namespace WebApi.Controllers
             string success = "";
             {
                 try
-                { 
+                {
                     using (OggleBoobleContext db = new OggleBoobleContext())
                     {
                         //SignalRHost.ProgressHub.PostToClient("Creating static files");
@@ -138,7 +138,8 @@ namespace WebApi.Controllers
                         //totalFiles = Math.Max(vwDirTree.GrandTotalFiles, vwDirTree.TotalFiles);
                         //SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
                         CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                        success = CreatePage(folderId, categoryFolder.RootFolder, categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM",""), db, recurr);
+                        success = CreatePage(folderId, categoryFolder.RootFolder, 
+                            categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", ""), db, recurr);
                     }
                 }
                 catch (Exception e) { success = Helpers.ErrorDetails(e); }
@@ -155,13 +156,13 @@ namespace WebApi.Controllers
 
                 string staticContent =
                     "<!DOCTYPE html>\n<html lang='en'>\n" + HeadHtml(folderId, folderName) +
-                    "\n<body style='margin-top:105px'>\n<header></header>" +
-                    GalleryPageBodyHtml(folderId, folderName, rootFolder) + "<footer></footer>\n" +
+                    "\n<body style='margin-top:105px'>\n<header>" + StaticPageHeader(folderId, rootFolder) + "</header>" +
+                    GalleryPageBodyHtml(folderId, folderName, rootFolder) +
+                    "<footer></footer>\n" +
                     // Slideshow() + CommentDialog() + ModelInfoDialog() +
                     "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
                     "<script>var staticPageFolderId=" + folderId + "; " +
                     "var staticPageFolderName='" + folderName + "'; " +
-                    //"var staticPageImagesCount='" + imagesCount + "'; " +
                     "var currentFolderRoot='" + rootFolder + "';</script>\n" +
                     "<div w3-include-html='/Snippets/Slideshow.html'></div>\n" +
                     "<div w3-include-html='/Snippets/AdminDialogs.html'></div>\n" +
@@ -169,7 +170,7 @@ namespace WebApi.Controllers
                     "<div w3-include-html='/Snippets/Register.html'></div>\n" +
                     "<script src='/scripts/StaticPage.js'></script>\n" +
                     "\n</body>\n</html>";
-                //success = WriteFileToDisk(staticContent, rootFolder, staticFolderName);
+
                 success = WriteFileToDisk(staticContent, rootFolder, folderName);
                 if (success == "ok")
                 {
@@ -193,41 +194,107 @@ namespace WebApi.Controllers
             return success;
         }
 
-        private string WriteFileToDisk(string staticContent, string rootFolder, string pageTitle)
+        private string StaticPageHeader(int folderId, string rootFolder)
         {
-            string success = "";
-            try
-            {
-                // todo  write the image as a file to x.ogglebooble  4/1/19
-                string tempFilePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data");
-
-                using (var staticFile = System.IO.File.Open(tempFilePath + "/temp.html", System.IO.FileMode.Create))
+            BreadCrumbModel breadCrumbModel = new BreadCrumbsController().Get(folderId);
+            StringBuilder breadCrumbString = new StringBuilder("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + folderId + ",\"" +
+                      rootFolder + "\")'>home  &#187</a>");
+                int breadcrumbCount = breadCrumbModel.BreadCrumbs.Count;
+                for (int i = breadcrumbCount - 1; i >= 0; i--)
                 {
-                    Byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(staticContent);
-                    staticFile.Write(byteArray, 0, byteArray.Length);
+                    if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder)
+                    {
+                        breadCrumbString.Append("<a class='inactiveBreadCrumb' " +
+                        (breadCrumbModel.BreadCrumbs.Count - i) + "," +
+                        breadCrumbModel.FolderName + "\",\"" +
+                        breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" +
+                        breadCrumbModel.BreadCrumbs[i].ParentId + "\",\"" +
+                        breadCrumbModel.RootFolder + "\"); forgetHomeFolderInfoDialog=false;' onmouseout='forgetHomeFolderInfoDialog=true;' " +
+                        "onclick='showEitherModelorFolderInfoDialog(" + (breadCrumbModel.BreadCrumbs.Count - i) + ",\"" +
+                        breadCrumbModel.FolderName + "\",\"" +
+                        breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" +
+                        breadCrumbModel.BreadCrumbs[i].ParentId + "\",\"" +
+                        breadCrumbModel.RootFolder + "\")' >" +
+                        breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") +
+                        "</a>");
+                    }
+                    else
+                    {
+                        breadCrumbString.Append("<a class='activeBreadCrumb'" +
+                            //	HBX	Home Breadcrumb Clicked
+                            "href='javascript:rtpe(\"BCC\"," + folderId + "," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
+                            breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
+                    }
                 }
-                FtpWebRequest webRequest = null;
-                //string ftpPath = ftpHost + "/pages.OGGLEBOOBLE.COM/";
-                string ftpPath = ftpHost + "oggle/static";
 
-                if (rootFolder == "")
-                    webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + pageTitle + ".html");
-                else
-                    webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + rootFolder + "/" + pageTitle + ".html");
-                webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
-                webRequest.Method = WebRequestMethods.Ftp.UploadFile;
-                using (System.IO.Stream requestStream = webRequest.GetRequestStream())
-                {
-                    byte[] fileContents = System.IO.File.ReadAllBytes(tempFilePath + "/temp.html");
-                    webRequest.ContentLength = fileContents.Length;
-                    requestStream.Write(fileContents, 0, fileContents.Length);
-                    requestStream.Flush();
-                    requestStream.Close();
-                }
-                success = "ok";
-            }
-            catch (Exception e) { success = Helpers.ErrorDetails(e); }
-            return success;
+            return
+                "   <div id='divTopLeftLogo' class='bannerImageContainer'></div>\n" +
+                "   <div class='headerBodyContainer'>\n" +
+                "       <div id='' class='headerTopRow'>\n" +
+                "           <div id='bannerTitle' class='headerTitle'></div >\n" +
+                //"                  <img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
+                //"                   title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +
+                //"                   \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
+                //"                   \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
+                "           <div id='subheaderContent' class='topLinkRow'>KKK</div>\n<span id='archiveLink'></span><span id='rankerLink'></span><span id='playboyLink'></span>\n" +
+                "           <div class='OggleSearchBox'>\n" +
+                "               <span id='notUserName' title='this is a progressive single letter search. Esc clears search.'>search</span>" +
+                "                   <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
+                "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
+                "           </div>\n" +
+                "       </div>\n" +
+                "       <div class='headerBottomRow'>\n" +
+                "           <div id='headerMessage' class='bottomLeftBottomHeaderArea'></div>\n" +
+                "           <div id='breadcrumbContainer' class='breadCrumbArea'>" + breadCrumbString.ToString() + "</div>\n" +
+                "           <div class='menuTabs replaceableMenuItems'>\n" +
+                "               <div id='twinsLink' class='menuTabs displayHidden'>\n" +
+                "                   <a href='/album.html?folder=3904'><img src='/Images/geminiSymbol1.png' title='Hef likes twins' class='badgeImage'></a>" +
+                "               </div>\n" +
+                "               <div id='breastfulPlaymatesLink' class='menuTabs displayHidden'>\n" +
+                "                   <a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>" +
+                "               </div>\n" +
+                "               <div id='pmoyLink' class='menuTabs displayHidden'>\n" +
+                "                   <a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>" +
+                "               </div>\n" +
+                "               <div id='blackCenterfoldsLink' class='menuTabs displayHidden'>\n" +
+                "                   <div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>\n" +
+                "               </div>\n" +
+                "           </div>\n" +
+                "           <div id='divLoginArea' class='loginArea'>\n" +
+                "               <div id='optionLoggedIn' class='displayHidden'>\n" +
+                "                   <div class='menuTab' id='dashboardMenuItem' class='displayHidden'><a href='/Dashboard.html'>Dashboard</a></div>\n" +
+                "                   <div class='menuTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
+                "                   <div class='menuTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
+                "               </div>\n" +
+                "               <div id='optionNotLoggedIn'>\n" +
+                "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
+                "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:showLoginDialog()'>Log In</a></div>\n" +
+                "               </div>\n" +
+                "           </div>\n" +
+                "       </div>\n" +
+                "   </div>\n" +
+                "<div id='draggableDialog' class='oggleDraggableDialog'>\n" +
+                "   <div id='draggableDialogHeader'class='oggleDraggableDialogHeader'>" +
+                "       <div id='draggableDialogTitle' class='oggleDraggableDialogTitle'></div>" +
+                "       <div id='draggableDialogCloseButton' class='oggleDraggableDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'></div>\n" +
+                "   </div>\n" +
+                "   <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
+                "</div>\n" +
+                "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
+                "<div id='customMessageContainer' class='centeredDivShell'>\n" +
+                "   <div class='centeredDivInner'>\n" +
+                "       <div id='customMessage' class='displayHidden' ></div>\n" +
+                "   </div>\n" +
+                "</div>\n" +
+                "<div id='feedbackDialog' class='modalDialog' title='Feedback'>\n" +
+                "   <div><input type='radio' name='feedbackRadio' value='complement' checked='checked'> complement\n" +
+                "       <input type='radio' name='feedbackRadio' value='suggestion'> suggestion\n" +
+                "       <input type='radio' name='feedbackRadio' value='report error'> report error" +
+                "   </div>\n" +
+                "   <div id='feedbackDialogSummerNoteTextArea'></div>\n" +
+                "   <div id='btnfeedbackDialogSave' class='roundendButton' onclick='saveFeedbackDialog(" + folderId + ")'>Send</div>\n" +
+                "   <div id='btnfeedbackDialogCancel' class='roundendButton' onclick='closeFeedbackDialog()'>Cancel</div>\n" +
+                "</div>";
         }
 
         private string GalleryPageBodyHtml(int folderId, string folderName, string rootFolder)
@@ -340,8 +407,44 @@ namespace WebApi.Controllers
             return bodyHtml.ToString();
         }
 
+        private string WriteFileToDisk(string staticContent, string rootFolder, string pageTitle)
+        {
+            string success = "";
+            try
+            {
+                // todo  write the image as a file to x.ogglebooble  4/1/19
+                string tempFilePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data");
 
-       int deepChildCount = 0;
+                using (var staticFile = System.IO.File.Open(tempFilePath + "/temp.html", System.IO.FileMode.Create))
+                {
+                    Byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(staticContent);
+                    staticFile.Write(byteArray, 0, byteArray.Length);
+                }
+                FtpWebRequest webRequest = null;
+                //string ftpPath = ftpHost + "/pages.OGGLEBOOBLE.COM/";
+                string ftpPath = ftpHost + "oggle/static";
+
+                if (rootFolder == "")
+                    webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + pageTitle + ".html");
+                else
+                    webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + rootFolder + "/" + pageTitle + ".html");
+                webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
+                webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                using (System.IO.Stream requestStream = webRequest.GetRequestStream())
+                {
+                    byte[] fileContents = System.IO.File.ReadAllBytes(tempFilePath + "/temp.html");
+                    webRequest.ContentLength = fileContents.Length;
+                    requestStream.Write(fileContents, 0, fileContents.Length);
+                    requestStream.Flush();
+                    requestStream.Close();
+                }
+                success = "ok";
+            }
+            catch (Exception e) { success = Helpers.ErrorDetails(e); }
+            return success;
+        }
+
+        int deepChildCount = 0;
         private void GetDeepChildCount(VwDirTree parentDir, OggleBoobleContext db) 
         {
             deepChildCount += parentDir.FileCount;

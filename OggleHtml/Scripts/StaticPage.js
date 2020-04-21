@@ -39,8 +39,8 @@ $(document).ready(function () {
                 };
                 logEventActivity(logEventModel);
             }
+            //getBreadCrumbs(staticPageFolderId);
             logPageHit(staticPageFolderId, "static page");
-            getBreadCrumbs(staticPageFolderId);
             resizeStaticPage();
             $(window).resize(resizeStaticPage());
             $('#feedbackBanner').click(showFeedbackDialog).fadeIn();

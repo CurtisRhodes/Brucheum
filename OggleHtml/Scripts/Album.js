@@ -56,6 +56,8 @@ function getAlbumImages(folderId) {
                     getBreadCrumbs(folderId);
                     var delta = (Date.now() - start) / 1000;
                     console.log("GetImageLinks?folder=" + folderId + " took: " + delta.toFixed(3));
+                    logPageHit(folderId, "Album.html");  // 
+
                 }
                 else {
                     logError({
@@ -119,7 +121,6 @@ function directToStaticPage(directToStaticPageFolderId) {
         url: settingsArray.ApiServer + "api/AlbumPage/GetStaticPage?folderId=" + directToStaticPageFolderId,
         success: function (successModel) {
             if (successModel.Success === "ok") {
-
                 window.location.href = successModel.ReturnValue;
             }
             else {
@@ -168,6 +169,7 @@ function getBreadCrumbs(getBreadCrumbsFolderId) {
         url: settingsArray.ApiServer + "/api/BreadCrumbs/Get?folderId=" + getBreadCrumbsFolderId,
         success: function (breadCrumbModel) {
             if (breadCrumbModel.Success === "ok") {
+                setOggleHeader(getBreadCrumbsFolderId, breadCrumbModel.RootFolder);
                 $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + getBreadCrumbsFolderId + ",\"" + currentFolderRoot + "\")'>home  &#187</a>");
                 for (i = breadCrumbModel.BreadCrumbs.length - 1; i >= 0; i--) {
                     if (breadCrumbModel.BreadCrumbs[i] === null) {
@@ -198,7 +200,6 @@ function getBreadCrumbs(getBreadCrumbsFolderId) {
                         }
                     }
                 }
-                setOggleHeader(getBreadCrumbsFolderId, breadCrumbModel.RootFolder);
                 staticPageFolderId = getBreadCrumbsFolderId;
                 currentAlbumJSfolderName = breadCrumbModel.FolderName;
                 document.title = currentAlbumJSfolderName + " : OggleBooble";

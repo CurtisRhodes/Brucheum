@@ -714,6 +714,8 @@ function logPageHit(pageId, calledFrom) {
             if (pageHitSuccessModel.Success === "ok") {
                 // MOVE PAGE HITS TO FOOTER SOMEDAY
 
+                //alert("headerMessage: pagehits: " + pageHitSuccessModel.PageHits.toLocaleString());
+
                 $('#headerMessage').html("pagehits: " + pageHitSuccessModel.PageHits.toLocaleString());
                 userPageHits = pageHitSuccessModel.UserPageHits;
                 userImageHits = pageHitSuccessModel.UserImageHits;
