@@ -95,3 +95,15 @@
     <img class="dirTreeImage" />
 </div>
 
+<div id='feedbackDialog' class='modalDialog' title='Feedback'>
+    <div>
+        <input type='radio' name='feedbackRadio' value='complement' checked='checked'> complement
+        <input type='radio' name='feedbackRadio' value='suggestion'> suggestion
+        <input type='radio' name='feedbackRadio' value='report error'> report error
+    </div>
+    <div id='feedbackDialogSummerNoteTextArea'></div>
+    <div>email<input id="txtFeedbackEmail"/></div>
+    <div id='btnfeedbackDialogSave' class='roundendButton' onclick='saveFeedbackDialog(" + folderId + ")'>Send</div>
+    <div id='btnfeedbackDialogCancel' class='roundendButton' onclick='closeFeedbackDialog()'>Cancel</div>
+</div>
+

@@ -18,111 +18,6 @@ namespace WebApi.Controllers
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
         private readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         private readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
-        //private int totalFiles = 0;
-        //private int filesProcessed = 0;
-
-        private void GetMetaTagsRecurr(MetaTagResultsModel metaTagResults, int folderId, OggleBoobleContext db)
-        {
-            CategoryFolder thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-            if (thisFolder.FolderName.IndexOf("OGGLEBOOBLE.COM") > 0)
-            {
-                thisFolder.FolderName = thisFolder.FolderName.Substring(0, thisFolder.FolderName.IndexOf("OGGLEBOOBLE.COM") - 1);
-            }
-            metaTagResults.MetaTags.Add(new MetaTagModel() { Tag = thisFolder.FolderName });
-            List<MetaTag> metaTags = db.MetaTags.Where(m => m.FolderId == folderId).ToList();
-            foreach (MetaTag metaTag in metaTags)
-            {
-                metaTagResults.MetaTags.Add(new MetaTagModel() { Tag = metaTag.Tag });
-            }
-            //metaTagResults.MetaTags.Add(new MetaTagModel() { TagId = metaTag.TagId, FolderId = metaTag.FolderId, Tag = metaTag.Tag });
-
-            if (thisFolder.Parent > 1)
-                GetMetaTagsRecurr(metaTagResults, thisFolder.Parent, db);
-        }
-
-        //public class MetaTagResultsModel
-        //{
-        //    public MetaTagResultsModel()
-        //    {
-        //        MetaTags = new List<MetaTagModel>();
-        //    }
-        //    public List<MetaTagModel> MetaTags { get; set; }
-        //    public string Source { get; set; }
-        //    public string MetaDescription { get; set; }
-        //    public string Success { get; set; }
-        //}
-
-        //public class MetaTagModel
-        //{
-        //    public int TagId { get; set; }
-        //    public int FolderId { get; set; }
-        //    public string LinkId { get; set; }
-        //    public string Tag { get; set; }
-        //}
-
-        private string HeadHtml(int folderId, string folderName)
-        {
-            MetaTagResultsModel metaTagResults = new MetaTagResultsModel();
-            string articleTagString = "";
-            using (OggleBoobleContext db = new OggleBoobleContext())
-            {
-                GetMetaTagsRecurr(metaTagResults, folderId, db);
-                foreach (MetaTagModel metaTag in metaTagResults.MetaTags)
-                    articleTagString += metaTag.Tag + ",";
-
-                metaTagResults.MetaDescription = "free naked pics of " + folderName;
-            }
-
-            return "<head>\n" +
-                "   <meta charset='utf-8'>\n" +
-                "   <title>" + folderName + " : OggleBooble</title>" +
-                "   <link rel='icon' type='image/png' href='/static/favicon.png' />" +
-                "   <meta name='Title' content='" + folderName + "' property='og:title'/>\n" +
-                "   <meta name='description' content='" + metaTagResults.MetaDescription + "'/>\n" +
-                "   <meta name='viewport' content='width=device-width, initial-scale=.07'>\n" +
-                "   <meta http-equiv='cache-control' content='max-age=0'>\n" +
-                "   <meta http-equiv='cache-control' content='no-cache'>\n" +
-                "   <meta http-equiv='expires' content='-1'>\n" +
-                "   <meta http-equiv='expires' content='Tue, 01 Jan 1980 11:00:00 GMT'>\n" +
-                "   <meta http-equiv='pragma' content='no-cache'>\n" +
-                "   <meta property='og:type' content='website' />\n" +
-                "   <meta property='og:url' content='" + httpLocation + folderName + ".html'/>\n" +
-                "   <meta name='Keywords' content='" + articleTagString + "'/>\n" +
-                "   <script src='https://code.jquery.com/jquery-latest.min.js' type='text/javascript'></script>\n" +
-                "   <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>\n" +
-                "   <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet'>\n" +
-                "   <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js'></script>\n" +
-                "   <link href='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css' rel='stylesheet'>\n" +
-                "   <script src='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js'></script>\n" +
-
-                "   <script src='/Scripts/Common.js'></script>\n" +
-                "   <script src='/Scripts/HitCounter.v2.js'></script>\n" +
-                "   <script src='/Scripts/Login.js'></script>\n" +
-                "   <script src='/Scripts/OggleHeader.js'></script>\n" +
-                "   <script src='/Scripts/ModelInfoDialog.js'></script>\n" +
-                "   <script src='/Scripts/OggleEventLog.js'></script>\n" +
-                "   <script src='/Scripts/OggleSearch.js'></script>\n" +
-                "   <script src='/Scripts/Slideshow.js'></script>\n" +
-                "   <script src='/Scripts/OggleFooter.js'></script>\n" +
-                "   <script src='/Scripts/Permissions.js'></script>\n" +
-                "   <script src='/Scripts/Album.js' type='text/javascript'></script>\n" +
-                "   <script src='/Scripts/Slideshow.js' type='text/javascript'></script>\n" +
-                "   <script src='/Scripts/ImageCommentDialog.js' type='text/javascript'></script>\n" +
-                "   <script src='/Scripts/FolderCategoryDialog.js' type='text/javascript'></script>\n" +
-                "   <script src='/Scripts/DirTree.js'></script>\n" +
-
-                "   <link href='/Styles/Common.css' rel='stylesheet'/>\n" +
-                "   <link href='/Styles/Header.css' rel='stylesheet'/>\n" +
-                "   <link href='/Styles/Slideshow.css' rel='stylesheet'/>\n" +
-                "   <link href='/Styles/FolderCategoryDialog.css' rel='stylesheet'/>\n" +
-                "   <link href='/Styles/ImageCommentDialog.css' rel='stylesheet'/>\n" +
-                "   <link href='/Styles/Carousel.css' rel='stylesheet'/>\n" +
-                "   <link href='/Styles/ModelInfoDialog.css' rel='stylesheet'/>\n" +
-                "   <link href='/Styles/ImagePage.css' rel='stylesheet'/>\n" +
-                "   <link href='/Styles/LoginDialog.css' rel='stylesheet'/>\n" +
-                "   <link href='/Styles/jqueryui.css' rel='stylesheet' />\n" +
-                "</head>";
-        }
 
         [HttpGet]
         public string Build(int folderId, bool recurr)
@@ -156,7 +51,7 @@ namespace WebApi.Controllers
 
                 string staticContent =
                     "<!DOCTYPE html>\n<html lang='en'>\n" + HeadHtml(folderId, folderName) +
-                    "\n<body style='margin-top:105px'>\n<header>" + StaticPageHeader(folderId, rootFolder) + "</header>" +
+                    "\n<body style='margin-top:105px'>\n<header>" + GetStaticPageHeader(folderId, rootFolder) + "</header>" +
                     GalleryPageBodyHtml(folderId, folderName, rootFolder) +
                     "<footer></footer>\n" +
                     // Slideshow() + CommentDialog() + ModelInfoDialog() +
@@ -194,18 +89,220 @@ namespace WebApi.Controllers
             return success;
         }
 
-        private string StaticPageHeader(int folderId, string rootFolder)
+        private string HeadHtml(int folderId, string folderName)
         {
-            BreadCrumbModel breadCrumbModel = new BreadCrumbsController().Get(folderId);
-            StringBuilder breadCrumbString = new StringBuilder("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + folderId + ",\"" +
-                      rootFolder + "\")'>home  &#187</a>");
+            MetaTagResultsModel metaTagResults = new MetaTagResultsModel();
+            string articleTagString = "";
+
+            //using (OggleBoobleContext db = new OggleBoobleContext())
+            //{
+            //    GetMetaTagsRecurr(metaTagResults, folderId, db);
+            //    foreach (MetaTagModel metaTag in metaTagResults.MetaTags)
+            //        articleTagString += metaTag.Tag + ",";
+
+            //    metaTagResults.MetaDescription = "free naked pics of " + folderName;
+            //}
+
+            return "<head>\n" +
+                "   <meta charset='utf-8'>\n" +
+                "   <title>" + folderName + " : OggleBooble</title>" +
+                "   <link rel='icon' type='image/png' href='/static/favicon.png' />" +
+                "   <meta name='Title' content='" + folderName + "' property='og:title'/>\n" +
+                "   <meta name='description' content='" + metaTagResults.MetaDescription + "'/>\n" +
+                "   <meta name='viewport' content='width=device-width, initial-scale=.07'>\n" +
+                "   <meta http-equiv='cache-control' content='max-age=0'>\n" +
+                "   <meta http-equiv='cache-control' content='no-cache'>\n" +
+                "   <meta http-equiv='expires' content='-1'>\n" +
+                "   <meta http-equiv='expires' content='Tue, 01 Jan 1980 11:00:00 GMT'>\n" +
+                "   <meta http-equiv='pragma' content='no-cache'>\n" +
+                "   <meta property='og:type' content='website' />\n" +
+                "   <meta property='og:url' content='" + httpLocation + folderName + ".html'/>\n" +
+                "   <meta name='Keywords' content='" + articleTagString + "'/>\n" +
+                "   <script src='https://code.jquery.com/jquery-latest.min.js' type='text/javascript'></script>\n" +
+                "   <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>\n" +
+                "   <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet'>\n" +
+                "   <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js'></script>\n" +
+                "   <link href='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css' rel='stylesheet'>\n" +
+                "   <script src='https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js'></script>\n" +
+
+                "   <script src='/Scripts/Common.js'></script>\n" +
+                "   <script src='/Scripts/HitCounter.v2.js'></script>\n" +
+                "   <script src='/Scripts/Login.js'></script>\n" +
+                "   <script src='/Scripts/FeedbackDialog.js'></script>\n" +
+                "   <script src='/Scripts/ModelInfoDialog.js'></script>\n" +
+                "   <script src='/Scripts/OggleEventLog.js'></script>\n" +
+                "   <script src='/Scripts/OggleSearch.js'></script>\n" +
+                "   <script src='/Scripts/Slideshow.js'></script>\n" +
+                "   <script src='/Scripts/OggleFooter.js'></script>\n" +
+                "   <script src='/Scripts/Permissions.js'></script>\n" +
+                "   <script src='/Scripts/OggleHeader.js'></script>\n" +
+                "   <script src='/Scripts/Slideshow.js'></script>\n" +
+                "   <script src='/Scripts/ImageCommentDialog.js'></script>\n" +
+                "   <script src='/Scripts/FolderCategoryDialog.js'></script>\n" +
+                "   <script src='/Scripts/DirTree.js'></script>\n" +
+
+                "   <link href='/Styles/Common.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/Header.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/Slideshow.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/FolderCategoryDialog.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/ImageCommentDialog.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/Carousel.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/ModelInfoDialog.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/ImagePage.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/LoginDialog.css' rel='stylesheet'/>\n" +
+                "   <link href='/Styles/jqueryui.css' rel='stylesheet' />\n" +
+                "</head>";
+        }
+
+        private string GetStaticPageHeader(int folderId, string rootFolder)
+        {
+            string topLeftLogo = "<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"boobs\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
+            string bannerTitle = "OggleBooble";
+            string headerClass = "boobsHeader";
+            string subheaderContent="";
+            string rankerLink="";
+            string playboyLink="";
+            string archiveLink="";
+            switch (rootFolder)
+            {
+                case "admin":
+                    subheaderContent = "admin";
+                    //$('header').switchClass('pornHeader', 'boobsHeader');
+                    //$("#divLoginArea").hide();
+                    //$('#subheaderContent').html("admin");
+                    break;
+                case "blank":
+                    subheaderContent = "loading"; // $('#subheaderContent').html("loading");
+                    break;
+                case "dashboard":
+                    subheaderContent = "dashboard"; // $('#subheaderContent').html("dashboard");
+                    break;
+                case "blog":
+                    subheaderContent = "blog";  // $('#subheaderContent').html("blog");
+                    break;
+                case "ranker":
+                    subheaderContent = "ranker"; // $('#subheaderContent').html("ranker");
+                    break;
+                case "archive":
+                    subheaderContent = "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",4)'>milk cows,</a> \n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1103)'>russian spys,</a> \n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1093)'>highschool fantasy girls,</a> \n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1107)'>sweater meat,</a> \n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",123)'>ultra juggs</a> \n";
+                    rankerLink = "<div id='rankerTag' class='headerFeatureBanner'>" +
+                        "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"archive\")'" +
+                        " title='Spin through the links to land on random portrait images.'>babes ranker</a></div>\n";
+
+                    playboyLink = "<div class='headerFeatureBanner'>" +
+                        "\n<a href='javascript:rtpe(\"BAC\"," + folderId + ",1132)'>every Playboy Centerfold</a></div>\n";
+                    break;
+                case "special":
+                case "boobs":
+                    subheaderContent =
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",136)'> poses,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",3916)'> positions,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",159)'> topics,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",199)'> shapes</a> and\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",241)'>sizes</a>\n";
+
+                    //DUTCH subheaderContent =
+                    //    "                <a href='/album.html?folder=2'><span class='bigTits'>STORE </span>bryster</a> organiseret af\n" +
+                    //    "                <a href='/album.html?folder=136'> rejser,</a>\n" +
+                    //    "                <a href='/album.html?folder=159'> emne,</a>\n" +
+                    //    "                <a href='/album.html?folder=199'> figurer</a> og\n" +
+                    //    "                <a href='/album.html?folder=241'>størrelser</a>\n";
+
+                    archiveLink = "<div id='rankerTag' class='headerFeatureBanner'>" +
+                        "<a href='javascript:rtpe(\"BAC\"," + folderId + ",3)'>babes archive</a></div>\n";
+                    rankerLink = "<div id='rankerTag' class='headerFeatureBanner'>" +
+                        "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"boobs\")'" +
+                        " title='Spin through the links to land on random portrait images.'>boobs ranker</a></div>\n";
+                    break;
+                case "playboy":
+                case "playmates":
+                    headerClass = "boobsHeader";
+                    topLeftLogo = "<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"playboy\")'><img src='/Images/playboyBallon.png' class='bannerImage'/></a>\n";
+                    subheaderContent =
+                        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1132)'>Centerfolds,</a>\n" +
+                        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1986)'> magazine covers,</a>\n" +
+                        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",3796)'> cybergirls,</a> and\n" +
+                        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",2601)'> extras</a>\n";
+
+                    archiveLink = "<div id='rankerTag' class='headerFeatureBanner'>" +
+                        "<a href='javascript:rtpe(\"BAC\"," + folderId + ",3)'>big tits archive</a></div>\n";
+                    rankerLink = "<div id='rankerTag' class='headerFeatureBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"playboy\")' " +
+                        "title='Spin through the links to land on random portrait images.'>playmate ranker</a></div>\n";
+                    break;
+                case "porn":
+                case "sluts":
+                    headerClass = "pornHeader";
+                    //changeFavoriteIcon();
+                    //$('body').addClass('pornBodyColors');
+                    subheaderContent =
+                        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",243)'>cock suckers</a>, \n" +
+                        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",420)'>boob suckers</a>, \n" +
+                        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",357)'>cum shots</a>, \n" +
+                        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",397)'>kinky</a> and \n" +
+                        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",411)'>naughty behaviour</a>\n";
+                    topLeftLogo = "<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"porn\")'><img src='/Images/csLips02.png' class='bannerImage'/></a>\n";
+                    archiveLink = "<div id='rankerTag' class='headerFeatureBanner'>" +
+                        "<a href='javascript:rtpe(\"BAC\"," + folderId + ",440)'>slut archive</a></div>\n";
+                    rankerLink = "<div id='rankerTag' class='headerFeatureBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"" + rootFolder + "\")' " +
+                        "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
+                    bannerTitle = "OgglePorn";
+                    break;
+
+                    //sendEmailToYourself("OggleHeader switch ","folderId: " + folderId+ "<br/>subdomain: " + subdomain);
+                    //alert("subdomain: " + subdomain + "  not found");
+                    //console.log("subdomain: " + subdomain + "  not found");
+            }
+            StringBuilder staticPageHeader = new StringBuilder("<div class='" + headerClass + "'> <div id='divTopLeftLogo' class='bannerImageContainer'></div>\n" +
+                "   <div class='headerBodyContainer'>\n" +
+                "       <div id='' class='headerTopRow'>\n" +
+                "           <div id='bannerTitle' class='headerTitle'>" + bannerTitle + "</div >\n" +
+                "           <div id='subheaderContent' class='topLinkRow'>" + subheaderContent + "</div>\n<span id='archiveLink'>" + archiveLink +
+                "               </span><span id='rankerLink'>" + rankerLink + "</span><span id='playboyLink'>" + playboyLink + "</span>\n" +
+                "           <div class='OggleSearchBox'>\n" +
+                "               <span id='notUserName' title='this is a progressive single letter search. Esc clears search.'>search</span>" +
+                "                   <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
+                "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
+                "           </div>\n" +
+                "       </div>\n");
+            //BreadCrumbModel breadCrumbModel = new BreadCrumbsController().Get(folderId);
+            BreadCrumbModel breadCrumbModel = new BreadCrumbModel();
+            using (OggleBoobleContext db = new OggleBoobleContext())
+            {
+                #region breadcrumbs
+                var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                var parent = thisFolder.Parent;
+                while (parent > 1)
+                {
+                    var parentDb = db.CategoryFolders.Where(f => f.Id == parent).First();
+                    breadCrumbModel.BreadCrumbs.Add(new BreadCrumbItemModel()
+                    {
+                        FolderId = parentDb.Id,
+                        FolderName = parentDb.FolderName,
+                        IsInitialFolder = false
+                    });
+                    parent = parentDb.Parent;
+                }
+                breadCrumbModel.BreadCrumbs.Add(new BreadCrumbItemModel()
+                {
+                    FolderId = thisFolder.Id,
+                    FolderName = thisFolder.FolderName,
+                    ParentId = thisFolder.Parent,
+                    IsInitialFolder = true
+                });
+                StringBuilder breadCrumbString = new StringBuilder("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + folderId + ",\"" +
+                          rootFolder + "\")'>home  &#187</a>");
                 int breadcrumbCount = breadCrumbModel.BreadCrumbs.Count;
                 for (int i = breadcrumbCount - 1; i >= 0; i--)
                 {
                     if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder)
                     {
                         breadCrumbString.Append("<a class='inactiveBreadCrumb' " +
-                        (breadCrumbModel.BreadCrumbs.Count - i) + "," +
+                        (breadCrumbModel.BreadCrumbs.Count - i) + "'," +
                         breadCrumbModel.FolderName + "\",\"" +
                         breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" +
                         breadCrumbModel.BreadCrumbs[i].ParentId + "\",\"" +
@@ -226,75 +323,88 @@ namespace WebApi.Controllers
                             breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
                     }
                 }
+                #endregion
+                staticPageHeader.Append("       <div class='headerBottomRow'>\n" +
+                    "           <div id='headerMessage' class='bottomLeftBottomHeaderArea'></div>\n" +
+                    "           <div id='breadcrumbContainer' class='breadCrumbArea'>" + breadCrumbString.ToString() + "</div>\n" +
+                    "           <div class='menuTabs replaceableMenuItems'>\n");
 
-            return
-                "   <div id='divTopLeftLogo' class='bannerImageContainer'></div>\n" +
-                "   <div class='headerBodyContainer'>\n" +
-                "       <div id='' class='headerTopRow'>\n" +
-                "           <div id='bannerTitle' class='headerTitle'></div >\n" +
-                //"                  <img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
-                //"                   title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +
-                //"                   \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
-                //"                   \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
-                "           <div id='subheaderContent' class='topLinkRow'>KKK</div>\n<span id='archiveLink'></span><span id='rankerLink'></span><span id='playboyLink'></span>\n" +
-                "           <div class='OggleSearchBox'>\n" +
-                "               <span id='notUserName' title='this is a progressive single letter search. Esc clears search.'>search</span>" +
-                "                   <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
-                "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
-                "           </div>\n" +
-                "       </div>\n" +
-                "       <div class='headerBottomRow'>\n" +
-                "           <div id='headerMessage' class='bottomLeftBottomHeaderArea'></div>\n" +
-                "           <div id='breadcrumbContainer' class='breadCrumbArea'>" + breadCrumbString.ToString() + "</div>\n" +
-                "           <div class='menuTabs replaceableMenuItems'>\n" +
-                "               <div id='twinsLink' class='menuTabs displayHidden'>\n" +
-                "                   <a href='/album.html?folder=3904'><img src='/Images/geminiSymbol1.png' title='Hef likes twins' class='badgeImage'></a>" +
-                "               </div>\n" +
-                "               <div id='breastfulPlaymatesLink' class='menuTabs displayHidden'>\n" +
-                "                   <a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>" +
-                "               </div>\n" +
-                "               <div id='pmoyLink' class='menuTabs displayHidden'>\n" +
-                "                   <a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>" +
-                "               </div>\n" +
-                "               <div id='blackCenterfoldsLink' class='menuTabs displayHidden'>\n" +
-                "                   <div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>\n" +
-                "               </div>\n" +
-                "           </div>\n" +
-                "           <div id='divLoginArea' class='loginArea'>\n" +
-                "               <div id='optionLoggedIn' class='displayHidden'>\n" +
-                "                   <div class='menuTab' id='dashboardMenuItem' class='displayHidden'><a href='/Dashboard.html'>Dashboard</a></div>\n" +
-                "                   <div class='menuTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
-                "                   <div class='menuTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
-                "               </div>\n" +
-                "               <div id='optionNotLoggedIn'>\n" +
-                "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
-                "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:showLoginDialog()'>Log In</a></div>\n" +
-                "               </div>\n" +
-                "           </div>\n" +
-                "       </div>\n" +
-                "   </div>\n" +
-                "<div id='draggableDialog' class='oggleDraggableDialog'>\n" +
-                "   <div id='draggableDialogHeader'class='oggleDraggableDialogHeader'>" +
-                "       <div id='draggableDialogTitle' class='oggleDraggableDialogTitle'></div>" +
-                "       <div id='draggableDialogCloseButton' class='oggleDraggableDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'></div>\n" +
-                "   </div>\n" +
-                "   <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
-                "</div>\n" +
-                "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
-                "<div id='customMessageContainer' class='centeredDivShell'>\n" +
-                "   <div class='centeredDivInner'>\n" +
-                "       <div id='customMessage' class='displayHidden' ></div>\n" +
-                "   </div>\n" +
-                "</div>\n" +
-                "<div id='feedbackDialog' class='modalDialog' title='Feedback'>\n" +
-                "   <div><input type='radio' name='feedbackRadio' value='complement' checked='checked'> complement\n" +
-                "       <input type='radio' name='feedbackRadio' value='suggestion'> suggestion\n" +
-                "       <input type='radio' name='feedbackRadio' value='report error'> report error" +
-                "   </div>\n" +
-                "   <div id='feedbackDialogSummerNoteTextArea'></div>\n" +
-                "   <div id='btnfeedbackDialogSave' class='roundendButton' onclick='saveFeedbackDialog(" + folderId + ")'>Send</div>\n" +
-                "   <div id='btnfeedbackDialogCancel' class='roundendButton' onclick='closeFeedbackDialog()'>Cancel</div>\n" +
-                "</div>";
+                CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                if (categoryFolderDetails != null)
+                {
+                    if (categoryFolderDetails.ExternalLinks != null)
+                    {
+                        if (categoryFolderDetails.ExternalLinks.IndexOf("Playmate Of The Year") > -1)
+                        {
+                            staticPageHeader.Append(
+                            "               <div id='pmoyLink' class='menuTabs displayHidden'>\n" +
+                            "                   <a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>" +
+                            "               </div>\n");
+                        }
+                        if (categoryFolderDetails.ExternalLinks.IndexOf("biggest breasted centerfolds") > -1)
+                        {
+                            staticPageHeader.Append(
+                                "               <div id='breastfulPlaymatesLink' class='menuTabs displayHidden'>\n" +
+                                "                   <a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>" +
+                                "               </div>\n");
+                        }
+                        if (categoryFolderDetails.ExternalLinks.IndexOf("black centerfolds") > -1)
+                        {
+                            staticPageHeader.Append(
+                                "               <div id='blackCenterfoldsLink' class='menuTabs displayHidden'>\n" +
+                                "                   <div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>\n" +
+                                "               </div>\n");
+                        }
+                        if (categoryFolderDetails.ExternalLinks.IndexOf("Hef likes twins") > -1)
+                        {
+                            staticPageHeader.Append(
+                                "               <div id='twinsLink' class='menuTabs displayHidden'>\n" +
+                                "                   <a href='/album.html?folder=3904'><img src='/Images/geminiSymbol1.png' title='Hef likes twins' class='badgeImage'></a>" +
+                                "               </div>\n");
+                        }
+                    }
+                }
+                staticPageHeader.Append(
+                    "           </div>\n" +
+                    "           <div id='divLoginArea' class='loginArea'>\n" +
+                    "               <div id='optionLoggedIn' class='displayHidden'>\n" +
+                    "                   <div class='menuTab' id='dashboardMenuItem' class='displayHidden'><a href='/Dashboard.html'>Dashboard</a></div>\n" +
+                    "                   <div class='menuTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
+                    "                   <div class='menuTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
+                    "               </div>\n" +
+                    "               <div id='optionNotLoggedIn'>\n" +
+                    "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
+                    "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:showLoginDialog()'>Log In</a></div>\n" +
+                    "               </div>\n" +
+                    "           </div>\n" +
+                    "       </div>\n" +
+                    "   </div>\n" +
+                    "<div id='draggableDialog' class='oggleDraggableDialog'>\n" +
+                    "   <div id='draggableDialogHeader'class='oggleDraggableDialogHeader'>" +
+                    "       <div id='draggableDialogTitle' class='oggleDraggableDialogTitle'></div>" +
+                    "       <div id='draggableDialogCloseButton' class='oggleDraggableDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'></div>\n" +
+                    "   </div>\n" +
+                    "   <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
+                    "</div>\n" +
+                    "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
+                    "<div id='customMessageContainer' class='centeredDivShell'>\n" +
+                    "   <div class='centeredDivInner'>\n" +
+                    "       <div id='customMessage' class='displayHidden' ></div>\n" +
+                    "   </div>\n" +
+                    "</div>\n");
+
+                //staticPageHeader.Append(
+                //    "<div id='feedbackDialog' class='modalDialog' title='Feedback'>\n" +
+                //    "   <div><input type='radio' name='feedbackRadio' value='complement' checked='checked'> complement\n" +
+                //    "       <input type='radio' name='feedbackRadio' value='suggestion'> suggestion\n" +
+                //    "       <input type='radio' name='feedbackRadio' value='report error'> report error" +
+                //    "   </div>\n" +
+                //    "   <div id='feedbackDialogSummerNoteTextArea'></div>\n" +
+                //    "   <div id='btnfeedbackDialogSave' class='roundendButton' onclick='saveFeedbackDialog(" + folderId + ")'>Send</div>\n" +
+                //    "   <div id='btnfeedbackDialogCancel' class='roundendButton' onclick='closeFeedbackDialog()'>Cancel</div>\n" +
+                //    "</div>");
+                return staticPageHeader.ToString();
+            }
         }
 
         private string GalleryPageBodyHtml(int folderId, string folderName, string rootFolder)

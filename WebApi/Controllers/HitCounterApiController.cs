@@ -214,9 +214,9 @@ namespace WebApi
     public class VisitController : ApiController
     {
         [HttpPost]
-        public LogVisitorSuccessModel LogVisitor(LogVisitorModel visitorModel)
+        public AddVisitorSuccessModel LogVisitor(LogVisitorModel visitorModel)
         {
-            var visitorSuccess = new LogVisitorSuccessModel();
+            var visitorSuccess = new AddVisitorSuccessModel();
             try
             {
                 using (OggleBoobleMySqContext mdb = new OggleBoobleMySqContext())
@@ -237,12 +237,12 @@ namespace WebApi
 
                         mdb.Visitors.Add(visitor);
                         mdb.SaveChanges();
-                        visitorSuccess.IsNewVisitor = true;
+                        //visitorSuccess.IsNewVisitor = true;
                         visitorSuccess.VisitorId = visitor.VisitorId;
                     }
                     else
                     {
-                        visitorSuccess.IsNewVisitor = false;
+                        //visitorSuccess.IsNewVisitor = false;
                         visitorSuccess.VisitorId = myExisting.VisitorId;
                         // FORCE A LOG VISIT 
                         //LogVisit(myExisting.VisitorId);
@@ -260,51 +260,6 @@ namespace WebApi
             return visitorSuccess;
         }
 
-        [HttpPost]
-        public LogVisitSuccessModel LogVisit(string visitorId)
-        {
-            LogVisitSuccessModel visitSuccessModel = new LogVisitSuccessModel() { VisitAdded = false };
-            try
-            {
-                using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
-                {
-                    DateTime lastVisitDate = DateTime.MinValue;
-                    List<Visit> visitorVisits = dbm.Visits.Where(v => v.VisitorId == visitorId).ToList();
-                    if (visitorVisits.Count() > 0)
-                    {
-                        lastVisitDate = dbm.Visits.Where(v => v.VisitorId == visitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
-                        visitSuccessModel.WelcomeMessage = "ok";
-                    }
-                    if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
-                    {
-                        Visitor visitor = dbm.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
-                        if (visitor != null)
-                        {
-                            dbm.Visits.Add(new Visit()
-                            {
-                                VisitorId = visitorId,
-                                VisitDate = DateTime.Now  //  .AddMilliseconds(getrandom.Next())
-                            });
-                            dbm.SaveChanges();
-                            visitSuccessModel.VisitAdded = true;
-                            if (lastVisitDate == DateTime.MinValue)
-                                visitSuccessModel.WelcomeMessage = "Welcome New Visitor";
-                            else
-                            {
-                                //if(v)
-                                visitSuccessModel.WelcomeMessage = "Welcome Back ";
-                            }
-                        }
-                    }
-                    visitSuccessModel.Success= "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                visitSuccessModel.Success= Helpers.ErrorDetails(ex);
-            }
-            return visitSuccessModel;
-        }
     }
 
     [EnableCors("*", "*", "*")]
@@ -425,9 +380,10 @@ namespace WebApi
                 {
                     mdb.FeedBacks.Add(new FeedBack()
                     {
-                        FeedBackComment=feedBackModel.FeedBackComment,
-                        FeedBackType=feedBackModel.FeedBackType,
+                        FeedBackComment = feedBackModel.FeedBackComment,
+                        FeedBackType = feedBackModel.FeedBackType,
                         PageId = feedBackModel.PageId,
+                        FeedBackEmail = feedBackModel.FeedBackEmail,
                         VisitorId = feedBackModel.VisitorId,
                         Occured = DateTime.Now
                     });
@@ -454,7 +410,7 @@ namespace WebApi
             {
                 using (var mdb = new OggleBoobleMySqContext())
                 {
-                    mdb.ErrorLogs.Add(new ErrorLog()
+                    mdb.ErrorLogItems.Add(new ErrorLogItem()
                     {
                         PkId = Guid.NewGuid().ToString(),
                         ActivityCode = logErrorModel.ActivityCode,

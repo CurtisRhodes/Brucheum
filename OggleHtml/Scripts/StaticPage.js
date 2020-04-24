@@ -19,7 +19,7 @@ $(document).ready(function () {
     //$('#fileCount').html(staticPageImagesCount);
     params = getParams();
     var calledFrom = params.calledFrom;
-    setOggleHeader(params.folder, "blank");
+    //setOggleHeader(params.folder, "blank");
     var dots = "";
     loadSettings();
     var loadSettingsWaiter = setInterval(function () {
@@ -39,11 +39,11 @@ $(document).ready(function () {
                 };
                 logEventActivity(logEventModel);
             }
-            //getBreadCrumbs(staticPageFolderId);
+            getBreadCrumbs(staticPageFolderId);
             logPageHit(staticPageFolderId, "static page");
             resizeStaticPage();
             $(window).resize(resizeStaticPage());
-            $('#feedbackBanner').click(showFeedbackDialog).fadeIn();
+            $('#feedbackBanner').click(showFeedbackDialog()).fadeIn();
         }
     }, 300);
 });

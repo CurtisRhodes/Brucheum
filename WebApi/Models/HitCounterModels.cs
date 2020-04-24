@@ -71,6 +71,7 @@ namespace WebApi.Models
         public int PageId { get; set; }
         public string FeedBackComment { get; set; }
         public string FeedBackType { get; set; }
+        public string FeedBackEmail { get; set; }
         public DateTime Occured { get; set; }
     }
 
@@ -110,11 +111,11 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
-    public class LogVisitorSuccessModel
+    public class AddVisitorSuccessModel
     {
         public string VisitorId { get; set; }
         public string PageName { get; set; }
-        public bool IsNewVisitor { get; set; }
+        public string IpAddress { get; set; }
         public string Success { get; set; }
     }    
 

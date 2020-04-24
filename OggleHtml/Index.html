@@ -24,6 +24,7 @@
     <script src="Scripts/OggleFooter.js"></script>
     <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/Carousel.js"></script>
+    <script src="Scripts/FeedbackDialog.js"></script>
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/FolderCategoryDialog.js"></script>
     <script src="Scripts/ModelInfoDialog.js"></script>
@@ -166,6 +167,7 @@
         var subdomain;
         var homePageId = 3908;
         var updatedGalleriesCount = 25;
+
         $(document).ready(function () {
             includeHTML();
             $('#laCarousel').hide();
@@ -198,12 +200,12 @@
                         if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
                             $('#dots').html('');
-                            $('#connectingMsg').hide();
                             $('#laCarousel').fadeIn();
                             loadUpdatedGalleriesBoxes(updatedGalleriesCount);
                             launchCarousel(subdomain);
                             logPageHit(homePageId, "Index");
                             $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
+
                             if (subdomain == "porn") {
                                 $('#pornLeftColumnList').show();
                                 $('#includeCenterfoldsCheckbox').hide();
@@ -212,10 +214,6 @@
                                 $('#boobsLeftColumnList').show();
                                 //launchPromoMessages();
                             }
-                            if (isInRole("Oggle admin")) {
-                                $('#carouselInclude').show();
-                            }
-                            $('#carouselInclude').show();
                         }
                         else {
                             dots += ". ";

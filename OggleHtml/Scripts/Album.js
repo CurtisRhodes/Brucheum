@@ -83,8 +83,6 @@ function getAlbumImages(folderId) {
                         ErrorMessage: errorMessage,
                         CalledFrom: "Album.js getAlbumImages"
                     });
-                    //sendEmailToYourself("XHR ERROR in Album.js GetImageLinks ",
-                    //    "Called from: " + getCookieValue("IpAddress") + "  folderId: " + getAlbumImagesFolderId + " Message: " + errorMessage);
                 }
             }
         });
@@ -126,11 +124,6 @@ function directToStaticPage(directToStaticPageFolderId) {
             else {
                 if (successModel.Success.indexOf("Option not supported") > -1) {
                     checkFor404(successModel.Success, "directToStaticPage");
-
-                    //sendEmailToYourself("SERVICE DOWN", "from directToStaticPage" +
-                    //    "<br/>folderId=" + directToStaticPageFolderId +
-                    //    "<br/>IpAddress: " + getCookieValue("IpAddress") +
-                    //    "<br/>" + successModel.Success);
                 }
                 else {
                     logError({
@@ -214,8 +207,6 @@ function getBreadCrumbs(getBreadCrumbsFolderId) {
                             ErrorMessage: breadCrumbModel.Success,
                             CalledFrom: "Album.js getBreadCrumbs"
                         });
-                        //sendEmailToYourself("SERVICE DOWN", "from getBreadCrumbs<br/>folderId=" + getBreadCrumbsFolderId + "<br/>IpAddress: " +
-                        //    getCookieValue("IpAddress") + "<br/> " + breadCrumbModel.Success);
                     }
                 }
                 else {
@@ -368,7 +359,6 @@ function startSlideShow(imageIndex) {
 
 function startSlideShow2(folderId2, imageIndex) {
     var visitorId = getCookieValue("VisitorId");
-    var ipAddress = getCookieValue("IpAddress");
 
     // get image array from DOM
     var imageArray = new Array();
@@ -384,18 +374,6 @@ function startSlideShow2(folderId2, imageIndex) {
         albumFolderId = staticPageFolderId;
     }
 
-    if (isNullorUndefined(ipAddress)) {
-        logError({
-            VisitorId: getCookieValue("VisitorId"),
-            ActivityCode: "BAD",
-            Severity: 1,
-            ErrorMessage: "isNullorUndefined(ipAddress)",
-            CalledFrom: "Album.js startSlideshow"
-        });
-        if (document.domain === 'localhost')
-            alert("Calling LogVisitor from Album.js/startslideshow" +
-                "\nvisitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + albumFolderId);
-    }
     if (isNullorUndefined(visitorId)) {
         logError({
             VisitorId: getCookieValue("VisitorId"),
@@ -404,9 +382,6 @@ function startSlideShow2(folderId2, imageIndex) {
             ErrorMessage: "isNullorUndefined(visitorId)",
             CalledFrom: "Album.js startSlideshow"
         });
-        if (document.domain === 'localhost')
-            alert("Calling LogVisitor from Album.js/startslideshow" +
-                "\nvisitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + albumFolderId);
     }
     if (albumFolderId === 0) {
         if (folderId2 !== 0) {
@@ -427,12 +402,8 @@ function startSlideShow2(folderId2, imageIndex) {
                 ErrorMessage: "albumFolderId == 0",
                 CalledFrom: "Album.js / startSlideshow"
             });
-            if (document.domain === 'localhost')
-                alert("Calling LogVisitor from Album.js/startslideshow" +
-                    "\nvisitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId: " + albumFolderId);
         }
     }
-    //sendEmailToYourself("Calling LogVisitor from Album.js/startslideshow", "visitorId: " + visitorId + "  IpAddress: " + ipAddress + "  folderId:
 
     launchViewer(albumFolderId, imageIndex, false);
 
@@ -501,9 +472,6 @@ function onRemoveImageClick(btn) {
                         ErrorMessage: errorMessage,
                         CalledFrom: "Album.js onRemoveImageClick"
                     });
-                    //sendEmailToYourself("XHR ERROR in Album.js GetImageLinks ",
-                        //"Params: " + getCookieValue("IpAddress") + "  folderId: " + folderId +
-                        //"Message: " + errorMessage);
                 }
                 $('#removeLinkDialog').dialog('close');
                 $('#removeLinkDialog').hide();

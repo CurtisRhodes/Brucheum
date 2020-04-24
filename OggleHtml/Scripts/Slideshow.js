@@ -116,89 +116,7 @@ function getFolderArray(folderId, startItem) {
 function verifyUser() {
     visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(visitorId)) {
-        // trmporary kludege while getIPinfo down
-        visitorId = "unknown";
-        setCookieValue("VisitorId", "unknown");
-        //if (!isNullorUndefined(ipAddress)) {
-        //    $.ajax({
-        //        type: "GET",
-        //        url: settingsArray.ApiServer + "api/HitCounter/GetVisitorIdFromIP?ipAddress=" + ipAddress,
-        //        success: function (getInfoModel) {
-        //            if (getInfoModel.Success === "ok") {
-        //                visitorId = getInfoModel.VisitorId;
-        //                setCookieValue("VisitorId", visitorId);
-        //                logError({
-        //                    VisitorId: getCookieValue("VisitorId"),
-        //                    ActivityCode: "WER",
-        //                    Severity: 2,
-        //                    ErrorMessage: "had to get visitorId from ip: " + ipAddress,
-        //                    CalledFrom: "SlideShow.js launchViewer"
-        //                });
-        //            }
-        //            else {
-        //                if (getInfoModel.Success === "not found") {
-        //                    logError({
-        //                        VisitorId: getCookieValue("VisitorId"),
-        //                        ActivityCode: "BAD",
-        //                        Severity: 2,
-        //                        ErrorMessage: "could not even find visitorId with Ip: " + ipAddress,
-        //                        CalledFrom: "SlideShow.js launchViewer GetVisitorIdFromIP"
-        //                    });
-        //                }
-        //                else {
-        //                    logError({
-        //                        VisitorId: getCookieValue("VisitorId"),
-        //                        ActivityCode: "BAD",
-        //                        Severity: 2,
-        //                        ErrorMessage: getInfoModel.Success,
-        //                        CalledFrom: "SlideShow.js launchViewer GetVisitorIdFromIP"
-        //                    });
-        //                }
-        //            }
-        //        },
-        //        error: function (jqXHR) {
-        //            var errorMessage = getXHRErrorDetails(jqXHR);
-        //            if (!checkFor404(errorMessage, "launchViewer")) {
-        //                logError({
-        //                    VisitorId: getCookieValue("VisitorId"),
-        //                    ActivityCode: "XHR",
-        //                    Severity: 2,
-        //                    ErrorMessage: errorMessage,
-        //                    CalledFrom: "SlideShow.js launchViewer GetVisitorIdFromIP"
-        //                });
-        //            }
-        //        }
-        //    });
-        //}
-        //else {
-        //    logError({
-        //        VisitorId: "undefined",
-        //        ActivityCode: "SVD",
-        //        Severity: 2,
-        //        ErrorMessage: "No visitorId and no Ip. NOT Calling LogVisitor",
-        //        CalledFrom: "slideshow.js / launchViewer"
-        //    });
-        //    //logVisitor(folderId, "launch viewer");
-        //}
-    }
-    ipAddress = getCookieValue("IpAddress");
-    if (isNullorUndefined(ipAddress)) {
-        // trmporary kludege while getIPinfo down
-        ipAddress = "unknown";
-        setCookieValue("IpAddress", "unknown");
-        //if (!isNullorUndefined(visitorId)) {
-        //    getIpFromVisitorId(visitorId, "launchViewer");
-        //}
-        //else {
-        //    logError({
-        //        VisitorId: visitorId,
-        //        ActivityCode: "SIP",
-        //        Severity: 4,
-        //        ErrorMessage: "ipAddress AND visitorid undefined",
-        //        CalledFrom: "slideshow.js / launchViewer"
-        //    });
-        //}
-        //sendEmailToYourself("830 PROBLEMO 1 in slideshow.js.slide.", " ");
+        tryLogPageHit(imageViewerFolderId, "slideshow");
     }
     if (isNullorUndefined(imageViewerFolderId)) {
         if (!isNullorUndefined(folderName)) {
@@ -211,7 +129,6 @@ function verifyUser() {
                 CalledFrom: "slideshow.js / launchViewer"
             });
         }
-        //logVisitor(folderId, "launch viewer");
     }
 }
 
@@ -376,7 +293,7 @@ function slideClick(direction) {
         //    getPageIdFromPageName("slideClick");
         //}
         //else {
-        //    logImageHit(ipAddress, visitorId, imageViewerArray[imageViewerIndex].Link, imageViewerFolderId, false);
+            logImageHit(visitorId, imageViewerArray[imageViewerIndex].Link, imageViewerFolderId, false);
         //}
     }
 }

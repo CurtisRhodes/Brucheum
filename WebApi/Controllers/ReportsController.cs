@@ -300,26 +300,23 @@ namespace WebApi.Controllers
             {
                 using (var mdb = new OggleBoobleMySqContext())
                 {
+
                     errorLog.ErrorRows =
-                        (from e in mdb.ErrorLogs
+                        (from e in mdb.ErrorLogItems
                          join v in mdb.Visitors on e.VisitorId equals v.VisitorId
                          select new ErrorLogItem()
                          {
-                             IpAddress = v.IpAddress,
+                             VisitorId = v.VisitorId,
                              City = v.City,
                              Country = v.Country,
                              CalledFrom = e.CalledFrom,
                              ActivityCode = e.ActivityCode,
                              Severity = e.Severity,
                              Occured = e.Occured,
+                             At = e.Occured.ToShortDateString(),
+                             On = e.Occured.AddHours(2).ToShortTimeString(),
                              ErrorMessage = e.ErrorMessage
                          }).OrderByDescending(e => e.Occured).Take(500).ToList();
-
-                    foreach (ErrorLogItem row in errorLog.ErrorRows)
-                    {
-                        row.InDay = row.Occured.ToShortDateString();
-                        row.OnTime = row.Occured.AddHours(2).ToShortTimeString();
-                    }
 
                     errorLog.Success = "ok";
                 }
@@ -330,6 +327,5 @@ namespace WebApi.Controllers
             }
             return errorLog;
         }
-
     }
 }

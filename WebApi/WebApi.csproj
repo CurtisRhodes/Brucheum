@@ -338,6 +338,7 @@
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\SlideshowController.cs" />
     <Compile Include="Controllers\StaticPageController.cs" />
+    <Compile Include="Controllers\VisitorInfoController.cs" />
     <Compile Include="Controllers\xAspNetController.cs" />
     <Compile Include="Controllers\OggleBoobleApiController.cs" />
     <Compile Include="DataContext\MySqlContext.cs" />

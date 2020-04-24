@@ -5,6 +5,8 @@ var userRoles = [];
 var waitingForReportThenPerformEvent = true;
 var forgetShowingCustomMessage = true;
 //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
+//<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+//<div class="g-recaptcha" data-sitekey="6LfaZzEUAAAAAMbgdAUmSHAHzv-dQaBAMYkR4h8L"></div>
 
 function loadSettings() {
     $.ajax({
@@ -173,6 +175,17 @@ function isNullorUndefined(val) {
     if (val === "undefined")
         return true;
     return false;
+}
+
+function create_UUID() {
+    // thank tohttps://www.w3resource.com/javascript-exercises/javascript-math-exercise-23.php
+    var dt = new Date().getTime();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (dt + Math.random() * 16) % 16 | 0;
+        dt = Math.floor(dt / 16);
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+    return uuid;
 }
 
 function sendEmailToYourself(subject, message) {
@@ -550,9 +563,12 @@ function checkFor404(errorMessage, calledFrom) {
         if (!inCheckFor404Loop) {
             checkFor404Loop = setInterval(function () {
                 if (!connectionVerified) {
-                    if (++verifyConnectionCount > verifyConnectionCountLimit) {
+                    if (++verifyConnectionCount > 3) {
+                        $('#connectingMsg').show();
+                    }
+                    if (verifyConnectionCount > verifyConnectionCountLimit) {
                         if (!canIgetaConnectionMessageShowing) {
-                            $('#customMessageContainer').prop("top", "300");
+                            $('#connectingMsg').hide();
                             $('#customMessage').html(
                                 "<div><div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'></div>\n" +
                                 "     <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
@@ -580,48 +596,55 @@ function checkFor404(errorMessage, calledFrom) {
 }
 
 function verifyConnection() {
-    console.log("calling verifyConnection");
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Carousel/VerifyConnection",
-        success: function (successModel) {
-            if (successModel.Success === "ok") {
-                if (successModel.ConnectionVerified) {
-                    clearInterval(checkFor404Loop);
-                    inCheckFor404Loop = false;
-                    connectionVerified = true;
-                    verifyConnectionCount = 0;
-                    console.log("verifyConnection: connection verified");
-                    $('#customMessage').hide();
-                    canIgetaConnectionMessageShowing = false;
+    if (isNullorUndefined(settingsArray.ApiServer)) {
+        console.error("verifyConnection settingsArray.ApiServer not defined");
+        connectionVerified = false;
+    }
+    else {
+        console.log("calling verifyConnection");
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Carousel/VerifyConnection",
+            success: function (successModel) {
+                if (successModel.Success === "ok") {
+                    if (successModel.ConnectionVerified) {
+                        clearInterval(checkFor404Loop);
+                        inCheckFor404Loop = false;
+                        connectionVerified = true;
+                        verifyConnectionCount = 0;
+                        console.log("verifyConnection: connection verified");
+                        $('#connectingMsg').hide();
+                        $('#customMessage').hide();
+                        canIgetaConnectionMessageShowing = false;
+                    }
+                    else {
+                        connectionVerified = false;
+                    }
                 }
                 else {
                     connectionVerified = false;
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "044",
+                        Severity: 1,
+                        ErrorMessage: successModel.Success,
+                        CalledFrom: "verifyConnection()"
+                    });
                 }
-            }
-            else {
-                connectionVerified = false;
+            },
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
                 logError({
                     VisitorId: getCookieValue("VisiorId"),
                     ActivityCode: "004",
                     Severity: 1,
-                    ErrorMessage: successModel.Success,
+                    ErrorMessage: errorMessage + ". CanIgetaConnectionMessageShowing: " + canIgetaConnectionMessageShowing + ". inCheckFor404Loop: " + inCheckFor404Loop,
                     CalledFrom: "verifyConnection()"
                 });
+                connectionVerified = false;
             }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            logError({
-                VisitorId: getCookieValue("VisiorId"),
-                ActivityCode: "004",
-                Severity: 1,
-                ErrorMessage: errorMessage + ". CanIgetaConnectionMessageShowing: " + canIgetaConnectionMessageShowing + ". inCheckFor404Loop: " + inCheckFor404Loop,
-                CalledFrom: "verifyConnection()"
-            });
-            connectionVerified = false;
-        }
-    });
+        });
+    }
 }
 
 function showCanIGetaConnectionMessage() {

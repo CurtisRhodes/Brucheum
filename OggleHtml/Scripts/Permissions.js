@@ -1,5 +1,8 @@
 ﻿function isInRole(roleName) {
-
+    if (isNullorUndefined(settingsArray.ApiServer)) {
+        //console.error("isInRole settingsArray.ApiServer not defined. Looking for: " + roleName);
+        return false;
+    }
     if (isNullorUndefined(roleName)) {
         //if (document.domain === 'localhost') alert("isInRole roleName: " + roleName);
         console.error("isInRole called with NullorUndefined roleName");

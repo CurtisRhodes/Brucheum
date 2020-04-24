@@ -28,9 +28,8 @@
                     ActivityCode: "ERR",
                     Severity: 12,
                     ErrorMessage: latestUpdates.Success,
-                    CalledFrom: "loadNewsBoxes"
+                    CalledFrom: "loadUpdatedGalleriesBoxes"
                 });
-                //sendEmailToYourself("Error in Caraousel/loadImages", carouselInfo.Success);
             }
         },
         error: function (jqXHR) {
@@ -41,7 +40,7 @@
                     ActivityCode: "XHR",
                     Severity: 1,
                     ErrorMessage: errorMessage,
-                    CalledFrom: "HitCounter.js getVisitorIdFromIp"
+                    CalledFrom: "loadUpdatedGalleriesBoxes"
                 });
                 //sendEmailToYourself("XHR ERROR IN Carousel.JS loadImages", "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take +
                 //    "  Message: " + errorMessage);

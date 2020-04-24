@@ -109,7 +109,6 @@ function attemptRegister() {
                             CalledFrom: "attemptRegister()"
                         });
                         //alert("XHR ERROR IN Login.JS attemptRegister\n" + errorMessage);
-                        //sendEmailToYourself("XHR ERROR IN Login.JS onLoginClick", "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress + "<br/>" + errorMessage);
                     }
                 }
             });
@@ -163,66 +162,12 @@ function onLogoutClick() {
 }
 
 function showLoginDialog() {
-    var ipAddress = getCookieValue("IpAddress");
-
-    if (!isNullorUndefined(ipAddress)) {
-        //alert("Logging In and already know Ip");
-        //console.log("Logging In and already know Ip");
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/HitCounter/GetVisitorIdFromIP?ipAddress=" + ipAddress,
-            success: function (loginSuccessModel) {
-                if (loginSuccessModel.Success === "ok") {
-                    setCookieValue("UserName", loginSuccessModel.UserName);
-                    setCookieValue("VisitorId", loginSuccessModel.VisitorId);
-                    if (ipAddress !== "68.203.90.183")// && ipAddress !== "50.62.160.105")
-                        logEventActivity({
-                            VisitorId: loginSuccessModel.VisitorId,
-                            EventCode: "LOG",
-                            EventDetail: loginSuccessModel.UserName + " logged in Ip: " + ipAddress,
-                            CalledFrom: "showLoginDialog"
-                        });
-                    //sendEmailToYourself("Login Attempt", "IpAddress: " + ipAddress);
-                    //"getVisitorInfoFromIPAddressSuccessModel.UserName: " + getVisitorInfoFromIPAddressSuccessModel.UserName +
-                    //" (Had to lookup thier ip address) IpAddress: " + ipAddress);
-                }
-                else {
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "JQE",
-                        Severity: 1,
-                        ErrorMessage: successModel.Success,
-                        CalledFrom: "showLoginDialog()"
-                    });
-                    //sendEmailToYourself("ERROR IN LOGIN. GetVisitorIdFromIP Fail", "Message: " + successModel.Success);
-                    //alert("GetVisitorIdFromIP: " + successModel.Success);
-                }
-            },
-            error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "onLoginClick")) {
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "showLoginDialog()"
-                    });
-                    //sendEmailToYourself("XHR ERROR IN Login.JS onLoginClick", "api/PageHit/GetVisitorIdFromIP?ipAddress=" + ipAddress +
-                    //    " Message: " + errorMessage);
-                }
-            }
-        });
-    }
-    else {
-        logEventActivity({
-            VisitorId: getCookieValue("VisitorId"),
-            EventCode: "LOG",
-            EventDetail: "Login Attepmt with known Ip: " + ipAddress,
-            CalledFrom: "showLoginDialog"
-        });
-        //sendEmailToYourself("Login Attepmt with known Ip", "Ip: " + ipAddress);
-    }
+    logEventActivity({
+        VisitorId: getCookieValue("VisitorId"),
+        EventCode: "LOG",
+        EventDetail: "Login dialog opened",
+        CalledFrom: "showLoginDialog"
+    });
 
     $('#modalContainer').show();
     $('#loginDialog').dialog({
@@ -249,10 +194,8 @@ function attemptLogin(userName, clearPasswod) {
             success: function (success) {
                 if (success === "ok") {
                     $('#loginDialog').dialog('close');
-
                     setCookieValue("UserName", $('#txtLoginUserName').val());
                     var userName = getCookieValue("UserName");
-
                     if (isNullorUndefined(userName)) {
                         logError({
                             VisitorId: getCookieValue("VisiorId"),
@@ -284,6 +227,13 @@ function attemptLogin(userName, clearPasswod) {
                 }
                 else {
                     $('#loginValidationSummary').html(success).show();
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "Q17",
+                        Severity: 13,
+                        ErrorMessage: "unsuccessful login attempt",
+                        CalledFrom: "attemptLogin()"
+                    });
                 }
             },
             error: function (jqXHR) {
@@ -301,7 +251,7 @@ function attemptLogin(userName, clearPasswod) {
             }
         });
     }
-}
+} 
 
 function validateLogin() {
     //alert("validateLogin");

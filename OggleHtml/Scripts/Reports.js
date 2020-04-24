@@ -61,7 +61,7 @@ function mostVisitedPagesPages() {
             if (popularPages.Success === "ok") {
                 $("#mostPopularPagesReport").html("<table><tr colspan=2><th>Most Popular Pages " + todayString() + "</th></tr>");
                 $.each(popularPages.Items, function (idx, obj) {
-                    $("#mostPopularPagesReport").append("<tr><td><a href='/album.html?folder=" + obj.FolderId + "' target='\_blank\''>" + obj.PageName + "</a></td><td>" + obj.PageHits + "</td></tr>");
+                    $("#mostPopularPagesReport").append("<tr><td><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" + obj.PageName + "</a></td><td>" + obj.PageHits + "</td></tr>");
                 });
                 $("#mostPopularPagesReport").append("</table>");
                 $('#popPagesContainer').css("display", "inline-block");
@@ -90,7 +90,7 @@ function runMostImageHits() {
             if (mostImageHits.Success === "ok") {
                 $("#mostImageHitsReport").html("<table><tr colspan=2><th>Most Image Hits" + todayString() + "</th></tr>");
                 $.each(mostImageHits.Items, function (idx, obj) {
-                    $("#mostImageHitsReport").append("<tr><td><a href='/album.html?folder=" + obj.FolderId + "' target='\_blank\''>" +
+                    $("#mostImageHitsReport").append("<tr><td><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" +
                         obj.PageName + "</a></td><td>" + obj.PageHits + "</td></tr>");
                 });
                 $("#mostImageHitsReport").append("</table>");

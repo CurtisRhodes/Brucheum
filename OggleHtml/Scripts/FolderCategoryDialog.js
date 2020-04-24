@@ -25,6 +25,8 @@ function showCategoryDialog(folderId) {
                 if (categoryComment.Success === "ok") {
                     categoryFolderId = folderId;
                     $('#folderCategoryDialog').dialog('option', 'title', categoryComment.FolderName);
+
+                    console.log("calling isInRole from showCategoryDialog");
                     if (isInRole("Oggle admin")) {
                         $('#catDlgSummerNoteTextArea').summernote({
                             height: 300,
