@@ -669,6 +669,9 @@ function ctxSAP(imgId) {
     $('#thumbImageContextMenu').css('z-index', "200");
     $('#thumbImageContextMenu').fadeIn();
 
+    if (!isInRole("Oggle admin")) {
+        $('#adminLink').hide();
+    }
     //var activityMessage = "context menu opened from Image: " + selectedImageLinkId;
     //if (viewerShowing)
     //    activityMessage += " from viewer";

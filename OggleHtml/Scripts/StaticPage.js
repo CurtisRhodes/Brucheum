@@ -22,6 +22,9 @@ $(document).ready(function () {
     //setOggleHeader(params.folder, "blank");
     var dots = "";
     loadSettings();
+
+    $('#adminLink').hide();
+
     var loadSettingsWaiter = setInterval(function () {
         if (settingsArray.ApiServer === undefined) {
             dots += "?. ";
