@@ -289,7 +289,7 @@ function runPageHitReport() {
                     if (isNullorUndefined(obj.FolderName))
                         kludge += "<td>null</a></td>";
                     else
-                        kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
+                        kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='_blank'>" + obj.FolderName.substring(0, 20) + "</a></td>";
                     if (obj.IpAddress === lastIp) {
                         kludge += "<td></td><td></td>";
                     } else {
@@ -359,7 +359,7 @@ function runErrorLogReport() {
                     kludge += "<td class='smallColumn'>" + obj.CalledFrom + "</td>";
                     kludge += "<td>" + obj.ActivityCode + "</td>";
                     kludge += "<td>" + obj.Severity + "</td>";
-                    kludge += "<td>" + obj.InDay + ":" + obj.OnTime + "</td></tr>";
+                    kludge += "<td>" + obj.At + ":" + obj.On + "</td></tr>";
                     kludge += "<tr><td class='detailRow' colspan=6>" + obj.ErrorMessage + "</td></tr>";
                 });
                 kludge += "</table>";

@@ -54,31 +54,48 @@ namespace WebApi.Controllers
 
         [HttpPost]
         [Route("api/VisitorInfo/AddVisitor")]
-        public AddVisitorSuccessModel AddVisitor(int pageId)
+        public AddVisitorSuccessModel AddVisitor(AddVisitorModel visitorData)
         {
-            AddVisitorSuccessModel addVisitorSuccess = new AddVisitorSuccessModel();
+            var addVisitorSuccess = new AddVisitorSuccessModel();
             try
             {
                 using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
-                    // We have a new visitor!
-                    string dnsHostName = Dns.GetHostName();
-                    IPHostEntry ipEntry = Dns.GetHostEntry(dnsHostName);
-                    IPAddress[] iPAddresses = ipEntry.AddressList;
-                    string ipAddress = iPAddresses[iPAddresses.Length - 1].ToString();
-                    string newVisitorId = Guid.NewGuid().ToString();
-                    Visitor newVisitor = new Visitor()
-                    {
-                        VisitorId = newVisitorId,
-                        InitialPage = pageId,
-                        InitialVisit = DateTime.Now,
-                        IpAddress = ipAddress
-                    };
-                    db.Visitors.Add(newVisitor);
-                    db.SaveChanges();
+                    CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == visitorData.PageId).FirstOrDefault();
+                    if (categoryFolder != null)
+                        addVisitorSuccess.PageName = categoryFolder.FolderName;
 
-                    addVisitorSuccess.IpAddress = ipAddress;
-                    addVisitorSuccess.VisitorId = newVisitorId;
+                    var existingVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
+                    if (existingVisitor != null)
+                    {
+                        addVisitorSuccess.VisitorId = existingVisitor.VisitorId;
+                        addVisitorSuccess.IsNewVisitor = false;
+                    }
+                    else
+                    {
+                        // We have a new visitor!
+                        //string dnsHostName = Dns.GetHostName();
+                        //IPHostEntry ipEntry = Dns.GetHostEntry(dnsHostName);
+                        //IPAddress[] iPAddresses = ipEntry.AddressList;
+                        //string ipAddress = iPAddresses[iPAddresses.Length - 1].ToString();
+                        string newVisitorId = Guid.NewGuid().ToString();
+                        Visitor newVisitor = new Visitor()
+                        {
+                            VisitorId = newVisitorId,
+                            InitialPage = visitorData.PageId,
+                            City = visitorData.City,
+                            Country = visitorData.Country,
+                            GeoCode = visitorData.GeoCode,
+                            Region = visitorData.Region,
+                            InitialVisit = DateTime.Now,
+                            IpAddress = visitorData.IpAddress
+                        };
+                        db.Visitors.Add(newVisitor);
+                        db.SaveChanges();
+
+                        addVisitorSuccess.VisitorId = newVisitorId;
+                        addVisitorSuccess.IsNewVisitor = true;
+                    }
                     addVisitorSuccess.Success = "ok";
                 }
             }
@@ -93,7 +110,7 @@ namespace WebApi.Controllers
         [Route("api/VisitorInfo/LogVisit")]
         public LogVisitSuccessModel LogVisit(string visitorId)
         {
-            LogVisitSuccessModel visitSuccessModel = new LogVisitSuccessModel() { VisitAdded = false };
+            LogVisitSuccessModel visitSuccessModel = new LogVisitSuccessModel();
             try
             {
                 using (OggleBoobleMySqContext dbm = new OggleBoobleMySqContext())
@@ -115,7 +132,7 @@ namespace WebApi.Controllers
                                 VisitDate = DateTime.Now  //  .AddMilliseconds(getrandom.Next())
                             });
                             dbm.SaveChanges();
-                            visitSuccessModel.VisitAdded = true;
+                            visitSuccessModel.IsNewVisitor = true;
                             if (lastVisitDate == DateTime.MinValue)
                                 visitSuccessModel.WelcomeMessage = "Welcome New Visitor";
                             else
@@ -138,8 +155,5 @@ namespace WebApi.Controllers
 
     }
 }
-
-
-
 
 

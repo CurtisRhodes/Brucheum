@@ -17,7 +17,7 @@ var imageViewerFolderName;
 var albumFolderId;
 var viewerShowing = false;
 var slideShowRunning = false;
-var ipAddress;
+//var ipAddress;
 var visitorId;
 var sessionCount = 0;
 var slideShowButtonsActive = true;
@@ -95,7 +95,6 @@ function getFolderArray(folderId, startItem) {
                         CalledFrom: "Album.js getAlbumImages"
                     });
                     //sendEmailToYourself("XHR ERROR in Album.js GetImageLinks ",
-                    //    "Called from: " + getCookieValue("IpAddress") + "  folderId: " + getAlbumImagesFolderId + " Message: " + errorMessage);
                 }
             }
         });
@@ -464,12 +463,10 @@ function closeViewer(calledFrom) {
         //if (sessionCount > 20) {
         //    if (document.domain === 'localhost') {
         //        alert("Close Slideshow ." + imageViewerFolderName + ".\nImages Viewed: " + sessionCount,
-        //            ". Close method: " + closeMethod + ".\nIp: " + getCookieValue("IpAddress"));
         //    }
         //    else {
         //        sendEmailToYourself("slideshow: " + imageViewerFolderName + ". Images Viewed: " + sessionCount,
         //            "Close method: " + closeMethod +
-        //            ".<br/>Ip: " + getCookieValue("IpAddress"));
         //    }
         //}
     }

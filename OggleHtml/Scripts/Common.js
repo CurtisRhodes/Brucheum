@@ -229,22 +229,25 @@ function logError(logErrorModel) {
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "/api/ErrorLog",
-        data: logErrorModel
-        //success: function (success) {
-        //    if (success === "ok")
-        //        //displayStatusMessage("ok", "error message logged");
-        //    else {
-        //        //alert("ChangeLog: " + success);
-        //        sendEmailToYourself("error in common/logActivity", success);
-        //    }
-        //},
-        //error: function (jqXHR) {
-        //    $('#dashBoardLoadingGif').hide();
-        //    var errorMessage = getXHRErrorDetails(jqXHR);
-        //    if (!checkFor404(errorMessage, "logActivity")) {
-        //        sendEmailToYourself("xhr error in common.js logActivity", "/api  ChangeLog  Message: " + errorMessage);
-        //    }
-        //}
+        data: logErrorModel,
+        success: function (success) {
+            if (success === "ok")
+                displayStatusMessage("ok", "error message logged");
+            else {
+                alert("ChangeLog: " + success);
+                //sendEmailToYourself("error in common/logActivity", success);
+            }
+        },
+        error: function (jqXHR) {
+            $('#dashBoardLoadingGif').hide();
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "logActivity")) {
+
+                alert("XHR error " + ErrorMessage);
+                sendEmailToYourself("xhr error in common.js logActivity", "/api  ChangeLog  Message: " + errorMessage);
+
+            }
+        }
     });
 }
 
@@ -543,6 +546,52 @@ function todayString() {
     return mm + '/' + dd + '/' + yyyy;
 }
 
+function getVisitorInfo() {
+    var info = {
+
+        timeOpened: new Date(),
+        timezone: (new Date()).getTimezoneOffset() / 60,
+
+        pageon() { return window.location.pathname },
+        referrer() { return document.referrer },
+        previousSites() { return history.length },
+
+        browserName() { return navigator.appName },
+        browserEngine() { return navigator.product },
+        browserVersion1a() { return navigator.appVersion },
+        browserVersion1b() { return navigator.userAgent },
+        browserLanguage() { return navigator.language },
+        browserOnline() { return navigator.onLine },
+        browserPlatform() { return navigator.platform },
+        javaEnabled() { return navigator.javaEnabled() },
+        dataCookiesEnabled() { return navigator.cookieEnabled },
+        dataCookies1() { return document.cookie },
+        dataCookies2() { return decodeURIComponent(document.cookie.split(";")) },
+        dataStorage() { return localStorage },
+
+        sizeScreenW() { return screen.width },
+        sizeScreenH() { return screen.height },
+        sizeDocW() { return document.width },
+        sizeDocH() { return document.height },
+        sizeInW() { return innerWidth },
+        sizeInH() { return innerHeight },
+        sizeAvailW() { return screen.availWidth },
+        sizeAvailH() { return screen.availHeight },
+        scrColorDepth() { return screen.colorDepth },
+        scrPixelDepth() { return screen.pixelDepth },
+
+        latitude() { return position.coords.latitude },
+        longitude() { return position.coords.longitude },
+        accuracy() { return position.coords.accuracy },
+        altitude() { return position.coords.altitude },
+        altitudeAccuracy() { return position.coords.altitudeAccuracy },
+        heading() { return position.coords.heading },
+        speed() { return position.coords.speed },
+        timestamp() { return position.timestamp },
+    };
+    return info;
+}
+
 var connectionVerified = false;
 var canIgetaConnectionMessageShowing = false;
 var verifyConnectionCount = 0;
@@ -623,22 +672,22 @@ function verifyConnection() {
                 }
                 else {
                     connectionVerified = false;
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "044",
-                        Severity: 1,
-                        ErrorMessage: successModel.Success,
-                        CalledFrom: "verifyConnection()"
-                    });
+                    //logError({
+                    //    VisitorId: getCookieValue("VisiorId"),
+                    //    ActivityCode: "044",
+                    //    Severity: 1,
+                    //    ErrorMessage: successModel.Success,
+                    //    CalledFrom: "verifyConnection()"
+                    //});
                 }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 logError({
                     VisitorId: getCookieValue("VisiorId"),
-                    ActivityCode: "004",
+                    ActivityCode: "XHR",
                     Severity: 1,
-                    ErrorMessage: errorMessage + ". CanIgetaConnectionMessageShowing: " + canIgetaConnectionMessageShowing + ". inCheckFor404Loop: " + inCheckFor404Loop,
+                    ErrorMessage: errorMessage + ". CanIgetShowing: " + canIgetaConnectionMessageShowing + ". in404Loop: " + inCheckFor404Loop,
                     CalledFrom: "verifyConnection()"
                 });
                 connectionVerified = false;
@@ -647,12 +696,3 @@ function verifyConnection() {
     }
 }
 
-function showCanIGetaConnectionMessage() {
-    $('#customMessageContainer').prop("top", "300");
-    $('#customMessage').html(
-        "<div><div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'></div>\n" +
-        "     <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
-        "</div>").show();
-    // alert("connection message showing");
-    canIgetaConnectionMessageShowing = true;
-}

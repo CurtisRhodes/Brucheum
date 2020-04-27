@@ -35,14 +35,27 @@ namespace WebApi.MySqDataContext
         public virtual DbSet<DailyActivityReport> DailyActivity { get; set; }
         public virtual DbSet<vwPageHit> vwPageHits { get; set; }
         public virtual DbSet<FeedBack> FeedBacks { get; set; }
-        public virtual DbSet<ErrorLogItem> ErrorLogItems { get; set; }
+        public virtual DbSet<vwErrorReport> vwErrorReportRows { get; set; }
         public virtual DbSet<PageHitTotals> PageHitTotal { get; set; }
+        public virtual DbSet<ErrorLog> ErrorLogs { get; set; }
     }
 
 
+    [Table("OggleBooble.ErrorLog")]
+    public class ErrorLog
+    {
+        [Key]
+        public string PkId { get; set; }
+        public string VisitorId { get; set; }
+        public string ActivityCode { get; set; }
+        public string CalledFrom { get; set; }
+        public int Severity { get; set; }
+        public string ErrorMessage { get; set; }
+        public DateTime Occured { get; set; }
+    }
 
     [Table("OggleBooble.vwErrorReport")]
-    public class ErrorLogItem
+    public class vwErrorReport
     {
         [Key]
         public string PkId { get; set; }

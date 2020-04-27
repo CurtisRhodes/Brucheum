@@ -71,9 +71,9 @@ namespace WebApi.Models
     {
         public ErrorLogReportModel()
         {
-            ErrorRows = new List<ErrorLogItem>();
+            ErrorRows = new List<vwErrorReport>();
         }
-        public List<ErrorLogItem> ErrorRows { get; set; }
+        public List<vwErrorReport> ErrorRows { get; set; }
         public string Success { get; set; }
     }
 

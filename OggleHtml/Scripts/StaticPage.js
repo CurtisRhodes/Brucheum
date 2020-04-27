@@ -33,23 +33,32 @@ $(document).ready(function () {
         else {
             clearInterval(loadSettingsWaiter);
             $('#dots').html('');
+
             if (!isNullorUndefined(calledFrom)) {
-                var logEventModel = {
-                    VisitorId: getCookieValue("VisitorId"),
-                    EventCode: "XLC",
-                    EventDetail: calledFrom,
-                    CalledFrom: staticPageFolderId
-                };
-                logEventActivity(logEventModel);
+                var visitorId = getCookieValue("VisitorId");
+                if (isNullorUndefined(visitorId)) {
+                    addVisitor(staticPageFolderId, "static");
+                }
+                else {
+                    logEventActivity({
+                        VisitorId: visitorId,
+                        EventCode: "XLC",
+                        EventDetail: calledFrom,
+                        CalledFrom: staticPageFolderId
+                    });
+                }
             }
-            getBreadCrumbs(staticPageFolderId);
-            logPageHit(staticPageFolderId, "static page");
             resizeStaticPage();
             $(window).resize(resizeStaticPage());
-            $('#feedbackBanner').click(showFeedbackDialog()).fadeIn();
+            logPageHit(staticPageFolderId, "static page");
+            getBreadCrumbs(staticPageFolderId);
         }
     }, 300);
 });
+
+//function getBreadCrumbs(staticPageFolderId) {
+//    setOggleFooter(staticPageFolderId, currentFolderRoot);
+//}
 
 function resizeStaticPage() {
     resizePage();
@@ -58,8 +67,7 @@ function resizeStaticPage() {
     if (viewerShowing) {
         resizeViewer();
     }
-    //console.log("resize static page");
-    //$('#footerMessage').html("8");
+    $('#feedbackBanner').css("top", $('#middleColumn').height() - 150);
 }
 
 function showCatListDialog(root) {
@@ -79,4 +87,23 @@ function staticCatTreeContainerClick(path, id, treeId) {
     }
     else
         alert("dirTreeClick treeId: " + treeId);
+}
+
+function subFolderPreClick(isStepChild, subFolderPreClickFolderId) {
+    if (isStepChild === "0")
+        rtpe("SUB", albumFolderId, subFolderPreClickFolderId);
+    else {
+        rtpe("SSB", albumFolderId, subFolderPreClickFolderId);
+    }
+}
+
+function showEitherModelorFolderInfoDialog(index, folderName, showEitherModelorFolderInfoDialogFolderId, parentId, rootFolder) {
+    //alert("showEitherModelorFolderInfoDialog(index: " + index + ", folderName: " + folderName + ", folderId: " + folderId + ", parentId: " + parentId + ", rootFolder: " + rootFolder + ")");
+    var cybergirls = "3796";
+    if (rootFolder === "playboy" && index > 4 || parentId === cybergirls || rootFolder === "archive" && index > 2) {
+        rtpe("CMX", showEitherModelorFolderInfoDialogFolderId, folderName);
+    }
+    else {
+        showCategoryDialog(showEitherModelorFolderInfoDialogFolderId);
+    }
 }

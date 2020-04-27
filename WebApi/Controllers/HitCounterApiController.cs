@@ -214,9 +214,9 @@ namespace WebApi
     public class VisitController : ApiController
     {
         [HttpPost]
-        public AddVisitorSuccessModel LogVisitor(LogVisitorModel visitorModel)
+        public LogVisitSuccessModel LogVisitor(LogVisitorModel visitorModel)
         {
-            var visitorSuccess = new AddVisitorSuccessModel();
+            var visitorSuccess = new LogVisitSuccessModel();
             try
             {
                 using (OggleBoobleMySqContext mdb = new OggleBoobleMySqContext())
@@ -410,7 +410,7 @@ namespace WebApi
             {
                 using (var mdb = new OggleBoobleMySqContext())
                 {
-                    mdb.ErrorLogItems.Add(new ErrorLogItem()
+                    mdb.ErrorLogs.Add(new ErrorLog()
                     {
                         PkId = Guid.NewGuid().ToString(),
                         ActivityCode = logErrorModel.ActivityCode,

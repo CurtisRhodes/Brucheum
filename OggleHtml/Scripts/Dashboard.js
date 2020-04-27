@@ -71,13 +71,13 @@ function setDashboardHeader(viewId) {
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='repairLinks()'>Repair Links</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAssignRolesDialog()'>Assign User Roles</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddRolesDialog()'>Edit Roles</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveManyTool();'>Move Many</div>");
 
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='$('.workAreaContainer').hide();$('#divAddVideo').show();\">Add Video Link</div>");
 
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='xx'>Add Video Link</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='testAddVisitor()'>test AddVisitor</div>");
 
 
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveManyTool();'>Move Many</div>");
 
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='emergencyFolderLocationFix()'>emergencyFolderLocationFix</div>");
@@ -89,6 +89,13 @@ function setDashboardHeader(viewId) {
             alert("view not undestood: " + viewId);
     }
     resizeDashboardPage();
+}
+
+
+function testAddVisitor() {
+    $('#dataifyInfo').show().html("sending test addVisitor");
+    addVisitor(3309, "dashboard");
+    //$('#dataifyInfo').show().html("test message sent");
 }
 
 function showUpLoadDialog() {

@@ -22,21 +22,6 @@ function getAlbumImages(folderId) {
                     currentFolderRoot = imageLinksModel.RootFolder;
                     $('#googleSearchText').html(imageLinksModel.FolderName);
 
-                    if (!isNullorUndefined(imageLinksModel.ExternalLinks)) {
-                        if (imageLinksModel.ExternalLinks.indexOf("Playmate Of The Year") > -1) {
-                            $('#pmoyLink').show();
-                        }
-                        if (imageLinksModel.ExternalLinks.indexOf("biggest breasted centerfolds") > -1) {
-                            $('#breastfulPlaymatesLink').show();
-                        }
-                        if (imageLinksModel.ExternalLinks.indexOf("black centerfolds") > -1) {
-                            $('#blackCenterfoldsLink').show();
-                        }
-                        if (imageLinksModel.ExternalLinks.indexOf("Hef likes twins") > -1) {
-                            $('#twinsLink').show();
-                        }
-                    }
-
                     $.each(imageLinksModel.TrackBackItems, function (idx, trackBackItem) {
                         if (trackBackItem.Site === "Babepedia") {
                             $('#babapediaLink').html(trackBackItem.TrackBackLink);
@@ -53,8 +38,9 @@ function getAlbumImages(folderId) {
                     });
 
                     processImages(imageLinksModel);
-                    getBreadCrumbs(folderId);
-                    var delta = (Date.now() - start) / 1000;
+                    getBreadCrumbs(folderId, imageLinksModel.ExternalLinks);
+
+                    //var delta = (Date.now() - start) / 1000;
                     console.log("GetImageLinks?folder=" + folderId + " took: " + delta.toFixed(3));
                     logPageHit(folderId, "Album.html");  // 
 
@@ -154,15 +140,17 @@ function directToStaticPage(directToStaticPageFolderId) {
     });
 }
 
-function getBreadCrumbs(getBreadCrumbsFolderId) {
+function getBreadCrumbs(folderId, badgesText) {
     // a woman commited suicide when pictures of her "came out"
     // title: I do not remember having been Invited)
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/BreadCrumbs/Get?folderId=" + getBreadCrumbsFolderId,
+        url: settingsArray.ApiServer + "/api/BreadCrumbs/Get?folderId=" + folderId,
         success: function (breadCrumbModel) {
             if (breadCrumbModel.Success === "ok") {
-                setOggleHeader(getBreadCrumbsFolderId, breadCrumbModel.RootFolder);
+
+                setOggleHeader(folderId, breadCrumbModel.RootFolder);
+
                 $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + getBreadCrumbsFolderId + ",\"" + currentFolderRoot + "\")'>home  &#187</a>");
                 for (i = breadCrumbModel.BreadCrumbs.length - 1; i >= 0; i--) {
                     if (breadCrumbModel.BreadCrumbs[i] === null) {
@@ -196,6 +184,22 @@ function getBreadCrumbs(getBreadCrumbsFolderId) {
                 staticPageFolderId = getBreadCrumbsFolderId;
                 currentAlbumJSfolderName = breadCrumbModel.FolderName;
                 document.title = currentAlbumJSfolderName + " : OggleBooble";
+
+                if (!isNullorUndefined(badgesText)) {
+                    if (badgesText.indexOf("Playmate Of The Year") > -1) {
+                        $('#pmoyLink').show();
+                    }
+                    if (badgesText.indexOf("biggest breasted centerfolds") > -1) {
+                        $('#breastfulPlaymatesLink').show();
+                    }
+                    if (badgesText.indexOf("black centerfolds") > -1) {
+                        $('#blackCenterfoldsLink').show();
+                    }
+                    if (badgesText.indexOf("Hef likes twins") > -1) {
+                        $('#twinsLink').show();
+                    }
+                }
+
             }
             else {
                 if (breadCrumbModel.Success.indexOf("Option not supported") > -1) {
@@ -669,6 +673,7 @@ function ctxSAP(imgId) {
     $('#thumbImageContextMenu').css('z-index', "200");
     $('#thumbImageContextMenu').fadeIn();
 
+
     if (!isInRole("Oggle admin")) {
         $('#adminLink').hide();
     }
@@ -723,16 +728,24 @@ function contextMenuAction(action) {
             showImageCommentDialog(selectedImage, selectedImageLinkId, albumFolderId, currentAlbumJSfolderName);
             break;
         case "explode":
-            var explodeEventDetail = "explode";
-            if (viewerShowing)
-                explodeEventDetail = "viewer explode";
-            logEventActivity({
-                VisitorId: getCookieValue("VisitorId"),
-                EventCode: "CM4",
-                EventDetail: explodeEventDetail,
-                CalledFrom: albumFolderId
-            });
-            window.open(selectedImage, "_blank");
+            if (isLoggedIn()) {
+                rtpe("EXP", albumFolderId, selectedImage);
+                logEventActivity({
+                    VisitorId: getCookieValue("VisitorId"),
+                    EventCode: "CM4",
+                    EventDetail: "explode image " + selectedImageLinkId,
+                    CalledFrom: albumFolderId
+                });
+            }
+            else {
+                logEventActivity({
+                    VisitorId: getCookieValue("VisitorId"),
+                    EventCode: "UN1",
+                    EventDetail: "un authorized attempt to explode",
+                    CalledFrom: albumFolderId
+                });
+                alert("You must be logged in to use this feature");
+            }
             break;
         case "archive":
             $("#thumbImageContextMenu").fadeOut();

@@ -183,6 +183,13 @@
             if (subdomain == "porn")
                 homePageId = 3909;
 
+
+            if (isLoggedIn()) {
+                $('#optionLoggedIn').show();
+                $('#optionNotLoggedIn').hide();
+                $('#dashboardMenuItem').show();
+            }
+
             setOggleHeader(homePageId, subdomain);
             loadSettings();
             var dots = ""

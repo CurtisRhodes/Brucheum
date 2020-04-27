@@ -1,4 +1,7 @@
-﻿function showFeedbackDialog() {
+﻿
+$('#feedbackBanner').click(showFeedbackDialog).fadeIn();
+
+function showFeedbackDialog() {
     $('#feedbackDialog').dialog({
         show: { effect: "fade" },
         hide: { effect: "blind" },

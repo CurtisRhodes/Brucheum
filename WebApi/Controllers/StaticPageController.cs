@@ -51,7 +51,8 @@ namespace WebApi.Controllers
 
                 string staticContent =
                     "<!DOCTYPE html>\n<html lang='en'>\n" + HeadHtml(folderId, folderName) +
-                    "\n<body style='margin-top:105px'>\n<header>" + GetStaticPageHeader(folderId, rootFolder) + "</header>" +
+                    "\n<body style='margin-top:105px'>\n" +
+                    GetStaticPageHeader(folderId, rootFolder) +
                     GalleryPageBodyHtml(folderId, folderName, rootFolder) +
                     "<footer></footer>\n" +
                     // Slideshow() + CommentDialog() + ModelInfoDialog() +
@@ -64,6 +65,7 @@ namespace WebApi.Controllers
                     "<div w3-include-html='/Snippets/Login.html'></div>\n" +
                     "<div w3-include-html='/Snippets/Register.html'></div>\n" +
                     "<script src='/scripts/StaticPage.js'></script>\n" +
+                    "<script>function getBreadCrumbs(staticPageFolderId){setOggleFooter(" + folderId + ",'" + rootFolder + "')};</script>\n" +
                     "\n</body>\n</html>";
 
                 success = WriteFileToDisk(staticContent, rootFolder, folderName);
@@ -156,13 +158,13 @@ namespace WebApi.Controllers
 
         private string GetStaticPageHeader(int folderId, string rootFolder)
         {
-            string topLeftLogo = "<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"boobs\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n";
-            string bannerTitle = "OggleBooble";
             string headerClass = "boobsHeader";
-            string subheaderContent="";
-            string rankerLink="";
-            string playboyLink="";
-            string archiveLink="";
+            string topLeftLogo = "/Images/redballon.png";
+            string bannerTitle = "OggleBooble";
+            string subheaderContent = "";
+            string rankerLink = "";
+            string playboyLink = "";
+            string archiveLink = "";
             switch (rootFolder)
             {
                 case "admin":
@@ -222,7 +224,7 @@ namespace WebApi.Controllers
                 case "playboy":
                 case "playmates":
                     headerClass = "boobsHeader";
-                    topLeftLogo = "<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"playboy\")'><img src='/Images/playboyBallon.png' class='bannerImage'/></a>\n";
+                    topLeftLogo = "/Images/playboyBallon.png";
                     subheaderContent =
                         "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1132)'>Centerfolds,</a>\n" +
                         "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1986)'> magazine covers,</a>\n" +
@@ -245,7 +247,7 @@ namespace WebApi.Controllers
                         "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",357)'>cum shots</a>, \n" +
                         "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",397)'>kinky</a> and \n" +
                         "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",411)'>naughty behaviour</a>\n";
-                    topLeftLogo = "<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"porn\")'><img src='/Images/csLips02.png' class='bannerImage'/></a>\n";
+                    topLeftLogo = "/Images/csLips02.png";
                     archiveLink = "<div id='rankerTag' class='headerFeatureBanner'>" +
                         "<a href='javascript:rtpe(\"BAC\"," + folderId + ",440)'>slut archive</a></div>\n";
                     rankerLink = "<div id='rankerTag' class='headerFeatureBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"" + rootFolder + "\")' " +
@@ -257,7 +259,11 @@ namespace WebApi.Controllers
                     //alert("subdomain: " + subdomain + "  not found");
                     //console.log("subdomain: " + subdomain + "  not found");
             }
-            StringBuilder staticPageHeader = new StringBuilder("<div class='" + headerClass + "'> <div id='divTopLeftLogo' class='bannerImageContainer'></div>\n" +
+            StringBuilder staticPageHeader = new StringBuilder(
+                "<header class='" + headerClass + "'>" +
+                "<div id='divTopLeftLogo' class='bannerImageContainer'>" +
+                "   <a href = 'javascript:rtpe(\"HBC\"," + folderId + ",\"boobs\")' ><img class='bannerImage' src = '" + topLeftLogo + "'/></a>\n" +
+                "</div>\n" +
                 "   <div class='headerBodyContainer'>\n" +
                 "       <div id='' class='headerTopRow'>\n" +
                 "           <div id='bannerTitle' class='headerTitle'>" + bannerTitle + "</div >\n" +
@@ -271,11 +277,19 @@ namespace WebApi.Controllers
                 "       </div>\n");
             //BreadCrumbModel breadCrumbModel = new BreadCrumbsController().Get(folderId);
             BreadCrumbModel breadCrumbModel = new BreadCrumbModel();
+            string badgesText = "";
             using (OggleBoobleContext db = new OggleBoobleContext())
             {
                 #region breadcrumbs
                 var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                 var parent = thisFolder.Parent;
+                breadCrumbModel.BreadCrumbs.Add(new BreadCrumbItemModel()
+                {
+                    FolderId = thisFolder.Id,
+                    FolderName = thisFolder.FolderName,
+                    ParentId = thisFolder.Parent,
+                    IsInitialFolder = true
+                });
                 while (parent > 1)
                 {
                     var parentDb = db.CategoryFolders.Where(f => f.Id == parent).First();
@@ -287,124 +301,122 @@ namespace WebApi.Controllers
                     });
                     parent = parentDb.Parent;
                 }
-                breadCrumbModel.BreadCrumbs.Add(new BreadCrumbItemModel()
-                {
-                    FolderId = thisFolder.Id,
-                    FolderName = thisFolder.FolderName,
-                    ParentId = thisFolder.Parent,
-                    IsInitialFolder = true
-                });
-                StringBuilder breadCrumbString = new StringBuilder("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + folderId + ",\"" +
-                          rootFolder + "\")'>home  &#187</a>");
-                int breadcrumbCount = breadCrumbModel.BreadCrumbs.Count;
-                for (int i = breadcrumbCount - 1; i >= 0; i--)
-                {
-                    if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder)
-                    {
-                        breadCrumbString.Append("<a class='inactiveBreadCrumb' " +
-                        (breadCrumbModel.BreadCrumbs.Count - i) + "'," +
-                        breadCrumbModel.FolderName + "\",\"" +
-                        breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" +
-                        breadCrumbModel.BreadCrumbs[i].ParentId + "\",\"" +
-                        breadCrumbModel.RootFolder + "\"); forgetHomeFolderInfoDialog=false;' onmouseout='forgetHomeFolderInfoDialog=true;' " +
-                        "onclick='showEitherModelorFolderInfoDialog(" + (breadCrumbModel.BreadCrumbs.Count - i) + ",\"" +
-                        breadCrumbModel.FolderName + "\",\"" +
-                        breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" +
-                        breadCrumbModel.BreadCrumbs[i].ParentId + "\",\"" +
-                        breadCrumbModel.RootFolder + "\")' >" +
-                        breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") +
-                        "</a>");
-                    }
-                    else
-                    {
-                        breadCrumbString.Append("<a class='activeBreadCrumb'" +
-                            //	HBX	Home Breadcrumb Clicked
-                            "href='javascript:rtpe(\"BCC\"," + folderId + "," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
-                            breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
-                    }
-                }
-                #endregion
-                staticPageHeader.Append("       <div class='headerBottomRow'>\n" +
-                    "           <div id='headerMessage' class='bottomLeftBottomHeaderArea'></div>\n" +
-                    "           <div id='breadcrumbContainer' class='breadCrumbArea'>" + breadCrumbString.ToString() + "</div>\n" +
-                    "           <div class='menuTabs replaceableMenuItems'>\n");
 
-                CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
-                if (categoryFolderDetails != null)
-                {
-                    if (categoryFolderDetails.ExternalLinks != null)
-                    {
-                        if (categoryFolderDetails.ExternalLinks.IndexOf("Playmate Of The Year") > -1)
-                        {
-                            staticPageHeader.Append(
-                            "               <div id='pmoyLink' class='menuTabs displayHidden'>\n" +
-                            "                   <a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>" +
-                            "               </div>\n");
-                        }
-                        if (categoryFolderDetails.ExternalLinks.IndexOf("biggest breasted centerfolds") > -1)
-                        {
-                            staticPageHeader.Append(
-                                "               <div id='breastfulPlaymatesLink' class='menuTabs displayHidden'>\n" +
-                                "                   <a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>" +
-                                "               </div>\n");
-                        }
-                        if (categoryFolderDetails.ExternalLinks.IndexOf("black centerfolds") > -1)
-                        {
-                            staticPageHeader.Append(
-                                "               <div id='blackCenterfoldsLink' class='menuTabs displayHidden'>\n" +
-                                "                   <div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>\n" +
-                                "               </div>\n");
-                        }
-                        if (categoryFolderDetails.ExternalLinks.IndexOf("Hef likes twins") > -1)
-                        {
-                            staticPageHeader.Append(
-                                "               <div id='twinsLink' class='menuTabs displayHidden'>\n" +
-                                "                   <a href='/album.html?folder=3904'><img src='/Images/geminiSymbol1.png' title='Hef likes twins' class='badgeImage'></a>" +
-                                "               </div>\n");
-                        }
-                    }
-                }
-                staticPageHeader.Append(
-                    "           </div>\n" +
-                    "           <div id='divLoginArea' class='loginArea'>\n" +
-                    "               <div id='optionLoggedIn' class='displayHidden'>\n" +
-                    "                   <div class='menuTab' id='dashboardMenuItem' class='displayHidden'><a href='/Dashboard.html'>Dashboard</a></div>\n" +
-                    "                   <div class='menuTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
-                    "                   <div class='menuTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
-                    "               </div>\n" +
-                    "               <div id='optionNotLoggedIn'>\n" +
-                    "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
-                    "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:showLoginDialog()'>Log In</a></div>\n" +
-                    "               </div>\n" +
-                    "           </div>\n" +
-                    "       </div>\n" +
-                    "   </div>\n" +
-                    "<div id='draggableDialog' class='oggleDraggableDialog'>\n" +
-                    "   <div id='draggableDialogHeader'class='oggleDraggableDialogHeader'>" +
-                    "       <div id='draggableDialogTitle' class='oggleDraggableDialogTitle'></div>" +
-                    "       <div id='draggableDialogCloseButton' class='oggleDraggableDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'></div>\n" +
-                    "   </div>\n" +
-                    "   <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
-                    "</div>\n" +
-                    "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
-                    "<div id='customMessageContainer' class='centeredDivShell'>\n" +
-                    "   <div class='centeredDivInner'>\n" +
-                    "       <div id='customMessage' class='displayHidden' ></div>\n" +
-                    "   </div>\n" +
-                    "</div>\n");
+                CategoryFolderDetail dbCategoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                if (dbCategoryFolderDetails != null)
+                    badgesText = dbCategoryFolderDetails.ExternalLinks;
 
-                //staticPageHeader.Append(
-                //    "<div id='feedbackDialog' class='modalDialog' title='Feedback'>\n" +
-                //    "   <div><input type='radio' name='feedbackRadio' value='complement' checked='checked'> complement\n" +
-                //    "       <input type='radio' name='feedbackRadio' value='suggestion'> suggestion\n" +
-                //    "       <input type='radio' name='feedbackRadio' value='report error'> report error" +
-                //    "   </div>\n" +
-                //    "   <div id='feedbackDialogSummerNoteTextArea'></div>\n" +
-                //    "   <div id='btnfeedbackDialogSave' class='roundendButton' onclick='saveFeedbackDialog(" + folderId + ")'>Send</div>\n" +
-                //    "   <div id='btnfeedbackDialogCancel' class='roundendButton' onclick='closeFeedbackDialog()'>Cancel</div>\n" +
-                //    "</div>");
-                return staticPageHeader.ToString();
             }
+            StringBuilder breadCrumbString = new StringBuilder("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," +
+                folderId + ",\"" + rootFolder + "\")'>home  &#187</a>");
+
+            int breadcrumbCount = breadCrumbModel.BreadCrumbs.Count;
+            for (int i = breadcrumbCount - 1; i >= 0; i--)
+            //for (int i = 0; i < breadCrumbModel.BreadCrumbs.Count; i++)
+            {
+                if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder)
+                {
+                    breadCrumbString.Append("<a class='inactiveBreadCrumb' " +
+                    (breadCrumbModel.BreadCrumbs.Count - i) + "'," +
+                    breadCrumbModel.FolderName + "\",\"" +
+                    breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" +
+                    breadCrumbModel.BreadCrumbs[i].ParentId + "\",\"" +
+                    breadCrumbModel.RootFolder + "\"); forgetHomeFolderInfoDialog=false;' onmouseout='forgetHomeFolderInfoDialog=true;' " +
+                    "onclick='showEitherModelorFolderInfoDialog(" + (breadCrumbModel.BreadCrumbs.Count - i) + ",\"" +
+                    breadCrumbModel.FolderName + "\",\"" +
+                    breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" +
+                    breadCrumbModel.BreadCrumbs[i].ParentId + "\",\"" +
+                    breadCrumbModel.RootFolder + "\")' >" +
+                    breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") +
+                    "</a>");
+                }
+                else
+                {
+                    breadCrumbString.Append("<a class='activeBreadCrumb'" +
+                        //	HBX	Home Breadcrumb Clicked
+                        "href='javascript:rtpe(\"BCC\"," + folderId + "," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
+                        breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
+                }
+            }
+            #endregion
+            staticPageHeader.Append("       <div class='headerBottomRow'>\n" +
+                "           <div id='headerMessage' class='bottomLeftBottomHeaderArea'></div>\n" +
+                "           <div id='breadcrumbContainer' class='breadCrumbArea'>" + breadCrumbString.ToString() + "</div>\n" +
+                "           <div class='menuTabs replaceableMenuItems'>\n");
+
+            //CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+            if (badgesText != "")
+            {
+                if (badgesText.IndexOf("Playmate Of The Year") > -1)
+                {
+                    staticPageHeader.Append(
+                    "               <div id='pmoyLink' class='menuTabs displayHidden'>\n" +
+                    "                   <a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>" +
+                    "               </div>\n");
+                }
+                if (badgesText.IndexOf("biggest breasted centerfolds") > -1)
+                {
+                    staticPageHeader.Append(
+                        "               <div id='breastfulPlaymatesLink' class='menuTabs displayHidden'>\n" +
+                        "                   <a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>" +
+                        "               </div>\n");
+                }
+                if (badgesText.IndexOf("black centerfolds") > -1)
+                {
+                    staticPageHeader.Append(
+                        "               <div id='blackCenterfoldsLink' class='menuTabs displayHidden'>\n" +
+                        "                   <div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>\n" +
+                        "               </div>\n");
+                }
+                if (badgesText.IndexOf("Hef likes twins") > -1)
+                {
+                    staticPageHeader.Append(
+                        "               <div id='twinsLink' class='menuTabs displayHidden'>\n" +
+                        "                   <a href='/album.html?folder=3904'><img src='/Images/geminiSymbol1.png' title='Hef likes twins' class='badgeImage'></a>" +
+                        "               </div>\n");
+                }
+            }
+            
+            staticPageHeader.Append(
+                "           </div>\n" +
+                "           <div id='divLoginArea' class='loginArea'>\n" +
+                "               <div id='optionLoggedIn' class='displayHidden'>\n" +
+                "                   <div class='menuTab' id='dashboardMenuItem' class='displayHidden'><a href='/Dashboard.html'>Dashboard</a></div>\n" +
+                "                   <div class='menuTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
+                "                   <div class='menuTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
+                "               </div>\n" +
+                "               <div id='optionNotLoggedIn'>\n" +
+                "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
+                "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:showLoginDialog()'>Log In</a></div>\n" +
+                "               </div>\n" +
+                "           </div>\n" +
+                "       </div>\n" +
+                "   </div>\n" +
+                "<div id='draggableDialog' class='oggleDraggableDialog'>\n" +
+                "   <div id='draggableDialogHeader'class='oggleDraggableDialogHeader'>" +
+                "       <div id='draggableDialogTitle' class='oggleDraggableDialogTitle'></div>" +
+                "       <div id='draggableDialogCloseButton' class='oggleDraggableDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'></div>\n" +
+                "   </div>\n" +
+                "   <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
+                "</div>\n" +
+                "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
+                "<div id='customMessageContainer' class='centeredDivShell'>\n" +
+                "   <div class='centeredDivInner'>\n" +
+                "       <div id='customMessage' class='displayHidden' ></div>\n" +
+                "   </div>\n" +
+                "</div>\n</header>\n");
+            //staticPageHeader.Append(
+            //    "<div id='feedbackDialog' class='modalDialog' title='Feedback'>\n" +
+            //    "   <div><input type='radio' name='feedbackRadio' value='complement' checked='checked'> complement\n" +
+            //    "       <input type='radio' name='feedbackRadio' value='suggestion'> suggestion\n" +
+            //    "       <input type='radio' name='feedbackRadio' value='report error'> report error" +
+            //    "   </div>\n" +
+            //    "   <div id='feedbackDialogSummerNoteTextArea'></div>\n" +
+            //    "   <div id='btnfeedbackDialogSave' class='roundendButton' onclick='saveFeedbackDialog(" + folderId + ")'>Send</div>\n" +
+            //    "   <div id='btnfeedbackDialogCancel' class='roundendButton' onclick='closeFeedbackDialog()'>Cancel</div>\n" +
+            //    "</div>");
+            return staticPageHeader.ToString();
+
         }
 
         private string GalleryPageBodyHtml(int folderId, string folderName, string rootFolder)

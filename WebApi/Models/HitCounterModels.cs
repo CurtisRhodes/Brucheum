@@ -103,23 +103,23 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
-    public class IPVisitLookup
+    public class LogVisitModel
     {
         public string VisitorId { get; set; }
         public string IpAddress { get; set; }
         public DateTime VisitDate { get; set; }
         public string Success { get; set; }
     }
-
-    public class AddVisitorSuccessModel
+    public class LogVisitSuccessModel
     {
         public string VisitorId { get; set; }
-        public string PageName { get; set; }
-        public string IpAddress { get; set; }
+        public string WelcomeMessage { get; set; }
+        public bool IsNewVisitor { get; set; }
         public string Success { get; set; }
-    }    
+        public string PageName { get; set; }
+    }
 
-    public class LogVisitorModel
+    public class AddVisitorModel
     {
         public int PageId { get; set; }
         public string IpAddress { get; set; }
@@ -130,10 +130,11 @@ namespace WebApi.Models
         public string GeoCode { get; set; }
     }
 
-    public class LogVisitSuccessModel
+    public class AddVisitorSuccessModel
     {
-        public string WelcomeMessage { get; set; }
-        public bool VisitAdded { get; set; }
+        public string VisitorId { get; set; }
+        public bool IsNewVisitor { get; set; }
         public string Success { get; set; }
+        public string PageName { get; set; }
     }
 }
