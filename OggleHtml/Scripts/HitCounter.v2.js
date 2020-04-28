@@ -22,7 +22,7 @@ function logImageHit(visitorId, link, pageId, isInitialHit) {
                 VisitorId: visitorId,
                 ActivityCode: "XV1",
                 Severity: 2,
-                ErrorMessage: "VisitorId undefined",
+                ErrorMessage: "VisitorId undefined. Calling addVisitor",
                 CalledFrom: "logImageHit"
             });
             addVisitor(pageId, "logImageHit");
@@ -163,9 +163,11 @@ function logPageHit(pageId, calledFrom) {
 }
 
 function addVisitor(pageId, calledFrom) {
+    //alert("debug 1");
     try {
-        visitorId = getCookieValue("VisitorId")
-        if (isNullorUndefined(visitorId)) {
+        visitorId = getCookieValue("VisitorId");
+        if (isNullorUndefined(visitorId))
+        {
             $.ajax({
                 type: "GET",
                 url: "http://api.ipstack.com/check?access_key=5de5cc8e1f751bc1456a6fbf1babf557",
@@ -181,7 +183,7 @@ function addVisitor(pageId, calledFrom) {
                             City: ipStackResponse.city,
                             Country: ipStackResponse.country_code,
                             Region: ipStackResponse.region_code,
-                            GeoCode: ipStackResponse.location.geoname_id
+                            GeoCode: "g333" // ipStackResponse.location.geoname_id
                             //Referrer: getVisitorInfo().referrer,
                             //Browser: getVisitorInfo().browserName,
                             //Latitude: getVisitorInfo().latitude,
@@ -206,9 +208,18 @@ function addVisitor(pageId, calledFrom) {
                                         CalledFrom: "addVisitor"
                                     });
                                 }
+                                if (calledFrom === "dashboard") {
+
+                                    $('#dataifyInfo').show().html("test ok");
+                                    setTimeout(function () { $('#dataifyInfo').show(); }, 2000);
+
+                                }
                                 tryLogPageHit(pageId, addVisitorSuccess.VisitorId);
                             }
                             else {
+                                if (document.domain === 'localhost') {
+                                    alert("addVisitor ajax Error: " + addVisitorSuccess.Success );
+                                }
                                 logError({
                                     VisitorId: "--",
                                     ActivityCode: "B07",
@@ -235,6 +246,10 @@ function addVisitor(pageId, calledFrom) {
                 },
                 error: function (jqXHR) {
                     var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (document.domain === 'localhost') {
+                        alert("addVisitor XHR Error: " + errorMessage);
+                    }
+
                     if (!checkFor404(errorMessage, "logPageHit")) {
                         logError({
                             VisitorId: visitorId,
@@ -247,51 +262,19 @@ function addVisitor(pageId, calledFrom) {
                 }
             });
         }
-        try {
-        } catch (e) {
-            logError({
-                VisitorId: "--",
-                ActivityCode: "C07",
-                Severity: 200,
-                ErrorMessage: e,
-                CalledFrom: "ipStacTest"
-            });
+    } catch (e) {
+        if (document.domain === 'localhost') {
+            alert("addVisitor Catch Error: " + e);
         }
+        logError({
+            VisitorId: "--",
+            ActivityCode: "C07",
+            Severity: 200,
+            ErrorMessage: e,
+            CalledFrom: "ipStacTest"
+        });
     }
-
-
-    //logVisitor(pageId, "addVisitor/" + calledFrom);
 }
-
-    //{
-    //    "ip": "68.203.90.183",
-    //    "type": "ipv4",
-    //    "continent_code": "NA",
-    //    "continent_name": "North America",
-    //    "country_code": "US",
-    //    "country_name": "United States",
-    //    "region_code": "TX",
-    //    "region_name": "Texas",
-    //    "city": "Farmers Branch",
-    //    "zip": "75234",
-    //    "latitude": 32.924468994140625,
-    //    "longitude": -96.89695739746094,
-    //    "location": {
-    //        "geoname_id": 4690198,
-    //            "capital": "Washington D.C.",
-    //                "languages": [
-    //                    {
-    //                        "code": "en",
-    //                        "name": "English",
-    //                        "native": "English"
-    //                    }
-    //                ],
-    //    "country_flag": "http:\/\/assets.ipstack.com\/flags\/us.svg",
-    //    "country_flag_emoji": "\ud83c\uddfa\ud83c\uddf8",
-    //    "country_flag_emoji_unicode": "U+1F1FA U+1F1F8",
-    //    "calling_code": "1",
-    //    "is_eu": false
-    //}
 
 function tryLogPageHit(pageId, visitorId) {
     //alert("tryLogPageHit PageId:" + pageId + ", visitorId: " + visitorId);
@@ -300,7 +283,7 @@ function tryLogPageHit(pageId, visitorId) {
         url: settingsArray.ApiServer + "api/VisitorInfo/LogPageHit?visitorId=" + visitorId + "&pageId=" + pageId,
         success: function (pageHitSuccess) {
             if (pageHitSuccess.Success === "ok") {
-                logVisit(visitorId)
+                logVisit(visitorId);
                // checkForHitLimit("pages", pageId, pageHitSuccess.UserPageHits, pageHitSuccess.UserImageHits);
             }
             else {

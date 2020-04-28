@@ -40,7 +40,7 @@ function getAlbumImages(folderId) {
                     processImages(imageLinksModel);
                     getBreadCrumbs(folderId, imageLinksModel.ExternalLinks);
 
-                    //var delta = (Date.now() - start) / 1000;
+                    var delta = (Date.now() - start) / 1000;
                     console.log("GetImageLinks?folder=" + folderId + " took: " + delta.toFixed(3));
                     logPageHit(folderId, "Album.html");  // 
 
@@ -86,23 +86,22 @@ function getAlbumImages(folderId) {
     }
 }
 
-function directToStaticPage(directToStaticPageFolderId) {
+function directToStaticPage(folderId) {
     ///  12/15
-    if (isNullorUndefined(directToStaticPageFolderId)) {
+    if (isNullorUndefined(folderId)) {
         logError({
             VisitorId: getCookieValue("VisitorId"),
             ActivityCode: "ERR",
             Severity: 1,
-            ErrorMessage: "isNullorUndefined(directToStaticPageFolderId) directing to folder 136",
+            ErrorMessage: "folderId undefined. Directing to folder 136",
             CalledFrom: "Album.js directToStaticPage"
         });
         //sendEmailToYourself("directToStaticPage folderId isNullorUndefined", "redirecting to poses");
-        directToStaticPageFolderId = 136;
     }
     $.ajax({
         type: "GET",
         async: true,
-        url: settingsArray.ApiServer + "api/AlbumPage/GetStaticPage?folderId=" + directToStaticPageFolderId,
+        url: settingsArray.ApiServer + "api/AlbumPage/GetStaticPage?folderId=" + folderId,
         success: function (successModel) {
             if (successModel.Success === "ok") {
                 window.location.href = successModel.ReturnValue;
@@ -119,7 +118,6 @@ function directToStaticPage(directToStaticPageFolderId) {
                         ErrorMessage: successModel.Success,
                         CalledFrom: "Album.js directToStaticPage"
                     });
-                    //sendEmailToYourself("jQuery fail in directToStaticPage", "folderId: " + directToStaticPageFolderId + " <br/>" + successModel.Success);
                 }
             }
         },
@@ -133,8 +131,6 @@ function directToStaticPage(directToStaticPageFolderId) {
                     ErrorMessage: errorMessage,
                     CalledFrom: "Album.js directToStaticPage"
                 });
-                //sendEmailToYourself("XHR ERROR IN GetStaticPage", "folderId=" + directToStaticPageFolderId +
-                //    "<br/>" + errorMessage + "<br/>SENDING THEM BACK TO DYNAMIC PAGE");
             }
         }
     });
@@ -151,7 +147,7 @@ function getBreadCrumbs(folderId, badgesText) {
 
                 setOggleHeader(folderId, breadCrumbModel.RootFolder);
 
-                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + getBreadCrumbsFolderId + ",\"" + currentFolderRoot + "\")'>home  &#187</a>");
+                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + folderId + ",\"" + currentFolderRoot + "\")'>home  &#187</a>");
                 for (i = breadCrumbModel.BreadCrumbs.length - 1; i >= 0; i--) {
                     if (breadCrumbModel.BreadCrumbs[i] === null) {
                         breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
@@ -176,12 +172,11 @@ function getBreadCrumbs(folderId, badgesText) {
                         else {
                             $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
                                 //	HBX	Home Breadcrumb Clicked
-                                "href='javascript:rtpe(\"BCC\"," + getBreadCrumbsFolderId + "," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
+                                "href='javascript:rtpe(\"BCC\"," + folderId + "," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
                         }
                     }
                 }
-                staticPageFolderId = getBreadCrumbsFolderId;
                 currentAlbumJSfolderName = breadCrumbModel.FolderName;
                 document.title = currentAlbumJSfolderName + " : OggleBooble";
 

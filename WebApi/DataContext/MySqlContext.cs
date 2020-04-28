@@ -3,7 +3,8 @@ using System.Data.Entity;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 //using Oracle.ManagedDataAccess.EntityFramework;
-using MySql.Data.Entity;
+// using MySql.Data.Entity;
+using MySql.Data.EntityFramework;
 
 namespace WebApi.MySqDataContext
 {

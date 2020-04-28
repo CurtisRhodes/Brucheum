@@ -112,25 +112,7 @@ function setOggleHeader(folderId, subdomain) {
     }
     setHeaderDetails(folderId, subdomain);
     setOggleFooter(folderId, subdomain);
-
-    if (isLoggedIn()) {
-        $('#spnUserName').html(getCookieValue("UserName"));
-        $('#optionLoggedIn').show();
-        $('#optionNotLoggedIn').hide();
-        
-        //console.log("calling isInRole from setOggleHeader");
-        if (isInRole("Oggle admin")) {
-            //alert("is in role Oggle admin");
-            $('#dashboardMenuItem').show();
-        }
-        else
-            $('#dashboardMenuItem').hide();
-    }
-    else {
-        $('#dashboardMenuItem').hide();
-        $('#optionLoggedIn').hide();
-        $('#optionNotLoggedIn').show();
-    }
+    setDashbordMenuItem();
 }
 
 
@@ -240,8 +222,35 @@ function setHeaderDetails(folderId, subdomain) {
                 ErrorMessage: "switch case not handled. FolderId: " + folderId + ", Subdomain: " + subdomain,
                 CalledFrom: "OggleHeader setOggleHeader"
             });
+
+
+
+
         //sendEmailToYourself("OggleHeader switch ","folderId: " + folderId+ "<br/>subdomain: " + subdomain);
         //alert("subdomain: " + subdomain + "  not found");
         //console.log("subdomain: " + subdomain + "  not found");
+    }
+}
+
+function setDashbordMenuItem() {
+    if (isLoggedIn()) {
+        $('#spnUserName').html(getCookieValue("UserName"));
+        $('#optionLoggedIn').show();
+        $('#optionNotLoggedIn').hide();
+
+        if (isInRole("Oggle admin")) {
+            $('#dashboardMenuItem').show();
+            console.log("isInRole Oggle admin");
+        }
+        else {
+            $('#dashboardMenuItem').hide();
+            //console.error("NOT isInRole Oggle admin");
+            //alert("NOT isInRole Oggle admin");
+        }
+    }
+    else {
+        $('#dashboardMenuItem').hide();
+        $('#optionLoggedIn').hide();
+        $('#optionNotLoggedIn').show();
     }
 }

@@ -95,7 +95,6 @@ function setDashboardHeader(viewId) {
 function testAddVisitor() {
     $('#dataifyInfo').show().html("sending test addVisitor");
     addVisitor(3309, "dashboard");
-    //$('#dataifyInfo').show().html("test message sent");
 }
 
 function showUpLoadDialog() {

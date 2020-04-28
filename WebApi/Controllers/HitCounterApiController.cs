@@ -210,57 +210,57 @@ namespace WebApi
         }
     }
 
-    [EnableCors("*", "*", "*")]
-    public class VisitController : ApiController
-    {
-        [HttpPost]
-        public LogVisitSuccessModel LogVisitor(LogVisitorModel visitorModel)
-        {
-            var visitorSuccess = new LogVisitSuccessModel();
-            try
-            {
-                using (OggleBoobleMySqContext mdb = new OggleBoobleMySqContext())
-                {
-                    Visitor myExisting = mdb.Visitors.Where(v => v.IpAddress == visitorModel.IpAddress).FirstOrDefault();
-                    if (myExisting == null)
-                    {
-                        // WE HAVE A NEW VISITOR
-                        Visitor visitor = new Visitor();
-                        visitor.VisitorId = Guid.NewGuid().ToString();
-                        visitor.IpAddress = visitorModel.IpAddress;
-                        visitor.City = visitorModel.City;
-                        visitor.Region = visitorModel.Region;
-                        visitor.Country = visitorModel.Country;
-                        visitor.GeoCode = visitorModel.GeoCode;
-                        visitor.InitialPage = visitorModel.PageId;
-                        visitor.InitialVisit = DateTime.Now;
+    //[EnableCors("*", "*", "*")]
+    //public class VisitController : ApiController
+    //{
+    //    [HttpPost]
+    //    public LogVisitSuccessModel LogVisitor(LogVisitorModel visitorModel)
+    //    {
+    //        var visitorSuccess = new LogVisitSuccessModel();
+    //        try
+    //        {
+    //            using (OggleBoobleMySqContext mdb = new OggleBoobleMySqContext())
+    //            {
+    //                Visitor myExisting = mdb.Visitors.Where(v => v.IpAddress == visitorModel.IpAddress).FirstOrDefault();
+    //                if (myExisting == null)
+    //                {
+    //                    // WE HAVE A NEW VISITOR
+    //                    Visitor visitor = new Visitor();
+    //                    visitor.VisitorId = Guid.NewGuid().ToString();
+    //                    visitor.IpAddress = visitorModel.IpAddress;
+    //                    visitor.City = visitorModel.City;
+    //                    visitor.Region = visitorModel.Region;
+    //                    visitor.Country = visitorModel.Country;
+    //                    visitor.GeoCode = visitorModel.GeoCode;
+    //                    visitor.InitialPage = visitorModel.PageId;
+    //                    visitor.InitialVisit = DateTime.Now;
 
-                        mdb.Visitors.Add(visitor);
-                        mdb.SaveChanges();
-                        //visitorSuccess.IsNewVisitor = true;
-                        visitorSuccess.VisitorId = visitor.VisitorId;
-                    }
-                    else
-                    {
-                        //visitorSuccess.IsNewVisitor = false;
-                        visitorSuccess.VisitorId = myExisting.VisitorId;
-                        // FORCE A LOG VISIT 
-                        //LogVisit(myExisting.VisitorId);
-                    }
-                    CategoryFolder categoryFolder = mdb.CategoryFolders.Where(f => f.Id == visitorModel.PageId).FirstOrDefault();
-                    if (categoryFolder != null)
-                        visitorSuccess.PageName = categoryFolder.FolderName;
-                }
-                visitorSuccess.Success = "ok";
-            }
-            catch (Exception ex)
-            {
-                visitorSuccess.Success = Helpers.ErrorDetails(ex);
-            }
-            return visitorSuccess;
-        }
+    //                    mdb.Visitors.Add(visitor);
+    //                    mdb.SaveChanges();
+    //                    //visitorSuccess.IsNewVisitor = true;
+    //                    visitorSuccess.VisitorId = visitor.VisitorId;
+    //                }
+    //                else
+    //                {
+    //                    //visitorSuccess.IsNewVisitor = false;
+    //                    visitorSuccess.VisitorId = myExisting.VisitorId;
+    //                    // FORCE A LOG VISIT 
+    //                    //LogVisit(myExisting.VisitorId);
+    //                }
+    //                CategoryFolder categoryFolder = mdb.CategoryFolders.Where(f => f.Id == visitorModel.PageId).FirstOrDefault();
+    //                if (categoryFolder != null)
+    //                    visitorSuccess.PageName = categoryFolder.FolderName;
+    //            }
+    //            visitorSuccess.Success = "ok";
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            visitorSuccess.Success = Helpers.ErrorDetails(ex);
+    //        }
+    //        return visitorSuccess;
+    //    }
 
-    }
+    //}
 
     [EnableCors("*", "*", "*")]
     public class ChangeLogController : ApiController

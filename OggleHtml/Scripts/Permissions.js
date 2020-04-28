@@ -1,6 +1,7 @@
 ﻿function isInRole(roleName) {
     if (isNullorUndefined(settingsArray.ApiServer)) {
-        //console.error("isInRole settingsArray.ApiServer not defined. Looking for: " + roleName);
+        //console.log("isInRole settingsArray.ApiServer not defined. Looking for: " + roleName);
+        //alert("isInRole settingsArray.ApiServer not defined. Looking for: " + roleName);
         return false;
     }
     if (isNullorUndefined(roleName)) {
@@ -17,7 +18,7 @@
     var userpermissons = window.localStorage["userPermissons"];
     if (!isNullorUndefined(userpermissons)) {
         // if (document.domain === 'localhost') alert("already have userPermissions in local storage");
-        console.log("already have userPermissions in local storage");
+        //console.log("already have userPermissions in local storage");
         return isInRoleStep2(userpermissons, roleName);
     }
 
@@ -106,19 +107,19 @@ function isInRoleStep2(userPermissons, roleName) {
         var permissonsItems = userPermissons.split(",");
         for (var i = 0; i < permissonsItems.length; i++) {
             //if (document.domain === 'localhost') alert("role found: " + permissonsItems[i]);
-            console.log("role found: " + permissonsItems[i]);
+            //console.log("role found: " + permissonsItems[i]);
             if (permissonsItems[i] === "Oggle admin") {
                 //if (getCookieValue("IpAddress") === "68.203.90.183") alert("admin override");
-                console.log("admin override");
+               //console.log("admin override");
                 return true;
             }
             if (permissonsItems[i] === roleName) {
-                console.log("rolename " + roleName + " FOUND!");
+                //console.log("rolename " + roleName + " FOUND!");
                 //if (document.domain === 'localhost') alert("rolename " + roleName + " FOUND!");
                 return true;
             }
-            else
-                console.log("rolename " + roleName + " not found ");
+            //else
+            //    console.log("rolename " + roleName + " not found ");
         }
     }
     //if (getCookieValue("IpAddress") === "68.203.90.183") alert("rolename " + roleName + " not found ");
@@ -129,6 +130,5 @@ function isLoggedIn() {
     var userNameExist = true;
     if (isNullorUndefined(getCookieValue("UserName")))
         userNameExist = false;
-    //alert("isLoggedIn: " + userNameExist);
     return userNameExist;
 }
