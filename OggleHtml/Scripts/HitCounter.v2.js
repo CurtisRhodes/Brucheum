@@ -172,7 +172,6 @@ function addVisitor(pageId, calledFrom) {
                 type: "GET",
                 url: "http://api.ipstack.com/check?access_key=5de5cc8e1f751bc1456a6fbf1babf557",
                 success: function (ipStackResponse) {
-
                     $.ajax({
                         type: "POST",
                         url: settingsArray.ApiServer + "api/VisitorInfo/AddVisitor",
@@ -200,14 +199,14 @@ function addVisitor(pageId, calledFrom) {
                                     CalledFrom: calledFrom
                                 });
 
-                                if (calledFrom === "static") {
-                                    logEventActivity({
-                                        VisitorId: addVisitorSuccess.VisitorId,
-                                        EventCode: "XLC",
-                                        EventDetail: addVisitorSuccess.PageName,
-                                        CalledFrom: "addVisitor"
-                                    });
-                                }
+                                //if (calledFrom === "static") {
+                                //    logEventActivity({
+                                //        VisitorId: addVisitorSuccess.VisitorId,
+                                //        EventCode: "XLC",
+                                //        EventDetail: addVisitorSuccess.PageName,
+                                //        CalledFrom: "addVisitor"
+                                //    });
+                                //}
                                 if (calledFrom === "dashboard") {
 
                                     $('#dataifyInfo').show().html("test ok");
@@ -242,7 +241,6 @@ function addVisitor(pageId, calledFrom) {
                             }
                         }
                     });
-
                 },
                 error: function (jqXHR) {
                     var errorMessage = getXHRErrorDetails(jqXHR);

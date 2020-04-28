@@ -38,16 +38,23 @@ $(document).ready(function () {
                 var visitorId = getCookieValue("VisitorId");
                 if (isNullorUndefined(visitorId)) {
                     addVisitor(staticPageFolderId, "static");
+                    visitorId = "new visitor";
                 }
-                else {
-                    logEventActivity({
-                        VisitorId: visitorId,
-                        EventCode: "XLC",
-                        EventDetail: calledFrom,
-                        CalledFrom: staticPageFolderId
-                    });
-                }
+                logEventActivity({
+                    VisitorId: visitorId,
+                    EventCode: "XLC",
+                    EventDetail: calledFrom,
+                    CalledFrom: staticPageFolderId
+                });
             }
+            else {
+                logEventActivity({
+                    VisitorId: visitorId,
+                    EventCode: "AL1",
+                    EventDetail: calledFrom,
+                    CalledFrom: staticPageFolderId
+                });
+             }
             resizeStaticPage();
             $(window).resize(resizeStaticPage());
             logPageHit(staticPageFolderId, "static page");
