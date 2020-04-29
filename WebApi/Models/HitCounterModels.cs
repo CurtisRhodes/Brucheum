@@ -115,10 +115,9 @@ namespace WebApi.Models
         public string VisitorId { get; set; }
         public string WelcomeMessage { get; set; }
         public bool IsNewVisitor { get; set; }
-        public string Success { get; set; }
         public string PageName { get; set; }
+        public string Success { get; set; }
     }
-
     public class AddVisitorModel
     {
         public int PageId { get; set; }
@@ -129,12 +128,19 @@ namespace WebApi.Models
         public string Country { get; set; }
         public string GeoCode { get; set; }
     }
-
     public class AddVisitorSuccessModel
     {
         public string VisitorId { get; set; }
         public bool IsNewVisitor { get; set; }
         public string Success { get; set; }
         public string PageName { get; set; }
+    }
+    public class VerifyVisitorSuccessModel
+    {
+        public string VisitorId { get; set; }
+        public string IpAddress { get; set; }
+        public bool Exists { get; set; }
+        public string PageName { get; set; }
+        public string Success { get; set; }
     }
 }

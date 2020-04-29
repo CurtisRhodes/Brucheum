@@ -112,25 +112,6 @@ function getFolderArray(folderId, startItem) {
     }
 }
 
-function verifyUser() {
-    visitorId = getCookieValue("VisitorId");
-    if (isNullorUndefined(visitorId)) {
-        tryLogPageHit(imageViewerFolderId, "slideshow");
-    }
-    if (isNullorUndefined(imageViewerFolderId)) {
-        if (!isNullorUndefined(folderName)) {
-            getPageIdFromPageName("launchViewer");
-            logError({
-                VisitorId: visitorId,
-                ActivityCode: "DBJ",
-                Severity: 2,
-                ErrorMessage: "tried to get page Id from folder Name",
-                CalledFrom: "slideshow.js / launchViewer"
-            });
-        }
-    }
-}
-
 function explodeViewer() {
     viewerH = 50;
     viewerW = 50;
@@ -211,68 +192,6 @@ function incrimentExplode() {
     }
 }
 
-function getPageIdFromPageName(calledFrom) {
-    if (!isNullorUndefined(imageViewerFolderName)) {
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/HitCounter/GeFolderIdFromtPageName?folderName=" + imageViewerFolderName,
-            success: function (getInfoModel) {
-                if (getInfoModel.Success === "ok") {
-                    imageViewerFolderId = getInfoModel.PageId;
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "WER",
-                        Severity: 2,
-                        ErrorMessage: "had to get imageViewerFolderId from folderName: " + imageViewerFolderName,
-                        CalledFrom: calledFrom
-                    });
-                }
-                else {
-                    if (getInfoModel.Success === "page not found") {
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "P2F",
-                            Severity: 2,
-                            ErrorMessage: "unable to get pageId from folderName: " + imageViewerFolderName,
-                            CalledFrom: calledFrom
-                        });
-                    }
-                    else {
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "P3F",
-                            Severity: 2,
-                            ErrorMessage: getInfoModel.Success,
-                            CalledFrom: calledFrom
-                        });
-                    }
-                }
-            },
-            error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "launchViewer")) {
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 2,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "SlideShow.js GeFolderIdFromtPageName"
-                    });
-                }
-            }
-        });
-    }
-    else {
-        logError({
-            VisitorId: getCookieValue("VisitorId"),
-            ActivityCode: "WER",
-            Severity: 2,
-            ErrorMessage: "no imageViewerFolderId AND no imageViewerFolderName",
-            CalledFrom: "SlideShow.js getPageIdFromPageName / "+calledFrom
-        });
-    }
-}
-
 function slideClick(direction) {
     if (slideShowRunning) {
         $('#txtStartSlideShow').html("start slideshow");
@@ -286,14 +205,7 @@ function slideClick(direction) {
     else {
         slide(direction);
         sessionCount++;
-
-        //if (document.domain === 'localhost') alert("sessionCount: " + sessionCount);
-        //if (isNullorUndefined(imageViewerFolderId)) {
-        //    getPageIdFromPageName("slideClick");
-        //}
-        //else {
-            logImageHit(visitorId, imageViewerArray[imageViewerIndex].Link, imageViewerFolderId, false);
-        //}
+        logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
     }
 }
 
@@ -349,7 +261,6 @@ function slide(direction) {
             setTimeout(function () {
 
                 if (imageViewerArray[imageViewerIndex].FolderId !== imageViewerArray[imageViewerIndex].ImageFolderId) {
-                    //$('#slideshowImageLabel').html("FolderId: " + imageViewerArray[imageViewerIndex].FolderId + " imageViewerFolderId: " + imageViewerArray[imageViewerIndex].ImageFolderId).fadeIn();
                     $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
                 }
                 $('.slideshowNavgArrows').css('visibility', 'visible').fadeIn();
@@ -457,7 +368,7 @@ function closeViewer(calledFrom) {
             VisitorId: getCookieValue("VisitorId"),
             EventCode: "SVC",
             EventDetail: "Images Viewed: " + sessionCount + " closed: " + closeMethod,
-            CalledFrom: imageViewerFolderId
+            CalledFrom: imageViewerFolderName
         });
         resizeImageContainer();
         //if (sessionCount > 20) {

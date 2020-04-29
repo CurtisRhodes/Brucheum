@@ -308,6 +308,8 @@ namespace WebApi.MySqDataContext
         [Column(Order = 1)]
         public DateTime HitDateTime { get; set; }
         public string ImageLinkId { get; set; }
+        [Key]
+        [Column(Order = 2)]
         public int PageId { get; set; }
     }
 

@@ -23,7 +23,7 @@ namespace WebApi.Controllers
                 using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
                     var twoMinutesAgo = DateTime.Now.AddMinutes(-2);
-                     var lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == pageId && h.Occured > twoMinutesAgo).FirstOrDefault();
+                    var lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == pageId && h.Occured > twoMinutesAgo).FirstOrDefault();
                     if (lastHit == null)
                     {
                         db.PageHits.Add(new PageHit()
@@ -46,7 +46,7 @@ namespace WebApi.Controllers
                 string err = Helpers.ErrorDetails(ex);
                 if (err.Contains("Object reference not set to an instance of an object."))
                     err = "Null reference. PageId: " + pageId + " visId: " + visitorId;
-                pageHitSuccess.Success =  err;
+                pageHitSuccess.Success = err;
 
             }
             return pageHitSuccess;
@@ -152,7 +152,34 @@ namespace WebApi.Controllers
             return visitSuccessModel;
         }
 
-
+        [HttpGet]
+        [Route("api/VisitorInfo/verifyVisitorId")]
+        public VerifyVisitorSuccessModel verifyVisitorId(string visitorId)
+        {
+            VerifyVisitorSuccessModel visitorSuccessModel = new VerifyVisitorSuccessModel();
+            try
+            {
+                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
+                {
+                    var dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                    if (dbVisitor == null)
+                    {
+                        visitorSuccessModel.Exists = false;
+                    }
+                    else
+                    {
+                        visitorSuccessModel.Exists = true;
+                        visitorSuccessModel.IpAddress = dbVisitor.IpAddress;
+                    }
+                    visitorSuccessModel.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                visitorSuccessModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return visitorSuccessModel;
+        }
     }
 }
 

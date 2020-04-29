@@ -34,12 +34,13 @@ $(document).ready(function () {
             clearInterval(loadSettingsWaiter);
             $('#dots').html('');
 
+            var visitorId = getCookieValue("VisitorId");
+            if (isNullorUndefined(visitorId)) {
+                addVisitor(staticPageFolderId, "static");
+            }
+            logVisit(visitorId, staticPageFolderId);
+
             if (!isNullorUndefined(calledFrom)) {
-                var visitorId = getCookieValue("VisitorId");
-                if (isNullorUndefined(visitorId)) {
-                    addVisitor(staticPageFolderId, "static");
-                    visitorId = "new visitor";
-                }
                 logEventActivity({
                     VisitorId: visitorId,
                     EventCode: "XLC",
@@ -48,13 +49,14 @@ $(document).ready(function () {
                 });
             }
             else {
+                verifyVisitorId();
                 logEventActivity({
                     VisitorId: visitorId,
                     EventCode: "AL1",
-                    EventDetail: calledFrom,
-                    CalledFrom: staticPageFolderId
+                    EventDetail: staticPageFolderId,
+                    CalledFrom: calledFrom
                 });
-             }
+            }
             resizeStaticPage();
             $(window).resize(resizeStaticPage());
             logPageHit(staticPageFolderId, "static page");

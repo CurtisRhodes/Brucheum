@@ -180,7 +180,7 @@ function isNullorUndefined(val) {
 function create_UUID() {
     // thank tohttps://www.w3resource.com/javascript-exercises/javascript-math-exercise-23.php
     var dt = new Date().getTime();
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var uuid = 'xxxxxxxx-2282-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = (dt + Math.random() * 16) % 16 | 0;
         dt = Math.floor(dt / 16);
         return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
@@ -226,25 +226,28 @@ function sendEmailToYourself(subject, message) {
 }
 
 function logError(logErrorModel) {
+    if (isNullorUndefined(logErrorModel.VisitorId))
+        logErrorModel.VisitorId = "00";
+
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "/api/ErrorLog",
         data: logErrorModel,
-        success: function (success) {
-            if (success === "ok")
-                displayStatusMessage("ok", "error message logged");
-            else {
-                alert("ChangeLog: " + success);
-                //sendEmailToYourself("error in common/logActivity", success);
-            }
-        },
+        //success: function (success) {
+        //    if (success === "ok")
+        //        // displayStatusMessage("ok", "error message logged");
+        //    else {
+        //        //alert("ChangeLog: " + success);
+        //        //sendEmailToYourself("error in common/logActivity", success);
+        //    }
+        //},
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "logActivity")) {
 
-                alert("XHR error " + ErrorMessage);
-                sendEmailToYourself("xhr error in common.js logActivity", "/api  ChangeLog  Message: " + errorMessage);
+                //alert("XHR error " + ErrorMessage);
+                //sendEmailToYourself("xhr error in common.js logActivity", "/api  ChangeLog  Message: " + errorMessage);
 
             }
         }
@@ -683,13 +686,15 @@ function verifyConnection() {
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                logError({
-                    VisitorId: getCookieValue("VisiorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage + ". CanIgetShowing: " + canIgetaConnectionMessageShowing + ". in404Loop: " + inCheckFor404Loop,
-                    CalledFrom: "verifyConnection()"
-                });
+                if (errorMessage.indexOf("Not Connect") > -1) {
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage + ". CanIgetShowing: " + canIgetaConnectionMessageShowing + ". in404Loop: " + inCheckFor404Loop,
+                        CalledFrom: "verifyConnection()"
+                    });
+                }
                 connectionVerified = false;
             }
         });

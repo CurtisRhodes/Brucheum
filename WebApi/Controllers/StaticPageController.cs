@@ -345,7 +345,7 @@ namespace WebApi.Controllers
                 "           <div class='menuTabs replaceableMenuItems'>\n");
 
             //CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
-            if (badgesText != "")
+            if (badgesText != null)
             {
                 if (badgesText.IndexOf("Playmate Of The Year") > -1)
                 {

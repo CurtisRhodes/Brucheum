@@ -357,31 +357,6 @@ function startSlideShow(imageIndex) {
 }
 
 function startSlideShow2(folderId2, imageIndex) {
-    var visitorId = getCookieValue("VisitorId");
-
-    // get image array from DOM
-    var imageArray = new Array();
-    $('#imageContainer').children().each(function () {
-        imageArray.push({
-            Id: $(this).attr("id"),
-            Link: $(this).find("img").attr("src")
-        });
-    });
-    if (typeof staticPageFolderName === 'string') {
-        isStaticPage = "true";
-        currentAlbumJSfolderName = staticPageFolderName;
-        albumFolderId = staticPageFolderId;
-    }
-
-    if (isNullorUndefined(visitorId)) {
-        logError({
-            VisitorId: getCookieValue("VisitorId"),
-            ActivityCode: "BAD",
-            Severity: 1,
-            ErrorMessage: "isNullorUndefined(visitorId)",
-            CalledFrom: "Album.js startSlideshow"
-        });
-    }
     if (albumFolderId === 0) {
         if (folderId2 !== 0) {
             albumFolderId = folderId2;
@@ -402,6 +377,32 @@ function startSlideShow2(folderId2, imageIndex) {
                 CalledFrom: "Album.js / startSlideshow"
             });
         }
+    }
+
+    // get image array from DOM
+    var imageArray = new Array();
+    $('#imageContainer').children().each(function () {
+        imageArray.push({
+            Id: $(this).attr("id"),
+            Link: $(this).find("img").attr("src")
+        });
+    });
+    if (typeof staticPageFolderName === 'string') {
+        isStaticPage = "true";
+        currentAlbumJSfolderName = staticPageFolderName;
+        albumFolderId = staticPageFolderId;
+    }
+
+    var visitorId = getCookieValue("VisitorId");
+    if (isNullorUndefined(visitorId)) {
+        addVisitor(albumFolderId, "Album.js/startSlideshow");
+        //logError({
+        //    VisitorId: getCookieValue("VisitorId"),
+        //    ActivityCode: "BAD",
+        //    Severity: 1,
+        //    ErrorMessage: "isNullorUndefined(visitorId)",
+        //    CalledFrom: "Album.js startSlideshow"
+        //});
     }
 
     launchViewer(albumFolderId, imageIndex, false);

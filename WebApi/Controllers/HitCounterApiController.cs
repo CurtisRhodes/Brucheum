@@ -417,7 +417,7 @@ namespace WebApi
                         ErrorMessage = logErrorModel.ErrorMessage,
                         CalledFrom = logErrorModel.CalledFrom,
                         Severity = logErrorModel.Severity,
-                        VisitorId = logErrorModel.VisitorId ?? "unknown",
+                        VisitorId = logErrorModel.VisitorId,
                         Occured = DateTime.Now
                     });
                     mdb.SaveChanges();
