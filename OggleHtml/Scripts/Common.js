@@ -484,7 +484,7 @@ function authenticateEmail(usersEmail) {
         CalledFrom: "authenticateEmail"
     });
     sendEmailToYourself("Acess Requested", " user: " + getCookieValue("UserName") + " has requsted " + privileges);
-    alert("Thank you for registering " + getCookieValue("UserName") + "\please reply to the two factor authentitifcation email sent to you" +
+    alert("Thank you for registering " + getCookieValue("UserName") + "\n please reply to the two factor authentitifcation email sent to you" +
         "\nYou will then be granted the access you requested."+"\nThe menu item 'Dashboard' will appear next to your 'Hello' message");
     dragableDialogClose();
 }
@@ -594,51 +594,6 @@ function getVisitorInfo() {
     };
     return info;
 }
-
-function logEventActivity(logEventModel) {
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "/api/EventLog/LogEventActivity",
-        data: logEventModel,
-        success: function (logEventActivitySuccess) {
-            if (logEventActivitySuccess.Success !== "ok") {
-                if (logEventActivitySuccess.Success.indexOf("Duplicate Entry") === 0) {
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "ER2",
-                        Severity: 2,
-                        ErrorMessage: logEventActivitySuccess.Success,
-                        CalledFrom: "LogEventActivity"
-                    });
-                }
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "LogEventActivity")) {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 2,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "LogEventActivity"
-                });
-            }
-        }
-    });
-}
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 var connectionVerified = false;

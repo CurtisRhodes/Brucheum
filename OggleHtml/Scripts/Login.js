@@ -63,8 +63,8 @@ function attemptRegister() {
                         if (document.domain !== 'localhost') {
                             logEventActivity({
                                 VisitorId: getCookieValue("VisitorId"),
-                                EventCode: eventCode,
-                                EventDetail: "BIG TIME Someone new actually registered\nUser: " + registeredUserModel.UserName,
+                                EventCode: "REG",
+                                EventDetail: "User: " + registeredUserModel.UserName,
                                 CalledFrom: "attemptRegister"
                             });
 
@@ -82,20 +82,15 @@ function attemptRegister() {
                         // show welcom to Oggle Booble message.
                     }
                     else {
-                        if (success === "user name already exists")
-                            alert("user name already exists");
-                        else {
-                            logError({
-                                VisitorId: getCookieValue("VisitorId"),
-                                ActivityCode: "KLG",
-                                Severity: 2,
-                                ErrorMessage: "attempting to register fail: " + success,
-                                CalledFrom: "attemptRegister()"
-                            });
-                            //if (document.domain === 'localhost')
-                            alert("attempting to register fail: " + success);
-                            //$('#registerValidationSummary').html(response).show();
-                        }
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "KLG",
+                            Severity: 2,
+                            ErrorMessage: "attempting to register fail: " + success,
+                            CalledFrom: "attemptRegister()"
+                        });
+                        alert("attempting to register fail: " + success);
+                        //$('#registerValidationSummary').html(response).show();
                     }
                 },
                 error: function (jqXHR) {
@@ -158,7 +153,8 @@ function onLogoutClick() {
     $('#optionLoggedIn').hide();
     $('#optionNotLoggedIn').show();
     $('.loginRequired').hide();
-    deleteCookie();
+    setCookieValue("IsLoggedIn", "false");
+    // deleteCookie();
 }
 
 function showLoginDialog() {
@@ -194,36 +190,20 @@ function attemptLogin(userName, clearPasswod) {
             success: function (success) {
                 if (success === "ok") {
                     $('#loginDialog').dialog('close');
-                    setCookieValue("UserName", $('#txtLoginUserName').val());
-                    var userName = getCookieValue("UserName");
-                    if (isNullorUndefined(userName)) {
-                        logError({
-                            VisitorId: getCookieValue("VisiorId"),
-                            ActivityCode: "Q12",
-                            Severity: 13,
-                            ErrorMessage: "User cookie not set",
-                            CalledFrom: "attemptLogin()"
-                        });
-                        //sendEmailToYourself("LOGING FAIL", "User cookie not set");
-                        if (document.domain === 'localhost')  // #DEBUG
-                            alert("LOGING FAIL.  User cookie not set");
-                        return;
-                    }
+                    setCookieValue("UserName", userName);
                     //  --setLoginHeader();
                     $('#spnUserName').html(userName);
                     $('#optionLoggedIn').show();
                     $('#optionNotLoggedIn').hide();
                     //if (getCookieValue("ipAddress") !== "68.203.90.183")// && ipAddress !== "50.62.160.105")
-
                     logEventActivity({
                         VisitorId: getCookieValue("VisitorId"),
                         EventCode: "LOG",
-                        EventDetail: "Someone Successfully logged in: " + userName,
+                        EventDetail: "Successfull log in: " + getCookieValue("UserName"),
                         CalledFrom: "showLoginDialog"
                     });
                     //sendEmailToYourself("Someone Successfully logged in", "User: " + userName);
                     displayStatusMessage("ok", "thanks for logging in " + userName);
-                    //window.location.href = ".";
                 }
                 else {
                     $('#loginValidationSummary').html(success).show();
@@ -280,7 +260,7 @@ function profilePease() {
 
 // COOKIES
 
-function deleteCookie() {
+function xxdeleteCookie() {
     window.localStorage["UserName"] = null;
     window.localStorage["IpAddress"] = null;
     window.localStorage["VisitorId"] = null;
@@ -320,6 +300,7 @@ function setCookieValue(elementName, elementValue) {
         var ipAddress = getCookieValue("IpAddress");
         var visitorId = getCookieValue("VisitorId");
         var userName = getCookieValue("UserName");
+        var isLoggedIn = getCookieValue("IsLoggedIn");
         decodedCookie = decodeURIComponent(document.cookie);
         var cookieElements = decodedCookie.split(';');
         var cookieItem; var cookieItemName; var cookieItemValue;
@@ -330,8 +311,11 @@ function setCookieValue(elementName, elementValue) {
             if (cookieItemName === "UserName") userName = cookieItemValue;
             if (cookieItemName === "IpAddress") ipAddress = cookieItemValue;
             if (cookieItemName === "VisitorId") visitorId = cookieItemValue;
+            if (cookieItemName === "IsLoggedIn") isLoggedIn = cookieItemValue;
         }
     }
+
+    if (elementName === "IsLoggedIn") isLoggedIn = elementValue;
     if (elementName === "UserName") userName = elementValue;
     if (elementName === "IpAddress") ipAddress = elementValue;
     if (elementName === "VisitorId") visitorId = elementValue;
@@ -339,7 +323,7 @@ function setCookieValue(elementName, elementValue) {
     expiryDate = new Date();
     expiryDate.setMonth(expiryDate.getMonth() + 9);
     //var cookieString = "VisitorId=" + visitorId + ";IpAddress=" + ipAddress + ";User=" + user + ";path='/;expires=" + expiryDate.toUTCString();
-    var cookieString = "VisitorId:" + visitorId + ",IpAddress:" + ipAddress + ",UserName:" + userName + ",path:'/,expires:" + expiryDate.toUTCString();
+    var cookieString = "VisitorId:" + visitorId + ",IpAddress:" + ipAddress + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
     document.cookie = cookieString;
     //alert("setCookieValue(" + elementName + "," + elementValue + ")\ncookie:\n" + document.cookie);
 }
@@ -373,7 +357,6 @@ function setLocalValue(localName, localValue) {
 
 function getLocalValue(localName) {
     var localValue = getCookieValue(localName);
-    alert("getLocalValue " + localName + " = " + localValue);
     return localValue;
 }
 

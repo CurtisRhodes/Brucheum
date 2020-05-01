@@ -22,31 +22,8 @@ $(document).ready(function () {
     //setOggleHeader(params.folder, "blank");
     var dots = "";
     loadSettings();
-
     $('#adminLink').hide();
-
     var visitorId = getCookieValue("VisitorId");
-    logVisit(visitorId, staticPageFolderId);
-
-    if (isNullorUndefined(calledFrom)) {
-        logEventActivity({
-            VisitorId: visitorId,
-            EventCode: "AL1",
-            EventDetail: staticPageFolderId,
-            CalledFrom: calledFrom
-        });
-    }
-    else {
-        if (isNullorUndefined(visitorId)) {
-            addVisitor(staticPageFolderId, "static");
-        }
-        logEventActivity({
-            VisitorId: visitorId,
-            EventCode: "XLC",
-            EventDetail: calledFrom,
-            CalledFrom: staticPageFolderId
-        });
-    }
 
     var loadSettingsWaiter = setInterval(function () {
         if (settingsArray.ApiServer === undefined) {
@@ -54,6 +31,39 @@ $(document).ready(function () {
             $('#dots').html(dots);
         }
         else {
+            if (isNullorUndefined(visitorId)) {
+                if (isNullorUndefined(calledFrom)) {
+                    callIpServiceFromStaticPage(staticPageFolderId, calledFrom);
+                }
+                else {
+                    logEventActivity({
+                        VisitorId: visitorId,
+                        EventCode: "AL2",
+                        EventDetail: "calledFrom: " + calledFrom,
+                        CalledFrom: staticPageFolderId
+                    });
+                }
+            }
+            else {  // visitorId ok
+                if (isNullorUndefined(calledFrom)) {
+                    logEventActivity({
+                        VisitorId: visitorId,
+                        EventCode: "AL1",
+                        EventDetail: "calledFrom: " + calledFrom,
+                        CalledFrom: staticPageFolderId
+                    });
+                    verifyVisitorId(visitorId, staticPageFolderId, calledFrom);
+                    logVisit(visitorId, staticPageFolderId);
+                }
+                else {
+                    logEventActivity({
+                        VisitorId: visitorId,
+                        EventCode: "XLC",
+                        EventDetail: calledFrom,
+                        CalledFrom: staticPageFolderId
+                    });
+                }
+            }
             clearInterval(loadSettingsWaiter);
             $('#dots').html('');
             resizeStaticPage();
