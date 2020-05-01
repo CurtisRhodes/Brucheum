@@ -595,6 +595,52 @@ function getVisitorInfo() {
     return info;
 }
 
+function logEventActivity(logEventModel) {
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "/api/EventLog/LogEventActivity",
+        data: logEventModel,
+        success: function (logEventActivitySuccess) {
+            if (logEventActivitySuccess.Success !== "ok") {
+                if (logEventActivitySuccess.Success.indexOf("Duplicate Entry") === 0) {
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "ER2",
+                        Severity: 2,
+                        ErrorMessage: logEventActivitySuccess.Success,
+                        CalledFrom: "LogEventActivity"
+                    });
+                }
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "LogEventActivity")) {
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "XHR",
+                    Severity: 2,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "LogEventActivity"
+                });
+            }
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 var connectionVerified = false;
 var canIgetaConnectionMessageShowing = false;
 var verifyConnectionCount = 0;

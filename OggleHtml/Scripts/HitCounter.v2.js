@@ -432,7 +432,7 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
             if (Number.isInteger(calledFrom)) {
                 pageId = calledFrom;
             }
-            addVisitor(pageId, "reportThenPerformEvent/" + calledFrom);
+            //addVisitor(pageId, "reportThenPerformEvent/" + calledFrom);
             visitorId = "00";
             //visitorId = create_UUID();
             //logError({

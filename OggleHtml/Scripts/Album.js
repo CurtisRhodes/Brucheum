@@ -685,6 +685,7 @@ function ctxSAP(imgId) {
 }
 
 function contextMenuAction(action) {
+
     switch (action) {
         case "show":
             logEventActivity({
@@ -704,14 +705,7 @@ function contextMenuAction(action) {
             });
             break;
         case "jump":
-            logEventActivity({
-                VisitorId: getCookieValue("VisitorId"),
-                EventCode: "CM2",
-                EventDetail: "see more of her: " + modelFolderName,
-                CalledFrom: albumFolderId
-            });
             rtpe("SEE", albumFolderId, modelFolderId);
-            //window.open("/album.html?folder=" + modelFolderId, "_blank");
             break;
         case "comment":
             $("#thumbImageContextMenu").fadeOut();
@@ -725,13 +719,7 @@ function contextMenuAction(action) {
             break;
         case "explode":
             if (isLoggedIn()) {
-                rtpe("EXP", albumFolderId, selectedImage);
-                logEventActivity({
-                    VisitorId: getCookieValue("VisitorId"),
-                    EventCode: "CM4",
-                    EventDetail: "explode image " + selectedImageLinkId,
-                    CalledFrom: albumFolderId
-                });
+                rtpe("EXP", albumFolderId, selectedImageLinkId);
             }
             else {
                 logEventActivity({
