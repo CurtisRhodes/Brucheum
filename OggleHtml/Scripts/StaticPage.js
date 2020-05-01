@@ -25,6 +25,29 @@ $(document).ready(function () {
 
     $('#adminLink').hide();
 
+    var visitorId = getCookieValue("VisitorId");
+    logVisit(visitorId, staticPageFolderId);
+
+    if (isNullorUndefined(calledFrom)) {
+        logEventActivity({
+            VisitorId: visitorId,
+            EventCode: "AL1",
+            EventDetail: staticPageFolderId,
+            CalledFrom: calledFrom
+        });
+    }
+    else {
+        if (isNullorUndefined(visitorId)) {
+            addVisitor(staticPageFolderId, "static");
+        }
+        logEventActivity({
+            VisitorId: visitorId,
+            EventCode: "XLC",
+            EventDetail: calledFrom,
+            CalledFrom: staticPageFolderId
+        });
+    }
+
     var loadSettingsWaiter = setInterval(function () {
         if (settingsArray.ApiServer === undefined) {
             dots += "?. ";
@@ -33,30 +56,6 @@ $(document).ready(function () {
         else {
             clearInterval(loadSettingsWaiter);
             $('#dots').html('');
-
-            var visitorId = getCookieValue("VisitorId");
-            if (isNullorUndefined(visitorId)) {
-                addVisitor(staticPageFolderId, "static");
-            }
-            logVisit(visitorId, staticPageFolderId);
-
-            if (!isNullorUndefined(calledFrom)) {
-                logEventActivity({
-                    VisitorId: visitorId,
-                    EventCode: "XLC",
-                    EventDetail: calledFrom,
-                    CalledFrom: staticPageFolderId
-                });
-            }
-            else {
-                verifyVisitorId();
-                logEventActivity({
-                    VisitorId: visitorId,
-                    EventCode: "AL1",
-                    EventDetail: staticPageFolderId,
-                    CalledFrom: calledFrom
-                });
-            }
             resizeStaticPage();
             $(window).resize(resizeStaticPage());
             logPageHit(staticPageFolderId, "static page");
