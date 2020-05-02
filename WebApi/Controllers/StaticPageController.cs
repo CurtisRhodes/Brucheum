@@ -339,8 +339,15 @@ namespace WebApi.Controllers
                 }
             }
             #endregion
+            int pageHits = 0;
+            using (var db = new MySqDataContext.OggleBoobleMySqContext())
+            {
+                pageHits += db.PageHits.Where(h => h.PageId == folderId).Count();
+                pageHits += db.PageHitTotal.Where(h => h.PageId == folderId).Count();
+            }
+
             staticPageHeader.Append("       <div class='headerBottomRow'>\n" +
-                "           <div id='headerMessage' class='bottomLeftBottomHeaderArea'></div>\n" +
+                "           <div id='headerMessage' class='bottomLeftBottomHeaderArea'>page hits: " + pageHits + "</div>\n" +
                 "           <div id='breadcrumbContainer' class='breadCrumbArea'>" + breadCrumbString.ToString() + "</div>\n" +
                 "           <div class='menuTabs replaceableMenuItems'>\n");
 
@@ -350,29 +357,29 @@ namespace WebApi.Controllers
                 if (badgesText.IndexOf("Playmate Of The Year") > -1)
                 {
                     staticPageHeader.Append(
-                    "               <div id='pmoyLink' class='menuTabs displayHidden'>\n" +
+                    "               <div id='pmoyLink' class='menuTabs'>\n" +
                     "                   <a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>" +
                     "               </div>\n");
                 }
                 if (badgesText.IndexOf("biggest breasted centerfolds") > -1)
                 {
                     staticPageHeader.Append(
-                        "               <div id='breastfulPlaymatesLink' class='menuTabs displayHidden'>\n" +
+                        "               <div id='breastfulPlaymatesLink' class='menuTabs'>\n" +
                         "                   <a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>" +
                         "               </div>\n");
                 }
                 if (badgesText.IndexOf("black centerfolds") > -1)
                 {
                     staticPageHeader.Append(
-                        "               <div id='blackCenterfoldsLink' class='menuTabs displayHidden'>\n" +
+                        "               <div id='blackCenterfoldsLink' class='menuTabs'>\n" +
                         "                   <div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>\n" +
                         "               </div>\n");
                 }
                 if (badgesText.IndexOf("Hef likes twins") > -1)
                 {
                     staticPageHeader.Append(
-                        "               <div id='twinsLink' class='menuTabs displayHidden'>\n" +
-                        "                   <a href='/album.html?folder=3904'><img src='/Images/geminiSymbol1.png' title='Hef likes twins' class='badgeImage'></a>" +
+                        "               <div id='twinsLink' class='menuTabs'>\n" +
+                        "                   <a href='/album.html?folder=3904'><img src='/Images/gemini03.png' title='Hef likes twins' class='badgeImage'></a>" +
                         "               </div>\n");
                 }
             }

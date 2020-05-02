@@ -61,7 +61,7 @@ function setOggleHeader(folderId, subdomain) {
             "           <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
             "           <div class='menuTabs replaceableMenuItems'>\n" +
             "               <div id='twinsLink' class='menuTabs displayHidden'>\n" +
-            "                   <a href='/album.html?folder=3904'><img src='/Images/geminiSymbol1.png' title='Hef likes twins' class='badgeImage'></a>" +
+            "                   <a href='/album.html?folder=3904'><img src='/Images/gemini03.png' title='Hef likes twins' class='badgeImage'></a>" +
             "               </div>\n" +
             "               <div id='breastfulPlaymatesLink' class='menuTabs displayHidden'>\n" +
             "                   <a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>" +
@@ -114,7 +114,6 @@ function setOggleHeader(folderId, subdomain) {
     setOggleFooter(folderId, subdomain);
     setDashbordMenuItem();
 }
-
 
 // requires no database call
 function setHeaderDetails(folderId, subdomain) {

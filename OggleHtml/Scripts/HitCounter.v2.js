@@ -19,7 +19,7 @@ function logImageHit(link, pageId, isInitialHit) {
         if (!Number.isInteger(pageId)) {
             logError({
                 VisitorId: visitorId,
-                ActivityCode: "IH8",
+                ActivityCode: "IH2",
                 Severity: 2,
                 ErrorMessage: "PageId came in wrong. Link: " + link + "  pageId:  " + pageId,
                 CalledFrom: "HitCounter.js logImageHit"
@@ -29,14 +29,14 @@ function logImageHit(link, pageId, isInitialHit) {
         }
 
         if (isNullorUndefined(visitorId)) {
-            //logError({
-            //    VisitorId: visitorId,
-            //    ActivityCode: "IH7",
-            //    Severity: 27,
-            //    ErrorMessage: "calling addVisitor from logImageHit",
-            //    CalledFrom: "logImageHit"
-            //});
-            addVisitor(pageId, "logImageHit");
+            logError({
+                VisitorId: visitorId,
+                ActivityCode: "IH0",
+                Severity: 27,
+                ErrorMessage: "logImageHit no VisitorId",
+                CalledFrom: pageId
+            });
+            //addVisitor(pageId, "logImageHit");
             return;
         }
         var linkId = link.substr(link.lastIndexOf("_") + 1, 36);
@@ -60,7 +60,7 @@ function logImageHit(link, pageId, isInitialHit) {
                     //if (imageHitSuccessModel.Success.indexOf("Duplicate entry") > 0) {
                     logError({
                         VisitorId: visitorId,
-                        ActivityCode: "IM1",
+                        ActivityCode: "IM4",
                         Severity: 2,
                         ErrorMessage: imageHitSuccessModel.Success,
                         CalledFrom: "logImageHit"
@@ -72,7 +72,7 @@ function logImageHit(link, pageId, isInitialHit) {
                 if (!checkFor404(errorMessage, "logImageHit")) {
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "IM2",
+                        ActivityCode: "IM5",
                         Severity: 2,
                         ErrorMessage: errorMessage,
                         CalledFrom: "HitCounter.js logImageHit"
@@ -83,7 +83,7 @@ function logImageHit(link, pageId, isInitialHit) {
     } catch (e) {
         logError({
             VisitorId: visitorId,
-            ActivityCode: "IM3",
+            ActivityCode: "IM6",
             Severity: 2,
             ErrorMessage: "CATCH ERROR: " + e,
             CalledFrom: "logImageHit"
@@ -548,6 +548,12 @@ function logEventActivity(logEventModel) {
 
 function callIpServiceFromStaticPage(staticPageFolderId, externalSource) {
     try {
+        logEventActivity({
+            VisitorId: getCookieValue("VisitorId"),
+            EventCode: "IPT",
+            EventDetail: "trying IpInfo"+ externalSource,
+            CalledFrom: staticPageFolderId
+        });
 
         $.ajax({
             type: "GET",

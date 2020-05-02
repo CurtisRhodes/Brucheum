@@ -6,6 +6,7 @@ var modelFolderName;
 var selectedImage;
 var selectedImageLinkId;
 var albumFolderId;
+var deepChildCount = 0;
 
 function getAlbumImages(folderId) {
     try {
@@ -55,7 +56,6 @@ function getAlbumImages(folderId) {
                     });
                     //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
                     //if (document.domain === 'localhost') alert("jQuery fail in Album.js: getAlbumImages\n" + imageLinksModel.Success);
-
                 }
             },
             error: function (jqXHR) {
@@ -237,7 +237,6 @@ function getBreadCrumbs(folderId, badgesText) {
     });
 }
 
-var deepChildCount = 0;
 function getDeepChildCount(subDir) {
     deepChildCount += subDir.ChildFiles;
     $.each(subDir.SubDirs, function (idx, obj) {
@@ -719,7 +718,7 @@ function contextMenuAction(action) {
             break;
         case "explode":
             if (isLoggedIn()) {
-                rtpe("EXP", albumFolderId, selectedImageLinkId);
+                rtpe("EXP", selectedImageLinkId, albumFolderId);
             }
             else {
                 logEventActivity({

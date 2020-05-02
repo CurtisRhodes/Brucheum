@@ -364,12 +364,22 @@ function closeViewer(calledFrom) {
         if (calledFrom !== undefined) {
             closeMethod = calledFrom;
         }
-        logEventActivity({
-            VisitorId: getCookieValue("VisitorId"),
-            EventCode: "SVC",
-            EventDetail: "Images Viewed: " + sessionCount + " closed: " + closeMethod,
-            CalledFrom: imageViewerFolderName
-        });
+        if (sessionCount < 2) {
+            logEventActivity({
+                VisitorId: getCookieValue("VisitorId"),
+                EventCode: "SVC",
+                EventDetail: "Single Image Viewed. closeMethod: " + closeMethod,
+                CalledFrom: albumFolderId
+            });
+        }
+        else {
+            logEventActivity({
+                VisitorId: getCookieValue("VisitorId"),
+                EventCode: "SVC",
+                EventDetail: "Images Viewed: " + sessionCount + " closed: " + closeMethod,
+                CalledFrom: albumFolderId
+            });
+        }
         resizeImageContainer();
         //if (sessionCount > 20) {
         //    if (document.domain === 'localhost') {
