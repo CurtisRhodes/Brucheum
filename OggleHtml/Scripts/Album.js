@@ -43,7 +43,6 @@ function getAlbumImages(folderId) {
 
                     var delta = (Date.now() - start) / 1000;
                     console.log("GetImageLinks?folder=" + folderId + " took: " + delta.toFixed(3));
-                    logPageHit(folderId, "Album.html");  // 
 
                 }
                 else {
@@ -194,6 +193,7 @@ function getBreadCrumbs(folderId, badgesText) {
                         $('#twinsLink').show();
                     }
                 }
+                logPageHit(folderId, "Album.html");  // 
 
             }
             else {
@@ -572,7 +572,6 @@ function ctxSAP(imgId) {
     var thisImageDiv = $('#' + imgId + '');
     var sstring = thisImageDiv.html();
     selectedImageLinkId = sstring.substr(sstring.lastIndexOf("_") + 1, 36);
-
     if (viewerShowing) {
         $('#thumbImageContextMenu').css("top", event.clientY + 5);
         $('#thumbImageContextMenu').css("left", event.clientX);
@@ -667,24 +666,9 @@ function ctxSAP(imgId) {
     });
     $('#thumbImageContextMenu').css('z-index', "200");
     $('#thumbImageContextMenu').fadeIn();
-
-
-    if (!isInRole("Oggle admin")) {
-        $('#adminLink').hide();
-    }
-    //var activityMessage = "context menu opened from Image: " + selectedImageLinkId;
-    //if (viewerShowing)
-    //    activityMessage += " from viewer";
-    //logEventActivity({
-    //    VisitorId: getCookieValue("VisitorId"),
-    //    EventCode: "CMC",
-    //    EventDetail: activityMessage,
-    //    CalledFrom: "Sideshow"
-    //});
 }
 
 function contextMenuAction(action) {
-
     switch (action) {
         case "show":
             logEventActivity({
@@ -720,7 +704,7 @@ function contextMenuAction(action) {
             break;
         case "explode":
             if (isLoggedIn()) {
-                rtpe("EXP", selectedImageLinkId, albumFolderId, albumFolderId);
+                rtpe("EXP", currentAlbumJSfolderName, selectedImage, albumFolderId);
             }
             else {
                 logEventActivity({
@@ -790,15 +774,15 @@ function slowlyHomeFolderInfoDialog(index, folderName, slowlyHomeFolderInfoDialo
     }, 1100);
 }
 
-function showEitherModelorFolderInfoDialog(index, folderName, showEitherModelorFolderInfoDialogFolderId, parentId, rootFolder) {
+function showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
 
     //alert("showEitherModelorFolderInfoDialog(index: " + index + ", folderName: " + folderName + ", folderId: " + folderId + ", parentId: " + parentId + ", rootFolder: " + rootFolder + ")");
     var cybergirls = "3796";
 
     if (rootFolder === "playboy" && index > 4 || parentId === cybergirls || rootFolder === "archive" && index > 2) {
-        rtpe("CMX", showEitherModelorFolderInfoDialogFolderId, folderName);
+        rtpe("CMX", folderId, folderName, folderId);
     }
     else {
-        showCategoryDialog(showEitherModelorFolderInfoDialogFolderId);
+        showCategoryDialog(folderId);
     }
 }

@@ -198,7 +198,7 @@ function verifyVisitorId(visitorId, pageId, calledFrom) {
     if (!isNullorUndefined(visitorId)) {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/VisitorInfo/verifyVisitorId&visitorId=" + visitorId,
+            url: settingsArray.ApiServer + "api/VisitorInfo/verifyVisitorId?visitorId=" + visitorId,
             success: function (visitorSuccessModel) {
                 if (visitorSuccessModel.Success === "ok") {
                     if (!visitorSuccessModel.Exists) {
@@ -357,7 +357,7 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
             }
             break;
         case "EXP":  // Explode
-            window.open(pageId, "_blank");
+            window.open(eventDetail, "_blank");
             break;
         case "SRC":  // Search Performed
         case "SSB":

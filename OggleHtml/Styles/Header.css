@@ -253,7 +253,6 @@ header {
 }
 
 .headerFeatureBanner {
-    height: 35px;
     border: solid 2px #000;
     border-radius: 10px;
     font-size: 18px;
@@ -263,6 +262,9 @@ header {
     margin-left: 40px;
     margin-top: 5px;
     cursor: pointer;
+}
+.headerFeatureBanner a {
+    text-decoration: none;
 }
 
 .babesArchive {

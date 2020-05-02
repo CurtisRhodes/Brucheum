@@ -37,7 +37,10 @@ function oggleSearchKeyDown(event) {
             return;
         }
         if (ev === 13) {  // enter
-            jumpToSelected($('#searchResultsDiv').find('li:first').prop("id"));
+
+            var selectedItem = $('#searchResultsDiv').find('li:first').prop("id");
+
+            jumpToSelected(selectedItem);
             return;
         }
 
@@ -119,7 +122,7 @@ function clearSearch() {
 }
 
 function jumpToSelected(selectedFolderId) {
-    reportThenPerformEvent('SRC', "currentFolderId", selectedFolderId, currentFolderId);
+    reportThenPerformEvent('SRC', currentFolderId, "", selectedFolderId);
     //window.open("/album.html?folder=" + selectedFolderId, "_blank");
     clearSearch();
 }
