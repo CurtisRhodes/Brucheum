@@ -8,24 +8,24 @@
             footerhtml =
                 "<div class='flexContainer'>\n" +
                 "    <div class='footerCol'>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"about us\")'>about us</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"dir tree\")'>Category List</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"about us\","+pageId+")'>about us</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"dir tree\"," + pageId +")'>Category List</div>\n" +
                 "        <div><a href='#'></a></div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"porn\")'>Nasty Porn</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"porn\"," + pageId +")'>Nasty Porn</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"ranker\")'>Boobs Rater</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"rejects\")'>Rejects</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"videos\")'>Nasty Videos</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"centerfolds\")'>Centerfolds</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"ranker\"," + pageId +")'>Boobs Rater</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"rejects\"," + pageId +")'>Rejects</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"videos\"," + pageId +")'>Nasty Videos</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"centerfolds\"," + pageId +")'>Centerfolds</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"mailme\")'>email site developer</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"blog\")'>Blog</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"archive\")'>Archive</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"mailme\"," + pageId +")'>email site developer</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"blog\"," + pageId +")'>Blog</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"archive\"," + pageId +")'>Archive</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"freedback\")'>Feedback</div>\n" +
+            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"freedback\"," + pageId +")'>Feedback</div>\n" +
                 "    </div>\n" +
                 "</div>\n" +
                 "<div id='footerLastBuild' class='footerVersionMessage'></div>\n";
@@ -34,21 +34,21 @@
             footerhtml =
                 "<div class='flexContainer'>\n" +
                 "    <div class='footerCol'>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"cybergirls\")'>cybergirls</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"magazine covers\")'>magazine covers</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"extras\")'>Playboy extras</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"cybergirls\"," + pageId + ")'>cybergirls</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"magazine covers\"," + pageId + ")'>magazine covers</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"extras\"," + pageId + ")'>Playboy extras</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"playmate dir tree\")'>Playmate List</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"ranker\")'; >Playmate Rater</a></div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"about us\")'>about us</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"playmate dir tree\"," + pageId + ")'>Playmate List</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"ranker\"," + pageId + ")'; >Playmate Rater</a></div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"about us\"," + pageId + ")'>about us</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"mailme\")'>email site developer</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"blog\")'>Blog</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"blog\"," + pageId + ")'>Blog</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"freedback\")'>Feedback</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"freedback\"," + pageId + ")'>Feedback</div>\n" +
                 "    </div>\n" +
                 "</div>\n" +
                 "<div id='footerLastBuild' class='footerVersionMessage'></div>\n";
@@ -57,17 +57,17 @@
         case "sluts":
             footerhtml = "<div class='flexContainer'>\n" +
                 "    <div class='footerCol'>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"about us\")'>about us</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"dir tree\")'>category list</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"blog\")'>blog</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"about us\"," + pageId + ")'>about us</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"dir tree\"," + pageId + ")'>category list</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"blog\"," + pageId + ")'>blog</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"ranker\")';>porn rater</a></div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"videos\")'>nasty Videos</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"slut archive\")'>slut archive</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"ranker\"," + pageId + ")';>porn rater</a></div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"videos\"," + pageId + ")'>nasty Videos</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"slut archive\"," + pageId + ")'>slut archive</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"mailme\")'>email site developer</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
                 "    </div>\n" +
                 "</div>\n";
             break;
@@ -79,7 +79,7 @@
                 "    <div class='footerCol'>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"mailme\")'>email site developer</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\"," + pageId + ",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
                 "    </div>\n" +
                 "</div>\n" +
                 "<div id='footerLastBuild' class='footerVersionMessage'></div>\n" +

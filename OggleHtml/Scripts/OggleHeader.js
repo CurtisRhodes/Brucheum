@@ -81,7 +81,7 @@ function setOggleHeader(folderId, subdomain) {
             "               </div>\n" +
             "               <div id='optionNotLoggedIn'>\n" +
             "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
-            "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:showLoginDialog()'>Log In</a></div>\n" +
+            "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:showLoginDialog(" + folderId + ")'>Log In</a></div>\n" +
             "               </div>\n" +
             "           </div>\n" +
             "       </div>\n" +
@@ -117,7 +117,7 @@ function setOggleHeader(folderId, subdomain) {
 
 // requires no database call
 function setHeaderDetails(folderId, subdomain) {
-    $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"boobs\")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n");
+    $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"boobs\"," + folderId + ")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n");
     $('#bannerTitle').html("OggleBooble");
     switch (subdomain) {
         case "admin":
@@ -136,33 +136,35 @@ function setHeaderDetails(folderId, subdomain) {
             break;
         case "ranker":
             $('#subheaderContent').html("ranker");
+            //rtpe(eventCode, CalledFrom, eventDetail, pageId);
             break;
+
         case "archive":
             $('#subheaderContent').html(
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",4)'>milk cows,</a> \n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1103)'>russian spys,</a> \n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1093)'>highschool fantasy girls,</a> \n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1107)'>sweater meat,</a> \n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",123)'>ultra juggs</a> \n");
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",4,4,)'>milk cows,</a> \n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1103,1103)'>russian spys,</a> \n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1093,1093)'>highschool fantasy girls,</a> \n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1107,1107)'>sweater meat,</a> \n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",123,123)'>ultra juggs</a> \n");
             $('#rankerLink').html("<div id='rankerTag' class='headerFeatureBanner'>" +
                 "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"archive\")'" +
                 " title='Spin through the links to land on random portrait images.'>babes ranker</a></div>\n");
 
             
             $('#playboyLink').html("<div class='headerFeatureBanner'>" +
-                "\n<a href='javascript:rtpe(\"BAC\"," + folderId + ",1132)'>every Playboy Centerfold</a></div>\n");
+                "\n<a href='javascript:rtpe(\"BAC\"," + folderId + ",1132,1132)'>every Playboy Centerfold</a></div>\n");
 
 
             break;
         case "special":
         case "boobs": {
             $('#subheaderContent').html(
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",136)'> poses,</a>\n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",3916)'> positions,</a>\n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",159)'> topics,</a>\n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",199)'> shapes</a> and\n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",241)'>sizes</a>\n");
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",2,2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",136,136)'> poses,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",3916,3916)'> positions,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",159,159)'> topics,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",199,199)'> shapes</a> and\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",241,241)'>sizes</a>\n");
 
             //DUTCH subheaderContent =
             //    "                <a href='/album.html?folder=2'><span class='bigTits'>STORE </span>bryster</a> organiseret af\n" +
@@ -172,9 +174,9 @@ function setHeaderDetails(folderId, subdomain) {
             //    "                <a href='/album.html?folder=241'>størrelser</a>\n";
 
             $('#archiveLink').html("<div id='rankerTag' class='headerFeatureBanner'>" +
-                "<a href='javascript:rtpe(\"BAC\"," + folderId + ",3)'>babes archive</a></div>\n");
+                "<a href='javascript:rtpe(\"BAC\"," + folderId + ",3,3)'>babes archive</a></div>\n");
             $('#rankerLink').html("<div id='rankerTag' class='headerFeatureBanner'>" +
-                "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"boobs\")'" +
+                "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"boobs\"," + folderId +")'" +
                 " title='Spin through the links to land on random portrait images.'>boobs ranker</a></div>\n");
         }
             break;
@@ -183,14 +185,14 @@ function setHeaderDetails(folderId, subdomain) {
             $('header').switchClass('pornHeader', 'boobsHeader');
             $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"playboy\")'><img src='/Images/playboyBallon.png' class='bannerImage'/></a>\n");
             $('#subheaderContent').html(
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1132)'>Centerfolds,</a>\n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1986)'> magazine covers,</a>\n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",3796)'> cybergirls,</a> and\n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",2601)'> extras</a>\n");
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1132," + folderId + ")'>Centerfolds,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1986," + folderId + ")'> magazine covers,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",3796," + folderId + ")'> cybergirls,</a> and\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",2601," + folderId + ")'> extras</a>\n");
 
             $('#archiveLink').html("<div id='rankerTag' class='headerFeatureBanner'>" +
-                "<a href='javascript:rtpe(\"BAC\"," + folderId + ",3)'>big tits archive</a></div>\n");
-            $('#rankerLink').html("<div id='rankerTag' class='headerFeatureBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"playboy\")' " +
+                "<a href='javascript:rtpe(\"BAC\"," + folderId + ",3," + folderId +")'>big tits archive</a></div>\n");
+            $('#rankerLink').html("<div id='rankerTag' class='headerFeatureBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"playboy\"," + folderId +")' " +
                 "title='Spin through the links to land on random portrait images.'>playmate ranker</a></div>\n");
             break;
         }
@@ -200,16 +202,16 @@ function setHeaderDetails(folderId, subdomain) {
             changeFavoriteIcon();
             $('body').addClass('pornBodyColors');
             $('#subheaderContent').html(
-                "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",243)'>cock suckers</a>, \n" +
-                "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",420)'>boob suckers</a>, \n" +
-                "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",357)'>cum shots</a>, \n" +
-                "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",397)'>kinky</a> and \n" +
-                "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",411)'>naughty behaviour</a>\n");
+                "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",243," + folderId + ")'>cock suckers</a>, \n" +
+                "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",420," + folderId + ")'>boob suckers</a>, \n" +
+                "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",357," + folderId + ")'>cum shots</a>, \n" +
+                "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",397," + folderId + ")'>kinky</a> and \n" +
+                "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",411," + folderId + ")'>naughty behaviour</a>\n");
 
-            $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"porn\")'><img src='/Images/csLips02.png' class='bannerImage'/></a>\n");
+            $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"porn\"," + folderId +")'><img src='/Images/csLips02.png' class='bannerImage'/></a>\n");
             $('#archiveLink').html("<div id='rankerTag' class='headerFeatureBanner'>" +
-                "<a href='javascript:rtpe(\"BAC\"," + folderId + ",440)'>slut archive</a></div>\n");
-            $('#rankerLink').html("<div id='rankerTag' class='headerFeatureBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"" + subdomain + "\")' " +
+                "<a href='javascript:rtpe(\"BAC\"," + folderId + ",440," + folderId +")'>slut archive</a></div>\n");
+            $('#rankerLink').html("<div id='rankerTag' class='headerFeatureBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"" + subdomain + "\"," + folderId + ")' " +
                 "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n");
             $('#bannerTitle').html("OgglePorn");
             break;

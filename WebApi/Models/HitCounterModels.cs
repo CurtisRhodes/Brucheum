@@ -52,6 +52,7 @@ namespace WebApi.Models
         public string VisitorId { get; set; }
         public string EventCode { get; set; }
         public string EventDetail { get; set; }
+        public int PageId { get; set; }
         public int CalledFrom { get; set; }
     }
 

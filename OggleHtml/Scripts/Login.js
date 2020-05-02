@@ -6,7 +6,15 @@
 // Request extra privdleges 
 // pay me to do some programming for you and I'll let you in on all my source code
 
-function showRegisterDialog() {
+function showRegisterDialog(pageId) {
+    logEventActivity({
+        VisitorId: getCookieValue("VisitorId"),
+        EventCode: "RDO",
+        EventDetail: "YESS!!!",
+        PageId: pageId,
+        CalledFrom: "showRegisterDialog"
+    });
+
     $('#customMessage').hide();
     forgetShowingCustomMessage = true;
     $('#modalContainer').show();
@@ -157,11 +165,12 @@ function onLogoutClick() {
     // deleteCookie();
 }
 
-function showLoginDialog() {
+function showLoginDialog(pageId) {
     logEventActivity({
         VisitorId: getCookieValue("VisitorId"),
-        EventCode: "LOG",
-        EventDetail: "Login dialog opened",
+        EventCode: "LDO",
+        EventDetail: "YESS!!!",
+        PageId: pageId,
         CalledFrom: "showLoginDialog"
     });
 

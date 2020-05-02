@@ -479,8 +479,9 @@ function authenticateEmail(usersEmail) {
     });
     logEventActivity({
         VisitorId: getCookieValue("VisiorId"),
-        EventCode: usersEmail + privileges,
-        EventDetail: "Acess Requested",
+        EventCode: "EMA" ,
+        EventDetail: usersEmail + privileges,
+        PageId: 1111,
         CalledFrom: "authenticateEmail"
     });
     sendEmailToYourself("Acess Requested", " user: " + getCookieValue("UserName") + " has requsted " + privileges);

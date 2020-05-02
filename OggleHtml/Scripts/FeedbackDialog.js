@@ -34,8 +34,9 @@ function saveFeedbackDialog(pageId) {
             if (success === "ok") {
                 logEventActivity({
                     VisitorId: visitorId,
-                    EventCode: "FED",
-                    EventDetail: "FeedBack Sent !!",
+                    EventCode: "FBS",
+                    EventDetail: "Hooraaaayyy !!",
+                    PageId: pageId,
                     CalledFrom: "OggleHeader saveFeedbackDialog"
                 });
                 //sendEmailToYourself("FeedBack", "ip: " + getCookieValue("IpAddress") + "<br/>"

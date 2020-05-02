@@ -186,27 +186,27 @@ namespace WebApi.Controllers
                     subheaderContent = "ranker"; // $('#subheaderContent').html("ranker");
                     break;
                 case "archive":
-                    subheaderContent = "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",4)'>milk cows,</a> \n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1103)'>russian spys,</a> \n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1093)'>highschool fantasy girls,</a> \n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1107)'>sweater meat,</a> \n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",123)'>ultra juggs</a> \n";
+                    subheaderContent = "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",4,4)'>milk cows,</a> \n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1103,1103)'>russian spys,</a> \n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1093,1093)'>highschool fantasy girls,</a> \n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1107,1107)'>sweater meat,</a> \n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",123,123)'>ultra juggs</a> \n";
                     rankerLink = "<div id='rankerTag' class='headerFeatureBanner'>" +
                         "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"archive\")'" +
                         " title='Spin through the links to land on random portrait images.'>babes ranker</a></div>\n";
 
                     playboyLink = "<div class='headerFeatureBanner'>" +
-                        "\n<a href='javascript:rtpe(\"BAC\"," + folderId + ",1132)'>every Playboy Centerfold</a></div>\n";
+                        "\n<a href='javascript:rtpe(\"BAC\"," + folderId + ",1132,1132)'>every Playboy Centerfold</a></div>\n";
                     break;
                 case "special":
                 case "boobs":
                     subheaderContent =
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",136)'> poses,</a>\n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",3916)'> positions,</a>\n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",159)'> topics,</a>\n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",199)'> shapes</a> and\n" +
-                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",241)'>sizes</a>\n";
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",2,2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",136,136)'> poses,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",3916,3916)'> positions,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",159,159))'> topics,</a>\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",199,199)'> shapes</a> and\n" +
+                "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",241,241)'>sizes</a>\n";
 
                     //DUTCH subheaderContent =
                     //    "                <a href='/album.html?folder=2'><span class='bigTits'>STORE </span>bryster</a> organiseret af\n" +
@@ -216,7 +216,7 @@ namespace WebApi.Controllers
                     //    "                <a href='/album.html?folder=241'>størrelser</a>\n";
 
                     archiveLink = "<div id='rankerTag' class='headerFeatureBanner'>" +
-                        "<a href='javascript:rtpe(\"BAC\"," + folderId + ",3)'>babes archive</a></div>\n";
+                        "<a href='javascript:rtpe(\"BAC\"," + folderId + ",3,3)'>babes archive</a></div>\n";
                     rankerLink = "<div id='rankerTag' class='headerFeatureBanner'>" +
                         "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"boobs\")'" +
                         " title='Spin through the links to land on random portrait images.'>boobs ranker</a></div>\n";
@@ -226,14 +226,14 @@ namespace WebApi.Controllers
                     headerClass = "boobsHeader";
                     topLeftLogo = "/Images/playboyBallon.png";
                     subheaderContent =
-                        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1132)'>Centerfolds,</a>\n" +
-                        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1986)'> magazine covers,</a>\n" +
-                        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",3796)'> cybergirls,</a> and\n" +
-                        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",2601)'> extras</a>\n";
+                        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1132,1132)'>Centerfolds,</a>\n" +
+                        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1986,1986)'> magazine covers,</a>\n" +
+                        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",3796,3796)'> cybergirls,</a> and\n" +
+                        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",2601,2601)'> extras</a>\n";
 
                     archiveLink = "<div id='rankerTag' class='headerFeatureBanner'>" +
-                        "<a href='javascript:rtpe(\"BAC\"," + folderId + ",3)'>big tits archive</a></div>\n";
-                    rankerLink = "<div id='rankerTag' class='headerFeatureBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"playboy\")' " +
+                        "<a href='javascript:rtpe(\"BAC\"," + folderId + ",3,3)'>big tits archive</a></div>\n";
+                    rankerLink = "<div id='rankerTag' class='headerFeatureBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"playboy\",111)' " +
                         "title='Spin through the links to land on random portrait images.'>playmate ranker</a></div>\n";
                     break;
                 case "porn":
@@ -242,15 +242,15 @@ namespace WebApi.Controllers
                     //changeFavoriteIcon();
                     //$('body').addClass('pornBodyColors');
                     subheaderContent =
-                        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",243)'>cock suckers</a>, \n" +
-                        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",420)'>boob suckers</a>, \n" +
-                        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",357)'>cum shots</a>, \n" +
-                        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",397)'>kinky</a> and \n" +
-                        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",411)'>naughty behaviour</a>\n";
+                        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",243,243)'>cock suckers</a>, \n" +
+                        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",420,420)'>boob suckers</a>, \n" +
+                        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",357,357)'>cum shots</a>, \n" +
+                        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",397,397)'>kinky</a> and \n" +
+                        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",411,411)'>naughty behaviour</a>\n";
                     topLeftLogo = "/Images/csLips02.png";
                     archiveLink = "<div id='rankerTag' class='headerFeatureBanner'>" +
-                        "<a href='javascript:rtpe(\"BAC\"," + folderId + ",440)'>slut archive</a></div>\n";
-                    rankerLink = "<div id='rankerTag' class='headerFeatureBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"" + rootFolder + "\")' " +
+                        "<a href='javascript:rtpe(\"BAC\"," + folderId + ",440,440)'>slut archive</a></div>\n";
+                    rankerLink = "<div id='rankerTag' class='headerFeatureBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"" + rootFolder + "\",444)' " +
                         "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n";
                     bannerTitle = "OgglePorn";
                     break;
@@ -334,7 +334,7 @@ namespace WebApi.Controllers
                 {
                     breadCrumbString.Append("<a class='activeBreadCrumb'" +
                         //	HBX	Home Breadcrumb Clicked
-                        "href='javascript:rtpe(\"BCC\"," + folderId + "," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
+                        "href='javascript:rtpe(\"BCC\"," + folderId + ",33," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
                         breadCrumbModel.BreadCrumbs[i].FolderName.Replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
                 }
             }

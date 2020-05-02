@@ -412,7 +412,7 @@ function resizeViewer() {
 
 function slideshowImageLabelClick() {
     //alert("knownSlideShowImageLabelClick()");
-    rtpe("SSC", imageViewerFolderId, imageViewerArray[imageViewerIndex].ImageFolderId);
+    rtpe("SSC", imageViewerFolderId, imageViewerArray[imageViewerIndex].ImageFolderId, imageViewerFolderId);
 }
 
 function slideshowContexMenu() {
@@ -463,7 +463,7 @@ function slideshowCtxMnuAction(action) {
             });
             break;
         case "see more of her":
-            rtpe("SEE", albumFolderId, imageViewerArray[imageViewerIndex].ImageFolderId);
+            rtpe("SEE", albumFolderId, imageViewerArray[imageViewerIndex].ImageFolderId, albumFolderId);
             //calledFrom = imageViewerArray[imageViewerIndex].ImageFolderId;
             break;
         case "showImageCommentDialog":
@@ -490,7 +490,7 @@ function slideshowCtxMnuAction(action) {
                 alert("You must be logged in to use this feature");
             }
             else
-                rtpe("EXP", albumFolderId, imageViewerArray[imageViewerIndex].Link);
+                rtpe("EXP", "slideshow", imageViewerArray[imageViewerIndex].Link, albumFolderId);
             break;
         case "Archive":
         case "Copy":

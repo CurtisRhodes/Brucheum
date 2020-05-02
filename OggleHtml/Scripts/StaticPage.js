@@ -19,6 +19,8 @@ $(document).ready(function () {
     //$('#fileCount').html(staticPageImagesCount);
     params = getParams();
     var calledFrom = params.calledFrom;
+    var internalLink = params.h;
+
     //setOggleHeader(params.folder, "blank");
     var dots = "";
     loadSettings();
@@ -32,34 +34,63 @@ $(document).ready(function () {
         }
         else {
             if (isNullorUndefined(visitorId)) {
-                if (isNullorUndefined(calledFrom)) {
-                    callIpServiceFromStaticPage(staticPageFolderId, calledFrom);
+                if (isNullorUndefined(internalLink)) {
+                    if (isNullorUndefined(calledFrom)) {
+                        logEventActivity({
+                            VisitorId: "knull",
+                            EventCode: "XLC",
+                            EventDetail: "no visitorId no calledFrom no h",
+                            PageId: staticPageFolderId,
+                            CalledFrom: "staticPage"
+                        });
+                    }
+                    else {
+                        logEventActivity({
+                            VisitorId: "knull",
+                            EventCode: "XLC",
+                            EventDetail: "no visitorId",
+                            PageId: staticPageFolderId,
+                            CalledFrom: "staticPage"
+                        });
+                    }
                 }
                 else {
                     logEventActivity({
-                        VisitorId: visitorId,
-                        EventCode: "AL2",
-                        EventDetail: "calledFrom: " + calledFrom,
-                        CalledFrom: staticPageFolderId
+                        VisitorId: "knull",
+                        EventCode: "AL1",
+                        EventDetail: "h but no visitorId",
+                        PageId: staticPageFolderId,
+                        CalledFrom: "staticPage"
                     });
                 }
+                callIpServiceFromStaticPage(staticPageFolderId, calledFrom);
             }
             else {  // visitorId ok
-                if (isNullorUndefined(calledFrom)) {
+                if (isNullorUndefined(internalLink)) {
+                    if (isNullorUndefined(calledFrom)) {
+                        logEventActivity({
+                            VisitorId: "knull",
+                            EventCode: "XLC",
+                            EventDetail: "no h an no calledFrom. an old Link?",
+                            PageId: staticPageFolderId,
+                            CalledFrom: "staticPage"
+                        });
+                    }
+                    else {
+                        logEventActivity({
+                            VisitorId: "knull",
+                            EventCode: "XLC",
+                            EventDetail: calledFrom,
+                            PageId: staticPageFolderId,
+                            CalledFrom: "staticPage"
+                        });
+                    }
+                }
+                else { 
                     logEventActivity({
                         VisitorId: visitorId,
                         EventCode: "AL1",
-                        EventDetail: "calledFrom: " + calledFrom,
-                        CalledFrom: staticPageFolderId
-                    });
-                    verifyVisitorId(visitorId, staticPageFolderId, calledFrom);
-                    logVisit(visitorId, staticPageFolderId);
-                }
-                else {
-                    logEventActivity({
-                        VisitorId: visitorId,
-                        EventCode: "XLC",
-                        EventDetail: calledFrom,
+                        EventDetail: "perfect h: " + internalLink,
                         CalledFrom: staticPageFolderId
                     });
                 }
@@ -109,9 +140,9 @@ function staticCatTreeContainerClick(path, id, treeId) {
 
 function subFolderPreClick(isStepChild, subFolderPreClickFolderId) {
     if (isStepChild === "0")
-        rtpe("SUB", albumFolderId, subFolderPreClickFolderId);
+        rtpe("SUB", "static", subFolderPreClickFolderId, subFolderPreClickFolderId);
     else {
-        rtpe("SSB", albumFolderId, subFolderPreClickFolderId);
+        rtpe("SSB", "static", subFolderPreClickFolderId, subFolderPreClickFolderId);
     }
 }
 

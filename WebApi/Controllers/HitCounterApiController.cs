@@ -307,49 +307,41 @@ namespace WebApi
             {
                 using (var mdb = new OggleBoobleMySqContext())
                 {
-                    if (int.TryParse(logEventModel.EventDetail, out int numericEventDetail))
-                    { 
-                        logEventModel.EventDetail = mdb.CategoryFolders.Where(f => f.Id == numericEventDetail).FirstOrDefault().FolderName;
-                    }
+                    logEventModel.EventDetail = mdb.CategoryFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault().FolderName;
                     mdb.EventLogs.Add(new EventLog()
                     {
                         EventCode = logEventModel.EventCode,
                         EventDetail = logEventModel.EventDetail,
-                        PageId = logEventModel.CalledFrom,
+                        PageId = logEventModel.PageId,
                         VisitorId = logEventModel.VisitorId,
                         Occured = DateTime.Now
                     });
                     mdb.SaveChanges();
 
-                    var categoryFolderCalledFromRow = mdb.CategoryFolders.Where(f => f.Id == logEventModel.CalledFrom).FirstOrDefault();
-                    if (categoryFolderCalledFromRow != null)
-                        logEventActivitySuccess.CalledFrom = categoryFolderCalledFromRow.FolderName;
-                    else
-                        logEventActivitySuccess.CalledFrom = "{" + logEventModel.CalledFrom + " not found}";
+                    //var categoryFolderCalledFromRow = mdb.CategoryFolders.Where(f => f.Id == logEventModel.CalledFrom).FirstOrDefault();
+                    //if (categoryFolderCalledFromRow != null)
+                    //    logEventActivitySuccess.CalledFrom = categoryFolderCalledFromRow.FolderName;
+                    //else
+                    //    logEventActivitySuccess.CalledFrom = "{" + logEventModel.CalledFrom + " not found}";
 
-                    Visitor visitor = mdb.Visitors.Where(v => v.VisitorId == logEventModel.VisitorId).FirstOrDefault();
-                    if (visitor != null)
-                    {
-                        logEventActivitySuccess.IpAddress = visitor.IpAddress;
-                        logEventActivitySuccess.VisitorDetails = visitor.City + ", " + visitor.Region + " " + visitor.Country;
-                    }
+                    //Visitor visitor = mdb.Visitors.Where(v => v.VisitorId == logEventModel.VisitorId).FirstOrDefault();
+                    //if (visitor != null)
+                    //{
+                    //    logEventActivitySuccess.IpAddress = visitor.IpAddress;
+                    //    logEventActivitySuccess.VisitorDetails = visitor.City + ", " + visitor.Region + " " + visitor.Country;
+                    //}
 
-                    var refEventCodeRow = mdb.Refs.Where(r => r.RefCode == logEventModel.EventCode).FirstOrDefault();
-                    if (refEventCodeRow != null) 
-                    {
-                        logEventActivitySuccess.EventName = refEventCodeRow.RefDescription;
-                    }
+                    //var refEventCodeRow = mdb.Refs.Where(r => r.RefCode == logEventModel.EventCode).FirstOrDefault();
+                    //if (refEventCodeRow != null)
+                    //{
+                    //    logEventActivitySuccess.EventName = refEventCodeRow.RefDescription;
+                    //}
 
-                    int eventDetailPageId;
-                    bool parseSuccess = int.TryParse(logEventModel.EventDetail, out eventDetailPageId);
-                    if (parseSuccess)
-                    {
-                        var categoryFolderEventDetailRow = mdb.CategoryFolders.Where(f => f.Id == eventDetailPageId).FirstOrDefault();
-                        if (categoryFolderEventDetailRow != null)
-                        {
-                            logEventActivitySuccess.PageBeingCalled = categoryFolderEventDetailRow.FolderName;
-                        }
-                    }
+                    //var categoryFolderEventDetailRow = mdb.CategoryFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault();
+                    //if (categoryFolderEventDetailRow != null)
+                    //{
+                    //    logEventActivitySuccess.PageBeingCalled = categoryFolderEventDetailRow.FolderName;
+                    //}
                 }
                 logEventActivitySuccess.Success = "ok";
             }

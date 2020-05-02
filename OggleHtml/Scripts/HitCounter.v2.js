@@ -157,7 +157,8 @@ function logVisit(visitorId, pageId) {
                     logEventActivity({
                         VisitorId: visitorId,
                         EventCode: "VIS",
-                        EventDetail: "Page: " + pageName,
+                        EventDetail: "VisitAdded: " + logVisitSuccessModel.VisitAdded,
+                        PageId: pageId,
                         CalledFrom: "HitCounter.js logVisit"
                     });
                     //sendEmailToYourself("Visit Added ", "visitorId: " + visitorId + "<br/>Initial Page: ");
@@ -193,7 +194,7 @@ function logVisit(visitorId, pageId) {
     });
 }
 
-function verifyVisitorId(visitorId, staticPageFolderId, calledFrom) {
+function verifyVisitorId(visitorId, pageId, calledFrom) {
     if (!isNullorUndefined(visitorId)) {
         $.ajax({
             type: "GET",
@@ -209,7 +210,7 @@ function verifyVisitorId(visitorId, staticPageFolderId, calledFrom) {
                             CalledFrom: "verifyVisitorId"
                         });
                         //addVisitor(pageId, "verifyVisitorId");
-                        callIpServiceFromStaticPage(staticPageFolderId, calledFrom);
+                        callIpServiceFromStaticPage(pageId, calledFrom);
                     }
                 }
                 else {
@@ -238,7 +239,7 @@ function verifyVisitorId(visitorId, staticPageFolderId, calledFrom) {
     }
 }
 
-function letemPorn(response, pornType) {
+function letemPorn(response, pornType, pageId) {
     // if (document.domain === 'localhost') alert("letemPorn: " + pornType);
     if (response === "ok") {
         //  setUserPornStatus(pornType);
@@ -255,7 +256,7 @@ function letemPorn(response, pornType) {
             //sendEmailToYourself("letemPorn problem", "pornType missing");
             pornType = "UNK";
         }
-        reportThenPerformEvent("PRN", 136, pornType);
+        reportThenPerformEvent("PRN", "xx", pornType, pageId);
     }
     else {
         $('#customMessage').hide();
@@ -265,20 +266,14 @@ function letemPorn(response, pornType) {
     }
 }
 
-function rtpe(eventCode, calledFrom, eventDetail) {
-    reportThenPerformEvent(eventCode, calledFrom, eventDetail);
+function rtpe(eventCode, calledFrom, eventDetail, pageId) {
+    reportThenPerformEvent(eventCode, calledFrom, eventDetail, pageId);
 }
 
-function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
-    //alert("reportThenPerformEvent(eventCode: " + eventCode + ", calledFrom: " + calledFrom + ", eventDetail: " + eventDetail);
+function reportThenPerformEvent(eventCode, calledFrom, eventDetail, pageId) {
     try {
         var visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId)) {
-            var pageId = 1;
-            if (Number.isInteger(calledFrom)) {
-                pageId = calledFrom;
-            }
-            //addVisitor(pageId, "reportThenPerformEvent/" + calledFrom);
             visitorId = "00";
             //visitorId = create_UUID();
             //logError({
@@ -294,12 +289,14 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
             VisitorId: visitorId,
             EventCode: eventCode,
             EventDetail: eventDetail,
+            PageId: pageId,
             CalledFrom: calledFrom
         });
 
-        performEvent(eventCode, calledFrom, eventDetail);
+        performEvent(eventCode, calledFrom, eventDetail, pageId);
 
-    } catch (e) {
+    }
+    catch (e) {
         logError({
             VisitorId: visitorId,
             ActivityCode: "CA2",
@@ -319,7 +316,7 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail) {
     }
 }
 
-function performEvent(eventCode, calledFrom, eventDetail) {
+function performEvent(eventCode, calledFrom, eventDetail, pageId) {
     if (eventCode === "PRN") {
         //  setUserPornStatus(pornType);
     }
@@ -344,7 +341,6 @@ function performEvent(eventCode, calledFrom, eventDetail) {
             break;
         case "CAA": // carousle context menu item clicked
             if (eventDetail === "foward") {
-                //alert("reportThenPerformEvent eventCode: " + eventCode + " eventDetail: " + eventDetail);
                 resume();
             }
             else {
@@ -361,12 +357,12 @@ function performEvent(eventCode, calledFrom, eventDetail) {
             }
             break;
         case "EXP":  // Explode
-            window.open(eventDetail, "_blank");
+            window.open(pageId, "_blank");
             break;
         case "SRC":  // Search Performed
         case "SSB":
         case "SSC":
-            window.open("/album.html?folder=" + eventDetail, "_blank");            
+            window.open("/album.html?folder=" + pageId, "_blank");
             break;
         case 'SUB':  // 'Sub Folder Click'
         case "CIC":  // carousel image clicked
@@ -377,10 +373,10 @@ function performEvent(eventCode, calledFrom, eventDetail) {
         case "BLC":  // banner link clicked
         case "BAC":  // Babes Archive Clicked
         case "LUP":  // Update Box click
-            window.location.href = "/album.html?folder=" + eventDetail;  //  open page in same window
+            window.location.href = "/album.html?folder=" + pageId;  //  open page in same window
             break;
         case "CMX":
-            showModelInfoDialog(eventDetail, calledFrom, 'Images/redballon.png');
+            showModelInfoDialog(eventDetail, pageId, 'Images/redballon.png');
             break;
         case "HBX":  // Home breadcrumb Clicked
             if (eventDetail === "porn")
@@ -419,7 +415,7 @@ function performEvent(eventCode, calledFrom, eventDetail) {
                         ErrorMessage: "uncaught switch option Left Menu Click EventDetail: " + eventDetail,
                         CalledFrom: calledFrom
                     });
-                    //alert("uncaught switch option Left Menu Click\nEventDetail: " + eventDetail); break;
+                //alert("uncaught switch option Left Menu Click\nEventDetail: " + eventDetail); break;
             }
             break;
         case "FLC":  //  footer link clicked
@@ -462,7 +458,7 @@ function performEvent(eventCode, calledFrom, eventDetail) {
                 ErrorMessage: "Uncaught Case: " + eventDetail + "eventCode " + eventCode + "  not handled in reportThenPerformEvent",
                 CalledFrom: calledFrom
             });
-            //sendEmailToYourself("Uncaught Case: " + eventCode, "eventCode " + eventCode + "  not handled in reportThenPerformEvent");
+        //sendEmailToYourself("Uncaught Case: " + eventCode, "eventCode " + eventCode + "  not handled in reportThenPerformEvent");
     }
 }
 
@@ -475,8 +471,9 @@ function checkForHitLimit(calledFrom, pageId, userPageHits, userImageHits) {
                     logEventActivity({
                         VisitorId: getCookieValue("VisitorId"),
                         EventCode: "PAY",
-                        EventDetail: "Page Hit Message Displayed. UserPageHits: " + userPageHits,
-                        CalledFrom: pageId
+                        EventDetail: "UserPageHits: " + userPageHits,
+                        PageId: pageId,
+                        CalledFrom: calledFrom
                     });
                 }
             }
@@ -486,8 +483,9 @@ function checkForHitLimit(calledFrom, pageId, userPageHits, userImageHits) {
                 logEventActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     EventCode: "PAY",
-                    EventDetail: "Image Hit Limit Message Displayed userImageHits: " + userImageHits,
-                    CalledFrom: pageId
+                    EventDetail: "Image Hits: " + userImageHits,
+                    PageId: pageId,
+                    CalledFrom: calledFrom
                 });
                 showCustomMessage(97, true);
             }
@@ -519,15 +517,13 @@ function logEventActivity(logEventModel) {
         data: logEventModel,
         success: function (logEventActivitySuccess) {
             if (logEventActivitySuccess.Success !== "ok") {
-                if (logEventActivitySuccess.Success.indexOf("Duplicate Entry") === 0) {
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "ER2",
-                        Severity: 2,
-                        ErrorMessage: logEventActivitySuccess.Success,
-                        CalledFrom: "LogEventActivity"
-                    });
-                }
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "ER2",
+                    Severity: 2,
+                    ErrorMessage: logEventActivitySuccess.Success,
+                    CalledFrom: "LogEventActivity"
+                });
             }
         },
         error: function (jqXHR) {
@@ -545,19 +541,19 @@ function logEventActivity(logEventModel) {
     });
 }
 
-
-function callIpServiceFromStaticPage(staticPageFolderId, externalSource) {
+function callIpServiceFromStaticPage(pageId, externalSource) {
     try {
         logEventActivity({
-            VisitorId: getCookieValue("VisitorId"),
-            EventCode: "IPT",
-            EventDetail: "trying IpInfo"+ externalSource,
-            CalledFrom: staticPageFolderId
+            VisitorId: "kmm",
+            EventCode: "IPC",
+            EventDetail: "externalSource" + externalSource,
+            PageId: pageId,
+            CalledFrom: "callIpServiceFromStaticPage"
         });
-
         $.ajax({
             type: "GET",
             url: "https://ipinfo.io?token=ac5da086206dc4",
+            dataType: "JSON",
             //url: "http//api.ipstack.com/check?access_key=5de5cc8e1f751bc1456a6fbf1babf557",
             success: function (ipResponse) {
                 $.ajax({
@@ -566,7 +562,7 @@ function callIpServiceFromStaticPage(staticPageFolderId, externalSource) {
                     data: {
                         IpAddress: ipResponse.ip,
                         PageId: pageId,
-                        CalledFrom: calledFrom,
+                        CalledFrom: externalSource,
                         City: ipResponse.city,
                         Country: ipResponse.country,
                         Region: ipResponse.region,
@@ -580,14 +576,16 @@ function callIpServiceFromStaticPage(staticPageFolderId, externalSource) {
                                 VisitorId: getCookieValue("VisitorId"),
                                 EventCode: "XLC",
                                 EventDetail: externalSource,
-                                CalledFrom: staticPageFolderId
+                                PageId: pageId,
+                                CalledFrom: "callIpService"
                             });
 
                             logEventActivity({
                                 VisitorId: getCookieValue("VisitorId"),
                                 EventCode: "NEW",
                                 EventDetail: "Ip: " + ipStackResponse.ip,
-                                CalledFrom: staticPageFolderId
+                                PageId: pageId,
+                                CalledFrom: "callIpService"
                             });
                         }
                         else {

@@ -101,7 +101,7 @@ function directToStaticPage(folderId) {
     $.ajax({
         type: "GET",
         async: true,
-        url: settingsArray.ApiServer + "api/AlbumPage/GetStaticPage?folderId=" + folderId,
+        url: settingsArray.ApiServer + "api/AlbumPage/GetStaticPage?folderId=" + folderId + "&h=2",
         success: function (successModel) {
             if (successModel.Success === "ok") {
                 window.location.href = successModel.ReturnValue;
@@ -147,7 +147,7 @@ function getBreadCrumbs(folderId, badgesText) {
 
                 setOggleHeader(folderId, breadCrumbModel.RootFolder);
 
-                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + folderId + ",\"" + currentFolderRoot + "\")'>home  &#187</a>");
+                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + folderId + ",33,\"" + currentFolderRoot + "\")'>home  &#187</a>");
                 for (i = breadCrumbModel.BreadCrumbs.length - 1; i >= 0; i--) {
                     if (breadCrumbModel.BreadCrumbs[i] === null) {
                         breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
@@ -172,7 +172,7 @@ function getBreadCrumbs(folderId, badgesText) {
                         else {
                             $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
                                 //	HBX	Home Breadcrumb Clicked
-                                "href='javascript:rtpe(\"BCC\"," + folderId + "," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
+                                "href='javascript:rtpe(\"BCC\"," + folderId + ",44," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
                                 breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
                         }
                     }
@@ -321,9 +321,9 @@ function processImages(imageLinksModel) {
 function subFolderPreClick(isStepChild, subFolderPreClickFolderId) {
     //function performEvent(eventCode, calledFrom, eventDetail) {
     if (isStepChild === "0")
-        rtpe("SUB", albumFolderId, subFolderPreClickFolderId);
+        rtpe("SUB", albumFolderId, "", subFolderPreClickFolderId);
     else {
-        rtpe("SSB", albumFolderId, subFolderPreClickFolderId);
+        rtpe("SSB", albumFolderId, "", subFolderPreClickFolderId);
     }
 }
 
@@ -394,7 +394,7 @@ function startSlideShow2(folderId2, imageIndex) {
 
     var visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(visitorId)) {
-        addVisitor(albumFolderId, "Album.js/startSlideshow");
+        //addVisitor(albumFolderId, "Album.js/startSlideshow");
         //logError({
         //    VisitorId: getCookieValue("VisitorId"),
         //    ActivityCode: "BAD",
@@ -689,9 +689,10 @@ function contextMenuAction(action) {
         case "show":
             logEventActivity({
                 VisitorId: getCookieValue("VisitorId"),
-                EventCode: "CM1",
-                EventDetail: "showModelInfoDialog called. Viewer showing: " + viewerShowing,
-                CalledFrom: albumFolderId
+                EventCode: "SMD",
+                EventDetail: "Viewer showing: " + viewerShowing,
+                PageId: albumFolderId,
+                CalledFrom: "contextMenuAction"
             });
             var disableViewerKeys = viewerShowing;
             viewerShowing = false;
@@ -704,28 +705,30 @@ function contextMenuAction(action) {
             });
             break;
         case "jump":
-            rtpe("SEE", albumFolderId, modelFolderId);
+            rtpe("SEE", albumFolderId, modelFolderId, modelFolderId);
             break;
         case "comment":
             $("#thumbImageContextMenu").fadeOut();
             logEventActivity({
                 VisitorId: getCookieValue("VisitorId"),
-                EventCode: "CM3",
-                EventDetail: "showImageCommentDialog: " + modelFolderName,
-                CalledFrom: albumFolderId
+                EventCode: "SID",
+                EventDetail: "image: " + selectedImageLinkId,
+                PageId: albumFolderId,
+                CalledFrom: "contextMenuAction"
             });
             showImageCommentDialog(selectedImage, selectedImageLinkId, albumFolderId, currentAlbumJSfolderName);
             break;
         case "explode":
             if (isLoggedIn()) {
-                rtpe("EXP", selectedImageLinkId, albumFolderId);
+                rtpe("EXP", selectedImageLinkId, albumFolderId, albumFolderId);
             }
             else {
                 logEventActivity({
                     VisitorId: getCookieValue("VisitorId"),
-                    EventCode: "UN1",
-                    EventDetail: "un authorized attempt to explode",
-                    CalledFrom: albumFolderId
+                    EventCode: "UNX",
+                    EventDetail: "image: " + selectedImageLinkId,
+                    PageId: albumFolderId,
+                    CalledFrom: "contextMenuAction"
                 });
                 alert("You must be logged in to use this feature");
             }
@@ -755,9 +758,10 @@ function contextMenuAction(action) {
         case "showLinks":
             logEventActivity({
                 VisitorId: getCookieValue("VisitorId"),
-                EventCode: "CM5",
+                EventCode: "SHL",
                 EventDetail: "show links",
-                CalledFrom: albumFolderId
+                PageId: albumFolderId,
+                CalledFrom: "contextMenuAction"
             });
             showLinks(selectedImageLinkId);
             break;
@@ -790,9 +794,6 @@ function showEitherModelorFolderInfoDialog(index, folderName, showEitherModelorF
 
     //alert("showEitherModelorFolderInfoDialog(index: " + index + ", folderName: " + folderName + ", folderId: " + folderId + ", parentId: " + parentId + ", rootFolder: " + rootFolder + ")");
     var cybergirls = "3796";
-
-
-
 
     if (rootFolder === "playboy" && index > 4 || parentId === cybergirls || rootFolder === "archive" && index > 2) {
         rtpe("CMX", showEitherModelorFolderInfoDialogFolderId, folderName);

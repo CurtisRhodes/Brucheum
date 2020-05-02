@@ -9,7 +9,7 @@
                     $('#updatedGalleriesSection').append("<div class='newsContentBox'>" +
                         "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
                         "<img class='newsContentBoxImage' src='" + LatestUpdate.FolderImage + "'" +
-                        "onclick='rtpe(\"LUP\",\"home page\"," + LatestUpdate.FolderId + ")'/>" +
+                        "onclick='rtpe(\"LUP\",\"home page\",10," + LatestUpdate.FolderId + ")'/>" +
                         "<div class='newsContentBoxDateLabel'>updated: " + $.date(LatestUpdate.LastModified) + "</span></div>" +
                         "</div>");
                 });

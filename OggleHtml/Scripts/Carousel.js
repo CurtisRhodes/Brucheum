@@ -130,7 +130,7 @@ function loadImages(rootFolder, isChecked, skip, take) {
 
 function clickViewGallery() {
     clearInterval(CarouselInterval);
-    rtpe("CIC", 3908, carouselItemArray[imageIndex].FolderId);
+    rtpe("CIC", "called from", "details", carouselItemArray[imageIndex].FolderId);
 }
 
 //carouselItemArray[imageIndex].ParentId
@@ -139,7 +139,7 @@ function clickViewParentGallery() {
         alert("clickViewParentGallery pageId: " + carouselItemArray[imageIndex].ParentId + "\neventDetail: " + eventDetail);
     }
     clearInterval(CarouselInterval);
-    reportThenPerformEvent("CPC", 100, carouselItemArray[imageIndex].ParentId);
+    reportThenPerformEvent("CPC", "clickViewParentGallery", "details", carouselItemArray[imageIndex].ParentId);
 }
 
 function clickSpeed(speed) {
@@ -205,7 +205,7 @@ function startCarousel() {
 }
 
 function assuranceArrowClick(direction) {
-    reportThenPerformEvent("CAA", specialPage, direction);
+    reportThenPerformEvent("CAA", "direction: " + direction, direction, specialPage);
 }
 
 function intervalBody() {
@@ -239,7 +239,7 @@ function intervalBody() {
 
 function knownModelLabelClick() {
     //alert("knownModelLabelClick(" + carouselItemArray[imageIndex].ModelFolderId + ")");
-    rtpe("CMN", "index", carouselItemArray[imageIndex].ModelFolderId);
+    rtpe("CMN", "index", carouselItemArray[imageIndex].ModelFolderId, carouselItemArray[imageIndex].FolderId);
 }
 
 
@@ -290,24 +290,11 @@ function carouselContextMenuClick() {
 }
 
 function carouselContextMenuAction(ctxMenuAction) {
-    //reportThenPerformEvent("CXM", carouselItemArray[imageIndex].FolderId);
-    //reportClickEvent("CMC", carouselItemArray[imageIndex].FolderId);
-    //if (document.domain === 'localhost') alert("carouselContextMenuAction(" + ctxMenuAction + ")");
-
-
-    //reportClickEvent("CMC", carouselItemArray[imageIndex].FolderId, ctxMenuAction);
-    //reportThenPerformEvent("CMC", ctxMenuAction);
     switch (ctxMenuAction) {
         case "showDialog":
             $('#carouselContextMenu').fadeOut();
             modelInfoDialogIsOpen = true;
             pause();
-
-            //if (document.domain === 'localhost')
-            //    alert("showModelInfoDialog(\n$('#ctxModelName').html(): " + $('#ctxModelName').html() +
-            //        "\nselectedImageArchiveFolderId: " + selectedImageArchiveFolderId +
-            //        "\ncarouselItemArray[imageIndex].Link:\n" + carouselItemArray[imageIndex].Link + ");");
-
             showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId, carouselItemArray[imageIndex].Link);
             $('#modelInfoDialog').on('dialogclose', function (event) {
                 modelInfoDialogIsOpen = false;
@@ -318,10 +305,7 @@ function carouselContextMenuAction(ctxMenuAction) {
             window.open('/album.html?folder=' + selectedImageArchiveFolderId, '_blank');
             break;
         case "explode":
-            reportThenPerformEvent("EXP", carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].Link);
-            //reportClickEvent("EXP", carouselItemArray[imageIndex].Link);
-            //reportThenPerformEvent("EXP", carouselItemArray[imageIndex].Link);
-            //window.open(carouselItemArray[imageIndex].Link, "_blank");
+            reportThenPerformEvent("EXP", "from main carousel", carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
             break;
         case "comment":
             $('#carouselContextMenu').fadeOut();

@@ -119,7 +119,7 @@ function clearSearch() {
 }
 
 function jumpToSelected(selectedFolderId) {
-    reportThenPerformEvent('SRC', currentFolderId, selectedFolderId);
+    reportThenPerformEvent('SRC', "currentFolderId", selectedFolderId, currentFolderId);
     //window.open("/album.html?folder=" + selectedFolderId, "_blank");
     clearSearch();
 }
