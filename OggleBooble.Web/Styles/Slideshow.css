@@ -1,0 +1,117 @@
+﻿
+.slideshowImageLabel {
+    position: absolute;
+    bottom: 50px;
+    right: 255px;
+    color: #fff;
+    background-color: rgba(178, 0, 255, 0.66);
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 20px;
+    white-space: nowrap;
+    cursor: pointer;
+    z-index: 200;
+}
+
+.slideshowNavgArrows {
+    float: left;
+}
+.slideshowNavgArrows img {
+    width: 50px;
+}
+
+.slideshowImage {
+    object-fit: contain;
+    transition: all .75s ease-in-out;
+    height: 100%;
+    float: left;
+}
+
+.redSides {
+    border-left: solid 5px #c05d5d;
+    border-right: solid 5px #c05d5d;
+}
+
+.fullScreenViewer {
+    position: absolute;
+    display: none;
+    /*background-image: url('images/pinkStarsWalllpaper.jpg');*/
+    background-color: var(--oggleBackgroundColor);
+    z-index: 32;
+}
+
+.hiddenClickArea {
+    position: absolute;
+    height: 100%;
+    width: 50%;
+    z-index: 35;
+}
+
+#leftClickArea {
+    /*cursor: url('https://ogglebooble.com/images/leftArrowcursor.png'), sw-resize;*/
+    cursor: pointer;
+}
+#rightClickArea {
+    /*cursor: url('https://ogglebooble.com/images/rightArrowcursor.png'), ne-resize;*/
+    cursor: pointer;
+}
+
+.txtSlideShow {
+    padding:2px;
+    cursor:pointer;
+}
+.imageViewerHeaderRow {
+    background-color: var(--ogglgeHeaderBarColor);
+    width: 100%;
+    padding-top: 3px;
+    margin-bottom: -5px;
+    display: none;
+}
+
+.viewerButtonsRowSection {
+    width: 19%;
+    display: flex;
+    display: inline-block;
+}
+
+    .viewerButtonsRowSection img {
+        display: inline-block;
+        height: 27px;
+        cursor: pointer;
+    }
+
+.imgCommentButton {
+    margin-left: 44px;
+    float: left;
+}
+
+.popoutBox {
+    margin-right: 22px;
+}
+
+.imageViewerTitle {
+    display: inline-block;
+    font-size: 26px;
+    width: 60%;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.attrBox {
+    position: absolute;
+    border: solid thin black;
+    display: none;
+}
+
+.innerContextMenuInfo {
+    display: none;
+}
+
+.linkInfoItem {
+    text-decoration: underline;
+    color: blue;
+}
+
+
+

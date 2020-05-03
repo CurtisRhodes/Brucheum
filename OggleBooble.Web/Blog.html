@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog : OggleBooble</title>
+    <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
+    <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>
+    <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet' />
+    <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js' type="text/javascript"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
+    <script src="Scripts/Login.js"></script>
+    <script src="Scripts/Common.js"></script>
+    <script src="Scripts/HitCounter.v2.js"></script>
+    <script src="Scripts/OggleEventLog.js"></script>
+    <script src="Scripts/OggleHeader.js"></script>
+    <script src="Scripts/OggleSearch.js"></script>
+    <script src="Scripts/OggleFooter.js"></script>
+    <script src="Scripts/Permissions.js"></script>
+    <script src="Scripts/DirTree.js"></script>
+    <script src="Scripts/OggleBlog.js"></script>
+    <!--<link href="Styles/jqueryUI.css" rel="stylesheet" />-->
+    <link href="Styles/loginDialog.css" rel="stylesheet" />
+    <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/start/jquery-ui.min.css" rel="stylesheet">
+    <link href="Styles/Header.css" rel="stylesheet" />
+    <link href="Styles/Common.css" rel="stylesheet" />
+    <link href="Styles/OggleBlog.css" rel="stylesheet" />
+</head>
+<body>
+    <header></header>
+    <div class="threeColumnLayout">
+        <div id="leftColumn">
+            <div id="blogControls" class="leftColumnList">
+                <div id="leftColumnShowBlog" onclick="showBlogDisplay()">Show Blog</div>
+                <div id="leftColumnEditorNew" onclick="showBlogEditor()">New Entry</div>
+                <div id="leftColumnEditor">Edit</div>
+                <div id="leftColumnShowPage">Show Page</div>
+            </div>
+        </div>
+        <div id="middleColumn">
+            <div id="dots"></div>
+            <div id="divStatusMessage"></div>
+            <img id="blogLoadingGif" class="loadingGif" src="Images/loader.gif" />
+
+            <div id="blogListArea" class="blogDisplayArea">
+                <select id="blogDisplayCommentTypeSelect" class="roundedInput" onchange="loadBlogArticles($(this).val())">
+                </select>
+                <div id="blogArticleJogContainer" class="blogArticleJogContainer"></div>
+            </div>
+
+            <div id="blogEditArea" class="twoColumnFrame flexContainer">
+                <div id="blogEditor" class="oggleBlogEditor">
+                    <div class="floatLeft">
+                        <div class="oggleBlogCrudArea flexContainer">
+                            <div class="floatLeft">
+                                <div style="display:block">
+                                    <div class="crudRow">
+                                        <div class="crudLabel inline">Title</div>
+                                        <input id="txtCommentTitle" class="roundedInput" />
+                                    </div>
+                                    <div class="crudRow">
+                                        <div class="crudLabel inline">Type</div>
+                                        <select id="selBlogEditCommentType" class="roundedInput" onchange="loadBlogList($(this).val())">
+                                        </select>
+                                    </div>
+                                    <div class="crudRow">
+                                        <div class="crudLabel inline">Link</div>
+                                        <input id="txtLink" class="roundedInput" onblur="$('#imgBlogLink').attr('src', $('#txtLink').val());" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="floatLeft">
+                                <img id="imgBlogLink" class="leftImage" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="floatLeft">
+                        <div id="oggleBlogSummerNote" class="oggleBlogTextEditor"></div>
+                        <div class="oggleBlogFooterArea">
+                            <div id="btnAddEdit" class="roundendButton" onclick="saveBlogEntry()">Add</div>
+                            <div id="btnNewCancel" class="roundendButton" onclick="NewCancel()">New</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="floatLeft">
+                    <div id="blogList" class="blogItemContainer"></div>
+                </div>
+
+            </div>
+
+            <div id="blogPageArea" class="singleBlogEntryContainer">
+                <div id="blogPageTitle" class="blogPageSubHeader"></div>
+                <div class="blogPageImageContainer"><img id="blogPageImage" class="largeCenteredImage" /></div>
+                <div id="blogPageBody" class="blogPageBodyText"></div>
+            </div>
+        </div>
+        <div id="rightColumn"></div>
+    </div>
+    <footer></footer>
+
+    <div w3-include-html="Snippets/Login.html"></div>
+    <div w3-include-html="Snippets/Register.html"></div>
+
+    <script>
+    /// 11:19  May 24 20019
+    ///  sometimes even I have to take a moment to figure out what I want to do.
+    /// start with a display of blog entries
+        $(document).ready(function () {
+            includeHTML();
+            $('#blogDisplayCommentTypeSelect').val('BLG');
+
+            params = getParams();
+
+            loadSettings();
+            var waiter = setInterval(function () {
+                if (settingsArray.ApiServer === undefined) {
+                    dots += ". ";
+                }
+                else {
+                    clearInterval(waiter);
+                    setOggleHeader(3911, "blog");
+                    //setOggleFooter(3911);
+                    loadBlogDropDowns();
+                    logPageHit(3911, "blog");
+
+                    if (params.blogId == undefined) {
+                        loadBlogArticles("BLG");
+                        showBlogDisplay('BLG');
+                    }
+                    else {
+                        //alert("Calling Blog for blogId: " + params.blogId);
+                        showBlogPage(params.blogId);
+                    }
+                    //alert("is this being from Index?")
+                    if (isInRole("Blog Editor")) {
+                        //if (document.domain === 'localhost') alert("is in role blog editor");
+                        $('.adminOnly').show();
+                        $('.blogEditButton').show();
+                        $('#footerMessage').html("blog Editor");
+                    }
+                    $('#blogControls').show();
+                }
+            }, 300);
+
+            $('#oggleBlogSummerNote').summernote({
+                codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+                toolbar: [
+                    ['lineWrapping', true],
+                    ['codeview'],
+                    ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
+                ]
+            });
+
+            $('#footerMessage').html("loading");
+            $('#leftColumnEditor').hide();
+            window.addEventListener("resize", resizeBlogPage);
+            resizePage();
+            $(window).resize(resizeBlogPage());
+        });
+
+        function loadBlogDropDowns() {
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/Ref/Get?refType=BLG",
+                success: function (refs) {
+                    if (refs.Success === "ok") {
+                        //<select id="blogDisplayCommentTypeSelect" class="roundedInput" onchange="loadBlogArticles($(this).val())">
+                        //    <option value="BLG">Blog Entry</option>
+                        //    <option value="CMT">Comment on an Image</option>
+                        //    <option class="adminOnly" value="PGM">Programmer Notes</option>
+                        //    <option class="adminOnly" value="FLD">Folder Comments</option>
+                        //    <option class="adminOnly" value="PRO">Promo Messages</option>
+                        //    <option class="adminOnly" value="CON">Site Content</option>
+                        //</select>
+                        //var isBlogEditor = isInRole("Blog Editor")
+
+                        $.each(refs.refItems, function (idx, obj) {
+                            $('#blogDisplayCommentTypeSelect').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
+                            $('#selBlogEditCommentType').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
+                        });
+                    }
+                    else {
+                        alert("loadBlogDropDowns\n" + refs.Success);
+                    }
+                },
+                error: function (jqXHR) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "getRefValues()")) {
+                        sendEmailToYourself("XHR ERROR IN getRefValues", "api/Ref/Get?refType=" + refType +
+                            "<br/>" + errorMessage);
+                        if (document.domain === 'localhost') alert("XHR error in getRefValues\n" + errorMessage);
+                    }
+                    return false;
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>

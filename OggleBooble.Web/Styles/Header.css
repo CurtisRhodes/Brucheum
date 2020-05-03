@@ -1,0 +1,287 @@
+﻿.classicColors {
+    background-color: var(--oggleHeaderBackgroundColor);
+    border-top: var(--oggleHeaderBoarderTop);
+    border-bottom: var(--oggleHeaderBoarderBottom);
+}
+
+.pornHeaderColors {
+    background-color: #cab37e;
+    border-top: #40767d 3px solid;
+    border-bottom: #decd6f 11px solid;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    z-index: 31;
+}
+
+.boobsHeader {
+    background: var(--brucheumBlue);
+    border-top: #40767d 3px solid;
+    border-bottom: #decd6f 3px solid;
+}
+
+.pornHeader {
+    background: #d0a783;
+    border-top: #40767d 3px solid;
+    border-bottom: #decd6f 3px solid;
+}
+
+
+.oggleDraggableDialog {
+    position: absolute;
+    z-index: 36;
+    display: none;
+    /*width: 60%;*/
+    border: solid 2px var(--oggleBorderColor);
+    background-color: var(--oggleContainerBackgroundColor);
+}
+.oggleDraggableDialogHeader {
+    border: none;
+    background-color: var(--brucheumBlue);
+    color: #fff;
+    display: inline-flex;
+    width: 100%;
+    cursor: grab;
+}
+.oggleDraggableDialogTitle {
+    float: left;
+    width: 100%;
+    font-size: 24px;
+    text-align: center;
+}
+.oggleDraggableDialogCloseButton {
+    float: right;
+    padding-top: 5px;
+    padding-right: 15px;
+    cursor: pointer;
+}
+    .oggleDraggableDialogCloseButton img {
+        height: 25px;
+    }
+.oggleDraggableDialogContents {
+    padding: 5px;
+}
+
+.bannerImageContainer {
+    float: left;
+    padding-top: 2px;
+    padding-left: 2px;
+}
+
+.bannerImage {
+    height: 80px;
+    cursor: pointer;
+}
+
+.headerBodyContainer {
+    float: left;
+    width: 100%;
+}
+
+.headerTopRow {
+    display: flex;
+    width: 100%;
+}
+
+.headerTitle {
+    padding-left: 6px;
+    padding-top: 1px;
+    font-family: 'Lucida Calligraphy';
+    font-size: 33px;
+}
+
+.topLinkRow {
+    font-size: 20px;
+    display: inline-block;
+    font-family: Comic Sans MS;
+    color: var(--oggleTitleColor);
+    vertical-align: top;
+    margin-left: 33px;
+    margin-top: 1px;
+    padding: 0;
+    line-height: normal;
+}
+
+.topLinkRow a {
+    color: var(--oggleTitleColor);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.badgeImage {
+    height: 45px;
+    margin-left: 9px;
+    float: left;
+}
+
+
+.blackCenterfoldsBanner {
+    height: 35px;
+    border: solid 2px red;
+    border-radius: 10px;
+    font-size: 18px;
+    padding: 3px;
+    text-decoration: none;
+    background-color:#407d6e;
+    margin-left: 40px;
+    margin-bottom: 3px;
+    cursor: pointer;
+}
+    .blackCenterfoldsBanner a {
+        color: yellow;
+    }
+
+.OggleSearchBox {
+    position: absolute;
+    right: 10px;
+    margin-top: 8px;
+    margin-right: 20px;
+}
+
+.OggleSearchBoxText {
+    border-radius: 10px;
+}
+
+.searchResultsDropdown {
+    display: none;
+    background-color: #fff;
+    border: solid thin black;
+    padding: 2px;
+    z-index: 200;
+    max-height:555px;
+    overflow-y: auto;
+}
+
+    .searchResultsDropdown li {
+        list-style-type: none;
+        padding: 3px;
+        cursor: pointer;
+    }
+        .searchResultsDropdown li:hover {
+            color: red;
+            cursor: pointer;
+        }
+
+
+.headerBottomRow {
+    display: flex;
+    font-family: Verdana;
+    font-size: 17px;
+    width: 100%;
+}
+
+.bottomLeftBottomHeaderArea {
+    margin-left: 100px;
+}
+
+.menuTab {
+    float: left;
+    display: inline-block;
+    margin-top: 1px;
+    border-radius: 5px;
+}
+    .menuTab a {
+        cursor: pointer;
+        color: black;
+        padding: 8px 20px;
+        margin-right: 20px;
+        text-decoration: none;
+        padding: 5px 5px;
+        border-radius: 1px;
+    }
+    .menuTab a:hover {
+        text-decoration: underline;
+        background-color: #fef;
+    }
+
+.breadCrumbArea {
+    float: left;
+    color: var(--ogglgeSubTitleColor);
+    font-family: Verdana;
+    font-size: 20px;
+    margin-left: 20px;
+}
+
+.activeBreadCrumb {
+    margin-left: 10px;
+    cursor: pointer;
+    text-decoration: underline;
+    float: left;
+}
+
+.inactiveBreadCrumb {
+    margin-left: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    float: left;
+}
+
+.replaceableMenuItems {
+    display:flex;
+}
+
+.bigTits {
+    font-size: 40px;
+    font-family: 'Arial Rounded MT';
+    /*
+        color: #ff00dc;
+        color: var(--thumbnailBorderColor); #74bac3;
+    */
+}
+
+.everyCenterfold {
+    font-size: 22px;
+    font-family: 'Comic Sans MS';  /*'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
+}
+
+.loginArea {
+    position: absolute;
+    right: 10px;
+    display: inline-block;
+}
+
+.domainMessage {
+    display: inline-block;
+    color: orangered;
+    margin-left: 9px;
+    margin-top: 20px;
+    white-space: nowrap;
+}
+
+.headerFeatureBanner {
+    border: solid 2px #000;
+    border-radius: 10px;
+    font-size: 18px;
+    padding: 3px;
+    color: #000;
+    background-color: aliceblue;
+    margin-left: 40px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+.headerFeatureBanner a {
+    text-decoration: none;
+}
+
+.babesArchive {
+    margin-top: 5px;
+    margin-left: 20px;
+
+    border: solid thin #444;
+    padding: 3px;
+    height: 35px;
+    background-color: aliceblue;
+    border-radius: 10px;
+    font-size: 18px;
+    color: var(--oggleTitleColor);    
+}
+
+.floatingFlow {
+    position: absolute;
+    height: 100px;
+    cursor: pointer;
+}

@@ -1,0 +1,307 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Transitions - OggleBooble</title>
+    <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
+    <script src="Scripts/Login.js"></script>
+    <script src="Scripts/Common.js"></script>
+    <script src="Scripts/OggleEventLog.js"></script>
+    <script src="Scripts/OggleHeader.js"></script>
+    <script src="Scripts/OggleSearch.js"></script>
+    <script src="Scripts/OggleFooter.js"></script>
+    <script src="Scripts/Permissions.js"></script>
+    <script src="Scripts/HitCounter.v2.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
+    <link href="Styles/jqueryUI.css" rel="stylesheet">
+    <link href="Styles/Common.css" rel="stylesheet">
+    <link href="Styles/loginDialog.css" rel="stylesheet">
+    <link href="Styles/Header.css" rel="stylesheet">
+
+    <style>
+        #imageContainer {
+            width: 100%;
+            background-color: #c7c7c7;
+            text-align: center;
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+        }
+
+            #imageContainer div {
+                flex: 0 0 auto;
+            }
+
+        .sliding-door {
+            /*height: 600px;*/
+            width: 200px;
+            background-color: #999;
+            transition: all .5s ease-in-out;
+        }
+
+        .centerImage {
+            /*height: 600px;*/
+            width: 400px;
+            border: solid thin #808080;
+            cursor: pointer;
+        }
+        /*.buttonRow {
+            padding-top: 12px;
+            padding-bottom: 4px;
+        }*/
+        #floatingMessage {
+            position: absolute;
+            top: 100px;
+            left: 800px;
+            font-family: 'Comic Sans MS';
+            font-size: 30px;
+            color: var(--oggleTitleColor);
+        }
+    </style>
+</head>
+<body>
+    <header></header>
+    <div id="floatingMessage">Want to see her tits</div>
+    <div class="threeColumnLayout">
+        <div id="leftColumn"></div>
+        <div id="middleColumn">
+            <h2>Transitions</h2>
+            <div id="dots"></div>
+            <div class="centered">
+                <div id="imageContainer">
+                    <div id="door-left" class="sliding-door"></div>
+                    <img id="imgNakedGirl" class="centerImage" />
+                    <div id="door-right" class="sliding-door"></div>
+                </div>
+            </div>
+        </div>
+        <div id="rightColumn"></div>
+    </div>
+    <footer></footer>
+
+    <script>
+        //var service = '@ViewBag.Service';
+        var subdomain = "boobs";
+
+        var transformEngine;
+        var pic1 = "http://archive.ogglebooble.com/favorites/Alison%20Angel/Alison%20Angel_01be2cba-301a-487b-8cbb-990492b7179f.jpg";
+        var pic2 = "";
+        var mode = "play";
+        var picArray = [];
+        var curIndex = 0;
+
+        $(document).ready(function () {
+
+            params = getParams();
+            //var subdomain = "boobs";
+            if (params.subdomain == undefined)
+                subdomain = "boobs";
+            else
+                subdomain = params.subdomain;
+
+
+            if (subdomain == "boobs")
+                $('#floatingMessage').html("Want to see her tits?")
+            else
+                $('#floatingMessage').html("Want to see her go down?")
+
+            loadSettings();
+            var dots = ""
+            var waiter = setInterval(function () {
+                if (settingsArray.ApiServer === undefined) {
+                    dots += ". ";
+                    $('#dots').html(dots);
+                }
+                else {
+                    $('#dots').html('');
+                    clearInterval(waiter);
+                    //if (subdomain == "boobs")
+                    setOggleHeader(3906, subdomain);
+                    logPageHit(3906, "Transitions");
+                    LoadPicArray(subdomain);
+                    //var waiter2 = setInterval(function () {
+                    //    dots += "* ";
+                    //    $('#dots').html(dots);
+                    //        clearInterval(waiter2);
+                    //        $('#dots').html("");
+                    //    }
+                    //}, 300);
+                }
+            }, 300);
+            resizePage();
+        });
+
+        $('#floatingMessage').click(function () {
+            SwitchMode();
+        });
+        $('#imgNakedGirl').click(function () {
+            SwitchMode();
+        });
+
+        function SwitchMode() {
+            if (mode === "play")
+                PerformTransform(1);
+            else
+                Incriment();
+
+            mode = (mode === "play") ? "skip" : "play";
+        }
+        ///  11:11 11:11
+        // 1/14/19
+        function LoadPicArray() {
+            try {
+                $.ajax({
+                    type: "GET",
+                    url: settingsArray.ApiServer + "api/Transitions?folderName=" + subdomain,
+                    success: function (data) {
+                        picArray = data;
+                        $('#imgNakedGirl').attr("src", picArray[0]);
+                        pic2 = picArray[1];
+                        $('#floatingMessage').css("left", ($('#imageContainer').width() / 2));
+                    },
+                    error: function (jqXHR) {
+                        var errorMessage = getXHRErrorDetails(jqXHR);
+                        if (!checkFor404(errorMessage, "LoadPicArray")) {
+                            sendEmailToYourself("XHR ERROR in Transitions.html LoadPicArray", "api/Transitions?folderName=" + subdomain + " Message: " + errorMessage);
+                        }
+                    }
+                });
+            } catch (e) {
+                sendEmailToYourself("LoadPicArray","CATCH :" + e.Message);
+                //alert("LoadPicArray CATCH :" + e.Message);
+            }
+        };
+
+        function Incriment() {
+            curIndex += 2;
+            if (curIndex >= picArray.length)
+                curIndex = 0;
+            pic1 = picArray[curIndex];
+            pic2 = picArray[curIndex + 1];
+            $('#imgNakedGirl').attr("src", pic1)
+            if (subdomain == "boobs")
+                $('#floatingMessage').html("Want to see her tits?");
+            else
+                $('#floatingMessage').html("Want to see her go down?");
+        }
+
+        function PerformTransform(ndx) {
+            switch (ndx) {
+                case 1:
+                    $('#door-left').css("transform", "translateX(201px)");
+                    $('#door-right').css("transform", "translateX(-201px)");
+                    setTimeout(function () {
+                        $('#imgNakedGirl').attr("src", pic2)
+                        $('#door-left').css("transform", "translateX(0)");
+                        $('#door-right').css("transform", "translateX(0)");
+                        $('#floatingMessage').html("Next")
+                    }, 500);
+                    break;
+                default:
+            }
+        }
+
+        function InitAndLoadTransformEngine() {
+            transformEngine = new TransformEngine();
+            transformEngine.Get("bork");
+            LoadAll();
+        };
+
+        (function TransformEngine() {
+            this.InternalArray = new Array();
+            //this.prototype.Push = new function (ele) { this.InternalArray.push(ele); };
+            //this.prototype.GetByName = new function (name) {
+            //    for (i = 0; i < this.InternalArray.length; i++) {
+            //        if (this.InternalArray[i] == name) {
+            //            return i;
+            //        }
+            //    }
+            //}
+            function construct(constructor, args) {
+                function F() {
+                    return constructor.apply(this, args);
+                }
+                this.InternalArray = new Array();
+
+                F.prototype = constructor.prototype;
+
+                return new F();
+            }
+        })(this);
+
+        function LoadAll() {
+            transformEngine.Push({ "name": "Blinds2", "progid": "DXImageTransform.Microsoft.Blinds(bands=2, direction = 'RIGHT')" });
+            transformEngine.Push({ "name": "Blinds4", "progid": "DXImageTransform.Microsoft.Blinds(bands=4,  direction='DOWN')" });
+            transformEngine.Push({ "name": "Blinds6", "progid": "DXImageTransform.Microsoft.Blinds(bands=6,  direction='LEFT')" });
+            transformEngine.Push({ "name": "Blinds8", "progid": "DXImageTransform.Microsoft.Blinds(bands=8,  direction='RIGHT')" });
+            transformEngine.Push({ "name": "Checkerboard", "progid": "DXImageTransform.Microsoft.Checkerboard(squaresX=2, squaresY=2, direction='right', duration=1)" });
+            transformEngine.Push({ "name": "Checkerboard", "progid": "DXImageTransform.Microsoft.Checkerboard(squaresX=4, squaresY=4, direction='right', duration=1)" });
+            transformEngine.Push({ "name": "Checkerboard", "progid": "DXImageTransform.Microsoft.Checkerboard(squaresX=8, squaresY=8, direction='up', duration=1)" });
+            transformEngine.Push({ "name": "Checkerboard", "progid": "DXImageTransform.Microsoft.Checkerboard(squaresX=8, squaresY=8, direction='down', duration=1)" });
+            transformEngine.Push({ "name": "Checkerboard", "progid": "DXImageTransform.Microsoft.Checkerboard(squaresX=8, squaresY=8, direction='left', duration=1)" });
+            transformEngine.Push({ "name": "Checkerboard", "progid": "DXImageTransform.Microsoft.Checkerboard(squaresX=8, squaresY=8, direction='right', duration=1)" });
+            transformEngine.Push({ "name": "Checkerboard", "progid": "DXImageTransform.Microsoft.Checkerboard(squaresX=12, squaresY=12, direction='right', duration=1)" });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Fade(duration=1.0,overlap=1.0)" });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Inset()" });
+            transformEngine.Push({ "name": "Iris", "progid": "DXImageTransform.Microsoft.Iris(irisStyle='CIRCLE', motion='in')" });
+            transformEngine.Push({ "name": "Iris", "progid": "DXImageTransform.Microsoft.Iris(irisStyle='CIRCLE', motion='out')" });
+            transformEngine.Push({ "name": "Iris", "progid": "DXImageTransform.Microsoft.Iris(irisStyle='CROSS', motion='in')" });
+            transformEngine.Push({ "name": "Iris", "progid": "DXImageTransform.Microsoft.Iris(irisStyle='CROSS', motion='out')" });
+            transformEngine.Push({ "name": "Iris", "progid": "DXImageTransform.Microsoft.Iris(irisStyle='PLUS', motion='out')" });
+            transformEngine.Push({ "name": "Iris", "progid": "DXImageTransform.Microsoft.Iris(irisStyle='PLUS', motion='in')" });
+            transformEngine.Push({ "name": "Iris", "progid": "DXImageTransform.Microsoft.Iris(irisStyle='SQUARE', motion='in')" });
+            transformEngine.Push({ "name": "Iris", "progid": "DXImageTransform.Microsoft.Iris(irisStyle='SQUARE', motion='out')" });
+            transformEngine.Push({ "name": "Iris", "progid": "DXImageTransform.Microsoft.Iris(irisStyle='STAR', motion='in')" });
+            transformEngine.Push({ "name": "Iris", "progid": "DXImageTransform.Microsoft.Iris(irisStyle='STAR', motion='out')" });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Pixelate(MaxSquare=30, Duration=2, Enabled=false)" });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.RadialWipe(wipeStyle='clock')" });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.RadialWipe(wipeStyle='wedge')" });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.RadialWipe(wipeStyle='radial')" });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.RandomBars(orientation='horizontal')" });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.RandomBars(orientation='vertical')  " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.RandomDissolve()                    " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Slide(slideStyle='HIDE', bands=1)   " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Slide(slideStyle='PUSH', bands=1)   " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Slide(slideStyle='SWAP', bands=1)   " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Slide(slideStyle='HIDE', bands=2)   " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Slide(slideStyle='PUSH', bands=2)   " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Slide(slideStyle='SWAP', bands=2)   " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Spiral(GridSizeX=16, GridSizeY=16)  " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Spiral(GridSizeX=8, GridSizeY=8)    " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Spiral(GridSizeX=64, GridSizeY=64)  " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Stretch(stretchStyle='HIDE')        " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Stretch(stretchStyle='spin')        " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Stretch(stretchStyle='push')        " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Barn(orientation=horizontal, motion=out)                " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Barn(orientation=horizontal, motion=in)                 " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Barn(orientation=vertical, motion=in)                   " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Barn(orientation=vertical, motion=out)                  " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Strips(Duration=1, Motion='leftdown')                   " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Strips(Duration=1, Motion='leftup')                     " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Strips(Duration=1, Motion='rightdown')                  " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Strips(Duration=2, Motion='rightup')                                                             " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Wipe(GradientSize=1.0, wipeStyle=0, motion='forward')                                            " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Wipe(GradientSize=1.0, wipeStyle=1, motion='reverse')                                            " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Wheel(duration=3)                                                                                " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Wheel(spokes=2)                                                                                  " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Wheel(spokes=4)                                                                                  " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Wheel(spokes=10)                                                                                 " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.Wheel(spokes=20)                                                                                 " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.zigzag(GridSizeX=8, GridSizeY=8)                                                                 " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.zigzag(GridSizeX=8, GridSizeY=16)                                                                " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.zigzag(GridSizeX=8, GridSizeY=32)                                                                " });
+            transformEngine.Push({ "name": "", "progid": "DXImageTransform.Microsoft.zigzag(GridSizeX=16, GridSizeY=64)" });
+        };
+
+    </script>
+
+</body>
+</html>

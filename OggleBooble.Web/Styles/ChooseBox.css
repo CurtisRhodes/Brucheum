@@ -1,0 +1,69 @@
+﻿.highlightItem {
+    background-color: red !important;
+}
+
+.chooseAvailableListItem {
+    color: black;
+    background-color: var(--oggleHeaderSelectBackgroundColor);
+    font-size: 16px;
+    margin: 4px;
+    padding: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.chooseAssignedListItem {
+    color: black;
+    background-color: var(--oggleHeaderSelectBackgroundColor);
+    font-size: 16px;
+    margin: 4px;
+    padding: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.chooseBtnsContainer {
+    background-color: white;
+    text-align: center;
+    padding-top: 10px;
+    float: left;
+}
+
+.chooseBtn {
+    height: 24px;
+    margin: 6px;
+    cursor: pointer;
+}
+
+.disenabled {
+    cursor: not-allowed !important;
+}
+
+.chooseBoxContainer {
+    margin-top: 4px;
+    display: flex;
+}
+
+.chooseBox {
+    border: solid 2px rgba(85, 85, 85, 0.50);
+    border-radius: 4px;
+    margin: 0;
+    width: 80%
+}
+
+.AssignRolesContainer {
+    min-width: 500px;
+}
+
+.editRolebtn {
+    width: 55px;
+    padding: 8px 4px;
+}
+
+#divRoleCrudContainer {
+    width: 444px;
+}
+
+#txtRoleName {
+    width: 225px;
+}

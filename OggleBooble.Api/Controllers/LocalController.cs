@@ -8,7 +8,7 @@ using System.Net.Mail;
 using System.Web;
 using System.Web.Http.Results;
 using OggleBooble.Api.Models;
-using OggleBooble.Api.DataContext;
+using OggleBooble.Api.MsSqlDataContext;
 
 namespace OggleBooble.Api.Controllers
 {

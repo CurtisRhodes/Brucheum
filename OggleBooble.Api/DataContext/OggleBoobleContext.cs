@@ -6,7 +6,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 
-namespace OggleBooble.Api.DataContext
+namespace OggleBooble.Api.MsSqlDataContext
 {
     public partial class OggleBoobleContext : DbContext
     {

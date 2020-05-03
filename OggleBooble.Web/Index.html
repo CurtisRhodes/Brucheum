@@ -1,0 +1,251 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Welcome - OggleBooble</title>
+    <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=.07">
+    <meta http-equiv="cache-control" content="max-age=0">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="-1">
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 11:00:00 GMT">
+    <meta http-equiv="pragma" content="no-cache">
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+    <!--<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />-->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>-->
+    <script src="Scripts/Common.js"></script>
+    <script src="Scripts/HitCounter.js"></script>
+    <script src="Scripts/IndexPage.js"></script>
+    <script src="Scripts/OggleEventLog.js"></script>
+    <script src="Scripts/Login.js"></script>
+    <script src="Scripts/OggleHeader.js"></script>
+    <script src="Scripts/OggleSearch.js"></script>
+
+
+
+    <script src="Scripts/OggleFooter.js"></script>
+    <script src="Scripts/Permissions.js"></script>
+    <script src="Scripts/Carousel.js"></script>
+    <script src="Scripts/FeedbackDialog.js"></script>
+    <script src="Scripts/DirTree.js"></script>
+    <script src="Scripts/FolderCategoryDialog.js"></script>
+    <script src="Scripts/ModelInfoDialog.js"></script>
+    <script src="Scripts/ImageCommentDialog.js"></script>
+    <script src="Scripts/MoveCopyArchive.js"></script>
+    <script src="Scripts/MetaTagDialog.js"></script>
+    <!--<link href="Styles/bootstrap.css" rel="stylesheet" />-->
+    <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">-->
+    <link href="Styles/jqueryUI.css" rel="stylesheet">
+    <link href="Styles/Common.css" rel="stylesheet">
+    <link href="Styles/IndexPage.css" rel="stylesheet">
+    <link href="Styles/loginDialog.css" rel="stylesheet">
+    <link href="Styles/Header.css" rel="stylesheet">
+    <link href="Styles/Carousel.css" rel="stylesheet">
+    <link href="Styles/ImagePage.css" rel="stylesheet">
+    <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet">
+    <link href="Styles/ModelInfoDialog.css" rel="stylesheet">
+    <link href="Styles/ImageCommentDialog.css" rel="stylesheet">
+    <link href="Styles/MetaTagDialog.css" rel="stylesheet">
+
+    <!--<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-1620126417602146",
+            enable_page_level_ads: true
+        });
+    </script>-->
+</head>
+<body>
+    <header></header>
+    <div class="threeColumnLayout">
+        <div id="leftColumn">
+            <div id="boobsLeftColumnList" class="leftColumnList">
+                <!--<div onclick="rtpe('LMC',3908,'boobTransitions');">Transitions</div>-->
+                <!--<div onclick="rtpe('LMC',3908,'boobsRanker');">Boobs Ranker</div>-->
+                <!--<div onclick="rtpe('LMC',3908,'explainBoobs');">Let me Explain</div>-->
+                <!--<div onclick="rtpe('LMC',3908,'dirTreeBoobs');">Category List</div>-->
+                <!--<div onclick="rtpe('LMC',3908,'centerfolds');">Playboy Centerfolds</div>-->
+                <div id="clkVideo" class="displayHidden" onclick="rtpe('LMC',3908,'video');">Video</div>
+                <!--<div onclick="rtpe('LMC',3908,'porn');">Nasty Porn</div>-->
+                <!--<div onclick="rtpe('LMC',0,'blog');">Blog</div>-->
+                <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
+            </div>
+            <div id="pornLeftColumnList" class="leftColumnList">
+                <div onclick="rtpe('LMC',3909,'back');">back to boobs</div><br />
+                <!--<div onclick="rtpe('LMC',3909,'pornTransitions');">Transition down</div>-->
+                <!--<div onclick="rtpe('LMC',3909,'pornRanker');">Nastieness Ranker</div>-->
+                <!--<div onclick="rtpe('LMC',3909,'explainPorn');">Let me Explain</div>-->
+                <!--<div onclick="rtpe('LMC',3909,'dirTreePorn');">Category List</div>-->
+                <!--<div onclick="rtpe('LMC',3909,'back');">back to boobs</div>-->
+                <!--<div onclick="rtpe('LMC',3909,'blog');">Blog</div>-->
+                <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
+            </div>
+        </div>
+        <div id="middleColumn">
+            <div id="divStatusMessage"></div>
+            <div id="dots"></div>
+            <div>
+                <div id="carouselOutterContainer" style="display:block;">
+                    <div class="indexSectionLabel floatingContainerElement">random galleries</div>
+                    <div class="carouselContainer">
+                        <div class="carouselShell">
+                            <div id="laCarousel" class="carouselInternals flexContainer">
+                                <div onclick="assuranceArrowClick('back')"><img class="assuranceArrows" src="/Images/leftArrowOpaque02.png" /></div>
+                                <div class="carouselImageContainer">
+
+                                    <div id="knownModelLabel" class="knownModelLabel" onclick="knownModelLabelClick()"></div>
+
+                                    <div id="categoryTitle" class="categoryTitleLabel"
+                                         onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;"
+                                         onmouseout="forgetShowingCatDialog=true;">
+                                    </div>
+                                    <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="/Images/redballon.png" onclick="clickViewGallery()" />
+
+                                    <div class="imgBottom">
+                                        <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
+                                        <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
+                                        <div id='categoryLabel' class='carouselCategoryLabel' onclick="clickViewParentGallery()"></div>
+                                        <img class="speedButton floatRight" src="Images/speedDialFaster.png" title="faster" onclick="clickSpeed('faster')" />
+                                        <img class="speedButton floatRight" src="Images/Settings-icon.png" title="carousel settings" onclick="showCarouelSettingsDialog()" />
+                                    </div>
+                                </div>
+                                <div onclick="assuranceArrowClick('foward')"><img class="assuranceArrows" src="/Images/rightArrowOpaque02.png" /></div>
+
+                                <div id="carouselSettingsDialog" class="dashboardToggle" title="Carousel Settings">
+                                    <div id="includeCenterfoldsCheckbox" class="galleryCheckBox">
+                                    <input type="checkbox" onchange="addToCarousel('playboy', $(this).is(':checked'))" /> Include Centerfolds</div>
+                                    <div class="galleryCheckBox">
+                                    <input type="checkbox" onchange="addToCarousel('archive', $(this).is(':checked'))" /> Include Archive</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="latestGalleriesContainer" class="floatBelow displayHidden">
+                    <div class="indexSectionLabel">latest updates</div>
+                    <div id="updatedGalleriesSection" class="updatedGalleriesSection"></div>
+                    <div class="clickable" onclick="onShowMoreGalleries()" >show more updated galleries</div>
+                </div>
+            </div>
+        </div>
+        <div id="rightColumn"></div>
+    </div>
+    <footer></footer>
+
+    <div id="launchingService" class="floatLeft">
+        <div class="centeredDivShell randomImageContainer">
+            <div class="centeredDivInner">
+                <div id="connectingMsg" class="displayHidden"><img src="https://media.giphy.com/media/ZFiRiRg60SjhipvdCz/giphy.gif" /></div>
+                <!--<div id="connectingMsg"><img src="https://media.giphy.com/media/ls5bix63j3H53E1Ebp/giphy.gif" /></div>-->
+            </div>
+        </div>
+    </div>
+
+    <div id="carouselContextMenu" class="ogContextMenu" onmouseleave="considerHidingContextMenu()">
+        <div id="ctxModelName" onclick="carouselContextMenuAction('showDialog')">model name</div>
+        <div id="ctxSeeMore" onclick="carouselContextMenuAction('seeMore')">See More</div>
+        <div onclick="carouselContextMenuAction('explode')">Explode</div>
+        <div onclick="carouselContextMenuAction('comment')">Comment</div>
+        <div onclick="carouselContextMenuAction('tags')">Tags</div>
+        <div id="ctxMove" onclick="carouselContextMenuAction('archive')">Archive</div>
+    </div>
+
+    <div id="dirTreeContainer" class="treeContainer"></div>
+    <div id="promoContainer" class="ogglePromoContainer">
+        <div id="promoContainerTitle" class="ogglePromoTitle"></div>
+        <div id="promoContainerText" class="ogglePromoText"></div>
+        <div onclick="killPromoMessages()" class="tinyDots" onmouseover="$('#killPromoPrompt').show()" onmouseout="$('#killPromoPrompt').hide()">...</div>
+        <div id="killPromoPrompt" class="ogglePromoKillMessage">had enough promo messages?</div>
+    </div>
+    <div w3-include-html="Snippets/AdminDialogs.html"></div>
+    <div w3-include-html="Snippets/Login.html"></div>
+    <div w3-include-html="Snippets/Register.html"></div>
+
+    <script>
+        var promoIdx = 0;
+        var promoMessagesArray = new Array();
+        var promoMessageRotator;
+        var promoMessageRotationSpeed = 15000;
+        var subdomain;
+        var homePageId = 3908;
+        var updatedGalleriesCount = 25;
+
+        $(document).ready(function () {
+            includeHTML();
+            $('#laCarousel').hide();
+            $('#carouselInclude').hide();
+            $('.indexSectionLabel').hide();
+            //$('#footerLastBuild').html("last build: " + lastBuild + "3");
+            $('#footerMessage').html("loading settings");
+            params = getParams();
+            if (params.subdomain === undefined)
+                subdomain = "boobs";
+            else
+                subdomain = params.subdomain;
+            if (subdomain == "porn")
+                homePageId = 3909;
+
+            setOggleHeader(homePageId, subdomain);
+            loadSettings();
+            var dots = ""
+            var waiter = setInterval(function () {
+                if (settingsArray.ApiServer === undefined) {
+                    dots += "~ ";
+                    $('#dots').html(dots);
+                    //console.log("loadSettings: " + settingsArray.ApiServer);
+                }
+                else {
+                    clearInterval(waiter);
+                    //$('#footerMessage').html("loading header");
+                    checkFor404("start", "Index");
+                    var verifyConnectionWaiter = setInterval(function () {
+                        if (connectionVerified) {
+                            clearInterval(verifyConnectionWaiter);
+                            $('#dots').html('');
+                            $('#laCarousel').fadeIn();
+                            loadUpdatedGalleriesBoxes(updatedGalleriesCount);
+                            launchCarousel(subdomain);
+                            logPageHit(homePageId);
+                            $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
+
+                            if (subdomain == "porn") {
+                                $('#pornLeftColumnList').show();
+                                $('#includeCenterfoldsCheckbox').hide();
+                            }
+                            else {
+                                $('#boobsLeftColumnList').show();
+                                //launchPromoMessages();
+                            }
+                            setDashbordMenuItem();
+                        }
+                        else {
+                            dots += ". ";
+                            $('#dots').html(dots);
+                        }
+                    }, 600);
+                }
+            }, 300);
+            window.addEventListener("resize", resizeIndexPage);
+            resizeIndexPage();
+
+            $('#carouselSettingsDialog').dialog({
+                autoOpen: false,
+                show: { effect: "fade" },
+                hide: { effect: "blind" },
+                width: "400"
+            });
+        });
+
+        function goToPorn() {
+
+            //if(hasPorn)
+            //if (document.domain === 'localhost') alert("goToPorn()");
+
+            // if user porn status not already set
+            showCustomMessage(35);
+        }
+
+    </script>
+</body>
+</html>

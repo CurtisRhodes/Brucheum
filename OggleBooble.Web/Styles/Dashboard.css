@@ -1,0 +1,331 @@
+﻿.noWrap td {
+    white-space: nowrap;
+    padding-right: 4px;
+}
+
+.dashboardContainer {
+    margin-top: 11px;
+    margin-left: 15px;
+    display: flex;
+    width: 98%;
+    border: solid 4px #cd49d3;
+    background-color: var(--oggleBackgroundColor);
+}
+.dashboardContainerRow {
+    float: left;
+    display: inline-block;
+}
+
+.oggleHorizontalMenu {
+    min-width: 15%;
+    border-right: solid thin #111;
+    border-top: 23px;
+    overflow: auto;
+    padding-right: 36px;
+}
+    .oggleHorizontalMenu div {
+        font-size: 17px;
+        cursor: pointer;
+        color: #9a4ea9;
+        margin: 12px 9px;
+        white-space: nowrap;
+    }
+        .oggleHorizontalMenu div:hover {
+            text-decoration: underline;
+            color: #333;
+        }
+
+.workAreaContainer {
+    
+    /*border-left: solid 3px var(--oggleBorderColor);
+    border-right: solid 3px var(--oggleBorderColor);
+    border-bottom: solid 0.75px var(--oggleBorderColor);*/
+    /*background-color: var(--oggleContainerBackgroundColor);*/
+}
+
+.workAreaDisplayContainer {
+    /*background-color: #dbe5c1;*/
+    overflow: auto;
+    height: inherit;
+}
+
+.workAreaRowDisplayContainer {
+    border: solid thin #000;
+    padding: 4px;
+    margin-left: 5px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.tightReport {
+    font-size: 14px;
+}
+    .tightReport table th {
+        text-align: center;        
+    }
+    .tightReport table td {
+        border: solid thin #606060;
+        padding: 1px 5px; 
+    }
+
+.dashboardTreeContainer {
+    /*
+    float: right;
+    display: inline-block;
+    min-width: 400px;
+    width: 15%;
+    background-color: #eae9ae;
+        */
+    border-left: solid .5px #555;
+    min-height: 106px;
+    overflow: auto;
+}
+
+.linkContainer {
+    display: inline;
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+    .linkContainer div {
+        display: inline;
+        color: #585a38;
+        margin-right: 22px;
+    }
+
+.adminLevelOption {
+    display: none;
+}
+
+.collapsable {
+    display: block;
+}
+
+.fileCount {
+    display: inline;
+    color: blue;
+    font-size: smaller;
+}
+
+.smallLoadingGif {
+   position: relative; 
+    top: 100px;
+    left: -210px;
+    height: 100px;
+    display: none;
+}
+
+.loadingGif {
+    left: 150px;
+    top: 200px;
+    height: 140px;
+    display: none;
+}
+
+.addLinkCrudArea {
+    font-size: 16px;
+    border: solid .5px #555;
+    padding: 6px;
+}
+
+.linkImage {
+    /*
+            float:right;
+        height: 430px;
+        min-width: 520px;
+
+        */
+    max-width: 80%;
+    border: solid .5px #555;
+}
+.roundedInput {
+    display: inline-block;
+    width: 95%;
+    margin-right: 6px;
+    font-size: 22px;
+}
+
+.roundendButton {
+    margin-top: 6px;
+    display: inline-block;
+}
+
+.infoLine {
+    position: absolute;
+    bottom: 22px;
+    display: none;
+    padding: 4px;
+    margin-left: 3px;
+    border: solid .5px #555;
+    height: 32px;
+    min-width: 610px;
+    cursor: pointer;
+    background-color: #f8e8e8;
+    /*vertical-align: bottom;*/
+}
+
+*.dashboardToggle {
+    display:none;
+}
+
+.myH2 {
+    font-family: Verdana;
+    margin-top: 1px;
+    font-size: 22px;
+}
+
+.clickable {
+    white-space: nowrap;
+}
+
+.dirTreeContainer {
+    /*background-color: #f7e1ab;*/
+    padding-right: 5px;
+    text-align: left;
+    overflow-y: auto;
+}
+
+
+.moveDirTreeContainer {
+    background-color: #f8e8e8;
+    padding-right: 5px;
+    text-align: left;
+    overflow-y: auto;
+}
+
+.toggleButton {
+    display: inline-block;
+    font-size: 24px;
+    background-color: #07C;
+    color: #fff;
+    margin: 2px 4px;
+    border-radius: 8px;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.repairReport {
+    padding: 4px;
+    line-height: 22px;
+    max-height: 412px;
+    overflow-y: auto;
+    background-color: #faf8e3;
+}
+
+.dashboardProgessBar {
+    color: aqua;
+    background-color: bisque;
+}
+
+#pageHitReport table td {
+    border: solid thin #000;
+    padding: 4px;
+    min-width: 95px;
+    text-align: center;
+}
+
+.workAreaCloseButton {
+    float: right;
+    padding-top: 15px;
+    padding-right: 15px;
+    cursor: pointer;
+}
+
+.workAreaHeaderLabel {
+    float: left;
+    width: 100%;
+    text-align: center;
+}
+.loadManyCheckbox {
+    transform: scale(1.2);
+}
+.zzloadManyCheckbox {
+    -ms-transform: scale(2); /* IE */
+    -moz-transform: scale(2); /* FF */
+    -webkit-transform: scale(2); /* Safari and Chrome */
+    -o-transform: scale(2); /* Opera */
+    transform: scale(2);
+}
+
+.sortBox {
+    border: solid thin #808080;
+    text-align: center;
+    display: inline-block;
+    background-color: #e5dfc1;
+    padding: 1px;
+    margin: 2px;
+}
+
+.sortBoxInput {
+    width: 100px;
+    border: none;
+    text-align: center;
+    background-color: #e5dfc1;
+}
+
+.sortBoxImage {
+    height: 125px;
+}
+
+.workAreaHeader {
+    border: none;
+    background-color: var(--brucheumBlue);
+    color: #fff;
+    display: inline-flex;
+    width: 100%;
+}
+
+.moveManyDestination {
+    background-color: var(--brucheumBlue);
+    display: inline-block;
+    color: #fff;
+    width: 100%;
+}
+    .moveManyDestination input {
+        width: 77%;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+.workareaFooter {
+    border-top: solid 5px var(--brucheumBlue);
+    padding-top: 3px;
+}
+
+.workAreaRow {
+    margin-top: 1px;
+    padding: 10px;
+    border-bottom: solid 5px var(--brucheumBlue);
+}
+
+.mostPopularPagesReport {
+    padding: 5px;
+}
+    .mostAvtiveUsersTable td {
+        padding-left: 16px;
+    }
+    .mostAvtiveUsersTable th {
+        text-align: center;
+    }
+
+.imageUpload {
+    height: 32px;
+    width: 100%;
+}
+
+.smallColumn {
+    font-size: 14px;
+}
+
+.detailRow {
+    font-size :14px;
+    background-color: #c1c5ef;
+    padding-left: 33px;
+}
+
+
+
+
+
+
+
+
