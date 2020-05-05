@@ -106,19 +106,9 @@ function showUpLoadDialog() {
 
 
 function onDirTreeComplete() {
-    //alert("onDirTreeComplete 1");
-
-
-    //$('#dataifyInfo').html("rebuildCatTree took: " + delta.toFixed(3) + " total folders: " + totalFolders + " total pics: " + totalPics.toLocaleString());
-    //setTimeout(function () {
-    //    alert("onDirTreeComplete 3");
-    //}, 5000);
-
     $('#dataifyInfo').hide();
     resizeDashboardPage();
     $('#dashBoardLoadingGif').hide();
-
-    //alert("onDirTreeComplete 2");
 }
 
 function buildDirectoryTree() {

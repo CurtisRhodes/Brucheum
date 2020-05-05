@@ -31,24 +31,6 @@ namespace OggleBooble.Api.Controllers
                         "join OggleBooble.ImageLink g on c.ImageLinkId = g.Id " +
                         "where f.RootFolder = @param1 and g.Width > g.Height"
                         , new System.Data.SqlClient.SqlParameter("param1", root)).OrderBy(m => m.LinkId).Skip(skip).Take(take).ToList();
-
-                    //var x = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
-                    //carouselInfo.Links =
-                    //    (from c in db.CategoryImageLinks
-                    //     join f in db.CategoryFolders on c.ImageCategoryId equals f.Id
-                    //     join p in db.CategoryFolders on f.Parent equals p.Id
-                    //     join g in db.ImageLinks on c.ImageLinkId equals g.Id
-                    //     where f.RootFolder == root
-                    //     select new CarouselItemModel()
-                    //     {
-                    //         RootFolder = f.RootFolder,
-                    //         FolderId = f.Id,
-                    //         ParentId = p.Id,
-                    //         LinkId = g.Id,
-                    //         FolderName = f.FolderName,
-                    //         FolderPath = p.FolderName,
-                    //         Link = g.Link.StartsWith("http") ? g.Link : g.ExternalLink
-                    //     }).OrderBy(m => m.LinkId).Skip(skip).Take(take).ToList();
                 }
                 carouselInfo.FolderCount = carouselInfo.Links.GroupBy(l => l.FolderName).Count();
                 timer.Stop();
@@ -63,7 +45,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        public LatestUpdatesModel GetLatestUpdates(int items)
+        public LatestUpdatesModel GetLatestUpdatedFolders(int itemLimit)
         {
             LatestUpdatesModel updatesModel = new LatestUpdatesModel();
             try
@@ -71,7 +53,7 @@ namespace OggleBooble.Api.Controllers
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     updatesModel.LatestUpdates = db.Database.SqlQuery<LatestUpdate>(
-                        "select top " + items + " max(f.Id) FolderId, f.FolderName, max(i.LastModified) LastModified, max(i2.Link) FolderImage " +
+                        "select top " + itemLimit + " max(f.Id) FolderId, f.FolderName, max(i.LastModified) LastModified, max(i2.Link) FolderImage " +
                         "from OggleBooble.ImageLink i " +
                         "join OggleBooble.CategoryFolder f on i.FolderLocation = f.Id " +
                         //"join OggleBooble.CategoryFolderDetail d on i.FolderLocation = d.FolderId " +

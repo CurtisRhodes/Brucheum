@@ -22,7 +22,7 @@ function loadSettings() {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "loadSettings")) {
                 logError({
-                    VisitorId: getCookieValue("VisitorId"),
+                    VisitorId: "877",
                     ActivityCode: "XHR",
                     Severity: 1,
                     ErrorMessage: errorMessage,
@@ -100,6 +100,43 @@ function resizePage() {
     var winH = $(window).height();
     var headerH = $('header').height();
     $('#middleColumn').height(winH - headerH);
+}
+
+function letemPorn(response, pornType, pageId) {
+    // if (document.domain === 'localhost') alert("letemPorn: " + pornType);
+    if (response === "ok") {
+        //  setUserPornStatus(pornType);
+        //<div onclick="goToPorn()">Nasty Porn</div>
+        //window.location.href = '/index.html?subdomain=porn';
+        if (isNullorUndefined(pornType)) {
+            logError({
+                VisitorId: getCookieValue("VisitorId"),
+                ActivityCode: "PRN",
+                Severity: 2,
+                ErrorMessage: "isNullorUndefined(pornType)",
+                CalledFrom: "HitCounter.js letemPorn"
+            });
+            //sendEmailToYourself("letemPorn problem", "pornType missing");
+            pornType = "UNK";
+        }
+        reportThenPerformEvent("PRN", "xx", pornType, pageId);
+    }
+    else {
+        $('#customMessage').hide();
+        if (typeof resume === 'function') {
+            resume();
+        }
+    }
+}
+
+function changeFavoriteIcon(icon) {
+    if (icon === "porn") {
+        var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+        link.type = 'image/x-icon';
+        link.rel = 'shortcut icon';
+        link.href = 'https://ogglebooble.com/images/cslips03.png';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    }
 }
 
 function displayStatusMessage(msgCode, message) {
@@ -226,36 +263,30 @@ function sendEmailToYourself(subject, message) {
 }
 
 function logError(logErrorModel) {
-    if (isNullorUndefined(logErrorModel.VisitorId))
-        logErrorModel.VisitorId = "00";
-
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "/api/ErrorLog",
+        url: settingsArray.ApiServer + "api/Common/LogError",
         data: logErrorModel,
-        //success: function (success) {
-        //    if (success === "ok")
-        //        // displayStatusMessage("ok", "error message logged");
-        //    else {
-        //        //alert("ChangeLog: " + success);
-        //        //sendEmailToYourself("error in common/logActivity", success);
-        //    }
-        //},
+        success: function (success) {
+            if (success === "ok") {
+                //displayStatusMessage("ok", "error message logged");
+                console.log("error message logged.  Called from: " + logErrorModel.CalledFrom + " message: " + logErrorModel.ErrorMessage);
+            }
+            else {
+                console.error("error in logError!!: " + success);
+            }
+        },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "logActivity")) {
-
-                //alert("XHR error " + ErrorMessage);
-                //sendEmailToYourself("xhr error in common.js logActivity", "/api  ChangeLog  Message: " + errorMessage);
-
+                console.error("XHR error in logError!!: " + success);
             }
         }
     });
 }
 
-//  ACTIVITY LOG
-function logActivity(changeLogModel) {
+function logDataActivity(changeLogModel) {
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "/api/ChangeLog",
@@ -596,11 +627,10 @@ function getVisitorInfo() {
     return info;
 }
 
-
 var connectionVerified = false;
 var canIgetaConnectionMessageShowing = false;
 var verifyConnectionCount = 0;
-var verifyConnectionCountLimit = 10;
+var verifyConnectionCountLimit = 17;
 var inCheckFor404Loop = false;
 var checkFor404Loop;
 function checkFor404(errorMessage, calledFrom) {    
@@ -629,10 +659,12 @@ function checkFor404(errorMessage, calledFrom) {
                                 "</div>").show();
 
                             console.log("connection message showing");
-
+                            var visitorId = getCookieValue("VisiorId");
+                            if (isNullorUndefined(visitorId))
+                                visitorId = "--";
                             canIgetaConnectionMessageShowing = true;
                             logError({
-                                VisitorId: getCookieValue("VisiorId"),
+                                VisitorId: visitorId,
                                 ActivityCode: "404",
                                 Severity: 1,
                                 ErrorMessage: "SERVICE DOWN",
@@ -658,7 +690,7 @@ function verifyConnection() {
         console.log("calling verifyConnection");
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/Carousel/VerifyConnection",
+            url: settingsArray.ApiServer + "api/Common/VerifyConnection",
             success: function (successModel) {
                 if (successModel.Success === "ok") {
                     if (successModel.ConnectionVerified) {
@@ -687,15 +719,19 @@ function verifyConnection() {
                 }
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (errorMessage.indexOf("Not Connect") > -1) {
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage + ". CanIgetShowing: " + canIgetaConnectionMessageShowing + ". in404Loop: " + inCheckFor404Loop,
-                        CalledFrom: "verifyConnection()"
-                    });
+                var erVisitorId = getCookieValue("VisiorId");
+                if (!isNullorUndefined(erVisitorId)) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    console.log(errorMessage + " " + settingsArray.ApiServer + "api/Common/VerifyConnection");
+                    if (errorMessage.indexOf("Not Connect") > -1) {
+                        logError({
+                            VisitorId: erVisitorId,
+                            ActivityCode: "XHR",
+                            Severity: 1,
+                            ErrorMessage: errorMessage + ". CanIgetShowing: " + canIgetaConnectionMessageShowing + ". in404Loop: " + inCheckFor404Loop,
+                            CalledFrom: "verifyConnection()"
+                        });
+                    }
                 }
                 connectionVerified = false;
             }

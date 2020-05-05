@@ -1,7 +1,7 @@
 ﻿function loadUpdatedGalleriesBoxes(numItmes) {
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/ImagePage/GetLatestUpdates?items=" + numItmes,
+        url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?itemLimit=" + numItmes,
         success: function (latestUpdates) {
             if (latestUpdates.Success === "ok") {
                 $('#updatedGalleriesSection').html("");
@@ -59,8 +59,8 @@ function resizeIndexPage() {
 }
 
 function addToCarousel(root, isChecked) {
-    if (root == "archive") {
-        if (subdomain == "porn")
+    if (root === "archive") {
+        if (subdomain === "porn")
             root = "sluts";
     }
     loadImages(root, isChecked, 0, 50000);
@@ -71,7 +71,7 @@ function launchPromoMessages() {
         type: "GET",
         url: settingsArray.ApiServer + "/api/OggleBlog/GetBlogList?commentType=PRO",
         success: function (blogCommentsContainer) {
-            if (blogCommentsContainer.Success == "ok") {
+            if (blogCommentsContainer.Success === "ok") {
                 $.each(blogCommentsContainer.blogComments, function (idx, blogComment) {
                     promoMessagesArray.push({
                         FolderId: blogComment.Id,

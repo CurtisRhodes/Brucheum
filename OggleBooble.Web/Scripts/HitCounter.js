@@ -15,7 +15,7 @@ function logImageHit(link, pageId, isInitialHit) {
             //sendEmailToYourself("TROUBLE in logImageHit. PageId came in Null or Undefined", "Set to 1 or  something");
             return;
         }
-        visitorId = getCookieValue("VisitorId");
+        var visitorId = getCookieValue("VisitorId");
         if (!Number.isInteger(pageId)) {
             logError({
                 VisitorId: visitorId,
@@ -105,12 +105,22 @@ function logPageHit(pageId) {
         return;
     }
     var visitorId = getCookieValue("VisitorId");
+    if (isNullorUndefined(visitorId)) {
+        logError({
+            VisitorId: visitorId,
+            ActivityCode: "AA2",
+            Severity: 1,
+            ErrorMessage: "visitorId undefined in LogPageHit.",
+            CalledFrom: "HitCounter.js logPageHit"
+        });
+    }
+
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/VisitorInfo/LogPageHit?visitorId=" + visitorId + "&pageId=" + pageId,
+        url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&pageId=" + pageId,
         success: function (pageHitSuccess) {
             if (pageHitSuccess.Success === "ok") {
-                logVisit(visitorId, pageId);;
+                //logVisit(visitorId, pageId);;
                 // checkForHitLimit("pages", pageId, pageHitSuccess.UserPageHits, pageHitSuccess.UserImageHits);
             }
             else {
@@ -119,7 +129,7 @@ function logPageHit(pageId) {
                     ActivityCode: "B01",
                     Severity: 4,
                     ErrorMessage: pageHitSuccess.Success,
-                    CalledFrom: "tryLogPageHit"
+                    CalledFrom: "logPageHit"
                 });
             }
         },
@@ -139,31 +149,39 @@ function logPageHit(pageId) {
 }
 
 function logVisit(visitorId, pageId) {
-
     if (isNullorUndefined(visitorId)) {
+        logError({
+            VisitorId: visitorId,
+            ActivityCode: "ERR",
+            Severity: 256,
+            ErrorMessage: "log visit called with no visitorId",
+            PageId: pageId,
+            CalledFrom: "HitCounter.js logVisit"
+        });
         return;
     }
-
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/VisitorInfo/LogVisit?visitorId=" + visitorId,
+        url: settingsArray.ApiServer + "api/Common/LogVisit?visitorId=" + visitorId,
         success: function (logVisitSuccessModel) {
             if (logVisitSuccessModel.Success === "ok") {
                 if (logVisitSuccessModel.VisitAdded) {
-                    if (logVisitSuccessModel.WelcomeMessage !== "ok") {
-                        $('#headerMessage').html(logVisitSuccessModel.WelcomeMessage);
+                    if (logVisitSuccessModel.IsNewVisitor) {
+                        $('#headerMessage').html("Wecome new visitor!");
                     }
-                    //if (verbosity > 5)
+                    else {
+                        $('#headerMessage').html("Wecome back" + logVisitSuccessModel.UserName);
+                    }
                     logEventActivity({
                         VisitorId: visitorId,
                         EventCode: "VIS",
-                        EventDetail: "VisitAdded: " + logVisitSuccessModel.VisitAdded,
+                        EventDetail: "VisitAdded. new visitor: " + logVisitSuccessModel.IsNewVisitor,
                         PageId: pageId,
                         CalledFrom: "HitCounter.js logVisit"
                     });
                     //sendEmailToYourself("Visit Added ", "visitorId: " + visitorId + "<br/>Initial Page: ");
                     //if (document.domain === 'localhost') alert("Visit Added ", "visitorId: " + visitorId);
-                }
+                }                
             }
             else {
                 logError({
@@ -195,271 +213,59 @@ function logVisit(visitorId, pageId) {
 }
 
 function verifyVisitorId(visitorId, pageId, calledFrom) {
-    if (!isNullorUndefined(visitorId)) {
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/VisitorInfo/verifyVisitorId?visitorId=" + visitorId,
-            success: function (visitorSuccessModel) {
-                if (visitorSuccessModel.Success === "ok") {
-                    if (!visitorSuccessModel.Exists) {
-                        logError({
-                            VisitorId: visitorId,
-                            ActivityCode: "VV2",
-                            Severity: 72,
-                            ErrorMessage: "VisitorId not found in Visitor table",
-                            CalledFrom: "verifyVisitorId"
-                        });
-                        //addVisitor(pageId, "verifyVisitorId");
-                        callIpServiceFromStaticPage(pageId, calledFrom);
-                    }
-                }
-                else {
-                    logError({
-                        VisitorId: visitorId,
-                        ActivityCode: "VV2",
-                        Severity: 2,
-                        ErrorMessage: visitorSuccessModel.Success,
-                        CalledFrom: "verifyVisitorId"
-                    });
-                }
-            },
-            error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "logImageHit")) {
-                    logError({
-                        VisitorId: visitorId,
-                        ActivityCode: "VV3",
-                        Severity: 2,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "verifyVisitorId"
-                    });
-                }
-            }
-        });
-    }
-}
-
-function letemPorn(response, pornType, pageId) {
-    // if (document.domain === 'localhost') alert("letemPorn: " + pornType);
-    if (response === "ok") {
-        //  setUserPornStatus(pornType);
-        //<div onclick="goToPorn()">Nasty Porn</div>
-        //window.location.href = '/index.html?subdomain=porn';
-        if (isNullorUndefined(pornType)) {
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "PRN",
-                Severity: 2,
-                ErrorMessage: "isNullorUndefined(pornType)",
-                CalledFrom: "HitCounter.js letemPorn"
-            });
-            //sendEmailToYourself("letemPorn problem", "pornType missing");
-            pornType = "UNK";
-        }
-        reportThenPerformEvent("PRN", "xx", pornType, pageId);
-    }
-    else {
-        $('#customMessage').hide();
-        if (typeof resume === 'function') {
-            resume();
-        }
-    }
-}
-
-function rtpe(eventCode, calledFrom, eventDetail, pageId) {
-    reportThenPerformEvent(eventCode, calledFrom, eventDetail, pageId);
-}
-
-function reportThenPerformEvent(eventCode, calledFrom, eventDetail, pageId) {
-    try {
-        var visitorId = getCookieValue("VisitorId");
-        if (isNullorUndefined(visitorId)) {
-            visitorId = "00";
-            //visitorId = create_UUID();
-            //logError({
-            //    VisitorId: visitorId,
-            //    ActivityCode: "X22",
-            //    Severity: 2,
-            //    ErrorMessage: "unknown visitorId",
-            //    CalledFrom: "reportThenPerformEvent/" + calledFrom
-            //});
-        }
-
-        logEventActivity({
-            VisitorId: visitorId,
-            EventCode: eventCode,
-            EventDetail: eventDetail,
-            PageId: pageId,
-            CalledFrom: calledFrom
-        });
-
-        performEvent(eventCode, calledFrom, eventDetail, pageId);
-
-    }
-    catch (e) {
+    if (isNullorUndefined(visitorId)) {
         logError({
             VisitorId: visitorId,
-            ActivityCode: "CA2",
+            ActivityCode: "VV0",
             Severity: 2,
-            //`ErrorMessage: "Catch Error in reportThenPerformEvent. EventCode: " + eventCode + ". EventDetail: " + eventDetail + " Message: " + e,
-            ErrorMessage: e,
-            CalledFrom: "reportThenPerformEvent/" + calledFrom
+            ErrorMessage: "visitorId undefined",
+            PageId: pageId,
+            CalledFrom: "verifyVisitorId"
         });
-        //sendEmailToYourself("Catch Error in OggleEvenLog()", "eventCode: " + eventCode +
-        //    "<br/>called from pageId: " + calledFrom +
-        //    "<br/>eventDetail: " + eventDetail +
-        //    "<br/>VisitorId: " + visitorId +
-        //    "<br/>Message: " + e);
-        if (document.domain === 'localhost') {
-            alert("reportThenPerformEvent Catch Error: " + e);
-        }
+        return;
     }
-}
-
-function performEvent(eventCode, calledFrom, eventDetail, pageId) {
-    if (eventCode === "PRN") {
-        //  setUserPornStatus(pornType);
-    }
-    switch (eventCode) {
-        case "GIC": // Gallery Item Clicked
-        case "CMC": // carousle context menu item clicked
-        case "CXM":  // carousle context menu opened
-        case "XLC":  // external link clicked
-            break;
-        case "PRN":  //("Porn Option clicked");
-            window.location.href = '/index.html?subdomain=porn';
-            break;
-        case "HBC":  //  header banner clicked
-            if (eventDetail === "porn")
-                window.location.href = '/index.html?subdomain=porn';
-            else
-                window.location.href = "/";
-            break;
-        case "GAX":  // can I get a connection
-            alert("can I get a connection");
-            //window.location.href = ".";
-            break;
-        case "CAA": // carousle context menu item clicked
-            if (eventDetail === "foward") {
-                resume();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/VisitorInfo/verifyVisitorId?visitorId=" + visitorId,
+        success: function (visitorSuccessModel) {
+            if (visitorSuccessModel.Success === "ok") {
+                if (!visitorSuccessModel.Exists) {
+                    logError({
+                        VisitorId: visitorId,
+                        ActivityCode: "VV1",
+                        Severity: 72,
+                        ErrorMessage: "VisitorId not found in Visitor table",
+                        PageId: pageId,
+                        CalledFrom: "verifyVisitorId"
+                    });
+                    //addVisitor(pageId, "verifyVisitorId");
+                    //callIpServiceFromStaticPage(pageId, calledFrom);
+                }
             }
             else {
-                // pop
-                imageHistory.pop();
-                imageIndex = imageHistory.pop();
-                if (imageIndex > 0) {
-                    $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
-                    $('#categoryTitle').html(carouselItemArray[imageIndex].FolderPath + ": " + carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
-                    resizeCarousel();
-                }
-                else
-                    alert("imageIndex: " + imageIndex);
+                logError({
+                    VisitorId: visitorId,
+                    ActivityCode: "VV2",
+                    Severity: 2,
+                    ErrorMessage: visitorSuccessModel.Success,
+                    PageId: pageId,
+                    CalledFrom: "verifyVisitorId"
+                });
             }
-            break;
-        case "EXP":  // Explode
-            window.open(eventDetail, "_blank");
-            break;
-        case "SRC":  // Search Performed
-        case "SSB":
-        case "SSC":
-            window.open("/album.html?folder=" + pageId, "_blank");
-            break;
-        case 'SUB':  // 'Sub Folder Click'
-        case "CIC":  // carousel image clicked
-        case "CMN":  // carousel model nameclicked
-        case "SEE":  // see more of her
-        case "CPC":  // carousel ParentGallery clicked
-        case "BCC":  // Breadcrumb Clicked
-        case "BLC":  // banner link clicked
-        case "BAC":  // Babes Archive Clicked
-        case "LUP":  // Update Box click
-            window.location.href = "/album.html?folder=" + pageId;  //  open page in same window
-            break;
-        case "CMX":
-            showModelInfoDialog(eventDetail, pageId, 'Images/redballon.png');
-            break;
-        case "HBX":  // Home breadcrumb Clicked
-            if (eventDetail === "porn")
-                window.location.href = '/index.html?subdomain=porn';
-            else
-                window.location.href = "/";
-            break;
-        case "RNK":  // Ranker Banner Clicked
-            window.location.href = "/Ranker.html?subdomain=" + eventDetail;
-            break;
-        case "LMC":  // Left Menu Clicked
-            switch (eventDetail) {
-                case "boobTransitions": window.location.href = 'transitions.html'; break;
-                case "pornTransitions": window.location.href = "transitions.html?subdomain=porn"; break;
-                case "boobsRanker": window.location.href = 'ranker.html'; break;
-                case "pornRanker": window.location.href = 'ranker.html?subdomain=porn'; break;
-                case "dirTreeBoobs": showCatListDialog(2); break;
-                case "dirTreePorn": showCatListDialog(242); break;
-                case "explainBoobs": showCustomMessage(38, true); break;
-                case "explainPorn": showCustomMessage(94, true); break;
-                case "back": window.location.href = "/"; break;
-                case "centerfolds": window.location.href = '/album.html?folder=1132'; break;
-                case "video": window.location.href = 'video.html'; break;
-                case "blog": window.location.href = '/Blog.html'; break;
-                case "porn":
-                    if (isLoggedIn())
-                        window.location.href = '/index.html?subdomain=porn';
-                    else
-                        showCustomMessage(35, false);
-                    break;
-                default:
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "KLG",
-                        Severity: 2,
-                        ErrorMessage: "uncaught switch option Left Menu Click EventDetail: " + eventDetail,
-                        CalledFrom: calledFrom
-                    });
-                //alert("uncaught switch option Left Menu Click\nEventDetail: " + eventDetail); break;
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "logImageHit")) {
+                logError({
+                    VisitorId: visitorId,
+                    ActivityCode: "VV3",
+                    Severity: 2,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "verifyVisitorId"
+                });
             }
-            break;
-        case "FLC":  //  footer link clicked
-            //if (document.domain === 'localhost') alert("eventCode: " + eventCode + " pageId: " + pageId);
-            switch (eventDetail) {
-                case "about us": showCustomMessage(38); break;
-                case "dir tree": showCatListDialog(2); break;
-                case "porn dir tree": showCatListDialog(242); break;
-                case "playmate dir tree": showCatListDialog(472); break;
-                case "porn": showCustomMessage(35, false); break;
-                case "blog": window.location.href = '/Blog.html'; break;
-                case "ranker": window.location.href = "/Ranker.html"; break;
-                case "rejects": window.location.href = "/album.html?folder=1132"; break;
-                case "centerfolds": window.location.href = "/album.html?folder=1132"; break;
-                case "cybergirls": window.location.href = "/album.html?folder=3796"; break;
-                case "extras": window.location.href = "/album.html?folder=2601"; break;
-                case "magazine covers": window.location.href = "/album.html?folder=1986"; break;
-                case "archive": window.location.href = "/album.html?folder=3"; break;
-                case "videos": window.location.href = 'video.html'; break;
-                case "mailme": window.location.href = 'mailto:curtishrhodes@hotmail.com'; break;
-                case "freedback": showFeedbackDialog(); break;
-                case "slut archive": window.location.href = "/album.html?folder=440"; break;
-                default:
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "KLG",
-                        Severity: 2,
-                        ErrorMessage: "uncaught switch option footer link clicked EventDetail: " + eventDetail,
-                        CalledFrom: calledFrom
-                    });
-                    //alert("eventDetail: " + eventDetail);
-                    break;
-            }
-            break;
-        default:
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "KLG",
-                Severity: 2,
-                ErrorMessage: "Uncaught Case: " + eventDetail + "eventCode " + eventCode + "  not handled in reportThenPerformEvent",
-                CalledFrom: calledFrom
-            });
-        //sendEmailToYourself("Uncaught Case: " + eventCode, "eventCode " + eventCode + "  not handled in reportThenPerformEvent");
-    }
+        }
+    });
 }
 
 function checkForHitLimit(calledFrom, pageId, userPageHits, userImageHits) {
@@ -513,15 +319,15 @@ function checkForHitLimit(calledFrom, pageId, userPageHits, userImageHits) {
 function logEventActivity(logEventModel) {
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "/api/EventLog/LogEventActivity",
+        url: settingsArray.ApiServer + "api/Common/LogActivity",
         data: logEventModel,
-        success: function (logEventActivitySuccess) {
-            if (logEventActivitySuccess.Success !== "ok") {
+        success: function (success) {
+            if (success !== "ok") {
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "ER2",
                     Severity: 2,
-                    ErrorMessage: logEventActivitySuccess.Success,
+                    ErrorMessage: success,
                     CalledFrom: "LogEventActivity"
                 });
             }
@@ -541,28 +347,24 @@ function logEventActivity(logEventModel) {
     });
 }
 
-function callIpServiceFromStaticPage(pageId, externalSource) {
+function getIpInfo(pageId,calledFrom) {
+    console.log("calling iPInfo");
     try {
-        logEventActivity({
-            VisitorId: "kmm",
-            EventCode: "IPC",
-            EventDetail: "externalSource" + externalSource,
-            PageId: pageId,
-            CalledFrom: "callIpServiceFromStaticPage"
-        });
         $.ajax({
             type: "GET",
             url: "https://ipinfo.io?token=ac5da086206dc4",
             dataType: "JSON",
             //url: "http//api.ipstack.com/check?access_key=5de5cc8e1f751bc1456a6fbf1babf557",
             success: function (ipResponse) {
+                console.log("iPInfo success");
+
                 $.ajax({
                     type: "POST",
-                    url: settingsArray.ApiServer + "api/VisitorInfo/AddVisitor",
+                    url: settingsArray.ApiServer + "api/Common/AddVisitor",
                     data: {
                         IpAddress: ipResponse.ip,
                         PageId: pageId,
-                        CalledFrom: externalSource,
+                        CalledFrom: calledFrom,
                         City: ipResponse.city,
                         Country: ipResponse.country,
                         Region: ipResponse.region,
@@ -571,21 +373,14 @@ function callIpServiceFromStaticPage(pageId, externalSource) {
                     success: function (addVisitorSuccess) {
                         if (addVisitorSuccess.Success === "ok") {
                             setCookieValue("VisitorId", addVisitorSuccess.VisitorId);
-
-                            logEventActivity({
-                                VisitorId: getCookieValue("VisitorId"),
-                                EventCode: "XLC",
-                                EventDetail: externalSource,
-                                PageId: pageId,
-                                CalledFrom: "callIpService"
-                            });
+                            setCookieValue("IsLoggedIn", "true");
 
                             logEventActivity({
                                 VisitorId: getCookieValue("VisitorId"),
                                 EventCode: "NEW",
-                                EventDetail: "Ip: " + ipStackResponse.ip,
+                                EventDetail: addVisitorSuccess.EventDetail,
                                 PageId: pageId,
-                                CalledFrom: "callIpService"
+                                CalledFrom: "callIpService/" + calledFrom
                             });
                         }
                         else {
@@ -594,6 +389,7 @@ function callIpServiceFromStaticPage(pageId, externalSource) {
                                 ActivityCode: "AV1",
                                 Severity: 277,
                                 ErrorMessage: addVisitorSuccess.Success,
+                                PageId: pageId,
                                 CalledFrom: "addVisitor/" + calledFrom
                             });
                         }
@@ -606,6 +402,7 @@ function callIpServiceFromStaticPage(pageId, externalSource) {
                                 ActivityCode: "AV3",
                                 Severity: 1,
                                 ErrorMessage: errorMessage + " called from: " + calledFrom,
+                                PageId: pageId,
                                 CalledFrom: "addVisitor/" + calledFrom
                             });
                         }
@@ -631,7 +428,8 @@ function callIpServiceFromStaticPage(pageId, externalSource) {
             ActivityCode: "AV4",
             Severity: 200,
             ErrorMessage: "Catch error: " + e,
-            CalledFrom: "addToVisitorTable"
+            PageId: pageId,
+            CalledFrom: "addVisitor/" + calledFrom
         });
     }
 }

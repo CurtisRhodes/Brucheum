@@ -8,77 +8,94 @@ var selectedImageLinkId;
 var albumFolderId;
 var deepChildCount = 0;
 
-function getAlbumImages(folderId) {
+function GetAllAlbumPageInfo(folderId) {
     try {
-        albumFolderId = folderId;
-        var start = Date.now();
-        $('#imagePageLoadingGif').show();
-        $.ajax({
-            type: "GET",
-            async: true,
-            url: settingsArray.ApiServer + "/api/ImagePage/GetImageLinks?folderId=" + folderId,
-            success: function (imageLinksModel) {
-                $('#imagePageLoadingGif').hide();
-                if (imageLinksModel.Success === "ok") {
-                    currentFolderRoot = imageLinksModel.RootFolder;
-                    $('#googleSearchText').html(imageLinksModel.FolderName);
+        var aapiVisitorId = getCookieValue("VisitorId");
+        if (isNullorUndefined(aapiVisitorId)) {
+            logError({
+                VisitorId: aapiVisitorId,
+                ActivityCode: "XXX",
+                Severity: 1,
+                ErrorMessage: "visitorId undefined",
+                CalledFrom: "GetAllAlbumPageInfo"
+            });
+        }
+        else {
+            albumFolderId = folderId;
+            var start = Date.now();
+            $('#imagePageLoadingGif').show();
+            $.ajax({
+                type: "GET",
+                async: true,
+                url: settingsArray.ApiServer + "api/AlbumPage/GetAllAlbumPageInfo?visitorId=" + aapiVisitorId + "&folderId=" + folderId,
+                success: function (imageLinksModel) {
+                    $('#imagePageLoadingGif').hide();
+                    if (imageLinksModel.Success === "ok") {
+                        currentFolderRoot = imageLinksModel.RootFolder;
+                        $('#googleSearchText').html(imageLinksModel.FolderName);
 
-                    $.each(imageLinksModel.TrackBackItems, function (idx, trackBackItem) {
-                        if (trackBackItem.Site === "Babepedia") {
-                            $('#babapediaLink').html(trackBackItem.TrackBackLink);
-                            $('#babapediaLink').show();
-                        }
-                        if (trackBackItem.Site === "Freeones") {
-                            $('#freeonesLink').html(trackBackItem.TrackBackLink);
-                            $('#freeonesLink').show();
-                        }
-                        if (trackBackItem.Site === "Indexxx") {
-                            $('#indexxxLink').html(trackBackItem.TrackBackLink);
-                            $('#indexxxLink').show();
-                        }
-                    });
+                        $.each(imageLinksModel.TrackBackItems, function (idx, trackBackItem) {
+                            if (trackBackItem.Site === "Babepedia") {
+                                $('#babapediaLink').html(trackBackItem.TrackBackLink);
+                                $('#babapediaLink').show();
+                            }
+                            if (trackBackItem.Site === "Freeones") {
+                                $('#freeonesLink').html(trackBackItem.TrackBackLink);
+                                $('#freeonesLink').show();
+                            }
+                            if (trackBackItem.Site === "Indexxx") {
+                                $('#indexxxLink').html(trackBackItem.TrackBackLink);
+                                $('#indexxxLink').show();
+                            }
+                        });
 
-                    processImages(imageLinksModel);
-                    getBreadCrumbs(folderId, imageLinksModel.ExternalLinks);
+                        processImages(imageLinksModel);
 
-                    var delta = (Date.now() - start) / 1000;
-                    console.log("GetImageLinks?folder=" + folderId + " took: " + delta.toFixed(3));
+                        $('#headerMessage').html("page hits: " + imageLinksModel.PageHits);
 
+                        setOggleFooter(folderId, imageLinksModel.RootFolder, imageLinksModel.LastModified);
+
+                        var delta = (Date.now() - start) / 1000;
+                        console.log("GetAllAlbumPageInfo took: " + delta.toFixed(3));
+
+                    }
+                    else {
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "BUG",
+                            Severity: 1,
+                            ErrorMessage: successModel.Success,
+                            CalledFrom: "GetAllAlbumPageInfo"
+                        });
+                        //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
+                        //if (document.domain === 'localhost') alert("jQuery fail in Album.js: getAlbumImages\n" + imageLinksModel.Success);
+                    }
+                },
+                error: function (jqXHR) {
+                    $('#imagePageLoadingGif').hide();
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "getAlbumImages")) {
+                        logError({
+                            VisitorId: aapiVisitorId,
+                            ActivityCode: "XHR",
+                            Severity: 1,
+                            ErrorMessage: errorMessage,
+                            CalledFrom: "GetAllAlbumPageInfo"
+                        });
+                    }
                 }
-                else {
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
-                        Severity: 1,
-                        ErrorMessage: successModel.Success,
-                        CalledFrom: "Album.js getAlbumImages"
-                    });
-                    //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
-                    //if (document.domain === 'localhost') alert("jQuery fail in Album.js: getAlbumImages\n" + imageLinksModel.Success);
-                }
-            },
-            error: function (jqXHR) {
-                $('#imagePageLoadingGif').hide();
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "getAlbumImages")) {
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "Album.js getAlbumImages"
-                    });
-                }
-            }
-        });
-    } catch (e) {
+            });
+        }
+    }
+    catch (e)
+    {
         $('#imagePageLoadingGif').hide();
         logError({
-            VisitorId: getCookieValue("VisitorId"),
+            VisitorId: aapiVisitorId,
             ActivityCode: "CAT",
             Severity: 1,
             ErrorMessage: e,
-            CalledFrom: "Album.js getAlbumImages"
+            CalledFrom: "GetAllAlbumPageInfo"
         });
         //sendEmailToYourself("Catch in Album.js getAlbumImages", e);
         //alert("GetLinkFolders CATCH: " + e);
@@ -86,7 +103,6 @@ function getAlbumImages(folderId) {
 }
 
 function directToStaticPage(folderId) {
-    ///  12/15
     if (isNullorUndefined(folderId)) {
         logError({
             VisitorId: getCookieValue("VisitorId"),
@@ -100,10 +116,10 @@ function directToStaticPage(folderId) {
     $.ajax({
         type: "GET",
         async: true,
-        url: settingsArray.ApiServer + "api/AlbumPage/GetStaticPage?folderId=" + folderId + "&h=2",
+        url: settingsArray.ApiServer + "api/AlbumPage/GetStaticPage?folderId=" + folderId,
         success: function (successModel) {
             if (successModel.Success === "ok") {
-                window.location.href = successModel.ReturnValue;
+                window.location.href = successModel.ReturnValue + "?q=35";
             }
             else {
                 if (successModel.Success.indexOf("Option not supported") > -1) {

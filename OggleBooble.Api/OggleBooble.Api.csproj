@@ -154,11 +154,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\BlogController.cs" />
-    <Compile Include="Controllers\AlbumPageController.cs" />
-    <Compile Include="Controllers\CommonController.cs" />
+    <Compile Include="Controllers\AlbumPageDbAccess.cs" />
+    <Compile Include="Controllers\CommonDbAccess.cs" />
+    <Compile Include="Controllers\FolderDetailController.cs" />
+    <Compile Include="Controllers\FtpUtilies.cs" />
     <Compile Include="Controllers\Helpers.cs" />
-    <Compile Include="Controllers\IndexPageController.cs" />
+    <Compile Include="Controllers\IndexPageDbAccess.cs" />
     <Compile Include="Controllers\LocalController.cs" />
+    <Compile Include="Controllers\OggleFileController.cs" />
+    <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="DataContext\MySqlContext.cs" />
     <Compile Include="DataContext\OggleBoobleContext.cs" />
     <Compile Include="Global.asax.cs">
@@ -167,8 +171,11 @@
     <Compile Include="Models\AlbumPageModels.cs" />
     <Compile Include="Models\BlogModels.cs" />
     <Compile Include="Models\CommonModels.cs" />
+    <Compile Include="Models\FileModels.cs" />
+    <Compile Include="Models\FolderDetailModels.cs" />
     <Compile Include="Models\IndexPageModels.cs" />
     <Compile Include="Models\LocalModels.cs" />
+    <Compile Include="Models\RoleModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

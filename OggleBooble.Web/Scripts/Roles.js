@@ -1,39 +1,47 @@
 ﻿var selectedRoleName = "";
 var selectedUserName = "";
 
-function loadUsers() {
+function loadCooseBox(column,option) {
     try {
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Login/GetUsers",
-            success: function (usersModel) {
-                if (usersModel.Success === "ok") {
-                    $('#ddUsers').html("<option class= 'ddOption' value ='0'>-- select a user --</option >");
-                    $.each(usersModel.UserNames, function (idx, userName) {
-                        $('#ddUsers').append("<option class='ddOption' value='" + userName + "'>" + userName + "</option>");
-                    });
+        if (option === "all users") {
+            // all users
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/Roles/LoadChooseBox?option=allUsers",
+                success: function (usersModel) {
+                    if (usersModel.Success === "ok") {
+                        $('#ddUsers').html("<option class= 'ddOption' value ='0'>-- select a user --</option >");
+                        $.each(usersModel.UserNames, function (idx, userName) {
+                            $('#ddUsers').append("<option class='ddOption' value='" + userName + "'>" + userName + "</option>");
+                        });
 
-                    $('#ddUsers').change(function () {
-                        selectedUserName = $('#ddUsers option:selected').attr("value");
-                        loadUserRoles("Available");
-                        loadUserRoles("Assigned");
-                    });
+                        $('#ddUsers').change(function () {
+                            selectedUserName = $('#ddUsers option:selected').attr("value");
+                            loadUserRoles("Available");
+                            loadUserRoles("Assigned");
+                        });
+                    }
+                    else
+                        alert("loadUsers: " + usersModel.Success);
+                },
+                error: function (jqXHR) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errorMessage, "loadUsers")) {
+                        sendEmailToYourself("XHR ERROR IN Admin.JS loadImages", "api/Login/GetUsers Message: " + errorMessage);
+                    }
                 }
-                else
-                    alert("loadUsers: " + usersModel.Success);
-            },
-            error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "loadUsers")) {
-                    sendEmailToYourself("XHR ERROR IN Admin.JS loadImages", "api/Login/GetUsers Message: " + errorMessage);
-                }
-            }
-        });
-    } catch (e) { alert("catch: " + e); }
-}
+            });
 
-function loadAllUserRoles() {
-    try {
+        }
+
+
+        if (column === "left") {
+            // all users
+        }
+        if (column === "right") {
+            // all roles
+        }
+
         // $('#divLoadingGif').show();
         $.ajax({
             type: "PATCH",
@@ -81,6 +89,7 @@ function loadAllUserRoles() {
         alert("catch: " + e);
     }
 }
+
 
 function loadUserRoles(whichType) {
     try {

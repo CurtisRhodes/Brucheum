@@ -39,8 +39,17 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<vwErrorReport> vwErrorReportRows { get; set; }
         public virtual DbSet<PageHitTotals> PageHitTotal { get; set; }
         public virtual DbSet<ErrorLog> ErrorLogs { get; set; }
+        public virtual DbSet<IpInfoCall> IpInfoCalls { get; set; }
     }
 
+    [Table("OggleBooble.IpInfoCalls")]
+    public class IpInfoCall
+    {
+        [Key]
+        public int PkId { get; set; }
+        public string IpAddress { get; set; }
+        public DateTime Occured { get; set; }
+    }
 
     [Table("OggleBooble.ErrorLog")]
     public class ErrorLog

@@ -5,21 +5,26 @@ using System.Web;
 
 namespace OggleBooble.Api.Models
 {
-    public class ImageLinksModel
+    public class GetAlbumInfoSuccessModel
     {
-        public ImageLinksModel()
+        public GetAlbumInfoSuccessModel()
         {
             Files = new List<VwLinkModel>();
             SubDirs = new List<CategoryTreeModel>();
             TrackBackItems = new List<TrackBackItem>();
+            BreadCrumbs = new List<BreadCrumbItemModel>();
         }
-        public int FoldrerId { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
         public List<TrackBackItem> TrackBackItems { get; set; }
         public List<VwLinkModel> Files { get; set; }
         public List<CategoryTreeModel> SubDirs { get; set; }
+        public List<BreadCrumbItemModel> BreadCrumbs { get; set; }
         public string ExternalLinks { get; set; }
+        public int PageHits { get; set; }
+        public int UserImageHits { get; set; }
+        public int UserPageHits { get; set; }
+        public string LastModified { get; set; }
         public string Success { get; set; }
     }
 
@@ -65,19 +70,6 @@ namespace OggleBooble.Api.Models
         public List<CategoryTreeModel> SubDirs { get; set; }
     }
 
-    public class BreadCrumbModel
-    {
-        public BreadCrumbModel()
-        {
-            BreadCrumbs = new List<BreadCrumbItemModel>();
-        }
-        public string FolderName { get; set; }
-        public string RootFolder { get; set; }
-        public string Html { get; set; }
-        public List<BreadCrumbItemModel> BreadCrumbs { get; set; }
-        public string Success { get; set; }
-    }
-
     public class BreadCrumbItemModel
     {
         public int FolderId { get; set; }
@@ -85,21 +77,4 @@ namespace OggleBooble.Api.Models
         public int ParentId { get; set; }
         public bool IsInitialFolder { get; set; }
     }
-
-    public class PageHitRequestModel
-    {
-        public string VisitorId { get; set; }
-        public int PageId { get; set; }
-    }
-    public class PageHitSuccessModel
-    {
-        public int PageHits { get; set; }
-        public int UserImageHits { get; set; }
-        public int UserPageHits { get; set; }
-        public string PageName { get; set; }
-        public string ParentName { get; set; }
-        public string RootFolder { get; set; }
-        public string Success { get; set; }
-    }
-
 }

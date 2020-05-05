@@ -13,16 +13,12 @@ var imageCommentDialogIsOpen = false;
 var folderCategoryDialogIsOpen = false;
 var forgetShowingCatDialog;
 var initialTake = 100;
-var specialPage;
 var imageHistory = [];
 
 function launchCarousel(root) {
-    $('#footerMessage').html("launching carousel");
-    if (root === "boobs")
-        specialPage = 3908;
-    if (root === "porn")
-        specialPage = 3909;
+    //$('#footerMessage').html("launching carousel");
 
+    $('#laCarousel').fadeIn();
     $('#thisCarouselImage').prop("src", "/Images/ingranaggi3.gif");
     loadImages(root, true, 0, initialTake);
 }
@@ -203,7 +199,10 @@ function startCarousel() {
 }
 
 function assuranceArrowClick(direction) {
-    reportThenPerformEvent("CAA", "direction: " + direction, direction, specialPage);
+    var pageId = 3908;
+    if (root === "porn")
+        pageId = 3909;
+    reportThenPerformEvent("CAA", "direction: " + direction, direction, pageId);
 }
 
 function intervalBody() {

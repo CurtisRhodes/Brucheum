@@ -1,51 +1,52 @@
 ﻿var MoveCopyImageModel = {};
 
-function showMoveCopyDialog(mode, link, sourceFolderId) {
+
+function onDirTreeComplete() {
+    $('#mcaLoagingGif').hide();
+}
+
+function loadMoveCopyArchiveDialog(mode, link, sourceFolderId) {
     MoveCopyImageModel.Mode = mode;
     MoveCopyImageModel.Link = link;
     MoveCopyImageModel.SourceFolderId = sourceFolderId;
 
-    $('#btnGo').html(mode);
-    $('#copyDialogImage').attr("src", link);
+    showMoveCopyArchiveDialog(link, mode)
+
+
+
+    var startNode = 0;
+    if (mode === "Archive")
+        startNode = 3822;
 
     if ($('#moveDialogDirTree').children().length < 1) {
-        //alert("$('#moveDialogDirTree').children().length: " + $('#moveDialogDirTree').children().length);
-        buildDirTree($('#moveDialogDirTree'), "moveDialogDirTree", 0);
-        $('#moveCopyDialog').dialog({
-            show: { effect: "fade" },
-            hide: { effect: "blind" },
-            position: { my: 'right top', at: 'right top', of: $('#middleColumn') },
-            width: "650"
-        });
+        $('#mcaLoagingGif').hide();
+        buildDirTree($('#moveDialogDirTree'), "moveCopyArchiveDialogDirTreeClick", startNode);
     }
-    //else alert("$('#moveDialogDirTree').children().length: " + $('#moveDialogDirTree').children().length);
+
+    $('#moveCopyDialog').dialog({
+        show: { effect: "fade" },
+        hide: { effect: "blind" },
+        position: { my: 'right top', at: 'right top', of: $('#middleColumn') },
+        width: "650"
+    });
 
     $('#moveCopyDialog').dialog("open");
-    $('#moveCopyDialogContainer').show();
     $('#moveCopyDialog').dialog('option', 'title', mode + " Image Link");
     $('#moveCopyDialog').on('dialogclose', function (event) {
         if (typeof getAlbumImages === 'function') {
-            getAlbumImages(sourceFolderId);
+            GetAllAlbumPageInfo(sourceFolderId);
             if (viewerShowing)
                 slide("next");
         }
     });
 }
 
-function ftpMoveCopy() {
+function moveCopyArchive() {
     //alert("MoveCopyImageModel.DestinationFolderId: " + MoveCopyImageModel.DestinationFolderId);
     $('#imagePageLoadingGif').show();
-
-        //public int SourceFolderId { get; set; }
-        //public string Link { get; set; }
-        //public string Mode { get; set; }
-
-        //public int DestinationFolderId { get; set; }
-        //public int SortOrder { get; set; }
-
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "/api/MoveImage/MoveImage",
+        url: settingsArray.ApiServer + "api/OggleFile/MoveCopyArchive",
         data: MoveCopyImageModel,
         success: function (successModel) {
             $('#imagePageLoadingGif').hide();
@@ -91,7 +92,7 @@ function ftpMoveCopy() {
     });
 }
 
-function moveDialogDirTreeClick(path, id, treeId) {
+function moveCopyArchiveDialogDirTreeClick(path, id, treeId) {
     //if (treeId == "moveDialogDirTree") {
         MoveCopyImageModel.DestinationFolderId = id;
         $('#moveDialogDirTree').hide();
@@ -102,4 +103,83 @@ function moveDialogDirTreeClick(path, id, treeId) {
     //}
     ///else
     //    alert("moveDialogDirTreeClick treeId: " + treeId);
+}
+
+function showMoveCopyArchiveDialog(link, mode) {
+    $('#dialogArea').html(
+        "<div id='moveCopyDialog' class='oggleDialogWindow' title=''>\n" +
+        "    <div class='inline'><img id='copyDialogImage' class='copyDialogImage' src='" + link + "' /></div>\n" +
+        "    <div id='dirTreeResults' class='pusedoTextBox'></div>\n" +
+        "    <div class='inline'><img class='moveDialogDirTreeButton' src='/Images/caretDown.png' onclick='$('#moveDialogDirTree').show()' /></div>\n" +
+        "    <img id='mcaLoagingGif' class='tinyloadingGif' src='Images/loader.gif'/>\n" +
+        "    <br />\n" +
+        "    <div id='moveDialogDirTree' class='hideableDropDown'></div>\n" +
+        "    <div id='btnGo' class='roundendButton' onclick='moveCopyArchive()'>" + mode + "</div>\n" +
+        "</div>\n");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function showUnknowModelDialog(link) {
+    return "<div id='modelInfoDialog' class='oggleDialogWindow' onmouseleave='considerClosingModelInfoDialog()'>\n" +
+        "    <div id='modelInfoViewOnlyArea' class='displayHidden'>\n" +
+        "        <div class='viewOnlyMessage'>If you you know who this is Please 'Add Info'</div>\n" +
+        "        <div class='viewOnlyMessage clickable' onclick='IamThisModel()'>Is this you?  </div>\n" +
+        "        <a class='dialogEditButton' href='javascript:IdentifyPoser()'>Add Info</a>\n" +
+        "    </div>\n" +
+        "    <a id='modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Save</a>\n" +
+        "</div>\n";
+}
+
+function showModelInfoEditDialog() {
+    return    "    <div id='modelInfoEditArea' class='displayHidden'>\n" +
+        "        <div class='flexContainer'>\n" +
+        "            <div class='floatLeft'>\n" +
+        "                <div class='modelInfoDialogLabel'>name</div><input id='txtFolderName' class='modelDialogInput' /><br />\n" +
+        "                <div class='modelInfoDialogLabel'>from</div><input id='txtNationality' class='modelDialogInput' /><br />\n" +
+        "                <div class='modelInfoDialogLabel'>born</div><input id='txtBorn' class='modelDialogInput' /><br />\n" +
+        "                <div class='modelInfoDialogLabel'>boobs</div>\n" +
+        "                <select id='selBoobs' class='modelDialogSelect'>\n" +
+        "                    <option value='Real'>Real</option>\n" +
+        "                    <option value='Fake'>Fake</option>\n" +
+        "                </select><br />\n" +
+        "                <div class='modelInfoDialogLabel'>figure</div><input id='txtMeasurements' class='modelDialogInput' />\n" +
+        "            </div>\n" +
+        "            <div class='floatLeft'>\n" +
+        "                <img id='modelDialogThumbNailImage' src='/Images/redballon.png' class='modelDialogImage' />\n" +
+        "            </div>\n" +
+        "        </div>\n" +
+        "        <div class='modelInfoDialogLabel'>comment</div>\n" +
+        "        <div id='modelInfoDialogCommentContainer'>\n" +
+        "            <div id='modelInfoDialogComment' class='modelInfoCommentArea'></div>\n" +
+        "        </div>\n" +
+        "        <div id='modelInfoDialogTrackBack'>\n" +
+        "            <div class='modelInfoDialogLabel'>status</div><input id='txtStatus' class='modelDialogInput' style='width: 90%;' /><br />\n" +
+        "            <div class='modelInfoDialogLabel'>trackbacks</div>\n" +
+        "            <div>\n" +
+        "                <div class='hrefLabel'>href</div><input id='txtLinkHref' class='modelDialogInput' />\n" +
+        "                <div class='hrefLabel'>label</div><input id='txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />\n" +
+        "                <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
+        "            </div>\n" +
+        "            <div id='externalLinks' class='trackbackLinksArea'></div>\n" +
+        "        </div>\n" +
+        "    </div>\n";
 }

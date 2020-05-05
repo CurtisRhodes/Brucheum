@@ -1,40 +1,14 @@
-﻿
-function changeFavicon(src) {
-    var link = document.createElement('link'),
-        oldLink = document.getElementById('dynamic-favicon');
-    link.id = 'dynamic-favicon';
-    link.rel = 'shortcut icon';
-    link.href = src;
-    if (oldLink) {
-        document.head.removeChild(oldLink);
-    }
-    document.head.appendChild(link);
-}
-
-function changeFavoriteIcon () {
-    var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-    link.type = 'image/x-icon';
-    link.rel = 'shortcut icon';    
-    link.href = 'https://ogglebooble.com/images/cslips03.png';
-    document.getElementsByTagName('head')[0].appendChild(link);
-}
-
-function setAlbumPageHeader(folderId) {
+﻿function setAlbumPageHeader(folderId) {
     setOggleHeader(folderId);
 }
 
-var currentFolderId;
 function setOggleHeader(folderId, subdomain) {
-
+    //if (getCookieValue("IpAddress") === "68.203.90.183") alert("setOggleHeader subdomain " + subdomain + "  folderId: " + folderId + " containsImageLinks: " + containsImageLinks);
     if (subdomain === undefined) {
-        //if (document.domain === 'localhost') alert("subdomain === undefined");
         subdomain = "boobs";
     }
-    currentFolderId = folderId;
     var headerHtml;
-    var lang = "en";
-
-    //if (getCookieValue("IpAddress") === "68.203.90.183") alert("setOggleHeader subdomain " + subdomain + "  folderId: " + folderId + " containsImageLinks: " + containsImageLinks);
+    //var lang = "en";
 
     $('header').switchClass('pornHeader', 'boobsHeader');
 
@@ -111,8 +85,6 @@ function setOggleHeader(folderId, subdomain) {
         $('header').html(headerHtml);
     }
     setHeaderDetails(folderId, subdomain);
-    setOggleFooter(folderId, subdomain);
-    setDashbordMenuItem();
 }
 
 // requires no database call
@@ -233,20 +205,20 @@ function setHeaderDetails(folderId, subdomain) {
     }
 }
 
-function setDashbordMenuItem() {
-    if (isLoggedIn()) {
+// requires no database call
+function setLoginHeaderSection(visitorId) {
+    var isLoggedIn = getCookieValue("IsLoggedIn");
+    if (isNullorUndefined(isLoggedIn)) {
+        setCookieValue("IsLoggedIn", "true");
+        isLoggedIn = "true";
+    }
+    if (isLoggedIn === "true") {
+        $('#headerMessage').html("logged in");
         $('#spnUserName').html(getCookieValue("UserName"));
         $('#optionLoggedIn').show();
         $('#optionNotLoggedIn').hide();
-
         if (isInRole("Oggle admin")) {
             $('#dashboardMenuItem').show();
-            console.log("isInRole Oggle admin");
-        }
-        else {
-            $('#dashboardMenuItem').hide();
-            //console.error("NOT isInRole Oggle admin");
-            //alert("NOT isInRole Oggle admin");
         }
     }
     else {
@@ -255,3 +227,5 @@ function setDashbordMenuItem() {
         $('#optionNotLoggedIn').show();
     }
 }
+
+

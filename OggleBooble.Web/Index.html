@@ -16,14 +16,12 @@
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>-->
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/HitCounter.js"></script>
+    <script src="Scripts/EventControl.js"></script>
     <script src="Scripts/IndexPage.js"></script>
-    <script src="Scripts/OggleEventLog.js"></script>
+    <script src="Scripts/Cookies.js"></script>
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleSearch.js"></script>
-
-
-
     <script src="Scripts/OggleFooter.js"></script>
     <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/Carousel.js"></script>
@@ -39,6 +37,7 @@
     <link href="Styles/jqueryUI.css" rel="stylesheet">
     <link href="Styles/Common.css" rel="stylesheet">
     <link href="Styles/IndexPage.css" rel="stylesheet">
+    <link href="Styles/Album.css" rel="stylesheet" />
     <link href="Styles/loginDialog.css" rel="stylesheet">
     <link href="Styles/Header.css" rel="stylesheet">
     <link href="Styles/Carousel.css" rel="stylesheet">
@@ -197,18 +196,27 @@
                 }
                 else {
                     clearInterval(waiter);
-                    //$('#footerMessage').html("loading header");
+
+
+                    //  LOCAL HOST because cookies don't work in IIS
+                    if (document.domain === 'localhost') {
+                        setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
+                        setCookieValue("UserName", "developer");
+                        var userPermissons = [];
+                        //userPermissons.push("Oggle admin");
+                        userPermissons.push("access dashboard");
+                        userPermissons.push("view dynamic");
+                        window.localStorage["userPermissons"] = userPermissons;
+                        //window.localStorage["IsLoggedIn"] = "true";
+                    }
+                    else
+                        loadRolesIntoLocalStorage("index", "any");
+
                     checkFor404("start", "Index");
                     var verifyConnectionWaiter = setInterval(function () {
                         if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
                             $('#dots').html('');
-                            $('#laCarousel').fadeIn();
-                            loadUpdatedGalleriesBoxes(updatedGalleriesCount);
-                            launchCarousel(subdomain);
-                            logPageHit(homePageId);
-                            $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
-
                             if (subdomain == "porn") {
                                 $('#pornLeftColumnList').show();
                                 $('#includeCenterfoldsCheckbox').hide();
@@ -217,7 +225,28 @@
                                 $('#boobsLeftColumnList').show();
                                 //launchPromoMessages();
                             }
-                            setDashbordMenuItem();
+
+                            launchCarousel(subdomain);
+
+                            loadUpdatedGalleriesBoxes(updatedGalleriesCount);
+
+
+                            var visitorId = getCookieValue("VisitorId");
+                            if (isNullorUndefined(visitorId)) {
+                                alert("Calling getIpInfo");
+                                getIpInfo(homePageId);
+                            }
+                            else {
+                                console.log("visitorId found: " + visitorId);
+                                setLoginHeaderSection(visitorId);
+                                logPageHit(homePageId);
+                            }
+
+
+
+
+                            $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
+
                         }
                         else {
                             dots += ". ";
@@ -236,7 +265,6 @@
                 width: "400"
             });
         });
-
         function goToPorn() {
 
             //if(hasPorn)
@@ -245,7 +273,6 @@
             // if user porn status not already set
             showCustomMessage(35);
         }
-
     </script>
 </body>
 </html>

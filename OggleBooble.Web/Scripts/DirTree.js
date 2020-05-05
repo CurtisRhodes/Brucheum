@@ -6,77 +6,53 @@ var totalFiles = 0;
 var categoryTreeModel = null;
 var dirTreeComplete = false;
 
-
-function backgroundreBuild(dest, treeId, startNode) {
-    if (categoryTreeModel === null) {
-        categoryTreeModel = getDirTree(dest, treeId, startNode, false);
-        setTimeout(function () {
-            if(dirTreeComplete)
-                if (typeof onDirTreeComplete === "function") {
-                        onDirTreeComplete();
-                }
-                return categoryTreeModel;
-        }, 300);
-    }
-    else {
-        //first  initiate rebuild
-        var newDirTree = getDirTree(dest, treeId, startNode, true);
-        if (typeof onDirTreeComplete === "function") {
-            if (!isRebuild)
-                onDirTreeComplete();
-        }
-        return categoryTreeModel;
-
-    }
-}
-
-function getDirTree(dest, treeId, startNode, isRebuild) {
+function buildDirTree(dest, treeId, startNode) {
     try {
-        var start = Date.now();
-        totalFolders = 0;
-        totalPics = 0;
-        dirTreeTab = 0;
-        dirTreeContainer = "";
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/DirTree/Get?root=" + startNode,
-            success: function (results) {
-                categoryTreeModel = results;
-                recurrBuildDirTree(categoryTreeModel, treeId);
+        if (window.localStorage[treeId] !== null) {
+            window.localStorage[treeId]
+        }
+        else {
+            var start = Date.now();
+            totalFolders = 0;
+            totalPics = 0;
+            dirTreeTab = 0;
+            dirTreeContainer = "";
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/DirTree/Get?root=" + startNode,
+                success: function (results) {
+                    categoryTreeModel = results;
+                    recurrBuildDirTree(categoryTreeModel, treeId);
 
-                dest.html(dirTreeContainer);
-                if (typeof onDirTreeComplete === "function") {
-                    onDirTreeComplete();
+                    dest.html(dirTreeContainer);
+
+                    window.localStorage[treeId] = dirTreeContainer;
+
+                    if (typeof onDirTreeComplete === "function") {
+                        onDirTreeComplete();
+                    }
+                    var delta = (Date.now() - start) / 1000;
+                    console.log("rebuildCatTree took: " + delta.toFixed(3));
+                },
+                error: function (xhr) {
+                    $('#dashBoardLoadingGif').hide();
+                    var errorMessage = getXHRErrorDetails(xhr);
+                    if (!checkFor404(errorMessage, "getDirTree")) {
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "XHR",
+                            Severity: 3,
+                            ErrorMessage: errorMessage,
+                            CalledFrom: "getDirTree"
+                        });
+                    }
+                    //dest.html("buildCatTree xhr error: " + getXHRErrorDetails(xhr));
                 }
-                var delta = (Date.now() - start) / 1000;
-                console.log("rebuildCatTree took: " + delta.toFixed(3));
-                dirTreeComplete = true;
-            },
-            error: function (xhr) {
-                $('#dashBoardLoadingGif').hide();
-                var errorMessage = getXHRErrorDetails(xhr);
-                if (!checkFor404(errorMessage, "getDirTree")) {
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 3,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "getDirTree"
-                    });
-                }
-                //dest.html("buildCatTree xhr error: " + getXHRErrorDetails(xhr));
-            }
-        });
+            });
+        }
     } catch (e) {
         dest.html("buildCatTree catch: " + e);
     }
-}
-
-function buildDirTree(dest, treeId, startNode, endNode) {  
-
-    getDirTree(dest, treeId, startNode);
-    //alert("buildDirTreez");
-
 }
 
 function recurrBuildDirTree(dir, treeId) {
@@ -133,7 +109,6 @@ function getAllChildFileCounts(thisFolder) {
     });
     return totalFiles;
 }
-
 
 function toggleDirTree(id) {
     if ($('#' + id + '').css("display") === "none")
