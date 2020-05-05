@@ -382,6 +382,56 @@ function IamThisModel() {
 
 }
 
+function showModelInfoDialogHtml() {
+    $('#modelInforDialogContainer').html(
+        "<div id='modelInfoDialog' class='oggleDialogWindow' onmouseleave='considerClosingModelInfoDialog()'>\n" +
+        "    <div id='modelInfoEditArea' class='displayHidden'>\n" +
+        "        <div class='flexContainer'>\n" +
+        "            <div class='floatLeft'>\n" +
+        "                <div class='modelInfoDialogLabel'>name</div><input id='txtFolderName' class='modelDialogInput' /><br />\n" +
+        "                <div class='modelInfoDialogLabel'>from</div><input id='txtNationality' class='modelDialogInput' /><br />\n" +
+        "                <div class='modelInfoDialogLabel'>born</div><input id='txtBorn' class='modelDialogInput' /><br />\n" +
+        "                <div class='modelInfoDialogLabel'>boobs</div>\n" +
+        "                <select id='selBoobs' class='modelDialogSelect'>\n" +
+        "                    <option value='Real'>Real</option>\n" +
+        "                    <option value='Fake'>Fake</option>\n" +
+        "                </select><br />\n" +
+        "                <div class='modelInfoDialogLabel'>figure</div><input id='txtMeasurements' class='modelDialogInput' />\n" +
+        "            </div>\n" +
+        "            <div class='floatLeft'>\n" +
+        "                <img id='modelDialogThumbNailImage' src='/Images/redballon.png' class='modelDialogImage' />\n" +
+        "            </div>\n" +
+        "        </div>\n" +
+        "        <div class='modelInfoDialogLabel'>comment</div>\n" +
+        "        <div id='modelInfoDialogCommentContainer'>\n" +
+        "            <div id='modelInfoDialogComment' class='modelInfoCommentArea'></div>\n" +
+        "        </div>\n" +
+        "        <div id='modelInfoDialogTrackBack'>\n" +
+        "            <div class='modelInfoDialogLabel'>status</div><input id='txtStatus' class='modelDialogInput' style='width: 90%;' /><br />\n" +
+        "            <div class='modelInfoDialogLabel'>trackbacks</div>\n" +
+        "            <div>\n" +
+        "                <div class='hrefLabel'>href</div><input id='txtLinkHref' class='modelDialogInput' />\n" +
+        "                <div class='hrefLabel'>label</div><input id='txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />\n" +
+        "                <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
+        "            </div>\n" +
+        "            <div id='externalLinks' class='trackbackLinksArea'></div>\n" +
+        "        </div>\n" +
+        "    </div>\n" +
+        "    <div id='modelInfoViewOnlyArea' class='displayHidden'>\n" +
+        "        <div class='viewOnlyMessage'>If you you know who this is Please 'Add Info'</div>\n" +
+        "        <div class='viewOnlyMessage clickable' onclick='IamThisModel()'>Is this you?  </div>\n" +
+        "        <a class='dialogEditButton' href='javascript:IdentifyPoser()'>Add Info</a>\n" +
+        "    </div>\n" +
+        "    <a id='modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Save</a>\n" +
+        "</div>\n");
+}
 
-
+function showReadOnlyModelInfoDialogHtml() {
+    $('#modelInforDialogContainer').html(
+        "<div id='folderCategoryDialog' class='oggleDialogWindow' title='' onmouseleave='considerClosingCategoryDialog()'>\n" +
+        "    <div id='catDlgSummerNoteTextArea'></div>\n" +
+        "    <div id='btnCatDlgEdit' class='folderCategoryDialogButton' onclick='editFolderDialog()'>Edit</div>\n" +
+        "    <div id='btnCatDlgMeta' class='folderCategoryDialogButton displayHidden' onclick='addMetaTags()'>add meta tags</div>\n" +
+        "</div>\n");
+}
 

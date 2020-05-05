@@ -73,14 +73,9 @@ function setOggleHeader(folderId, subdomain) {
             "       <div id='customMessage' class='displayHidden' ></div>\n" +
             "   </div>\n" +
             "</div>\n" +
-            "<div id='feedbackDialog' class='modalDialog' title='Feedback'>\n" +
-            "   <div><input type='radio' name='feedbackRadio' value='complement' checked='checked'> complement\n" +
-            "       <input type='radio' name='feedbackRadio' value='suggestion'> suggestion\n" +
-            "       <input type='radio' name='feedbackRadio' value='report error'> report error" +
-            "   </div>\n" +
-            "   <div id='feedbackDialogSummerNoteTextArea'></div>\n" +
-            "   <div id='btnfeedbackDialogSave' class='roundendButton' onclick='saveFeedbackDialog(" + folderId + ")'>Send</div>\n" +
-            "   <div id='btnfeedbackDialogCancel' class='roundendButton' onclick='closeFeedbackDialog()'>Cancel</div>\n" +
+            "<div id='modalContainer' class='modalVail'>\n" +
+            "   <div id='modalContent' class='modalContentStyle'></div>\n" +
+            "</div>\n" +
             "</div>";
         $('header').html(headerHtml);
     }

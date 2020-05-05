@@ -17,10 +17,39 @@ var imageHistory = [];
 
 function launchCarousel(root) {
     //$('#footerMessage').html("launching carousel");
-
-    $('#laCarousel').fadeIn();
-    $('#thisCarouselImage').prop("src", "/Images/ingranaggi3.gif");
+    loadCarouselHtml();
     loadImages(root, true, 0, initialTake);
+}
+
+function loadCarouselHtml() {
+    $('#carouselContainer').html(
+        "<div class='carouselShell'>\n" +
+        "    <div id='laCarousel' class='carouselInternals flexContainer'>\n" +
+        "        <div onclick='assuranceArrowClick('back')'><img class='assuranceArrows' src='/Images/leftArrowOpaque02.png' /></div>\n" +
+        "        <div class='carouselImageContainer'>\n" +
+        "            <div id='knownModelLabel' class='knownModelLabel' onclick='knownModelLabelClick()'></div>\n" +
+        "            <div id='categoryTitle' class='categoryTitleLabel'" +
+        "                onmouseover='slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;'\n" +
+        "                onmouseout='forgetShowingCatDialog=true;'>\n" +
+        "            </div>\n" +
+        "            <img id='thisCarouselImage' oncontextmenu='carouselContextMenuClick()' class='carouselImage' src='/Images/ingranaggi3.gif' onclick='clickViewGallery()' />\n" +
+        "            <div class='imgBottom'>\n" +
+        "                <img class='speedButton floatLeft' src='Images/speedDialSlower.png' title='slower' onclick='clickSpeed('slower')' />\n" +
+        "                <div id='pauseButton' class='pauseButton' onclick='togglePause()'>||</div>\n" +
+        "                <div id='categoryLabel' class='carouselCategoryLabel' onclick='clickViewParentGallery()'></div>\n" +
+        "                <img class='speedButton floatRight' src='Images/speedDialFaster.png' title='faster' onclick='clickSpeed('faster')' />\n" +
+        "                <img class='speedButton floatRight' src='Images/Settings-icon.png' title='carousel settings' onclick='showCarouelSettingsDialog()' />\n" +
+        "            </div>\n" +
+        "        </div>\n" +
+        "        <div onclick='assuranceArrowClick('foward')'><img class='assuranceArrows' src='/Images/rightArrowOpaque02.png' /></div>\n" +
+        "        <div id='carouselSettingsDialog' class='dashboardToggle' title='Carousel Settings'>\n" +
+        "            <div id='includeCenterfoldsCheckbox' class='galleryCheckBox'>\n" +
+        "                <input type='checkbox' onchange='addToCarousel('playboy', $(this).is(':checked'))' /> Include Centerfolds</div>\n" +
+        "            <div class='galleryCheckBox'>\n" +
+        "                <input type='checkbox' onchange='addToCarousel('archive', $(this).is(':checked'))' /> Include Archive</div>\n" +
+        "        </div>\n" +
+        "    </div>\n" +
+        "</div>\n");
 }
 
 function loadImages(rootFolder, isChecked, skip, take) {
@@ -65,7 +94,6 @@ function loadImages(rootFolder, isChecked, skip, take) {
         //alert("loops: " + k + " spliced: " + spliced + " carouselItemArray.length: " + carouselItemArray.length + " numFolders: " + numFolders + " numImages: " + numImages);
     }
     else {
-        $('#laCarousel').show();
         $('#categoryTitle').hide();
         $('#footerMessage').html("loading carousel");
         $.ajax({
@@ -89,6 +117,7 @@ function loadImages(rootFolder, isChecked, skip, take) {
                     $('#categoryTitle').show();
 
                     if (numImages === 0) {
+                        //$('#thisCarouselImage').prop("src", "/Images/ingranaggi3.gif");
                         startCarousel();
                         $('#footerMessage').html("starting carousel");
                         resizeCarousel();
@@ -340,4 +369,16 @@ function carouselContextMenuAction(ctxMenuAction) {
 function onImageNotLoaded() {
     sendEmailToYourself("onImageNotLoaded", "bk image " + carouselItemArray[imageIndex].Link + " not found");
     //alert("bk image " + carouselItemArray[imageIndex].Link + " not found");
+}
+
+function loadCarouselContextMenuHtml() {
+    $("#carouselContextMenuContainer").html(
+        "<div id='carouselContextMenu' class='ogContextMenu' onmouseleave='considerHidingContextMenu()'>\n" +
+        "    <div id='ctxModelName' onclick='carouselContextMenuAction('showDialog')'>model name</div>\n" +
+        "    <div id='ctxSeeMore' onclick='carouselContextMenuAction('seeMore')'>See More</div>\n" +
+        "    <div onclick='carouselContextMenuAction('explode')'>Explode</div>\n" +
+        "    <div onclick='carouselContextMenuAction('comment')'>Comment</div>\n" +
+        "    <div onclick='carouselContextMenuAction('tags')'>Tags</div>\n" +
+        "    <div id='ctxMove' onclick='carouselContextMenuAction('archive')'>Archive</div>\n" +
+        "</div>\n");
 }

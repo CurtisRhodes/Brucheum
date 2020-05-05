@@ -26,6 +26,7 @@
     margin: 1px;
     border: dashed 3px #988470;
 }
+
 .noLinksImageFrame {
     margin: 1px;
     padding: 1px;
@@ -41,16 +42,19 @@
     border-radius: 4px;
     margin: 4px;
 }
+
 .folderImageOutterFrame {
     background-color: #333;
     border: solid 6px var(--thumbnailBorderColor);
     border-radius: 4px;
     margin: 4px;
 }
+
 .subDirLabel {
     text-align: center;
     background-color: var(--thumbnailBorderColor);
 }
+
 .pornSubDirLabel {
     text-align: center;
     background-color: #966211;
@@ -62,6 +66,7 @@
     /*background-color: var(--thumbnailBorderColor);*/
     background-color: orangered; /*#ffcccc;*/
 }
+
 .pornFolderImageFrame {
     text-align: center;
     background-color: #ffcccc;
@@ -110,7 +115,6 @@
 }
 
 .countContainer {
-
     width: 100%;
     text-align: right;
 }
@@ -130,6 +134,7 @@
     margin-right: -5px;
     padding-left: 10px;
 }
+
 .leftColumnTrackbackArea {
     margin-top: 200px;
     margin-left: 12px;

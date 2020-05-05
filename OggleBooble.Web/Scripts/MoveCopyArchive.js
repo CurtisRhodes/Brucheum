@@ -9,27 +9,20 @@ function loadMoveCopyArchiveDialog(mode, link, sourceFolderId) {
     MoveCopyImageModel.Mode = mode;
     MoveCopyImageModel.Link = link;
     MoveCopyImageModel.SourceFolderId = sourceFolderId;
-
     showMoveCopyArchiveDialog(link, mode)
-
-
-
     var startNode = 0;
     if (mode === "Archive")
         startNode = 3822;
-
     if ($('#moveDialogDirTree').children().length < 1) {
         $('#mcaLoagingGif').hide();
         buildDirTree($('#moveDialogDirTree'), "moveCopyArchiveDialogDirTreeClick", startNode);
     }
-
     $('#moveCopyDialog').dialog({
         show: { effect: "fade" },
         hide: { effect: "blind" },
         position: { my: 'right top', at: 'right top', of: $('#middleColumn') },
         width: "650"
     });
-
     $('#moveCopyDialog').dialog("open");
     $('#moveCopyDialog').dialog('option', 'title', mode + " Image Link");
     $('#moveCopyDialog').on('dialogclose', function (event) {
@@ -105,8 +98,8 @@ function moveCopyArchiveDialogDirTreeClick(path, id, treeId) {
     //    alert("moveDialogDirTreeClick treeId: " + treeId);
 }
 
-function showMoveCopyArchiveDialog(link, mode) {
-    $('#dialogArea').html(
+function showMoveCopyArchiveDialogHtml(link, mode) {
+    $('#modalContent').html(
         "<div id='moveCopyDialog' class='oggleDialogWindow' title=''>\n" +
         "    <div class='inline'><img id='copyDialogImage' class='copyDialogImage' src='" + link + "' /></div>\n" +
         "    <div id='dirTreeResults' class='pusedoTextBox'></div>\n" +
@@ -118,68 +111,63 @@ function showMoveCopyArchiveDialog(link, mode) {
         "</div>\n");
 }
 
+function showRemoveImageDialogHtml() {
+    $('#modalContent').html(
+        "<div id='removeLinkDialog' class='oggleDialogWindow' title='Remove Image'>\n" +
+        "    <div><input type='radio' value='DUP' name='rdoRejectImageReasons' checked='checked' />  duplicate</div>\n" +
+        "    <div><input type='radio' value='BAD' name='rdoRejectImageReasons' />  bad link</div>\n" +
+        "    <div><input type='radio' value='LOW' name='rdoRejectImageReasons' />  low quality</div>\n" +
+        "    <div>\n" +
+        "        <span class='roundendButton' onclick='onRemoveImageClick('ok')'>ok</span>\n" +
+        "        <span class='roundendButton' onclick='onRemoveImageClick('cancel')'>cancel</span>\n" +
+        "    </div>\n" +
+        "</div>\n");
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function showUnknowModelDialog(link) {
-    return "<div id='modelInfoDialog' class='oggleDialogWindow' onmouseleave='considerClosingModelInfoDialog()'>\n" +
+function showUnknowModelDialogHtml() {
+    $('#modalContent').html(
+        "<div id='modelInfoDialog' class='oggleDialogWindow' onmouseleave='considerClosingModelInfoDialog()'>\n" +
         "    <div id='modelInfoViewOnlyArea' class='displayHidden'>\n" +
         "        <div class='viewOnlyMessage'>If you you know who this is Please 'Add Info'</div>\n" +
         "        <div class='viewOnlyMessage clickable' onclick='IamThisModel()'>Is this you?  </div>\n" +
         "        <a class='dialogEditButton' href='javascript:IdentifyPoser()'>Add Info</a>\n" +
         "    </div>\n" +
         "    <a id='modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Save</a>\n" +
-        "</div>\n";
+        "</div>\n");
 }
 
 function showModelInfoEditDialog() {
-    return    "    <div id='modelInfoEditArea' class='displayHidden'>\n" +
-        "        <div class='flexContainer'>\n" +
-        "            <div class='floatLeft'>\n" +
-        "                <div class='modelInfoDialogLabel'>name</div><input id='txtFolderName' class='modelDialogInput' /><br />\n" +
-        "                <div class='modelInfoDialogLabel'>from</div><input id='txtNationality' class='modelDialogInput' /><br />\n" +
-        "                <div class='modelInfoDialogLabel'>born</div><input id='txtBorn' class='modelDialogInput' /><br />\n" +
-        "                <div class='modelInfoDialogLabel'>boobs</div>\n" +
-        "                <select id='selBoobs' class='modelDialogSelect'>\n" +
-        "                    <option value='Real'>Real</option>\n" +
-        "                    <option value='Fake'>Fake</option>\n" +
-        "                </select><br />\n" +
-        "                <div class='modelInfoDialogLabel'>figure</div><input id='txtMeasurements' class='modelDialogInput' />\n" +
-        "            </div>\n" +
-        "            <div class='floatLeft'>\n" +
-        "                <img id='modelDialogThumbNailImage' src='/Images/redballon.png' class='modelDialogImage' />\n" +
-        "            </div>\n" +
+    $('#modalContent').html(
+        "<div id='modelInfoEditArea' class='displayHidden'>\n" +
+        "    <div class='flexContainer'>\n" +
+        "        <div class='floatLeft'>\n" +
+        "            <div class='modelInfoDialogLabel'>name</div><input id='txtFolderName' class='modelDialogInput' /><br />\n" +
+        "            <div class='modelInfoDialogLabel'>from</div><input id='txtNationality' class='modelDialogInput' /><br />\n" +
+        "            <div class='modelInfoDialogLabel'>born</div><input id='txtBorn' class='modelDialogInput' /><br />\n" +
+        "            <div class='modelInfoDialogLabel'>boobs</div>\n" +
+        "            <select id='selBoobs' class='modelDialogSelect'>\n" +
+        "                <option value='Real'>Real</option>\n" +
+        "                <option value='Fake'>Fake</option>\n" +
+        "            </select><br />\n" +
+        "            <div class='modelInfoDialogLabel'>figure</div><input id='txtMeasurements' class='modelDialogInput' />\n" +
         "        </div>\n" +
-        "        <div class='modelInfoDialogLabel'>comment</div>\n" +
-        "        <div id='modelInfoDialogCommentContainer'>\n" +
-        "            <div id='modelInfoDialogComment' class='modelInfoCommentArea'></div>\n" +
+        "        <div class='floatLeft'>\n" +
+        "            <img id='modelDialogThumbNailImage' src='/Images/redballon.png' class='modelDialogImage' />\n" +
         "        </div>\n" +
-        "        <div id='modelInfoDialogTrackBack'>\n" +
-        "            <div class='modelInfoDialogLabel'>status</div><input id='txtStatus' class='modelDialogInput' style='width: 90%;' /><br />\n" +
-        "            <div class='modelInfoDialogLabel'>trackbacks</div>\n" +
-        "            <div>\n" +
-        "                <div class='hrefLabel'>href</div><input id='txtLinkHref' class='modelDialogInput' />\n" +
-        "                <div class='hrefLabel'>label</div><input id='txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />\n" +
-        "                <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
-        "            </div>\n" +
-        "            <div id='externalLinks' class='trackbackLinksArea'></div>\n" +
+        "    </div>\n" +
+        "    <div class='modelInfoDialogLabel'>comment</div>\n" +
+        "    <div id='modelInfoDialogCommentContainer'>\n" +
+        "        <div id='modelInfoDialogComment' class='modelInfoCommentArea'></div>\n" +
+        "    </div>\n" +
+        "    <div id='modelInfoDialogTrackBack'>\n" +
+        "        <div class='modelInfoDialogLabel'>status</div><input id='txtStatus' class='modelDialogInput' style='width: 90%;' /><br />\n" +
+        "        <div class='modelInfoDialogLabel'>trackbacks</div>\n" +
+        "        <div>\n" +
+        "            <div class='hrefLabel'>href</div><input id='txtLinkHref' class='modelDialogInput' />\n" +
+        "            <div class='hrefLabel'>label</div><input id='txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />\n" +
+        "            <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
         "        </div>\n" +
-        "    </div>\n";
+        "        <div id='externalLinks' class='trackbackLinksArea'></div>\n" +
+        "    </div>\n" +
+        "</div>\n");
 }

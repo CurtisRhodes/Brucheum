@@ -37,7 +37,7 @@
     <script src="Scripts/MetaTagDialog.js"></script>
     <script src="Scripts/Slideshow.js"></script>
 
-    <link href="Styles/Album.css" rel="stylesheet" />
+    <link href="Styles/AlbumPage.css" rel="stylesheet" />
     <link href="Styles/loginDialog.css" rel="stylesheet" />
     <link href="Styles/Header.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet" />
@@ -71,42 +71,18 @@
             <div id="deepSlideshow" class='floatRight displayHidden' title='include all child folders' style='cursor: pointer;' onclick='launchDeepSlideShow();'>slideshow</div>
             <div id="imageContainer" class="flexWrapContainer"></div>
             <div id="fileCount" class="countContainer"></div>
+            <div id="albumPageContextMenuContainer"></div>
         </div>
         <div id="rightColumn">
-            <div id="feedbackBanner" class="fixedMessageButton displayHidden" 
-                 title="I built this website entirely by myself using only PlainOldJavaScript.\nAny comments or suggestions are greatly appreciated">feedback</div>
+            <div id="feedbackBanner" class="fixedMessageButton displayHidden"></div>
         </div>
     </div>
-    <div id="dialogArea"></div>
     <footer></footer>
-    <div>
-        <div id="thumbImageContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut(); $('#linkInfo').hide();">
-            <div id="ctxModelName" onclick="contextMenuAction('show')">model name</div>
-            <div id="ctxSeeMore" onclick="contextMenuAction('jump')">see more of her</div>
-            <div onclick="contextMenuAction('comment')">Comment</div>
-            <div onclick="contextMenuAction('explode')">explode</div>
-            <div onclick="contextMenuAction('showLinks')">Show Links</div>
-            <div id="linkInfo" class="innerContextMenuInfo">
-                <div id="linkInfoContainer"></div>
-            </div>
-            <div id="ctxArchive" class="adminLink" onclick="contextMenuAction('archive')">Archive</div>
-            <div class="adminLink" onclick="contextMenuAction('copy')">Copy Link</div>
-            <div class="adminLink" onclick="contextMenuAction('move')">Move Image</div>
-            <div class="adminLink" onclick="contextMenuAction('remove')">Remove Link</div>
-            <div class="adminLink" onclick="contextMenuAction('setF')">Set as Folder Image</div>
-            <div class="adminLink" onclick="contextMenuAction('setC')">Set as Category Image</div>
-        </div>
-        <!--<div w3-include-html="Snippets/Slideshow.html"></div>
-        <div w3-include-html="Snippets/AdminDialogs.html"></div>
-        <div w3-include-html="Snippets/Login.html"></div>
-        <div w3-include-html="Snippets/Register.html"></div>-->
-    </div>
     <script>
         //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
-
         $(document).ready(function () {
             //includeHTML();
-            resizePage();
+            //resizePage();
             params = getParams();
             if (params.folder == undefined) {
                 window.location.href = "Index.html";
@@ -134,6 +110,7 @@
                 $('#feedbackBanner').click(showFeedbackDialog).fadeIn();
             }, 300);
         });
+
     </script>
   </body>
 </html>

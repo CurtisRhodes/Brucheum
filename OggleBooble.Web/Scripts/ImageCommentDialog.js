@@ -118,3 +118,15 @@ function editImageComment() {
         }
     });
 }
+
+function showImageCommentDialogHtml() {
+    $('#modalContent').html(
+        "<div id='imageCommentDialog' class='oggleDialogWindow'>\n" +
+        "    <div id='divStatusMessage'></div>\n" +
+        "    <div class='center'><img id='commentDialogImage' class='commentDialogImage' /></div>\n" +
+        "    <div><input id='txtCommentTitle' class='roundedInput commentTitleText' tabindex='1' placeholder='Give your comment a title' /></div>\n" +
+        "    <div id='imageCommentEditor' tabindex='2'></div>\n" +
+        "    <div id='divSaveFantasy' class='roundendButton clickable commentDialogButton inline' onclick='saveComment()'>save</div>\n" +
+        "    <div id='commentInstructions' class='commentDialogInstructions inline'>log in to view comments</div>\n" +
+        "</div>\n");
+}

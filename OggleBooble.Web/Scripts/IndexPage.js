@@ -137,6 +137,15 @@ function onShowMoreGalleries() {
 }
 
 
+function showPromoMessagesHtml() {
+    $('#promoMessagesContainer').html(
+        "<div id='promoContainer' class='ogglePromoContainer'>\n" +
+        "    <div id='promoContainerTitle' class='ogglePromoTitle'></div>\n" +
+        "    <div id='promoContainerText' class='ogglePromoText'></div>\n" +
+        "    <div onclick='killPromoMessages()' class='tinyDots' onmouseover='$('#killPromoPrompt').show()' onmouseout='$('#killPromoPrompt').hide()'>...</div>\n" +
+        "    <div id='killPromoPrompt' class='ogglePromoKillMessage'>had enough promo messages?</div>\n" +
+        "</div>\n");
+}
 
 
 

@@ -26,7 +26,6 @@ function GetAllAlbumPageInfo(folderId) {
             $('#imagePageLoadingGif').show();
             $.ajax({
                 type: "GET",
-                async: true,
                 url: settingsArray.ApiServer + "api/AlbumPage/GetAllAlbumPageInfo?visitorId=" + aapiVisitorId + "&folderId=" + folderId,
                 success: function (imageLinksModel) {
                     $('#imagePageLoadingGif').hide();
@@ -151,108 +150,6 @@ function directToStaticPage(folderId) {
     });
 }
 
-function getBreadCrumbs(folderId, badgesText) {
-    // a woman commited suicide when pictures of her "came out"
-    // title: I do not remember having been Invited)
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "/api/BreadCrumbs/Get?folderId=" + folderId,
-        success: function (breadCrumbModel) {
-            if (breadCrumbModel.Success === "ok") {
-
-                setOggleHeader(folderId, breadCrumbModel.RootFolder);
-
-                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + folderId + ",33,\"" + currentFolderRoot + "\")'>home  &#187</a>");
-                for (i = breadCrumbModel.BreadCrumbs.length - 1; i >= 0; i--) {
-                    if (breadCrumbModel.BreadCrumbs[i] === null) {
-                        breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
-                    }
-                    else {
-                        if (breadCrumbModel.BreadCrumbs[i].IsInitialFolder) {
-                            $('#breadcrumbContainer').append(
-                                "<a class='inactiveBreadCrumb' " +
-                                Number(breadCrumbModel.BreadCrumbs.length - i) + ",\"" +
-                                breadCrumbModel.FolderName + "\",\"" +
-                                breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" +
-                                breadCrumbModel.BreadCrumbs[i].ParentId + "\",\"" +
-                                breadCrumbModel.RootFolder + "\"); forgetHomeFolderInfoDialog=false;' onmouseout='forgetHomeFolderInfoDialog=true;' " +
-                                "onclick='showEitherModelorFolderInfoDialog(" + Number(breadCrumbModel.BreadCrumbs.length - i) + ",\"" +
-                                breadCrumbModel.FolderName + "\",\"" +
-                                breadCrumbModel.BreadCrumbs[i].FolderId + "\",\"" +
-                                breadCrumbModel.BreadCrumbs[i].ParentId + "\",\"" +
-                                breadCrumbModel.RootFolder + "\")' >" +
-                                breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") +
-                                "</a>");
-                        }
-                        else {
-                            $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
-                                //	HBX	Home Breadcrumb Clicked
-                                "href='javascript:rtpe(\"BCC\"," + folderId + ",44," + breadCrumbModel.BreadCrumbs[i].FolderId + ")'>" +
-                                breadCrumbModel.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
-                        }
-                    }
-                }
-                currentAlbumJSfolderName = breadCrumbModel.FolderName;
-                document.title = currentAlbumJSfolderName + " : OggleBooble";
-
-                if (!isNullorUndefined(badgesText)) {
-                    if (badgesText.indexOf("Playmate Of The Year") > -1) {
-                        $('#pmoyLink').show();
-                    }
-                    if (badgesText.indexOf("biggest breasted centerfolds") > -1) {
-                        $('#breastfulPlaymatesLink').show();
-                    }
-                    if (badgesText.indexOf("black centerfolds") > -1) {
-                        $('#blackCenterfoldsLink').show();
-                    }
-                    if (badgesText.indexOf("Hef likes twins") > -1) {
-                        $('#twinsLink').show();
-                    }
-                }
-                logPageHit(folderId, "Album.html");  // 
-
-            }
-            else {
-                if (breadCrumbModel.Success.indexOf("Option not supported") > -1) {
-                    if (!checkFor404(breadCrumbModel.Success, "getBreadCrumbs")) {
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "4BB",
-                            Severity: 3,
-                            ErrorMessage: breadCrumbModel.Success,
-                            CalledFrom: "Album.js getBreadCrumbs"
-                        });
-                    }
-                }
-                else {
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
-                        Severity: 3,
-                        ErrorMessage: breadCrumbModel.Success,
-                        CalledFrom: "Album.js getBreadCrumbs"
-                    });
-                    //sendEmailToYourself("jQuery fail in Album.js getBreadCrumbs", breadCrumbModel.Success);
-                }
-            }
-        },
-        error: function (jqXHR) {
-            $('#imagePageLoadingGif').hide();
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "getBreadCrumbs")) {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 3,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "Album.js getBreadCrumbs"
-                });
-                //sendEmailToYourself("XHR ERROR IN ALBUM.JS getBreadCrumbs", "/api/BreadCrumbs/Get?folderId=" + getBreadCrumbsFolderId + " Message: " + errorMessage);
-            }
-        }
-    });
-}
-
 function getDeepChildCount(subDir) {
     deepChildCount += subDir.ChildFiles;
     $.each(subDir.SubDirs, function (idx, obj) {
@@ -344,16 +241,12 @@ function subFolderPreClick(isStepChild, subFolderPreClickFolderId) {
 }
 
 function resizeImageContainer() {
-
     //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
-
     resizePage();
     $('#imageContainer').width($('#middleColumn').width());
     $('#imageContainer').css("max-height", $('#middleColumn').height() - 50);
-    if (viewerShowing) {
+    if (viewerShowing) 
         resizeViewer();
-    }
-
     $('#feedbackBanner').css("top", $('#middleColumn').height() - 150);
 }
 
@@ -367,33 +260,6 @@ function startSlideShow(imageIndex) {
         currentAlbumJSfolderName = staticPageFolderName;
         albumFolderId = staticPageFolderId;
     }
-    //if (albumFolderId == 0) {    }
-    startSlideShow2(albumFolderId, imageIndex, currentAlbumJSfolderName);
-}
-
-function startSlideShow2(folderId2, imageIndex) {
-    if (albumFolderId === 0) {
-        if (folderId2 !== 0) {
-            albumFolderId = folderId2;
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "LME",
-                Severity: 6,
-                ErrorMessage: "Lame: albumFolderId == 0 but folderId2 = " + folderId2,
-                CalledFrom: "Album.js / startSlideshow"
-            });
-        }
-        else {
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "BAD",
-                Severity: 1,
-                ErrorMessage: "albumFolderId == 0",
-                CalledFrom: "Album.js / startSlideshow"
-            });
-        }
-    }
-
     // get image array from DOM
     var imageArray = new Array();
     $('#imageContainer').children().each(function () {
@@ -402,26 +268,8 @@ function startSlideShow2(folderId2, imageIndex) {
             Link: $(this).find("img").attr("src")
         });
     });
-    if (typeof staticPageFolderName === 'string') {
-        isStaticPage = "true";
-        currentAlbumJSfolderName = staticPageFolderName;
-        albumFolderId = staticPageFolderId;
-    }
-
-    var visitorId = getCookieValue("VisitorId");
-    if (isNullorUndefined(visitorId)) {
-        //addVisitor(albumFolderId, "Album.js/startSlideshow");
-        //logError({
-        //    VisitorId: getCookieValue("VisitorId"),
-        //    ActivityCode: "BAD",
-        //    Severity: 1,
-        //    ErrorMessage: "isNullorUndefined(visitorId)",
-        //    CalledFrom: "Album.js startSlideshow"
-        //});
-    }
 
     launchViewer(albumFolderId, imageIndex, false);
-
     resizeViewer();
     viewerShowing = true;
 }
@@ -778,23 +626,20 @@ function contextMenuAction(action) {
     }
 }
 
-function slowlyHomeFolderInfoDialog(index, folderName, slowlyHomeFolderInfoDialogFolderId, parentId, rootFolder) {
+function slowlyShowFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
     forgetHomeFolderInfoDialog = false;
     setTimeout(function () {
         if (forgetHomeFolderInfoDialog === false) {
             alert("disable this");
             if (typeof pause === 'function')
                 pause();
-            showEitherModelorFolderInfoDialog(index, folderName, slowlyHomeFolderInfoDialogFolderId, parentId, rootFolder);
+            showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId, rootFolder);
         }
     }, 1100);
 }
 
 function showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
-
-    //alert("showEitherModelorFolderInfoDialog(index: " + index + ", folderName: " + folderName + ", folderId: " + folderId + ", parentId: " + parentId + ", rootFolder: " + rootFolder + ")");
     var cybergirls = "3796";
-
     if (rootFolder === "playboy" && index > 4 || parentId === cybergirls || rootFolder === "archive" && index > 2) {
         rtpe("CMX", folderId, folderName, folderId);
     }
@@ -802,3 +647,23 @@ function showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId
         showCategoryDialog(folderId);
     }
 }
+
+function showAlbumPageContextMenuHtml() {
+    "<div id='thumbImageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut(); $('#linkInfo').hide();'>\n" +
+        "    <div id='ctxModelName' onclick='contextMenuAction('show')'>model name</div>\n" +
+        "    <div id='ctxSeeMore' onclick='contextMenuAction('jump')'>see more of her</div>\n" +
+        "    <div onclick='contextMenuAction('comment')'>Comment</div>\n" +
+        "    <div onclick='contextMenuAction('explode')'>explode</div>\n" +
+        "    <div onclick='contextMenuAction('showLinks')'>Show Links</div>\n" +
+        "    <div id='linkInfo' class='innerContextMenuInfo'>\n" +
+        "        <div id='linkInfoContainer'></div>\n" +
+        "    </div>\n" +
+        "    <div id='ctxArchive' class='adminLink' onclick='contextMenuAction('archive')'>Archive</div>\n" +
+        "    <div class='adminLink' onclick='contextMenuAction('copy')'>Copy Link</div>\n" +
+        "    <div class='adminLink' onclick='contextMenuAction('move')'>Move Image</div>\n" +
+        "    <div class='adminLink' onclick='contextMenuAction('remove')'>Remove Link</div>\n" +
+        "    <div class='adminLink' onclick='contextMenuAction('setF')'>Set as Folder Image</div>\n" +
+        "    <div class='adminLink' onclick='contextMenuAction('setC')'>Set as Category Image</div>\n" +
+        "</div>\n";
+}
+

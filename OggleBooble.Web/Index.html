@@ -24,24 +24,14 @@
     <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
     <script src="Scripts/Permissions.js"></script>
-    <script src="Scripts/Carousel.js"></script>
-    <script src="Scripts/FeedbackDialog.js"></script>
-    <script src="Scripts/DirTree.js"></script>
-    <script src="Scripts/FolderCategoryDialog.js"></script>
-    <script src="Scripts/ModelInfoDialog.js"></script>
-    <script src="Scripts/ImageCommentDialog.js"></script>
-    <script src="Scripts/MoveCopyArchive.js"></script>
-    <script src="Scripts/MetaTagDialog.js"></script>
     <!--<link href="Styles/bootstrap.css" rel="stylesheet" />-->
     <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">-->
     <link href="Styles/jqueryUI.css" rel="stylesheet">
     <link href="Styles/Common.css" rel="stylesheet">
     <link href="Styles/IndexPage.css" rel="stylesheet">
-    <link href="Styles/Album.css" rel="stylesheet" />
     <link href="Styles/loginDialog.css" rel="stylesheet">
     <link href="Styles/Header.css" rel="stylesheet">
     <link href="Styles/Carousel.css" rel="stylesheet">
-    <link href="Styles/ImagePage.css" rel="stylesheet">
     <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet">
     <link href="Styles/ModelInfoDialog.css" rel="stylesheet">
     <link href="Styles/ImageCommentDialog.css" rel="stylesheet">
@@ -84,47 +74,16 @@
         <div id="middleColumn">
             <div id="divStatusMessage"></div>
             <div id="dots"></div>
-            <div>
-                <div id="carouselOutterContainer" style="display:block;">
+
+            <div class="display: block">
+                <div id="carouselOutterContainer">
                     <div class="indexSectionLabel floatingContainerElement">random galleries</div>
-                    <div class="carouselContainer">
-                        <div class="carouselShell">
-                            <div id="laCarousel" class="carouselInternals flexContainer">
-                                <div onclick="assuranceArrowClick('back')"><img class="assuranceArrows" src="/Images/leftArrowOpaque02.png" /></div>
-                                <div class="carouselImageContainer">
-
-                                    <div id="knownModelLabel" class="knownModelLabel" onclick="knownModelLabelClick()"></div>
-
-                                    <div id="categoryTitle" class="categoryTitleLabel"
-                                         onmouseover="slowlyShowFolderCategoryDialog(carouselItemArray[imageIndex].FolderId); forgetShowingCatDialog=false;"
-                                         onmouseout="forgetShowingCatDialog=true;">
-                                    </div>
-                                    <img id="thisCarouselImage" oncontextmenu="carouselContextMenuClick()" class="carouselImage" src="/Images/redballon.png" onclick="clickViewGallery()" />
-
-                                    <div class="imgBottom">
-                                        <img class="speedButton floatLeft" src="Images/speedDialSlower.png" title="slower" onclick="clickSpeed('slower')" />
-                                        <div id="pauseButton" class='pauseButton' onclick="togglePause()">||</div>
-                                        <div id='categoryLabel' class='carouselCategoryLabel' onclick="clickViewParentGallery()"></div>
-                                        <img class="speedButton floatRight" src="Images/speedDialFaster.png" title="faster" onclick="clickSpeed('faster')" />
-                                        <img class="speedButton floatRight" src="Images/Settings-icon.png" title="carousel settings" onclick="showCarouelSettingsDialog()" />
-                                    </div>
-                                </div>
-                                <div onclick="assuranceArrowClick('foward')"><img class="assuranceArrows" src="/Images/rightArrowOpaque02.png" /></div>
-
-                                <div id="carouselSettingsDialog" class="dashboardToggle" title="Carousel Settings">
-                                    <div id="includeCenterfoldsCheckbox" class="galleryCheckBox">
-                                    <input type="checkbox" onchange="addToCarousel('playboy', $(this).is(':checked'))" /> Include Centerfolds</div>
-                                    <div class="galleryCheckBox">
-                                    <input type="checkbox" onchange="addToCarousel('archive', $(this).is(':checked'))" /> Include Archive</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div id="carouselContainer"></div>
                 </div>
                 <div id="latestGalleriesContainer" class="floatBelow displayHidden">
                     <div class="indexSectionLabel">latest updates</div>
                     <div id="updatedGalleriesSection" class="updatedGalleriesSection"></div>
-                    <div class="clickable" onclick="onShowMoreGalleries()" >show more updated galleries</div>
+                    <div class="clickable" onclick="onShowMoreGalleries()">show more updated galleries</div>
                 </div>
             </div>
         </div>
@@ -141,22 +100,10 @@
         </div>
     </div>
 
-    <div id="carouselContextMenu" class="ogContextMenu" onmouseleave="considerHidingContextMenu()">
-        <div id="ctxModelName" onclick="carouselContextMenuAction('showDialog')">model name</div>
-        <div id="ctxSeeMore" onclick="carouselContextMenuAction('seeMore')">See More</div>
-        <div onclick="carouselContextMenuAction('explode')">Explode</div>
-        <div onclick="carouselContextMenuAction('comment')">Comment</div>
-        <div onclick="carouselContextMenuAction('tags')">Tags</div>
-        <div id="ctxMove" onclick="carouselContextMenuAction('archive')">Archive</div>
-    </div>
+    <div id="carouselContextMenuContainer"></div>
 
     <div id="dirTreeContainer" class="treeContainer"></div>
-    <div id="promoContainer" class="ogglePromoContainer">
-        <div id="promoContainerTitle" class="ogglePromoTitle"></div>
-        <div id="promoContainerText" class="ogglePromoText"></div>
-        <div onclick="killPromoMessages()" class="tinyDots" onmouseover="$('#killPromoPrompt').show()" onmouseout="$('#killPromoPrompt').hide()">...</div>
-        <div id="killPromoPrompt" class="ogglePromoKillMessage">had enough promo messages?</div>
-    </div>
+
     <div w3-include-html="Snippets/AdminDialogs.html"></div>
     <div w3-include-html="Snippets/Login.html"></div>
     <div w3-include-html="Snippets/Register.html"></div>
@@ -171,10 +118,8 @@
         var updatedGalleriesCount = 25;
 
         $(document).ready(function () {
-            includeHTML();
-            $('#laCarousel').hide();
-            $('#carouselInclude').hide();
-            $('.indexSectionLabel').hide();
+            //includeHTML();
+            //$('.indexSectionLabel').hide();
             //$('#footerLastBuild').html("last build: " + lastBuild + "3");
             $('#footerMessage').html("loading settings");
             params = getParams();
@@ -274,5 +219,13 @@
             showCustomMessage(35);
         }
     </script>
+    <script src="Scripts/Carousel.js"></script>
+    <script src="Scripts/FeedbackDialog.js"></script>
+    <script src="Scripts/DirTree.js"></script>
+    <script src="Scripts/FolderCategoryDialog.js"></script>
+    <script src="Scripts/ModelInfoDialog.js"></script>
+    <script src="Scripts/ImageCommentDialog.js"></script>
+    <script src="Scripts/MoveCopyArchive.js"></script>
+    <script src="Scripts/MetaTagDialog.js"></script>
 </body>
 </html>

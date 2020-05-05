@@ -23,25 +23,8 @@
     position: absolute;
 }
 
-.carouselContainer {
-    padding: 2px;
-}
-
-.carouselShell {
-    position: absolute;
-    left: 50%;
-}
-
-.carouselInternals {
-    position: relative;
-    left: -50%;
-    min-height: 200px;
-}
-
-.carouselImage {
-    height: 500px;
-    width: 800px;
-    cursor: pointer;
+.indexSectionLabel {
+    display: none;
 }
 
 .newsContentBoxLabel {
@@ -67,6 +50,7 @@
 
 .floatBelow {
     margin-top: 559px;
+
 }
 
 .slideshowCheckboxes {

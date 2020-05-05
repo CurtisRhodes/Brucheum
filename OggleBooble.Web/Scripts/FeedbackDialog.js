@@ -1,5 +1,4 @@
-﻿
-$('#feedbackBanner').click(showFeedbackDialog).fadeIn();
+﻿$('#feedbackBanner').click(showFeedbackDialog).fadeIn();
 
 function showFeedbackDialog() {
     $('#feedbackDialog').dialog({
@@ -79,4 +78,18 @@ function saveFeedbackDialog(pageId) {
 }
 function closeFeedbackDialog() {
     $("#feedbackDialog").dialog('close');
+}
+function showFeedbackDialogHtml() {
+    $('#modalContent').html(
+        "<div id='feedbackDialog' class='modalDialog' title='Feedback'>\n" +
+        "    <div>\n" +
+        "       <input type='radio' name='feedbackRadio' value='complement' checked='checked'> complement\n" +
+        "       <input type='radio' name='feedbackRadio' value='suggestion'> suggestion\n" +
+        "       <input type='radio' name='feedbackRadio' value='report error'> report error\n" +
+        "   </div>\n" +
+        "   <div>email<input id='txtFeedbackEmail' /></div>\n" +
+        "   <div id='feedbackDialogSummerNoteTextArea'></div>\n" +
+        "   <div id='btnfeedbackDialogSave' class='roundendButton' onclick='saveFeedbackDialog(" + folderId + ")'>Send</div>\n" +
+        "   <div id='btnfeedbackDialogCancel' class='roundendButton' onclick='closeFeedbackDialog()'>Cancel</div>\n" +
+        "</div>\n");
 }

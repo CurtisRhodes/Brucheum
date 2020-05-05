@@ -566,6 +566,58 @@ function slideshowCtxMnuShowLinks(linkId) {
     });
 }
 
+function showSlideshowHtml() {
+    $('#slideShowContainer').html(
+        "<div id='divStaticImageViewer'>\n" +
+        "    <div id='imageViewerDialog' class='fullScreenViewer'>\n" +
+        "        <div id='viewerButtonsRow' class='imageViewerHeaderRow'>\n" +
+        "            <div class='viewerButtonsRowSection'>\n" +
+        "                <img id='imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/Images/comment.png' />\n" +
+        "            </div>\n" +
+        "            <span id='imageViewerHeaderTitle' class='imageViewerTitle'></span>\n" +
+        "            <div class='viewerButtonsRowSection'>\n" +
+        "                <div class='floatRight' style='margin-left: 44px;' onclick='closeViewer('click');'><img title='you may use the {esc} key' src='/Images/close.png' /></div>\n" +
+        "                <div class='floatRight' onclick='runSlideShow('faster');'><img id='fasterSlideshow' title='faster' src='/Images/speedDialFaster.png' /></div>\n" +
+        "                <div id='txtStartSlideShow' class='txtSlideShow floatRight' onclick='runSlideShow('start');'>start slideshow</div>\n" +
+        "                <div class='floatRight' onclick='runSlideShow('slower');'><img id='slowerSlideShow' title='slower' src='/Images/speedDialSlower.png' /></div>\n" +
+        "                <div class='floatRight' onclick='blowupImage()'><img class='popoutBox' title='open image in a new window' src='/Images/expand02.png' /></div>\n" +
+        "            </div>\n" +
+        "        </div>\n" +
+        "        <div id='leftClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slideClick('prev');'></div>\n" +
+        "        <div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slideClick('next');'></div>\n" +
+        "        <div class='centeredDivShell'>\n" +
+        "            <div class='centeredDivInner'>\n" +
+        "                <div id='viewerImageContainer' class='flexContainer'>\n" +
+        "                    <div class='slideshowNavgArrows'><img src='/Images/leftArrowOpaque02.png' /></div>\n" +
+        "                    <img id='viewerImage' class='slideshowImage' />\n" +
+        "                    <div class='slideshowNavgArrows'><img src='/Images/rightArrowOpaque02.png' /></div>\n" +
+        "                </div>\n" +
+        "            </div>\n" +
+        "        </div>\n" +
+        "    </div>\n" +
+        "    <div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n" +
+        "</div>\n");
+}
+function showSlideshowContextMenuHtml() {
+    $('#slideshowContextMenuContainer').html(
+        "<div id='slideshowContextMenu' class='ogContextMenu' onmouseleave='closeSlideshowContextMenu()'>\n" +
+        "    <div id='slideshowContextMenuModelName' onclick='slideshowCtxMnuAction('showModelInfo')'>model name</div>\n" +
+        "    <div id='slideshowContextMenuSeeMore' onclick='slideshowCtxMnuAction('see more of her')'>see more of her</div>\n" +
+        "    <div onclick='slideshowCtxMnuAction('showImageCommentDialog')'>Comment</div>\n" +
+        "    <div onclick='slideshowCtxMnuAction('explode')'>explode</div>\n" +
+        "    <div onclick='slideshowCtxMnuAction('showLinks')'>Show Links</div>\n" +
+        "    <div id='slideshowIinkInfo' class='innerContextMenuInfo'>\n" +
+        "        <div id='slideshowLinkInfoContainer'></div>\n" +
+        "    </div>\n" +
+        "    <div id='slideshowContextMenuArchive' class='adminLink' onclick='slideshowCtxMnuAction('Archive')'>Archive</div>\n" +
+        "    <div class='adminLink' onclick='slideshowCtxMnuAction('Copy')'>Copy Link</div>\n" +
+        "    <div class='adminLink' onclick='slideshowCtxMnuAction('Move')'>Move Image</div>\n" +
+        "    <div class='adminLink' onclick='slideshowCtxMnuAction('remove')'>Remove Link</div>\n" +
+        "    <div class='adminLink' onclick='slideshowCtxMnuAction('setF')'>Set as Folder Image</div>\n" +
+        "    <div class='adminLink' onclick='slideshowCtxMnuAction('setC')'>Set as Category Image</div>\n" +
+        "</div>\n");
+}
+
 $(document).keydown(function (event) {
     if (slideShowButtonsActive) {
         switch (event.which) {
