@@ -92,14 +92,18 @@ function resizePage() {
 
     // set page width
     var winW = $(window).width();
-    var lcW = $('#leftColumn').width();
-    var rcW = $('#rightColumn').width();
+    var lcW = $('.leftColumn').width();
+    var rcW = $('.rightColumn').width();
     $('.middleColumn').width(winW - lcW - rcW);
 
     //set page height
     var winH = $(window).height();
     var headerH = $('header').height();
-    $('#middleColumn').height(winH - headerH);
+    $('.middleColumn').height(winH - headerH);
+    
+    $('#bottomSection').html("page height: " + winH + " page width: " + winW);
+    //$('#footerMessage').html("page height: " + winH + " page width: " + winW);
+
 }
 
 function letemPorn(response, pornType, pageId) {

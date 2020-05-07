@@ -1,4 +1,12 @@
-﻿.classicColors {
+﻿header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    z-index: 31;
+}
+
+.classicColors {
     background-color: var(--oggleHeaderBackgroundColor);
     border-top: var(--oggleHeaderBoarderTop);
     border-bottom: var(--oggleHeaderBoarderBottom);
@@ -8,14 +16,6 @@
     background-color: #cab37e;
     border-top: #40767d 3px solid;
     border-bottom: #decd6f 11px solid;
-}
-
-header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    display: flex;
-    z-index: 31;
 }
 
 .boobsHeader {

@@ -51,18 +51,18 @@ body {
     display: flex;
 }
 
-    .threeColumnLayout #leftColumn {
+    .threeColumnLayout .leftColumn {
         float: left;
         /*border-right: solid 5px var(--ogglgeHeaderBarColor);*/
         min-width: 10%;
     }
 
-    .threeColumnLayout #middleColumn {
+    .threeColumnLayout .middleColumn {
         float: left;
         width: 100%;
     }
 
-    .threeColumnLayout #rightColumn {
+    .threeColumnLayout .rightColumn {
         float: right;
         min-width: 7%;
     }

@@ -5,227 +5,64 @@
     <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=.07">
-    <meta http-equiv="cache-control" content="max-age=0">
-    <meta http-equiv="cache-control" content="no-cache">
-    <meta http-equiv="expires" content="-1">
-    <meta http-equiv="expires" content="Tue, 01 Jan 1980 11:00:00 GMT">
-    <meta http-equiv="pragma" content="no-cache">
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
-    <!--<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />-->
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>-->
-    <script src="Scripts/Common.js"></script>
-    <script src="Scripts/HitCounter.js"></script>
-    <script src="Scripts/EventControl.js"></script>
-    <script src="Scripts/IndexPage.js"></script>
-    <script src="Scripts/Cookies.js"></script>
-    <script src="Scripts/Login.js"></script>
-    <script src="Scripts/OggleHeader.js"></script>
-    <script src="Scripts/OggleSearch.js"></script>
-    <script src="Scripts/OggleFooter.js"></script>
-    <script src="Scripts/Permissions.js"></script>
-    <!--<link href="Styles/bootstrap.css" rel="stylesheet" />-->
-    <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">-->
-    <link href="Styles/jqueryUI.css" rel="stylesheet">
-    <link href="Styles/Common.css" rel="stylesheet">
-    <link href="Styles/IndexPage.css" rel="stylesheet">
-    <link href="Styles/loginDialog.css" rel="stylesheet">
-    <link href="Styles/Header.css" rel="stylesheet">
-    <link href="Styles/Carousel.css" rel="stylesheet">
-    <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet">
-    <link href="Styles/ModelInfoDialog.css" rel="stylesheet">
-    <link href="Styles/ImageCommentDialog.css" rel="stylesheet">
-    <link href="Styles/MetaTagDialog.css" rel="stylesheet">
+    <script src="http://localhost:60457/Scripts/Common.js"></script>
+    <script src="http://localhost:60457/Scripts/OggleHeader.js"></script>
+    <script src="http://localhost:60457/Scripts/OggleFooter.js"></script>
+    <link href="http://localhost:60457/Styles/Common.css" rel="stylesheet" />
+    <link href="http://localhost:60457/Styles/Header.css" rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-    <!--<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({
-            google_ad_client: "ca-pub-1620126417602146",
-            enable_page_level_ads: true
-        });
-    </script>-->
+        section {
+            margin: 11px;
+            min-height: 40%;
+            border: solid 2px #111;
+            padding: 14px;
+            background-color: #d5d1ba;
+        }
+
+
+    </style>
 </head>
-<body>
+  <body>
     <header></header>
     <div class="threeColumnLayout">
-        <div id="leftColumn">
-            <div id="boobsLeftColumnList" class="leftColumnList">
-                <!--<div onclick="rtpe('LMC',3908,'boobTransitions');">Transitions</div>-->
-                <!--<div onclick="rtpe('LMC',3908,'boobsRanker');">Boobs Ranker</div>-->
-                <!--<div onclick="rtpe('LMC',3908,'explainBoobs');">Let me Explain</div>-->
-                <!--<div onclick="rtpe('LMC',3908,'dirTreeBoobs');">Category List</div>-->
-                <!--<div onclick="rtpe('LMC',3908,'centerfolds');">Playboy Centerfolds</div>-->
-                <div id="clkVideo" class="displayHidden" onclick="rtpe('LMC',3908,'video');">Video</div>
-                <!--<div onclick="rtpe('LMC',3908,'porn');">Nasty Porn</div>-->
-                <!--<div onclick="rtpe('LMC',0,'blog');">Blog</div>-->
-                <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
-            </div>
-            <div id="pornLeftColumnList" class="leftColumnList">
-                <div onclick="rtpe('LMC',3909,'back');">back to boobs</div><br />
-                <!--<div onclick="rtpe('LMC',3909,'pornTransitions');">Transition down</div>-->
-                <!--<div onclick="rtpe('LMC',3909,'pornRanker');">Nastieness Ranker</div>-->
-                <!--<div onclick="rtpe('LMC',3909,'explainPorn');">Let me Explain</div>-->
-                <!--<div onclick="rtpe('LMC',3909,'dirTreePorn');">Category List</div>-->
-                <!--<div onclick="rtpe('LMC',3909,'back');">back to boobs</div>-->
-                <!--<div onclick="rtpe('LMC',3909,'blog');">Blog</div>-->
-                <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
-            </div>
-        </div>
-        <div id="middleColumn">
-            <div id="divStatusMessage"></div>
-            <div id="dots"></div>
+        <div class="leftColumn"></div>
+        <div class="middleColumn">
 
-            <div class="display: block">
-                <div id="carouselOutterContainer">
-                    <div class="indexSectionLabel floatingContainerElement">random galleries</div>
-                    <div id="carouselContainer"></div>
-                </div>
-                <div id="latestGalleriesContainer" class="floatBelow displayHidden">
-                    <div class="indexSectionLabel">latest updates</div>
-                    <div id="updatedGalleriesSection" class="updatedGalleriesSection"></div>
-                    <div class="clickable" onclick="onShowMoreGalleries()">show more updated galleries</div>
-                </div>
-            </div>
+            <section class="topSection">
+                top section
+            </section>
+            <section class="bottomSection" id="bottomSection">
+                bottom section
+            </section>
+
         </div>
-        <div id="rightColumn"></div>
+        <div class="rightColumn"></div>
     </div>
     <footer></footer>
-
-    <div id="launchingService" class="floatLeft">
-        <div class="centeredDivShell randomImageContainer">
-            <div class="centeredDivInner">
-                <div id="connectingMsg" class="displayHidden"><img src="https://media.giphy.com/media/ZFiRiRg60SjhipvdCz/giphy.gif" /></div>
-                <!--<div id="connectingMsg"><img src="https://media.giphy.com/media/ls5bix63j3H53E1Ebp/giphy.gif" /></div>-->
-            </div>
-        </div>
-    </div>
-
-    <div id="carouselContextMenuContainer"></div>
-
-    <div id="dirTreeContainer" class="treeContainer"></div>
-
-    <div w3-include-html="Snippets/AdminDialogs.html"></div>
-    <div w3-include-html="Snippets/Login.html"></div>
-    <div w3-include-html="Snippets/Register.html"></div>
-
+    
     <script>
-        var promoIdx = 0;
-        var promoMessagesArray = new Array();
-        var promoMessageRotator;
-        var promoMessageRotationSpeed = 15000;
-        var subdomain;
         var homePageId = 3908;
-        var updatedGalleriesCount = 25;
-
+        var subdomain = "boobs";
         $(document).ready(function () {
-            //includeHTML();
-            //$('.indexSectionLabel').hide();
-            //$('#footerLastBuild').html("last build: " + lastBuild + "3");
-            $('#footerMessage').html("loading settings");
-            params = getParams();
-            if (params.subdomain === undefined)
-                subdomain = "boobs";
-            else
-                subdomain = params.subdomain;
-            if (subdomain == "porn")
-                homePageId = 3909;
-
             setOggleHeader(homePageId, subdomain);
-            loadSettings();
-            var dots = ""
-            var waiter = setInterval(function () {
-                if (settingsArray.ApiServer === undefined) {
-                    dots += "~ ";
-                    $('#dots').html(dots);
-                    //console.log("loadSettings: " + settingsArray.ApiServer);
-                }
-                else {
-                    clearInterval(waiter);
+            setOggleFooter(homePageId, subdomain);
 
-
-                    //  LOCAL HOST because cookies don't work in IIS
-                    if (document.domain === 'localhost') {
-                        setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-                        setCookieValue("UserName", "developer");
-                        var userPermissons = [];
-                        //userPermissons.push("Oggle admin");
-                        userPermissons.push("access dashboard");
-                        userPermissons.push("view dynamic");
-                        window.localStorage["userPermissons"] = userPermissons;
-                        //window.localStorage["IsLoggedIn"] = "true";
-                    }
-                    else
-                        loadRolesIntoLocalStorage("index", "any");
-
-                    checkFor404("start", "Index");
-                    var verifyConnectionWaiter = setInterval(function () {
-                        if (connectionVerified) {
-                            clearInterval(verifyConnectionWaiter);
-                            $('#dots').html('');
-                            if (subdomain == "porn") {
-                                $('#pornLeftColumnList').show();
-                                $('#includeCenterfoldsCheckbox').hide();
-                            }
-                            else {
-                                $('#boobsLeftColumnList').show();
-                                //launchPromoMessages();
-                            }
-
-                            launchCarousel(subdomain);
-
-                            loadUpdatedGalleriesBoxes(updatedGalleriesCount);
-
-
-                            var visitorId = getCookieValue("VisitorId");
-                            if (isNullorUndefined(visitorId)) {
-                                alert("Calling getIpInfo");
-                                getIpInfo(homePageId);
-                            }
-                            else {
-                                console.log("visitorId found: " + visitorId);
-                                setLoginHeaderSection(visitorId);
-                                logPageHit(homePageId);
-                            }
-
-
-
-
-                            $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
-
-                        }
-                        else {
-                            dots += ". ";
-                            $('#dots').html(dots);
-                        }
-                    }, 600);
-                }
-            }, 300);
-            window.addEventListener("resize", resizeIndexPage);
             resizeIndexPage();
-
-            $('#carouselSettingsDialog').dialog({
-                autoOpen: false,
-                show: { effect: "fade" },
-                hide: { effect: "blind" },
-                width: "400"
-            });
+            window.addEventListener("resize", resizeIndexPage);
         });
-        function goToPorn() {
 
-            //if(hasPorn)
-            //if (document.domain === 'localhost') alert("goToPorn()");
-
-            // if user porn status not already set
-            showCustomMessage(35);
+        function resizeIndexPage() {
+            resizePage();
+            //$('#middleColumn').height($('#middleColumn').height() + $('#updatedGalleriesSection').height());
+            //$('.assuranceArrows').height($('.carouselImageContainer').height());
         }
     </script>
-    <script src="Scripts/Carousel.js"></script>
-    <script src="Scripts/FeedbackDialog.js"></script>
-    <script src="Scripts/DirTree.js"></script>
-    <script src="Scripts/FolderCategoryDialog.js"></script>
-    <script src="Scripts/ModelInfoDialog.js"></script>
-    <script src="Scripts/ImageCommentDialog.js"></script>
-    <script src="Scripts/MoveCopyArchive.js"></script>
-    <script src="Scripts/MetaTagDialog.js"></script>
-</body>
+
+  </body>
 </html>
