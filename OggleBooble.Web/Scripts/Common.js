@@ -88,10 +88,16 @@ $.date = function (dateObject) {
 };
 
 function resizePage() {
-    //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
+    //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, 
+    // or using “transform” along with “transform - origin: 0 0”.album.html
 
     // set page width
     var winW = $(window).width();
+
+    if (winW < 1500) {
+        $('section').css("background-color", "red");
+    }
+
     var lcW = $('.leftColumn').width();
     var rcW = $('.rightColumn').width();
     $('.middleColumn').width(winW - lcW - rcW);

@@ -31,6 +31,7 @@
                 "<div id='footerLastBuild' class='footerVersionMessage'></div>\n";
             break;
         case "playboy":
+        case "centerfold":
             footerhtml =
                 "<div class='flexContainer'>\n" +
                 "    <div class='footerCol'>\n" +

@@ -307,7 +307,11 @@ namespace WebApi
                     CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     string staticPageFileName = dbCategoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
                     //string staticPageFileName = Helpers.GetCustomStaticFolderName(folderId, dbCategoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", ""));
-                    successModel.ReturnValue = "http://ogglebooble.com/static/" + dbCategoryFolder.RootFolder + "/" + staticPageFileName + ".html";
+
+                    string rootPath = dbCategoryFolder.RootFolder;
+                    if (rootPath == "centerfold")
+                        rootPath = "playboy";
+                    successModel.ReturnValue = "http://ogglebooble.com/static/" + rootPath + "/" + staticPageFileName + ".html";
                     successModel.Success = "ok";
                 }
             }
@@ -960,16 +964,17 @@ namespace WebApi
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    var expectedImageDetail = (from l in db.ImageLinks
-                                               join f in db.CategoryFolders on l.FolderLocation equals f.Id
-                                               where l.Id == linkId
-                                               select new GetModelNameModel()
-                                               {
-                                                   FolderId = f.Id,
-                                                   Link = l.Link,
-                                                   FolderName = f.FolderName,
-                                                   RootFolder = f.RootFolder
-                                               }).FirstOrDefault();
+                    var expectedImageDetail = (
+                        from l in db.ImageLinks
+                        join f in db.CategoryFolders on l.FolderLocation equals f.Id
+                        where l.Id == linkId
+                        select new GetModelNameModel()
+                        {
+                            FolderId = f.Id,
+                            Link = l.Link,
+                            FolderName = f.FolderName,
+                            RootFolder = f.RootFolder
+                        }).FirstOrDefault();
                     if (expectedImageDetail != null)
                         imageDetail = expectedImageDetail;
                     else

@@ -104,6 +104,9 @@ function directToStaticPage(folderId) {
         success: function (successModel) {
             if (successModel.Success === "ok") {
                 window.location.href = successModel.ReturnValue;
+
+
+
             }
             else {
                 if (successModel.Success.indexOf("Option not supported") > -1) {
@@ -584,47 +587,32 @@ function ctxSAP(imgId) {
     }
     $.ajax({
         type: "GET",
-        async: true,
         url: settingsArray.ApiServer + "api/ImageCategoryDetail/GetModelName?linkId=" + selectedImageLinkId,
         success: function (modelDetails) {
             if (modelDetails.Success === "ok") {
+                $('#ctxSeeMore').hide();
+                if (isNullorUndefined(isnmodelDetails.FolderName)) {
+                    $('#ctxModelName').html("unknown model");
+                }
+                else {
+                    $('#ctxModelName').html(modelDetails.FolderName);
+                    if (modelDetails.RootFolder !== currentFolderRoot) {
+                        $('#ctxSeeMore').show();
+                    }
+                }
+                modelFolderId = modelDetails.FolderId;
                 selectedImage = modelDetails.Link;
                 modelFolderName = modelDetails.FolderName;
                 //fullPageName = modelDetails.RootFolder + "/" + modelDetails.FolderName;
-                modelFolderId = modelDetails.FolderId;
-
-                $('#ctxModelName').html("unknown model");
-                $('#ctxSeeMore').hide();
-                var canSeeMore = false;
 
                 if (typeof staticPageFolderName === 'string') {
                     currentAlbumJSfolderName = staticPageFolderName;
                 }
 
-                if (modelDetails.RootFolder === "archive" || modelDetails.RootFolder === "playboy" || modelDetails.RootFolder === "sluts") {
-                    //alert("currentFolderRoot: " + currentFolderRoot + "  modelDetails.RootFolder: " + modelDetails.RootFolder);
-                    $('#ctxModelName').html(modelDetails.FolderName);
-                    $('#ctxSeeMore').hide();
-                }
-
-                if (modelDetails.RootFolder === "archive" && currentFolderRoot !== "archive") {
-                    //alert("archive   modelDetails.RootFolder == " + modelDetails.RootFolder + " and currentFolderRoot = " + currentFolderRoot);
-                    $('#ctxSeeMore').show();
-                    canSeeMore = true;
-                }
-
-                //if (modelDetails.RootFolder === "playboy" && currentFolderRoot !== "playboy") {
-                //    $('#ctxSeeMore').show();
+                //$('.adminLink').hide();
+                //if (isInRole("Image Editor")) {
+                //    $('.adminLink').show();
                 //}
-                //if (modelDetails.RootFolder === "sluts" && currentFolderRoot !== "sluts") {
-                //    $('#ctxSeeMore').show();
-                //}
-
-                $('.adminLink').hide();
-                if (isInRole("Image Editor")) {
-                    $('.adminLink').show();
-                    //if (document.domain === 'localhost') alert(userName + " gets to edit images");                    
-                }
             }
             else {
                 if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
@@ -775,11 +763,9 @@ function slowlyHomeFolderInfoDialog(index, folderName, slowlyHomeFolderInfoDialo
 }
 
 function showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
-
     //alert("showEitherModelorFolderInfoDialog(index: " + index + ", folderName: " + folderName + ", folderId: " + folderId + ", parentId: " + parentId + ", rootFolder: " + rootFolder + ")");
-    var cybergirls = "3796";
-
-    if (rootFolder === "playboy" && index > 4 || parentId === cybergirls || rootFolder === "archive" && index > 2) {
+    if (rootFolder === "centerfold" || rootFolder === "cybergirl" || rootFolder === "archive" && index > 2) {
+        //if (rootFolder === "playboy" && index > 4 || parentId === cybergirls || rootFolder === "archive" && index > 2) {
         rtpe("CMX", folderId, folderName, folderId);
     }
     else {

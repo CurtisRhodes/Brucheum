@@ -146,13 +146,13 @@ function subFolderPreClick(isStepChild, subFolderPreClickFolderId) {
     }
 }
 
-function showEitherModelorFolderInfoDialog(index, folderName, showEitherModelorFolderInfoDialogFolderId, parentId, rootFolder) {
+function showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
     //alert("showEitherModelorFolderInfoDialog(index: " + index + ", folderName: " + folderName + ", folderId: " + folderId + ", parentId: " + parentId + ", rootFolder: " + rootFolder + ")");
-    var cybergirls = "3796";
-    if (rootFolder === "playboy" && index > 4 || parentId === cybergirls || rootFolder === "archive" && index > 2) {
-        rtpe("CMX", showEitherModelorFolderInfoDialogFolderId, folderName);
+    if (rootFolder === "centerfold" || rootFolder === "cybergirl" || rootFolder === "archive" && index > 2) {
+        //if (rootFolder === "playboy" && index > 4 || parentId === cybergirls || rootFolder === "archive" && index > 2) {
+        rtpe("CMX", folderId, folderName, folderId);
     }
     else {
-        showCategoryDialog(showEitherModelorFolderInfoDialogFolderId);
+        showCategoryDialog(folderId);
     }
 }
