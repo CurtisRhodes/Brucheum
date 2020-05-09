@@ -11,76 +11,74 @@ function setOggleHeader(folderId, subdomain) {
     //var lang = "en";
 
     $('header').switchClass('pornHeader', 'boobsHeader');
+    $('header').html(fullScreenHeader())
 
-    // HEADER HTML
-    {
-        headerHtml =
-            "   <div id='divTopLeftLogo' class='bannerImageContainer'></div>\n" +
-            "   <div class='headerBodyContainer'>\n" +
-            "       <div id='' class='headerTopRow'>\n" +
-            "           <div id='bannerTitle' class='headerTitle'></div >\n" +
-            //"                  <img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
-            //"                   title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +
-            //"                   \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
-            //"                   \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
-            "           <div id='subheaderContent' class='topLinkRow'></div>\n<span id='archiveLink'></span><span id='rankerLink'></span><span id='playboyLink'></span>\n" +
-            "           <div class='OggleSearchBox'>\n" +
-            "               <span id='notUserName' title='this is a progressive single letter search. Esc clears search.'>search</span>" +
-            "                   <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
-            "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
-            "           </div>\n" +
-            "       </div>\n" +
-            "       <div class='headerBottomRow'>\n" +
-            "           <div id='headerMessage' class='bottomLeftBottomHeaderArea'></div>\n" +
-            "           <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
-            "           <div class='menuTabs replaceableMenuItems'>\n" +
-            "               <div id='twinsLink' class='menuTabs displayHidden'>\n" +
-            "                   <a href='/album.html?folder=3904'><img src='/Images/gemini03.png' title='Hef likes twins' class='badgeImage'></a>" +
-            "               </div>\n" +
-            "               <div id='breastfulPlaymatesLink' class='menuTabs displayHidden'>\n" +
-            "                   <a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>" +
-            "               </div>\n" +
-            "               <div id='pmoyLink' class='menuTabs displayHidden'>\n" +
-            "                   <a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>" +
-            "               </div>\n" +
-            "               <div id='blackCenterfoldsLink' class='menuTabs displayHidden'>\n" +
-            "                   <div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>\n" +
-            "               </div>\n" +
-            "           </div>\n" +
-            "           <div id='divLoginArea' class='loginArea'>\n" +
-            "               <div id='optionLoggedIn' class='displayHidden'>\n" +
-            "                   <div class='menuTab' id='dashboardMenuItem' class='displayHidden'><a href='/Dashboard.html'>Dashboard</a></div>\n" +
-            "                   <div class='menuTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
-            "                   <div class='menuTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
-            "               </div>\n" +
-            "               <div id='optionNotLoggedIn'>\n" +
-            "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
-            "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:showLoginDialog(" + folderId + ")'>Log In</a></div>\n" +
-            "               </div>\n" +
-            "           </div>\n" +
-            "       </div>\n" +
-            "   </div>\n" +
-            "<div id='draggableDialog' class='oggleDraggableDialog'>\n" +
-            "   <div id='draggableDialogHeader'class='oggleDraggableDialogHeader'>" +
-            "       <div id='draggableDialogTitle' class='oggleDraggableDialogTitle'></div>" +
-            "       <div id='draggableDialogCloseButton' class='oggleDraggableDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'></div>\n" +
-            "   </div>\n" +
-            "   <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
-            "</div>\n" +
-            "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
-            "<div id='customMessageContainer' class='centeredDivShell'>\n" +
-            "   <div class='centeredDivInner'>\n" +
-            "       <div id='customMessage' class='displayHidden' ></div>\n" +
-            "   </div>\n" +
-            "</div>\n" +
-            "<div id='modalContainer' class='modalVail'>\n" +
-            "   <div id='modalContent' class='modalContentStyle'></div>\n" +
-            "</div>\n" +
-            "</div>";
-        $('header').html(headerHtml);
-    }
     setHeaderDetails(folderId, subdomain);
 }
+
+function fullScreenHeader() {
+    // HEADER HTML
+    return "   <div id='divTopLeftLogo' class='bannerImageContainer'></div>\n" +
+        "   <div class='headerBodyContainer'>\n" +
+        "       <div id='' class='headerTopRow'>\n" +
+        "           <div id='bannerTitle' class='headerTitle'></div >\n" +
+        "           <div id='subheaderContent' class='topLinkRow'></div>\n<span id='archiveLink'></span><span id='rankerLink'></span><span id='playboyLink'></span>\n" +
+        "           <div class='OggleSearchBox'>\n" +
+        "               <span id='notUserName' title='Esc clears search.'>search</span>" +
+        "                   <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
+        "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
+        "           </div>\n" +
+        "       </div>\n" +
+        "       <div class='headerBottomRow'>\n" +
+        "           <div id='headerMessage' class='bottomLeftBottomHeaderArea'></div>\n" +
+        "           <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
+        "           <div class='menuTabs replaceableMenuItems'>\n" +
+        "               <div id='twinsLink' class='menuTabs displayHidden'>\n" +
+        "                   <a href='/album.html?folder=3904'><img src='/Images/gemini03.png' title='Hef likes twins' class='badgeImage'></a>" +
+        "               </div>\n" +
+        "               <div id='breastfulPlaymatesLink' class='menuTabs displayHidden'>\n" +
+        "                   <a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>" +
+        "               </div>\n" +
+        "               <div id='pmoyLink' class='menuTabs displayHidden'>\n" +
+        "                   <a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>" +
+        "               </div>\n" +
+        "               <div id='blackCenterfoldsLink' class='menuTabs displayHidden'>\n" +
+        "                   <div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>\n" +
+        "               </div>\n" +
+        "           </div>\n" +
+        "           <div id='divLoginArea' class='loginArea'>\n" +
+        "               <div id='optionLoggedIn' class='displayHidden'>\n" +
+        "                   <div class='menuTab' id='dashboardMenuItem' class='displayHidden'><a href='/Dashboard.html'>Dashboard</a></div>\n" +
+        "                   <div class='menuTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
+        "                   <div class='menuTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
+        "               </div>\n" +
+        "               <div id='optionNotLoggedIn'>\n" +
+        "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
+        "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:showLoginDialog(" + folderId + ")'>Log In</a></div>\n" +
+        "               </div>\n" +
+        "           </div>\n" +
+        "       </div>\n" +
+        "   </div>\n" +
+        "<div id='draggableDialog' class='oggleDraggableDialog'>\n" +
+        "   <div id='draggableDialogHeader'class='oggleDraggableDialogHeader'>" +
+        "       <div id='draggableDialogTitle' class='oggleDraggableDialogTitle'></div>" +
+        "       <div id='draggableDialogCloseButton' class='oggleDraggableDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'></div>\n" +
+        "   </div>\n" +
+        "   <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
+        "</div>\n" +
+        "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
+        "<div id='customMessageContainer' class='centeredDivShell'>\n" +
+        "   <div class='centeredDivInner'>\n" +
+        "       <div id='customMessage' class='displayHidden' ></div>\n" +
+        "   </div>\n" +
+        "</div>\n" +
+        "<div id='dirTreeContainer' class='treeContainer></div>\n" +
+        "<div id='modalContainer' class='modalVail'>\n" +
+        "   <div id='modalContent' class='modalContentStyle'></div>\n" +
+        "</div>\n" +
+        "</div>";
+}
+
 
 // requires no database call
 function setHeaderDetails(folderId, subdomain) {
@@ -223,6 +221,10 @@ function setLoginHeaderSection(visitorId) {
     }
 }
 
+        //"                  <img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
+        //"                   title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +
+        //"                   \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
+        //"                   \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
 
 function phoneHeader() {
     return "   <div id='divTopLeftLogo' class='bannerImageContainer'></div>\n" +
