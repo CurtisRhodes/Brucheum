@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>browswer test page - OggleBooble</title>
+    <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=.07">
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+    <script src="http://localhost:60457/Scripts/Common.js"></script>
+    <script src="http://localhost:60457/Scripts/OggleHeader.js"></script>
+    <script src="http://localhost:60457/Scripts/OggleFooter.js"></script>
+    <link href="http://localhost:60457/Styles/Common.css" rel="stylesheet" />
+    <link href="http://localhost:60457/Styles/Header.css" rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        section {
+            margin: 11px;
+            min-height: 40%;
+            border: solid 2px #111;
+            padding: 14px;
+            background-color: #d5d1ba;
+        }
+
+    </style>
+</head>
+  <body>
+    <header></header>
+    <div class="threeColumnLayout">
+        <div class="leftColumn"></div>
+        <div class="middleColumn">
+
+            <section class="topSection">
+                top section
+            </section>
+            <section class="bottomSection" id="bottomSection">
+                bottom section
+
+                <div id="browserInfo"></div>
+
+            </section>
+
+        </div>
+        <div class="rightColumn"></div>
+    </div>
+    <footer></footer>
+    
+    <script>
+        var homePageId = 3908;
+        var subdomain = "boobs";
+        $(document).ready(function () {
+            setOggleHeader(homePageId, subdomain);
+            setOggleFooter(homePageId, subdomain);
+
+            resizeIndexPage();
+            window.addEventListener("resize", resizeIndexPage);
+        });
+
+        function resizeIndexPage() {
+            resizePage();
+
+            //$('#browserInfo').html("page height: " + winH + " page width: " + winW);
+            $('#browserInfo').append("<br>availHeight: " + screen.availHeight);
+            $('#browserInfo').append("<br>availWidth: " + screen.availWidth);
+            $('#browserInfo').append("<br>innerWidth: " + window.innerWidth);
+
+
+            //sizeDocW() { return document.width },
+            //sizeDocH() { return document.height },
+            //sizeInW() { return innerWidth },
+            //sizeInH() { return innerHeight },
+            //sizeAvailW() { return screen.availWidth },
+            //sizeAvailH() { return screen.availHeight },
+            //scrColorDepth() { return screen.colorDepth },
+            //scrPixelDepth() { return screen.pixelDepth },
+
+
+            //$('#footerMessage').html("page height: " + winH + " page width: " + winW);
+            //$('#middleColumn').height($('#middleColumn').height() + $('#updatedGalleriesSection').height());
+            //$('.assuranceArrows').height($('.carouselImageContainer').height());
+        }
+    </script>
+
+  </body>
+</html>
