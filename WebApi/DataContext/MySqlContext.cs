@@ -182,8 +182,8 @@ namespace WebApi.MySqDataContext
     [Table("OggleBooble.EventLog")]
     public class EventLog
     {
-        public string EventCode { get; set; }
         public string EventDetail { get; set; }
+        public string CalledFrom { get; set; }
         public int PageId { get; set; }
         [Key]
         [Column(Order = 0)]
@@ -191,6 +191,9 @@ namespace WebApi.MySqDataContext
         [Key]
         [Column(Order = 1)]
         public DateTime Occured { get; set; }
+        [Key]
+        [Column(Order = 2)]
+        public string EventCode { get; set; }
     }
 
     [Table("OggleBooble.CategoryFolder")]

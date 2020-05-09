@@ -183,6 +183,20 @@
                 homePageId = 3909;
 
             setOggleHeader(homePageId, subdomain);
+
+            if (document.domain === 'localhost') {
+                setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
+                setCookieValue("UserName", "developer");
+                var userPermissons = [];
+                userPermissons.push("Oggle admin");
+                userPermissons.push("access dashboard");
+                userPermissons.push("view dynamic");
+                window.localStorage["userPermissons"] = userPermissons;
+                //window.localStorage["IsLoggedIn"] = "true";
+            }
+            //else
+            //    loadRolesIntoLocalStorage("index", "any");
+
             loadSettings();
             var dots = ""
             var waiter = setInterval(function () {
@@ -205,6 +219,13 @@
                             logPageHit(homePageId, "Index");
                             $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
 
+                            //if (document.domain === 'localhost') {
+                            //    alert("navigator.cookieEnabled: " + navigator.cookieEnabled);
+                            //    callIpServiceFromStaticPage(homePageId, "test")
+                            //}
+
+
+
                             if (subdomain == "porn") {
                                 $('#pornLeftColumnList').show();
                                 $('#includeCenterfoldsCheckbox').hide();
@@ -213,6 +234,8 @@
                                 $('#boobsLeftColumnList').show();
                                 //launchPromoMessages();
                             }
+
+
                             setDashbordMenuItem();
                         }
                         else {

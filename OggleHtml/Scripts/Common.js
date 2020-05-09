@@ -631,13 +631,15 @@ function checkFor404(errorMessage, calledFrom) {
                             console.log("connection message showing");
 
                             canIgetaConnectionMessageShowing = true;
-                            logError({
-                                VisitorId: getCookieValue("VisiorId"),
-                                ActivityCode: "404",
-                                Severity: 1,
-                                ErrorMessage: "SERVICE DOWN",
-                                CalledFrom: "checkFor404Loop - " + calledFrom
-                            });
+                            if (document.domain !== 'localhost') {
+                                logError({
+                                    VisitorId: getCookieValue("VisiorId"),
+                                    ActivityCode: "404",
+                                    Severity: 1,
+                                    ErrorMessage: "SERVICE DOWN",
+                                    CalledFrom: errorMessage + "- " + calledFrom
+                                });
+                            }
                         }
                     }
                     verifyConnection();

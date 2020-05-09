@@ -48,7 +48,7 @@ function getAlbumImages(folderId) {
                 else {
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
+                        ActivityCode: "AJX",
                         Severity: 1,
                         ErrorMessage: successModel.Success,
                         CalledFrom: "Album.js getAlbumImages"
@@ -100,13 +100,10 @@ function directToStaticPage(folderId) {
     $.ajax({
         type: "GET",
         async: true,
-        url: settingsArray.ApiServer + "api/AlbumPage/GetStaticPage?folderId=" + folderId + "&h=2",
+        url: settingsArray.ApiServer + "api/AlbumPage/GetStaticPage?folderId=" + folderId,
         success: function (successModel) {
             if (successModel.Success === "ok") {
-                window.location.href = successModel.ReturnValue;
-
-
-
+                window.location.href = successModel.ReturnValue + "?h=2";
             }
             else {
                 if (successModel.Success.indexOf("Option not supported") > -1) {
@@ -214,7 +211,7 @@ function getBreadCrumbs(folderId, badgesText) {
                 else {
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
+                        ActivityCode: "AJX",
                         Severity: 3,
                         ErrorMessage: breadCrumbModel.Success,
                         CalledFrom: "Album.js getBreadCrumbs"
@@ -456,7 +453,7 @@ function onRemoveImageClick(btn) {
                     //alert("removeLink: " + success);
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
+                        ActivityCode: "AJX",
                         Severity: 3,
                         ErrorMessage: success,
                         CalledFrom: "Album.js onRemoveImageClick"
@@ -514,7 +511,7 @@ function removeImage() {
                             alert("removeLink: " + success);
                             logError({
                                 VisitorId: getCookieValue("VisitorId"),
-                                ActivityCode: "BUG",
+                                ActivityCode: "AJX",
                                 Severity: 1,
                                 ErrorMessage: success,
                                 CalledFrom: "Album.js removeImage"
@@ -543,7 +540,7 @@ function removeImage() {
                 else {
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
+                        ActivityCode: "AJX",
                         Severity: 3,
                         ErrorMessage: success,
                         CalledFrom: "Album.js removeImage"
@@ -607,12 +604,13 @@ function ctxSAP(imgId) {
 
                 if (typeof staticPageFolderName === 'string') {
                     currentAlbumJSfolderName = staticPageFolderName;
+
                 }
 
-                //$('.adminLink').hide();
-                //if (isInRole("Image Editor")) {
-                //    $('.adminLink').show();
-                //}
+                $('.adminLink').hide();
+                if (isInRole("Image Editor")) {
+                    $('.adminLink').show();
+                }
             }
             else {
                 if (folderDetailModel.Success.indexOf("Option not supported") > -1) {
@@ -740,9 +738,9 @@ function contextMenuAction(action) {
         default:
             logError({
                 VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "BUG",
+                ActivityCode: "SWT",
                 Severity: 2,
-                ErrorMessage: "Unhandeled switch case option.  Action: " + action,
+                ErrorMessage: "unhandled case: " + action,
                 CalledFrom: "Album.js contextMenuAction"
             });
             //sendEmailToYourself("error in album.js contextMenuAction ", "Unhandeled switch case option.  Action: " + action);

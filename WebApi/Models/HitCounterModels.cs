@@ -53,7 +53,7 @@ namespace WebApi.Models
         public string EventCode { get; set; }
         public string EventDetail { get; set; }
         public int PageId { get; set; }
-        public int CalledFrom { get; set; }
+        public string CalledFrom { get; set; }
     }
 
     public class LogEventActivitySuccessModel

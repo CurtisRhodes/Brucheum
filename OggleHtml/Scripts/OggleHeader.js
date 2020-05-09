@@ -80,7 +80,7 @@ function setOggleHeader(folderId, subdomain) {
             "                   <div class='menuTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
             "               </div>\n" +
             "               <div id='optionNotLoggedIn'>\n" +
-            "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
+            "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:showRegisterDialog(" + folderId + ")'>Register</a></div>\n" +
             "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:showLoginDialog(" + folderId + ")'>Log In</a></div>\n" +
             "               </div>\n" +
             "           </div>\n" +
@@ -221,15 +221,11 @@ function setHeaderDetails(folderId, subdomain) {
         default:
             logError({
                 VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "BUG",
+                ActivityCode: "SWT",
                 Severity: 2,
-                ErrorMessage: "switch case not handled. FolderId: " + folderId + ", Subdomain: " + subdomain,
-                CalledFrom: "OggleHeader setOggleHeader"
+                ErrorMessage: "unhandled oprion: " + subdomain + ". FolderId: " + folderId,
+                CalledFrom: "setHeaderDetails"
             });
-
-
-
-
         //sendEmailToYourself("OggleHeader switch ","folderId: " + folderId+ "<br/>subdomain: " + subdomain);
         //alert("subdomain: " + subdomain + "  not found");
         //console.log("subdomain: " + subdomain + "  not found");

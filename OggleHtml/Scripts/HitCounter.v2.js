@@ -3,7 +3,6 @@ var freeImageHitsAllowed = 2500;
 
 function logImageHit(link, pageId, isInitialHit) {
     try {
-
         if (isNullorUndefined(pageId)) {
             logError({
                 VisitorId: visitorId,
@@ -16,29 +15,47 @@ function logImageHit(link, pageId, isInitialHit) {
             return;
         }
         visitorId = getCookieValue("VisitorId");
-        if (!Number.isInteger(pageId)) {
-            logError({
-                VisitorId: visitorId,
-                ActivityCode: "IH2",
-                Severity: 2,
-                ErrorMessage: "PageId came in wrong. Link: " + link + "  pageId:  " + pageId,
-                CalledFrom: "HitCounter.js logImageHit"
-            });
-            verifyVisitorId(visitorId, pageId);
+
+        //pageId = pageId.trim();
+        //if (!Number.isInteger(pageId)) {
+        //    logError({
+        //        VisitorId: visitorId,
+        //        ActivityCode: "IH5",
+        //        Severity: 2,
+        //        ErrorMessage: "PageId came in wrong. pageId:  " + pageId,
+        //        CalledFrom: "HitCounter.js logImageHit"
+        //    });
+        //    //verifyVisitorId(visitorId, pageId);
+        //    return;
+        //}
+
+        if (isNullorUndefined(visitorId)) {
+            //logError({
+            //    VisitorId: visitorId,
+            //    ActivityCode: "IH0",
+            //    Severity: 27,
+            //    ErrorMessage: "logImageHit no VisitorId (NOT calling IpInfo)",
+            //    CalledFrom: pageId
+            //});
+
+            //callIpServiceFromStaticPage(pageId, "logImageHit", "logImageHit");
+
             return;
         }
 
-        if (isNullorUndefined(visitorId)) {
+        if (visitorId.length !== 36) {
             logError({
                 VisitorId: visitorId,
-                ActivityCode: "IH0",
+                ActivityCode: "IH2",
                 Severity: 27,
-                ErrorMessage: "logImageHit no VisitorId",
+                ErrorMessage: "bad visitorId in logImageHit",
                 CalledFrom: pageId
             });
-            //addVisitor(pageId, "logImageHit");
+            callIpServiceFromStaticPage(pageId, "bad visitorId", "logImageHit");
+
             return;
         }
+
         var linkId = link.substr(link.lastIndexOf("_") + 1, 36);
         var logImageHItData = {
             VisitorId: visitorId,
@@ -46,6 +63,8 @@ function logImageHit(link, pageId, isInitialHit) {
             LinkId: linkId,
             IsInitialHit: isInitialHit
         };
+
+
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/ImageHit/LogImageHit",
@@ -60,7 +79,7 @@ function logImageHit(link, pageId, isInitialHit) {
                     //if (imageHitSuccessModel.Success.indexOf("Duplicate entry") > 0) {
                     logError({
                         VisitorId: visitorId,
-                        ActivityCode: "IM4",
+                        ActivityCode: "IMD",
                         Severity: 2,
                         ErrorMessage: imageHitSuccessModel.Success,
                         CalledFrom: "logImageHit"
@@ -210,7 +229,7 @@ function verifyVisitorId(visitorId, pageId, calledFrom) {
                             CalledFrom: "verifyVisitorId"
                         });
                         //addVisitor(pageId, "verifyVisitorId");
-                        callIpServiceFromStaticPage(pageId, calledFrom);
+                        callIpServiceFromStaticPage(pageId, calledFrom, "verifyVisitorId");
                     }
                 }
                 else {
@@ -519,9 +538,9 @@ function logEventActivity(logEventModel) {
             if (logEventActivitySuccess.Success !== "ok") {
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "ER2",
+                    ActivityCode: "LEV",
                     Severity: 2,
-                    ErrorMessage: logEventActivitySuccess.Success,
+                    ErrorMessage: logEventModel.EventCode + " - " + logEventModel.EventDetail + ". err: " + logEventActivitySuccess.Success,
                     CalledFrom: "LogEventActivity"
                 });
             }
@@ -541,15 +560,43 @@ function logEventActivity(logEventModel) {
     });
 }
 
-function callIpServiceFromStaticPage(pageId, externalSource) {
+function callIpServiceFromStaticPage(pageId, externalSource, calledFrom) {
     try {
-        logEventActivity({
-            VisitorId: "kmm",
-            EventCode: "IPC",
-            EventDetail: "externalSource" + externalSource,
-            PageId: pageId,
-            CalledFrom: "callIpServiceFromStaticPage"
-        });
+
+        var visitorId = getCookieValue("VisitorId");
+        if (!isNullorUndefined(visitorId)) {
+            logError({
+                VisitorId: visitorId,
+                ActivityCode: "IP1",
+                Severity: 72,
+                ErrorMessage: "known VisitorId sent to IpInfo",
+                CalledFrom: calledFrom
+            });
+            return;
+        }
+
+        if (!navigator.cookieEnabled) {
+            //alert("this site requires cookies");
+            logError({
+                VisitorId: visitorId,
+                ActivityCode: "IP2",
+                Severity: 72,
+                ErrorMessage: "Visitor cookies not enabled",
+                CalledFrom: calledFrom
+            });
+            return;
+
+        }
+        //dataCookies1() { return document.cookie },
+
+        //logEventActivity({
+        //    VisitorId: "kmm",
+        //    EventCode: "IPC",
+        //    EventDetail: "externalSource" + externalSource,
+        //    PageId: pageId,
+        //    CalledFrom: "callIpServiceFromStaticPage"
+        //});
+
         $.ajax({
             type: "GET",
             url: "https://ipinfo.io?token=ac5da086206dc4",
@@ -570,34 +617,50 @@ function callIpServiceFromStaticPage(pageId, externalSource) {
                     },
                     success: function (addVisitorSuccess) {
                         if (addVisitorSuccess.Success === "ok") {
+
                             setCookieValue("VisitorId", addVisitorSuccess.VisitorId);
 
-                            logEventActivity({
-                                VisitorId: getCookieValue("VisitorId"),
-                                EventCode: "XLC",
-                                EventDetail: externalSource,
-                                PageId: pageId,
-                                CalledFrom: "callIpService"
-                            });
+                            if (calledFrom === "Static") {
+                                logEventActivity({
+                                    VisitorId: getCookieValue("VisitorId"),
+                                    EventCode: "XLC",
+                                    EventDetail: "externalSource: " + externalSource,
+                                    PageId: pageId,
+                                    CalledFrom: "callIpService"
+                                });
+                            }
 
-                            logEventActivity({
-                                VisitorId: getCookieValue("VisitorId"),
-                                EventCode: "NEW",
-                                EventDetail: "Ip: " + ipStackResponse.ip,
-                                PageId: pageId,
-                                CalledFrom: "callIpService"
-                            });
+                            if (addVisitorSuccess.IsNewVisitor) {
+                                logEventActivity({
+                                    VisitorId: getCookieValue("VisitorId"),
+                                    EventCode: "NEW",
+                                    EventDetail: "Ip: " + ipResponse.ip,
+                                    PageId: pageId,
+                                    CalledFrom: calledFrom
+                                });
+                            }
+                            else {
+                                logError({
+                                    VisitorId: getCookieValue("VisitorId"),
+                                    ActivityCode: "IPX",
+                                    Severity: 757,
+                                    ErrorMessage: "IpInfo called on known visitor",
+                                    CalledFrom: calledFrom
+                                });
+                            }
                         }
+
                         else {
                             logError({
                                 VisitorId: addVisitorSuccess.VisitorId,
                                 ActivityCode: "AV1",
                                 Severity: 277,
                                 ErrorMessage: addVisitorSuccess.Success,
-                                CalledFrom: "addVisitor/" + calledFrom
+                                CalledFrom: "callIpService"
                             });
                         }
                     },
+
                     error: function (jqXHR) {
                         var errorMessage = getXHRErrorDetails(jqXHR);
                         if (!checkFor404(errorMessage, "addVisitor")) {
@@ -628,7 +691,7 @@ function callIpServiceFromStaticPage(pageId, externalSource) {
     } catch (e) {
         logError({
             VisitorId: "--",
-            ActivityCode: "AV4",
+            ActivityCode: "IP4",
             Severity: 200,
             ErrorMessage: "Catch error: " + e,
             CalledFrom: "addToVisitorTable"

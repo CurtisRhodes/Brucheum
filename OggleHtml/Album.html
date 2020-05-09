@@ -112,7 +112,15 @@
             includeHTML();
             resizePage();
             params = getParams();
-            if (params.folder == undefined) {
+
+            if (isNullorUndefined(params.folder)) {
+                logError({
+                    VisitorId: visitorId,
+                    ActivityCode: "PPP",
+                    Severity: 700,
+                    ErrorMessage: "params.folder undefined. Directing to Index.html",
+                    CalledFrom: "Album.html"
+                })
                 window.location.href = "Index.html";
             }
 
@@ -126,15 +134,28 @@
                 }
                 else {
                     clearInterval(waiter);
-                    $('#dots').html('');
-                    if (isInRole("view dynamic")) {
-                        //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) TruE");
-                        getAlbumImages(params.folder);
-                    }
-                    else {
-                        //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) FALSE");
-                        directToStaticPage(params.folder);
-                    }
+                    verifyConnection();
+                    var verifyConnectionWaiter = setInterval(function () {
+                        if (connectionVerified) {
+                            clearInterval(verifyConnectionWaiter);
+                            $('#dots').html('');
+
+                            if (isInRole("view dynamic")) {
+                                //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) TruE");
+                                getAlbumImages(params.folder);
+                            }
+                            else {
+                                //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) FALSE");
+
+                                directToStaticPage(params.folder);
+                            }
+                        }
+                        else {
+                            verifyConnection();
+                            dots += ". ";
+                            $('#dots').html(dots);
+                        }
+                    }, 300);
                 }
                 $('#feedbackBanner').click(showFeedbackDialog).fadeIn();
             }, 300);

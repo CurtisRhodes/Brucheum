@@ -33,7 +33,11 @@ namespace WebApi.Controllers
                         //totalFiles = Math.Max(vwDirTree.GrandTotalFiles, vwDirTree.TotalFiles);
                         //SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
                         CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                        success = CreatePage(folderId, categoryFolder.RootFolder, 
+                        var rootFolder = categoryFolder.RootFolder;
+                        if (rootFolder == "centerfold") {
+                            rootFolder = "playboy";
+                        }
+                        success = CreatePage(folderId, rootFolder, 
                             categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", ""), db, recurr);
                     }
                 }

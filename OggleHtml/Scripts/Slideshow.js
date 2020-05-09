@@ -73,10 +73,10 @@ function getFolderArray(folderId, startItem) {
                 else {
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
+                        ActivityCode: "AJX",
                         Severity: 1,
                         ErrorMessage: successModel.Success,
-                        CalledFrom: "Slideshow.js buildFolderArray"
+                        CalledFrom: "Slideshow/getFolderArray"
                     });
                     //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
                     //if (document.domain === 'localhost') alert("jQuery fail in Album.js: getAlbumImages\n" + imageLinksModel.Success);
@@ -204,11 +204,10 @@ function slideClick(direction) {
     }
     else {
         slide(direction);
-        sessionCount++;
-        logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
     }
 }
 
+var lastImageId;
 function slide(direction) {
     try {
         $('#slideshowImageLabel').fadeOut();
@@ -259,13 +258,15 @@ function slide(direction) {
             sessionCount++;
             $('#viewerImage').css("transform", "translateX(0)");
             setTimeout(function () {
-
                 if (imageViewerArray[imageViewerIndex].FolderId !== imageViewerArray[imageViewerIndex].ImageFolderId) {
                     $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
                 }
                 $('.slideshowNavgArrows').css('visibility', 'visible').fadeIn();
-            }, 1100);
-            
+                if (lastImageId !== imageViewerArray[imageViewerIndex].LinkId) {
+                    lastImageId = imageViewerArray[imageViewerIndex].LinkId;
+                    logImageHit(lastImageId, imageViewerFolderId, false);
+                }
+            }, 1100);            
         }, 450);
         //$('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
     } catch (e) {
@@ -344,6 +345,7 @@ function showImageViewerCommentDialog() {
     logEventActivity({
         VisitorId: getCookieValue("VisitorId"),
         EventCode: "SVC",
+        PageId: imageViewerFolderId,
         EventDetail: "WOW! Someone tried to make a comment",
         CalledFrom: "Sideshow"
     });
@@ -369,7 +371,8 @@ function closeViewer(calledFrom) {
                 VisitorId: getCookieValue("VisitorId"),
                 EventCode: "SVC",
                 EventDetail: "Single Image Viewed. closeMethod: " + closeMethod,
-                CalledFrom: albumFolderId
+                PageId: imageViewerFolderId,
+                CalledFrom: "closeViewer"
             });
         }
         else {
@@ -377,7 +380,8 @@ function closeViewer(calledFrom) {
                 VisitorId: getCookieValue("VisitorId"),
                 EventCode: "SVC",
                 EventDetail: "Images Viewed: " + sessionCount + " closed: " + closeMethod,
-                CalledFrom: albumFolderId
+                PageId: imageViewerFolderId,
+                CalledFrom: "closeViewer"
             });
         }
         resizeImageContainer();
@@ -474,9 +478,10 @@ function slideshowCtxMnuAction(action) {
             slideShowButtonsActive = false;
             logEventActivity({
                 VisitorId: getCookieValue("VisitorId"),
-                EventCode: "FCC",
+                EventCode: "FCC",  // fantasy comment
                 EventDetail: "Image: " + imageViewerArray[imageViewerIndex].Link,
-                CalledFrom: albumFolderId
+                PageId: imageViewerFolderId,
+                CalledFrom: "closeViewer"
             });
             showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, albumFolderId, currentAlbumJSfolderName);
             $('#imageCommentDialog').on('dialogclose', function (event) {
@@ -511,9 +516,9 @@ function slideshowCtxMnuAction(action) {
         default:
             logError({
                 VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "BUG",
+                ActivityCode: "SWT",
                 Severity: 2,
-                ErrorMessage: "Unhandeled switch case option.  Action: " + action,
+                ErrorMessage: "Unhandeled case: " + action,
                 CalledFrom: "Album.js contextMenuAction"
             });
         //sendEmailToYourself("error in album.js contextMenuAction ", "Unhandeled switch case option.  Action: " + action);
@@ -543,7 +548,7 @@ function slideshowCtxMnuShowLinks(linkId) {
             else {
                 logError({
                     VisitorId: getCookieValue("VisiorId"),
-                    ActivityCode: "BUG",
+                    ActivityCode: "AJX",
                     Severity: 1,
                     ErrorMessage: linksModel.Success,
                     CalledFrom: "slideshowCtxMnuShowLinks"

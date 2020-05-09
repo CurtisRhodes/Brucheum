@@ -5,13 +5,14 @@
 // use my product
 // Request extra privdleges 
 // pay me to do some programming for you and I'll let you in on all my source code
-
+var registerFromPageId;
 function showRegisterDialog(pageId) {
+    registerFromPageId = pageId;
     logEventActivity({
         VisitorId: getCookieValue("VisitorId"),
         EventCode: "RDO",
         EventDetail: "YESS!!!",
-        PageId: pageId,
+        PageId: registerFromPageId,
         CalledFrom: "showRegisterDialog"
     });
 
@@ -73,6 +74,7 @@ function attemptRegister() {
                                 VisitorId: getCookieValue("VisitorId"),
                                 EventCode: "REG",
                                 EventDetail: "User: " + registeredUserModel.UserName,
+                                PageId: registerFromPageId,
                                 CalledFrom: "attemptRegister"
                             });
 
@@ -165,12 +167,14 @@ function onLogoutClick() {
     // deleteCookie();
 }
 
+var LogInFromPageId;
 function showLoginDialog(pageId) {
+    LogInFromPageId = pageId;
     logEventActivity({
         VisitorId: getCookieValue("VisitorId"),
         EventCode: "LDO",
         EventDetail: "YESS!!!",
-        PageId: pageId,
+        PageId: LogInFromPageId,
         CalledFrom: "showLoginDialog"
     });
 
@@ -209,6 +213,7 @@ function attemptLogin(userName, clearPasswod) {
                         VisitorId: getCookieValue("VisitorId"),
                         EventCode: "LOG",
                         EventDetail: "Successfull log in: " + getCookieValue("UserName"),
+                        PageId: LogInFromPageId,
                         CalledFrom: "showLoginDialog"
                     });
                     //sendEmailToYourself("Someone Successfully logged in", "User: " + userName);
@@ -334,6 +339,9 @@ function setCookieValue(elementName, elementValue) {
     //var cookieString = "VisitorId=" + visitorId + ";IpAddress=" + ipAddress + ";User=" + user + ";path='/;expires=" + expiryDate.toUTCString();
     var cookieString = "VisitorId:" + visitorId + ",IpAddress:" + ipAddress + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
     document.cookie = cookieString;
+
+    //if()
+
     //alert("setCookieValue(" + elementName + "," + elementValue + ")\ncookie:\n" + document.cookie);
 }
 
