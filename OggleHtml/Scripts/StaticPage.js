@@ -52,7 +52,7 @@ $(document).ready(function () {
                     if (isNullorUndefined(visitorId)) {
                         if (!isNullorUndefined(internalLink)) {
                             logEventActivity({
-                                VisitorId: "knull",
+                                VisitorId: "xx",
                                 EventCode: "IS1",
                                 EventDetail: "h but no visitorId",
                                 PageId: staticPageFolderId,

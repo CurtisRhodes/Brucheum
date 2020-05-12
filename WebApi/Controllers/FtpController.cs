@@ -172,10 +172,17 @@ namespace WebApi
                             return successModel;
                         }
 
+                        string sourceRootFolder = dbSourceFolder.RootFolder;
+                        if (sourceRootFolder == "centerfold")
+                            sourceRootFolder = "playboy";
+                        string destinationRootRolder = dbSourceFolder.RootFolder;
+                        if (destinationRootRolder == "centerfold")
+                            destinationRootRolder = "playboy";
+
                         CategoryFolder dbDestinationFolder = db.CategoryFolders.Where(f => f.Id == model.DestinationFolderId).First();
                         string extension = model.Link.Substring(model.Link.LastIndexOf("."));
-                        string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName;
-                        string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.SourceFolderId) + dbSourceFolder.FolderName;
+                        string destinationFtpPath = ftpHost + destinationRootRolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName;
+                        string sourceFtpPath = ftpHost + sourceRootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.SourceFolderId) + dbSourceFolder.FolderName;
                         string newFileName = dbDestinationFolder.FolderName + "_" + dbImageLink.Id + extension;
                         string sourceFileName = model.Link.Substring(model.Link.LastIndexOf("/") + 1);
 

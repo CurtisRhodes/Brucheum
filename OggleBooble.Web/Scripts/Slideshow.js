@@ -30,10 +30,14 @@ function launchViewer(folderId, startItem, showAllChildren) {
         includeSubFolders = false;
     sessionCount = 0;
     $('#imageContainer').fadeOut();
-    getFolderArray(folderId, startItem);
+    getSlideshowItems(folderId, startItem);
+
+    $('#imagePageLoadingGif').fadeIn();
+    $('#imageContainer').fadeOut();
+    $('#slideShowContainer').html(showSlideshowHtml()).show();
 }
 
-function getFolderArray(folderId, startItem) {
+function getSlideshowItems(folderId, startItem) {
     try {
         albumFolderId = folderId;
         var start = Date.now();
@@ -58,7 +62,9 @@ function getFolderArray(folderId, startItem) {
                             }
                         };
                     }
-                    $('#imageViewerDialog').show();
+
+                    $('#imagePageLoadingGif').hide();
+                    viewerShowing = true;
                     resizePage();
                     resizeViewer();
                     explodeViewer();
@@ -117,7 +123,7 @@ function explodeViewer() {
     viewerW = 50;
     windowW = $(window).width();
     windowH = $(window).height();
-    $('#imageViewerDialog').height(viewerH);
+    $('#slideShowContainer').height(viewerH);
     $('#viewerImage').attr("src", imageViewerArray[imageViewerIndex].Link);
     $('#viewerImage').removeClass('redSides');
     $('#viewerButtonsRow').hide();
@@ -143,13 +149,13 @@ function incrimentExplode() {
         viewerW += Xincrimentor * 2;
         if (viewerW > windowW) { viewerW = windowW; }
     }
-    $('#imageViewerDialog').css('top', viewerT);
-    $('#imageViewerDialog').css('left', viewerL);
-    $('#imageViewerDialog').height(viewerH);
-    $('#imageViewerDialog').width(viewerW);
+    $('#slideShowContainer').css('top', viewerT);
+    $('#slideShowContainer').css('left', viewerL);
+    $('#slideShowContainer').height(viewerH);
+    $('#slideShowContainer').width(viewerW);
     $('#viewerImageContainer').height(viewerH);
-    $('#viewerImageContainer').css('left', ($('#imageViewerDialog').width() - $('#viewerImage').width()) / 2);
-    //   alert("dlgW: " + $('#imageViewerDialog').width() + "imgW: " + $('#viewerImage').width());
+    $('#viewerImageContainer').css('left', ($('#slideShowContainer').width() - $('#viewerImage').width()) / 2);
+    //   alert("dlgW: " + $('#slideShowContainer').width() + "imgW: " + $('#viewerImage').width());
     if ((viewerT === 0) && (viewerL === 0) && (viewerH === windowH) && (viewerW === windowW)) {
         if (imageViewerFolderName === undefined) {
             if (typeof staticPageFolderName === 'string') {
@@ -179,14 +185,14 @@ function incrimentExplode() {
 
         $('#viewerButtonsRow').show();
         clearInterval(exploderInterval);
-        $('#imageViewerDialog').css('top', 0);
-        $('#imageViewerDialog').css('left', 0);
+        $('#slideShowContainer').css('top', 0);
+        $('#slideShowContainer').css('left', 0);
 
         $('#leftClickArea').css('left', 0);
         $('#rightClickArea').css('left', viewerW / 2);
 
-        $('#imageViewerDialog').width(viewerW);
-        $('#imageViewerDialog').height(viewerH);
+        $('#slideShowContainer').width(viewerW);
+        $('#slideShowContainer').height(viewerH);
         if (imageViewerArray[imageViewerIndex].FolderId !== imageViewerArray[imageViewerIndex].ImageFolderId)
             $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
     }
@@ -352,8 +358,14 @@ function showImageViewerCommentDialog() {
 function closeViewer(calledFrom) {
     event.preventDefault();
     window.event.returnValue = false;
+
+
     $('#imageContainer').fadeIn();
-    $('#imageViewerDialog').effect('blind', { mode: 'hide', direction: 'vertical' }, 500);
+
+    //slideShowContainer
+    $('#slideShowContainer').effect('blind', { mode: 'hide', direction: 'vertical' }, 500);
+
+
     viewerShowing = false;
     slideShowRunning = false;
     clearInterval(imageViewerIntervalTimer);
@@ -397,17 +409,8 @@ function closeViewer(calledFrom) {
 function resizeViewer() {
     $('#leftClickArea').css('left', 0);
     $('#rightClickArea').css('left', $(window).width() / 2);
-
-    //$('#imageViewerDialog').width($(window).width());
-    //$('#imageViewerDialog').height($(window).height());
-
-    //viewerImageContainer
-
     $('#viewerImage').height($(window).height() - 30);
     $('.slideshowNavgArrows img').height($(window).height() - 30);
-
-    //alert("slideshowNavgArrows height: " + $('.slideshowNavgArrows img').height());
-
 }
 
 function slideshowImageLabelClick() {
@@ -568,36 +571,33 @@ function slideshowCtxMnuShowLinks(linkId) {
 
 function showSlideshowHtml() {
     $('#slideShowContainer').html(
-        "<div id='divStaticImageViewer'>\n" +
-        "    <div id='imageViewerDialog' class='fullScreenViewer'>\n" +
-        "        <div id='viewerButtonsRow' class='imageViewerHeaderRow'>\n" +
-        "            <div class='viewerButtonsRowSection'>\n" +
-        "                <img id='imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/Images/comment.png' />\n" +
-        "            </div>\n" +
-        "            <span id='imageViewerHeaderTitle' class='imageViewerTitle'></span>\n" +
-        "            <div class='viewerButtonsRowSection'>\n" +
-        "                <div class='floatRight' style='margin-left: 44px;' onclick='closeViewer('click');'><img title='you may use the {esc} key' src='/Images/close.png' /></div>\n" +
-        "                <div class='floatRight' onclick='runSlideShow('faster');'><img id='fasterSlideshow' title='faster' src='/Images/speedDialFaster.png' /></div>\n" +
-        "                <div id='txtStartSlideShow' class='txtSlideShow floatRight' onclick='runSlideShow('start');'>start slideshow</div>\n" +
-        "                <div class='floatRight' onclick='runSlideShow('slower');'><img id='slowerSlideShow' title='slower' src='/Images/speedDialSlower.png' /></div>\n" +
-        "                <div class='floatRight' onclick='blowupImage()'><img class='popoutBox' title='open image in a new window' src='/Images/expand02.png' /></div>\n" +
-        "            </div>\n" +
-        "        </div>\n" +
-        "        <div id='leftClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slideClick('prev');'></div>\n" +
-        "        <div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slideClick('next');'></div>\n" +
-        "        <div class='centeredDivShell'>\n" +
-        "            <div class='centeredDivInner'>\n" +
-        "                <div id='viewerImageContainer' class='flexContainer'>\n" +
-        "                    <div class='slideshowNavgArrows'><img src='/Images/leftArrowOpaque02.png' /></div>\n" +
-        "                    <img id='viewerImage' class='slideshowImage' />\n" +
-        "                    <div class='slideshowNavgArrows'><img src='/Images/rightArrowOpaque02.png' /></div>\n" +
-        "                </div>\n" +
-        "            </div>\n" +
+        " <div id='viewerButtonsRow' class='imageViewerHeaderRow'>\n" +
+        "    <div class='viewerButtonsRowSection'>\n" +
+        "        <img id='imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/Images/comment.png' />\n" +
+        "    </div>\n" +
+        "    <span id='imageViewerHeaderTitle' class='imageViewerTitle'></span>\n" +
+        "    <div class='viewerButtonsRowSection'>\n" +
+        "        <div class='floatRight' style='margin-left: 44px;' onclick='closeViewer(\"click\");'><img title='you may use the {esc} key' src='/Images/close.png' /></div>\n" +
+        "        <div class='floatRight' onclick='runSlideShow(\"faster\");'><img id='fasterSlideshow' title='faster' src='/Images/speedDialFaster.png' /></div>\n" +
+        "        <div id='txtStartSlideShow' class='txtSlideShow floatRight' onclick='runSlideShow(\"start\");'>start slideshow</div>\n" +
+        "        <div class='floatRight' onclick='runSlideShow(\"slower\");'><img id='slowerSlideShow' title='slower' src='/Images/speedDialSlower.png' /></div>\n" +
+        "        <div class='floatRight' onclick='blowupImage()'><img class='popoutBox' title='open image in a new window' src='/Images/expand02.png' /></div>\n" +
+        "    </div>\n" +
+        "</div>\n" +
+        "<div id='leftClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slideClick(\"prev\");'></div>\n" +
+        "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slideClick(\"next\");'></div>\n" +
+        "<div class='centeringOuterShell'>\n" +
+        "    <div class='centeringInnerShell'>\n" +
+        "        <div id='viewerImageContainer' class='flexContainer'>\n" +
+        "            <div class='slideshowNavgArrows'><img src='/Images/leftArrowOpaque02.png' /></div>\n" +
+        "            <img id='viewerImage' class='slideshowImage' />\n" +
+        "            <div class='slideshowNavgArrows'><img src='/Images/rightArrowOpaque02.png' /></div>\n" +
         "        </div>\n" +
         "    </div>\n" +
-        "    <div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n" +
-        "</div>\n");
+        "</div>\n" +
+        "<div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n");
 }
+
 function showSlideshowContextMenuHtml() {
     $('#slideshowContextMenuContainer').html(
         "<div id='slideshowContextMenu' class='ogContextMenu' onmouseleave='closeSlideshowContextMenu()'>\n" +

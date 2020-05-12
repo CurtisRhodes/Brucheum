@@ -1,4 +1,14 @@
 ﻿
+
+
+.indexPageSection {
+    width: 100%;
+    display: inline-block;
+    background-color: var(--oggleBackgroundColor);
+    min-height: 40%;
+    margin-bottom: 6px;
+}
+
 /*@media (min-width: 768px) {
     background-color: red;
 }*/
@@ -21,6 +31,7 @@
 
 .floatingContainerElement {
     position: absolute;
+    padding: 7px;
 }
 
 .indexSectionLabel {

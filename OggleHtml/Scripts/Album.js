@@ -270,7 +270,7 @@ function processImages(imageLinksModel) {
             }// imageModelFile
         }
         $('#imageContainer').append("<div id='" + imageModelFile.LinkId + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
-            " oncontextmenu='ctxSAP(\"" + imageModelFile.LinkId + "\")' onclick='startSlideShow2(" + albumFolderId + ",\"" + imageModelFile.LinkId + "\")'" +
+            " oncontextmenu='ctxSAP(\"" + imageModelFile.LinkId + "\")' onclick='startSlideShow2(\"" + imageModelFile.LinkId + "\",\"" + imageModelFile.LinkId + "\")'" +
             " src='" + imageModelFile.Link + "'/></div>");
     });
 
@@ -588,7 +588,7 @@ function ctxSAP(imgId) {
         success: function (modelDetails) {
             if (modelDetails.Success === "ok") {
                 $('#ctxSeeMore').hide();
-                if (isNullorUndefined(isnmodelDetails.FolderName)) {
+                if (isNullorUndefined(modelDetails.FolderName)) {
                     $('#ctxModelName').html("unknown model");
                 }
                 else {

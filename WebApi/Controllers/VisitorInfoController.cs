@@ -180,6 +180,32 @@ namespace WebApi.Controllers
             }
             return visitorSuccessModel;
         }
+        
+        [HttpPost]
+        [Route("api/VisitorInfo/LogIpInfoHit")]
+        public LogIpInfoSuccessModel LogIpInfoHit(string ipAddress)
+        {
+            var ipInfoSuccess = new LogIpInfoSuccessModel();
+            try
+            {
+                using (OggleBoobleMySqContext mdb = new OggleBoobleMySqContext())
+                {
+                    mdb.IpInfoCalls.Add(new IpInfoCall()
+                    {
+                        PkId=Guid.NewGuid().ToString(),
+                        IpAddress = ipAddress,
+                        Occured = DateTime.Now
+                    });
+                    mdb.SaveChanges();
+                    ipInfoSuccess.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                ipInfoSuccess.Success = Helpers.ErrorDetails(ex);
+            }
+            return ipInfoSuccess;
+        }
     }
 }
 

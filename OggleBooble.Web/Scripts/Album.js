@@ -31,6 +31,10 @@ function GetAllAlbumPageInfo(folderId) {
                     $('#imagePageLoadingGif').hide();
                     if (imageLinksModel.Success === "ok") {
                         currentFolderRoot = imageLinksModel.RootFolder;
+
+                        setOggleHeader(folderId, currentFolderRoot);
+                        setOggleFooter(folderId, currentFolderRoot);
+
                         $('#googleSearchText').html(imageLinksModel.FolderName);
 
                         $.each(imageLinksModel.TrackBackItems, function (idx, trackBackItem) {
@@ -157,6 +161,16 @@ function getDeepChildCount(subDir) {
     });
 }
 
+//imageLinksModel(
+//    Index 
+//    LinkId
+//    Link 
+//    FolderId
+//    ImageFolderId 
+//    ImageParentId
+//    ImageFolderName
+//    SortOrder
+
 function processImages(imageLinksModel) {
     var imageFrameClass = "folderImageOutterFrame";
     var subDirLabel = "subDirLabel";
@@ -183,8 +197,8 @@ function processImages(imageLinksModel) {
             }// imageModelFile
         }
         $('#imageContainer').append("<div id='" + imageModelFile.LinkId + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
-            " oncontextmenu='ctxSAP(\"" + imageModelFile.LinkId + "\")' onclick='startSlideShow2(" + albumFolderId + ",\"" + imageModelFile.LinkId + "\")'" +
-            " src='" + imageModelFile.Link + "'/></div>");
+            //" oncontextmenu='ctxSAP(\"" + imageModelFile.LinkId + "\")' onclick='startSlideShow(" + albumFolderId + ",\"" + imageModelFile.LinkId + "\")'" +
+            " oncontextmenu='ctxSAP(\"" + imageModelFile.LinkId + "\")' onclick='startSlideShow(\"" + imageModelFile.LinkId + "\")'" + " src='" + imageModelFile.Link + "'/></div>");
     });
 
     if (imageLinksModel.SubDirs.length > 1) {
@@ -254,7 +268,10 @@ $(window).resize(function () {
     resizeImageContainer();
 });
 
-function startSlideShow(imageIndex) {
+function startSlideShow(linkId) {
+
+    alert("linkId: " + linkId);
+
     if (typeof staticPageFolderName === 'string') {
         isStaticPage = "true";
         currentAlbumJSfolderName = staticPageFolderName;
@@ -269,9 +286,8 @@ function startSlideShow(imageIndex) {
         });
     });
 
-    launchViewer(albumFolderId, imageIndex, false);
-    resizeViewer();
-    viewerShowing = true;
+    launchViewer(albumFolderId, linkId, false);
+    $('#fileCount').hide();
 }
 
 function launchDeepSlideShow()

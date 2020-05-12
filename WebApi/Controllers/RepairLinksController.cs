@@ -22,6 +22,7 @@ namespace WebApi
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
         static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
+        static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
 
         [HttpGet]
         public RepairReportModel RepairLinks(int startFolderId, string drive)
@@ -371,12 +372,101 @@ namespace WebApi
             string success = "";
             try
             {
+
                 //CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                 //string ftpPath = ftpHost + "/" + dbCategoryFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(folderId);
                 List<ImageLink> imageLinks = db.ImageLinks.Where(l => l.FolderLocation == folderId).ToList();
                 DateTime imageFileDateTime= DateTime.MinValue;
+
+                int fWidth = 0;
+                int fHeight = 0;
+                long fSize = 0;
+                string extension;
+                string trimPath;
+                string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
                 foreach (ImageLink imageLink in imageLinks)
                 {
+                    if (imageLink.Width == null)
+                    {
+                        try
+                        {
+                            CategoryFolder dbCategory = db.CategoryFolders.Where(f => f.Id == imageLink.FolderLocation).First();
+                            extension = imageLink.Link.Substring(imageLink.Link.LastIndexOf("."));
+                            string newFileName = dbCategory.FolderName + "_" + imageLink.Id + extension;
+                            trimPath = imageLink.Link.Replace("/Root/", "").Replace("%20", " ").Replace(newFileName, "").Replace("http://", "");
+                            // USE WEBCLIENT TO CREATE THE FILE
+                            using (WebClient wc = new WebClient())
+                            {
+                                try
+                                {
+                                    wc.DownloadFile(new Uri(imageLink.Link), appDataPath + "tempImage" + extension);
+                                }
+                                catch (Exception ex)
+                                {
+                                    success = "wc. download didnt work " + ex.Message;
+                                    
+                                }
+                            }
+                            FtpWebRequest webRequest = null;
+                            // USE WEBREQUEST TO UPLOAD THE FILE
+                            try
+                            {
+                                // todo  write the image as a file to x.ogglebooble  4/1/19
+                                string ftpPath = ftpHost + trimPath;
+                                if (!FtpUtilies.DirectoryExists(ftpPath))
+                                    FtpUtilies.CreateDirectory(ftpPath);
+
+                                webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
+                                webRequest.Credentials = networkCredentials;
+                                webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                                //var zz = webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                            }
+                            catch (Exception ex)
+                            {
+                                success = " webRequest didnt work " + ex.Message;
+                            }
+                            // TAKE THE WEBREQUEST FILE STREAM TO 
+
+                            try
+                            {
+                                using (Stream requestStream = webRequest.GetRequestStream())
+                                {
+                                    byte[] fileContents = System.IO.File.ReadAllBytes(appDataPath + "tempImage" + extension);
+                                    webRequest.ContentLength = fileContents.Length;
+                                    requestStream.Write(fileContents, 0, fileContents.Length);
+                                    requestStream.Flush();
+                                    requestStream.Close();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                success = "GetRequestStream didn't work " + ex.Message;
+                            }
+
+                            using (var fileStream = new FileStream(appDataPath + "tempImage" + extension, FileMode.Open, FileAccess.Read, FileShare.Read))
+                            {
+                                fSize = fileStream.Length;
+                                using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
+                                {
+                                    fWidth = image.Width;
+                                    fHeight = image.Height;
+                                }
+                                imageLink.Width = fWidth;
+                                imageLink.Height = fHeight;
+                                db.SaveChanges();
+
+                            }
+                            DirectoryInfo directory = new DirectoryInfo(appDataPath);
+                            FileInfo tempFile = directory.GetFiles("tempImage" + extension).FirstOrDefault();
+                            if (tempFile != null)
+                                tempFile.Delete();
+                            System.Diagnostics.Debug.WriteLine("delete worked ");
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine("delete didn't work " + ex.Message);
+                        }
+                    }
                     if (imageLink.LastModified == null)
                     {
                         try

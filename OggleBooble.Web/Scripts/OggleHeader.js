@@ -7,16 +7,15 @@ function setOggleHeader(folderId, subdomain) {
     if (subdomain === undefined) {
         subdomain = "boobs";
     }
-    var headerHtml;
     //var lang = "en";
 
-    $('header').switchClass('pornHeader', 'boobsHeader');
-    $('header').html(fullScreenHeader())
+    //$('header').switchClass('pornHeader', 'boobsHeader');
+    $('header').html(fullScreenHeader(folderId));
 
     setHeaderDetails(folderId, subdomain);
 }
 
-function fullScreenHeader() {
+function fullScreenHeader(folderId) {
     // HEADER HTML
     return "   <div id='divTopLeftLogo' class='bannerImageContainer'></div>\n" +
         "   <div class='headerBodyContainer'>\n" +
@@ -67,8 +66,8 @@ function fullScreenHeader() {
         "   <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
         "</div>\n" +
         "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
-        "<div id='customMessageContainer' class='centeredDivShell'>\n" +
-        "   <div class='centeredDivInner'>\n" +
+        "<div id='customMessageContainer' class='centeringOuterShell'>\n" +
+        "   <div class='centeringInnerShell'>\n" +
         "       <div id='customMessage' class='displayHidden' ></div>\n" +
         "   </div>\n" +
         "</div>\n" +
@@ -276,8 +275,8 @@ function phoneHeader() {
         "   <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
         "</div>\n" +
         "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
-        "<div id='customMessageContainer' class='centeredDivShell'>\n" +
-        "   <div class='centeredDivInner'>\n" +
+        "<div id='customMessageContainer' class='centeringOuterShell'>\n" +
+        "   <div class='centeringInnerShell'>\n" +
         "       <div id='customMessage' class='displayHidden' ></div>\n" +
         "   </div>\n" +
         "</div>\n" +
@@ -332,13 +331,13 @@ function tabletHeader() {
         "<div id='draggableDialog' class='oggleDraggableDialog'>\n" +
         "   <div id='draggableDialogHeader'class='oggleDraggableDialogHeader'>" +
         "       <div id='draggableDialogTitle' class='oggleDraggableDialogTitle'></div>" +
-        "       <div id='draggableDialogCloseButton' class='oggleDraggableDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'></div>\n" +
+        "       <div id='draggableDialogCloseButton' class='oggleDraggableDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='$(\"dragableDialog.hide()\"'></div>\n" +
         "   </div>\n" +
         "   <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
         "</div>\n" +
         "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
-        "<div id='customMessageContainer' class='centeredDivShell'>\n" +
-        "   <div class='centeredDivInner'>\n" +
+        "<div id='customMessageContainer' class='centeringOuterShell'>\n" +
+        "   <div class='centeringInnerShell'>\n" +
         "       <div id='customMessage' class='displayHidden' ></div>\n" +
         "   </div>\n" +
         "</div>\n" +
@@ -402,8 +401,8 @@ function bigScreenHeader() {
         "   <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
         "</div>\n" +
         "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
-        "<div id='customMessageContainer' class='centeredDivShell'>\n" +
-        "   <div class='centeredDivInner'>\n" +
+        "<div id='customMessageContainer' class='centeringOuterShell'>\n" +
+        "   <div class='centeringInnerShell'>\n" +
         "       <div id='customMessage' class='displayHidden' ></div>\n" +
         "   </div>\n" +
         "</div>\n" +

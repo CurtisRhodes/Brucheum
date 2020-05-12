@@ -31,6 +31,11 @@ function launchViewer(folderId, startItem, showAllChildren) {
     sessionCount = 0;
     $('#imageContainer').fadeOut();
     getFolderArray(folderId, startItem);
+
+    visitorId = getCookieValue("VisitorId");
+    if (isNullorUndefined(visitorId)) {
+        callIpServiceFromStaticPage(folderId, "slideshow", "slideshow");
+    }
 }
 
 function getFolderArray(folderId, startItem) {
@@ -71,8 +76,11 @@ function getFolderArray(folderId, startItem) {
                     console.log("GetImageLinks?folder=" + folderId + " took: " + delta.toFixed(3));
                 }
                 else {
+                    var ajxVisitorId = getCookieValue("VisitorId");
+                    if (isNullorUndefined(ajxVisitorId))
+                        ajxVisitorId = "undefined";
                     logError({
-                        VisitorId: getCookieValue("VisitorId"),
+                        VisitorId: ajxVisitorId,
                         ActivityCode: "AJX",
                         Severity: 1,
                         ErrorMessage: successModel.Success,
@@ -87,8 +95,12 @@ function getFolderArray(folderId, startItem) {
                 //$('#imagePageLoadingGif').hide();
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errorMessage, "getAlbumImages")) {
+                    var xhrVisitorId = getCookieValue("VisitorId");
+                    if (isNullorUndefined(xhrVisitorId))
+                        xhrVisitorId = "undefined";
+
                     logError({
-                        VisitorId: getCookieValue("VisitorId"),
+                        VisitorId: xhrVisitorId,
                         ActivityCode: "XHR",
                         Severity: 1,
                         ErrorMessage: errorMessage,
@@ -100,8 +112,11 @@ function getFolderArray(folderId, startItem) {
         });
     } catch (e) {
         //$('#imagePageLoadingGif').hide();
+        var catVisitorId = getCookieValue("VisitorId");
+        if (isNullorUndefined(catVisitorId))
+            catVisitorId = "undefined";
         logError({
-            VisitorId: getCookieValue("VisitorId"),
+            VisitorId: catVisitorId,
             ActivityCode: "CAT",
             Severity: 1,
             ErrorMessage: e,
@@ -152,9 +167,12 @@ function incrimentExplode() {
     //   alert("dlgW: " + $('#imageViewerDialog').width() + "imgW: " + $('#viewerImage').width());
     if ((viewerT === 0) && (viewerL === 0) && (viewerH === windowH) && (viewerW === windowW)) {
         if (imageViewerFolderName === undefined) {
+            var ajxVisitorId = getCookieValue("VisitorId");
+            if (isNullorUndefined(ajxVisitorId))
+                ajxVisitorId = "undefined";
             if (typeof staticPageFolderName === 'string') {
                 logError({
-                    VisitorId: getCookieValue("VisitorId"),
+                    VisitorId: ajxVisitorId,
                     ActivityCode: "IS1",
                     Severity: 4,
                     ErrorMessage: "Issue in SlideShow. StaticPageFolderName: " + staticPageFolderName,
@@ -166,7 +184,7 @@ function incrimentExplode() {
             }
             else {
                 logError({
-                    VisitorId: getCookieValue("VisitorId"),
+                    VisitorId: ajxVisitorId,
                     ActivityCode: "IS2",
                     Severity: 4,
                     ErrorMessage: "Issue in SlideShow  typeof staticPageFolderName",
@@ -270,8 +288,11 @@ function slide(direction) {
         }, 450);
         //$('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
     } catch (e) {
+        var ajxVisitorId = getCookieValue("VisitorId");
+        if (isNullorUndefined(ajxVisitorId))
+            ajxVisitorId = "undefined";
         logError({
-            VisitorId: getCookieValue("VisitorId"),
+            VisitorId: ajxVisitorId,
             ActivityCode: "CAT",
             Severity: 4,
             ErrorMessage: e,
@@ -340,10 +361,12 @@ function blowupImage() {
 
 function showImageViewerCommentDialog() {
     closeViewer("CommentDialog");
-
     showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, imageViewerFolderName);
+    var ajxVisitorId = getCookieValue("VisitorId");
+    if (isNullorUndefined(ajxVisitorId))
+        ajxVisitorId = "undefined";
     logEventActivity({
-        VisitorId: getCookieValue("VisitorId"),
+        VisitorId: ajxVisitorId,
         EventCode: "SVC",
         PageId: imageViewerFolderId,
         EventDetail: "WOW! Someone tried to make a comment",
@@ -363,12 +386,14 @@ function closeViewer(calledFrom) {
 
     if (verbosity > 2) {
         var closeMethod = "click";
-        if (calledFrom !== undefined) {
+        if (calledFrom !== undefined) 
             closeMethod = calledFrom;
-        }
+        var ajxVisitorId = getCookieValue("VisitorId");
+        if (isNullorUndefined(ajxVisitorId))
+            ajxVisitorId = "undefined";
         if (sessionCount < 2) {
             logEventActivity({
-                VisitorId: getCookieValue("VisitorId"),
+                VisitorId: ajxVisitorId,
                 EventCode: "SVC",
                 EventDetail: "Single Image Viewed. closeMethod: " + closeMethod,
                 PageId: imageViewerFolderId,
@@ -377,7 +402,7 @@ function closeViewer(calledFrom) {
         }
         else {
             logEventActivity({
-                VisitorId: getCookieValue("VisitorId"),
+                VisitorId: ajxVisitorId,
                 EventCode: "SVC",
                 EventDetail: "Images Viewed: " + sessionCount + " closed: " + closeMethod,
                 PageId: imageViewerFolderId,
@@ -476,8 +501,11 @@ function slideshowCtxMnuAction(action) {
                 runSlideShow('pause');
             }
             slideShowButtonsActive = false;
+            var cmtVisitorId = getCookieValue("VisitorId");
+            if (isNullorUndefined(cmtVisitorId))
+                cmtVisitorId = "undefined";
             logEventActivity({
-                VisitorId: getCookieValue("VisitorId"),
+                VisitorId: cmtVisitorId,
                 EventCode: "FCC",  // fantasy comment
                 EventDetail: "Image: " + imageViewerArray[imageViewerIndex].Link,
                 PageId: imageViewerFolderId,
@@ -514,8 +542,11 @@ function slideshowCtxMnuAction(action) {
             //if (viewerShowing) slide("next");
             break;
         default:
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
+            var ajxVisitorId = getCookieValue("VisitorId");
+            if (isNullorUndefined(ajxVisitorId))
+                ajxVisitorId = "undefined";
+          logError({
+                VisitorId: ajxVisitorId,
                 ActivityCode: "SWT",
                 Severity: 2,
                 ErrorMessage: "Unhandeled case: " + action,

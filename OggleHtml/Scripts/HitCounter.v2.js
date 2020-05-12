@@ -3,19 +3,6 @@ var freeImageHitsAllowed = 2500;
 
 function logImageHit(link, pageId, isInitialHit) {
     try {
-        if (isNullorUndefined(pageId)) {
-            logError({
-                VisitorId: visitorId,
-                ActivityCode: "IM1",
-                Severity: 2,
-                ErrorMessage: "TROUBLE in logImageHit. PageId came in Null or Undefined",
-                CalledFrom: "HitCounter.js logImageHit"
-            });
-            //sendEmailToYourself("TROUBLE in logImageHit. PageId came in Null or Undefined", "Set to 1 or  something");
-            return;
-        }
-        visitorId = getCookieValue("VisitorId");
-
         //pageId = pageId.trim();
         //if (!Number.isInteger(pageId)) {
         //    logError({
@@ -29,19 +16,30 @@ function logImageHit(link, pageId, isInitialHit) {
         //    return;
         //}
 
+        visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId)) {
-            //logError({
-            //    VisitorId: visitorId,
-            //    ActivityCode: "IH0",
-            //    Severity: 27,
-            //    ErrorMessage: "logImageHit no VisitorId (NOT calling IpInfo)",
-            //    CalledFrom: pageId
-            //});
-
+            logError({
+                VisitorId: visitorId,
+                ActivityCode: "IH0",
+                Severity: 27,
+                ErrorMessage: "logImageHit no VisitorId (NOT calling IpInfo)",
+                CalledFrom: pageId
+            });
             //callIpServiceFromStaticPage(pageId, "logImageHit", "logImageHit");
-
             return;
         }
+        if (isNullorUndefined(pageId)) {
+            logError({
+                VisitorId: visitorId,
+                ActivityCode: "IM1",
+                Severity: 2,
+                ErrorMessage: "TROUBLE in logImageHit. PageId came in Null or Undefined",
+                CalledFrom: "HitCounter.js logImageHit"
+            });
+            //sendEmailToYourself("TROUBLE in logImageHit. PageId came in Null or Undefined", "Set to 1 or  something");
+            return;
+        }
+
 
         if (visitorId.length !== 36) {
             logError({
@@ -52,7 +50,6 @@ function logImageHit(link, pageId, isInitialHit) {
                 CalledFrom: pageId
             });
             callIpServiceFromStaticPage(pageId, "bad visitorId", "logImageHit");
-
             return;
         }
 
@@ -63,8 +60,6 @@ function logImageHit(link, pageId, isInitialHit) {
             LinkId: linkId,
             IsInitialHit: isInitialHit
         };
-
-
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/ImageHit/LogImageHit",
@@ -76,14 +71,23 @@ function logImageHit(link, pageId, isInitialHit) {
                     //checkForHitLimit("images", pageId, userPageHits, userImageHits);
                 }
                 else {
-                    //if (imageHitSuccessModel.Success.indexOf("Duplicate entry") > 0) {
-                    logError({
-                        VisitorId: visitorId,
-                        ActivityCode: "IMD",
-                        Severity: 2,
-                        ErrorMessage: imageHitSuccessModel.Success,
-                        CalledFrom: "logImageHit"
-                    });
+                    if (!imageHitSuccessModel.Success.indexOf("Duplicate entry") > 0)
+                        //logError({
+                        //    VisitorId: visitorId,
+                        //    ActivityCode: "IMD",
+                        //    Severity: 2,
+                        //    ErrorMessage: "Duplicate entry",
+                        //    CalledFrom: "logImageHit"
+                        //});
+                        //else
+
+                        logError({
+                            VisitorId: visitorId,
+                            ActivityCode: "IMD",
+                            Severity: 2,
+                            ErrorMessage: imageHitSuccessModel.Success,
+                            CalledFrom: "logImageHit"
+                        });
                 }
             },
             error: function (jqXHR) {
@@ -124,6 +128,11 @@ function logPageHit(pageId, calledFrom) {
         return;
     }
     var visitorId = getCookieValue("VisitorId");
+    if (isNullorUndefined(visitorId)) {
+        //callIpServiceFromStaticPage(pageId, "logPageHit", calledFrom);
+        visitorId = "undefined" + Math.floor((Math.random() * 1000) + 1);;
+    }
+
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/VisitorInfo/LogPageHit?visitorId=" + visitorId + "&pageId=" + pageId,
@@ -135,10 +144,10 @@ function logPageHit(pageId, calledFrom) {
             else {
                 logError({
                     VisitorId: visitorId,
-                    ActivityCode: "B01",
+                    ActivityCode: "AJX",
                     Severity: 4,
                     ErrorMessage: pageHitSuccess.Success,
-                    CalledFrom: "tryLogPageHit"
+                    CalledFrom: "logPageHit/" + calledFrom
                 });
             }
         },
@@ -162,7 +171,6 @@ function logVisit(visitorId, pageId) {
     if (isNullorUndefined(visitorId)) {
         return;
     }
-
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/VisitorInfo/LogVisit?visitorId=" + visitorId,
@@ -563,29 +571,51 @@ function logEventActivity(logEventModel) {
 function callIpServiceFromStaticPage(pageId, externalSource, calledFrom) {
     try {
 
-        var visitorId = getCookieValue("VisitorId");
-        if (!isNullorUndefined(visitorId)) {
-            logError({
-                VisitorId: visitorId,
-                ActivityCode: "IP1",
-                Severity: 72,
-                ErrorMessage: "known VisitorId sent to IpInfo",
-                CalledFrom: calledFrom
-            });
-            return;
-        }
+        if (document.domain !== 'localhost') {
 
-        if (!navigator.cookieEnabled) {
-            //alert("this site requires cookies");
-            logError({
-                VisitorId: visitorId,
-                ActivityCode: "IP2",
-                Severity: 72,
-                ErrorMessage: "Visitor cookies not enabled",
-                CalledFrom: calledFrom
-            });
-            return;
+            var visitorId = getCookieValue("VisitorId");
+            if (!isNullorUndefined(visitorId)) {
+                logError({
+                    VisitorId: visitorId,
+                    ActivityCode: "IP1",
+                    Severity: 72,
+                    ErrorMessage: "known VisitorId sent to IpInfo",
+                    CalledFrom: calledFrom
+                });
+                return;
+            }
 
+            if (!navigator.cookieEnabled) {
+                //    var decodedCookie = decodeURIComponent(document.cookie);
+                //    var cookieElements = decodedCookie.split(',');
+                //    var cookieItem; var cookieItemName; var cookieItemValue;
+                //    for (var i = 0; i < cookieElements.length; i++) {
+                //        cookieItem = cookieElements[i].split(':');
+                //        cookieItemName = cookieItem[0].trim();//.substring(0, cookieElements[i].indexOf("=")).trim();
+                //        cookieItemValue = cookieItem[1];//.substring(cookieElements[i].indexOf("=") + 1);
+                //        if (cookieItemName === "VisitorId") {
+                //            logError({
+                //                VisitorId: visitorId,
+                //                ActivityCode: "IP1",
+                //                Severity: 72,
+                //                ErrorMessage: "known VisitorId sent to IpInfo",
+                //                CalledFrom: calledFrom
+                //            });
+                //            return;
+                //        }
+                //    }
+                //}
+                //else {
+                //alert("this site requires cookies");
+                logError({
+                    VisitorId: visitorId,
+                    ActivityCode: "IP2",
+                    Severity: 72,
+                    ErrorMessage: "Visitor cookies not enabled",
+                    CalledFrom: calledFrom
+                });
+                return;
+            }
         }
         //dataCookies1() { return document.cookie },
 
@@ -629,6 +659,11 @@ function callIpServiceFromStaticPage(pageId, externalSource, calledFrom) {
                                     CalledFrom: "callIpService"
                                 });
                             }
+
+                            $.ajax({
+                                type: "POST",
+                                url: settingsArray.ApiServer + "api/VisitorInfo/LogIpInfoHit?ipAddress=" + ipResponse.ip,
+                            })
 
                             if (addVisitorSuccess.IsNewVisitor) {
                                 logEventActivity({
@@ -694,7 +729,7 @@ function callIpServiceFromStaticPage(pageId, externalSource, calledFrom) {
             ActivityCode: "IP4",
             Severity: 200,
             ErrorMessage: "Catch error: " + e,
-            CalledFrom: "addToVisitorTable"
+            CalledFrom: "IpInfo"
         });
     }
 }

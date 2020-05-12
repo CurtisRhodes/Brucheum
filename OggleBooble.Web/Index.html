@@ -24,9 +24,20 @@
     <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
     <script src="Scripts/Permissions.js"></script>
+    <script src="Scripts/FolderCategoryDialog.js"></script>
+
+    <script src="Scripts/Carousel.js"></script>
+
+
+    <!--<script src="Scripts/FeedbackDialog.js"></script>
+    <script src="Scripts/DirTree.js"></script>
+    <script src="Scripts/ModelInfoDialog.js"></script>
+    <script src="Scripts/ImageCommentDialog.js"></script>
+    <script src="Scripts/MoveCopyArchive.js"></script>
+    <script src="Scripts/MetaTagDialog.js"></script>-->
     <!--<link href="Styles/bootstrap.css" rel="stylesheet" />-->
     <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">-->
-    <link href="Styles/jqueryUI.css" rel="stylesheet">
+    <!--<link href="Styles/jqueryUI.css" rel="stylesheet">-->
     <link href="Styles/Common.css" rel="stylesheet">
     <link href="Styles/IndexPage.css" rel="stylesheet">
     <link href="Styles/loginDialog.css" rel="stylesheet">
@@ -46,54 +57,32 @@
     </script>-->
 </head>
 <body>
-    <header></header>
+    <header class="boobsHeader"></header>
     <div class="threeColumnLayout">
-        <div id="leftColumn">
-            <div id="boobsLeftColumnList" class="leftColumnList">
-                <!--<div onclick="rtpe('LMC',3908,'boobTransitions');">Transitions</div>-->
-                <!--<div onclick="rtpe('LMC',3908,'boobsRanker');">Boobs Ranker</div>-->
-                <!--<div onclick="rtpe('LMC',3908,'explainBoobs');">Let me Explain</div>-->
-                <!--<div onclick="rtpe('LMC',3908,'dirTreeBoobs');">Category List</div>-->
-                <!--<div onclick="rtpe('LMC',3908,'centerfolds');">Playboy Centerfolds</div>-->
-                <div id="clkVideo" class="displayHidden" onclick="rtpe('LMC',3908,'video');">Video</div>
-                <!--<div onclick="rtpe('LMC',3908,'porn');">Nasty Porn</div>-->
-                <!--<div onclick="rtpe('LMC',0,'blog');">Blog</div>-->
-                <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
-            </div>
-            <div id="pornLeftColumnList" class="leftColumnList">
-                <div onclick="rtpe('LMC',3909,'back');">back to boobs</div><br />
-                <!--<div onclick="rtpe('LMC',3909,'pornTransitions');">Transition down</div>-->
-                <!--<div onclick="rtpe('LMC',3909,'pornRanker');">Nastieness Ranker</div>-->
-                <!--<div onclick="rtpe('LMC',3909,'explainPorn');">Let me Explain</div>-->
-                <!--<div onclick="rtpe('LMC',3909,'dirTreePorn');">Category List</div>-->
-                <!--<div onclick="rtpe('LMC',3909,'back');">back to boobs</div>-->
-                <!--<div onclick="rtpe('LMC',3909,'blog');">Blog</div>-->
-                <!--<div onclick="window.location.href='/home/Mobile?folder=boobs'">Mobile</div>-->
-            </div>
-        </div>
-        <div id="middleColumn">
+        <div class="leftColumn"></div>
+        <div class="middleColumn">
             <div id="divStatusMessage"></div>
             <div id="dots"></div>
-
-            <div class="display: block">
-                <div id="carouselOutterContainer">
-                    <div class="indexSectionLabel floatingContainerElement">random galleries</div>
-                    <div id="carouselContainer"></div>
-                </div>
-                <div id="latestGalleriesContainer" class="floatBelow displayHidden">
-                    <div class="indexSectionLabel">latest updates</div>
+            <div class="indexPageSection" id="topIndexPageSection">
+                <div class="floatingContainerElement sectionLabel">random galleries</div>
+                <div id="carouselContainer"></div>
+            </div>
+            <div class="indexPageSection" id="bottomSection">
+                <div>latest updates</div>
+                <div id="browserInfo"></div>
+                <div id="latestGalleriesContainer">
                     <div id="updatedGalleriesSection" class="updatedGalleriesSection"></div>
                     <div class="clickable" onclick="onShowMoreGalleries()">show more updated galleries</div>
                 </div>
             </div>
         </div>
-        <div id="rightColumn"></div>
+        <div class="rightColumn"></div>
     </div>
     <footer></footer>
 
     <div id="launchingService" class="floatLeft">
-        <div class="centeredDivShell randomImageContainer">
-            <div class="centeredDivInner">
+        <div class="centeringOuterShell randomImageContainer">
+            <div class="centeringInnerShell">
                 <div id="connectingMsg" class="displayHidden"><img src="https://media.giphy.com/media/ZFiRiRg60SjhipvdCz/giphy.gif" /></div>
                 <!--<div id="connectingMsg"><img src="https://media.giphy.com/media/ls5bix63j3H53E1Ebp/giphy.gif" /></div>-->
             </div>
@@ -112,8 +101,6 @@
         var updatedGalleriesCount = 25;
 
         $(document).ready(function () {
-            //includeHTML();
-            //$('.indexSectionLabel').hide();
             //$('#footerLastBuild').html("last build: " + lastBuild + "3");
             $('#footerMessage').html("loading settings");
             params = getParams();
@@ -125,6 +112,9 @@
                 homePageId = 3909;
 
             setOggleHeader(homePageId, subdomain);
+
+            setOggleFooter(homePageId, subdomain);
+
             loadSettings();
             var dots = ""
             var getXMLsettingsWaiter = setInterval(function () {
@@ -163,7 +153,10 @@
                                 //launchPromoMessages();
                             }
 
-                            launchCarousel(subdomain);
+                            //if(subdomain==="boobs")
+                            //    launchCarousel("everything");
+                            //else
+                                launchCarousel(subdomain);
 
                             loadUpdatedGalleriesBoxes(updatedGalleriesCount);
 
@@ -178,10 +171,6 @@
                                 setLoginHeaderSection(visitorId);
                                 logPageHit(homePageId);
                             }
-
-
-
-
                             $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
 
                         }
@@ -195,30 +184,41 @@
 
             window.addEventListener("resize", resizeIndexPage);
             resizeIndexPage();
-
-            $('#carouselSettingsDialog').dialog({
-                autoOpen: false,
-                show: { effect: "fade" },
-                hide: { effect: "blind" },
-                width: "400"
-            });
         });
-        function goToPorn() {
 
-            //if(hasPorn)
-            //if (document.domain === 'localhost') alert("goToPorn()");
+        function resizeIndexPage() {
+            //set page height
+            var winH = $(window).height();
+            var headerH = $('header').height() + 8;
+            //$('.middleColumn').height(winH - headerH);
+            $('#topIndexPageSection').height((winH - headerH) * .75);
+            
+            //$('.middleColumn').height(winH - headerH);
+            //bottomSection
+            //$('#topIndexPageSection').height(winH - headerH);
+            //$('.indexPageSection').height($('.middleColumn').height() / 2.15);
 
-            // if user porn status not already set
-            showCustomMessage(35);
+            //resizeCarousel();
+            var carouselFooerHeight = 40;
+            $('#thisCarouselImage').height($('#topIndexPageSection').height() - carouselFooerHeight);
+
+
+
+            // width
+            var winW = $(window).width();
+            $('section').css("background-color", "#d5d1ba");
+            if (winW < 1500) {
+                $('section').css("background-color", "red");
+            }
+
+            //var lcW = $('.leftColumn').width();
+            //var rcW = $('.rightColumn').width();
+            //$('.middleColumn').width(winW - lcW - rcW);
+
+
+            //$('#footerMessage').html("page height: " + winH + " page width: " + winW);
+            //$('#bottomSection').html("page height: " + winH + " page width: " + winW);
         }
     </script>
-    <script src="Scripts/Carousel.js"></script>
-    <script src="Scripts/FeedbackDialog.js"></script>
-    <script src="Scripts/DirTree.js"></script>
-    <script src="Scripts/FolderCategoryDialog.js"></script>
-    <script src="Scripts/ModelInfoDialog.js"></script>
-    <script src="Scripts/ImageCommentDialog.js"></script>
-    <script src="Scripts/MoveCopyArchive.js"></script>
-    <script src="Scripts/MetaTagDialog.js"></script>
 </body>
 </html>
