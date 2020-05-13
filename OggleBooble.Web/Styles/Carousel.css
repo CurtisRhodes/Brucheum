@@ -30,31 +30,16 @@
     z-index: 2;
 }
 
-.carouselShell {
-    position: absolute;
-    left: 50%;
-}
-
-.carouselInternals {
-    position: relative;
-    left: -50%;
-    min-height: 200px;
-}
-
 .carouselImage {
-    height: 500px;
-    width: 800px;
     cursor: pointer;
 }
 
 .carouselImageContainer {
-    border: solid 5px #efeacb;
-    border-bottom: none;
-    background-color: #efeacb;
-    cursor: pointer;
+    display: flex;    
 }
 
-.imgBottom {
+.carouselFooter {
+    margin-left: 50px;
     background-color: #efeacb;
     text-align: center;
 }

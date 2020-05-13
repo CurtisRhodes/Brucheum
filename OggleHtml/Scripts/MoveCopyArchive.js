@@ -8,6 +8,9 @@ function showMoveCopyDialog(mode, link, sourceFolderId) {
     $('#btnGo').html(mode);
     $('#copyDialogImage').attr("src", link);
 
+
+
+
     if ($('#moveDialogDirTree').children().length < 1) {
         //alert("$('#moveDialogDirTree').children().length: " + $('#moveDialogDirTree').children().length);
         buildDirTree($('#moveDialogDirTree'), "moveDialogDirTree", 0);

@@ -18,32 +18,12 @@
     --topLinkRow14: 14px;
 }
 
-.pornBodyColors {
-    background-color: #ffcccc;
-}
 
 body {
     background-color: var(--oggleBackgroundColor);
     font-family: Verdana;
-    box-sizing: border-box;
-    margin-top: 100px !important;
     font-size: var(--normalFont);
-}
-
-
-.selectedDirTreeNode {
-    background-color: #dcd7be; /* #b2e5eb; */
-}
-.treeLabelDiv {
-    display: inline;
-}
-
-/*.pinkStarBackground {
-    background-image: url('images/pinkStarsWalllpaper02.jpg');
-}*/
-
-.catlyn {
-    background-image: url('https://edge206.stream.highwebmedia.com/live-hls/amlst:caylin-sd-8937ba6912ed937e04b8db696878e971b081d644ba83cba4e9b73d5e0af1e0f6_trns_h264/playlist.m3u8');
+    margin: 0;
 }
 
 .threeColumnLayout {
@@ -54,7 +34,7 @@ body {
     .threeColumnLayout .leftColumn {
         float: left;
         /*border-right: solid 5px var(--ogglgeHeaderBarColor);*/
-        min-width: 10%;
+        min-width: 4%;
     }
 
     .threeColumnLayout .middleColumn {
@@ -64,9 +44,23 @@ body {
 
     .threeColumnLayout .rightColumn {
         float: right;
-        min-width: 7%;
+        min-width: 5%;
     }
 
+.pornBodyColors {
+    background-color: #ffcccc;
+}
+
+.centeringOuterShell {
+    position: absolute;
+    left: 50%;
+    margin: 0;
+}
+.centeringInnerShell {
+    position: relative;
+    left: -50%;
+    margin: 0;
+}
 
 .modalVail {
     display: none; /*Hidden by default */
@@ -82,6 +76,11 @@ body {
 
 .modalContentStyle {
     z-index: 15;
+}
+
+.sectionLabel {
+    color: var(--oggleTitleColor);
+
 }
 
 .roundendButton {
@@ -141,23 +140,6 @@ body {
             color: #333;
         }
 
-.centeredDivShell {
-    position: absolute;
-    left: 50%;
-}
-
-.centeredDivShell2 {
-    position: absolute;
-    left: 40%;
-    top: 0;
-}
-
-.centeredDivInner {
-    position: relative;
-    left: -50%;
-    min-height: 200px;
-}
-
 .galleryCheckBoxContainer {
     margin: 8px;
 }
@@ -179,6 +161,7 @@ body {
     }
 
 footer {
+    display: block;
     margin-top: 4px;
     border-top: solid 4px #feb236;
     font-family: Arial;
@@ -431,3 +414,18 @@ footer {
     border-radius: 8px;
 }
 
+.selectedDirTreeNode {
+    background-color: #dcd7be; /* #b2e5eb; */
+}
+
+.treeLabelDiv {
+    display: inline;
+}
+
+/*.pinkStarBackground {
+    background-image: url('images/pinkStarsWalllpaper02.jpg');
+}*/
+
+.catlyn {
+    background-image: url('https://edge206.stream.highwebmedia.com/live-hls/amlst:caylin-sd-8937ba6912ed937e04b8db696878e971b081d644ba83cba4e9b73d5e0af1e0f6_trns_h264/playlist.m3u8');
+}

@@ -1,6 +1,8 @@
-﻿function setOggleFooter(pageId, subdomain, lastModified) {
+﻿function setOggleFooter(pageId, subdomain) {
     //alert("setOggleFooter. pageId: " + pageId + "  rootFolder: " + rootFolder);
     var footerhtml = "";
+
+    //rtpe(code,calledFrom,eventDetail,pageId)
 
     switch (subdomain) {
         case "boobs":
@@ -8,27 +10,26 @@
             footerhtml =
                 "<div class='flexContainer'>\n" +
                 "    <div class='footerCol'>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"about us\",\"about us\","+pageId+")'>about us</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"dir tree\",\"dir tree\"," + pageId +")'>Category List</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"about us\",\"about us\"," + pageId + ")'>about us</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"dir tree\",\"dir tree\"," + pageId + ")'>Category List</div>\n" +
                 "        <div><a href='#'></a></div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"porn\",\"porn\"," + pageId +")'>Nasty Porn</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"porn\",\"porn\"," + pageId + ")'>Nasty Porn</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"ranker\",\"ranker\"," + pageId +")'>Boobs Rater</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"rejects\",\"rejects\"," + pageId +")'>Rejects</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"videos\",\"videos\"," + pageId +")'>Nasty Videos</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"centerfolds\",\"centerfolds\"," + pageId +")'>Centerfolds</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"ranker\",\"ranker\"," + pageId + ")'>Boobs Rater</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"rejects\",\"rejects\"," + pageId + ")'>Rejects</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"videos\",\"videos\"," + pageId + ")'>Nasty Videos</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"centerfolds\",\"centerfolds\"," + pageId + ")'>Centerfolds</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"mailme\",\"mailme\"," + pageId +")'>email site developer</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"blog\",\"blog\"," + pageId +")'>Blog</div>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"archive\"," + pageId +")'>Archive</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"mailme\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"blog\",\"blog\"," + pageId + ")'>Blog</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"archive\"," + pageId + ")'>Archive</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
-            "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",'tt\",\"freedback\"," + pageId +")'>Feedback</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"freedback\"," + pageId + ")'>Feedback</div>\n" +
                 "    </div>\n" +
-                "</div>\n" +
-                "<div id='footerLastBuild' class='footerVersionMessage'></div>\n";
+                "</div>\n";
             break;
         case "playboy":
             footerhtml =
@@ -81,17 +82,13 @@
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
                 "    </div>\n" +
-                "</div>\n" +
-                "<div id='footerLastBuild' class='footerVersionMessage'></div>\n" +
-                "<div class='footerFooter'>\n" +
-                "    <div id='footerMessage'></div>\n" +
-                "    <div id='copyright'>&copy; 2019 - <a href='~/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>\n" +
                 "</div>\n";
             break;
     }
     footerhtml += "<div class='footerFooter'>\n" +
         "    <div id='footerMessage'></div>\n" +
         //"    <div class='footerMessage'>last modified: " + lastModified + "</div>\n" +
+        //"<div id='footerLastBuild' class='footerVersionMessage'></div>\n";
         "    <div id='copyright'>&copy; 2019 - <a href='~/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>\n" +
         "</div>\n";
     $('footer').html(footerhtml);

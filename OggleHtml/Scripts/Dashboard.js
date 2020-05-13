@@ -79,7 +79,7 @@ function setDashboardHeader(viewId) {
 
 
 
-            //$('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='emergencyFolderLocationFix()'>emergencyFolderLocationFix</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='MoveManyCleanup()'>MoveManyCleanup</div>");
            
@@ -796,10 +796,6 @@ function renameFolder() {
         }
     });
 }
-
-
-
-
 
 function addFileDates() {
     $('#dataifyInfo').show().html("adding file dates");

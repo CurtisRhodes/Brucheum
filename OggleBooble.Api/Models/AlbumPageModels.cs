@@ -77,4 +77,15 @@ namespace OggleBooble.Api.Models
         public int ParentId { get; set; }
         public bool IsInitialFolder { get; set; }
     }
+    public class SlideshowItemsModel
+    {
+        public SlideshowItemsModel()
+        {
+            SlideshowItems = new List<MsSqlDataContext.vwSlideshowItem>();
+        }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public List<MsSqlDataContext.vwSlideshowItem> SlideshowItems { get; set; }
+        public string Success { get; set; }
+    }
 }

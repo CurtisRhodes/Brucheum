@@ -144,4 +144,12 @@ namespace WebApi.Models
         public string PageName { get; set; }
         public string Success { get; set; }
     }
+    public class LogIpInfoSuccessModel
+    {
+        public string VisitorId { get; set; }
+        public string IpAddress { get; set; }
+        public bool Exists { get; set; }
+        public string PageName { get; set; }
+        public string Success { get; set; }
+    }
 }

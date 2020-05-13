@@ -28,11 +28,44 @@ namespace OggleBooble.Api.MsSqlDataContext
         public virtual DbSet<StepChild> StepChildren { get; set; }
         public virtual DbSet<TrackbackLink> TrackbackLinks { get; set; }
         public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
+        public virtual DbSet<vwCarouselItem> vwCarouselImages { get; set; }
+        public virtual DbSet<vwSlideshowItem> vwSlideshowItems { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
     }
+    [Table("OggleBooble.vwSlideshowItems")]
+    public class vwSlideshowItem
+    {
+        [Key]
+        public long Index { get; set; }
+        public string LinkId { get; set; }
+        public string Link { get; set; }
+        public int FolderId { get; set; }
+        public int ImageFolderId { get; set; }
+        public int ImageParentId { get; set; }
+        public string ImageFolderName { get; set; }
+        public int SortOrder { get; set; }
+    }
+
+    [Table("OggleBooble.vwCarouselImages")]
+    public class vwCarouselItem
+    {
+        public string RootFolder { get; set; }
+        public int FolderId { get; set; }
+        public int ModelFolderId { get; set; }
+        public string RootPath { get; set; }
+        public string FolderName { get; set; }
+        public string ModelPath { get; set; }
+        public string ModelName { get; set; }
+        [Key]
+        public string LinkId { get; set; }
+        public string Link { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+    }
+
     [Table("OggleBooble.ChangeLog")]
     public class ChangeLog
     {

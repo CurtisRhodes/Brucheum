@@ -11,7 +11,7 @@ using System.Web.Http.Cors;
 namespace OggleBooble.Api.Controllers
 {
     [EnableCors("*", "*", "*")]
-    public class IndexPageController : ApiController
+    public class CarouselController : ApiController
     {
         [HttpGet]
         public CarouselInfoModel GetCarouselImages(string root, int skip, int take)
@@ -23,16 +23,19 @@ namespace OggleBooble.Api.Controllers
                 timer.Start();
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    carouselInfo.Links = db.Database.SqlQuery<CarouselItemModel>(
-                        "select f.RootFolder, f.Id FolderId, p.Id ParentId, g.Id LinkId, f.FolderName, p.FolderName FolderPath, g.Link " +
-                        "from OggleBooble.CategoryImageLink c " +
-                        "join OggleBooble.CategoryFolder f on c.ImageCategoryId = f.Id " +
-                        "join OggleBooble.CategoryFolder p on f.Parent = p.Id " +
-                        "join OggleBooble.ImageLink g on c.ImageLinkId = g.Id " +
-                        "where f.RootFolder = @param1 and g.Width > g.Height"
-                        , new System.Data.SqlClient.SqlParameter("param1", root)).OrderBy(m => m.LinkId).Skip(skip).Take(take).ToList();
+                    carouselInfo.Links = db.vwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
+                        .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList();
+
+                    //carouselInfo.Links = db.Database.SqlQuery<CarouselItemModel>(
+                    //                "select f.RootFolder, f.Id FolderId, p.Id ParentId, g.Id LinkId, f.FolderName, p.FolderName FolderPath, g.Link " +
+                    //                "from OggleBooble.CategoryImageLink c " +
+                    //                "join OggleBooble.CategoryFolder f on c.ImageCategoryId = f.Id " +
+                    //                "join OggleBooble.CategoryFolder p on f.Parent = p.Id " +
+                    //                "join OggleBooble.ImageLink g on c.ImageLinkId = g.Id " +
+                    //                "where f.RootFolder = @param1 and g.Width > g.Height"
+                    //                , new System.Data.SqlClient.SqlParameter("param1", root)).OrderBy(m => m.LinkId).Skip(skip).Take(take).ToList();
                 }
-                carouselInfo.FolderCount = carouselInfo.Links.GroupBy(l => l.FolderName).Count();
+                //carouselInfo.FolderCount = carouselInfo.Links.GroupBy(l => l.FolderName).Count();
                 timer.Stop();
                 System.Diagnostics.Debug.WriteLine("Select " + take + " from vLinks took: " + timer.Elapsed);
                 carouselInfo.Success = "ok";
@@ -43,6 +46,11 @@ namespace OggleBooble.Api.Controllers
             }
             return carouselInfo;
         }
+    }
+
+    [EnableCors("*", "*", "*")]
+    public class LatestUpdatesController : ApiController
+    {
 
         [HttpGet]
         public LatestUpdatesModel GetLatestUpdatedFolders(int itemLimit)

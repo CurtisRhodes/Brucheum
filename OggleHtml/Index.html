@@ -193,6 +193,7 @@
                 userPermissons.push("view dynamic");
                 window.localStorage["userPermissons"] = userPermissons;
                 //window.localStorage["IsLoggedIn"] = "true";
+                //alert("visitorId = undefined" + Math.floor((Math.random() * 1000) + 1));
             }
             //else
             //    loadRolesIntoLocalStorage("index", "any");
@@ -220,11 +221,9 @@
                             $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
 
                             //if (document.domain === 'localhost') {
-                            //    alert("navigator.cookieEnabled: " + navigator.cookieEnabled);
-                            //    callIpServiceFromStaticPage(homePageId, "test")
+                            //    //alert("navigator.cookieEnabled: " + navigator.cookieEnabled);
+                            //    //callIpServiceFromStaticPage(homePageId, "test");
                             //}
-
-
 
                             if (subdomain == "porn") {
                                 $('#pornLeftColumnList').show();

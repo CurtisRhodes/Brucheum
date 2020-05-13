@@ -1,7 +1,7 @@
 ﻿function loadUpdatedGalleriesBoxes(numItmes) {
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?itemLimit=" + numItmes,
+        url: settingsArray.ApiServer + "api/LatestUpdates/GetLatestUpdatedFolders?itemLimit=" + numItmes,
         success: function (latestUpdates) {
             if (latestUpdates.Success === "ok") {
                 $('#updatedGalleriesSection').html("");
@@ -47,23 +47,6 @@
             }
         }
     });
-}
-
-function resizeIndexPage() {
-    resizePage();
-
-    $('#middleColumn').height($('#middleColumn').height() + $('#updatedGalleriesSection').height());
-    $('.assuranceArrows').height($('.carouselImageContainer').height());
-
-
-}
-
-function addToCarousel(root, isChecked) {
-    if (root === "archive") {
-        if (subdomain === "porn")
-            root = "sluts";
-    }
-    loadImages(root, isChecked, 0, 50000);
 }
 
 function launchPromoMessages() {
@@ -126,16 +109,10 @@ function killPromoMessages() {
     setInterval(function () { showPromoMessages() }, 30000);
 }
 
-function showCarouelSettingsDialog() {
-   // alert("showCarasouelSettingsDialog()");
-    $('#carouselSettingsDialog').dialog('open');
-}
-
 function onShowMoreGalleries() {
     updatedGalleriesCount += 15;
     loadUpdatedGalleriesBoxes(updatedGalleriesCount);
 }
-
 
 function showPromoMessagesHtml() {
     $('#promoMessagesContainer').html(
@@ -147,6 +124,11 @@ function showPromoMessagesHtml() {
         "</div>\n");
 }
 
+function goToPorn() {
 
+    //if(hasPorn)
+    //if (document.domain === 'localhost') alert("goToPorn()");
 
-
+    // if user porn status not already set
+    showCustomMessage(35);
+}

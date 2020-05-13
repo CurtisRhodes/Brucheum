@@ -120,18 +120,3 @@ function considerClosingCategoryDialog() {
     }
 }
 
-function slowlyShowFolderCategoryDialog(folderId) {
-    setTimeout(function () {
-        if (forgetShowingCatDialog === false) {
-            if (typeof pause === 'function')
-                pause();
-            folderCategoryDialogIsOpen = true;
-            showCategoryDialog(folderId);
-        }
-    }, 1100);
-    $('#folderCategoryDialog').on('dialogclose', function (event) {
-        folderCategoryDialogIsOpen = false;
-        if (typeof resume === 'function')
-            resume();
-    });
-}
