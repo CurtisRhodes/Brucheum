@@ -78,7 +78,6 @@
         </div>
         <div class="rightColumn"></div>
     </div>
-    <footer></footer>
 
     <div id="launchingService" class="floatLeft">
         <div class="centeringOuterShell randomImageContainer">
@@ -91,6 +90,7 @@
 
     <div id="carouselContextMenuContainer"></div>
 
+    <div class="footer"></div>
     <script>
         var promoIdx = 0;
         var promoMessagesArray = new Array();
@@ -112,8 +112,6 @@
                 homePageId = 3909;
 
             setOggleHeader(homePageId, subdomain);
-
-            setOggleFooter(homePageId, subdomain);
 
             loadSettings();
             var dots = ""
@@ -153,17 +151,15 @@
                                 //launchPromoMessages();
                             }
 
-                            //if(subdomain==="boobs")
-                            //    launchCarousel("everything");
-                            //else
-                                launchCarousel(subdomain);
+                            launchCarousel("everything");
 
                             loadUpdatedGalleriesBoxes(updatedGalleriesCount);
 
+                            $('.indexPageSection').show();
+                            setOggleFooter(homePageId, subdomain);
 
                             var visitorId = getCookieValue("VisitorId");
                             if (isNullorUndefined(visitorId)) {
-                                alert("Calling getIpInfo");
                                 getIpInfo(homePageId);
                             }
                             else {
@@ -172,7 +168,6 @@
                                 logPageHit(homePageId);
                             }
                             $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
-
                         }
                         else {
                             dots += ". ";
@@ -187,22 +182,12 @@
         });
 
         function resizeIndexPage() {
-            //set page height
+            // height
             var winH = $(window).height();
             var headerH = $('header').height() + 8;
             //$('.middleColumn').height(winH - headerH);
-            $('#topIndexPageSection').height((winH - headerH) * .75);
-            
-            //$('.middleColumn').height(winH - headerH);
-            //bottomSection
-            //$('#topIndexPageSection').height(winH - headerH);
-            //$('.indexPageSection').height($('.middleColumn').height() / 2.15);
-
-            //resizeCarousel();
-            var carouselFooerHeight = 40;
-            $('#thisCarouselImage').height($('#topIndexPageSection').height() - carouselFooerHeight);
-
-
+            $('#topIndexPageSection').height((winH - headerH) * .655);
+            $('.threeColumnLayout').css("min-height", winH - headerH);
 
             // width
             var winW = $(window).width();
@@ -210,14 +195,6 @@
             if (winW < 1500) {
                 $('section').css("background-color", "red");
             }
-
-            //var lcW = $('.leftColumn').width();
-            //var rcW = $('.rightColumn').width();
-            //$('.middleColumn').width(winW - lcW - rcW);
-
-
-            //$('#footerMessage').html("page height: " + winH + " page width: " + winW);
-            //$('#bottomSection').html("page height: " + winH + " page width: " + winW);
         }
     </script>
 </body>

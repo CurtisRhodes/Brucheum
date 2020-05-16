@@ -34,15 +34,15 @@ namespace OggleBooble.Api.Models
         public string Success { get; set; }
     }
 
-    public class CarouselItemModel
-    {
-        public string RootFolder { get; set; }
-        public int ModelFolderId { get; set; }
-        public string ModelPath { get; set; }
-        public string ModelName { get; set; }
-        public string LinkId { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public string Link { get; set; }
-    }
+    //public class CarouselItemModel
+    //{
+    //    public string RootFolder { get; set; }
+    //    public int ModelFolderId { get; set; }
+    //    public string ModelPath { get; set; }
+    //    public string ModelName { get; set; }
+    //    public string LinkId { get; set; }
+    //    public int Width { get; set; }
+    //    public int Height { get; set; }
+    //    public string Link { get; set; }
+    //}
 }

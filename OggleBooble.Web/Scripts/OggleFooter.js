@@ -1,9 +1,7 @@
 ﻿function setOggleFooter(pageId, subdomain) {
     //alert("setOggleFooter. pageId: " + pageId + "  rootFolder: " + rootFolder);
-    var footerhtml = "";
-
     //rtpe(code,calledFrom,eventDetail,pageId)
-
+    var footerhtml;
     switch (subdomain) {
         case "boobs":
         case "archive":
@@ -51,8 +49,7 @@
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"freedback\"," + pageId + ")'>Feedback</div>\n" +
                 "    </div>\n" +
-                "</div>\n" +
-                "<div id='footerLastBuild' class='footerVersionMessage'></div>\n";
+                "</div>\n";
             break;
         case "porn":
         case "sluts":
@@ -73,7 +70,8 @@
                 "</div>\n";
             break;
         default:
-            footerhtml = "<div class='flexContainer'>\n" +
+            footerhtml +=
+                "<div class='flexContainer'>\n" +
                 "    <div class='footerCol'>\n" +
                 "       <div>unhandled domain: " + subdomain + "</div>\n" +
                 "    </div>\n" +
@@ -86,10 +84,11 @@
             break;
     }
     footerhtml += "<div class='footerFooter'>\n" +
-        "    <div id='footerMessage'></div>\n" +
-        //"    <div class='footerMessage'>last modified: " + lastModified + "</div>\n" +
-        //"<div id='footerLastBuild' class='footerVersionMessage'></div>\n";
+        "   <div id='footerMessage'></div>\n" +
+      //"    <div class='footerMessage'>last modified: " + lastModified + "</div>\n" +
+      //"<div id='footerLastBuild' class='footerVersionMessage'></div>\n";
         "    <div id='copyright'>&copy; 2019 - <a href='~/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>\n" +
+        "   </div>\n" +
         "</div>\n";
-    $('footer').html(footerhtml);
+    $('.footer').html(footerhtml);
 }

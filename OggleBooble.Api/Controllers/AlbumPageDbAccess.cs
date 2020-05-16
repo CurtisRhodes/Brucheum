@@ -92,7 +92,6 @@ namespace OggleBooble.Api.Controllers
                         ParentId = thisFolder.Parent,
                         IsInitialFolder = true
                     });
-
                     var parent = thisFolder.Parent;
                     while (parent > 1)
                     {

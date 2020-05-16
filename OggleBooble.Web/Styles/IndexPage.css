@@ -1,12 +1,15 @@
 ﻿
 
 
+
+
 .indexPageSection {
     width: 100%;
-    display: inline-block;
-    background-color: var(--oggleBackgroundColor);
+    display: block;
     min-height: 40%;
     margin-bottom: 6px;
+    border: solid thin orange;
+    display: none;
 }
 
 /*@media (min-width: 768px) {
@@ -14,12 +17,12 @@
 }*/
 
 .updatedGalleriesSection {
+    border: solid thin red;
     /*
         padding: 3px;
         background-color: #988519;
-        border: solid thin red;
         background-color: var(--oggleContainerBackgroundColor);
-    */ 
+    */
 }
 
 .newsContentBox {

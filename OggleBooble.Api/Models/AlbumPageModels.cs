@@ -27,6 +27,26 @@ namespace OggleBooble.Api.Models
         public string LastModified { get; set; }
         public string Success { get; set; }
     }
+    public class CategoryTreeModel
+    {
+        public CategoryTreeModel()
+        {
+            SubDirs = new List<CategoryTreeModel>();
+        }
+        public int FolderId { get; set; }
+        public int ParentId { get; set; }
+        public string DirectoryName { get; set; }
+        public string DanniPath { get; set; }
+        public string RootFolder { get; set; }
+        public string Link { get; set; }
+        public string LinkId { get; set; }
+        public int FileCount { get; set; }
+        public int SubDirCount { get; set; }
+        public int ChildFiles { get; set; }
+        public int Links { get; set; }
+        public int IsStepChild { get; set; }
+        public List<CategoryTreeModel> SubDirs { get; set; }
+    }
 
     public class TrackBackItem
     {
@@ -47,27 +67,6 @@ namespace OggleBooble.Api.Models
         public string Orientation { get; set; }
         public int LinkCount { get; set; }
         public int SortOrder { get; set; }
-    }
-
-    public class CategoryTreeModel
-    {
-        public CategoryTreeModel()
-        {
-            SubDirs = new List<CategoryTreeModel>();
-        }
-        public int FolderId { get; set; }
-        public int ParentId { get; set; }
-        public string DirectoryName { get; set; }
-        public string DanniPath { get; set; }
-        public string RootFolder { get; set; }
-        public string Link { get; set; }
-        public string LinkId { get; set; }
-        public int FileCount { get; set; }
-        public int SubDirCount { get; set; }
-        public int ChildFiles { get; set; }
-        public int Links { get; set; }
-        public int IsStepChild { get; set; }
-        public List<CategoryTreeModel> SubDirs { get; set; }
     }
 
     public class BreadCrumbItemModel

@@ -6,26 +6,11 @@ var dashboardMainSelectedTreeId = 0;
 var dashboardMainSelectedPath = "";
 var partialViewSelectedItemId = 0;
 var dashboardContextMenuFolderId = "";
-
-function resizeDashboardPage() {
-    resizePage();
-    var mch = $('#middleColumn').height() - 50;
-    $('.dashboardContainer').height(mch);
-    $('#dashboardLeftMenu').height(mch);
-    $('.dashboardTreeContainer').height(mch);
-    $('.workAreaContainer').height(mch);
-
-    var mw = $('.dashboardContainer').width() - $('#dashboardLeftMenu').width() - $('.dashboardTreeContainer').width() - 39;
-    $('.workAreaContainer').width(mw + 'px');
-
-    $('.workAreaDisplayContainer').height(mch - 100);   
-
-    //$('#footerMessage').html("dashboardContainer.width: " + $('.dashboardContainer').width() +
-    //    "  dashboardTreeContainer.width: " + $('.dashboardTreeContainer').width() +
-    //    "  dashboardLeftMenu.width: " + $('#dashboardLeftMenu').width() +
-    //    "  workAreaContainer.width: " + $('.workAreaContainer').width()) +
-    //    "  mw: " + mw;
-}
+var dirTreeTab = 0;
+var dirTreeTabIndent = 22;
+var dirDepth = 3;
+var totalFiles = 0;
+var treeId = "dashboardMain";
 
 function setDashboardHeader(viewId) {
     $('#headerSubTitle').html(viewId);
@@ -68,7 +53,10 @@ function setDashboardHeader(viewId) {
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showCopyFolderDialog()'>Copy Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#renameFolderCrud').dialog('open');\">Rename Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='prepareXhamsterPage()'>Prepare xHamster Page</div>");
+
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='repairLinks()'>Repair Links</div>");
+
+
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAssignRolesDialog()'>Assign User Roles</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddRolesDialog()'>Edit Roles</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveManyTool();'>Move Many</div>");
@@ -91,7 +79,6 @@ function setDashboardHeader(viewId) {
     resizeDashboardPage();
 }
 
-
 function testAddVisitor() {
     $('#dataifyInfo').show().html("sending test addVisitor");
     addVisitor(3309, "dashboard");
@@ -105,85 +92,103 @@ function showUpLoadDialog() {
 }
 
 
-function onDirTreeComplete() {
-    $('#dataifyInfo').hide();
-    resizeDashboardPage();
-    $('#dashBoardLoadingGif').hide();
-}
-
+var dirTreeContainer = "";
 function buildDirectoryTree() {
-    $('#dirTreeContainer').html("");
-    $('#dataifyInfo').show().html("rebuilding directory tree");
+    var start = Date.now();
     $('#dashBoardLoadingGif').show();
-    // call func in dirTree.js
-    buildDirTree($('#dirTreeContainer'), "dashboardMain", 0);
-}
-
-function createStaticPages(justOne) {
-    //$('#createStaticPagesCrud').dialog("close");
-    //$('#createStaticPagesCrud').hide();
-    $('#dashBoardLoadingGif').fadeIn();
-    $('#dataifyInfo').show().html("creating static pages for " + dashboardMainSelectedPath);
-    //$('#progressBar').show();
+    $('#dataifyInfo').show().html("loading directory tree");
+    //buildDirTree($('#dirTreeContainer'), "dashboardMain", 0, true);
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/StaticPage/Buld?folderId=" + dashboardMainSelectedTreeId + "&recurr=" + justOne,
-        success: function (success) {
-            //$('#progressBar').hide();
-            $('#dashBoardLoadingGif').hide();
-            if (success === "ok") {
-                $('#createStaticPagesCrud').dialog("close");
-                displayStatusMessage("ok", "done");
-                $('#txtNewLink').val("");
-                $('#progressBar').hide();
+        url: settingsArray.ApiServer + "api/Links/BuildCatTree?root=0",// + startNode,
+        success: function (dirTreeModel) {
+            if (dirTreeModel.Success === "ok") {
+                $('#dashBoardLoadingGif').hide();
+                //$('#dataifyInfo').show().html("loading directory tree took: " + dirTreeModel.TimeTook);
+
+                var delta = (Date.now() - start) / 1000;
+                console.log("rebuildCatTree took: " + delta.toFixed(3));
+                $('#dataifyInfo').show().html("loading directory tree took: " + delta.toFixed(3));
+
+
+                buildDirTree(dirTreeModel);
+
+                $('#dashboardMain').html(dirTreeContainer);
+                resizeDashboardPage();
+
                 $('#dataifyInfo').hide();
             }
-            else
-                alert("createStaticPages: " + success);
+            else { alert(dirTreeModel.Success); }
         },
         error: function (xhr) {
             $('#dashBoardLoadingGif').hide();
-            alert("createStaticPages xhr error: " + getXHRErrorDetails(xhr));
+            var errorMessage = getXHRErrorDetails(xhr);
+            alert(errorMessage);
+            if (!checkFor404(errorMessage, "getDirTree")) {
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "XHR",
+                    Severity: 3,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "getDirTree"
+                });
+            }
+            //dest.html("buildCatTree xhr error: " + getXHRErrorDetails(xhr));
         }
     });
 }
 
-function xxcreateStaticIndexPages() {
-    $('#dataifyInfo').show().html("Building Index page");
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/StaticPage/CreateIndexPage?rootFolder=boobs&userName=xxx&pageTitle=Index&metaTagFolderId=2",
-        success: function (success) {
-            //$('#dashBoardLoadingGif').hide();
-            if (success === "ok") {
-                $('#dataifyInfo').show().html("Building porn Index page");
-                $.ajax({
-                    type: "GET",
-                    url: settingsArray.ApiServer + "api/StaticPage/CreateIndexPage?rootFolder=porn&userName=xxx&pageTitle=porn&metaTagFolderId=242",
-                    success: function (success) {
-                        //$('#dashBoardLoadingGif').hide();
-                        if (success === "ok") {
-                            displayStatusMessage("ok", "done building Index pages");
-                            $('#dataifyInfo').hide();
-                        }
-                        else
-                            alert("createStaticPages: " + success);
-                    },
-                    error: function (xhr) {
-                        $('#dashBoardLoadingGif').hide();
-                        alert("createStaticPages xhr error: " + getXHRErrorDetails(xhr));
-                    }
-                });
-            }
-            else
-                alert("createStaticPages: " + success);
-        },
-        error: function (xhr) {
-            $('#dashBoardLoadingGif').hide();
-            alert("createStaticPages xhr error: " + getXHRErrorDetails(xhr));
+function buildDirTree(dir) {
+    dirTreeTab += dirTreeTabIndent;
+    var txtFileCount = "";
+    var expandClass = "";
+    $.each(dir.SubDirs, function (idx, thisNode) {
+        var vwDir = thisNode.vwDirTree;
+
+        if (isNullorUndefined(vwDir.Link))
+            vwDir.Link= "Images/redballon.png";
+        expandMode = "-";
+        expandClass = "";
+        if (dirTreeTab / dirTreeTabIndent > dirDepth) {
+            expandClass = "displayHidden";
+            if (thisNode.SubDirs.length > 0)
+                expandMode = "+";
         }
+
+        txtFileCount = "(" + vwDir.FileCount + ")";
+        if (vwDir.FileCount < vwDir.SubDirCount) {
+            txtFileCount = "(" + vwDir.SubDirCount + "/" + vwDir.ChildFiles + ")";
+        }
+        if (vwDir.FileCount + vwDir.ChildFiles === 0) {
+            txtFileCount = "-(" + vwDir.SubDirCount + "/" + getChildFileCounts(vwDir.FolderId).toLocaleString() + ")";
+        }
+
+        dirTreeContainer += "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
+            + "<span id='S" + vwDir.LinkId + "' onclick=toggleDirTree('" + vwDir.LinkId + "') >[" + expandMode + "] </span>"
+            + "<div id='" + vwDir.linkId + "aq' class='treeLabelDiv' onclick=" + treeId + "Click('" + vwDir.DanniPath + "','" + vwDir.FolderId + "','" + vwDir.LinkId + "aq') "
+            + "oncontextmenu=showDirTreeContextMenu('" + vwDir.LinkId + "','" + vwDir.FolderId + "') "
+            + "onmouseover=showFolderImage('" + encodeURI(vwDir.Link) + "') onmouseout=$('.dirTreeImageContainer').hide() >"
+            + vwDir.FolderName.replace(".OGGLEBOOBLE.COM", "") + "</div>       <span class='fileCount'>  : "
+            + txtFileCount + "</span></div>" +
+            "<div class='" + expandClass + "' id=" + vwDir.LinkId + ">";
+
+        totalPics += vwDir.FileCount;
+
+        buildDirTree(thisNode);
+        dirTreeContainer += "</div>";
+        dirTreeTab -= dirTreeTabIndent;
     });
 }
+
+function getChildFileCounts(startNode) {
+    totalFiles += startNode.vwDirTree.FileCount;
+    $.each(startNode.SubDirs, function (idx, subDirObj) {
+        if (!subDirObj.vwDirTree.IsStepChild)
+            getChildFileCounts(subDirObj);
+    });
+    return totalFiles;
+}
+
 
 function addVideoLink() {
     try {
@@ -967,6 +972,76 @@ function MoveManyCleanup() {
         }
     });
 }
+
+function repairLinks() {
+    var start = Date.now();
+    $('#dataifyInfo').show().html("checking and repairing links");
+    $('#dashBoardLoadingGif').fadeIn();
+    $('#repairLinksReport').html("");
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "/api/Links/RepairLinks/?startFolderId=" + dashboardMainSelectedTreeId,
+        success: function (repairReport) {
+            $('#dashBoardLoadingGif').hide();
+            if (repairReport.Success === "ok") {
+                try {
+                    var delta = Date.now() - start;
+                    var minutes = Math.floor(delta / 60000);
+                    var seconds = (delta % 60000 / 1000).toFixed(0);
+                    //console.log("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+                    $('#dataifyInfo').html("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+                    $('#dataifyInfo').append(", Rows Processed: " + repairReport.RowsProcessed);
+                    if (repairReport.ImagesDownLoaded > 0)
+                        $('#dataifyInfo').append(", Images DownLoaded: " + repairReport.ImagesDownLoaded);
+                    if (repairReport.LinksEdited > 0)
+                        $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);
+                    if (repairReport.ImagesRenamed > 0)
+                        $('#dataifyInfo').append(", Images Renamed: " + repairReport.ImagesRenamed);
+                    if (repairReport.NewLinksAdded > 0)
+                        $('#dataifyInfo').append(", New Links Added: " + repairReport.NewLinksAdded);
+                    if (repairReport.ImagesMoved > 0)
+                        $('#dataifyInfo').append(", Images Moved: " + repairReport.ImagesMoved);
+                    if (repairReport.LinksRemoved > 0)
+                        $('#dataifyInfo').append(", CatLinks Added: " + repairReport.LinksRemoved);
+                    if (repairReport.CatLinksAdded > 0)
+                        $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
+
+
+                    //$('#dataifyInfo').append(", directory errors: " + repairReport.DirNotFound);
+                    //$('#dataifyInfo').append(", bad file names: " + repairReport.BadFileNames);
+
+                    //$('#dataifyInfo').append(", links fixed: " + repairReport.LinksRemoved);
+                    //repairReport.MissingImages.forEach(function (element) {
+                    //    /// add new link
+                    //    $('#repairReport').append("<div> missing image: " + element.Name + "</div>");
+                    //});
+
+                    repairReport.Errors.forEach(function (element) {
+                        $('#repairLinksReport').append("<div> errors: " + element + "</div>");
+                    });
+
+                    //repairReport.BadLinks.forEach(function (element) {
+                    //    $('#repairReport').append("<div> bad link: " + element.id + "</div>");
+                    //});
+
+                    //setTimeout(function () { $('#dataifyInfo').hide(); }, 3000);
+
+                }
+                catch (e) {
+                    alert("problem displaying repair report: " + e);
+                }
+            }
+            else
+                alert("repairLinks: " + repairReport.Success);
+        },
+        error: function (xhr) {
+            $('#dashBoardLoadingGif').hide();
+            alert("downloadLinks xhr error: " + getXHRErrorDetails(xhr));
+        }
+    });
+}
+
+
 
 
 

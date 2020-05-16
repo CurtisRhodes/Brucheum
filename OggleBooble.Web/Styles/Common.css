@@ -23,12 +23,11 @@ body {
     background-color: var(--oggleBackgroundColor);
     font-family: Verdana;
     font-size: var(--normalFont);
-    margin: 0;
+    box-sizing: padding-box;
 }
 
 .threeColumnLayout {
     width: 100%;
-    display: flex;
 }
 
     .threeColumnLayout .leftColumn {
@@ -38,12 +37,12 @@ body {
     }
 
     .threeColumnLayout .middleColumn {
-        float: left;
         width: 100%;
+        /*border: solid 10px blue;*/
     }
 
     .threeColumnLayout .rightColumn {
-        float: right;
+        float: left;
         min-width: 5%;
     }
 
@@ -160,32 +159,31 @@ body {
         width: 100px;
     }
 
-footer {
-    display: block;
-    margin-top: 4px;
+.footer {
+    margin-top: 10px;
     border-top: solid 4px #feb236;
     font-family: Arial;
-    background-color: #000;
+    background-color: #333;
     color: #eee;
 }
 
-    footer .footerCol {
+    .footer .footerCol {
         padding-top: 8px;
         float: left;
         min-width: 200px;
     }
 
-        footer .footerCol div {
+        .footer .footerCol div {
             padding: 8px;
             text-align: center;
         }
 
-            footer .footerCol div a {
+            .footer .footerCol div a {
                 text-decoration: none;
                 color: #fff;
             }
 
-    footer .footerFooter {
+    .footer .footerFooter {
         -moz-box-sizing: border-box;
         box-sizing: border-box;
         width: 100%;
@@ -193,18 +191,18 @@ footer {
         padding-bottom: 2px;
     }
 
-    footer #footerMessage {
+    .footer #footerMessage {
         display: inline-block;
         padding-left: 12px;
     }
 
-    footer #copyright {
+    .footer #copyright {
         display: inline-block;
         float: right;
         margin-right: 8px;
     }
 
-        footer #copyright a:visited {
+        .footer #copyright a:visited {
             color: #eee;
         }
 

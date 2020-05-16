@@ -16,11 +16,8 @@
                 console.log("loaded " + latestUpdates.LatestUpdates.length + " news boxes");
                 $('.indexSectionLabel').show();
                 $('#updatedGalleriesSection').css("text-align", "center");
+
                 resizeIndexPage();
-                setTimeout(function () {
-                    resizeIndexPage();
-                    $('#footerMessage').html("updated galleries loaded");
-                }, 800);
             }
             else {
                 logError({

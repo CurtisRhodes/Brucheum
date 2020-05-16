@@ -6,50 +6,63 @@ var totalFiles = 0;
 var categoryTreeModel = null;
 var dirTreeComplete = false;
 
-function buildDirTree(dest, treeId, startNode) {
+function buildDirTree(dest, treeId, startNode, forceRebuild) {
     try {
-        if (window.localStorage[treeId] !== null) {
-            window.localStorage[treeId]
+        if (!forceRebuild) {
+            if (window.localStorage[treeId] !== null) {
+                dest.html(window.localStorage[treeId]);
+                return;
+            }
         }
-        else {
-            var start = Date.now();
-            totalFolders = 0;
-            totalPics = 0;
-            dirTreeTab = 0;
-            dirTreeContainer = "";
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "api/DirTree/Get?root=" + startNode,
-                success: function (results) {
-                    categoryTreeModel = results;
-                    recurrBuildDirTree(categoryTreeModel, treeId);
+        var start = Date.now();
+        totalFolders = 0;
+        totalPics = 0;
+        dirTreeTab = 0;
+        dirTreeContainer = "";
 
-                    dest.html(dirTreeContainer);
+        if (treeId === "dashboardMain")
+            $('#dashBoardLoadingGif').show();
 
-                    window.localStorage[treeId] = dirTreeContainer;
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Links/BuildCatTree?root=" + startNode,
+            success: function (results) {
 
-                    if (typeof onDirTreeComplete === "function") {
-                        onDirTreeComplete();
-                    }
-                    var delta = (Date.now() - start) / 1000;
-                    console.log("rebuildCatTree took: " + delta.toFixed(3));
-                },
-                error: function (xhr) {
-                    $('#dashBoardLoadingGif').hide();
-                    var errorMessage = getXHRErrorDetails(xhr);
-                    if (!checkFor404(errorMessage, "getDirTree")) {
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 3,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "getDirTree"
-                        });
-                    }
-                    //dest.html("buildCatTree xhr error: " + getXHRErrorDetails(xhr));
+                categoryTreeModel = results;
+                recurrBuildDirTree(categoryTreeModel, treeId);
+
+                dest.html(dirTreeContainer);
+
+                window.localStorage[treeId] = dirTreeContainer;
+
+                if (typeof onDirTreeComplete === "function") {
+                    onDirTreeComplete();
                 }
-            });
-        }
+
+                if (treeId === "dashboardMain")
+                    $('#dashBoardLoadingGif').hide();
+
+
+                var delta = (Date.now() - start) / 1000;
+                console.log("rebuildCatTree took: " + delta.toFixed(3));
+
+
+            },
+            error: function (xhr) {
+                $('#dashBoardLoadingGif').hide();
+                var errorMessage = getXHRErrorDetails(xhr);
+                if (!checkFor404(errorMessage, "getDirTree")) {
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 3,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "getDirTree"
+                    });
+                }
+                //dest.html("buildCatTree xhr error: " + getXHRErrorDetails(xhr));
+            }
+        });
     } catch (e) {
         dest.html("buildCatTree catch: " + e);
     }

@@ -21,6 +21,7 @@
     position: absolute;
     display: inline-block;
     color: #fff;
+    left: 51px;
     background-color: rgba(178, 0, 255, 0.66);
     border-radius: 5px;
     padding: 5px;

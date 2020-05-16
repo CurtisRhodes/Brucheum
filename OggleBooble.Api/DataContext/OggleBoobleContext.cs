@@ -54,11 +54,17 @@ namespace OggleBooble.Api.MsSqlDataContext
     {
         public string RootFolder { get; set; }
         public int FolderId { get; set; }
-        public int ModelFolderId { get; set; }
-        public string RootPath { get; set; }
         public string FolderName { get; set; }
-        public string ModelPath { get; set; }
-        public string ModelName { get; set; }
+        public string FolderParent { get; set; }
+        public int FolderParentId { get; set; }
+        public string FolderGP { get; set; }
+        public int FolderGPId { get; set; }
+        public int ImageFolderId { get; set; }
+        public string ImageFolder { get; set; }
+        public string ImageFolderParent { get; set; }
+        public int ImageFolderParentId { get; set; }
+        public string ImageFolderGP { get; set; }
+        public int ImageFolderGPId { get; set; }
         [Key]
         public string LinkId { get; set; }
         public string Link { get; set; }

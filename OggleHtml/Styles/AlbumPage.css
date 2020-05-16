@@ -1,4 +1,9 @@
 ﻿
+.aboveImageContainerDiv {
+    border: solid 5px red;
+    display: flex;
+}
+
 .selectedSearchItem {
     background-color: var(--thumbnailBorderColor);
 }

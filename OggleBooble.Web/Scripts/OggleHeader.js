@@ -11,7 +11,6 @@ function setOggleHeader(folderId, subdomain) {
 
     //$('header').switchClass('pornHeader', 'boobsHeader');
     $('header').html(fullScreenHeader(folderId));
-
     setHeaderDetails(folderId, subdomain);
 }
 
@@ -77,7 +76,6 @@ function fullScreenHeader(folderId) {
         "</div>\n" +
         "</div>";
 }
-
 
 // requires no database call
 function setHeaderDetails(folderId, subdomain) {
@@ -199,6 +197,7 @@ function setHeaderDetails(folderId, subdomain) {
 
 // requires no database call
 function setLoginHeaderSection(visitorId) {
+
     var isLoggedIn = getCookieValue("IsLoggedIn");
     if (isNullorUndefined(isLoggedIn)) {
         setCookieValue("IsLoggedIn", "true");

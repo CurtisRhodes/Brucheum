@@ -12,14 +12,15 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
     <script src="Scripts/Common.js"></script>
-    <script src="Scripts/HitCounter.v2.js"></script>
+    <script src="Scripts/DirTree.js"></script>
+    <script src="Scripts/HitCounter.js"></script>
     <script src="Scripts/OggleEventLog.js"></script>
+    <script src="Scripts/Cookies.js"></script>
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
     <script src="Scripts/Permissions.js"></script>
-    <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/FolderCategoryDialog.js"></script>
     <script src="Scripts/ModelInfoDialog.js"></script>
     <script src="Scripts/ImageCommentDialog.js"></script>
@@ -34,10 +35,10 @@
     <link href="Styles/Header.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet" />
     <link href="Styles/Carousel.css" rel="stylesheet" />
-    <link href="Styles/ImagePage.css" rel="stylesheet" />
     <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
     <link href="Styles/ModelInfoDialog.css" rel="stylesheet" />
     <!--
+    <link href="Styles/ImagePage.css" rel="stylesheet" />
     <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
     <link href="Styles/ImageCommentDialog.css" rel="stylesheet" />
     <link href="Styles/ImageCategoryDialog.css" rel="stylesheet" />
@@ -53,8 +54,8 @@
     <header></header>
     <div class="threeColumnLayout">
         <!--<div id="leftColumn"></div>-->
-        <div id="middleColumn">
-            <img id="dashBoardLoadingGif" class="loadingGif" src="Images/loader.gif" />
+        <div class="middleColumn">
+            <img id="dashBoardLoadingGif" class="loadingGif displayHidden" src="Images/loader.gif" />
             <div id="dots"></div>
             <div id="divStatusMessage"></div>
             <div id='notConnectMessage' class='displayHidden customMessageContainer'></div>
@@ -280,7 +281,7 @@
             </div>
 
         </div>
-        <!--<div id="rightColumn"></div>-->
+        <!--<div class="rightColumn"></div>-->
         <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
             <div onclick="dashboardContextMenuOpenFolder()">Open Folder</div>
             <div onclick="dashboardContextMenuShowCategoryDetails()">Show Category Info</div>
@@ -294,11 +295,9 @@
 
     <script>
         $(document).ready(function () {
-            includeHTML();
             $('.txtLinkPath').val('');
             $('.workAreaContainer').hide();
             $('#divAddImages').show();
-
             var dots = "";
             loadSettings();
             var waiter = setInterval(function () {
@@ -309,13 +308,15 @@
                 else {
                     clearInterval(waiter);
                     $('dots').html("");
+
                     buildDirectoryTree();
+
                     setOggleHeader(3910, "dashboard");
                     //setOggleFooter("special", 3910);
 
                     logPageHit(3910, "dashboard");
-                    $('.breadcrumbContainer').html("");
-                    $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Add Images');\">Add Images</a>");
+                    //$('#breadcrumbContainer').html("<span>NEW</span> ");
+                    $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Add Images');\">Add X Images</a>");
                     $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Manage Folders');\">Manage Folders</a>");
                     $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Reports');\">Reports</a>");
                     $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Admin');\">Admin</a>");
@@ -335,13 +336,45 @@
 
             defineDilogs();
             //setSignalR();
-            window.addEventListener("resize", resizeDashboardPage);
-            resizeDashboardPage();
+            //resizeDashboardPage();
 
-            //window.addEventListener("beforeunload", detectUnload());
+          //  window.addEventListener("beforeunload", detectUnload());
+
             //window.addEventListener("beforeunload", function (event) { ... });
             //window.onbeforeunload = function (event) { ... };
+            window.addEventListener("resize", resizeDashboardPage);
         });
+
+        function resizeDashboardPage() {
+            //resizePage();
+            
+            var winH = $(window).height();
+            var headerH = $('header').height();
+            $('.threeColumnLayout').height(winH - headerH);
+            $('.middleColumn').height(winH - headerH);
+
+           // alert("middleColumn.height: " + $('.middleColumn').height());
+
+            var mch = $('.middleColumn').height() - 50;
+            $('.dashboardContainer').height(mch);
+            $('#dashboardLeftMenu').height(mch);
+            $('.dashboardTreeContainer').height(mch);
+            $('.workAreaContainer').height(mch);
+
+            var mw = $('.dashboardContainer').width() - $('#dashboardLeftMenu').width() - $('.dashboardTreeContainer').width() - 39;
+            $('.workAreaContainer').width(mw + 'px');
+
+            $('.workAreaDisplayContainer').height(mch - 100);
+
+            //$('#footerMessage').html("dashboardContainer.width: " + $('.dashboardContainer').width() +
+            //    "  dashboardTreeContainer.width: " + $('.dashboardTreeContainer').width() +
+            //    "  dashboardLeftMenu.width: " + $('#dashboardLeftMenu').width() +
+            //    "  workAreaContainer.width: " + $('.workAreaContainer').width()) +
+            //    "  mw: " + mw;
+        }
+
+
+
 
         function detectUnload() {
             alert("detectUnload");

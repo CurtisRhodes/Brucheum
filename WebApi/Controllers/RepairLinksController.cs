@@ -47,9 +47,13 @@ namespace WebApi
         {
             try
             {
-
                 CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                string ftpPath = ftpHost + "/" + dbCategoryFolder.RootFolder + ".ogglebooble.com/"
+
+                string rootFolder = dbCategoryFolder.RootFolder;
+                if (rootFolder == "centerfold")
+                    rootFolder = "playboy";
+
+                string ftpPath = ftpHost + "/" + rootFolder + ".ogglebooble.com/"
                     + Helpers.GetParentPath(folderId) + dbCategoryFolder.FolderName;
 
                 if (!FtpUtilies.DirectoryExists(ftpPath))
@@ -75,7 +79,7 @@ namespace WebApi
 
                 string[] imageFiles = FtpUtilies.GetFiles(ftpPath);
 
-                string goDaddyPrefix = "http://" + dbCategoryFolder.RootFolder + ".ogglebooble.com/";                
+                string goDaddyPrefix = "http://" + rootFolder + ".ogglebooble.com/";                
                 string expectedLinkName = goDaddyPrefix + Helpers.GetParentPath(folderId) + dbCategoryFolder.FolderName;
                 string ext = "";
                 bool fileNameInExpectedForm;
@@ -299,6 +303,21 @@ namespace WebApi
                     if (imageFiles.Count() > goDaddyLinks.Count())
                     {
                         repairReport.Errors.Add("Extra Links Found in " + ftpPath);
+                        foreach (string imageFile in imageFiles) {
+                             linkId = imageFile.Substring(imageFile.IndexOf("_") - 1);
+                            var x = db.ImageLinks.Where(i => i.Link == imageFile).FirstOrDefault();
+                            if (x == null)
+                            {
+                                // add a link
+                                db.ImageLinks.Add(new ImageLink()
+                                {
+                                    Id = Guid.NewGuid().ToString(),
+                                    Link = imageFile,
+                                    ExternalLink = "gg"
+                                });
+                                db.SaveChanges();
+                            }                                             
+                        }
                     }
                 }
 

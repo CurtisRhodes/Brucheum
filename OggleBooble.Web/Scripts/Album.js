@@ -30,6 +30,9 @@ function GetAllAlbumPageInfo(folderId) {
                 success: function (imageLinksModel) {
                     $('#imagePageLoadingGif').hide();
                     if (imageLinksModel.Success === "ok") {
+
+                        currentAlbumJSfolderName = imageLinksModel.FolderName;
+                        document.title = currentAlbumJSfolderName + " : OggleBooble";
                         currentFolderRoot = imageLinksModel.RootFolder;
 
                         setOggleHeader(folderId, currentFolderRoot);
@@ -52,11 +55,15 @@ function GetAllAlbumPageInfo(folderId) {
                             }
                         });
 
+                        setBreadCrumbs(imageLinksModel.BreadCrumbs, imageLinksModel.ExternalLinks);
+
                         processImages(imageLinksModel);
 
                         $('#headerMessage').html("page hits: " + imageLinksModel.PageHits);
 
-                        setOggleFooter(folderId, imageLinksModel.RootFolder, imageLinksModel.LastModified);
+
+                        logPageHit(folderId, "Album.html");  // 
+
 
                         var delta = (Date.now() - start) / 1000;
                         console.log("GetAllAlbumPageInfo took: " + delta.toFixed(3));
@@ -102,6 +109,59 @@ function GetAllAlbumPageInfo(folderId) {
         });
         //sendEmailToYourself("Catch in Album.js getAlbumImages", e);
         //alert("GetLinkFolders CATCH: " + e);
+    }
+}
+
+function setBreadCrumbs(breadCrumbModel, badgesText) {
+    // a woman commited suicide when pictures of her "came out"
+    // title: I do not remember having been Invited)
+
+    //alert("breadCrumbModel.length: " + breadCrumbModel.length);
+
+
+    $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + albumFolderId + ",33,\"" + currentFolderRoot + "\")'>home  &#187</a>");
+    for (i = breadCrumbModel.length - 1; i >= 0; i--) {
+        if (breadCrumbModel[i] === null) {
+            breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
+        }
+        else {
+            if (breadCrumbModel[i].IsInitialFolder) {
+                $('#breadcrumbContainer').append(
+                    "<a class='inactiveBreadCrumb' " +
+                    Number(breadCrumbModel.length - i) + ",\"" +
+                    breadCrumbModel.FolderName + "\",\"" +
+                    breadCrumbModel[i].FolderId + "\",\"" +
+                    breadCrumbModel[i].ParentId + "\",\"" +
+                    breadCrumbModel.RootFolder + "\"); forgetHomeFolderInfoDialog=false;' onmouseout='forgetHomeFolderInfoDialog=true;' " +
+                    "onclick='showEitherModelorFolderInfoDialog(" + Number(breadCrumbModel.length - i) + ",\"" +
+                    breadCrumbModel.FolderName + "\",\"" +
+                    breadCrumbModel[i].FolderId + "\",\"" +
+                    breadCrumbModel[i].ParentId + "\",\"" +
+                    breadCrumbModel.RootFolder + "\")' >" +
+                    breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") +
+                    "</a>");
+            }
+            else {
+                $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
+                    "href='javascript:rtpe(\"BCC\"," + albumFolderId + ",44," + breadCrumbModel[i].FolderId + ")'>" +
+                    breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
+            }
+        }
+    }
+
+    if (!isNullorUndefined(badgesText)) {
+        if (badgesText.indexOf("Playmate Of The Year") > -1) {
+            $('#pmoyLink').show();
+        }
+        if (badgesText.indexOf("biggest breasted centerfolds") > -1) {
+            $('#breastfulPlaymatesLink').show();
+        }
+        if (badgesText.indexOf("black centerfolds") > -1) {
+            $('#blackCenterfoldsLink').show();
+        }
+        if (badgesText.indexOf("Hef likes twins") > -1) {
+            $('#twinsLink').show();
+        }
     }
 }
 

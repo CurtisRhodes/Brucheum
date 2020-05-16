@@ -160,6 +160,7 @@
     <Compile Include="Controllers\FtpUtilies.cs" />
     <Compile Include="Controllers\Helpers.cs" />
     <Compile Include="Controllers\IndexPageDbAccess.cs" />
+    <Compile Include="Controllers\LinksController.cs" />
     <Compile Include="Controllers\LocalController.cs" />
     <Compile Include="Controllers\OggleFileController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
@@ -174,13 +175,14 @@
     <Compile Include="Models\FileModels.cs" />
     <Compile Include="Models\FolderDetailModels.cs" />
     <Compile Include="Models\IndexPageModels.cs" />
+    <Compile Include="Models\LinkModels.cs" />
     <Compile Include="Models\LocalModels.cs" />
     <Compile Include="Models\RoleModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Properties\PublishProfiles\OggleApi.curtisrhodes.com.pubxml" />
+    <None Include="Properties\PublishProfiles\api.ogglebooble.com.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

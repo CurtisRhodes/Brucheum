@@ -40,7 +40,7 @@
 
 
     <link href="Styles/Common.css" rel="stylesheet" />
-    <link href="Styles/IndexPage.css" rel="stylesheet">
+    <link href="Styles/AlbumPage.css" rel="stylesheet">
     <link href="Styles/loginDialog.css" rel="stylesheet" />
     <link href="Styles/Header.css" rel="stylesheet" />
     <link href="Styles/Slideshow.css" rel="stylesheet" />
@@ -50,11 +50,9 @@
     <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
 
     <link href="Styles/FolderCategoryDialog.css" rel="stylesheet" />
-    <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
-    <link href="Styles/bootstrap 3.3.5.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
+    <!--<link href="Styles/bootstrap 3.3.5.css" rel="stylesheet" />
     <link href="Styles/jqueryUI.css" rel="stylesheet" />-->
-    <link href="Styles/AlbumPage.css" rel="stylesheet" />
-    <link href="Styles/Carousel.css" rel="stylesheet">
 
 </head>
   <body>
@@ -68,16 +66,14 @@
             </div>
         </div>
         <div class="middleColumn">
-            <div id="divBreadCrumbs"></div>
-            <div id="divTestBox" class="attrBox"></div>
             <img id="imagePageLoadingGif" class="loadingGif" src="Images/loader.gif" />
             <div id="dots"></div>
-            <div id='googleSearchText' class="sectionLabel"></div>
-            <div id="deepSlideshow" class='floatRight displayHidden' title='include all child folders' style='cursor: pointer;' onclick='launchDeepSlideShow();'>slideshow</div>
-
+            <div id="albumPageHeader" class="aboveImageContainerDiv">
+                <div id='googleSearchText' class="sectionLabel"></div>
+                <div id="deepSlideshow" class='floatRight displayHidden' title='include all child folders' style='cursor: pointer;' onclick='launchDeepSlideShow();'>slideshow</div>
+            </div>
             <div id="imageContainer" class="flexWrapContainer"></div>
             <div id="slideShowContainer" class="fullScreenViewer"></div>
-
             <div id="fileCount" class="countContainer"></div>
             <div id="albumPageContextMenuContainer"></div>
         </div>
