@@ -3,26 +3,14 @@ var searchString = "";
 var itemIndex = -1;
 var listboxActive = false;
 
-
-//<div class='OggleSearchBox'>\n" +
-//    <span id='notUserName'>search</span> <input class='OggleSearchBoxText' id='txtSearch' on onkeydown='oggleSearchKeyDown(event)' />" +
-//    <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
-//</div>\n" +
-
 function oggleSearchKeyDown(event) {
     var ev = event.keyCode;
     if (!listboxActive) {
 
         if (ev === 9 || ev === 40) {  //  tab
             event.preventDefault();
-            //window.event.returnValue = false;
             itemIndex = 1;
             listboxActive = true;
-            //var searchItems = $('#searchResultsDiv').children();
-            //alert("tab key pressed. SearchItems count: " + searchItems.length);
-            //var tt = searchItems[0].id;
-            //alert("tab 0: " + tt);
-
             $('#searchResultsDiv').find('li:first').addClass('selectedSearchItem').focus();
             return false;
         }
@@ -87,7 +75,7 @@ function performSearch(searchString) {
             busy = true;
             $.ajax({
                 type: "GET",
-                url: settingsArray.ApiServer + "api/OggleSearch/GetSearchResults?searchString=" + searchString,
+                url: settingsArray.ApiServer + "api/Folder/GetSearchResults?searchString=" + searchString,
                 success: function (SearchResultsModel) {
                     $('#searchResultsDiv').html("<ul class='searchResultList>").show();
                     $.each(SearchResultsModel.SearchResults, function (idx, searchResult) {
@@ -126,7 +114,6 @@ function jumpToSelected(selectedFolderId) {
     //window.open("/album.html?folder=" + selectedFolderId, "_blank");
     clearSearch();
 }
-
 
 function linkItemKeyDown(event) {
     alert("linkItemKeyDown");

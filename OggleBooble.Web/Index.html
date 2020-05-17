@@ -82,8 +82,9 @@
     <div id="launchingService" class="floatLeft">
         <div class="centeringOuterShell randomImageContainer">
             <div class="centeringInnerShell">
-                <div id="connectingMsg" class="displayHidden"><img src="https://media.giphy.com/media/ZFiRiRg60SjhipvdCz/giphy.gif" /></div>
-                <!--<div id="connectingMsg"><img src="https://media.giphy.com/media/ls5bix63j3H53E1Ebp/giphy.gif" /></div>-->
+                <div id="connectingMsg" class="displayHidden">
+                    <img src="Images/altair02.gif" />
+                </div>
             </div>
         </div>
     </div>
@@ -128,15 +129,15 @@
                         setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
                         setCookieValue("UserName", "developer");
                         var userPermissons = [];
-                        //userPermissons.push("Oggle admin");
+                        userPermissons.push("Oggle admin");
                         userPermissons.push("access dashboard");
                         userPermissons.push("view dynamic");
                         window.localStorage["userPermissons"] = userPermissons;
                         //window.localStorage["IsLoggedIn"] = "true";
                     }
-                    else
+                    else {
                         loadRolesIntoLocalStorage("index", "any");
-
+                    }
                     checkFor404("start", "Index");
                     var verifyConnectionWaiter = setInterval(function () {
                         if (connectionVerified) {

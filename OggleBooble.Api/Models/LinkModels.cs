@@ -26,9 +26,8 @@ namespace OggleBooble.Api.Models
         }
         public List<DirTreeModelNode> SubDirs { get; set; }
         public VwDirTree vwDirTree { get; set; }
+        public string DanniPath { get; set; }
     }
-
-
 
     public class RepairReportModel
     {

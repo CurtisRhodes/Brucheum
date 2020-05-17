@@ -156,13 +156,13 @@
     <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\AlbumPageDbAccess.cs" />
     <Compile Include="Controllers\CommonDbAccess.cs" />
-    <Compile Include="Controllers\FolderDetailController.cs" />
+    <Compile Include="Controllers\FolderController.cs" />
     <Compile Include="Controllers\FtpUtilies.cs" />
     <Compile Include="Controllers\Helpers.cs" />
     <Compile Include="Controllers\IndexPageDbAccess.cs" />
     <Compile Include="Controllers\LinksController.cs" />
     <Compile Include="Controllers\LocalController.cs" />
-    <Compile Include="Controllers\OggleFileController.cs" />
+    <Compile Include="Controllers\ImageController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="DataContext\MySqlContext.cs" />
     <Compile Include="DataContext\OggleBoobleContext.cs" />
@@ -173,7 +173,7 @@
     <Compile Include="Models\BlogModels.cs" />
     <Compile Include="Models\CommonModels.cs" />
     <Compile Include="Models\FileModels.cs" />
-    <Compile Include="Models\FolderDetailModels.cs" />
+    <Compile Include="Models\FolderModels.cs" />
     <Compile Include="Models\IndexPageModels.cs" />
     <Compile Include="Models\LinkModels.cs" />
     <Compile Include="Models\LocalModels.cs" />

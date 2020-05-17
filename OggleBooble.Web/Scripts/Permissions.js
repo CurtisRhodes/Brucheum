@@ -59,47 +59,49 @@ function loadRolesIntoLocalStorage(calledFrom, roleName) {
             return;
         }
     }
+    var userName = getCookieValue("UserName");
+    if (!isNullorUndefined(userName)) {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Roles/GetUserRoles?userName=" + userName + "&roleType=Assigned",
+            success: function (roleModel) {
+                if (roleModel.Success === "ok") {
+                    var userPermissons = [];
+                    $.each(roleModel.RoleNames, function (idx, roleName) {
+                        userPermissons.push(roleName);
+                    });
+                    //if (document.domain === 'localhost') alert("set user roles for " + getCookieValue("UserName") + ". " + roleModel.RoleNames.length + " added");
+                    window.localStorage["userPermissons"] = userPermissons;
 
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Roles/GetUserRoles?userName=" + userName + "&roleType=Assigned",
-        success: function (roleModel) {
-            if (roleModel.Success === "ok") {
-                var userPermissons = [];
-                $.each(roleModel.RoleNames, function (idx, roleName) {
-                    userPermissons.push(roleName);
-                });
-                //if (document.domain === 'localhost') alert("set user roles for " + getCookieValue("UserName") + ". " + roleModel.RoleNames.length + " added");
-                window.localStorage["userPermissons"] = userPermissons;
-
-                if (calledFrom === "")
-                    return isInRole(roleName);
+                    if (calledFrom === "")
+                        return isInRole(roleName);
+                }
+                else {
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "ERR",
+                        Severity: 1,
+                        ErrorMessage: roleModel.Success,
+                        CalledFrom: "loadRolesIntoLocalStorage"
+                    });
+                }
+            },
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "getUserPermissions()")) {
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "loadRolesIntoLocalStorage"
+                    });
+                    if (document.domain === 'localhost') alert("XHR error in getUserPermissions(): " + errorMessage);
+                }
+                return false;
             }
-            else {
-                logError({
-                    VisitorId: getCookieValue("VisiorId"),
-                    ActivityCode: "ERR",
-                    Severity: 1,
-                    ErrorMessage: roleModel.Success,
-                    CalledFrom: "loadRolesIntoLocalStorage"
-                });
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "getUserPermissions()")) {
-                logError({
-                    VisitorId: getCookieValue("VisiorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "loadRolesIntoLocalStorage"
-                });
-                if (document.domain === 'localhost') alert("XHR error in getUserPermissions(): " + errorMessage);
-            }
-            return false;
-        }
-    });
+        });
+    }
 }
 
 function isLoggedIn() {
@@ -108,8 +110,3 @@ function isLoggedIn() {
         userNameExist = false;
     return userNameExist;
 }
-
-
-
-
-

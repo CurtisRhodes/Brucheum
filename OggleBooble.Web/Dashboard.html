@@ -14,6 +14,7 @@
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/HitCounter.js"></script>
+    <script src="Scripts/EventControl.js"></script>
     <script src="Scripts/OggleEventLog.js"></script>
     <script src="Scripts/Cookies.js"></script>
     <script src="Scripts/Login.js"></script>
@@ -51,7 +52,7 @@
 
 </head>
 <body>
-    <header></header>
+    <header class="boobsHeader"></header>
     <div class="threeColumnLayout">
         <!--<div id="leftColumn"></div>-->
         <div class="middleColumn">
@@ -60,35 +61,37 @@
             <div id="divStatusMessage"></div>
             <div id='notConnectMessage' class='displayHidden customMessageContainer'></div>
             <div id="dashboard" class="dashboardContainer">
-                <div id="dashboardContainerRow">
+                <div class="dashboardContainerRow">
                     <div id="dashboardLeftMenu" class="oggleHorizontalMenu"></div>
                 </div>
-                <div id="dashboardContainerRow">
+                <div class="dashboardContainerRow">
                     <div id="divWorkArea" class="dashboardWorkArea">
                         <div id="divAddImages" class="workAreaContainer">
-                            <div id="uploadArea" class="oggleh">
+                            <div id="uploadArea" class="addImageArea">
+
                                 <div id="addNewLink" class="addLinkCrudArea">
                                     <div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
                                     <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
                                     <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
                                 </div>
+
                                 <img id="imgLinkPreview" class="linkImage" />
                             </div>
                             <div id="progressBar" class="dashboardProgessBar"></div>
                         </div>
+
                         <div id="divAddFile" class="workAreaContainer">
                             <div id="uploadArea" class="oggleh">
                                 <div id="addNewLink" class="addLinkCrudArea">
                                     <!--<div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>-->
                                     <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
-                                    <div>upload<input id="uplImage" type="file" class="imageUpload" onchange="SaveFileAs()"/></div>
+                                    <div>upload<input id="uplImage" type="file" class="imageUpload" onchange="SaveFileAs()" /></div>
                                     <div class="roundendButton" tabindex="2" onclick="saveFileAsLink()">Insert</div>
                                 </div>
                                 <img id="imgLinkPreview" class="linkImage" />
                             </div>
                             <div id="progressBar" class="dashboardProgessBar"></div>
                         </div>
-
 
                         <div id="divSortTool" class="workAreaContainer">
                             <div class="workAreaHeader">
@@ -120,12 +123,13 @@
                                 <button onclick="moveCheckedImages()">Move Checked</button>
                             </div>
                         </div>
+
                         <div id="divAddVideo" class="workAreaContainer">
 
                             <!--var videoLink = {};
-        videoLink.Link = $('#txtVideoLink').val();
-        videoLink.Image = $('#txtVideoImage').val();
-        videoLink.Title = $('#txtVideoTitle').val();-->
+                            videoLink.Link = $('#txtVideoLink').val();
+                            videoLink.Image = $('#txtVideoImage').val();
+                            videoLink.Title = $('#txtVideoTitle').val();-->
 
 
                             <div class="workAreaHeader">
@@ -150,6 +154,7 @@
                                 <button id="refreshActivityReport" class="inline" onclick="rerunReport()">refresh</button>
                             </div>
                         </div>
+
                         <div id="divHitMetrics" class="workAreaContainer">
                             <div class="workAreaHeader">
                                 <div class="workAreaHeaderLabel"><h3>Metrics</h3></div>
@@ -170,6 +175,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div id="divStandardReport" class="workAreaContainer">
                             <div class="workAreaHeader">
                                 <div class="workAreaHeaderLabel"><h3 id="reportLabel">_</h3></div>
@@ -186,7 +192,7 @@
                     </div>
                     <div id="dataifyInfo" class="infoLine" onclick="$('#dataifyInfo').hide();"></div>
                 </div>
-                <div id="dashboardContainerRow">
+                <div class="dashboardContainerRow">
                     <div id="dirTreeContainer" class="dashboardTreeContainer">
                         <img id="getDirTreeLoadingGif" class="smallLoadingGif" src="/Images/loader.gif" />
                         <div id="dashboardMain"></div>
@@ -268,16 +274,16 @@
                 </div>
 
                 <!--
-            <div id="videoCrud" class="dashboardToggle">
-                <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
-                <div class="floatingCrudContainer">
-                    <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
-                    <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
-                    <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
-                    <div class="roundendButton" onclick="addVideo()">Insert</div>
-                </div>
-            </div>
-        -->
+                    <div id="videoCrud" class="dashboardToggle">
+                        <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
+                        <div class="floatingCrudContainer">
+                            <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
+                            <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
+                            <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
+                            <div class="roundendButton" onclick="addVideo()">Insert</div>
+                        </div>
+                    </div>
+                -->
             </div>
 
         </div>
@@ -288,7 +294,7 @@
             <div onclick="dashboardContextMenuShowInfoDialog()">Show Model Info</div>
         </div>
     </div>
-    <footer></footer>
+    <div class="footer"></div>
     <div class="dirTreeImageContainer floatingDirTreeImage">
         <img class="dirTreeImage" />
     </div>
@@ -297,40 +303,58 @@
         $(document).ready(function () {
             $('.txtLinkPath').val('');
             $('.workAreaContainer').hide();
-            $('#divAddImages').show();
+            setOggleHeader(3910, "dashboard");
+            setOggleFooter(3910, "dashboard");
+
             var dots = "";
             loadSettings();
-            var waiter = setInterval(function () {
+            var getXMLsettingsWaiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
                     dots += ". ";
                     $('dots').html(dots);
                 }
                 else {
-                    clearInterval(waiter);
-                    $('dots').html("");
+                    clearInterval(getXMLsettingsWaiter);
+                    verifyConnection();
+                    var verifyConnectionWaiter = setInterval(function () {
+                        if (connectionVerified) {
+                            clearInterval(verifyConnectionWaiter);
+                            $('dots').html("");
+                            loadDirectoryTree(1);
 
-                    buildDirectoryTree();
+                            if (isInRole("Oggle admin")) {
+                               // alert("isInRole Oggle admin")
 
-                    setOggleHeader(3910, "dashboard");
-                    //setOggleFooter("special", 3910);
 
-                    logPageHit(3910, "dashboard");
-                    //$('#breadcrumbContainer').html("<span>NEW</span> ");
-                    $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Add Images');\">Add X Images</a>");
-                    $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Manage Folders');\">Manage Folders</a>");
-                    $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Reports');\">Reports</a>");
-                    $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Admin');\">Admin</a>");
+                                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Add Images');\">Add Images</a>");
+                                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Manage Folders');\">Manage Folders</a>");
+                                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Reports');\">Reports</a>");
+                                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Admin');\">Admin</a>");
+                                $('#headerMessage').html("Oggle admin");
+                                $('.adminLevelOption').show();
+                                setDashboardHeader('Admin');
+                            }
+                            else {
+                                //alert("NOT In Role Oggle admin");
+                                setDashboardHeader('Add Images');
+                            }
 
-                    if (isInRole("Oggle admin")) {
-                        //alert("isInRole Oggle admin")
-                        $('.adminLevelOption').show();
-                        setDashboardHeader('Admin');
-                    }
-                    else {
-                        //alert("NOT In Role Oggle admin");
-                        setDashboardHeader('Add Images');
-                    }
-                    
+                            $('#divAddImages').show();
+
+                        }
+                    }, 300);
+
+
+
+                    //getpermissions
+                    //if (isInRole("view dynamic"))
+
+
+
+                    //logPageHit(3910, "dashboard");
+
+
+
                 }
             }, 300);
 
@@ -338,7 +362,7 @@
             //setSignalR();
             //resizeDashboardPage();
 
-          //  window.addEventListener("beforeunload", detectUnload());
+            //  window.addEventListener("beforeunload", detectUnload());
 
             //window.addEventListener("beforeunload", function (event) { ... });
             //window.onbeforeunload = function (event) { ... };
@@ -347,13 +371,13 @@
 
         function resizeDashboardPage() {
             //resizePage();
-            
+
             var winH = $(window).height();
             var headerH = $('header').height();
             $('.threeColumnLayout').height(winH - headerH);
             $('.middleColumn').height(winH - headerH);
 
-           // alert("middleColumn.height: " + $('.middleColumn').height());
+            // alert("middleColumn.height: " + $('.middleColumn').height());
 
             var mch = $('.middleColumn').height() - 50;
             $('.dashboardContainer').height(mch);

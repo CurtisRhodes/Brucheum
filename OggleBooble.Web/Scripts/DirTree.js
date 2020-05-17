@@ -123,14 +123,6 @@ function getAllChildFileCounts(thisFolder) {
     return totalFiles;
 }
 
-function toggleDirTree(id) {
-    if ($('#' + id + '').css("display") === "none")
-        $('#S' + id + '').html("[-] ");
-    else
-        $('#S' + id + '').html("[+] ");
-    $('#' + id + '').toggle();
-}
-
 function showFolderImage(link) {
     //alert("showFolderImage: " + link);
     $('.dirTreeImageContainer').css("top", event.clientY - 100);
@@ -149,4 +141,12 @@ function showDirTreeContextMenu(linkId, folderId) {
     $('#dashboardContextMenu').css("top", event.clientY + 5);
     $('#dashboardContextMenu').css("left", event.clientX);
     $('#dashboardContextMenu').fadeIn();
+}
+
+function toggleDirTree(id) {
+    if ($('#' + id + '').css("display") === "none")
+        $('#S' + id + '').html("[-] ");
+    else
+        $('#S' + id + '').html("[+] ");
+    $('#' + id + '').toggle();
 }

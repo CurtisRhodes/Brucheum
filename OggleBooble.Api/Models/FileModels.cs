@@ -13,4 +13,11 @@ namespace OggleBooble.Api.Models
         public string Mode { get; set; }
         public int SortOrder { get; set; }
     }
+
+    public class AddLinkModel
+    {
+        public int FolderId { get; set; }
+        public string Link { get; set; }
+        public string Path { get; set; }
+    }
 }

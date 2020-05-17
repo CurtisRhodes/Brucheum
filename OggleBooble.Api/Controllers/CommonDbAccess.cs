@@ -267,5 +267,32 @@ namespace OggleBooble.Api.Controllers
             }
             return success;
         }
+
+        [HttpPost]
+        [Route("api/Common/LogDataActivity")]
+        public string LogDataActivity(ChangeLogModel changeLog)
+        {
+            string success;
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    db.ChangeLogs.Add(new ChangeLog()
+                    {
+                        PageId = changeLog.PageId,
+                        PageName = changeLog.PageName,
+                        Activity = changeLog.Activity,
+                        Occured = DateTime.Now
+                    });
+                    db.SaveChanges();
+                }
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿var tabIndent = 22;
 var tab = 0;
-var totalPics = 0;
+//var totalPics = 0;
 var totalFolders = 0;
 var dashboardMainSelectedTreeId = 0;
 var dashboardMainSelectedPath = "";
@@ -10,7 +10,6 @@ var dirTreeTab = 0;
 var dirTreeTabIndent = 22;
 var dirDepth = 3;
 var totalFiles = 0;
-var treeId = "dashboardMain";
 
 function setDashboardHeader(viewId) {
     $('#headerSubTitle').html(viewId);
@@ -93,30 +92,34 @@ function showUpLoadDialog() {
 
 
 var dirTreeContainer = "";
-function buildDirectoryTree() {
+function loadDirectoryTree(startNode) {
     var start = Date.now();
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("loading directory tree");
     //buildDirTree($('#dirTreeContainer'), "dashboardMain", 0, true);
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Links/BuildCatTree?root=0",// + startNode,
+        url: settingsArray.ApiServer + "api/Links/BuildCatTree?root=" + startNode,
         success: function (dirTreeModel) {
             if (dirTreeModel.Success === "ok") {
-                $('#dashBoardLoadingGif').hide();
+
                 //$('#dataifyInfo').show().html("loading directory tree took: " + dirTreeModel.TimeTook);
 
-                var delta = (Date.now() - start) / 1000;
-                console.log("rebuildCatTree took: " + delta.toFixed(3));
-                $('#dataifyInfo').show().html("loading directory tree took: " + delta.toFixed(3));
-
-
+                var dataLoadTime = (Date.now() - start) / 1000;
+                console.log("load dirTree data took: " + dataLoadTime.toFixed(3));
+                $('#dataifyInfo').show().html("loading directory tree took: " + dataLoadTime.toFixed(3));
+                start = Date.now();
                 buildDirTree(dirTreeModel);
-
                 $('#dashboardMain').html(dirTreeContainer);
                 resizeDashboardPage();
 
-                $('#dataifyInfo').hide();
+                var htmlBuildTime = (Date.now() - start) / 1000;
+                $('#dataifyInfo').append("   html took: " + htmlBuildTime.toFixed(3));
+                console.log("build dirTree html: " + htmlBuildTime.toFixed(3));
+
+                $('#dashBoardLoadingGif').hide();
+                //setTimeout(function () { $('#dataifyInfo').hide(); }, 1200);
+                
             }
             else { alert(dirTreeModel.Success); }
         },
@@ -144,7 +147,6 @@ function buildDirTree(dir) {
     var expandClass = "";
     $.each(dir.SubDirs, function (idx, thisNode) {
         var vwDir = thisNode.vwDirTree;
-
         if (isNullorUndefined(vwDir.Link))
             vwDir.Link= "Images/redballon.png";
         expandMode = "-";
@@ -160,24 +162,31 @@ function buildDirTree(dir) {
             txtFileCount = "(" + vwDir.SubDirCount + "/" + vwDir.ChildFiles + ")";
         }
         if (vwDir.FileCount + vwDir.ChildFiles === 0) {
-            txtFileCount = "-(" + vwDir.SubDirCount + "/" + getChildFileCounts(vwDir.FolderId).toLocaleString() + ")";
+            txtFileCount = "-(" + vwDir.SubDirCount + "/" + getChildFileCounts(thisNode).toLocaleString() + ")";
         }
 
         dirTreeContainer += "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
             + "<span id='S" + vwDir.LinkId + "' onclick=toggleDirTree('" + vwDir.LinkId + "') >[" + expandMode + "] </span>"
-            + "<div id='" + vwDir.linkId + "aq' class='treeLabelDiv' onclick=" + treeId + "Click('" + vwDir.DanniPath + "','" + vwDir.FolderId + "','" + vwDir.LinkId + "aq') "
-            + "oncontextmenu=showDirTreeContextMenu('" + vwDir.LinkId + "','" + vwDir.FolderId + "') "
+            + "<div id='" + vwDir.LinkId + "aq' class='treeLabelDiv' onclick='dirTreeClick(\"" + thisNode.DanniPath + "\",\"" + vwDir.Id + "\")' "
+            + "oncontextmenu=showDirTreeContextMenu('" + vwDir.LinkId + "','" + vwDir.Id + "') "
             + "onmouseover=showFolderImage('" + encodeURI(vwDir.Link) + "') onmouseout=$('.dirTreeImageContainer').hide() >"
-            + vwDir.FolderName.replace(".OGGLEBOOBLE.COM", "") + "</div>       <span class='fileCount'>  : "
+            + vwDir.FolderName.replace(".OGGLEBOOBLE.COM", "") + "</div><span class='fileCount'>  : "
             + txtFileCount + "</span></div>" +
             "<div class='" + expandClass + "' id=" + vwDir.LinkId + ">";
 
-        totalPics += vwDir.FileCount;
-
+        //totalPics += vwDir.FileCount;
         buildDirTree(thisNode);
         dirTreeContainer += "</div>";
         dirTreeTab -= dirTreeTabIndent;
     });
+}
+
+function dirTreeClick(danniPath, folderId) {
+    dashboardMainSelectedTreeId = folderId;
+    dashboardMainSelectedPath = danniPath;
+    $('.txtLinkPath').val(danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
+    //alert("DanniPath: " + $('.txtLinkPath').val());
+    //alert("dashboardMainSelectedTreeId: " + dashboardMainSelectedTreeId);
 }
 
 function getChildFileCounts(startNode) {
@@ -190,53 +199,13 @@ function getChildFileCounts(startNode) {
 }
 
 
-function addVideoLink() {
-    try {
-        $('#dashBoardLoadingGif').show();
-
-         var ImageId= $('#txtVideoImage').val();
-
-        var videoLink = {};
-        videoLink.Link = $('#txtVideoLink').val();
-        videoLink.ImageId = ImageId;
-        videoLink.Title = $('#txtVideoTitle').val();
-        videoLink.FolderId = dashboardMainSelectedTreeId;
-
-        $.ajax({
-            type: "POST",
-            url: settingsArray.ApiServer + "api/VideoLink",
-            data: videoLink,
-            success(success) {
-                $('#dashBoardLoadingGif').hide();
-                if (!success.startsWith("ERROR")) {
-                    displayStatusMessage("ok", "video link added");
-                }
-                else
-                    alert("addVideo: " + success);
-            },
-            error: function (xhr) {
-                $('#dashBoardLoadingGif').hide();
-                alert("addVideo xhr: " + getXHRErrorDetails(xhr));
-            }
-        });
-    } catch (e) {
-        alert("addVideo Catch : " + e);
-    }
-}
-
-function previewLinkImage() {
-    $('#imgLinkPreview').attr('src', $('#txtNewLink').val());
-    $('#imgLinkPreview').one("load", function () {
-        $('#footerMessage').html("image height: " + $('#imgLinkPreview').height());
-        resizeDashboardPage();
-    });
-}
-
+// ADD HTTP ADDRESS OF AN IMAGE
 function addImageLink() {
     if (isNullorUndefined($('#txtNewLink').val()))
         alert("invalid link");
     else {
-        $('#dataifyInfo').hide();
+
+        $('#dataifyInfo').show().html("calling AddImageLink");
         var newLink = {};
         newLink.Link = $('#txtNewLink').val();
         newLink.FolderId = dashboardMainSelectedTreeId;
@@ -244,7 +213,7 @@ function addImageLink() {
         $('#dashBoardLoadingGif').fadeIn();
         $.ajax({
             type: "POST",
-            url: settingsArray.ApiServer + "/api/FtpDashBoard",
+            url: settingsArray.ApiServer + "api/OggleFile/AddImageLink",
             data: newLink,
             success: function (successModel) {
                 $('#dashBoardLoadingGif').hide();
@@ -257,7 +226,7 @@ function addImageLink() {
                         alert("set image: " + successModel.ReturnValue + " as folder image for " + dashboardMainSelectedTreeId);
                         setFolderImage(successModel.ReturnValue, dashboardMainSelectedTreeId, "folder");
                     }
-                    logActivity({
+                    logDataActivity({
                         PageId: dashboardMainSelectedTreeId,
                         PageName: $('.txtLinkPath').val(),
                         Activity: "new image added"
@@ -273,60 +242,98 @@ function addImageLink() {
         });
     }
 }
-
-function xxloadProperties() {
-    $('#dataifyInfo').show().html("adding size info");
-    $.ajax({
-        type: "PATCH",
-        url: settingsArray.ApiServer + "api/FtpDashBoard/GetFileProps?folderId=" + dashboardMainSelectedTreeId,
-        success: function (success) {
-            $('#imagePageLoadingGif').hide();
-            if (success === "ok") {
-                displayStatusMessage("ok", "done");
-                $('#dataifyInfo').hide();
-            }
-            else
-                alert("GetFileProps: " + success);
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "loadProperties")) {
-                sendEmailToYourself("XHR ERROR in Blog.js putBlogEntry", "/api/OggleBlog Message: " + errorMessage);
-            }
-        }
+function previewLinkImage() {
+    $('#imgLinkPreview').attr('src', $('#txtNewLink').val());
+    $('#imgLinkPreview').one("load", function () {
+        //$('#footerMessage').html("image height: " + $('#imgLinkPreview').height());
+        var winH = $(window).height();
+        var headerH = $('header').height();
+        var uploadImageAreaH = $('#uploadArea').height();
+        $('.threeColumnLayout').height(Math.max(winH, uploadImageAreaH) - headerH);
     });
 }
+function SaveFileAs() {
+    try {
+        //fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
+        //var data = "{'imageName':'" + fileName + "'image':'" + image + "'}";
 
-function mergeFolders() {
-    if (confirm("collapse " + $('.txtLinkPath').val())) {
-        $('#dashBoardLoadingGif').fadeIn();
-        $('#dataifyInfo').show().html("collapse Child Folder");
-        //$('#progressBar').progressbar("enable");
-        $('#progressBar').show();
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "/api/MoveImage/CollapseFolder?folderId=" + dashboardMainSelectedTreeId,
-            success: function (success) {
-                $('#dashBoardLoadingGif').hide();
-                if (success === "ok") {
-                    displayStatusMessage("ok", "collapse succeded");
-                    buildDirectoryTree();
-                    $('#progressBar').hide();
-                    //$('#progressBar').progressbar("destroy");
+        //try {
+        //    fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
+        //    var image = $('#uplImage')[0].files[0];
+        //    //var data = "{'imageName':'" + fileName + "'image':'" + image + "'}";
+        //    if (image !== null) {
+        //        //alert("url: " + service + "/api/Images");
+        //        $.ajax({
+        //            type: "POST",
+        //            url: settingsArray.ApiServer + "/api/Images?oFileName=" + fileName,
+        //            enctype: 'multipart/form-data',
+        //            processData: false,  // Important!
+        //            contentType: false,
+        //            async: false,
+        //            cache: false,
+        //            data: image,
+        //            success: function (success) {
+        //                if (success !== "ok")
+        //                    alert("postImage: " + success);
+        //            },
+        //            error: function (xhr) {
+        //                alert("PostTimage error: " + xhr.statusText);
+        //            }
+        //        });
+        //    }
+        //    else {
+        //        alert("ERROR: image == null")
+        //        //displayStatusMessage("alert-danger", "ERROR: not working");
+        //    }
+        //    return fileName;
+        //} catch (e) {
+        //    //displayStatusMessage("alert-danger", "ERROR t: " + e);
+        //    alert("try catch ERROR : " + e);
+        //}
+
+
+
+
+
+        var image = $('#uplImage')[0].files[0];
+        if (image !== null) {
+            $('#dashBoardLoadingGif').fadeIn();
+            $.ajax({
+                type: "POST",
+                url: settingsArray.ApiServer + "/api/FtpDashBoard/SaveFileAs?imageName=" + $('#uplImage').val() + "&destinationPath=" + dashboardMainSelectedPath,
+                enctype: 'multipart/form-data',
+                processData: false,  // Important!
+                contentType: "image/jpeg",
+                async: false,
+                cache: false,
+                data: image,
+                success: function (successModel) {
+                    $('#dashBoardLoadingGif').hide();
+                    if (successModel.Success === "ok") {
+                        displayStatusMessage("ok", "image link added");
+                        $('#txtNewLink').val("");
+                        resizeDashboardPage();
+                        logActivity({
+                            PageId: dashboardMainSelectedTreeId,
+                            PageName: $('.txtLinkPath').val(),
+                            Activity: "new image added "
+                        });
+                    }
+                    else
+                        alert("postImage: " + success);
+                },
+                error: function (xhr) {
+                    $('#dashBoardLoadingGif').hide();
+                    alert("Postimage error: " + xhr.statusText);
                 }
-                else {
-                    sendEmailToYourself("jquery fail in FolderCategory.js collapseChildFolder", success);
-                    //alert("collapseChildFolder: " + success);
-                }
-            },
-            error: function (jqXHR) {
-                $('#dashBoardLoadingGif').hide();
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "collapseChildFolder")) {
-                    sendEmailToYourself("XHR ERROR in Dashboard.js collapseChildFolder", "/api/MoveImage/CollapseFolder?folderId=" + dashboardMainSelectedTreeId + " Message: " + errorMessage);
-                }
-            }
-        });
+            });
+        }
+        else {
+            alert("ERROR: image == null");
+        }
+    } catch (e) {
+        //displayStatusMessage("alert-danger", "ERROR t: " + e);
+        alert("try catch ERROR : " + e);
     }
 }
 
@@ -343,11 +350,6 @@ function showAddRolesDialog() {
 }
 
 // TREE CONTEXT MENU FUNCTIONS
-function dashboardMainClick(path, id, linkId) {
-    dashboardMainSelectedTreeId = id;
-    dashboardMainSelectedPath = path;
-    $('.txtLinkPath').val(path.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
-}
 function dashboardContextMenuOpenFolder() {
     window.open("/album.html?folder=" + dashboardContextMenuFolderId, "_blank");
 }
@@ -792,9 +794,80 @@ function renameFolder() {
     });
 }
 
+// REPAIR FUNCTIONS
+function repairLinks() {
+    var start = Date.now();
+    $('#dataifyInfo').show().html("checking and repairing links");
+    $('#dashBoardLoadingGif').fadeIn();
+    $('#repairLinksReport').html("");
 
 
 
+    alert("dashboardMainSelectedTreeId: " + dashboardMainSelectedTreeId);
+
+
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Links/RepairLinks/?startFolderId=" + dashboardMainSelectedTreeId,
+        success: function (repairReport) {
+            $('#dashBoardLoadingGif').hide();
+            if (repairReport.Success === "ok") {
+                try {
+                    var delta = Date.now() - start;
+                    var minutes = Math.floor(delta / 60000);
+                    var seconds = (delta % 60000 / 1000).toFixed(0);
+                    //console.log("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+                    $('#dataifyInfo').html("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+                    $('#dataifyInfo').append(", Rows Processed: " + repairReport.RowsProcessed);
+                    if (repairReport.ImagesDownLoaded > 0)
+                        $('#dataifyInfo').append(", Images DownLoaded: " + repairReport.ImagesDownLoaded);
+                    if (repairReport.LinksEdited > 0)
+                        $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);
+                    if (repairReport.ImagesRenamed > 0)
+                        $('#dataifyInfo').append(", Images Renamed: " + repairReport.ImagesRenamed);
+                    if (repairReport.NewLinksAdded > 0)
+                        $('#dataifyInfo').append(", New Links Added: " + repairReport.NewLinksAdded);
+                    if (repairReport.ImagesMoved > 0)
+                        $('#dataifyInfo').append(", Images Moved: " + repairReport.ImagesMoved);
+                    if (repairReport.LinksRemoved > 0)
+                        $('#dataifyInfo').append(", CatLinks Added: " + repairReport.LinksRemoved);
+                    if (repairReport.CatLinksAdded > 0)
+                        $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
+
+
+                    //$('#dataifyInfo').append(", directory errors: " + repairReport.DirNotFound);
+                    //$('#dataifyInfo').append(", bad file names: " + repairReport.BadFileNames);
+
+                    //$('#dataifyInfo').append(", links fixed: " + repairReport.LinksRemoved);
+                    //repairReport.MissingImages.forEach(function (element) {
+                    //    /// add new link
+                    //    $('#repairReport').append("<div> missing image: " + element.Name + "</div>");
+                    //});
+
+                    repairReport.Errors.forEach(function (element) {
+                        $('#repairLinksReport').append("<div> errors: " + element + "</div>");
+                    });
+
+                    //repairReport.BadLinks.forEach(function (element) {
+                    //    $('#repairReport').append("<div> bad link: " + element.id + "</div>");
+                    //});
+
+                    //setTimeout(function () { $('#dataifyInfo').hide(); }, 3000);
+
+                }
+                catch (e) {
+                    alert("problem displaying repair report: " + e);
+                }
+            }
+            else
+                alert("repairLinks: " + repairReport.Success);
+        },
+        error: function (xhr) {
+            $('#dashBoardLoadingGif').hide();
+            alert("downloadLinks xhr error: " + getXHRErrorDetails(xhr));
+        }
+    });
+}
 
 function addFileDates() {
     $('#dataifyInfo').show().html("adding file dates");
@@ -824,91 +897,6 @@ function addFileDates() {
             alert("Move Folder xhr error: " + getXHRErrorDetails(xhr));
         }
     });
-}
-
-function SaveFileAs() {
-    try {
-        //fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
-        //var data = "{'imageName':'" + fileName + "'image':'" + image + "'}";
-
-        //try {
-        //    fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
-        //    var image = $('#uplImage')[0].files[0];
-        //    //var data = "{'imageName':'" + fileName + "'image':'" + image + "'}";
-        //    if (image !== null) {
-        //        //alert("url: " + service + "/api/Images");
-        //        $.ajax({
-        //            type: "POST",
-        //            url: settingsArray.ApiServer + "/api/Images?oFileName=" + fileName,
-        //            enctype: 'multipart/form-data',
-        //            processData: false,  // Important!
-        //            contentType: false,
-        //            async: false,
-        //            cache: false,
-        //            data: image,
-        //            success: function (success) {
-        //                if (success !== "ok")
-        //                    alert("postImage: " + success);
-        //            },
-        //            error: function (xhr) {
-        //                alert("PostTimage error: " + xhr.statusText);
-        //            }
-        //        });
-        //    }
-        //    else {
-        //        alert("ERROR: image == null")
-        //        //displayStatusMessage("alert-danger", "ERROR: not working");
-        //    }
-        //    return fileName;
-        //} catch (e) {
-        //    //displayStatusMessage("alert-danger", "ERROR t: " + e);
-        //    alert("try catch ERROR : " + e);
-        //}
-
-
-
-
-
-        var image = $('#uplImage')[0].files[0];
-        if (image !== null) {
-            $('#dashBoardLoadingGif').fadeIn();
-            $.ajax({
-                type: "POST",
-                url: settingsArray.ApiServer + "/api/FtpDashBoard/SaveFileAs?imageName=" + $('#uplImage').val() + "&destinationPath=" + dashboardMainSelectedPath,
-                enctype: 'multipart/form-data',
-                processData: false,  // Important!
-                contentType: "image/jpeg",
-                async: false,
-                cache: false,
-                data: image,
-                success: function (successModel) {
-                    $('#dashBoardLoadingGif').hide();
-                    if (successModel.Success === "ok") {
-                        displayStatusMessage("ok", "image link added");
-                        $('#txtNewLink').val("");
-                        resizeDashboardPage();
-                        logActivity({
-                            PageId: dashboardMainSelectedTreeId,
-                            PageName: $('.txtLinkPath').val(),
-                            Activity: "new image added "
-                        });
-                    }
-                    else
-                        alert("postImage: " + success);
-                },
-                error: function (xhr) {
-                    $('#dashBoardLoadingGif').hide();
-                    alert("Postimage error: " + xhr.statusText);
-                }
-            });
-        }
-        else {
-            alert("ERROR: image == null");
-        }
-    } catch (e) {
-        //displayStatusMessage("alert-danger", "ERROR t: " + e);
-        alert("try catch ERROR : " + e);
-    }
 }
 
 function emergencyFolderLocationFix() {
@@ -973,76 +961,95 @@ function MoveManyCleanup() {
     });
 }
 
-function repairLinks() {
-    var start = Date.now();
-    $('#dataifyInfo').show().html("checking and repairing links");
-    $('#dashBoardLoadingGif').fadeIn();
-    $('#repairLinksReport').html("");
+// UNUSED
+function addVideoLink() {
+    try {
+        $('#dashBoardLoadingGif').show();
+
+        var ImageId = $('#txtVideoImage').val();
+
+        var videoLink = {};
+        videoLink.Link = $('#txtVideoLink').val();
+        videoLink.ImageId = ImageId;
+        videoLink.Title = $('#txtVideoTitle').val();
+        videoLink.FolderId = dashboardMainSelectedTreeId;
+
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "api/VideoLink",
+            data: videoLink,
+            success(success) {
+                $('#dashBoardLoadingGif').hide();
+                if (!success.startsWith("ERROR")) {
+                    displayStatusMessage("ok", "video link added");
+                }
+                else
+                    alert("addVideo: " + success);
+            },
+            error: function (xhr) {
+                $('#dashBoardLoadingGif').hide();
+                alert("addVideo xhr: " + getXHRErrorDetails(xhr));
+            }
+        });
+    } catch (e) {
+        alert("addVideo Catch : " + e);
+    }
+}
+
+function xxloadProperties() {
+    $('#dataifyInfo').show().html("adding size info");
     $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "/api/Links/RepairLinks/?startFolderId=" + dashboardMainSelectedTreeId,
-        success: function (repairReport) {
-            $('#dashBoardLoadingGif').hide();
-            if (repairReport.Success === "ok") {
-                try {
-                    var delta = Date.now() - start;
-                    var minutes = Math.floor(delta / 60000);
-                    var seconds = (delta % 60000 / 1000).toFixed(0);
-                    //console.log("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-                    $('#dataifyInfo').html("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-                    $('#dataifyInfo').append(", Rows Processed: " + repairReport.RowsProcessed);
-                    if (repairReport.ImagesDownLoaded > 0)
-                        $('#dataifyInfo').append(", Images DownLoaded: " + repairReport.ImagesDownLoaded);
-                    if (repairReport.LinksEdited > 0)
-                        $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);
-                    if (repairReport.ImagesRenamed > 0)
-                        $('#dataifyInfo').append(", Images Renamed: " + repairReport.ImagesRenamed);
-                    if (repairReport.NewLinksAdded > 0)
-                        $('#dataifyInfo').append(", New Links Added: " + repairReport.NewLinksAdded);
-                    if (repairReport.ImagesMoved > 0)
-                        $('#dataifyInfo').append(", Images Moved: " + repairReport.ImagesMoved);
-                    if (repairReport.LinksRemoved > 0)
-                        $('#dataifyInfo').append(", CatLinks Added: " + repairReport.LinksRemoved);
-                    if (repairReport.CatLinksAdded > 0)
-                        $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
-
-
-                    //$('#dataifyInfo').append(", directory errors: " + repairReport.DirNotFound);
-                    //$('#dataifyInfo').append(", bad file names: " + repairReport.BadFileNames);
-
-                    //$('#dataifyInfo').append(", links fixed: " + repairReport.LinksRemoved);
-                    //repairReport.MissingImages.forEach(function (element) {
-                    //    /// add new link
-                    //    $('#repairReport').append("<div> missing image: " + element.Name + "</div>");
-                    //});
-
-                    repairReport.Errors.forEach(function (element) {
-                        $('#repairLinksReport').append("<div> errors: " + element + "</div>");
-                    });
-
-                    //repairReport.BadLinks.forEach(function (element) {
-                    //    $('#repairReport').append("<div> bad link: " + element.id + "</div>");
-                    //});
-
-                    //setTimeout(function () { $('#dataifyInfo').hide(); }, 3000);
-
-                }
-                catch (e) {
-                    alert("problem displaying repair report: " + e);
-                }
+        type: "PATCH",
+        url: settingsArray.ApiServer + "api/FtpDashBoard/GetFileProps?folderId=" + dashboardMainSelectedTreeId,
+        success: function (success) {
+            $('#imagePageLoadingGif').hide();
+            if (success === "ok") {
+                displayStatusMessage("ok", "done");
+                $('#dataifyInfo').hide();
             }
             else
-                alert("repairLinks: " + repairReport.Success);
+                alert("GetFileProps: " + success);
         },
-        error: function (xhr) {
-            $('#dashBoardLoadingGif').hide();
-            alert("downloadLinks xhr error: " + getXHRErrorDetails(xhr));
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "loadProperties")) {
+                sendEmailToYourself("XHR ERROR in Blog.js putBlogEntry", "/api/OggleBlog Message: " + errorMessage);
+            }
         }
     });
 }
 
-
-
-
+function xxmergeFolders() {
+    if (confirm("collapse " + $('.txtLinkPath').val())) {
+        $('#dashBoardLoadingGif').fadeIn();
+        $('#dataifyInfo').show().html("collapse Child Folder");
+        //$('#progressBar').progressbar("enable");
+        $('#progressBar').show();
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "/api/MoveImage/CollapseFolder?folderId=" + dashboardMainSelectedTreeId,
+            success: function (success) {
+                $('#dashBoardLoadingGif').hide();
+                if (success === "ok") {
+                    displayStatusMessage("ok", "collapse succeded");
+                    buildDirectoryTree();
+                    $('#progressBar').hide();
+                    //$('#progressBar').progressbar("destroy");
+                }
+                else {
+                    sendEmailToYourself("jquery fail in FolderCategory.js collapseChildFolder", success);
+                    //alert("collapseChildFolder: " + success);
+                }
+            },
+            error: function (jqXHR) {
+                $('#dashBoardLoadingGif').hide();
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "collapseChildFolder")) {
+                    sendEmailToYourself("XHR ERROR in Dashboard.js collapseChildFolder", "/api/MoveImage/CollapseFolder?folderId=" + dashboardMainSelectedTreeId + " Message: " + errorMessage);
+                }
+            }
+        });
+    }
+}
 
 

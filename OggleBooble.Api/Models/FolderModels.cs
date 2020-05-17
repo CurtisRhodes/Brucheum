@@ -29,4 +29,20 @@ namespace OggleBooble.Api.Models
         public bool IsLandscape { get; set; }
         public string Success { get; set; }
     }
+    public class SearchResultsModel
+    {
+        public SearchResultsModel()
+        {
+            SearchResults = new List<SearchResult>();
+        }
+        public List<SearchResult> SearchResults { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class SearchResult
+    {
+        public string FolderName { get; set; }
+        public string Parent { get; set; }
+        public int FolderId { get; set; }
+    }
 }

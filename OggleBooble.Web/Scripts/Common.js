@@ -293,7 +293,7 @@ function logError(logErrorModel) {
 function logDataActivity(changeLogModel) {
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "/api/ChangeLog",
+        url: settingsArray.ApiServer + "api/Common/LogDataActivity",
         data: changeLogModel,
         success: function (success) {
             if (success === "ok")

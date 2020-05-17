@@ -38,7 +38,15 @@ namespace OggleBooble.Api.Models
         public string ErrorMessage { get; set; }
         public string CalledFrom { get; set; }
     }
-
+    public class ChangeLogModel
+    {
+        public int PkId { get; set; }
+        public int PageId { get; set; }
+        public string PageName { get; set; }
+        public string Activity { get; set; }
+        public DateTime Occured { get; set; }
+        public bool StaticRebuild { get; set; }
+    }
     public class LogActivityModel
     {
         public string VisitorId { get; set; }
@@ -47,7 +55,6 @@ namespace OggleBooble.Api.Models
         public int PageId { get; set; }
         public int CalledFrom { get; set; }
     }
-
     public class LogVisitSuccessModel
     {
         public string VisitorId { get; set; }

@@ -100,11 +100,12 @@ namespace OggleBooble.Api.Controllers
                     vwDirTrees = db.VwDirTrees.ToList().OrderBy(v => v.Id);
                 }
 
-                MsSqlDataContext.VwDirTree vRootNode = vwDirTrees.Where(v => v.Id == 0).First();
+                MsSqlDataContext.VwDirTree vRootNode = vwDirTrees.Where(v => v.Id == root).First();
                 DirTreeModelNode rootNode = new DirTreeModelNode() { vwDirTree = vRootNode };
                 dirTreeModel.SubDirs.Add(rootNode);
 
-                GetDirTreeChildNodes(dirTreeModel, rootNode, vwDirTrees);
+                //GetDirTreeChildNodes(dirTreeModel, rootNode, vwDirTrees);
+                GetDirTreeChildNodes(dirTreeModel, rootNode, vwDirTrees, "");
                 timer.Stop();
                 dirTreeModel.TimeTook = timer.Elapsed;
                 //System.Diagnostics.Debug.WriteLine("RebuildCatTree took: " + timer.Elapsed);
@@ -116,17 +117,16 @@ namespace OggleBooble.Api.Controllers
             }
             return dirTreeModel;
         }
-        private void GetDirTreeChildNodes(DirTreeSuccessModel dirTreeModel, DirTreeModelNode parentNode, IEnumerable<MsSqlDataContext.VwDirTree> vwDirTree)
+        private void GetDirTreeChildNodes(DirTreeSuccessModel dirTreeModel, DirTreeModelNode parentNode, IEnumerable<MsSqlDataContext.VwDirTree> vwDirTree, string dPath)
         {
-            var vwDirTreeNodes = vwDirTree.Where(v => v.Parent == parentNode.vwDirTree.Id).ToList();
+            var vwDirTreeNodes = vwDirTree.Where(v => v.Parent == parentNode.vwDirTree.Id).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
             foreach (VwDirTree vNode in vwDirTreeNodes)
             {
-                DirTreeModelNode childNode = new DirTreeModelNode() { vwDirTree = vNode };                
+                DirTreeModelNode childNode = new DirTreeModelNode() { vwDirTree = vNode, DanniPath = (dPath + "/" + vNode.FolderName).Replace(" ", "%20") };
                 parentNode.SubDirs.Add(childNode);
                 if (vNode.IsStepChild == 0)
-                    GetDirTreeChildNodes(dirTreeModel, childNode, vwDirTree);
+                    GetDirTreeChildNodes(dirTreeModel, childNode, vwDirTree, (dPath + "/" + vNode.FolderName).Replace(" ", "%20"));
             }
         }
-
     }
 }

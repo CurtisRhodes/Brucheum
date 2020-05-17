@@ -53,6 +53,7 @@
             break;
         case "porn":
         case "sluts":
+        case "dashboard":
             footerhtml = "<div class='flexContainer'>\n" +
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"about us\"," + pageId + ")'>about us</div>\n" +
@@ -69,6 +70,19 @@
                 "    </div>\n" +
                 "</div>\n";
             break;
+        //case "dashboard":
+        //    footerhtml +=
+        //        "<div class='flexContainer'>\n" +
+        //        "    <div class='footerCol'>\n" +
+        //        "       <div>unhandled domain: " + subdomain + "</div>\n" +
+        //        "    </div>\n" +
+        //        "    <div class='footerCol'>\n" +
+        //        "    </div>\n" +
+        //        "    <div class='footerCol'>\n" +
+        //        "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
+        //        "    </div>\n" +
+        //        "</div>\n";
+        //    break;
         default:
             footerhtml +=
                 "<div class='flexContainer'>\n" +
