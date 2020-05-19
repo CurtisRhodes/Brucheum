@@ -1,7 +1,32 @@
 ﻿
+.aboveImageContainerDiv {
+    display: flex;
+    /*border: solid thin red;*/
+    padding: 2px;
+    overflow: auto;
+}
+
+.flexboxMiddleSection {
+    float: left;
+    width: 100%;
+    text-align: center;
+}
+
+.deepSlideshowLabel {
+    float: right;
+    cursor: pointer;
+    color: var(--oggleTitleColor);
+    white-space: nowrap;
+}
+
+.floatRightLabel {
+    float: right;
+}
+
 .selectedSearchItem {
     background-color: var(--thumbnailBorderColor);
 }
+
 
 .adminRow div {
     margin: 3px;
@@ -76,14 +101,14 @@
     border-right: dotted 24px #ff00dc;
 }
 
-.flexWrapContainer {
+.galleryContainer {
     border: solid 4px red;
-    margin-top: 16px;
     background-color: var(--oggleContainerBackgroundColor);
     border: solid thin black;
     min-height: 200px;
     display: flex;
     flex-wrap: wrap;
+    max-height: inherit;
     overflow-y: scroll;
 }
 

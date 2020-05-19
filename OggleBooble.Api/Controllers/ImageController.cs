@@ -1,6 +1,7 @@
 ﻿using OggleBooble.Api.Models;
 using OggleBooble.Api.MsSqlDataContext;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -13,13 +14,72 @@ using System.Web.Http.Cors;
 namespace OggleBooble.Api.Controllers
 {
     [EnableCors("*", "*", "*")]
-    public class OggleFileController : ApiController
+    public class ImageController : ApiController
     {
         private readonly string repoPath = "F:/Danni/";
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
         static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
         static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
+
+        [HttpGet]
+        [Route("api/Image/GetImageDetail")]
+        public ImageInfoSuccessModel GetImageDetail(int folderId, string linkId)
+        {
+            var timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
+            var imageInfo = new ImageInfoSuccessModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    if (dbCategoryFolder == null)
+                    {
+                        imageInfo.Success = "no dategory folder found";
+                        return imageInfo;
+                    }
+
+                    ImageLink dbImageLink = db.ImageLinks.Where(i =>> i.Id).FirstOrDefault();
+                    if (dbImageLink == null) {
+                        imageInfo.Success = "no image link found";
+                        return imageInfo;
+                    }
+
+                    imageInfo.IsLinkJustaLink = (dbImageLink.FolderLocation != folderId);
+                    imageInfo.LinkId = dbImageLink.Link;
+                    imageInfo.FolderLocation = dbImageLink.FolderLocation;
+                    imageInfo.Height = dbImageLink.Height;
+                    imageInfo.Width = dbImageLink.Width;
+                    imageInfo.LastModified = dbImageLink.LastModified;
+                    imageInfo.Link = dbImageLink.Link;
+                    imageInfo.ExternalLink = dbImageLink.ExternalLink;
+                    imageInfo.InternalLinks = (from l in db.CategoryImageLinks
+                                               join f in db.CategoryFolders on l.ImageCategoryId equals f.Id
+                                               where l.ImageLinkId == linkId && l.ImageCategoryId != folderId
+                                               select new { folderId = f.Id, folderName = f.FolderName })
+                                               .ToDictionary(i => i.folderId, i => i.folderName);
+
+                    if (dbCategoryFolder == null)
+                    {
+                        imageInfo.Success = "no dategory folder found";
+                        return imageInfo;
+                    }
+
+
+
+                }
+
+                imageInfo.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                imageInfo.Success = Helpers.ErrorDetails(ex);
+            }
+            timer.Stop();
+            System.Diagnostics.Debug.WriteLine("GetImageLinks took: " + timer.Elapsed);
+            return imageInfo;
+        }
 
         [HttpPut]
         [Route("api/OggleFile/MoveCopyArchive")]
@@ -177,7 +237,6 @@ namespace OggleBooble.Api.Controllers
             }
             return successModel;
         }
-
 
         [HttpPost]
         [Route("api/OggleFile/AddImageLink")]
@@ -372,5 +431,6 @@ namespace OggleBooble.Api.Controllers
             }
             return successModel;
         }
+
     }
 }

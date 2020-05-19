@@ -404,6 +404,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web.config" />
+    <None Include="Properties\PublishProfiles\api.ogglebooble.pubxml" />
     <None Include="Properties\PublishProfiles\ftp publish .pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

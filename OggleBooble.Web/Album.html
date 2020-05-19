@@ -55,8 +55,10 @@
     <link href="Styles/jqueryUI.css" rel="stylesheet" />-->
 
 </head>
-  <body>
+<body>
     <header class="boobsHeader"></header>
+    <img id="imagePageLoadingGif" class="loadingGif" src="Images/loader.gif" />
+    <div id="dots"></div>
     <div class="threeColumnLayout">
         <div class="leftColumn">
             <div id="TrackbackLinkArea" class="leftColumnTrackbackArea">
@@ -66,13 +68,12 @@
             </div>
         </div>
         <div class="middleColumn">
-            <img id="imagePageLoadingGif" class="loadingGif" src="Images/loader.gif" />
-            <div id="dots"></div>
             <div id="albumPageHeader" class="aboveImageContainerDiv">
-                <div id='googleSearchText' class="sectionLabel"></div>
-                <div id="deepSlideshow" class='floatRight displayHidden' title='include all child folders' style='cursor: pointer;' onclick='launchDeepSlideShow();'>slideshow</div>
+                <div id='googleSearchText' class="floatLeft sectionLabel"></div>
+                <div id="aboveImageContainerMessageArea" class="flexboxMiddleSection"></div>
+                <div id="deepSlideshow" class='deepSlideshowLabel' title='slideshow includes all child folders' onclick='launchDeepSlideShow();'>gallery slideshow</div>
             </div>
-            <div id="imageContainer" class="flexWrapContainer"></div>
+            <div id="imageContainer" class="galleryContainer"></div>
             <div id="slideShowContainer" class="fullScreenViewer"></div>
             <div id="fileCount" class="countContainer"></div>
             <div id="albumPageContextMenuContainer"></div>
@@ -81,10 +82,14 @@
             <div id="feedbackBanner" class="fixedMessageButton displayHidden"></div>
         </div>
     </div>
-    <footer></footer>
+    <div class="footer"></div>
     <script>
         //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
         $(document).ready(function () {
+            $('#deepSlideshow').hide();
+            loadAlbumPageContextMenuHtml();
+            $('#imageContainer').hide();
+
             params = getParams();
             if (params.folder == undefined) {
                 window.location.href = "Index.html";
@@ -103,6 +108,8 @@
                     $('#dots').html('');
                     if (isInRole("view dynamic")) {
                         //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) TruE");
+                        // $('.middleColumn').css("display", "flex");
+
                         GetAllAlbumPageInfo(params.folder);
                     }
                     else {
@@ -121,12 +128,19 @@
         function resizeAlbumPage() {
             var winH = $(window).height();
             var headerH = $('header').height() + 8;
+
             $('.middleColumn').css("min-height", winH - headerH);
+            $('#topIndexPageSection').height((winH - headerH) * .655);
+            $('.threeColumnLayout').css("min-height", winH - headerH);
+
+            //$('#aboveImageContainerMessageArea').html("simple stupid")
+
+            $('.footer').css("margin-top", 88);
 
 
         }
 
 
     </script>
-  </body>
+</body>
 </html>

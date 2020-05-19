@@ -27,6 +27,7 @@ namespace OggleBooble.Api.Models
         public string LastModified { get; set; }
         public string Success { get; set; }
     }
+
     public class CategoryTreeModel
     {
         public CategoryTreeModel()
@@ -76,6 +77,7 @@ namespace OggleBooble.Api.Models
         public int ParentId { get; set; }
         public bool IsInitialFolder { get; set; }
     }
+
     public class SlideshowItemsModel
     {
         public SlideshowItemsModel()
@@ -87,4 +89,25 @@ namespace OggleBooble.Api.Models
         public List<MsSqlDataContext.vwSlideshowItem> SlideshowItems { get; set; }
         public string Success { get; set; }
     }
+
+    public class ImageInfoSuccessModel
+    {
+        public ImageInfoSuccessModel()            {
+            InternalLinks = new Dictionary<int, string>();
+        }
+        public Dictionary<int,string> InternalLinks { get; set; }
+        public string LinkId { get; set; }
+        public int LinkFolder { get; set; }
+        public bool IsLinkJustaLink { get; set; }
+        public string ExternalLink { get; set; }
+        public string Link { get; set; }
+        public int FolderLocation { get; set; }
+        public int? Width { get; set; }
+        public int? Height { get; set; }
+        public long? Size { get; set; }
+        public DateTime? LastModified { get; set; }
+        public string Success { get; set; }
+    }
 }
+
+

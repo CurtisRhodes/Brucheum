@@ -107,51 +107,22 @@ namespace OggleBooble.Api.Controllers
     public class FolderDetailController : ApiController
     {
         [HttpGet]
-        public GetModelNameModel GetModelName(string linkId)
+        [Route("api/FolderDetail/GetFolderInfo")]
+        public FolderDetailModel GetFolderInfo(int folderId)
         {
-            GetModelNameModel imageDetail = new GetModelNameModel();
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    var expectedImageDetail = (from l in db.ImageLinks
-                                               join f in db.CategoryFolders on l.FolderLocation equals f.Id
-                                               where l.Id == linkId
-                                               select new GetModelNameModel()
-                                               {
-                                                   FolderId = f.Id,
-                                                   Link = l.Link,
-                                                   FolderName = f.FolderName,
-                                                   RootFolder = f.RootFolder
-                                               }).FirstOrDefault();
-                    if (expectedImageDetail != null)
-                        imageDetail = expectedImageDetail;
-                    else
-                        System.Diagnostics.Debug.WriteLine(linkId + " didnt work ");
-
-                    imageDetail.Success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                imageDetail.Success = Helpers.ErrorDetails(ex);
-            }
-            return imageDetail;
-        }
-
-        [HttpGet]
-        public FolderDetailModel Get(int folderId)
-        {
-            FolderDetailModel folderDetailModel = new FolderDetailModel();
+            var folderDetailModel = new FolderDetailModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                     folderDetailModel.FolderName = dbFolder.FolderName;
+                    folderDetailModel.RootFolder = dbFolder.RootFolder;
+
                     CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
                     if (categoryFolderDetails != null)
                     {
+                        //folderDetailModel.FolderName = categoryFolderDetails.;
                         folderDetailModel.Measurements = categoryFolderDetails.Measurements;
                         folderDetailModel.Nationality = categoryFolderDetails.Nationality;
                         folderDetailModel.ExternalLinks = categoryFolderDetails.ExternalLinks;

@@ -23,7 +23,6 @@ body {
     background-color: var(--oggleBackgroundColor);
     font-family: Verdana;
     font-size: var(--normalFont);
-    box-sizing: padding-box;
 }
 
 .threeColumnLayout {
@@ -37,8 +36,10 @@ body {
     }
 
     .threeColumnLayout .middleColumn {
+        float: left;
         width: 100%;
-        /*border: solid 10px blue;*/
+        height: inherit;
+        max-height: inherit;
     }
 
     .threeColumnLayout .rightColumn {
@@ -79,7 +80,7 @@ body {
 
 .sectionLabel {
     color: var(--oggleTitleColor);
-
+    white-space: nowrap;
 }
 
 .roundendButton {

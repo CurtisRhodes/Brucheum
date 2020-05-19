@@ -5,18 +5,12 @@ using System.Web;
 
 namespace OggleBooble.Api.Models
 {
-    public class GetModelNameModel
-    {
-        public string Link { get; set; }
-        public string FolderName { get; set; }
-        public string RootFolder { get; set; }
-        public int FolderId { get; set; }
-        public string Success { get; set; }
-    }
     public class FolderDetailModel
     {
         public int FolderId { get; set; }
         public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public string Link { get; set; }
         public string Nationality { get; set; }
         public string Measurements { get; set; }
         public string ExternalLinks { get; set; }

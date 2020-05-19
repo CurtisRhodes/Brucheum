@@ -58,19 +58,20 @@
 </head>
 <body>
     <header class="boobsHeader"></header>
-    <div class="threeColumnLayout">
+    <div class="threeColumnLayout" style="background-color: greenyellow">
         <div class="leftColumn"></div>
         <div class="middleColumn">
-            <div id="divStatusMessage"></div>
-            <div id="dots"></div>
-            <div class="indexPageSection" id="topIndexPageSection">
-                <div class="floatingContainerElement sectionLabel">random galleries</div>
-                <div id="carouselContainer"></div>
-            </div>
-            <div class="indexPageSection" id="bottomSection">
-                <div>latest updates</div>
-                <div id="browserInfo"></div>
-                <div id="latestGalleriesContainer">
+            <div>
+                <div id="divStatusMessage"></div>
+                <div id="dots"></div>
+                <div class="indexPageSection" id="topIndexPageSection">
+                    <div class="flexContainer">
+                        <div class="floatingContainerElement sectionLabel">random galleries</div>
+                        <div id="carouselContainer"></div>
+                    </div>
+                </div>
+                <div class="indexPageSection" id="bottomSection">
+                    <div class="sectionLabel">latest updates</div>
                     <div id="updatedGalleriesSection" class="updatedGalleriesSection"></div>
                     <div class="clickable" onclick="onShowMoreGalleries()">show more updated galleries</div>
                 </div>
@@ -112,7 +113,7 @@
             if (subdomain == "porn")
                 homePageId = 3909;
 
-            setOggleHeader(homePageId, subdomain);
+            setOggleHeader(homePageId, "Index");
 
             loadSettings();
             var dots = ""
@@ -185,9 +186,11 @@
         function resizeIndexPage() {
             // height
             var winH = $(window).height();
-            var headerH = $('header').height() + 8;
+            var headerH = $('header').height();
             //$('.middleColumn').height(winH - headerH);
             $('#topIndexPageSection').height((winH - headerH) * .655);
+
+            $('.threeColumnLayout').height($('.middleColumn').height());
             $('.threeColumnLayout').css("min-height", winH - headerH);
 
             // width

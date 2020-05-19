@@ -12,6 +12,7 @@ function setOggleHeader(folderId, subdomain) {
     //$('header').switchClass('pornHeader', 'boobsHeader');
     $('header').html(fullScreenHeader(folderId));
     setHeaderDetails(folderId, subdomain);
+    setLoginHeaderSection();
 }
 
 function fullScreenHeader(folderId) {
@@ -77,6 +78,46 @@ function fullScreenHeader(folderId) {
         "</div>";
 }
 
+function showPornHeader(folderId) {
+    $('header').switchClass('boobsHeader', 'pornHeader');
+    changeFavoriteIcon();
+    $('body').addClass('pornBodyColors');
+    $('#subheaderContent').html(
+        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",243," + folderId + ")'>cock suckers</a>, \n" +
+        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",420," + folderId + ")'>boob suckers</a>, \n" +
+        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",357," + folderId + ")'>cum shots</a>, \n" +
+        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",397," + folderId + ")'>kinky</a> and \n" +
+        "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",411," + folderId + ")'>naughty behaviour</a>\n");
+
+    $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"porn\"," + folderId + ")'><img src='/Images/csLips02.png' class='bannerImage'/></a>\n");
+    $('#archiveLink').html("<div id='rankerTag' class='headerFeatureBanner'>" +
+        "<a href='javascript:rtpe(\"BAC\"," + folderId + ",440," + folderId + ")'>slut archive</a></div>\n");
+    $('#rankerLink').html("<div id='rankerTag' class='headerFeatureBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"" + subdomain + "\"," + folderId + ")' " +
+        "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n");
+    $('#bannerTitle').html("OgglePorn");
+    
+}
+
+function showBoobsHeader(folderId) {
+    $('#subheaderContent').html(
+        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",2,2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",136,136)'> poses,</a>\n" +
+        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",3916,3916)'> positions,</a>\n" +
+        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",159,159)'> topics,</a>\n" +
+        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",199,199)'> shapes</a> and\n" +
+        "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",241,241)'>sizes</a>\n");
+
+    $('#breadcrumbContainer').html("<div class='headerFeatureBanner'>" +
+        "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"boobs\"," + folderId + ")'" +
+        " title='Spin through the links to land on random portrait images.'>boobs ranker</a></div>\n");
+
+    $('#breadcrumbContainer').append("<div class='headerFeatureBanner'>" +
+        "\n<a href='javascript:rtpe(\"BAC\"," + folderId + ",\"Playboy button\",1132)'>every Playboy Centerfold</a></div>\n");
+
+    $('#breadcrumbContainer').append("<div id='rankerTag' class='headerFeatureBanner'>" +
+        "<a href='javascript:rtpe(\"BAC\"," + folderId + ",\"archive button\",3)'>babes archive</a></div>\n");
+}
+
 // requires no database call
 function setHeaderDetails(folderId, subdomain) {
     $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"boobs\"," + folderId + ")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n");
@@ -86,6 +127,12 @@ function setHeaderDetails(folderId, subdomain) {
             $('header').switchClass('pornHeader', 'boobsHeader');
             $("#divLoginArea").hide();
             $('#subheaderContent').html("admin");
+            break;
+        case "Index":
+            if (folderId === 3909)
+                showPornHeader(folderId);
+            else
+                showBoobsHeader(folderId);
             break;
         case "blank":
             $('#subheaderContent').html("loading");
@@ -100,7 +147,6 @@ function setHeaderDetails(folderId, subdomain) {
             $('#subheaderContent').html("ranker");
             //rtpe(eventCode, CalledFrom, eventDetail, pageId);
             break;
-
         case "archive":
             $('#subheaderContent').html(
                 "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",4,4,)'>milk cows,</a> \n" +
@@ -108,10 +154,10 @@ function setHeaderDetails(folderId, subdomain) {
                 "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1093,1093)'>highschool fantasy girls,</a> \n" +
                 "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",1107,1107)'>sweater meat,</a> \n" +
                 "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",123,123)'>ultra juggs</a> \n");
+
             $('#rankerLink').html("<div id='rankerTag' class='headerFeatureBanner'>" +
                 "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"archive\")'" +
                 " title='Spin through the links to land on random portrait images.'>babes ranker</a></div>\n");
-
             
             $('#playboyLink').html("<div class='headerFeatureBanner'>" +
                 "\n<a href='javascript:rtpe(\"BAC\"," + folderId + ",1132,1132)'>every Playboy Centerfold</a></div>\n");
@@ -159,7 +205,7 @@ function setHeaderDetails(folderId, subdomain) {
             break;
         }
         case "porn":
-        case "sluts":
+        case "sluts": {
             $('header').switchClass('boobsHeader', 'pornHeader');
             changeFavoriteIcon();
             $('body').addClass('pornBodyColors');
@@ -170,12 +216,13 @@ function setHeaderDetails(folderId, subdomain) {
                 "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",397," + folderId + ")'>kinky</a> and \n" +
                 "               <a href='javascript:rtpe(\"BLC\"," + folderId + ",411," + folderId + ")'>naughty behaviour</a>\n");
 
-            $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"porn\"," + folderId +")'><img src='/Images/csLips02.png' class='bannerImage'/></a>\n");
+            $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"porn\"," + folderId + ")'><img src='/Images/csLips02.png' class='bannerImage'/></a>\n");
             $('#archiveLink').html("<div id='rankerTag' class='headerFeatureBanner'>" +
-                "<a href='javascript:rtpe(\"BAC\"," + folderId + ",440," + folderId +")'>slut archive</a></div>\n");
+                "<a href='javascript:rtpe(\"BAC\"," + folderId + ",440," + folderId + ")'>slut archive</a></div>\n");
             $('#rankerLink').html("<div id='rankerTag' class='headerFeatureBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"" + subdomain + "\"," + folderId + ")' " +
                 "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n");
             $('#bannerTitle').html("OgglePorn");
+        }
             break;
         default:
             logError({
@@ -185,44 +232,10 @@ function setHeaderDetails(folderId, subdomain) {
                 ErrorMessage: "switch case not handled. FolderId: " + folderId + ", Subdomain: " + subdomain,
                 CalledFrom: "OggleHeader setOggleHeader"
             });
-
-
-
-
-        //sendEmailToYourself("OggleHeader switch ","folderId: " + folderId+ "<br/>subdomain: " + subdomain);
-        //alert("subdomain: " + subdomain + "  not found");
-        //console.log("subdomain: " + subdomain + "  not found");
     }
 }
 
-// requires no database call
-function setLoginHeaderSection(visitorId) {
 
-    var isLoggedIn = getCookieValue("IsLoggedIn");
-    if (isNullorUndefined(isLoggedIn)) {
-        setCookieValue("IsLoggedIn", "true");
-        isLoggedIn = "true";
-    }
-    if (isLoggedIn === "true") {
-        $('#headerMessage').html("logged in");
-        $('#spnUserName').html(getCookieValue("UserName"));
-        $('#optionLoggedIn').show();
-        $('#optionNotLoggedIn').hide();
-        if (isInRole("Oggle admin")) {
-            $('#dashboardMenuItem').show();
-        }
-    }
-    else {
-        $('#dashboardMenuItem').hide();
-        $('#optionLoggedIn').hide();
-        $('#optionNotLoggedIn').show();
-    }
-}
-
-        //"                  <img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
-        //"                   title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +
-        //"                   \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
-        //"                   \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
 
 function phoneHeader() {
     return "   <div id='divTopLeftLogo' class='bannerImageContainer'></div>\n" +
@@ -351,11 +364,10 @@ function bigScreenHeader() {
         "   <div class='headerBodyContainer'>\n" +
         "       <div id='' class='headerTopRow'>\n" +
         "           <div id='bannerTitle' class='headerTitle'></div >\n" +
-        //"                  <img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
-        //"                   title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +
-        //"                   \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
-        //"                   \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
-        "           <div id='subheaderContent' class='topLinkRow'></div>\n<span id='archiveLink'></span><span id='rankerLink'></span><span id='playboyLink'></span>\n" +
+        "           <div id='subheaderContent' class='topLinkRow'></div>\n" +
+        "               <span id='archiveLink'></span>" +
+        "               <span id='rankerLink'></span >" +
+        "               <span id='playboyLink'></span>\n" +
         "           <div class='OggleSearchBox'>\n" +
         "               <span id='notUserName' title='this is a progressive single letter search. Esc clears search.'>search</span>" +
         "                   <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
@@ -410,4 +422,44 @@ function bigScreenHeader() {
         "</div>\n" +
         "</div>";
 }
+
+// requires no database call
+function setLoginHeaderSection() {
+
+    var isLoggedIn = getCookieValue("IsLoggedIn");
+    if (isNullorUndefined(isLoggedIn)) {
+        setCookieValue("IsLoggedIn", "true");
+        isLoggedIn = "true";
+    }
+    if (isLoggedIn === "true") {
+        $('#headerMessage').html("logged in");
+        $('#spnUserName').html(getCookieValue("UserName"));
+        $('#optionLoggedIn').show();
+        $('#optionNotLoggedIn').hide();
+        if (isInRole("Oggle admin")) {
+            $('#dashboardMenuItem').show();
+        }
+    }
+    else {
+        $('#dashboardMenuItem').hide();
+        $('#optionLoggedIn').hide();
+        $('#optionNotLoggedIn').show();
+    }
+}
+
+
+
+
+//"                  <img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
+//"                   title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +
+//"                   \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
+//"                   \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
+
+
+
+
+
+
+
+
 

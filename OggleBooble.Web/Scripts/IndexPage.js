@@ -15,7 +15,7 @@
                 });
                 console.log("loaded " + latestUpdates.LatestUpdates.length + " news boxes");
                 $('.indexSectionLabel').show();
-                $('#updatedGalleriesSection').css("text-align", "center");
+                //$('#updatedGalleriesSection').css("text-align", "center");
 
                 resizeIndexPage();
             }

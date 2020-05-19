@@ -116,8 +116,7 @@ namespace OggleBooble.Api.Controllers
                         albumInfo.PageHits += dbPageHitTotals.Hits;
                     }
                     MySqlDataContext.CategoryFolder categoryFolder = mdb.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    if (categoryFolder != null)
-                        albumInfo.RootFolder = mdb.CategoryFolders.Where(f => f.Id == folderId).First().RootFolder;
+                    //if (categoryFolder != null) albumInfo.RootFolder = mdb.CategoryFolders.Where(f => f.Id == folderId).First().RootFolder;
                     albumInfo.UserPageHits = mdb.PageHits.Where(h => h.VisitorId == visitorId).Count();
                     albumInfo.UserImageHits = mdb.ImageHits.Where(h => h.VisitorId == visitorId).Count();
                 }
