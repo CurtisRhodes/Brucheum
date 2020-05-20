@@ -40,7 +40,7 @@ namespace OggleBooble.Api.Controllers
                         return imageInfo;
                     }
 
-                    ImageLink dbImageLink = db.ImageLinks.Where(i =>> i.Id).FirstOrDefault();
+                    ImageLink dbImageLink = db.ImageLinks.Where(i => i.Id == linkId).FirstOrDefault();
                     if (dbImageLink == null) {
                         imageInfo.Success = "no image link found";
                         return imageInfo;
