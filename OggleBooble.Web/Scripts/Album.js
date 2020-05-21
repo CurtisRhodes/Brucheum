@@ -415,7 +415,7 @@ function onRemoveImageClick(btn) {
 }
 
 function removeImage() {
-    //alert("currentFolderId: " + currentFolderId);
+    //alert("albumFolderId: " + albumFolderId);
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + selectedImageLinkId,
@@ -423,15 +423,15 @@ function removeImage() {
             if (success === "ok") {
                 $.ajax({
                     type: "DELETE",
-                    url: settingsArray.ApiServer + "api/FtpImageRemove/RemoveImageLink?folderId=" + currentFolderId + "&imageId=" + selectedImageLinkId,
+                    url: settingsArray.ApiServer + "api/FtpImageRemove/RemoveImageLink?folderId=" + albumFolderId + "&imageId=" + selectedImageLinkId,
                     success: function (success) {
                         if (success === "ok") {
                             if (viewerShowing)
                                 slide("next");
-                            getAlbumImages(currentFolderId);
+                            getAlbumImages(albumFolderId);
 
                             var changeLogModel = {
-                                PageId: currentFolderId,
+                                PageId: albumFolderId,
                                 PageName: currentAlbumJSfolderName,
                                 Activity: "link removed " + selectedImageLinkId
                             };
@@ -504,26 +504,18 @@ function imageCtx(imgId) {
 
     event.preventDefault();
     window.event.returnValue = false;
-    //var thisImageDiv = $('#' + imgId + '');
-    if (viewerShowing) {
-        $('#imageContextMenu').css("top", event.clientY + 5);
-        $('#imageContextMenu').css("left", event.clientX);
-    }
-    else {
-        var picpos = thisImageDiv.offset();
-        var picLeft = Math.max(0, picpos.left + thisImageDiv.width() - $('#imageContextMenu').width() - 50);
-        $('#imageContextMenu').css("top", picpos.top + 5);
-        $('#imageContextMenu').css("left", picLeft);
-    }
+    var thisImageDiv = $('#' + imgId + '');
 
     $('#ctxModelName').html(currentAlbumJSfolderName);
 
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Image/GetImageDetail?folderId=" + currentFolderId + "&linkId=" + imgId,
+        url: settingsArray.ApiServer + "api/Image/GetImageDetail?folderId=" + albumFolderId + "&linkId=" + imgId,
         success: function (ImageInfoSuccess) {
             if (ImageInfoSuccess.Success === "ok") {
 
+                $('#ctxModelName').html(imageInfo.FolderName);
+                
                 //imageInfo.IsLinkJustaLink = (dbImageLink.FolderLocation != folderId);
                 //imageInfo.LinkId = dbImageLink.Link;
                 //imageInfo.FolderLocation = dbImageLink.FolderLocation;
@@ -563,10 +555,24 @@ function imageCtx(imgId) {
             }
         }
     });
+
+    //$('#imageContextMenu').css('z-index', "200");
+
+    if (viewerShowing) {
+        $('#imageContextMenu').css("top", event.clientY + 5);
+        $('#imageContextMenu').css("left", event.clientX);
+    }
+    else {
+        var picpos = thisImageDiv.offset();
+        var picLeft = Math.max(0, picpos.left + thisImageDiv.width() - $('#imageContextMenu').width() - 50);
+        $('#imageContextMenu').css("top", picpos.top + 5);
+        $('#imageContextMenu').css("left", picLeft);
+    }
+    $('#imageContextMenu').fadeIn();
 }
 
 
-function ctxSAP(imgId) {
+function XXctxSAP(imgId) {
     event.preventDefault();
     window.event.returnValue = false;
     var thisImageDiv = $('#' + imgId + '');
@@ -599,8 +605,6 @@ function ctxSAP(imgId) {
     //    alert("$('.adminLink').show();" );
     //}
 
-    $('#imageContextMenu').css('z-index', "200");
-    $('#imageContextMenu').fadeIn();
 }
 
 function contextMenuAction(action) {
@@ -719,9 +723,9 @@ function showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId
     }
 }
 
-function loadAlbumPageContextMenuHtml() {
+function loadImageContextMenu() {
 
-    $('#albumPageContextMenuContainer').html(
+    $('#imageContextMenuContainer').html(
         "<div id='imageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
         "    <div id='ctxModelName' onclick='contextMenuAction(\"show\")'>model name</div>\n" +
         "    <div id='ctxSeeMore' onclick='contextMenuAction(\"jump\")'>see more of her</div>\n" +

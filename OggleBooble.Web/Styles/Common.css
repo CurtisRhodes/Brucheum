@@ -26,16 +26,20 @@ body {
 }
 
 .threeColumnLayout {
-    width: 100%;
+    /*width: 100%;*/
+    height: 100%;
+    display: flex;
+    overflow: auto;
 }
 
     .threeColumnLayout .leftColumn {
         float: left;
-        /*border-right: solid 5px var(--ogglgeHeaderBarColor);*/
+        border-right: solid 5px var(--ogglgeHeaderBarColor);
         min-width: 4%;
     }
 
     .threeColumnLayout .middleColumn {
+
         float: left;
         width: 100%;
         height: inherit;
@@ -60,6 +64,12 @@ body {
     position: relative;
     left: -50%;
     margin: 0;
+}
+
+.oggleDialog {
+    background-color: var(--oggleContainerBackgroundColor);
+    padding:6px;
+    border: solid 5px var(--oggleBorderColor);
 }
 
 .modalVail {

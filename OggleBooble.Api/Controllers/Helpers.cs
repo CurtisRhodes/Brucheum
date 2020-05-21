@@ -30,6 +30,19 @@ namespace OggleBooble.Api.Controllers
 
     public static class Helpers
     {
+
+        public static bool ContainsRomanNumeral(string folderName)
+        {
+            var doesContain = false;
+            if (folderName.Contains(" I"))
+                doesContain = true;
+            if (folderName.Contains(" V"))
+                doesContain = true;
+            if (folderName.Contains(" X"))
+                doesContain = true;
+            return doesContain;
+        }
+
         public static Image SetMetaValue(this Image image, FolderAttributeCode property, string value)
         {
             PropertyItem prop = image.PropertyItems[0];

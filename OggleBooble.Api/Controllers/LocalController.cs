@@ -21,7 +21,7 @@ namespace OggleBooble.Api.Controllers
             string path = System.Web.HttpContext.Current.Server.MapPath("~/bin/OggleBooble.Api.dll");
             if (System.IO.File.Exists(path))
             {
-                lastBuild = System.IO.File.GetLastWriteTime(path).ToShortDateString();
+                lastBuild = System.IO.File.GetLastWriteTime(path).ToShortDateString()+" :"+ System.IO.File.GetLastWriteTime(path).ToShortTimeString();
             }
             return lastBuild;
         }
@@ -43,14 +43,14 @@ namespace OggleBooble.Api.Controllers
                         MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "CurtishRhodes@hotmail.com", "(local) " + subject, message);
                         mailMessage.IsBodyHtml = true;
                         smtpClient.Send(mailMessage);
-                        success = "ok";
+                        success = "ok local";
                     }
                 }
                 else
                 {
                     using (SmtpClient smtpClient = new SmtpClient("relay-hosting.secureserver.net", 25))
                     {
-                        MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "info@curtisrhodes.com", subject, message);
+                        MailMessage mailMessage = new MailMessage("info@curtisrhodes.com", "CurtishRhodes@hotmail.com", subject, message);
                         mailMessage.IsBodyHtml = true;
                         smtpClient.Send(mailMessage);
                         success = "ok";

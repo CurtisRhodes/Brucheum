@@ -98,6 +98,7 @@ namespace OggleBooble.Api.Models
         public Dictionary<int,string> InternalLinks { get; set; }
         public string LinkId { get; set; }
         public int LinkFolder { get; set; }
+        public string FolderName { get; set; }
         public bool IsLinkJustaLink { get; set; }
         public string ExternalLink { get; set; }
         public string Link { get; set; }

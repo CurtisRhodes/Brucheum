@@ -13,6 +13,9 @@ using System.Web.Http.Cors;
 
 namespace OggleBooble.Api.Controllers
 {
+    
+
+
     [EnableCors("*", "*", "*")]
     public class ImageController : ApiController
     {
@@ -40,6 +43,15 @@ namespace OggleBooble.Api.Controllers
                         return imageInfo;
                     }
 
+                    imageInfo.FolderName = dbCategoryFolder.FolderName;
+                    if (Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName)) {
+                        CategoryFolder dbCategoryFolderParent = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).FirstOrDefault();
+                        if (dbCategoryFolderParent != null)
+                        {
+                            imageInfo.FolderName = dbCategoryFolderParent.FolderName;
+                        }
+                    }
+
                     ImageLink dbImageLink = db.ImageLinks.Where(i => i.Id == linkId).FirstOrDefault();
                     if (dbImageLink == null) {
                         imageInfo.Success = "no image link found";
@@ -65,9 +77,6 @@ namespace OggleBooble.Api.Controllers
                         imageInfo.Success = "no dategory folder found";
                         return imageInfo;
                     }
-
-
-
                 }
 
                 imageInfo.Success = "ok";

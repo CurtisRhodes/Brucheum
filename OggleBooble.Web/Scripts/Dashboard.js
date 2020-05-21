@@ -199,7 +199,7 @@ function getChildFileCounts(startNode) {
 }
 
 
-// ADD HTTP ADDRESS OF AN IMAGE
+// ADD IMAGE LINK
 function addImageLink() {
     if (isNullorUndefined($('#txtNewLink').val()))
         alert("invalid link");
@@ -348,6 +348,13 @@ function showAddRolesDialog() {
     $('#addEditRolesDialog').dialog('open');
     loadAaddEditRoles();
 }
+
+function showAddEditRoles() {
+
+
+}
+
+
 
 // TREE CONTEXT MENU FUNCTIONS
 function dashboardContextMenuOpenFolder() {

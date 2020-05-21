@@ -76,7 +76,7 @@
             <div id="imageContainer" class="galleryContainer"></div>
             <div id="slideShowContainer" class="fullScreenViewer"></div>
             <div id="fileCount" class="countContainer"></div>
-            <div id="albumPageContextMenuContainer"></div>
+            <div id="imageContextMenuContainer"></div>
         </div>
         <div class="rightColumn">
             <div id="feedbackBanner" class="fixedMessageButton displayHidden"></div>
@@ -87,7 +87,7 @@
         //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
         $(document).ready(function () {
             $('#deepSlideshow').hide();
-            loadAlbumPageContextMenuHtml();
+            loadImageContextMenu();
             $('#imageContainer').hide();
 
             params = getParams();

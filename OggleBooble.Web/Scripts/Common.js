@@ -327,6 +327,17 @@ function logDataActivity(changeLogModel) {
     });
 }
 
+function containsRomanNumerals(strLabel) {
+    var doesContain = false;
+    if (strLabel.indexOf(" I") > 0)
+        doesContain = true;
+    if (strLabel.indexOf(" V") > 0)
+        doesContain = true;
+    if (strLabel.indexOf(" X") > 0)
+        doesContain = true;
+    return doesContain;
+}
+
 // COMMON CONTEXTMENU FUNCTIONS
 function showLinks(linkId) {
     $.ajax({

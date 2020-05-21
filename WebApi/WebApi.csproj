@@ -395,7 +395,7 @@
     <Content Include="Styles\addEdit.css" />
     <Content Include="Styles\bootstrap.min.css" />
     <Content Include="Styles\JournalEditor.css" />
-    <Content Include="Styles\jumbotron.css" />
+    <Content Include="Styles\bsExtract.css" />
     <Content Include="Styles\MsStandard.css" />
     <Content Include="Styles\rowContainer.css" />
   </ItemGroup>
@@ -404,8 +404,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web.config" />
-    <None Include="Properties\PublishProfiles\api.ogglebooble.pubxml" />
     <None Include="Properties\PublishProfiles\ftp publish .pubxml" />
+    <None Include="Properties\PublishProfiles\oggleapi.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

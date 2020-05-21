@@ -293,10 +293,12 @@ function intervalBody() {
 
                 if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
                     $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolder);
-                    $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderGP);
+
+                    $('#imageTopLabel').html("Playboy Playmate p: " + carouselItemArray[imageIndex].ImageFolderGP);
                     $('#headerMessage').append("P");
+                    imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
                     pause();
-                    setTimeout(function () { alert("roman shift " + $('#headerMessage').html() + ".  ImageFolderGP:" + imageTopLabelClickId); }, 600);
+                    setTimeout(function () { alert("roman shift " + $('#headerMessage').html() + ".  imageTopLabelClickId: " + imageTopLabelClickId); }, 600);
                 }
             }
         }
@@ -314,7 +316,9 @@ function intervalBody() {
                 $('#headerMessage').html("3");
 
                 if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
-                    $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderParent);
+
+                    $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolder);
+
                     $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderGP);
                     footerLabelClickId = 472; // 
                     $('#categoryLabel').html("Playboy");
@@ -602,13 +606,3 @@ function assuranceArrowClick(direction) {
     reportThenPerformEvent("CAA", "direction: " + direction, direction, homePageId);
 }
 
-function containsRomanNumerals(strLabel) {
-    var doesContain = false;
-    if (strLabel.indexOf(" I") > 0)
-        doesContain = true;
-    if (strLabel.indexOf(" V") > 0)
-        doesContain = true;
-    if (strLabel.indexOf(" X") > 0)
-        doesContain = true;
-    return doesContain;
-}
