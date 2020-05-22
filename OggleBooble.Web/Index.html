@@ -72,26 +72,14 @@
                 </div>
             </div>
             <div class="indexPageSection" id="bottomSection">
-                <div class="sectionLabel">latest updates</div>
+                <div class="clickable sectionLabel" onclick="showHideGalleries()">latest updates</div>
                 <div id="updatedGalleriesSection" class="updatedGalleriesSection"></div>
-                <div class="clickable" onclick="onShowMoreGalleries()">show more updated galleries</div>
             </div>
+            <div id="showMoreGalleriesDiv" class="clickable sectionLabel" onclick="showMoreGalleries()">show more updated galleries</div>
         </div>
         <div class="rightColumn" style="background-color: #ecfaca"></div>
     </div>
-
-    <div id="launchingService" class="floatLeft">
-        <div class="centeringOuterShell randomImageContainer">
-            <div class="centeringInnerShell">
-                <div id="connectingMsg" class="displayHidden">
-                    <img src="Images/altair02.gif" />
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div id="carouselContextMenuContainer"></div>
-
     <div class="footer"></div>
     <script>
         var promoIdx = 0;
@@ -154,7 +142,7 @@
                                 //launchPromoMessages();
                             }
 
-                            launchCarousel("everything");
+                            launchCarousel();
 
                             loadUpdatedGalleriesBoxes(updatedGalleriesCount);
 
@@ -170,10 +158,6 @@
                                 setLoginHeaderSection(visitorId);
                                 logPageHit(homePageId);
                             }
-
-                            $('.sectionLabel').show();
-
-
                             $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
                         }
                         else {
@@ -192,12 +176,11 @@
             // height
             var winH = $(window).height();
             var headerH = $('header').height();
-            //$('.middleColumn').height(winH - headerH);
-            $('#topIndexPageSection').height((winH - headerH) * .655);
-
-            //$('.threeColumnLayout').height($('.middleColumn').height());
             $('.threeColumnLayout').css("min-height", winH - headerH);
-
+            $('#topIndexPageSection').height((winH - headerH - 100));
+            if ($('#updatedGalleriesSection').is(':visible')) {
+                $('#topIndexPageSection').height((winH - headerH) * .85);
+            }
             // width
             var winW = $(window).width();
             $('section').css("background-color", "#d5d1ba");

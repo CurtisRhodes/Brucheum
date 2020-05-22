@@ -3,6 +3,16 @@ function rtpe(eventCode, calledFrom, eventDetail, pageId) {
     reportThenPerformEvent(eventCode, calledFrom, eventDetail, pageId);
 }
 
+function reportEvent(eventCode, calledFrom, eventDetail, pageId) {
+    logEventActivity({
+        VisitorId: getCookieValue("VisitorId");,
+        EventCode: eventCode,
+        EventDetail: eventDetail,
+        PageId: pageId,
+        CalledFrom: calledFrom
+    });
+}
+
 function reportThenPerformEvent(eventCode, calledFrom, eventDetail, pageId) {
     try {
         var visitorId = getCookieValue("VisitorId");
@@ -67,23 +77,6 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
         case "GAX":  // can I get a connection
             alert("can I get a connection");
             //window.location.href = ".";
-            break;
-        case "CAA": // carousle context menu item clicked
-            if (eventDetail === "foward") {
-                resume();
-            }
-            else {
-                // pop
-                imageHistory.pop();
-                imageIndex = imageHistory.pop();
-                if (imageIndex > 0) {
-                    $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
-                    $('#categoryTitle').html(carouselItemArray[imageIndex].FolderPath + ": " + carouselItemArray[imageIndex].FolderName).fadeIn(intervalSpeed);
-                    resizeCarousel();
-                }
-                else
-                    alert("imageIndex: " + imageIndex);
-            }
             break;
         case "EXP":  // Explode
             window.open(eventDetail, "_blank");

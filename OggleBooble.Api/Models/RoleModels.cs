@@ -5,9 +5,9 @@ using System.Web;
 
 namespace OggleBooble.Api.Models
 {
-    public class UsersRoleModel
+    public class RegisteredUsersSuccessModel
     {
-        public UsersRoleModel(){
+        public RegisteredUsersSuccessModel(){
             RegisteredUsers = new List<UsersModel>();
         }
         public List<UsersModel> RegisteredUsers { get; set; }
@@ -16,7 +16,18 @@ namespace OggleBooble.Api.Models
 
     public class UsersModel
     {
-        public string UserNames { get; set; }
+        public string UserName { get; set; }
         public string VisitorId { get; set; }
     }
+
+    public class UserRolesSuccessModel
+    {
+        public UserRolesSuccessModel()
+        {
+            RoleNames = new List<string>();
+        }
+        public List<string> RoleNames { get; set; }
+        public string Success { get; set; }
+    }
+
 }

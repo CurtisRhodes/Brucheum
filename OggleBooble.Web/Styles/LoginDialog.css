@@ -40,6 +40,7 @@
     border-radius: 3px;
     border: 1px solid #d6d9dc;
     margin-bottom: 16px;
+    background-color: #d6d9dc;
 }
 
 #btnLoginPopupLogin {
@@ -160,29 +161,5 @@
 
 .labelStyle {
     color: purple;
-}
-
-.or-container {
-    text-align: center;
-    margin-bottom: 10px;
-    clear: both;
-    color: #6a737c;
-    font-variant: small-caps;
-}
-
-.or-hr {
-    margin-bottom: 0;
-    position: relative;
-    top: 19px;
-    height: 0;
-    border: 0;
-    border-top: 1px solid #3436e8;
-}
-
-.or {
-    display: inline-block;
-    position: relative;
-    padding: 10px;
-    background-color: #fff;
 }
 

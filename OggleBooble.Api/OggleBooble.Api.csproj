@@ -165,6 +165,7 @@
     <Compile Include="Controllers\LinksController.cs" />
     <Compile Include="Controllers\LocalController.cs" />
     <Compile Include="Controllers\ImageController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="DataContext\MySqlContext.cs" />
     <Compile Include="DataContext\OggleBoobleContext.cs" />

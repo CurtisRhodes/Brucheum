@@ -3,14 +3,17 @@
     width: 100%;
     min-height: 40%;
     margin-bottom: 6px;
-    /*border: solid thin orange;*/
+    display: flex;
+    /*
+    overflow: auto;
+    border: solid 10px orange;
+    */
 }
 
 /*@media (min-width: 768px) {
     background-color: red;
 }*/
-
-.updatedGalleriesSection {
+    .updatedGalleriesSection {
     float: left;
     text-align: center;
     height: inherit;
@@ -33,10 +36,6 @@
 .floatingContainerElement {
     position: absolute;
     padding: 7px;
-}
-
-.indexSectionLabel {
-    display: none;
 }
 
 .newsContentBoxLabel {

@@ -9,6 +9,7 @@
 
     $('header').html(fullScreenHeader(folderId));
 
+    $('#draggableDialog').draggable();
 
     setHeaderDetails(folderId, subdomain);
     setLoginHeaderSection();
@@ -202,13 +203,19 @@ function fullScreenHeader(folderId) {
         "           </div>\n" +
         "       </div>\n" +
         "   </div>\n" +
-        "<div id='draggableDialog' class='oggleDraggableDialog'>\n" +
-        "   <div id='draggableDialogHeader'class='oggleDraggableDialogHeader'>" +
-        "       <div id='draggableDialogTitle' class='oggleDraggableDialogTitle'></div>" +
-        "       <div id='draggableDialogCloseButton' class='oggleDraggableDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'></div>\n" +
+
+        "<div class='centeringOuterShell'>\n" +
+        "   <div class='centeringInnerShell'>\n" +
+        "       <div id='draggableDialog' class='oggleDraggableDialog'>\n" +
+        "          <div id='draggableDialogHeader'class='oggleDraggableDialogHeader'>" +
+        "              <div id='draggableDialogTitle' class='oggleDraggableDialogTitle'></div>" +
+        "              <div id='draggableDialogCloseButton' class='oggleDraggableDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'></div>\n" +
+        "          </div>\n" +
+        "          <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
+        "       </div>\n" +
         "   </div>\n" +
-        "   <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
         "</div>\n" +
+
         "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
         "<div id='customMessageContainer' class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
@@ -219,7 +226,17 @@ function fullScreenHeader(folderId) {
         "<div id='modalContainer' class='modalVail'>\n" +
         "   <div id='modalContent' class='modalContentStyle'></div>\n" +
         "</div>\n" +
-        "</div>";
+        "</div>\n" +
+        "<div id='launchingService' class='floatLeft'>\n" +
+        "    <div class='centeringOuterShell randomImageContainer'>\n" +
+        "        <div class='centeringInnerShell'>\n" +
+        "            <div id='connectingMsg' class='displayHidden'>\n" +
+        "                <img src='Images/altair02.gif' />\n" +
+        "            </div>\n" +
+        "        </div>\n" +
+        "    </div>\n" +
+        "</div>\n";
+
 }
 
 function showPornHeader(folderId) {

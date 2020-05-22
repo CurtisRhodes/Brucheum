@@ -1,4 +1,5 @@
 ﻿using OggleBooble.Api.Models;
+using OggleBooble.Api.MySqlDataContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,72 +12,46 @@ namespace OggleBooble.Api.Controllers
     public class RolesController : ApiController
     {
         [HttpGet]
-        [Route("api/Roles/LoadChooseBox")]
-        public UsersRoleModel LoadChooseBox(string option)
+        [Route("api/Roles/GetUserRoles")]
+        public List<string> GetUserRoles(string userName)
         {
-            var usersRoleModel = new UsersRoleModel();
-
+            var roles = new List<string>();
             try
             {
                 using (var mdb = new MySqlDataContext.OggleBoobleMySqContext())
                 {
-                    if (option == "allUsers")
-                    {
-                        var oggleBoobleUsers = mdb.RegisteredUsers.ToList();
-                        foreach (MySqlDataContext.RegisteredUser user in oggleBoobleUsers)
-                        {
-                            usersRoleModel.RegisteredUsers.Add(new UsersModel()
-                            {
-                                UserNames = user.UserName,
-                                VisitorId = user.VisitorId
-                            });
-                        }
-                        usersRoleModel.Success = "ok";
-                    }
+
+                    roles = mdb.UserRoles.Where(r => r.UserName == userName).Select(r => r.RoleName).ToList();
                 }
             }
             catch (Exception ex)
             {
-                usersRoleModel.Success = Helpers.ErrorDetails(ex);
+                roles.Add(Helpers.ErrorDetails(ex));
             }
-            return usersRoleModel;
-
+            return roles;
         }
 
         [HttpGet]
-        [Route("api/Roles/GetUserRoles")]
-        public UsersRoleModel GetUserRoles(string roleType)
+        [Route("api/Roles/GetRegisteredUsers")]
+        public RegisteredUsersSuccessModel GetRegisteredUsers()
         {
-            var usersRoleModel = new UsersRoleModel();
-
+            var registeredUsersSuccess = new RegisteredUsersSuccessModel();
             try
             {
-                using (var mdb = new MySqlDataContext.OggleBoobleMySqContext())
+                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
                 {
-                    if (roleType == "allUsers")
-                    {
-                        var oggleBoobleUsers = mdb.RegisteredUsers.ToList();
-
-                        foreach (MySqlDataContext.RegisteredUser user in oggleBoobleUsers)
-                        {
-                            usersRoleModel.RegisteredUsers.Add(new UsersModel()
-                            {
-                                UserNames = user.UserName,
-                                VisitorId = user.VisitorId
-                            });
-                        }
-                        usersRoleModel.Success = "ok";
-                    }
+                    registeredUsersSuccess.RegisteredUsers =
+                        (from u in db.RegisteredUsers
+                         select new UsersModel()
+                         {
+                             UserName = u.UserName,
+                             VisitorId = u.VisitorId
+                         }).ToList();
+                    registeredUsersSuccess.Success = "ok";
                 }
             }
-            catch (Exception ex)
-            {
-                usersRoleModel.Success = Helpers.ErrorDetails(ex);
-            }
-            return usersRoleModel;
-
+            catch (Exception ex) { registeredUsersSuccess.Success = Helpers.ErrorDetails(ex); }
+            return registeredUsersSuccess;
         }
-
-
     }
 }

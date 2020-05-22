@@ -14,7 +14,7 @@ namespace OggleBooble.Api.Controllers
     public class CarouselController : ApiController
     {
         [HttpGet]
-        public CarouselInfoModel GetCarouselImages(string root, int skip, int take)
+        public CarouselInfoModel GetCarouselImages(string root, int skip, int take, bool includeLandscape, bool includePortrait)
         {
             CarouselInfoModel carouselInfo = new CarouselInfoModel();
             try
@@ -23,27 +23,21 @@ namespace OggleBooble.Api.Controllers
                 timer.Start();
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    carouselInfo.Links = db.vwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
-                        .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList();
-
-                    //carouselInfo.Links = db.Database.SqlQuery<CarouselItemModel>(
-                    //                "select f.RootFolder, f.Id FolderId, p.Id ParentId, g.Id LinkId, f.FolderName, p.FolderName FolderPath, g.Link " +
-                    //                "from OggleBooble.CategoryImageLink c " +
-                    //                "join OggleBooble.CategoryFolder f on c.ImageCategoryId = f.Id " +
-                    //                "join OggleBooble.CategoryFolder p on f.Parent = p.Id " +
-                    //                "join OggleBooble.ImageLink g on c.ImageLinkId = g.Id " +
-                    //                "where f.RootFolder = @param1 and g.Width > g.Height"
-                    //                , new System.Data.SqlClient.SqlParameter("param1", root)).OrderBy(m => m.LinkId).Skip(skip).Take(take).ToList();
+                    if (includeLandscape)
+                        carouselInfo.Links.AddRange(db.vwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
+                            .Where(v => v.Width > v.Height)
+                            .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
+                    if (includePortrait)
+                        carouselInfo.Links.AddRange(db.vwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
+                            .Where(v => v.Height >= v.Width)
+                            .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
                 }
                 //carouselInfo.FolderCount = carouselInfo.Links.GroupBy(l => l.FolderName).Count();
                 timer.Stop();
                 System.Diagnostics.Debug.WriteLine("Select " + take + " from vLinks took: " + timer.Elapsed);
                 carouselInfo.Success = "ok";
             }
-            catch (Exception ex)
-            {
-                carouselInfo.Success = Helpers.ErrorDetails(ex);
-            }
+            catch (Exception ex) { carouselInfo.Success = Helpers.ErrorDetails(ex); }
             return carouselInfo;
         }
     }

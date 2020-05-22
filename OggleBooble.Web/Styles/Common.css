@@ -34,7 +34,7 @@ body {
 
     .threeColumnLayout .leftColumn {
         float: left;
-        border-right: solid 5px var(--ogglgeHeaderBarColor);
+        /*border-right: solid 5px var(--ogglgeHeaderBarColor);*/
         min-width: 4%;
     }
 
@@ -69,7 +69,10 @@ body {
 .oggleDialog {
     background-color: var(--oggleContainerBackgroundColor);
     padding:6px;
-    border: solid 5px var(--oggleBorderColor);
+}
+
+.center {
+    text-align: center;
 }
 
 .modalVail {
@@ -82,6 +85,10 @@ body {
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+input[type='checkbox'] {
+    transform: scale(2);
 }
 
 .modalContentStyle {

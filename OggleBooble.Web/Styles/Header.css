@@ -52,6 +52,7 @@
     float: left;
     padding: 2px 8px;
     width: 100%;
+    white-space: nowrap;
     font-size: 24px;
     text-align: center;
 }

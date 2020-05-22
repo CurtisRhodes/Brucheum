@@ -235,6 +235,7 @@ namespace WebApi
                         "join OggleBooble.CategoryFolder f on i.FolderLocation = f.Id " +
                         //"join OggleBooble.CategoryFolderDetail d on i.FolderLocation = d.FolderId " +
                         "join OggleBooble.ImageLink i2 on f.FolderImage = i2.Id " +
+                        "where f.RootFolder not in ('porn', 'sluts') " +
                         "group by f.FolderName " +
                         "order by LastModified desc").ToList();
                 }

@@ -1,10 +1,13 @@
-﻿function loadUpdatedGalleriesBoxes(numItmes) {
+﻿
+function loadUpdatedGalleriesBoxes(numItmes) {
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/LatestUpdates/GetLatestUpdatedFolders?itemLimit=" + numItmes,
         success: function (latestUpdates) {
             if (latestUpdates.Success === "ok") {
+                $('.sectionLabel').show();
                 $('#updatedGalleriesSection').html("");
+
                 $.each(latestUpdates.LatestUpdates, function (idx, LatestUpdate) {
                     $('#updatedGalleriesSection').append("<div class='newsContentBox'>" +
                         "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
@@ -14,9 +17,6 @@
                         "</div>");
                 });
                 console.log("loaded " + latestUpdates.LatestUpdates.length + " news boxes");
-                $('.indexSectionLabel').show();
-                //$('#updatedGalleriesSection').css("text-align", "center");
-
                 resizeIndexPage();
             }
             else {
@@ -106,9 +106,15 @@ function killPromoMessages() {
     setInterval(function () { showPromoMessages() }, 30000);
 }
 
-function onShowMoreGalleries() {
+function showMoreGalleries() {
     updatedGalleriesCount += 15;
     loadUpdatedGalleriesBoxes(updatedGalleriesCount);
+}
+
+function showHideGalleries() {
+    $('#updatedGalleriesSection').toggle();
+    $('#showMoreGalleriesDiv').toggle();
+    resizeIndexPage();
 }
 
 function showPromoMessagesHtml() {
