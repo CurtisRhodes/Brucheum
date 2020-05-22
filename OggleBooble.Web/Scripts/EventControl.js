@@ -5,7 +5,7 @@ function rtpe(eventCode, calledFrom, eventDetail, pageId) {
 
 function reportEvent(eventCode, calledFrom, eventDetail, pageId) {
     logEventActivity({
-        VisitorId: getCookieValue("VisitorId");,
+        VisitorId: getCookieValue("VisitorId"),
         EventCode: eventCode,
         EventDetail: eventDetail,
         PageId: pageId,
@@ -79,6 +79,7 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
             //window.location.href = ".";
             break;
         case "EXP":  // Explode
+            //rtpe("EXP", currentAlbumJSfolderName, selectedImage, albumFolderId);
             window.open(eventDetail, "_blank");
             break;
         case "SRC":  // Search Performed

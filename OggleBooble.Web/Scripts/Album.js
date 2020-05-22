@@ -496,12 +496,10 @@ function removeImage() {
     });
 }
 
-
 function imageCtx(imgId) {
 
 //    [Route("api/Image/GetImageDetail")]
 //      public ImageInfoSuccessModel GetImageDetail(int folderId, string linkId)
-
     event.preventDefault();
     window.event.returnValue = false;
     var thisImageDiv = $('#' + imgId + '');
@@ -511,8 +509,8 @@ function imageCtx(imgId) {
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Image/GetImageDetail?folderId=" + albumFolderId + "&linkId=" + imgId,
-        success: function (ImageInfoSuccess) {
-            if (ImageInfoSuccess.Success === "ok") {
+        success: function (imageInfo) {
+            if (imageInfo.Success === "ok") {
 
                 $('#ctxModelName').html(imageInfo.FolderName);
                 
@@ -526,8 +524,10 @@ function imageCtx(imgId) {
                 //imageInfo.ExternalLink = dbImageLink.ExternalLink;
                 //imageInfo.InternalLinks = (from l in db.CategoryImageLinks
 
+                selectedImage = imageInfo.Link;
+
                 $('#ctxSeeMore').hide();
-                if (ImageInfoSuccess.IsLinkJustaLink) {
+                if (imageInfo.IsLinkJustaLink) {
                     $('#ctxSeeMore').show();
                 }
             }
@@ -536,7 +536,7 @@ function imageCtx(imgId) {
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "BUG",
                     Severity: 3,
-                    ErrorMessage: ImageInfoSuccess.Success,
+                    ErrorMessage: imageInfo.Success,
                     CalledFrom: "imageCtx"
                 });
             }
@@ -570,7 +570,6 @@ function imageCtx(imgId) {
     }
     $('#imageContextMenu').fadeIn();
 }
-
 
 function XXctxSAP(imgId) {
     event.preventDefault();
@@ -643,6 +642,8 @@ function contextMenuAction(action) {
             break;
         case "explode":
             if (isLoggedIn()) {
+
+                alert("rtpe EXP currentAlbumJSfolderName: " + currentAlbumJSfolderName + " selectedImage: " + selectedImage + " albumFolderId: " + albumFolderId);
                 rtpe("EXP", currentAlbumJSfolderName, selectedImage, albumFolderId);
             }
             else {

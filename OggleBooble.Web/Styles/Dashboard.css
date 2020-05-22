@@ -7,13 +7,13 @@
     margin-top: 11px;
     margin-left: 15px;
     display: flex;
-    width: 98%;
-    border: solid 4px #cd49d3;
-    background-color: var(--oggleBackgroundColor);
+    border: solid 4px var(--oggleBorderColor);    /*#cd49d3;*/
+    background-color: #000;
 }
-.dashboardContainerRow {
+.dashboardContainerColumn {
     float: left;
-    display: inline-block;
+    /*display: inline-block;*/
+    background-color: var(--oggleBackgroundColor);
 }
 
 .oggleHorizontalMenu {
@@ -76,9 +76,10 @@
     width: 15%;
     background-color: #eae9ae;
         */
+    overflow: auto;
+    margin-bottom: 44px;
     border-left: solid .5px #555;
     min-height: 106px;
-    overflow: auto;
 }
 
 .linkContainer {

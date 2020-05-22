@@ -169,7 +169,7 @@ function fullScreenHeader(folderId) {
         "           <div id='subheaderContent' class='topLinkRow'></div>\n<span id='archiveLink'></span><span id='rankerLink'></span><span id='playboyLink'></span>\n" +
         "           <div class='OggleSearchBox'>\n" +
         "               <span id='notUserName' title='Esc clears search.'>search</span>" +
-        "                   <input class='OggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
+        "                   <input class='OggleSearchBoxText' id='txtSearch' onfocus='startOggleSearch(" + folderId + ")' onkeydown='oggleSearchKeyDown(event)' />" +
         "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
         "           </div>\n" +
         "       </div>\n" +
@@ -217,16 +217,19 @@ function fullScreenHeader(folderId) {
         "</div>\n" +
 
         "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
+
         "<div id='customMessageContainer' class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
         "       <div id='customMessage' class='displayHidden' ></div>\n" +
         "   </div>\n" +
         "</div>\n" +
-        "<div id='dirTreeContainer' class='treeContainer'></div>\n" +
+
+        "<div id='dirTreeContainer' class='floatingDirTreeContainer'></div>\n" +
+
         "<div id='modalContainer' class='modalVail'>\n" +
         "   <div id='modalContent' class='modalContentStyle'></div>\n" +
         "</div>\n" +
-        "</div>\n" +
+
         "<div id='launchingService' class='floatLeft'>\n" +
         "    <div class='centeringOuterShell randomImageContainer'>\n" +
         "        <div class='centeringInnerShell'>\n" +

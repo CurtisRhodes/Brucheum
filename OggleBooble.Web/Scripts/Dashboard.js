@@ -11,25 +11,30 @@ var dirTreeTabIndent = 22;
 var dirDepth = 3;
 var totalFiles = 0;
 
-function setDashboardHeader(viewId) {
+function setLeftMenu(viewId) {
     $('#headerSubTitle').html(viewId);
     switch (viewId) {
         case "Add Images":
             $('.workAreaContainer').hide();
             $('#divAddImages').show();
             $('#dashboardLeftMenu').html("<div class='clickable' onclick='buildDirectoryTree()'>ReBuild Dir Tree</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showUpLoadFileDialog()'>Upload a file</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddImageLinkDialog()'>Add Image Link</div>");
             break;
         case "Manage Folders":
             $('.workAreaContainer').hide();
             $('#divAddImages').show();
             $('#dashboardLeftMenu').html("<div class='clickable' onclick='buildDirectoryTree()'>ReBuild Dir Tree</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='repairLinks()'>Repair Links</div>");
+
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#createNewFolderDialog').dialog('open');\">Create New Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showCopyFolderDialog()'>Copy Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#renameFolderCrud').dialog('open');\">Rename Folder</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
+            break;
+        case "Manage Roles":
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick='showAssignRolesDialog()'>Assign User Roles</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddRolesDialog()'>Edit Roles</div>");
             break;
         case "Reports":
             $('#dashboardLeftMenu').html("<div class='clickable' onclick='showPerfMetrics()'>Performance Metrics</div>");
@@ -41,35 +46,24 @@ function setDashboardHeader(viewId) {
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='runErrorLogReport()'>Error Log</div>");
             break;
         case "Admin":
-            $('.workAreaContainer').hide();
-            $('#divAddImages').show();
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showUpLoadDialog()'>Upload a file</div>");
             $('#dashboardLeftMenu').html("<div class='clickable' onclick='buildDirectoryTree()'>ReBuild Dir Tree</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddImageLinkDialog()'>Add Image Link</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#createStaticPagesCrud').dialog('open');\">Create Static Pages</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='repairLinks()'>Repair Links</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='prepareXhamsterPage()'>Prepare xHamster Page</div>");
+
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#createNewFolderDialog').dialog('open');\">Create New Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showCopyFolderDialog()'>Copy Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#renameFolderCrud').dialog('open');\">Rename Folder</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='prepareXhamsterPage()'>Prepare xHamster Page</div>");
 
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='repairLinks()'>Repair Links</div>");
-
-
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAssignRolesDialog()'>Assign User Roles</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddRolesDialog()'>Edit Roles</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveManyTool();'>Move Many</div>");
-
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='$('.workAreaContainer').hide();$('#divAddVideo').show();\">Add Video Link</div>");
-
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='testAddVisitor()'>test AddVisitor</div>");
-
-
-
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddVideoLink();\">Add Video Link</div>");
+            //$('#dashboardLeftMenu').append("<div class='clickable' onclick='testAddVisitor()'>test AddVisitor</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='emergencyFolderLocationFix()'>emergencyFolderLocationFix</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='MoveManyCleanup()'>MoveManyCleanup</div>");
-           
 
             break;
         default:
@@ -83,15 +77,34 @@ function testAddVisitor() {
     addVisitor(3309, "dashboard");
 }
 
-function showUpLoadDialog() {
+function showAddImageLinkDialog() {
+    $('.workAreaContainer').hide();
+    $('#divAddFile').show();
+}
 
+function showUpLoadFileDialog() {
     $('.workAreaContainer').hide();
     $('#divAddFile').show();
 
 }
+function showAddVideoLink() {
+    $('.workAreaContainer').hide();
+    $('#divAddFile').show();
+}
 
+function showRenameFolder() {
+    $('.workAreaContainer').hide();
+    $('#divAddFile').show();
+}
 
-var dirTreeContainer = "";
+function afterDirTreeLoaded() {
+    $('#dashBoardLoadingGif').hide();
+    setOggleFooter(3910, "dashboard");
+    resizeDashboardPage();
+    setTimeout(function () { $('#dataifyInfo').hide() }, 20000);
+}
+
+var strdirTree = "";
 function loadDirectoryTree(startNode) {
     var start = Date.now();
     $('#dashBoardLoadingGif').show();
@@ -102,24 +115,18 @@ function loadDirectoryTree(startNode) {
         url: settingsArray.ApiServer + "api/Links/BuildCatTree?root=" + startNode,
         success: function (dirTreeModel) {
             if (dirTreeModel.Success === "ok") {
-
-                //$('#dataifyInfo').show().html("loading directory tree took: " + dirTreeModel.TimeTook);
-
                 var dataLoadTime = (Date.now() - start) / 1000;
                 console.log("load dirTree data took: " + dataLoadTime.toFixed(3));
                 $('#dataifyInfo').show().html("loading directory tree took: " + dataLoadTime.toFixed(3));
                 start = Date.now();
                 buildDirTree(dirTreeModel);
-                $('#dashboardMain').html(dirTreeContainer);
-                resizeDashboardPage();
+
+                $('#dashboardDirTreeContainer').html(strdirTree);
 
                 var htmlBuildTime = (Date.now() - start) / 1000;
                 $('#dataifyInfo').append("   html took: " + htmlBuildTime.toFixed(3));
                 console.log("build dirTree html: " + htmlBuildTime.toFixed(3));
-
-                $('#dashBoardLoadingGif').hide();
-                //setTimeout(function () { $('#dataifyInfo').hide(); }, 1200);
-                
+                afterDirTreeLoaded();
             }
             else { alert(dirTreeModel.Success); }
         },
@@ -164,8 +171,9 @@ function buildDirTree(dir) {
         if (vwDir.FileCount + vwDir.ChildFiles === 0) {
             txtFileCount = "-(" + vwDir.SubDirCount + "/" + getChildFileCounts(thisNode).toLocaleString() + ")";
         }
-
-        dirTreeContainer += "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
+        //$('#dashboardMain').append(
+        strdirTree +=
+            "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
             + "<span id='S" + vwDir.LinkId + "' onclick=toggleDirTree('" + vwDir.LinkId + "') >[" + expandMode + "] </span>"
             + "<div id='" + vwDir.LinkId + "aq' class='treeLabelDiv' onclick='dirTreeClick(\"" + thisNode.DanniPath + "\",\"" + vwDir.Id + "\")' "
             + "oncontextmenu=showDirTreeContextMenu('" + vwDir.LinkId + "','" + vwDir.Id + "') "
@@ -176,7 +184,8 @@ function buildDirTree(dir) {
 
         //totalPics += vwDir.FileCount;
         buildDirTree(thisNode);
-        dirTreeContainer += "</div>";
+        //$('#dashboardMain').append("</div>");
+        strdirTree += "</div>";
         dirTreeTab -= dirTreeTabIndent;
     });
 }
@@ -197,7 +206,6 @@ function getChildFileCounts(startNode) {
     });
     return totalFiles;
 }
-
 
 // ADD IMAGE LINK
 function addImageLink() {

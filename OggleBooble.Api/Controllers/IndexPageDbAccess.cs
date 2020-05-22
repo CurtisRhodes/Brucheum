@@ -45,7 +45,6 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class LatestUpdatesController : ApiController
     {
-
         [HttpGet]
         public LatestUpdatesModel GetLatestUpdatedFolders(int itemLimit)
         {

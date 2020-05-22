@@ -2,6 +2,12 @@
 var searchString = "";
 var itemIndex = -1;
 var listboxActive = false;
+var currentFolderId;
+
+
+function startOggleSearch(folderId) {
+    currentFolderId = folderId;
+}
 
 function oggleSearchKeyDown(event) {
     var ev = event.keyCode;

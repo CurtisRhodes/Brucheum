@@ -60,11 +60,11 @@
             <div id="dots"></div>
             <div id="divStatusMessage"></div>
             <div id='notConnectMessage' class='displayHidden customMessageContainer'></div>
-            <div id="dashboard" class="dashboardContainer">
-                <div class="dashboardContainerRow">
+            <div id="dashboardContainer" class="dashboardContainer">
+                <div id="dashboardLeftColumn" class="dashboardContainerColumn">
                     <div id="dashboardLeftMenu" class="oggleHorizontalMenu"></div>
                 </div>
-                <div class="dashboardContainerRow">
+                <div id="dashboardMiddleColumn" class="dashboardContainerColumn">
                     <div id="divWorkArea" class="dashboardWorkArea">
                         <div id="divAddImages" class="workAreaContainer">
                             <div id="uploadArea" class="addImageArea">
@@ -127,9 +127,9 @@
                         <div id="divAddVideo" class="workAreaContainer">
 
                             <!--var videoLink = {};
-                            videoLink.Link = $('#txtVideoLink').val();
-                            videoLink.Image = $('#txtVideoImage').val();
-                            videoLink.Title = $('#txtVideoTitle').val();-->
+            videoLink.Link = $('#txtVideoLink').val();
+            videoLink.Image = $('#txtVideoImage').val();
+            videoLink.Title = $('#txtVideoTitle').val();-->
 
 
                             <div class="workAreaHeader">
@@ -190,10 +190,12 @@
                             </div>
                         </div>
                     </div>
+
                     <div id="dataifyInfo" class="infoLine" onclick="$('#dataifyInfo').hide();"></div>
+
                 </div>
-                <div class="dashboardContainerRow">
-                    <div id="dirTreeContainer" class="dashboardTreeContainer">
+                <div id="dashboardRightColumn" class="dashboardContainerColumn">
+                    <div id="dashboardDirTreeContainer" class="dashboardTreeContainer">
                         <img id="getDirTreeLoadingGif" class="smallLoadingGif" src="/Images/loader.gif" />
                         <div id="dashboardMain"></div>
                     </div>
@@ -304,7 +306,6 @@
             $('.txtLinkPath').val('');
             $('.workAreaContainer').hide();
             setOggleHeader(3910, "dashboard");
-            setOggleFooter(3910, "dashboard");
 
             var dots = "";
             loadSettings();
@@ -322,83 +323,60 @@
                             $('dots').html("");
                             loadDirectoryTree(1);
 
-                            if (isInRole("Oggle admin")) {
-                               // alert("isInRole Oggle admin")
-
-
-                                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Add Images');\">Add Images</a>");
-                                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Manage Folders');\">Manage Folders</a>");
-                                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Reports');\">Reports</a>");
-                                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setDashboardHeader('Admin');\">Admin</a>");
-                                $('#headerMessage').html("Oggle admin");
-                                $('.adminLevelOption').show();
-                                setDashboardHeader('Admin');
-                            }
-                            else {
-                                //alert("NOT In Role Oggle admin");
-                                setDashboardHeader('Add Images');
-                            }
-
-                            $('#divAddImages').show();
-
+                            loadHeaderTabs();
+                            resizeDashboardPage();
                         }
                     }, 300);
-
-
-
                     //getpermissions
                     //if (isInRole("view dynamic"))
-
-
-
                     //logPageHit(3910, "dashboard");
-
-
-
                 }
             }, 300);
 
             defineDilogs();
             //setSignalR();
             //resizeDashboardPage();
-
-            //  window.addEventListener("beforeunload", detectUnload());
-
-            //window.addEventListener("beforeunload", function (event) { ... });
-            //window.onbeforeunload = function (event) { ... };
+            //window.addEventListener("beforeunload", detectUnload());
             window.addEventListener("resize", resizeDashboardPage);
         });
 
         function resizeDashboardPage() {
             //resizePage();
+            // HEIGHT
+            let winH = $(window).height();
+            let headerH = $('header').height(); 
+            let screenH = winH - headerH;;
+            $('.threeColumnLayout').height(screenH);
+            $('.dashboardContainerColumn').css("min-height", screenH);
+            $('#dashboardDirTreeContainer').height(screenH);
+            $('#dashboardLeftMenu').css("min-height", screenH);            
 
-            var winH = $(window).height();
-            var headerH = $('header').height();
-            $('.threeColumnLayout').height(winH - headerH);
-            $('.middleColumn').height(winH - headerH);
-
-            // alert("middleColumn.height: " + $('.middleColumn').height());
-
-            var mch = $('.middleColumn').height() - 50;
-            $('.dashboardContainer').height(mch);
-            $('#dashboardLeftMenu').height(mch);
-            $('.dashboardTreeContainer').height(mch);
-            $('.workAreaContainer').height(mch);
-
-            var mw = $('.dashboardContainer').width() - $('#dashboardLeftMenu').width() - $('.dashboardTreeContainer').width() - 39;
-            $('.workAreaContainer').width(mw + 'px');
-
-            $('.workAreaDisplayContainer').height(mch - 100);
-
-            //$('#footerMessage').html("dashboardContainer.width: " + $('.dashboardContainer').width() +
-            //    "  dashboardTreeContainer.width: " + $('.dashboardTreeContainer').width() +
-            //    "  dashboardLeftMenu.width: " + $('#dashboardLeftMenu').width() +
-            //    "  workAreaContainer.width: " + $('.workAreaContainer').width()) +
-            //    "  mw: " + mw;
+            // WIDTH
+            let middleColumnW = $('#dashboardContainer').width() - $('#dashboardRightColumn').width() - $('#dashboardLeftColumn').width();
+            $('#dashboardMiddleColumn').width(middleColumnW);
         }
 
+        function loadHeaderTabs() {
+            if (isInRole("add images")) {
+                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Add Images');\">Add Images</a>");
+                setLeftMenu('Add Images');
+                $('#divAddImages').show();
+            }
+            if (isInRole("manage folders")) {
+                alert("isInRole manage folders")
+                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Folders');\">Manage Folders</a>");
 
-
+            }
+            if (isInRole("Oggle admin")) {
+                //alert("isInRole Oggle admin")
+                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Admin');\">Admin</a>");
+                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Reports');\">Reports</a>");
+                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Roles');\">Reports</a>");
+                $('#headerMessage').html("Oggle admin");
+                $('.adminLevelOption').show();
+                setLeftMenu('Admin');
+            }
+        }
 
         function detectUnload() {
             alert("detectUnload");

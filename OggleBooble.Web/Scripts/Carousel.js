@@ -116,7 +116,8 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                     });
 
                     if (take === 366) {
-                        startCarousel(0);
+                        newImageIndex = Math.floor(Math.random() * carouselItemArray.length);
+                        startCarousel(newImageIndex);
                         resizeCarousel();
                     }
 
@@ -225,8 +226,8 @@ function intervalBody(newImageIndex) {
                     $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParent);
                     $('#headerMessage').append("P");
                     imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
-                    pause();
-                    setTimeout(function () { alert("roman shift " + $('#headerMessage').html() + ".  imageTopLabelClickId: " + imageTopLabelClickId); }, 600);
+                    //pause();
+                    //setTimeout(function () { alert("roman shift " + $('#headerMessage').html() + ".  imageTopLabelClickId: " + imageTopLabelClickId); }, 600);
                 }
             }
         }
@@ -250,16 +251,17 @@ function intervalBody(newImageIndex) {
                     setTimeout(function () { alert("non folder member 3. centerfold\nroot: " + carouselItemArray[imageIndex].RootFolder) }, 600);
                 }
             }
-            else {  // roman numeral shift
-                $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderGP)
+            else {  // non roman numeral shift
+                $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderGP);
                 $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderParent);
+                $('#categoryLabel').html(carouselItemArray[imageIndex].RootFolder);
                 knownModelLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
                 mainImageClickId = carouselItemArray[imageIndex].FolderParentId;
                 imageTopLabelClickId = carouselItemArray[imageIndex].FolderGPId;
                 footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
                 $('#headerMessage').html("4");
                 pause();
-                setTimeout(function () { alert("4 Roman Numeral non folder member") }, 600);
+                setTimeout(function () { alert("4 Non Roman Numeral Non folder member") }, 600);
             }
         }
         $('#categoryLabel').fadeIn();
