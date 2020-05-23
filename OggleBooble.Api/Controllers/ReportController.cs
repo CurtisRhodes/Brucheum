@@ -3,14 +3,15 @@ using OggleBooble.Api.MySqlDataContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 
 namespace OggleBooble.Api.Controllers
 {
     [EnableCors("*", "*", "*")]
-    public class ReportContoller : ApiController
+    public class ReportController : ApiController
     {
         [HttpGet]
         [Route("api/Report/MetricMatrixReport")]
@@ -165,7 +166,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/Reports/MostActiveUsersReport")]
+        [Route("api/Report/MostActiveUsersReport")]
         public MostActiveUsersModel MostActiveUsersReport()
         {
             var mostActiveUsersReport = new MostActiveUsersModel();
@@ -211,7 +212,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/Reports/PageHitReport")]
+        [Route("api/Report/PageHitReport")]
         public PageHitReportModel PageHitReport()
         {
             var pageHitReportModel = new PageHitReportModel();
@@ -253,7 +254,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/Reports/FeedbackReport")]
+        [Route("api/Report/FeedbackReport")]
         public FeedbackReportModel FeedbackReport()
         {
             FeedbackReportModel feedbackReport = new FeedbackReportModel();
@@ -291,7 +292,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/Reports/ErrorLogReport")]
+        [Route("api/Report/ErrorLogReport")]
         public ErrorLogReportModel ErrorLogReport()
         {
             ErrorLogReportModel errorLog = new ErrorLogReportModel();

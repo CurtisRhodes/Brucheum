@@ -8,9 +8,11 @@ var partialViewSelectedItemId = 0;
 var dashboardContextMenuFolderId = "";
 var dirTreeTab = 0;
 var dirTreeTabIndent = 22;
-var dirDepth = 3;
 var totalFiles = 0;
+var expandDepth = 2;
 
+
+// MENU FUNCTIONS
 function setLeftMenu(viewId) {
     $('#headerSubTitle').html(viewId);
     switch (viewId) {
@@ -38,12 +40,12 @@ function setLeftMenu(viewId) {
             break;
         case "Reports":
             $('#dashboardLeftMenu').html("<div class='clickable' onclick='showPerfMetrics()'>Performance Metrics</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showPageHitReport()'>Page Hit Report</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='pageHitReport()'>Page Hit Report</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showEventActivityReport()'>Event Activity</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMostActiveUsersReport()'>Most Active Users</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showLatestImageHitsReport()'>Latest Image Hits</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='FeedbackReport()'>Feedback</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='runErrorLogReport()'>Error Log</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='errorLogReport()'>Error Log</div>");
             break;
         case "Admin":
             $('#dashboardLeftMenu').html("<div class='clickable' onclick='buildDirectoryTree()'>ReBuild Dir Tree</div>");
@@ -72,44 +74,13 @@ function setLeftMenu(viewId) {
     resizeDashboardPage();
 }
 
-function testAddVisitor() {
-    $('#dataifyInfo').show().html("sending test addVisitor");
-    addVisitor(3309, "dashboard");
-}
 
-function showAddImageLinkDialog() {
-    $('.workAreaContainer').hide();
-    $('#divAddFile').show();
-}
-
-function showUpLoadFileDialog() {
-    $('.workAreaContainer').hide();
-    $('#divAddFile').show();
-
-}
-function showAddVideoLink() {
-    $('.workAreaContainer').hide();
-    $('#divAddFile').show();
-}
-
-function showRenameFolder() {
-    $('.workAreaContainer').hide();
-    $('#divAddFile').show();
-}
-
-function afterDirTreeLoaded() {
-    $('#dashBoardLoadingGif').hide();
-    setOggleFooter(3910, "dashboard");
-    resizeDashboardPage();
-    setTimeout(function () { $('#dataifyInfo').hide() }, 20000);
-}
-
+// DIRECTORY TREE 
 var strdirTree = "";
 function loadDirectoryTree(startNode) {
     var start = Date.now();
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("loading directory tree");
-    //buildDirTree($('#dirTreeContainer'), "dashboardMain", 0, true);
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Links/BuildCatTree?root=" + startNode,
@@ -119,14 +90,18 @@ function loadDirectoryTree(startNode) {
                 console.log("load dirTree data took: " + dataLoadTime.toFixed(3));
                 $('#dataifyInfo').show().html("loading directory tree took: " + dataLoadTime.toFixed(3));
                 start = Date.now();
-                buildDirTree(dirTreeModel);
+                buildDirTreeRecurr(dirTreeModel);
 
-                $('#dashboardDirTreeContainer').html(strdirTree);
+                $('#dashboardRightColumn').html(strdirTree);
 
                 var htmlBuildTime = (Date.now() - start) / 1000;
                 $('#dataifyInfo').append("   html took: " + htmlBuildTime.toFixed(3));
                 console.log("build dirTree html: " + htmlBuildTime.toFixed(3));
-                afterDirTreeLoaded();
+
+                $('#dashBoardLoadingGif').hide();
+                setOggleFooter(3910, "dashboard");
+                resizeDashboardPage();
+                setTimeout(function () { $('#dataifyInfo').hide() }, 20000);
             }
             else { alert(dirTreeModel.Success); }
         },
@@ -148,29 +123,33 @@ function loadDirectoryTree(startNode) {
     });
 }
 
-function buildDirTree(dir) {
+function buildDirTreeRecurr(parentNode) {
     dirTreeTab += dirTreeTabIndent;
-    var txtFileCount = "";
-    var expandClass = "";
-    $.each(dir.SubDirs, function (idx, thisNode) {
+    let txtFileCount = "";
+    let expandClass = "";
+    $.each(parentNode.SubDirs, function (idx, thisNode) {
         var vwDir = thisNode.vwDirTree;
         if (isNullorUndefined(vwDir.Link))
             vwDir.Link= "Images/redballon.png";
         expandMode = "-";
         expandClass = "";
-        if (dirTreeTab / dirTreeTabIndent > dirDepth) {
+        if (dirTreeTab / dirTreeTabIndent > expandDepth) {
             expandClass = "displayHidden";
             if (thisNode.SubDirs.length > 0)
                 expandMode = "+";
         }
 
         txtFileCount = "(" + vwDir.FileCount + ")";
-        if (vwDir.FileCount < vwDir.SubDirCount) {
-            txtFileCount = "(" + vwDir.SubDirCount + "/" + vwDir.ChildFiles + ")";
+        if (vwDir.SubDirCount > 0) {
+            totalFiles = 0;
+            if (vwDir.FileCount > 0) {
+                txtFileCount = "(" + vwDir.SubDirCount + " / " + vwDir.FileCount + " + " + (getChildFileCounts(thisNode) - vwDir.FileCount).toLocaleString() + ")";
+            }
+            else
+                txtFileCount = "(" + vwDir.SubDirCount + " / " + getChildFileCounts(thisNode).toLocaleString() + ")";
         }
-        if (vwDir.FileCount + vwDir.ChildFiles === 0) {
-            txtFileCount = "-(" + vwDir.SubDirCount + "/" + getChildFileCounts(thisNode).toLocaleString() + ")";
-        }
+        //txtFileCount = "(" + vwDir.SubDirCount + " / " + vwDir.ChildFiles + ")";
+
         //$('#dashboardMain').append(
         strdirTree +=
             "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
@@ -183,9 +162,10 @@ function buildDirTree(dir) {
             "<div class='" + expandClass + "' id=" + vwDir.LinkId + ">";
 
         //totalPics += vwDir.FileCount;
-        buildDirTree(thisNode);
+        buildDirTreeRecurr(thisNode);
         //$('#dashboardMain').append("</div>");
         strdirTree += "</div>";
+        //dirTreeTabIndent = 22;
         dirTreeTab -= dirTreeTabIndent;
     });
 }
@@ -205,6 +185,40 @@ function getChildFileCounts(startNode) {
             getChildFileCounts(subDirObj);
     });
     return totalFiles;
+}
+// TREE CONTEXT MENU FUNCTIONS
+function dashboardContextMenuOpenFolder() {
+    window.open("/album.html?folder=" + dashboardContextMenuFolderId, "_blank");
+}
+function dashboardContextMenuShowCategoryDetails() {
+    showCategoryDialog(dashboardContextMenuFolderId);
+}
+function dashboardContextMenuShowInfoDialog() {
+    showModelInfoDialog($('.txtLinkPath').val(), dashboardContextMenuFolderId, "http://boobs.ogglebooble.com/redballon.png");
+}
+
+
+
+
+
+function showAddImageLinkDialog() {
+    $('.workAreaContainer').hide();
+    $('#divAddFile').show();
+}
+function showUpLoadFileDialog() {
+    $('.workAreaContainer').hide();
+    $('#divAddFile').show();
+
+}
+function showAddVideoLink() {
+    $('.workAreaContainer').hide();
+    $('#divAddFile').show();
+}
+
+// RENAME A FOLDER
+function showRenameFolder() {
+    $('.workAreaContainer').hide();
+    $('#divAddFile').show();
 }
 
 // ADD IMAGE LINK
@@ -356,7 +370,6 @@ function showAddRolesDialog() {
     $('#addEditRolesDialog').dialog('open');
     loadAaddEditRoles();
 }
-
 function showAddEditRoles() {
 
 
@@ -364,16 +377,6 @@ function showAddEditRoles() {
 
 
 
-// TREE CONTEXT MENU FUNCTIONS
-function dashboardContextMenuOpenFolder() {
-    window.open("/album.html?folder=" + dashboardContextMenuFolderId, "_blank");
-}
-function dashboardContextMenuShowCategoryDetails() {
-    showCategoryDialog(dashboardContextMenuFolderId);
-}
-function dashboardContextMenuShowInfoDialog() {
-    showModelInfoDialog($('.txtLinkPath').val(), dashboardContextMenuFolderId, "http://boobs.ogglebooble.com/redballon.png");
-}
 
 function prepareXhamsterPage() {
     $('#dashBoardLoadingGif').show();
@@ -1011,7 +1014,7 @@ function addVideoLink() {
     }
 }
 
-function xxloadProperties() {
+function XXloadProperties() {
     $('#dataifyInfo').show().html("adding size info");
     $.ajax({
         type: "PATCH",
@@ -1034,7 +1037,7 @@ function xxloadProperties() {
     });
 }
 
-function xxmergeFolders() {
+function XXmergeFolders() {
     if (confirm("collapse " + $('.txtLinkPath').val())) {
         $('#dashBoardLoadingGif').fadeIn();
         $('#dataifyInfo').show().html("collapse Child Folder");
@@ -1067,4 +1070,8 @@ function xxmergeFolders() {
     }
 }
 
+function XXtestAddVisitor() {
+    $('#dataifyInfo').show().html("sending test addVisitor");
+    addVisitor(3309, "dashboard");
+}
 

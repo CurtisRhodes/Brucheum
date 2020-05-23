@@ -7,10 +7,10 @@
     <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
     <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
     <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' type='text/javascript'></script>
-    <link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet' />
+    <!--<link href='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css' rel='stylesheet' />
     <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js' type="text/javascript"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>-->
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/DirTree.js"></script>
     <script src="Scripts/HitCounter.js"></script>
@@ -55,239 +55,111 @@
     <header class="boobsHeader"></header>
     <div class="threeColumnLayout">
         <!--<div id="leftColumn"></div>-->
-        <div class="middleColumn">
-            <img id="dashBoardLoadingGif" class="loadingGif displayHidden" src="Images/loader.gif" />
-            <div id="dots"></div>
-            <div id="divStatusMessage"></div>
-            <div id='notConnectMessage' class='displayHidden customMessageContainer'></div>
-            <div id="dashboardContainer" class="dashboardContainer">
-                <div id="dashboardLeftColumn" class="dashboardContainerColumn">
-                    <div id="dashboardLeftMenu" class="oggleHorizontalMenu"></div>
+        <!--<div class="middleColumn"></div>-->
+        <img id="dashBoardLoadingGif" class="loadingGif displayHidden" src="Images/loader.gif" />
+        <div id="dots"></div>
+        <div id="divStatusMessage"></div>
+        <div id='notConnectMessage' class='displayHidden customMessageContainer'></div>
+        <div id="dashboardContainer" class="dashboardContainer">
+            <div id="dashboardLeftColumn" class="dashboardContainerColumn">
+                <div id="dashboardLeftMenu" class="oggleVerticalMenu"></div>
+            </div>
+            <div id="dashboardMiddleColumn" class="dashboardContainerColumn">
+
+
+
+
+                <div id="dataifyInfo" class="infoLine" onclick="$('#dataifyInfo').hide();"></div>
+            </div>
+            <div id="dashboardRightColumn" class="dashboardContainerColumn">
+                <div id="dashboardTreeContainer" class="dashboardTreeContainer"></div>
+            </div>
+        </div>
+        <div id="divModalDialogs">
+            <div id="createNewFolderDialog" class="dashboardToggle" title="Create New Folder">
+                <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
+                <div><span>parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                <div class="roundendButton" onclick="createNewFolder()">Create Folder</div>
+            </div>
+
+            <div id="createStaticPagesCrud" class="dashboardToggle" title="Create Static Pages">
+                <div><span>folders to staticify</span><input id="txtFolderToStaticify" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                <div><span>include all subfolders </span><input type="checkbox" id="ckIncludeSubfolders" checked="checked" /></div>
+                <div class="roundendButton" onclick="createStaticPages($('#ckIncludeSubfolders').is(':checked'))">Build Files</div>
+                <div id="renameFolderReport" class="repairReport"></div>
+            </div>
+
+            <div id="renameFolderCrud" class="dashboardToggle" title="Rename Folder">
+                <div><span>folder to rename</span><input id="txtFolderToRename" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                <div><span>new name</span><input id="txtReName" class="roundedInput" /></div>
+                <div class="roundendButton" onclick="renameFolder()">Rename Folder</div>
+                <div id="renameFolderReport" class="repairReport"></div>
+            </div>
+
+            <div id="moveFolderCrud" class="dashboardToggle" title="Move Folder">
+                <div><span>folder to move</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                <div>
+                    <span>new parent </span><div onclick="$('#moveFolderDestDirTree').dialog('open');" class="toggleButton">...</div>
+                    <div id="moveFolderDestDirTree" class="moveDirTreeContainer" title="Select Parent Folder"></div>
+                    <input id="txtMoveFolderDest" class="roundedInput" readonly="readonly" />
                 </div>
-                <div id="dashboardMiddleColumn" class="dashboardContainerColumn">
-                    <div id="divWorkArea" class="dashboardWorkArea">
-                        <div id="divAddImages" class="workAreaContainer">
-                            <div id="uploadArea" class="addImageArea">
+                <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
+            </div>
 
-                                <div id="addNewLink" class="addLinkCrudArea">
-                                    <div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>
-                                    <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
-                                    <div class="roundendButton" tabindex="2" onclick="addImageLink()">Insert</div>
-                                </div>
+            <div id="copyFolderCrud" class="dashboardToggle" title="Copy Folder">
+                <div><span>folder to copy</span><input id="txtNewStepParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+                <div><span>new name</span><input id="txtNewFolderName" class="roundedInput" /></div>
+                <div><span>link</span><input id="xxxtxtNewLink" class="roundedInput" /></div>
+                <div>
+                    <span>new parent </span><div id="copyFolderToggleButton" onclick="$('#copyFolderParentDirTree').dialog('open');" class="toggleButton">...</div>
+                    <div id="copyFolderParentDirTree" class="moveDirTreeContainer" title="Select Parent Folder"></div>
+                    <input id="txtCopyFolderParent" class="roundedInput" readonly="readonly" />
+                </div>
+                <div class="roundendButton" onclick="copyFolder()">Copy Folder</div>
+            </div>
 
-                                <img id="imgLinkPreview" class="linkImage" />
-                            </div>
-                            <div id="progressBar" class="dashboardProgessBar"></div>
-                        </div>
+            <div id="addEditRolesDialog" class="dashboardToggle" title="Add Edit Roles">
+                <div class="crudArea">
+                    <label>Role:</label>
+                    <input class="roundedInput" id="txtRoleName" />
+                    <div id="btnAddUpdateRole" class="roundendButton editRolebtn" onclick="addUpdateRole()">Add</div>
+                    <div id="btnRoleToggle" class="roundendButton editRolebtn" onclick="toggleAddButton()">New</div>
+                </div>
+                <div class="crudItemsList" id="divRoleList"></div>
+            </div>
 
-                        <div id="divAddFile" class="workAreaContainer">
-                            <div id="uploadArea" class="oggleh">
-                                <div id="addNewLink" class="addLinkCrudArea">
-                                    <!--<div>link&nbsp;&nbsp;<input id="txtNewLink" tabindex="1" class="roundedInput" onblur="previewLinkImage()" /></div>-->
-                                    <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
-                                    <div>upload<input id="uplImage" type="file" class="imageUpload" onchange="SaveFileAs()" /></div>
-                                    <div class="roundendButton" tabindex="2" onclick="saveFileAsLink()">Insert</div>
-                                </div>
-                                <img id="imgLinkPreview" class="linkImage" />
-                            </div>
-                            <div id="progressBar" class="dashboardProgessBar"></div>
-                        </div>
-
-                        <div id="divSortTool" class="workAreaContainer">
-                            <div class="workAreaHeader">
-                                <div class="workAreaHeaderLabel"><h3 id="sortTableHeader"></h3></div>
-                                <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="$('.workAreaContainer').hide();$('#divAddImages').fadeIn();"></div>
-                            </div>
-                            <div id="sortToolContainer" class="workAreaDisplayContainer"></div>
-                            <div class="workareaFooter">
-                                <button onclick="updateSortOrder()">ReSort</button>
-                            </div>
-                        </div>
-
-                        <div id="divMoveManyTool" class="workAreaContainer">
-                            <div class="workAreaHeader">
-                                <div class="workAreaHeaderLabel"><h3 id="moveManyHeader"></h3></div>
-                                <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="$('.workAreaContainer').hide();$('#divAddImages').fadeIn();"></div>
-
-                                <div><span id="btnSelectAll" class="button">select all</span></div>
-
-                            </div>
-                            <div class="moveManyDestination">
-                                <span>destination</span>
-                                <input id="txtMoveManyDestination" class="roundedInput" readonly="readonly" />
-                                <div id="moveManyToggleButton" onclick="$('#moveManyDestinationDirTree').dialog('open');" class="toggleButton">...</div>
-                                <div id="moveManyDestinationDirTree" class="dirTreeContainer" title="Select Destination Folder"></div>
-                            </div>
-                            <div id="moveManyToolContainer" class="workAreaDisplayContainer"></div>
-                            <div class="workareaFooter">
-                                <button onclick="moveCheckedImages()">Move Checked</button>
-                            </div>
-                        </div>
-
-                        <div id="divAddVideo" class="workAreaContainer">
-
-                            <!--var videoLink = {};
-            videoLink.Link = $('#txtVideoLink').val();
-            videoLink.Image = $('#txtVideoImage').val();
-            videoLink.Title = $('#txtVideoTitle').val();-->
-
-
-                            <div class="workAreaHeader">
-                                <div class="workAreaHeaderLabel"><h3>Add Video Link</h3></div>
-                                <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="$('.workAreaContainer').hide();$('#divAddImages').fadeIn();"></div>
-                            </div>
-                            <div class='workAreaDisplayContainer'>
-                                <div id="uploadVideoArea" class="oggleh">
-                                    <div id="addNewVideoLink" class="addLinkCrudArea">
-                                        <div>link&nbsp;&nbsp;<input id="txtVideoLink" tabindex="1" class="roundedInput" /></div>
-                                        <div>video image<input id="txtVideoImage" class="roundedInput" onblur="previewLinkImage()" /></div>
-                                        <div>title&nbsp;&nbsp;<input id="txtVideoTitle" tabindex="1" class="roundedInput" /></div>
-                                        <div>path&nbsp;<input class="roundedInput txtLinkPath" readonly="readonly" /></div>
-                                        <!--<div>upload<input id="uplImage" type="file" class="imageUpload" onchange="postImage()"/></div>-->
-                                        <div class="roundendButton" tabindex="2" onclick="addVideoLink()">Insert</div>
-                                    </div>
-                                    <img id="imgVideoLinkPreview" class="linkImage" />
-                                </div>
-                            </div>
-                            <div class="workareaFooter">
-                                <span id="divStandardReportCount"></span>
-                                <button id="refreshActivityReport" class="inline" onclick="rerunReport()">refresh</button>
-                            </div>
-                        </div>
-
-                        <div id="divHitMetrics" class="workAreaContainer">
-                            <div class="workAreaHeader">
-                                <div class="workAreaHeaderLabel"><h3>Metrics</h3></div>
-                                <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="$('.workAreaContainer').hide();$('#divAddImages').fadeIn();"></div>
-                            </div>
-                            <div class="workAreaRow">
-                                <div id="pageHitReport"></div>
-                                <button id="refreshPageHits" class="inline displayHidden" onclick="metricsMatrixReport()">refresh</button>
-                            </div>
-                            <div class="workAreaRow flexContainer">
-                                <div>
-                                    <div id="mostImageHitsReport" class="workAreaRowDisplayContainer"></div>
-                                    <button id="btnMostImageHits" class="inline displayHidden" onclick="runMostImageHits()">refresh</button>
-                                </div>
-                                <div>
-                                    <div id="mostPopularPagesReport" class="workAreaRowDisplayContainer"></div>
-                                    <button id="btnPopPages" class="inline displayHidden" onclick="mostVisitedPagesPages()">refresh</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="divStandardReport" class="workAreaContainer">
-                            <div class="workAreaHeader">
-                                <div class="workAreaHeaderLabel"><h3 id="reportLabel">_</h3></div>
-                                <div class="workAreaCloseButton"><img style="height:25px" src="/images/poweroffRed01.png" onclick="$('.workAreaContainer').hide();$('#divAddImages').fadeIn();"></div>
-                            </div>
-                            <div class='workAreaDisplayContainer'>
-                                <div id="divStandardReportArea"></div>
-                            </div>
-                            <div class="workareaFooter">
-                                <span id="divStandardReportCount"></span>
-                                <button id="refreshActivityReport" class="inline" onclick="rerunReport()">refresh</button>
-                            </div>
-                        </div>
+            <div id="rolesChooseBoxDialog" class="dashboardToggle" title="Assign Roles">
+                <div class="crudContainer AssignRolesContainer">
+                    <div class="crudContainerTitle">Assign Roles</div>
+                    <div class="flexContainer">
+                        <div><select id="ddUsers" class="crudDropDown"></select></div>
                     </div>
+                    <div id="divRolesChoose" class="chooseBoxContainer">
 
-                    <div id="dataifyInfo" class="infoLine" onclick="$('#dataifyInfo').hide();"></div>
+                        <div id="divChooseAvailable" class="chooseBox floatLeft"></div>
 
-                </div>
-                <div id="dashboardRightColumn" class="dashboardContainerColumn">
-                    <div id="dashboardDirTreeContainer" class="dashboardTreeContainer">
-                        <img id="getDirTreeLoadingGif" class="smallLoadingGif" src="/Images/loader.gif" />
-                        <div id="dashboardMain"></div>
+                        <div id="divChooseButtons" class="chooseBtnsContainer floatLeft">
+                            <div><img id="imgAdd" class="chooseBtn" onclick="addUserRole()" src="/Images/sglright.jpg" /></div>
+                            <div><img id="imgAddAll" class="chooseBtn disenabled" src="/Images/dblright.jpg" /></div>
+                            <div><img id="imgRemove" class="chooseBtn" onclick="removeUserRole()" src="/Images/sglleft.jpg" /></div>
+                            <div><img id="imgRemoveAll" class="chooseBtn disenabled" src="/Images/dblleft.jpg" /></div>
+                        </div>
+                        <div id="divChooseAssigned" class="chooseBox floatLeft"></div>
                     </div>
                 </div>
             </div>
-            <div id="divModalDialogs">
-                <div id="createNewFolderDialog" class="dashboardToggle" title="Create New Folder">
-                    <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
-                    <div><span>parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                    <div class="roundendButton" onclick="createNewFolder()">Create Folder</div>
-                </div>
 
-                <div id="createStaticPagesCrud" class="dashboardToggle" title="Create Static Pages">
-                    <div><span>folders to staticify</span><input id="txtFolderToStaticify" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                    <div><span>include all subfolders </span><input type="checkbox" id="ckIncludeSubfolders" checked="checked" /></div>
-                    <div class="roundendButton" onclick="createStaticPages($('#ckIncludeSubfolders').is(':checked'))">Build Files</div>
-                    <div id="renameFolderReport" class="repairReport"></div>
-                </div>
-
-                <div id="renameFolderCrud" class="dashboardToggle" title="Rename Folder">
-                    <div><span>folder to rename</span><input id="txtFolderToRename" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                    <div><span>new name</span><input id="txtReName" class="roundedInput" /></div>
-                    <div class="roundendButton" onclick="renameFolder()">Rename Folder</div>
-                    <div id="renameFolderReport" class="repairReport"></div>
-                </div>
-
-                <div id="moveFolderCrud" class="dashboardToggle" title="Move Folder">
-                    <div><span>folder to move</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                    <div>
-                        <span>new parent </span><div onclick="$('#moveFolderDestDirTree').dialog('open');" class="toggleButton">...</div>
-                        <div id="moveFolderDestDirTree" class="moveDirTreeContainer" title="Select Parent Folder"></div>
-                        <input id="txtMoveFolderDest" class="roundedInput" readonly="readonly" />
-                    </div>
-                    <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
-                </div>
-
-                <div id="copyFolderCrud" class="dashboardToggle" title="Copy Folder">
-                    <div><span>folder to copy</span><input id="txtNewStepParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                    <div><span>new name</span><input id="txtNewFolderName" class="roundedInput" /></div>
-                    <div><span>link</span><input id="txtNewLink" class="roundedInput" /></div>
-                    <div>
-                        <span>new parent </span><div id="copyFolderToggleButton" onclick="$('#copyFolderParentDirTree').dialog('open');" class="toggleButton">...</div>
-                        <div id="copyFolderParentDirTree" class="moveDirTreeContainer" title="Select Parent Folder"></div>
-                        <input id="txtCopyFolderParent" class="roundedInput" readonly="readonly" />
-                    </div>
-                    <div class="roundendButton" onclick="copyFolder()">Copy Folder</div>
-                </div>
-
-                <div id="addEditRolesDialog" class="dashboardToggle" title="Add Edit Roles">
-                    <div class="crudArea">
-                        <label>Role:</label>
-                        <input class="roundedInput" id="txtRoleName" />
-                        <div id="btnAddUpdateRole" class="roundendButton editRolebtn" onclick="addUpdateRole()">Add</div>
-                        <div id="btnRoleToggle" class="roundendButton editRolebtn" onclick="toggleAddButton()">New</div>
-                    </div>
-                    <div class="crudItemsList" id="divRoleList"></div>
-                </div>
-
-                <div id="rolesChooseBoxDialog" class="dashboardToggle" title="Assign Roles">
-                    <div class="crudContainer AssignRolesContainer">
-                        <div class="crudContainerTitle">Assign Roles</div>
-                        <div class="flexContainer">
-                            <div><select id="ddUsers" class="crudDropDown"></select></div>
-                        </div>
-                        <div id="divRolesChoose" class="chooseBoxContainer">
-
-                            <div id="divChooseAvailable" class="chooseBox floatLeft"></div>
-
-                            <div id="divChooseButtons" class="chooseBtnsContainer floatLeft">
-                                <div><img id="imgAdd" class="chooseBtn" onclick="addUserRole()" src="/Images/sglright.jpg" /></div>
-                                <div><img id="imgAddAll" class="chooseBtn disenabled" src="/Images/dblright.jpg" /></div>
-                                <div><img id="imgRemove" class="chooseBtn" onclick="removeUserRole()" src="/Images/sglleft.jpg" /></div>
-                                <div><img id="imgRemoveAll" class="chooseBtn disenabled" src="/Images/dblleft.jpg" /></div>
-                            </div>
-                            <div id="divChooseAssigned" class="chooseBox floatLeft"></div>
-                        </div>
+            <!--
+                <div id="videoCrud" class="dashboardToggle">
+                    <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
+                    <div class="floatingCrudContainer">
+                        <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
+                        <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
+                        <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
+                        <div class="roundendButton" onclick="addVideo()">Insert</div>
                     </div>
                 </div>
-
-                <!--
-                    <div id="videoCrud" class="dashboardToggle">
-                        <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
-                        <div class="floatingCrudContainer">
-                            <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
-                            <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
-                            <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
-                            <div class="roundendButton" onclick="addVideo()">Insert</div>
-                        </div>
-                    </div>
-                -->
-            </div>
-
+            -->
         </div>
         <!--<div class="rightColumn"></div>-->
         <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
@@ -304,19 +176,18 @@
     <script>
         $(document).ready(function () {
             $('.txtLinkPath').val('');
-            $('.workAreaContainer').hide();
             setOggleHeader(3910, "dashboard");
 
             var dots = "";
             loadSettings();
             var getXMLsettingsWaiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
-                    dots += ". ";
+                    dots += "~ ";
                     $('dots').html(dots);
                 }
                 else {
                     clearInterval(getXMLsettingsWaiter);
-                    verifyConnection();
+                    checkFor404("start", "Dashboard");
                     var verifyConnectionWaiter = setInterval(function () {
                         if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
@@ -324,6 +195,11 @@
                             loadDirectoryTree(1);
                             loadHeaderTabs();
                             resizeDashboardPage();
+                            $('.dashboardContainerColumn').show();
+                        }
+                        else {
+                            dots += ". ";
+                            $('dots').html(dots);
                         }
                     }, 300);
                     //getpermissions
@@ -342,17 +218,18 @@
         function resizeDashboardPage() {
             //resizePage();
             // HEIGHT
+
             let winH = $(window).height();
-            let headerH = $('header').height(); 
+            let headerH = $('header').height();
             let screenH = winH - headerH;;
-            $('.threeColumnLayout').height(screenH);
-            $('.dashboardContainerColumn').css("min-height", screenH);
-            $('#dashboardDirTreeContainer').height(screenH);
-            $('#dashboardLeftMenu').css("min-height", screenH);            
+            $('.dashboardContainerColumn').height(screenH - 33);
+            //$('.').css("min-height", screenH);
+            //$('#dashboardLeftMenu').css("min-height", screenH);
 
             // WIDTH
+
             let middleColumnW = $('#dashboardContainer').width() - $('#dashboardRightColumn').width() - $('#dashboardLeftColumn').width();
-            $('#dashboardMiddleColumn').width(middleColumnW);
+            $('#dashboardMiddleColumn').width(middleColumnW - 21);
         }
 
         function loadHeaderTabs() {
@@ -481,6 +358,23 @@
             });
         }
 
+
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -267,6 +267,9 @@ function sendEmailToYourself(subject, message) {
 }
 
 function logError(logErrorModel) {
+    alert(logErrorModel.ErrorMessage);
+
+
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Common/LogError",

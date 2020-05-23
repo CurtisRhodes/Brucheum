@@ -141,7 +141,7 @@ function setLoginHeaderSection() {
     if (isNullorUndefined(isLoggedIn)) {
         setCookieValue("IsLoggedIn", "true");
         isLoggedIn = "true";
-        alert("isNullorUndefined(isLoggedIn)");
+       // alert("isNullorUndefined(isLoggedIn)");
     }
 
     if (isLoggedIn === "true") {

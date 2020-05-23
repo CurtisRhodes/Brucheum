@@ -26,7 +26,7 @@ function isInRole(roleName) {
     permissonsItems = userPermissons.split(",");
     for (var i = 0; i < permissonsItems.length; i++) {
         if (permissonsItems[i] === "Oggle admin") {
-            console.log("admin override");
+            //console.log("admin override");
             return true;
         }
         if (permissonsItems[i] === roleName) {

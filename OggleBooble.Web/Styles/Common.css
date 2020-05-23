@@ -256,6 +256,12 @@ input[type='checkbox'] {
     display: none;
 }
 
+.overflowContainer {
+    border: solid thick red;
+    width: 942px;
+    overflow-x: scroll;
+}
+
 .flexContainer {
     display: flex;
 }

@@ -1,5 +1,16 @@
 ﻿// REPORTS
 var activeReport = "";
+function rerunReport() {
+    switch (activeReport) {
+        case "PageHitReport": runPageHitReport(); break;
+        case "MostActiveUsers": runMostActiveUsersReport(); break;
+        case "LatestImageHits": runLatestImageHitsReport(); break;
+        case "EventActivity": runEventActivityReport(); break;
+        case "Feedback": FeedbackReport(); break;
+        case "ErrorLog": errorLogReport(); break;
+        default: alert("activeReport [" + activeReport + "] not found");
+    }
+}
 
 function showPerfMetrics() {
     $('.workAreaContainer').hide();
@@ -13,7 +24,7 @@ function metricsMatrixReport() {
 
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/Reports/MetricsMatrixReport",
+            url: settingsArray.ApiServer + "api/Report/MetricMatrixReport",
             success: function (metricsMatrixResults) {
                 $('#dashBoardLoadingGif').hide();
                 if (metricsMatrixResults.Success === "ok") {
@@ -62,7 +73,7 @@ function mostVisitedPagesPages() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Reports/MostVisitedPagesReport",
+        url: settingsArray.ApiServer + "api/Report/MostVisitedPagesReport",
         success: function (popularPages) {
             $('#dashBoardLoadingGif').hide();
             if (popularPages.Success === "ok") {
@@ -91,7 +102,7 @@ function runMostImageHits() {
     $("#mostImageHitsReport").html("");
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/Reports/MostImageHitsReport",
+        url: settingsArray.ApiServer + "/api/Report/MostImageHitsReport",
         success: function (mostImageHits) {
             $('#dashBoardLoadingGif').hide();
             if (mostImageHits.Success === "ok") {
@@ -131,7 +142,7 @@ function runEventActivityReport() {
     $("#divStandardReportCount").html("");
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/Reports/ActivityReport",
+        url: settingsArray.ApiServer + "/api/Report/ActivityReport",
         success: function (activityReport) {
             $('#dashBoardLoadingGif').hide();
             if (activityReport.Success === "ok") {
@@ -180,7 +191,7 @@ function runLatestImageHitsReport() {
     $("#divStandardReportCount").html("");
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Reports/LatestImageHits",
+        url: settingsArray.ApiServer + "api/Report/LatestImageHits",
         success: function (imageHitActivityReport) {
             $('#dashBoardLoadingGif').hide();
             if (imageHitActivityReport.Success === "ok") {
@@ -223,7 +234,7 @@ function runMostActiveUsersReport() {
     $("#divStandardReportArea").html("");
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Reports/MostActiveUsersReport",
+        url: settingsArray.ApiServer + "api/Report/MostActiveUsersReport",
         success: function (mostActiveUsersReport) {
             $('#dashBoardLoadingGif').hide();
             if (mostActiveUsersReport.Success === "ok") {
@@ -267,7 +278,7 @@ function runMostActiveUsersReport() {
     });
 }
 
-function showPageHitReport() {
+function pageHitReport() {
     activeReport = "PageHitReport";
     $("#divStandardReportArea").removeClass("tightReport");
     $('.workAreaContainer').hide();
@@ -282,7 +293,7 @@ function runPageHitReport() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Reports/PageHitReport",
+        url: settingsArray.ApiServer + "api/Report/PageHitReport",
         success: function (pageHitReportModel) {
             $('#dashBoardLoadingGif').hide();
             if (pageHitReportModel.Success === "ok") {
@@ -328,54 +339,61 @@ function runPageHitReport() {
     });
 }
 
-function rerunReport() {
-    switch (activeReport) {
-        case "PageHitReport": runPageHitReport(); break;
-        case "MostActiveUsers": runMostActiveUsersReport(); break;
-        case "LatestImageHits": runLatestImageHitsReport(); break;
-        case "EventActivity": runEventActivityReport(); break;
-        case "Feedback": FeedbackReport(); break;
-        case "ErrorLog": runErrorLogReport(); break;
-        default: alert("activeReport [" + activeReport + "] not found");
-    }
-}
-
 function playmateChecklist() {
     
 
 }
 
-function runErrorLogReport() {
+function stdReportHeader(title) {
+    return "<div class='workAreaHeader'>\n" +
+        "    <div class='workAreaHeaderLabel'><h3>" + title + "</h3></div>\n" +
+        "    <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='closeReport()'></div>\n" +
+        "</div>";
+}
+
+function errorLogReport() {
     //    [Route("api/Reports/")]
     activeReport = "ErrorLog";
+
     $('.workAreaContainer').hide();
     $('#divStandardReport').show();
     $('#reportLabel').html("Error Log");
-    $('#dashBoardLoadingGif').show();
     $("#divStandardReportArea").html("");
     $("#divStandardReportCount").html("");
     $('#dashBoardLoadingGif').show();
+    
+    var html = stdReportHeader("Error Report for " + todayString());
+    html += "</div>";
+
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Reports/ErrorLogReport",
+        url: settingsArray.ApiServer + "api/Report/ErrorLogReport",
         success: function (errorLogReport) {
             $('#dashBoardLoadingGif').hide();
-            if (errorLogReport.Success === "ok") {
-                var kludge = "<table class='mostAvtiveUsersTable'>";
-                kludge += "<tr><th>ip</th><th>Location</th><th>Called From</th><th>Actity</th><th>Severity</th><th>Occured</th></tr>";
+            if (errorLogReport.Success === "ok")
+            {
+                html += "<div class='overflowContainer'>";
+
+                html += "<table class='mostAvtiveUsersTable'>";
+                html += "<tr><th>ip</th><th>Location</th><th>Called From</th><th>Actity</th><th>Severity</th><th>Occured</th></tr>";
+
                 $.each(errorLogReport.ErrorRows, function (idx, obj) {
-                    kludge += "<tr><td>" + obj.IpAddress + "</td>";
-                    kludge += "<td>" + obj.City + "," + obj.Country + "</td>";
+                    html += "<tr><td>" + obj.IpAddress + "</td>";
+                    html += "<td>" + obj.City + "," + obj.Country + "</td>";
                     //kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
-                    kludge += "<td class='smallColumn'>" + obj.CalledFrom + "</td>";
-                    kludge += "<td>" + obj.ActivityCode + "</td>";
-                    kludge += "<td>" + obj.Severity + "</td>";
-                    kludge += "<td>" + obj.At + ":" + obj.On + "</td></tr>";
-                    kludge += "<tr><td class='detailRow' colspan=6>" + obj.ErrorMessage + "</td></tr>";
+                    html += "<td class='smallColumn'>" + obj.CalledFrom + "</td>";
+                    html += "<td>" + obj.ActivityCode + "</td>";
+                    html += "<td>" + obj.Severity + "</td>";
+                    //html += "<td>" + obj.At + ":" + obj.On + "</td>";
+                    html += "<td>" + obj.At + "</td>";
+                    //html += "<td colspan='6'>" + obj.ErrorMessage + "</td></tr>";
+                    html += "</tr><tr><td colspan='6'>" + obj.ErrorMessage + "</td></tr></tr>";
                 });
-                kludge += "</table>";
-                $("#divStandardReportArea").html(kludge);
+                html += "</table>";
+                html += "</div>";
+                //$("#divStandardReportArea").html(kludge);
                 //$("#divStandardReportCount").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
+                $('#dashboardMiddleColumn').html(html);
             }
             else {
                 alert("PageHitsReport: " + errorLogReport.Success);
@@ -383,7 +401,7 @@ function runErrorLogReport() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "runErrorLogReport")) {
+            if (!checkFor404(errorMessage, "errorLogReport")) {
                 //sendEmailToYourself("XHR ERROR in Dashboard.js FeedbackReport"                    + errorMessage);
             }
         }
@@ -401,7 +419,7 @@ function FeedbackReport() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Reports/FeedbackReport",
+        url: settingsArray.ApiServer + "api/Report/FeedbackReport",
         success: function (feedbackReport) {
             $('#dashBoardLoadingGif').hide();
             if (feedbackReport.Success === "ok") {

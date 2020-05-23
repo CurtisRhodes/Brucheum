@@ -7,29 +7,41 @@
     margin-top: 11px;
     margin-left: 15px;
     display: flex;
-    border: solid 4px var(--oggleBorderColor);    /*#cd49d3;*/
+    border: solid 4px var(--oggleBorderColor); /*#cd49d3;*/
+    width: 100%;
+    background-color: #888;
 }
 .dashboardContainerColumn {
     float: left;
-    /*display: inline-block;*/
+    overflow: auto;
+    display: inline-block;
+    /*border: solid thin #111;*/
+    box-sizing: padding-box;
     background-color: var(--oggleBackgroundColor);
+    display: none;
 }
 
-.oggleHorizontalMenu {
+.xxdashboardRightContainerColumn {
+    float: right;
+    border: solid thin #111;
+    background-color: var(--oggleBackgroundColor);
+    /*max-width: 30%;*/
+}
+
+.oggleVerticalMenu {
     min-width: 15%;
-    border-right: solid thin #111;
     border-top: 23px;
     overflow: auto;
     padding-right: 36px;
 }
-    .oggleHorizontalMenu div {
+    .oggleVerticalMenu div {
         font-size: 17px;
         cursor: pointer;
         color: #9a4ea9;
         margin: 12px 9px;
         white-space: nowrap;
     }
-        .oggleHorizontalMenu div:hover {
+        .oggleVerticalMenu div:hover {
             text-decoration: underline;
             color: #333;
         }
@@ -76,7 +88,8 @@
     background-color: #eae9ae;
         */
     overflow: auto;
-    margin-bottom: 44px;
+    margin-bottom: 4px;
+    border-bottom: solid 4px #999;
     border-left: solid .5px #555;
     min-height: 106px;
 }
