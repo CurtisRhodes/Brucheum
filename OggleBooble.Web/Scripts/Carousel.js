@@ -224,6 +224,7 @@ function intervalBody(newImageIndex) {
 
                 if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
                     $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParent);
+                    $('#knownModelLabel').html(carouselItemArray[imageIndex].Folder);
                     $('#headerMessage').append("P");
                     imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
                     //pause();

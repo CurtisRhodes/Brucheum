@@ -322,7 +322,6 @@
                             clearInterval(verifyConnectionWaiter);
                             $('dots').html("");
                             loadDirectoryTree(1);
-
                             loadHeaderTabs();
                             resizeDashboardPage();
                         }
@@ -363,9 +362,7 @@
                 $('#divAddImages').show();
             }
             if (isInRole("manage folders")) {
-                alert("isInRole manage folders")
                 $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Folders');\">Manage Folders</a>");
-
             }
             if (isInRole("Oggle admin")) {
                 //alert("isInRole Oggle admin")

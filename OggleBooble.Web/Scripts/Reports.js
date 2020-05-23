@@ -7,47 +7,54 @@ function showPerfMetrics() {
     metricsMatrixReport();
 }
 function metricsMatrixReport() {
-    $('#dashBoardLoadingGif').show();
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Reports/MetricsMatrixReport",
-        success: function (metricsMatrixReport) {
-            $('#dashBoardLoadingGif').hide();
-            if (metricsMatrixReport.Success === "ok") {
+    if (connectionVerified) {
+        //$('#dashBoardLoadingGif').show();
+        alert("metricsMatrixReport");
 
-                var kludge = "<table><tr><th></th><th>Today</th><th>Yesterday</th><th>-2 Days</th><th>-3 Days</th><th>-4 Days</th>" +
-                    "<th>-5 Days</th><th>-6 Days</th></tr>";
-                $.each(metricsMatrixReport.MatrixRows, function (idx, row) {
-                    kludge += "<tr><td>" + row.Column + "</td> ";
-                    kludge += "<td>" + row.Today.toLocaleString() + "</td>";
-                    kludge += "<td>" + row.Yesterday.toLocaleString() + "</td>";
-                    kludge += "<td>" + row.Two_Days_ago.toLocaleString() + "</td>";
-                    kludge += "<td>" + row.Three_Days_ago.toLocaleString() + "</td>";
-                    kludge += "<td>" + row.Four_Days_ago.toLocaleString() + "</td>";
-                    kludge += "<td>" + row.Five_Days_ago.toLocaleString() + "</td>";
-                    kludge += "<td>" + row.Six_Days_ago.toLocaleString() + "</td>";
-                });
-                kludge += "</tr></table>";
-                $("#pageHitReport").html(kludge);
-                $("#refreshPageHits").show();
-                $("#btnPopPages").show();
-                $("#btnMostImageHits").show();
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Reports/MetricsMatrixReport",
+            success: function (metricsMatrixResults) {
+                $('#dashBoardLoadingGif').hide();
+                if (metricsMatrixResults.Success === "ok") {
 
-                mostVisitedPagesPages();
-                runMostImageHits();
+                    var kludge = "<table><tr><th></th><th>Today</th><th>Yesterday</th><th>-2 Days</th><th>-3 Days</th><th>-4 Days</th>" +
+                        "<th>-5 Days</th><th>-6 Days</th></tr>";
+                    $.each(metricsMatrixResults.MatrixRows, function (idx, row) {
+                        kludge += "<tr><td>" + row.Column + "</td> ";
+                        kludge += "<td>" + row.Today.toLocaleString() + "</td>";
+                        kludge += "<td>" + row.Yesterday.toLocaleString() + "</td>";
+                        kludge += "<td>" + row.Two_Days_ago.toLocaleString() + "</td>";
+                        kludge += "<td>" + row.Three_Days_ago.toLocaleString() + "</td>";
+                        kludge += "<td>" + row.Four_Days_ago.toLocaleString() + "</td>";
+                        kludge += "<td>" + row.Five_Days_ago.toLocaleString() + "</td>";
+                        kludge += "<td>" + row.Six_Days_ago.toLocaleString() + "</td>";
+                    });
+                    kludge += "</tr></table>";
+                    $("#pageHitReport").html(kludge);
+                    $("#refreshPageHits").show();
+                    $("#btnPopPages").show();
+                    $("#btnMostImageHits").show();
+
+                    mostVisitedPagesPages();
+                    runMostImageHits();
+                }
+                else {
+                    alert("PageHitsReport: " + metricsMatrixResults.Success);
+                }
+            },
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "renameFolder")) {
+                    alert(errorMessage);
+                    //sendEmailToYourself("XHR ERROR in Dashboard.js renameFolder",
+                    //    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
+                }
             }
-            else {
-                alert("PageHitsReport: " + metricsMatrixReport.Success);
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "renameFolder")) {
-                sendEmailToYourself("XHR ERROR in Dashboard.js renameFolder",
-                    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
-            }
-        }
-    });
+        });
+    }
+    else
+        alert("unable to run report");
 }
 
 // in perfMetrics
@@ -55,7 +62,7 @@ function mostVisitedPagesPages() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/Reports/MostVisitedPagesReport",
+        url: settingsArray.ApiServer + "api/Reports/MostVisitedPagesReport",
         success: function (popularPages) {
             $('#dashBoardLoadingGif').hide();
             if (popularPages.Success === "ok") {
@@ -118,7 +125,8 @@ function showEventActivityReport() {
     runEventActivityReport();
 }
 function runEventActivityReport() {
-    $('#dashBoardLoadingGif').show();
+    //$('#dashBoardLoadingGif').show();
+    alert("runEventActivityReport");
     $("#divStandardReportArea").html("");
     $("#divStandardReportCount").html("");
     $.ajax({
@@ -148,6 +156,9 @@ function runEventActivityReport() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
+
+            alert(errorMessage);
+
             if (!checkFor404(errorMessage, "ActivityReport")) {
                 sendEmailToYourself("XHR ERROR in Dashboard.js ActivityReport",
                     "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
