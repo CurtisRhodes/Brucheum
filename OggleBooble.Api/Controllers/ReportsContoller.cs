@@ -300,22 +300,6 @@ namespace OggleBooble.Api.Controllers
                 using (var mdb = new OggleBoobleMySqContext())
                 {
                     errorLog.ErrorRows = mdb.vwErrorReportRows.ToList();
-                    //(from e in mdb.ErrorLogItems
-                    // join v in mdb.Visitors on e.VisitorId equals v.VisitorId
-                    // select new ErrorLogItem()
-                    // {
-                    //     VisitorId = v.VisitorId,
-                    //     City = v.City,
-                    //     Country = v.Country,
-                    //     CalledFrom = e.CalledFrom,
-                    //     ActivityCode = e.ActivityCode,
-                    //     Severity = e.Severity,
-                    //     Occured = e.Occured,
-                    //     At = e.Occured.ToShortDateString(),
-                    //     On = e.Occured.AddHours(2).ToShortTimeString(),
-                    //     ErrorMessage = e.ErrorMessage
-                    // }).OrderByDescending(e => e.Occured).Take(500).ToList();
-
                     errorLog.Success = "ok";
                 }
             }

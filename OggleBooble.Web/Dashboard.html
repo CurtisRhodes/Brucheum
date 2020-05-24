@@ -53,26 +53,17 @@
 </head>
 <body>
     <header class="boobsHeader"></header>
-    <div class="threeColumnLayout">
-        <!--<div id="leftColumn"></div>-->
-        <!--<div class="middleColumn"></div>-->
         <img id="dashBoardLoadingGif" class="loadingGif displayHidden" src="Images/loader.gif" />
         <div id="dots"></div>
         <div id="divStatusMessage"></div>
-        <div id='notConnectMessage' class='displayHidden customMessageContainer'></div>
         <div id="dashboardContainer" class="dashboardContainer">
             <div id="dashboardLeftColumn" class="dashboardContainerColumn">
                 <div id="dashboardLeftMenu" class="oggleVerticalMenu"></div>
             </div>
             <div id="dashboardMiddleColumn" class="dashboardContainerColumn">
-
-
-
-
                 <div id="dataifyInfo" class="infoLine" onclick="$('#dataifyInfo').hide();"></div>
             </div>
             <div id="dashboardRightColumn" class="dashboardContainerColumn">
-                <div id="dashboardTreeContainer" class="dashboardTreeContainer"></div>
             </div>
         </div>
         <div id="divModalDialogs">
@@ -161,17 +152,7 @@
                 </div>
             -->
         </div>
-        <!--<div class="rightColumn"></div>-->
-        <div id="dashboardContextMenu" class="ogContextMenu" onmouseleave="$(this).fadeOut();">
-            <div onclick="dashboardContextMenuOpenFolder()">Open Folder</div>
-            <div onclick="dashboardContextMenuShowCategoryDetails()">Show Category Info</div>
-            <div onclick="dashboardContextMenuShowInfoDialog()">Show Model Info</div>
-        </div>
-    </div>
     <div class="footer"></div>
-    <div class="dirTreeImageContainer floatingDirTreeImage">
-        <img class="dirTreeImage" />
-    </div>
 
     <script>
         $(document).ready(function () {
@@ -192,7 +173,7 @@
                         if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
                             $('dots').html("");
-                            loadDirectoryTree(1);
+                            loadDirectoryTree(1, "dashboardRightColumn");
                             loadHeaderTabs();
                             resizeDashboardPage();
                             $('.dashboardContainerColumn').show();

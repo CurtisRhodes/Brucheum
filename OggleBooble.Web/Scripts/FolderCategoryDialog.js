@@ -6,26 +6,29 @@ function showCategoryDialog(folderId) {
     // create a new table (or row)
     // --alter table OggleBooble.ImageFolder add CatergoryDescription nvarchar(max)
     // 4/30/2019  --first use of jQuery dialog
-
-    $('#folderCategoryDialog').dialog({
-        autoOpen: false,
-        show: { effect: "fade" },
-        hide: { effect: "blind" },
-        position: { my: 'center', at: 'top' },
-        width: "560"
-    });
-
-    $('#folderCategoryDialog').dialog('open');
+ 
     try {
-        $('#btnCatDlgMeta').hide();
+        $('#draggableDialogContents').html(folderInfoPopUpHtml());
+
+        var winH = $(window).height();
+        var dlgH = $('#customMessage').height();
+        $('#customMessageContainer').css("top", (winH - dlgH) / 2);
+
+        if (typeof pause === 'function')
+            pause();
+
+
+
+
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/CategoryComment/Get?folderId=" + folderId,
-            success: function (categoryComment) {
-                if (categoryComment.Success === "ok") {
+            url: settingsArray.ApiServer + "api/FolderDetail/GetFolderInfo?folderId=" + folderId,
+            success: function (folderDetails) {
+                if (folderDetails.Success === "ok") {
                     categoryFolderId = folderId;
-                    $('#folderCategoryDialog').dialog('option', 'title', categoryComment.FolderName);
 
+                    $('#draggableDialogTitle').html(folderDetails.FolderName);
+                    $("#draggableDialog").fadeIn();
                     console.log("calling isInRole from showCategoryDialog");
                     if (isInRole("Oggle admin")) {
                         $('#catDlgSummerNoteTextArea').summernote({
@@ -41,16 +44,25 @@ function showCategoryDialog(folderId) {
                             toolbar: '[]'
                         });
                         $('#catDlgSummerNoteTextArea').summernote('disable');
+                        $('#btnCatDlgMeta').hide();
                     }
 
                     if (categoryComment.CommentText === "") {
-                        if (document.domain === 'localhost') alert("categoryComment.CommentText  EMPTY: " + categoryComment.CommentText);
+                        if (document.domain === 'localhost') alert("categoryComment.CommentText  EMPTY: " + folderDetails.CommentText);
                     }
                     $('#catDlgSummerNoteTextArea').summernote('code', categoryComment.CommentText);
                 }
                 else {
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "JQE",
+                        Severity: 2,
+                        ErrorMessage: folderDetails.Success,
+                        CalledFrom: "showCategoryDialog"
+                    });
+
                     //if (categoryComment.Success !== "not found")
-                    sendEmailToYourself("jquery fail in FolderCategory.js showCategoryDialog", "get Category Comment: " + categoryComment.Success);
+                    //sendEmailToYourself("jquery fail in FolderCategory.js showCategoryDialog", "get Category Comment: " + folderDetails.Success);
                     if (document.domain === 'localhost')
                         alert("FolderCategoryDialog: " + categoryComment.Success);
                     //alert("get Category Comment: " + categoryComment.Success);
@@ -59,7 +71,13 @@ function showCategoryDialog(folderId) {
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errorMessage, "showCategoryDialog")) {
-                    sendEmailToYourself("XHR ERROR in FolderCategory.js showCategoryDialog", "api/CategoryComment/Get?folderId=" + folderId + " Message: " + errorMessage);
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 2,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "showCategoryDialog"
+                    });
                 }
             }
         });
@@ -76,6 +94,15 @@ function showCategoryDialog(folderId) {
         if (document.domain === 'localhost') alert("FolderCategoryDialog catch: " + e);
     }
 }
+
+function folderInfoPopUpHtml() {
+    return "<div id='folderCategoryDialog' class='oggleDialogWindow' title='' onmouseleave='considerClosingCategoryDialog()'>\n" +
+        "    <div id='catDlgSummerNoteTextArea'></div>\n" +
+        "    <div id='btnCatDlgEdit' class='folderCategoryDialogButton' onclick='editFolderDialog()'>Edit</div>\n" +
+        "    <div id='btnCatDlgMeta' class='folderCategoryDialogButton displayHidden' onclick='addMetaTags()'>add meta tags</div>\n" +
+        "</div>\n";
+}
+
 
 function editFolderDialog() {
     if ($('#btnCatDlgEdit').html() === "Save") {

@@ -1,16 +1,5 @@
 ﻿// REPORTS
 var activeReport = "";
-function rerunReport() {
-    switch (activeReport) {
-        case "PageHitReport": runPageHitReport(); break;
-        case "MostActiveUsers": runMostActiveUsersReport(); break;
-        case "LatestImageHits": runLatestImageHitsReport(); break;
-        case "EventActivity": runEventActivityReport(); break;
-        case "Feedback": FeedbackReport(); break;
-        case "ErrorLog": errorLogReport(); break;
-        default: alert("activeReport [" + activeReport + "] not found");
-    }
-}
 
 function showPerfMetrics() {
     $('.workAreaContainer').hide();
@@ -68,7 +57,6 @@ function metricsMatrixReport() {
         alert("unable to run report");
 }
 
-// in perfMetrics
 function mostVisitedPagesPages() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
@@ -280,11 +268,7 @@ function runMostActiveUsersReport() {
 
 function pageHitReport() {
     activeReport = "PageHitReport";
-    $("#divStandardReportArea").removeClass("tightReport");
-    $('.workAreaContainer').hide();
-    $('#divStandardReport').show();
-    $('#reportLabel').html("Page Hit Report for " + todayString());
-    runPageHitReport();
+    var html = stdReportHeader("Page Hit Report for " + todayString());
 }
 function runPageHitReport() {
     $("#divStandardReportArea").removeClass("tightReport");
@@ -363,7 +347,6 @@ function errorLogReport() {
     $('#dashBoardLoadingGif').show();
     
     var html = stdReportHeader("Error Report for " + todayString());
-    html += "</div>";
 
     $.ajax({
         type: "GET",
