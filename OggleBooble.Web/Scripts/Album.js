@@ -21,6 +21,8 @@ function GetAllAlbumPageInfo(folderId) {
             });
         }
         else {
+
+            $('.footer').hide();
             albumFolderId = folderId;
             var start = Date.now();
             $('#imagePageLoadingGif').show();
@@ -60,15 +62,15 @@ function GetAllAlbumPageInfo(folderId) {
                         processImages(imageLinksModel);
 
                         $('#headerMessage').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
+                        $('#footerInfo1').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
                         resizeAlbumPage();
-
 
                         logPageHit(folderId, "Album.html");  // 
 
 
                         var delta = (Date.now() - start) / 1000;
                         console.log("GetAllAlbumPageInfo took: " + delta.toFixed(3));
-
+                        $('.footer').show();
                     }
                     else {
                         logError({
@@ -128,19 +130,8 @@ function setBreadCrumbs(breadCrumbModel, badgesText) {
         else {
             if (breadCrumbModel[i].IsInitialFolder) {
                 $('#breadcrumbContainer').append(
-                    "<a class='inactiveBreadCrumb' " +
-                    Number(breadCrumbModel.length - i) + ",\"" +
-                    breadCrumbModel.FolderName + "\",\"" +
-                    breadCrumbModel[i].FolderId + "\",\"" +
-                    breadCrumbModel[i].ParentId + "\",\"" +
-                    breadCrumbModel.RootFolder + "\"); forgetHomeFolderInfoDialog=false;' onmouseout='forgetHomeFolderInfoDialog=true;' " +
-                    "onclick='showEitherModelorFolderInfoDialog(" + Number(breadCrumbModel.length - i) + ",\"" +
-                    breadCrumbModel.FolderName + "\",\"" +
-                    breadCrumbModel[i].FolderId + "\",\"" +
-                    breadCrumbModel[i].ParentId + "\",\"" +
-                    breadCrumbModel.RootFolder + "\")' >" +
-                    breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") +
-                    "</a>");
+                    "<a class='inactiveBreadCrumb' forgetHomeFolderInfoDialog=false;' onmouseout='forgetHomeFolderInfoDialog=true;' " +
+                    "onclick='showCategoryDialog(" + breadCrumbModel[i].FolderId + ")'>" + breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
             }
             else {
                 $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
@@ -163,6 +154,15 @@ function setBreadCrumbs(breadCrumbModel, badgesText) {
         if (badgesText.indexOf("Hef likes twins") > -1) {
             $('#twinsLink').show();
         }
+    }
+}
+function showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
+    var cybergirls = "3796";
+    if (rootFolder === "playboy" && index > 4 || parentId === cybergirls || rootFolder === "archive" && index > 2) {
+        rtpe("CMX", folderId, folderName, folderId);
+    }
+    else {
+        showCategoryDialog(folderId);
     }
 }
 
@@ -643,7 +643,7 @@ function contextMenuAction(action) {
         case "explode":
             if (isLoggedIn()) {
 
-                alert("rtpe EXP currentAlbumJSfolderName: " + currentAlbumJSfolderName + " selectedImage: " + selectedImage + " albumFolderId: " + albumFolderId);
+                //alert("rtpe EXP currentAlbumJSfolderName: " + currentAlbumJSfolderName + " selectedImage: " + selectedImage + " albumFolderId: " + albumFolderId);
                 rtpe("EXP", currentAlbumJSfolderName, selectedImage, albumFolderId);
             }
             else {
@@ -712,16 +712,6 @@ function slowlyShowFolderInfoDialog(index, folderName, folderId, parentId, rootF
             showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId, rootFolder);
         }
     }, 1100);
-}
-
-function showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
-    var cybergirls = "3796";
-    if (rootFolder === "playboy" && index > 4 || parentId === cybergirls || rootFolder === "archive" && index > 2) {
-        rtpe("CMX", folderId, folderName, folderId);
-    }
-    else {
-        showCategoryDialog(folderId);
-    }
 }
 
 function loadImageContextMenu() {

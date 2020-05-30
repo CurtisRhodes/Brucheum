@@ -33,6 +33,7 @@ label {
     height: 150px;
     min-width: 160px;
     margin-left: 4px;
+    display: block;
 }
 
 .modelInfoDialogLabel {

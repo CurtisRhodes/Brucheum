@@ -1,5 +1,14 @@
-﻿// DIRECTORY TREE 
+﻿// DIRECTORY TREE
+//var tabIndent = 22;
+//var tab = 0;
+//var totalPics = 0;
+var totalFolders = 0;
+var dirTreeTab = 0;
+var dirTreeTabIndent = 2;
+var totalFiles = 0;
+var expandDepth = 2;
 var strdirTree = "";
+
 function loadDirectoryTree(startNode, container) {
     var start = Date.now();
     $('#dashBoardLoadingGif').show();
@@ -62,7 +71,6 @@ function buildDirTreeRecurr(parentNode) {
             if (thisNode.SubDirs.length > 0)
                 expandMode = "+";
         }
-
         txtFileCount = "(" + vwDir.FileCount + ")";
         if (vwDir.SubDirCount > 0) {
             totalFiles = 0;
@@ -72,21 +80,20 @@ function buildDirTreeRecurr(parentNode) {
             else
                 txtFileCount = "(" + vwDir.SubDirCount + " / " + getChildFileCounts(thisNode).toLocaleString() + ")";
         }
+        let randomId = create_UUID();
         strdirTree +=
             "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
-            + "<span id='S" + vwDir.LinkId + "' onclick=toggleDirTree('" + vwDir.LinkId + "') >[" + expandMode + "] </span>"
-            + "<div id='" + vwDir.LinkId + "aq' class='treeLabelDiv' onclick='dirTreeClick(\"" + thisNode.DanniPath + "\",\"" + vwDir.Id + "\")' "
+            + "<span id='S" + randomId + "' onclick=toggleDirTree('" + randomId + "') >[" + expandMode + "] </span>"
+            + "<div id='" + randomId + "aq' class='treeLabelDiv' onclick='dirTreeClick(\"" + thisNode.DanniPath + "\",\"" + vwDir.Id + "\")' "
             + "oncontextmenu=showDirTreeContextMenu('" + vwDir.Id + "') "
             + "onmouseover=showFolderImage('" + encodeURI(vwDir.Link) + "') onmouseout=$('.dirTreeImageContainer').hide() >"
             + vwDir.FolderName.replace(".OGGLEBOOBLE.COM", "") + "</div><span class='fileCount'>  : "
             + txtFileCount + "</span></div>" +
-            "<div class='" + expandClass + "' id=" + vwDir.LinkId + ">";
+            "<div class='" + expandClass + "' id=" + randomId + ">";
 
-        //totalPics += vwDir.FileCount;
+        dirTreeTabIndent = 22;
         buildDirTreeRecurr(thisNode);
-        //$('#dashboardMain').append("</div>");
         strdirTree += "</div>";
-        //dirTreeTabIndent = 22;
         dirTreeTab -= dirTreeTabIndent;
     });
 }
@@ -94,9 +101,6 @@ function buildDirTreeRecurr(parentNode) {
 
 
 function dirTreeClick(danniPath, folderId) {
-    dashboardMainSelectedTreeId = folderId;
-    dashboardMainSelectedPath = danniPath;
-    $('.txtLinkPath').val(danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
     //alert("DanniPath: " + $('.txtLinkPath').val());
     //alert("dashboardMainSelectedTreeId: " + dashboardMainSelectedTreeId);
 }
@@ -133,11 +137,10 @@ function showDirTreeContextMenu(folderId) {
 
     $('body').append(
         "<div id='dashboardContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
-        "    <div onclick='window.open(\"/album.html?folder=" + folderId + "\"_blank\")'>Open Folder</div>\n" +
+        "    <div onclick='window.open(\"/album.html?folder=" + folderId + "\", \"_blank\")'>Open Folder</div>\n" +
         "    <div onclick='showCategoryDialog(" + folderId + ")'>Show Category Info</div>\n" +
         "    <div onclick='showModelInfoDialog(" + folderId + ")'>Show Model Info</div>\n" +
         "</div>\n");
-
     $('#dashboardContextMenu').css("top", event.clientY + 5);
     $('#dashboardContextMenu').css("left", event.clientX);
     $('#dashboardContextMenu').fadeIn();

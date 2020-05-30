@@ -1,10 +1,23 @@
-﻿#folderCategoryDialog .ui-dialog {
+﻿/*#folderCategoryDialog .ui-dialog {
     top: 44px;
     left: 100px;
 }
 
 #folderCategoryDialog .ui-corner-all {
     border-radius: 22px;
+}*/
+
+.folderDialogContainer {
+    background-color: #000;
+}
+.modelInfoCommentArea {
+    height: 100%;
+}
+.folderDialogFooter {
+    position: relative;
+    padding: 6px;
+    bottom: 0px;
+    background: var(--oggleBackgroundColor);
 }
 
 .folderCategoryDialogButton {
@@ -17,7 +30,7 @@
     cursor: pointer;
 }
 
-#folderCategoryDialog .ui-widget textarea {
+/*#folderCategoryDialog .ui-widget textarea {
     font-family: 'Comic Sans MS';
     color: #79078f;
     font-size: 18px;
@@ -36,4 +49,4 @@
 
 .metaTagRow {
     display: none;
-}
+}*/

@@ -168,6 +168,7 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
+    <Compile Include="Controllers\StaticPageController.cs" />
     <Compile Include="DataContext\MySqlContext.cs" />
     <Compile Include="DataContext\OggleBoobleContext.cs" />
     <Compile Include="Global.asax.cs">

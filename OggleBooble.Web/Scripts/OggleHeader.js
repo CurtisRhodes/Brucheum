@@ -1,15 +1,27 @@
-﻿function setOggleHeader(folderId, subdomain) {
+﻿
+function setOggleHeader(folderId, subdomain) {
     //if (getCookieValue("IpAddress") === "68.203.90.183") alert("setOggleHeader subdomain " + subdomain + "  folderId: " + folderId + " containsImageLinks: " + containsImageLinks);
     if (subdomain === undefined) {
         subdomain = "boobs";
     }
-    //var lang = "en";
+    //Include a script tag to https://smtpjs.com/v3/smtp.js
 
+    $('.oggleHeader').addClass("boobsHeader");
+
+    //var lang = "en";
     //$('header').switchClass('pornHeader', 'boobsHeader');
 
-    $('header').html(fullScreenHeader(folderId));
+    $('.oggleHeader').html(headerHtml(folderId));
+    $('.oggleHeader').append(draggableDialog());
+    $('#draggableDialog').resizable({
+        resize: function (event, ui) {
 
-    $('#draggableDialog').draggable();
+            //$('#headerMessage').html("onresize: " + event.pageX + " note-editable.height: " + $('.note-editable').height());
+            $('#headerMessage').html("dH: " + $('#draggableDialog').height() + " sH: " + $('.note-editable').height());
+
+            $('.note-editable').height($('#draggableDialog').height() - 200);
+        }
+    });
 
     setHeaderDetails(folderId, subdomain);
     setLoginHeaderSection();
@@ -18,6 +30,9 @@
 
 // requires no database call
 function setHeaderDetails(folderId, subdomain) {
+
+    //alert("setHeaderDetails folderId: " + folderId + ", subdomain: " + subdomain);
+
     $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"boobs\"," + folderId + ")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n");
     $('#bannerTitle').html("OggleBooble");
     switch (subdomain) {
@@ -87,7 +102,7 @@ function setHeaderDetails(folderId, subdomain) {
         }
             break;
         case "playboy":
-        case "playmates": {
+        case "centerfold": {
             $('header').switchClass('pornHeader', 'boobsHeader');
             $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"playboy\")'><img src='/Images/playboyBallon.png' class='bannerImage'/></a>\n");
             $('#subheaderContent').html(
@@ -160,7 +175,7 @@ function setLoginHeaderSection() {
     }
 }
 
-function fullScreenHeader(folderId) {
+function headerHtml(folderId) {
     // HEADER HTML
     return "   <div id='divTopLeftLogo' class='bannerImageContainer'></div>\n" +
         "   <div class='headerBodyContainer'>\n" +
@@ -204,17 +219,6 @@ function fullScreenHeader(folderId) {
         "       </div>\n" +
         "   </div>\n" +
 
-        "<div class='centeringOuterShell'>\n" +
-        "   <div class='centeringInnerShell'>\n" +
-        "       <div id='draggableDialog' class='oggleDraggableDialog'>\n" +
-        "          <div id='draggableDialogHeader'class='oggleDraggableDialogHeader'>" +
-        "              <div id='draggableDialogTitle' class='oggleDraggableDialogTitle'></div>" +
-        "              <div id='draggableDialogCloseButton' class='oggleDraggableDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'></div>\n" +
-        "          </div>\n" +
-        "          <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
-        "       </div>\n" +
-        "   </div>\n" +
-        "</div>\n" +
 
         "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
 
@@ -241,6 +245,95 @@ function fullScreenHeader(folderId) {
         "</div>\n";
 
 }
+
+function draggableDialog() {
+    return "<div class='centeringOuterShell'>\n" +
+    "   <div class='centeringInnerShell'>\n" +
+    "      <div id='draggableDialog' class='oggleDraggableDialog resizable resizers'>\n" +
+    "           <div id='draggableDialogHeader'class='oggleDraggableDialogHeader' onmousedown='enterDragMode()' onmouseup='cancelDragMode()'>" +
+    "               <div id='draggableDialogTitle' class='oggleDraggableDialogTitle'></div>" +
+    "               <div id='draggableDialogCloseButton' class='oggleDraggableDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'/></div>\n" +
+    "           </div>\n" +
+    "           <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
+    //"           <div id='draggableDialogResizeBar' class='oggleResizeBar' onmousedown='enterResizeMode()' onmouseup='cancelResize()' >" +
+    //"              <div class='dragBarSandwitchBar'></div>" +
+    //"              <div class='dragBarSandwitchBar'></div>" +
+    //"              <div class='dragBarSandwitchBar'></div>" +
+    //"           </div>\n" +
+    "      </div>\n" +
+    "   </div>\n" +
+    "</div>\n";
+}
+
+function enterDragMode() {
+    $('#headerMessage').html("entering drag mode");
+    $('#draggableDialog').draggable({ disabled: false });
+    $('#draggableDialog').draggable();
+}
+function cancelDragMode() {
+    $('#headerMessage').html("end drag");
+    $('#draggableDialog').draggable({ disabled: true });
+}
+
+//$(window).scroll(function () {
+//    $('.oggleHeader').css("top", 0);
+//    $('#headerMessage').html("scroll: " + $(window).scrollTop() + " hdr: " + $('.oggleHeader').position().top);
+//    $('.oggleHeader').css("top", 0);
+//    //if ($(window).scrollTop() > elementPosition.top) {
+//    //    $('#navigation').css('position', 'fixed').css('top', '0');
+//    //} else {
+//    //    $('#navigation').css('position', 'static');
+//    //}
+//});
+
+//$('#imageContainer').on("scroll", function () {
+//    $('#headerMessage').html("SCROLL: " + $('#imageContainer').offset().top);
+//    //    //var visH = $(window).height() - $('.oggleHeader').height();
+//    //    //$('#feedbackBanner').css("bottom", 40);
+//});
+
+//function enterResizeMode() {
+//    //alert("entering resize mode");
+//    $('#headerMessage').html("entering resize mode");
+//    $('#draggableDialog').resizable();
+
+//    //$('#headerMessage').html("entering resize mode. dialog bott: " + currbott);
+//    //currBott = $('#draggableDialog').offset().top; // + $('#draggableDialog').height();
+//    //$('#draggableDialogResizeBar').draggable();
+//}
+
+//function cancelResize() {
+//    $('#draggableDialog').resizable({ disabled: true });
+//}
+
+//unction makeResizableDiv(div) {
+//    const element = document.querySelector(div);
+//    const resizers = document.querySelectorAll(div + ' .resizer')
+//    for (let i = 0; i < resizers.length; i++) {
+//        const currentResizer = resizers[i];
+//        currentResizer.addEventListener('mousedown', function (e) {
+//            e.preventDefault()
+//            window.addEventListener('mousemove', resize)
+//            window.addEventListener('mouseup', stopResize)
+//        })
+//    }
+//}
+
+//function resize(e) {
+//    if (currentResizer.classList.contains('bottom-right')) {
+//        element.style.width = e.pageX - element.getBoundingClientRect().left + 'px'
+//    }
+//}
+
+//function stopResize() {
+//    window.removeEventListener('mousemove', resize)
+//}
+
+
+
+
+
+
 
 function showPornHeader(folderId) {
     $('header').switchClass('boobsHeader', 'pornHeader');
@@ -283,17 +376,7 @@ function showBoobsHeader(folderId) {
 }
 
 
-
 //"                  <img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
 //"                   title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +
 //"                   \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
 //"                   \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
-
-
-
-
-
-
-
-
-

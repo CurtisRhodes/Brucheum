@@ -39,4 +39,35 @@ namespace OggleBooble.Api.Models
         public string Parent { get; set; }
         public int FolderId { get; set; }
     }
+
+    public class MetaTagResultsModel
+    {
+        public MetaTagResultsModel()
+        {
+            MetaTags = new List<MetaTagModel>();
+        }
+        public List<MetaTagModel> MetaTags { get; set; }
+        public string Source { get; set; }
+        public string MetaDescription { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class MetaTagModel
+    {
+        public int TagId { get; set; }
+        public int FolderId { get; set; }
+        public string LinkId { get; set; }
+        public string Tag { get; set; }
+    }
+
+    public class TrackBackModel
+    {
+        public TrackBackModel()
+        {
+            TrackBackItems = new List<TrackBackItem>();
+        }
+        public int PageId { get; set; }
+        public List<TrackBackItem> TrackBackItems { get; set; }
+        public string Success { get; set; }
+    }
 }

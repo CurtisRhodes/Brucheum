@@ -21,6 +21,82 @@ namespace OggleBooble.Api.Controllers
         //static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
         //static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
 
+        [HttpPost]
+        [Route("api/Folder/Create")]
+        public SuccessModel Create(int parentId, string newFolderName)
+        {
+            SuccessModel successModel = new SuccessModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == parentId).FirstOrDefault();
+
+                    var folderPath = dbSourceFolder.FolderName;
+                    if (folderPath.ToUpper().Contains("OGGLEBOOBLE.COM"))
+                        folderPath = "";
+
+                    string destinationFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(parentId) + folderPath + "/" + newFolderName.Trim();
+                    if (FtpUtilies.DirectoryExists(destinationFtpPath))
+                        successModel.Success = "folder already exists";
+                    else
+                    {
+                        string createDirSuccess = FtpUtilies.CreateDirectory(destinationFtpPath);
+                        if (createDirSuccess == "ok")
+                        {
+                            CategoryFolder newFolder = new CategoryFolder()
+                            {
+                                Parent = parentId,
+                                FolderName = newFolderName.Trim(),
+                                SortOrder = 933,
+                                RootFolder = dbSourceFolder.RootFolder
+                            };
+                            db.CategoryFolders.Add(newFolder);
+                            db.SaveChanges();
+                            int newFolderId = newFolder.Id;
+
+                            //db.CategoryFolderDetails.Add(new CategoryFolderDetail() { FolderId = newFolderId, SortOrder = 99 });
+                            //db.SaveChanges();
+
+                            // now add it to Oracle
+                            using (var mdb = new MySqlDataContext.OggleBoobleMySqContext())
+                            {
+                                MySqlDataContext.CategoryFolder newOracleRow = new MySqlDataContext.CategoryFolder();
+                                try
+                                {
+                                    newOracleRow.PkId = Guid.NewGuid().ToString();
+                                    newOracleRow.Id = newFolderId;
+                                    newOracleRow.Parent = parentId;
+                                    newOracleRow.FolderName = newFolderName.Trim();
+                                    newOracleRow.RootFolder = dbSourceFolder.RootFolder;
+                                    newOracleRow.SortOrder = 934;
+                                    mdb.CategoryFolders.Add(newOracleRow);
+                                    mdb.SaveChanges();
+                                    successModel.Success = "ok";
+
+                                    //MySqDataContext.CategoryFolderDetail oraCategoryFolderDetail = new MySqDataContext.CategoryFolderDetail();
+                                    //oraCategoryFolderDetail.FolderId = newFolderId;
+                                    //oraCategoryFolderDetail.SortOrder = 998;
+                                    //mdb.CategoryFolderDetails.Add(oraCategoryFolderDetail);
+                                    //oraCategoryFolderDetail.FolderId = newFolderId;
+                                }
+                                catch (Exception ex)
+                                {
+                                    successModel.Success = "Oracle Insert fail in CreateFolder: " + Helpers.ErrorDetails(ex);
+                                    //Console.WriteLine("Oracle Insert fail in CreateFolder: " + Helpers.ErrorDetails(ex));
+                                }
+                                successModel.ReturnValue = newFolderId.ToString();
+                            }
+                        }
+                        else
+                            successModel.Success = createDirSuccess;
+                    }
+                }
+            }
+            catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }
+            return successModel;
+        }
+
         [HttpPut]
         [Route("api/Folder/Rename")]
         public string Rename(int folderId, string newFolderName)
@@ -149,37 +225,6 @@ namespace OggleBooble.Api.Controllers
             return folderDetailModel;
         }
 
-        // create new folder in Posers Identified
-        [HttpPost]
-        public string Insert(FolderDetailModel model)
-        {
-            string success = "";
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    db.CategoryFolderDetails.Add(new CategoryFolderDetail()
-                    {
-                        CommentText = model.CommentText,
-                        ExternalLinks = model.ExternalLinks,
-                        FolderId = model.FolderId,
-                        Nationality = model.Nationality,
-                        Measurements = model.Measurements,
-                        Boobs = model.Boobs,
-                        LinkStatus = model.LinkStatus,
-                        Born = model.Born
-                    });
-                    db.SaveChanges();
-                    success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-
         [HttpPut]
         public string Update(FolderDetailModel model)
         {
@@ -246,5 +291,86 @@ namespace OggleBooble.Api.Controllers
         }
     }
 
+    [EnableCors("*", "*", "*")]
+    public class TrackbackLinkController : ApiController
+    {
+        [HttpGet]
+        public TrackBackModel GetTrackBacks(int folderId)
+        {
+            TrackBackModel trackBackModel = new TrackBackModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    List<TrackbackLink> trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
+                    foreach (TrackbackLink trackbackLink in trackbackLinks)
+                    {
+                        trackBackModel.TrackBackItems.Add(new TrackBackItem()
+                        {
+                            Site = trackbackLink.Site,
+                            TrackBackLink = trackbackLink.TrackBackLink,
+                            LinkStatus = trackbackLink.LinkStatus
+                        });
+                    }
+                    trackBackModel.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                trackBackModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return trackBackModel;
+        }
+
+        [HttpPost]
+        public string Insert(TrackBackItem trackBackItem)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    db.TrackbackLinks.Add(new TrackbackLink()
+                    {
+                        PageId = trackBackItem.PageId,
+                        LinkStatus = trackBackItem.LinkStatus,
+                        Site = trackBackItem.Site,
+                        TrackBackLink = trackBackItem.TrackBackLink
+                    });
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+        [HttpPut]
+        public string Update(TrackBackItem item)
+        {
+            string success = "";
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    TrackbackLink trackbackLink = db.TrackbackLinks.Where(t => t.PageId == item.PageId).FirstOrDefault();
+                    trackbackLink.Site = item.Site;
+                    trackbackLink.LinkStatus = item.LinkStatus;
+                    trackbackLink.Site = item.Site;
+                    trackbackLink.TrackBackLink = item.TrackBackLink;
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+    }
 
 }

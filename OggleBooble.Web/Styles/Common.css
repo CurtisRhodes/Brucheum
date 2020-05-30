@@ -6,6 +6,7 @@
     --oggleBorderColor: #b200ff; /* #f1cff7;       carouselContainer  #b200ff; */
     --ogglePurple: #79078f;
     --normalFont: 17px;
+    --ogglgeTextColor: #000;
     --oggleTitleColor: #7f2c8f;
     --ogglgeSubTitleColor: #490157;
     --thumbnailBorderColor: #74bac3; /* hot pink #ff00dc   */
@@ -16,8 +17,22 @@
     --oggleHeaderSelectBackgroundColor: #74bac3;
     --topLinkRowDefault: 28px;
     --topLinkRow14: 14px;
+    --flitterYellow: #fbf0b4;
 }
 
+.oggleResizeBar {
+    padding-top: 1px;
+    height: 9px;
+    background-color: #e6de3b;
+    width: 100%;
+    cursor: ns-resize;
+}
+
+.dragBarSandwitchBar {
+    width: 20px;
+    margin: 1px auto;
+    border-top: 1px solid rgba(0,0,0,.2);
+}
 
 body {
     background-color: var(--oggleBackgroundColor);
@@ -178,7 +193,7 @@ input[type='checkbox'] {
     }
 
 .footer {
-    margin-top: 10px;
+    margin-top: 44px;
     border-top: solid 4px #feb236;
     font-family: Arial;
     background-color: #333;
@@ -427,9 +442,9 @@ input[type='checkbox'] {
 
 .fixedMessageButton {
     position: relative;
+    bottom: 50px;
     padding: 20px 15px;
     margin: 10px;
-    top: 800px;
     cursor: pointer;
     color: var(--ogglePurple);
     background-color: var(--oggleContainerBackgroundColor);

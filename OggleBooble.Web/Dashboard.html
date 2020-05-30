@@ -61,31 +61,14 @@
                 <div id="dashboardLeftMenu" class="oggleVerticalMenu"></div>
             </div>
             <div id="dashboardMiddleColumn" class="dashboardContainerColumn">
+                <div id="workAreaContainer" class="workAreaContainer"></div>
                 <div id="dataifyInfo" class="infoLine" onclick="$('#dataifyInfo').hide();"></div>
             </div>
-            <div id="dashboardRightColumn" class="dashboardContainerColumn">
-            </div>
+            <div id="dashboardRightColumn" class="dashboardContainerColumn"></div>
         </div>
         <div id="divModalDialogs">
-            <div id="createNewFolderDialog" class="dashboardToggle" title="Create New Folder">
-                <div><span>title</span><input id="txtNewFolderTitle" class="roundedInput" /></div>
-                <div><span>parent</span><input class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div class="roundendButton" onclick="createNewFolder()">Create Folder</div>
-            </div>
+            
 
-            <div id="createStaticPagesCrud" class="dashboardToggle" title="Create Static Pages">
-                <div><span>folders to staticify</span><input id="txtFolderToStaticify" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div><span>include all subfolders </span><input type="checkbox" id="ckIncludeSubfolders" checked="checked" /></div>
-                <div class="roundendButton" onclick="createStaticPages($('#ckIncludeSubfolders').is(':checked'))">Build Files</div>
-                <div id="renameFolderReport" class="repairReport"></div>
-            </div>
-
-            <div id="renameFolderCrud" class="dashboardToggle" title="Rename Folder">
-                <div><span>folder to rename</span><input id="txtFolderToRename" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div><span>new name</span><input id="txtReName" class="roundedInput" /></div>
-                <div class="roundendButton" onclick="renameFolder()">Rename Folder</div>
-                <div id="renameFolderReport" class="repairReport"></div>
-            </div>
 
             <div id="moveFolderCrud" class="dashboardToggle" title="Move Folder">
                 <div><span>folder to move</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
@@ -263,13 +246,6 @@
         }
 
         function defineDilogs() {
-            $('#uploadArea').keydown(function (event) {
-                if (event.keyCode === 13) {
-                    // Cancel the default action, if needed
-                    // Trigger the button element with a click
-                    addImageLink();
-                }
-            });
 
 
             $('#renameFolderCrud').dialog({
@@ -294,12 +270,6 @@
                 $('#createNewFolderDialog').hide();
             });
 
-            $('#createStaticPagesCrud').dialog({
-                autoOpen: false,
-                show: { effect: "fade" },
-                hide: { effect: "blind" },
-                width: "400"
-            });
 
             $('#moveFolderCrud').dialog({
                 autoOpen: false,

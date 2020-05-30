@@ -230,7 +230,7 @@ function create_UUID() {
 }
 
 function sendEmailToYourself(subject, message) {
-    //alert("sendEmailToYourself(subject: " + subject + ", message: " + message + ")");
+    if (document.domain === "localhost") alert("sendEmailToYourself(subject: " + subject + ", message: " + message + ")");
     $.ajax({
         type: "GET",
         url: "https://api.curtisrhodes.com/api/GodaddyEmail?subject=" + subject + "&message=" + message,
@@ -267,8 +267,7 @@ function sendEmailToYourself(subject, message) {
 }
 
 function logError(logErrorModel) {
-    alert(logErrorModel.ErrorMessage);
-
+    if (document.domain === "localhost") alert("error being logged: " + logErrorModel.ErrorMessage);
 
     $.ajax({
         type: "POST",
@@ -522,6 +521,7 @@ function showCustomMessage(blogId, allowClickAnywhere) {
 var registerEmail;
 var requestedPrivileges = [];
 function authenticateEmail(usersEmail) {
+
     var privileges = "";
     $.each(requestedPrivileges, function (idx,obj) {
         privileges += obj + ", ";

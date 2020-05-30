@@ -26,10 +26,12 @@
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"freedback\"," + pageId + ")'>Feedback</div>\n" +
+                "        <div id='footerInfo1'></div>\n" +
                 "    </div>\n" +
                 "</div>\n";
             break;
         case "playboy":
+        case "centerfold":
             footerhtml =
                 "<div class='flexContainer'>\n" +
                 "    <div class='footerCol'>\n" +
@@ -48,6 +50,7 @@
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"freedback\"," + pageId + ")'>Feedback</div>\n" +
+            "        <div id='footerInfo1'></div>\n" +
                 "    </div>\n" +
                 "</div>\n";
             break;
@@ -67,6 +70,7 @@
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
+                "        <div id='footerInfo1'></div>\n" +
                 "    </div>\n" +
                 "</div>\n";
             break;
