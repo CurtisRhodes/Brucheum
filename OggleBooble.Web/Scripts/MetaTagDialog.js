@@ -6,14 +6,14 @@ function openMetaTagDialog(folderId, linkId) {
     metaTagModel.LinkId = linkId;
     getMetaTags(folderId, linkId);
 
-    $('#metaTagDialog').show();
-    $('#metaTagDialog').dialog({
-        show: { effect: "fade" },
-        hide: { effect: "blind" },
-        width: "456px"
-    });
+    //$('#metaTagDialog').show();
+    //$('#metaTagDialog').dialog({
+    //    show: { effect: "fade" },
+    //    hide: { effect: "blind" },
+    //    width: "456px"
+    //});
     
-    $('#metaTagDialog').dialog("open");
+    //$('#metaTagDialog').dialog("open");
 
 }
 

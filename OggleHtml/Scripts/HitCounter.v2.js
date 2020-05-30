@@ -344,9 +344,7 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail, pageId) {
 }
 
 function performEvent(eventCode, calledFrom, eventDetail, pageId) {
-    if (eventCode === "PRN") {
-        //  setUserPornStatus(pornType);
-    }
+  
     switch (eventCode) {
         case "GIC": // Gallery Item Clicked
         case "CMC": // carousle context menu item clicked

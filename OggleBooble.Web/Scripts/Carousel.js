@@ -473,7 +473,7 @@ function slowlyShowFolderCategoryDialog() {
             if (typeof pause === 'function')
                 pause();
             folderCategoryDialogIsOpen = true;
-            showCategoryDialog(carouselItemArray[imageIndex].FolderId);
+            showFolderInfoDialog(carouselItemArray[imageIndex].FolderId);
         }
     }, 1100);
     $('#folderCategoryDialog').on('dialogclose', function (event) {

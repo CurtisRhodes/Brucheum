@@ -1,14 +1,20 @@
 ﻿var folderInfo = {};
     //<script src = "https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" ></script>
-function showCategoryDialog(folderId) {
+function showFolderInfoDialog(folderId) {
     // 11:11 2/25/19
     // 2:20 4/10/2019
     // create a new table (or row)
     // --alter table OggleBooble.ImageFolder add CatergoryDescription nvarchar(max)
     // 4/30/2019  --first use of jQuery dialog
+    // 5/30/2020  removing use of jquery dialog for my own. 
     try {
         $('#imagePageLoadingGif').show();
         $('#draggableDialogContents').html(folderDialogHtml());
+
+        $('#modelInfoDetails').hide();
+        $('#btnCatDlgCancel').hide();
+        $('#btnCatDlgMeta').hide();
+
         $('#draggableDialog').css("top", $('.oggleHeader').height() + 20);
         $('#summernoteContainer').summernote({
             toolbar: "none",
@@ -16,6 +22,8 @@ function showCategoryDialog(folderId) {
             dialogsInBody: true
         });
         $('#summernoteContainer').summernote('disable');
+
+
 
         $(".note-editable").css('font-size', '19px');
         $(".modelDialogInput").prop('readonly', true);;
@@ -91,7 +99,7 @@ function showCategoryDialog(folderId) {
             ErrorMessage: "get NudeModelInfo catch: " + e,
             CalledFrom: "showCategoryDialog"
         });
-        //sendEmailToYourself("javascript catch in FolderCategoryDialog.js showCategoryDialog", "get NudeModelInfo catch: " + e);
+        //sendEmailToYourself("javascript catch in FolderInfoDialog.js showCategoryDialog", "get NudeModelInfo catch: " + e);
         if (document.domain === 'localhost') alert("FolderCategoryDialog catch: " + e);
     }
 }

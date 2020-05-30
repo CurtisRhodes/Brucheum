@@ -188,6 +188,17 @@ function create_UUID() {
     return uuid;
 }
 
+function containsRomanNumerals(strLabel) {
+    var doesContain = false;
+    if (strLabel.indexOf(" I") > 0)
+        doesContain = true;
+    if (strLabel.indexOf(" V") > 0)
+        doesContain = true;
+    if (strLabel.indexOf(" X") > 0)
+        doesContain = true;
+    return doesContain;
+}
+
 function sendEmailToYourself(subject, message) {
     //alert("sendEmailToYourself(subject: " + subject + ", message: " + message + ")");
     $.ajax({
@@ -229,9 +240,12 @@ function logError(logErrorModel) {
     if (isNullorUndefined(logErrorModel.VisitorId))
         logErrorModel.VisitorId = "00";
 
+    if (document.domain === "localhost")
+        alert("logError: " + logErrorModel.ErrorMessage);
+
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "/api/ErrorLog",
+        url: settingsArray.ApiServer + "api/ErrorLog/ErrorLog",
         data: logErrorModel,
         //success: function (success) {
         //    if (success === "ok")
@@ -244,6 +258,10 @@ function logError(logErrorModel) {
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
+            if (document.domain === "localhost")
+                alert("logError: " + errorMessage);
+
+
             if (!checkFor404(errorMessage, "logActivity")) {
 
                 //alert("XHR error " + ErrorMessage);

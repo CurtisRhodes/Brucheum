@@ -215,7 +215,9 @@
                             clearInterval(verifyConnectionWaiter);
                             $('#dots').html('');
                             $('#laCarousel').fadeIn();
-                            loadUpdatedGalleriesBoxes(updatedGalleriesCount);
+
+                            loadUpdatedGalleriesBoxes(subdomain, updatedGalleriesCount);
+
                             launchCarousel(subdomain);
                             logPageHit(homePageId, "Index");
                             $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);

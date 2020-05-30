@@ -134,21 +134,21 @@
                 }
                 else {
                     clearInterval(waiter);
-                    verifyConnection();
+                    checkFor404();
                     var verifyConnectionWaiter = setInterval(function () {
                         if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
                             $('#dots').html('');
 
-                            //if (isInRole("view dynamic")) {
-                            //    //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) TruE");
-                            //    getAlbumImages(params.folder);
-                            //}
-                            //else {
-                            //    //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) FALSE");
-                            //    directToStaticPage(params.folder);
-                            //}
-                            directToStaticPage(params.folder);
+                            if (isInRole("view dynamic")) {
+                                //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) TruE");
+                                getAlbumImages(params.folder);
+                            }
+                            else {
+                                //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) FALSE");
+                                directToStaticPage(params.folder);
+                            }
+                            //directToStaticPage(params.folder);
 
                         }
                         else {

@@ -91,9 +91,11 @@ function performSearch(searchString) {
                 success: function (SearchResultsModel) {
                     $('#searchResultsDiv').html("<ul class='searchResultList>").show();
                     $.each(SearchResultsModel.SearchResults, function (idx, searchResult) {
-                        $('#searchResultsDiv').append("<li id=" + searchResult.FolderId +
-                            " onclick='jumpToSelected(" + searchResult.FolderId + ")' onkeydown='linkItemKeyDown(event)'  >" +
-                            searchResult.Parent + "/" + searchResult.FolderName + "</li>");
+                        if (!containsRomanNumerals(searchResult.FolderName)) {
+                            $('#searchResultsDiv').append("<li id=" + searchResult.FolderId +
+                                " onclick='jumpToSelected(" + searchResult.FolderId + ")' onkeydown='linkItemKeyDown(event)'  >" +
+                                searchResult.Parent + "/" + searchResult.FolderName + "</li>");
+                        }
                     });
                     $('#searchResultsDiv').append("</ul>").show();
                     $('.loginArea').hide();

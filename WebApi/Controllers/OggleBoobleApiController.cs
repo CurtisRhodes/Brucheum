@@ -222,20 +222,23 @@ namespace WebApi
         }
 
         [HttpGet]
-        public LatestUpdatesModel GetLatestUpdates(int items)
+        public LatestUpdatesModel GetLatestUpdates(int items,string rootFolder)
         {
             LatestUpdatesModel updatesModel = new LatestUpdatesModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
+                    string whereClause = "where f.RootFolder not in ('porn', 'sluts') ";
+                    if (rootFolder == "porn" || rootFolder == "sluts")
+                        whereClause = "where f.RootFolder in ('porn', 'sluts') ";
                     updatesModel.LatestUpdates = db.Database.SqlQuery<LatestUpdate>(
                         "select top " + items + " max(f.Id) FolderId, f.FolderName, max(i.LastModified) LastModified, max(i2.Link) FolderImage " +
                         "from OggleBooble.ImageLink i " +
                         "join OggleBooble.CategoryFolder f on i.FolderLocation = f.Id " +
                         //"join OggleBooble.CategoryFolderDetail d on i.FolderLocation = d.FolderId " +
                         "join OggleBooble.ImageLink i2 on f.FolderImage = i2.Id " +
-                        "where f.RootFolder not in ('porn', 'sluts') " +
+                        whereClause +
                         "group by f.FolderName " +
                         "order by LastModified desc").ToList();
                 }

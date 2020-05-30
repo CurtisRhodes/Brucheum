@@ -1,11 +1,13 @@
-﻿function loadUpdatedGalleriesBoxes(numItmes) {
+﻿function loadUpdatedGalleriesBoxes(subdomain, numItmes) {
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/ImagePage/GetLatestUpdates?items=" + numItmes,
+        url: settingsArray.ApiServer + "api/ImagePage/GetLatestUpdates?items=" + numItmes + "&rootFolder=" + subdomain,
         success: function (latestUpdates) {
             if (latestUpdates.Success === "ok") {
                 $('#updatedGalleriesSection').html("");
                 $.each(latestUpdates.LatestUpdates, function (idx, LatestUpdate) {
+
+
                     $('#updatedGalleriesSection').append("<div class='newsContentBox'>" +
                         "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
                         "<img class='newsContentBoxImage' src='" + LatestUpdate.FolderImage + "'" +
@@ -133,7 +135,9 @@ function showCarouelSettingsDialog() {
 
 function onShowMoreGalleries() {
     updatedGalleriesCount += 15;
-    loadUpdatedGalleriesBoxes(updatedGalleriesCount);
+    //loadUpdatedGalleriesBoxes(updatedGalleriesCount);
+    loadUpdatedGalleriesBoxes(subdomain, updatedGalleriesCount);
+
 }
 
 

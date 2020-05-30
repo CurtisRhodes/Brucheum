@@ -77,11 +77,11 @@ function GetAllAlbumPageInfo(folderId) {
                             VisitorId: getCookieValue("VisitorId"),
                             ActivityCode: "BUG",
                             Severity: 1,
-                            ErrorMessage: successModel.Success,
+                            ErrorMessage: imageLinksModel.Success,
                             CalledFrom: "GetAllAlbumPageInfo"
                         });
                         //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
-                        //if (document.domain === 'localhost') alert("jQuery fail in Album.js: getAlbumImages\n" + imageLinksModel.Success);
+                        if (document.domain === 'localhost') alert("jQuery fail in Album.js: getAlbumImages\n" + imageLinksModel.Success);
                     }
                 },
                 error: function (jqXHR) {
@@ -131,7 +131,7 @@ function setBreadCrumbs(breadCrumbModel, badgesText) {
             if (breadCrumbModel[i].IsInitialFolder) {
                 $('#breadcrumbContainer').append(
                     "<a class='inactiveBreadCrumb' forgetHomeFolderInfoDialog=false;' onmouseout='forgetHomeFolderInfoDialog=true;' " +
-                    "onclick='showCategoryDialog(" + breadCrumbModel[i].FolderId + ")'>" + breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
+                    "onclick='showFolderInfoDialog(" + breadCrumbModel[i].FolderId + ")'>" + breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
             }
             else {
                 $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
@@ -154,15 +154,6 @@ function setBreadCrumbs(breadCrumbModel, badgesText) {
         if (badgesText.indexOf("Hef likes twins") > -1) {
             $('#twinsLink').show();
         }
-    }
-}
-function showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId, rootFolder) {
-    var cybergirls = "3796";
-    if (rootFolder === "playboy" && index > 4 || parentId === cybergirls || rootFolder === "archive" && index > 2) {
-        rtpe("CMX", folderId, folderName, folderId);
-    }
-    else {
-        showCategoryDialog(folderId);
     }
 }
 
@@ -248,7 +239,8 @@ function processImages(imageLinksModel) {
             }// imageModelFile
         }
         $('#imageContainer').append("<div id='" + imageModelFile.LinkId + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
-            " oncontextmenu='imageCtx(\"" + imageModelFile.LinkId + "\")' onclick='startSlideShow(\"" + imageModelFile.LinkId + "\")'" + " src='" + imageModelFile.Link + "'/></div>");
+            " oncontextmenu='imageCtx(\"" + imageModelFile.LinkId + "\")' onclick='startSlideShow(\"" + imageModelFile.LinkId + "\")'" +
+            " src='" + imageModelFile.Link + "'/></div>");
     });
 
     if (imageLinksModel.SubDirs.length > 1) {
@@ -269,16 +261,22 @@ function processImages(imageLinksModel) {
     $.each(imageLinksModel.SubDirs, function (idx, subDir) {
         if (subDir.Link === null)
             subDir.Link = "Images/redballon.png";
-        var kludge = "<div class='" + imageFrameClass + "' onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.FolderId + "\")'>" +
+        var kludge = "<div id='" + subDir.LinkId + "' class='" + imageFrameClass +
+            "' oncontextmenu='folderCtx(\"" + subDir.LinkId + "\")'" +
+            " onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.FolderId + "\")'>" +
             "<img class='folderImage' src='" + subDir.Link + "'/>";
 
         if (subDir.SubDirCount === 0)
-            kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.FileCount + ")</div></div>";
+            kludge += "<div class='" + subDirLabel + "'   >" +
+                subDir.DirectoryName + "  (" + subDir.FileCount + ")</div></div>";
         else {
             deepChildCount = subDir.FileCount;
             getDeepChildCount(subDir);
-            if (deepChildCount === 0) // this must be just a collection of stepchildren
+            if (deepChildCount === 0) { // this must be just a collection of stepchildren
+                $('#fileCount').html(subDir.SubDirCount);
+                // get deep count of stepchildren
                 kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.SubDirCount + ")</div></div>";
+            }
             else {
                 if (subDir.SubDirCount > 1)
                     kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.SubDirCount + "/" + deepChildCount.toLocaleString() + ")</div></div>";
@@ -293,7 +291,6 @@ function processImages(imageLinksModel) {
     $('#imageContainer').show();
     resizeImageContainer();
     //$('#footerMessage').html(": " + imageLinksModel.Files.length);
-    //$('#footerMessage').html(": ");
 }
 
 function subFolderPreClick(isStepChild, subFolderPreClickFolderId) {
@@ -571,39 +568,23 @@ function imageCtx(imgId) {
     $('#imageContextMenu').fadeIn();
 }
 
-function XXctxSAP(imgId) {
+function folderCtx(imgId) {
     event.preventDefault();
     window.event.returnValue = false;
+    loadFolderContextMenu();
     var thisImageDiv = $('#' + imgId + '');
-    var sstring = thisImageDiv.html();
-    selectedImageLinkId = sstring.substr(sstring.lastIndexOf("_") + 1, 36);
-    if (viewerShowing) {
-        $('#imageContextMenu').css("top", event.clientY + 5);
-        $('#imageContextMenu').css("left", event.clientX);
-    }
-    else {
-        var picpos = thisImageDiv.offset();
-        var picLeft = Math.max(0, picpos.left + thisImageDiv.width() - $('#imageContextMenu').width() - 50);
-        $('#imageContextMenu').css("top", picpos.top + 5);
-        $('#imageContextMenu').css("left", picLeft);
-    }
+    var picpos = thisImageDiv.offset();
+    var picLeft = Math.max(0, picpos.left + thisImageDiv.width() - $('#folderContextMenu').width() - 50);
+    $('#folderContextMenu').css("top", picpos.top + thisImageDiv.height());
+    $('#folderContextMenu').css("left", picLeft);
+    $('#folderLinkInfo').hide();
 
-    $('#ctxModelName').html(currentAlbumJSfolderName);
-
-    if (currentFolderRoot === "archive" ||
-        currentFolderRoot === "centerfold") {
-        $('#ctxSeeMore').hide();
-    }
-
-    //"    <div id='linkInfo' class='innerContextMenuInfo'>\n" +
-
-    $('#linkInfo').hide();
     $('.adminLink').hide();
     //if (isInRole("Oggle admin")) {
     //    $('.adminLink').show();
     //    alert("$('.adminLink').show();" );
     //}
-
+    $('#folderContextMenu').show();
 }
 
 function contextMenuAction(action) {
@@ -616,15 +597,10 @@ function contextMenuAction(action) {
                 PageId: albumFolderId,
                 CalledFrom: "contextMenuAction"
             });
-            var disableViewerKeys = viewerShowing;
-            viewerShowing = false;
+            showFolderInfoDialog(albumFolderId);
             $("#imageContextMenu").fadeOut();
             //alert("showModelInfoDialog from contextMenuAction");
-            showModelInfoDialog($('#ctxModelName').html(), modelFolderId, selectedImage);// $('#' + currentContextLinkId + '').attr("src"));
-            $('#modelInfoDialog').on('dialogclose', function (event) {
-                viewerShowing = disableViewerKeys;
-                $('#modelInfoDialog').hide();
-            });
+            //showModelInfoDialog($('#ctxModelName').html(), modelFolderId, selectedImage);// $('#' + currentContextLinkId + '').attr("src"));
             break;
         case "jump":
             rtpe("SEE", albumFolderId, modelFolderId, modelFolderId);
@@ -673,6 +649,9 @@ function contextMenuAction(action) {
             $("#imageContextMenu").fadeOut();
             removeImage();
             break;
+        case "showFolderLinks":
+
+            break;
         case "setF":
             setFolderImage(selectedImageLinkId, albumFolderId, "folder");
             break;
@@ -709,7 +688,7 @@ function slowlyShowFolderInfoDialog(index, folderName, folderId, parentId, rootF
             alert("disable this");
             if (typeof pause === 'function')
                 pause();
-            showEitherModelorFolderInfoDialog(index, folderName, folderId, parentId, rootFolder);
+            showFolderInfoDialog(index);
         }
     }, 1100);
 }
@@ -736,3 +715,16 @@ function loadImageContextMenu() {
         "</div>\n");
 }
 
+function loadFolderContextMenu() {
+    $('#imageContextMenuContainer').html(
+        "<div id='folderContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
+        "    <div id='ctxFolderInfo' onclick='contextMenuAction(\"show\")'>show folder info</div>\n" +
+        "    <div id='ctxMetaTags' onclick='contextMenuAction(\"meta\")'>show meta tags</div>\n" +
+        //"    <div onclick='contextMenuAction(\"explodeFolderImage\")'>explode</div>\n" +
+        //"    <div onclick='contextMenuAction(\"showFolderLinks\")'>Show Links</div>\n" +
+        //"    <div id='folderLinkInfo' class='innerContextMenuInfo'>\n" +
+        //"        <div id='folderLinkInfoContainer'></div>\n" +
+        //"    </div>\n" +
+        //"    <div onclick='contextMenuAction(\"showLinks\")'>Show Image info</div>\n" +
+        "</div>\n");
+}
