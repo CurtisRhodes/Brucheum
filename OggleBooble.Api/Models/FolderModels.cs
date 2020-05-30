@@ -20,7 +20,7 @@ namespace OggleBooble.Api.Models
         public string Boobepedia { get; set; }
         public string FolderImage { get; set; }
         public string LinkStatus { get; set; }
-        public bool IsLandscape { get; set; }
+        public bool HasImages { get; set; }
         public string Success { get; set; }
     }
     public class SearchResultsModel

@@ -192,13 +192,15 @@ namespace OggleBooble.Api.Controllers
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+
+                    folderDetailModel.HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
                     folderDetailModel.FolderName = dbFolder.FolderName;
                     folderDetailModel.RootFolder = dbFolder.RootFolder;
+                    folderDetailModel.FolderImage = db.ImageLinks.Where(i => i.Id == dbFolder.FolderImage).Select(i => i.Link).FirstOrDefault();
 
                     CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
                     if (categoryFolderDetails != null)
                     {
-                        //folderDetailModel.FolderName = categoryFolderDetails.;
                         folderDetailModel.Measurements = categoryFolderDetails.Measurements;
                         folderDetailModel.Nationality = categoryFolderDetails.Nationality;
                         folderDetailModel.ExternalLinks = categoryFolderDetails.ExternalLinks;
@@ -209,12 +211,11 @@ namespace OggleBooble.Api.Controllers
                         folderDetailModel.LinkStatus = categoryFolderDetails.LinkStatus;
                         //folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
                     }
-                    ImageLink imageLink = db.ImageLinks.Where(g => g.Id == dbFolder.FolderImage).FirstOrDefault();
-                    if (imageLink != null)
-                    {
-                        folderDetailModel.FolderImage = imageLink.Link;
-                        folderDetailModel.IsLandscape = (imageLink.Width > imageLink.Height);
-                    }
+                    //ImageLink imageLink = db.ImageLinks.Where(g => g.Id == dbFolder.FolderImage).FirstOrDefault();
+                    //if (imageLink != null)
+                    //{
+                    //    folderDetailModel.FolderImage = imageLink.Link;
+                    //}
                 }
                 folderDetailModel.Success = "ok";
             }
@@ -235,7 +236,11 @@ namespace OggleBooble.Api.Controllers
                 {
                     CategoryFolderDetail dbFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == model.FolderId).FirstOrDefault();
                     if (dbFolderDetail == null)
-                        success = Insert(model);
+                    {
+                        dbFolderDetail = new CategoryFolderDetail();
+                        dbFolderDetail.FolderId = model.FolderId;
+                        db.CategoryFolderDetails.Add(dbFolderDetail);
+                    }
                     else
                     {
                         dbFolderDetail.Born = model.Born;

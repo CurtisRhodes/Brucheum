@@ -8,16 +8,13 @@
 }*/
 
 .folderDialogContainer {
-    background-color: #000;
-}
-.modelInfoCommentArea {
-    height: 100%;
+    background: var(--oggleBackgroundColor);
+    overflow: auto;
 }
 .folderDialogFooter {
     position: relative;
     padding: 6px;
-    bottom: 0px;
-    background: var(--oggleBackgroundColor);
+    bottom: 8px;
 }
 
 .folderCategoryDialogButton {
@@ -30,23 +27,50 @@
     cursor: pointer;
 }
 
-/*#folderCategoryDialog .ui-widget textarea {
-    font-family: 'Comic Sans MS';
-    color: #79078f;
-    font-size: 18px;
-    font-weight: normal;
-}
-
-.catDlgReadOnlyTextArea {
-    height: 350px;
-    width: 400px;
+.modelInfoCommentArea {
+    height: 100%;
     overflow-y: auto;
-    background-color: var(--oggleBackgroundColor);
-    padding: 9px;
-    margin: 8px;
-    border-radius: 22px;
+    width: 100%;
+    padding: 5px;
+    margin-right: 4px;
 }
 
-.metaTagRow {
-    display: none;
-}*/
+/*  CONSOLIDATED FROM MODEL INFO DIALOG*/
+.modelInfoDetailsArea {
+    float: left;
+    width: 100%;
+}
+    .modelInfoDetailsArea div {
+        display: inline-block;
+    }
+    
+.modelInfoDialogLabel {
+    width: 50px;
+    margin-right: 6px;
+    text-align: right;
+    font-size: 17px;
+}
+
+.modelDialogInput {
+    width: 320px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-bottom: 2px;
+    font-size: 18px;
+}
+
+.modelDialogImage {
+    height: 150px;
+    min-width: 160px;
+    margin-left: 4px;
+    display: block;
+}
+
+.modelDialogSelect {
+    width: 220px;
+    margin-left: -6px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-bottom: 2px;
+}

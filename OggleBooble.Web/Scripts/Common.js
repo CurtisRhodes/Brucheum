@@ -599,6 +599,11 @@ function todayString() {
     return mm + '/' + dd + '/' + yyyy;
 }
 
+function showMyAlert(message) {
+    alert(message);
+}
+
+// MOVE TO 
 function getVisitorInfo() {
     var info = {
 
@@ -666,28 +671,30 @@ function checkFor404(errorMessage, calledFrom) {
             checkFor404Loop = setInterval(function () {
                 if (!connectionVerified) {
                     if (++verifyConnectionCount > 3) {
-                        $('#connectingMsg').show();
+                        $('#launchingService').show();
                     }
                     if (verifyConnectionCount > verifyConnectionCountLimit) {
                         if (!canIgetaConnectionMessageShowing) {
-                            $('#connectingMsg').hide();
+                            $('#launchingService').hide();
                             $('#customMessage').html(
                                 "<div><div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'></div>\n" +
                                 "     <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
                                 "</div>").show();
 
-                            console.log("connection message showing");
+                            console.log("canIgetaConnection message showing");
                             var visitorId = getCookieValue("VisiorId");
                             if (isNullorUndefined(visitorId))
                                 visitorId = "--";
                             canIgetaConnectionMessageShowing = true;
-                            logError({
-                                VisitorId: visitorId,
-                                ActivityCode: "404",
-                                Severity: 1,
-                                ErrorMessage: "SERVICE DOWN",
-                                CalledFrom: "checkFor404Loop - " + calledFrom
-                            });
+
+                            if (document.domain !== "localhost")
+                                logError({
+                                    VisitorId: visitorId,
+                                    ActivityCode: "404",
+                                    Severity: 1,
+                                    ErrorMessage: "SERVICE DOWN",
+                                    CalledFrom: "checkFor404Loop - " + calledFrom
+                                });
                         }
                     }
                     verifyConnection();
@@ -717,7 +724,7 @@ function verifyConnection() {
                         connectionVerified = true;
                         verifyConnectionCount = 0;
                         console.log("verifyConnection: connection verified");
-                        $('#connectingMsg').hide();
+                        $('#launchingService').hide();
                         $('#customMessage').hide();
                         canIgetaConnectionMessageShowing = false;
                     }
@@ -727,30 +734,9 @@ function verifyConnection() {
                 }
                 else {
                     connectionVerified = false;
-                    //logError({
-                    //    VisitorId: getCookieValue("VisiorId"),
-                    //    ActivityCode: "044",
-                    //    Severity: 1,
-                    //    ErrorMessage: successModel.Success,
-                    //    CalledFrom: "verifyConnection()"
-                    //});
                 }
             },
-            error: function (jqXHR) {
-                var erVisitorId = getCookieValue("VisiorId");
-                if (!isNullorUndefined(erVisitorId)) {
-                    var errorMessage = getXHRErrorDetails(jqXHR);
-                    console.log(errorMessage + " " + settingsArray.ApiServer + "api/Common/VerifyConnection");
-                    if (errorMessage.indexOf("Not Connect") > -1) {
-                        logError({
-                            VisitorId: erVisitorId,
-                            ActivityCode: "XHR",
-                            Severity: 1,
-                            ErrorMessage: errorMessage + ". CanIgetShowing: " + canIgetaConnectionMessageShowing + ". in404Loop: " + inCheckFor404Loop,
-                            CalledFrom: "verifyConnection()"
-                        });
-                    }
-                }
+            error: function () {
                 connectionVerified = false;
             }
         });

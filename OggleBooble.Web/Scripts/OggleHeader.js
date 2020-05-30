@@ -1,5 +1,4 @@
-﻿
-function setOggleHeader(folderId, subdomain) {
+﻿function setOggleHeader(folderId, subdomain) {
     //if (getCookieValue("IpAddress") === "68.203.90.183") alert("setOggleHeader subdomain " + subdomain + "  folderId: " + folderId + " containsImageLinks: " + containsImageLinks);
     if (subdomain === undefined) {
         subdomain = "boobs";
@@ -19,14 +18,13 @@ function setOggleHeader(folderId, subdomain) {
             //$('#headerMessage').html("onresize: " + event.pageX + " note-editable.height: " + $('.note-editable').height());
             $('#headerMessage').html("dH: " + $('#draggableDialog').height() + " sH: " + $('.note-editable').height());
 
-            $('.note-editable').height($('#draggableDialog').height() - 200);
+            $('.note-editable').height($('#draggableDialog').height() - 360);
         }
     });
 
     setHeaderDetails(folderId, subdomain);
     setLoginHeaderSection();
 }
-
 
 // requires no database call
 function setHeaderDetails(folderId, subdomain) {
@@ -234,12 +232,10 @@ function headerHtml(folderId) {
         "   <div id='modalContent' class='modalContentStyle'></div>\n" +
         "</div>\n" +
 
-        "<div id='launchingService' class='floatLeft'>\n" +
+        "<div id='launchingService' class='floatLeft displayHidden'>\n" +
         "    <div class='centeringOuterShell randomImageContainer'>\n" +
         "        <div class='centeringInnerShell'>\n" +
-        "            <div id='connectingMsg' class='displayHidden'>\n" +
-        "                <img src='Images/altair02.gif' />\n" +
-        "            </div>\n" +
+        "           <img src='Images/altair02.gif' />\n" +
         "        </div>\n" +
         "    </div>\n" +
         "</div>\n";

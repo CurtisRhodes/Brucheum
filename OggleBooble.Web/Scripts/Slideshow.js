@@ -20,7 +20,7 @@ var slideShowRunning = false;
 //var ipAddress;
 var visitorId;
 var sessionCount = 0;
-var slideShowButtonsActive = true;
+var slideShowButtonsActive = false;
 var includeSubFolders;
 
 function launchViewer(folderId, startItem, showAllChildren) {
@@ -31,7 +31,7 @@ function launchViewer(folderId, startItem, showAllChildren) {
     sessionCount = 0;
     $('#imageContainer').fadeOut();
     getSlideshowItems(folderId, startItem);
-
+    slideShowButtonsActive = true;
     $('#imagePageLoadingGif').fadeIn();
     $('#imageContainer').fadeOut();
     $('#slideShowContainer').html(showSlideshowHtml()).show();
@@ -368,6 +368,7 @@ function closeViewer(calledFrom) {
 
     viewerShowing = false;
     slideShowRunning = false;
+    slideShowButtonsActive = false;
     clearInterval(imageViewerIntervalTimer);
     $('#txtStartSlideShow').html("start slideshow");
 

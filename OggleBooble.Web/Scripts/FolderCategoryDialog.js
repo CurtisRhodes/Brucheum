@@ -7,18 +7,18 @@ function showCategoryDialog(folderId) {
     // --alter table OggleBooble.ImageFolder add CatergoryDescription nvarchar(max)
     // 4/30/2019  --first use of jQuery dialog
     try {
+        $('#imagePageLoadingGif').show();
         $('#draggableDialogContents').html(folderDialogHtml());
-       
-        //$('#draggableDialog').css("top", ($(window).height() - $('#draggableDialog').height()) / 2);
         $('#draggableDialog').css("top", $('.oggleHeader').height() + 20);
-        //$('.centeringOuterShell').css("left", $('.centeringInnerShell').offset().left - $('#draggableDialog').width() / 2);
-        //$('#btnCatDlgCancel').hide();
-        //$('#draggableDialog').css("top", $('#header').height() + 108);
+        $('#summernoteContainer').summernote({
+            toolbar: "none",
+            height: "300", 
+            dialogsInBody: true
+        });
+        $('#summernoteContainer').summernote('disable');
 
-        $('#summernoteContainer').summernote({ toolbar: "none" });
-        $('#summernoteContainer').summernote({ height: "300" });
-        //$('#summernoteContainer').summernote({ toolbar: "none" });
-        $("#draggableDialog").show();
+        $(".note-editable").css('font-size', '19px');
+        $(".modelDialogInput").prop('readonly', true);;
 
         if (typeof pause === 'function')
             pause();
@@ -27,7 +27,6 @@ function showCategoryDialog(folderId) {
         // how to determine folder type : if a category folder or a model album
         // if rootfolder = boobs show just the CommentText 
         // 
-
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/FolderDetail/GetFolderInfo?folderId=" + folderId,
@@ -46,11 +45,19 @@ function showCategoryDialog(folderId) {
                     $('#txtBorn').val(folderDetails.Born);
                     $('#txtNationality').val(folderDetails.Nationality);
                     $('#txtBorn').val(folderDetails.Born);
-                    $('#txtBoobs').val(folderDetails.Measurements);
+                    $('#txtBoobs').val(folderDetails.Boobs);
+                    $('#txtMeasurements').val(folderDetails.Measurements);
                     //$('#txtStatus').val(folderDetails.LinkStatus);
                     $("#summernoteContainer").summernote("code", folderInfo.CommentText);
+
+                    determineFolderType();
+
+                    $('#imagePageLoadingGif').hide();
+                    $("#draggableDialog").fadeIn();
                 }
                 else {
+                    $('#imagePageLoadingGif').hide();
+                    showMyAlert("unable to show folder info");
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "JQE",
@@ -89,37 +96,7 @@ function showCategoryDialog(folderId) {
     }
 }
 
-function editFolderDialog() {
-    if ($('#btnCatDlgEdit').html() === "Save") {
-        saveFolderDialog();
-        $('#btnCatDlgEdit').html("Edit");
-        return;
-    }
-    if (!isLoggedIn()) {
-        alert("you must be logged in to edit folder comments");
-        return;
-    }
-    if ($('#btnCatDlgEdit').html() === "Edit") {
-        //$('#headerMessage').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
-        $('#summernoteContainer').summernote("destroy");
-        $('#summernoteContainer').summernote({ toolbar: [['codeview']] });
-        $("#summernoteContainer").summernote("code", folderInfo.CommentText);
-        $('#summernoteContainer').summernote({ focus: true });
-
-        $('#boobsInputArea').html("<select id='selBoobs' class='modelDialogSelect'>\n" +
-            "    <option value='Real'>Real</option>\n" +
-            "    <option value='Fake'>Fake</option>\n" +
-            "</select><br />\n");
-        $('#selBoobs').val(folderDetails.Boobs).change();
-
-        $('#btnCatDlgEdit').html("Save");
-        $('#btnCatDlgCancel').show();
-    }
-}
-
-function saveFolderDialog() {
-    folderDetailModel = {};
-
+function determineFolderType() {
     //    FolderId { get; set; }
     //    FolderName { get; set; }
     //    RootFolder { get; set; }
@@ -136,29 +113,99 @@ function saveFolderDialog() {
     //    IsLandscape { get; set; }
     //    Success { get; set; }
 
+    if (folderInfo.RootFolder === "centerfold") {
+        $('#modelInfoDetails').show();
+        return;
+    }
+
+    if (folderInfo.RootFolder === "archive") {
+        if (folderInfo.HasImages) {
+            $('#modelInfoDetails').show();
+            return;
+        }
+    }
+}
+
+function editFolderDialog() {
+    if ($('#btnCatDlgEdit').html() === "Save") {
+        saveFolderDialog();
+        return;
+    }
+    if (!isLoggedIn()) {
+        showMyAlert("you must be logged in to edit folder comments");
+        return;
+    }
+    $('#btnCatDlgEdit').html("Save");
+    $(".modelDialogInput").prop('readonly', false);
+    $("#txtFolderName").prop('readonly', true);
+    $('#summernoteContainer').summernote('enable');
+
+    $('#summernoteContainer').summernote("destroy");
+    $('#summernoteContainer').summernote({ toolbar: [['codeview']] });
+   
+
+    $('#boobsInputArea').html("<select id='selBoobs' class='modelDialogInput'>\n" +
+        "    <option value='Real'>Real</option>\n" +
+        "    <option value='Fake'>Fake</option>\n" +
+        "</select><br />\n");
+    $('#selBoobs').val(folderInfo.Boobs).change();
+    $('#btnCatDlgCancel').show();
+}
+
+function saveFolderDialog() {
+    $('#imagePageLoadingGif').show();
+    // LOAD GETS
+    folderInfo.Born = $('#txtBorn').val();
+    folderInfo.Nationality = $('#txtNationality').val();
+    folderInfo.Measurements = $('#txtMeasurements').val();
+    folderInfo.Boobs = $('#selBoobs').val();
+    folderInfo.CommentText = $('#summernoteContainer').summernote('code');
+    //folderInfo.ExternalLinks = $('#externalLinks').summernote('code');
+    //folderInfo.LinkStatus = $('#txtStatus').val();
+
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "/api/FolderDetail/Update",
-
-        //EditFolderCategory?folderId=" + categoryFolderId + " & commentText=" + $('#catDlgSummerNoteTextArea').summernote('code'),
-            success: function(success) {
+        data: folderInfo,
+        success: function (success) {
+            $('#imagePageLoadingGif').fadeOut();
             if (success === "ok") {
                 displayStatusMessage("ok", "category description updated");
                 $('#btnCatDlgEdit').html("Edit");
-                $('#btnCatDlgMeta').hide();
+                //$('#btnCatDlgMeta').hide();
+                $('#btnCatDlgCancel').hide();
+                $(".modelDialogInput").prop('readonly', true);;
+
+                $('#summernoteContainer').summernote("destroy");
+                $('#summernoteContainer').summernote({ toolbar: "none" });
+                $('#summernoteContainer').summernote('disable');
             }
             else {
-                sendEmailToYourself("jquery fail in FolderCategory.js saveCategoryDialogText", success);
-                if (document.domain === 'localhost')
-                    alert("EditFolderCategory: " + success);
+                //sendEmailToYourself("jquery fail in FolderCategory.js saveCategoryDialogText", success);
+                if (document.domain === 'localhost') alert("EditFolderCategory: " + success);
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "JQE",
+                    Severity: 2,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "saveFolderDialog"
+                });
             }
         },
         error: function (jqXHR) {
+            $('#imagePageLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "saveCategoryDialogText")) {
-                sendEmailToYourself("XHR ERROR in FolderCategory.js saveCategoryDialogText",
-                    "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" +
-                    $('#catDlgSummerNoteTextArea').summernote('code') + " Message: " + errorMessage);
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "XHR",
+                    Severity: 2,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "saveFolderDialog"
+                });
+                //sendEmailToYourself("XHR ERROR in FolderCategory.js saveCategoryDialogText",
+                //    "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" +
+                //    $('#catDlgSummerNoteTextArea').summernote('code') + " Message: " + errorMessage);
             }
         }
     });
@@ -166,19 +213,18 @@ function saveFolderDialog() {
 
 function folderDialogHtml() {
     return "<div class='folderDialogContainer'>\n" +
-        "   <div class='modelInfoDetailsArea'>\n" +
-        "       <div class='flexContainer'>\n" +
-        "           <div class='floatLeft'>\n" +
-        "               <div class='modelInfoDialogLabel'>name</div><input id='txtFolderName' class='modelDialogInput'/>\n" +
-        "               <div class='modelInfoDialogLabel'>from</div><input id='txtNationality' class='modelDialogInput'/>\n" +
-        "               <div class='modelInfoDialogLabel'>born</div><input id='txtBorn' class='modelDialogInput'/>\n" +
-        "               <div id=''boobsInputArea' class='modelInfoDialogLabel'>boobs</div><input id='txtBoobs' class='modelDialogInput'/>\n" +
-        "               <div class='modelInfoDialogLabel'>figure</div><input id='txtMeasurements' class='modelDialogInput'/>\n" +
-        "           </div>\n" +
-        "           <div class='floatLeft'>\n" +
-        "               <img id='modelDialogThumbNailImage' src='/Images/redballon.png' class='modelDialogImage' />\n" +
-        "           </div>\n" +
+        "   <div id='modelInfoDetails' class='flexContainer displayHidden'>\n" +
+        "       <div class='modelInfoDetailsArea'>\n" +
+        "          <div><div class='modelInfoDialogLabel'>name</div><div class='modelInfoValue'><input id='txtFolderName' class='modelDialogInput'/></div></div>\n" +
+        "           <div><div class='modelInfoDialogLabel'>from</div><div class='modelInfoValue'><input id='txtNationality' class='modelDialogInput'/></div></div>\n" +
+        "           <div><div class='modelInfoDialogLabel'>born</div><div class='modelInfoValue'><input id='txtBorn' class='modelDialogInput'/></div></div>\n" +
+        "           <div><div class='modelInfoDialogLabel'>boobs</div><div id='boobsInputArea'><div class='modelInfoValue'><input id='txtBoobs' class='modelDialogInput'/></div></div></div>\n" +
+        "           <div><div class='modelInfoDialogLabel'>figure</div><div class='modelInfoValue'><input id='txtMeasurements' class='modelDialogInput'/></div></div>\n" +
         "       </div>\n" +
+        "       <div class='floatLeft'>\n" +
+        "           <img id='modelDialogThumbNailImage' src='/Images/redballon.png' class='modelDialogImage' />\n" +
+        "       </div>\n" +
+        "   </div>\n" +
         "   <div class='modelInfoCommentArea'>\n" +
         "       <textarea id='summernoteContainer'></textarea>\n" +
         "   </div>\n" +
@@ -193,14 +239,16 @@ function folderDialogHtml() {
 function cancelEdit() {
     $('#btnCatDlgEdit').html("Edit");
     $('#btnCatDlgCancel').hide();
-    $('#summernoteContainer').summernote("destroy");
+
+    $('#summernoteContainer').summernote("destroy"); // needed to reset toolbar
     $('#summernoteContainer').summernote({ toolbar: "none" });
-    $("#summernoteContainer").summernote("code", folderInfo.CommentText);
-    $('#summernoteContainer').summernote({ focus: false });
+    $('#summernoteContainer').summernote('disable');
+    $("#summernoteContainer").summernote("code", folderInfo.CommentText); // reload unedited to cancel changes
 }
 
 function addMetaTags() {
-    openMetaTagDialog(categoryFolderId);
+
+    //openMetaTagDialog(categoryFolderId);
 }
 
 function considerClosingCategoryDialog() {
@@ -208,4 +256,15 @@ function considerClosingCategoryDialog() {
         $('#folderCategoryDialog').dialog("close");
     }
 }
+
+
+function showReadOnlyModelInfoDialogHtml() {
+    $('#modelInforDialogContainer').html(
+        "<div id='folderCategoryDialog' class='oggleDialogWindow' title='' onmouseleave='considerClosingCategoryDialog()'>\n" +
+        "    <div id='catDlgSummerNoteTextArea'></div>\n" +
+        "    <div id='btnCatDlgEdit' class='folderCategoryDialogButton' onclick='editFolderDialog()'>Edit</div>\n" +
+        "    <div id='btnCatDlgMeta' class='folderCategoryDialogButton displayHidden' onclick='addMetaTags()'>add meta tags</div>\n" +
+        "</div>\n");
+}
+
 

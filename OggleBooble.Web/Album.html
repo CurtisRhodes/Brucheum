@@ -133,25 +133,11 @@
         });
 
         function resizeAlbumPage() {
-            //var winH = $(window).height();
-            //var headerH = $('.oggleHeader').height() + 100;
             var visH = $(window).height() - $('.oggleHeader').height();
             $('.threeColumnLayout').css("min-height", visH);
-
-            //$('#feedbackBanner').css("top", winH - headerH - 100);
             $('#feedbackBanner').css("top", visH - 100);
-            //$('#imageContainer').height(winH - headerH);
             $('.middleColumn').css("min-height", visH);
-
-            
-            $('#aboveImageContainerMessageArea').html("resize: visH: " + visH + "  col: " + $('.threeColumnLayout').height()
-                + "  con: " + $('#imageContainer').height());
-
-            //var winVH = document.body.clientHeight; // $(window).innerHeight();
-            //$('.middleColumn').css("height", winH - headerH);
-            //$('#aboveImageContainerMessageArea').html("simple stupid")
-            //$('#headerMessage').html("resize: winH: " + winH + "  winVH: " + winVH + "  3col: " + $('.threeColumnLayout').height());
-            //setTimeout(function () { $('#headerMessage').html("="); }, 50000);
+            //$('#aboveImageContainerMessageArea').html("resize: visH: " + visH + "  col: " + $('.threeColumnLayout').height() + "  con: " + $('#imageContainer').height());
         }
 
     </script>

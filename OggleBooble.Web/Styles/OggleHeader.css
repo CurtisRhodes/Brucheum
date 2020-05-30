@@ -45,7 +45,7 @@
 .oggleDraggableDialog {
     position: absolute;
     z-index: 36;
-    min-width: 500px;
+    width: 650px;
     display: none;
     resize: both;
     overflow: auto;

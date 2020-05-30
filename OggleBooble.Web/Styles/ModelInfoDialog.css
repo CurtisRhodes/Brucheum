@@ -8,14 +8,6 @@ label {
     width: 105px !important;
 }
 
-.modelInfoCommentArea {
-    height: 200px;
-    overflow-y: auto;
-    width: 100%;
-    padding: 5px;
-    margin-right: 4px;
-}
-
 .trackbackLinksArea {
     height: 121px;
     border: solid .5px #ccc;
@@ -29,37 +21,6 @@ label {
         font-size : 15px;
     }
 
-.modelDialogImage {
-    height: 150px;
-    min-width: 160px;
-    margin-left: 4px;
-    display: block;
-}
-
-.modelInfoDialogLabel {
-    display: inline-block;
-    width: 61px;
-    margin-right: 6px;
-    text-align: right;
-    font-size: 13px;
-}
-
-.modelDialogInput {
-    width: 220px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    margin-bottom: 2px;
-}
-
-.modelDialogSelect {
-    width: 220px;
-    margin-left: -6px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    margin-bottom: 2px;
-}
 
 .addLinkIcon {
     cursor: pointer;
