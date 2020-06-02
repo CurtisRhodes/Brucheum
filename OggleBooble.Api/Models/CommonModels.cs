@@ -30,6 +30,23 @@ namespace OggleBooble.Api.Models
         public string RootFolder { get; set; }
         public string Success { get; set; }
     }
+    public class LogImageHitDataModel
+    {
+        public string VisitorId { get; set; }
+        public int PageId { get; set; }
+        public string LinkId { get; set; }
+        public bool IsInitialHit { get; set; }
+    };
+    public class ImageHitSuccessModel
+    {
+        public int ImageHits { get; set; }
+        public int UserImageHits { get; set; }
+        public int UserPageHits { get; set; }
+        public string PageName { get; set; }
+        public string IpAddress { get; set; }
+        public DateTime HitDateTime { get; set; }
+        public string Success { get; set; }
+    }
     public class LogErrorModel
     {
         public string VisitorId { get; set; }

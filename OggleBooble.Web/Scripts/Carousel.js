@@ -14,7 +14,6 @@ var folderCategoryDialogIsOpen = false;
 var forgetShowingCatDialog;
 var imageHistory = [];
 var carouselImageViews = 0;
-
 var mainImageClickId;
 var knownModelLabelClickId;
 var imageTopLabelClickId;
@@ -24,7 +23,7 @@ function launchCarousel() {
     //$('#footerMessage').html("launching carousel");
     loadCarouselHtml();
 
-    //if (isNullorUndefined(window.localStorage["carouselSettings"])) {
+    if (isNullorUndefined(window.localStorage["carouselSettings"])) {
 
         var carouselSettings = {
             includeArchive: true,
@@ -34,9 +33,9 @@ function launchCarousel() {
             includePortrait: false
         };
         window.localStorage["carouselSettings"] = JSON.stringify(carouselSettings);
-    //}
-    //else
-    //    console.log("carouselSettings found in local storage!");
+    }
+    else
+        console.log("carouselSettings found in local storage!");
     let lsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
 
     loadImages("boobs", Date.now(), 0, 366, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
@@ -87,10 +86,11 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
     var start = Date.now();
     try {
         $('#imageTopLabel').hide();
-        $('#footerMessage').html("loading carousel");
+        //$('#footerMessage').html("loading carousel");
+        //alert("loading carousel");
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/Carousel/GetCarouselImages?root=" + rootFolder + "&skip=" + skip + "&take=" + take +
+            url: settingsArray.ApiServer + "api/IndexPage/GetCarouselImages?root=" + rootFolder + "&skip=" + skip + "&take=" + take +
                 "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
             success: function (carouselInfo) {
                 if (carouselInfo.Success === "ok") {
@@ -579,15 +579,37 @@ function removeItemsFromArray(rootFolder) {
 }
 
 function assuranceArrowClick(direction) {
-    reportEvent("CAA", "direction: " + direction, direction, homePageId);
-    if (eventDetail === "foward") {
+    //reportEvent(eventCode, calledFrom, eventDetail, pageId) {
+    reportEvent("CAA", carouselItemArray[imageIndex].LinkId, "direction: " + direction,  homePageId);
+    if (direction === "foward") {
         newImageIndex = Math.floor(Math.random() * carouselItemArray.length);
         intervalBody(newImageIndex);
         resume();
     }
     else {
         pause();
+        //imageHistory.pop();
         imageHistory.pop();
         intervalBody(imageHistory.pop());
     }
 }
+
+//public class vwCarouselItem {
+//    public string RootFolder { get; set; }
+//    public int FolderId { get; set; }
+//    public string FolderName { get; set; }
+//    public string FolderParent { get; set; }
+//    public int FolderParentId { get; set; }
+//    public string FolderGP { get; set; }
+//    public int FolderGPId { get; set; }
+//    public int ImageFolderId { get; set; }
+//    public string ImageFolder { get; set; }
+//    public string ImageFolderParent { get; set; }
+//    public int ImageFolderParentId { get; set; }
+//    public string ImageFolderGP { get; set; }
+//    public int ImageFolderGPId { get; set; }
+//    public string LinkId { get; set; }
+//    public string Link { get; set; }
+//    public int Width { get; set; }
+//    public int Height { get; set; }
+//}

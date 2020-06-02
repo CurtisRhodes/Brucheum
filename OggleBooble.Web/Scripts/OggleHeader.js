@@ -14,16 +14,20 @@
     $('.oggleHeader').append(draggableDialog());
     $('#draggableDialog').resizable({
         resize: function (event, ui) {
-
             //$('#headerMessage').html("onresize: " + event.pageX + " note-editable.height: " + $('.note-editable').height());
             $('#headerMessage').html("dH: " + $('#draggableDialog').height() + " sH: " + $('.note-editable').height());
-
             $('.note-editable').height($('#draggableDialog').height() - 360);
         }
     });
 
     setHeaderDetails(folderId, subdomain);
     setLoginHeaderSection();
+}
+
+function dragableDialogClose() {
+    $('#draggableDialog').fadeOut();
+    if (typeof resume === 'function')
+        resume();
 }
 
 // requires no database call
@@ -325,12 +329,6 @@ function cancelDragMode() {
 //    window.removeEventListener('mousemove', resize)
 //}
 
-
-
-
-
-
-
 function showPornHeader(folderId) {
     $('header').switchClass('boobsHeader', 'pornHeader');
     changeFavoriteIcon();
@@ -370,7 +368,6 @@ function showBoobsHeader(folderId) {
     $('#breadcrumbContainer').append("<div id='rankerTag' class='headerFeatureBanner'>" +
         "<a href='javascript:rtpe(\"BAC\"," + folderId + ",\"archive button\",3)'>babes archive</a></div>\n");
 }
-
 
 //"                  <img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
 //"                   title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +

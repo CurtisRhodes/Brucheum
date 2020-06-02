@@ -42,6 +42,7 @@ body {
 
 .threeColumnLayout {
     /*width: 100%;*/
+    background-color: var(--oggleBackgroundColor);
     height: 100%;
     display: flex;
     overflow: auto;

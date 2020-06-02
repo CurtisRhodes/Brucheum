@@ -1,5 +1,4 @@
 ﻿var folderInfo = {};
-    //<script src = "https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" ></script>
 function showFolderInfoDialog(folderId) {
     // 11:11 2/25/19
     // 2:20 4/10/2019
@@ -22,8 +21,8 @@ function showFolderInfoDialog(folderId) {
             dialogsInBody: true
         });
         $('#summernoteContainer').summernote('disable');
-
-
+        // CMX	Show Model Info Dialog
+        reportEvent("CMX", "called From", "detail", folderId);
 
         $(".note-editable").css('font-size', '19px');
         $(".modelDialogInput").prop('readonly', true);;
@@ -41,12 +40,12 @@ function showFolderInfoDialog(folderId) {
             success: function (folderDetails) {
                 if (folderDetails.Success === "ok") {
                     folderInfo = folderDetails;
-                    if (isNullorUndefined(folderDetails.CommentText)) {
-                        folderDetails.CommentText = "In in eros sit amet nunc ultrices laoreet. Nunc eu fringilla diam. Morbi eget nunc gravida, dignissim metus et, pharetra ligula." +
-                            " Maecenas efficitur nunc dapibus neque semper gravida. Donec eget commodo turpis, non accumsan sapien. Nunc elementum hendrerit sodales." +
-                            " Nam pulvinar cursus mi, id feugiat quam. Curabitur interdum pretium nunc, vitae aliquam tellus pellentesque in. Nullam eleifend viverra massa, eu vulp" +
-                            "utate nisi sagittis sit amet. Suspendisse imperdiet sem nec tempus ornare. Morbi sit amet consequat diam.";
-                    }
+                    //if (isNullorUndefined(folderDetails.CommentText)) {
+                    //    folderDetails.CommentText = "In in eros sit amet nunc ultrices laoreet. Nunc eu fringilla diam. Morbi eget nunc gravida, dignissim metus et, pharetra ligula." +
+                    //        " Maecenas efficitur nunc dapibus neque semper gravida. Donec eget commodo turpis, non accumsan sapien. Nunc elementum hendrerit sodales." +
+                    //        " Nam pulvinar cursus mi, id feugiat quam. Curabitur interdum pretium nunc, vitae aliquam tellus pellentesque in. Nullam eleifend viverra massa, eu vulp" +
+                    //        "utate nisi sagittis sit amet. Suspendisse imperdiet sem nec tempus ornare. Morbi sit amet consequat diam.";
+                    //}
                     $('#draggableDialogTitle').html(folderDetails.FolderName);
                     $('#modelDialogThumbNailImage').attr("src", folderDetails.FolderImage);
                     $('#txtFolderName').val(folderDetails.FolderName);
@@ -150,6 +149,7 @@ function editFolderDialog() {
 
     $('#summernoteContainer').summernote("destroy");
     $('#summernoteContainer').summernote({ toolbar: [['codeview']] });
+    $(".note-editable").css('font-size', '19px');
    
 
     $('#boobsInputArea').html("<select id='selBoobs' class='modelDialogInput'>\n" +
@@ -220,7 +220,7 @@ function saveFolderDialog() {
 }
 
 function folderDialogHtml() {
-    return "<div class='folderDialogContainer'>\n" +
+    return "<div class='folderDialogContainer' onmouseout='considerClosingModelInfoDialog()' >\n" +
         "   <div id='modelInfoDetails' class='flexContainer displayHidden'>\n" +
         "       <div class='modelInfoDetailsArea'>\n" +
         "          <div><div class='modelInfoDialogLabel'>name</div><div class='modelInfoValue'><input id='txtFolderName' class='modelDialogInput'/></div></div>\n" +
@@ -259,12 +259,11 @@ function addMetaTags() {
     //openMetaTagDialog(categoryFolderId);
 }
 
-function considerClosingCategoryDialog() {
-    if (!isInRole("Oggle admin") || $('#btnCatDlgEdit').html() === "Edit") {
-        $('#folderCategoryDialog').dialog("close");
+function considerClosingModelInfoDialog() {
+    if ($('#btnCatDlgEdit').html() === "Edit") {
+        dragableDialogClose();
     }
 }
-
 
 function showReadOnlyModelInfoDialogHtml() {
     $('#modelInforDialogContainer').html(

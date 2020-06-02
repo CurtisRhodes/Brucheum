@@ -21,14 +21,13 @@ function GetAllAlbumPageInfo(folderId) {
             });
         }
         else {
-
             $('.footer').hide();
             albumFolderId = folderId;
             var start = Date.now();
             $('#imagePageLoadingGif').show();
             $.ajax({
                 type: "GET",
-                url: settingsArray.ApiServer + "api/AlbumPage/GetAllAlbumPageInfo?visitorId=" + aapiVisitorId + "&folderId=" + folderId,
+                url: settingsArray.ApiServer + "api/GalleryPage/GetAllAlbumPageInfo?visitorId=" + aapiVisitorId + "&folderId=" + folderId,
                 success: function (imageLinksModel) {
                     $('#imagePageLoadingGif').hide();
                     if (imageLinksModel.Success === "ok") {
@@ -237,10 +236,11 @@ function processImages(imageLinksModel) {
                     imageFrameClass = "nonLocalImageFrame";
                 }
             }// imageModelFile
-        }
+        }  // startSlideShow(folderId, linkId)
+
         $('#imageContainer').append("<div id='" + imageModelFile.LinkId + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
-            " oncontextmenu='imageCtx(\"" + imageModelFile.LinkId + "\")' onclick='startSlideShow(\"" + imageModelFile.LinkId + "\")'" +
-            " src='" + imageModelFile.Link + "'/></div>");
+            " oncontextmenu='imageCtx(\"" + imageModelFile.LinkId + "\")' onclick='startSlideShow(" + imageModelFile.FolderId +
+            ",\"" + imageModelFile.LinkId + "\")'" + " src='" + imageModelFile.Link + "'/></div>");
     });
 
     if (imageLinksModel.SubDirs.length > 1) {
@@ -316,14 +316,14 @@ $(window).resize(function () {
     resizeImageContainer();
 });
 
-function startSlideShow(linkId) {
+function startSlideShow(folderId, linkId) {
 
     //alert("linkId: " + linkId);
 
     if (typeof staticPageFolderName === 'string') {
         isStaticPage = "true";
         currentAlbumJSfolderName = staticPageFolderName;
-        albumFolderId = staticPageFolderId;
+        //albumFolderId = staticPageFolderId;
     }
     // get image array from DOM
     var imageArray = new Array();
@@ -334,7 +334,7 @@ function startSlideShow(linkId) {
         });
     });
 
-    launchViewer(albumFolderId, linkId, false);
+    launchViewer(folderId, linkId, false);
     $('#fileCount').hide();
 }
 

@@ -1,8 +1,11 @@
 ﻿
+
+//[Route("api/IndexPage/GetLatestUpdatedFolders")]
+
 function loadUpdatedGalleriesBoxes(numItmes) {
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/LatestUpdates/GetLatestUpdatedFolders?itemLimit=" + numItmes,
+        url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?itemLimit=" + numItmes,
         success: function (latestUpdates) {
             if (latestUpdates.Success === "ok") {
                 $('.sectionLabel').show();

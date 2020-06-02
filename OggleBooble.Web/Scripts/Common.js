@@ -267,7 +267,10 @@ function sendEmailToYourself(subject, message) {
 }
 
 function logError(logErrorModel) {
-    if (document.domain === "localhost") alert("error being logged: " + logErrorModel.ErrorMessage);
+    if (document.domain === "localhost") alert("error being logged: " +
+        "\n called from: " + logErrorModel.CalledFrom +
+        "\n pageId: " + logErrorModel.PageId +
+        "\n message: " + logErrorModel.ErrorMessage);
 
     $.ajax({
         type: "POST",
@@ -283,7 +286,6 @@ function logError(logErrorModel) {
             }
         },
         error: function (jqXHR) {
-            $('#dashBoardLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "logActivity")) {
                 console.error("XHR error in logError!!: " + success);
@@ -414,7 +416,7 @@ function getFileDate() {
 
 }
 
-function showCatListDialog(startFolder) {
+function XXshowCatListDialog(startFolder) {
     buildDirTree($('#indexCatTreeContainer'), "indexCatTreeContainer", startFolder);
     $('#indexCatTreeContainer').dialog({
         autoOpen: false,
@@ -544,11 +546,6 @@ function requestPrivilege(privilege) {
     //alert("requestPrivilege: " + privilege);
 }
 
-function dragableDialogClose() {
-    $('#draggableDialog').fadeOut();
-    if (typeof resume === 'function')
-        resume();
-}
 
 function dragElement(elmnt) {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -670,7 +667,7 @@ function checkFor404(errorMessage, calledFrom) {
         if (!inCheckFor404Loop) {
             checkFor404Loop = setInterval(function () {
                 if (!connectionVerified) {
-                    if (++verifyConnectionCount > 3) {
+                    if (++verifyConnectionCount === 3) {
                         $('#launchingService').show();
                     }
                     if (verifyConnectionCount > verifyConnectionCountLimit) {

@@ -21,6 +21,7 @@ namespace OggleBooble.Api.Models
         public string FolderImage { get; set; }
         public string LinkStatus { get; set; }
         public bool HasImages { get; set; }
+        public bool ContainsRomanNumerals { get; set; }
         public string Success { get; set; }
     }
     public class SearchResultsModel

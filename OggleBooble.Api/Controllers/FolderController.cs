@@ -193,11 +193,11 @@ namespace OggleBooble.Api.Controllers
                 {
                     CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
 
+                    folderDetailModel.ContainsRomanNumerals = ContainsRomanNumerals(db.CategoryFolders.Where(f => f.Parent == folderId).ToList());
                     folderDetailModel.HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
                     folderDetailModel.FolderName = dbFolder.FolderName;
                     folderDetailModel.RootFolder = dbFolder.RootFolder;
                     folderDetailModel.FolderImage = db.ImageLinks.Where(i => i.Id == dbFolder.FolderImage).Select(i => i.Link).FirstOrDefault();
-
                     CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
                     if (categoryFolderDetails != null)
                     {
@@ -226,6 +226,17 @@ namespace OggleBooble.Api.Controllers
             return folderDetailModel;
         }
 
+        private bool ContainsRomanNumerals(List<CategoryFolder> childFolders)
+        {
+            foreach (CategoryFolder childFolder in childFolders)
+            {
+                if (childFolder.FolderName.Contains(" I")) return true;
+                if (childFolder.FolderName.Contains(" V")) return true;
+                if (childFolder.FolderName.Contains(" X")) return true;
+            }
+            return false;
+        }
+
         [HttpPut]
         public string Update(FolderDetailModel model)
         {
@@ -237,8 +248,10 @@ namespace OggleBooble.Api.Controllers
                     CategoryFolderDetail dbFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == model.FolderId).FirstOrDefault();
                     if (dbFolderDetail == null)
                     {
-                        dbFolderDetail = new CategoryFolderDetail();
-                        dbFolderDetail.FolderId = model.FolderId;
+                        dbFolderDetail = new CategoryFolderDetail
+                        {
+                            FolderId = model.FolderId
+                        };
                         db.CategoryFolderDetails.Add(dbFolderDetail);
                     }
                     else

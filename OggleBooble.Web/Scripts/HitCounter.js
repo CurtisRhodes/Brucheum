@@ -3,7 +3,6 @@ var freeImageHitsAllowed = 2500;
 
 function logImageHit(link, pageId, isInitialHit) {
     try {
-
         if (isNullorUndefined(pageId)) {
             logError({
                 VisitorId: visitorId,
@@ -27,7 +26,6 @@ function logImageHit(link, pageId, isInitialHit) {
             verifyVisitorId(visitorId, pageId);
             return;
         }
-
         if (isNullorUndefined(visitorId)) {
             logError({
                 VisitorId: visitorId,
@@ -39,6 +37,7 @@ function logImageHit(link, pageId, isInitialHit) {
             //addVisitor(pageId, "logImageHit");
             return;
         }
+
         var linkId = link.substr(link.lastIndexOf("_") + 1, 36);
         var logImageHItData = {
             VisitorId: visitorId,

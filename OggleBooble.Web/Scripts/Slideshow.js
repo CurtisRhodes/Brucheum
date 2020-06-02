@@ -17,7 +17,6 @@ var imageViewerFolderName;
 var albumFolderId;
 var viewerShowing = false;
 var slideShowRunning = false;
-//var ipAddress;
 var visitorId;
 var sessionCount = 0;
 var slideShowButtonsActive = false;
@@ -29,28 +28,34 @@ function launchViewer(folderId, startItem, showAllChildren) {
     if (isNullorUndefined(includeSubFolders))
         includeSubFolders = false;
     sessionCount = 0;
-    $('#imageContainer').fadeOut();
+    //$('#imageContainer').fadeOut();
+
     getSlideshowItems(folderId, startItem);
+
     slideShowButtonsActive = true;
     $('#imagePageLoadingGif').fadeIn();
-    $('#imageContainer').fadeOut();
-    $('#slideShowContainer').html(showSlideshowHtml()).show();
+    //$('#imageContainer').fadeOut();
+    //$('#slideShowContainer').html(showSlideshowHtml()).show();
 }
 
 function getSlideshowItems(folderId, startItem) {
     try {
+        //[Route("api/GalleryPage/GetSlideShowItems")]
         albumFolderId = folderId;
         var start = Date.now();
-        //$('#imagePageLoadingGif').show();
         $.ajax({
             type: "GET",
-            async: true,
-            url: settingsArray.ApiServer + "/api/Slideshow/GetSlideShowItems?folderId=" + folderId + "&includeSubFolders=" + includeSubFolders,
+            url: settingsArray.ApiServer + "/api/GalleryPage/GetSlideShowItems?folderId=" + folderId + "&includeSubFolders=" + includeSubFolders,
             success: function (slideshowItemModel) {
                 //$('#imagePageLoadingGif').hide();
+                $('#imagePageLoadingGif').fadeIn();
                 if (slideshowItemModel.Success === "ok") {
                     imageViewerFolderName = slideshowItemModel.FolderName;
                     imageViewerArray = slideshowItemModel.SlideshowItems;
+
+                    $('#imageContainer').fadeOut();
+                    $('#slideShowContainer').html(showSlideshowHtml()).show();
+
                     //$('#imageViewerHeaderTitle').html(slideshowItemModel.RootFolder + "/" + slideshowItemModel.FolderName + "/" + slideshowItemModel.ImageFolderName);
                     $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName);
 
@@ -63,7 +68,6 @@ function getSlideshowItems(folderId, startItem) {
                         };
                     }
 
-                    $('#imagePageLoadingGif').hide();
                     viewerShowing = true;
                     resizePage();
                     resizeViewer();
@@ -597,6 +601,13 @@ function showSlideshowHtml() {
         "    </div>\n" +
         "</div>\n" +
         "<div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n");
+
+    $('#rightClickArea').on.dblclick(function () {
+        event.preventDefault();
+        window.event.returnValue = false;
+        alert("start slideshow");
+    });
+
 }
 
 function showSlideshowContextMenuHtml() {
@@ -626,7 +637,7 @@ $(document).keydown(function (event) {
                 closeViewer("escape key");
                 break;
             //case 38: scrollTabStrip('foward'); break;
-            //case 33: scrollTabStrip('foward'); break;
+            //case 33: scrollTabStrip('foward'); breakapi/VisitorInfo/verifyVisitorId
             case 34:                        // pg down
             case 40:                        // dowm arrow
             case 37:                        // left arrow
@@ -648,6 +659,5 @@ $(document).keydown(function (event) {
         }
     }
 });
-
 
 

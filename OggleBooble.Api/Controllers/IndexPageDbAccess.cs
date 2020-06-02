@@ -11,9 +11,10 @@ using System.Web.Http.Cors;
 namespace OggleBooble.Api.Controllers
 {
     [EnableCors("*", "*", "*")]
-    public class CarouselController : ApiController
+    public class IndexPageController : ApiController
     {
         [HttpGet]
+        [Route("api/IndexPage/GetCarouselImages")]
         public CarouselInfoModel GetCarouselImages(string root, int skip, int take, bool includeLandscape, bool includePortrait)
         {
             CarouselInfoModel carouselInfo = new CarouselInfoModel();
@@ -40,12 +41,9 @@ namespace OggleBooble.Api.Controllers
             catch (Exception ex) { carouselInfo.Success = Helpers.ErrorDetails(ex); }
             return carouselInfo;
         }
-    }
 
-    [EnableCors("*", "*", "*")]
-    public class LatestUpdatesController : ApiController
-    {
         [HttpGet]
+        [Route("api/IndexPage/GetLatestUpdatedFolders")]
         public LatestUpdatesModel GetLatestUpdatedFolders(int itemLimit)
         {
             LatestUpdatesModel updatesModel = new LatestUpdatesModel();

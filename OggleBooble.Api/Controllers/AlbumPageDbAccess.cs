@@ -9,10 +9,10 @@ using System.Web.Http.Cors;
 namespace OggleBooble.Api.Controllers
 {
     [EnableCors("*", "*", "*")]
-    public class AlbumPageController : ApiController
+    public class GalleryPageController : ApiController
     {
         [HttpGet]
-        [Route("api/AlbumPage/GetAllAlbumPageInfo")]
+        [Route("api/GalleryPage/GetAllAlbumPageInfo")]
         public GetAlbumInfoSuccessModel GetAllAlbumPageInfo(string visitorId, int folderId)
         {
             var timer = new System.Diagnostics.Stopwatch();
@@ -162,7 +162,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/AlbumPage/GetStaticPage")]
+        [Route("api/GalleryPage/GetStaticPage")]
         public SuccessModel GetStaticPage(int folderId)
         {
             SuccessModel successModel = new SuccessModel();
@@ -183,13 +183,10 @@ namespace OggleBooble.Api.Controllers
             }
             return successModel;
         }
-    }
 
-    [EnableCors("*", "*", "*")]
-    public class SlideshowController : ApiController
-    {
         SlideshowItemsModel slideshowItemModel = null;
         [HttpGet]
+        [Route("api/GalleryPage/GetSlideShowItems")]
         public SlideshowItemsModel GetSlideShowItems(int folderId, bool includeSubFolders)
         {
             var timer = new System.Diagnostics.Stopwatch();
@@ -227,7 +224,6 @@ namespace OggleBooble.Api.Controllers
             System.Diagnostics.Debug.WriteLine("GetImageLinks took: " + timer.Elapsed);
             return slideshowItemModel;
         }
-
         private void GetChildGalleryItems(int parentFolderId, OggleBoobleContext db)
         {
             slideshowItemModel.SlideshowItems.AddRange(db.Database.SqlQuery<vwSlideshowItem>(
@@ -240,6 +236,5 @@ namespace OggleBooble.Api.Controllers
                 GetChildGalleryItems(subFolder.Id, db);
             }
         }
-
     }
 }

@@ -7,6 +7,8 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using WebApi.MySqDataContext;
+using System.Data.Entity.Validation;
 
 namespace OggleBooble.Api.Controllers
 {
@@ -96,6 +98,51 @@ namespace OggleBooble.Api.Controllers
                 pageHitSuccessModel.Success = Helpers.ErrorDetails(ex);
             }
             return pageHitSuccessModel;
+        }
+
+        //api/ImageHit/LogImageHit
+        bool imageHitControllerBusy = false;
+        [HttpPost]
+        public ImageHitSuccessModel LogImageHit(LogImageHitDataModel logImageHItData)
+        {
+            ImageHitSuccessModel imageHitSuccess = new ImageHitSuccessModel();
+            try
+            {
+                //System.Threading.Thread.Sleep(1000);
+                if (imageHitControllerBusy)
+                    imageHitSuccess.Success = "imageHitController Busy";
+                else
+                {
+                    imageHitControllerBusy = true;
+                    using (var dbm = new OggleBoobleMySqContext())
+                    {
+                        //DateTime utcDateTime = DateTime.UtcNow.AddMilliseconds(getrandom.Next());
+                        //imageHitSuccess.HitDateTime = utcDateTime;
+                        dbm.ImageHits.Add(new ImageHit()
+                        {
+                            VisitorId = logImageHItData.VisitorId,
+                            PageId = logImageHItData.PageId,
+                            ImageLinkId = logImageHItData.LinkId,
+                            HitDateTime = DateTime.Now
+                        });
+                        dbm.SaveChanges();
+                        imageHitSuccess.UserImageHits = dbm.ImageHits.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
+                        imageHitSuccess.UserPageHits = dbm.PageHits.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
+                        imageHitSuccess.ImageHits = dbm.ImageHits.Where(h => h.ImageLinkId == logImageHItData.LinkId).Count();
+                        imageHitControllerBusy = false;
+                    }
+                }
+                imageHitSuccess.Success = "ok";
+            }
+            catch (DbEntityValidationException dbEx)
+            {
+                imageHitSuccess.Success = Helpers.ErrorDetails(dbEx);
+            }
+            catch (Exception ex)
+            {
+                imageHitSuccess.Success = Helpers.ErrorDetails(ex);
+            }
+            return imageHitSuccess;
         }
 
         [HttpPost]

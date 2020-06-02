@@ -13,9 +13,6 @@ using System.Web.Http.Cors;
 
 namespace OggleBooble.Api.Controllers
 {
-    
-
-
     [EnableCors("*", "*", "*")]
     public class ImageController : ApiController
     {
