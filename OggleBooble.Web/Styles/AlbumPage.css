@@ -110,11 +110,12 @@
 }
 
 .galleryContainer {
+    display: flex;
+    text-align: center;
     border: solid 4px red;
     background-color: var(--oggleContainerBackgroundColor);
     border: solid thin black;
-    min-height: 200px;
-    display: flex;
+    min-height: 200px;    
     flex-wrap: wrap;
     max-height: inherit;
     overflow-y: scroll;

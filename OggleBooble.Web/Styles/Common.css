@@ -1,10 +1,9 @@
 ﻿
 :root {
     --brucheumBlue: #74bac3;
-    --oggleBackgroundColor: #fef; /* #f7eef7  #b081b1 #f8e8e8 */
-    /*--oggleContainerBackgroundColor: #d1f5f3;*/
-    --oggleContainerBackgroundColor: #b5a6d5;
-    --oggleBorderColor: #b200ff; /* #f1cff7;       carouselContainer  #b200ff; */
+    --oggleBackgroundColor: #b5a6d5; /*#fef;  #f7eef7  #b081b1 #f8e8e8 */
+    --oggleContainerBackgroundColor: #bc61e4; /* #d1f5f3; #f8e8e8 */
+    --oggleBorderColor: #b200ff; /* #f1cff7;*/
     --ogglePurple: #79078f;
     --normalFont: 17px;
     --ogglgeTextColor: #000;
@@ -18,7 +17,10 @@
     --oggleHeaderSelectBackgroundColor: #74bac3;
     --topLinkRowDefault: 28px;
     --topLinkRow14: 14px;
+    --oggleContainerFooterColor: #d1f5f3;
     --flitterYellow: #fbf0b4;
+    --opaqueImageLabel: rgba(178, 0, 255, 0.66);
+    --oggleLabelColor: #b200ff;
 }
 
 .oggleResizeBar {
@@ -489,7 +491,6 @@ input[type='checkbox'] {
 }
 .ctxInfoLabel {
     display: inline-block;
-    width: 88px;
     font-weight: bold;
 }
 

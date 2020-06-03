@@ -8,7 +8,7 @@
     bottom: 50px;
     right: 55px;
     color: #fff;
-    background-color: rgba(178, 0, 255, 0.66);
+    background-color: var(--opaqueImageLabel);
     border-radius: 5px;
     padding: 5px;
     font-size: 20px;
@@ -22,7 +22,7 @@
     display: inline-block;
     color: #fff;
     left: 51px;
-    background-color: rgba(178, 0, 255, 0.66);
+    background-color: var(--opaqueImageLabel);
     border-radius: 5px;
     padding: 5px;
     font-size: 22px;
@@ -41,7 +41,7 @@
 
 .carouselFooter {
     margin-left: 50px;
-    background-color: #efeacb;
+    background-color: var(--oggleContainerFooterColor);
     text-align: center;
 }
 
@@ -55,7 +55,7 @@
     text-decoration: underline;
     font-size: 20px;
     margin-bottom: 4px;
-    color: #b200ff;
+    color: var(--oggleLabelColor);
 }
 
 .speedButton {

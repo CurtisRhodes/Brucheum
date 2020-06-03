@@ -1,24 +1,4 @@
 ﻿
-:root {
-    --brucheumBlue: #74bac3;
-    --oggleBackgroundColor: #fef; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
-    --oggleContainerBackgroundColor: #fefefe; /*  #f8e8e8 */
-    --oggleBorderColor: #b200ff; /* #f1cff7;       carouselContainer  #b200ff; */
-    --ogglePurple: #79078f;
-    --normalFont: 17px;
-    --oggleTitleColor: #7f2c8f;
-    --ogglgeSubTitleColor: #490157;
-    --thumbnailBorderColor: #74bac3; /* hot pink #ff00dc   */
-    --ogglgeHeaderBarColor: #decd6f; /*#c79bbe*/
-    --oggleHeaderBoarderTop: #40767d 3px solid;
-    --oggleHeaderBackgroundColor: #74bac3;
-    --oggleHeaderBoarderBottom: #decd6f 11px solid;
-    --oggleHeaderSelectBackgroundColor: #74bac3;
-    --topLinkRowDefault: 28px;
-    --topLinkRow14: 14px;
-}
-
-
 .twoColumnFrame {
     border: solid thin var(--oggleBorderColor);
 }

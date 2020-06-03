@@ -13,6 +13,7 @@
 }
 
 .imageFrame {
+    position: absolute;
     margin: 4.5px;
     border: solid .05px #676b8a;
 }
