@@ -52,7 +52,7 @@
     border: solid 2px var(--oggleBorderColor);
     background-color: var(--oggleContainerBackgroundColor);
 }
-.oggleDraggableDialogHeader {
+.oggleDialogHeader {
     border: none;
     background-color: var(--brucheumBlue);
     color: #fff;
@@ -60,7 +60,7 @@
     width: 100%;
     cursor: grabbing; 
 }
-.oggleDraggableDialogTitle {
+.oggleDialogTitle {
     float: left;
     padding: 2px 8px;
     width: 100%;
@@ -68,16 +68,16 @@
     font-size: 24px;
     text-align: center;
 }
-.oggleDraggableDialogCloseButton {
+.oggleDialogCloseButton {
     float: right;
     padding-top: 5px;
     padding-right: 15px;
     cursor: pointer;
 }
-    .oggleDraggableDialogCloseButton img {
+    .oggleDialogCloseButton img {
         height: 25px;
     }
-.oggleDraggableDialogContents {
+.oggleDialogContents {
     padding: 5px;
     height: 100%;
     /*padding: 4px 8px;*/

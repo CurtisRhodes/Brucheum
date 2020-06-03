@@ -1,12 +1,20 @@
 ﻿var folderDetailModel = {};
 
-function showImageCommentDialog(src, linkId, folderId, folderName) {
-    folderDetailModel.LinkId = linkId;
-    folderDetailModel.Link = src;
-    folderDetailModel.FolderId = folderId;
-    folderDetailModel.FolderName = folderName;
-    folderDetailModel.UserId = getCookieValue("VisitorId");
-    folderDetailModel.CommentType = "CMT";
+function showImageCommentDialog(linkId) {
+    alert("showImageCommentDialog")
+        //, linkId, folderId, folderName
+
+    $('#draggableDialogContents').html(imageCommentDialogHtml());
+    //
+
+
+
+    //folderDetailModel.LinkId = linkId;
+    //folderDetailModel.Link = src;
+    //folderDetailModel.FolderId = folderId;
+    //folderDetailModel.FolderName = folderName;
+    //folderDetailModel.UserId = getCookieValue("VisitorId");
+    //folderDetailModel.CommentType = "CMT";
     $('#commentDialogImage').attr("src", src);
     //$('#imageCommentEditor').summernote('code', "");
     $('#txtCommentTitle').val("");
@@ -22,15 +30,31 @@ function showImageCommentDialog(src, linkId, folderId, folderName) {
         ]
     });
 
-    $('#imageCommentDialog').show();
-    $('#imageCommentDialog').dialog({
-        show: { effect: "fade" },
-        hide: { effect: "blind" },
-        width: "715"
-    });
+    //$('#imageCommentDialog').show();
+    //$('#imageCommentDialog').dialog({
+    //    show: { effect: "fade" },
+    //    hide: { effect: "blind" },
+    //    width: "715"
+    //});
+
+
+
 
     $('#imageCommentDialog').dialog('option', 'title', "Write a fantasy about this image");
     loadComment();
+
+
+    logEventActivity({
+        VisitorId: getCookieValue("VisitorId"),
+        EventCode: "SID",
+        EventDetail: "image: " + selectedImageLinkId,
+        PageId: albumFolderId,
+        CalledFrom: "contextMenuAction"
+    });
+
+
+
+
 }
 
 function loadComment() {
@@ -119,14 +143,13 @@ function editImageComment() {
     });
 }
 
-function showImageCommentDialogHtml() {
-    $('#modalContent').html(
-        "<div id='imageCommentDialog' class='oggleDialogWindow'>\n" +
+function imageCommentDialogHtml() {
+    return "<div id='imageCommentDialog'>\n" +
         "    <div id='divStatusMessage'></div>\n" +
-        "    <div class='center'><img id='commentDialogImage' class='commentDialogImage' /></div>\n" +
+        "    <div class='center'><img id='commentDialogImage' class='commentDialogImage'/></div>\n" +
         "    <div><input id='txtCommentTitle' class='roundedInput commentTitleText' tabindex='1' placeholder='Give your comment a title' /></div>\n" +
         "    <div id='imageCommentEditor' tabindex='2'></div>\n" +
         "    <div id='divSaveFantasy' class='roundendButton clickable commentDialogButton inline' onclick='saveComment()'>save</div>\n" +
         "    <div id='commentInstructions' class='commentDialogInstructions inline'>log in to view comments</div>\n" +
-        "</div>\n");
+        "</div>\n";
 }

@@ -40,8 +40,8 @@ namespace OggleBooble.Api.Controllers
                         return imageInfo;
                     }
 
-                    imageInfo.FolderName = dbCategoryFolder.FolderName;
-                    if (Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName)) {
+                    if (Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName))
+                    {
                         CategoryFolder dbCategoryFolderParent = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).FirstOrDefault();
                         if (dbCategoryFolderParent != null)
                         {
@@ -50,17 +50,32 @@ namespace OggleBooble.Api.Controllers
                     }
 
                     ImageLink dbImageLink = db.ImageLinks.Where(i => i.Id == linkId).FirstOrDefault();
-                    if (dbImageLink == null) {
+                    if (dbImageLink == null)
+                    {
                         imageInfo.Success = "no image link found";
                         return imageInfo;
                     }
+                    if (dbImageLink.FolderLocation != folderId)
+                    {
+                        var dbModelFolder = db.CategoryFolders.Where(f => f.Id == dbImageLink.FolderLocation).FirstOrDefault();
+                        imageInfo.ModelFolderName = dbModelFolder.FolderName;                    
+                    }
 
-                    imageInfo.IsLinkJustaLink = (dbImageLink.FolderLocation != folderId);
-                    imageInfo.LinkId = dbImageLink.Link;
-                    imageInfo.FolderLocation = dbImageLink.FolderLocation;
+                    var albumInfo = new GetAlbumInfoSuccessModel();
+                    albumInfo.ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName);
+                    albumInfo.ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(db.CategoryFolders.Where(f => f.Parent == folderId).ToList());
+                    albumInfo.HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
+                    albumInfo.HasSubFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0;
+                    albumInfo.RootFolder = dbCategoryFolder.RootFolder;
+
+                    imageInfo.FolderType = Helpers.DetermineFolderType(albumInfo);
+
+                    imageInfo.FolderName = dbCategoryFolder.FolderName;
+                    imageInfo.LinkId = dbImageLink.Id;
+                    imageInfo.ModelFolderId = dbImageLink.FolderLocation;
                     imageInfo.Height = dbImageLink.Height;
                     imageInfo.Width = dbImageLink.Width;
-                    imageInfo.LastModified = dbImageLink.LastModified;
+                    imageInfo.LastModified = dbImageLink.LastModified.Value.ToShortDateString();
                     imageInfo.Link = dbImageLink.Link;
                     imageInfo.ExternalLink = dbImageLink.ExternalLink;
                     imageInfo.InternalLinks = (from l in db.CategoryImageLinks
@@ -75,13 +90,9 @@ namespace OggleBooble.Api.Controllers
                         return imageInfo;
                     }
                 }
-
                 imageInfo.Success = "ok";
             }
-            catch (Exception ex)
-            {
-                imageInfo.Success = Helpers.ErrorDetails(ex);
-            }
+            catch (Exception ex) { imageInfo.Success = Helpers.ErrorDetails(ex); }
             timer.Stop();
             System.Diagnostics.Debug.WriteLine("GetImageLinks took: " + timer.Elapsed);
             return imageInfo;
@@ -274,10 +285,16 @@ namespace OggleBooble.Api.Controllers
                         {
                             try
                             {
-                                DirectoryInfo dirInfo = new DirectoryInfo(repoPath + trimPath);
+                                string localRoot = dbCategory.RootFolder;
+                                if (localRoot == "centerfold")
+                                    localRoot = "playboy";
+
+                                var test = newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
+                                var localPath = repoPath + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
+                                DirectoryInfo dirInfo = new DirectoryInfo(localPath);
                                 if (!dirInfo.Exists)
                                     dirInfo.Create();
-                                wc.DownloadFile(new Uri(newLink.Link), repoPath + trimPath + "/" + newFileName);
+                                wc.DownloadFile(new Uri(newLink.Link), localPath + "/" + newFileName);
                             }
                             catch (Exception ex)
                             {
@@ -299,7 +316,11 @@ namespace OggleBooble.Api.Controllers
                         try
                         {
                             // todo  write the image as a file to x.ogglebooble  4/1/19
-                            string ftpPath = ftpHost + trimPath;
+                            string localRoot = dbCategory.RootFolder;
+                            if (localRoot == "centerfold")
+                                localRoot = "playboy";
+                            //var localPath = repoPath + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
+                            string ftpPath = ftpHost + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
                             if (!FtpUtilies.DirectoryExists(ftpPath))
                                 FtpUtilies.CreateDirectory(ftpPath);
 

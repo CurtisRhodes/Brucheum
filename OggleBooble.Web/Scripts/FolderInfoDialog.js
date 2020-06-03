@@ -36,7 +36,7 @@ function showFolderInfoDialog(folderId) {
         // 
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/FolderDetail/GetFolderInfo?folderId=" + folderId,
+            url: settingsArray.ApiServer + "api/Folder/GetFolderInfo?folderId=" + folderId,
             success: function (folderDetails) {
                 if (folderDetails.Success === "ok") {
                     folderInfo = folderDetails;
@@ -89,6 +89,18 @@ function showFolderInfoDialog(folderId) {
                 }
             }
         });
+
+
+        logEventActivity({
+            VisitorId: getCookieValue("VisitorId"),
+            EventCode: "SMD",
+            EventDetail: "Viewer showing: " + viewerShowing,
+            PageId: albumFolderId,
+            CalledFrom: "contextMenuAction"
+        });
+
+
+
     }
     catch (e) {
         logError({
@@ -119,6 +131,8 @@ function determineFolderType() {
     //    LinkStatus { get; set; }
     //    IsLandscape { get; set; }
     //    Success { get; set; }
+
+
 
     if (folderInfo.RootFolder === "centerfold") {
         $('#modelInfoDetails').show();
@@ -275,3 +289,43 @@ function showReadOnlyModelInfoDialogHtml() {
 }
 
 
+//<div id="modelInfoDialog" class="oggleDialogWindow" onmouseleave="considerClosingModelInfoDialog()">
+//    <div id="modelInfoEditArea" class="displayHidden">
+//        <div class="flexContainer">
+//            <div class="floatLeft">
+//                <div class="modelInfoDialogLabel">name</div><input id="txtFolderName" class="modelDialogInput" /><br />
+//                <div class="modelInfoDialogLabel">from</div><input id="txtNationality" class="modelDialogInput" /><br />
+//                <div class="modelInfoDialogLabel">born</div><input id="txtBorn" class="modelDialogInput" /><br />
+//                <div class="modelInfoDialogLabel">boobs</div>
+//                <select id="selBoobs" class="modelDialogSelect">
+//                    <option value="Real">Real</option>
+//                    <option value="Fake">Fake</option>
+//                </select><br />
+//                <div class="modelInfoDialogLabel">figure</div><input id="txtMeasurements" class="modelDialogInput" />
+//            </div>
+//            <div class="floatLeft">
+//                <img id="modelDialogThumbNailImage" src="/Images/redballon.png" class="modelDialogImage" />
+//            </div>
+//        </div>
+//        <div class="modelInfoDialogLabel">comment</div>
+//        <div id="modelInfoDialogCommentContainer">
+//            <div id="modelInfoDialogComment" class="modelInfoCommentArea"></div>
+//        </div>
+//        <div id="modelInfoDialogTrackBack">
+//            <div class="modelInfoDialogLabel">status</div><input id="txtStatus" class="modelDialogInput" style="width: 90%;" /><br />
+//            <div class="modelInfoDialogLabel">trackbacks</div>
+//            <div>
+//                <div class="hrefLabel">href</div><input id="txtLinkHref" class="modelDialogInput" />
+//                <div class="hrefLabel">label</div><input id="txtLinkLabel" class="modelDialogInput" onblur="addHrefToExternalLinks()" />
+//                <span class="addLinkIcon" onclick="addHrefToExternalLinks()">+</span>
+//            </div>
+//            <div id="externalLinks" class="trackbackLinksArea"></div>
+//        </div>
+//    </div>
+//    <div id="modelInfoViewOnlyArea" class="displayHidden">
+//        <div class="viewOnlyMessage">If you you know who this is Please 'Add Info'</div>
+//        <div class="viewOnlyMessage clickable" onclick="IamThisModel()">Is this you?  </div>
+//        <a class="dialogEditButton" href="javascript:IdentifyPoser()">Add Info</a>
+//    </div>
+//    <a id="modelInfoEdit" class="dialogEditButton" href="javascript:toggleMode()">Save</a>
+//</div>

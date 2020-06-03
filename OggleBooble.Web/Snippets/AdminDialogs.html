@@ -1,44 +1,4 @@
 ﻿
-<div id="modelInfoDialog" class="oggleDialogWindow" onmouseleave="considerClosingModelInfoDialog()">
-    <div id="modelInfoEditArea" class="displayHidden">
-        <div class="flexContainer">
-            <div class="floatLeft">
-                <div class="modelInfoDialogLabel">name</div><input id="txtFolderName" class="modelDialogInput" /><br />
-                <div class="modelInfoDialogLabel">from</div><input id="txtNationality" class="modelDialogInput" /><br />
-                <div class="modelInfoDialogLabel">born</div><input id="txtBorn" class="modelDialogInput" /><br />
-                <div class="modelInfoDialogLabel">boobs</div>
-                <select id="selBoobs" class="modelDialogSelect">
-                    <option value="Real">Real</option>
-                    <option value="Fake">Fake</option>
-                </select><br />
-                <div class="modelInfoDialogLabel">figure</div><input id="txtMeasurements" class="modelDialogInput" />
-            </div>
-            <div class="floatLeft">
-                <img id="modelDialogThumbNailImage" src="/Images/redballon.png" class="modelDialogImage" />
-            </div>
-        </div>
-        <div class="modelInfoDialogLabel">comment</div>
-        <div id="modelInfoDialogCommentContainer">
-            <div id="modelInfoDialogComment" class="modelInfoCommentArea"></div>
-        </div>
-        <div id="modelInfoDialogTrackBack">
-            <div class="modelInfoDialogLabel">status</div><input id="txtStatus" class="modelDialogInput" style="width: 90%;" /><br />
-            <div class="modelInfoDialogLabel">trackbacks</div>
-            <div>
-                <div class="hrefLabel">href</div><input id="txtLinkHref" class="modelDialogInput" />
-                <div class="hrefLabel">label</div><input id="txtLinkLabel" class="modelDialogInput" onblur="addHrefToExternalLinks()" />
-                <span class="addLinkIcon" onclick="addHrefToExternalLinks()">+</span>
-            </div>
-            <div id="externalLinks" class="trackbackLinksArea"></div>
-        </div>
-    </div>
-    <div id="modelInfoViewOnlyArea" class="displayHidden">
-        <div class="viewOnlyMessage">If you you know who this is Please 'Add Info'</div>
-        <div class="viewOnlyMessage clickable" onclick="IamThisModel()">Is this you?  </div>
-        <a class="dialogEditButton" href="javascript:IdentifyPoser()">Add Info</a>
-    </div>
-    <a id="modelInfoEdit" class="dialogEditButton" href="javascript:toggleMode()">Save</a>
-</div>
 
 <div id="moveCopyDialog" class="oggleDialogWindow" title="">
     <div class="inline"><img id="copyDialogImage" class="copyDialogImage" /></div>
@@ -77,15 +37,4 @@
     <img class="dirTreeImage" />
 </div>
 
-<div id='feedbackDialog' class='modalDialog' title='Feedback'>
-    <div>
-        <input type='radio' name='feedbackRadio' value='complement' checked='checked'> complement
-        <input type='radio' name='feedbackRadio' value='suggestion'> suggestion
-        <input type='radio' name='feedbackRadio' value='report error'> report error
-    </div>
-    <div id='feedbackDialogSummerNoteTextArea'></div>
-    <div>email<input id="txtFeedbackEmail"/></div>
-    <div id='btnfeedbackDialogSave' class='roundendButton' onclick='saveFeedbackDialog(" + folderId + ")'>Send</div>
-    <div id='btnfeedbackDialogCancel' class='roundendButton' onclick='closeFeedbackDialog()'>Cancel</div>
-</div>
 

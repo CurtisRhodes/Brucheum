@@ -341,5 +341,33 @@ namespace OggleBooble.Api.Controllers
             }
             return success;
         }
+
+        [HttpPost]
+        [Route("api/Common/LogFeedback")]
+        public string LogFeedback(FeedBackModel feedBackModel)
+        {
+            string success;
+            try
+            {
+                using (var mdb = new MySqlDataContext.OggleBoobleMySqContext())
+                {
+                    mdb.FeedBacks.Add(new MySqlDataContext.FeedBack()
+                    {
+                        FeedBackComment = feedBackModel.FeedBackComment,
+                        FeedBackType = feedBackModel.FeedBackType,
+                        FeedBackEmail = feedBackModel.FeedBackEmail,
+                        VisitorId = feedBackModel.VisitorId,
+                        Occured = DateTime.Now
+                    });
+                    mdb.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
     }
 }

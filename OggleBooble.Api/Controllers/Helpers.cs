@@ -27,9 +27,48 @@ namespace OggleBooble.Api.Controllers
         DateTime = 36867,
         SubjetLocation = 41492
     }
-
     public static class Helpers
     {
+        public static string DetermineFolderType(Models.GetAlbumInfoSuccessModel folderDetailModel)
+        {
+            if (folderDetailModel.ContainsRomanNumeral)
+                return "singleModelCollection";
+            if (folderDetailModel.ContainsRomanNumeralChildren)
+                return "singleModelGallery";
+
+            if (folderDetailModel.RootFolder == "archive" || folderDetailModel.RootFolder == "sluts")
+            {
+                if (folderDetailModel.HasImages)
+                    return "singleModelCollection";
+                if (folderDetailModel.HasSubFolders)
+                    return "singleModelGallery";
+            }
+            if (folderDetailModel.RootFolder == "boobs" || folderDetailModel.RootFolder == "porn")
+            {
+                if (folderDetailModel.HasImages)
+                    return "assorterdImagesCollection";
+                if (folderDetailModel.HasSubFolders)
+                    return "assorterdImagesGallery";
+            }
+
+            //folderDetailModel.ContainsRomanNumerals = ContainsRomanNumerals(db.CategoryFolders.Where(f => f.Parent == folderId).ToList());
+            //folderDetailModel.HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
+            //folderDetailModel.HasSubfolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0;
+            return "unknown";
+        }
+
+
+
+        public static bool ContainsRomanNumeralChildren(List<CategoryFolder> childFolders)
+        {
+            foreach (CategoryFolder childFolder in childFolders)
+            {
+                if (childFolder.FolderName.Contains(" I")) return true;
+                if (childFolder.FolderName.Contains(" V")) return true;
+                if (childFolder.FolderName.Contains(" X")) return true;
+            }
+            return false;
+        }
 
         public static bool ContainsRomanNumeral(string folderName)
         {

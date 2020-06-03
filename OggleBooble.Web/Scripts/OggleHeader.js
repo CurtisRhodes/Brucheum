@@ -11,7 +11,9 @@
     //$('header').switchClass('pornHeader', 'boobsHeader');
 
     $('.oggleHeader').html(headerHtml(folderId));
-    $('.oggleHeader').append(draggableDialog());
+    $('.oggleHeader').append(draggableDialogHtml());
+    $('.oggleHeader').append(modlaDialogHtml());
+
     $('#draggableDialog').resizable({
         resize: function (event, ui) {
             //$('#headerMessage').html("onresize: " + event.pageX + " note-editable.height: " + $('.note-editable').height());
@@ -21,14 +23,10 @@
     });
 
     setHeaderDetails(folderId, subdomain);
-    setLoginHeaderSection();
+    if (subdomain !== "blank")
+        setLoginHeaderSection();
 }
 
-function dragableDialogClose() {
-    $('#draggableDialog').fadeOut();
-    if (typeof resume === 'function')
-        resume();
-}
 
 // requires no database call
 function setHeaderDetails(folderId, subdomain) {
@@ -246,34 +244,60 @@ function headerHtml(folderId) {
 
 }
 
-function draggableDialog() {
+function draggableDialogHtml() {
     return "<div class='centeringOuterShell'>\n" +
     "   <div class='centeringInnerShell'>\n" +
-    "      <div id='draggableDialog' class='oggleDraggableDialog resizable resizers'>\n" +
-    "           <div id='draggableDialogHeader'class='oggleDraggableDialogHeader' onmousedown='enterDragMode()' onmouseup='cancelDragMode()'>" +
-    "               <div id='draggableDialogTitle' class='oggleDraggableDialogTitle'></div>" +
-    "               <div id='draggableDialogCloseButton' class='oggleDraggableDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'/></div>\n" +
+    "      <div id='draggableDialog' class='oggleDraggableDialog'>\n" +
+    "           <div id='draggableDialogHeader'class='oggleDialogHeader' onmousedown='draggableDialogEnterDragMode()' onmouseup='draggableDialogCancelDragMode()'>" +
+    "               <div id='draggableDialogTitle' class='oggleDialogTitle'></div>" +
+    "               <div id='draggableDialogCloseButton' class='oggleDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'/></div>\n" +
     "           </div>\n" +
-    "           <div id='draggableDialogContents' class='oggleDraggableDialogContents'></div>\n" +
-    //"           <div id='draggableDialogResizeBar' class='oggleResizeBar' onmousedown='enterResizeMode()' onmouseup='cancelResize()' >" +
-    //"              <div class='dragBarSandwitchBar'></div>" +
-    //"              <div class='dragBarSandwitchBar'></div>" +
-    //"              <div class='dragBarSandwitchBar'></div>" +
-    //"           </div>\n" +
+    "           <div id='draggableDialogContents' class='oggleDialogContents'></div>\n" +
     "      </div>\n" +
     "   </div>\n" +
     "</div>\n";
 }
-
-function enterDragMode() {
+function draggableDialogEnterDragMode() {
     $('#headerMessage').html("entering drag mode");
     $('#draggableDialog').draggable({ disabled: false });
     $('#draggableDialog').draggable();
 }
-function cancelDragMode() {
+function draggableDialogCancelDragMode() {
     $('#headerMessage').html("end drag");
     $('#draggableDialog').draggable({ disabled: true });
 }
+function dragableDialogClose() {
+    $('#draggableDialog').fadeOut();
+    if (typeof resume === 'function')
+        resume();
+}
+
+function modlaDialogHtml() {
+    return "<div class='centeringOuterShell'>\n" +
+        "   <div class='centeringInnerShell'>\n" +
+        "      <div id='oggleModlaDialog' class='oggleDraggableDialog modalVail'>\n" +
+        "           <div id='modalDialogHeader'class='oggleDialogHeader'>" +
+        "               <div id='modalDialogTitle' class='oggleDialogTitle'></div>" +
+        "               <div id='modalDialogCloseButton' class='oggleDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='modalDialogClose()'/></div>\n" +
+        "           </div>\n" +
+        "           <div id='modalDialogContents' class='oggleDialogContents'></div>\n" +
+        "      </div>\n" +
+        "   </div>\n" +
+        "</div>\n";
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
 
 //$(window).scroll(function () {
 //    $('.oggleHeader').css("top", 0);

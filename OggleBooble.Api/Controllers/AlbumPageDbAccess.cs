@@ -26,14 +26,16 @@ namespace OggleBooble.Api.Controllers
                     albumInfo.RootFolder = dbCategoryFolder.RootFolder;
                     albumInfo.FolderName = dbCategoryFolder.FolderName;
 
+                    albumInfo.ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName);
+                    albumInfo.ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(db.CategoryFolders.Where(f => f.Parent == folderId).ToList());
+                    albumInfo.HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
+                    albumInfo.HasSubFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0;
+
+                    albumInfo.FolderType = Helpers.DetermineFolderType(albumInfo);
+
                     List<VwDirTree> vwTrees = db.VwDirTrees.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.FolderName).ToList();
                     foreach (VwDirTree vwTree in vwTrees)
                     {
-                        //if (vwTree.Link == null)
-                        //    folderImage = Helpers.GetFirstImage(vwTree.Id);
-                        //totalChildren = 0;
-                        //int childFilesCount = GetTotalChildFiles(folderId);
-
                         albumInfo.SubDirs.Add(new CategoryTreeModel()
                         {
                             LinkId = Guid.NewGuid().ToString(),
@@ -67,7 +69,6 @@ namespace OggleBooble.Api.Controllers
                         };
                         albumInfo.Files.Add(vwLinkModel);
                     }
-
                     List<TrackbackLink> trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
                     foreach (TrackbackLink trackbackLink in trackbackLinks)
                     {
@@ -78,11 +79,9 @@ namespace OggleBooble.Api.Controllers
                             LinkStatus = trackbackLink.LinkStatus
                         });
                     }
-
                     CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
                     if (categoryFolderDetails != null)
                         albumInfo.ExternalLinks = categoryFolderDetails.ExternalLinks;
-
                     //BreadCrumbModel breadCrumbModel = new BreadCrumbModel();
                     var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                     albumInfo.BreadCrumbs.Add(new BreadCrumbItemModel()

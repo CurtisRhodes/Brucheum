@@ -21,6 +21,53 @@ namespace OggleBooble.Api.Controllers
         //static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
         //static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
 
+        [HttpGet]
+        [Route("api/Folder/GetFolderInfo")]
+        public FolderDetailModel GetFolderInfo(int folderId)
+        {
+            var folderDetailModel = new FolderDetailModel();
+            try
+            {
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+
+                    folderDetailModel.ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbFolder.FolderName);
+                    folderDetailModel.ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(db.CategoryFolders.Where(f => f.Parent == folderId).ToList());
+                    folderDetailModel.HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
+                    folderDetailModel.HasSubfolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0;
+                    folderDetailModel.FolderName = dbFolder.FolderName;
+                    folderDetailModel.RootFolder = dbFolder.RootFolder;
+                    folderDetailModel.FolderImage = db.ImageLinks.Where(i => i.Id == dbFolder.FolderImage).Select(i => i.Link).FirstOrDefault();
+                    CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                    if (categoryFolderDetails != null)
+                    {
+                        folderDetailModel.Measurements = categoryFolderDetails.Measurements;
+                        folderDetailModel.Nationality = categoryFolderDetails.Nationality;
+                        folderDetailModel.ExternalLinks = categoryFolderDetails.ExternalLinks;
+                        folderDetailModel.CommentText = categoryFolderDetails.CommentText;
+                        folderDetailModel.Born = categoryFolderDetails.Born;
+                        folderDetailModel.Boobs = categoryFolderDetails.Boobs;
+                        folderDetailModel.FolderId = categoryFolderDetails.FolderId;
+                        folderDetailModel.LinkStatus = categoryFolderDetails.LinkStatus;
+                        //folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
+                    }
+                    //ImageLink imageLink = db.ImageLinks.Where(g => g.Id == dbFolder.FolderImage).FirstOrDefault();
+                    //if (imageLink != null)
+                    //{
+                    //    folderDetailModel.FolderImage = imageLink.Link;
+                    //}
+                }
+                folderDetailModel.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                folderDetailModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return folderDetailModel;
+        }
+
+
         [HttpPost]
         [Route("api/Folder/Create")]
         public SuccessModel Create(int parentId, string newFolderName)
@@ -182,61 +229,6 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class FolderDetailController : ApiController
     {
-        [HttpGet]
-        [Route("api/FolderDetail/GetFolderInfo")]
-        public FolderDetailModel GetFolderInfo(int folderId)
-        {
-            var folderDetailModel = new FolderDetailModel();
-            try
-            {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-
-                    folderDetailModel.ContainsRomanNumerals = ContainsRomanNumerals(db.CategoryFolders.Where(f => f.Parent == folderId).ToList());
-                    folderDetailModel.HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
-                    folderDetailModel.FolderName = dbFolder.FolderName;
-                    folderDetailModel.RootFolder = dbFolder.RootFolder;
-                    folderDetailModel.FolderImage = db.ImageLinks.Where(i => i.Id == dbFolder.FolderImage).Select(i => i.Link).FirstOrDefault();
-                    CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
-                    if (categoryFolderDetails != null)
-                    {
-                        folderDetailModel.Measurements = categoryFolderDetails.Measurements;
-                        folderDetailModel.Nationality = categoryFolderDetails.Nationality;
-                        folderDetailModel.ExternalLinks = categoryFolderDetails.ExternalLinks;
-                        folderDetailModel.CommentText = categoryFolderDetails.CommentText;
-                        folderDetailModel.Born = categoryFolderDetails.Born;
-                        folderDetailModel.Boobs = categoryFolderDetails.Boobs;
-                        folderDetailModel.FolderId = categoryFolderDetails.FolderId;
-                        folderDetailModel.LinkStatus = categoryFolderDetails.LinkStatus;
-                        //folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
-                    }
-                    //ImageLink imageLink = db.ImageLinks.Where(g => g.Id == dbFolder.FolderImage).FirstOrDefault();
-                    //if (imageLink != null)
-                    //{
-                    //    folderDetailModel.FolderImage = imageLink.Link;
-                    //}
-                }
-                folderDetailModel.Success = "ok";
-            }
-            catch (Exception ex)
-            {
-                folderDetailModel.Success = Helpers.ErrorDetails(ex);
-            }
-            return folderDetailModel;
-        }
-
-        private bool ContainsRomanNumerals(List<CategoryFolder> childFolders)
-        {
-            foreach (CategoryFolder childFolder in childFolders)
-            {
-                if (childFolder.FolderName.Contains(" I")) return true;
-                if (childFolder.FolderName.Contains(" V")) return true;
-                if (childFolder.FolderName.Contains(" X")) return true;
-            }
-            return false;
-        }
-
         [HttpPut]
         public string Update(FolderDetailModel model)
         {

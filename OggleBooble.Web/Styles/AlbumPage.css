@@ -12,6 +12,15 @@
     text-align: center;
 }
 
+.folderCommentButton {
+    position: relative;
+    display: none;
+    top: 120px;
+    left: 15px;
+    height: 47px;
+    cursor: pointer;
+}
+
 .deepSlideshowLabel {
     float: right;
     cursor: pointer;
@@ -26,7 +35,6 @@
 .selectedSearchItem {
     background-color: var(--thumbnailBorderColor);
 }
-
 
 .adminRow div {
     margin: 3px;

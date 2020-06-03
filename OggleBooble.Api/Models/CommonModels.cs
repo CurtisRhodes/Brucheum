@@ -97,4 +97,13 @@ namespace OggleBooble.Api.Models
         public string PageName { get; set; }
         public string UserName { get; set; }
     }
+    public class FeedBackModel
+    {
+        public string VisitorId { get; set; }
+        public int PageId { get; set; }
+        public string FeedBackComment { get; set; }
+        public string FeedBackType { get; set; }
+        public string FeedBackEmail { get; set; }
+        public DateTime Occured { get; set; }
+    }
 }

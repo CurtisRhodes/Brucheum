@@ -337,15 +337,6 @@ function createNewFolder() {
     });
 }
 
-
-
-
-
-
-
-
-
-
 function showUpLoadFileDialog() {
     $('.workAreaContainer').hide();
     $('#divAddFile').show();

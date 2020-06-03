@@ -35,7 +35,7 @@ function launchViewer(folderId, startItem, showAllChildren) {
     slideShowButtonsActive = true;
     $('#imagePageLoadingGif').fadeIn();
     //$('#imageContainer').fadeOut();
-    //$('#slideShowContainer').html(showSlideshowHtml()).show();
+    //$('#slideShowContainer').html(slideshowHtml()).show();
 }
 
 function getSlideshowItems(folderId, startItem) {
@@ -54,7 +54,7 @@ function getSlideshowItems(folderId, startItem) {
                     imageViewerArray = slideshowItemModel.SlideshowItems;
 
                     $('#imageContainer').fadeOut();
-                    $('#slideShowContainer').html(showSlideshowHtml()).show();
+                    $('#slideShowContainer').html(slideshowHtml()).show();
 
                     //$('#imageViewerHeaderTitle').html(slideshowItemModel.RootFolder + "/" + slideshowItemModel.FolderName + "/" + slideshowItemModel.ImageFolderName);
                     $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName);
@@ -574,7 +574,7 @@ function slideshowCtxMnuShowLinks(linkId) {
     });
 }
 
-function showSlideshowHtml() {
+function slideshowHtml() {
     $('#slideShowContainer').html(
         " <div id='viewerButtonsRow' class='imageViewerHeaderRow'>\n" +
         "    <div class='viewerButtonsRowSection'>\n" +

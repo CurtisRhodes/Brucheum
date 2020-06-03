@@ -60,6 +60,8 @@
     <div id="dots"></div>
     <div class="threeColumnLayout">
         <div class="leftColumn">
+            <img id='folderCommentButton' class='folderCommentButton' title='folder comment' onclick='showFolderCommentDialog()' src='/Images/comment.png' />
+            <div id="folderCommentContainer"></div>
             <div id="TrackbackLinkArea" class="leftColumnTrackbackArea">
                 <div id="babapediaLink" class="leftColumnTrackbackLink displayHidden"></div>
                 <div id="freeonesLink" class="leftColumnTrackbackLink displayHidden"></div>
@@ -78,7 +80,7 @@
             <div id="imageContextMenuContainer"></div>
         </div>
         <div class="rightColumn">
-            <div id="feedbackBanner" class="fixedMessageButton" onclick="showFeedbackDialog()">feedback</div>
+            <div id="feedbackBanner" class="fixedMessageButton">feedback</div>
         </div>
     </div>
     <div class="footer"></div>
@@ -86,8 +88,7 @@
         //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
         $(document).ready(function () {
             $('#deepSlideshow').hide();
-            $('#imageContainer').hide();
-            loadImageContextMenu();
+            $('#imageContainer').hide();            
             params = getParams();
             if (params.folder == undefined) {
                 window.location.href = "Index.html";
@@ -113,7 +114,10 @@
                         else {
                             clearInterval(waiter2);
                             $('#dots').html('');
-                            if (isInRole("view dynamic")) {
+
+                            //alert("document.domain: " + document.domain);
+
+                            if (isInRole("view dynamic") || document.domain === "localhost") {
                                 //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) TruE");
                                 GetAllAlbumPageInfo(params.folder);
                                 //$('#feedbackBanner').fadeIn();
@@ -128,10 +132,11 @@
             }, 300);
 
             window.addEventListener("resize", resizeAlbumPage);
-            //resizeAlbumPage();
+            $('#feedbackBanner').on("click", function () {
+                showFeedbackDialog(params.folder);
+            });
 
         });
-
         function resizeAlbumPage() {
             var visH = $(window).height() - $('.oggleHeader').height();
             $('.threeColumnLayout').css("min-height", visH);

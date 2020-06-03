@@ -229,6 +229,12 @@ function create_UUID() {
     return uuid;
 }
 
+function isValidEmail(email) {
+    var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+    //alert("emailReg.test(email): " + emailReg.test(email));
+    return emailReg.test(email);
+}
+
 function sendEmailToYourself(subject, message) {
     if (document.domain === "localhost") alert("sendEmailToYourself(subject: " + subject + ", message: " + message + ")");
     $.ajax({

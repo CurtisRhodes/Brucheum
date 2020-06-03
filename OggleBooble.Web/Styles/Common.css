@@ -2,7 +2,8 @@
 :root {
     --brucheumBlue: #74bac3;
     --oggleBackgroundColor: #fef; /* #f7eef7  #b081b1 #f8e8e8 */
-    --oggleContainerBackgroundColor: #d1f5f3;
+    /*--oggleContainerBackgroundColor: #d1f5f3;*/
+    --oggleContainerBackgroundColor: #b5a6d5;
     --oggleBorderColor: #b200ff; /* #f1cff7;       carouselContainer  #b200ff; */
     --ogglePurple: #79078f;
     --normalFont: 17px;
@@ -84,7 +85,8 @@ body {
 
 .oggleDialog {
     background-color: var(--oggleContainerBackgroundColor);
-    padding:6px;
+    padding: 6px;
+    font-size: 18px;
 }
 
 .center {
@@ -467,3 +469,27 @@ input[type='checkbox'] {
 .catlyn {
     background-image: url('https://edge206.stream.highwebmedia.com/live-hls/amlst:caylin-sd-8937ba6912ed937e04b8db696878e971b081d644ba83cba4e9b73d5e0af1e0f6_trns_h264/playlist.m3u8');
 }
+
+.feedbackRadioButtons {
+    padding: 4px;
+}
+.feedbackRadioButtons span {
+    margin-right: 14px;
+}
+.feedbackEmailInput {
+    width: 100%;
+}
+
+.innerContextMenuContainer {
+    display: none;
+    background-color: #b1b1b1;
+}
+.ctxInfoValue {
+    display: inline-block;
+}
+.ctxInfoLabel {
+    display: inline-block;
+    width: 88px;
+    font-weight: bold;
+}
+

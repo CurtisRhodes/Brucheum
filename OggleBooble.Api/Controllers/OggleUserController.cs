@@ -10,9 +10,10 @@ using System.Web.Http.Cors;
 namespace OggleBooble.Api.Controllers
 {
     [EnableCors("*", "*", "*")]
-    public class LoginController : ApiController
+    public class OggleUserController : ApiController
     {
         [HttpGet]
+        [Route("api/Login/VerifyLogin")]
         public string VerifyLogin(string userName, string passWord)
         {
             string success = "";
@@ -38,6 +39,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
+        [Route("api/Login/UserPermissions")]
         public List<string> UserPermissions(string userName)
         {
             List<string> roles = null;
@@ -49,6 +51,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpPost]
+        [Route("api/Login/AddUser")]
         public string AddUser(RegisteredUser registeredUserModel)
         {
             string success = "";
@@ -76,6 +79,18 @@ namespace OggleBooble.Api.Controllers
                 success = Helpers.ErrorDetails(ex);
             }
             return success;
+        }
+
+        [HttpGet]
+        [Route("api/Login/GetUserInfo")]
+        public RegisteredUser GetUserInfo(string visitorId)
+        {
+            var registeredUser = new RegisteredUser();
+            using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
+            {
+                registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
+            }
+            return registeredUser;
         }
 
         private static string HashSHA256(string value)

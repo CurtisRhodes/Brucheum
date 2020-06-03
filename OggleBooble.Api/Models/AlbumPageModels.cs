@@ -25,6 +25,11 @@ namespace OggleBooble.Api.Models
         public int UserImageHits { get; set; }
         public int UserPageHits { get; set; }
         public string LastModified { get; set; }
+        public string FolderType { get; set; }
+        public bool HasImages { get; set; }
+        public bool HasSubFolders { get; set; }
+        public bool ContainsRomanNumeral { get; set; }
+        public bool ContainsRomanNumeralChildren { get; set; }
         public string Success { get; set; }
     }
 
@@ -97,16 +102,16 @@ namespace OggleBooble.Api.Models
         }
         public Dictionary<int,string> InternalLinks { get; set; }
         public string LinkId { get; set; }
-        public int LinkFolder { get; set; }
         public string FolderName { get; set; }
-        public bool IsLinkJustaLink { get; set; }
+        public int ModelFolderId { get; set; }
+        public string ModelFolderName { get; set; }
         public string ExternalLink { get; set; }
         public string Link { get; set; }
-        public int FolderLocation { get; set; }
         public int? Width { get; set; }
         public int? Height { get; set; }
         public long? Size { get; set; }
-        public DateTime? LastModified { get; set; }
+        public string LastModified { get; set; }
+        public string FolderType { get; set; }
         public string Success { get; set; }
     }
 }

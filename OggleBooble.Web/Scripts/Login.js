@@ -9,9 +9,11 @@
 var loginFromPageId;
 function showLoginDialog() {
     $('#draggableDialogTitle').html("Log In to OggleBooble");
-    $('#draggableDialogContents').html(loadLoginDialogHtml());
+    $('#draggableDialogContents').html(loginDialogHtml());
     $("#draggableDialog").fadeIn();
+    $('.validationError').hide();
 
+    $("#draggableDialog").css("width", "600");
     var winH = $(window).height();
     var dlgH = $('#customMessage').height();
     $('#customMessageContainer').css("top", (winH - dlgH) / 2);
@@ -94,7 +96,7 @@ function attemptLogin() {
 } 
 
 function validateLogin() {
-    //alert("validateLogin");
+    $('.validationError').hide();
     if ($('#txtLoginUserName').val() === "") {
         $('#errLoginUserName').show();
         return false;
@@ -105,14 +107,13 @@ function validateLogin() {
         $('#errLoginPassword').show();
         return false;
     }
+
+
+
+
     $('#errLoginPassword').hide();
     return true;
 }
-
-
-
-
-
 
 function onLogoutClick(pageId) {
 
@@ -144,12 +145,9 @@ function transferToRegisterPopup() {
     onRegisterClick();
 }
 
-function loadLoginDialogHtml() {
-
-    //$('#loginDialogContainer').html(
-    var loginDialogHtml =
-        "<div id='loginDialog' class='oggleDialog'>\n" +
-        "    <div id='loginValidationSummary' class='validationError'></div>\n" +
+function loginDialogHtml() {
+    return "<div id='loginDialog' class='oggleDialog'>\n" +
+        //"    <div id='loginValidationSummary' class='validationError'></div>\n" +
         "    <div id='errLoginUserName' class='validationError'>Required</div>\n" +
         "    <label>User Name</label><br>\n" +
         "    <input id='txtLoginUserName' class='roundedInput'><br>\n" +
@@ -196,16 +194,17 @@ function loadLoginDialogHtml() {
         "       Google\n" +
         "   </div>\n" +
         "</div>\n";
-    $("#txtLoginClearPassword").keyup(function (event) {
-        if (event.keyCode === 13) {
-            attemptLogin();
-        }
-    });
-    function checkFaceBookLoginState() {
-        alert("checkFaceBookLoginState()");
-    }
+}
 
-    return loginDialogHtml;
+$("#txtLoginClearPassword").keyup(function (event) {
+    if (event.keyCode === 13) {
+        alert("$(#txtLoginClearPassword).keyup");
+        attemptLogin();
+    }
+});
+
+function checkFaceBookLoginState() {
+    alert("checkFaceBookLoginState()");
 }
 
 function showRegisterDialogHtml() {
@@ -232,7 +231,6 @@ function showRegisterDialogHtml() {
         "   <button class='roundendButton submitButton' onclick='attemptRegister()'>Submit</button>\n" +
         "</div>\n");
 }
-
 
 function showRegisterDialog(pageId) {
     logEventActivity({
