@@ -428,11 +428,10 @@ function carouselContextMenuAction(ctxMenuAction) {
             imageCommentDialogIsOpen = true;
             pause();
             $('#carouselContextMenu').fadeOut();
-            showImageCommentDialog(
-                carouselItemArray[imageIndex].Link,
+            showImageCommentDialog(carouselItemArray[imageIndex].Link,
                 carouselItemArray[imageIndex].LinkId,
                 carouselItemArray[imageIndex].FolderId,
-                carouselItemArray[imageIndex].FolderName);
+                carouselItemArray[imageIndex].FolderName, "Carousel");
 
             $('#imageCommentDialog').on('dialogclose', function (event) {
                 imageCommentDialogIsOpen = false;

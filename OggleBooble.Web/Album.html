@@ -34,7 +34,7 @@
     <script src="Scripts/MetaTagDialog.js"></script>
     <script src="Scripts/Slideshow.js"></script>
     <script src="Scripts/Album.js"></script>
-
+    <script src="Scripts/ImageContextMenu.js"></script>
 
     <link href="Styles/Common.css" rel="stylesheet" />
     <link href="Styles/AlbumPage.css" rel="stylesheet">
@@ -94,7 +94,7 @@
                 window.location.href = "Index.html";
             }
             resizeAlbumPage();
-            setOggleHeader(params.folder, "blank");
+            setOggleHeader(params.folder, "loading");
             var dots = "";
             loadSettings();
             var waiter = setInterval(function () {

@@ -451,8 +451,8 @@ input[type='checkbox'] {
     padding: 20px 15px;
     margin: 10px;
     cursor: pointer;
-    color: var(--ogglePurple);
-    background-color: var(--oggleContainerBackgroundColor);
+    /*color: var(--ogglePurple);*/
+    background-color: var(--brucheumBlue);
     border-radius: 8px;
 }
 

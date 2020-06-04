@@ -143,13 +143,14 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
             break;
         case "FLC":  //  footer link clicked
             //if (document.domain === 'localhost') alert("eventCode: " + eventCode + " pageId: " + pageId);
+            //reportThenPerformEvent(\"FLC\",\"blog\",\"blog\"," + pageId + ")'>Blog</div>\n"
             switch (eventDetail) {
                 case "about us": showCustomMessage(38); break;
                 case "dir tree": showCatListDialog(2); break;
                 case "porn dir tree": showCatListDialog(242); break;
                 case "playmate dir tree": showCatListDialog(472); break;
                 case "porn": showCustomMessage(35, false); break;
-                case "blog": window.location.href = '/Blog.html'; break;
+                case "blog": window.location.href = '/index.html?subdomain=blog'; break;
                 case "ranker": window.location.href = "/Ranker.html"; break;
                 case "rejects": window.location.href = "/album.html?folder=1132"; break;
                 case "centerfolds": window.location.href = "/album.html?folder=1132"; break;

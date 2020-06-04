@@ -1,4 +1,5 @@
-﻿using OggleBooble.Api.MsSqlDataContext;
+﻿using OggleBooble.Api.MySqlDataContext;
+using OggleBooble.Api.MsSqlDataContext;
 using OggleBooble.Api.Models;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,6 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using WebApi.MySqDataContext;
 using System.Data.Entity.Validation;
 
 namespace OggleBooble.Api.Controllers
@@ -370,4 +370,22 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
     }
+
+    [EnableCors("*", "*", "*")]
+    public class EntityAttributeController : ApiController
+    {
+        [HttpGet]
+        [Route("api/Ref/GetRefs")]
+        public List<Ref> GetRefs(string refType) {
+            var refs = new List<Ref>();
+            using (var mdb = new OggleBoobleMySqContext())
+            {
+               refs = mdb.Refs.Where(r => r.RefType == refType).ToList();            
+            }
+            return refs;
+        }
+    }
+
+
+
 }

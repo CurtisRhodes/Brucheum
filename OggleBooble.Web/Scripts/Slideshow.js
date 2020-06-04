@@ -28,27 +28,19 @@ function launchViewer(folderId, startItem, showAllChildren) {
     if (isNullorUndefined(includeSubFolders))
         includeSubFolders = false;
     sessionCount = 0;
-    //$('#imageContainer').fadeOut();
-
     getSlideshowItems(folderId, startItem);
-
     slideShowButtonsActive = true;
-    $('#imagePageLoadingGif').fadeIn();
-    //$('#imageContainer').fadeOut();
-    //$('#slideShowContainer').html(slideshowHtml()).show();
 }
 
 function getSlideshowItems(folderId, startItem) {
     try {
-        //[Route("api/GalleryPage/GetSlideShowItems")]
+        $('#imagePageLoadingGif').fadeIn();
         albumFolderId = folderId;
         var start = Date.now();
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "/api/GalleryPage/GetSlideShowItems?folderId=" + folderId + "&includeSubFolders=" + includeSubFolders,
             success: function (slideshowItemModel) {
-                //$('#imagePageLoadingGif').hide();
-                $('#imagePageLoadingGif').fadeIn();
                 if (slideshowItemModel.Success === "ok") {
                     imageViewerFolderName = slideshowItemModel.FolderName;
                     imageViewerArray = slideshowItemModel.SlideshowItems;
@@ -68,6 +60,7 @@ function getSlideshowItems(folderId, startItem) {
                         };
                     }
 
+                    $('#imagePageLoadingGif').hide();               
                     viewerShowing = true;
                     resizePage();
                     resizeViewer();
@@ -81,12 +74,13 @@ function getSlideshowItems(folderId, startItem) {
                     console.log("GetImageLinks?folder=" + folderId + " took: " + delta.toFixed(3));
                 }
                 else {
+                    $('#imagePageLoadingGif').hide();
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "BUG",
                         Severity: 1,
                         ErrorMessage: successModel.Success,
-                        CalledFrom: "Slideshow.js buildFolderArray"
+                        CalledFrom: "getSlideshowItems"
                     });
                     //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
                     //if (document.domain === 'localhost') alert("jQuery fail in Album.js: getAlbumImages\n" + imageLinksModel.Success);
@@ -94,22 +88,24 @@ function getSlideshowItems(folderId, startItem) {
                 }
             },
             error: function (jqXHR) {
-                //$('#imagePageLoadingGif').hide();
+                $('#imagePageLoadingGif').hide();
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errorMessage, "getAlbumImages")) {
+                    if (document.domain === "localhost") alert("getSlideshowItems: " + errorMessage);
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "XHR",
                         Severity: 1,
                         ErrorMessage: errorMessage,
-                        CalledFrom: "Album.js getAlbumImages"
+                        CalledFrom: "getSlideshowItems"
                     });
                     //sendEmailToYourself("XHR ERROR in Album.js GetImageLinks ",
                 }
             }
         });
     } catch (e) {
-        //$('#imagePageLoadingGif').hide();
+        $('#imagePageLoadingGif').hide();
+        if (document.domain === "localhost") alert("getSlideshowItems: " + e);
         logError({
             VisitorId: getCookieValue("VisitorId"),
             ActivityCode: "CAT",
@@ -349,14 +345,8 @@ function blowupImage() {
 
 function showImageViewerCommentDialog() {
     closeViewer("CommentDialog");
-
-    showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, imageViewerFolderName);
-    logEventActivity({
-        VisitorId: getCookieValue("VisitorId"),
-        EventCode: "SVC",
-        EventDetail: "WOW! Someone tried to make a comment",
-        CalledFrom: "Sideshow"
-    });
+    //showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, imageViewerFolderName);
+    showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, "slideshow icon");
 }
 
 function closeViewer(calledFrom) {
@@ -480,13 +470,7 @@ function slideshowCtxMnuAction(action) {
                 runSlideShow('pause');
             }
             slideShowButtonsActive = false;
-            logEventActivity({
-                VisitorId: getCookieValue("VisitorId"),
-                EventCode: "FCC",
-                EventDetail: "Image: " + imageViewerArray[imageViewerIndex].Link,
-                CalledFrom: albumFolderId
-            });
-            showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, albumFolderId, currentAlbumJSfolderName);
+            showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, albumFolderId, currentAlbumJSfolderName, "Slideshow Context Menu");
             $('#imageCommentDialog').on('dialogclose', function (event) {
                 slideShowButtonsActive = true;
                 if (slideShowRunning)
@@ -602,11 +586,11 @@ function slideshowHtml() {
         "</div>\n" +
         "<div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n");
 
-    $('#rightClickArea').on.dblclick(function () {
-        event.preventDefault();
-        window.event.returnValue = false;
-        alert("start slideshow");
-    });
+    //$('#rightClickArea').on.dblclick(function () {
+    //    event.preventDefault();
+    //    window.event.returnValue = false;
+    //    alert("start slideshow");
+    //});
 
 }
 

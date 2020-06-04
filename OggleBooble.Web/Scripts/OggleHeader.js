@@ -23,7 +23,7 @@
     });
 
     setHeaderDetails(folderId, subdomain);
-    if (subdomain !== "blank")
+    if (subdomain !== "loading")
         setLoginHeaderSection();
 }
 
@@ -47,7 +47,7 @@ function setHeaderDetails(folderId, subdomain) {
             else
                 showBoobsHeader(folderId);
             break;
-        case "blank":
+        case "loading":
             $('#subheaderContent').html("loading");
             break;
         case "dashboard":
@@ -58,7 +58,6 @@ function setHeaderDetails(folderId, subdomain) {
             break;
         case "ranker":
             $('#subheaderContent').html("ranker");
-            //rtpe(eventCode, CalledFrom, eventDetail, pageId);
             break;
         case "archive":
             $('#subheaderContent').html(

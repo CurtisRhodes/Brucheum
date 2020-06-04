@@ -349,36 +349,6 @@ function containsRomanNumerals(strLabel) {
 }
 
 // COMMON CONTEXTMENU FUNCTIONS
-function showLinks(linkId) {
-    $.ajax({
-        type: "PATCH",
-        url: settingsArray.ApiServer + "api/ImagePage?linkId=" + linkId,
-        success: function (linksModel) {
-            if (linksModel.Success === "ok") {
-                $('#linkInfo').show();
-                $('#linkInfoContainer').html("");
-                $.each(linksModel.Links, function (idx, obj) {
-                    $('#linkInfoContainer').append("<div id='" + obj.FolderId + "' class='linkInfoItem' onclick='openLink(" + obj.FolderId + ")'>" + obj.PathName + "</div>");
-                });
-            }
-            else
-                alert("showLinks: " + linksModel.Success);
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "showLinks")) {
-                logError({
-                    VisitorId: getCookieValue("VisiorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "showLinks(" + linkId + ")"
-                });
-                //sendEmailToYourself("xhr error in common.js showLinks", "api/ImagePage?linkId=" + linkId + " Message: " + errorMessage);
-            }
-        }
-    });
-}
 
 function openLink(folderId) {
     window.open("/album.html?folder=" + folderId, "_blank");
@@ -713,6 +683,7 @@ function verifyConnection() {
     if (isNullorUndefined(settingsArray.ApiServer)) {
         console.error("verifyConnection settingsArray.ApiServer not defined");
         connectionVerified = false;
+        return;
     }
     else {
         console.log("calling verifyConnection");

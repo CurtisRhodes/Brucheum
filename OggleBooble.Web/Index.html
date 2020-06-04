@@ -24,6 +24,7 @@
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
+    <script src="Scripts/OggleBlog.js"></script>
 
 
     <script src="Scripts/Permissions.js"></script>
@@ -49,7 +50,7 @@
     <link href="Styles/ModelInfoDialog.css" rel="stylesheet">
     <link href="Styles/ImageCommentDialog.css" rel="stylesheet">
     <link href="Styles/MetaTagDialog.css" rel="stylesheet">
-
+    <link href="Styles/OggleBlog.css" rel="stylesheet" />
     <!--<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
         (adsbygoogle = window.adsbygoogle || []).push({
@@ -97,14 +98,16 @@
             $('#footerMessage').html("loading settings");
             $('.sectionLabel').hide();
             params = getParams();
+            subdomain = params.subdomain;
             if (params.subdomain === undefined)
                 subdomain = "boobs";
-            else
-                subdomain = params.subdomain;
             if (subdomain == "porn")
                 homePageId = 3909;
-
-            setOggleHeader(homePageId, "Index");
+            if (subdomain == "blog") {
+                homePageId = 3911;
+                $('threeColumnLayout').html(blogBodyHtml());
+            }
+            setOggleHeader(homePageId, "loading");
 
             loadSettings();
             var dots = ""
@@ -130,27 +133,30 @@
                     else {
                         loadRolesIntoLocalStorage("index", "any");
                     }
-                    checkFor404("start", "Index");
+                    checkFor404("start", subdomain);
                     var verifyConnectionWaiter = setInterval(function () {
                         if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
                             $('#dots').html('');
-                            if (subdomain == "porn") {
-                                $('#pornLeftColumnList').show();
-                                $('#includeCenterfoldsCheckbox').hide();
+                            if (subdomain === "blog") {
+                                blogStartup();
                             }
                             else {
-                                $('#boobsLeftColumnList').show();
-                                //launchPromoMessages();
+                                if (subdomain == "porn") {
+                                    $('#pornLeftColumnList').show();
+                                    $('#includeCenterfoldsCheckbox').hide();
+                                }
+                                else {
+                                    $('#boobsLeftColumnList').show();
+                                    //launchPromoMessages();
+                                }
+
+                                launchCarousel();
+                                loadUpdatedGalleriesBoxes(updatedGalleriesCount);
+                                $('.indexPageSection').show();
+
                             }
-
-                            launchCarousel();
-
-                            loadUpdatedGalleriesBoxes(updatedGalleriesCount);
-
-                            $('.indexPageSection').show();
                             setOggleFooter(homePageId, subdomain);
-
                             var visitorId = getCookieValue("VisitorId");
                             if (isNullorUndefined(visitorId)) {
                                 getIpInfo(homePageId);

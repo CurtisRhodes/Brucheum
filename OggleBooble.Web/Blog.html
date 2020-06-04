@@ -31,7 +31,7 @@
 <body>
     <header></header>
     <div class="threeColumnLayout">
-        <div id="leftColumn">
+        <div class="leftColumn">
             <div id="blogControls" class="leftColumnList">
                 <div id="leftColumnShowBlog" onclick="showBlogDisplay()">Show Blog</div>
                 <div id="leftColumnEditorNew" onclick="showBlogEditor()">New Entry</div>
@@ -39,7 +39,7 @@
                 <div id="leftColumnShowPage">Show Page</div>
             </div>
         </div>
-        <div id="middleColumn">
+        <div class="middleColumn">
             <div id="dots"></div>
             <div id="divStatusMessage"></div>
             <img id="blogLoadingGif" class="loadingGif" src="Images/loader.gif" />
@@ -98,7 +98,7 @@
                 <div id="blogPageBody" class="blogPageBodyText"></div>
             </div>
         </div>
-        <div id="rightColumn"></div>
+        <div class="rightColumn"></div>
     </div>
     <footer></footer>
 
@@ -109,12 +109,9 @@
     /// 11:19  May 24 20019
     ///  sometimes even I have to take a moment to figure out what I want to do.
     /// start with a display of blog entries
-        $(document).ready(function () {
-            includeHTML();
+       $(document).ready(function () {
             $('#blogDisplayCommentTypeSelect').val('BLG');
-
             params = getParams();
-
             loadSettings();
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
@@ -161,44 +158,6 @@
             resizePage();
             $(window).resize(resizeBlogPage());
         });
-
-        function loadBlogDropDowns() {
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "api/Ref/Get?refType=BLG",
-                success: function (refs) {
-                    if (refs.Success === "ok") {
-                        //<select id="blogDisplayCommentTypeSelect" class="roundedInput" onchange="loadBlogArticles($(this).val())">
-                        //    <option value="BLG">Blog Entry</option>
-                        //    <option value="CMT">Comment on an Image</option>
-                        //    <option class="adminOnly" value="PGM">Programmer Notes</option>
-                        //    <option class="adminOnly" value="FLD">Folder Comments</option>
-                        //    <option class="adminOnly" value="PRO">Promo Messages</option>
-                        //    <option class="adminOnly" value="CON">Site Content</option>
-                        //</select>
-                        //var isBlogEditor = isInRole("Blog Editor")
-
-                        $.each(refs.refItems, function (idx, obj) {
-                            $('#blogDisplayCommentTypeSelect').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
-                            $('#selBlogEditCommentType').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
-                        });
-                    }
-                    else {
-                        alert("loadBlogDropDowns\n" + refs.Success);
-                    }
-                },
-                error: function (jqXHR) {
-                    var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "getRefValues()")) {
-                        sendEmailToYourself("XHR ERROR IN getRefValues", "api/Ref/Get?refType=" + refType +
-                            "<br/>" + errorMessage);
-                        if (document.domain === 'localhost') alert("XHR error in getRefValues\n" + errorMessage);
-                    }
-                    return false;
-                }
-            });
-        }
-
     </script>
 </body>
 </html>

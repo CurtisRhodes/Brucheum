@@ -9,10 +9,11 @@ using System.Web.Http;
 
 namespace OggleBooble.Api.Controllers
 {
-    public class BlogController : ApiController
+    public class OggleJournalController : ApiController
     {
         [HttpGet]
-        public BlogCommentModel Get(int blogId)
+        [Route("api/OggleBlog/GetBlogItem")]
+        public BlogCommentModel GetBlogItem(int blogId)
         {
             BlogCommentModel entry = new BlogCommentModel();
             try
@@ -41,6 +42,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
+        [Route("api/OggleBlog/GetBlogList")]
         public BlogCommentModelContainer GetBlogList(string commentType)
         {
             BlogCommentModelContainer blogCommentsContainer = new BlogCommentModelContainer();
@@ -69,10 +71,11 @@ namespace OggleBooble.Api.Controllers
             return blogCommentsContainer;
         }
 
-        [HttpPatch]
-        public BlogCommentModel GetImageComment(string linkId, string userId)
+        [HttpGet]
+        [Route("api/OggleBlog/GetBlogComment")]
+        public BlogCommentModel GetBlogComment(string linkId, string userId)
         {
-            BlogCommentModel entry = new BlogCommentModel();
+            var blogComment = new BlogCommentModel();
             try
             {
                 using (OggleBoobleContext db = new OggleBoobleContext())
@@ -80,45 +83,60 @@ namespace OggleBooble.Api.Controllers
                     BlogComment dbBlogComment = db.BlogComments.Where(b => b.LinkId == linkId).Where(b => b.UserId == userId).FirstOrDefault();
                     if (dbBlogComment != null)
                     {
-                        entry.CommentTitle = dbBlogComment.CommentTitle;
-                        entry.CommentText = dbBlogComment.CommentText;
-                        entry.Id = dbBlogComment.Id;
+                        //public class BlogCommentModel
+                        //{
+                        //    public int Id { get; set; }
+                        //    public string CommentTitle { get; set; }
+                        //    public string CommentType { get; set; }
+                        //    public string Link { get; set; }
+                        //    public string LinkId { get; set; }
+                        //    public int FolderId { get; set; }
+                        //    public string UserId { get; set; }
+                        //    public string CommentText { get; set; }
+                        //    public string Posted { get; set; }
+                        //    public string Success { get; set; }
+                        //}
+                        blogComment.CommentTitle = dbBlogComment.CommentTitle;
+                        blogComment.CommentText = dbBlogComment.CommentText;
+                        blogComment.Id = dbBlogComment.Id;
                     }
                     else
-                        entry.Id = 0;
+                        blogComment.Id = 0;
                 }
-                entry.Success = "ok";
+                blogComment.Success = "ok";
             }
             catch (Exception ex)
             {
-                entry.CommentTitle = Helpers.ErrorDetails(ex);
+                blogComment.CommentTitle = Helpers.ErrorDetails(ex);
             }
-            return entry;
+            return blogComment;
         }
 
         [HttpPost]
-        public SuccessModel Insert(BlogComment entry)
+        [Route("api/Blog/Insert")]
+        public SuccessModel Insert(BlogComment blogComment)
         {
-            SuccessModel success = new SuccessModel();
+            SuccessModel successModel = new SuccessModel();
             try
             {
-                entry.Posted = DateTime.Now;
+                blogComment.Posted = DateTime.Now;
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
-                    db.BlogComments.Add(entry);
+                    db.BlogComments.Add(blogComment);
                     db.SaveChanges();
-                    success.Success = "ok";
-                    success.ReturnValue = entry.Id.ToString();
+                    successModel.Success = "ok";
+                    successModel.ReturnValue = blogComment.Id.ToString();
                 }
             }
             catch (Exception e)
             {
-                success.Success = Helpers.ErrorDetails(e);
+                successModel.Success = Helpers.ErrorDetails(e);
             }
-            return success;
+            return successModel;
         }
 
         [HttpPut]
+        [Route("api/OggleBlog/Update")]
         public string Update(BlogComment entry)
         {
             string success = "";

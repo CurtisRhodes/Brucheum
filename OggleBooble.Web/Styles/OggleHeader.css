@@ -39,7 +39,7 @@
     resize: both;
     overflow: auto;
     border: solid 2px var(--oggleBorderColor);
-    background-color: var(--oggleContainerBackgroundColor);
+    background-color: var(--flitterYellow);
 }
 .oggleDialogHeader {
     border: none;
