@@ -138,7 +138,7 @@ function showDirTreeContextMenu(folderId) {
     $('body').append(
         "<div id='dashboardContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
         "    <div onclick='window.open(\"/album.html?folder=" + folderId + "\", \"_blank\")'>Open Folder</div>\n" +
-        "    <div onclick='showFolderInfoDialog(" + folderId + ")'>Show Category Info</div>\n" +
+        "    <div onclick='showFolderInfoDialog(" + folderId + ",\"dash ctx\")'>Show Category Info</div>\n" +
         "    <div onclick='showModelInfoDialog(" + folderId + ")'>Show Model Info</div>\n" +
         "</div>\n");
     $('#dashboardContextMenu').css("top", event.clientY + 5);

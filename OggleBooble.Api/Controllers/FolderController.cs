@@ -12,7 +12,7 @@ using System.Web.Http.Cors;
 namespace OggleBooble.Api.Controllers
 {
     [EnableCors("*", "*", "*")]
-    public class FolderController : ApiController
+    public class CategoryFolderController : ApiController
     {
         //private readonly string repoPath = "F:/Danni/";
         private readonly string hostingPath = ".ogglebooble.com/";
@@ -31,11 +31,7 @@ namespace OggleBooble.Api.Controllers
                 using (OggleBoobleContext db = new OggleBoobleContext())
                 {
                     CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-
-                    folderDetailModel.ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbFolder.FolderName);
-                    folderDetailModel.ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(db.CategoryFolders.Where(f => f.Parent == folderId).ToList());
-                    folderDetailModel.HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
-                    folderDetailModel.HasSubfolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0;
+                    folderDetailModel.FolderId = folderId;
                     folderDetailModel.FolderName = dbFolder.FolderName;
                     folderDetailModel.RootFolder = dbFolder.RootFolder;
                     folderDetailModel.FolderImage = db.ImageLinks.Where(i => i.Id == dbFolder.FolderImage).Select(i => i.Link).FirstOrDefault();
@@ -52,6 +48,18 @@ namespace OggleBooble.Api.Controllers
                         folderDetailModel.LinkStatus = categoryFolderDetails.LinkStatus;
                         //folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
                     }
+
+                    var folderTypeModel = new FolderTypeModel()
+                    {
+                        RootFolder = dbFolder.RootFolder,
+                        ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbFolder.FolderName),
+                        ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(db.CategoryFolders.Where(f => f.Parent == folderId).ToList()),
+                        HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
+                        HasSubFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0,
+                    };
+                    
+                    folderDetailModel.FolderType = Helpers.DetermineFolderType(folderTypeModel);
+
                     //ImageLink imageLink = db.ImageLinks.Where(g => g.Id == dbFolder.FolderImage).FirstOrDefault();
                     //if (imageLink != null)
                     //{
@@ -66,7 +74,6 @@ namespace OggleBooble.Api.Controllers
             }
             return folderDetailModel;
         }
-
 
         [HttpPost]
         [Route("api/Folder/Create")]

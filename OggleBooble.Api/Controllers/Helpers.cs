@@ -1,4 +1,5 @@
 ﻿
+using OggleBooble.Api.Models;
 using OggleBooble.Api.MsSqlDataContext;
 using System;
 using System.Collections.Generic;
@@ -29,25 +30,25 @@ namespace OggleBooble.Api.Controllers
     }
     public static class Helpers
     {
-        public static string DetermineFolderType(Models.GetAlbumInfoSuccessModel folderDetailModel)
+        public static string DetermineFolderType(FolderTypeModel folderTypeInfo)
         {
-            if (folderDetailModel.ContainsRomanNumeral)
+            if (folderTypeInfo.ContainsRomanNumeral)
                 return "singleModelCollection";
-            if (folderDetailModel.ContainsRomanNumeralChildren)
+            if (folderTypeInfo.ContainsRomanNumeralChildren)
                 return "singleModelGallery";
 
-            if (folderDetailModel.RootFolder == "archive" || folderDetailModel.RootFolder == "sluts")
+            if (folderTypeInfo.RootFolder == "archive" || folderTypeInfo.RootFolder == "sluts")
             {
-                if (folderDetailModel.HasImages)
+                if (folderTypeInfo.HasImages)
                     return "singleModelCollection";
-                if (folderDetailModel.HasSubFolders)
+                if (folderTypeInfo.HasSubFolders)
                     return "singleModelGallery";
             }
-            if (folderDetailModel.RootFolder == "boobs" || folderDetailModel.RootFolder == "porn")
+            if (folderTypeInfo.RootFolder == "boobs" || folderTypeInfo.RootFolder == "porn")
             {
-                if (folderDetailModel.HasImages)
+                if (folderTypeInfo.HasImages)
                     return "assorterdImagesCollection";
-                if (folderDetailModel.HasSubFolders)
+                if (folderTypeInfo.HasSubFolders)
                     return "assorterdImagesGallery";
             }
 

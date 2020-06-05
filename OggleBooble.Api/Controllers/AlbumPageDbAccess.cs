@@ -26,12 +26,15 @@ namespace OggleBooble.Api.Controllers
                     albumInfo.RootFolder = dbCategoryFolder.RootFolder;
                     albumInfo.FolderName = dbCategoryFolder.FolderName;
 
-                    albumInfo.ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName);
-                    albumInfo.ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(db.CategoryFolders.Where(f => f.Parent == folderId).ToList());
-                    albumInfo.HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
-                    albumInfo.HasSubFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0;
-
-                    albumInfo.FolderType = Helpers.DetermineFolderType(albumInfo);
+                    var folderTypeModel = new FolderTypeModel()
+                    {
+                        RootFolder = dbCategoryFolder.RootFolder,
+                        ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName),
+                        ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(db.CategoryFolders.Where(f => f.Parent == folderId).ToList()),
+                        HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
+                        HasSubFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0,
+                    };
+                    albumInfo.FolderType = Helpers.DetermineFolderType(folderTypeModel);
 
                     List<VwDirTree> vwTrees = db.VwDirTrees.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.FolderName).ToList();
                     foreach (VwDirTree vwTree in vwTrees)

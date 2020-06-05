@@ -31,6 +31,12 @@
     border-bottom: #decd6f 3px solid;
 }
 
+.launchingServiceContainer {
+    position: absolute;
+    top: 400px;
+    display: none;
+}
+
 .oggleDraggableDialog {
     position: absolute;
     z-index: 36;

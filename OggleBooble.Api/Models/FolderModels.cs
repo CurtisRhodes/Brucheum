@@ -20,10 +20,7 @@ namespace OggleBooble.Api.Models
         public string Boobepedia { get; set; }
         public string FolderImage { get; set; }
         public string LinkStatus { get; set; }
-        public bool HasImages { get; set; }
-        public bool HasSubfolders { get; set; }
-        public bool ContainsRomanNumeral { get; set; }
-        public bool ContainsRomanNumeralChildren { get; set; }
+        public string FolderType { get; set; }
         public string Success { get; set; }
     }
     public class SearchResultsModel

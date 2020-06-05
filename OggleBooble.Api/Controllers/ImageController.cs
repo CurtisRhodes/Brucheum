@@ -62,13 +62,15 @@ namespace OggleBooble.Api.Controllers
                     }
 
                     var albumInfo = new GetAlbumInfoSuccessModel();
-                    albumInfo.ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName);
-                    albumInfo.ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(db.CategoryFolders.Where(f => f.Parent == folderId).ToList());
-                    albumInfo.HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
-                    albumInfo.HasSubFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0;
                     albumInfo.RootFolder = dbCategoryFolder.RootFolder;
-
-                    imageInfo.FolderType = Helpers.DetermineFolderType(albumInfo);
+                    var folderTypeModel = new FolderTypeModel()
+                    {
+                        ContainsRomanNumeral = Helpers.ContainsRomanNumeral(imageInfo.FolderName),
+                        ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(db.CategoryFolders.Where(f => f.Parent == folderId).ToList()),
+                        HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
+                        HasSubFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0,
+                    };
+                    imageInfo.FolderType = Helpers.DetermineFolderType(folderTypeModel);
 
                     imageInfo.FolderName = dbCategoryFolder.FolderName;
                     imageInfo.LinkId = dbImageLink.Id;

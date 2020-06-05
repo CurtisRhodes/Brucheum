@@ -233,11 +233,13 @@ function headerHtml(folderId) {
         "   <div id='modalContent' class='modalContentStyle'></div>\n" +
         "</div>\n" +
 
-        "<div id='launchingService' class='floatLeft displayHidden'>\n" +
+        "<div id='launchingService'>\n" +
         "    <div class='centeringOuterShell randomImageContainer'>\n" +
-        "        <div class='centeringInnerShell'>\n" +
-        "           <img src='Images/altair02.gif' />\n" +
-        "        </div>\n" +
+        "       <div class='centeringInnerShell'>\n" +
+        "           <div class='launchingServiceContainer'>\n"+
+        "               <img src='Images/altair02.gif' />\n" +
+        "           </div>\n" +
+        "       </div>\n" +
         "    </div>\n" +
         "</div>\n";
 

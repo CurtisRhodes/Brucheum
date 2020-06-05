@@ -5,6 +5,14 @@ using System.Web;
 
 namespace OggleBooble.Api.Models
 {
+    public class FolderTypeModel 
+    {
+        public string RootFolder { get; set; }
+        public bool HasImages { get; set; }
+        public bool HasSubFolders { get; set; }
+        public bool ContainsRomanNumeral { get; set; }
+        public bool ContainsRomanNumeralChildren { get; set; }
+    }
     public class GetAlbumInfoSuccessModel
     {
         public GetAlbumInfoSuccessModel()
@@ -26,10 +34,6 @@ namespace OggleBooble.Api.Models
         public int UserPageHits { get; set; }
         public string LastModified { get; set; }
         public string FolderType { get; set; }
-        public bool HasImages { get; set; }
-        public bool HasSubFolders { get; set; }
-        public bool ContainsRomanNumeral { get; set; }
-        public bool ContainsRomanNumeralChildren { get; set; }
         public string Success { get; set; }
     }
 

@@ -60,15 +60,17 @@ function getImageDetails() {
                 $('#imageInfoHeight').html(imageInfo.Height);
                 $('#imageInfoWidth').html(imageInfo.Width);
                 $('#imageInfoLastModified').html(imageInfo.LastModified);
-                $('#linkInfoContainer').html("");                
-                alert("imageInfo.InternalLinks.length: " + imageInfo.InternalLinks.size);
-                if (imageInfo.InternalLinks.count() > 0) {
-                    //$('#ctxShowImageLinks').hide();
-                    $('#ctxShowImageLinks').html("no links");
+
+                //alert("jQuery.isEmptyObject: " + jQuery.isEmptyObject(imageInfo.InternalLinks));
+                if (jQuery.isEmptyObject(imageInfo.InternalLinks)) {
+                    $('#ctxShowImageLinks').hide();
+                    //$('#ctxShowImageLinks').html("no links");
                 }
                 else {
+                    $('#otherLinksContainer').html("");          
                     $.each(imageInfo.InternalLinks, function (idx, obj) {
-                        $('#linkInfoContainer').append(obj.Value);
+                        alert("<div><a href='/album.html?folder=" + idx + " target=\"_blank\"'>" + obj + "</a></div>");
+                        $('#otherLinksContainer').append("<div><a href='/album.html?folder=" + idx + "' target='_blank'>" + obj + "</a></div>");
                     });
                 }
             }
@@ -106,10 +108,10 @@ function imageCtxMenuAction(action) {
     switch (action) {
         case "show":
             $("#imageContextMenu").fadeOut();
-            if ($('#ctxModelName').html() === "unknown model") 
-                showUnknownModelInfoDialog(folderId);            
+            if ($('#ctxModelName').html() === "unknown model")
+                showUnknownModelInfoDialog(folderId);
             else
-                showFolderInfoDialog(folderId);
+                showFolderInfoDialog(folderId, "img ctx");
             break;
         case "see more":
             rtpe("SEE", folderId, folderName, modelFolderId);
@@ -165,10 +167,6 @@ function imageCtxMenuAction(action) {
                 CalledFrom: "Album.js contextMenuAction"
             });
     }    
-}
-
-function showLinks(linkId) {
-
 }
 
 function removeImage() {

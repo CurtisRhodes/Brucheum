@@ -472,7 +472,7 @@ function slowlyShowFolderCategoryDialog() {
             if (typeof pause === 'function')
                 pause();
             folderCategoryDialogIsOpen = true;
-            showFolderInfoDialog(carouselItemArray[imageIndex].FolderId);
+            showFolderInfoDialog(carouselItemArray[imageIndex].FolderId, "carousel slowly");
         }
     }, 1100);
     $('#folderCategoryDialog').on('dialogclose', function (event) {
@@ -493,14 +493,18 @@ function showCarouelSettingsDialog() {
         "</div>\n");
 
     let lsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
+
+
     $('#ckCenterfold').prop("checked", lsCarouselSettings.includeCenterfolds);
     $('#ckArchive').prop("checked", lsCarouselSettings.includeArchive);
     $('#ckPorn').prop("checked", lsCarouselSettings.includePorn);
     $('#ckLandscape').prop("checked", lsCarouselSettings.includeLandscape);
     $('#ckPortrait').prop("checked", lsCarouselSettings.includePortrait);
+    $("#draggableDialogContents").css("width", 500);
 
     $('.carouselCheckbox').change(function () {
-        //alert("this." + this.id + " checked: " + this.checked);
+        alert("this." + this.id + " checked: " + this.checked);
+        // update settings
         switch (this.id) {
             case "ckPortrait":
                 lsCarouselSettings.includePortrait = this.checked;

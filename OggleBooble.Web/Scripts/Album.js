@@ -129,8 +129,10 @@ function setBreadCrumbs(breadCrumbModel, badgesText) {
         else {
             if (breadCrumbModel[i].IsInitialFolder) {
                 $('#breadcrumbContainer').append(
-                    "<a class='inactiveBreadCrumb' onmouseover='slowlyshowFolderInfoDialog(" + breadCrumbModel[i].FolderId + ")' onmouseout='forgetHomeFolderInfoDialog=true;' " +
-                    "onclick='showFolderInfoDialog(" + breadCrumbModel[i].FolderId + ")'>" + breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
+                    "<a class='inactiveBreadCrumb' " +
+                    "onmouseover = 'slowlyShowFolderInfoDialog(" + breadCrumbModel[i].FolderId + ")' " +
+                    "onmouseout = 'forgetHomeFolderInfoDialog=true;' " +
+                    "onclick='showFolderInfoDialog(" + breadCrumbModel[i].FolderId + ",\"bc click\")'>" + breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
             }
             else {
                 $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
@@ -438,8 +440,8 @@ function folderContextMenuAction(action) {
     switch (action) {
         case "show":
             if ($('#ctxModelName').html() === "unknown model") {
-                showUnknownModelInfoDialog(albumFolderId);
-                showFolderInfoDialog(albumFolderId);
+                //showUnknownModelInfoDialog(albumFolderId);
+                showFolderInfoDialog(albumFolderId,"folder ctx show");
             }
             $("#imageContextMenu").fadeOut();
             break;
@@ -520,10 +522,9 @@ function slowlyShowFolderInfoDialog(folderId) {
     forgetHomeFolderInfoDialog = false;
     setTimeout(function () {
         if (!forgetHomeFolderInfoDialog) {
-            alert("disable this");
             if (typeof pause === 'function')
                 pause();
-            showFolderInfoDialog(folderId);
+            showFolderInfoDialog(folderId, "bc slowly");
         }
     }, 1800);
 }

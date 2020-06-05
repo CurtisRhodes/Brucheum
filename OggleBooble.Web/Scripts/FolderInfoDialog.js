@@ -1,5 +1,6 @@
 ﻿var folderInfo = {};
-function showFolderInfoDialog(folderId) {
+
+function showFolderInfoDialog(folderId, calledFrom) {
     // 11:11 2/25/19
     // 2:20 4/10/2019
     // create a new table (or row)
@@ -21,8 +22,6 @@ function showFolderInfoDialog(folderId) {
             dialogsInBody: true
         });
         $('#summernoteContainer').summernote('disable');
-        // CMX	Show Model Info Dialog
-        reportEvent("CMX", "called From", "detail", folderId);
 
         $(".note-editable").css('font-size', '19px');
         $(".modelDialogInput").prop('readonly', true);;
@@ -34,75 +33,16 @@ function showFolderInfoDialog(folderId) {
         // how to determine folder type : if a category folder or a model album
         // if rootfolder = boobs show just the CommentText 
         // 
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Folder/GetFolderInfo?folderId=" + folderId,
-            success: function (folderDetails) {
-                if (folderDetails.Success === "ok") {
-                    folderInfo = folderDetails;
-                    //if (isNullorUndefined(folderDetails.CommentText)) {
-                    //    folderDetails.CommentText = "In in eros sit amet nunc ultrices laoreet. Nunc eu fringilla diam. Morbi eget nunc gravida, dignissim metus et, pharetra ligula." +
-                    //        " Maecenas efficitur nunc dapibus neque semper gravida. Donec eget commodo turpis, non accumsan sapien. Nunc elementum hendrerit sodales." +
-                    //        " Nam pulvinar cursus mi, id feugiat quam. Curabitur interdum pretium nunc, vitae aliquam tellus pellentesque in. Nullam eleifend viverra massa, eu vulp" +
-                    //        "utate nisi sagittis sit amet. Suspendisse imperdiet sem nec tempus ornare. Morbi sit amet consequat diam.";
-                    //}
-                    $('#draggableDialogTitle').html(folderDetails.FolderName);
-                    $('#modelDialogThumbNailImage').attr("src", folderDetails.FolderImage);
-                    $('#txtFolderName').val(folderDetails.FolderName);
-                    $('#txtBorn').val(folderDetails.Born);
-                    $('#txtNationality').val(folderDetails.Nationality);
-                    $('#txtBorn').val(folderDetails.Born);
-                    $('#txtBoobs').val(folderDetails.Boobs);
-                    $('#txtMeasurements').val(folderDetails.Measurements);
-                    //$('#txtStatus').val(folderDetails.LinkStatus);
-                    $("#summernoteContainer").summernote("code", folderInfo.CommentText);
 
-                    determineFolderType();
+        getFolderDetails(folderId);
 
-                    $('#imagePageLoadingGif').hide();
-                    $("#draggableDialog").fadeIn();
-                }
-                else {
-                    $('#imagePageLoadingGif').hide();
-                    showMyAlert("unable to show folder info");
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "JQE",
-                        Severity: 2,
-                        ErrorMessage: folderDetails.Success,
-                        CalledFrom: "showCategoryDialog"
-                    });
-                    if (document.domain === 'localhost') alert("showCategoryDialog: " + folderDetails.Success);
-                }
-            },
-            error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (document.domain === 'localhost') alert("showCategoryDialog: " + errorMessage);
-                if (!checkFor404(errorMessage, "showCategoryDialog")) {
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 2,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "showCategoryDialog"
-                    });
-                }
-            }
-        });
-
-
-        logEventActivity({
-            VisitorId: getCookieValue("VisitorId"),
-            EventCode: "SMD",
-            EventDetail: "Viewer showing: " + viewerShowing,
-            PageId: albumFolderId,
-            CalledFrom: "contextMenuAction"
-        });
-
-
+        // CMX	Show Model Info Dialog
+        //reportEvent("CMX", "called From", "detail", folderId);
+        reportEvent("SMD", calledFrom, "Viewer showing: " + viewerShowing, albumFolderId);
 
     }
     catch (e) {
+        $('#imagePageLoadingGif').hide();
         logError({
             VisitorId: getCookieValue("VisitorId"),
             ActivityCode: "ERR",
@@ -115,36 +55,75 @@ function showFolderInfoDialog(folderId) {
     }
 }
 
-function determineFolderType() {
-    //    FolderId { get; set; }
-    //    FolderName { get; set; }
-    //    RootFolder { get; set; }
-    //    Link { get; set; }
-    //    Nationality { get; set; }
-    //    Measurements { get; set; }
-    //    ExternalLinks { get; set; }
-    //    CommentText { get; set; }
-    //    Born { get; set; }
-    //    Boobs { get; set; }
-    //    Boobepedia { get; set; }
-    //    FolderImage { get; set; }
-    //    LinkStatus { get; set; }
-    //    IsLandscape { get; set; }
-    //    Success { get; set; }
+function getFolderDetails(folderId) {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Folder/GetFolderInfo?folderId=" + folderId,
+        success: function (folderDetails) {
+            $('#imagePageLoadingGif').hide();
+            if (folderDetails.Success === "ok") {
+                folderInfo = folderDetails;
 
+                //if (isNullorUndefined(folderDetails.CommentText)) {
+                //    folderDetails.CommentText = "In in eros sit amet nunc ultrices laoreet. Nunc eu fringilla diam. Morbi eget nunc gravida, dignissim metus et, pharetra ligula." +
+                //        " Maecenas efficitur nunc dapibus neque semper gravida. Donec eget commodo turpis, non accumsan sapien. Nunc elementum hendrerit sodales." +
+                //        " Nam pulvinar cursus mi, id feugiat quam. Curabitur interdum pretium nunc, vitae aliquam tellus pellentesque in. Nullam eleifend viverra massa, eu vulp" +
+                //        "utate nisi sagittis sit amet. Suspendisse imperdiet sem nec tempus ornare. Morbi sit amet consequat diam.";
+                //}
+                $('#draggableDialogTitle').html(folderDetails.FolderName);
+                $('#modelDialogThumbNailImage').attr("src", folderDetails.FolderImage);
+                $('#txtFolderName').val(folderDetails.FolderName);
+                $('#txtBorn').val(folderDetails.Born);
+                $('#txtNationality').val(folderDetails.Nationality);
+                $('#txtBorn').val(folderDetails.Born);
+                $('#txtBoobs').val(folderDetails.Boobs);
+                $('#txtMeasurements').val(folderDetails.Measurements);
+                //$('#txtStatus').val(folderDetails.LinkStatus);
+                $("#summernoteContainer").summernote("code", folderInfo.CommentText);
+                $('#imagePageLoadingGif').hide();
+                $("#draggableDialog").fadeIn();
 
+                //determine view
 
-    if (folderInfo.RootFolder === "centerfold") {
-        $('#modelInfoDetails').show();
-        return;
-    }
-
-    if (folderInfo.RootFolder === "archive") {
-        if (folderInfo.HasImages) {
-            $('#modelInfoDetails').show();
-            return;
+                switch (folderInfo.FolderType) {
+                    case "singleModelGallery":
+                    case "singleModelCollection":
+                        $('#modelInfoDetails').show();
+                        break;
+                    case "assorterdImagesCollection":
+                    case "assorterdImagesGallery":
+                        $('#modelInfoDetails').hide();
+                        break;                    
+                }
+            }
+            else {
+                $('#imagePageLoadingGif').hide();
+                showMyAlert("unable to show folder info");
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "JQE",
+                    Severity: 2,
+                    ErrorMessage: folderDetails.Success,
+                    CalledFrom: "showCategoryDialog"
+                });
+                if (document.domain === 'localhost') alert("showCategoryDialog: " + folderDetails.Success);
+            }
+        },
+        error: function (jqXHR) {
+            $('#imagePageLoadingGif').hide();
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (document.domain === 'localhost') alert("showCategoryDialog: " + errorMessage);
+            if (!checkFor404(errorMessage, "showCategoryDialog")) {
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "XHR",
+                    Severity: 2,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "showCategoryDialog"
+                });
+            }
         }
-    }
+    });
 }
 
 function editFolderDialog() {
@@ -201,6 +180,9 @@ function saveFolderDialog() {
                 $('#summernoteContainer').summernote("destroy");
                 $('#summernoteContainer').summernote({ toolbar: "none" });
                 $('#summernoteContainer').summernote('disable');
+                $(".note-editable").css('font-size', '19px');
+                $(".modelDialogInput").prop('readonly', true);;
+
             }
             else {
                 //sendEmailToYourself("jquery fail in FolderCategory.js saveCategoryDialogText", success);
@@ -266,6 +248,8 @@ function cancelEdit() {
     $('#summernoteContainer').summernote({ toolbar: "none" });
     $('#summernoteContainer').summernote('disable');
     $("#summernoteContainer").summernote("code", folderInfo.CommentText); // reload unedited to cancel changes
+    $(".note-editable").css('font-size', '19px');
+    $(".modelDialogInput").prop('readonly', true);;
 }
 
 function addMetaTags() {
@@ -273,21 +257,21 @@ function addMetaTags() {
     //openMetaTagDialog(categoryFolderId);
 }
 
-function considerClosingModelInfoDialog() {
-    if ($('#btnCatDlgEdit').html() === "Edit") {
-        dragableDialogClose();
-    }
-}
+//function considerClosingModelInfoDialog() {
+//    alert("considerClosingModelInfoDialog()");
+//    if ($('#btnCatDlgEdit').html() === "Edit") {
+//        dragableDialogClose();
+//    }
+//}
 
 function showReadOnlyModelInfoDialogHtml() {
     $('#modelInforDialogContainer').html(
-        "<div id='folderCategoryDialog' class='oggleDialogWindow' title='' onmouseleave='considerClosingCategoryDialog()'>\n" +
+        "<div id='folderCategoryDialog'>\n" +   // class='oggleDialogWindow' title='' onmouseleave='considerClosingCategoryDialog()'
         "    <div id='catDlgSummerNoteTextArea'></div>\n" +
         "    <div id='btnCatDlgEdit' class='folderCategoryDialogButton' onclick='editFolderDialog()'>Edit</div>\n" +
         "    <div id='btnCatDlgMeta' class='folderCategoryDialogButton displayHidden' onclick='addMetaTags()'>add meta tags</div>\n" +
         "</div>\n");
 }
-
 
 //<div id="modelInfoDialog" class="oggleDialogWindow" onmouseleave="considerClosingModelInfoDialog()">
 //    <div id="modelInfoEditArea" class="displayHidden">
