@@ -15,6 +15,21 @@ namespace OggleBooble.Api.Models
         public string ReturnValue { get; set; }
         public string Success { get; set; }
     }
+    public class RefSuccessModel
+    {
+        public RefSuccessModel() {
+            RefItems = new List<RefItemModel>();
+        }
+        public List<RefItemModel> RefItems { get; set; }
+        public string Success { get; set; }
+    }
+    public class RefItemModel
+    {
+        public string RefType { get; set; }
+        public string RefCode { get; set; }
+        public string RefDescription { get; set; }
+
+    }
     public class PageHitRequestModel
     {
         public string VisitorId { get; set; }

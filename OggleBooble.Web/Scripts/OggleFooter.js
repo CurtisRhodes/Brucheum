@@ -21,7 +21,7 @@
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"mailme\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"blog\",\"blog\"," + pageId + ")'>Blog</div>\n" +
+            "        <div class='clickable' onclick='window.location.href=\"/index.html?subdomain=blog\"'>Blog</div>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"archive\"," + pageId + ")'>Archive</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
@@ -46,7 +46,7 @@
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"blog\"," + pageId + ")'>Blog</div>\n" +
+                "        <div class='clickable' onclick='window.location.href=\"/index.html?subdomain=blog\"'>Blog</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"freedback\"," + pageId + ")'>Feedback</div>\n" +
@@ -61,7 +61,7 @@
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"about us\"," + pageId + ")'>about us</div>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"dir tree\"," + pageId + ")'>category list</div>\n" +
-                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"blog\"," + pageId + ")'>blog</div>\n" +
+                "        <div class='clickable' onclick='window.location.href=\"/index.html?subdomain=blog\"'>Blog</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"ranker\"," + pageId + ")';>porn rater</a></div>\n" +
@@ -88,7 +88,7 @@
         //        "</div>\n";
         //    break;
         default:
-            footerhtml +=
+            footerhtml =
                 "<div class='flexContainer'>\n" +
                 "    <div class='footerCol'>\n" +
                 "       <div>unhandled domain: " + subdomain + "</div>\n" +

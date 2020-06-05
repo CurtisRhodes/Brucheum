@@ -55,6 +55,8 @@ function setHeaderDetails(folderId, subdomain) {
             break;
         case "blog":
             $('#subheaderContent').html("blog");
+            //alert("setOggleFooter(folderId :" + folderId + ", subdomain: " + subdomain + ");");
+
             break;
         case "ranker":
             $('#subheaderContent').html("ranker");
@@ -233,16 +235,13 @@ function headerHtml(folderId) {
         "   <div id='modalContent' class='modalContentStyle'></div>\n" +
         "</div>\n" +
 
-        "<div id='launchingService'>\n" +
-        "    <div class='centeringOuterShell randomImageContainer'>\n" +
-        "       <div class='centeringInnerShell'>\n" +
-        "           <div class='launchingServiceContainer'>\n"+
-        "               <img src='Images/altair02.gif' />\n" +
-        "           </div>\n" +
+        "<div class='centeringOuterShell'>\n" +
+        "   <div class='centeringInnerShell'>\n" +
+        "       <div id='launchingServiceGif' class='launchingServiceContainer'>\n" +
+        "           <img src='Images/altair02.gif' />\n" +
         "       </div>\n" +
-        "    </div>\n" +
+        "   </div>\n" +
         "</div>\n";
-
 }
 
 function draggableDialogHtml() {

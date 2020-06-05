@@ -110,3 +110,45 @@ function isLoggedIn() {
         userNameExist = false;
     return userNameExist;
 }
+
+function getUserSettings() {
+
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/UserSettings/Get?visitorId="+getCookieValue("VisitorId"),
+        success: function (successModel) {
+            if (successModel.Success === "ok") {
+                alert("userSettings: " + successModel.ReturnValue);
+                window.localStorage["userPreferences"] = successModel.ReturnValue;
+            }
+            else {
+                alert("ss" + successModel.Success);
+            }
+
+        }
+    });
+}
+
+function setUserSettings(settingJson) {
+
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "api/EntityAttribute/Update",
+        data: settingJson,
+        success: function (successModel) {
+            if (successModel.Success === "ok") {
+
+                window.localStorage["userPermissons"] = successModel.ReturnValue;
+
+            }
+            else {
+                alert("ss" + successModel.Success);
+            }
+
+        }
+    })
+
+
+}
+
+

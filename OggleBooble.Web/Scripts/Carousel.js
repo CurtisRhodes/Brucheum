@@ -8,7 +8,6 @@ var carouselContainerHeight;
 var CarouselInterval;
 var selectedImageArchiveFolderId;
 var metaTagDialogIsOpen = false;
-var modelInfoDialogIsOpen = false;
 var imageCommentDialogIsOpen = false;
 var folderCategoryDialogIsOpen = false;
 var forgetShowingCatDialog;
@@ -330,19 +329,6 @@ function clickSpeed(speed) {
     startCarousel(imageIndex);
 }
 
-function considerHidingContextMenu() {
-    $('#carouselContextMenu').fadeOut();
-    if (!metaTagDialogIsOpen) {
-        if (!modelInfoDialogIsOpen) {
-            if (!imageCommentDialogIsOpen) {
-                if (!folderCategoryDialogIsOpen) {
-                    resume();
-                }
-            }
-        }
-    }
-}
-
 function togglePause() {
     if ($('#pauseButton').html() === "||")
         pause();
@@ -412,13 +398,7 @@ function carouselContextMenuAction(ctxMenuAction) {
     switch (ctxMenuAction) {
         case "showDialog":
             $('#carouselContextMenu').fadeOut();
-            modelInfoDialogIsOpen = true;
-            pause();
-            showModelInfoDialog($('#ctxModelName').html(), selectedImageArchiveFolderId, carouselItemArray[imageIndex].Link);
-            $('#modelInfoDialog').on('dialogclose', function (event) {
-                modelInfoDialogIsOpen = false;
-                resume();
-            });
+            showFolderInfoDialog(selectedImageArchiveFolderId, "carousel context menu");
             break;
         case "explode":
             reportThenPerformEvent("EXP", "from main carousel", carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
@@ -494,16 +474,19 @@ function showCarouelSettingsDialog() {
 
     let lsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
 
-
     $('#ckCenterfold').prop("checked", lsCarouselSettings.includeCenterfolds);
     $('#ckArchive').prop("checked", lsCarouselSettings.includeArchive);
     $('#ckPorn').prop("checked", lsCarouselSettings.includePorn);
     $('#ckLandscape').prop("checked", lsCarouselSettings.includeLandscape);
     $('#ckPortrait').prop("checked", lsCarouselSettings.includePortrait);
-    $("#draggableDialogContents").css("width", 500);
+    $("#draggableDialog").css("width", 500);
+    $("#draggableDialogTitle").html("Carousel Settings top: [" + $("#draggableDialog").attr("top") + "]");
 
     $('.carouselCheckbox').change(function () {
-        alert("this." + this.id + " checked: " + this.checked);
+        //alert("this." + this.id + " checked: " + this.checked);
+
+        setUserSettings("{porn:girl,ckCenterfold:no,ckArchive:yes,ckPorn:no,ckLandscape:yes,ckPortrait:no}");
+
         // update settings
         switch (this.id) {
             case "ckPortrait":

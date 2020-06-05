@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29926.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "OggleBooble.Web", "..\OggleBooble.Web\", "{B640DC14-58AE-4502-9F36-E88F910B0B3C}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_60457"
+		Debug.AspNetCompiler.PhysicalPath = "..\OggleBooble.Web\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_60457\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_60457"
+		Release.AspNetCompiler.PhysicalPath = "..\OggleBooble.Web\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_60457\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "60457"
+		SlnRelativePath = "..\OggleBooble.Web\"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OggleBooble.Api", "..\OggleBooble.Api\OggleBooble.Api.csproj", "{A651CC29-F321-42CA-A440-17C368F16516}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B640DC14-58AE-4502-9F36-E88F910B0B3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B640DC14-58AE-4502-9F36-E88F910B0B3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B640DC14-58AE-4502-9F36-E88F910B0B3C}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{B640DC14-58AE-4502-9F36-E88F910B0B3C}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{A651CC29-F321-42CA-A440-17C368F16516}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A651CC29-F321-42CA-A440-17C368F16516}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A651CC29-F321-42CA-A440-17C368F16516}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A651CC29-F321-42CA-A440-17C368F16516}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {780022C8-106D-4652-86E0-D8386BC439D3}
+	EndGlobalSection
+EndGlobal

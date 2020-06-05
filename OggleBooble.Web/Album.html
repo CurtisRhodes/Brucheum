@@ -104,7 +104,6 @@
                 }
                 else {
                     clearInterval(waiter);
-                    connectionVerified = false;
                     checkFor404();
                     var waiter2 = setInterval(function () {
                         if (!connectionVerified) {
@@ -114,7 +113,6 @@
                         else {
                             clearInterval(waiter2);
                             $('#dots').html('');
-
                             //alert("document.domain: " + document.domain);
 
                             if (isInRole("view dynamic") || document.domain === "localhost") {

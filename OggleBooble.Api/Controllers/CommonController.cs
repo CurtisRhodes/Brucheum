@@ -375,17 +375,71 @@ namespace OggleBooble.Api.Controllers
     public class EntityAttributeController : ApiController
     {
         [HttpGet]
-        [Route("api/Ref/GetRefs")]
-        public List<Ref> GetRefs(string refType) {
-            var refs = new List<Ref>();
-            using (var mdb = new OggleBoobleMySqContext())
+        [Route("api/EntityAttribute/GetRefs")]
+        public RefSuccessModel GetRefs(string refType)
+        {
+            RefSuccessModel refs = new RefSuccessModel();
+            try
             {
-               refs = mdb.Refs.Where(r => r.RefType == refType).ToList();            
+                using (var mdb = new OggleBoobleMySqContext())
+                {
+                    var dbRefs = mdb.Refs.Where(r => r.RefType == refType).ToList();
+                    foreach (Ref dbRef in dbRefs)
+                    {
+                        refs.RefItems.Add(new RefItemModel()
+                        {
+                            RefCode = dbRef.RefCode,
+                            RefType = dbRef.RefType,
+                            RefDescription = dbRef.RefDescription
+                        });
+                    }
+                    refs.Success = "ok";
+                }
             }
+            catch (Exception ex) { refs.Success = Helpers.ErrorDetails(ex); }
             return refs;
         }
+
+        [HttpGet]
+        [Route("api/UserSettings/Get")]
+        public SuccessModel GetUserSettings(string visitorId)
+        {
+            var successModel = new SuccessModel();
+            try
+            {
+                using (var mdb = new OggleBoobleMySqContext())
+                {
+                    successModel.ReturnValue = mdb.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault().PornPreference;
+                }
+                successModel.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                successModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return successModel;
+        }
+
+        [HttpPut]
+        [Route("api/EntityAttribute/Update")]
+        public string UpdateUserSettings(string visitorId, string settingJson)
+        {
+            string success;
+            try
+            {
+                using (var mdb = new OggleBoobleMySqContext())
+                {
+                    var dbUser = mdb.RegisteredUsers.Where(r => r.VisitorId == visitorId).FirstOrDefault();
+                    dbUser.PornPreference = settingJson;
+                    mdb.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
     }
-
-
-
 }

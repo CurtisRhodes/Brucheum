@@ -64,9 +64,9 @@ function GetAllAlbumPageInfo(folderId) {
                         $('#footerInfo1').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
                         resizeAlbumPage();
 
-                        logPageHit(folderId, "Album.html");  // 
-                        $('#folderCommentButton').fadeIn();
+                        logPageHit(folderId, "Album.html"); 
 
+                        $('#folderCommentButton').fadeIn();
                         var delta = (Date.now() - start) / 1000;
                         console.log("GetAllAlbumPageInfo took: " + delta.toFixed(3));
                         $('.footer').show();

@@ -6,13 +6,15 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace OggleBooble.Api.Controllers
 {
+    [EnableCors("*", "*", "*")]
     public class OggleJournalController : ApiController
     {
         [HttpGet]
-        [Route("api/OggleBlog/GetBlogItem")]
+        [Route("api/OggleJournal/GetBlogItem")]
         public BlogCommentModel GetBlogItem(int blogId)
         {
             BlogCommentModel entry = new BlogCommentModel();
@@ -42,7 +44,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/OggleBlog/GetBlogList")]
+        [Route("api/OggleJournal/GetBlogList")]
         public BlogCommentModelContainer GetBlogList(string commentType)
         {
             BlogCommentModelContainer blogCommentsContainer = new BlogCommentModelContainer();
@@ -113,7 +115,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/Blog/Insert")]
+        [Route("api/OggleJournal/Insert")]
         public SuccessModel Insert(BlogComment blogComment)
         {
             SuccessModel successModel = new SuccessModel();
@@ -136,7 +138,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpPut]
-        [Route("api/OggleBlog/Update")]
+        [Route("api/OggleJournal/Update")]
         public string Update(BlogComment entry)
         {
             string success = "";

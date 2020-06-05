@@ -33,7 +33,7 @@
 
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
     <link href="Styles/loginDialog.css" rel="stylesheet" />
-    <link href="Styles/Header.css" rel="stylesheet" />
+    <link href="Styles/OggleHeader.css" rel="stylesheet">
     <link href="Styles/Common.css" rel="stylesheet" />
     <link href="Styles/Carousel.css" rel="stylesheet" />
     <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
@@ -53,88 +53,88 @@
 </head>
 <body>
     <header class="boobsHeader"></header>
-        <img id="dashBoardLoadingGif" class="loadingGif displayHidden" src="Images/loader.gif" />
-        <div id="dots"></div>
-        <div id="divStatusMessage"></div>
-        <div id="dashboardContainer" class="dashboardContainer">
-            <div id="dashboardLeftColumn" class="dashboardContainerColumn">
-                <div id="dashboardLeftMenu" class="oggleVerticalMenu"></div>
-            </div>
-            <div id="dashboardMiddleColumn" class="dashboardContainerColumn">
-                <div id="workAreaContainer" class="workAreaContainer"></div>
-                <div id="dataifyInfo" class="infoLine" onclick="$('#dataifyInfo').hide();"></div>
-            </div>
-            <div id="dashboardRightColumn" class="dashboardContainerColumn"></div>
+    <img id="dashBoardLoadingGif" class="loadingGif displayHidden" src="Images/loader.gif" />
+    <div id="dots"></div>
+    <div id="divStatusMessage"></div>
+    <div id="dashboardContainer" class="dashboardContainer">
+        <div id="dashboardLeftColumn" class="dashboardContainerColumn">
+            <div id="dashboardLeftMenu" class="oggleVerticalMenu"></div>
         </div>
-        <div id="divModalDialogs">
-            
-
-
-            <div id="moveFolderCrud" class="dashboardToggle" title="Move Folder">
-                <div><span>folder to move</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div>
-                    <span>new parent </span><div onclick="$('#moveFolderDestDirTree').dialog('open');" class="toggleButton">...</div>
-                    <div id="moveFolderDestDirTree" class="moveDirTreeContainer" title="Select Parent Folder"></div>
-                    <input id="txtMoveFolderDest" class="roundedInput" readonly="readonly" />
-                </div>
-                <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
-            </div>
-
-            <div id="copyFolderCrud" class="dashboardToggle" title="Copy Folder">
-                <div><span>folder to copy</span><input id="txtNewStepParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
-                <div><span>new name</span><input id="txtNewFolderName" class="roundedInput" /></div>
-                <div><span>link</span><input id="xxxtxtNewLink" class="roundedInput" /></div>
-                <div>
-                    <span>new parent </span><div id="copyFolderToggleButton" onclick="$('#copyFolderParentDirTree').dialog('open');" class="toggleButton">...</div>
-                    <div id="copyFolderParentDirTree" class="moveDirTreeContainer" title="Select Parent Folder"></div>
-                    <input id="txtCopyFolderParent" class="roundedInput" readonly="readonly" />
-                </div>
-                <div class="roundendButton" onclick="copyFolder()">Copy Folder</div>
-            </div>
-
-            <div id="addEditRolesDialog" class="dashboardToggle" title="Add Edit Roles">
-                <div class="crudArea">
-                    <label>Role:</label>
-                    <input class="roundedInput" id="txtRoleName" />
-                    <div id="btnAddUpdateRole" class="roundendButton editRolebtn" onclick="addUpdateRole()">Add</div>
-                    <div id="btnRoleToggle" class="roundendButton editRolebtn" onclick="toggleAddButton()">New</div>
-                </div>
-                <div class="crudItemsList" id="divRoleList"></div>
-            </div>
-
-            <div id="rolesChooseBoxDialog" class="dashboardToggle" title="Assign Roles">
-                <div class="crudContainer AssignRolesContainer">
-                    <div class="crudContainerTitle">Assign Roles</div>
-                    <div class="flexContainer">
-                        <div><select id="ddUsers" class="crudDropDown"></select></div>
-                    </div>
-                    <div id="divRolesChoose" class="chooseBoxContainer">
-
-                        <div id="divChooseAvailable" class="chooseBox floatLeft"></div>
-
-                        <div id="divChooseButtons" class="chooseBtnsContainer floatLeft">
-                            <div><img id="imgAdd" class="chooseBtn" onclick="addUserRole()" src="/Images/sglright.jpg" /></div>
-                            <div><img id="imgAddAll" class="chooseBtn disenabled" src="/Images/dblright.jpg" /></div>
-                            <div><img id="imgRemove" class="chooseBtn" onclick="removeUserRole()" src="/Images/sglleft.jpg" /></div>
-                            <div><img id="imgRemoveAll" class="chooseBtn disenabled" src="/Images/dblleft.jpg" /></div>
-                        </div>
-                        <div id="divChooseAssigned" class="chooseBox floatLeft"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!--
-                <div id="videoCrud" class="dashboardToggle">
-                    <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
-                    <div class="floatingCrudContainer">
-                        <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
-                        <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
-                        <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
-                        <div class="roundendButton" onclick="addVideo()">Insert</div>
-                    </div>
-                </div>
-            -->
+        <div id="dashboardMiddleColumn" class="dashboardContainerColumn">
+            <div id="workAreaContainer" class="workAreaContainer"></div>
+            <div id="dataifyInfo" class="infoLine" onclick="$('#dataifyInfo').hide();"></div>
         </div>
+        <div id="dashboardRightColumn" class="dashboardContainerColumn"></div>
+    </div>
+    <div id="divModalDialogs">
+
+
+
+        <div id="moveFolderCrud" class="dashboardToggle" title="Move Folder">
+            <div><span>folder to move</span><input id="txtNewFolderParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+            <div>
+                <span>new parent </span><div onclick="$('#moveFolderDestDirTree').dialog('open');" class="toggleButton">...</div>
+                <div id="moveFolderDestDirTree" class="moveDirTreeContainer" title="Select Parent Folder"></div>
+                <input id="txtMoveFolderDest" class="roundedInput" readonly="readonly" />
+            </div>
+            <div class="roundendButton" onclick="moveFolder()">Move Folder</div>
+        </div>
+
+        <div id="copyFolderCrud" class="dashboardToggle" title="Copy Folder">
+            <div><span>folder to copy</span><input id="txtNewStepParent" class="txtLinkPath roundedInput" readonly="readonly" /></div>
+            <div><span>new name</span><input id="txtNewFolderName" class="roundedInput" /></div>
+            <div><span>link</span><input id="xxxtxtNewLink" class="roundedInput" /></div>
+            <div>
+                <span>new parent </span><div id="copyFolderToggleButton" onclick="$('#copyFolderParentDirTree').dialog('open');" class="toggleButton">...</div>
+                <div id="copyFolderParentDirTree" class="moveDirTreeContainer" title="Select Parent Folder"></div>
+                <input id="txtCopyFolderParent" class="roundedInput" readonly="readonly" />
+            </div>
+            <div class="roundendButton" onclick="copyFolder()">Copy Folder</div>
+        </div>
+
+        <div id="addEditRolesDialog" class="dashboardToggle" title="Add Edit Roles">
+            <div class="crudArea">
+                <label>Role:</label>
+                <input class="roundedInput" id="txtRoleName" />
+                <div id="btnAddUpdateRole" class="roundendButton editRolebtn" onclick="addUpdateRole()">Add</div>
+                <div id="btnRoleToggle" class="roundendButton editRolebtn" onclick="toggleAddButton()">New</div>
+            </div>
+            <div class="crudItemsList" id="divRoleList"></div>
+        </div>
+
+        <div id="rolesChooseBoxDialog" class="dashboardToggle" title="Assign Roles">
+            <div class="crudContainer AssignRolesContainer">
+                <div class="crudContainerTitle">Assign Roles</div>
+                <div class="flexContainer">
+                    <div><select id="ddUsers" class="crudDropDown"></select></div>
+                </div>
+                <div id="divRolesChoose" class="chooseBoxContainer">
+
+                    <div id="divChooseAvailable" class="chooseBox floatLeft"></div>
+
+                    <div id="divChooseButtons" class="chooseBtnsContainer floatLeft">
+                        <div><img id="imgAdd" class="chooseBtn" onclick="addUserRole()" src="/Images/sglright.jpg" /></div>
+                        <div><img id="imgAddAll" class="chooseBtn disenabled" src="/Images/dblright.jpg" /></div>
+                        <div><img id="imgRemove" class="chooseBtn" onclick="removeUserRole()" src="/Images/sglleft.jpg" /></div>
+                        <div><img id="imgRemoveAll" class="chooseBtn disenabled" src="/Images/dblleft.jpg" /></div>
+                    </div>
+                    <div id="divChooseAssigned" class="chooseBox floatLeft"></div>
+                </div>
+            </div>
+        </div>
+
+        <!--
+            <div id="videoCrud" class="dashboardToggle">
+                <div class="floatingCrudBanner">Add Video Link <div onclick="$('#videoCrud').fadeOut()" class="farSide">x</div> </div>
+                <div class="floatingCrudContainer">
+                    <div><span class="cru">link</span><input id="txtVideoLink" class="roundedInput" /></div>
+                    <div><span>image</span><input id="txtVideoImage" class="roundedInput" /></div>
+                    <div><span>title</span><input id="txtVideoTitle" class="roundedInput" /></div>
+                    <div class="roundendButton" onclick="addVideo()">Insert</div>
+                </div>
+            </div>
+        -->
+    </div>
     <div class="footer"></div>
 
     <script>

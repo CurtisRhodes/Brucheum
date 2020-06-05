@@ -95,7 +95,8 @@
 
         $(document).ready(function () {
             //$('#footerLastBuild').html("last build: " + lastBuild + "3");
-            $('#footerMessage').html("loading settings");
+            //$('#footerMessage').html("loading settings");
+
             $('.sectionLabel').hide();
             params = getParams();
             subdomain = params.subdomain;
@@ -103,12 +104,10 @@
                 subdomain = "boobs";
             if (subdomain == "porn")
                 homePageId = 3909;
-            if (subdomain == "blog") {
+            if (subdomain == "blog")
                 homePageId = 3911;
-                $('threeColumnLayout').html(blogBodyHtml());
-            }
-            setOggleHeader(homePageId, "loading");
 
+            setOggleHeader(homePageId, "loading");
             loadSettings();
             var dots = ""
             var getXMLsettingsWaiter = setInterval(function () {
@@ -138,7 +137,8 @@
                         if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
                             $('#dots').html('');
-                            if (subdomain === "blog") {
+                            if (subdomain == "blog") {
+                                $('.threeColumnLayout').html(blogBodyHtml());
                                 blogStartup();
                             }
                             else {
@@ -156,7 +156,10 @@
                                 $('.indexPageSection').show();
 
                             }
+
+                            //alert("setOggleFooter(homePageId :" + homePageId + ", subdomain: " + subdomain + ");");
                             setOggleFooter(homePageId, subdomain);
+
                             var visitorId = getCookieValue("VisitorId");
                             if (isNullorUndefined(visitorId)) {
                                 getIpInfo(homePageId);

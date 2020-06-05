@@ -21,6 +21,9 @@ namespace OggleBooble.Api.Controllers
         //static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
         //static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
 
+        //url: settingsArray.ApiServer + "/api/CategoryComment/Get?folderId=" + blogId,
+
+
         [HttpGet]
         [Route("api/Folder/GetFolderInfo")]
         public FolderDetailModel GetFolderInfo(int folderId)

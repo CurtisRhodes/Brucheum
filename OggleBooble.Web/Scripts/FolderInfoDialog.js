@@ -47,7 +47,7 @@ function showFolderInfoDialog(folderId, calledFrom) {
             VisitorId: getCookieValue("VisitorId"),
             ActivityCode: "ERR",
             Severity: 12,
-            ErrorMessage: "get NudeModelInfo catch: " + e,
+            ErrorMessage: "showFolderInfoDialog catch: " + e,
             CalledFrom: "showCategoryDialog"
         });
         //sendEmailToYourself("javascript catch in FolderInfoDialog.js showCategoryDialog", "get NudeModelInfo catch: " + e);

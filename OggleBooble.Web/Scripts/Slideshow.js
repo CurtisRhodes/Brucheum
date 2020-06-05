@@ -447,18 +447,12 @@ function slideshowCtxMnuAction(action) {
             slideshowCtxMnuShowLinks(imageViewerArray[imageViewerIndex].LinkId);
             //slideshowLinkInfoContainer
             break;
-        case "showModelInfo":            
+        case "showModelInfo":       
             slideShowButtonsActive = false;
             $("#thumbImageContextMenu").fadeOut();
             if (slideShowRunning)
                 runSlideShow('pause');
-            showModelInfoDialog($('#ctxModelName').html(), imageViewerArray[imageViewerIndex].ImageFolderId, imageViewerArray[imageViewerIndex].Link);// $('#' + currentContextLinkId + '').attr("src"));
-            $('#modelInfoDialog').on('dialogclose', function (event) {
-                slideShowButtonsActive = true;
-                $('#modelInfoDialog').hide();
-                if (slideShowRunning)
-                    runSlideShow('resume');
-            });
+            showFolderInfoDialog(imageViewerArray[imageViewerIndex].ImageFolderId, "slideshow ctx menu");
             break;
         case "see more of her":
             rtpe("SEE", albumFolderId, imageViewerArray[imageViewerIndex].ImageFolderId, albumFolderId);

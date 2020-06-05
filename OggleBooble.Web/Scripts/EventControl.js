@@ -98,9 +98,6 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
         case "LUP":  // Update Box click
             window.location.href = "/album.html?folder=" + pageId;  //  open page in same window
             break;
-        case "CMX":
-            showModelInfoDialog(eventDetail, pageId, 'Images/redballon.png');
-            break;
         case "HBX":  // Home breadcrumb Clicked
             if (eventDetail === "porn")
                 window.location.href = '/index.html?subdomain=porn';

@@ -636,19 +636,18 @@ function checkFor404(errorMessage, calledFrom) {
     setTimeout(function () {
         if (!connectionVerified) {
             verifyConnection();
+            console.log("calling verifyConnection");
         }
-    }, 1000);
+    }, 800);
 
     if (!connectionVerified) {
         if (!inCheckFor404Loop) {
             checkFor404Loop = setInterval(function () {
                 if (!connectionVerified) {
                     if (++verifyConnectionCount === 3) {
-                        $('#launchingService').show();
-                    }
+                        $('#launchingServiceGif').show();                    }
                     if (verifyConnectionCount > verifyConnectionCountLimit) {
                         if (!canIgetaConnectionMessageShowing) {
-                            $('#launchingService').hide();
                             $('#customMessage').html(
                                 "<div><div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'></div>\n" +
                                 "     <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
@@ -659,6 +658,7 @@ function checkFor404(errorMessage, calledFrom) {
                             if (isNullorUndefined(visitorId))
                                 visitorId = "--";
                             canIgetaConnectionMessageShowing = true;
+                            $('#launchingServiceGif').hide();
 
                             if (document.domain !== "localhost")
                                 logError({
@@ -686,7 +686,6 @@ function verifyConnection() {
         return;
     }
     else {
-        console.log("calling verifyConnection");
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Common/VerifyConnection",
@@ -698,19 +697,23 @@ function verifyConnection() {
                         connectionVerified = true;
                         verifyConnectionCount = 0;
                         console.log("verifyConnection: connection verified");
-                        $('#launchingService').hide();
+                        $('#launchingServiceGif').hide();
                         $('#customMessage').hide();
                         canIgetaConnectionMessageShowing = false;
                     }
                     else {
+                        //if (document.domain === "local host") alert("verifyConnection: " + successModel.Success)
                         connectionVerified = false;
                     }
                 }
                 else {
+                    if (document.domain === "local host") alert("verifyConnection JQA: " + successModel.Success)
                     connectionVerified = false;
                 }
             },
-            error: function () {
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (document.domain === "local host") alert("verifyConnection XHR: " + errorMessage)
                 connectionVerified = false;
             }
         });
