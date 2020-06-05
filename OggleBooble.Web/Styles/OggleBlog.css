@@ -77,7 +77,7 @@
 
 .blogArticleJogBody {
     display: inline-block;
-    background-color: var(--oggleContainerBackgroundColor);
+    /*background-color: var(--oggleContainerBackgroundColor);*/
     width: 100%;
 }
 
