@@ -5,15 +5,16 @@
     margin-bottom: 6px;
     display: flex;
     /*
-    overflow: auto;
     border: solid 10px orange;
+    overflow: auto;
     */
 }
 
 /*@media (min-width: 768px) {
     background-color: red;
 }*/
-    .updatedGalleriesSection {
+.updatedGalleriesSection {
+    display: block;
     float: left;
     text-align: center;
     height: inherit;

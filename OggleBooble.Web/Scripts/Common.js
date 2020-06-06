@@ -71,7 +71,7 @@ function getParams() {
     return params;
 }
 
-$.date = function (dateObject) {
+function dateString(dateObject) {
     var d = new Date(dateObject);
     var day = d.getDate();
     var month = d.getMonth() + 1;
@@ -102,7 +102,7 @@ function resizePage() {
     var winH = $(window).height();
     var headerH = $('header').height();
     $('.middleColumn').height(winH - headerH);
-    $('#bottomSection').html("page height: " + winH + " page width: " + winW);
+    //$('#bottomSection').html("page height: " + winH + " page width: " + winW);
     //$('#footerMessage').html("page height: " + winH + " page width: " + winW);
 }
 

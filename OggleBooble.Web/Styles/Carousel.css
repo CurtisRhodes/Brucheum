@@ -36,10 +36,12 @@
 }
 
 .carouselImageContainer {
-    display: flex;    
+    position: relative;
+    display: flex;
 }
 
 .carouselFooter {
+    position: relative;
     margin-left: 50px;
     background-color: var(--oggleContainerFooterColor);
     text-align: center;

@@ -20,7 +20,8 @@ var footerLabelClickId;
 
 function launchCarousel() {
     //$('#footerMessage').html("launching carousel");
-    loadCarouselHtml();
+    $('#carouselContainer').html(carouselHtml());
+    $("#carouselContextMenuContainer").html(carouselContextMenuHtml());
 
     if (isNullorUndefined(window.localStorage["carouselSettings"])) {
 
@@ -52,33 +53,30 @@ function launchCarousel() {
     window.addEventListener("resize", resizeCarousel);
 }
 
-function loadCarouselHtml() {
-    $('#carouselContainer').html(
-        "<div class='centeringOuterShell'>\n" +
-        "   <div id='innerCarouselContainer'  class='centeringInnerShell'>\n" +
-        "      <div id='carouselImageContainer' class='carouselImageContainer flexContainer'>\n" +
-        "          <img class='assuranceArrows' onclick='assuranceArrowClick(\"back\")' src='/Images/leftArrowOpaque02.png' />\n" +
-        "          <div id='knownModelLabel' class='knownModelLabel' onclick='clickViewGallery(3)'></div>\n" +
-        "          <div id='imageTopLabel' class='categoryTitleLabel' onclick='clickViewGallery(2)'></div>\n" +
-        "          <img id='thisCarouselImage' oncontextmenu='carouselContextMenuClick()' class='carouselImage' src='/Images/ingranaggi3.gif' onclick='clickViewGallery(1)' />\n" +
-        "          <img class='assuranceArrows' onclick='assuranceArrowClick(\"foward\")' src='/Images/rightArrowOpaque02.png' />\n" +
-        "      </div>\n" +
-        "      <div class='carouselFooter'>\n" +
-        "          <img class='speedButton floatLeft' src='Images/speedDialSlower.png' title='slower' onclick='clickSpeed(\"slower\")' />\n" +
-        "          <div id='pauseButton' class='pauseButton' onclick='togglePause()'>||</div>\n" +
-        "          <div id='categoryLabel' class='carouselCategoryLabel' onclick='clickViewGallery(4)'></div>\n" +
-        "          <img class='speedButton floatRight' src='Images/speedDialFaster.png' title='faster' onclick='clickSpeed(\"faster\")' />\n" +
-        "          <img class='speedButton floatRight' src='Images/Settings-icon.png' title='carousel settings' onclick='showCarouelSettingsDialog()' />\n" +
-        "       </div>\n" +
-        "   </div>\n" +
-        "</div>\n");
-    $("#carouselContextMenuContainer").html(
-        "<div id='carouselContextMenu' class='ogContextMenu' onmouseleave='considerHidingContextMenu()'>\n" +
+function carouselContextMenuHtml() {
+    return "<div id='carouselContextMenu' class='ogContextMenu' onmouseleave='considerHidingContextMenu()'>\n" +
         "    <div id='ctxModelName' onclick='carouselContextMenuAction(\"showDialog\")'>model name</div>\n" +
         "    <div onclick='carouselContextMenuAction(\"explode\")'>Explode</div>\n" +
         "    <div onclick='carouselContextMenuAction(\"comment\")'>Comment</div>\n" +
         //"    <div onclick='carouselContextMenuAction(\"tags\")'>Tags</div>\n" +
-        "</div>\n");
+        "</div>\n";
+}
+
+function carouselHtml() {
+    return "<div id='carouselImageContainer' class='carouselImageContainer'>\n" +
+        "    <img class='assuranceArrows' onclick='assuranceArrowClick(\"back\")' src='/Images/leftArrowOpaque02.png' />\n" +
+        "    <div id='knownModelLabel' class='knownModelLabel' onclick='clickViewGallery(3)'></div>\n" +
+        "    <div id='imageTopLabel' class='categoryTitleLabel' onclick='clickViewGallery(2)'></div>\n" +
+        "    <img id='thisCarouselImage' oncontextmenu='carouselContextMenuClick()' class='carouselImage' src='/Images/ingranaggi3.gif' onclick='clickViewGallery(1)' />\n" +
+        "    <img class='assuranceArrows' onclick='assuranceArrowClick(\"foward\")' src='/Images/rightArrowOpaque02.png' />\n" +
+        "</div>\n" +
+        "<div id='carouselFooter' class='carouselFooter'>\n" +
+        "    <img class='speedButton floatLeft' src='Images/speedDialSlower.png' title='slower' onclick='clickSpeed(\"slower\")' />\n" +
+        "    <div id='pauseButton' class='pauseButton' onclick='togglePause()'>||</div>\n" +
+        "    <div id='categoryLabel' class='carouselCategoryLabel' onclick='clickViewGallery(4)'></div>\n" +
+        "    <img class='speedButton floatRight' src='Images/speedDialFaster.png' title='faster' onclick='clickSpeed(\"faster\")' />\n" +
+        "    <img class='speedButton floatRight' src='Images/Settings-icon.png' title='carousel settings' onclick='showCarouelSettingsDialog()' />\n" +
+        "</div>\n";
 }
 
 function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, includePortrait) {
@@ -136,37 +134,35 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                     }
                 }
                 else {
-                    if (domain === "localHost")
-                        alert("ERRR: " + carouselInfo.Success);
-
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "CSL",
-                        Severity: 1,
-                        ErrorMessage: carouselInfo.Success,
-                        PageId: homePageId,
-                        CalledFrom: "loadImages"
-                    });
+                    if (document.domain === "localHost")
+                        alert("JQA error in loadImages: " + carouselInfo.Success)
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "JQA",
+                            Severity: 1,
+                            ErrorMessage: carouselInfo.Success,
+                            PageId: homePageId,
+                            CalledFrom: "loadImages"
+                        });
                     //if (document.domain === 'localhost') alert("loadImages: " + carouselInfo.Success);
                     //--sendEmailToYourself("Error in Caraousel/loadImages", carouselInfo.Success);
                 }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
-
-                if (document.domain === "localHost")
-                    alert("loadImages: " + errorMessage);
-
-                if (!checkFor404(errorMessage, "loadImages")) {
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        PageId: homePageId,
-                        CalledFrom: "loadImages"
-                    });
-
+                if (!checkFor404()) {
+                    if (document.domain === "localHost")
+                        alert("XHR error in loadImages: " + errorMessage);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "XHR",
+                            Severity: 1,
+                            ErrorMessage: errorMessage,
+                            PageId: homePageId,
+                            CalledFrom: "loadImages"
+                        });
                     //sendEmailToYourself("XHR ERROR IN Carousel.JS loadImages", "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take + "  Message: " + errorMessage);
                 }
             }
@@ -187,7 +183,14 @@ function startCarousel(startIndex) {
 function intervalBody(newImageIndex) {
     imageIndex = newImageIndex;
     $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
-        $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
+
+        $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link)
+            .on('load', function () {
+                //$('#headerMessage').html(carouselItemArray[imageIndex].LinkId);
+                resizeCarousel();
+            });
+
+
         $('#knownModelLabel').html("").hide();
         $('#categoryLabel').html("").hide();
         $('#imageTopLabel').html("").hide();
@@ -203,7 +206,7 @@ function intervalBody(newImageIndex) {
                 imageTopLabelClickId = carouselItemArray[imageIndex].FolderParentId;
                 footerLabelClickId = carouselItemArray[imageIndex].FolderGPId;
                 knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;
-                $('#headerMessage').html("1");
+                //$('#headerMessage').html("1");
 
                 if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
                     $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderGP);
@@ -219,7 +222,7 @@ function intervalBody(newImageIndex) {
                 mainImageClickId = carouselItemArray[imageIndex].ImageFolderParentId;
                 knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;  //  the roman
                 imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderGPId;
-                $('#headerMessage').html("2");
+                //$('#headerMessage').html("2");
 
                 if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
                     $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParent);
@@ -240,13 +243,13 @@ function intervalBody(newImageIndex) {
                 knownModelLabelClickId = carouselItemArray[imageIndex].ImageFolderId;
                 imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderGPId;
                 footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
-                $('#headerMessage').html("3");
+                //$('#headerMessage').html("3");
                 if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
                     $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolder);
                     $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderGP);
                     footerLabelClickId = 472;
                     $('#categoryLabel').html("Playboy");
-                    $('#headerMessage').html(" 3P non folder member");
+                    //$('#headerMessage').html(" 3P non folder member");
                     pause();
                     setTimeout(function () { alert("non folder member 3. centerfold\nroot: " + carouselItemArray[imageIndex].RootFolder) }, 600);
                 }
@@ -259,7 +262,7 @@ function intervalBody(newImageIndex) {
                 mainImageClickId = carouselItemArray[imageIndex].FolderParentId;
                 imageTopLabelClickId = carouselItemArray[imageIndex].FolderGPId;
                 footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
-                $('#headerMessage').html("4");
+                //$('#headerMessage').html("4");
                 pause();
                 setTimeout(function () { alert("4 Non Roman Numeral Non folder member") }, 600);
             }
@@ -268,7 +271,8 @@ function intervalBody(newImageIndex) {
         $('#imageTopLabel').fadeIn();
         $('#knownModelLabel').fadeIn();
         imageHistory.push(imageIndex);
-        $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
+        $('#carouselImageContainer').fadeIn();
+        //$('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
 
         $('#footerMessage').html("image " + imageIndex + " of " + carouselItemArray.length.toLocaleString());
         carouselImageViews++;
@@ -313,9 +317,13 @@ function getRootFolderId(rootFolder) {
 }
 
 function resizeCarousel() {
-    var carouselFooterHeight = 40;
-    $('#thisCarouselImage').height($('#topIndexPageSection').height() - carouselFooterHeight);
-    $('.carouselFooter').width($('#thisCarouselImage').width());
+
+    $('#carouselImageContainer').css("left", ($('#topIndexPageSection').width() - $('#carouselImageContainer').width()) / 2);
+    $('#carouselFooter').width($('#thisCarouselImage').width()); 
+    $('#carouselFooter').css("left", ($('#topIndexPageSection').width() - $('#carouselImageContainer').width()) / 2);
+
+    $('#thisCarouselImage').height($(window).height() * .65);
+    $('#headerMessage').html($('#thisCarouselImage').height());
 }
 
 function clickSpeed(speed) {
@@ -345,43 +353,6 @@ function resume() {
     clearInterval(CarouselInterval);
     startCarousel(imageIndex);
     $('#pauseButton').html("||");
-}
-
-function getImageDetails() {
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Image/GetImageDetail?folderId=" +
-            carouselItemArray[imageIndex].ImageFolderId +
-            "&linkId=" + carouselItemArray[imageIndex].LinkId,
-        success: function (imageInfo) {
-            if (folderDetails.Success === "ok") {
-
-                //imageInfo.IsLinkJustaLink = (dbImageLink.FolderLocation != folderId);
-                //imageInfo.LinkId = dbImageLink.Link;
-                //imageInfo.FolderLocation = dbImageLink.FolderLocation;
-                //imageInfo.Height = dbImageLink.Height;
-                //imageInfo.Width = dbImageLink.Width;
-                //imageInfo.LastModified = dbImageLink.LastModified;
-                //imageInfo.Link = dbImageLink.Link;
-                //imageInfo.ExternalLink = dbImageLink.ExternalLink;
-                //imageInfo.InternalLinks = (from l in db.CategoryImageLinks
-           }
-            else {
-                //alert("GetModelName: " + imageDetails.Success);
-                sendEmailToYourself("GetModelName fail", imageDetails.Success);
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "carouselContextMenu")) {
-                sendEmailToYourself("XHR ERROR IN Carousel.JS carouselContextMenu", "api/ImageCategoryDetail/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId +
-                    " Message : " + errorMessage);
-                //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
-            }
-            sendEmailToYourself("GetNudeModelName xhr error: ", xhr.statusText);
-            //alert("GetNudeModelName xhr error: " + xhr.statusText);
-        }
-    });
 }
 
 function carouselContextMenuClick() {
@@ -436,14 +407,35 @@ function carouselContextMenuAction(ctxMenuAction) {
             showMoveCopyDialog("Archive", carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
             break;
         default:
-            sendEmailToYourself("Invalid context menu action", "invalid: " + ctxMenuAction);
+            if (document.domain === "localHost")
+                alert("carouselContextMenuAction: Invalid context menu action");
+            else
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "XHR",
+                    Severity: 1,
+                    ErrorMessage: "Invalid context menu action",
+                    PageId: homePageId,
+                    CalledFrom: "loadImages"
+                });
+            //sendEmailToYourself("Invalid context menu action", "invalid: " + ctxMenuAction);
         //alert("invalid: " + ctxMenuAction);
     }
 }
 
 function onImageNotLoaded() {
-    sendEmailToYourself("onImageNotLoaded", "bk image " + carouselItemArray[imageIndex].Link + " not found");
-    //alert("bk image " + carouselItemArray[imageIndex].Link + " not found");
+    //sendEmailToYourself("onImageNotLoaded", "bk image " + carouselItemArray[imageIndex].Link + " not found");
+    if (document.domain === "localHost")
+        alert("onImageNotLoaded");
+    else
+        logError({
+            VisitorId: getCookieValue("VisitorId"),
+            ActivityCode: "ERR",
+            Severity: 1,
+            ErrorMessage: "onImageNotLoaded",
+            PageId: homePageId,
+            CalledFrom: "onImageNotLoaded"
+        });
 }
 
 function slowlyShowFolderCategoryDialog() {

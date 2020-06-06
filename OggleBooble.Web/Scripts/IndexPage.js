@@ -1,8 +1,4 @@
-﻿
-
-//[Route("api/IndexPage/GetLatestUpdatedFolders")]
-
-function loadUpdatedGalleriesBoxes(numItmes) {
+﻿function loadUpdatedGalleriesBoxes(numItmes) {
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?itemLimit=" + numItmes,
@@ -10,40 +6,43 @@ function loadUpdatedGalleriesBoxes(numItmes) {
             if (latestUpdates.Success === "ok") {
                 $('.sectionLabel').show();
                 $('#updatedGalleriesSection').html("");
-
                 $.each(latestUpdates.LatestUpdates, function (idx, LatestUpdate) {
                     $('#updatedGalleriesSection').append("<div class='newsContentBox'>" +
                         "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
                         "<img class='newsContentBoxImage' src='" + LatestUpdate.FolderImage + "'" +
                         "onclick='rtpe(\"LUP\",\"home page\",10," + LatestUpdate.FolderId + ")'/>" +
-                        "<div class='newsContentBoxDateLabel'>updated: " + $.date(LatestUpdate.LastModified) + "</span></div>" +
+                        "<div class='newsContentBoxDateLabel'>updated: " + dateString(LatestUpdate.LastModified) + "</span></div>" +
                         "</div>");
                 });
                 console.log("loaded " + latestUpdates.LatestUpdates.length + " news boxes");
                 resizeIndexPage();
             }
             else {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "ERR",
-                    Severity: 12,
-                    ErrorMessage: latestUpdates.Success,
-                    CalledFrom: "loadUpdatedGalleriesBoxes"
-                });
+                if (document.domain === 'localhost')
+                    alert("JQA error in loadUpdatedGalleriesBoxes\n" + latestUpdates.Success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "JQA",
+                        Severity: 12,
+                        ErrorMessage: latestUpdates.Success,
+                        CalledFrom: "loadUpdatedGalleriesBoxes"
+                    });
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "loadImages")) {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "loadUpdatedGalleriesBoxes"
-                });
-                //sendEmailToYourself("XHR ERROR IN Carousel.JS loadImages", "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take +
-                //    "  Message: " + errorMessage);
+                if (document.domain === 'localhost')
+                    alert("XHR error in loadUpdatedGalleriesBoxes\n" + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "loadUpdatedGalleriesBoxes"
+                    });
             }
         }
     });

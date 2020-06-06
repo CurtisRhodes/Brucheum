@@ -1,204 +1,205 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>Welcome - OggleBooble</title>
-    <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=.07">
-    <meta http-equiv="cache-control" content="max-age=0">
-    <meta http-equiv="cache-control" content="no-cache">
-    <meta http-equiv="expires" content="-1">
-    <meta http-equiv="expires" content="Tue, 01 Jan 1980 11:00:00 GMT">
-    <meta http-equiv="pragma" content="no-cache">
-    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
-    <!--<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />-->
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>-->
-    <script src="Scripts/Common.js"></script>
-    <script src="Scripts/HitCounter.js"></script>
-    <script src="Scripts/EventControl.js"></script>
-    <script src="Scripts/IndexPage.js"></script>
-    <script src="Scripts/Cookies.js"></script>
-    <script src="Scripts/Login.js"></script>
+    <head>
+        <title>OggleBooble</title>
+        <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=.07">
 
-    <script src="Scripts/OggleHeader.js"></script>
-    <script src="Scripts/OggleSearch.js"></script>
-    <script src="Scripts/OggleFooter.js"></script>
-    <script src="Scripts/OggleBlog.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
 
+        <script src="Scripts/Common.js"></script>
+        <script src="Scripts/HitCounter.js"></script>
+        <script src="Scripts/EventControl.js"></script>
+        <script src="Scripts/IndexPage.js"></script>
+        <script src="Scripts/Cookies.js"></script>
+        <script src="Scripts/Login.js"></script>
+        <script src="Scripts/OggleHeader.js"></script>
+        <script src="Scripts/OggleSearch.js"></script>
+        <script src="Scripts/OggleFooter.js"></script>
+        <script src="Scripts/Permissions.js"></script>
+        <script src="Scripts/ModelInfoDialog.js"></script>
+        <script src="Scripts/FeedbackDialog.js"></script>
+        <script src="Scripts/DirTree.js"></script>
+        <script src="Scripts/FolderInfoDialog.js"></script>
+        <script src="Scripts/ImageCommentDialog.js"></script>
+        <script src="Scripts/MoveCopyArchive.js"></script>
+        <script src="Scripts/MetaTagDialog.js"></script>
+        <script src="Scripts/Slideshow.js"></script>
+        <script src="Scripts/Album.js"></script>
+        <script src="Scripts/ImageContextMenu.js"></script>
+        <script src="Scripts/OggleBlog.js"></script>
+        <script src="Scripts/Carousel.js"></script>
 
-    <script src="Scripts/Permissions.js"></script>
-    <script src="Scripts/FolderInfoDialog.js"></script>
-    <script src="Scripts/Carousel.js"></script>
+        <link href="Styles/Common.css" rel="stylesheet" />
+        <link href="Styles/AlbumPage.css" rel="stylesheet">
+        <link href="Styles/loginDialog.css" rel="stylesheet" />
+        <link href="Styles/OggleHeader.css" rel="stylesheet" />
+        <link href="Styles/Slideshow.css" rel="stylesheet" />
+        <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
+        <link href="Styles/ModelInfoDialog.css" rel="stylesheet" />
+        <link href="Styles/ImageCommentDialog.css" rel="stylesheet" />
+        <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
+        <link href="Styles/FolderCategoryDialog.css" rel="stylesheet" />
 
+        <link href="Styles/IndexPage.css" rel="stylesheet">
+        <link href="Styles/Carousel.css" rel="stylesheet">
+        <link href="Styles/OggleBlog.css" rel="stylesheet" />
 
-    <!--<script src="Scripts/FeedbackDialog.js"></script>
-    <script src="Scripts/DirTree.js"></script>
-    <script src="Scripts/ModelInfoDialog.js"></script>
-    <script src="Scripts/ImageCommentDialog.js"></script>
-    <script src="Scripts/MoveCopyArchive.js"></script>
-    <script src="Scripts/MetaTagDialog.js"></script>-->
-    <!--<link href="Styles/bootstrap.css" rel="stylesheet" />-->
-    <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">-->
-    <!--<link href="Styles/jqueryUI.css" rel="stylesheet">-->
-    <link href="Styles/Common.css" rel="stylesheet">
-    <link href="Styles/IndexPage.css" rel="stylesheet">
-    <link href="Styles/loginDialog.css" rel="stylesheet">
-    <link href="Styles/OggleHeader.css" rel="stylesheet">
-    <link href="Styles/Carousel.css" rel="stylesheet">
-    <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet">
-    <link href="Styles/ModelInfoDialog.css" rel="stylesheet">
-    <link href="Styles/ImageCommentDialog.css" rel="stylesheet">
-    <link href="Styles/MetaTagDialog.css" rel="stylesheet">
-    <link href="Styles/OggleBlog.css" rel="stylesheet" />
-    <!--<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+
+        <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+        <link href="Styles/jqueryUI.css" rel="stylesheet" />
+        <!--<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>-->
+        <!--<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>-->
+        <!--<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />-->
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>-->
+        <!--<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
         (adsbygoogle = window.adsbygoogle || []).push({
             google_ad_client: "ca-pub-1620126417602146",
             enable_page_level_ads: true
         });
     </script>-->
-</head>
-<body>
-    <div class="oggleHeader"></div>
-    <div class="threeColumnLayout">
-        <div class="leftColumn">
-            <div id="pabh" class="promoBox"></div>
-        </div>
-        <div class="middleColumn">
-            <div id="divStatusMessage"></div>
-            <div id="dots"></div>
-            <div class="indexPageSection" id="topIndexPageSection">
-                <div class="flexContainer">
-                    <div class="floatingContainerElement sectionLabel">random galleries</div>
-                    <div id="carouselContainer"></div>
+    </head>
+    <body>
+        <div class="oggleHeader"></div>
+        <div class="threeColumnLayout">
+            <div class="leftColumn">
+                <div id="pabh" class="promoBox"></div>
+            </div>
+            <div class="middleColumn">
+                <div id="divStatusMessage"></div>
+                <div id="dots"></div>
+                <div class="indexPageSection" id="topIndexPageSection">
+                    <div class="flexContainer">
+                        <div class="floatingContainerElement sectionLabel">random galleries</div>
+                        <div id="carouselContainer"></div>
+                    </div>
                 </div>
+                <div class="indexPageSection" id="bottomSection">
+                    <div class="clickable sectionLabel" onclick="showHideGalleries()">latest updates</div>
+                    <div id="updatedGalleriesSection" class="updatedGalleriesSection"></div>
+                </div>
+                <div id="showMoreGalleriesDiv" class="clickable sectionLabel" onclick="showMoreGalleries()">show more updated galleries</div>
             </div>
-            <div class="indexPageSection" id="bottomSection">
-                <div class="clickable sectionLabel" onclick="showHideGalleries()">latest updates</div>
-                <div id="updatedGalleriesSection" class="updatedGalleriesSection"></div>
-            </div>
-            <div id="showMoreGalleriesDiv" class="clickable sectionLabel" onclick="showMoreGalleries()">show more updated galleries</div>
+            <div class="rightColumn"></div>
         </div>
-        <div class="rightColumn"></div>
-    </div>
-    <div id="carouselContextMenuContainer"></div>
-    <div class="footer"></div>
-    <script>
-        var promoIdx = 0;
-        var promoMessagesArray = new Array();
-        var promoMessageRotator;
-        var promoMessageRotationSpeed = 15000;
-        var subdomain;
-        var homePageId = 3908;
-        var updatedGalleriesCount = 25;
+        <div id="carouselContextMenuContainer"></div>
+        <div class="footer"></div>
+        <script>
+            var promoIdx = 0;
+            var promoMessagesArray = new Array();
+            var promoMessageRotator;
+            var promoMessageRotationSpeed = 15000;
+            var subdomain;
+            var homePageId = 3908;
+            var updatedGalleriesCount = 25;
 
-        $(document).ready(function () {
-            //$('#footerLastBuild').html("last build: " + lastBuild + "3");
-            //$('#footerMessage').html("loading settings");
+            $(document).ready(function () {
+                //$('#footerLastBuild').html("last build: " + lastBuild + "3");
+                //$('#footerMessage').html("loading settings");
+                document.title = "welcome : OggleBooble";
 
-            $('.sectionLabel').hide();
-            params = getParams();
-            subdomain = params.subdomain;
-            if (params.subdomain === undefined)
-                subdomain = "boobs";
-            if (subdomain == "porn")
-                homePageId = 3909;
-            if (subdomain == "blog")
-                homePageId = 3911;
+                $('.sectionLabel').hide();
+                params = getParams();
+                subdomain = params.subdomain;
+                if (params.subdomain === undefined)
+                    subdomain = "boobs";
+                if (subdomain == "porn")
+                    homePageId = 3909;
+                if (subdomain == "blog")
+                    homePageId = 3911;
 
-            setOggleHeader(homePageId, "loading");
-            loadSettings();
-            var dots = ""
-            var getXMLsettingsWaiter = setInterval(function () {
-                if (settingsArray.ApiServer === undefined) {
-                    dots += "~ ";
-                    $('#dots').html(dots);
-                    //console.log("loadSettings: " + settingsArray.ApiServer);
-                }
-                else {
-                    clearInterval(getXMLsettingsWaiter);
-                    //  LOCAL HOST because cookies don't work in IIS
-                    if (document.domain === 'localhost') {
-                        setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-                        setCookieValue("UserName", "developer");
-                        var userPermissons = [];
-                        userPermissons.push("Oggle admin");
-                        userPermissons.push("access dashboard");
-                        userPermissons.push("view dynamic");
-                        window.localStorage["userPermissons"] = userPermissons;
-                        //window.localStorage["IsLoggedIn"] = "true";
+                setOggleHeader(homePageId, "loading");
+                loadSettings();
+                var dots = ""
+                var getXMLsettingsWaiter = setInterval(function () {
+                    if (settingsArray.ApiServer === undefined) {
+                        dots += "~ ";
+                        $('#dots').html(dots);
+                        //console.log("loadSettings: " + settingsArray.ApiServer);
                     }
                     else {
-                        loadRolesIntoLocalStorage("index", "any");
-                    }
-                    checkFor404("start", subdomain);
-                    var verifyConnectionWaiter = setInterval(function () {
-                        if (connectionVerified) {
-                            clearInterval(verifyConnectionWaiter);
-                            $('#dots').html('');
-                            if (subdomain == "blog") {
-                                $('.threeColumnLayout').html(blogBodyHtml());
-                                blogStartup();
-                            }
-                            else {
-                                if (subdomain == "porn") {
-                                    $('#pornLeftColumnList').show();
-                                    $('#includeCenterfoldsCheckbox').hide();
-                                }
-                                else {
-                                    $('#boobsLeftColumnList').show();
-                                    //launchPromoMessages();
-                                }
-
-                                launchCarousel();
-                                loadUpdatedGalleriesBoxes(updatedGalleriesCount);
-                                $('.indexPageSection').show();
-
-                            }
-
-                            //alert("setOggleFooter(homePageId :" + homePageId + ", subdomain: " + subdomain + ");");
-                            setOggleFooter(homePageId, subdomain);
-
-                            var visitorId = getCookieValue("VisitorId");
-                            if (isNullorUndefined(visitorId)) {
-                                getIpInfo(homePageId);
-                            }
-                            else {
-                                console.log("visitorId found: " + visitorId);
-                                setLoginHeaderSection(visitorId);
-                                logPageHit(homePageId);
-                            }
-                            $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
+                        clearInterval(getXMLsettingsWaiter);
+                        //  LOCAL HOST because cookies don't work in IIS
+                        if (document.domain === 'localhost') {
+                            setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
+                            setCookieValue("UserName", "developer");
+                            var userPermissons = [];
+                            userPermissons.push("Oggle admin");
+                            userPermissons.push("access dashboard");
+                            userPermissons.push("view dynamic");
+                            window.localStorage["userPermissons"] = userPermissons;
+                            //window.localStorage["IsLoggedIn"] = "true";
                         }
                         else {
-                            dots += ". ";
-                            $('#dots').html(dots);
+                            loadRolesIntoLocalStorage("index", "any");
                         }
-                    }, 600);
+                        checkFor404("start", subdomain);
+                        var verifyConnectionWaiter = setInterval(function () {
+                            if (connectionVerified) {
+                                clearInterval(verifyConnectionWaiter);
+                                $('#dots').html('');
+                                if (subdomain == "blog") {
+                                    $('.threeColumnLayout').html(blogBodyHtml());
+                                    blogStartup();
+                                }
+                                else {
+                                    if (subdomain == "porn") {
+                                        $('#pornLeftColumnList').show();
+                                        $('#includeCenterfoldsCheckbox').hide();
+                                    }
+                                    else {
+                                        $('#boobsLeftColumnList').show();
+                                        //launchPromoMessages();
+                                    }
+                                    //setOggleFooter(3910, "Index");
+                                    launchCarousel();
+                                    loadUpdatedGalleriesBoxes(updatedGalleriesCount);
+                                    $('.indexPageSection').show();
+                                    setOggleFooter(homePageId, subdomain);
+                                    setOggleHeader(params.folder, "Index");
+                                }
+                                //alert("setOggleFooter(homePageId :" + homePageId + ", subdomain: " + subdomain + ");");
+                                var visitorId = getCookieValue("VisitorId");
+                                if (isNullorUndefined(visitorId)) {
+                                    getIpInfo(homePageId);
+                                }
+                                else {
+                                    console.log("visitorId found: " + visitorId);
+                                    setLoginHeaderSection(visitorId);
+                                    logPageHit(homePageId);
+                                }
+                                $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
+                            }
+                            else {
+                                dots += ". ";
+                                $('#dots').html(dots);
+                            }
+                        }, 600);
+                    }
+                }, 300);
+
+                window.addEventListener("resize", resizeIndexPage);
+                resizeIndexPage();
+            });
+
+            function resizeIndexPage() {
+                // height
+                var winH = $(window).height();
+                var headerH = $('header').height();
+                $('.threeColumnLayout').css("min-height", winH - headerH);
+                $('#topIndexPageSection').height((winH - headerH - 100));
+                var winW = $(window).width();
+                $('section').css("background-color", "#d5d1ba");
+                if (winW < 1500) {
+                    $('section').css("background-color", "red");
                 }
-            }, 300);
-
-            window.addEventListener("resize", resizeIndexPage);
-            resizeIndexPage();
-        });
-
-        function resizeIndexPage() {
-            // height
-            var winH = $(window).height();
-            var headerH = $('header').height();
-            $('.threeColumnLayout').css("min-height", winH - headerH);
-            $('#topIndexPageSection').height((winH - headerH - 100));
-            if ($('#updatedGalleriesSection').is(':visible')) {
-                $('#topIndexPageSection').height((winH - headerH) * .85);
             }
-            // width
-            var winW = $(window).width();
-            $('section').css("background-color", "#d5d1ba");
-            if (winW < 1500) {
-                $('section').css("background-color", "red");
-            }
-        }
-    </script>
-</body>
+        </script>
+    </body>
 </html>
