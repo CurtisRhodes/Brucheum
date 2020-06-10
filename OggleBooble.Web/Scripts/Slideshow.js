@@ -30,6 +30,16 @@ function launchViewer(folderId, startItem, showAllChildren) {
     sessionCount = 0;
     getSlideshowItems(folderId, startItem);
     slideShowButtonsActive = true;
+
+    $('#slideshowContextMenuContainer').html(slideshowContextMenuHtml());
+    $('#slideShowContainer').html(slideshowHtml()).show();
+    $('#rightClickArea').dblclick(function () {
+        event.preventDefault();
+        window.event.returnValue = false;
+        alert("start slideshow");
+    });
+
+    window.addEventListener("resize", resizeViewer);
 }
 
 function getSlideshowItems(folderId, startItem) {
@@ -46,7 +56,6 @@ function getSlideshowItems(folderId, startItem) {
                     imageViewerArray = slideshowItemModel.SlideshowItems;
 
                     $('#imageContainer').fadeOut();
-                    $('#slideShowContainer').html(slideshowHtml()).show();
 
                     //$('#imageViewerHeaderTitle').html(slideshowItemModel.RootFolder + "/" + slideshowItemModel.FolderName + "/" + slideshowItemModel.ImageFolderName);
                     $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName);
@@ -553,8 +562,7 @@ function slideshowCtxMnuShowLinks(linkId) {
 }
 
 function slideshowHtml() {
-    $('#slideShowContainer').html(
-        " <div id='viewerButtonsRow' class='imageViewerHeaderRow'>\n" +
+    return " <div id='viewerButtonsRow' class='imageViewerHeaderRow'>\n" +
         "    <div class='viewerButtonsRowSection'>\n" +
         "        <img id='imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/Images/comment.png' />\n" +
         "    </div>\n" +
@@ -578,19 +586,11 @@ function slideshowHtml() {
         "        </div>\n" +
         "    </div>\n" +
         "</div>\n" +
-        "<div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n");
-
-    //$('#rightClickArea').on.dblclick(function () {
-    //    event.preventDefault();
-    //    window.event.returnValue = false;
-    //    alert("start slideshow");
-    //});
-
+        "<div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n";
 }
 
-function showSlideshowContextMenuHtml() {
-    $('#slideshowContextMenuContainer').html(
-        "<div id='slideshowContextMenu' class='ogContextMenu' onmouseleave='closeSlideshowContextMenu()'>\n" +
+function slideshowContextMenuHtml() {
+    return "<div id='slideshowContextMenu' class='ogContextMenu' onmouseleave='closeSlideshowContextMenu()'>\n" +
         "    <div id='slideshowContextMenuModelName' onclick='slideshowCtxMnuAction('showModelInfo')'>model name</div>\n" +
         "    <div id='slideshowContextMenuSeeMore' onclick='slideshowCtxMnuAction('see more of her')'>see more of her</div>\n" +
         "    <div onclick='slideshowCtxMnuAction('showImageCommentDialog')'>Comment</div>\n" +
@@ -605,7 +605,7 @@ function showSlideshowContextMenuHtml() {
         "    <div class='adminLink' onclick='slideshowCtxMnuAction('remove')'>Remove Link</div>\n" +
         "    <div class='adminLink' onclick='slideshowCtxMnuAction('setF')'>Set as Folder Image</div>\n" +
         "    <div class='adminLink' onclick='slideshowCtxMnuAction('setC')'>Set as Category Image</div>\n" +
-        "</div>\n");
+        "</div>\n";
 }
 
 $(document).keydown(function (event) {

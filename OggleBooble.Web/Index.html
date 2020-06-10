@@ -4,7 +4,7 @@
     <title>Welcome - OggleBooble</title>
     <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=.07">
     <meta http-equiv="cache-control" content="max-age=0">
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="expires" content="-1">
@@ -31,27 +31,32 @@
     <script src="Scripts/FolderInfoDialog.js"></script>
     <script src="Scripts/Carousel.js"></script>
 
+        <link href="Styles/Common.css" rel="stylesheet" />
+        <link href="Styles/AlbumPage.css" rel="stylesheet">
+        <link href="Styles/loginDialog.css" rel="stylesheet" />
+        <link href="Styles/OggleHeader.css" rel="stylesheet" />
+        <link href="Styles/Slideshow.css" rel="stylesheet" />
+        <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
+        <link href="Styles/ModelInfoDialog.css" rel="stylesheet" />
+        <link href="Styles/ImageCommentDialog.css" rel="stylesheet" />
+        <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
+        <link href="Styles/FolderCategoryDialog.css" rel="stylesheet" />
 
-    <!--<script src="Scripts/FeedbackDialog.js"></script>
-    <script src="Scripts/DirTree.js"></script>
-    <script src="Scripts/ModelInfoDialog.js"></script>
-    <script src="Scripts/ImageCommentDialog.js"></script>
-    <script src="Scripts/MoveCopyArchive.js"></script>
-    <script src="Scripts/MetaTagDialog.js"></script>-->
-    <!--<link href="Styles/bootstrap.css" rel="stylesheet" />-->
-    <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">-->
-    <!--<link href="Styles/jqueryUI.css" rel="stylesheet">-->
-    <link href="Styles/Common.css" rel="stylesheet">
-    <link href="Styles/IndexPage.css" rel="stylesheet">
-    <link href="Styles/loginDialog.css" rel="stylesheet">
-    <link href="Styles/OggleHeader.css" rel="stylesheet">
-    <link href="Styles/Carousel.css" rel="stylesheet">
-    <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet">
-    <link href="Styles/ModelInfoDialog.css" rel="stylesheet">
-    <link href="Styles/ImageCommentDialog.css" rel="stylesheet">
-    <link href="Styles/MetaTagDialog.css" rel="stylesheet">
-    <link href="Styles/OggleBlog.css" rel="stylesheet" />
-    <!--<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <link href="Styles/IndexPage.css" rel="stylesheet">
+        <link href="Styles/Carousel.css" rel="stylesheet">
+        <link href="Styles/OggleBlog.css" rel="stylesheet" />
+
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+
+        <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+        <link href="Styles/jqueryUI.css" rel="stylesheet" />
+        <!--<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>-->
+        <!--<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>-->
+        <!--<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />-->
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>-->
+        <!--<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
         (adsbygoogle = window.adsbygoogle || []).push({
             google_ad_client: "ca-pub-1620126417602146",
@@ -70,17 +75,15 @@
             <div id="dots"></div>
             <div class="indexPageSection" id="topIndexPageSection">
                 <div class="flexContainer">
-                    <div class="indexPageSectionLabel">random galleries</div>
+                    <div class="floatingContainerElement sectionLabel">random galleries</div>
                     <div id="carouselContainer"></div>
                 </div>
             </div>
             <div class="indexPageSection" id="bottomSection">
-                <div class="indexPageSectionLabel" onclick="showHideGalleries()">latest updates</div>
+                <div class="clickable sectionLabel" onclick="showHideGalleries()">latest updates</div>
                 <div id="updatedGalleriesSection" class="updatedGalleriesSection"></div>
             </div>
-
-            <div id="showMoreGalleriesDiv" class="indexPageSectionLabel" onclick="showMoreGalleries()">show more updated galleries</div>
-
+            <div id="showMoreGalleriesDiv" class="clickable sectionLabel" onclick="showMoreGalleries()">show more updated galleries</div>
         </div>
         <div class="rightColumn"></div>
     </div>
@@ -95,11 +98,12 @@
         var homePageId = 3908;
         var updatedGalleriesCount = 25;
 
-        $(document).ready(function () {
-            //$('#footerLastBuild').html("last build: " + lastBuild + "3");
-            //$('#footerMessage').html("loading settings");
+            $(document).ready(function () {
+                //$('#footerLastBuild').html("last build: " + lastBuild + "3");
+                //$('#footerMessage').html("loading settings");
+                document.title = "welcome : OggleBooble";
 
-            $('.indexPageSectionLabel').hide();
+            $('.sectionLabel').hide();
             params = getParams();
             subdomain = params.subdomain;
             if (params.subdomain === undefined)
@@ -123,7 +127,7 @@
                     //  LOCAL HOST because cookies don't work in IIS
                     if (document.domain === 'localhost') {
                         setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-                        setCookieValue("UserName", "cooler");
+                        setCookieValue("UserName", "developer");
                         var userPermissons = [];
                         userPermissons.push("Oggle admin");
                         userPermissons.push("access dashboard");
@@ -154,13 +158,10 @@
                                 }
 
                                 launchCarousel();
-
-                                loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
-                                $('.indexPageSectionLabel').show();
+                                loadUpdatedGalleriesBoxes(updatedGalleriesCount);
+                                $('.indexPageSection').show();
 
                             }
-
-                            setOggleHeader(homePageId, "Index");
 
                             //alert("setOggleFooter(homePageId :" + homePageId + ", subdomain: " + subdomain + ");");
                             setOggleFooter(homePageId, subdomain);
@@ -184,9 +185,9 @@
                 }
             }, 300);
 
-            window.addEventListener("resize", resizeIndexPage);
-            resizeIndexPage();
-        });
+                window.addEventListener("resize", resizeIndexPage);
+                resizeIndexPage();
+            });
 
         function resizeIndexPage() {
             // height
@@ -194,8 +195,9 @@
             var headerH = $('header').height();
             $('.threeColumnLayout').css("min-height", winH - headerH);
             $('#topIndexPageSection').height((winH - headerH - 100));
-            $('#topIndexPageSection').height((winH - headerH) * .58);
-
+            if ($('#updatedGalleriesSection').is(':visible')) {
+                $('#topIndexPageSection').height((winH - headerH) * .85);
+            }
             // width
             var winW = $(window).width();
             $('section').css("background-color", "#d5d1ba");

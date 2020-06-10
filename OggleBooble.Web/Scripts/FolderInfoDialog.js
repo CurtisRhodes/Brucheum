@@ -143,8 +143,8 @@ function editFolderDialog() {
     $('#summernoteContainer').summernote("destroy");
     $('#summernoteContainer').summernote({ toolbar: [['codeview']] });
     $(".note-editable").css('font-size', '19px');
-   
 
+    $("#txtBorn").datepicker();
     $('#boobsInputArea').html("<select id='selBoobs' class='modelDialogInput'>\n" +
         "    <option value='Real'>Real</option>\n" +
         "    <option value='Fake'>Fake</option>\n" +

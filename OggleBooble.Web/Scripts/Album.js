@@ -12,13 +12,7 @@ function GetAllAlbumPageInfo(folderId) {
     try {
         var aapiVisitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(aapiVisitorId)) {
-            logError({
-                VisitorId: aapiVisitorId,
-                ActivityCode: "XXX",
-                Severity: 1,
-                ErrorMessage: "visitorId undefined",
-                CalledFrom: "GetAllAlbumPageInfo"
-            });
+            logError({ VisitorId: aapiVisitorId, ActivityCode: "XXX", Severity: 1, ErrorMessage: "visitorId undefined", CalledFrom: "GetAllAlbumPageInfo" });
         }
         else {
             $('.footer').hide();

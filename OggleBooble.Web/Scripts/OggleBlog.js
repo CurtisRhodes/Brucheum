@@ -3,6 +3,14 @@ var selectedCommentType = "BLG";
 
 function blogStartup() {
     setOggleHeader(3911, "blog");
+    document.title = "blog : OggleBooble";
+
+    $('#summernoteContainer').summernote({
+        toolbar: [['codeview']],
+        height: "300",
+        dialogsInBody: true
+    });
+    $(".note-editable").css('font-size', '19px');
 
     if (isNullorUndefined(params.blogId)) {
         loadArticleJogs("BLG");
@@ -69,7 +77,6 @@ function loadArticleJogs(commentType) {
     else
         loadBlogArticles(commentType);
 }
-
 function loadBlogArticles(commentType) {
     try {
         $('#blogLoadingGif').show();
@@ -135,7 +142,6 @@ function loadBlogArticles(commentType) {
         alert("display Blog: CATCH " + e);
     }
 }
-
 function loadFolderComments() {
     $.ajax({
         type: "GET",
@@ -180,16 +186,142 @@ function loadFolderComments() {
     });
 }
 
-function editArticle(blogId, commentType) {
+function editArticle(itemId, commentType) {
     loadBlogList(commentType);
-    loadBlogEntry(blogId, commentType);
+    if (commentType === "FLD")
+        loadFolderComment(itemId);
+    else
+        loadBlogEntry(itemId);
     setBlogView("editArticle");
 }
+function loadBlogEntry(blogId) {
+    try {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/OggleJournal/GetBlogItem?blogId=" + blogId,
+            success: function (model) {
+                if (model.Success === "ok") {
+                    blogObject.Id = model.Id;
+                    $('#txtCommentTitle').val(model.CommentTitle);
+                    $('#selBlogEditCommentType').val(model.CommentType);
+                    $('#txtLink').val(model.Link);
+                    $('#summernoteContainer').summernote('code', model.CommentText);
+                    $('#imgBlogLink').attr("src", model.Link);
 
-function editItem(blogId, commentType) {
-    loadBlogList(commentType);
-    loadBlogEntry(blogId, commentType);
-    setBlogView("editItem");
+                    $('#blogPageTitle').html(model.CommentTitle);
+                    $('#blogPageBody').html(model.CommentText);
+                    $('#blogPageImage').attr("src", model.Link);
+                    //if ($('#blogPageBody').height() > $('#middleColumn').height()) {
+                    //    $('#middleColumn').height($('#blogPageBody').height() + $('#bheader').height());
+                    //    resizePage();
+                    //}
+                    $('#btnAddEdit').html("Save");
+                    $('#btnNewCancel').show();
+                }
+                else {
+                    if (document.domain === 'localhost')
+                        alert("JQA error in loadBlogEntry\n" + model.Success);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "JQA",
+                            Severity: 1,
+                            ErrorMessage: model.Success,
+                            CalledFrom: "loadBlogEntry"
+                        });
+                    //sendEmailToYourself("jquery fail in Blog.js displayBlogEntry", model.Success);
+                }
+            },
+            error: function (jqXHR) {
+                $('#blogLoadingGif').hide();
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404()) {
+                    //sendEmailToYourself("XHR ERROR in Blog.js loadBlogEntry", "/api/CategoryComment/Get?folderId=" + blogId + " Message: " + errorMessage);
+                    if (document.domain === 'localhost')
+                        alert("XHR error in loadBlogEntry\n" + errorMessage);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "XHR",
+                            Severity: 1,
+                            ErrorMessage: errorMessage,
+                            CalledFrom: "loadBlogEntry"
+                        });
+                }
+            }
+        });
+    } catch (e) {
+        if (document.domain === 'localhost')
+            alert("CATCH error in loadBlogEntry\n" + model.Success);
+        else
+            logError({
+                VisitorId: getCookieValue("VisitorId"),
+                ActivityCode: "CAT",
+                Severity: 1,
+                ErrorMessage: e,
+                CalledFrom: "loadBlogEntry"
+            });
+        //sendEmailToYourself("Catch ERROR in Blog.js loadBlogEntry", e);
+    }
+}
+function loadFolderComment(folderId) {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Folder/GetFolderInfo?folderId=" + folderId,
+        success: function (folderDetailModel) {
+            if (folderDetailModel.Success === "ok") {
+                blogObject.Id = folderDetailModel.FolderId;
+                $('#txtCommentTitle').val(folderDetailModel.FolderName);
+                $('#selBlogEditCommentType').val(commentType);
+                $('#txtLink').val(folderDetailModel.Link);
+                $('#oggleBlogSummerNote').summernote('code', folderDetailModel.CommentText);
+                //$('#imgBlogLink').attr("src", folderDetailModel.Link);
+
+                $('#blogPageTitle').html(categoryCommentModel.FolderName);
+                $('#blogPageImage').attr("src", categoryCommentModel.Link);
+                $('#blogPageBody').html("fls");
+
+                if ($('#blogPageBody').height() > $('#middleColumn').height()) {
+                    $('#middleColumn').height($('#blogPageBody').height() + $('#bheader').height());
+                    resizePage();
+                }
+
+
+                $('#btnAddEdit').html("Save");
+                $('#btnNewCancel').show();
+            }
+            else {
+                if (document.domain === 'localhost')
+                    alert("JQA error in loadBlogEntry\n" + folderDetailModel.Success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "JQA",
+                        Severity: 1,
+                        ErrorMessage: folderDetailModel.Success,
+                        CalledFrom: "loadBlogEntry"
+                    });
+                //sendEmailToYourself("jquery fail in Blog.js loadBlogEntry", "displayBlogEntry: " + categoryCommentModel.Success);
+            }
+        },
+        error: function (jqXHR) {
+            $('#blogLoadingGif').hide();
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404()) {
+                //sendEmailToYourself("XHR ERROR in Blog.js loadBlogEntry", "/api/CategoryComment/Get?folderId=" + blogId + " Message: " + errorMessage);
+                if (document.domain === 'localhost')
+                    alert("XHR error in loadBlogEntry\n" + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "loadBlogEntry"
+                    });
+            }
+        }
+    });
 }
 
 function setBlogView(option) {
@@ -207,22 +339,14 @@ function setBlogView(option) {
             $('#btnNewCancel').hide();
             clearGets();
             break;
-        case "editItem":
-            $('#leftColumnEditor').hide();
-            $('#leftColumnEditorNew').hide();
-            $('#leftColumnShowBlog').show();
-            $('#leftColumnShowPage').show();
-            $('#blogPageArea').fadeOut();
-            $('#blogListArea').hide();
-            $('#blogEditArea').fadeIn();
-            break;
         case "editArticle":
             $('#leftColumnEditorNew').hide();
             $('#leftColumnEditor').hide();
-            $('#blogPageArea').hide();
             $('#leftColumnShowBlog').show();
             $('#blogListArea').fadeOut();
             $('#blogEditArea').fadeIn();
+            $('#leftColumnShowPage').show();
+            $('#blogPageArea').fadeOut();
             break;
         case "showBlogDisplay":
             $('#leftColumnEditorNew').show();
@@ -245,73 +369,12 @@ function setBlogView(option) {
     }
 }
 
-function getBlogEntry(blogId) {
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/OggleJournal/GetBlogItem?blogId=" + blogId,
-        success: function (model) {
-            if (model.Success === "ok") {
-                //alert("displayBlogEntry: " + model.Id);
-                blogObject.Id = model.Id;
-                $('#blogPageTitle').html(model.CommentTitle);
-                $('#blogPageBody').html(model.CommentText);
-                $('#blogPageImage').attr("src", model.Link);
-
-                if ($('#blogPageBody').height() > $('#middleColumn').height()) {
-                    $('#middleColumn').height($('#blogPageBody').height() + $('#bheader').height());
-                    resizePage();
-                }
-            }
-            else {
-                sendEmailToYourself("jQuery fail in Blog.js showBlogPage", "displayBlogEntry: " + model.Success);
-                alert("displayBlogEntry: " + model.Success);
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "showBlogPage")) {
-                sendEmailToYourself("XHR ERROR in Blog.js showBlogPage", "/api/OggleBlog?blogId=" + blogId + " Message: " + errorMessage);
-            }
-        }
-    });
-}
-
-function getFolderComment(folderId) {
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "/api/CategoryComment/Get?folderId=" + folderId,
-        success: function (categoryCommentModel) {
-            if (categoryCommentModel.Success === "ok") {
-                blogObject.Id = categoryCommentModel.FolderId;
-                $('#blogPageTitle').html(categoryCommentModel.FolderName);
-                $('#blogPageImage').attr("src", categoryCommentModel.Link);
-                $('#blogPageBody').html("fls");
-
-                if ($('#blogPageBody').height() > $('#middleColumn').height()) {
-                    $('#middleColumn').height($('#blogPageBody').height() + $('#bheader').height());
-                    resizePage();
-                }
-            }
-            else {
-                sendEmailToYourself("XHR ERROR in Blog.js showBlogPage", "showBlogPage FLD: " + categoryCommentModel.Success);
-                //alert("showBlogPage FLD: " + categoryCommentModel.Success);                        
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "showBlogPage")) {
-                sendEmailToYourself("XHR ERROR in Blog.js showBlogPage", "/api/CategoryComment/Get?folderId=" + blogId + " Message: " + errorMessage);
-            }
-        }
-    });
-}
-
 function showBlogPage(itemId, commentType) {
     try {
         if (commentType === "FLD")
-            getFolderComment(itemId);
+            loadFolderComment(itemId);
         else
-            getBlogEntry(itemId);
+            loadBlogEntry(itemId);
 
         $('#leftColumnEditor').click(function () {
             editArticle(itemId, commentType);
@@ -426,92 +489,6 @@ function loadBlogList(commentType) {
                 CalledFrom: "loadBlogList"
             });
         //sendEmailToYourself("catch in Blog.js loadBlogList", "load BlogList catch: " + e);
-    }
-}
-
-function loadBlogEntry(blogId, commentType) {
-    try {
-        if (commentType === "FLD") {
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "api/Folder/GetFolderInfo?folderId=" + blogId,
-                success: function (folderDetailModel) {
-                    if (folderDetailModel.Success === "ok") {
-                        blogObject.Id = folderDetailModel.FolderId;
-                        $('#txtCommentTitle').val(folderDetailModel.FolderName);
-                        $('#selBlogEditCommentType').val(commentType);
-                        $('#txtLink').val(folderDetailModel.Link);
-                        $('#oggleBlogSummerNote').summernote('code', folderDetailModel.CommentText);
-                        //$('#imgBlogLink').attr("src", folderDetailModel.Link);
-
-                        $('#btnAddEdit').html("Save");
-                        $('#btnNewCancel').show();
-                    }
-                    else {
-                        if (document.domain === 'localhost')
-                            alert("JQA error in loadBlogEntry\n" + folderDetailModel.Success);
-                        else
-                            logError({
-                                VisitorId: getCookieValue("VisitorId"),
-                                ActivityCode: "JQA",
-                                Severity: 1,
-                                ErrorMessage: folderDetailModel.Success,
-                                CalledFrom: "loadBlogEntry"
-                            });
-                        //sendEmailToYourself("jquery fail in Blog.js loadBlogEntry", "displayBlogEntry: " + categoryCommentModel.Success);
-                    }
-                },
-                error: function (jqXHR) {
-                    $('#blogLoadingGif').hide();
-                    var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404()) {
-                        //sendEmailToYourself("XHR ERROR in Blog.js loadBlogEntry", "/api/CategoryComment/Get?folderId=" + blogId + " Message: " + errorMessage);
-                        if (document.domain === 'localhost')
-                            alert("XHR error in loadBlogEntry\n" + errorMessage);
-                        else
-                            logError({
-                                VisitorId: getCookieValue("VisitorId"),
-                                ActivityCode: "XHR",
-                                Severity: 1,
-                                ErrorMessage: errorMessage,
-                                CalledFrom: "loadBlogEntry"
-                            });
-                    }
-                }
-            });
-        }
-        else {
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "api/Blog/GetBlogItem?blogId=" + blogId,
-                success: function (model) {
-                    if (model.Success === "ok") {
-                        blogObject.Id = model.Id;
-                        $('#txtCommentTitle').val(model.CommentTitle);
-                        $('#selBlogEditCommentType').val(model.CommentType);
-                        $('#txtLink').val(model.Link);
-                        $('#oggleBlogSummerNote').summernote('code', model.CommentText);
-                        $('#imgBlogLink').attr("src", model.Link);
-
-                        $('#btnAddEdit').html("Save");
-                        $('#btnNewCancel').show();
-                    }
-                    else {
-                        sendEmailToYourself("jquery fail in Blog.js displayBlogEntry", model.Success);
-                        //alert("displayBlogEntry: " + model.Success);
-                    }
-                },
-                error: function (jqXHR) {
-                    var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "loadBlogEntry")) {
-                        sendEmailToYourself("XHR ERROR in Blog.js loadBlogEntry", "/api/CategoryComment/Get?folderId=" + blogId + " Message: " + errorMessage);
-                    }
-                }
-            });
-        }
-    } catch (e) {
-        sendEmailToYourself("Catch ERROR in Blog.js loadBlogEntry", e);
-        //alert("display BlogEntry catch: " + e);
     }
 }
 
@@ -653,7 +630,10 @@ function blogBodyHtml() {
         "                </div>\n" +
         "            </div>\n" +
         "            <div class='floatLeft'>\n" +
-        "                <div id='oggleBlogSummerNote' class='oggleBlogTextEditor'></div>\n" +
+        "               <div class='modelInfoCommentArea'>\n" +
+        "                   <textarea id='summernoteContainer'></textarea>\n" +
+        "               </div>\n" +
+//        "                <div id='oggleBlogSummerNote' class='oggleBlogTextEditor'></div>\n" +
         "                <div class='oggleBlogFooterArea'>\n" +
         "                    <div id='btnAddEdit' class='roundendButton' onclick='saveBlogEntry()'>Add</div>\n" +
         "                    <div id='btnNewCancel' class='roundendButton' onclick='NewCancel()'>New</div>\n" +
