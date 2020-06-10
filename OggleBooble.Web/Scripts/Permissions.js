@@ -112,43 +112,102 @@ function isLoggedIn() {
 }
 
 function getUserSettings() {
-
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/UserSettings/Get?visitorId="+getCookieValue("VisitorId"),
+        url: settingsArray.ApiServer + "api/UserSettings/Get?visitorId=" + getCookieValue("VisitorId"),
         success: function (successModel) {
             if (successModel.Success === "ok") {
-                alert("userSettings: " + successModel.ReturnValue);
-                window.localStorage["userPreferences"] = successModel.ReturnValue;
-            }
-            else {
-                alert("ss" + successModel.Success);
-            }
 
+
+                //let jsonResults = successModel.ReturnValue.Children();
+
+
+                let carouselSettings = jsonResults.First()["CarouselSettings"];
+
+                alert("carouselSettings: " + JSON.stringify(carouselSettings));
+
+                window.localStorage["carouselSettings"] = JSON.stringify(carouselSettings);
+                //var settingsJson = json.pa successModel.ReturnValue
+                //window.localStorage["userPreferences"] = successModel.ReturnValue;
+                //let jsonstring = JSON.parse(successModel);
+            }
+            else {                
+                if (document.domain === "localHost") 
+                    alert("JQA error in getUserSettings: " + successModel.Success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: successModel.Success,
+                        PageId: 555,
+                        CalledFrom: "getUserSettings"
+                    });
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404()) {
+                if (document.domain === "localHost")
+                    alert("getUserSettings: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        PageId: 555,
+                        CalledFrom: "getUserSettings"
+                    });
+                //sendEmailToYourself("XHR ERROR IN Carousel.JS loadImages", "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take + "  Message: " + errorMessage);
+            }
         }
     });
 }
 
-function setUserSettings(settingJson) {
+function updateUserSettings(userName, settingName, settingJson) {
+    // merge json string (in api);
+
+    alert("updateUserSettings(userName: " + userName + ", settingName: " + settingName + "\n settingJson: " + settingJson);
 
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "api/EntityAttribute/Update",
-        data: settingJson,
+        url: settingsArray.ApiServer + "api/EntityAttribute/Update?userName=" + userName + "&settingName=" + settingName + "&settingJson=" + settingJson,
         success: function (successModel) {
-            if (successModel.Success === "ok") {
-
+            if (successModel.Success  === "ok") {
                 window.localStorage["userPermissons"] = successModel.ReturnValue;
-
+                displayStatusMessage("ok", "user settings updated");
             }
             else {
-                alert("ss" + successModel.Success);
+                if (document.domain === "localHost")
+                    alert("JQA error in setUserSettings: " + success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: success,
+                        PageId: 555,
+                        CalledFrom: "setUserSettings"
+                    });
             }
-
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404()) {
+                if (document.domain === "localHost")
+                    alert("setUserSettings XHR: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        PageId: 555,
+                        CalledFrom: "setUserSettings"
+                    });
+                //sendEmailToYourself("XHR ERROR IN Carousel.JS loadImages", "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take + "  Message: " + errorMessage);
+            }
         }
-    })
-
-
+    });
 }
-
-

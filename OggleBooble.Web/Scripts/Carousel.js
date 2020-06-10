@@ -17,39 +17,39 @@ var mainImageClickId;
 var knownModelLabelClickId;
 var imageTopLabelClickId;
 var footerLabelClickId;
+let initialTake = 500;
 
 function launchCarousel() {
     //$('#footerMessage').html("launching carousel");
     loadCarouselHtml();
 
+    var jsCarouselSettings;
     if (isNullorUndefined(window.localStorage["carouselSettings"])) {
-
-        var carouselSettings = {
+        lsCarouselSettings = {
             includeArchive: true,
             includeCenterfolds: true,
             includePorn: false,
             includeLandscape: true,
             includePortrait: false
         };
-        window.localStorage["carouselSettings"] = JSON.stringify(carouselSettings);
+        window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
     }
-    else
+    else {
         console.log("carouselSettings found in local storage!");
-    let lsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
-
-    loadImages("boobs", Date.now(), 0, 366, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
-    let initialTake = 500;
-
-    if (lsCarouselSettings.includeArchive) {
-        loadImages("archive", Date.now(), 0, initialTake, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
+        //alert("lsCarouselSettings: " + jsCarouselSettings + "\ncarouselSettings.includeLandscape: " + jsCarouselSettings.includeLandscape);
     }
-    if (lsCarouselSettings.includeCenterfolds) {
-        loadImages("centerfold", Date.now(), 0, initialTake, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
+    jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
+    loadImages("boobs", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    initialTake = 1500;
+    if (jsCarouselSettings.includeArchive) {
+        loadImages("archive", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
     }
-    if (lsCarouselSettings.includePorn) {
-        loadImages("porn", Date.now(), 0, initialTake, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
+    if (jsCarouselSettings.includeCenterfolds) {
+        loadImages("centerfold", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
     }
-    window.addEventListener("resize", resizeCarousel);
+    if (jsCarouselSettings.includePorn) {
+        loadImages("porn", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    }
 }
 
 function loadCarouselHtml() {
@@ -66,7 +66,7 @@ function loadCarouselHtml() {
         "      <div class='carouselFooter'>\n" +
         "          <img class='speedButton floatLeft' src='Images/speedDialSlower.png' title='slower' onclick='clickSpeed(\"slower\")' />\n" +
         "          <div id='pauseButton' class='pauseButton' onclick='togglePause()'>||</div>\n" +
-        "          <div id='categoryLabel' class='carouselCategoryLabel' onclick='clickViewGallery(4)'></div>\n" +
+        "          <div id='carouselFooterLabel' class='carouselCategoryLabel' onclick='clickViewGallery(4)'></div>\n" +
         "          <img class='speedButton floatRight' src='Images/speedDialFaster.png' title='faster' onclick='clickSpeed(\"faster\")' />\n" +
         "          <img class='speedButton floatRight' src='Images/Settings-icon.png' title='carousel settings' onclick='showCarouelSettingsDialog()' />\n" +
         "       </div>\n" +
@@ -114,7 +114,7 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                         //alert("carouselItemArray.push[ " + idx + " ]");
                     });
 
-                    if (take === 366) {
+                    if (take === 500) {
                         newImageIndex = Math.floor(Math.random() * carouselItemArray.length);
                         startCarousel(newImageIndex);
                         resizeCarousel();
@@ -184,87 +184,95 @@ function startCarousel(startIndex) {
     }, rotationSpeed);
 }
 
+function setLabelLinks() {
+    if (carouselItemArray[imageIndex].FolderId === carouselItemArray[imageIndex].ImageFolderId) {
+        //$('#knownModelLabel').hide();
+        if (!containsRomanNumerals(carouselItemArray[imageIndex].ImageFolder)) {
+            // noraml
+            $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderName);
+            //$('#knownModelLabel').html("");
+            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderParent)
+            $('#carouselFooterLabel').html(carouselItemArray[imageIndex].FolderGP);
+            mainImageClickId = carouselItemArray[imageIndex].FolderId;
+            imageTopLabelClickId = carouselItemArray[imageIndex].FolderParentId;
+            footerLabelClickId = carouselItemArray[imageIndex].FolderGPId;
+            knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;
+            //$('#headerMessage').html("1");
+
+            if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
+                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderGP);
+                //$('#headerMessage').append("P");
+            }
+
+        }
+        else { // roman shift
+            $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderParent);
+            $('#imageTopLabel').html(carouselItemArray[imageIndex].ImageFolderGP)
+            $('#carouselFooterLabel').html(carouselItemArray[imageIndex].RootFolder);
+            footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
+            mainImageClickId = carouselItemArray[imageIndex].ImageFolderParentId;
+            knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;  //  the roman
+            imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderGPId;
+            //$('#headerMessage').html("2");
+
+            if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
+                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParent);
+                $('#knownModelLabel').html(carouselItemArray[imageIndex].Folder);
+                //$('#headerMessage').append("P");
+                imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
+                //pause();
+                //setTimeout(function () { alert("roman shift " + $('#headerMessage').html() + ".  imageTopLabelClickId: " + imageTopLabelClickId); }, 600);
+            }
+        }
+    }
+    else {
+        if (!containsRomanNumerals(carouselItemArray[imageIndex].FolderName)) {
+            $('#imageTopLabel').html(carouselItemArray[imageIndex].ImageFolderGP)
+            $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderParent);
+            $('#carouselFooterLabel').html(carouselItemArray[imageIndex].RootFolder);
+            mainImageClickId = carouselItemArray[imageIndex].ImageFolderParentId;
+            knownModelLabelClickId = carouselItemArray[imageIndex].ImageFolderId;
+            imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderGPId;
+            footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
+            //$('#headerMessage').html("3");
+            if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
+                $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolder);
+                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParent);
+                footerLabelClickId = 472;
+                $('#carouselFooterLabel').html("Playboy");
+                //$('#headerMessage').html(" 3P non folder member");
+                pause();
+                setTimeout(function () { alert("non folder member 3. centerfold\nroot: " + carouselItemArray[imageIndex].RootFolder) }, 600);
+            }
+        }
+        else {  // non roman numeral shift
+            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderGP);
+            $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderParent);
+            $('#carouselFooterLabel').html(carouselItemArray[imageIndex].RootFolder);
+            knownModelLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
+            mainImageClickId = carouselItemArray[imageIndex].FolderParentId;
+            imageTopLabelClickId = carouselItemArray[imageIndex].FolderGPId;
+            footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
+            //$('#headerMessage').html("4");
+            pause();
+            setTimeout(function () { alert("4 Non Roman Numeral Non folder member") }, 600);
+        }
+    }
+}
+
 function intervalBody(newImageIndex) {
     imageIndex = newImageIndex;
     $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
         $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
+
+
         $('#knownModelLabel').html("").hide();
-        $('#categoryLabel').html("").hide();
+        $('#carouselFooterLabel').html("").hide();
         $('#imageTopLabel').html("").hide();
-        if (carouselItemArray[imageIndex].FolderId === carouselItemArray[imageIndex].ImageFolderId) {
-            //$('#knownModelLabel').hide();
-            if (!containsRomanNumerals(carouselItemArray[imageIndex].ImageFolder)) {
-                // noraml
-                $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderName);
-                //$('#knownModelLabel').html("");
-                $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderParent)
-                $('#categoryLabel').html(carouselItemArray[imageIndex].FolderGP);
-                mainImageClickId = carouselItemArray[imageIndex].FolderId;
-                imageTopLabelClickId = carouselItemArray[imageIndex].FolderParentId;
-                footerLabelClickId = carouselItemArray[imageIndex].FolderGPId;
-                knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;
-                $('#headerMessage').html("1");
 
-                if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
-                    $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderGP);
-                    $('#headerMessage').append("P");
-                }
+        setLabelLinks();
 
-            }
-            else { // roman shift
-                $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderParent);
-                $('#imageTopLabel').html(carouselItemArray[imageIndex].ImageFolderGP)
-                $('#categoryLabel').html(carouselItemArray[imageIndex].RootFolder);
-                footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
-                mainImageClickId = carouselItemArray[imageIndex].ImageFolderParentId;
-                knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;  //  the roman
-                imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderGPId;
-                $('#headerMessage').html("2");
-
-                if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
-                    $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParent);
-                    $('#knownModelLabel').html(carouselItemArray[imageIndex].Folder);
-                    $('#headerMessage').append("P");
-                    imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
-                    //pause();
-                    //setTimeout(function () { alert("roman shift " + $('#headerMessage').html() + ".  imageTopLabelClickId: " + imageTopLabelClickId); }, 600);
-                }
-            }
-        }
-        else {
-            if (!containsRomanNumerals(carouselItemArray[imageIndex].FolderName)) {
-                $('#imageTopLabel').html(carouselItemArray[imageIndex].ImageFolderGP)
-                $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderParent);
-                $('#categoryLabel').html(carouselItemArray[imageIndex].RootFolder);
-                mainImageClickId = carouselItemArray[imageIndex].ImageFolderParentId;
-                knownModelLabelClickId = carouselItemArray[imageIndex].ImageFolderId;
-                imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderGPId;
-                footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
-                $('#headerMessage').html("3");
-                if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
-                    $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolder);
-                    $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderGP);
-                    footerLabelClickId = 472;
-                    $('#categoryLabel').html("Playboy");
-                    $('#headerMessage').html(" 3P non folder member");
-                    pause();
-                    setTimeout(function () { alert("non folder member 3. centerfold\nroot: " + carouselItemArray[imageIndex].RootFolder) }, 600);
-                }
-            }
-            else {  // non roman numeral shift
-                $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderGP);
-                $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderParent);
-                $('#categoryLabel').html(carouselItemArray[imageIndex].RootFolder);
-                knownModelLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
-                mainImageClickId = carouselItemArray[imageIndex].FolderParentId;
-                imageTopLabelClickId = carouselItemArray[imageIndex].FolderGPId;
-                footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
-                $('#headerMessage').html("4");
-                pause();
-                setTimeout(function () { alert("4 Non Roman Numeral Non folder member") }, 600);
-            }
-        }
-        $('#categoryLabel').fadeIn();
+        $('#carouselFooterLabel').fadeIn();
         $('#imageTopLabel').fadeIn();
         $('#knownModelLabel').fadeIn();
         imageHistory.push(imageIndex);
@@ -273,7 +281,8 @@ function intervalBody(newImageIndex) {
         $('#footerMessage').html("image " + imageIndex + " of " + carouselItemArray.length.toLocaleString());
         carouselImageViews++;
         //console.log("image views: " + carouselImageViews);
-        //$('#headerMessage').html("carouselImageViews: " + carouselImageViews);
+        //$('#headerMessage').html("carousel image viewed: " + carouselImageViews);
+        $('#footerMessage').append(".  carousel image viewed: " + carouselImageViews);
     });
 }
 
@@ -347,43 +356,6 @@ function resume() {
     $('#pauseButton').html("||");
 }
 
-function getImageDetails() {
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Image/GetImageDetail?folderId=" +
-            carouselItemArray[imageIndex].ImageFolderId +
-            "&linkId=" + carouselItemArray[imageIndex].LinkId,
-        success: function (imageInfo) {
-            if (folderDetails.Success === "ok") {
-
-                //imageInfo.IsLinkJustaLink = (dbImageLink.FolderLocation != folderId);
-                //imageInfo.LinkId = dbImageLink.Link;
-                //imageInfo.FolderLocation = dbImageLink.FolderLocation;
-                //imageInfo.Height = dbImageLink.Height;
-                //imageInfo.Width = dbImageLink.Width;
-                //imageInfo.LastModified = dbImageLink.LastModified;
-                //imageInfo.Link = dbImageLink.Link;
-                //imageInfo.ExternalLink = dbImageLink.ExternalLink;
-                //imageInfo.InternalLinks = (from l in db.CategoryImageLinks
-           }
-            else {
-                //alert("GetModelName: " + imageDetails.Success);
-                sendEmailToYourself("GetModelName fail", imageDetails.Success);
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "carouselContextMenu")) {
-                sendEmailToYourself("XHR ERROR IN Carousel.JS carouselContextMenu", "api/ImageCategoryDetail/GetModelName?linkId=" + carouselItemArray[imageIndex].LinkId +
-                    " Message : " + errorMessage);
-                //alert("containsLink xhr: " + getXHRErrorDetails(xhr));
-            }
-            sendEmailToYourself("GetNudeModelName xhr error: ", xhr.statusText);
-            //alert("GetNudeModelName xhr error: " + xhr.statusText);
-        }
-    });
-}
-
 function carouselContextMenuClick() {
     pause();
     event.preventDefault();
@@ -441,27 +413,6 @@ function carouselContextMenuAction(ctxMenuAction) {
     }
 }
 
-function onImageNotLoaded() {
-    sendEmailToYourself("onImageNotLoaded", "bk image " + carouselItemArray[imageIndex].Link + " not found");
-    //alert("bk image " + carouselItemArray[imageIndex].Link + " not found");
-}
-
-function slowlyShowFolderCategoryDialog() {
-    setTimeout(function () {
-        if (forgetShowingCatDialog === false) {
-            if (typeof pause === 'function')
-                pause();
-            folderCategoryDialogIsOpen = true;
-            showFolderInfoDialog(carouselItemArray[imageIndex].FolderId, "carousel slowly");
-        }
-    }, 1100);
-    $('#folderCategoryDialog').on('dialogclose', function (event) {
-        folderCategoryDialogIsOpen = false;
-        if (typeof resume === 'function')
-            resume();
-    });
-}
-
 function showCarouelSettingsDialog() {
     $("#draggableDialogTitle").html("Carousel Settings");
     $("#draggableDialogContents").html(
@@ -471,6 +422,12 @@ function showCarouelSettingsDialog() {
         "   <input class='carouselCheckbox' id='ckLandscape' type='checkbox'/> allow landscape size<br/>\n" +
         "   <input class='carouselCheckbox' id='ckPortrait' type='checkbox'/> allow portrait size<br/>\n" +
         "</div>\n");
+    $("#draggableDialog").css("width", 300);
+    //$("#draggableDialogTitle").html("Carousel Settings top: [" + $("#draggableDialog").attr("top") + "]");
+    $('#draggableDialog').css("top", event.clientY - 75);
+    $('#customMessageContainer').css("left", event.clientX - 100);
+    pause();
+    $("#draggableDialog").fadeIn();
 
     let lsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
 
@@ -479,15 +436,21 @@ function showCarouelSettingsDialog() {
     $('#ckPorn').prop("checked", lsCarouselSettings.includePorn);
     $('#ckLandscape').prop("checked", lsCarouselSettings.includeLandscape);
     $('#ckPortrait').prop("checked", lsCarouselSettings.includePortrait);
-    $("#draggableDialog").css("width", 500);
-    $("#draggableDialogTitle").html("Carousel Settings top: [" + $("#draggableDialog").attr("top") + "]");
 
     $('.carouselCheckbox').change(function () {
-        //alert("this." + this.id + " checked: " + this.checked);
+        alert("this." + this.id + " checked: " + this.checked);
+        //window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
 
-        setUserSettings("{porn:girl,ckCenterfold:no,ckArchive:yes,ckPorn:no,ckLandscape:yes,ckPortrait:no}");
+        //let lsCarouselSettings = window.localStorage["carouselSettings"];
 
-        // update settings
+        //var lsCarouselSettings = {
+        //    includeArchive: lsCarouselSettings.includeArchive,
+        //    includeCenterfolds: lsCarouselSettings.includeCenterfolds,
+        //    includePorn: lsCarouselSettings.includePorn,
+        //    includeLandscape: lsCarouselSettings.includeLandscape,
+        //    includePortrait: lsCarouselSettings.includePortrait
+        //};
+
         switch (this.id) {
             case "ckPortrait":
                 lsCarouselSettings.includePortrait = this.checked;
@@ -499,57 +462,46 @@ function showCarouelSettingsDialog() {
                 break;
             case "ckArchive":
                 lsCarouselSettings.includeArchive = this.checked;
-                if(this.checked)
+                if (this.checked)
                     loadImages("archive", Date.now(), 0, 500, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
                 else
                     removeItemsFromArray("archive");
                 break;
             case "ckCenterfold":
                 lsCarouselSettings.includeCenterfolds = this.checked;
-                if (this.checked)
+                if (this.checked) {
                     loadImages("centerfold", Date.now(), 0, 500, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
-                else
-                    removeItemsFromArray("centerfold");
+                    displayStatusMessage("ok", "centerfolds added to carousel");
+                }
+                else {
+                    let numImagesRemoved = removeItemsFromArray("centerfold");
+                    $('#headerMessage').html(numImagesRemoved + "centerfold images removed");
+                    displayStatusMessage("ok", numImagesRemoved + "centerfold images removed");
+                }
                 break;
             case "ckPorn":
                 lsCarouselSettings.includePorn = this.checked;
-                if (this.checked)
+                if (this.checked) {
                     loadImages("porn", Date.now(), 0, 500, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
-                else
-                    removeItemsFromArray("porn");
+                }
+                else {
+                    let numImagesRemoved = removeItemsFromArray("porn");
+                    $('#headerMessage').html(numImagesRemoved+ "porn images removed");
+                    displayStatusMessage("ok", numImagesRemoved + "porn images removed");
+                }
                 break;
             default:
         }
 
-        var newCarouselSettings = {
-            includeArchive: lsCarouselSettings.includeArchive,
-            includeCenterfolds: lsCarouselSettings.includeCenterfolds,
-            includePorn: lsCarouselSettings.includePorn,
-            includeLandscape: lsCarouselSettings.includeLandscape,
-            includePortrait: lsCarouselSettings.includePortrait
-        };
-        window.localStorage["carouselSettings"] = JSON.stringify(newCarouselSettings);
+        // update settings
+        window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
 
-        function reloadAll() {
-            if (lsCarouselSettings.includeArchive) {
-                removeItemsFromArray("archive");
-                loadImages("archive", Date.now(), 0, 500, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
-            }
-            if (lsCarouselSettings.includeCenterfolds) {
-                removeItemsFromArray("centerfold");
-                loadImages("centerfold", Date.now(), 0, 500, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
-            }
-            if (lsCarouselSettings.includePorn) {
-                removeItemsFromArray("porn");
-                loadImages("porn", Date.now(), 0, 500, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
-            }
-        }
+        let userName = getCookieValue("UserName");
+        if (isNullorUndefined(userName))
+            displayStatusMessage("warning", "You must be logged in for settings to persist");
+        else
+            updateUserSettings(userName, "CarouselSettings", lsCarouselSettings)
     });
-
-    //pause();
-    $('#draggableDialog').css("top", event.clientY - 75);
-    $('#customMessageContainer').css("left", event.clientX - 100);
-    $("#draggableDialog").fadeIn();
 }
 
 function removeItemsFromArray(rootFolder) {
@@ -562,6 +514,7 @@ function removeItemsFromArray(rootFolder) {
     }
     console.log("Removed " + numRemoved + " links of type: " + rootFolder);
     $('#footerMessage').html("total carousel items: " + carouselItemArray.length.toLocaleString());
+    return numRemoved;
 }
 
 function assuranceArrowClick(direction) {
@@ -579,23 +532,3 @@ function assuranceArrowClick(direction) {
         intervalBody(imageHistory.pop());
     }
 }
-
-//public class vwCarouselItem {
-//    public string RootFolder { get; set; }
-//    public int FolderId { get; set; }
-//    public string FolderName { get; set; }
-//    public string FolderParent { get; set; }
-//    public int FolderParentId { get; set; }
-//    public string FolderGP { get; set; }
-//    public int FolderGPId { get; set; }
-//    public int ImageFolderId { get; set; }
-//    public string ImageFolder { get; set; }
-//    public string ImageFolderParent { get; set; }
-//    public int ImageFolderParentId { get; set; }
-//    public string ImageFolderGP { get; set; }
-//    public int ImageFolderGPId { get; set; }
-//    public string LinkId { get; set; }
-//    public string Link { get; set; }
-//    public int Width { get; set; }
-//    public int Height { get; set; }
-//}

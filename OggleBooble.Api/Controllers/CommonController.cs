@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Data.Entity.Validation;
+using System.Runtime.InteropServices;
 
 namespace OggleBooble.Api.Controllers
 {
@@ -409,7 +410,7 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var mdb = new OggleBoobleMySqContext())
                 {
-                    successModel.ReturnValue = mdb.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault().PornPreference;
+                    successModel.ReturnValue = mdb.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault().UserSettings;
                 }
                 successModel.Success = "ok";
             }
@@ -422,24 +423,32 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPut]
         [Route("api/EntityAttribute/Update")]
-        public string UpdateUserSettings(string visitorId, string settingJson)
+        public SuccessModel UpdateUserSettings(string userName, string settingName, string settingJson)
         {
-            string success;
+            var successModel = new SuccessModel();
             try
             {
                 using (var mdb = new OggleBoobleMySqContext())
                 {
-                    var dbUser = mdb.RegisteredUsers.Where(r => r.VisitorId == visitorId).FirstOrDefault();
-                    dbUser.PornPreference = settingJson;
+                    // replace section
+                    var dbUser = mdb.RegisteredUsers.Where(r => r.UserName == userName).FirstOrDefault();
+                    var currentSettings = dbUser.UserSettings;
+
+                    int startindex = currentSettings.IndexOf(settingName);
+                    int lenToEnd = currentSettings.Substring(startindex, currentSettings.IndexOf("}") + 1).Length;
+                    string elementRemoved = currentSettings.Remove(startindex, lenToEnd);
+                    dbUser.UserSettings = elementRemoved + settingJson;
+
                     mdb.SaveChanges();
-                    success = "ok";
+                    successModel.Success = "ok";
+                    successModel.ReturnValue = dbUser.UserSettings;
                 }
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex);
+                successModel.Success = Helpers.ErrorDetails(ex);
             }
-            return success;
+            return successModel;
         }
     }
 }

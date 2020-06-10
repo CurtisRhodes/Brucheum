@@ -2,13 +2,12 @@
 
 //[Route("api/IndexPage/GetLatestUpdatedFolders")]
 
-function loadUpdatedGalleriesBoxes(numItmes) {
+function loadUpdatedGalleriesBoxes(numItmes, rootFolder) {
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?itemLimit=" + numItmes,
+        url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?itemLimit=" + numItmes + "&rootFolder=" + rootFolder,
         success: function (latestUpdates) {
             if (latestUpdates.Success === "ok") {
-                $('.sectionLabel').show();
                 $('#updatedGalleriesSection').html("");
 
                 $.each(latestUpdates.LatestUpdates, function (idx, LatestUpdate) {
@@ -20,6 +19,7 @@ function loadUpdatedGalleriesBoxes(numItmes) {
                         "</div>");
                 });
                 console.log("loaded " + latestUpdates.LatestUpdates.length + " news boxes");
+                $('.indexPageSectionLabel').show();
                 resizeIndexPage();
             }
             else {
@@ -49,6 +49,35 @@ function loadUpdatedGalleriesBoxes(numItmes) {
     });
 }
 
+function showMoreGalleries() {
+    updatedGalleriesCount += 15;
+    loadUpdatedGalleriesBoxes(updatedGalleriesCount);
+}
+
+function showHideGalleries() {
+    $('#updatedGalleriesSection').toggle();
+    $('#showMoreGalleriesDiv').toggle();
+    resizeIndexPage();
+}
+
+function goToPorn() {
+    //if(hasPorn)
+    //if (document.domain === 'localhost') alert("goToPorn()");
+    // if user porn status not already set
+    showCustomMessage(35);
+}
+
+
+// PROMO MESSAGES
+function promoMessagesHtml() {
+    return "<div id='promoContainer' class='ogglePromoContainer'>\n" +
+        "    <div id='promoContainerTitle' class='ogglePromoTitle'></div>\n" +
+        "    <div id='promoContainerText' class='ogglePromoText'></div>\n" +
+        "    <div onclick='killPromoMessages()' class='tinyDots' onmouseover='$('#killPromoPrompt').show()' onmouseout='$('#killPromoPrompt').hide()'>...</div>\n" +
+        "    <div id='killPromoPrompt' class='ogglePromoKillMessage'>had enough promo messages?</div>\n" +
+        "</div>\n";
+}
+
 function launchPromoMessages() {
     $.ajax({
         type: "GET",
@@ -64,11 +93,13 @@ function launchPromoMessages() {
                     });
                 });
                 showPromoMessages();
+                $('#promoMessagesContainer').html(promoMessagesHtml());
             }
             else {
                 $('#blogLoadingGif').hide();
-                sendEmailToYourself("FAIL in Index.Html launchPromoMessages", "/api/OggleBlog/GetBlogList?commentType=PRO" +
-                    "<br/>Called from: " + getCookieValue("IpAddress") + "<br/>Message: " + blogCommentsContainer.Success);
+
+                //sendEmailToYourself("FAIL in Index.Html launchPromoMessages", "/api/OggleBlog/GetBlogList?commentType=PRO" +
+                //    "<br/>Called from: " + getCookieValue("IpAddress") + "<br/>Message: " + blogCommentsContainer.Success);
                 //alert("loadPromoMessages: " + blogCommentsContainer.Success)
             }
         },
@@ -107,34 +138,4 @@ function killPromoMessages() {
     $('#promoContainer').fadeOut();
     clearInterval(promoMessageRotator);
     setInterval(function () { showPromoMessages() }, 30000);
-}
-
-function showMoreGalleries() {
-    updatedGalleriesCount += 15;
-    loadUpdatedGalleriesBoxes(updatedGalleriesCount);
-}
-
-function showHideGalleries() {
-    $('#updatedGalleriesSection').toggle();
-    $('#showMoreGalleriesDiv').toggle();
-    resizeIndexPage();
-}
-
-function showPromoMessagesHtml() {
-    $('#promoMessagesContainer').html(
-        "<div id='promoContainer' class='ogglePromoContainer'>\n" +
-        "    <div id='promoContainerTitle' class='ogglePromoTitle'></div>\n" +
-        "    <div id='promoContainerText' class='ogglePromoText'></div>\n" +
-        "    <div onclick='killPromoMessages()' class='tinyDots' onmouseover='$('#killPromoPrompt').show()' onmouseout='$('#killPromoPrompt').hide()'>...</div>\n" +
-        "    <div id='killPromoPrompt' class='ogglePromoKillMessage'>had enough promo messages?</div>\n" +
-        "</div>\n");
-}
-
-function goToPorn() {
-
-    //if(hasPorn)
-    //if (document.domain === 'localhost') alert("goToPorn()");
-
-    // if user porn status not already set
-    showCustomMessage(35);
 }

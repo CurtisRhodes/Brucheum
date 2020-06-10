@@ -115,11 +115,6 @@ input[type='checkbox'] {
     z-index: 15;
 }
 
-.sectionLabel {
-    color: var(--oggleTitleColor);
-    white-space: nowrap;
-}
-
 .roundendButton {
     display: inline-block;
     text-align: center;

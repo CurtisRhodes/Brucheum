@@ -4,7 +4,7 @@
     <title>Welcome - OggleBooble</title>
     <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=.07">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="cache-control" content="max-age=0">
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="expires" content="-1">
@@ -70,15 +70,17 @@
             <div id="dots"></div>
             <div class="indexPageSection" id="topIndexPageSection">
                 <div class="flexContainer">
-                    <div class="floatingContainerElement sectionLabel">random galleries</div>
+                    <div class="indexPageSectionLabel">random galleries</div>
                     <div id="carouselContainer"></div>
                 </div>
             </div>
             <div class="indexPageSection" id="bottomSection">
-                <div class="clickable sectionLabel" onclick="showHideGalleries()">latest updates</div>
+                <div class="indexPageSectionLabel" onclick="showHideGalleries()">latest updates</div>
                 <div id="updatedGalleriesSection" class="updatedGalleriesSection"></div>
             </div>
-            <div id="showMoreGalleriesDiv" class="clickable sectionLabel" onclick="showMoreGalleries()">show more updated galleries</div>
+
+            <div id="showMoreGalleriesDiv" class="indexPageSectionLabel" onclick="showMoreGalleries()">show more updated galleries</div>
+
         </div>
         <div class="rightColumn"></div>
     </div>
@@ -97,7 +99,7 @@
             //$('#footerLastBuild').html("last build: " + lastBuild + "3");
             //$('#footerMessage').html("loading settings");
 
-            $('.sectionLabel').hide();
+            $('.indexPageSectionLabel').hide();
             params = getParams();
             subdomain = params.subdomain;
             if (params.subdomain === undefined)
@@ -121,7 +123,7 @@
                     //  LOCAL HOST because cookies don't work in IIS
                     if (document.domain === 'localhost') {
                         setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-                        setCookieValue("UserName", "developer");
+                        setCookieValue("UserName", "cooler");
                         var userPermissons = [];
                         userPermissons.push("Oggle admin");
                         userPermissons.push("access dashboard");
@@ -152,10 +154,13 @@
                                 }
 
                                 launchCarousel();
-                                loadUpdatedGalleriesBoxes(updatedGalleriesCount);
-                                $('.indexPageSection').show();
+
+                                loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
+                                $('.indexPageSectionLabel').show();
 
                             }
+
+                            setOggleHeader(homePageId, "Index");
 
                             //alert("setOggleFooter(homePageId :" + homePageId + ", subdomain: " + subdomain + ");");
                             setOggleFooter(homePageId, subdomain);
@@ -189,9 +194,8 @@
             var headerH = $('header').height();
             $('.threeColumnLayout').css("min-height", winH - headerH);
             $('#topIndexPageSection').height((winH - headerH - 100));
-            if ($('#updatedGalleriesSection').is(':visible')) {
-                $('#topIndexPageSection').height((winH - headerH) * .85);
-            }
+            $('#topIndexPageSection').height((winH - headerH) * .58);
+
             // width
             var winW = $(window).width();
             $('section').css("background-color", "#d5d1ba");

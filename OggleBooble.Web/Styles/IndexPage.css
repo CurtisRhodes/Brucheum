@@ -1,11 +1,21 @@
 ﻿
+.indexPageSectionLabel {
+    white-space: nowrap;
+    cursor: pointer;
+    position: absolute;
+}
+.floatingContainerElement {
+    padding: 7px;
+}
+
 .indexPageSection {
     width: 100%;
-    min-height: 40%;
-    margin-bottom: 6px;
+    margin-top: 6px;
     display: flex;
-    /*
     overflow: auto;
+    /*
+    min-height: 40%;
+    color: var(--oggleTitleColor);
     border: solid 10px orange;
     */
 }
@@ -13,7 +23,7 @@
 /*@media (min-width: 768px) {
     background-color: red;
 }*/
-    .updatedGalleriesSection {
+.updatedGalleriesSection {
     float: left;
     text-align: center;
     height: inherit;
@@ -22,7 +32,6 @@
         padding: 3px;
         background-color: #988519;
         background-color: var(--oggleContainerBackgroundColor);
-        border: solid thin red;
     */
 }
 
@@ -31,11 +40,6 @@
     margin: 2px;
     background-color: #3b0e56;
     height: 280px;
-}
-
-.floatingContainerElement {
-    position: absolute;
-    padding: 7px;
 }
 
 .newsContentBoxLabel {

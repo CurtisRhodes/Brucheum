@@ -6,6 +6,22 @@
     display: flex;
     z-index: 31;
 }
+.headerBodyContainer {
+    float: left;
+    width: 100%;
+}
+
+.headerTopRow {
+    display: flex;
+    width: 100%;
+}
+
+.headerTitle {
+    padding-left: 6px;
+    padding-top: 1px;
+    font-family: 'Lucida Calligraphy';
+    font-size: 33px;
+}
 
 .classicColors {
     background-color: var(--oggleHeaderBackgroundColor);
@@ -89,22 +105,6 @@
     cursor: pointer;
 }
 
-.headerBodyContainer {
-    float: left;
-    width: 100%;
-}
-
-.headerTopRow {
-    display: flex;
-    width: 100%;
-}
-
-.headerTitle {
-    padding-left: 6px;
-    padding-top: 1px;
-    font-family: 'Lucida Calligraphy';
-    font-size: 33px;
-}
 
 .topLinkRow {
     font-size: 20px;
@@ -151,11 +151,12 @@
     position: absolute;
     right: 10px;
     margin-top: 8px;
-    margin-right: 20px;
+    margin-right: 20px;    
 }
 
 .OggleSearchBoxText {
     border-radius: 10px;
+    height: 20px;
 }
 
 .searchResultsDropdown {

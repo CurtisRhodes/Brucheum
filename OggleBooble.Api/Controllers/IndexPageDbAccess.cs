@@ -44,21 +44,24 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/IndexPage/GetLatestUpdatedFolders")]
-        public LatestUpdatesModel GetLatestUpdatedFolders(int itemLimit)
+        public LatestUpdatesModel GetLatestUpdatedFolders(int itemLimit, string rootFolder)
         {
             LatestUpdatesModel updatesModel = new LatestUpdatesModel();
             try
             {
-                using (OggleBoobleContext db = new OggleBoobleContext())
-                {
-                    updatesModel.LatestUpdates = db.Database.SqlQuery<LatestUpdate>(
-                        "select top " + itemLimit + " max(f.Id) FolderId, f.FolderName, max(i.LastModified) LastModified, max(i2.Link) FolderImage " +
+                string sqlStr = "select top " + itemLimit + " max(f.Id) FolderId, f.FolderName, max(i.LastModified) LastModified, max(i2.Link) FolderImage " +
                         "from OggleBooble.ImageLink i " +
                         "join OggleBooble.CategoryFolder f on i.FolderLocation = f.Id " +
-                        //"join OggleBooble.CategoryFolderDetail d on i.FolderLocation = d.FolderId " +
-                        "join OggleBooble.ImageLink i2 on f.FolderImage = i2.Id " +
-                        "group by f.FolderName " +
-                        "order by LastModified desc").ToList();
+                        "join OggleBooble.ImageLink i2 on f.FolderImage = i2.Id ";
+                if (rootFolder.Contains("pornsluts"))
+                    sqlStr += "where f.RootFolder in ('porn','sluts') ";
+                else
+                    sqlStr += "where f.RootFolder not in ('porn','sluts') ";
+                sqlStr += "group by f.FolderName order by LastModified desc";
+
+                using (OggleBoobleContext db = new OggleBoobleContext())
+                {
+                    updatesModel.LatestUpdates = db.Database.SqlQuery<LatestUpdate>(sqlStr).ToList();
                 }
                 updatesModel.Success = "ok";
             }
