@@ -1,6 +1,5 @@
-﻿
+﻿using OggleBooble.Api.MySqlDataContext;
 using OggleBooble.Api.Models;
-using OggleBooble.Api.MsSqlDataContext;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
@@ -57,8 +56,6 @@ namespace OggleBooble.Api.Controllers
             //folderDetailModel.HasSubfolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0;
             return "unknown";
         }
-
-
 
         public static bool ContainsRomanNumeralChildren(List<CategoryFolder> childFolders)
         {

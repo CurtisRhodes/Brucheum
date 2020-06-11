@@ -10,6 +10,11 @@ var loginFromPageId;
 function showLoginDialog() {
     $('#draggableDialogTitle').html("Log In to OggleBooble");
     $('#draggableDialogContents').html(loginDialogHtml());
+
+
+    $("#draggableDialog").css("width", "400");
+
+
     $("#draggableDialog").fadeIn();
     $('.validationError').hide();
 

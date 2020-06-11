@@ -3,6 +3,7 @@
     --brucheumBlue: #74bac3;
     --oggleBackgroundColor: #b5a6d5; /*#fef;  #f7eef7  #b081b1 #f8e8e8 */
     --oggleContainerBackgroundColor: #bc61e4; /* #d1f5f3; #f8e8e8 */
+    --oggleDialogBackgroundColor: #fc9; /* #d1f5f3; #f8e8e8 */
     --oggleBorderColor: #b200ff; /* #f1cff7;*/
     --ogglePurple: #79078f;
     --normalFont: 17px;
@@ -86,7 +87,7 @@ body {
 }
 
 .oggleDialog {
-    background-color: var(--oggleContainerBackgroundColor);
+    background-color: var(--oggleDialogBackgroundColor);
     padding: 6px;
     font-size: 18px;
 }

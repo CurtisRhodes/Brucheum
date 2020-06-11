@@ -16,6 +16,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<CategoryFolder> CategoryFolders { get; set; }
         public virtual DbSet<ImageLink> ImageLinks { get; set; }
         public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
+        public virtual DbSet<VwDirTree> VwDirTrees { get; set; }
         public virtual DbSet<ImageHit> ImageHits { get; set; }
         public virtual DbSet<PageHit> PageHits { get; set; }
         public virtual DbSet<Visitor> Visitors { get; set; }
@@ -23,7 +24,6 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<MetricsMatrix> VwMetricsMatrices { get; set; }
         public virtual DbSet<vwImageHit> vwImageHits { get; set; }
         public virtual DbSet<StepChild> StepChildren { get; set; }
-        public virtual DbSet<VwDirTree> VwDirTrees { get; set; }
         public virtual DbSet<VwLink> VwLinks { get; set; }
         public virtual DbSet<CategoryFolderDetail> CategoryFolderDetails { get; set; }
         public virtual DbSet<RankerVote> RankerVotes { get; set; }
@@ -40,6 +40,42 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<PageHitTotals> PageHitTotal { get; set; }
         public virtual DbSet<ErrorLog> ErrorLogs { get; set; }
         public virtual DbSet<IpInfoCall> IpInfoCalls { get; set; }
+        public virtual DbSet<vwSlideshowItem> vwSlideshowItems { get; set; }
+    }
+
+    [Table("OggleBooble.vwDirtree")]
+    public partial class VwDirTree
+    {
+        [Key]
+        [Column(Order = 0)]
+        public int Id { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public int Parent { get; set; }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public string LinkId { get; set; }
+        public string Link { get; set; }
+        public int FileCount { get; set; }
+        public int SubDirCount { get; set; }
+        public int ChildFiles { get; set; }
+        public int Links { get; set; }
+        public int IsStepChild { get; set; }
+        public int SortOrder { get; set; }
+    }
+
+    [Table("OggleBooble.vwSlideshowItems")]
+    public class vwSlideshowItem
+    {
+        [Key]
+        public long Index { get; set; }
+        public string LinkId { get; set; }
+        public string Link { get; set; }
+        public int FolderId { get; set; }
+        public int ImageFolderId { get; set; }
+        public int ImageParentId { get; set; }
+        public string ImageFolderName { get; set; }
+        public int SortOrder { get; set; }
     }
 
     [Table("OggleBooble.IpInfoCalls")]
@@ -346,24 +382,6 @@ namespace OggleBooble.Api.MySqlDataContext
         public string Link { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
-        public int SortOrder { get; set; }
-    }
-
-    [Table("OggleBooble.vwDirtree")]
-    public partial class VwDirTree
-    {
-        [Key]
-        public int Id { get; set; }
-        public int Parent { get; set; }
-        public string FolderName { get; set; }
-        public string RootFolder { get; set; }
-        public string LinkId { get; set; }
-        public string Link { get; set; }
-        public int FileCount { get; set; }
-        public int SubDirCount { get; set; }
-        public int ChildFiles { get; set; }
-        public int Links { get; set; }
-        public int IsStepChild { get; set; }
         public int SortOrder { get; set; }
     }
 

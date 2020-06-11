@@ -1,5 +1,5 @@
 ﻿using OggleBooble.Api.Models;
-using OggleBooble.Api.MsSqlDataContext;
+using OggleBooble.Api.MySqlDataContext;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -26,7 +26,7 @@ namespace OggleBooble.Api.Controllers
             string success = "";
             try
             {
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                using (var db = new OggleBoobleMySqContext())
                 {
                     //SignalRHost.ProgressHub.PostToClient("Creating static files");
                     //VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == folderId).First();
@@ -47,7 +47,7 @@ namespace OggleBooble.Api.Controllers
 
         }
 
-        private string CreatePage(int folderId, string rootFolder, string folderName, OggleBoobleContext db, bool recurr)
+        private string CreatePage(int folderId, string rootFolder, string folderName, OggleBoobleMySqContext db, bool recurr)
         {
             string success = "";
             try
@@ -531,7 +531,7 @@ namespace OggleBooble.Api.Controllers
             var breadcrumbs = new List<BreadCrumbItemModel>();
             StringBuilder breadCrumbString = new StringBuilder();
 
-            using (var db = new OggleBoobleContext())
+            using (var db = new OggleBoobleMySqContext())
             {
                 //using (= new OggleBoobleContext())
                 var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();

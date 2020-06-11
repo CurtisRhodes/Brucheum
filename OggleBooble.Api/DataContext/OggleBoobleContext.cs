@@ -8,16 +8,16 @@ using System.Web;
 
 namespace OggleBooble.Api.MsSqlDataContext
 {
-    public partial class OggleBoobleContext : DbContext
+    public partial class OggleBoobleMsSqlContext : DbContext
     {
-        public OggleBoobleContext()
+        public OggleBoobleMsSqlContext()
             : base("GoDaddy") { }
 
         public virtual DbSet<CategoryFolder> CategoryFolders { get; set; }
         public virtual DbSet<ImageLink> ImageLinks { get; set; }
         public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
 
-        public virtual DbSet<VwDirTree> VwDirTrees { get; set; }
+        //public virtual DbSet<VwDirTree> VwDirTrees { get; set; }
         public virtual DbSet<VideoLink> VideoLinks { get; set; }
         public virtual DbSet<VwLink> VwLinks { get; set; }
         public virtual DbSet<BlogComment> BlogComments { get; set; }
@@ -238,7 +238,7 @@ namespace OggleBooble.Api.MsSqlDataContext
     }
 
     [Table("OggleBooble.vwDirtree")]
-    public partial class VwDirTree
+    public partial class msVwDirTree
     {
         [Key]
         [Column(Order = 0)]

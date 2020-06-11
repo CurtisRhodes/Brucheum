@@ -1,6 +1,5 @@
 ﻿using OggleBooble.Api.Models;
-using OggleBooble.Api.MsSqlDataContext;
-//using OggleBooble.Api.MySqlDataContext;
+using OggleBooble.Api.MySqlDataContext;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -31,14 +30,14 @@ namespace OggleBooble.Api.Controllers
             {
                 var timer = new System.Diagnostics.Stopwatch();
                 timer.Start();
-                IEnumerable<MsSqlDataContext.VwDirTree> vwDirTrees = new List<MsSqlDataContext.VwDirTree>();
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                IEnumerable<VwDirTree> vwDirTrees = new List<VwDirTree>();
+                using (var db = new OggleBoobleMySqContext())
                 {
                     // wow did this speed things up
                     vwDirTrees = db.VwDirTrees.ToList().OrderBy(v => v.Id);
                 }
 
-                MsSqlDataContext.VwDirTree vRootNode = vwDirTrees.Where(v => v.Id == root).First();
+                VwDirTree vRootNode = vwDirTrees.Where(v => v.Id == root).First();
                 DirTreeModelNode rootNode = new DirTreeModelNode() { vwDirTree = vRootNode };
                 dirTreeModel.SubDirs.Add(rootNode);
 
@@ -55,7 +54,7 @@ namespace OggleBooble.Api.Controllers
             }
             return dirTreeModel;
         }
-        private void GetDirTreeChildNodes(DirTreeSuccessModel dirTreeModel, DirTreeModelNode parentNode, IEnumerable<MsSqlDataContext.VwDirTree> vwDirTree, string dPath)
+        private void GetDirTreeChildNodes(DirTreeSuccessModel dirTreeModel, DirTreeModelNode parentNode, IEnumerable<VwDirTree> vwDirTree, string dPath)
         {
             var vwDirTreeNodes = vwDirTree.Where(v => v.Parent == parentNode.vwDirTree.Id).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
             foreach (VwDirTree vNode in vwDirTreeNodes)
@@ -67,14 +66,12 @@ namespace OggleBooble.Api.Controllers
             }
         }
 
-
-
         [HttpGet]
         [Route("api/Links/RepairLinks")]
         public RepairReportModel RepairLinks(int folderId, bool recurr)
         {
             RepairReportModel repairReport = new RepairReportModel();
-            using (OggleBoobleContext db = new OggleBoobleContext())
+            using (var db = new OggleBoobleMySqContext())
             {
                 CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
 
@@ -122,14 +119,12 @@ namespace OggleBooble.Api.Controllers
             return repairReport;
         }
 
-
-
         public RepairReportModel XXRepairLinks(int startFolderId, string drive)
         {
             RepairReportModel repairReport = new RepairReportModel() { isSubFolder = false };
             try
             {
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                using (var db = new OggleBoobleMySqContext())
                 {
                     var timer = new System.Diagnostics.Stopwatch();
                     timer.Start();

@@ -50,6 +50,8 @@ function launchCarousel() {
     if (jsCarouselSettings.includePorn) {
         loadImages("porn", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
     }
+    
+    window.addEventListener("resize", resizeCarousel);
 }
 
 function loadCarouselHtml() {
@@ -102,8 +104,10 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                             FolderParentId: obj.FolderParentId,
                             FolderGP: obj.FolderGP,
                             FolderGPId: obj.FolderGPId,
+
                             ImageFolderId: obj.ImageFolderId,
                             ImageFolder: obj.ImageFolder,
+                            //ImageFolderRoot: obj.ImageFolderRoot,
                             ImageFolderParent: obj.ImageFolderParent,
                             ImageFolderParentId: obj.ImageFolderParentId,
                             ImageFolderGP: obj.ImageFolderGP,

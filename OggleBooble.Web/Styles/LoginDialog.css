@@ -94,24 +94,6 @@
 }
 
 
-.modalDialog {
-    /*
-    position: absolute;
-    top: 22%;
-    left: 40%;
-    box-sizing: content-box;
-    color: #242729;
-    min-width: 300px;
-    border: 1px solid #e4e6e8;
-    background: #fff;
-    border: solid thin #777;
-    border-radius: 6px;
-    box-shadow: 10px 10px rgba(95, 12, 12, 0.5);
-    */
-    z-index: 12;
-    display: none;
-}
-
 .dialogHeader {
     text-align: center;
     padding: 6px;

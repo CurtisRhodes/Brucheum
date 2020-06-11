@@ -1,5 +1,4 @@
 ﻿var hdrFolderId, hdrSubdomain;
-
 function setOggleHeader(folderId, subdomain) {
     //if (getCookieValue("IpAddress") === "68.203.90.183") alert("setOggleHeader subdomain " + subdomain + "  folderId: " + folderId + " containsImageLinks: " + containsImageLinks);
     if (subdomain === undefined) subdomain = "boobs";
@@ -25,7 +24,7 @@ function setOggleHeader(folderId, subdomain) {
 
     //$('.headerTitle').html(subdomain);
     window.addEventListener("resize", headerResize);
-    //headerResize(subdomain);
+    headerResize(subdomain);
 }
 
 function headerResize() {
@@ -35,14 +34,18 @@ function headerResize() {
     $('#divLoginArea').css("font-size", 17);
     setHeaderDetails(hdrFolderId, hdrSubdomain);
     if (hdrW < 1400) {
-        // show iPadHeader
-        $('#divLoginArea').css("font-size", 15);
-        $('.oggleHeader').css("background-color", "#ecc6c6");
+        $('.oggleHeader').css("background-color", "#ecc6c6"); // brown
+        $('#divLoginArea').css("font-size", 10);
     }
     if (hdrW < 1330) {
         // show iPadHeader
         $('#subheaderContent').css("font-size", 17);
-        $('.oggleHeader').css("background-color", "#ccffcc");
+        $('.oggleHeader').css("background-color", "#ccffcc");  // green
+        $('#breadcrumbContainer').html("<div id='rankerTag'><a href='javascript:rtpe(\"RNK\"," + hdrFolderId + ",\"archive\")'" +
+            " title='Spin through the links to land on random portrait images.'>babes ranker</a></div>\n" +
+            "<div><a href='javascript:rtpe(\"BAC\"," + hdrFolderId + ",1132,1132)'>every Playboy Centerfold</a></div>\n" +
+            "<div id='rankerTag'><a href='javascript:rtpe(\"BAC\"," + hdrFolderId + ",3,3)'>babes archive</a></div>\n");
+        // $('#breadcrumbContainer').html("");
     }
     if (hdrW < 1200) {
         // show burgerMenu
@@ -52,13 +55,13 @@ function headerResize() {
     //$('.headerBodyContainer').css("font-size", 10);
     //$('.headerBodyContainer').css("font-size", 10);
     $('#headerMessage').html("hdrW: " + hdrW);
+            // show iPadHeader
 
 }
 
 function showBurgerMenu() {
 
 }
-
 
 // requires no database call
 function setHeaderDetails(folderId, subdomain) {
@@ -68,12 +71,8 @@ function setHeaderDetails(folderId, subdomain) {
     $('#divTopLeftLogo').html("<a href='javascript:rtpe(\"HBC\"," + folderId + ",\"boobs\"," + folderId + ")'><img src='/Images/redballon.png' class='bannerImage'/></a>\n");
     $('#bannerTitle').html("OggleBooble");
     switch (subdomain) {
-        case "admin":
-            $('header').switchClass('pornHeader', 'boobsHeader');
-            $("#divLoginArea").hide();
-            $('#subheaderContent').html("admin");
-            break;
         case "Index": {
+            //$('header').switchClass('pornHeader', 'boobsHeader');
             $('#subheaderContent').html(
                 "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",2,2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
                 "                <a href='javascript:rtpe(\"BLC\"," + folderId + ",136,136)'> poses,</a>\n" +
@@ -94,6 +93,7 @@ function setHeaderDetails(folderId, subdomain) {
         case "loading": $('#subheaderContent').html("loading"); break;
         case "dashboard": {
             $('#subheaderContent').html("dashboard");
+            $("#divLoginArea").hide();
             break;
         }
         case "blog": {

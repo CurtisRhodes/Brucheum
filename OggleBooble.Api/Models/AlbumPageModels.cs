@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OggleBooble.Api.MySqlDataContext;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -91,11 +92,11 @@ namespace OggleBooble.Api.Models
     {
         public SlideshowItemsModel()
         {
-            SlideshowItems = new List<MsSqlDataContext.vwSlideshowItem>();
+            SlideshowItems = new List<vwSlideshowItem>();
         }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
-        public List<MsSqlDataContext.vwSlideshowItem> SlideshowItems { get; set; }
+        public List<vwSlideshowItem> SlideshowItems { get; set; }
         public string Success { get; set; }
     }
 

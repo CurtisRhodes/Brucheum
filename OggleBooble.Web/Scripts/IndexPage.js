@@ -1,7 +1,7 @@
-﻿function loadUpdatedGalleriesBoxes(numItmes) {
+﻿function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?itemLimit=" + numItmes,
+        url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?itemLimit=" + numItmes + "&rootFolder=" + subdomain,
         success: function (latestUpdates) {
             if (latestUpdates.Success === "ok") {
                 $('.sectionLabel').show();

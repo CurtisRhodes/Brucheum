@@ -1,4 +1,4 @@
-﻿using OggleBooble.Api.MsSqlDataContext;
+﻿using OggleBooble.Api.MySqlDataContext;
 using OggleBooble.Api.Models;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace OggleBooble.Api.Controllers
             var albumInfo = new GetAlbumInfoSuccessModel();
             try
             {
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                using (var db = new OggleBoobleMySqContext())
                 {
                     CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                     albumInfo.RootFolder = dbCategoryFolder.RootFolder;
@@ -72,6 +72,8 @@ namespace OggleBooble.Api.Controllers
                         };
                         albumInfo.Files.Add(vwLinkModel);
                     }
+
+
                     List<TrackbackLink> trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
                     foreach (TrackbackLink trackbackLink in trackbackLinks)
                     {
@@ -135,7 +137,8 @@ namespace OggleBooble.Api.Controllers
 
         private string GetLastModified(int pageId)
         {
-            using (OggleBoobleContext db = new OggleBoobleContext())
+            //using (OggleBoobleContext db = new OggleBoobleContext())
+            using (var db = new OggleBoobleMySqContext())
             {
                 DateTime? lastModified = (from i in db.ImageLinks
                                           where i.FolderLocation == pageId
@@ -170,7 +173,7 @@ namespace OggleBooble.Api.Controllers
             SuccessModel successModel = new SuccessModel();
             try
             {
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                using (var db = new OggleBoobleMySqContext())
                 {
                     CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     string staticPageFileName = dbCategoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", "");
@@ -196,7 +199,7 @@ namespace OggleBooble.Api.Controllers
             slideshowItemModel = new SlideshowItemsModel();
             try
             {
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                using (var db = new OggleBoobleMySqContext())
                 {
                     CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     if (categoryFolder == null)
@@ -206,6 +209,8 @@ namespace OggleBooble.Api.Controllers
                     }
                     slideshowItemModel.FolderName = categoryFolder.FolderName;
                     slideshowItemModel.RootFolder = categoryFolder.RootFolder;
+
+                    //vwSlideshowItem x = new vwSlideshowItem();
 
                     slideshowItemModel.SlideshowItems = db.Database.SqlQuery<vwSlideshowItem>(
                         "select row_number() over(order by SortOrder, FolderId, LinkId) 'Index', * from OggleBooble.vwSlideshowItems " +
@@ -226,7 +231,7 @@ namespace OggleBooble.Api.Controllers
             System.Diagnostics.Debug.WriteLine("GetImageLinks took: " + timer.Elapsed);
             return slideshowItemModel;
         }
-        private void GetChildGalleryItems(int parentFolderId, OggleBoobleContext db)
+        private void GetChildGalleryItems(int parentFolderId, OggleBoobleMySqContext db)
         {
             slideshowItemModel.SlideshowItems.AddRange(db.Database.SqlQuery<vwSlideshowItem>(
                 "select row_number() over(order by LinkId) 'Index', * from OggleBooble.vwSlideshowItems " +
