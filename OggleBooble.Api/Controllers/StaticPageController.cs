@@ -26,7 +26,7 @@ namespace OggleBooble.Api.Controllers
             string success = "";
             try
             {
-                using (var db = new OggleBoobleMySqContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     //SignalRHost.ProgressHub.PostToClient("Creating static files");
                     //VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == folderId).First();
@@ -47,7 +47,7 @@ namespace OggleBooble.Api.Controllers
 
         }
 
-        private string CreatePage(int folderId, string rootFolder, string folderName, OggleBoobleMySqContext db, bool recurr)
+        private string CreatePage(int folderId, string rootFolder, string folderName, OggleBoobleMySqlContext db, bool recurr)
         {
             string success = "";
             try
@@ -268,7 +268,7 @@ namespace OggleBooble.Api.Controllers
 
 
             int pageHits = 0;
-            using (var db = new MySqlDataContext.OggleBoobleMySqContext())
+            using (var db = new MySqlDataContext.OggleBoobleMySqlContext())
             {
                 pageHits += db.PageHits.Where(h => h.PageId == folderId).Count();
                 pageHits += db.PageHitTotal.Where(h => h.PageId == folderId).Count();
@@ -410,7 +410,7 @@ namespace OggleBooble.Api.Controllers
             "   <div id='divStatusMessage'></div>\n");
             //ImageLink[] imageArray = null;
             int imagesCount = 0;
-            using (OggleBoobleContext db = new OggleBoobleContext())
+            using (var db = new OggleBoobleMySqlContext())
             {
                 string imageFrameClass = "folderImageOutterFrame";
                 string subDirLabelClass = "subDirLabel";
@@ -531,7 +531,7 @@ namespace OggleBooble.Api.Controllers
             var breadcrumbs = new List<BreadCrumbItemModel>();
             StringBuilder breadCrumbString = new StringBuilder();
 
-            using (var db = new OggleBoobleMySqContext())
+            using (var db = new OggleBoobleMySqlContext())
             {
                 //using (= new OggleBoobleContext())
                 var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
@@ -591,7 +591,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         int deepChildCount = 0;
-        private void GetDeepChildCount(VwDirTree parentDir, OggleBoobleContext db)
+        private void GetDeepChildCount(VwDirTree parentDir, OggleBoobleMySqlContext db)
         {
             deepChildCount += parentDir.FileCount;
             List<VwDirTree> subDirs = db.VwDirTrees.Where(f => f.Parent == parentDir.Id).ToList();

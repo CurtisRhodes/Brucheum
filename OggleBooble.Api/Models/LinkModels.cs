@@ -1,4 +1,4 @@
-﻿using OggleBooble.Api.MsSqlDataContext;
+﻿using OggleBooble.Api.MySqlDataContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +28,7 @@ namespace OggleBooble.Api.Models
         public VwDirTree vwDirTree { get; set; }
         public string DanniPath { get; set; }
     }
+
 
     public class RepairReportModel
     {

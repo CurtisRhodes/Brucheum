@@ -221,7 +221,7 @@ namespace OggleBooble.Api.Controllers
         public static string GetLocalParentPath(int folderId)
         {
             string parentPath = "";
-            using (OggleBoobleContext db = new OggleBoobleContext())
+            using (var db = new OggleBoobleMySqlContext())
             {
                 //var thisFolder = db.ImageFolders.Where(f => f.Id == folderId).First();
                 //parentPath = thisFolder.FolderName;
@@ -239,7 +239,7 @@ namespace OggleBooble.Api.Controllers
         public static string GetFullParentPath(int folderId)
         {
             string parentPath = "";
-            using (OggleBoobleContext db = new OggleBoobleContext())
+            using (var db = new OggleBoobleMySqlContext())
             {
                 var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                 parentPath = ""; //thisFolder.FolderName;
@@ -259,7 +259,7 @@ namespace OggleBooble.Api.Controllers
         public static string GetParentPath(int folderId)
         {
             string parentPath = "";
-            using (OggleBoobleContext db = new OggleBoobleContext())
+            using (var db = new OggleBoobleMySqlContext())
             {
                 var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                 parentPath = ""; //thisFolder.FolderName;
@@ -283,7 +283,7 @@ namespace OggleBooble.Api.Controllers
         public static string GetFirstImage(int parentFolder)
         {
             string goodLink = "";
-            using (OggleBoobleContext db = new OggleBoobleContext())
+            using (var db = new OggleBoobleMySqlContext())
             {
                 goodLink = (from l in db.ImageLinks
                             join c in db.CategoryImageLinks on l.Id equals c.ImageLinkId

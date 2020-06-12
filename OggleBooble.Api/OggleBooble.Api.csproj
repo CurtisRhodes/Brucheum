@@ -156,7 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\BlogController.cs" />
-    <Compile Include="Controllers\AlbumPageDbAccess.cs" />
+    <Compile Include="Controllers\GalleryController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\FolderController.cs" />
     <Compile Include="Controllers\FtpUtilies.cs" />

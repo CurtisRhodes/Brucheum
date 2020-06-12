@@ -17,7 +17,7 @@ namespace OggleBooble.Api.Controllers
         public string VerifyLogin(string userName, string passWord)
         {
             string success = "";
-            using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
+            using (var db = new OggleBoobleMySqlContext())
             {
                 string encryptedPassword = HashSHA256(passWord);
                 RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == userName && u.Pswrd == encryptedPassword).FirstOrDefault();
@@ -43,7 +43,7 @@ namespace OggleBooble.Api.Controllers
         public List<string> UserPermissions(string userName)
         {
             List<string> roles = null;
-            using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
+            using (var db = new OggleBoobleMySqlContext())
             {
                 roles = db.UserRoles.Where(r => r.UserName == userName).Select(r => r.RoleName).ToList();
             }
@@ -57,7 +57,7 @@ namespace OggleBooble.Api.Controllers
             string success = "";
             try
             {
-                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == registeredUserModel.UserName).FirstOrDefault();
                     if (dbRegisteredUser != null)
@@ -86,7 +86,7 @@ namespace OggleBooble.Api.Controllers
         public RegisteredUser GetUserInfo(string visitorId)
         {
             var registeredUser = new RegisteredUser();
-            using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
+            using (var db = new OggleBoobleMySqlContext())
             {
                 registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
             }

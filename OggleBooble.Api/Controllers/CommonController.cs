@@ -24,7 +24,7 @@ namespace OggleBooble.Api.Controllers
             VerifyConnectionSuccessModel successModel = new VerifyConnectionSuccessModel() { ConnectionVerified = false };
             try
             {
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     var test = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
                     successModel.ConnectionVerified = true;
@@ -48,7 +48,7 @@ namespace OggleBooble.Api.Controllers
             PageHitSuccessModel pageHitSuccessModel = new PageHitSuccessModel();
             try
             {
-                using (var mdb = new MySqlDataContext.OggleBoobleMySqContext())
+                using (var mdb = new MySqlDataContext.OggleBoobleMySqlContext())
                 {
                     var twoMinutesAgo = DateTime.Now.AddMinutes(-2);
 
@@ -115,7 +115,7 @@ namespace OggleBooble.Api.Controllers
                 else
                 {
                     imageHitControllerBusy = true;
-                    using (var dbm = new OggleBoobleMySqContext())
+                    using (var dbm = new OggleBoobleMySqlContext())
                     {
                         //DateTime utcDateTime = DateTime.UtcNow.AddMilliseconds(getrandom.Next());
                         //imageHitSuccess.HitDateTime = utcDateTime;
@@ -153,7 +153,7 @@ namespace OggleBooble.Api.Controllers
             LogVisitSuccessModel visitSuccessModel = new LogVisitSuccessModel() { VisitAdded = false, IsNewVisitor = false };
             try
             {
-                using (var mdb = new MySqlDataContext.OggleBoobleMySqContext())
+                using (var mdb = new MySqlDataContext.OggleBoobleMySqlContext())
                 {
                     DateTime lastVisitDate = DateTime.MinValue;
                     List<MySqlDataContext.Visit> visitorVisits = mdb.Visits.Where(v => v.VisitorId == visitorId).ToList();
@@ -201,7 +201,7 @@ namespace OggleBooble.Api.Controllers
             var addVisitorSuccess = new AddVisitorSuccessModel();
             try
             {
-                using (var mdb = new MySqlDataContext.OggleBoobleMySqContext())
+                using (var mdb = new MySqlDataContext.OggleBoobleMySqlContext())
                 {
                     var dupIp = mdb.IpInfoCalls.Where(ip => ip.IpAddress == visitorData.IpAddress).FirstOrDefault();
                     if (dupIp != null)
@@ -264,7 +264,7 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                using (var mdb = new MySqlDataContext.OggleBoobleMySqContext())
+                using (var mdb = new MySqlDataContext.OggleBoobleMySqlContext())
                 {
                     mdb.ErrorLogs.Add(new MySqlDataContext.ErrorLog()
                     {
@@ -294,7 +294,7 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                using (var mdb = new MySqlDataContext.OggleBoobleMySqContext())
+                using (var mdb = new MySqlDataContext.OggleBoobleMySqlContext())
                 {
                     logEventModel.EventDetail = mdb.CategoryFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault().FolderName;
                     mdb.EventLogs.Add(new MySqlDataContext.EventLog()
@@ -323,7 +323,7 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                using (var db = new OggleBoobleMSSqlContext())
                 {
                     db.ChangeLogs.Add(new ChangeLog()
                     {
@@ -350,7 +350,7 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                using (var mdb = new MySqlDataContext.OggleBoobleMySqContext())
+                using (var mdb = new MySqlDataContext.OggleBoobleMySqlContext())
                 {
                     mdb.FeedBacks.Add(new MySqlDataContext.FeedBack()
                     {
@@ -382,7 +382,7 @@ namespace OggleBooble.Api.Controllers
             RefSuccessModel refs = new RefSuccessModel();
             try
             {
-                using (var mdb = new OggleBoobleMySqContext())
+                using (var mdb = new OggleBoobleMySqlContext())
                 {
                     var dbRefs = mdb.Refs.Where(r => r.RefType == refType).ToList();
                     foreach (Ref dbRef in dbRefs)
@@ -408,7 +408,7 @@ namespace OggleBooble.Api.Controllers
             var successModel = new SuccessModel();
             try
             {
-                using (var mdb = new OggleBoobleMySqContext())
+                using (var mdb = new OggleBoobleMySqlContext())
                 {
                     successModel.ReturnValue = mdb.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault().UserSettings;
                 }
@@ -428,7 +428,7 @@ namespace OggleBooble.Api.Controllers
             var successModel = new SuccessModel();
             try
             {
-                using (var mdb = new OggleBoobleMySqContext())
+                using (var mdb = new OggleBoobleMySqlContext())
                 {
                     // replace section
                     var dbUser = mdb.RegisteredUsers.Where(r => r.UserName == userName).FirstOrDefault();

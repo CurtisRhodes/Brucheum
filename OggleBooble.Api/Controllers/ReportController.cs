@@ -20,7 +20,7 @@ namespace OggleBooble.Api.Controllers
             var metricsMatrixResults = new MetricsMatrixResults();
             try
             {
-                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
                     db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
@@ -79,7 +79,7 @@ namespace OggleBooble.Api.Controllers
             var MostImageHits = new MostPopularPagesReportModel();
             try
             {
-                using (var db = new OggleBoobleMySqContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     // select * from OggleBooble.vwImageHitsForToday;
 
@@ -103,7 +103,7 @@ namespace OggleBooble.Api.Controllers
             var imageHitsReportModel = new LatestImageHitsReportModel();
             try
             {
-                using (var db = new OggleBoobleMySqContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
 
@@ -137,7 +137,7 @@ namespace OggleBooble.Api.Controllers
             var activityReport = new ActivityReportModel();
             try
             {
-                using (var db = new OggleBoobleMySqContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     db.EventLogs.RemoveRange(db.EventLogs.Where(e => e.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
                     db.SaveChanges();
@@ -172,7 +172,7 @@ namespace OggleBooble.Api.Controllers
             var mostActiveUsersReport = new MostActiveUsersModel();
             try
             {
-                using (var db = new OggleBoobleMySqContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
 
@@ -219,7 +219,7 @@ namespace OggleBooble.Api.Controllers
             //int errCount = 0;
             try
             {
-                using (var db = new OggleBoobleMySqContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
                     db.SaveChanges();
@@ -260,14 +260,14 @@ namespace OggleBooble.Api.Controllers
             FeedbackReportModel feedbackReport = new FeedbackReportModel();
             try
             {
-                using (var mdb = new OggleBoobleMySqContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     feedbackReport.FeedbackRows =
-                        (from f in mdb.FeedBacks
-                         join v in mdb.Visitors on f.VisitorId equals v.VisitorId
-                         join c in mdb.CategoryFolders on f.PageId equals c.Id
-                         join p in mdb.CategoryFolders on c.Parent equals p.Id
-                         join r in mdb.RegisteredUsers on f.VisitorId equals r.VisitorId into sr
+                        (from f in db.FeedBacks
+                         join v in db.Visitors on f.VisitorId equals v.VisitorId
+                         join c in db.CategoryFolders on f.PageId equals c.Id
+                         join p in db.CategoryFolders on c.Parent equals p.Id
+                         join r in db.RegisteredUsers on f.VisitorId equals r.VisitorId into sr
                          from u in sr.DefaultIfEmpty()
                          where (v.IpAddress != "68.203.90.183")
                          select new FeedbackModel()
@@ -298,9 +298,9 @@ namespace OggleBooble.Api.Controllers
             ErrorLogReportModel errorLog = new ErrorLogReportModel();
             try
             {
-                using (var mdb = new OggleBoobleMySqContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    errorLog.ErrorRows = mdb.vwErrorReportRows.ToList();
+                    errorLog.ErrorRows = db.vwErrorReportRows.ToList();
                     //(from e in mdb.ErrorLogItems
                     // join v in mdb.Visitors on e.VisitorId equals v.VisitorId
                     // select new ErrorLogItem()

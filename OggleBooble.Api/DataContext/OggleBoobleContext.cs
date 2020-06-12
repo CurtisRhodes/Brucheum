@@ -8,9 +8,9 @@ using System.Web;
 
 namespace OggleBooble.Api.MsSqlDataContext
 {
-    public partial class OggleBoobleMsSqlContext : DbContext
+    public partial class OggleBoobleMSSqlContext : DbContext
     {
-        public OggleBoobleMsSqlContext()
+        public OggleBoobleMSSqlContext()
             : base("GoDaddy") { }
 
         public virtual DbSet<CategoryFolder> CategoryFolders { get; set; }

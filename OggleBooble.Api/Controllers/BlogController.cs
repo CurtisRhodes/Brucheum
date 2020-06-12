@@ -20,7 +20,7 @@ namespace OggleBooble.Api.Controllers
             BlogCommentModel entry = new BlogCommentModel();
             try
             {
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                using (var db = new OggleBoobleMSSqlContext())
                 {
                     BlogComment dbBlogComment = db.BlogComments.Where(b => b.Id == blogId).FirstOrDefault();
                     if (dbBlogComment != null)
@@ -50,7 +50,7 @@ namespace OggleBooble.Api.Controllers
             BlogCommentModelContainer blogCommentsContainer = new BlogCommentModelContainer();
             try
             {
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                using (var db = new OggleBoobleMSSqlContext())
                 {
                     List<BlogComment> dbBlogCommentsContainer = db.BlogComments.Where(b => b.CommentType == commentType).ToList();
                     foreach (BlogComment dbBlogComment in dbBlogCommentsContainer)
@@ -80,7 +80,7 @@ namespace OggleBooble.Api.Controllers
             var blogComment = new BlogCommentModel();
             try
             {
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                using (var db = new OggleBoobleMSSqlContext())
                 {
                     BlogComment dbBlogComment = db.BlogComments.Where(b => b.LinkId == linkId).Where(b => b.UserId == userId).FirstOrDefault();
                     if (dbBlogComment != null)
@@ -122,7 +122,7 @@ namespace OggleBooble.Api.Controllers
             try
             {
                 blogComment.Posted = DateTime.Now;
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                using (var db = new OggleBoobleMSSqlContext())
                 {
                     db.BlogComments.Add(blogComment);
                     db.SaveChanges();
@@ -144,7 +144,7 @@ namespace OggleBooble.Api.Controllers
             string success = "";
             try
             {
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                using (var db = new OggleBoobleMSSqlContext())
                 {
                     var dbEntry = db.BlogComments.Where(b => b.Id == entry.Id).FirstOrDefault();
                     if (dbEntry == null)

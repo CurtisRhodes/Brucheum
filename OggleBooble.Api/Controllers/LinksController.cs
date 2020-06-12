@@ -31,7 +31,7 @@ namespace OggleBooble.Api.Controllers
                 var timer = new System.Diagnostics.Stopwatch();
                 timer.Start();
                 IEnumerable<VwDirTree> vwDirTrees = new List<VwDirTree>();
-                using (var db = new OggleBoobleMySqContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     // wow did this speed things up
                     vwDirTrees = db.VwDirTrees.ToList().OrderBy(v => v.Id);
@@ -71,7 +71,7 @@ namespace OggleBooble.Api.Controllers
         public RepairReportModel RepairLinks(int folderId, bool recurr)
         {
             RepairReportModel repairReport = new RepairReportModel();
-            using (var db = new OggleBoobleMySqContext())
+            using (var db = new OggleBoobleMySqlContext())
             {
                 CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
 
@@ -124,7 +124,7 @@ namespace OggleBooble.Api.Controllers
             RepairReportModel repairReport = new RepairReportModel() { isSubFolder = false };
             try
             {
-                using (var db = new OggleBoobleMySqContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     var timer = new System.Diagnostics.Stopwatch();
                     timer.Start();
@@ -137,7 +137,7 @@ namespace OggleBooble.Api.Controllers
             catch (Exception ex) { repairReport.Success = Helpers.ErrorDetails(ex); }
             return repairReport;
         }
-        private void RepairLinksRecurr(int folderId, RepairReportModel repairReport, OggleBoobleContext db)
+        private void RepairLinksRecurr(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db)
         {
             try
             {
@@ -457,7 +457,5 @@ namespace OggleBooble.Api.Controllers
             }
             return success;
         }
-
-
     }
 }

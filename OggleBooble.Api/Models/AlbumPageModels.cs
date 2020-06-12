@@ -59,14 +59,6 @@ namespace OggleBooble.Api.Models
         public List<CategoryTreeModel> SubDirs { get; set; }
     }
 
-    public class TrackBackItem
-    {
-        public int PageId { get; set; }
-        public string Site { get; set; }
-        public string TrackBackLink { get; set; }
-        public string LinkStatus { get; set; }
-    }
-
     public class VwLinkModel
     {
         public int FolderId { get; set; }

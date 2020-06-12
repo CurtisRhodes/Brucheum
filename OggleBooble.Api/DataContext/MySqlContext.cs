@@ -9,9 +9,9 @@ using MySql.Data.EntityFramework;
 namespace OggleBooble.Api.MySqlDataContext
 {
     [DbConfigurationType(typeof(MySqlEFConfiguration))]
-    public partial class OggleBoobleMySqContext : DbContext
+    public partial class OggleBoobleMySqlContext : DbContext
     {
-        public OggleBoobleMySqContext() : base("name=GoDaddyMySql") { }
+        public OggleBoobleMySqlContext() : base("name=GoDaddyMySql") { }
 
         public virtual DbSet<CategoryFolder> CategoryFolders { get; set; }
         public virtual DbSet<ImageLink> ImageLinks { get; set; }
@@ -41,6 +41,21 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<ErrorLog> ErrorLogs { get; set; }
         public virtual DbSet<IpInfoCall> IpInfoCalls { get; set; }
         public virtual DbSet<vwSlideshowItem> vwSlideshowItems { get; set; }
+        public virtual DbSet<TrackbackLink> TrackbackLinks { get; set; }
+    }
+
+    [Table("OggleBooble.TrackbackLink")]
+    public class TrackbackLink
+    {
+        [Key]
+        [Column(Order = 0)]
+        public int PageId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string SiteCode { get; set; }
+        public string Href { get; set; }
+        public string CalledFrom { get; set; }
+        public string LinkStatus { get; set; }
     }
 
     [Table("OggleBooble.vwDirtree")]

@@ -18,10 +18,9 @@ namespace OggleBooble.Api.Controllers
             var roles = new List<string>();
             try
             {
-                using (var mdb = new MySqlDataContext.OggleBoobleMySqContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
-
-                    roles = mdb.UserRoles.Where(r => r.UserName == userName).Select(r => r.RoleName).ToList();
+                    roles = db.UserRoles.Where(r => r.UserName == userName).Select(r => r.RoleName).ToList();
                 }
             }
             catch (Exception ex)
@@ -38,7 +37,7 @@ namespace OggleBooble.Api.Controllers
             var registeredUsersSuccess = new RegisteredUsersSuccessModel();
             try
             {
-                using (OggleBoobleMySqContext db = new OggleBoobleMySqContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     registeredUsersSuccess.RegisteredUsers =
                         (from u in db.RegisteredUsers
