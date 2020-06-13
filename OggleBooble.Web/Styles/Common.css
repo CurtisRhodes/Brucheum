@@ -368,7 +368,6 @@ input[type='checkbox'] {
 }
 
 .connectionMessage {
-    border: solid thick red;
     text-align: center;
 }
 
@@ -382,7 +381,7 @@ input[type='checkbox'] {
 }
 
 .divRefreshPage {
-    background-color: var(--oggleContainerBackgroundColor);
+    background-color: var(--oggleDialogBackgroundColor);
     font-size: 24px;
     padding: 4px;
     text-align: center;
@@ -406,14 +405,14 @@ input[type='checkbox'] {
 }
 
 .ogglePromoText {
-    background-color: var(--oggleContainerBackgroundColor);
+    background-color: var(--oggleDialogBackgroundColor);
     font-size: 18px;
     padding: 6px 6px 0 6px;
     text-align: justify;
 }
 
 .tinyDots {
-    background-color: var(--oggleContainerBackgroundColor);
+    background-color: var(--oggleDialogBackgroundColor);
     text-align: right;
     cursor: pointer;
 }
@@ -431,15 +430,6 @@ input[type='checkbox'] {
     display: none;
 }
 
-.catDlgReadOnlyTextArea {
-    height: 350px;
-    width: 400px;
-    overflow-y: auto;
-    background-color: var(--oggleBackgroundColor);
-    padding: 9px;
-    margin: 8px;
-    border-radius: 22px;
-}
 
 .fixedMessageButton {
     position: relative;

@@ -8,7 +8,6 @@ using System.Net.Mail;
 using System.Web;
 using System.Web.Http.Results;
 using OggleBooble.Api.Models;
-using OggleBooble.Api.MsSqlDataContext;
 
 namespace OggleBooble.Api.Controllers
 {
@@ -78,10 +77,26 @@ namespace OggleBooble.Api.Controllers
         public JsonResult<TestResults> MsSqlTest(int parent)
         {
             var testResults = new TestResults();
-            using (OggleBoobleContext db = new OggleBoobleContext())
+            using (var db = new MSSqlDataContext.OggleBoobleMSSqlContext())
             {
-                List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == parent).ToList();
-                foreach (CategoryFolder categoryFolder in categoryFolders)
+                var categoryFolders = db.CategoryFolders.Where(f => f.Parent == parent).ToList();
+                foreach (var categoryFolder in categoryFolders)
+                {
+                    testResults.Items.Add(new TestResultsItem() { Id = categoryFolder.Id, FolderName = categoryFolder.FolderName });
+                }
+                testResults.Success = "ok";
+            }
+            return Json(testResults);
+        }
+
+        [HttpGet]
+        public JsonResult<TestResults> MySqlTest(int parent)
+        {
+            var testResults = new TestResults();
+            using (var db = new MySqlDataContext.OggleBoobleMySqlContext())
+            {
+                List<MySqlDataContext.CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == parent).ToList();
+                foreach (var categoryFolder in categoryFolders)
                 {
                     testResults.Items.Add(new TestResultsItem() { Id = categoryFolder.Id, FolderName = categoryFolder.FolderName });
                 }

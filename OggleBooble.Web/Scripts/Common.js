@@ -629,7 +629,7 @@ var verifyConnectionCount = 0;
 var verifyConnectionCountLimit = 17;
 var inCheckFor404Loop = false;
 var checkFor404Loop;
-function checkFor404(errorMessage, calledFrom) {    
+function checkFor404(calledFrom) {    
     //sendEmailToYourself("checkFor404 called with null errorMessage from: " + calledFrom, "ip: " + ipAddr);
     connectionVerified = false;
     verifyConnection();
@@ -644,12 +644,13 @@ function checkFor404(errorMessage, calledFrom) {
         if (!inCheckFor404Loop) {
             checkFor404Loop = setInterval(function () {
                 if (!connectionVerified) {
-                    if (++verifyConnectionCount === 3) {
-                        $('#launchingServiceGif').show();                    }
+                    if (++verifyConnectionCount === 3)
+                        $('#launchingServiceGif').show();
                     if (verifyConnectionCount > verifyConnectionCountLimit) {
                         if (!canIgetaConnectionMessageShowing) {
                             $('#customMessage').html(
-                                "<div><div class='connectionMessage'><img src='/Images/canIgetaConnection.gif'></div>\n" +
+
+                                "<div><div class='connectionMessage'><img src='/Images/canIgetaConnection.gif' height='200' ></div>\n" +
                                 "     <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
                                 "</div>").show();
 
@@ -666,7 +667,7 @@ function checkFor404(errorMessage, calledFrom) {
                                     ActivityCode: "404",
                                     Severity: 1,
                                     ErrorMessage: "SERVICE DOWN",
-                                    CalledFrom: "checkFor404Loop - " + calledFrom
+                                    CalledFrom: "checkFor404Loop - "// + calledFrom
                                 });
                         }
                     }

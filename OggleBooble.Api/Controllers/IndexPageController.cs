@@ -1,4 +1,4 @@
-﻿using OggleBooble.Api.MsSqlDataContext;
+﻿using OggleBooble.Api.MySqlDataContext;
 using OggleBooble.Api.Models;
 using System;
 using System.Collections.Generic;
@@ -10,19 +10,21 @@ using System.Web.Http.Cors;
 
 namespace OggleBooble.Api.Controllers
 {
+
     [EnableCors("*", "*", "*")]
     public class IndexPageController : ApiController
     {
+        int skip = 0;
         [HttpGet]
         [Route("api/IndexPage/GetCarouselImages")]
-        public CarouselInfoModel GetCarouselImages(string root, int skip, int take, bool includeLandscape, bool includePortrait)
+        public CarouselInfoModel GetCarouselImages(string root, int take, bool includeLandscape, bool includePortrait)
         {
             CarouselInfoModel carouselInfo = new CarouselInfoModel();
             try
             {
                 var timer = new System.Diagnostics.Stopwatch();
                 timer.Start();
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     if (includeLandscape)
                         carouselInfo.Links.AddRange(db.vwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
@@ -44,24 +46,19 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/IndexPage/GetLatestUpdatedFolders")]
-        public LatestUpdatesModel GetLatestUpdatedFolders(int itemLimit, string rootFolder)
+        public LatestUpdatesModel GetLatestUpdatedFolders(int take, string rootFolder)
         {
             LatestUpdatesModel updatesModel = new LatestUpdatesModel();
             try
             {
-                string sqlStr = "select top " + itemLimit + " max(f.Id) FolderId, f.FolderName, max(i.LastModified) LastModified, max(i2.Link) FolderImage " +
-                        "from OggleBooble.ImageLink i " +
-                        "join OggleBooble.CategoryFolder f on i.FolderLocation = f.Id " +
-                        "join OggleBooble.ImageLink i2 on f.FolderImage = i2.Id ";
-                if (rootFolder.Contains("pornsluts"))
-                    sqlStr += "where f.RootFolder in ('porn','sluts') ";
-                else
-                    sqlStr += "where f.RootFolder not in ('porn','sluts') ";
-                sqlStr += "group by f.FolderName order by LastModified desc";
-
-                using (OggleBoobleContext db = new OggleBoobleContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    updatesModel.LatestUpdates = db.Database.SqlQuery<LatestUpdate>(sqlStr).ToList();
+                    if (rootFolder.Contains("pornsluts"))
+                        updatesModel.LatestTouchedGalleries = db.vwLatestTouched.
+                            Where(l => l.RootFolder == "porn" || l.RootFolder == "sluts").Take(take).ToList();
+                    else
+                        updatesModel.LatestTouchedGalleries = db.vwLatestTouched.
+                            Where(l => l.RootFolder != "porn").Where(l => l.RootFolder != "sluts").Take(take).ToList();
                 }
                 updatesModel.Success = "ok";
             }

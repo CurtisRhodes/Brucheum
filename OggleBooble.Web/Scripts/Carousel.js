@@ -83,6 +83,7 @@ function loadCarouselHtml() {
         "</div>\n");
 }
 
+var skip = 0;
 function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, includePortrait) {
     var start = Date.now();
     try {
@@ -140,7 +141,7 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                     }
                 }
                 else {
-                    if (domain === "localHost")
+                    if (document.domain === "localHost")
                         alert("ERRR: " + carouselInfo.Success);
 
                     logError({
@@ -267,6 +268,9 @@ function setLabelLinks() {
 function intervalBody(newImageIndex) {
     imageIndex = newImageIndex;
     $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
+
+
+
         $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
 
 

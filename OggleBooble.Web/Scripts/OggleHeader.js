@@ -356,7 +356,7 @@ function headerHtml(folderId) {
         "<div class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
         "       <div id='launchingServiceGif' class='launchingServiceContainer'>\n" +
-        "           <img src='Images/altair02.gif' />\n" +
+        "           <img src='Images/altair02.gif' height='200' />\n" +
         "       </div>\n" +
         "   </div>\n" +
         "</div>\n";

@@ -56,7 +56,7 @@ namespace OggleBooble.Api.Controllers
             var mostPopularPages = new MostPopularPagesReportModel();
             try
             {
-                using (var db = new OggleBoobleMySqContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     mostPopularPages.Items = db.Database.SqlQuery<MostPopularPagesReportItem>(
                          "select FolderName PageName, f.Id FolderId, count(*) PageHits " +

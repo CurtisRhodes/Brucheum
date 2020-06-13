@@ -161,7 +161,7 @@
     <Compile Include="Controllers\FolderController.cs" />
     <Compile Include="Controllers\FtpUtilies.cs" />
     <Compile Include="Controllers\Helpers.cs" />
-    <Compile Include="Controllers\IndexPageDbAccess.cs" />
+    <Compile Include="Controllers\IndexPageController.cs" />
     <Compile Include="Controllers\LinksController.cs" />
     <Compile Include="Controllers\LocalController.cs" />
     <Compile Include="Controllers\ImageController.cs" />
@@ -170,7 +170,7 @@
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\StaticPageController.cs" />
     <Compile Include="DataContext\MySqlContext.cs" />
-    <Compile Include="DataContext\OggleBoobleContext.cs" />
+    <Compile Include="DataContext\MSSqlContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

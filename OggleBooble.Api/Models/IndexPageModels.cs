@@ -1,4 +1,4 @@
-﻿using OggleBooble.Api.MsSqlDataContext;
+﻿using OggleBooble.Api.MySqlDataContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,19 +10,19 @@ namespace OggleBooble.Api.Models
     {
         public LatestUpdatesModel()
         {
-            LatestUpdates = new List<LatestUpdate>();
+            LatestTouchedGalleries = new List<vwLatestTouchedGalleries>();
         }
-        public List<LatestUpdate> LatestUpdates { get; set; }
+        public List<vwLatestTouchedGalleries> LatestTouchedGalleries { get; set; }
         public string Success { get; set; }
     }
 
-    public class LatestUpdate
-    {
-        public int FolderId { get; set; }
-        public string FolderName { get; set; }
-        public DateTime LastModified { get; set; }
-        public string FolderImage { get; set; }
-    }
+    //public class LatestUpdateItemModel
+    //{
+    //    public int FolderId { get; set; }
+    //    public string FolderName { get; set; }
+    //    public DateTime LastModified { get; set; }
+    //    public string FolderImage { get; set; }
+    //}
 
     public class CarouselInfoModel
     {

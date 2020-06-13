@@ -1,5 +1,5 @@
 ﻿using OggleBooble.Api.MySqlDataContext;
-using OggleBooble.Api.MsSqlDataContext;
+using OggleBooble.Api.MSSqlDataContext;
 using OggleBooble.Api.Models;
 using System;
 using System.Collections.Generic;

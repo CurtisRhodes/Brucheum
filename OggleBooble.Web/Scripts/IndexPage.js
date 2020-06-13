@@ -1,12 +1,13 @@
 ﻿function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?itemLimit=" + numItmes + "&rootFolder=" + subdomain,
+        url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?take=" + numItmes + "&rootFolder=" + subdomain,
         success: function (latestUpdates) {
             if (latestUpdates.Success === "ok") {
                 $('.sectionLabel').show();
                 $('#updatedGalleriesSection').html("");
-                $.each(latestUpdates.LatestUpdates, function (idx, LatestUpdate) {
+                $.each(latestUpdates.LatestTouchedGalleries, function (idx, LatestUpdate) {
+
                     $('#updatedGalleriesSection').append("<div class='newsContentBox'>" +
                         "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
                         "<img class='newsContentBoxImage' src='" + LatestUpdate.FolderImage + "'" +
@@ -14,7 +15,7 @@
                         "<div class='newsContentBoxDateLabel'>updated: " + dateString(LatestUpdate.LastModified) + "</span></div>" +
                         "</div>");
                 });
-                console.log("loaded " + latestUpdates.LatestUpdates.length + " news boxes");
+                console.log("loaded " + latestUpdates.LatestTouchedGalleries.length + " news boxes");
                 resizeIndexPage();
             }
             else {

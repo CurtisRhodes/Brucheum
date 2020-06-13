@@ -9,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-
+using System.Data.Entity;
 
 namespace OggleBooble.Api.Controllers
 {
@@ -57,13 +57,13 @@ namespace OggleBooble.Api.Controllers
             return "unknown";
         }
 
-        public static bool ContainsRomanNumeralChildren(List<CategoryFolder> childFolders)
+        public static bool ContainsRomanNumeralChildren(List<string> childFolders)
         {
-            foreach (CategoryFolder childFolder in childFolders)
+            foreach (string childFolder in childFolders)
             {
-                if (childFolder.FolderName.Contains(" I")) return true;
-                if (childFolder.FolderName.Contains(" V")) return true;
-                if (childFolder.FolderName.Contains(" X")) return true;
+                if (childFolder.Contains(" I")) return true;
+                if (childFolder.Contains(" V")) return true;
+                if (childFolder.Contains(" X")) return true;
             }
             return false;
         }

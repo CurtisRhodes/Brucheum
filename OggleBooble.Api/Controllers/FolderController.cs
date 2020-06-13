@@ -1,5 +1,5 @@
 ﻿using OggleBooble.Api.Models;
-using OggleBooble.Api.MsSqlDataContext;
+using OggleBooble.Api.MSSqlDataContext;
 using OggleBooble.Api.MySqlDataContext;
 using System;
 using System.Collections.Generic;
@@ -28,15 +28,15 @@ namespace OggleBooble.Api.Controllers
             var folderDetailModel = new FolderDetailModel();
             try
             {
-                using (var db = new OggleBoobleMySqlContext())
+                using (var db = new OggleBoobleMSSqlContext())
                 {
-                    MySqlDataContext.CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                    var dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                     folderDetailModel.FolderId = folderId;
                     folderDetailModel.FolderName = dbFolder.FolderName;
                     folderDetailModel.RootFolder = dbFolder.RootFolder;
                     folderDetailModel.FolderImage = db.ImageLinks.Where(i => i.Id == dbFolder.FolderImage).Select(i => i.Link).FirstOrDefault();
 
-                    MySqlDataContext.CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                    var categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
 
 
                     if (categoryFolderDetails != null)
@@ -51,13 +51,14 @@ namespace OggleBooble.Api.Controllers
                         folderDetailModel.LinkStatus = categoryFolderDetails.LinkStatus;
                         //folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
                     }
+                    var childFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList();
                     var folderTypeModel = new FolderTypeModel()
                     {
                         RootFolder = dbFolder.RootFolder,
                         ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbFolder.FolderName),
-                        ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(db.CategoryFolders.Where(f => f.Parent == folderId).ToList()),
+                        ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(childFolders),
                         HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
-                        HasSubFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0,
+                        HasSubFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0
                     };
                     folderDetailModel.FolderType = Helpers.DetermineFolderType(folderTypeModel);
 
@@ -89,7 +90,7 @@ namespace OggleBooble.Api.Controllers
                 int newFolderId = 0;
                 using (var db = new OggleBoobleMSSqlContext())
                 {
-                    MsSqlDataContext.CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == parentId).FirstOrDefault();
+                    MSSqlDataContext.CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == parentId).FirstOrDefault();
                     folderPath = dbSourceFolder.FolderName;
                     destinationFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" +
                         Helpers.GetParentPath(parentId) + folderPath + "/" + newFolderName.Trim();
@@ -107,7 +108,7 @@ namespace OggleBooble.Api.Controllers
                         string createDirSuccess = FtpUtilies.CreateDirectory(destinationFtpPath);
                         if (createDirSuccess == "ok")
                         {
-                            var newFolder = new MsSqlDataContext.CategoryFolder()
+                            var newFolder = new MSSqlDataContext.CategoryFolder()
                             {
                                 Parent = parentId,
                                 FolderName = newFolderName.Trim(),
@@ -171,7 +172,7 @@ namespace OggleBooble.Api.Controllers
                 string oldName;
                 using (var db = new OggleBoobleMSSqlContext())
                 {
-                    MsSqlDataContext.CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    MSSqlDataContext.CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     oldName = dbSourceFolder.FolderName;
                     string parentPath = Helpers.GetParentPath(folderId);
                     string ftpPath = ftpHost + dbSourceFolder.RootFolder + hostingPath + parentPath + oldName;
@@ -279,10 +280,10 @@ namespace OggleBooble.Api.Controllers
                 }
                 using (var db = new OggleBoobleMSSqlContext())
                 {
-                    MsSqlDataContext.CategoryFolderDetail dbFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == model.FolderId).FirstOrDefault();
+                    MSSqlDataContext.CategoryFolderDetail dbFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == model.FolderId).FirstOrDefault();
                     if (dbFolderDetail == null)
                     {
-                        dbFolderDetail = new MsSqlDataContext.CategoryFolderDetail
+                        dbFolderDetail = new MSSqlDataContext.CategoryFolderDetail
                         {
                             FolderId = model.FolderId
                         };
@@ -354,7 +355,7 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMSSqlContext())
                 {
                     var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
-                    foreach (MsSqlDataContext.TrackbackLink trackbackLink in trackbackLinks)
+                    foreach (MSSqlDataContext.TrackbackLink trackbackLink in trackbackLinks)
                     {
                         trackBackModel.TrackBackItems.Add(new TrackBackItem()
                         {
@@ -395,7 +396,7 @@ namespace OggleBooble.Api.Controllers
             {                
                 using (var db = new OggleBoobleMSSqlContext())
                 {
-                    db.TrackbackLinks.Add(new MsSqlDataContext.TrackbackLink()
+                    db.TrackbackLinks.Add(new MSSqlDataContext.TrackbackLink()
                     {
                         PageId = trackBackItem.PageId,
                         LinkStatus = trackBackItem.LinkStatus,
@@ -433,7 +434,7 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMSSqlContext())
                 {
-                    MsSqlDataContext.TrackbackLink trackbackLink = db.TrackbackLinks.Where(t => t.PageId == item.PageId).FirstOrDefault();
+                    MSSqlDataContext.TrackbackLink trackbackLink = db.TrackbackLinks.Where(t => t.PageId == item.PageId).FirstOrDefault();
                     trackbackLink.Site = item.Site;
                     trackbackLink.LinkStatus = item.LinkStatus;
                     trackbackLink.TrackBackLink = item.TrackBackLink;
