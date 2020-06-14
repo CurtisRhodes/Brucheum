@@ -107,8 +107,8 @@ namespace OggleBooble.Api.Controllers
                 {
                     db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
 
-                    List<vwImageHit> imageHits = db.vwImageHits.ToList();
-                    foreach (vwImageHit imageHit in imageHits)
+                    List<VwImageHit> imageHits = db.VwImageHits.ToList();
+                    foreach (VwImageHit imageHit in imageHits)
                     {
                         imageHitsReportModel.Items.Add(new LatestImageHitsItem()
                         {
@@ -177,7 +177,7 @@ namespace OggleBooble.Api.Controllers
                     db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
 
                     var mostActiveUserItems = db.MostActiveUsersForToday.ToList();
-                    foreach (vwMostActiveUsersForToday mostActiveUserItem in mostActiveUserItems)
+                    foreach (VwMostActiveUsersForToday mostActiveUserItem in mostActiveUserItems)
                     {
                         mostActiveUsersReport.Items.Add(new MostActiveUsersItem()
                         {
@@ -223,11 +223,11 @@ namespace OggleBooble.Api.Controllers
                 {
                     db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
                     db.SaveChanges();
-                    List<vwPageHit> vwPageHits = db.vwPageHits.Take(500).ToList();
+                    List<VwPageHit> vwPageHits = db.VwPageHits.Take(500).ToList();
 
                     pageHitReportModel.HitCount = db.PageHits.Count();
 
-                    foreach (vwPageHit item in vwPageHits)
+                    foreach (VwPageHit item in vwPageHits)
                     {
                         pageHitReportModel.Items.Add(new PageHitReportModelItem()
                         {
@@ -300,23 +300,7 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    errorLog.ErrorRows = db.vwErrorReportRows.ToList();
-                    //(from e in mdb.ErrorLogItems
-                    // join v in mdb.Visitors on e.VisitorId equals v.VisitorId
-                    // select new ErrorLogItem()
-                    // {
-                    //     VisitorId = v.VisitorId,
-                    //     City = v.City,
-                    //     Country = v.Country,
-                    //     CalledFrom = e.CalledFrom,
-                    //     ActivityCode = e.ActivityCode,
-                    //     Severity = e.Severity,
-                    //     Occured = e.Occured,
-                    //     At = e.Occured.ToShortDateString(),
-                    //     On = e.Occured.AddHours(2).ToShortTimeString(),
-                    //     ErrorMessage = e.ErrorMessage
-                    // }).OrderByDescending(e => e.Occured).Take(500).ToList();
-
+                    errorLog.ErrorRows = db.VwErrorReportRows.ToList();
                     errorLog.Success = "ok";
                 }
             }

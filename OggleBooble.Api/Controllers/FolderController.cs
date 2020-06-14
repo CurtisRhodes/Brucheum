@@ -131,30 +131,24 @@ namespace OggleBooble.Api.Controllers
                 }
                 using (var mdb = new OggleBoobleMySqlContext())
                 {
-                    MySqlDataContext.CategoryFolder newOracleRow = new MySqlDataContext.CategoryFolder();
-                    try
-                    {
-                        newOracleRow.PkId = Guid.NewGuid().ToString();
-                        newOracleRow.Id = newFolderId;
-                        newOracleRow.Parent = parentId;
-                        newOracleRow.FolderName = newFolderName.Trim();
-                        newOracleRow.RootFolder = destinationRootFolder;
-                        newOracleRow.SortOrder = 934;
-                        mdb.CategoryFolders.Add(newOracleRow);
-                        mdb.SaveChanges();
-                        successModel.Success = "ok";
+                    MySqlDataContext.CategoryFolder newFolder = new MySqlDataContext.CategoryFolder();
+                    newFolder.Id = newFolderId;
+                    newFolder.Parent = parentId;
+                    newFolder.FolderName = newFolderName.Trim();
+                    newFolder.RootFolder = destinationRootFolder;
+                    newFolder.SortOrder = 934;
+                    newFolder.Path = "";
 
-                        //MySqDataContext.CategoryFolderDetail oraCategoryFolderDetail = new MySqDataContext.CategoryFolderDetail();
-                        //oraCategoryFolderDetail.FolderId = newFolderId;
-                        //oraCategoryFolderDetail.SortOrder = 998;
-                        //mdb.CategoryFolderDetails.Add(oraCategoryFolderDetail);
-                        //oraCategoryFolderDetail.FolderId = newFolderId;
-                    }
-                    catch (Exception ex)
-                    {
-                        successModel.Success = "Oracle Insert fail in CreateFolder: " + Helpers.ErrorDetails(ex);
-                        //Console.WriteLine("Oracle Insert fail in CreateFolder: " + Helpers.ErrorDetails(ex));
-                    }
+
+                    mdb.CategoryFolders.Add(newFolder);
+                    mdb.SaveChanges();
+                    successModel.Success = "ok";
+
+                    //MySqDataContext.CategoryFolderDetail oraCategoryFolderDetail = new MySqDataContext.CategoryFolderDetail();
+                    //oraCategoryFolderDetail.FolderId = newFolderId;
+                    //oraCategoryFolderDetail.SortOrder = 998;
+                    //mdb.CategoryFolderDetails.Add(oraCategoryFolderDetail);
+                    //oraCategoryFolderDetail.FolderId = newFolderId;
                     successModel.ReturnValue = newFolderId.ToString();
                 }
             }

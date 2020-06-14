@@ -92,7 +92,7 @@ namespace OggleBooble.Api.Controllers
 
                     if (dbCategoryFolder == null)
                     {
-                        imageInfo.Success = "no dategory folder found";
+                        imageInfo.Success = "folder not found. "+ folderId;
                         return imageInfo;
                     }
                 }

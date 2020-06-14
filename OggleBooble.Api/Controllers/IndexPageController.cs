@@ -27,11 +27,11 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     if (includeLandscape)
-                        carouselInfo.Links.AddRange(db.vwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
+                        carouselInfo.Links.AddRange(db.VwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
                             .Where(v => v.Width > v.Height)
                             .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
                     if (includePortrait)
-                        carouselInfo.Links.AddRange(db.vwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
+                        carouselInfo.Links.AddRange(db.VwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
                             .Where(v => v.Height >= v.Width)
                             .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
                 }
@@ -40,7 +40,9 @@ namespace OggleBooble.Api.Controllers
                 System.Diagnostics.Debug.WriteLine("Select " + take + " from vLinks took: " + timer.Elapsed);
                 carouselInfo.Success = "ok";
             }
-            catch (Exception ex) { carouselInfo.Success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex) {
+                carouselInfo.Success = Helpers.ErrorDetails(ex);
+            }
             return carouselInfo;
         }
 
@@ -54,10 +56,10 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     if (rootFolder.Contains("pornsluts"))
-                        updatesModel.LatestTouchedGalleries = db.vwLatestTouched.
+                        updatesModel.LatestTouchedGalleries = db.VwLatestTouched.
                             Where(l => l.RootFolder == "porn" || l.RootFolder == "sluts").Take(take).ToList();
                     else
-                        updatesModel.LatestTouchedGalleries = db.vwLatestTouched.
+                        updatesModel.LatestTouchedGalleries = db.VwLatestTouched.
                             Where(l => l.RootFolder != "porn").Where(l => l.RootFolder != "sluts").Take(take).ToList();
                 }
                 updatesModel.Success = "ok";

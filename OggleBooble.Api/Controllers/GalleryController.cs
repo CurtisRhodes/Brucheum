@@ -213,7 +213,7 @@ namespace OggleBooble.Api.Controllers
 
                     //vwSlideshowItem x = new vwSlideshowItem();
 
-                    slideshowItemModel.SlideshowItems = db.Database.SqlQuery<vwSlideshowItem>(
+                    slideshowItemModel.SlideshowItems = db.Database.SqlQuery<VwSlideshowItem>(
                         "select row_number() over(order by SortOrder, FolderId, LinkId) 'Index', * from OggleBooble.vwSlideshowItems " +
                         "where FolderId = " + folderId).ToList();
 
@@ -235,7 +235,7 @@ namespace OggleBooble.Api.Controllers
 
         private void GetChildGalleryItems(int parentFolderId, OggleBoobleMySqlContext db)
         {
-            slideshowItemModel.SlideshowItems.AddRange(db.Database.SqlQuery<vwSlideshowItem>(
+            slideshowItemModel.SlideshowItems.AddRange(db.Database.SqlQuery<VwSlideshowItem>(
                 "select row_number() over(order by LinkId) 'Index', * from OggleBooble.vwSlideshowItems " +
                 "where ImageParentId = " + parentFolderId).ToList());
 

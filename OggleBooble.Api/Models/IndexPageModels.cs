@@ -10,9 +10,9 @@ namespace OggleBooble.Api.Models
     {
         public LatestUpdatesModel()
         {
-            LatestTouchedGalleries = new List<vwLatestTouchedGalleries>();
+            LatestTouchedGalleries = new List<VwLatestTouchedGalleries>();
         }
-        public List<vwLatestTouchedGalleries> LatestTouchedGalleries { get; set; }
+        public List<VwLatestTouchedGalleries> LatestTouchedGalleries { get; set; }
         public string Success { get; set; }
     }
 
@@ -28,9 +28,9 @@ namespace OggleBooble.Api.Models
     {
         public CarouselInfoModel()
         {
-            Links = new List<vwCarouselItem>();
+            Links = new List<VwCarouselItem>();
         }
-        public List<vwCarouselItem> Links { get; set; }
+        public List<VwCarouselItem> Links { get; set; }
         public string Success { get; set; }
     }
 

@@ -70,9 +70,9 @@ namespace OggleBooble.Api.Models
     {
         public ErrorLogReportModel()
         {
-            ErrorRows = new List<MySqlDataContext.vwErrorReport>();
+            ErrorRows = new List<MySqlDataContext.VwErrorReport>();
         }
-        public List<MySqlDataContext.vwErrorReport> ErrorRows { get; set; }
+        public List<MySqlDataContext.VwErrorReport> ErrorRows { get; set; }
         public string Success { get; set; }
     }
 

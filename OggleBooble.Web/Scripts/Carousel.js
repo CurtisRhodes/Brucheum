@@ -18,6 +18,7 @@ var knownModelLabelClickId;
 var imageTopLabelClickId;
 var footerLabelClickId;
 let initialTake = 500;
+let settingsImgRepo = "https://library.curtisrhodes.com/";
 
 function launchCarousel() {
     //$('#footerMessage').html("launching carousel");
@@ -39,17 +40,21 @@ function launchCarousel() {
         //alert("lsCarouselSettings: " + jsCarouselSettings + "\ncarouselSettings.includeLandscape: " + jsCarouselSettings.includeLandscape);
     }
     jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
-    loadImages("boobs", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-    initialTake = 1500;
-    if (jsCarouselSettings.includeArchive) {
-        loadImages("archive", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-    }
-    if (jsCarouselSettings.includeCenterfolds) {
-        loadImages("centerfold", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-    }
-    if (jsCarouselSettings.includePorn) {
-        loadImages("porn", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-    }
+    initialTake = 500;
+
+    //alert("loadImages");
+    loadImages("centerfold", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+
+    //loadImages("boobs", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    //if (jsCarouselSettings.includeArchive) {
+    //    loadImages("archive", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    //}
+    //if (jsCarouselSettings.includeCenterfolds) {
+    //    loadImages("centerfold", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    //}
+    //if (jsCarouselSettings.includePorn) {
+    //    loadImages("porn", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    //}
     
     window.addEventListener("resize", resizeCarousel);
 }
@@ -97,6 +102,9 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
             success: function (carouselInfo) {
                 if (carouselInfo.Success === "ok") {
                     $.each(carouselInfo.Links, function (idx, obj) {
+
+                        //alert("obj.FolderPath: " + obj.FolderPath);
+
                         carouselItemArray.push({
                             RootFolder: obj.RootFolder,
                             FolderId: obj.FolderId,
@@ -105,10 +113,10 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                             FolderParentId: obj.FolderParentId,
                             FolderGP: obj.FolderGP,
                             FolderGPId: obj.FolderGPId,
-
+                            FolderPath: obj.FolderPath,
                             ImageFolderId: obj.ImageFolderId,
                             ImageFolder: obj.ImageFolder,
-                            //ImageFolderRoot: obj.ImageFolderRoot,
+                            ImageFolderRoot: obj.ImageFolderRoot,
                             ImageFolderParent: obj.ImageFolderParent,
                             ImageFolderParentId: obj.ImageFolderParentId,
                             ImageFolderGP: obj.ImageFolderGP,
@@ -266,13 +274,19 @@ function setLabelLinks() {
 }
 
 function intervalBody(newImageIndex) {
+    //alert("intervalBody");
+
     imageIndex = newImageIndex;
     $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
+        //alert("intervalBody\ncarouselItemArray[imageIndex].FolderPath: " + carouselItemArray[imageIndex].FolderPath);
 
+        let newSrc = settingsImgRepo + carouselItemArray[imageIndex].FolderPath + "/" +
+            carouselItemArray[imageIndex].FolderName + "_" + carouselItemArray[imageIndex].LinkId + ".jpg";
 
+        alert("newSrc: " + newSrc);
 
-        $('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
-
+        //$('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
+        $('#thisCarouselImage').attr('src', newSrc);
 
         $('#knownModelLabel').html("").hide();
         $('#carouselFooterLabel').html("").hide();

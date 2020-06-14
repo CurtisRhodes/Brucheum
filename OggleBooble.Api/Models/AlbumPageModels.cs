@@ -84,11 +84,11 @@ namespace OggleBooble.Api.Models
     {
         public SlideshowItemsModel()
         {
-            SlideshowItems = new List<vwSlideshowItem>();
+            SlideshowItems = new List<VwSlideshowItem>();
         }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
-        public List<vwSlideshowItem> SlideshowItems { get; set; }
+        public List<VwSlideshowItem> SlideshowItems { get; set; }
         public string Success { get; set; }
     }
 
