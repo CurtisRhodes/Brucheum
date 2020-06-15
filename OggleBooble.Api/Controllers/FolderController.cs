@@ -86,14 +86,13 @@ namespace OggleBooble.Api.Controllers
             {
                 string destinationFtpPath;
                 string destinationRootFolder;
-                string folderPath;
+                //string folderPath;
                 int newFolderId = 0;
                 using (var db = new OggleBoobleMSSqlContext())
                 {
                     MSSqlDataContext.CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == parentId).FirstOrDefault();
-                    folderPath = dbSourceFolder.FolderName;
                     destinationFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" +
-                        Helpers.GetParentPath(parentId) + folderPath + "/" + newFolderName.Trim();
+                        Helpers.GetParentPath(parentId) + dbSourceFolder.FolderName + "/" + newFolderName.Trim();
 
                     if (FtpUtilies.DirectoryExists(destinationFtpPath))
                     {
@@ -101,55 +100,45 @@ namespace OggleBooble.Api.Controllers
                         return successModel;
                     }
                     destinationRootFolder = dbSourceFolder.RootFolder;
-                    if (folderPath.ToUpper().Contains("OGGLEBOOBLE.COM"))
-                        folderPath = "";
+                    string createDirSuccess = FtpUtilies.CreateDirectory(destinationFtpPath);
+                    if (createDirSuccess == "ok")
+                    {
+                        var newFolder = new MSSqlDataContext.CategoryFolder()
+                        {
+                            Parent = parentId,
+                            FolderName = newFolderName.Trim(),
+                            SortOrder = 933,
+                            RootFolder = destinationRootFolder
+                        };
+                        db.CategoryFolders.Add(newFolder);
+                        newFolderId = newFolder.Id;
+                        db.CategoryFolderDetails.Add(new MSSqlDataContext.CategoryFolderDetail() { FolderId = newFolderId, LinkStatus = "created: " + DateTime.Now.ToShortDateString() });
+                        db.SaveChanges();
+                    }
                     else
                     {
-                        string createDirSuccess = FtpUtilies.CreateDirectory(destinationFtpPath);
-                        if (createDirSuccess == "ok")
-                        {
-                            var newFolder = new MSSqlDataContext.CategoryFolder()
-                            {
-                                Parent = parentId,
-                                FolderName = newFolderName.Trim(),
-                                SortOrder = 933,
-                                RootFolder = destinationRootFolder
-                            };
-                            db.CategoryFolders.Add(newFolder);
-                            db.SaveChanges();
-                            newFolderId = newFolder.Id;
-                            //db.CategoryFolderDetails.Add(new CategoryFolderDetail() { FolderId = newFolderId, SortOrder = 99 });
-                            //db.SaveChanges();
-                            // now add it to Oracle
-                        }
-                        else
-                        {
-                            successModel.Success = createDirSuccess;
-                            return successModel;
-                        }
+                        successModel.Success = createDirSuccess;
+                        return successModel;
                     }
                 }
-                using (var mdb = new OggleBoobleMySqlContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
+                    var dbParent = db.CategoryFolders.Where(f => f.Id == parentId).FirstOrDefault();
+                    string folderPath = dbParent.FolderPath + "/" + newFolderName;
+
                     MySqlDataContext.CategoryFolder newFolder = new MySqlDataContext.CategoryFolder();
                     newFolder.Id = newFolderId;
                     newFolder.Parent = parentId;
                     newFolder.FolderName = newFolderName.Trim();
                     newFolder.RootFolder = destinationRootFolder;
                     newFolder.SortOrder = 934;
-                    newFolder.Path = "";
+                    newFolder.FolderPath = folderPath;
 
-
-                    mdb.CategoryFolders.Add(newFolder);
-                    mdb.SaveChanges();
-                    successModel.Success = "ok";
-
-                    //MySqDataContext.CategoryFolderDetail oraCategoryFolderDetail = new MySqDataContext.CategoryFolderDetail();
-                    //oraCategoryFolderDetail.FolderId = newFolderId;
-                    //oraCategoryFolderDetail.SortOrder = 998;
-                    //mdb.CategoryFolderDetails.Add(oraCategoryFolderDetail);
-                    //oraCategoryFolderDetail.FolderId = newFolderId;
+                    db.CategoryFolders.Add(newFolder);
+                    db.CategoryFolderDetails.Add(new MySqlDataContext.CategoryFolderDetail() { FolderId = newFolderId, LinkStatus = "created: " + DateTime.Now.ToShortDateString() });
+                    db.SaveChanges();
                     successModel.ReturnValue = newFolderId.ToString();
+                    successModel.Success = "ok";
                 }
             }
             catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }

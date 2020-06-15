@@ -343,7 +343,7 @@ function headerHtml(folderId) {
 
         "<div id='customMessageContainer' class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
-        "       <div id='customMessage' class='displayHidden' ></div>\n" +
+        "       <div id='customMessage' class='customMessageContainer' ></div>\n" +
         "   </div>\n" +
         "</div>\n" +
 
@@ -351,13 +351,5 @@ function headerHtml(folderId) {
 
         "<div id='modalContainer' class='modalVail'>\n" +
         "   <div id='modalContent' class='modalContentStyle'></div>\n" +
-        "</div>\n" +
-
-        "<div class='centeringOuterShell'>\n" +
-        "   <div class='centeringInnerShell'>\n" +
-        "       <div id='launchingServiceGif' class='launchingServiceContainer'>\n" +
-        "           <img src='Images/altair02.gif' height='200' />\n" +
-        "       </div>\n" +
-        "   </div>\n" +
         "</div>\n";
 }

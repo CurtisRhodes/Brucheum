@@ -644,12 +644,16 @@ function checkFor404(calledFrom) {
         if (!inCheckFor404Loop) {
             checkFor404Loop = setInterval(function () {
                 if (!connectionVerified) {
-                    if (++verifyConnectionCount === 3)
-                        $('#launchingServiceGif').show();
+                    if (++verifyConnectionCount === 3) {
+                        $('.launchingServiceContainer').css("top", window.innerHeight / 2 - 100);
+                        $('#customMessage').html(
+                            "<div id='launchingServiceGif' class='launchingServiceContainer'>\n" +
+                            "   <img src='Images/altair03.gif' height='200' />\n" +
+                            "</div>\n").show();
+                    }
                     if (verifyConnectionCount > verifyConnectionCountLimit) {
                         if (!canIgetaConnectionMessageShowing) {
                             $('#customMessage').html(
-
                                 "<div><div class='connectionMessage'><img src='/Images/canIgetaConnection.gif' height='200' ></div>\n" +
                                 "     <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
                                 "</div>").show();
@@ -659,7 +663,6 @@ function checkFor404(calledFrom) {
                             if (isNullorUndefined(visitorId))
                                 visitorId = "--";
                             canIgetaConnectionMessageShowing = true;
-                            $('#launchingServiceGif').hide();
 
                             if (document.domain !== "localhost")
                                 logError({
@@ -698,7 +701,6 @@ function verifyConnection() {
                         connectionVerified = true;
                         verifyConnectionCount = 0;
                         console.log("verifyConnection: connection verified");
-                        $('#launchingServiceGif').hide();
                         $('#customMessage').hide();
                         canIgetaConnectionMessageShowing = false;
                     }
@@ -720,4 +722,3 @@ function verifyConnection() {
         });
     }
 }
-

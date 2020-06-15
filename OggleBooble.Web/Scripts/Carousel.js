@@ -122,7 +122,7 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                             ImageFolderGP: obj.ImageFolderGP,
                             ImageFolderGPId: obj.ImageFolderGPId,
                             LinkId: obj.LinkId,
-                            Link: obj.Link
+                            FileName: obj.FileName
                         });
                         //alert("carouselItemArray.push[ " + idx + " ]");
                     });
@@ -278,13 +278,8 @@ function intervalBody(newImageIndex) {
 
     imageIndex = newImageIndex;
     $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
-        //alert("intervalBody\ncarouselItemArray[imageIndex].FolderPath: " + carouselItemArray[imageIndex].FolderPath);
-
-        let newSrc = settingsImgRepo + carouselItemArray[imageIndex].FolderPath + "/" +
-            carouselItemArray[imageIndex].FolderName + "_" + carouselItemArray[imageIndex].LinkId + ".jpg";
-
-        alert("newSrc: " + newSrc);
-
+        let newSrc = settingsImgRepo + carouselItemArray[imageIndex].FolderPath + "/" + carouselItemArray[imageIndex].FileName;
+        //alert("newSrc: " + newSrc);
         //$('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
         $('#thisCarouselImage').attr('src', newSrc);
 

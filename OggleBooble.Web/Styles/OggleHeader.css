@@ -47,7 +47,7 @@
     border-bottom: #decd6f 3px solid;
 }
 
-.launchingServiceContainer {
+.customMessageContainer {
     position: relative;
     top: 250px;
     display: none;

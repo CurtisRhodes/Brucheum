@@ -111,8 +111,8 @@ namespace OggleBooble.Api.Controllers
                     }
                 }
 
-                albumInfo.LastModified = GetLastModified(folderId);
-                using (var mdb = new MySqlDataContext.OggleBoobleMySqlContext())
+                //albumInfo.LastModified = GetLastModified(folderId);
+                using (var mdb = new OggleBoobleMySqlContext())
                 {
                     albumInfo.PageHits = mdb.PageHits.Where(h => h.PageId == folderId).Count();
                     var dbPageHitTotals = mdb.PageHitTotal.Where(h => h.PageId == folderId).FirstOrDefault();
@@ -120,7 +120,7 @@ namespace OggleBooble.Api.Controllers
                     {
                         albumInfo.PageHits += dbPageHitTotals.Hits;
                     }
-                    MySqlDataContext.CategoryFolder categoryFolder = mdb.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    CategoryFolder categoryFolder = mdb.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     //if (categoryFolder != null) albumInfo.RootFolder = mdb.CategoryFolders.Where(f => f.Id == folderId).First().RootFolder;
                     albumInfo.UserPageHits = mdb.PageHits.Where(h => h.VisitorId == visitorId).Count();
                     albumInfo.UserImageHits = mdb.ImageHits.Where(h => h.VisitorId == visitorId).Count();
@@ -134,37 +134,6 @@ namespace OggleBooble.Api.Controllers
             timer.Stop();
             System.Diagnostics.Debug.WriteLine("GetImageLinks took: " + timer.Elapsed);
             return albumInfo;
-        }
-
-        private string GetLastModified(int pageId)
-        {
-            //using (OggleBoobleContext db = new OggleBoobleContext())
-            using (var db = new OggleBoobleMySqlContext())
-            {
-                DateTime? lastModified = (from i in db.ImageLinks
-                                          where i.FolderLocation == pageId
-                                          select i.LastModified).Max();
-
-                if (lastModified == null)
-                {
-
-                    lastModified = (from i in db.ImageLinks
-                                    join f in db.CategoryFolders on i.FolderLocation equals f.Parent
-                                    where i.FolderLocation == pageId
-                                    select i.LastModified).Max();
-
-                    if (lastModified == null)
-                        lastModified = (from i in db.ImageLinks
-                                        join f in db.CategoryFolders on i.FolderLocation equals f.Parent
-                                        where i.FolderLocation == pageId
-                                        select i.LastModified).Max();
-
-                }
-                if (lastModified == null)
-                    lastModified = DateTime.MinValue;
-
-                return lastModified.Value.ToShortDateString();
-            }
         }
 
         [HttpGet]
@@ -229,7 +198,7 @@ namespace OggleBooble.Api.Controllers
                 slideshowItemModel.Success = Helpers.ErrorDetails(ex);
             }
             timer.Stop();
-            System.Diagnostics.Debug.WriteLine("GetImageLinks took: " + timer.Elapsed);
+            System.Diagnostics.Debug.WriteLine("GetImageFiles took: " + timer.Elapsed);
             return slideshowItemModel;
         }
 

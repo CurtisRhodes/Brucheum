@@ -14,7 +14,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public OggleBoobleMySqlContext() : base("name=GoDaddyMySql") { }
 
         public virtual DbSet<CategoryFolder> CategoryFolders { get; set; }
-        public virtual DbSet<ImageLink> ImageLinks { get; set; }       
+        //public virtual DbSet<ImageLink> ImageLinks { get; set; }       
         public virtual DbSet<ImageFile> ImageFiles { get; set; }
         public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
         public virtual DbSet<ImageHit> ImageHits { get; set; }
@@ -50,18 +50,19 @@ namespace OggleBooble.Api.MySqlDataContext
 
     }
 
-    [Table("OggleBooble.vwLatestTouchedGalleries")]
-    public class VwLatestTouchedGalleries
+
+    [Table("OggleBooble.CategoryFolder")]
+    public partial class CategoryFolder
     {
         [Key]
-        public int FolderId { get; set; }
+        public int Id { get; set; }
+        public int Parent { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
+        public string FolderPath { get; set; }
         public string FolderImage { get; set; }
-        public DateTime LastModified { get; set; }
+        public int SortOrder { get; set; }
     }
-
-    // select * from OggleBooble.ImageFile;
     [Table("OggleBooble.ImageFile")]
     public class ImageFile
     {
@@ -69,80 +70,38 @@ namespace OggleBooble.Api.MySqlDataContext
         public string Id { get; set; }
         public string FileName { get; set; }
         public string FileType { get; set; }
+        public int FolderId { get; set; }
         public string ExternalLink { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public int Size { get; set; }
+        public long Size { get; set; }
         public DateTime Acquired { get; set; }
     }
 
-    [Table("OggleBooble.VwCarouselImages")]
-    public class VwCarouselItem
-    {
-        public string RootFolder { get; set; }
-        public int FolderId { get; set; }
-        public string FolderName { get; set; }
-        public string FolderParent { get; set; }
-        public int FolderParentId { get; set; }
-        public string FolderGP { get; set; }
-        public int FolderGPId { get; set; }
-        public int ImageFolderId { get; set; }
-        public string FolderPath { get; set; }
-        public string ImageFolder { get; set; }
-        public string ImageFolderParent { get; set; }
-        public int ImageFolderParentId { get; set; }
-        public string ImageFolderGP { get; set; }
-        public int ImageFolderGPId { get; set; }
-        [Key]
-        public string LinkId { get; set; }
-        public string Link { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-    }
+    //[Table("OggleBooble.ImageLink")]
+    //public partial class ImageLink
+    //{
+    //    [Key]
+    //    public string Id { get; set; }
+    //    public string ExternalLink { get; set; }
+    //    public string Link { get; set; }
+    //    public int FolderLocation { get; set; }
+    //    public int? Width { get; set; }
+    //    public int? Height { get; set; }
+    //    public long? Size { get; set; }
+    //    public DateTime? LastModified { get; set; }
+    //}
 
-    [Table("OggleBooble.TrackbackLink")]
-    public class TrackbackLink
+    [Table("OggleBooble.CategoryImageLink")]
+    public partial class CategoryImageLink
     {
         [Key]
         [Column(Order = 0)]
-        public int PageId { get; set; }
+        public int ImageCategoryId { get; set; }
         [Key]
         [Column(Order = 1)]
-        public string SiteCode { get; set; }
-        public string Href { get; set; }
-        public string CalledFrom { get; set; }
-        public string LinkStatus { get; set; }
-    }
-
-
-    [Table("OggleBooble.IpInfoCalls")]
-    public class IpInfoCall
-    {
-        [Key]
-        public int PkId { get; set; }
-        public string IpAddress { get; set; }
-        public DateTime Occured { get; set; }
-    }
-
-    [Table("OggleBooble.ErrorLog")]
-    public class ErrorLog
-    {
-        [Key]
-        public string PkId { get; set; }
-        public string VisitorId { get; set; }
-        public string ActivityCode { get; set; }
-        public string CalledFrom { get; set; }
-        public int Severity { get; set; }
-        public string ErrorMessage { get; set; }
-        public DateTime Occured { get; set; }
-    }
-
-    [Table("OggleBooble.PageHitTotals")]
-    public class PageHitTotals
-    {
-        [Key]
-        public int PageId { get; set; }
-        public int Hits { get; set; }
+        public string ImageLinkId { get; set; }
+        public int SortOrder { get; set; }
     }
 
     [Table("OggleBooble.FeedBack")]
@@ -174,6 +133,50 @@ namespace OggleBooble.Api.MySqlDataContext
         public string Status { get; set; }
         public string UserSettings { get; set; }
         public string Pswrd { get; set; }
+    }
+
+    [Table("OggleBooble.TrackbackLink")]
+    public class TrackbackLink
+    {
+        [Key]
+        [Column(Order = 0)]
+        public int PageId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string SiteCode { get; set; }
+        public string Href { get; set; }
+        public string CalledFrom { get; set; }
+        public string LinkStatus { get; set; }
+    }
+
+    [Table("OggleBooble.IpInfoCalls")]
+    public class IpInfoCall
+    {
+        [Key]
+        public int PkId { get; set; }
+        public string IpAddress { get; set; }
+        public DateTime Occured { get; set; }
+    }
+
+    [Table("OggleBooble.ErrorLog")]
+    public class ErrorLog
+    {
+        [Key]
+        public string PkId { get; set; }
+        public string VisitorId { get; set; }
+        public string ActivityCode { get; set; }
+        public string CalledFrom { get; set; }
+        public int Severity { get; set; }
+        public string ErrorMessage { get; set; }
+        public DateTime Occured { get; set; }
+    }
+
+    [Table("OggleBooble.PageHitTotals")]
+    public class PageHitTotals
+    {
+        [Key]
+        public int PageId { get; set; }
+        public int Hits { get; set; }
     }
 
     [Table("webStats.Role")]
@@ -218,45 +221,6 @@ namespace OggleBooble.Api.MySqlDataContext
         [Key]
         [Column(Order = 1)]
         public DateTime Occured { get; set; }
-    }
-
-    [Table("OggleBooble.CategoryFolder")]
-    public partial class CategoryFolder
-    {
-        [Key]
-        public int Id { get; set; }
-        public int Parent { get; set; }
-        public string FolderName { get; set; }
-        public string RootFolder { get; set; }
-        public string Path { get; set; }
-        public string FolderImage { get; set; }
-        public int SortOrder { get; set; }
-    }
-
-    [Table("OggleBooble.ImageLink")]
-    public partial class ImageLink
-    {
-        [Key]
-        public string Id { get; set; }
-        public string ExternalLink { get; set; }
-        public string Link { get; set; }
-        public int FolderLocation { get; set; }
-        public int? Width { get; set; }
-        public int? Height { get; set; }
-        public long? Size { get; set; }
-        public DateTime? LastModified { get; set; }
-    }
-
-    [Table("OggleBooble.CategoryImageLink")]
-    public partial class CategoryImageLink
-    {
-        [Key]
-        [Column(Order = 0)]
-        public int ImageCategoryId { get; set; }
-        [Key]
-        [Column(Order = 1)]
-        public string ImageLinkId { get; set; }
-        public int SortOrder { get; set; }
     }
 
     [Table("OggleBooble.RankerVote")]
@@ -387,6 +351,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public int ImageHits { get; set; }
     }
 
+
     [Table("OggleBooble.vwDirtree")]
     public partial class VwDirTree
     {
@@ -503,6 +468,42 @@ namespace OggleBooble.Api.MySqlDataContext
         public string Detail { get; set; }
         public string HitDate { get; set; }
         public string HitTime { get; set; }
+    }
+    [Table("OggleBooble.vwLatestTouchedGalleries")]
+    public class VwLatestTouchedGalleries
+    {
+        [Key]
+        public int FolderId { get; set; }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public string FolderImage { get; set; }
+        public DateTime LastModified { get; set; }
+    }
+
+    // select * from OggleBooble.ImageFile;
+
+    [Table("OggleBooble.VwCarouselImages")]
+    public class VwCarouselItem
+    {
+        [Key]
+        public string LinkId { get; set; }
+        public string RootFolder { get; set; }
+        public int FolderId { get; set; }
+        public string FolderName { get; set; }
+        public string FolderParent { get; set; }
+        public int FolderParentId { get; set; }
+        public string FolderGP { get; set; }
+        public int FolderGPId { get; set; }
+        public int ImageFolderId { get; set; }
+        public string FolderPath { get; set; }
+        public string ImageFolder { get; set; }
+        public string ImageFolderParent { get; set; }
+        public int ImageFolderParentId { get; set; }
+        public string ImageFolderGP { get; set; }
+        public int ImageFolderGPId { get; set; }
+        public string FileName { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
     }
 }
 

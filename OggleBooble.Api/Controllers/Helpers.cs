@@ -279,58 +279,5 @@ namespace OggleBooble.Api.Controllers
 
             return parentPath.Substring(parentPath.IndexOf("/") + 1);
         }
-
-        public static string GetFirstImage(int parentFolder)
-        {
-            string goodLink = "";
-            using (var db = new OggleBoobleMySqlContext())
-            {
-                goodLink = (from l in db.ImageLinks
-                            join c in db.CategoryImageLinks on l.Id equals c.ImageLinkId
-                            where c.ImageCategoryId == parentFolder
-                            select l.Link.StartsWith("http") ? l.Link : l.ExternalLink).FirstOrDefault();
-                if (goodLink == null)
-                {
-                    var categoryFolders = db.CategoryFolders.Where(f => f.Parent == parentFolder).ToList();
-                    foreach (CategoryFolder subFolder in categoryFolders)
-                    {
-                        goodLink = (from l in db.ImageLinks
-                                    join c in db.CategoryImageLinks on l.Id equals c.ImageLinkId
-                                    where c.ImageCategoryId == subFolder.Id
-                                    select l.Link).FirstOrDefault();
-                        if (goodLink == null)
-                        {
-                            var subSubFolders = db.CategoryFolders.Where(f => f.Parent == subFolder.Id).ToList();
-                            foreach (CategoryFolder subSubFolder in subSubFolders)
-                            {
-                                goodLink = (from l in db.ImageLinks
-                                            join c in db.CategoryImageLinks on l.Id equals c.ImageLinkId
-                                            where c.ImageCategoryId == subSubFolder.Id
-                                            select l.Link).FirstOrDefault();
-                                if (goodLink != null)
-                                    break;
-                            }
-                        }
-                        if (goodLink != null)
-                            break;
-                    }
-                }
-            }
-            return goodLink;
-        }
-
-        //public static string GetCustomStaticFolderName(int folderId, string folderName)
-        //{
-        //    string filePath = Helpers.GetParentPath(folderId);
-        //    if (filePath.Contains("centerfolds"))
-        //        folderName = "centerfolds/" + folderName;
-        //    if (filePath.Contains("magazine"))
-        //        folderName = "covers/" + folderName;
-        //    if (filePath.Contains("plus"))
-        //        folderName = "plus/" + folderName;
-        //    if (filePath.Contains("porn"))
-        //        folderName = "porn/" + folderName;
-        //    return folderName;
-        //}
     }
 }
