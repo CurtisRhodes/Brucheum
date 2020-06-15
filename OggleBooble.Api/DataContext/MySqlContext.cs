@@ -476,7 +476,8 @@ namespace OggleBooble.Api.MySqlDataContext
         public int FolderId { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
-        public string FolderImage { get; set; }
+        public string FolderPath { get; set; }
+        public string FileName { get; set; }
         public DateTime LastModified { get; set; }
     }
 

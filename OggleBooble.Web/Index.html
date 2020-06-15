@@ -162,7 +162,7 @@
                                 // alert("launchCarousel");
 
                                 launchCarousel();
-                                //loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
+                                loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
                                 $('.indexPageSection').show();
 
                             }
@@ -200,7 +200,7 @@
             $('.threeColumnLayout').css("min-height", winH - headerH);
             $('#topIndexPageSection').height((winH - headerH - 100));
             if ($('#updatedGalleriesSection').is(':visible')) {
-                $('#topIndexPageSection').height((winH - headerH) * .85);
+                $('#topIndexPageSection').height((winH - headerH) * .65);
             }
             // width
             var winW = $(window).width();

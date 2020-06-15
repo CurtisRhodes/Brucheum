@@ -1,4 +1,5 @@
 ﻿function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
+    let settingsImgRepo = "https://library.curtisrhodes.com/";
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?take=" + numItmes + "&rootFolder=" + subdomain,
@@ -8,9 +9,13 @@
                 $('#updatedGalleriesSection').html("");
                 $.each(latestUpdates.LatestTouchedGalleries, function (idx, LatestUpdate) {
 
+                    let src = settingsImgRepo + LatestUpdate.FolderPath + "/" + LatestUpdate.FileName;
+
+
+                    console.log(LatestUpdate.FolderName + ". src: " + src);
                     $('#updatedGalleriesSection').append("<div class='newsContentBox'>" +
                         "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
-                        "<img class='newsContentBoxImage' src='" + LatestUpdate.FolderImage + "'" +
+                        "<img class='newsContentBoxImage' src='" + src + "'" +
                         "onclick='rtpe(\"LUP\",\"home page\",10," + LatestUpdate.FolderId + ")'/>" +
                         "<div class='newsContentBoxDateLabel'>updated: " + dateString(LatestUpdate.LastModified) + "</span></div>" +
                         "</div>");
