@@ -19,10 +19,11 @@ var imageTopLabelClickId;
 var footerLabelClickId;
 let initialTake = 500;
 let settingsImgRepo = "https://library.curtisrhodes.com/";
+let imgSrc;
 
 function launchCarousel() {
     //$('#footerMessage').html("launching carousel");
-    loadCarouselHtml();
+    $('#carouselContainer').html(carouselHtml());
 
     var jsCarouselSettings;
     if (isNullorUndefined(window.localStorage["carouselSettings"])) {
@@ -43,49 +44,19 @@ function launchCarousel() {
     initialTake = 500;
 
     //alert("loadImages");
-    loadImages("centerfold", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
 
-    //loadImages("boobs", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-    //if (jsCarouselSettings.includeArchive) {
-    //    loadImages("archive", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-    //}
+    loadImages("boobs", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    if (jsCarouselSettings.includeArchive) {
+        loadImages("archive", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    }
     //if (jsCarouselSettings.includeCenterfolds) {
     //    loadImages("centerfold", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
     //}
-    //if (jsCarouselSettings.includePorn) {
-    //    loadImages("porn", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-    //}
+    if (jsCarouselSettings.includePorn) {
+        loadImages("porn", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    }
     
     window.addEventListener("resize", resizeCarousel);
-}
-
-function loadCarouselHtml() {
-    $('#carouselContainer').html(
-        "<div class='centeringOuterShell'>\n" +
-        "   <div id='innerCarouselContainer'  class='centeringInnerShell'>\n" +
-        "      <div id='carouselImageContainer' class='carouselImageContainer flexContainer'>\n" +
-        "          <img class='assuranceArrows' onclick='assuranceArrowClick(\"back\")' src='/Images/leftArrowOpaque02.png' />\n" +
-        "          <div id='knownModelLabel' class='knownModelLabel' onclick='clickViewGallery(3)'></div>\n" +
-        "          <div id='imageTopLabel' class='categoryTitleLabel' onclick='clickViewGallery(2)'></div>\n" +
-        "          <img id='thisCarouselImage' oncontextmenu='carouselContextMenuClick()' class='carouselImage' src='/Images/ingranaggi3.gif' onclick='clickViewGallery(1)' />\n" +
-        "          <img class='assuranceArrows' onclick='assuranceArrowClick(\"foward\")' src='/Images/rightArrowOpaque02.png' />\n" +
-        "      </div>\n" +
-        "      <div class='carouselFooter'>\n" +
-        "          <img class='speedButton floatLeft' src='Images/speedDialSlower.png' title='slower' onclick='clickSpeed(\"slower\")' />\n" +
-        "          <div id='pauseButton' class='pauseButton' onclick='togglePause()'>||</div>\n" +
-        "          <div id='carouselFooterLabel' class='carouselCategoryLabel' onclick='clickViewGallery(4)'></div>\n" +
-        "          <img class='speedButton floatRight' src='Images/speedDialFaster.png' title='faster' onclick='clickSpeed(\"faster\")' />\n" +
-        "          <img class='speedButton floatRight' src='Images/Settings-icon.png' title='carousel settings' onclick='showCarouelSettingsDialog()' />\n" +
-        "       </div>\n" +
-        "   </div>\n" +
-        "</div>\n");
-    $("#carouselContextMenuContainer").html(
-        "<div id='carouselContextMenu' class='ogContextMenu' onmouseleave='considerHidingContextMenu()'>\n" +
-        "    <div id='ctxModelName' onclick='carouselContextMenuAction(\"showDialog\")'>model name</div>\n" +
-        "    <div onclick='carouselContextMenuAction(\"explode\")'>Explode</div>\n" +
-        "    <div onclick='carouselContextMenuAction(\"comment\")'>Comment</div>\n" +
-        //"    <div onclick='carouselContextMenuAction(\"tags\")'>Tags</div>\n" +
-        "</div>\n");
 }
 
 var skip = 0;
@@ -149,37 +120,36 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                     }
                 }
                 else {
-                    if (document.domain === "localHost")
-                        alert("ERRR: " + carouselInfo.Success);
-
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "CSL",
-                        Severity: 1,
-                        ErrorMessage: carouselInfo.Success,
-                        PageId: homePageId,
-                        CalledFrom: "loadImages"
-                    });
+                    if (document.domain === "localhost")
+                        //alert("settingsArray.ApiServer: " + settingsArray.ApiServer);
+                        alert("carousel.loadImages: " + carouselInfo.Success);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "CSL",
+                            Severity: 1,
+                            ErrorMessage: carouselInfo.Success,
+                            PageId: homePageId,
+                            CalledFrom: "loadImages"
+                        });
                     //if (document.domain === 'localhost') alert("loadImages: " + carouselInfo.Success);
                     //--sendEmailToYourself("Error in Caraousel/loadImages", carouselInfo.Success);
                 }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
-
-                if (document.domain === "localHost")
-                    alert("loadImages: " + errorMessage);
-
                 if (!checkFor404(errorMessage, "loadImages")) {
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        PageId: homePageId,
-                        CalledFrom: "loadImages"
-                    });
-
+                    if (document.domain === "localhost")
+                        alert("Carousel loadImages:\n" + errorMessage);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "XHR",
+                            Severity: 1,
+                            ErrorMessage: errorMessage,
+                            PageId: homePageId,
+                            CalledFrom: "loadImages"
+                        });
                     //sendEmailToYourself("XHR ERROR IN Carousel.JS loadImages", "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take + "  Message: " + errorMessage);
                 }
             }
@@ -267,10 +237,23 @@ function setLabelLinks() {
             imageTopLabelClickId = carouselItemArray[imageIndex].FolderGPId;
             footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
             //$('#headerMessage').html("4");
-            pause();
-            setTimeout(function () { alert("4 Non Roman Numeral Non folder member") }, 600);
+            //pause();
+            //setTimeout(function () { alert("4 Non Roman Numeral Non folder member") }, 600);
         }
     }
+}
+
+function imgErrorThrown() {
+
+    //alert("imgErrorThrown. src: " + $(this).prop("src"));
+    alert("imgErrorThrown. src: " + imgSrc);
+    $('#thisCarouselImage').attr('src', "Images/redballon.png");
+
+    //logDataActivity({
+    //    PageId: 0,
+    //    PageName: "Carousel",
+    //    Activity: imgSrc 
+    //});
 }
 
 function intervalBody(newImageIndex) {
@@ -278,10 +261,15 @@ function intervalBody(newImageIndex) {
 
     imageIndex = newImageIndex;
     $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
-        let newSrc = settingsImgRepo + carouselItemArray[imageIndex].FolderPath + "/" + carouselItemArray[imageIndex].FileName;
+
+
+        imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FolderPath + "/" + carouselItemArray[imageIndex].FileName;
         //alert("newSrc: " + newSrc);
         //$('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
-        $('#thisCarouselImage').attr('src', newSrc);
+        $('#thisCarouselImage').attr('src', imgSrc);
+
+
+
 
         $('#knownModelLabel').html("").hide();
         $('#carouselFooterLabel').html("").hide();
@@ -548,4 +536,33 @@ function assuranceArrowClick(direction) {
         imageHistory.pop();
         intervalBody(imageHistory.pop());
     }
+}
+
+function carouselHtml() {
+    $("#carouselContextMenuContainer").html(
+        "<div id='carouselContextMenu' class='ogContextMenu' onmouseleave='considerHidingContextMenu()'>\n" +
+        "    <div id='ctxModelName' onclick='carouselContextMenuAction(\"showDialog\")'>model name</div>\n" +
+        "    <div onclick='carouselContextMenuAction(\"explode\")'>Explode</div>\n" +
+        "    <div onclick='carouselContextMenuAction(\"comment\")'>Comment</div>\n" +
+        //"    <div onclick='carouselContextMenuAction(\"tags\")'>Tags</div>\n" +
+        "</div>\n");
+
+    return "<div class='centeringOuterShell'>\n" +
+        "   <div id='innerCarouselContainer'  class='centeringInnerShell'>\n" +
+        "      <div id='carouselImageContainer' class='carouselImageContainer flexContainer'>\n" +
+        "          <img class='assuranceArrows' onclick='assuranceArrowClick(\"back\")' src='/Images/leftArrowOpaque02.png' />\n" +
+        "          <div id='knownModelLabel' class='knownModelLabel' onclick='clickViewGallery(3)'></div>\n" +
+        "          <div id='imageTopLabel' class='categoryTitleLabel' onclick='clickViewGallery(2)'></div>\n" +
+        "          <img id='thisCarouselImage' onerror='imgErrorThrown(" + imgSrc + ")' oncontextmenu='carouselContextMenuClick()' class='carouselImage' src='/Images/ingranaggi3.gif' onclick='clickViewGallery(1)' />\n" +
+        "          <img class='assuranceArrows' onclick='assuranceArrowClick(\"foward\")' src='/Images/rightArrowOpaque02.png' />\n" +
+        "      </div>\n" +
+        "      <div class='carouselFooter'>\n" +
+        "          <img class='speedButton floatLeft' src='Images/speedDialSlower.png' title='slower' onclick='clickSpeed(\"slower\")' />\n" +
+        "          <div id='pauseButton' class='pauseButton' onclick='togglePause()'>||</div>\n" +
+        "          <div id='carouselFooterLabel' class='carouselCategoryLabel' onclick='clickViewGallery(4)'></div>\n" +
+        "          <img class='speedButton floatRight' src='Images/speedDialFaster.png' title='faster' onclick='clickSpeed(\"faster\")' />\n" +
+        "          <img class='speedButton floatRight' src='Images/Settings-icon.png' title='carousel settings' onclick='showCarouelSettingsDialog()' />\n" +
+        "       </div>\n" +
+        "   </div>\n" +
+        "</div>\n";
 }

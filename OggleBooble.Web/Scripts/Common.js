@@ -273,31 +273,32 @@ function sendEmailToYourself(subject, message) {
 }
 
 function logError(logErrorModel) {
-    if (document.domain === "localhost") alert("error being logged: " +
+    if (document.domain === "localhost") alert("error almost logged: " +
         "\n called from: " + logErrorModel.CalledFrom +
+        "\n code: " + logErrorModel.ActivityCode +
         "\n pageId: " + logErrorModel.PageId +
         "\n message: " + logErrorModel.ErrorMessage);
-
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "api/Common/LogError",
-        data: logErrorModel,
-        success: function (success) {
-            if (success === "ok") {
-                //displayStatusMessage("ok", "error message logged");
-                console.log("error message logged.  Called from: " + logErrorModel.CalledFrom + " message: " + logErrorModel.ErrorMessage);
+    else
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "api/Common/LogError",
+            data: logErrorModel,
+            success: function (success) {
+                if (success === "ok") {
+                    //displayStatusMessage("ok", "error message logged");
+                    console.log("error message logged.  Called from: " + logErrorModel.CalledFrom + " message: " + logErrorModel.ErrorMessage);
+                }
+                else {
+                    console.error("error in logError!!: " + success);
+                }
+            },
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errorMessage, "logActivity")) {
+                    console.error("XHR error in logError!!: " + success);
+                }
             }
-            else {
-                console.error("error in logError!!: " + success);
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "logActivity")) {
-                console.error("XHR error in logError!!: " + success);
-            }
-        }
-    });
+        });
 }
 
 function logDataActivity(changeLogModel) {

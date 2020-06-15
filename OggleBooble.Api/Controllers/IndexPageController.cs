@@ -1,4 +1,5 @@
-﻿using OggleBooble.Api.MySqlDataContext;
+﻿using OggleBooble.Api.MSSqlDataContext;
+using OggleBooble.Api.MySqlDataContext;
 using OggleBooble.Api.Models;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,10 @@ using System.Web.Http.Cors;
 
 namespace OggleBooble.Api.Controllers
 {
-
     [EnableCors("*", "*", "*")]
     public class IndexPageController : ApiController
     {
-        int skip = 0;
+        private int skip = 0;
         [HttpGet]
         [Route("api/IndexPage/GetCarouselImages")]
         public CarouselInfoModel GetCarouselImages(string root, int take, bool includeLandscape, bool includePortrait)

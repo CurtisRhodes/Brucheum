@@ -351,8 +351,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public int ImageHits { get; set; }
     }
 
-
-    [Table("OggleBooble.vwDirtree")]
+    [Table("OggleBooble.VwDirTree")]
     public partial class VwDirTree
     {
         [Key]
@@ -363,12 +362,11 @@ namespace OggleBooble.Api.MySqlDataContext
         public int Parent { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
-        public string LinkId { get; set; }
-        public string Link { get; set; }
+        public string FileName { get; set; }
         public int FileCount { get; set; }
-        public int SubDirCount { get; set; }
-        public int ChildFiles { get; set; }
-        public int Links { get; set; }
+        //public int SubDirCount { get; set; }
+        //public int ChildFiles { get; set; }
+        //public int Links { get; set; }
         public int IsStepChild { get; set; }
         public int SortOrder { get; set; }
     }

@@ -414,24 +414,14 @@ namespace OggleBooble.Api.Controllers
             {
                 string imageFrameClass = "folderImageOutterFrame";
                 string subDirLabelClass = "subDirLabel";
+                int subDirChildFiles = 0;
+                int childFiles = 0;
                 if (rootFolder == "porn" && rootFolder == "sluts")
                 {
                     imageFrameClass = "pornFolderImageOutterFrame";
                     subDirLabelClass = "pornSubDirLabel";
                 }
                 List<VwDirTree> subDirs = db.VwDirTrees.Where(f => f.Parent == folderId).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
-                if (subDirs.Count() > 1)
-                {
-                    foreach (VwDirTree subDir in subDirs)
-                    {
-                        if (subDir.FileCount > 1)
-                        {
-                            bodyHtml.Append("   <div id='staticPageDeepSlideshow' class='floatRight displayHiddes' title='include all child folders'" +
-                            " style='cursor: pointer;' onclick='launchViewer(" + folderId + ", 1, true);'>slideshow</div>\n");
-                            break;
-                        }
-                    }
-                }
                 bodyHtml.Append("   <div id='imageContainer' class='flexWrapContainer'>\n");
 
                 // IMAGES 
@@ -443,28 +433,43 @@ namespace OggleBooble.Api.Controllers
                          "oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='launchViewer(" + folderId + ",\"" + link.LinkId + "\",false)' src='" + link.Link + "'/></div>\n");
                     imagesCount++;
                 }
+
+
                 //  SUBFOLDERS
                 string countText, fullerFolderName;
-                foreach (VwDirTree subDir in subDirs)
+                if (subDirs.Count() > 1)
                 {
-                    fullerFolderName = subDir.RootFolder + "/" + Helpers.GetParentPath(folderId).Replace(".OGGLEBOOBLE.COM", "");
-                    countText = subDir.FileCount.ToString();
-                    //int subDirFileCount = Math.Max(subDir.FileCount, subDir.SubDirCount);
-                    if (subDir.SubDirCount > 1)
+                    foreach (VwDirTree subDir in subDirs)
                     {
-                        int subDirCnt = subDir.SubDirCount;
-                        if (subDir.FileCount > 0)
-                            subDirCnt++;
-                        deepChildCount = 0;
-                        GetDeepChildCount(subDir, db);
-                        countText = subDirCnt + "/" + String.Format("{0:n0}", deepChildCount);
+                        var dbChildFiles = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+                        subDirChildFiles = dbChildFiles.Count();
+                        subDirChildFiles += db.StepChildren.Where(s => s.Parent == folderId).Count();
+                        if (subDir.FileCount > 1)
+                        {
+                            bodyHtml.Append("   <div id='staticPageDeepSlideshow' class='floatRight displayHiddes' title='include all child folders'" +
+                            " style='cursor: pointer;' onclick='launchViewer(" + folderId + ", 1, true);'>slideshow</div>\n");
+                            break;
+                        }
+                        fullerFolderName = subDir.RootFolder + "/" + Helpers.GetParentPath(folderId).Replace(".OGGLEBOOBLE.COM", "");
+                        countText = subDir.FileCount.ToString();
+                        childFiles = db.CategoryImageLinks.Where(l => dbChildFiles.Select(c => c.Id).Contains(l.ImageCategoryId)).Count();
+                        //int subDirFileCount = Math.Max(subDir.FileCount, subDir.SubDirCount);
+                        //if (subDir.SubDirCount > 1)
+                        //{
+                        //    int subDirCnt = subDir.SubDirCount;
+                        //    if (subDir.FileCount > 0)
+                        //        subDirCnt++;
+                        //    deepChildCount = 0;
+                        //    GetDeepChildCount(subDir, db);
+                        //    countText = subDirCnt + "/" + String.Format("{0:n0}", deepChildCount);
+                        //}
+                        bodyHtml.Append("<div class='" + imageFrameClass + "'>" +
+                            //"<div class='folderImageFrame' onclick='reportThenPerformEvent(\"SUB\"," + folderId + "," + subDir.Id + ")'>" +
+                            "<div class='folderImageFrame' onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.Id + "\")'>" +
+                            "<img class='folderImage' src='" + subDir.FileName + "'/>" +
+                            "<div class='" + subDirLabelClass + "'>" + subDir.FolderName +
+                            " (" + countText + ")</div></div></div>\n");
                     }
-                    bodyHtml.Append("<div class='" + imageFrameClass + "'>" +
-                        //"<div class='folderImageFrame' onclick='reportThenPerformEvent(\"SUB\"," + folderId + "," + subDir.Id + ")'>" +
-                        "<div class='folderImageFrame' onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.Id + "\")'>" +
-                        "<img class='folderImage' src='" + subDir.Link + "'/>" +
-                        "<div class='" + subDirLabelClass + "'>" + subDir.FolderName +
-                        " (" + countText + ")</div></div></div>\n");
                 }
             }
 

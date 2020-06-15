@@ -37,25 +37,37 @@ namespace OggleBooble.Api.Controllers
                     };
                     albumInfo.FolderType = Helpers.DetermineFolderType(folderTypeModel);
 
-                    List<VwDirTree> vwTrees = db.VwDirTrees.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.FolderName).ToList();
+                    var vwTrees = db.VwDirTrees.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.FolderName).ToList();
+
+                    //CategoryTreeModel
+
+                    int subDirCount = 0;
+                    int childFiles = 0;
                     foreach (VwDirTree vwTree in vwTrees)
                     {
+                        var dbChildFiles = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+                        subDirCount = dbChildFiles.Count();
+                        subDirCount += db.StepChildren.Where(s => s.Parent == folderId).Count();
+                        var childFolderIds = dbChildFiles.Select(c => c.Id).ToList();
+                        childFiles = db.CategoryImageLinks.Where(l => childFolderIds.Contains(l.ImageCategoryId)).Count();
+
                         albumInfo.SubDirs.Add(new CategoryTreeModel()
                         {
                             LinkId = Guid.NewGuid().ToString(),
-                            //DanniPath = folderId,
                             FolderId = vwTree.Id,
                             DirectoryName = vwTree.FolderName,
                             ParentId = vwTree.Parent,
-                            SubDirCount = vwTree.SubDirCount,
                             FileCount = vwTree.FileCount,
-                            ChildFiles = vwTree.ChildFiles,
+                            SubDirCount = subDirCount,
+                            ChildFiles = childFiles,
                             //FileCount = childFilesCount,
                             //Length = vwTree.FileCount + vwTree.TotalFiles + vwTree.GrandTotalFiles,
                             IsStepChild = vwTree.IsStepChild,
-                            Link = vwTree.Link
+                            FileName=vwTree.FileName
+                            //Link = vwTree.Link
                         });
                     }
+
                     List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.Link).ToList();
                     foreach (VwLink vwLink in vwLinks)
                     {
@@ -63,7 +75,7 @@ namespace OggleBooble.Api.Controllers
                         {
                             FolderId = vwLink.FolderId,
                             FolderName = vwLink.FolderName,
-                            Link = vwLink.Link,
+                            //Link = vwLink.Link,
                             LinkId = vwLink.LinkId,
                             LinkCount = vwLink.LinkCount,
                             Orientation = vwLink.Orientation,

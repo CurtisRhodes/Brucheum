@@ -323,12 +323,12 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                using (var db = new OggleBoobleMSSqlContext())
+                using (var db = new MSSqlDataContext.OggleBoobleMSSqlContext())
                 {
-                    db.ChangeLogs.Add(new ChangeLog()
+                    db.ChangeLogs.Add(new MSSqlDataContext.ChangeLog()
                     {
-                        PageId = changeLog.PageId,
-                        PageName = changeLog.PageName,
+                        PageId = 1144,
+                        PageName = changeLog.PageName,                         
                         Activity = changeLog.Activity,
                         Occured = DateTime.Now
                     });

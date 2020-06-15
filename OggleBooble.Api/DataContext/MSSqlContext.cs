@@ -17,7 +17,7 @@ namespace OggleBooble.Api.MSSqlDataContext
         public virtual DbSet<ImageLink> ImageLinks { get; set; }
         public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
 
-        //public virtual DbSet<VwDirTree> VwDirTrees { get; set; }
+        public virtual DbSet<vwDirTree> vwDirTrees { get; set; }
         public virtual DbSet<VideoLink> VideoLinks { get; set; }
         public virtual DbSet<VwLink> VwLinks { get; set; }
         public virtual DbSet<BlogComment> BlogComments { get; set; }
@@ -238,7 +238,7 @@ namespace OggleBooble.Api.MSSqlDataContext
     }
 
     [Table("OggleBooble.vwDirtree")]
-    public partial class msVwDirTree
+    public partial class vwDirTree
     {
         [Key]
         [Column(Order = 0)]

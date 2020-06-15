@@ -66,28 +66,34 @@ function GetAllAlbumPageInfo(folderId) {
                         $('.footer').show();
                     }
                     else {
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "BUG",
-                            Severity: 1,
-                            ErrorMessage: imageLinksModel.Success,
-                            CalledFrom: "GetAllAlbumPageInfo"
-                        });
+                        $('#imagePageLoadingGif').hide();
+                        if (document.domain === 'localhost')
+                            setTimeout(function () { alert("jQuery fail in Album.js: getAlbumImages\n" + imageLinksModel.Success) }, 800);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "BUG",
+                                Severity: 1,
+                                ErrorMessage: imageLinksModel.Success,
+                                CalledFrom: "GetAllAlbumPageInfo"
+                            });
                         //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
-                        if (document.domain === 'localhost') alert("jQuery fail in Album.js: getAlbumImages\n" + imageLinksModel.Success);
                     }
                 },
                 error: function (jqXHR) {
                     $('#imagePageLoadingGif').hide();
                     var errorMessage = getXHRErrorDetails(jqXHR);
                     if (!checkFor404(errorMessage, "getAlbumImages")) {
-                        logError({
-                            VisitorId: aapiVisitorId,
-                            ActivityCode: "XHR",
-                            Severity: 1,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "GetAllAlbumPageInfo"
-                        });
+                        if (document.domain === 'localhost')
+                            alert("XHR fail in Album.js: getAlbumImages\n" + errorMessage);
+                        else
+                            logError({
+                                VisitorId: aapiVisitorId,
+                                ActivityCode: "XHR",
+                                Severity: 1,
+                                ErrorMessage: errorMessage,
+                                CalledFrom: "GetAllAlbumPageInfo"
+                            });
                     }
                 }
             });
