@@ -315,7 +315,7 @@ input[type='checkbox'] {
 
 .ogContextMenu {
     position: absolute;
-    background-color: var(--oggleBackgroundColor);
+    background: var(--oggleContainerBackgroundColor);
     border: solid 2px #923c76;
     padding: 8px 10px;
     display: none;
@@ -324,9 +324,9 @@ input[type='checkbox'] {
 
     .ogContextMenu div {
         padding: 8px;
-        margin: 2px;
+        /*margin: 2px;
         background-color: #fff;
-        border-radius: 3px;
+        border-radius: 3px;*/
         cursor: pointer;
     }
 

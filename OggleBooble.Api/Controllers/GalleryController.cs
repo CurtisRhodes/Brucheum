@@ -68,20 +68,19 @@ namespace OggleBooble.Api.Controllers
                         });
                     }
 
-                    List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.Link).ToList();
+                    List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
                     foreach (VwLink vwLink in vwLinks)
                     {
                         VwLinkModel vwLinkModel = new VwLinkModel()
                         {
                             FolderId = vwLink.FolderId,
                             FolderName = vwLink.FolderName,
-                            //Link = vwLink.Link,
-                            LinkId = vwLink.LinkId,
-                            LinkCount = vwLink.LinkCount,
-                            Orientation = vwLink.Orientation,
+                            ParentName = vwLink.ParentName,
+                            FileName = vwLink.FileName,
                             RootFolder = vwLink.RootFolder,
-                            SortOrder = vwLink.SortOrder,
-                            ParentName = vwLink.ParentName
+                            Orientation = vwLink.Orientation,
+                            LinkId = vwLink.LinkId,
+                            SortOrder = vwLink.SortOrder
                         };
                         albumInfo.Files.Add(vwLinkModel);
                     }

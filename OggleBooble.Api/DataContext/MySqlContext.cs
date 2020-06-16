@@ -145,7 +145,6 @@ namespace OggleBooble.Api.MySqlDataContext
         [Column(Order = 1)]
         public string SiteCode { get; set; }
         public string Href { get; set; }
-        public string CalledFrom { get; set; }
         public string LinkStatus { get; set; }
     }
 
@@ -308,7 +307,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public int FolderId { get; set; }
         public string Nationality { get; set; }
         public string Measurements { get; set; }
-        public string Born { get; set; }
+        public DateTime? Born { get; set; }
         public string ExternalLinks { get; set; }
         public string CommentText { get; set; }
         public string Boobs { get; set; }
@@ -371,18 +370,18 @@ namespace OggleBooble.Api.MySqlDataContext
         public int SortOrder { get; set; }
     }
 
-    [Table("OggleBooble.vwLinks")]
+    [Table("OggleBooble.VwLinks")]
     public partial class VwLink
     {
         public int FolderId { get; set; }
         [Key]
-        public string LinkId { get; set; }
         public string FolderName { get; set; }
         public string ParentName { get; set; }
-        public string Link { get; set; }
+        public string FileName { get; set; }
         public string RootFolder { get; set; }
         public string Orientation { get; set; }
-        public int LinkCount { get; set; }
+        public string LinkId { get; set; }
+        //public int LinkCount { get; set; }
         public int SortOrder { get; set; }
     }
 
@@ -485,24 +484,24 @@ namespace OggleBooble.Api.MySqlDataContext
     public class VwCarouselItem
     {
         [Key]
-        public string LinkId { get; set; }
-        public string RootFolder { get; set; }
         public int FolderId { get; set; }
+        public string RootFolder { get; set; }
         public string FolderName { get; set; }
-        public string FolderParent { get; set; }
+        public string FolderParentName { get; set; }
         public int FolderParentId { get; set; }
-        public string FolderGP { get; set; }
+        public string FolderGPName { get; set; }
         public int FolderGPId { get; set; }
         public int ImageFolderId { get; set; }
-        public string FolderPath { get; set; }
-        public string ImageFolder { get; set; }
-        public string ImageFolderParent { get; set; }
+        public string ImageFolderName { get; set; }
+        public string ImageFolderParentName { get; set; }
         public int ImageFolderParentId { get; set; }
-        public string ImageFolderGP { get; set; }
+        public string ImageFolderGPName { get; set; }
         public int ImageFolderGPId { get; set; }
-        public string FileName { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+        public string FileName { get; set; }
+        public string LinkId { get; set; }
+        public string Id { get; set; }
     }
 }
 

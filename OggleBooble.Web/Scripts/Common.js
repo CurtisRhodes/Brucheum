@@ -230,7 +230,7 @@ function create_UUID() {
 }
 
 function isValidEmail(email) {
-    var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+    var emailReg = /^([\w-.]+@([\w-]+\.)+[\w-]{2,4})?$/;
     //alert("emailReg.test(email): " + emailReg.test(email));
     return emailReg.test(email);
 }

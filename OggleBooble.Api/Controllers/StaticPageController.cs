@@ -430,7 +430,7 @@ namespace OggleBooble.Api.Controllers
                 foreach (VwLink link in vwLinks)
                 {
                     bodyHtml.Append("<div id='img" + idx + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
-                         "oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='launchViewer(" + folderId + ",\"" + link.LinkId + "\",false)' src='" + link.Link + "'/></div>\n");
+                         "oncontextmenu='ctxSAP(\"img" + idx + "\")' onclick='launchViewer(" + folderId + ",\"" + link.LinkId + "\",false)' src='" + link.FileName + "'/></div>\n");
                     imagesCount++;
                 }
 

@@ -323,15 +323,15 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                using (var db = new MSSqlDataContext.OggleBoobleMSSqlContext())
+                using (var db = new OggleBoobleMSSqlContext())
                 {
-                    db.ChangeLogs.Add(new MSSqlDataContext.ChangeLog()
-                    {
-                        PageId = 1144,
-                        PageName = changeLog.PageName,                         
-                        Activity = changeLog.Activity,
-                        Occured = DateTime.Now
-                    });
+                    var dataAction = new ChangeLog();
+                    dataAction.PkId = Guid.NewGuid().ToString();
+                    dataAction.PageId = 1144;
+                    dataAction.PageName = changeLog.PageName;
+                    dataAction.Activity = changeLog.Activity;
+                    dataAction.Occured = DateTime.Now;
+                    db.ChangeLogs.Add(dataAction);
                     db.SaveChanges();
                 }
                 success = "ok";
@@ -340,7 +340,7 @@ namespace OggleBooble.Api.Controllers
             {
                 success = Helpers.ErrorDetails(ex);
             }
-            return success;
+            return "ok";
         }
 
         [HttpPost]

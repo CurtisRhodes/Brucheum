@@ -15,7 +15,7 @@ namespace OggleBooble.Api.Models
         public string Measurements { get; set; }
         public string ExternalLinks { get; set; }
         public string CommentText { get; set; }
-        public string Born { get; set; }
+        public DateTime? Born { get; set; }
         public string Boobs { get; set; }
         public string Boobepedia { get; set; }
         public string FolderImage { get; set; }

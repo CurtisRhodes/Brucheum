@@ -5,7 +5,7 @@
 
 .knownModelLabel {
     position: absolute;
-    bottom: 50px;
+    bottom: 5px;
     right: 55px;
     color: #fff;
     background-color: var(--opaqueImageLabel);

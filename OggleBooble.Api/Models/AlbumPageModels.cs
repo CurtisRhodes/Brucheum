@@ -63,13 +63,12 @@ namespace OggleBooble.Api.Models
     public class VwLinkModel
     {
         public int FolderId { get; set; }
-        public string LinkId { get; set; }
         public string FolderName { get; set; }
         public string ParentName { get; set; }
-        public string Link { get; set; }
+        public string FileName { get; set; }
         public string RootFolder { get; set; }
         public string Orientation { get; set; }
-        public int LinkCount { get; set; }
+        public string LinkId { get; set; }
         public int SortOrder { get; set; }
     }
 

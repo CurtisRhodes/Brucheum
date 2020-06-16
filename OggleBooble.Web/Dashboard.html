@@ -138,6 +138,11 @@
     <div class="footer"></div>
 
     <script>
+
+        function dashboardStart() {
+
+        }
+
         $(document).ready(function () {
             $('.txtLinkPath').val('');
             setOggleHeader(3910, "dashboard");
@@ -178,6 +183,48 @@
             //window.addEventListener("beforeunload", detectUnload());
             window.addEventListener("resize", resizeDashboardPage);
         });
+
+        $(document).ready(function () {
+            $('.txtLinkPath').val('');
+            setOggleHeader(3910, "dashboard");
+
+            var dots = "";
+            loadSettings();
+            var getXMLsettingsWaiter = setInterval(function () {
+                if (settingsArray.ApiServer === undefined) {
+                    dots += "~ ";
+                    $('dots').html(dots);
+                }
+                else {
+                    clearInterval(getXMLsettingsWaiter);
+                    checkFor404("start", "Dashboard");
+                    var verifyConnectionWaiter = setInterval(function () {
+                        if (connectionVerified) {
+                            clearInterval(verifyConnectionWaiter);
+                            $('dots').html("");
+                            loadDirectoryTree(1, "dashboardRightColumn");
+                            loadHeaderTabs();
+                            resizeDashboardPage();
+                            $('.dashboardContainerColumn').show();
+                        }
+                        else {
+                            dots += ". ";
+                            $('dots').html(dots);
+                        }
+                    }, 300);
+                    //getpermissions
+                    //if (isInRole("view dynamic"))
+                    //logPageHit(3910, "dashboard");
+                }
+            }, 300);
+
+            defineDilogs();
+            //setSignalR();
+            //resizeDashboardPage();
+            //window.addEventListener("beforeunload", detectUnload());
+            window.addEventListener("resize", resizeDashboardPage);
+        });
+
 
         function resizeDashboardPage() {
             //resizePage();

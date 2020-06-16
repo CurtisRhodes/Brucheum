@@ -13,6 +13,7 @@ var folderCategoryDialogIsOpen = false;
 var forgetShowingCatDialog;
 var imageHistory = [];
 var carouselImageViews = 0;
+var carouselImageErrors = 0;
 var mainImageClickId;
 var knownModelLabelClickId;
 var imageTopLabelClickId;
@@ -24,7 +25,7 @@ let imgSrc;
 function launchCarousel() {
     //$('#footerMessage').html("launching carousel");
     $('#carouselContainer').html(carouselHtml());
-
+    resizeCarousel();
     var jsCarouselSettings;
     if (isNullorUndefined(window.localStorage["carouselSettings"])) {
         lsCarouselSettings = {
@@ -41,11 +42,12 @@ function launchCarousel() {
         //alert("lsCarouselSettings: " + jsCarouselSettings + "\ncarouselSettings.includeLandscape: " + jsCarouselSettings.includeLandscape);
     }
     jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
-    initialTake = 500;
+    initialTake = 1500;
 
     //alert("loadImages");
 
-    loadImages("boobs", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    loadImages("boobs", Date.now(), 0, 500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+
     if (jsCarouselSettings.includeArchive) {
         loadImages("archive", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
     }
@@ -63,7 +65,7 @@ var skip = 0;
 function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, includePortrait) {
     var start = Date.now();
     try {
-        $('#imageTopLabel').hide();
+        //$('#imageTopLabel').hide();
         //$('#footerMessage').html("loading carousel");
         //alert("loading carousel");
         $.ajax({
@@ -73,24 +75,21 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
             success: function (carouselInfo) {
                 if (carouselInfo.Success === "ok") {
                     $.each(carouselInfo.Links, function (idx, obj) {
-
-                        //alert("obj.FolderPath: " + obj.FolderPath);
-
                         carouselItemArray.push({
-                            RootFolder: obj.RootFolder,
+                            Id: obj.Id,
                             FolderId: obj.FolderId,
-                            FolderParent: obj.FolderParent,
+                            RootFolder: obj.RootFolder,
                             FolderName: obj.FolderName,
+                            FolderParentName: obj.FolderParentName,
                             FolderParentId: obj.FolderParentId,
-                            FolderGP: obj.FolderGP,
+                            FolderGPName: obj.FolderGPName,
                             FolderGPId: obj.FolderGPId,
-                            FolderPath: obj.FolderPath,
                             ImageFolderId: obj.ImageFolderId,
-                            ImageFolder: obj.ImageFolder,
+                            ImageFolderName: obj.ImageFolderName,
                             ImageFolderRoot: obj.ImageFolderRoot,
-                            ImageFolderParent: obj.ImageFolderParent,
+                            ImageFolderParentName: obj.ImageFolderParentName,
                             ImageFolderParentId: obj.ImageFolderParentId,
-                            ImageFolderGP: obj.ImageFolderGP,
+                            ImageFolderGPName: obj.ImageFolderGPName,
                             ImageFolderGPId: obj.ImageFolderGPId,
                             LinkId: obj.LinkId,
                             FileName: obj.FileName
@@ -170,12 +169,12 @@ function startCarousel(startIndex) {
 function setLabelLinks() {
     if (carouselItemArray[imageIndex].FolderId === carouselItemArray[imageIndex].ImageFolderId) {
         //$('#knownModelLabel').hide();
-        if (!containsRomanNumerals(carouselItemArray[imageIndex].ImageFolder)) {
+        if (!containsRomanNumerals(carouselItemArray[imageIndex].ImageFolderName)) {
             // noraml
             $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderName);
             //$('#knownModelLabel').html("");
-            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderParent)
-            $('#carouselFooterLabel').html(carouselItemArray[imageIndex].FolderGP);
+            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderParentName)
+            $('#carouselFooterLabel').html(carouselItemArray[imageIndex].FolderGPName);
             mainImageClickId = carouselItemArray[imageIndex].FolderId;
             imageTopLabelClickId = carouselItemArray[imageIndex].FolderParentId;
             footerLabelClickId = carouselItemArray[imageIndex].FolderGPId;
@@ -183,14 +182,14 @@ function setLabelLinks() {
             //$('#headerMessage').html("1");
 
             if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
-                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderGP);
+                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderGPName);
                 //$('#headerMessage').append("P");
             }
 
         }
         else { // roman shift
-            $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderParent);
-            $('#imageTopLabel').html(carouselItemArray[imageIndex].ImageFolderGP)
+            $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderParentName);
+            $('#imageTopLabel').html(carouselItemArray[imageIndex].ImageFolderGPName)
             $('#carouselFooterLabel').html(carouselItemArray[imageIndex].RootFolder);
             footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
             mainImageClickId = carouselItemArray[imageIndex].ImageFolderParentId;
@@ -199,7 +198,7 @@ function setLabelLinks() {
             //$('#headerMessage').html("2");
 
             if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
-                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParent);
+                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParentName);
                 $('#knownModelLabel').html(carouselItemArray[imageIndex].Folder);
                 //$('#headerMessage').append("P");
                 imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
@@ -210,8 +209,8 @@ function setLabelLinks() {
     }
     else {
         if (!containsRomanNumerals(carouselItemArray[imageIndex].FolderName)) {
-            $('#imageTopLabel').html(carouselItemArray[imageIndex].ImageFolderGP)
-            $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderParent);
+            $('#imageTopLabel').html(carouselItemArray[imageIndex].ImageFolderGPName)
+            $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderParentName);
             $('#carouselFooterLabel').html(carouselItemArray[imageIndex].RootFolder);
             mainImageClickId = carouselItemArray[imageIndex].ImageFolderParentId;
             knownModelLabelClickId = carouselItemArray[imageIndex].ImageFolderId;
@@ -219,8 +218,8 @@ function setLabelLinks() {
             footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
             //$('#headerMessage').html("3");
             if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
-                $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolder);
-                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParent);
+                $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderName);
+                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParentName);
                 footerLabelClickId = 472;
                 $('#carouselFooterLabel').html("Playboy");
                 //$('#headerMessage').html(" 3P non folder member");
@@ -229,8 +228,8 @@ function setLabelLinks() {
             }
         }
         else {  // non roman numeral shift
-            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderGP);
-            $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderParent);
+            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderGPName);
+            $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderParentName);
             $('#carouselFooterLabel').html(carouselItemArray[imageIndex].RootFolder);
             knownModelLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
             mainImageClickId = carouselItemArray[imageIndex].FolderParentId;
@@ -244,16 +243,18 @@ function setLabelLinks() {
 }
 
 function imgErrorThrown() {
-
-    //alert("imgErrorThrown. src: " + $(this).prop("src"));
-    alert("imgErrorThrown. src: " + imgSrc);
     $('#thisCarouselImage').attr('src', "Images/redballon.png");
+    carouselImageViews -= 1;
+    carouselImageErrors++;
+    //pause();
+    //alert("imgErrorThrown. src: " + $(this).prop("src"));
+    //alert("imgErrorThrown. src: " + imgSrc);
 
-    //logDataActivity({
-    //    PageId: 0,
-    //    PageName: "Carousel",
-    //    Activity: imgSrc 
-    //});
+    logDataActivity({
+        PageId: 1,
+        PageName: "Carousel",
+        Activity: imgSrc 
+    });
 }
 
 function intervalBody(newImageIndex) {
@@ -261,16 +262,8 @@ function intervalBody(newImageIndex) {
 
     imageIndex = newImageIndex;
     $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
-
-
-        imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FolderPath + "/" + carouselItemArray[imageIndex].FileName;
-        //alert("newSrc: " + newSrc);
-        //$('#thisCarouselImage').attr('src', carouselItemArray[imageIndex].Link);
+        imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
         $('#thisCarouselImage').attr('src', imgSrc);
-
-
-
-
         $('#knownModelLabel').html("").hide();
         $('#carouselFooterLabel').html("").hide();
         $('#imageTopLabel').html("").hide();
@@ -284,10 +277,9 @@ function intervalBody(newImageIndex) {
         $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
 
         $('#footerMessage').html("image " + imageIndex + " of " + carouselItemArray.length.toLocaleString());
-        carouselImageViews++;
         //console.log("image views: " + carouselImageViews);
-        //$('#headerMessage').html("carousel image viewed: " + carouselImageViews);
-        $('#footerMessage').append(".  carousel image viewed: " + carouselImageViews);
+        $('#headerMessage').html("viewed ok: " + ++carouselImageViews + " errors: " + carouselImageErrors);
+        //$('#footerMessage').append(".  carousel image viewed: " + carouselImageViews);
     });
 }
 
@@ -296,19 +288,19 @@ function clickViewGallery(labelClick) {
     switch (labelClick) {
         case 1:  // carousel main image
             //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + mainImageClickId);
-            rtpe("CIC", carouselItemArray[imageIndex].ImageFolder, "main image", mainImageClickId);
+            rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "main image", mainImageClickId);
             break;
         case 2: // top imageTopLabel
             //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + imageTopLabelClickId);
-            reportThenPerformEvent("CIC", carouselItemArray[imageIndex].ImageFolder, "image top label", imageTopLabelClickId);    
+            reportThenPerformEvent("CIC", carouselItemArray[imageIndex].ImageFolderName, "image top label", imageTopLabelClickId);    
             break;
         case 3: // knownModelLabel
             //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + knownModelLabelClickId);
-            rtpe("CIC", carouselItemArray[imageIndex].ImageFolder, "knownModelLabel", knownModelLabelClickId);
+            rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "knownModelLabel", knownModelLabelClickId);
             break;
         case 4: // footer 
             //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + footerLabelClickId);
-            reportThenPerformEvent("CPC", carouselItemArray[imageIndex].ImageFolder, "clickViewParentGallery", footerLabelClickId);
+            reportThenPerformEvent("CPC", carouselItemArray[imageIndex].ImageFolderName, "clickViewParentGallery", footerLabelClickId);
             break;
         default:
     }
@@ -378,7 +370,7 @@ function carouselContextMenuAction(ctxMenuAction) {
             showFolderInfoDialog(selectedImageArchiveFolderId, "carousel context menu");
             break;
         case "explode":
-            reportThenPerformEvent("EXP", "from main carousel", carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
+            reportThenPerformEvent("EXP", "from main carousel", settingsImgRepo + carouselItemArray[imageIndex].FileName, carouselItemArray[imageIndex].FolderId);
             break;
         case "comment":
             $('#carouselContextMenu').fadeOut();
@@ -540,7 +532,7 @@ function assuranceArrowClick(direction) {
 
 function carouselHtml() {
     $("#carouselContextMenuContainer").html(
-        "<div id='carouselContextMenu' class='ogContextMenu' onmouseleave='considerHidingContextMenu()'>\n" +
+        "<div id='carouselContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
         "    <div id='ctxModelName' onclick='carouselContextMenuAction(\"showDialog\")'>model name</div>\n" +
         "    <div onclick='carouselContextMenuAction(\"explode\")'>Explode</div>\n" +
         "    <div onclick='carouselContextMenuAction(\"comment\")'>Comment</div>\n" +
