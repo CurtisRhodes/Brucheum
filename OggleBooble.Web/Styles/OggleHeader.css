@@ -16,6 +16,69 @@
     width: 100%;
 }
 
+
+/*let hdrBottRowW = $('#divTopLeftLogo').width() + $('#badgesContainer').width() + $('#divLoginArea').width() + $('#breadcrumbContainer').width() + $('#headerMessage').width();*/
+/*
+
+*/
+
+.headerBottomRow {
+    width: 100%;
+    border: solid thin blue;
+    display: inline-block;
+}
+.bottomRowSection1 {
+    float: left;
+    display: flex;
+}
+.bottomLeftHeaderArea {
+    float: left;
+    border: solid thin pink;
+}
+.breadCrumbArea {
+    float: left;
+    display: inline-block;
+    border: solid thin pink;
+}
+.badgesSection {
+    display: flex;
+    float: left;
+    border: solid thin pink;
+}
+.loginArea {
+    margin-top: 9px;
+    margin-right: 5px;
+    float: right;  
+}
+
+.badgeImage {
+    height: 31px;
+    margin-left: 9px;
+    float: left;
+}
+
+
+.blackCenterfoldsBanner {
+    height: 35px;
+    border: solid 2px red;
+    border-radius: 10px;
+    font-size: 18px;
+    padding: 3px;
+    white-space: nowrap;
+    text-decoration: none;
+    background-color: #407d6e;
+    margin-left: 8px;
+    margin-bottom: 3px;
+    cursor: pointer;
+}
+
+    .blackCenterfoldsBanner a {
+        color: yellow;
+    }
+
+
+
+
 .headerTitle {
     padding-left: 6px;
     padding-top: 1px;
@@ -124,29 +187,6 @@
     text-decoration: underline;
 }
 
-.badgeImage {
-    height: 45px;
-    margin-left: 9px;
-    float: left;
-}
-
-
-.blackCenterfoldsBanner {
-    height: 35px;
-    border: solid 2px red;
-    border-radius: 10px;
-    font-size: 18px;
-    padding: 3px;
-    text-decoration: none;
-    background-color:#407d6e;
-    margin-left: 40px;
-    margin-bottom: 3px;
-    cursor: pointer;
-}
-    .blackCenterfoldsBanner a {
-        color: yellow;
-    }
-
 .OggleSearchBox {
     position: absolute;
     right: 10px;
@@ -179,18 +219,6 @@
             cursor: pointer;
         }
 
-
-.headerBottomRow {
-    display: flex;
-    font-family: Verdana;
-    font-size: 17px;
-    width: 100%;
-}
-
-.bottomLeftBottomHeaderArea {
-    margin-left: 100px;
-}
-
 .menuTab {
     float: left;
     display: inline-block;
@@ -200,8 +228,7 @@
     .menuTab a {
         cursor: pointer;
         color: black;
-        padding: 8px 20px;
-        margin-right: 20px;
+        padding: 8px;
         text-decoration: none;
         padding: 5px 5px;
         border-radius: 1px;
@@ -210,23 +237,6 @@
         text-decoration: underline;
         background-color: #fef;
     }
-
-.bottomLeftHeaderArea {
-    border: solid thin red;
-    background-color: #a7a769;
-}
-.badgesSection {
-    display: flex;
-    border: solid thin red;
-    background-color: #cab37e;
-}
-.breadCrumbArea {
-    float: left;
-    color: var(--ogglgeSubTitleColor);
-    font-family: Verdana;
-    font-size: 20px;
-    margin-left: 20px;
-}
 
 .activeBreadCrumb {
     margin-left: 10px;
@@ -256,11 +266,6 @@
     font-family: 'Comic Sans MS';  /*'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
 }
 
-.loginArea {
-    position: absolute;
-    right: 10px;
-    display: inline-block;
-}
 
 .domainMessage {
     display: inline-block;
@@ -270,16 +275,21 @@
     white-space: nowrap;
 }
 
+.littleBanners {
+    display: inline-block;
+    cursor: pointer;
+}
+
+
 .headerFeatureBanner {
     display: inline-block;
     border: solid 2px #000;
     border-radius: 10px;
-    font-size: 18px;
-    padding: 3px;
+    font-size: 16px;
+    padding: 2.5px;
     color: #000;
     background-color: aliceblue;
-    margin-left: 40px;
-    margin-top: 5px;
+    margin: 3px;
     cursor: pointer;
 }
 .headerFeatureBanner a {

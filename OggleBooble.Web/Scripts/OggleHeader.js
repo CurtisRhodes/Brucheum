@@ -24,42 +24,72 @@ function setOggleHeader(folderId, subdomain) {
     setMenubar(subdomain);
     setHeaderDetails(folderId, subdomain);
     setLoginHeaderSection(subdomain);
+
+    $('#badgesContainer').append("<a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>");
+    $('#badgesContainer').append("<a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>");
+    $('#badgesContainer').append("<div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>");
+    $('#badgesContainer').append("<a href='/album.html?folder=3904'><img src='/Images/gemini03.png' title='Hef likes twins' class='badgeImage'></a>");
+
     window.addEventListener("resize", headerResize);
     headerResize(subdomain);
 }
 
 function headerResize() {
-    //alert("headerResize");
-    let hdrW = window.innerWidth;
-    $('.oggleHeader').css("background-color", "var(--brucheumBlue)");
-    $('#divLoginArea').css("font-size", 17);
-    setHeaderDetails(hdrFolderId, hdrSubdomain);
+    let hdrBottRowW = $('.headerBottomRow').width();
+    let hdrBottRowSectionsW = $('#badgesContainer').width() + $('#divLoginArea').width() + $('#breadcrumbContainer').width() + $('#headerMessage').width();
+    $('#txtSearch').val("BotW: " + hdrBottRowW + " Secs: " + hdrBottRowSectionsW);
 
-    if (hdrW > 1400) {
-        $('.oggleHeader').css("background-color", "#ecc6c6"); // brown
-        $('#divLoginArea').css("font-size", 10);
-        setMenubar(hdrSubdomain);
+    // header reset
+    if (hdrBottRowSectionsW < hdrBottRowW) {
+        setMenubar(subdomain);
+        $('.oggleHeader').css("background-color", "var(--brucheumBlue)");
+        $('#divLoginArea').css("fon-t-size", 14);
     }
-    if (hdrW > 1200 && hdrW < 1400) {
-        // show iPadHeader
-        $('#mainMenuContainer').css("font-size", 17);
+    if (hdrBottRowSectionsW >= hdrBottRowW) {
         $('.oggleHeader').css("background-color", "#ccffcc");  // green
-        setMenubar(hdrSubdomain);
-
-        //$('#breadcrumbContainer').html("<div id='rankerTag'><a href='javascript:rtpe(\"RNK\"," + hdrFolderId + ",\"archive\")'" +
-        //    " title='Spin through the links to land on random portrait images.'>babes ranker</a></div>\n" +
-        //    "<div><a href='javascript:rtpe(\"BAC\"," + hdrFolderId + ",1132,1132)'>every Playboy Centerfold</a></div>\n" +
-        //    "<div id='rankerTag'><a href='javascript:rtpe(\"BAC\"," + hdrFolderId + ",3,3)'>babes archive</a></div>\n");
-        // $('#breadcrumbContainer').html("");
+        $('#divLoginArea').css("font-size", 12);
+        $('#headerMessage').html(hdrBottRowSectionsW - hdrBottRowW)
+        hdrBottRowSectionsW = $('#badgesContainer').width() + $('#divLoginArea').width() + $('#breadcrumbContainer').width() + $('#headerMessage').width();
     }
-    if (hdrW < 1200) {
+    if (hdrBottRowSectionsW >= hdrBottRowW) {
+        $('#divLoginArea').css("font-size", 12);
+        $('header').switchClass('.headerFeatureBanner', 'littleBanners');
+        hdrBottRowSectionsW = $('#badgesContainer').width() + $('#divLoginArea').width() + $('#breadcrumbContainer').width() + $('#headerMessage').width();
+    }
+    if (hdrBottRowSectionsW >= hdrBottRowW) {
+        $('.oggleHeader').css("background-color", "#ecc6c6"); // brown
+    }
+
+    //if (hdrW < 1320 && hdrW > 1260) {
+    //    $('#divLoginArea').css("font-size", 14);
+    //    setMenubar(hdrSubdomain);
+    //}
+    //if (hdrW < 1320 && hdrW > 1260) {
+    //    $('#mainMenuContainer').css("font-size", 17);
+    //    $('#divLoginArea').css("font-size", 10);
+    //    setMenubar(hdrSubdomain);
+    //}
+    //if (hdrW < 1260) {
+    //    $('#mainMenuContainer').css("font-size", 17);
+    //    $('#divLoginArea').css("font-size", 10);
+
+    //    setMenubar(hdrSubdomain);
+    //}
+    if (hdrBottRowW < 800) {
         $('#breadcrumbContainer').hide();
         $('#mainMenuContainer').html("<img src='/Images/hamburger.png' onclick='$('#hamburgerCtx').show()' height=50px />");
     }
+    //$('#headerMessage').html("hdrW: " + hdrW);
+
+
     //<div id='breadcrumbContainer' class='breadCrumbArea'>
     //$('.headerBodyContainer').css("font-size", 10);
     //$('.headerBodyContainer').css("font-size", 10);
-    $('#headerMessage').html("hdrW: " + hdrW);
+    //$('#breadcrumbContainer').html("<div id='rankerTag'><a href='javascript:rtpe(\"RNK\"," + hdrFolderId + ",\"archive\")'" +
+    //    " title='Spin through the links to land on random portrait images.'>babes ranker</a></div>\n" +
+    //    "<div><a href='javascript:rtpe(\"BAC\"," + hdrFolderId + ",1132,1132)'>every Playboy Centerfold</a></div>\n" +
+    //    "<div id='rankerTag'><a href='javascript:rtpe(\"BAC\"," + hdrFolderId + ",3,3)'>babes archive</a></div>\n");
+    // $('#breadcrumbContainer').html("");
 
 }
 
@@ -105,8 +135,6 @@ function setMenubar(subdomain) {
                 "                <a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",241,241)'>sizes</a>\n");
     }
 }
-
-function setBreadCrumbsRow() { }
 
 function setHeaderDetails(folderId, subdomain) {
     //alert("setHeaderDetails folderId: " + folderId + ", subdomain: " + subdomain);
@@ -196,7 +224,6 @@ function setHeaderDetails(folderId, subdomain) {
 
 function setLoginHeaderSection(subdomain) {
     if (subdomain === "loading") {
-        $('#dashboardMenuItem').hide();
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').show();
         return;
@@ -275,9 +302,10 @@ function headerHtml(folderId) {
         "           </div>\n" +
         "       </div>\n" +
         "       <div class='headerBottomRow'>\n" +
-        "           <div id='headerMessage' class='bottomLeftHeaderArea'></div>\n" +
-        "           <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
-        "           <div id='badgesContainer' class='badgesSection'>\n" +
+        "           <div class='bottomRowSection1'>\n" +
+        "               <div id='headerMessage' class='bottomLeftHeaderArea'></div>\n" +
+        "               <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
+        "               <div id='badgesContainer' class='badgesSection'></div>\n" +
         "           </div>\n" +
         "           <div id='divLoginArea' class='loginArea'>\n" +
         "               <div id='optionLoggedIn' class='displayHidden'>\n" +
