@@ -168,7 +168,6 @@ function startCarousel(startIndex) {
 
 function setLabelLinks() {
     if (carouselItemArray[imageIndex].FolderId === carouselItemArray[imageIndex].ImageFolderId) {
-        //$('#knownModelLabel').hide();
         if (!containsRomanNumerals(carouselItemArray[imageIndex].ImageFolderName)) {
             // noraml
             $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderName);
@@ -207,29 +206,29 @@ function setLabelLinks() {
             }
         }
     }
-    else {
-        if (!containsRomanNumerals(carouselItemArray[imageIndex].FolderName)) {
-            $('#imageTopLabel').html(carouselItemArray[imageIndex].ImageFolderGPName)
-            $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderParentName);
-            $('#carouselFooterLabel').html(carouselItemArray[imageIndex].RootFolder);
-            mainImageClickId = carouselItemArray[imageIndex].ImageFolderParentId;
+    else { // we have a link
+        if (!containsRomanNumerals(carouselItemArray[imageIndex].ImageFolderName)) {
+            $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderName);
+            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderName)
+            $('#carouselFooterLabel').html(carouselItemArray[imageIndex].ImageFolderParentName);
+            mainImageClickId = carouselItemArray[imageIndex].ImageFolderId;
             knownModelLabelClickId = carouselItemArray[imageIndex].ImageFolderId;
-            imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderGPId;
-            footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
+            imageTopLabelClickId = carouselItemArray[imageIndex].FolderId;
+            footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].ImageFolderParentId);
             //$('#headerMessage').html("3");
             if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
                 $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderName);
-                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParentName);
-                footerLabelClickId = 472;
+                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParentName);                
                 $('#carouselFooterLabel').html("Playboy");
+                footerLabelClickId = 472;
                 //$('#headerMessage').html(" 3P non folder member");
                 pause();
                 setTimeout(function () { alert("non folder member 3. centerfold\nroot: " + carouselItemArray[imageIndex].RootFolder) }, 600);
             }
         }
-        else {  // non roman numeral shift
-            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderGPName);
+        else {  // roman numeral shift
             $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderParentName);
+            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderGPName);
             $('#carouselFooterLabel').html(carouselItemArray[imageIndex].RootFolder);
             knownModelLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
             mainImageClickId = carouselItemArray[imageIndex].FolderParentId;
@@ -249,7 +248,6 @@ function imgErrorThrown() {
     //pause();
     //alert("imgErrorThrown. src: " + $(this).prop("src"));
     //alert("imgErrorThrown. src: " + imgSrc);
-
     logDataActivity({
         PageId: 1,
         PageName: "Carousel",

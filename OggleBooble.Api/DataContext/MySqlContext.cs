@@ -17,6 +17,7 @@ namespace OggleBooble.Api.MySqlDataContext
         //public virtual DbSet<ImageLink> ImageLinks { get; set; }       
         public virtual DbSet<ImageFile> ImageFiles { get; set; }
         public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
+        public virtual DbSet<DirTree> DirTrees { get; set; }
         public virtual DbSet<ImageHit> ImageHits { get; set; }
         public virtual DbSet<PageHit> PageHits { get; set; }
         public virtual DbSet<Visitor> Visitors { get; set; }
@@ -78,19 +79,25 @@ namespace OggleBooble.Api.MySqlDataContext
         public DateTime Acquired { get; set; }
     }
 
-    //[Table("OggleBooble.ImageLink")]
-    //public partial class ImageLink
-    //{
-    //    [Key]
-    //    public string Id { get; set; }
-    //    public string ExternalLink { get; set; }
-    //    public string Link { get; set; }
-    //    public int FolderLocation { get; set; }
-    //    public int? Width { get; set; }
-    //    public int? Height { get; set; }
-    //    public long? Size { get; set; }
-    //    public DateTime? LastModified { get; set; }
-    //}
+    [Table("OggleBooble.DirTree")]
+    public partial class DirTree
+    {
+        [Key]
+        [Column(Order = 0)]
+        public int Id { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public int Parent { get; set; }
+        public string FolderName { get; set; }
+        public string RootFolder { get; set; }
+        public string FolderImage { get; set; }
+        public int FileCount { get; set; }
+        public int SubDirCount { get; set; }
+        public int ChildFiles { get; set; }
+        public int LinkCount { get; set; }
+        public int IsStepChild { get; set; }
+        public int SortOrder { get; set; }
+    }
 
     [Table("OggleBooble.CategoryImageLink")]
     public partial class CategoryImageLink
@@ -361,11 +368,11 @@ namespace OggleBooble.Api.MySqlDataContext
         public int Parent { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
-        public string FileName { get; set; }
         public int FileCount { get; set; }
-        //public int SubDirCount { get; set; }
-        //public int ChildFiles { get; set; }
-        //public int Links { get; set; }
+        public int SubDirCount { get; set; }
+        public int ChildFiles { get; set; }
+        public int Links { get; set; }
+        public string FolderImage { get; set; }
         public int IsStepChild { get; set; }
         public int SortOrder { get; set; }
     }
@@ -373,15 +380,12 @@ namespace OggleBooble.Api.MySqlDataContext
     [Table("OggleBooble.VwLinks")]
     public partial class VwLink
     {
-        public int FolderId { get; set; }
         [Key]
-        public string FolderName { get; set; }
-        public string ParentName { get; set; }
-        public string FileName { get; set; }
-        public string RootFolder { get; set; }
-        public string Orientation { get; set; }
         public string LinkId { get; set; }
-        //public int LinkCount { get; set; }
+        public int FolderId { get; set; }
+        public string FileName { get; set; }
+        public string Orientation { get; set; }
+        public bool Islink { get; set; }
         public int SortOrder { get; set; }
     }
 

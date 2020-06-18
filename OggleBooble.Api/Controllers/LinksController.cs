@@ -30,14 +30,15 @@ namespace OggleBooble.Api.Controllers
             {
                 var timer = new System.Diagnostics.Stopwatch();
                 timer.Start();
-                IEnumerable<VwDirTree> vwDirTrees = new List<VwDirTree>();
+                IEnumerable<DirTree> vwDirTrees = new List<DirTree>();
+                //var vwDirTrees;
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     // wow did this speed things up
-                    vwDirTrees = db.VwDirTrees.ToList().OrderBy(v => v.Id);
+                    vwDirTrees = db.DirTrees.ToList().OrderBy(v => v.Id);
                 }
 
-                VwDirTree vRootNode = vwDirTrees.Where(v => v.Id == root).First();
+                var vRootNode = vwDirTrees.Where(v => v.Id == root).First();
                 DirTreeModelNode rootNode = new DirTreeModelNode() { vwDirTree = vRootNode };
                 dirTreeModel.SubDirs.Add(rootNode);
 
@@ -54,10 +55,10 @@ namespace OggleBooble.Api.Controllers
             }
             return dirTreeModel;
         }
-        private void GetDirTreeChildNodes(DirTreeSuccessModel dirTreeModel, DirTreeModelNode parentNode, IEnumerable<VwDirTree> vwDirTree, string dPath)
+        private void GetDirTreeChildNodes(DirTreeSuccessModel dirTreeModel, DirTreeModelNode parentNode, IEnumerable<DirTree> vwDirTree, string dPath)
         {
             var vwDirTreeNodes = vwDirTree.Where(v => v.Parent == parentNode.vwDirTree.Id).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
-            foreach (VwDirTree vNode in vwDirTreeNodes)
+            foreach (DirTree vNode in vwDirTreeNodes)
             {
                 DirTreeModelNode childNode = new DirTreeModelNode() { vwDirTree = vNode, DanniPath = (dPath + "/" + vNode.FolderName).Replace(" ", "%20") };
                 parentNode.SubDirs.Add(childNode);

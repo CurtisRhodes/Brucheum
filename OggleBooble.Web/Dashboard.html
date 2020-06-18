@@ -66,6 +66,10 @@
         </div>
         <div id="dashboardRightColumn" class="dashboardContainerColumn"></div>
     </div>
+
+
+
+
     <div id="divModalDialogs">
 
 
@@ -138,11 +142,6 @@
     <div class="footer"></div>
 
     <script>
-
-        function dashboardStart() {
-
-        }
-
         $(document).ready(function () {
             $('.txtLinkPath').val('');
             setOggleHeader(3910, "dashboard");
@@ -184,84 +183,6 @@
             window.addEventListener("resize", resizeDashboardPage);
         });
 
-        $(document).ready(function () {
-            $('.txtLinkPath').val('');
-            setOggleHeader(3910, "dashboard");
-
-            var dots = "";
-            loadSettings();
-            var getXMLsettingsWaiter = setInterval(function () {
-                if (settingsArray.ApiServer === undefined) {
-                    dots += "~ ";
-                    $('dots').html(dots);
-                }
-                else {
-                    clearInterval(getXMLsettingsWaiter);
-                    checkFor404("start", "Dashboard");
-                    var verifyConnectionWaiter = setInterval(function () {
-                        if (connectionVerified) {
-                            clearInterval(verifyConnectionWaiter);
-                            $('dots').html("");
-                            loadDirectoryTree(1, "dashboardRightColumn");
-                            loadHeaderTabs();
-                            resizeDashboardPage();
-                            $('.dashboardContainerColumn').show();
-                        }
-                        else {
-                            dots += ". ";
-                            $('dots').html(dots);
-                        }
-                    }, 300);
-                    //getpermissions
-                    //if (isInRole("view dynamic"))
-                    //logPageHit(3910, "dashboard");
-                }
-            }, 300);
-
-            defineDilogs();
-            //setSignalR();
-            //resizeDashboardPage();
-            //window.addEventListener("beforeunload", detectUnload());
-            window.addEventListener("resize", resizeDashboardPage);
-        });
-
-
-        function resizeDashboardPage() {
-            //resizePage();
-            // HEIGHT
-
-            let winH = $(window).height();
-            let headerH = $('header').height();
-            let screenH = winH - headerH;;
-            $('.dashboardContainerColumn').height(screenH - 33);
-            //$('.').css("min-height", screenH);
-            //$('#dashboardLeftMenu').css("min-height", screenH);
-
-            // WIDTH
-
-            let middleColumnW = $('#dashboardContainer').width() - $('#dashboardRightColumn').width() - $('#dashboardLeftColumn').width();
-            $('#dashboardMiddleColumn').width(middleColumnW - 21);
-        }
-
-        function loadHeaderTabs() {
-            if (isInRole("add images")) {
-                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Add Images');\">Add Images</a>");
-                setLeftMenu('Add Images');
-                $('#divAddImages').show();
-            }
-            if (isInRole("manage folders")) {
-                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Folders');\">Manage Folders</a>");
-            }
-            if (isInRole("Oggle admin")) {
-                //alert("isInRole Oggle admin")
-                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Admin');\">Admin</a>");
-                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Reports');\">Reports</a>");
-                $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Roles');\">Reports</a>");
-                $('#headerMessage').html("Oggle admin");
-                $('.adminLevelOption').show();
-                setLeftMenu('Admin');
-            }
-        }
 
         function detectUnload() {
             alert("detectUnload");
@@ -355,24 +276,8 @@
                 width: "400"
             });
         }
-
-
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

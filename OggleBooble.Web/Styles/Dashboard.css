@@ -35,6 +35,10 @@
     /*max-width: 30%;*/
 }
 
+#dashboardLeftColumn {
+    border-right: solid thin #111;
+}
+
 .oggleVerticalMenu {
     min-width: 15%;
     border-top: 23px;

@@ -1,4 +1,5 @@
-﻿function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
+﻿
+function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
     let settingsImgRepo = "https://library.curtisrhodes.com/";
     $.ajax({
         type: "GET",

@@ -649,7 +649,7 @@ function checkFor404(calledFrom) {
                         $('.launchingServiceContainer').css("top", window.innerHeight / 2 - 100);
                         $('#customMessage').html(
                             "<div id='launchingServiceGif' class='launchingServiceContainer'>\n" +
-                            "   <img src='Images/altair03.gif' height='200' />\n" +
+                            "   <img src='Images/altair04.gif' height='200' />\n" +
                             "</div>\n").show();
                     }
                     if (verifyConnectionCount > verifyConnectionCountLimit) {

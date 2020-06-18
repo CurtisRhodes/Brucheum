@@ -12,6 +12,27 @@ namespace OggleBooble.Api.Controllers
     public class GalleryPageController : ApiController
     {
         [HttpGet]
+        [Route("api/GalleryPage/UpdateDirTree")]
+        public string UpdateDirTree() 
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext()) 
+                {                    
+                    db.Database.ExecuteSqlCommand("TRUNCATE TABLE Entity");
+                    db.Database.ExecuteSqlCommand("insert OggleBooble.DirTree select * from OggleBooble.VwDirTree");
+                }
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+        [HttpGet]
         [Route("api/GalleryPage/GetAllAlbumPageInfo")]
         public GetAlbumInfoSuccessModel GetAllAlbumPageInfo(string visitorId, int folderId)
         {
@@ -37,54 +58,38 @@ namespace OggleBooble.Api.Controllers
                     };
                     albumInfo.FolderType = Helpers.DetermineFolderType(folderTypeModel);
 
-                    var vwTrees = db.VwDirTrees.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.FolderName).ToList();
-
-                    //CategoryTreeModel
-
-                    int subDirCount = 0;
-                    int childFiles = 0;
-                    foreach (VwDirTree vwTree in vwTrees)
+                    // SUB FOLDERS
+                    var dbFolderRows = db.DirTrees.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.FolderName).ToList();
+                    foreach (DirTree row in dbFolderRows)
                     {
-                        var dbChildFiles = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
-                        subDirCount = dbChildFiles.Count();
-                        subDirCount += db.StepChildren.Where(s => s.Parent == folderId).Count();
-                        var childFolderIds = dbChildFiles.Select(c => c.Id).ToList();
-                        childFiles = db.CategoryImageLinks.Where(l => childFolderIds.Contains(l.ImageCategoryId)).Count();
-
                         albumInfo.SubDirs.Add(new CategoryTreeModel()
                         {
                             LinkId = Guid.NewGuid().ToString(),
-                            FolderId = vwTree.Id,
-                            DirectoryName = vwTree.FolderName,
-                            ParentId = vwTree.Parent,
-                            FileCount = vwTree.FileCount,
-                            SubDirCount = subDirCount,
-                            ChildFiles = childFiles,
-                            //FileCount = childFilesCount,
-                            //Length = vwTree.FileCount + vwTree.TotalFiles + vwTree.GrandTotalFiles,
-                            IsStepChild = vwTree.IsStepChild,
-                            FileName=vwTree.FileName
-                            //Link = vwTree.Link
+                            FolderId = row.Id,
+                            DirectoryName = row.FolderName,
+                            ParentId = row.Parent,
+                            FileCount = row.FileCount,
+                            SubDirCount = row.SubDirCount,
+                            ChildFiles = row.ChildFiles,
+                            IsStepChild = row.IsStepChild,
+                            FolderImage = row.FolderImage
                         });
                     }
 
+                    // IMAGES
                     List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
-                    foreach (VwLink vwLink in vwLinks)
+                    foreach (VwLink imgLink in vwLinks)
                     {
                         VwLinkModel vwLinkModel = new VwLinkModel()
                         {
-                            FolderId = vwLink.FolderId,
-                            FolderName = vwLink.FolderName,
-                            ParentName = vwLink.ParentName,
-                            FileName = vwLink.FileName,
-                            RootFolder = vwLink.RootFolder,
-                            Orientation = vwLink.Orientation,
-                            LinkId = vwLink.LinkId,
-                            SortOrder = vwLink.SortOrder
+                            FolderId = imgLink.FolderId,
+                            LinkId = imgLink.LinkId,
+                            FileName = imgLink.FileName,
+                            Orientation = imgLink.Orientation,
+                            SortOrder = imgLink.SortOrder
                         };
                         albumInfo.Files.Add(vwLinkModel);
                     }
-
 
                     List<TrackbackLink> trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
                     foreach (TrackbackLink trackbackLink in trackbackLinks)

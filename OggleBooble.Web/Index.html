@@ -15,54 +15,52 @@
     <!--<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />-->
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>-->
     <script src="Scripts/Common.js"></script>
+    <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/HitCounter.js"></script>
     <script src="Scripts/EventControl.js"></script>
-    <script src="Scripts/IndexPage.js"></script>
     <script src="Scripts/Cookies.js"></script>
     <script src="Scripts/Login.js"></script>
+
+    <script src="Scripts/IndexPage.js"></script>
 
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
     <script src="Scripts/OggleBlog.js"></script>
 
+    <script src="Scripts/Dashboard.js"></script>
+    <script src="Scripts/DirTree.js"></script>
+    <script src="Scripts/Roles.js"></script>
+    <script src="Scripts/Reports.js"></script>
 
-    <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/FolderInfoDialog.js"></script>
     <script src="Scripts/Carousel.js"></script>
 
-        <link href="Styles/Common.css" rel="stylesheet" />
-        <link href="Styles/AlbumPage.css" rel="stylesheet">
-        <link href="Styles/loginDialog.css" rel="stylesheet" />
-        <link href="Styles/OggleHeader.css" rel="stylesheet" />
-        <link href="Styles/Slideshow.css" rel="stylesheet" />
-        <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
-        <link href="Styles/ModelInfoDialog.css" rel="stylesheet" />
-        <link href="Styles/ImageCommentDialog.css" rel="stylesheet" />
-        <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
-        <link href="Styles/FolderCategoryDialog.css" rel="stylesheet" />
+    <link href="Styles/Common.css" rel="stylesheet" />
+    <link href="Styles/AlbumPage.css" rel="stylesheet">
+    <link href="Styles/loginDialog.css" rel="stylesheet" />
+    <link href="Styles/OggleHeader.css" rel="stylesheet" />
+    <link href="Styles/Slideshow.css" rel="stylesheet" />
+    <link href="Styles/MoveCopyArchiveDialog.css" rel="stylesheet" />
+    <link href="Styles/ModelInfoDialog.css" rel="stylesheet" />
+    <link href="Styles/ImageCommentDialog.css" rel="stylesheet" />
+    <link href="Styles/MetaTagDialog.css" rel="stylesheet" />
+    <link href="Styles/FolderCategoryDialog.css" rel="stylesheet" />
 
-        <link href="Styles/IndexPage.css" rel="stylesheet">
-        <link href="Styles/Carousel.css" rel="stylesheet">
-        <link href="Styles/OggleBlog.css" rel="stylesheet" />
+    <link href="Styles/IndexPage.css" rel="stylesheet">
+    <link href="Styles/Carousel.css" rel="stylesheet">
+    <link href="Styles/OggleBlog.css" rel="stylesheet" />
 
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
 
-        <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
-        <link href="Styles/jqueryUI.css" rel="stylesheet" />
-        <!--<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>-->
-        <!--<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>-->
-        <!--<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />-->
-        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>-->
-        <!--<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({
-            google_ad_client: "ca-pub-1620126417602146",
-            enable_page_level_ads: true
-        });
-    </script>-->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+    <link href="Styles/jqueryUI.css" rel="stylesheet" />
+
+    <link href="Styles/Dashboard.css" rel="stylesheet" />
+    <link href="Styles/ChooseBox.css" rel="stylesheet" />
+
 </head>
 <body>
     <div class="oggleHeader"></div>
@@ -98,10 +96,10 @@
         var homePageId = 3908;
         var updatedGalleriesCount = 25;
 
-            $(document).ready(function () {
-                //$('#footerLastBuild').html("last build: " + lastBuild + "3");
-                //$('#footerMessage').html("loading settings");
-                document.title = "welcome : OggleBooble";
+        $(document).ready(function () {
+            //$('#footerLastBuild').html("last build: " + lastBuild + "3");
+            //$('#footerMessage').html("loading settings");
+            document.title = "welcome : OggleBooble";
 
             $('.sectionLabel').hide();
             params = getParams();
@@ -112,7 +110,8 @@
                 homePageId = 3909;
             if (subdomain == "blog")
                 homePageId = 3911;
-
+            if (subdomain == "dashboard")
+                homePageId = 3911;
             setOggleHeader(homePageId, "loading");
             loadSettings();
             var dots = ""
@@ -143,31 +142,28 @@
                         if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
                             $('#dots').html('');
+                            setOggleHeader(homePageId, "Index");
+
                             if (subdomain == "blog") {
                                 $('.threeColumnLayout').html(blogBodyHtml());
                                 blogStartup();
                             }
-                            else {
-                                if (subdomain == "porn") {
-                                    $('#pornLeftColumnList').show();
-                                    $('#includeCenterfoldsCheckbox').hide();
-                                }
-                                else {
-                                    $('#boobsLeftColumnList').show();
-                                    //launchPromoMessages();
-                                }
-
-                                setOggleHeader(homePageId, "Index");
-
-                                // alert("launchCarousel");
-
-                                launchCarousel();
-                               // loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
-                                $('.indexPageSection').show();
-
+                            if (subdomain == "dashboard") {
+                                $('.threeColumnLayout').html(dashboardHtml());
+                                dashboardStartup();
                             }
-
-                            //alert("setOggleFooter(homePageId :" + homePageId + ", subdomain: " + subdomain + ");");
+                            if (subdomain == "porn") {
+                                $('#pornLeftColumnList').show();
+                                $('#includeCenterfoldsCheckbox').hide();
+                            }
+                            if (subdomain == "boobs") {
+                                $('#boobsLeftColumnList').show();
+                                //launchPromoMessages();
+                                launchCarousel();
+                                loadImageListIntoLocalStorage();
+                                // loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
+                                $('.indexPageSection').show();
+                            }
                             setOggleFooter(homePageId, subdomain);
 
                             var visitorId = getCookieValue("VisitorId");
@@ -189,9 +185,9 @@
                 }
             }, 300);
 
-                window.addEventListener("resize", resizeIndexPage);
-                resizeIndexPage();
-            });
+            window.addEventListener("resize", resizeIndexPage);
+            resizeIndexPage();
+        });
 
         function resizeIndexPage() {
             // height

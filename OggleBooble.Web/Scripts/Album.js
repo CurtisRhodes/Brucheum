@@ -7,6 +7,7 @@ var selectedImage;
 var selectedImageLinkId;
 var albumFolderId;
 var deepChildCount = 0;
+let settingsImgRepo = "https://library.curtisrhodes.com/";
 
 function GetAllAlbumPageInfo(folderId) {
     try {
@@ -117,6 +118,89 @@ function GetAllAlbumPageInfo(folderId) {
     }
 }
 
+function processImages(imageLinksModel) {
+    var imageFrameClass = "folderImageOutterFrame";
+    var subDirLabel = "subDirLabel";
+    var imageEditor = isInRole("Image Editor");
+    $('#imageContainer').html('');
+
+    if (imageLinksModel.RootFolder === "porn" || imageLinksModel.RootFolder === "sluts") {
+        imageFrameClass = "pornFolderImageOutterFrame";
+        subDirLabel = "pornSubDirLabel";
+    }
+    // IMAGES
+    $.each(imageLinksModel.Files, function (idx, imageModelFile) {
+        imageFrameClass = "imageFrame";
+        if (imageEditor) {
+            if (imageLinksModel.RootFolder === "archive") {
+                if (imageModelFile.LinkCount > 1) {
+                    imageFrameClass = "multiLinkImageFrame";
+                }
+            }
+            else {
+                if (imageModelFile.LinkCount > 1) {
+                    imageFrameClass = "nonLocalImageFrame";
+                }
+            }// imageModelFile
+        }  // startSlideShow(folderId, linkId)
+        let imgSrc = settingsImgRepo + "/" + imageModelFile.FileName;
+        $('#imageContainer').append(
+            "<div id='" + imageModelFile.LinkId + "' class='" + imageFrameClass + "'>" +
+            "<img class='thumbImage' onerror='albumImgError(" + imgSrc + ")' alt='" + imgSrc + "' " +
+            " oncontextmenu='imageCtx(\"" + imageModelFile.LinkId + "\")' onclick='startSlideShow(" + imageModelFile.FolderId +
+            ",\"" + imageModelFile.LinkId + "\")'" + " src='" + imgSrc + "'/></div>");
+    });
+
+    if (imageLinksModel.SubDirs.length > 1) {
+        var totalChildImages = 0;
+        $('#deepSlideshow').show();
+        $.each(imageLinksModel.SubDirs, function (idx, obj) {
+            totalChildImages += obj.FileCount;
+        });
+        $('#fileCount').html(imageLinksModel.SubDirs.length + "/" + totalChildImages.toLocaleString());
+    }
+    else {
+        $('#fileCount').html(imageLinksModel.Files.length);
+    }
+    if (imageLinksModel.Files.length > 0 && imageLinksModel.SubDirs.length > 0)
+        $('#fileCount').html(imageLinksModel.Files.length + "  (" + imageLinksModel.SubDirs.length + ")");
+
+    //  SUBFOLDERS
+    $.each(imageLinksModel.SubDirs, function (idx, subDir) {
+
+        let imgSrc = settingsImgRepo + "/" + subDir.FolderImage;
+        var kludge = "<div id='" + subDir.LinkId + "' class='" + imageFrameClass +
+            "' oncontextmenu='folderCtx(\"" + subDir.LinkId + "\")'" +
+            " onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.FolderId + "\")'>" +
+            "<img class='folderImage' albumImgError(" + imgSrc + ")' alt='" + imgSrc + "' src='" + imgSrc + "'/>";
+
+        if (subDir.SubDirCount === 0)
+            kludge += "<div class='" + subDirLabel + "'   >" +
+                subDir.DirectoryName + "  (" + subDir.FileCount + ")</div></div>";
+        else {
+            deepChildCount = subDir.FileCount;
+            getDeepChildCount(subDir);
+            if (deepChildCount === 0) { // this must be just a collection of stepchildren
+                $('#fileCount').html(subDir.SubDirCount);
+                // get deep count of stepchildren
+                kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.SubDirCount + ")</div></div>";
+            }
+            else {
+                if (subDir.SubDirCount > 1)
+                    kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.SubDirCount + "/" + deepChildCount.toLocaleString() + ")</div></div>";
+                else
+                    kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + deepChildCount.toLocaleString() + ")</div></div>";
+            }
+        }
+        $('#imageContainer').append(kludge);
+    });
+
+    $('#imagePageLoadingGif').hide();
+    $('#imageContainer').show();
+    resizeImageContainer();
+    //$('#footerMessage').html(": " + imageLinksModel.Files.length);
+}
+
 function setBreadCrumbs(breadCrumbModel, badgesText) {
     // a woman commited suicide when pictures of her "came out"
     // title: I do not remember having been Invited)
@@ -217,85 +301,14 @@ function getDeepChildCount(subDir) {
     });
 }
 
-function processImages(imageLinksModel) {
-    var imageFrameClass = "folderImageOutterFrame";
-    var subDirLabel = "subDirLabel";
-    var imageEditor = isInRole("Image Editor");
-    $('#imageContainer').html('');
+function albumImgError(fileName) {
+    alert("albumImgError:" + fileName);
+    //subDir.Link = "Images/redballon.png";
+    $(this).attr('src', "Images/redballon.png");
 
-    if (imageLinksModel.RootFolder === "porn" || imageLinksModel.RootFolder === "sluts") {
-        imageFrameClass = "pornFolderImageOutterFrame";
-        subDirLabel = "pornSubDirLabel";
-    }
-    // IMAGES
-    $.each(imageLinksModel.Files, function (idx, imageModelFile) {
-        imageFrameClass = "imageFrame";
-        if (imageEditor) {
-            if (imageLinksModel.RootFolder === "archive") {
-                if (imageModelFile.LinkCount > 1) {
-                    imageFrameClass = "multiLinkImageFrame";
-                }
-            }
-            else {
-                if (imageModelFile.LinkCount > 1) {
-                    imageFrameClass = "nonLocalImageFrame";
-                }
-            }// imageModelFile
-        }  // startSlideShow(folderId, linkId)
 
-        $('#imageContainer').append("<div id='" + imageModelFile.LinkId + "' class='" + imageFrameClass + "'><img class='thumbImage' " +
-            " oncontextmenu='imageCtx(\"" + imageModelFile.LinkId + "\")' onclick='startSlideShow(" + imageModelFile.FolderId +
-            ",\"" + imageModelFile.LinkId + "\")'" + " src='" + imageModelFile.Link + "'/></div>");
-    });
 
-    if (imageLinksModel.SubDirs.length > 1) {
-        var totalChildImages = 0;
-        $('#deepSlideshow').show();
-        $.each(imageLinksModel.SubDirs, function (idx, obj) {
-            totalChildImages += obj.FileCount;
-        });
-        $('#fileCount').html(imageLinksModel.SubDirs.length + "/" + totalChildImages.toLocaleString());
-    }
-    else {
-        $('#fileCount').html(imageLinksModel.Files.length);
-    }
-    if (imageLinksModel.Files.length > 0 && imageLinksModel.SubDirs.length > 0) 
-        $('#fileCount').html(imageLinksModel.Files.length + "  (" + imageLinksModel.SubDirs.length + ")");
 
-    //  SUBFOLDERS
-    $.each(imageLinksModel.SubDirs, function (idx, subDir) {
-        if (subDir.Link === null)
-            subDir.Link = "Images/redballon.png";
-        var kludge = "<div id='" + subDir.LinkId + "' class='" + imageFrameClass +
-            "' oncontextmenu='folderCtx(\"" + subDir.LinkId + "\")'" +
-            " onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.FolderId + "\")'>" +
-            "<img class='folderImage' src='" + subDir.Link + "'/>";
-
-        if (subDir.SubDirCount === 0)
-            kludge += "<div class='" + subDirLabel + "'   >" +
-                subDir.DirectoryName + "  (" + subDir.FileCount + ")</div></div>";
-        else {
-            deepChildCount = subDir.FileCount;
-            getDeepChildCount(subDir);
-            if (deepChildCount === 0) { // this must be just a collection of stepchildren
-                $('#fileCount').html(subDir.SubDirCount);
-                // get deep count of stepchildren
-                kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.SubDirCount + ")</div></div>";
-            }
-            else {
-                if (subDir.SubDirCount > 1)
-                    kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.SubDirCount + "/" + deepChildCount.toLocaleString() + ")</div></div>";
-                else
-                    kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + deepChildCount.toLocaleString() + ")</div></div>";
-            }
-        }
-        $('#imageContainer').append(kludge);
-    });
-
-    $('#imagePageLoadingGif').hide();
-    $('#imageContainer').show();
-    resizeImageContainer();
-    //$('#footerMessage').html(": " + imageLinksModel.Files.length);
 }
 
 function subFolderPreClick(isStepChild, subFolderPreClickFolderId) {
@@ -551,5 +564,11 @@ function showFolderCommentDialog() {
     var visitorId = getCookieValue("VisitorId");
 
     alert("showFolderCommentDialog()");
+
+}
+
+function loadImageListIntoLocalStorage() {
+
+
 
 }

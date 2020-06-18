@@ -1,13 +1,64 @@
 ﻿var dashboardMainSelectedTreeId = 0;
 var dashboardMainSelectedPath = "";
 
-// MENU FUNCTIONS
+function dashboardHtml() {
+    return "<div id='dashboardContainer' class='dashboardContainer'>\n" +
+        "    <div id='dashboardLeftColumn' class='dashboardContainerColumn'>\n" +
+        "       <div id='dashboardLeftMenu' class='oggleVerticalMenu' ></div>\n" +
+        "   </div>\n" +
+        "    <div id='dashboardMiddleColumn' class='dashboardContainerColumn'>\n" +
+        "       <div id='workAreaContainer' class='workAreaContainer'></div>\n" +
+        "   </div>\n" +
+        "   <div id='dashboardRightColumn' class='dashboardContainerColumn'></div>\n" +
+        "   <div id='dataifyInfo' class='infoLine' onclick='$(' #dataifyInfo').hide();'></div>\n" +
+        "</div >\n";
+}
+
+function dashboardStartup() {
+    $('.txtLinkPath').val('');
+    setOggleHeader(3910, "dashboard");
+    loadDirectoryTree(1, "dashboardRightColumn");
+    loadHeaderTabs();
+    setLeftMenu('Add Images');
+    document.title = "Dashboard : OggleBooble";
+
+    $('.dashboardContainerColumn').show(); 
+    $('#divAddImages').show();
+    //logPageHit(3910, "dashboard");
+    //defineDilogs();
+    //setSignalR();
+    //window.addEventListener("beforeunload", detectUnload());
+    window.addEventListener("resize", resizeDashboardPage);
+    //resizeDashboardPage();
+}
+
+function resizeDashboardPage() {
+    //resizePage();
+
+    // HEIGHT
+    //$('.dashboardContainerColumn')
+
+    //$('.threeColumnLayout').css("height", ($(window).innerHeight() - $('header').height()) + 50);
+    var bb = $('.threeColumnLayout').height();
+    $('.threeColumnLayout').css("height", ($(window).innerHeight() - $('header').height()) - 550);
+
+    $('#dashboardContainer').css("height", $('.threeColumnLayout').height() - 550);
+
+    
+    //alert("before: " + bb + "  after:" + $('.threeColumnLayout').height());
+
+
+    // WIDTH
+    let middleColumnW = $('#dashboardContainer').width() - $('#dashboardRightColumn').width() - $('#dashboardLeftColumn').width();
+    $('#dashboardMiddleColumn').css("width", middleColumnW - 121);
+    //$('#headerMessage').html("dashboardMiddleColumn.w: " + $('#dashboardMiddleColumn').width());
+}
+
 function setLeftMenu(viewId) {
     $('#headerSubTitle').html(viewId);
     switch (viewId) {
         case "Add Images":
             $('.workAreaContainer').hide();
-            $('#divAddImages').show();
             $('#dashboardLeftMenu').html("<div class='clickable' onclick='buildDirectoryTree()'>ReBuild Dir Tree</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showUpLoadFileDialog()'>Upload a file</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddImageLinkDialog()'>Add Image Link</div>");
@@ -50,7 +101,7 @@ function setLeftMenu(viewId) {
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showRenameFolderDialog()'>Rename Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveManyTool();'>Move Many</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddVideoLink();\">Add Video Link</div>");
-            
+
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='testAddVisitor()'>test AddVisitor</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='emergencyFolderLocationFix()'>emergencyFolderLocationFix</div>");
@@ -61,6 +112,24 @@ function setLeftMenu(viewId) {
             alert("view not undestood: " + viewId);
     }
     resizeDashboardPage();
+}
+
+function loadHeaderTabs() {
+    if (isInRole("add images")) {
+        $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Add Images');\">Add Images</a>");
+        $('#divAddImages').show();
+    }
+    if (isInRole("manage folders")) {
+        $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Folders');\">Manage Folders</a>");
+    }
+    if (isInRole("Oggle admin")) {
+        //alert("isInRole Oggle admin")
+        $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Admin');\">Admin</a>");
+        $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Reports');\">Reports</a>");
+        $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Roles');\">Reports</a>");
+        $('#headerMessage').html("Oggle admin");
+        $('.adminLevelOption').show();
+    }
 }
 
 // REPAIR FUNCTIONS
@@ -273,28 +342,6 @@ function previewLinkImage() {
     });
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //  CREATE NEW FOLDER
 function showCreateNewFolderDialog() {
     $('#draggableDialogTitle').html("Create New Folder");
@@ -502,9 +549,6 @@ function showAddEditRoles() {
 
 
 }
-
-
-
 
 function prepareXhamsterPage() {
     $('#dashBoardLoadingGif').show();

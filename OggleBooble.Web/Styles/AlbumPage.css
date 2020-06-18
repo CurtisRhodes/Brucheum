@@ -12,6 +12,13 @@
     text-align: center;
 }
 
+.sectionLabel {
+    font-size: larger;
+    color: var(--oggleTitleColor);
+    white-space: nowrap;
+}
+
+
 .folderCommentButton {
     position: relative;
     display: none;

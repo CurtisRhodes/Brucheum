@@ -466,7 +466,7 @@ namespace OggleBooble.Api.Controllers
                         bodyHtml.Append("<div class='" + imageFrameClass + "'>" +
                             //"<div class='folderImageFrame' onclick='reportThenPerformEvent(\"SUB\"," + folderId + "," + subDir.Id + ")'>" +
                             "<div class='folderImageFrame' onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.Id + "\")'>" +
-                            "<img class='folderImage' src='" + subDir.FileName + "'/>" +
+                            "<img class='folderImage' src='" + subDir.FolderImage + "'/>" +
                             "<div class='" + subDirLabelClass + "'>" + subDir.FolderName +
                             " (" + countText + ")</div></div></div>\n");
                     }
