@@ -211,6 +211,15 @@
         background-color: #fef;
     }
 
+.bottomLeftHeaderArea {
+    border: solid thin red;
+    background-color: #a7a769;
+}
+.badgesSection {
+    display: flex;
+    border: solid thin red;
+    background-color: #cab37e;
+}
 .breadCrumbArea {
     float: left;
     color: var(--ogglgeSubTitleColor);
@@ -231,10 +240,6 @@
     font-weight: bold;
     cursor: pointer;
     float: left;
-}
-
-.replaceableMenuItems {
-    display:flex;
 }
 
 .bigTits {

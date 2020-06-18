@@ -148,7 +148,7 @@ function showRepairLinksDialog() {
 
     //$('#draggableDialog').css("left", ($(window).width() - $('#draggableDialog').width()) / 2.142);
 
-    $("#subheaderContent").html("len: " + dashboardMainSelectedPath.length);
+    $("#mainMenuContainer").html("len: " + dashboardMainSelectedPath.length);
 
     //$("#draggableDialog").css("min-width", 500);
 
@@ -241,7 +241,7 @@ function showCreateStaticPagesDialog() {
     $('#draggableDialog').css("top", ($(window).height() - $('#draggableDialog').height()) / 2);
     $('#draggableDialog').css("left", ($(window).width() - $('#draggableDialog').width) / 2);
 
-    //$("#subheaderContent").html(".txtLinkPath : " + $('.txtLinkPath').val());
+    //$("#mainMenuContainer").html(".txtLinkPath : " + $('.txtLinkPath').val());
 
 }
 function createStaticPages(justOne) {
@@ -1108,7 +1108,7 @@ function dirTreeClick(danniPath, folderId) {
     dashboardMainSelectedTreeId = folderId;
     dashboardMainSelectedPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
     $('.txtLinkPath').val(dashboardMainSelectedPath);
-    $("#subheaderContent").html($('.txtLinkPath').val());
+    $("#mainMenuContainer").html($('.txtLinkPath').val());
     //alert("DanniPath: " + $('.txtLinkPath').val());
     //alert("dashboardMainSelectedTreeId: " + dashboardMainSelectedTreeId);
 }

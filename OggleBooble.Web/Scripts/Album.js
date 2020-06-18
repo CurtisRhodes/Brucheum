@@ -54,12 +54,15 @@ function GetAllAlbumPageInfo(folderId) {
                             }
                         });
 
-                        setBreadCrumbs(imageLinksModel.BreadCrumbs, imageLinksModel.ExternalLinks);
+                        setBreadCrumbs(imageLinksModel.BreadCrumbs);
 
                         processImages(imageLinksModel);
 
+                        setBadges(imageLinksModel.ExternalLinks);
+
                         $('#headerMessage').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
                         $('#footerInfo1').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
+
                         resizeAlbumPage();
 
                         logPageHit(folderId, "Album.html"); 
@@ -117,7 +120,22 @@ function GetAllAlbumPageInfo(folderId) {
         //alert("GetLinkFolders CATCH: " + e);
     }
 }
-
+function setBadges(badgesText) {
+    if (!isNullorUndefined(badgesText)) {
+        if (badgesText.indexOf("Playmate Of The Year") > -1) {
+            $('#badgesContainer').append("<a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>");
+        }
+        if (badgesText.indexOf("biggest breasted centerfolds") > -1) {
+            $('#badgesContainer').append("<a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>");
+        }
+        if (badgesText.indexOf("black centerfolds") > -1) {
+            $('#badgesContainer').append("<div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>");
+        }
+        if (badgesText.indexOf("Hef likes twins") > -1) {
+            $('#badgesContainer').append("<a href='/album.html?folder=3904'><img src='/Images/gemini03.png' title='Hef likes twins' class='badgeImage'></a>");
+        }
+    }
+}
 function processImages(imageLinksModel) {
     var imageFrameClass = "folderImageOutterFrame";
     var subDirLabel = "subDirLabel";
@@ -201,7 +219,7 @@ function processImages(imageLinksModel) {
     //$('#footerMessage').html(": " + imageLinksModel.Files.length);
 }
 
-function setBreadCrumbs(breadCrumbModel, badgesText) {
+function setBreadCrumbs(breadCrumbModel) {
     // a woman commited suicide when pictures of her "came out"
     // title: I do not remember having been Invited)
 
@@ -226,21 +244,6 @@ function setBreadCrumbs(breadCrumbModel, badgesText) {
                     "href='javascript:rtpe(\"BCC\"," + albumFolderId + ",44," + breadCrumbModel[i].FolderId + ")'>" +
                     breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
             }
-        }
-    }
-
-    if (!isNullorUndefined(badgesText)) {
-        if (badgesText.indexOf("Playmate Of The Year") > -1) {
-            $('#pmoyLink').show();
-        }
-        if (badgesText.indexOf("biggest breasted centerfolds") > -1) {
-            $('#breastfulPlaymatesLink').show();
-        }
-        if (badgesText.indexOf("black centerfolds") > -1) {
-            $('#blackCenterfoldsLink').show();
-        }
-        if (badgesText.indexOf("Hef likes twins") > -1) {
-            $('#twinsLink').show();
         }
     }
 }
