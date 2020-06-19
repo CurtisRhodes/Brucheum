@@ -1,8 +1,8 @@
 ﻿
 :root {
     --brucheumBlue: #74bac3;
-    --oggleBackgroundColor: #b5a6d5; /*#fef;  #f7eef7  #b081b1 #f8e8e8 */
-    --oggleContainerBackgroundColor: #bc61e4; /* #d1f5f3; #f8e8e8 */
+    --oggleBackgroundColor: #c1bad1; /*#fef;  #f7eef7  #b081b1 #f8e8e8 */
+    --oggleContainerBackgroundColor: #9caab2; /* #bc61e4; #d1f5f3; #f8e8e8 */
     --oggleDialogBackgroundColor: #fc9; /* #d1f5f3; #f8e8e8 */
     --oggleBorderColor: #b200ff; /* #f1cff7;*/
     --ogglePurple: #79078f;
@@ -20,20 +20,6 @@
     --flitterYellow: #fbf0b4;
     --opaqueImageLabel: rgba(178, 0, 255, 0.66);
     --oggleLabelColor: #b200ff;
-}
-
-.oggleResizeBar {
-    padding-top: 1px;
-    height: 9px;
-    background-color: #e6de3b;
-    width: 100%;
-    cursor: ns-resize;
-}
-
-.dragBarSandwitchBar {
-    width: 20px;
-    margin: 1px auto;
-    border-top: 1px solid rgba(0,0,0,.2);
 }
 
 body {
@@ -319,13 +305,15 @@ input[type='checkbox'] {
     display: none;
     z-index: 120;
 }
-
     .ogContextMenu div {
         padding: 8px;
-        /*margin: 2px;
+        margin: 2px;
         background-color: #fff;
-        border-radius: 3px;*/
+        border-radius: 3px;
         cursor: pointer;
+    }
+    .ogContextMenu div:hover {
+        text-decoration:underline;
     }
 
 .settingsConsole {

@@ -42,16 +42,16 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail, pageId) {
 
     }
     catch (e) {
-        logError({
-            VisitorId: visitorId,
-            ActivityCode: "CA2",
-            Severity: 2,
-            ErrorMessage: e,
-            CalledFrom: "reportThenPerformEvent/" + calledFrom
-        });
-        if (document.domain === 'localhost') {
+        if (document.domain === 'localhost')
             alert("reportThenPerformEvent Catch Error: " + e);
-        }
+        else
+            logError({
+                VisitorId: visitorId,
+                ActivityCode: "CA2",
+                Severity: 2,
+                ErrorMessage: e,
+                CalledFrom: "reportThenPerformEvent/" + calledFrom
+            });
     }
 }
 
@@ -94,6 +94,7 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
         case "CPC":  // carousel ParentGallery clicked
         case "BCC":  // Breadcrumb Clicked
         case "BLC":  // banner link clicked
+        case "EPC":  // every playmate clicked
         case "BAC":  // Babes Archive Clicked
         case "LUP":  // Update Box click
             window.location.href = "/album.html?folder=" + pageId;  //  open page in same window

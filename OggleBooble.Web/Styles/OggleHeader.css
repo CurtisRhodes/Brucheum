@@ -5,6 +5,7 @@
     width: 100%;
     display: flex;
     z-index: 31;
+    background: var(--brucheumBlue);
 }
 .headerBodyContainer {
     float: left;
@@ -35,11 +36,6 @@
     float: left;
     border: solid thin pink;
 }
-.breadCrumbArea {
-    float: left;
-    display: inline-block;
-    border: solid thin pink;
-}
 .badgesSection {
     display: flex;
     float: left;
@@ -48,29 +44,48 @@
 .loginArea {
     margin-top: 9px;
     margin-right: 5px;
-    float: right;  
+    float: right;
+    border: solid thin pink;
 }
 
 .badgeImage {
-    height: 31px;
+    height: 31px;it
     margin-left: 9px;
     float: left;
 }
 
-
-.blackCenterfoldsBanner {
-    height: 35px;
-    border: solid 2px red;
+.breadCrumbArea {
+    float: left;
+    display: inline-block;
+    border: solid thin pink;
+}
+.headerBanner {
+    display: inline-block;
+    border: solid 2px #000;
     border-radius: 10px;
-    font-size: 18px;
-    padding: 3px;
-    white-space: nowrap;
-    text-decoration: none;
-    background-color: #407d6e;
-    margin-left: 8px;
-    margin-bottom: 3px;
+    padding: 2.5px;
+    color: #000;
+    background-color: aliceblue;
+    margin: 3px;
     cursor: pointer;
 }
+
+.headerBanner a {
+    text-decoration: none;
+}
+
+ .blackCenterfoldsBanner {
+        border: solid 2px red;
+        border-radius: 10px;
+        font-size: 16px;
+        padding: 3px;
+        white-space: nowrap;
+        text-decoration: none;
+        background-color: #407d6e;
+        margin-left: 8px;
+        margin-bottom: 3px;
+        cursor: pointer;
+    }
 
     .blackCenterfoldsBanner a {
         color: yellow;
@@ -157,17 +172,20 @@
     /*padding: 4px 8px;*/
 }
 
-.bannerImageContainer {
+.siteLogoContainer {
     float: left;
     padding-top: 2px;
     padding-left: 2px;
 }
 
-.bannerImage {
+.siteLogo {
     height: 80px;
     cursor: pointer;
 }
-
+.hamburger {
+    height: 50px;
+    cursor: pointer;
+}
 
 .topLinkRow {
     font-size: 20px;
@@ -275,26 +293,6 @@
     white-space: nowrap;
 }
 
-.littleBanners {
-    display: inline-block;
-    cursor: pointer;
-}
-
-
-.headerFeatureBanner {
-    display: inline-block;
-    border: solid 2px #000;
-    border-radius: 10px;
-    font-size: 16px;
-    padding: 2.5px;
-    color: #000;
-    background-color: aliceblue;
-    margin: 3px;
-    cursor: pointer;
-}
-.headerFeatureBanner a {
-    text-decoration: none;
-}
 
 .babesArchive {
     margin-top: 5px;

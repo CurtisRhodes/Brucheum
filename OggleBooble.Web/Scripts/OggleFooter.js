@@ -4,7 +4,7 @@
     var footerhtml;
     switch (subdomain) {
         case "boobs":
-        case "archive":
+        case "archive": {
             footerhtml =
                 "<div class='flexContainer'>\n" +
                 "    <div class='footerCol'>\n" +
@@ -21,7 +21,7 @@
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"mailme\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
-            "        <div class='clickable' onclick='window.location.href=\"/index.html?subdomain=blog\"'>Blog</div>\n" +
+                "        <div class='clickable' onclick='window.location.href=\"/index.html?subdomain=blog\"'>Blog</div>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"archive\"," + pageId + ")'>Archive</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
@@ -30,6 +30,7 @@
                 "    </div>\n" +
                 "</div>\n";
             break;
+        }
         case "playboy":
         case "centerfold":
             footerhtml =

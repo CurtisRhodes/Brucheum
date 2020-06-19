@@ -334,6 +334,7 @@ function logEventActivity(logEventModel) {
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "LogEventActivity")) {
+                if()
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "XHR",
