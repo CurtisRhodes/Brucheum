@@ -39,7 +39,6 @@
     display: inline-block;
     margin: 2px;
     background-color: #3b0e56;
-    height: 280px;
 }
 
 .newsContentBoxLabel {
@@ -52,7 +51,7 @@
 }
 
 .newsContentBoxImage {
-    height: 272px;
+    height: 172px;
     cursor: pointer;
 }
 

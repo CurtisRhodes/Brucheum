@@ -1,6 +1,8 @@
 ﻿
+var thisItemSrc;
 function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
-    let settingsImgRepo = "https://library.curtisrhodes.com/";
+    let settingsImgRepo = settingsArray.ImageRepo;
+    //alert("loadUpdatedGalleriesBoxes settingsImgRepo: " + settingsImgRepo);
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?take=" + numItmes + "&rootFolder=" + subdomain,
@@ -10,13 +12,11 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
                 $('#updatedGalleriesSection').html("");
                 $.each(latestUpdates.LatestTouchedGalleries, function (idx, LatestUpdate) {
 
-                    let src = settingsImgRepo + LatestUpdate.FolderPath + "/" + LatestUpdate.FileName;
-
-
-                    console.log(LatestUpdate.FolderName + ". src: " + src);
+                    thisItemSrc = settingsImgRepo + LatestUpdate.FolderPath + "/" + LatestUpdate.FileName;
+                    //console.log(LatestUpdate.FolderName + ". src: " + src);
                     $('#updatedGalleriesSection').append("<div class='newsContentBox'>" +
                         "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
-                        "<img class='newsContentBoxImage' src='" + src + "'" +
+                        "<img id='lt" + LatestUpdate.FolderId + "' class='newsContentBoxImage' onerror='latestGalleryImageError(" + LatestUpdate.FolderId + ")' src='" + thisItemSrc + "'" +
                         "onclick='rtpe(\"LUP\",\"home page\",10," + LatestUpdate.FolderId + ")'/>" +
                         "<div class='newsContentBoxDateLabel'>updated: " + dateString(LatestUpdate.LastModified) + "</span></div>" +
                         "</div>");
@@ -53,6 +53,11 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
             }
         }
     });
+}
+
+function latestGalleryImageError(folderId) {    
+    alert("latestGallery src: " + $('#lt' + folderId).attr('src'));
+    $('#lt' + folderId).attr('src', "Images/redballon.png");
 }
 
 function launchPromoMessages() {

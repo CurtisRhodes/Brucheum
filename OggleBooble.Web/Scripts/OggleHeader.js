@@ -278,8 +278,8 @@ function hdrTopRowSectionsW() {
 }
 function showResizeMessage(secMsg) {
     $('#divStatusMessage').html(secMsg + "hdrTopRow: " + $('.headerTopRow').width().toLocaleString() +
-        "<br/>bottomSecs: " + hdrBottRowSectionsW().toLocaleString() +
-        "<br/>hdrTopSecs: " + hdrTopRowSectionsW().toLocaleString());
+        " bottomSecs: " + hdrBottRowSectionsW().toLocaleString() +
+        " hdrTopSecs: " + hdrTopRowSectionsW().toLocaleString());
 }
 
 function draggableDialogEnterDragMode() {

@@ -8,26 +8,28 @@ var forgetShowingCustomMessage = true;
 //<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 //<div class="g-recaptcha" data-sitekey="6LfaZzEUAAAAAMbgdAUmSHAHzv-dQaBAMYkR4h8L"></div>
 
-function loadSettings() {
+function loadOggleSettings() {
     $.ajax({
         type: "GET",
         url: "/Data/Settings.xml",
         dataType: "xml",
-        success: function (xml) {
-            $(xml).find('setting').each(function () {
+        success: function (settingsXml) {
+            $(settingsXml).find('setting').each(function () {
                 settingsArray[$(this).attr('name')] = $(this).attr('value');
             });
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "loadSettings")) {
-                logError({
-                    VisitorId: "877",
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "common.js loadSettings"
-                });
+                if (document.domain === "localhost") alert("loadSettings: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: "877",
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "common.js loadSettings"
+                    });
                 //sendEmailToYourself("XHR error in common.js loadSettings", "/Data/Settings.xml Message: " + errorMessage);
             }
         }

@@ -7,10 +7,11 @@ var selectedImage;
 var selectedImageLinkId;
 var albumFolderId;
 var deepChildCount = 0;
-let settingsImgRepo = "https://library.curtisrhodes.com/";
+let settingsImgRepo = settingsArray.ImageRepo;
 
 function GetAllAlbumPageInfo(folderId) {
     try {
+        settingsImgRepo = settingsArray.ImageRepo;
         var aapiVisitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(aapiVisitorId)) {
             if (document.domain === 'localhost')
@@ -186,7 +187,7 @@ function processImages(imageLinksModel) {
     //  SUBFOLDERS
     $.each(imageLinksModel.SubDirs, function (idx, subDir) {
 
-        let imgSrc = settingsImgRepo + "/" + subDir.FolderImage;
+        let imgSrc = settingsImgRepo + subDir.FolderImage;
         var kludge = "<div id='" + subDir.LinkId + "' class='" + imageFrameClass +
             "' oncontextmenu='folderCtx(\"" + subDir.LinkId + "\")'" +
             " onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.FolderId + "\")'>" +
@@ -308,10 +309,6 @@ function albumImgError(fileName) {
     alert("albumImgError:" + fileName);
     //subDir.Link = "Images/redballon.png";
     $(this).attr('src', "Images/redballon.png");
-
-
-
-
 }
 
 function subFolderPreClick(isStepChild, subFolderPreClickFolderId) {

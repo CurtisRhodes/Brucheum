@@ -17,15 +17,8 @@
     width: 100%;
 }
 
-
-/*let hdrBottRowW = $('#divTopLeftLogo').width() + $('#badgesContainer').width() + $('#divLoginArea').width() + $('#breadcrumbContainer').width() + $('#headerMessage').width();*/
-/*
-
-*/
-
 .headerBottomRow {
-    width: 100%;
-    border: solid thin blue;
+    width: 100%; 
     display: inline-block;
 }
 .bottomRowSection1 {
@@ -34,18 +27,15 @@
 }
 .bottomLeftHeaderArea {
     float: left;
-    border: solid thin pink;
 }
 .badgesSection {
     display: flex;
     float: left;
-    border: solid thin pink;
 }
 .loginArea {
     margin-top: 9px;
     margin-right: 5px;
     float: right;
-    border: solid thin pink;
 }
 
 .badgeImage {
@@ -57,7 +47,6 @@
 .breadCrumbArea {
     float: left;
     display: inline-block;
-    border: solid thin pink;
 }
 .headerBanner {
     display: inline-block;

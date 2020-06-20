@@ -100,6 +100,7 @@
             //$('#footerLastBuild').html("last build: " + lastBuild + "3");
             //$('#footerMessage').html("loading settings");
             document.title = "welcome : OggleBooble";
+            loadOggleSettings();
 
             $('.sectionLabel').hide();
             params = getParams();
@@ -113,7 +114,8 @@
             if (subdomain == "dashboard")
                 homePageId = 3911;
             setOggleHeader(homePageId, "loading");
-            loadSettings();
+
+
             var dots = ""
             var getXMLsettingsWaiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
@@ -159,8 +161,8 @@
                             if (subdomain == "boobs") {
                                 $('#boobsLeftColumnList').show();
                                 //launchPromoMessages();
-                                //   launchCarousel();
-                                // loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
+                                launchCarousel();
+                                loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
                                 $('.indexPageSection').show();
                             }
                             setOggleFooter(homePageId, subdomain);

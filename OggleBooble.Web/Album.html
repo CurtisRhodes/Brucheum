@@ -91,7 +91,7 @@
             resizeAlbumPage();
             setOggleHeader(params.folder, "loading");
             var dots = "";
-            loadSettings();
+            loadOggleSettings();
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
                     dots += "~ ";

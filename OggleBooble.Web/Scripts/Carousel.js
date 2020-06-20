@@ -19,7 +19,7 @@ var knownModelLabelClickId;
 var imageTopLabelClickId;
 var footerLabelClickId;
 let initialTake = 500;
-let settingsImgRepo = "https://library.curtisrhodes.com/";
+let settingsImgRepo = settingsArray.ImageRepo;
 let imgSrc;
 
 function launchCarousel() {
@@ -64,6 +64,7 @@ function launchCarousel() {
 var skip = 0;
 function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, includePortrait) {
     var start = Date.now();
+    settingsImgRepo = settingsArray.ImageRepo;
     try {
         //$('#imageTopLabel').hide();
         //$('#footerMessage').html("loading carousel");

@@ -322,26 +322,29 @@ function logEventActivity(logEventModel) {
         data: logEventModel,
         success: function (success) {
             if (success !== "ok") {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "ER2",
-                    Severity: 2,
-                    ErrorMessage: success,
-                    CalledFrom: "LogEventActivity"
-                });
+                if (document.domain === "localhost") alert("LogEventActivity error: " + success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "ER2",
+                        Severity: 2,
+                        ErrorMessage: success,
+                        CalledFrom: "LogEventActivity"
+                    });
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "LogEventActivity")) {
-                if()
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 2,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "LogEventActivity"
-                });
+                if (document.domain === "localhost") alert("LogEventActivity error: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 2,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "LogEventActivity"
+                    });
             }
         }
     });
