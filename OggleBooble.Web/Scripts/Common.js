@@ -89,6 +89,23 @@ function dateString(dateObject) {
     return date;
 };
 
+function dateString2(dateObject) {
+    var d = new Date(dateObject);
+    var day = d.getDate();
+    var month = d.getMonth() + 1;
+    //var year = d.getFullYear();
+    if (day < 10) {
+        day = "0" + day;
+    }
+    if (month < 10) {
+        month = "0" + month;
+    }
+    var strDate = month + "/" + day; // + "/" + year;
+
+    return strDate;
+};
+
+
 function resizePage() {
     //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, 
     // or using “transform” along with “transform - origin: 0 0”.album.html

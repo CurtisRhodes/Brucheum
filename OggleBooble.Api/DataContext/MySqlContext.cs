@@ -470,16 +470,16 @@ namespace OggleBooble.Api.MySqlDataContext
         public string HitDate { get; set; }
         public string HitTime { get; set; }
     }
-    [Table("OggleBooble.vwLatestTouchedGalleries")]
+    [Table("OggleBooble.VwLatestTouchedGalleries")]
     public class VwLatestTouchedGalleries
     {
         [Key]
+        public string Id { get; set; }
         public int FolderId { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
-        public string FolderPath { get; set; }
-        public string FileName { get; set; }
-        public DateTime LastModified { get; set; }
+        public string ImageFile { get; set; }
+        public DateTime Acquired { get; set; }
     }
 
     // select * from OggleBooble.ImageFile;
