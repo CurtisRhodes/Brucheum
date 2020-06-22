@@ -197,10 +197,6 @@
     font-size: 22px;
 }
 
-.clickable {
-    white-space: nowrap;
-}
-
 .dirTreeContainer {
     /*background-color: #f7e1ab;*/
     padding-right: 5px;

@@ -27,7 +27,7 @@ function loadMoveCopyArchiveDialog(mode, link, sourceFolderId) {
     $('#moveCopyDialog').dialog('option', 'title', mode + " Image Link");
     $('#moveCopyDialog').on('dialogclose', function (event) {
         if (typeof getAlbumImages === 'function') {
-            GetAllAlbumPageInfo(sourceFolderId);
+            loadAlbum(sourceFolderId);
             if (viewerShowing)
                 slide("next");
         }

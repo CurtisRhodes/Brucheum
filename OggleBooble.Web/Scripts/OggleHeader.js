@@ -7,7 +7,8 @@ function setOggleHeader(folderId, subdomain) {
     hdrFolderId = folderId;
     hdrSubdomain = subdomain;
     $('.oggleHeader').html(headerHtml(folderId, subdomain));
-
+    $('#dashboardMenuItem').html(subdomain);
+    
     //if(subdomain.contains("porn,"))
     $('.oggleHeader').addClass("boobsHeader");
     //$('header').switchClass('pornHeader', 'boobsHeader');
@@ -110,6 +111,9 @@ function setHeaderDetails(folderId, subdomain) {
 function setMenubar(subdomain) {
     let headerMenu;
     switch (subdomain) {
+        case "loading":
+            headerMenu = "loading";
+            break;
         case "archive": {
             headerMenu = "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",4,4,)'>milk cows,</a> \n" +
                 "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",1103,1103)'>russian spys,</a> \n" +
@@ -149,16 +153,16 @@ function setMenubar(subdomain) {
 
 function setLoginHeaderSection(subdomain) {
     if (subdomain === "loading") {
-        $('#optionLoggedIn').hide();
-        $('#optionNotLoggedIn').show();
+        $('#divLoginArea').hide();
         return;
     }
+    $('#divLoginArea').show();
     var isLoggedIn = getCookieValue("IsLoggedIn");
 
     if (isNullorUndefined(isLoggedIn)) {
         setCookieValue("IsLoggedIn", "true");
         isLoggedIn = "true";
-       // alert("isNullorUndefined(isLoggedIn)");
+        console.log("isNullorUndefined(isLoggedIn)");
     }
 
     if (isLoggedIn === "true") {
@@ -179,24 +183,23 @@ function setLoginHeaderSection(subdomain) {
 
 function headerResize() {
     hdrRowW = $('.headerTopRow').width();
-    $('#mainMenuContainer').html(setMenubar(hdrSubdomain));
 
-    if (hdrTopRowSectionsW() < hdrRowW) {
-        $('.headerTitle').css("font-size", "17px");
-    }
-    else {
-        $('.headerTitle').css("font-size", "17px");
-        $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
-    }
+    //if (hdrTopRowSectionsW() < hdrRowW) {
+    //    $('.headerTitle').css("font-size", "17px");
+    //}
+    //else {
+    //    $('.headerTitle').css("font-size", "17px");
+    //}
 
     if (hdrBottRowSectionsW() < hdrRowW) {
         $('.oggleHeader').css("background-color", "var(--brucheumBlue)");
         $('.siteLogo').css("height", "80px");
         $('#divLoginArea').css("font-size", "17px");
-        $('#breadcrumbContainer').css("font-size", "16px").show();
+        $('#breadcrumbContainer').css("font-size", "18px").show();
         $('.headerBanner').css("font-size", "16px").show();
         $('.badgeImage').css("height", "31px");
         $('.blackCenterfoldsBanner').css("font-size", "16px");
+        $('#mainMenuContainer').html(setMenubar(hdrSubdomain));
         showResizeMessage("RESET: ");
     }
     if (hdrBottRowSectionsW() >= hdrRowW) {
@@ -207,6 +210,8 @@ function headerResize() {
         $('.headerBanner').css("font-size", "15px").show();
         $('.badgeImage').css("height", "31px");
         $('.blackCenterfoldsBanner').css("font-size", "15px");
+        $('#mainMenuContainer').html(setMenubar(hdrSubdomain));
+
         showResizeMessage("80/15: ");
     }
     if (hdrBottRowSectionsW() >= hdrRowW) {
@@ -217,6 +222,8 @@ function headerResize() {
         $('.headerBanner').css("font-size", "13px").show();
         $('.badgeImage').css("height", "28px");
         $('.blackCenterfoldsBanner').css("font-size", "13px");
+        $('#mainMenuContainer').html(setMenubar(hdrSubdomain));
+
         showResizeMessage("60/13: ");
     }
     //if (hdrBottRowSectionsW() >= hdrRowW) {
@@ -236,6 +243,7 @@ function headerResize() {
         $('.headerBanner').css("font-size", "12px").show();
         $('.blackCenterfoldsBanner').css("font-size", "12px");
         $('.badgeImage').css("height", "22px");
+        $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
 
         showResizeMessage("iPad 50/12 : ");
     }
@@ -256,6 +264,7 @@ function headerResize() {
         $('#divLoginArea').css("font-size", "12px");
         $('.headerBanner').css("font-size", "12px").show();
         $('.badgeImage').css("height", "18px");
+        $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
 
         showResizeMessage("iPhone: ");
     }
@@ -274,10 +283,11 @@ function hdrBottRowSectionsW() {
 }
 function hdrTopRowSectionsW() {
     let calcIssue = 0;
-    return $('#bannerTitle').width() + $('#mainMenuContainer').width() + $('#bannerLinks').width() + $('.OggleSearchBox').width() + calcIssue;
+    //alert("hdrTopRowSectionsW bt:" + $('#bannerTitle').width() + " mainMenuContainer: " + $('#mainMenuContainer').width() +        "  bannerLinks: " + $('#bannerLinks').width() + "  searchBox: " + $('#searchBox').width());
+    return $('#bannerTitle').width() + $('#mainMenuContainer').width() + $('#bannerTitle').width() + $('#searchBox').width() + calcIssue;
 }
 function showResizeMessage(secMsg) {
-    $('#divStatusMessage').html(secMsg + "hdrTopRow: " + $('.headerTopRow').width().toLocaleString() +
+    $('#aboveImageContainerMessageArea').html(secMsg + "hdrTopRow: " + $('.headerTopRow').width().toLocaleString() +
         " bottomSecs: " + hdrBottRowSectionsW().toLocaleString() +
         " hdrTopSecs: " + hdrTopRowSectionsW().toLocaleString());
 }
@@ -314,9 +324,9 @@ function headerHtml(folderId, subdomain) {
         "           <span id='archiveLink'></span>" +
         "           <span id='rankerLink'></span>" +
         "           <span id='playboyLink'></span>\n" +
-        "           <div class='OggleSearchBox'>\n" +
+        "           <div id='searchBox' class='oggleSearchBox'>\n" +
         "               <span id='notUserName' title='Esc clears search.'>search</span>" +
-        "                   <input class='OggleSearchBoxText' id='txtSearch' onfocus='startOggleSearch(" + folderId + ")' onkeydown='oggleSearchKeyDown(event)' />" +
+        "                   <input class='oggleSearchBoxText' id='txtSearch' onfocus='startOggleSearch(" + folderId + ")' onkeydown='oggleSearchKeyDown(event)' />" +
         "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
         "           </div>\n" +
         "       </div>\n" +

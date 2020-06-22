@@ -15,6 +15,7 @@
     <script src="Scripts/IndexPage.js"></script>
     <script src="Scripts/Cookies.js"></script>
     <script src="Scripts/Login.js"></script>
+    <script src="Scripts/VerifyConnection.js"></script>
     <script src="Scripts/OggleHeader.js"></script>
     <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
@@ -64,8 +65,9 @@
             </div>
         </div>
         <div class="middleColumn">
+            <div id="divStatusMessage"></div>
             <div id="albumPageHeader" class="aboveImageContainerDiv">
-                <div id='googleSearchText' class="floatLeft sectionLabel"></div>
+                <div id='googleSearchText' class="albumPageMetaTitle"></div>
                 <div id="aboveImageContainerMessageArea" class="flexboxMiddleSection"></div>
                 <div id="deepSlideshow" class='deepSlideshowLabel' title='slideshow includes all child folders' onclick='launchDeepSlideShow();'>gallery slideshow</div>
             </div>
@@ -110,7 +112,7 @@
                             $('#dots').html('');
                             if (isInRole("view dynamic") || document.domain === "localhost") {
                                 //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) TruE");
-                                GetAllAlbumPageInfo(params.folder);
+                                loadAlbum(params.folder);
                                 //$('#feedbackBanner').fadeIn();
                             }
                             else {

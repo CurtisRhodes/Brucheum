@@ -8,7 +8,6 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
         url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?take=" + numItmes + "&rootFolder=" + subdomain,
         success: function (latestUpdates) {
             if (latestUpdates.Success === "ok") {
-                $('.sectionLabel').show();
                 $('#updatedGalleriesSection').html("");
                 $.each(latestUpdates.LatestTouchedGalleries, function (idx, LatestUpdate) {
                     if (!isNullorUndefined(LatestUpdate.ImageFile)) {
@@ -25,6 +24,8 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
                             "</div>");
                     }
                 });
+                $('.indexPageSection').show();
+                $('.sectionLabel').show();
                 console.log("loaded " + latestUpdates.LatestTouchedGalleries.length + " news boxes");
                 resizeIndexPage();
             }
@@ -61,10 +62,14 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
 
 let oneShown = false;
 function latestGalleryImageError(folderId) {    
+    //alert("latestGalleryImageError");
     //alert("latestGallery src: " + $('#lt' + folderId).attr('src'));
-    $('#lt' + folderId).attr('src', "Images/redballon.png");
+
+    //$('#lt' + folderId).attr('src', "Images/redballon.png");
+
     if (!oneShown) {
         oneShown = true;
+        alert("latestGalleryImageError called: " + folderId);
         alert("xx: " + $('#lt' + folderId).attr('src'))
     }
 }

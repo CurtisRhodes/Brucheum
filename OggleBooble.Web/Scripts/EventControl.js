@@ -85,6 +85,7 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
         case "SRC":  // Search Performed
         case "SSB":
         case "SSC":
+        case "ONT":
             window.open("/album.html?folder=" + pageId, "_blank");
             break;
         case 'SUB':  // 'Sub Folder Click'

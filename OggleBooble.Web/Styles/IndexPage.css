@@ -1,28 +1,24 @@
 ﻿
-.indexPageSectionLabel {
-    white-space: nowrap;
-    cursor: pointer;
+
+.sectionLabel {
+    font-size: larger;
+    color: var(--oggleTitleColor);
     position: absolute;
-}
-.floatingContainerElement {
-    padding: 7px;
+    white-space: nowrap;
+    display: none;
+    /*border: solid thin red;*/
 }
 
 .indexPageSection {
+    margin-top: 26px;
     width: 100%;
-    margin-top: 6px;
     display: flex;
     overflow: auto;
-    /*
     min-height: 40%;
     color: var(--oggleTitleColor);
-    border: solid 10px orange;
-    */
+    /*border: solid 10px orange;*/
 }
 
-/*@media (min-width: 768px) {
-    background-color: red;
-}*/
 .updatedGalleriesSection {
     float: left;
     text-align: center;

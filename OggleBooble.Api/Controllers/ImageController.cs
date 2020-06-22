@@ -308,7 +308,7 @@ namespace OggleBooble.Api.Controllers
                                     localRoot = "playboy";
 
                                 var test = newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
-                                var localPath = repoPath + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
+                                var localPath = localRepoPath + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
                                 DirectoryInfo dirInfo = new DirectoryInfo(localPath);
                                 if (!dirInfo.Exists)
                                     dirInfo.Create();

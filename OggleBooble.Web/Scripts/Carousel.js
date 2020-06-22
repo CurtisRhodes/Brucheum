@@ -246,15 +246,17 @@ function imgErrorThrown() {
     $('#thisCarouselImage').attr('src', "Images/redballon.png");
     carouselImageViews -= 1;
     carouselImageErrors++;
-    //pause();
+    pause();
     //alert("imgErrorThrown. src: " + $(this).prop("src"));
     //alert("imgErrorThrown. src: " + imgSrc);
+
     logDataActivity({
         PageId: 1,
         PageName: "Carousel",
         Activity: imgSrc 
     });
 }
+// function doneLoggingDataActivity() { };
 
 function intervalBody(newImageIndex) {
     //alert("intervalBody");
@@ -291,7 +293,7 @@ function clickViewGallery(labelClick) {
             break;
         case 2: // top imageTopLabel
             //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + imageTopLabelClickId);
-            reportThenPerformEvent("CIC", carouselItemArray[imageIndex].ImageFolderName, "image top label", imageTopLabelClickId);    
+            rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "image top label", imageTopLabelClickId);    
             break;
         case 3: // knownModelLabel
             //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + knownModelLabelClickId);
@@ -371,11 +373,16 @@ function carouselContextMenuAction(ctxMenuAction) {
         case "explode":
             reportThenPerformEvent("EXP", "from main carousel", settingsImgRepo + carouselItemArray[imageIndex].FileName, carouselItemArray[imageIndex].FolderId);
             break;
+        case "openInNewTab":
+            // rtpe(eventCode, calledFrom, eventDetail, pageId)
+            rtpe("ONT", "carousel context menu", carouselItemArray[imageIndex].ImageFolderName, mainImageClickId);
+            break;
         case "comment":
             $('#carouselContextMenu').fadeOut();
             imageCommentDialogIsOpen = true;
             pause();
             $('#carouselContextMenu').fadeOut();
+            //showImageCommentDialog(link, linkId, folderId, folderName, calledFrom) {
             showImageCommentDialog(carouselItemArray[imageIndex].Link,
                 carouselItemArray[imageIndex].LinkId,
                 carouselItemArray[imageIndex].FolderId,
@@ -533,6 +540,7 @@ function carouselHtml() {
     $("#carouselContextMenuContainer").html(
         "<div id='carouselContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
         "    <div id='ctxModelName' onclick='carouselContextMenuAction(\"showDialog\")'>model name</div>\n" +
+        "    <div onclick='carouselContextMenuAction(\"openInNewTab\")'>Open in new tab</div>\n" +
         "    <div onclick='carouselContextMenuAction(\"explode\")'>Explode</div>\n" +
         "    <div onclick='carouselContextMenuAction(\"comment\")'>Comment</div>\n" +
         //"    <div onclick='carouselContextMenuAction(\"tags\")'>Tags</div>\n" +

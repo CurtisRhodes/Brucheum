@@ -30,6 +30,7 @@ function showImageContextMenu(pImgSrc, pLinkId, pFolderId, currentAlbumJSfolderN
     $('#imageContextMenu').fadeIn();
 }
 
+
 function getImageDetails() {
     $.ajax({
         type: "GET",
@@ -39,10 +40,9 @@ function getImageDetails() {
                 selectedImage = imageInfo.Link;
                 //alert("selectedImage: " + selectedImage);
                 if (Number(imageInfo.ModelFolderId) !== Number(folderId)) {
-                    $('#ctxModelName').html("n: " + imageInfo.ModelFolderName);
+                    $('#ctxModelName').html(imageInfo.ModelFolderName);
                     modelFolderId = imageInfo.ModelFolderId;
                     $('#ctxSeeMore').show();
-                    //alert("ModelFolderId: " + imageInfo.ModelFolderId + " !== folderId: " + folderId);
                 }
                 else {
                     //alert("folderType: " + imageInfo.FolderType);
@@ -52,8 +52,8 @@ function getImageDetails() {
                         $('#ctxModelName').html("s: " + imageInfo.FolderName);
                     }
                     if (imageInfo.FolderType.indexOf("assorterd") > -1) {
-                        $('#ctxModelName').html("f2: " + imageInfo.FolderType);
-                        //$('#ctxModelName').html("unknown model");
+                        //$('#ctxModelName').html("f2: " + imageInfo.FolderName);
+                        $('#ctxModelName').html("unknown model");
                     }
                 }
                 $('#imageInfoLinkId').html(imageInfo.LinkId);
@@ -174,6 +174,53 @@ function imageCtxMenuAction(action) {
             });
     }    
 }
+
+function setFolderImage(linkId, folderId, level) {
+    //if (document.domain === 'localhost') alert("setFolderImage. \nlinkId: " + linkId + "\nfolderId=" + folderId + "\nlevel=" + level);
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "/api/GalleryPage/UpdateFolderImage?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level,
+        success: function (success) {
+            if (success === "ok") {
+
+                displayStatusMessage("ok", level + " image set");
+                $("#imageContextMenu").fadeOut();
+
+            }
+            else {
+                if (document.domain === "localhost")
+                    alert("setFolderImage AJX: " + success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "AJX",
+                        Severity: 1,
+                        ErrorMessage: success,
+                        CalledFrom: "common.js setFolderImage"
+                    });
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404("setFolderImage")) {
+                if (document.domain === "localhost")
+                    alert("setFolderImage: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "common.js setFolderImage"
+                    });
+                //sendEmailToYourself("xhr error in common.js setFolderImage", "/api/ImageCategoryDetail/?linkId=" + linkId +
+                //    "&folderId=" + folderId + "&level=" + level + " Message: " + errorMessage);
+            }
+        }
+    });
+}
+
+
 
 function removeImage() {
     //alert("folderId: " + folderId);

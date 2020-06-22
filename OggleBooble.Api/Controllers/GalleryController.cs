@@ -63,22 +63,7 @@ namespace OggleBooble.Api.Controllers
                     }
 
                     // IMAGES
-                    var vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
-                    foreach (MySqlDataContext.VwLink imgLink in vwLinks)
-                    {
-                        VwLinkModel vwLinkModel = new VwLinkModel()
-                        {
-                            FolderId = imgLink.FolderId,
-                            LinkId = imgLink.LinkId,
-                            FileName = imgLink.FileName,
-                            Islink = imgLink.Islink,
-                            Orientation = imgLink.Orientation,
-                            SortOrder = imgLink.SortOrder
-                        };
-                        imagesModel.Files.Add(vwLinkModel);
-                    }
-
-
+                    imagesModel.Files = db.VwLinks.Where(v => v.Id == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
                 }
                 imagesModel.Success = "ok";
             }

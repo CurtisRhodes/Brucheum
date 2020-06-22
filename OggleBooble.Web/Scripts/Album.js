@@ -9,17 +9,15 @@ var albumFolderId;
 var deepChildCount = 0;
 let settingsImgRepo = settingsArray.ImageRepo;
 
-
-
-function GetAllAlbumPageInfo(folderId) {
+function loadAlbum(folderId) {
     try {
         settingsImgRepo = settingsArray.ImageRepo;
         var aapiVisitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(aapiVisitorId)) {
             if (document.domain === 'localhost')
-                alert("visitorId undefined, CalledFrom: GetAllAlbumPageInfo");
+                alert("visitorId undefined, CalledFrom: loadAlbum");
             else
-                logError({ VisitorId: aapiVisitorId, ActivityCode: "XXX", Severity: 1, ErrorMessage: "visitorId undefined, CalledFrom: GetAllAlbumPageInfo" });
+                logError({ VisitorId: aapiVisitorId, ActivityCode: "XXX", Severity: 1, ErrorMessage: "visitorId undefined, CalledFrom: loadAlbum" });
         }
         else {
             $('.footer').hide();
@@ -48,7 +46,7 @@ function GetAllAlbumPageInfo(folderId) {
                                 ActivityCode: "BUG",
                                 Severity: 1,
                                 ErrorMessage: imageLinksModel.Success,
-                                CalledFrom: "GetAllAlbumPageInfo"
+                                CalledFrom: "loadAlbum"
                             });
                         //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
                     }
@@ -65,7 +63,7 @@ function GetAllAlbumPageInfo(folderId) {
                                 ActivityCode: "XHR",
                                 Severity: 1,
                                 ErrorMessage: errorMessage,
-                                CalledFrom: "GetAllAlbumPageInfo"
+                                CalledFrom: "loadAlbum"
                             });
                     }
                 }
@@ -125,7 +123,7 @@ function GetAllAlbumPageInfo(folderId) {
                                 ActivityCode: "BUG",
                                 Severity: 1,
                                 ErrorMessage: imageLinksModel.Success,
-                                CalledFrom: "GetAllAlbumPageInfo"
+                                CalledFrom: "loadAlbum"
                             });
                         //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
                     }
@@ -133,7 +131,7 @@ function GetAllAlbumPageInfo(folderId) {
                 error: function (jqXHR) {
                     $('#imagePageLoadingGif').hide();
                     var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "getAlbumImages")) {
+                    if (!checkFor404( "getAlbumImages")) {
                         if (document.domain === 'localhost')
                             alert("XHR fail in Album.js: getAlbumImages\n" + errorMessage);
                         else
@@ -142,7 +140,7 @@ function GetAllAlbumPageInfo(folderId) {
                                 ActivityCode: "XHR",
                                 Severity: 1,
                                 ErrorMessage: errorMessage,
-                                CalledFrom: "GetAllAlbumPageInfo"
+                                CalledFrom: "loadAlbum"
                             });
                     }
                 }
@@ -159,79 +157,79 @@ function GetAllAlbumPageInfo(folderId) {
                 ActivityCode: "CAT",
                 Severity: 1,
                 ErrorMessage: e,
-                CalledFrom: "GetAllAlbumPageInfo"
+                CalledFrom: "loadAlbum"
             });
         //sendEmailToYourself("Catch in Album.js getAlbumImages", e);
         //alert("GetLinkFolders CATCH: " + e);
     }
 }
 
-function setBadges(badgesText) {
-    if (!isNullorUndefined(badgesText)) {
-        if (badgesText.indexOf("Playmate Of The Year") > -1) {
-            $('#badgesContainer').append("<a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>");
-        }
-        if (badgesText.indexOf("biggest breasted centerfolds") > -1) {
-            $('#badgesContainer').append("<a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>");
-        }
-        if (badgesText.indexOf("black centerfolds") > -1) {
-            $('#badgesContainer').append("<div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>");
-        }
-        if (badgesText.indexOf("Hef likes twins") > -1) {
-            $('#badgesContainer').append("<a href='/album.html?folder=3904'><img src='/Images/gemini03.png' title='Hef likes twins' class='badgeImage'></a>");
-        }
-    }
-}
-
-function processImages(imageLinksModel) {
+function processImages(imagesModel) {
     var imageFrameClass = "folderImageOutterFrame";
     var subDirLabel = "subDirLabel";
     var imageEditor = isInRole("Image Editor");
     $('#imageContainer').html('');
 
-    if (imageLinksModel.RootFolder === "porn" || imageLinksModel.RootFolder === "sluts") {
+    if (imagesModel.RootFolder === "porn" || imagesModel.RootFolder === "sluts") {
         imageFrameClass = "pornFolderImageOutterFrame";
         subDirLabel = "pornSubDirLabel";
     }
     // IMAGES
-    $.each(imageLinksModel.Files, function (idx, imageModelFile) {
-        imageFrameClass = "imageFrame";
-        if (imageEditor) {
-            if (imageLinksModel.RootFolder === "archive") {
-                if (imageModelFile.LinkCount > 1) {
-                    imageFrameClass = "multiLinkImageFrame";
-                }
-            }
-            else {
-                if (imageModelFile.LinkCount > 1) {
-                    imageFrameClass = "nonLocalImageFrame";
-                }
-            }// imageModelFile
-        }  // startSlideShow(folderId, linkId)
-        let imgSrc = settingsImgRepo + "/" + imageModelFile.FileName;
-        $('#imageContainer').append(
-            "<div id='" + imageModelFile.LinkId + "' class='" + imageFrameClass + "'>" +
-            "<img class='thumbImage' onerror='albumImgError(" + imgSrc + ")' alt='" + imgSrc + "' " +
-            " oncontextmenu='imageCtx(\"" + imgSrc + "\",\"" + imageModelFile.LinkId + "\")' onclick='startSlideShow(" + imageModelFile.FolderId +
-            ",\"" + imageModelFile.LinkId + "\")'" + " src='" + imgSrc + "'/></div>");
-    });
 
-    if (imageLinksModel.SubDirs.length > 1) {
+    //string LinkId { get; set; }
+    //int Id { get; set; }
+    //int SrcId { get; set; }
+    //string FileName { get; set; }
+    //string SrcFolder { get; set; }
+    //string Orientation { get; set; }
+    //bool Islink { get; set; }
+    //int SortOrder { get; set; }
+    if (imageEditor) {
+        if (imagesModel.RootFolder === "archive") {
+            if (imagesModel.LinkCount > 1) {
+                imageFrameClass = "multiLinkImageFrame";
+            }
+        }
+        else {
+            if (imagesModel.LinkCount > 1) {
+                imageFrameClass = "nonLocalImageFrame";
+            }
+        }// imageModelFile
+    }  // startSlideShow(folderId, linkId)
+
+    if (imagesModel.SubDirs.length > 1) {
         var totalChildImages = 0;
         $('#deepSlideshow').show();
-        $.each(imageLinksModel.SubDirs, function (idx, obj) {
+        $.each(imagesModel.SubDirs, function (idx, obj) {
             totalChildImages += obj.FileCount;
         });
-        $('#fileCount').html(imageLinksModel.SubDirs.length + "/" + totalChildImages.toLocaleString());
+        $('#fileCount').html(imagesModel.SubDirs.length + "/" + totalChildImages.toLocaleString());
     }
     else {
-        $('#fileCount').html(imageLinksModel.Files.length);
+        $('#fileCount').html(imagesModel.Files.length);
     }
-    if (imageLinksModel.Files.length > 0 && imageLinksModel.SubDirs.length > 0)
-        $('#fileCount').html(imageLinksModel.Files.length + "  (" + imageLinksModel.SubDirs.length + ")");
+    if (imagesModel.Files.length > 0 && imagesModel.SubDirs.length > 0)
+        $('#fileCount').html(imagesModel.Files.length + "  (" + imagesModel.SubDirs.length + ")");
 
-    //  SUBFOLDERS
-    $.each(imageLinksModel.SubDirs, function (idx, subDir) {
+    // FILES
+    $.each(imagesModel.Files, function (idx, imageModelFile) {
+        imageFrameClass = "imageFrame";
+        let imgSrc = settingsImgRepo + "/" + imageModelFile.FileName;
+
+        let appendKluge = "<div id='" + imageModelFile.LinkId + "' class='" + imageFrameClass + "'>" +
+            // "<img class='thumbImage' onerror='albumImgError(" + imgSrc + ")' alt='" + imgSrc + "' " +
+            "<img class='thumbImage' alt='" + imgSrc + "' " +
+            " oncontextmenu='imageCtx(\"" + imgSrc + "\",\"" + imageModelFile.LinkId + "\")'" +
+            " onclick='startSlideShow(" + imageModelFile.Id + ",\"" + imageModelFile.LinkId + "\")'" + " src='" + imgSrc + "'/>";
+        if (imageModelFile.Id !== imageModelFile.SrcId)
+            appendKluge += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +
+                imageModelFile.SrcFolder + "' onclick='rtpe(\"SEE\",\"abc\",\"detail" + imageModelFile.SrcId + "\")' /></div>";
+        appendKluge += "</div>";
+        $('#imageContainer').append(appendKluge);
+    });
+
+    //  SUBFOLDERS 
+    $.each(imagesModel.SubDirs, function (idx, subDir) {
 
         imgSrc = settingsImgRepo + subDir.FolderImage;
         var kludge = "<div id='" + subDir.LinkId + "' class='" + imageFrameClass +
@@ -263,7 +261,7 @@ function processImages(imageLinksModel) {
     $('#imagePageLoadingGif').hide();
     $('#imageContainer').show();
     resizeImageContainer();
-    //$('#footerMessage').html(": " + imageLinksModel.Files.length);
+    //$('#footerMessage').html(": " + imagesModel.Files.length);
 }
 
 function setBreadCrumbs(breadCrumbModel) {
@@ -291,6 +289,23 @@ function setBreadCrumbs(breadCrumbModel) {
                     "href='javascript:rtpe(\"BCC\"," + albumFolderId + ",44," + breadCrumbModel[i].FolderId + ")'>" +
                     breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
             }
+        }
+    }
+}
+
+function setBadges(badgesText) {
+    if (!isNullorUndefined(badgesText)) {
+        if (badgesText.indexOf("Playmate Of The Year") > -1) {
+            $('#badgesContainer').append("<a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>");
+        }
+        if (badgesText.indexOf("biggest breasted centerfolds") > -1) {
+            $('#badgesContainer').append("<a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>");
+        }
+        if (badgesText.indexOf("black centerfolds") > -1) {
+            $('#badgesContainer').append("<div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>");
+        }
+        if (badgesText.indexOf("Hef likes twins") > -1) {
+            $('#badgesContainer').append("<a href='/album.html?folder=3904'><img src='/Images/gemini03.png' title='Hef likes twins' class='badgeImage'></a>");
         }
     }
 }

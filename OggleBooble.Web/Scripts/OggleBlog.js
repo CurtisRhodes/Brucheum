@@ -54,14 +54,15 @@ function loadBlogDropDowns() {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404()) {
                 //sendEmailToYourself("XHR ERROR IN getRefValues", "api/Ref/Get?refType=" + refType + "<br/>" + errorMessage);
-                if (document.domain === 'localhost') alert("XHR error in loadBlogDropDowns\n" + errorMessage);
+                if (document.domain === 'localhost')
+                    alert("XHR error in loadBlogDropDowns\n" + errorMessage);
                 else
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "XHR",
                         Severity: 1,
                         ErrorMessage: errorMessage,
-                        CalledFrom: "GetAllAlbumPageInfo"
+                        CalledFrom: "loadBlogDropDowns"
                     });
             }
         }

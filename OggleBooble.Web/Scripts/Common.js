@@ -151,16 +151,6 @@ function letemPorn(response, pornType, pageId) {
     }
 }
 
-function changeFavoriteIcon(icon) {
-    if (icon === "porn") {
-        var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-        link.type = 'image/x-icon';
-        link.rel = 'shortcut icon';
-        link.href = 'https://ogglebooble.com/images/cslips03.png';
-        document.getElementsByTagName('head')[0].appendChild(link);
-    }
-}
-
 function displayStatusMessage(msgCode, message) {
 
     var severityClassName;
@@ -325,17 +315,24 @@ function logDataActivity(changeLogModel) {
         url: settingsArray.ApiServer + "api/Common/LogDataActivity",
         data: changeLogModel,
         success: function (success) {
-            if (success === "ok")
+            if (success === "ok") {
                 displayStatusMessage("ok", "activity" + changeLogModel.Activity + " logged");
+                if (typeof resume === 'function')
+                    resume();
+
+                doneLoggingDataActivity();
+            }
             else {
-                //alert("ChangeLog: " + success);
-                logError({
-                    VisitorId: getCookieValue("VisiorId"),
-                    ActivityCode: "OMG",
-                    Severity: 1,
-                    ErrorMessage: success,
-                    CalledFrom: "logActivity"
-                });
+                if (document.domain === "localhost")
+                    alert("logDataActivity: " + success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "OMG",
+                        Severity: 1,
+                        ErrorMessage: success,
+                        CalledFrom: "logActivity"
+                    });
                 //sendEmailToYourself("error in common/logActivity", success);
             }
         },
@@ -367,50 +364,17 @@ function containsRomanNumerals(strLabel) {
     return doesContain;
 }
 
-// COMMON CONTEXTMENU FUNCTIONS
-
-function openLink(folderId) {
-    window.open("/album.html?folder=" + folderId, "_blank");
-}
-
-function setFolderImage(linkId, folderId, level) {
-    //if (document.domain === 'localhost') alert("setFolderImage. \nlinkId: " + linkId + "\nfolderId=" + folderId + "\nlevel=" + level);
-    $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "/api/GalleryPage/UpdateFolderImage?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level,
-        success: function (success) {
-            if (success === "ok") {
-                displayStatusMessage("ok", level + " image set");
-                $('#thumbImageContextMenu').fadeOut();
-            }
-            else {
-                if (document.domain === "localhost")
-                    alert("setFolderImage AJX: " + success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "AJX",
-                        Severity: 1,
-                        ErrorMessage: success,
-                        CalledFrom: "common.js setFolderImage"
-                    });
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "setFolderImage")) {
-                logError({
-                    VisitorId: getCookieValue("VisiorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "common.js setFolderImage"
-                });
-                //sendEmailToYourself("xhr error in common.js setFolderImage", "/api/ImageCategoryDetail/?linkId=" + linkId +
-                //    "&folderId=" + folderId + "&level=" + level + " Message: " + errorMessage);
-            }
-        }
-    });
+function changeFavoriteIcon(icon) {
+    var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+    link.type = 'image/x-icon';
+    link.rel = 'shortcut icon';
+    switch (icon) {
+        case "porn": link.href = 'https://ogglebooble.com/images/cslips03.png'; break;
+        case "loading": link.href = 'https://ogglebooble.com/images/loader.gif'; break;
+        case "redBallon": link.href = 'Images/favicon.png'; break;
+        default: link.href = 'Images/favicon.png';
+    }
+    document.getElementsByTagName('head')[0].appendChild(link);
 }
 
 // GET BUILD INFO
@@ -550,7 +514,6 @@ function requestPrivilege(privilege) {
     //alert("requestPrivilege: " + privilege);
 }
 
-
 function dragElement(elmnt) {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     if (document.getElementById(elmnt.id + "header")) {
@@ -604,149 +567,3 @@ function showMyAlert(message) {
     alert(message);
 }
 
-// MOVE TO 
-function getVisitorInfo() {
-    var info = {
-
-        timeOpened: new Date(),
-        timezone: (new Date()).getTimezoneOffset() / 60,
-
-        pageon() { return window.location.pathname },
-        referrer() { return document.referrer },
-        previousSites() { return history.length },
-
-        browserName() { return navigator.appName },
-        browserEngine() { return navigator.product },
-        browserVersion1a() { return navigator.appVersion },
-        browserVersion1b() { return navigator.userAgent },
-        browserLanguage() { return navigator.language },
-        browserOnline() { return navigator.onLine },
-        browserPlatform() { return navigator.platform },
-        javaEnabled() { return navigator.javaEnabled() },
-        dataCookiesEnabled() { return navigator.cookieEnabled },
-        dataCookies1() { return document.cookie },
-        dataCookies2() { return decodeURIComponent(document.cookie.split(";")) },
-        dataStorage() { return localStorage },
-
-        sizeScreenW() { return screen.width },
-        sizeScreenH() { return screen.height },
-        sizeDocW() { return document.width },
-        sizeDocH() { return document.height },
-        sizeInW() { return innerWidth },
-        sizeInH() { return innerHeight },
-        sizeAvailW() { return screen.availWidth },
-        sizeAvailH() { return screen.availHeight },
-        scrColorDepth() { return screen.colorDepth },
-        scrPixelDepth() { return screen.pixelDepth },
-
-        latitude() { return position.coords.latitude },
-        longitude() { return position.coords.longitude },
-        accuracy() { return position.coords.accuracy },
-        altitude() { return position.coords.altitude },
-        altitudeAccuracy() { return position.coords.altitudeAccuracy },
-        heading() { return position.coords.heading },
-        speed() { return position.coords.speed },
-        timestamp() { return position.timestamp },
-    };
-    return info;
-}
-
-var connectionVerified = false;
-var canIgetaConnectionMessageShowing = false;
-var verifyConnectionCount = 0;
-var verifyConnectionCountLimit = 17;
-var inCheckFor404Loop = false;
-var checkFor404Loop;
-function checkFor404(calledFrom) {    
-    //sendEmailToYourself("checkFor404 called with null errorMessage from: " + calledFrom, "ip: " + ipAddr);
-    connectionVerified = false;
-    verifyConnection();
-    setTimeout(function () {
-        if (!connectionVerified) {
-            verifyConnection();
-            console.log("calling verifyConnection");
-        }
-    }, 800);
-
-    if (!connectionVerified) {
-        if (!inCheckFor404Loop) {
-            checkFor404Loop = setInterval(function () {
-                if (!connectionVerified) {
-                    if (++verifyConnectionCount === 3) {
-                        $('.launchingServiceContainer').css("top", window.innerHeight / 2 - 100);
-                        $('#customMessage').html(
-                            "<div id='launchingServiceGif' class='launchingServiceContainer'>\n" +
-                            "   <img src='Images/altair04.gif' height='200' />\n" +
-                            "</div>\n").show();
-                    }
-                    if (verifyConnectionCount > verifyConnectionCountLimit) {
-                        if (!canIgetaConnectionMessageShowing) {
-                            $('#customMessage').html(
-                                "<div><div class='connectionMessage'><img src='/Images/canIgetaConnection.gif' height='200' ></div>\n" +
-                                "     <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
-                                "</div>").show();
-
-                            console.log("canIgetaConnection message showing");
-                            var visitorId = getCookieValue("VisiorId");
-                            if (isNullorUndefined(visitorId))
-                                visitorId = "--";
-                            canIgetaConnectionMessageShowing = true;
-
-                            if (document.domain !== "localhost")
-                                logError({
-                                    VisitorId: visitorId,
-                                    ActivityCode: "404",
-                                    Severity: 1,
-                                    ErrorMessage: "SERVICE DOWN",
-                                    CalledFrom: "checkFor404Loop - "// + calledFrom
-                                });
-                        }
-                    }
-                    verifyConnection();
-                }
-            }, 1600);
-            inCheckFor404Loop = true;
-        }
-    }
-    return !connectionVerified;
-}
-
-function verifyConnection() {
-    if (isNullorUndefined(settingsArray.ApiServer)) {
-        console.error("verifyConnection settingsArray.ApiServer not defined");
-        connectionVerified = false;
-        return;
-    }
-    else {
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Common/VerifyConnection",
-            success: function (successModel) {
-                if (successModel.Success === "ok") {
-                    if (successModel.ConnectionVerified) {
-                        clearInterval(checkFor404Loop);
-                        inCheckFor404Loop = false;
-                        connectionVerified = true;
-                        verifyConnectionCount = 0;
-                        console.log("verifyConnection: connection verified");
-                        $('#customMessage').hide();
-                        canIgetaConnectionMessageShowing = false;
-                    }
-                    else {
-                        //if (document.domain === "local host") alert("verifyConnection: " + successModel.Success)
-                        connectionVerified = false;
-                    }
-                }
-                else {
-                    if (document.domain === "local host") alert("verifyConnection JQA: " + successModel.Success)
-                    connectionVerified = false;
-                }
-            },
-            error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (document.domain === "local host") alert("verifyConnection XHR: " + errorMessage)
-                connectionVerified = false;
-            }
-        });
-    }
-}

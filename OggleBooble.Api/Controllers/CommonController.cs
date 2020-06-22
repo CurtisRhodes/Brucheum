@@ -329,7 +329,7 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMSSqlContext())
                 {
                     var dataAction = new ChangeLog();
-                    dataAction.PkId = Guid.NewGuid().ToString();
+                    //dataAction.PkId = Guid.NewGuid().ToString();
                     dataAction.PageId = 1144;
                     dataAction.PageName = changeLog.PageName;
                     dataAction.Activity = changeLog.Activity;

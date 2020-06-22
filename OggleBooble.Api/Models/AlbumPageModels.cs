@@ -18,10 +18,10 @@ namespace OggleBooble.Api.Models
     {
         public AlbumImagesModel()
         {
-            Files = new List<VwLinkModel>();
+            Files = new List<VwLink>();
             SubDirs = new List<CategoryTreeModel>();
         }
-        public List<VwLinkModel> Files { get; set; }
+        public List<VwLink> Files { get; set; }
         public List<CategoryTreeModel> SubDirs { get; set; }
         public string Success { get; set; }
     }
@@ -68,7 +68,7 @@ namespace OggleBooble.Api.Models
         public List<CategoryTreeModel> SubDirs { get; set; }
     }
 
-    public class VwLinkModel
+    public class xxVwLinkModel
     {
         public string LinkId { get; set; }
         public int FolderId { get; set; }

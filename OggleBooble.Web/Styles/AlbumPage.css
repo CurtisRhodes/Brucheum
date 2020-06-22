@@ -5,19 +5,25 @@
     padding: 2px;
     overflow: auto;
 }
-
-.flexboxMiddleSection {
-    float: left;
-    width: 100%;
-    text-align: center;
-}
-
-.sectionLabel {
-    font-size: larger;
-    color: var(--oggleTitleColor);
+.albumPageMetaTitle {
     white-space: nowrap;
+    color: var(--oggleTitleColor);
 }
+.knownModelIndicator {
+    display: inline-block;
+    position: relative;
+    bottom: -85px;
+    right: 25px;
+}
+    .knownModelIndicator img {
+        height: 20px;
+    }
 
+    .flexboxMiddleSection {
+        float: left;
+        width: 100%;
+        text-align: center;
+    }
 
 .folderCommentButton {
     position: relative;
@@ -49,7 +55,7 @@
 
 .imageFrame {
     margin: 4.5px;
-    border: solid .05px #676b8a;
+    /*border: solid .05px #676b8a;*/
 }
 
 .adminLink {

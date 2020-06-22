@@ -18,6 +18,7 @@
     <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/HitCounter.js"></script>
     <script src="Scripts/EventControl.js"></script>
+    <script src="Scripts/VerifyConnection.js"></script>
     <script src="Scripts/Cookies.js"></script>
     <script src="Scripts/Login.js"></script>
 
@@ -34,6 +35,7 @@
     <script src="Scripts/Reports.js"></script>
 
     <script src="Scripts/FolderInfoDialog.js"></script>
+    <script src="Scripts/ImageCommentDialog.js"></script>
     <script src="Scripts/Carousel.js"></script>
 
     <link href="Styles/Common.css" rel="stylesheet" />
@@ -73,12 +75,12 @@
             <div id="dots"></div>
             <div class="indexPageSection" id="topIndexPageSection">
                 <div class="flexContainer">
-                    <div class="floatingContainerElement sectionLabel">random galleries</div>
+                    <div class="sectionLabel">random galleries</div>
                     <div id="carouselContainer"></div>
                 </div>
             </div>
+            <div class="clickable sectionLabel" onclick="showHideGalleries()">latest updates</div>
             <div class="indexPageSection" id="bottomSection">
-                <div class="clickable sectionLabel" onclick="showHideGalleries()">latest updates</div>
                 <div id="updatedGalleriesSection" class="updatedGalleriesSection"></div>
             </div>
             <div id="showMoreGalleriesDiv" class="clickable sectionLabel" onclick="showMoreGalleries()">show more updated galleries</div>
@@ -101,18 +103,16 @@
             //$('#footerMessage').html("loading settings");
             document.title = "welcome : OggleBooble";
             loadOggleSettings();
-
-            $('.sectionLabel').hide();
             params = getParams();
             subdomain = params.subdomain;
             if (params.subdomain === undefined)
                 subdomain = "boobs";
-            if (subdomain == "porn")
-                homePageId = 3909;
-            if (subdomain == "blog")
-                homePageId = 3911;
-            if (subdomain == "dashboard")
-                homePageId = 3911;
+            //if (subdomain == "porn")
+            //    homePageId = 3909;
+            //if (subdomain == "blog")
+            //    homePageId = 3911;
+            //if (subdomain == "dashboard")
+            //    homePageId = 3911;
             setOggleHeader(homePageId, "loading");
 
 
@@ -144,8 +144,8 @@
                         if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
                             $('#dots').html('');
-                            setOggleHeader(homePageId, "Index");
-
+                            document.title = "welcome : OggleBooble";
+                            changeFavoriteIcon("redBallon");
                             if (subdomain == "blog") {
                                 $('.threeColumnLayout').html(blogBodyHtml());
                                 blogStartup();
@@ -155,18 +155,18 @@
                                 dashboardStartup();
                             }
                             if (subdomain == "porn") {
-                                $('#pornLeftColumnList').show();
-                                $('#includeCenterfoldsCheckbox').hide();
+                                document.title = "OgglePorn";
+                                setOggleHeader(homePageId, subdomain);
+                                setOggleFooter(homePageId, subdomain);
                             }
                             if (subdomain == "boobs") {
-                                $('#boobsLeftColumnList').show();
+                                document.title = "welcome : OggleBooble";
+                                setOggleHeader(homePageId, "Index");
+                                setOggleFooter(homePageId, "Index");
                                 //launchPromoMessages();
                                 launchCarousel();
                                 loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
-                                $('.indexPageSection').show();
                             }
-                            setOggleFooter(homePageId, subdomain);
-
                             var visitorId = getCookieValue("VisitorId");
                             if (isNullorUndefined(visitorId)) {
                                 getIpInfo(homePageId);
@@ -176,7 +176,6 @@
                                 setLoginHeaderSection(visitorId);
                                 logPageHit(homePageId);
                             }
-                            $('#indexPageCatTreeContainer').dialog('option', 'title', subdomain);
                         }
                         else {
                             dots += ". ";
@@ -185,7 +184,6 @@
                     }, 600);
                 }
             }, 300);
-
             window.addEventListener("resize", resizeIndexPage);
             resizeIndexPage();
         });

@@ -38,27 +38,29 @@ function showFolderInfoDialog(folderId, calledFrom) {
 
         // CMX	Show Model Info Dialog
         //reportEvent("CMX", "called From", "detail", folderId);
-        reportEvent("SMD", calledFrom, "Viewer showing: " + viewerShowing, albumFolderId);
+        reportEvent("SMD", calledFrom, "detail", folderId);
 
     }
     catch (e) {
         $('#imagePageLoadingGif').hide();
-        logError({
-            VisitorId: getCookieValue("VisitorId"),
-            ActivityCode: "ERR",
-            Severity: 12,
-            ErrorMessage: "showFolderInfoDialog catch: " + e,
-            CalledFrom: "showCategoryDialog"
-        });
+        if (document.domain === 'localhost')
+            alert("showFolderInfoDialog catch: " + e);
+        else
+            logError({
+                VisitorId: getCookieValue("VisitorId"),
+                ActivityCode: "CAT",
+                Severity: 12,
+                ErrorMessage: "showFolderInfoDialog catch: " + e,
+                CalledFrom: "showFolderInfoDialog"
+            });
         //sendEmailToYourself("javascript catch in FolderInfoDialog.js showCategoryDialog", "get NudeModelInfo catch: " + e);
-        if (document.domain === 'localhost') alert("FolderCategoryDialog catch: " + e);
     }
 }
 
 function getFolderDetails(folderId) {
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Folder/GetFolderInfo?folderId=" + folderId,
+        url: settingsArray.ApiServer + "api/CatFolder/GetFolderInfo?folderId=" + folderId,
         success: function (folderDetails) {
             $('#imagePageLoadingGif').hide();
             if (folderDetails.Success === "ok") {
@@ -93,34 +95,38 @@ function getFolderDetails(folderId) {
                     case "assorterdImagesCollection":
                     case "assorterdImagesGallery":
                         $('#modelInfoDetails').hide();
-                        break;                    
+                        break;
                 }
             }
             else {
                 $('#imagePageLoadingGif').hide();
                 showMyAlert("unable to show folder info");
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "JQE",
-                    Severity: 2,
-                    ErrorMessage: folderDetails.Success,
-                    CalledFrom: "showCategoryDialog"
-                });
-                if (document.domain === 'localhost') alert("showCategoryDialog: " + folderDetails.Success);
+                if (document.domain === 'localhost')
+                    alert("getFolderDetails: " + folderDetails.Success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "JQE",
+                        Severity: 2,
+                        ErrorMessage: folderDetails.Success,
+                        CalledFrom: "getFolderDetails"
+                    });
             }
         },
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (document.domain === 'localhost') alert("showCategoryDialog: " + errorMessage);
             if (!checkFor404(errorMessage, "showCategoryDialog")) {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 2,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "showCategoryDialog"
-                });
+                if (document.domain === 'localhost')
+                    alert("getFolderDetails: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 2,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "getFolderDetails"
+                    });
             }
         }
     });
@@ -186,27 +192,32 @@ function saveFolderDialog() {
             }
             else {
                 //sendEmailToYourself("jquery fail in FolderCategory.js saveCategoryDialogText", success);
-                if (document.domain === 'localhost') alert("EditFolderCategory: " + success);
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "JQE",
-                    Severity: 2,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "saveFolderDialog"
-                });
+                if (document.domain === 'localhost')
+                    alert("saveFolderDialog: " + success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "JQE",
+                        Severity: 2,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "saveFolderDialog"
+                    });
             }
         },
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "saveCategoryDialogText")) {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 2,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "saveFolderDialog"
-                });
+                if (document.domain === 'localhost')
+                    alert("saveFolderDialog: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 2,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "saveFolderDialog"
+                    });
                 //sendEmailToYourself("XHR ERROR in FolderCategory.js saveCategoryDialogText",
                 //    "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" +
                 //    $('#catDlgSummerNoteTextArea').summernote('code') + " Message: " + errorMessage);

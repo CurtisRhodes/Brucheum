@@ -26,6 +26,8 @@
     display: flex;
 }
 .bottomLeftHeaderArea {
+    padding-right: 8px;
+    padding-top: 11px;
     float: left;
 }
 .badgesSection {
@@ -39,7 +41,7 @@
 }
 
 .badgeImage {
-    height: 31px;it
+    height: 31px;
     margin-left: 9px;
     float: left;
 }
@@ -194,7 +196,7 @@
     text-decoration: underline;
 }
 
-.OggleSearchBox {
+.oggleSearchBox {
     position: absolute;
     right: 10px;
     margin-top: 8px;
@@ -202,7 +204,7 @@
     height: 50px;
 }
 
-.OggleSearchBoxText {
+.oggleSearchBoxText {
     border-radius: 10px;    
 }
 
