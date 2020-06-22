@@ -10,7 +10,7 @@ function dashboardHtml() {
         "       <div id='workAreaContainer' class='workAreaContainer'></div>\n" +
         "   </div>\n" +
         "   <div id='dashboardRightColumn' class='dashboardContainerColumn'></div>\n" +
-        "   <div id='dataifyInfo' class='infoLine' onclick='$(' #dataifyInfo').hide();'></div>\n" +
+        "   <div id='dataifyInfo' class='infoLine' onclick='$(\"#dataifyInfo\").hide()'></div>\n" +
         "</div >\n";
 }
 
@@ -23,13 +23,14 @@ function dashboardStartup() {
     document.title = "Dashboard : OggleBooble";
 
     $('.dashboardContainerColumn').show(); 
-    $('#divAddImages').show();
+    // $('#divAddImages').show();
+    showAddImageLinkDialog()
     //logPageHit(3910, "dashboard");
     //defineDilogs();
     //setSignalR();
     //window.addEventListener("beforeunload", detectUnload());
     window.addEventListener("resize", resizeDashboardPage);
-    //resizeDashboardPage();
+    resizeDashboardPage();
 }
 
 function resizeDashboardPage() {
@@ -42,7 +43,9 @@ function resizeDashboardPage() {
     var bb = $('.threeColumnLayout').height();
     $('.threeColumnLayout').css("height", ($(window).innerHeight() - $('header').height()) - 550);
 
-    $('#dashboardContainer').css("height", $('.threeColumnLayout').height() - 550);
+    let adjH = $('.threeColumnLayout').height();
+    //alert("adjH: " + adjH);
+    $('#dashboardContainer').css("height", adjH);
 
     
     //alert("before: " + bb + "  after:" + $('.threeColumnLayout').height());
@@ -50,7 +53,7 @@ function resizeDashboardPage() {
 
     // WIDTH
     let middleColumnW = $('#dashboardContainer').width() - $('#dashboardRightColumn').width() - $('#dashboardLeftColumn').width();
-    $('#dashboardMiddleColumn').css("width", middleColumnW - 121);
+    $('#dashboardMiddleColumn').css("width", middleColumnW - 21);
     //$('#headerMessage').html("dashboardMiddleColumn.w: " + $('#dashboardMiddleColumn').width());
 }
 
@@ -58,14 +61,14 @@ function setLeftMenu(viewId) {
     $('#headerSubTitle').html(viewId);
     switch (viewId) {
         case "Add Images":
-            $('.workAreaContainer').hide();
+            //$('.workAreaContainer').hide();
             $('#dashboardLeftMenu').html("<div class='clickable' onclick='buildDirectoryTree()'>ReBuild Dir Tree</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showUpLoadFileDialog()'>Upload a file</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddImageLinkDialog()'>Add Image Link</div>");
+            $('#divAddImages').show();
             break;
         case "Manage Folders":
-            $('.workAreaContainer').hide();
-            $('#divAddImages').show();
+            //$('.workAreaContainer').hide();
             $('#dashboardLeftMenu').html("<div class='clickable' onclick='buildDirectoryTree()'>ReBuild Dir Tree</div>");
 
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
@@ -277,7 +280,7 @@ function createStaticPages(justOne) {
 function showAddImageLinkDialog() {
     $('#workAreaContainer').html(
         "<div id='addLinkCrudArea' class='addLinkCrudArea'>\n" +
-        "    <div>link&nbsp;&nbsp;<input id='txtNewLink' tabindex='1' class='roundedInput' onblur='previewLinkImage()' /></div>\n" +
+        "    <div>link&nbsp;&nbsp;<input id='txtImageLink' tabindex='1' class='roundedInput' onblur='previewLinkImage()' /></div>\n" +
         "    <div>path&nbsp;<input class='roundedInput txtLinkPath' readonly='readonly' /></div>\n" +
         "    <div class='roundendButton' tabindex='2' onclick='addImageLink()'>Insert</div>\n" +
         "</div>\n" +
@@ -291,12 +294,12 @@ function showAddImageLinkDialog() {
     });
 }
 function addImageLink() {
-    if (isNullorUndefined($('#txtNewLink').val()))
+    if (isNullorUndefined($('#txtImageLink').val()))
         alert("invalid link");
     else {
         $('#dataifyInfo').show().html("calling AddImageLink");
         var newLink = {};
-        newLink.Link = $('#txtNewLink').val();
+        newLink.Link = $('#txtImageLink').val();
         newLink.FolderId = dashboardMainSelectedTreeId;
         newLink.Path = dashboardMainSelectedPath;
         $('#dashBoardLoadingGif').fadeIn();
@@ -308,7 +311,7 @@ function addImageLink() {
                 $('#dashBoardLoadingGif').hide();
                 if (successModel.Success === "ok") {
                     //displayStatusMessage("ok", "image link added");
-                    $('#txtNewLink').val("");
+                    $('#txtImageLink').val("");
                     resizeDashboardPage();
 
                     if (successModel.ReturnValue !== "0") {
@@ -332,7 +335,7 @@ function addImageLink() {
     }
 }
 function previewLinkImage() {
-    $('#imgLinkPreview').attr('src', $('#txtNewLink').val());
+    $('#imgLinkPreview').attr('src', $('#txtImageLink').val());
     $('#imgLinkPreview').one("load", function () {
         //$('#footerMessage').html("image height: " + $('#imgLinkPreview').height());
         var winH = $(window).height();
@@ -387,8 +390,8 @@ function createNewFolder() {
 function showUpLoadFileDialog() {
     $('.workAreaContainer').hide();
     $('#divAddFile').show();
-
 }
+
 function showAddVideoLink() {
     $('.workAreaContainer').hide();
     $('#divAddFile').show();
@@ -880,7 +883,7 @@ function copyFolder() {
     var stepchildModel = {
         Parent: copyFolderSelectedParentId,
         Child: dashboardMainSelectedTreeId,
-        Link: $('#txtNewLink').val(),
+        Link: $('#txtImageLink').val(),
         FolderName: $('#txtNewFolderName').val(),
         SortOrder: 998
     };
@@ -1104,7 +1107,9 @@ function XXtestAddVisitor() {
 
 //var partialViewSelectedItemId = 0;
 //var dashboardContextMenuFolderId = "";
+
 function dirTreeClick(danniPath, folderId) {
+    alert("dirTreeClick. DanniPath: " + danniPath);
     dashboardMainSelectedTreeId = folderId;
     dashboardMainSelectedPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
     $('.txtLinkPath').val(dashboardMainSelectedPath);

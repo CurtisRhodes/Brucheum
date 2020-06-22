@@ -81,7 +81,7 @@ function performSearch(searchString) {
             busy = true;
             $.ajax({
                 type: "GET",
-                url: settingsArray.ApiServer + "api/Folder/GetSearchResults?searchString=" + searchString,
+                url: settingsArray.ApiServer + "api/CatFolder/GetSearchResults?searchString=" + searchString,
                 success: function (SearchResultsModel) {
                     $('#searchResultsDiv').html("<ul class='searchResultList>").show();
                     $.each(SearchResultsModel.SearchResults, function (idx, searchResult) {

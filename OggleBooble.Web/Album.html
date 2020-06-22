@@ -108,14 +108,13 @@
                         else {
                             clearInterval(waiter2);
                             $('#dots').html('');
-                            //alert("document.domain: " + document.domain);
-
                             if (isInRole("view dynamic") || document.domain === "localhost") {
                                 //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) TruE");
                                 GetAllAlbumPageInfo(params.folder);
                                 //$('#feedbackBanner').fadeIn();
                             }
                             else {
+                                alert("document.domain: " + document.domain);
                                 //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) FALSE");
                                 directToStaticPage(params.folder);
                             }

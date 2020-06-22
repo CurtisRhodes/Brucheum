@@ -18,7 +18,8 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class ImageController : ApiController
     {
-        private readonly string repoPath = "F:/Danni/";
+        private readonly string localRepoPath = "F:/Danni/";
+        private readonly string repoDomain = ConfigurationManager.AppSettings["ImageRepository"];
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
         static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
@@ -26,11 +27,11 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/Image/GetImageDetail")]
-        public ImageInfoSuccessModel GetImageDetail(int folderId, string linkId)
+        public ImageInfoModel GetImageDetail(int folderId, string linkId)
         {
             var timer = new System.Diagnostics.Stopwatch();
             timer.Start();
-            var imageInfo = new ImageInfoSuccessModel();
+            var imageInfo = new ImageInfoModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
@@ -51,7 +52,7 @@ namespace OggleBooble.Api.Controllers
                         }
                     }
 
-                    var dbImageFile = db.ImageFiles.Where(i => i.Id == linkId).FirstOrDefault();
+                    ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == linkId).FirstOrDefault();
                     if (dbImageFile == null)
                     {
                         imageInfo.Success = "no image link found";
@@ -59,20 +60,18 @@ namespace OggleBooble.Api.Controllers
                     }
                     if (dbImageFile.FolderId != folderId)
                     {
-                        var dbModelFolder = db.CategoryFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
+                        MySqlDataContext.CategoryFolder dbModelFolder = db.CategoryFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
                         imageInfo.ModelFolderName = dbModelFolder.FolderName;                    
                     }
 
-                    var albumInfo = new GetAlbumInfoSuccessModel();
-                    albumInfo.RootFolder = dbCategoryFolder.RootFolder;
                     List<string> subFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList();
-
                     var folderTypeModel = new FolderTypeModel()
                     {
                         ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName),
                         ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(subFolders),
                         HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
                         HasSubFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0,
+                        RootFolder = dbCategoryFolder.RootFolder
                     };
                     imageInfo.FolderType = Helpers.DetermineFolderType(folderTypeModel);
 
@@ -98,7 +97,9 @@ namespace OggleBooble.Api.Controllers
                 }
                 imageInfo.Success = "ok";
             }
-            catch (Exception ex) { imageInfo.Success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex) {
+                imageInfo.Success = Helpers.ErrorDetails(ex); 
+            }
             timer.Stop();
             System.Diagnostics.Debug.WriteLine("GetImageLinks took: " + timer.Elapsed);
             return imageInfo;
@@ -273,7 +274,13 @@ namespace OggleBooble.Api.Controllers
                 int fWidth = 0;
                 int fHeight = 0;
                 long fSize = 0;
-                string trimPath = "", newFileName = "";
+                string trimPath = "", newFileName = "", mySqlDestPath;
+
+                using (var mdb = new OggleBoobleMySqlContext())
+                {
+                    mySqlDestPath = repoDomain + mdb.CategoryFolders.Where(f => f.Id == newLink.FolderId).FirstOrDefault().FolderPath;
+                }
+
                 using (var db = new OggleBoobleMSSqlContext())
                 {
                     var existingLink = db.ImageLinks.Where(l => l.ExternalLink == newLink.Link).FirstOrDefault();
@@ -338,6 +345,15 @@ namespace OggleBooble.Api.Controllers
                             webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
                             webRequest.Credentials = networkCredentials;
                             var zz = webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+
+
+
+
+                            webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + mySqlDestPath);
+                            webRequest.Credentials = networkCredentials;
+                            zz = webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+
+
                         }
                         catch (Exception ex)
                         {

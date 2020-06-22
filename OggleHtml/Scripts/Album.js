@@ -50,7 +50,7 @@ function getAlbumImages(folderId) {
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "AJX",
                         Severity: 1,
-                        ErrorMessage: successModel.Success,
+                        ErrorMessage: imageLinksModel.Success,
                         CalledFrom: "Album.js getAlbumImages"
                     });
                     //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);

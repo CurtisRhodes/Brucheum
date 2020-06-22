@@ -83,7 +83,7 @@ function getFolderArray(folderId, startItem) {
                         VisitorId: ajxVisitorId,
                         ActivityCode: "AJX",
                         Severity: 1,
-                        ErrorMessage: successModel.Success,
+                        ErrorMessage: slideshowItemModel.Success,
                         CalledFrom: "Slideshow/getFolderArray"
                     });
                     //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);

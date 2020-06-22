@@ -234,10 +234,10 @@ namespace WebApi
                         whereClause = "where f.RootFolder in ('porn', 'sluts') ";
                     updatesModel.LatestUpdates = db.Database.SqlQuery<LatestUpdate>(
                         "select top " + items + " max(f.Id) FolderId, f.FolderName, max(i.LastModified) LastModified, max(i2.Link) FolderImage " +
-                        "from OggleBooble.ImageLink i " +
-                        "join OggleBooble.CategoryFolder f on i.FolderLocation = f.Id " +
-                        //"join OggleBooble.CategoryFolderDetail d on i.FolderLocation = d.FolderId " +
-                        "join OggleBooble.ImageLink i2 on f.FolderImage = i2.Id " +
+                        "from Oggle.ImageLink i " +
+                        "join Oggle.CategoryFolder f on i.FolderLocation = f.Id " +
+                        //"join Oggle.CategoryFolderDetail d on i.FolderLocation = d.FolderId " +
+                        "join Oggle.ImageLink i2 on f.FolderImage = i2.Id " +
                         whereClause +
                         "group by f.FolderName " +
                         "order by LastModified desc").ToList();
@@ -345,10 +345,10 @@ namespace WebApi
                     
                     //carouselInfo.Links = db.Database.SqlQuery<CarouselItemModel>(
                     //    "select f.RootFolder, f.Id FolderId, p.Id ParentId, g.Id LinkId, f.FolderName, p.FolderName FolderPath, g.Link " +
-                    //    "from OggleBooble.CategoryImageLink c " +
-                    //    "join OggleBooble.CategoryFolder f on c.ImageCategoryId = f.Id " +
-                    //    "join OggleBooble.CategoryFolder p on f.Parent = p.Id " +
-                    //    "join OggleBooble.ImageLink g on c.ImageLinkId = g.Id " +
+                    //    "from Oggle.CategoryImageLink c " +
+                    //    "join Oggle.CategoryFolder f on c.ImageCategoryId = f.Id " +
+                    //    "join Oggle.CategoryFolder p on f.Parent = p.Id " +
+                    //    "join Oggle.ImageLink g on c.ImageLinkId = g.Id " +
                     //    "where f.RootFolder = @param1 and g.Width > g.Height"
                     //    , new SqlParameter("param1", root)).OrderBy(m => m.LinkId).Skip(skip).Take(take).ToList();
                 }

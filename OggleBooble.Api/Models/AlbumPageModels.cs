@@ -14,20 +14,28 @@ namespace OggleBooble.Api.Models
         public bool ContainsRomanNumeral { get; set; }
         public bool ContainsRomanNumeralChildren { get; set; }
     }
-    public class GetAlbumInfoSuccessModel
+    public class AlbumImagesModel
     {
-        public GetAlbumInfoSuccessModel()
+        public AlbumImagesModel()
         {
             Files = new List<VwLinkModel>();
             SubDirs = new List<CategoryTreeModel>();
+        }
+        public List<VwLinkModel> Files { get; set; }
+        public List<CategoryTreeModel> SubDirs { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class AlbumInfoModel
+    {
+        public AlbumInfoModel()
+        {
             TrackBackItems = new List<TrackBackItem>();
             BreadCrumbs = new List<BreadCrumbItemModel>();
         }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
         public List<TrackBackItem> TrackBackItems { get; set; }
-        public List<VwLinkModel> Files { get; set; }
-        public List<CategoryTreeModel> SubDirs { get; set; }
         public List<BreadCrumbItemModel> BreadCrumbs { get; set; }
         public string ExternalLinks { get; set; }
         public int PageHits { get; set; }
@@ -66,7 +74,6 @@ namespace OggleBooble.Api.Models
         public int FolderId { get; set; }
         public string FileName { get; set; }
         public string Orientation { get; set; }
-        public string IsLink { get; set; }
         public bool Islink { get; set; }
         public int SortOrder { get; set; }
     }
@@ -91,9 +98,9 @@ namespace OggleBooble.Api.Models
         public string Success { get; set; }
     }
 
-    public class ImageInfoSuccessModel
+    public class ImageInfoModel
     {
-        public ImageInfoSuccessModel()            {
+        public ImageInfoModel()            {
             InternalLinks = new Dictionary<int, string>();
         }
         public Dictionary<int,string> InternalLinks { get; set; }

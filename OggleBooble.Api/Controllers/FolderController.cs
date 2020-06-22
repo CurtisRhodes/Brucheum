@@ -13,16 +13,13 @@ using System.Web.Http.Cors;
 namespace OggleBooble.Api.Controllers
 {
     [EnableCors("*", "*", "*")]
-    public class CategoryFolderController : ApiController
+    public class CatFolderController : ApiController
     {
         private readonly string hostingPath = ".ogglebooble.com/";
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
-        //static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
-        //static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
-        //static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
 
         [HttpGet]
-        [Route("api/Folder/GetFolderInfo")]
+        [Route("api/CatFolder/GetFolderInfo")]
         public FolderDetailModel GetFolderInfo(int folderId)
         {
             var folderDetailModel = new FolderDetailModel();
@@ -78,7 +75,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/Folder/Create")]
+        [Route("api/CatFolder/Create")]
         public SuccessModel Create(int parentId, string newFolderName)
         {
             SuccessModel successModel = new SuccessModel();
@@ -146,7 +143,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpPut]
-        [Route("api/Folder/Rename")]
+        [Route("api/CatFolder/Rename")]
         public string Rename(int folderId, string newFolderName)
         {
             string success = "";
@@ -194,7 +191,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/Folder/GetSearchResults")]
+        [Route("api/CatFolder/GetSearchResults")]
         public SearchResultsModel GetSearchResults(string searchString)
         {
             SearchResultsModel searchResultsModel = new SearchResultsModel();
@@ -231,7 +228,7 @@ namespace OggleBooble.Api.Controllers
     public class FolderDetailController : ApiController
     {
         [HttpPut]
-        [Route("api/FolderDetail/GetSearchResults")]
+        [Route("api/FolderDetail/Update")]
         public string Update(FolderDetailModel model)
         {
             string success = "";
@@ -290,40 +287,6 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
-        [HttpPut]
-        public string UpdateFolderImage(string linkId, int folderId, string level)
-        {
-            string success = "";
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    var dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                    var dbParentCategoryFolder = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
-                    if (level == "folder")
-                        dbCategoryFolder.FolderImage = linkId;
-                    else
-                        dbParentCategoryFolder.FolderImage = linkId;
-                    db.SaveChanges();
-                }
-                using (var db = new OggleBoobleMSSqlContext())
-                {
-                    var dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                    var dbParentCategoryFolder = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
-                    if (level == "folder")
-                        dbCategoryFolder.FolderImage = linkId;
-                    else
-                        dbParentCategoryFolder.FolderImage = linkId;
-                    db.SaveChanges();
-                }
-                success = "ok";
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
     }
 
     [EnableCors("*", "*", "*")]

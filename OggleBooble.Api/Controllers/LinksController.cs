@@ -30,20 +30,20 @@ namespace OggleBooble.Api.Controllers
             {
                 var timer = new System.Diagnostics.Stopwatch();
                 timer.Start();
-                IEnumerable<DirTree> vwDirTrees = new List<DirTree>();
+                IEnumerable<VwDirTree> VwDirTrees = new List<VwDirTree>();
                 //var vwDirTrees;
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     // wow did this speed things up
-                    vwDirTrees = db.DirTrees.ToList().OrderBy(v => v.Id);
+                    VwDirTrees = db.VwDirTrees.ToList().OrderBy(v => v.Id);
                 }
 
-                var vRootNode = vwDirTrees.Where(v => v.Id == root).First();
-                DirTreeModelNode rootNode = new DirTreeModelNode() { vwDirTree = vRootNode };
+                var vRootNode = VwDirTrees.Where(v => v.Id == root).First();
+                DirTreeModelNode rootNode = new DirTreeModelNode() { VwDirTree = vRootNode };
                 dirTreeModel.SubDirs.Add(rootNode);
 
                 //GetDirTreeChildNodes(dirTreeModel, rootNode, vwDirTrees);
-                GetDirTreeChildNodes(dirTreeModel, rootNode, vwDirTrees, "");
+                GetDirTreeChildNodes(dirTreeModel, rootNode, VwDirTrees, "");
                 timer.Stop();
                 dirTreeModel.TimeTook = timer.Elapsed;
                 //System.Diagnostics.Debug.WriteLine("RebuildCatTree took: " + timer.Elapsed);
@@ -55,15 +55,15 @@ namespace OggleBooble.Api.Controllers
             }
             return dirTreeModel;
         }
-        private void GetDirTreeChildNodes(DirTreeSuccessModel dirTreeModel, DirTreeModelNode parentNode, IEnumerable<DirTree> vwDirTree, string dPath)
+        private void GetDirTreeChildNodes(DirTreeSuccessModel dirTreeModel, DirTreeModelNode parentNode, IEnumerable<VwDirTree> VwDirTrees, string dPath)
         {
-            var vwDirTreeNodes = vwDirTree.Where(v => v.Parent == parentNode.vwDirTree.Id).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
-            foreach (DirTree vNode in vwDirTreeNodes)
+            var vwDirTreeNodes = VwDirTrees.Where(v => v.Parent == parentNode.VwDirTree.Id).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
+            foreach (VwDirTree vNode in vwDirTreeNodes)
             {
-                DirTreeModelNode childNode = new DirTreeModelNode() { vwDirTree = vNode, DanniPath = (dPath + "/" + vNode.FolderName).Replace(" ", "%20") };
+                DirTreeModelNode childNode = new DirTreeModelNode() { VwDirTree = vNode, DanniPath = (dPath + "/" + vNode.FolderName).Replace(" ", "%20") };
                 parentNode.SubDirs.Add(childNode);
                 if (vNode.IsStepChild == 0)
-                    GetDirTreeChildNodes(dirTreeModel, childNode, vwDirTree, (dPath + "/" + vNode.FolderName).Replace(" ", "%20"));
+                    GetDirTreeChildNodes(dirTreeModel, childNode, VwDirTrees, (dPath + "/" + vNode.FolderName).Replace(" ", "%20"));
             }
         }
 

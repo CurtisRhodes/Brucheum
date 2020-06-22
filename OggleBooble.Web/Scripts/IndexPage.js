@@ -11,26 +11,19 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
                 $('.sectionLabel').show();
                 $('#updatedGalleriesSection').html("");
                 $.each(latestUpdates.LatestTouchedGalleries, function (idx, LatestUpdate) {
+                    if (!isNullorUndefined(LatestUpdate.ImageFile)) {
+                        //if (idx === 0) alert("LatestUpdate.ImageFile: " + LatestUpdate.ImageFile);
 
-        //public int FolderId { get; set; }
-        //public string FolderName { get; set; }
-        //public string RootFolder { get; set; }
-        //public string ImageFile { get; set; }
-        //public DateTime Acquired { get; set; }
-
-                    if (idx === 0)
-                        alert("LatestUpdate.ImageFile: " + LatestUpdate.ImageFile);
-
-                    thisItemSrc = settingsImgRepo + LatestUpdate.ImageFile;
-
-
-                    //console.log(LatestUpdate.FolderName + ". src: " + src);
-                    $('#updatedGalleriesSection').append("<div class='newsContentBox'>" +
-                        "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
-                        "<img id='lt" + LatestUpdate.Id + "' class='newsContentBoxImage' onerror='latestGalleryImageError(" + LatestUpdate.Id + ")' src='" + thisItemSrc + "'" +
-                        "onclick='rtpe(\"LUP\",\"home page\",10," + LatestUpdate.FolderId + ")'/>" +
-                        "<div class='newsContentBoxDateLabel'>updated: " + dateString2(LatestUpdate.Acquired) + "</span></div>" +
-                        "</div>");
+                        thisItemSrc = settingsImgRepo + LatestUpdate.ImageFile;
+                        //console.log(LatestUpdate.FolderName + ". src: " + src);
+                        $('#updatedGalleriesSection').append("<div class='newsContentBox'>" +
+                            "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
+                            "<img id='lt" + LatestUpdate.Id + "' class='newsContentBoxImage' " +
+                            "onerror='latestGalleryImageError(" + LatestUpdate.Id + ")' src='" + thisItemSrc + "'" +
+                            "onclick='rtpe(\"LUP\",\"home page\",10," + LatestUpdate.FolderId + ")'/>" +
+                            "<div class='newsContentBoxDateLabel'>updated: " + dateString2(LatestUpdate.Acquired) + "</span></div>" +
+                            "</div>");
+                    }
                 });
                 console.log("loaded " + latestUpdates.LatestTouchedGalleries.length + " news boxes");
                 resizeIndexPage();
@@ -66,9 +59,14 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
     });
 }
 
+let oneShown = false;
 function latestGalleryImageError(folderId) {    
     //alert("latestGallery src: " + $('#lt' + folderId).attr('src'));
     $('#lt' + folderId).attr('src', "Images/redballon.png");
+    if (!oneShown) {
+        oneShown = true;
+        alert("xx: " + $('#lt' + folderId).attr('src'))
+    }
 }
 
 function launchPromoMessages() {

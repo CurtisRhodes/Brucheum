@@ -10,6 +10,7 @@ var expandDepth = 2;
 var strdirTree = "";
 
 function loadDirectoryTree(startNode, container) {
+    settingsImgRepo = settingsArray.ImageRepo;
     var start = Date.now();
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("loading directory tree");
@@ -32,9 +33,7 @@ function loadDirectoryTree(startNode, container) {
                 console.log("build dirTree html: " + htmlBuildTime.toFixed(3));
 
                 $('#dashBoardLoadingGif').hide();
-                setOggleFooter(3910, "dashboard");
-                resizeDashboardPage();
-                setTimeout(function () { $('#dataifyInfo').hide() }, 20000);
+                setTimeout(function () { $('#dataifyInfo').hide() }, 15000);
             }
             else { alert(dirTreeModel.Success); }
         },
@@ -60,10 +59,14 @@ function buildDirTreeRecurr(parentNode) {
     dirTreeTab += dirTreeTabIndent;
     let txtFileCount = "";
     let expandClass = "";
+    let folderImage = "";
     $.each(parentNode.SubDirs, function (idx, thisNode) {
-        var vwDir = thisNode.vwDirTree;
-        if (isNullorUndefined(vwDir.Link))
-            vwDir.Link = "Images/redballon.png";
+        var vwDir = thisNode.VwDirTree;
+
+        if (isNullorUndefined(vwDir.FolderImage))
+            folderImage = "Images/redballon.png";
+        else
+            folderImage = settingsImgRepo + vwDir.FolderImage;
         expandMode = "-";
         expandClass = "";
         if (dirTreeTab / dirTreeTabIndent > expandDepth) {
@@ -86,7 +89,7 @@ function buildDirTreeRecurr(parentNode) {
             + "<span id='S" + randomId + "' onclick=toggleDirTree('" + randomId + "') >[" + expandMode + "] </span>"
             + "<div id='" + randomId + "aq' class='treeLabelDiv' onclick='dirTreeClick(\"" + thisNode.DanniPath + "\",\"" + vwDir.Id + "\")' "
             + "oncontextmenu=showDirTreeContextMenu('" + vwDir.Id + "') "
-            + "onmouseover=showFolderImage('" + encodeURI(vwDir.FolderImage) + "') onmouseout=$('.dirTreeImageContainer').hide() >"
+            + "onmouseover=showFolderImage('" + encodeURI(folderImage) + "') onmouseout=$('.dirTreeImageContainer').hide() >"
             + vwDir.FolderName.replace(".OGGLEBOOBLE.COM", "") + "</div><span class='fileCount'>  : "
             + txtFileCount + "</span></div>" +
             "<div class='" + expandClass + "' id=" + randomId + ">";
@@ -96,13 +99,6 @@ function buildDirTreeRecurr(parentNode) {
         strdirTree += "</div>";
         dirTreeTab -= dirTreeTabIndent;
     });
-}
-
-
-
-function dirTreeClick(danniPath, folderId) {
-    //alert("DanniPath: " + $('.txtLinkPath').val());
-    //alert("dashboardMainSelectedTreeId: " + dashboardMainSelectedTreeId);
 }
 
 function getChildFileCounts(startNode) {

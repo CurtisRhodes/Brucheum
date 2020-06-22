@@ -17,6 +17,7 @@ namespace OggleBooble.Api.Controllers
     public class CommonController : ApiController
     {
         [HttpGet]
+        [Route("api/Common/VerifyConnection")]
         public VerifyConnectionSuccessModel VerifyConnection()
         {
             var timer = new System.Diagnostics.Stopwatch();
@@ -24,7 +25,8 @@ namespace OggleBooble.Api.Controllers
             VerifyConnectionSuccessModel successModel = new VerifyConnectionSuccessModel() { ConnectionVerified = false };
             try
             {
-                using (var db = new OggleBoobleMySqlContext())
+                //using (var db = new OggleBoobleMySqlContext())
+                using (var db = new OggleBoobleMSSqlContext())
                 {
                     var test = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
                     successModel.ConnectionVerified = true;
@@ -104,6 +106,7 @@ namespace OggleBooble.Api.Controllers
         //api/ImageHit/LogImageHit
         bool imageHitControllerBusy = false;
         [HttpPost]
+        [Route("api/Common/LogImageHit")]
         public ImageHitSuccessModel LogImageHit(LogImageHitDataModel logImageHItData)
         {
             ImageHitSuccessModel imageHitSuccess = new ImageHitSuccessModel();

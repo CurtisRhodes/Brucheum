@@ -105,7 +105,6 @@ function dateString2(dateObject) {
     return strDate;
 };
 
-
 function resizePage() {
     //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, 
     // or using “transform” along with “transform - origin: 0 0”.album.html
@@ -378,14 +377,23 @@ function setFolderImage(linkId, folderId, level) {
     //if (document.domain === 'localhost') alert("setFolderImage. \nlinkId: " + linkId + "\nfolderId=" + folderId + "\nlevel=" + level);
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "/api/ImageCategoryDetail/UpdateFolderImage?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level,
+        url: settingsArray.ApiServer + "/api/GalleryPage/UpdateFolderImage?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level,
         success: function (success) {
             if (success === "ok") {
                 displayStatusMessage("ok", level + " image set");
                 $('#thumbImageContextMenu').fadeOut();
             }
             else {
-                alert("setFolderImage: " + success);
+                if (document.domain === "localhost")
+                    alert("setFolderImage AJX: " + success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "AJX",
+                        Severity: 1,
+                        ErrorMessage: success,
+                        CalledFrom: "common.js setFolderImage"
+                    });
             }
         },
         error: function (jqXHR) {

@@ -1,7 +1,7 @@
 ﻿var blogComment = {};
 
 function showImageCommentDialog(link, linkId, folderId, folderName, calledFrom) {
-    alert("showImageCommentDialog. LinkId: " + linkId + " called From: " + calledFrom);
+    //alert("showImageCommentDialog. LinkId: " + linkId + " called From: " + calledFrom);
     $('#draggableDialogContents').html(imageCommentDialogHtml());
 
     blogComment.Id = 0;

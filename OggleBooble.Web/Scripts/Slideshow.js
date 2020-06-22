@@ -30,6 +30,7 @@ function launchViewer(folderId, startItem, showAllChildren) {
     sessionCount = 0;
     getSlideshowItems(folderId, startItem);
     slideShowButtonsActive = true;
+    settingsImgRepo = settingsArray.ImageRepo;
 
     $('#slideshowContextMenuContainer').html(slideshowContextMenuHtml());
     $('#slideShowContainer').html(slideshowHtml()).show();
@@ -69,7 +70,7 @@ function getSlideshowItems(folderId, startItem) {
                         };
                     }
 
-                    $('#imagePageLoadingGif').hide();               
+                    $('#imagePageLoadingGif').hide();
                     viewerShowing = true;
                     resizePage();
                     resizeViewer();
@@ -84,16 +85,16 @@ function getSlideshowItems(folderId, startItem) {
                 }
                 else {
                     $('#imagePageLoadingGif').hide();
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
-                        Severity: 1,
-                        ErrorMessage: successModel.Success,
-                        CalledFrom: "getSlideshowItems"
-                    });
+                    if (document.domain === "localhost") alert("getSlideshowItems: " + slideshowItemModel.Success);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "BUG",
+                            Severity: 1,
+                            ErrorMessage: slideshowItemModel.Success,
+                            CalledFrom: "getSlideshowItems"
+                        });
                     //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
-                    //if (document.domain === 'localhost') alert("jQuery fail in Album.js: getAlbumImages\n" + imageLinksModel.Success);
-
                 }
             },
             error: function (jqXHR) {
@@ -114,16 +115,16 @@ function getSlideshowItems(folderId, startItem) {
         });
     } catch (e) {
         $('#imagePageLoadingGif').hide();
-        if (document.domain === "localhost") alert("getSlideshowItems: " + e);
-        logError({
-            VisitorId: getCookieValue("VisitorId"),
-            ActivityCode: "CAT",
-            Severity: 1,
-            ErrorMessage: e,
-            CalledFrom: "Album.js getAlbumImages"
-        });
+        if (document.domain === "localhost") alert("getSlideshowItems CATCH: " + e);
+        else
+            logError({
+                VisitorId: getCookieValue("VisitorId"),
+                ActivityCode: "CAT",
+                Severity: 1,
+                ErrorMessage: e,
+                CalledFrom: "Album.js getAlbumImages"
+            });
         //sendEmailToYourself("Catch in Album.js getAlbumImages", e);
-        //alert("GetLinkFolders CATCH: " + e);
     }
 }
 
@@ -133,7 +134,8 @@ function explodeViewer() {
     windowW = $(window).width();
     windowH = $(window).height();
     $('#slideShowContainer').height(viewerH);
-    $('#viewerImage').attr("src", imageViewerArray[imageViewerIndex].Link);
+
+    $('#viewerImage').attr("src", settingsImgRepo + imageViewerArray[imageViewerIndex].FileName);
     $('#viewerImage').removeClass('redSides');
     $('#viewerButtonsRow').hide();
     exploderInterval = setInterval(function () {
@@ -262,7 +264,7 @@ function slide(direction) {
                 $('#viewerImage').css("transform", "translateX(2200px)");
             }
 
-            $('#viewerImage').attr("src", imageViewerArray[imageViewerIndex].Link);
+            $('#viewerImage').attr("src", settingsImgRepo + imageViewerArray[imageViewerIndex].FileName);
             $('#viewerImageContainer').css('left', ($(window).width() - $('#viewerImage').width()) / 2);
 
             $('#viewerImage').show();

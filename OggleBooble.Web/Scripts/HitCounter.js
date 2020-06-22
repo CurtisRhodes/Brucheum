@@ -47,7 +47,7 @@ function logImageHit(link, pageId, isInitialHit) {
         };
         $.ajax({
             type: "POST",
-            url: settingsArray.ApiServer + "api/ImageHit/LogImageHit",
+            url: settingsArray.ApiServer + "api/Common/LogImageHit",
             data: logImageHItData,
             success: function (imageHitSuccessModel) {
                 if (imageHitSuccessModel.Success === "ok") {
@@ -113,7 +113,6 @@ function logPageHit(pageId) {
             CalledFrom: "HitCounter.js logPageHit"
         });
     }
-
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&pageId=" + pageId,

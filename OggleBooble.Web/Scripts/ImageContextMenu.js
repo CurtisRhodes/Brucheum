@@ -1,13 +1,14 @@
-﻿var selectedImage, linkId, folderId, folderName, modelFolderId;
+﻿var selectedImage, imgSrc, linkId, folderId, folderName, modelFolderId;
 
-function showImageContextMenu(selectedImageLinkId, albumFolderId, currentAlbumJSfolderName) {
+function showImageContextMenu(pImgSrc, pLinkId, pFolderId, currentAlbumJSfolderName) {
     //alert("image context menu");
     event.preventDefault();
     window.event.returnValue = false;
 
     folderName = currentAlbumJSfolderName;
-    linkId = selectedImageLinkId;
-    folderId = albumFolderId;
+    linkId = pLinkId;
+    imgSrc = pImgSrc;
+    folderId = pFolderId;
     getImageDetails();
 
     $('#imageContextMenuContainer').html(imageContextMenuHtml());
@@ -38,7 +39,7 @@ function getImageDetails() {
                 selectedImage = imageInfo.Link;
                 //alert("selectedImage: " + selectedImage);
                 if (Number(imageInfo.ModelFolderId) !== Number(folderId)) {
-                    $('#ctxModelName').html(imageInfo.ModelFolderName);
+                    $('#ctxModelName').html("n: " + imageInfo.ModelFolderName);
                     modelFolderId = imageInfo.ModelFolderId;
                     $('#ctxSeeMore').show();
                     //alert("ModelFolderId: " + imageInfo.ModelFolderId + " !== folderId: " + folderId);
@@ -46,12 +47,13 @@ function getImageDetails() {
                 else {
                     //alert("folderType: " + imageInfo.FolderType);
                     $('#ctxSeeMore').hide();
-                    $('#ctxModelName').html(imageInfo.FolderType);
+                    $('#ctxModelName').html("f1: " + imageInfo.FolderType);
                     if (imageInfo.FolderType.indexOf("singleModel") > -1) {
-                        $('#ctxModelName').html(imageInfo.FolderName);
+                        $('#ctxModelName').html("s: " + imageInfo.FolderName);
                     }
                     if (imageInfo.FolderType.indexOf("assorterd") > -1) {
-                        $('#ctxModelName').html("unknown model");
+                        $('#ctxModelName').html("f2: " + imageInfo.FolderType);
+                        //$('#ctxModelName').html("unknown model");
                     }
                 }
                 $('#imageInfoLinkId').html(imageInfo.LinkId);
@@ -67,35 +69,38 @@ function getImageDetails() {
                     //$('#ctxShowImageLinks').html("no links");
                 }
                 else {
-                    $('#otherLinksContainer').html("");          
+                    $('#otherLinksContainer').html("");
                     $.each(imageInfo.InternalLinks, function (idx, obj) {
-                        alert("<div><a href='/album.html?folder=" + idx + " target=\"_blank\"'>" + obj + "</a></div>");
+                        //alert("<div><a href='/album.html?folder=" + idx + " target=\"_blank\"'>" + obj + "</a></div>");
                         $('#otherLinksContainer').append("<div><a href='/album.html?folder=" + idx + "' target='_blank'>" + obj + "</a></div>");
                     });
                 }
             }
             else {
                 if (document.domain === "localhost") alert("imageInfo.Success: " + imageInfo.Success);
-
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "BUG",
-                    Severity: 3,
-                    ErrorMessage: imageInfo.Success,
-                    CalledFrom: "imageCtx"
-                });
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "BUG",
+                        Severity: 3,
+                        ErrorMessage: imageInfo.Success,
+                        CalledFrom: "imageCtx"
+                    });
             }
         },
         error: function (xhr) {
             var errorMessage = getXHRErrorDetails(xhr);
-            if (!checkFor404(errorMessage, "removeImage")) {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "Album.js removeImage"
-                });
+            if (!checkFor404()) {
+                if (document.domain === "localhost")
+                    alert("getImageDetails XHR: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "Album.js removeImage"
+                    });
                 //sendEmailToYourself("XHR ERROR IN ALBUM.JS remove image", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + linkId + " Message: " + errorMessage);
             }
         }
@@ -118,11 +123,12 @@ function imageCtxMenuAction(action) {
             break;
         case "comment":
             $("#imageContextMenu").fadeOut();
-            showImageCommentDialog(selectedImage, linkId, folderId, folderName, "ImageContextMenu");
+            showImageCommentDialog(imgSrc, linkId, folderId, folderName, "ImageContextMenu");
             break;
         case "explode":
             if (isLoggedIn()) {
-                rtpe("EXP", folderName, selectedImage, folderId);
+                //rtpe(eventCode, calledFrom, eventDetail, pageId)
+                rtpe("EXP", folderName, imgSrc, folderId);
             }
             else {
                 reportEvent("UNX", "", "", folderId);

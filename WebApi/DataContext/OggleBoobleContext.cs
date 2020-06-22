@@ -33,7 +33,7 @@ namespace WebApi.OggleBoobleSqlContext
         }
     }
         
-    [Table("OggleBooble.vwSlideshowItems")]
+    [Table("Oggle.vwSlideshowItems")]
     public class vwSlideshowItem
     {
         [Key]
@@ -47,7 +47,7 @@ namespace WebApi.OggleBoobleSqlContext
         public int SortOrder { get; set; }
     }
 
-    [Table("OggleBooble.vwCarouselItems")]
+    [Table("Oggle.vwCarouselItems")]
     public class vwCarouselItem
     {
         [Key]
@@ -64,7 +64,7 @@ namespace WebApi.OggleBoobleSqlContext
         public int Width { get; set; }
     }
 
-    [Table("OggleBooble.ChangeLog")]
+    [Table("Oggle.ChangeLog")]
     public class ChangeLog
     {
         [Key]
@@ -76,7 +76,7 @@ namespace WebApi.OggleBoobleSqlContext
         public bool StaticRebuild { get; set; }
     }
 
-    [Table("OggleBooble.TrackbackLink")]
+    [Table("Oggle.TrackbackLink")]
     public partial class TrackbackLink
     {
         [Key]
@@ -89,7 +89,7 @@ namespace WebApi.OggleBoobleSqlContext
         public string LinkStatus { get; set; }
     }
 
-    [Table("OggleBooble.StepChild")]
+    [Table("Oggle.StepChild")]
     public partial class StepChild
     {
         [Key]
@@ -104,7 +104,7 @@ namespace WebApi.OggleBoobleSqlContext
         public int SortOrder { get; set; }
     }
 
-    [Table("OggleBooble.RejectLink")]
+    [Table("Oggle.RejectLink")]
     public partial class RejectLink
     {
         [Key]
@@ -114,7 +114,7 @@ namespace WebApi.OggleBoobleSqlContext
         public string ExternalLink { get; set; }
     }
 
-    [Table("OggleBooble.CategoryFolder")]
+    [Table("Oggle.CategoryFolder")]
     public partial class CategoryFolder
     {
         [Key]
@@ -126,7 +126,7 @@ namespace WebApi.OggleBoobleSqlContext
         public string FolderImage { get; set; }
     }
 
-    [Table("OggleBooble.ImageLink")]
+    [Table("Oggle.ImageLink")]
     public partial class ImageLink
     {
         [Key]
@@ -140,7 +140,7 @@ namespace WebApi.OggleBoobleSqlContext
         public DateTime? LastModified { get; set; }
     }
 
-    [Table("OggleBooble.CategoryImageLink")]
+    [Table("Oggle.CategoryImageLink")]
     public partial class CategoryImageLink
     {
         [Key]
@@ -152,7 +152,7 @@ namespace WebApi.OggleBoobleSqlContext
         public int SortOrder { get; set; }
     }
 
-    [Table("OggleBooble.CategoryFolderDetail")]
+    [Table("Oggle.CategoryFolderDetail")]
     public partial class CategoryFolderDetail
     {
         [Key]
@@ -167,7 +167,7 @@ namespace WebApi.OggleBoobleSqlContext
         public string LinkStatus { get; set; }
     }
 
-    [Table("OggleBooble.vwLinks")]
+    [Table("Oggle.vwLinks")]
     public partial class VwLink
     {
         public int FolderId { get; set; }
@@ -182,7 +182,7 @@ namespace WebApi.OggleBoobleSqlContext
         public int SortOrder { get; set; }
     }
 
-    [Table("OggleBooble.VideoLink")]
+    [Table("Oggle.VideoLink")]
     public partial class VideoLink
     {
         [Key]
@@ -193,7 +193,7 @@ namespace WebApi.OggleBoobleSqlContext
         public int FolderId { get; set; }
     }
 
-    [Table("OggleBooble.BlogComment")]
+    [Table("Oggle.BlogComment")]
     public partial class BlogComment
     {
         [Key]
@@ -208,7 +208,7 @@ namespace WebApi.OggleBoobleSqlContext
         public DateTime Posted { get; set; }
     }
 
-    [Table("OggleBooble.MetaTag")]
+    [Table("Oggle.MetaTag")]
     public partial class MetaTag
     {
         [Key]
@@ -218,7 +218,7 @@ namespace WebApi.OggleBoobleSqlContext
         public string Tag { get; set; }
     }
 
-    [Table("OggleBooble.RankerVote")]
+    [Table("Oggle.RankerVote")]
     public partial class RankerVote
     {
         [Key]
@@ -229,7 +229,7 @@ namespace WebApi.OggleBoobleSqlContext
         public DateTime VoteDate { get; set; }
     }
 
-    [Table("OggleBooble.vwDirtree")]
+    [Table("Oggle.vwDirtree")]
     public partial class VwDirTree
     {
         [Key]
