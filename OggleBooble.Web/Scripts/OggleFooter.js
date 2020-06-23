@@ -10,7 +10,7 @@
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"about us\",\"about us\"," + pageId + ")'>about us</div>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"dir tree\",\"dir tree\"," + pageId + ")'>Category List</div>\n" +
-                "        <div><a href='#'></a></div>\n" +
+                "        <div class='clickable' onclick='window.location.href=\"/index.html?subdomain=dashboard\", \"_blank\" '>Dashboard</div>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"porn\",\"porn\"," + pageId + ")'>Nasty Porn</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
@@ -21,12 +21,14 @@
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"mailme\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
-                "        <div class='clickable' onclick='window.location.href=\"/index.html?subdomain=blog\"'>Blog</div>\n" +
+                "        <div class='clickable' onclick='window.location.href=\"/index.html?subdomain=blog\", \"_blank\"'>Blog</div>\n" +
+                "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"archive\"," + pageId + ")'>Archive</div>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"archive\"," + pageId + ")'>Archive</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"tt\",\"freedback\"," + pageId + ")'>Feedback</div>\n" +
                 "        <div id='footerInfo1'></div>\n" +
+                "        <div>" + subdomain + "</div>\n" +
                 "    </div>\n" +
                 "</div>\n";
             break;

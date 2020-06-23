@@ -90,7 +90,7 @@ function performSearch(searchString) {
                             searchResult.Parent + "/" + searchResult.FolderName + "</li>");
                     });
                     $('#searchResultsDiv').append("</ul>").show();
-                    $('.loginArea').hide();
+                    $('#divLoginArea').hide();
                     busy = false;
                 },
                 error: function (jqXHR) {
@@ -108,7 +108,7 @@ function performSearch(searchString) {
 
 function clearSearch() {
     $('#searchResultsDiv').hide().html("");
-    $('.loginArea').show();
+    $('#divLoginArea').show();
     listboxActive = false;
     searchString = "";
     $('#txtSearch').val("");

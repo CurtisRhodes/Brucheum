@@ -22,7 +22,7 @@ function setOggleHeader(folderId, subdomain) {
     });
     setHeaderDetails(hdrFolderId, hdrSubdomain);
     setMenubar(subdomain);
-    setLoginHeaderSection(subdomain);
+    setLoginSection(subdomain);
     window.addEventListener("resize", headerResize);
     headerResize();
 }
@@ -59,52 +59,59 @@ function setHeaderDetails(folderId, subdomain) {
         }
         case "archive": {
 
-            $('#rankerLink').html("<div id='rankerTag' class='headerBanner bigBanner'>" +
+            $('#hdrBtmRowSec3').html("<div id='rankerTag' class='headerBanner'>" +
                 "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"archive\")'" +
                 " title='Spin through the links to land on random portrait images.'>babes ranker</a></div>\n");
 
-            $('#playboyLink').html("<div class='headerBanner bigBanner'>" +
+            $('#hdrBtmRowSec3').append("<div class='headerBanner'>" +
                 "\n<a href='javascript:rtpe(\"EPC\"," + folderId + ",1132,1132)'>every Playboy Centerfold</a></div>\n");
+
             break;
         }
         case "boobs": {
-            $('#archiveLink').html("<div id='rankerTag' class='headerBanner bigBanner'>" +
+            $('#bannerContainer').html("<div id='rankerTag' class='headerBanner'>" +
                 "<a href='javascript:rtpe(\"BAC\"," + folderId + ",3,3)'>babes archive</a></div>\n");
-            $('#rankerLink').html("<div id='rankerTag' class='headerBanner bigBanner'>" +
-                "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"boobs\"," + folderId +")'" +
+            $('#bannerContainer').append("<div id='rankerTag' class='headerBanner'>" +
+                "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"boobs\"," + folderId + ")'" +
                 " title='Spin through the links to land on random portrait images.'>boobs ranker</a></div>\n");
             break;
         }
         case "playboy":
         case "centerfold": {
-            $('#divSiteLogo').attr("src","/Images/playboyBallon.png");
-            $('#archiveLink').html("<div id='rankerTag' class='headerBanner bigBanner'>" +
-                "<a href='javascript:rtpe(\"BAC\"," + folderId + ",3," + folderId +")'>big tits archive</a></div>\n");
-            $('#rankerLink').html("<div id='rankerTag' class='headerBanner bigBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"playboy\"," + folderId +")' " +
+
+            $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
+            $('#bannerContainer').html("<div id='rankerTag' class='headerBanner'>" +
+                "<a href='javascript:rtpe(\"BAC\"," + folderId + ",3," + folderId + ")'>big tits archive</a></div>\n");
+            $('#bannerContainer').append("<div id='rankerTag' class='headerBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"playboy\"," + folderId + ")' " +
                 "title='Spin through the links to land on random portrait images.'>playmate ranker</a></div>\n");
             break;
         }
         case "porn":
         case "sluts": {
+
             $('header').switchClass('boobsHeader', 'pornHeader');
             $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
             changeFavoriteIcon();
             $('body').addClass('pornBodyColors');
-            $('#archiveLink').html("<div id='rankerTag' class='headerBanner bigBanner'>" +
+            $('#bannerContainer').html("<div id='rankerTag' class='headerBanner'>" +
                 "<a href='javascript:rtpe(\"BAC\"," + folderId + ",440," + folderId + ")'>slut archive</a></div>\n");
-            $('#rankerLink').html("<div id='rankerTag' class='headerBanner bigBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"" + subdomain + "\"," + folderId + ")' " +
+            $('#bannerContainer').append("<div id='rankerTag' class='headerBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"" + subdomain + "\"," + folderId + ")' " +
                 "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n");
             $('#bannerTitle').html("OgglePorn");
             break;
         }
-        default:
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "BUG",
-                Severity: 2,
-                ErrorMessage: "switch case not handled. FolderId: " + folderId + ", Subdomain: " + subdomain,
-                CalledFrom: "OggleHeader setOggleHeader"
-            });
+        default: {
+            if (document.domain === "localhost")
+                alert("switch case not handled. FolderId: " + folderId + ", Subdomain: " + subdomain);
+            else
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "BUG",
+                    Severity: 2,
+                    ErrorMessage: "switch case not handled. FolderId: " + folderId + ", Subdomain: " + subdomain,
+                    CalledFrom: "OggleHeader setOggleHeader"
+                });
+        }
     }
 }
 
@@ -151,7 +158,7 @@ function setMenubar(subdomain) {
     return headerMenu;
 }
 
-function setLoginHeaderSection(subdomain) {
+function setLoginSection(subdomain) {
     if (subdomain === "loading") {
         $('#divLoginArea').hide();
         return;
@@ -183,90 +190,121 @@ function setLoginHeaderSection(subdomain) {
 
 function headerResize() {
     hdrRowW = $('.headerTopRow').width();
+    {
+        if (hdrBottRowSectionsW() < hdrRowW) {
+            $('.oggleHeader').css("background-color", "var(--brucheumBlue)");
+            $('.siteLogo').css("height", "80px");
+            $('#divLoginArea').css("font-size", "17px");
+            if (hdrSubdomain === "Index") {
+                $('.headerBanner').css("font-size", "12px"); // banner tabs contents
+                $('.headerBanner').css("color", "yellow").show(); // banner tabs contents
+            }
+            $('#breadcrumbContainer').css("font-size", "18px").show();
+            $('.badgeImage').css("height", "31px");
+            $('.blackCenterfoldsBanner').css("font-size", "16px");
+            $('#mainMenuContainer').html(setMenubar(hdrSubdomain));
+            showResizeMessage("RESET: ");
+        }
+        if (hdrBottRowSectionsW() >= hdrRowW) {
+            $('.oggleHeader').css("background-color", "#ccffcc");  // green
+            $('.siteLogo').css("height", "80px");
+            $('#divLoginArea').css("font-size", "15px");
+            $('#breadcrumbContainer').css("font-size", "15px").show();
+            $('.badgeImage').css("height", "31px");
+            $('.blackCenterfoldsBanner').css("font-size", "15px");
+            $('#mainMenuContainer').html(setMenubar(hdrSubdomain));
 
-    //if (hdrTopRowSectionsW() < hdrRowW) {
-    //    $('.headerTitle').css("font-size", "17px");
-    //}
-    //else {
-    //    $('.headerTitle').css("font-size", "17px");
-    //}
+            showResizeMessage("80/15: ");
+        }
+        if (hdrBottRowSectionsW() >= hdrRowW) {
+            $('.oggleHeader').css("background-color", "#e6de3b");  // sn
+            $('.siteLogo').css("height", "60px");
+            $('#divLoginArea').css("font-size", "13px");
+            $('#breadcrumbContainer').css("font-size", "13px").show();
+            $('.badgeImage').css("height", "28px");
+            $('.blackCenterfoldsBanner').css("font-size", "13px");
+            $('#mainMenuContainer').html(setMenubar(hdrSubdomain));
 
-    if (hdrBottRowSectionsW() < hdrRowW) {
-        $('.oggleHeader').css("background-color", "var(--brucheumBlue)");
-        $('.siteLogo').css("height", "80px");
-        $('#divLoginArea').css("font-size", "17px");
-        $('#breadcrumbContainer').css("font-size", "18px").show();
-        $('.headerBanner').css("font-size", "16px").show();
-        $('.badgeImage').css("height", "31px");
-        $('.blackCenterfoldsBanner').css("font-size", "16px");
-        $('#mainMenuContainer').html(setMenubar(hdrSubdomain));
-        showResizeMessage("RESET: ");
+            showResizeMessage("60/13: ");
+        }
+        //if (hdrBottRowSectionsW() >= hdrRowW) {
+        //    $('.siteLogo').css("height", "60px");
+        //    $('#divLoginArea').css("font-size", "12px");
+        //    $('#breadcrumbContainer').css("font-size", "12px").show();
+        //    $('.headerBanner').css("font-size", "10px").show();
+        //    $('.badgeImage').css("height", "22px");
+        //    $('.blackCenterfoldsBanner').css("font-size", "10px");
+        //    showResizeMessage("brown?: ");
+        //}
+        if (hdrBottRowSectionsW() >= hdrRowW) {
+            $('.oggleHeader').css("background-color", "#e9b5e7");  // sn
+            $('.siteLogo').css("height", "50px");
+            $('#divLoginArea').css("font-size", "12px");
+            $('#breadcrumbContainer').css("font-size", "12px").show();
+            $('.blackCenterfoldsBanner').css("font-size", "12px");
+            $('.badgeImage').css("height", "22px");
+            $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
+
+            showResizeMessage("iPad 50/12 : ");
+        }
+        //if (hdrBottRowSectionsW() >= hdrRowW) {
+        //    $('.oggleHeader').css("background-color", "#e6de3b");  // sn
+        //    $('.siteLogo').css("height", "40px");
+        //    $('#divLoginArea').css("font-size", "12px");
+        //    $('#breadcrumbContainer').css("font-size", "10px").show();
+        //    $('.headerBanner').css("font-size", "12px").show();
+        //    $('.blackCenterfoldsBanner').css("font-size", "10px");
+        //    $('.badgeImage').css("height", "20px");
+        //    showResizeMessage("iPad 40/12 : ");
+        //}
+        if (hdrBottRowSectionsW() >= hdrRowW) {
+            $('.oggleHeader').css("background-color", "#a58383");  // brown        
+            $('.siteLogo').css("height", "30px");
+            $('#breadcrumbContainer').hide();
+            $('#divLoginArea').css("font-size", "12px");
+            $('.headerBanner').css("font-size", "12px").show();
+            $('.badgeImage').css("height", "18px");
+            $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
+
+            showResizeMessage("iPhone: ");
+        }
     }
-    if (hdrBottRowSectionsW() >= hdrRowW) {
-        $('.oggleHeader').css("background-color", "#ccffcc");  // green
-        $('.siteLogo').css("height", "80px");
-        $('#divLoginArea').css("font-size", "15px");
-        $('#breadcrumbContainer').css("font-size", "15px").show();
-        $('.headerBanner').css("font-size", "15px").show();
-        $('.badgeImage').css("height", "31px");
-        $('.blackCenterfoldsBanner').css("font-size", "15px");
-        $('#mainMenuContainer').html(setMenubar(hdrSubdomain));
+    {
+        if (hdrTopRowSectionsW() < hdrRowW) {
+            $('#bannerTitle').css("font-size", "33px");
+            $('#bannerTitle').css("color", "blue");
+            $('#mainMenuContainer').css("font-size", "20px").show();
+            $('#bannerContainer').show();
+            $('.headerBanner').css("font-size", "17px").show(); // banner tabs contents
+            //"           <div id='bannerContainer'></div>" +
+            //"           <div id='searchBox' class='oggleSearchBox'>\n" +
+            showResizeMessage("TOP RESET: ");
+        }
+        //let testing = false;
+        //if (false) {
+        if (hdrTopRowSectionsW() > hdrRowW) {
+            $('#bannerTitle').css("font-size", "22px");
+            $('#bannerTitle').css("color", "orange");
+            $('#bannerContainer').show();
+            $('#mainMenuContainer').css("font-size", "18px").show();
+            $('.headerBanner').css("font-size", "15px").show(); // banner tabs contents
+            //"           <div id='searchBox' class='oggleSearchBox'>\n" +
+            showResizeMessage("q1: ");
+        }
+        if (hdrTopRowSectionsW() > hdrRowW) {
+            $('#bannerContainer').hide();
+            $('#mainMenuContainer').css("font-size", "18px");
+            $('.headerBanner').css("font-size", "15px").show(); // banner tabs contents
+            //"           <div id='searchBox' class='oggleSearchBox'>\n" +
+            showResizeMessage("q2: ");
+        }
+        if (hdrTopRowSectionsW() > hdrRowW) {
+            $('#bannerContainer').hide();
+            $('#mainMenuContainer').hide();
+            //"           <div id='searchBox' class='oggleSearchBox'>\n" +
+            showResizeMessage("q3: ");
+        }
 
-        showResizeMessage("80/15: ");
-    }
-    if (hdrBottRowSectionsW() >= hdrRowW) {
-        $('.oggleHeader').css("background-color", "#e6de3b");  // sn
-        $('.siteLogo').css("height", "60px");
-        $('#divLoginArea').css("font-size", "13px");
-        $('#breadcrumbContainer').css("font-size", "13px").show();
-        $('.headerBanner').css("font-size", "13px").show();
-        $('.badgeImage').css("height", "28px");
-        $('.blackCenterfoldsBanner').css("font-size", "13px");
-        $('#mainMenuContainer').html(setMenubar(hdrSubdomain));
-
-        showResizeMessage("60/13: ");
-    }
-    //if (hdrBottRowSectionsW() >= hdrRowW) {
-    //    $('.siteLogo').css("height", "60px");
-    //    $('#divLoginArea').css("font-size", "12px");
-    //    $('#breadcrumbContainer').css("font-size", "12px").show();
-    //    $('.headerBanner').css("font-size", "10px").show();
-    //    $('.badgeImage').css("height", "22px");
-    //    $('.blackCenterfoldsBanner').css("font-size", "10px");
-    //    showResizeMessage("brown?: ");
-    //}
-    if (hdrBottRowSectionsW() >= hdrRowW) {
-        $('.oggleHeader').css("background-color", "#e9b5e7");  // sn
-        $('.siteLogo').css("height", "50px");
-        $('#divLoginArea').css("font-size", "12px");
-        $('#breadcrumbContainer').css("font-size", "12px").show();
-        $('.headerBanner').css("font-size", "12px").show();
-        $('.blackCenterfoldsBanner').css("font-size", "12px");
-        $('.badgeImage').css("height", "22px");
-        $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
-
-        showResizeMessage("iPad 50/12 : ");
-    }
-    //if (hdrBottRowSectionsW() >= hdrRowW) {
-    //    $('.oggleHeader').css("background-color", "#e6de3b");  // sn
-    //    $('.siteLogo').css("height", "40px");
-    //    $('#divLoginArea').css("font-size", "12px");
-    //    $('#breadcrumbContainer').css("font-size", "10px").show();
-    //    $('.headerBanner').css("font-size", "12px").show();
-    //    $('.blackCenterfoldsBanner').css("font-size", "10px");
-    //    $('.badgeImage').css("height", "20px");
-    //    showResizeMessage("iPad 40/12 : ");
-    //}
-    if (hdrBottRowSectionsW() >= hdrRowW) {
-        $('.oggleHeader').css("background-color", "#a58383");  // brown        
-        $('.siteLogo').css("height", "30px");
-        $('#breadcrumbContainer').hide();
-        $('#divLoginArea').css("font-size", "12px");
-        $('.headerBanner').css("font-size", "12px").show();
-        $('.badgeImage').css("height", "18px");
-        $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
-
-        showResizeMessage("iPhone: ");
     }
 }
 
@@ -282,9 +320,8 @@ function hdrBottRowSectionsW() {
     return $('#headerMessage').width() + $('#breadcrumbContainer').width() + $('#badgesContainer').width() + $('#divLoginArea').width() + calcIssue;
 }
 function hdrTopRowSectionsW() {
-    let calcIssue = 0;
-    //alert("hdrTopRowSectionsW bt:" + $('#bannerTitle').width() + " mainMenuContainer: " + $('#mainMenuContainer').width() +        "  bannerLinks: " + $('#bannerLinks').width() + "  searchBox: " + $('#searchBox').width());
-    return $('#bannerTitle').width() + $('#mainMenuContainer').width() + $('#bannerTitle').width() + $('#searchBox').width() + calcIssue;
+    let topRowKludge = 0;
+    return $('#bannerTitle').width() + $('#mainMenuContainer').width() + $('#bannerContainer').width() + $('#searchBox').width() + topRowKludge;
 }
 function showResizeMessage(secMsg) {
     $('#aboveImageContainerMessageArea').html(secMsg + "hdrTopRow: " + $('.headerTopRow').width().toLocaleString() +
@@ -292,27 +329,7 @@ function showResizeMessage(secMsg) {
         " hdrTopSecs: " + hdrTopRowSectionsW().toLocaleString());
 }
 
-function draggableDialogEnterDragMode() {
-    $('#headerMessage').html("entering drag mode");
-    $('#draggableDialog').draggable({ disabled: false });
-    $('#draggableDialog').draggable();
-}
-function draggableDialogCancelDragMode() {
-    $('#headerMessage').html("end drag");
-    $('#draggableDialog').draggable({ disabled: true });
-}
-function dragableDialogClose() {
-    $('#draggableDialog').fadeOut();
-    if (typeof resume === 'function')
-        resume();
-}
-
-//<img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
-// title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +
-// \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
-// \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
 function headerHtml(folderId, subdomain) {
-                    // rtpe(eventCode, calledFrom, eventDetail, pageId)
     return "<div class='siteLogoContainer'>" +
         "       <a href='javascript:rtpe(\"HBC\"," + folderId + ",\"" + subdomain + "\"," + folderId + ")'>" +
         "       <img id='divSiteLogo' class='siteLogo' src='/Images/redballon.png'/></a>" +
@@ -320,10 +337,8 @@ function headerHtml(folderId, subdomain) {
         "   <div class='headerBodyContainer'>\n" +
         "       <div class='headerTopRow'>\n" +
         "           <div id='bannerTitle' class='headerTitle'></div >\n" +
-        "           <div id='mainMenuContainer' class='topLinkRow mainMenu'></div>" +
-        "           <span id='archiveLink'></span>" +
-        "           <span id='rankerLink'></span>" +
-        "           <span id='playboyLink'></span>\n" +
+        "           <div id='mainMenuContainer' class='hdrTopRowMenu'></div>" +
+        "           <div id='bannerContainer'></div>" +
         "           <div id='searchBox' class='oggleSearchBox'>\n" +
         "               <span id='notUserName' title='Esc clears search.'>search</span>" +
         "                   <input class='oggleSearchBoxText' id='txtSearch' onfocus='startOggleSearch(" + folderId + ")' onkeydown='oggleSearchKeyDown(event)' />" +
@@ -335,16 +350,17 @@ function headerHtml(folderId, subdomain) {
         "               <div id='headerMessage' class='bottomLeftHeaderArea'></div>\n" +
         "               <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
         "               <div id='badgesContainer' class='badgesSection'></div>\n" +
+        "               <div id='hdrBtmRowSec3' class='hdrBtmRowOverflow'></div>\n" +
         "           </div>\n" +
         "           <div id='divLoginArea' class='loginArea'>\n" +
         "               <div id='optionLoggedIn' class='displayHidden'>\n" +
-        "                   <div class='menuTab' id='dashboardMenuItem' class='displayHidden'><a href='/index.html?subdomain=dashboard'>Dashboard</a></div>\n" +
-        "                   <div class='menuTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
-        "                   <div class='menuTab'><a href='javascript:onLogoutClick(" + folderId + ")'>Log Out</a></div>\n" +
+        //"                   <div class='hoverTab' id='dashboardMenuItem' class='displayHidden'><a href='/index.html?subdomain=dashboard'>Dashboard</a></div>\n" +
+        "                   <div class='hoverTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
+        "                   <div class='hoverTab'><a href='javascript:onLogoutClick(" + folderId + ")'>Log Out</a></div>\n" +
         "               </div>\n" +
         "               <div id='optionNotLoggedIn'>\n" +
-        "                   <div id='btnLayoutRegister' class='menuTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
-        "                   <div id='btnLayoutLogin' class='menuTab'><a href='javascript:showLoginDialog(" + folderId + ")'>Log In</a></div>\n" +
+        "                   <div id='btnLayoutRegister' class='hoverTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
+        "                   <div id='btnLayoutLogin' class='hoverTab'><a href='javascript:showLoginDialog(" + folderId + ")'>Log In</a></div>\n" +
         "               </div>\n" +
         "           </div>\n" +
         "       </div>\n" +
@@ -385,3 +401,23 @@ function headerHtml(folderId, subdomain) {
         "    <div onclick='rtpe(\"EPC\",\"hamburger\",\"" + subdomain + "\"," + 1132 + ")'>every Playboy Centerfold</div>\n" +
         "</div>\n";
 }
+
+function draggableDialogEnterDragMode() {
+    $('#headerMessage').html("entering drag mode");
+    $('#draggableDialog').draggable({ disabled: false });
+    $('#draggableDialog').draggable();
+}
+function draggableDialogCancelDragMode() {
+    $('#headerMessage').html("end drag");
+    $('#draggableDialog').draggable({ disabled: true });
+}
+function dragableDialogClose() {
+    $('#draggableDialog').fadeOut();
+    if (typeof resume === 'function')
+        resume();
+}
+
+//<img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
+// title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +
+// \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
+// \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +

@@ -3,10 +3,11 @@ var dashboardMainSelectedPath = "";
 
 function dashboardHtml() {
     return "<div id='dashboardContainer' class='dashboardContainer'>\n" +
-        "    <div id='dashboardLeftColumn' class='dashboardContainerColumn'>\n" +
+        "   <div id='dashboardLeftColumn' class='dashboardContainerColumn'>\n" +
         "       <div id='dashboardLeftMenu' class='oggleVerticalMenu' ></div>\n" +
         "   </div>\n" +
-        "    <div id='dashboardMiddleColumn' class='dashboardContainerColumn'>\n" +
+        "   <img id='dashBoardLoadingGif' class='loadingGif' src='Images/loader.gif'/>\n" +
+        "   <div id='dashboardMiddleColumn' class='dashboardContainerColumn'>\n" +
         "       <div id='workAreaContainer' class='workAreaContainer'></div>\n" +
         "   </div>\n" +
         "   <div id='dashboardRightColumn' class='dashboardContainerColumn'></div>\n" +
@@ -40,20 +41,16 @@ function resizeDashboardPage() {
     //$('.dashboardContainerColumn')
 
     //$('.threeColumnLayout').css("height", ($(window).innerHeight() - $('header').height()) + 50);
-    var bb = $('.threeColumnLayout').height();
-    $('.threeColumnLayout').css("height", ($(window).innerHeight() - $('header').height()) - 550);
+    //var bb = $('.threeColumnLayout').height();
+    //$('.threeColumnLayout').css("height", ($(window).innerHeight() - $('header').height()) - 550);
 
-    let adjH = $('.threeColumnLayout').height();
+    //let adjH = $('.threeColumnLayout').height();
     //alert("adjH: " + adjH);
-    $('#dashboardContainer').css("height", adjH);
-
-    
-    //alert("before: " + bb + "  after:" + $('.threeColumnLayout').height());
-
+    //$('#dashboardContainer').css("height", adjH);
 
     // WIDTH
     let middleColumnW = $('#dashboardContainer').width() - $('#dashboardRightColumn').width() - $('#dashboardLeftColumn').width();
-    $('#dashboardMiddleColumn').css("width", middleColumnW - 21);
+    $('#dashboardMiddleColumn').css("width", middleColumnW - 33);
     //$('#headerMessage').html("dashboardMiddleColumn.w: " + $('#dashboardMiddleColumn').width());
 }
 
@@ -349,8 +346,8 @@ function previewLinkImage() {
 function showCreateNewFolderDialog() {
     $('#draggableDialogTitle').html("Create New Folder");
     $('#draggableDialogContents').html(
-        "<div><span>title</span><input id='txtNewFolderTitle' class='roundedInput' /></div>\n" +
-        "<div><span>parent</span><input class='txtLinkPath roundedInput' readonly='readonly' /></div>\n" +
+        "<div><span>title</span><input id='txtNewFolderTitle' class='inlineInput roundedInput' /></div>\n" +
+        "<div><span>parent</span><input class='txtLinkPath inlineInput roundedInput' readonly='readonly' /></div>\n" +
         "<div class='roundendButton' onclick='createNewFolder()'>Create Folder</div>\n");
     $("#draggableDialog").fadeIn();
     var winH = $(window).height();
@@ -401,7 +398,7 @@ function showAddVideoLink() {
 function showRenameFolderDialog() {
     $('#draggableDialogTitle').html("Rename Folder");
     $('#draggableDialogContents').html(
-        "<div><span>folder to rename</span><input id='txtFolderToRename' class='txtLinkPath roundedInput' readonly='readonly' /></div>\n" +
+        "<div><span>folder to rename</span><input id='txtFolderToRename' class='txtLinkPath inlineInput roundedInput' readonly='readonly' /></div>\n" +
         "<div><span>new name</span><input id='txtReName' class='roundedInput' /></div>\n" +
         "<div class='roundendButton' onclick='renameFolder()'>Rename Folder</div>\n" +
         "<div id='renameFolderReport' class='repairReport'></div>\n");
@@ -1109,7 +1106,7 @@ function XXtestAddVisitor() {
 //var dashboardContextMenuFolderId = "";
 
 function dirTreeClick(danniPath, folderId) {
-    alert("dirTreeClick. DanniPath: " + danniPath);
+    //alert("dirTreeClick. DanniPath: " + danniPath);
     dashboardMainSelectedTreeId = folderId;
     dashboardMainSelectedPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
     $('.txtLinkPath').val(dashboardMainSelectedPath);

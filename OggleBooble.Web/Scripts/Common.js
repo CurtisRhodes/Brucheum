@@ -108,20 +108,16 @@ function dateString2(dateObject) {
 function resizePage() {
     //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, 
     // or using “transform” along with “transform - origin: 0 0”.album.html
+
     // set page width
     var winW = $(window).width();
-    if (winW < 1500) {
-        $('section').css("background-color", "red");
-    }
     var lcW = $('.leftColumn').width();
     var rcW = $('.rightColumn').width();
     $('.middleColumn').width(winW - lcW - rcW);
     //set page height
-    var winH = $(window).height();
-    var headerH = $('header').height();
-    $('.middleColumn').height(winH - headerH);
-    //$('#bottomSection').html("page height: " + winH + " page width: " + winW);
-    //$('#footerMessage').html("page height: " + winH + " page width: " + winW);
+    //var winH = $(window).height();
+    //var headerH = $('header').height();
+    //$('.middleColumn').height(winH - headerH);
 }
 
 function letemPorn(response, pornType, pageId) {

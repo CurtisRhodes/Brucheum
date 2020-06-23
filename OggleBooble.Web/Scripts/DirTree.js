@@ -33,6 +33,7 @@ function loadDirectoryTree(startNode, container) {
                 console.log("build dirTree html: " + htmlBuildTime.toFixed(3));
 
                 $('#dashBoardLoadingGif').hide();
+                resizeDashboardPage();
                 setTimeout(function () { $('#dataifyInfo').hide() }, 15000);
             }
             else { alert(dirTreeModel.Success); }

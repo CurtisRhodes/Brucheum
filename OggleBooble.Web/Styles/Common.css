@@ -6,7 +6,7 @@
     --oggleDialogBackgroundColor: #fc9; /* #d1f5f3; #f8e8e8 */
     --oggleBorderColor: #b200ff; /* #f1cff7;*/
     --ogglePurple: #79078f;
-    --normalFont: 17px;
+    --normalFont: 15px;
     --ogglgeTextColor: #000;
     --oggleTitleColor: #7f2c8f;
     --ogglgeSubTitleColor: #490157;
@@ -34,6 +34,7 @@ body {
     height: 100%;
     display: flex;
     overflow: auto;
+    border-bottom: solid 4px gold;
 }
 
     .threeColumnLayout .leftColumn {
@@ -118,7 +119,6 @@ input[type='checkbox'] {
     border: 1px solid #ccc;
     border-radius: 3px;
 }
-
 
 .validationError {
     display: inline-block;
@@ -417,12 +417,11 @@ input[type='checkbox'] {
     display: none;
 }
 
-
 .fixedMessageButton {
     position: relative;
-    bottom: 50px;
+    bottom: 150px;
     padding: 20px 15px;
-    margin: 10px;
+    margin-left: 10px;
     cursor: pointer;
     /*color: var(--ogglePurple);*/
     background-color: var(--brucheumBlue);

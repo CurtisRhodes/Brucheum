@@ -16,8 +16,10 @@
     display: flex;
     border: solid 4px var(--oggleBorderColor); /*#cd49d3;*/
     width: 100%;
-    background-color: #888;
+    height: 100%;
+    background-color: rgba(151, 112, 112, 0.85);
 }
+
 .dashboardContainerColumn {
     float: left;
     overflow: auto;
@@ -161,17 +163,18 @@
     max-width: 80%;
     border: solid .5px #555;
 }
-.roundedInput {
+
+.inlineInput {
     display: inline-block;
     width: 95%;
     margin-right: 6px;
-    font-size: 22px;
 }
 
 .roundendButton {
     margin-top: 6px;
     display: inline-block;
 }
+
 
 .infoLine {
     position: absolute;

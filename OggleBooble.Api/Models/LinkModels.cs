@@ -34,6 +34,7 @@ namespace OggleBooble.Api.Models
     {
         public RepairReportModel()
         {
+            MissingFiles = new List<string>();
             Errors = new List<string>();
         }
         public int ImagesRenamed { get; set; }
@@ -48,6 +49,7 @@ namespace OggleBooble.Api.Models
         public int BadFileNames { get; set; }
         public int BadLinks { get; set; }
         public bool isSubFolder { get; set; }
+        public List<string> MissingFiles { get; set; }
 
         public List<string> Errors { get; set; }
         public string Success { get; set; }

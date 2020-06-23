@@ -16,6 +16,7 @@ namespace OggleBooble.Api.Controllers
     public class LinksController : ApiController
     {
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+        private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
         static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
         //static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
@@ -74,51 +75,61 @@ namespace OggleBooble.Api.Controllers
             RepairReportModel repairReport = new RepairReportModel();
             using (var db = new OggleBoobleMySqlContext())
             {
-                CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-
-                string rootFolder = dbCategoryFolder.RootFolder;
-                if (rootFolder == "centerfold") rootFolder = "playboy";
-
-                string ftpPath = ftpHost + "/" + rootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(folderId) + dbCategoryFolder.FolderName;
-                string[] imageFiles = FtpUtilies.GetFiles(ftpPath);
-                List<string> imageFileLinkIds = new List<string>();
-                foreach (string imageFile in imageFiles)
-                {
-                    imageFileLinkIds.Add(imageFile.Substring(imageFile.IndexOf("_") + 1, 36));
-                }
-
-                List<ImageFile> goDaddyLinks =
-                    (from c in db.CategoryImageLinks
-                     join g in db.ImageFiles on c.ImageLinkId equals g.Id
-                     where c.ImageCategoryId == folderId
-                     //&& g.Link.Contains(dbCategoryFolder.FolderName)
-                     && g.FolderId == dbCategoryFolder.Id
-                     select (g)).ToList();
-
-                // 1 check if there is a file in the folder for every link in the table.
-                foreach (string linkId in imageFileLinkIds)
-                {
-                    if (!goDaddyLinks.Exists(g => g.Id == linkId))
-                    {
-                        // physical file located that does not contain a link record
-                        // and I will not have external link info
-                        repairReport.Errors.Add("file with no link: " + linkId);
-                        //goDaddyLinks.Add(new ImageLink() { Id = linkId });
-                    }
-                }
-
-                // 2 check if there is a link for every file 
-                foreach (ImageFile imageLink in goDaddyLinks)
-                {
-                    if (imageFileLinkIds.Find(t => t == imageLink.Id) == "")
-                    {
-                        repairReport.Errors.Add("link with no file: " + imageLink.Id);
-                    }
-                }
+                CheckFolder(folderId, repairReport, db, recurr);
+            
+            
             }
-            repairReport.Success = "ok";
+
             return repairReport;
         }
+        private void CheckFolder(int folderId, RepairReportModel repairReport,  OggleBoobleMySqlContext db,bool recurr)
+        {
+            CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+            string ftpPath = ftpHost + "/" + imgRepo + dbCategoryFolder.FolderPath + dbCategoryFolder.FolderName;
+            string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
+            List<ImageFile> existingLinks =
+                (from c in db.CategoryImageLinks
+                 join i in db.ImageFiles on c.ImageLinkId equals i.Id
+                 //join f in db.CategoryFolders on i.FolderId equals f.Id
+                 select (i)).ToList();
+
+            // 1. check if there is a link for every file 
+            for (int i = 0; i < physcialFiles.Length; i++)
+            {
+                if (existingLinks.Where(f => f.FileName == physcialFiles[i]).FirstOrDefault() == null)
+                {
+                    repairReport.MissingFiles.Add(physcialFiles[i]);
+                    db.ImageFiles.Add(new ImageFile()
+                    {
+                        ExternalLink = "aa"
+                    });
+                    CategoryImageLink categoryImageLink = new CategoryImageLink()
+                    {
+                        ImageCategoryId = folderId,
+                        ImageLinkId = ""
+                    };
+                }
+            }
+
+            // 2 check if there is a file in the folder for every link in the table.
+            foreach (ImageFile imageLink in existingLinks)
+            {
+                //var results = Array.FindAll(physcialFiles, s => s.Equals(imageLink.FileName));
+                if (!physcialFiles.Contains(imageLink.FileName))
+                {
+                    repairReport.Errors.Add("link with no file: " + imageLink.Id);
+                }
+            }
+            if (recurr)
+            {
+                var childFolders = db.CategoryFolders.Where(c => c.Parent == folderId).ToList();
+                foreach (CategoryFolder childFolder in childFolders)
+                {
+                    RepairLinks(childFolder.Id, recurr);
+                }
+            }
+        }
+
 
         public RepairReportModel XXRepairLinks(int startFolderId, string drive)
         {
