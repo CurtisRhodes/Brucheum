@@ -237,20 +237,26 @@ function processImages(imagesModel) {
             " onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.FolderId + "\")'>" +
             "<img class='folderImage' albumImgError(" + imgSrc + ")' alt='" + imgSrc + "' src='" + imgSrc + "'/>";
 
-        if (subDir.SubDirCount === 0)
+        let subDirCount = subDir.SubDirs.length;
+
+        if (subDir.FolderId === 10)
+            alert("subDirCount: " + subDirCount);
+
+
+        if (subDirCount === 0)
             kludge += "<div class='" + subDirLabel + "'   >" +
                 subDir.DirectoryName + "  (" + subDir.FileCount + ")</div></div>";
         else {
-            deepChildCount = subDir.FileCount;
+            deepChildCount = 0;
             getDeepChildCount(subDir);
             if (deepChildCount === 0) { // this must be just a collection of stepchildren
-                $('#fileCount').html(subDir.SubDirCount);
+                $('#fileCount').html(subDirCount);
                 // get deep count of stepchildren
                 kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.SubDirCount + ")</div></div>";
             }
             else {
-                if (subDir.SubDirCount > 1)
-                    kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.SubDirCount + "/" + deepChildCount.toLocaleString() + ")</div></div>";
+                if (subDirCount > 1)
+                    kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDirCount + "/" + deepChildCount.toLocaleString() + ")</div></div>";
                 else
                     kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + deepChildCount.toLocaleString() + ")</div></div>";
             }
@@ -419,6 +425,7 @@ function startSlideShow(folderId, linkId) {
 
 function launchDeepSlideShow()
 {
+
     launchViewer(albumFolderId, 1, true);
 }
 

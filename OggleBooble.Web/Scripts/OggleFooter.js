@@ -4,6 +4,7 @@
     var footerhtml;
     switch (subdomain) {
         case "boobs":
+        case "Index":
         case "archive": {
             footerhtml =
                 "<div class='flexContainer'>\n" +

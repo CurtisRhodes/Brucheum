@@ -147,6 +147,15 @@
                             $('#dots').html('');
                             document.title = "welcome : OggleBooble";
                             changeFavoriteIcon("redBallon");
+                            var visitorId = getCookieValue("VisitorId");
+                            if (isNullorUndefined(visitorId)) {
+                                getIpInfo(homePageId);
+                            }
+                            else {
+                                console.log("visitorId found: " + visitorId);
+                                logPageHit(homePageId);
+                            }
+
                             if (subdomain == "blog") {
                                 $('.threeColumnLayout').html(blogBodyHtml());
                                 blogStartup();
@@ -167,15 +176,6 @@
                                 //launchPromoMessages();
                                 launchCarousel();
                                 loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
-                            }
-                            var visitorId = getCookieValue("VisitorId");
-                            if (isNullorUndefined(visitorId)) {
-                                getIpInfo(homePageId);
-                            }
-                            else {
-                                console.log("visitorId found: " + visitorId);
-                                setLoginHeaderSection(visitorId);
-                                logPageHit(homePageId);
                             }
                         }
                         else {

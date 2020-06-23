@@ -17,13 +17,11 @@ namespace OggleBooble.Api.Controllers
         private int skip = 0;
         [HttpGet]
         [Route("api/IndexPage/GetCarouselImages")]
-        public CarouselInfoModel GetCarouselImages(string root, int take, bool includeLandscape, bool includePortrait)
+        public CarouselInfoModel GetCarouselImages(string root, int skip, int take, bool includeLandscape, bool includePortrait)
         {
             CarouselInfoModel carouselInfo = new CarouselInfoModel();
             try
             {
-                var timer = new System.Diagnostics.Stopwatch();
-                timer.Start();
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     if (includeLandscape)
@@ -36,8 +34,6 @@ namespace OggleBooble.Api.Controllers
                             .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
                 }
                 //carouselInfo.FolderCount = carouselInfo.Links.GroupBy(l => l.FolderName).Count();
-                timer.Stop();
-                System.Diagnostics.Debug.WriteLine("Select " + take + " from vLinks took: " + timer.Elapsed);
                 carouselInfo.Success = "ok";
             }
             catch (Exception ex) {

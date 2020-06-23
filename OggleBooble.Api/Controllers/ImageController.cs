@@ -298,27 +298,31 @@ namespace OggleBooble.Api.Controllers
                         string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
                         trimPath = newLink.Path.Replace("/Root/", "").Replace("%20", " ");
 
+                        // COPY FILE TO LOCAL ?
+                        //try
+                        //{
+                        //    string localRoot = dbCategory.RootFolder;
+                        //    if (localRoot == "centerfold")
+                        //        localRoot = "playboy";
+
+                        //    var test = newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
+                        //    var localPath = localRepoPath + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
+                        //    DirectoryInfo dirInfo = new DirectoryInfo(localPath);
+                        //    if (!dirInfo.Exists)
+                        //        dirInfo.Create();
+                        //    wc.DownloadFile(new Uri(newLink.Link), localPath + "/" + newFileName);
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    var err = Helpers.ErrorDetails(ex);
+                        //    System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
+                        //}
+
+
+
                         // USE WEBCLIENT TO CREATE THE FILE
                         using (WebClient wc = new WebClient())
                         {
-                            try
-                            {
-                                string localRoot = dbCategory.RootFolder;
-                                if (localRoot == "centerfold")
-                                    localRoot = "playboy";
-
-                                var test = newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
-                                var localPath = localRepoPath + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
-                                DirectoryInfo dirInfo = new DirectoryInfo(localPath);
-                                if (!dirInfo.Exists)
-                                    dirInfo.Create();
-                                wc.DownloadFile(new Uri(newLink.Link), localPath + "/" + newFileName);
-                            }
-                            catch (Exception ex)
-                            {
-                                var err = Helpers.ErrorDetails(ex);
-                                System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
-                            }
                             try
                             {
                                 wc.DownloadFile(new Uri(newLink.Link), appDataPath + "tempImage" + extension);
@@ -334,26 +338,26 @@ namespace OggleBooble.Api.Controllers
                         try
                         {
                             // todo  write the image as a file to x.ogglebooble  4/1/19
-                            string localRoot = dbCategory.RootFolder;
-                            if (localRoot == "centerfold")
-                                localRoot = "playboy";
-                            //var localPath = repoPath + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
-                            string ftpPath = ftpHost + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
-                            if (!FtpUtilies.DirectoryExists(ftpPath))
-                                FtpUtilies.CreateDirectory(ftpPath);
+                            //string localRoot = dbCategory.RootFolder;
+                            //if (localRoot == "centerfold")
+                            //    localRoot = "playboy";
+                            ////var localPath = repoPath + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
+                            //string ftpPath = ftpHost + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
+                            //if (!FtpUtilies.DirectoryExists(ftpPath))
+                            //    FtpUtilies.CreateDirectory(ftpPath);
 
-                            webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
+
+
+                            //webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
+                            //webRequest.Credentials = networkCredentials;
+                            //var zz = webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+
+
+
+
+                            webRequest = (FtpWebRequest)WebRequest.Create(ftpHost + repoDomain + "/" + mySqlDestPath + "/" + newFileName);
                             webRequest.Credentials = networkCredentials;
-                            var zz = webRequest.Method = WebRequestMethods.Ftp.UploadFile;
-
-
-
-
-                            webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + mySqlDestPath);
-                            webRequest.Credentials = networkCredentials;
-                            zz = webRequest.Method = WebRequestMethods.Ftp.UploadFile;
-
-
+                            webRequest.Method = WebRequestMethods.Ftp.UploadFile;
                         }
                         catch (Exception ex)
                         {

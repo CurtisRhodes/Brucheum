@@ -55,7 +55,7 @@ namespace OggleBooble.Api.Controllers
                             DirectoryName = row.FolderName,
                             ParentId = row.Parent,
                             FileCount = row.FileCount,
-                            //SubDirCount = row.SubDirCount,
+                            //SubDirCount = db.CategoryFolders.Where(f => f.Parent == row.Id).Count(),
                             //ChildFiles = row.ChildFiles,
                             IsStepChild = row.IsStepChild,
                             FolderImage = row.FolderImage

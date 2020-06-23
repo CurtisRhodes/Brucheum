@@ -313,10 +313,12 @@ function logDataActivity(changeLogModel) {
         success: function (success) {
             if (success === "ok") {
                 displayStatusMessage("ok", "activity" + changeLogModel.Activity + " logged");
-                if (typeof resume === 'function')
+                if (typeof resume === 'function') {
                     resume();
-
-                doneLoggingDataActivity();
+                }
+                if (typeof doneLoggingDataActivity === 'function') {
+                    doneLoggingDataActivity();
+                }
             }
             else {
                 if (document.domain === "localhost")
@@ -336,13 +338,16 @@ function logDataActivity(changeLogModel) {
             $('#dashBoardLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "logActivity")) {
-                logError({
-                    VisitorId: getCookieValue("VisiorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "logActivity"
-                });
+                if (document.domain === "localhost")
+                    alert("logDataActivity: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "logActivity"
+                    });
                 //sendEmailToYourself("xhr error in common.js logActivity", "/api  ChangeLog  Message: " + errorMessage);
             }
         }

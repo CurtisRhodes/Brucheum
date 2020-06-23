@@ -59,21 +59,21 @@ function setHeaderDetails(folderId, subdomain) {
         }
         case "archive": {
 
-            $('#hdrBtmRowSec3').html("<div id='rankerTag' class='headerBanner'>" +
-                "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"archive\")'" +
-                " title='Spin through the links to land on random portrait images.'>babes ranker</a></div>\n");
+            //$('#hdrBtmRowSec3').html("<div id='rankerTag' class='headerBanner'>" +
+            //    "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"archive\")'" +
+            //    " title='Spin through the links to land on random portrait images.'>babes ranker</a></div>\n");
 
-            $('#hdrBtmRowSec3').append("<div class='headerBanner'>" +
-                "\n<a href='javascript:rtpe(\"EPC\"," + folderId + ",1132,1132)'>every Playboy Centerfold</a></div>\n");
+            //$('#hdrBtmRowSec3').append("<div class='headerBanner'>" +
+            //    "\n<a href='javascript:rtpe(\"EPC\"," + folderId + ",1132,1132)'>every Playboy Centerfold</a></div>\n");
 
             break;
         }
         case "boobs": {
-            $('#bannerContainer').html("<div id='rankerTag' class='headerBanner'>" +
-                "<a href='javascript:rtpe(\"BAC\"," + folderId + ",3,3)'>babes archive</a></div>\n");
-            $('#bannerContainer').append("<div id='rankerTag' class='headerBanner'>" +
-                "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"boobs\"," + folderId + ")'" +
-                " title='Spin through the links to land on random portrait images.'>boobs ranker</a></div>\n");
+            //$('#bannerContainer').html("<div id='rankerTag' class='headerBanner'>" +
+            //    "<a href='javascript:rtpe(\"BAC\"," + folderId + ",3,3)'>babes archive</a></div>\n");
+            //$('#bannerContainer').append("<div id='rankerTag' class='headerBanner'>" +
+            //    "\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"boobs\"," + folderId + ")'" +
+            //    " title='Spin through the links to land on random portrait images.'>boobs ranker</a></div>\n");
             break;
         }
         case "playboy":

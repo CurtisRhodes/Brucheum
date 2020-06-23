@@ -324,7 +324,7 @@ namespace OggleBooble.Api.Controllers
         public string LogDataActivity(ChangeLogModel changeLog)
         {
             string success;
-            try
+            try            
             {
                 using (var db = new OggleBoobleMSSqlContext())
                 {
@@ -343,7 +343,7 @@ namespace OggleBooble.Api.Controllers
             {
                 success = Helpers.ErrorDetails(ex);
             }
-            return "ok";
+            return success;
         }
 
         [HttpPost]

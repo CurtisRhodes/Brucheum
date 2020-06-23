@@ -60,18 +60,16 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
     });
 }
 
-let oneShown = false;
+//let oneShown = false;
 function latestGalleryImageError(folderId) {    
-    //alert("latestGalleryImageError");
+    alert("latestGalleryImageError: " + folderId);
     //alert("latestGallery src: " + $('#lt' + folderId).attr('src'));
-
     //$('#lt' + folderId).attr('src', "Images/redballon.png");
-
-    if (!oneShown) {
-        oneShown = true;
-        alert("latestGalleryImageError called: " + folderId);
-        alert("xx: " + $('#lt' + folderId).attr('src'))
-    }
+    //if (!oneShown) {
+    //    oneShown = true;
+    //    alert("latestGalleryImageError called: " + folderId);
+    //    alert("xx: " + $('#lt' + folderId).attr('src'))
+    //}
 }
 
 function launchPromoMessages() {

@@ -6,7 +6,7 @@ using System.Web;
 
 namespace OggleBooble.Api.Models
 {
-    public class FolderTypeModel 
+    public class FolderTypeModel
     {
         public string RootFolder { get; set; }
         public bool HasImages { get; set; }
@@ -32,11 +32,13 @@ namespace OggleBooble.Api.Models
         {
             TrackBackItems = new List<TrackBackItem>();
             BreadCrumbs = new List<BreadCrumbItemModel>();
+            SubDirInfos = new List<SubDirInfo>();
         }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
         public List<TrackBackItem> TrackBackItems { get; set; }
         public List<BreadCrumbItemModel> BreadCrumbs { get; set; }
+        public List<SubDirInfo> SubDirInfos { get; set; }
         public string ExternalLinks { get; set; }
         public int PageHits { get; set; }
         public int UserImageHits { get; set; }
@@ -44,6 +46,13 @@ namespace OggleBooble.Api.Models
         public string LastModified { get; set; }
         public string FolderType { get; set; }
         public string Success { get; set; }
+    }
+
+    public class SubDirInfo
+    {
+        public int ParentFolderId { get; set; }
+        public int SubDirCount { get; set; }
+        public int TotalChildFiles { get; set; }
     }
 
     public class CategoryTreeModel

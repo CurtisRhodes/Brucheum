@@ -76,7 +76,7 @@ namespace OggleBooble.Api.MSSqlDataContext
     public class ChangeLog
     {
         [Key]
-        public string PkId { get; set; }
+        public int PkId { get; set; }
         public int PageId { get; set; }
         public string PageName { get; set; }
         public string Activity { get; set; }

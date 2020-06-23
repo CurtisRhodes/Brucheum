@@ -12,13 +12,13 @@ var imageCommentDialogIsOpen = false;
 var folderCategoryDialogIsOpen = false;
 var forgetShowingCatDialog;
 var imageHistory = [];
+var rootsLoaded = [];
 var carouselImageViews = 0;
 var carouselImageErrors = 0;
 var mainImageClickId;
 var knownModelLabelClickId;
 var imageTopLabelClickId;
 var footerLabelClickId;
-let initialTake = 500;
 let settingsImgRepo = settingsArray.ImageRepo;
 let imgSrc;
 
@@ -42,22 +42,20 @@ function launchCarousel() {
         //alert("lsCarouselSettings: " + jsCarouselSettings + "\ncarouselSettings.includeLandscape: " + jsCarouselSettings.includeLandscape);
     }
     jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
-    initialTake = 1500;
 
     //alert("loadImages");
 
     loadImages("boobs", Date.now(), 0, 500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
 
     if (jsCarouselSettings.includeArchive) {
-        loadImages("archive", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+        loadImages("archive", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
     }
-    //if (jsCarouselSettings.includeCenterfolds) {
-    //    loadImages("centerfold", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-    //}
+    if (jsCarouselSettings.includeCenterfolds) {
+        loadImages("centerfold", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    }
     if (jsCarouselSettings.includePorn) {
-        loadImages("porn", Date.now(), 0, initialTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+        loadImages("porn", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
     }
-    
     window.addEventListener("resize", resizeCarousel);
 }
 
@@ -110,10 +108,12 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                         take = 2000;
                         //console.log("loadImages(" + rootFolder + ") skip: " + skip + " take  " + take + " took: " + delta.toFixed(3));
                         loadImages(rootFolder, absolueStart, skip + take, take, includeLandscape, includePortrait);
-                        $('#footerMessage').html("carousel items loaded: " + carouselItemArray.length);
+                        $('#footerMessage').html(rootFolder + " carousel items loaded: " + carouselItemArray.length + " skip: " + skip);
                     }
                     else {
                         // done
+
+                        rootsLoaded.push(rootFolder);
                         delta = (Date.now() - absolueStart) / 1000;
                         console.log("loadImages(" + rootFolder + ") DONE!! took: " + delta.toFixed(3) + " total: " + carouselItemArray.length.toLocaleString());
                         $('#footerMessage').html("total carousel items: " + carouselItemArray.length.toLocaleString());
@@ -121,7 +121,6 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                 }
                 else {
                     if (document.domain === "localhost")
-                        //alert("settingsArray.ApiServer: " + settingsArray.ApiServer);
                         alert("carousel.loadImages: " + carouselInfo.Success);
                     else
                         logError({
@@ -220,11 +219,13 @@ function setLabelLinks() {
             if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
                 $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderName);
                 $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParentName);                
-                $('#carouselFooterLabel').html("Playboy");
-                footerLabelClickId = 472;
+
+                //$('#carouselFooterLabel').html("Playboy");
+                //footerLabelClickId = 472;
+
                 //$('#headerMessage').html(" 3P non folder member");
-                pause();
-                setTimeout(function () { alert("non folder member 3. centerfold\nroot: " + carouselItemArray[imageIndex].RootFolder) }, 600);
+                //pause();
+                //setTimeout(function () { alert("non folder member 3. centerfold\nroot: " + carouselItemArray[imageIndex].RootFolder) }, 600);
             }
         }
         else {  // roman numeral shift
@@ -350,6 +351,7 @@ function pause() {
 
 function resume() {
     clearInterval(CarouselInterval);
+    imageIndex = Math.floor(Math.random() * carouselItemArray.length);
     startCarousel(imageIndex);
     $('#pauseButton').html("||");
 }
@@ -524,8 +526,6 @@ function assuranceArrowClick(direction) {
     //reportEvent(eventCode, calledFrom, eventDetail, pageId) {
     reportEvent("CAA", carouselItemArray[imageIndex].LinkId, "direction: " + direction,  homePageId);
     if (direction === "foward") {
-        newImageIndex = Math.floor(Math.random() * carouselItemArray.length);
-        intervalBody(newImageIndex);
         resume();
     }
     else {
