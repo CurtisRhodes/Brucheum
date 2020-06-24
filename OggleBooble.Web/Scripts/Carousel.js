@@ -22,7 +22,7 @@ var footerLabelClickId;
 let settingsImgRepo = settingsArray.ImageRepo;
 let imgSrc;
 
-function launchCarousel() {
+function launchCarousel(startRoot) {
     //$('#footerMessage').html("launching carousel");
     $('#carouselContainer').html(carouselHtml());
     resizeCarousel();
@@ -45,16 +45,19 @@ function launchCarousel() {
 
     //alert("loadImages");
 
-    loadImages("boobs", Date.now(), 0, 500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-
-    if (jsCarouselSettings.includeArchive) {
-        loadImages("archive", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    loadImages(startRoot, Date.now(), 0, 500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    if (startRoot === "boobs") {
+        if (jsCarouselSettings.includeArchive) {
+            loadImages("archive", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+        }
+        if (jsCarouselSettings.includeCenterfolds) {
+            loadImages("centerfold", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+        }
     }
-    if (jsCarouselSettings.includeCenterfolds) {
-        loadImages("centerfold", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-    }
-    if (jsCarouselSettings.includePorn) {
-        loadImages("porn", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    if (startRoot === "porn") {
+        //if (jsCarouselSettings.includePorn) {
+            loadImages("sluts", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+        //}
     }
     window.addEventListener("resize", resizeCarousel);
 }

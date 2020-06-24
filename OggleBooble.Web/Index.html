@@ -165,16 +165,18 @@
                                 dashboardStartup();
                             }
                             if (subdomain == "porn") {
+                                changeFavoriteIcon("porn");
                                 document.title = "OgglePorn";
                                 setOggleHeader(homePageId, subdomain);
                                 setOggleFooter(homePageId, subdomain);
+                                launchCarousel("porn");
                             }
                             if (subdomain == "boobs") {
                                 document.title = "welcome : OggleBooble";
                                 setOggleHeader(homePageId, "Index");
                                 setOggleFooter(homePageId, "Index");
                                 //launchPromoMessages();
-                                launchCarousel();
+                                launchCarousel("boobs");
                                 loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
                             }
                         }

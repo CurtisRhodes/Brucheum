@@ -94,7 +94,7 @@ function setHeaderDetails(folderId, subdomain) {
             changeFavoriteIcon();
             $('body').addClass('pornBodyColors');
             $('#bannerContainer').html("<div id='rankerTag' class='headerBanner'>" +
-                "<a href='javascript:rtpe(\"BAC\"," + folderId + ",440," + folderId + ")'>slut archive</a></div>\n");
+                "<a href='javascript:rtpe(\"BAC\"," + folderId + ",440,440)'>slut archive</a></div>\n");
             $('#bannerContainer').append("<div id='rankerTag' class='headerBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"" + subdomain + "\"," + folderId + ")' " +
                 "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n");
             $('#bannerTitle').html("OgglePorn");
@@ -140,11 +140,11 @@ function setMenubar(subdomain) {
         }
         case "porn":
         case "sluts": {
-            headerMenu = "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",243," + hdrFolderId + ")'>cock suckers</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",420," + hdrFolderId + ")'>boob suckers</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",357," + hdrFolderId + ")'>cum shots</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",397," + hdrFolderId + ")'>kinky</a> and \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",411," + hdrFolderId + ")'>naughty behaviour</a>\n";
+            headerMenu = "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + "," + hdrFolderId + ",243)'>cock suckers</a>, \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ',' + hdrFolderId + ",420)'>boob suckers</a>, \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ',' + hdrFolderId + ",357)'>cum shots</a>, \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ',' + hdrFolderId + ",397)'>kinky</a> and \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ',' + hdrFolderId + ",411)'>naughty behaviour</a>\n";
             break;
         }
         default:
