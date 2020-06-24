@@ -330,7 +330,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     var dataAction = new ChangeLog();
                     //dataAction.PkId = Guid.NewGuid().ToString();
-                    dataAction.PageId = 1144;
+                    dataAction.PageId = changeLog.PageId;
                     dataAction.PageName = changeLog.PageName;
                     dataAction.Activity = changeLog.Activity;
                     dataAction.Occured = DateTime.Now;

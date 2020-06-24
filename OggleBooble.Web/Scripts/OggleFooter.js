@@ -11,7 +11,7 @@
                 "    <div class='footerCol'>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"about us\",\"about us\"," + pageId + ")'>about us</div>\n" +
                 "        <div class='clickable' onclick='reportThenPerformEvent(\"FLC\",\"dir tree\",\"dir tree\"," + pageId + ")'>Category List</div>\n" +
-                "        <div class='clickable' onclick='window.location.href=\"index.html?subdomain=dashboard\", \"_blank\"'>DashXboard</div>\n" +
+                "        <div class='clickable' onclick='window.open(\"index.html?subdomain=dashboard\", \"_blank\")'>DashXboard</div>\n" +
                 "        <div class='clickable' onclick='window.location.href=\"index.html?subdomain=porn\", \"_blank\"'>NasXty Porn</div>\n" +
                 "    </div>\n" +
                 "    <div class='footerCol'>\n" +

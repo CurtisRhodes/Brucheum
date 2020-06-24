@@ -246,18 +246,17 @@ function setLabelLinks() {
     }
 }
 
-function imgErrorThrown() {
+function imgErrorThrown(index) {
     $('#thisCarouselImage').attr('src', "Images/redballon.png");
     carouselImageViews -= 1;
     carouselImageErrors++;
     pause();
-    //alert("imgErrorThrown. src: " + $(this).prop("src"));
-    //alert("imgErrorThrown. src: " + imgSrc);
-
+    alert("Missig Image: " + carouselItemArray[imageIndex].FolderId + ", "+ carouselItemArray[imageIndex].FolderName+
+        "\nlinkId: " + carouselItemArray[imageIndex].LinkId);    
     logDataActivity({
-        PageId: 1,
-        PageName: "Carousel",
-        Activity: imgSrc 
+        PageId: carouselItemArray[imageIndex].FolderId,
+        PageName: carouselItemArray[imageIndex].FolderName,
+        Activity: carouselItemArray[imageIndex].LinkId
     });
 }
 // function doneLoggingDataActivity() { };
@@ -555,7 +554,7 @@ function carouselHtml() {
         "          <img class='assuranceArrows' onclick='assuranceArrowClick(\"back\")' src='/Images/leftArrowOpaque02.png' />\n" +
         "          <div id='knownModelLabel' class='knownModelLabel' onclick='clickViewGallery(3)'></div>\n" +
         "          <div id='imageTopLabel' class='categoryTitleLabel' onclick='clickViewGallery(2)'></div>\n" +
-        "          <img id='thisCarouselImage' onerror='imgErrorThrown(" + imgSrc + ")' oncontextmenu='carouselContextMenuClick()' class='carouselImage' src='/Images/ingranaggi3.gif' onclick='clickViewGallery(1)' />\n" +
+        "          <img id='thisCarouselImage' onerror='imgErrorThrown(" + imageIndex + ")' oncontextmenu='carouselContextMenuClick()' class='carouselImage' src='/Images/ingranaggi3.gif' onclick='clickViewGallery(1)' />\n" +
         "          <img class='assuranceArrows' onclick='assuranceArrowClick(\"foward\")' src='/Images/rightArrowOpaque02.png' />\n" +
         "      </div>\n" +
         "      <div class='carouselFooter'>\n" +

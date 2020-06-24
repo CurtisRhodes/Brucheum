@@ -466,3 +466,10 @@ input[type='checkbox'] {
     font-weight: bold;
 }
 
+.flexbox {
+    width: 100%;
+    display: -webkit-flex;
+}
+    .flexbox input {
+        width: 100%;
+    }

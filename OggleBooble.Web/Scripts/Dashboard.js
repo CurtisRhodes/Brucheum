@@ -25,13 +25,19 @@ function dashboardStartup() {
 
     $('.dashboardContainerColumn').show(); 
     // $('#divAddImages').show();
-    showAddImageLinkDialog()
     //logPageHit(3910, "dashboard");
     //defineDilogs();
     //setSignalR();
     //window.addEventListener("beforeunload", detectUnload());
     window.addEventListener("resize", resizeDashboardPage);
     resizeDashboardPage();
+}
+
+function onDirTreeComplete() {
+    $('#dashBoardLoadingGif').hide();
+    resizeDashboardPage();
+    setTimeout(function () { $('#dataifyInfo').hide() }, 15000);
+    showAddImageLinkDialog();
 }
 
 function resizeDashboardPage() {
@@ -44,9 +50,8 @@ function resizeDashboardPage() {
     //var bb = $('.threeColumnLayout').height();
     //$('.threeColumnLayout').css("height", ($(window).innerHeight() - $('header').height()) - 550);
 
-    //let adjH = $('.threeColumnLayout').height();
-    //alert("adjH: " + adjH);
-    //$('#dashboardContainer').css("height", adjH);
+    let adjH = $('.threeColumnLayout').height() - $('header').height() - 90;
+    $('#dashboardContainer').css("height", adjH);
 
     // WIDTH
     let middleColumnW = $('#dashboardContainer').width() - $('#dashboardRightColumn').width() - $('#dashboardLeftColumn').width();
@@ -277,8 +282,12 @@ function createStaticPages(justOne) {
 function showAddImageLinkDialog() {
     $('#workAreaContainer').html(
         "<div id='addLinkCrudArea' class='addLinkCrudArea'>\n" +
-        "    <div>link&nbsp;&nbsp;<input id='txtImageLink' tabindex='1' class='roundedInput' onblur='previewLinkImage()' /></div>\n" +
-        "    <div>path&nbsp;<input class='roundedInput txtLinkPath' readonly='readonly' /></div>\n" +
+        "   <div class='flexbox'>\n" +
+        "       <label>link</label><input id='txtImageLink' tabindex='1' class='roundedInput' onblur='previewLinkImage()'/>\n" +
+        "   </div>\n" +
+        "   <div class='flexbox'>\n" +
+        "       <label>path</label><input class='roundedInput txtLinkPath' readonly='readonly' /></div>\n" +
+        "   </div>\n" +
         "    <div class='roundendButton' tabindex='2' onclick='addImageLink()'>Insert</div>\n" +
         "</div>\n" +
         "<img id='imgLinkPreview' class='linkImage' />\n").show();
@@ -307,7 +316,8 @@ function addImageLink() {
             success: function (successModel) {
                 $('#dashBoardLoadingGif').hide();
                 if (successModel.Success === "ok") {
-                    //displayStatusMessage("ok", "image link added");
+                    $('#dataifyInfo').show().html("calling AddImageLink");
+                    displayStatusMessage("ok", "image link added");
                     $('#txtImageLink').val("");
                     resizeDashboardPage();
 
@@ -320,9 +330,12 @@ function addImageLink() {
                         PageName: $('.txtLinkPath').val(),
                         Activity: "new image added"
                     });
+                    $('#dataifyInfo').hide();
                 }
-                else
+                else {
+                    $('#dataifyInfo').show().html("successModel.Success");
                     alert("addImageLink: " + successModel.Success);
+                }
             },
             error: function (xhr) {
                 $('#dashBoardLoadingGif').hide();
@@ -761,7 +774,6 @@ function updateSortOrder() {
             }
         });
     }
-
 
 // MOVE FOLDER
 function showMoveFolderDialog() {

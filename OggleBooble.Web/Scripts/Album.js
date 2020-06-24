@@ -425,7 +425,7 @@ function startSlideShow(folderId, linkId) {
 
 function launchDeepSlideShow()
 {
-
+    $('#imagePageLoadingGif').show();
     launchViewer(albumFolderId, 1, true);
 }
 

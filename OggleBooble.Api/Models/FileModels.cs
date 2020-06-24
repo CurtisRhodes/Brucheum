@@ -13,6 +13,8 @@ namespace OggleBooble.Api.Models
         public string Link { get; set; }
         public string Mode { get; set; }
         public int SortOrder { get; set; }
+        public string SourceFolderName { get; set; }
+        public string DestinationFolderName { get; set; }        
     }
 
     public class AddLinkModel

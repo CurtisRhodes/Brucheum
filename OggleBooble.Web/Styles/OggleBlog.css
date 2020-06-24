@@ -34,11 +34,6 @@
     margin-left: 7px;
 }
 
-.roundedInput {
-    margin-bottom: 7px;
-    width: 500px;
-}
-
 .leftImage {
     border: solid .05px var(--oggleBorderColor);
     height: 130px;

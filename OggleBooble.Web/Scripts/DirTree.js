@@ -20,7 +20,8 @@ function loadDirectoryTree(startNode, container) {
         success: function (dirTreeModel) {
             if (dirTreeModel.Success === "ok") {
                 var dataLoadTime = (Date.now() - start) / 1000;
-                console.log("load dirTree data took: " + dataLoadTime.toFixed(3));
+
+                //console.log("load dirTree data took: " + dataLoadTime.toFixed(3));
                 $('#dataifyInfo').show().html("loading directory tree took: " + dataLoadTime.toFixed(3));
                 start = Date.now();
                 buildDirTreeRecurr(dirTreeModel);
@@ -32,9 +33,9 @@ function loadDirectoryTree(startNode, container) {
                 $('#dataifyInfo').append("   html took: " + htmlBuildTime.toFixed(3));
                 console.log("build dirTree html: " + htmlBuildTime.toFixed(3));
 
-                $('#dashBoardLoadingGif').hide();
-                resizeDashboardPage();
-                setTimeout(function () { $('#dataifyInfo').hide() }, 15000);
+                if (typeof onDirTreeComplete === 'function') {
+                    onDirTreeComplete();
+                }
             }
             else { alert(dirTreeModel.Success); }
         },

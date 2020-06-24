@@ -23,8 +23,8 @@ function setOggleHeader(folderId, subdomain) {
     setHeaderDetails(hdrFolderId, hdrSubdomain);
     setMenubar(subdomain);
     setLoginSection(subdomain);
-    window.addEventListener("resize", headerResize);
-    headerResize();
+    window.addEventListener("resize", mediaSavyHdrResize);
+    mediaSavyHdrResize();
 }
 
 function setHeaderDetails(folderId, subdomain) {
@@ -188,8 +188,10 @@ function setLoginSection(subdomain) {
     }
 }
 
-function headerResize() {
+function mediaSavyHdrResize() {
     hdrRowW = $('.headerTopRow').width();
+
+    // bottom Row  
     {
         if (hdrBottRowSectionsW() < hdrRowW) {
             $('.oggleHeader').css("background-color", "var(--brucheumBlue)");
@@ -214,7 +216,7 @@ function headerResize() {
             $('.blackCenterfoldsBanner').css("font-size", "15px");
             $('#mainMenuContainer').html(setMenubar(hdrSubdomain));
 
-            showResizeMessage("80/15: ");
+            showResizeMessage("80/15: ","B");
         }
         if (hdrBottRowSectionsW() >= hdrRowW) {
             $('.oggleHeader').css("background-color", "#e6de3b");  // sn
@@ -225,7 +227,7 @@ function headerResize() {
             $('.blackCenterfoldsBanner').css("font-size", "13px");
             $('#mainMenuContainer').html(setMenubar(hdrSubdomain));
 
-            showResizeMessage("60/13: ");
+            showResizeMessage("60/13: ", "B");
         }
         //if (hdrBottRowSectionsW() >= hdrRowW) {
         //    $('.siteLogo').css("height", "60px");
@@ -245,7 +247,7 @@ function headerResize() {
             $('.badgeImage').css("height", "22px");
             $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
 
-            showResizeMessage("iPad 50/12 : ");
+            showResizeMessage("iPad 50/12 : ", "B");
         }
         //if (hdrBottRowSectionsW() >= hdrRowW) {
         //    $('.oggleHeader').css("background-color", "#e6de3b");  // sn
@@ -266,9 +268,10 @@ function headerResize() {
             $('.badgeImage').css("height", "18px");
             $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
 
-            showResizeMessage("iPhone: ");
+            showResizeMessage("iPhone: ", "B");
         }
     }
+// top row
     {
         if (hdrTopRowSectionsW() < hdrRowW) {
             $('#bannerTitle').css("font-size", "33px");
@@ -278,7 +281,7 @@ function headerResize() {
             $('.headerBanner').css("font-size", "17px").show(); // banner tabs contents
             //"           <div id='bannerContainer'></div>" +
             //"           <div id='searchBox' class='oggleSearchBox'>\n" +
-            showResizeMessage("TOP RESET: ");
+            showResizeMessage("TOP RESET: ","T");
         }
         //let testing = false;
         //if (false) {
@@ -289,20 +292,20 @@ function headerResize() {
             $('#mainMenuContainer').css("font-size", "18px").show();
             $('.headerBanner').css("font-size", "15px").show(); // banner tabs contents
             //"           <div id='searchBox' class='oggleSearchBox'>\n" +
-            showResizeMessage("q1: ");
+            showResizeMessage("q1: ","T");
         }
         if (hdrTopRowSectionsW() > hdrRowW) {
             $('#bannerContainer').hide();
             $('#mainMenuContainer').css("font-size", "18px");
             $('.headerBanner').css("font-size", "15px").show(); // banner tabs contents
             //"           <div id='searchBox' class='oggleSearchBox'>\n" +
-            showResizeMessage("q2: ");
+            showResizeMessage("q2: ", "T");
         }
         if (hdrTopRowSectionsW() > hdrRowW) {
             $('#bannerContainer').hide();
             $('#mainMenuContainer').hide();
             //"           <div id='searchBox' class='oggleSearchBox'>\n" +
-            showResizeMessage("q3: ");
+            showResizeMessage("q3: ", "T");
         }
 
     }
@@ -323,10 +326,11 @@ function hdrTopRowSectionsW() {
     let topRowKludge = 0;
     return $('#bannerTitle').width() + $('#mainMenuContainer').width() + $('#bannerContainer').width() + $('#searchBox').width() + topRowKludge;
 }
-function showResizeMessage(secMsg) {
-    $('#aboveImageContainerMessageArea').html(secMsg + "hdrTopRow: " + $('.headerTopRow').width().toLocaleString() +
-        " bottomSecs: " + hdrBottRowSectionsW().toLocaleString() +
-        " hdrTopSecs: " + hdrTopRowSectionsW().toLocaleString());
+function showResizeMessage(secMsg, row) {
+
+    //$('#aboveImageContainerMessageArea').html(secMsg + "hdrTopRow: " + $('.headerTopRow').width().toLocaleString() +
+    //    " bottomSecs: " + hdrBottRowSectionsW().toLocaleString() +
+    //    " hdrTopSecs: " + hdrTopRowSectionsW().toLocaleString());
 }
 
 function headerHtml(folderId, subdomain) {

@@ -65,12 +65,12 @@ function getSlideshowItems(folderId, startItem) {
             type: "GET",
             url: settingsArray.ApiServer + "/api/GalleryPage/GetSlideShowItems?folderId=" + folderId + "&includeSubFolders=" + includeSubFolders,
             success: function (slideshowItemModel) {
+                $('#imagePageLoadingGif').hide();
                 if (slideshowItemModel.Success === "ok") {
                     imageViewerFolderName = slideshowItemModel.FolderName;
                     imageViewerArray = slideshowItemModel.SlideshowItems;
 
                     $('#imageContainer').fadeOut();
-
                     //$('#imageViewerHeaderTitle').html(slideshowItemModel.RootFolder + "/" + slideshowItemModel.FolderName + "/" + slideshowItemModel.ImageFolderName);
                     $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName);
 

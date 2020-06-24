@@ -30,7 +30,6 @@ function showImageContextMenu(pImgSrc, pLinkId, pFolderId, currentAlbumJSfolderN
     $('#imageContextMenu').fadeIn();
 }
 
-
 function getImageDetails() {
     $.ajax({
         type: "GET",
@@ -175,6 +174,39 @@ function imageCtxMenuAction(action) {
     }    
 }
 
+function imageContextMenuHtml() {
+    return "<div id='imageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
+        "    <div id='ctxModelName' onclick='imageCtxMenuAction(\"show\")'>model name</div>\n" +
+        "    <div id='ctxSeeMore' onclick='imageCtxMenuAction(\"see more\")'>see more of her</div>\n" +
+        "    <div onclick='imageCtxMenuAction(\"comment\")'>Comment</div>\n" +
+        "    <div onclick='imageCtxMenuAction(\"explode\")'>explode</div>\n" +
+        "    <div id='ctxShowImageLinks' onclick='imageCtxMenuAction(\"showLinks\")'>Show Links</div>\n" +
+        "    <div id='otherLinksContainer' class='innerContextMenuContainer'></div>\n" +
+        "    <div onclick='imageCtxMenuAction(\"imageInfo\")'>Show Image info</div>\n" +
+        "    <div id='imageCtxMenuInfo' class='innerContextMenuContainer'>\n" +
+        "        <div><div class='ctxInfoLabel'>LinkId</div><div id='imageInfoLinkId' class='ctxInfoValue'></div></div>\n" +
+        //"        <div><div class='ctxInfoLabel'>internal link</div><div id='imageInfoInternalLink' class='ctxInfoValue'></div></div>\n" +
+        //"        <div><div class='ctxInfoLabel'>FolderLocation</div><div id='imageInfoFolderLocation' class='ctxInfoValue'></div></div>\n" +
+        "        <div><div class='ctxInfoLabel'>Height</div><div id='imageInfoHeight' class='ctxInfoValue'></div></div>\n" +
+        "        <div><div class='ctxInfoLabel'>Width</div><div id='imageInfoWidth' class='ctxInfoValue'></div></div>\n" +
+        "        <div><div class='ctxInfoLabel'>LastModified</div><div id='imageInfoLastModified' class='ctxInfoValue'></div></div>\n" +
+        //"        <div><div class='ctxInfoLabel'>ExternalLink</div><div id='imageInfoExternalLink' class='ctxInfoValue'></div></div>\n" +
+        "    </div>\n" +
+
+
+
+        "    <div id='ctxArchive' class='adminLink' onclick='contextMenuAction(\"archive\")'>Archive</div>\n" +
+        "    <div class='adminLink' onclick='imageCtxMenuAction(\"copy\")'>Copy Link</div>\n" +
+        "    <div class='adminLink' onclick='imageCtxMenuAction(\"move\")'>Move Image</div>\n" +
+        "    <div class='adminLink' onclick='imageCtxMenuAction(\"remove\")'>Remove Link</div>\n" +
+        "    <div class='adminLink' onclick='imageCtxMenuAction(\"setF\")'>Set as Folder Image</div>\n" +
+        "    <div class='adminLink' onclick='imageCtxMenuAction(\"setC\")'>Set as Category Image</div>\n" +
+        "</div>\n";
+}
+
+
+
+
 function setFolderImage(linkId, folderId, level) {
     //if (document.domain === 'localhost') alert("setFolderImage. \nlinkId: " + linkId + "\nfolderId=" + folderId + "\nlevel=" + level);
     $.ajax({
@@ -219,8 +251,6 @@ function setFolderImage(linkId, folderId, level) {
         }
     });
 }
-
-
 
 function removeImage() {
     //alert("folderId: " + folderId);
@@ -304,32 +334,128 @@ function removeImage() {
     });
 }
 
-function imageContextMenuHtml() {
-    return "<div id='imageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
-        "    <div id='ctxModelName' onclick='imageCtxMenuAction(\"show\")'>model name</div>\n" +
-        "    <div id='ctxSeeMore' onclick='imageCtxMenuAction(\"see more\")'>see more of her</div>\n" +
-        "    <div onclick='imageCtxMenuAction(\"comment\")'>Comment</div>\n" +
-        "    <div onclick='imageCtxMenuAction(\"explode\")'>explode</div>\n" +
-        "    <div id='ctxShowImageLinks' onclick='imageCtxMenuAction(\"showLinks\")'>Show Links</div>\n" +
-        "    <div id='otherLinksContainer' class='innerContextMenuContainer'></div>\n" +
-        "    <div onclick='imageCtxMenuAction(\"imageInfo\")'>Show Image info</div>\n" +
-        "    <div id='imageCtxMenuInfo' class='innerContextMenuContainer'>\n" +
-        "        <div><div class='ctxInfoLabel'>LinkId</div><div id='imageInfoLinkId' class='ctxInfoValue'></div></div>\n" +
-        //"        <div><div class='ctxInfoLabel'>internal link</div><div id='imageInfoInternalLink' class='ctxInfoValue'></div></div>\n" +
-        //"        <div><div class='ctxInfoLabel'>FolderLocation</div><div id='imageInfoFolderLocation' class='ctxInfoValue'></div></div>\n" +
-        "        <div><div class='ctxInfoLabel'>Height</div><div id='imageInfoHeight' class='ctxInfoValue'></div></div>\n" +
-        "        <div><div class='ctxInfoLabel'>Width</div><div id='imageInfoWidth' class='ctxInfoValue'></div></div>\n" +
-        "        <div><div class='ctxInfoLabel'>LastModified</div><div id='imageInfoLastModified' class='ctxInfoValue'></div></div>\n" +
-        //"        <div><div class='ctxInfoLabel'>ExternalLink</div><div id='imageInfoExternalLink' class='ctxInfoValue'></div></div>\n" +
-        "    </div>\n" +
 
 
 
-        "    <div id='ctxArchive' class='adminLink' onclick='contextMenuAction(\"archive\")'>Archive</div>\n" +
-        "    <div class='adminLink' onclick='imageCtxMenuAction(\"copy\")'>Copy Link</div>\n" +
-        "    <div class='adminLink' onclick='imageCtxMenuAction(\"move\")'>Move Image</div>\n" +
-        "    <div class='adminLink' onclick='imageCtxMenuAction(\"remove\")'>Remove Link</div>\n" +
-        "    <div class='adminLink' onclick='imageCtxMenuAction(\"setF\")'>Set as Folder Image</div>\n" +
-        "    <div class='adminLink' onclick='imageCtxMenuAction(\"setC\")'>Set as Category Image</div>\n" +
-        "</div>\n";
+
+var MoveCopyImageModel = {};
+function showMoveCopyDialog(action, selectedImage, folderId) {
+    MoveCopyImageModel.Mode = action;
+    MoveCopyImageModel.Link = selectedImage;
+    MoveCopyImageModel.SourceFolderId = folderId;
+
+    $('#draggableDialog').css("top", $('.oggleHeader').height() + 20);
+    $('#draggableDialogTitle').html(action + " Image Link");
+    $('#draggableDialogContents').html(moveCopyArchiveHTML());
+
+
+    var startNode = 0;
+    if (mode === "Archive")
+        startNode = 3822;
+    if ($('#moveDialogDirTree').children().length < 1) {
+        $('#mcaLoagingGif').hide();
+        buildDirTree($('#moveDialogDirTree'), "moveCopyArchiveDialogDirTreeClick", startNode);
+    }
+
 }
+
+function nonFtpMoveCopy() {
+    $('#imagePageLoadingGif').show();
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "api/OggleFile/MoveCopyArchive",
+        data: MoveCopyImageModel,
+        success: function (successModel) {
+            $('#imagePageLoadingGif').hide();
+            if (successModel.Success === "ok") {
+
+                displayStatusMessage("ok", "link " + MoveCopyImageModel.Mode + "ed to " + $('#dirTreeResults').html());
+                //alert("changeLogModel id: " + MoveCopyImageModel.SourceFolderId + " mode: " + MoveCopyImageModel.Mode + "  name: " + $('#dirTreeResults').html());
+                var activityDesc;
+                if (MoveCopyImageModel.Mode === "Copy")
+                    activityDesc = "link copied from " + MoveCopyImageModel.SourceFolderId + " to: " + MoveCopyImageModel.DestinationFolderId;
+                if (MoveCopyImageModel.Mode === "Move")
+                    activityDesc = "link moved from " + MoveCopyImageModel.SourceFolderId + " to: " + MoveCopyImageModel.DestinationFolderId;
+                if (MoveCopyImageModel.Mode === "Archive")
+                    activityDesc = "link Archived from " + MoveCopyImageModel.SourceFolderId + " to: " + MoveCopyImageModel.DestinationFolderId;
+                logActivity({
+                    PageId: MoveCopyImageModel.SourceFolderId,
+                    PageName: $('#dirTreeResults').html(),
+                    Activity: activityDesc
+                });
+                $('#moveCopyDialog').dialog("close");
+                if (successModel.ReturnValue === "0") {
+                    var linkId = MoveCopyImageModel.Link.substr(MoveCopyImageModel.Link.lastIndexOf("_") + 1, 36);
+                    displayStatusMessage("warning", "Folder Image Set");
+                    //alert("set folder image: " + linkId + "," + MoveCopyImageModel.SourceFolderId);
+                    setFolderImage(linkId, MoveCopyImageModel.DestinationFolderId, "folder");
+                }
+            }
+            else {
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "BUG",
+                    Severity: 2,
+                    ErrorMessage: successModel.Success,
+                    CalledFrom: "MoveCopyArchive.js ftpMoveCopy"
+                });
+                //alert("ftpMoveCopy: " + successModel.Success);
+            }
+        },
+        error: function (xhr) {
+            $('#imagePageLoadingGif').hide();
+            alert("ftpMoveCopy xhr error: " + xhr.statusText);
+        }
+    });
+}
+
+function moveCopyArchiveHTML() {
+    return "<div id='moveCopyDialog' class='oggleDialogWindow' title=''>\n" +
+        "    <div class='inline'><img id='copyDialogImage' class='copyDialogImage' /></div>\n" +
+        "    <div id='dirTreeResults' class='pusedoTextBox'></div>\n" +
+        "    <div class='inline'><img class='moveDialogDirTreeButton' src='/Images/caretDown.png' onclick='$('#moveDialogDirTree').show()' /></div>\n" +
+        "    <br />\n" +
+        "    <div id='moveDialogDirTree' class='hideableDropDown'></div>\n" +
+        "    <div id='btnGo' class='roundendButton' onclick='nonFtpMoveCopy()'>Copy</div>\n" +
+        "</div>";
+}
+
+function moveCopyDialogDirTreeClick(path, id, treeId) {
+    //if (treeId == "moveDialogDirTree") {
+    MoveCopyImageModel.DestinationFolderId = id;
+    $('#moveDialogDirTree').hide();
+    if (path.length > path.indexOf(".COM") + 4)
+        $('#dirTreeResults').html(path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " "));
+    else
+        $('#dirTreeResults').html(path);
+    //}
+    ///else
+    //    alert("moveDialogDirTreeClick treeId: " + treeId);
+}
+
+
+
+    //showUnknownModelInfoDialog(folderId);
+    //showFolderInfoDialog(folderId, "img ctx");
+    //rtpe("SEE", folderId, folderName, modelFolderId);
+    //showImageCommentDialog(imgSrc, linkId, folderId, folderName, "ImageContextMenu");
+    //rtpe("EXP", folderName, imgSrc, folderId);
+    //$('#imageCtxMenuInfo').toggle();
+    //reportEvent("SHL", "show Image links", folderName, folderId)
+    //showMoveCopyDialog("Archive", selectedImage, folderId);
+    //showMoveCopyDialog("Copy", selectedImage, folderId);
+    //showMoveCopyDialog("Move", selectedImage, folderId);
+    //removeImage();
+    //setFolderImage(linkId, folderId, "folder");
+    //setFolderImage(linkId, folderId, "parent");
+
+
+
+
+
+
+
+
+
+
+

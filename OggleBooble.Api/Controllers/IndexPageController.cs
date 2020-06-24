@@ -14,7 +14,6 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class IndexPageController : ApiController
     {
-        private int skip = 0;
         [HttpGet]
         [Route("api/IndexPage/GetCarouselImages")]
         public CarouselInfoModel GetCarouselImages(string root, int skip, int take, bool includeLandscape, bool includePortrait)
