@@ -13,7 +13,7 @@ namespace OggleBooble.Api.MySqlDataContext
     {
         public OggleBoobleMySqlContext() : base("name=GoDaddyMySql") { }
 
-        public virtual DbSet<CategoryFolder> CategoryFolders { get; set; }
+        public virtual DbSet<VirtualFolder> VirtualFolders { get; set; }
         //public virtual DbSet<ImageLink> ImageLinks { get; set; }       
         public virtual DbSet<ImageFile> ImageFiles { get; set; }
         public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
@@ -53,7 +53,7 @@ namespace OggleBooble.Api.MySqlDataContext
 
 
     [Table("OggleBooble.CategoryFolder")]
-    public partial class CategoryFolder
+    public partial class VirtualFolder
     {
         [Key]
         public int Id { get; set; }

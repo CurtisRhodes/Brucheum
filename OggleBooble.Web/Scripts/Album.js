@@ -24,14 +24,16 @@ function loadAlbum(folderId) {
             albumFolderId = folderId;
             var getImagesStart = Date.now();
             $('#imagePageLoadingGif').show();
+            //GetAlbumImages
             $.ajax({
                 type: "GET",
                 url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumImages?folderId=" + folderId,
-                success: function (imagesModel) {
+                success: function (albumImageInfo) {
                     $('#imagePageLoadingGif').hide();
-                    if (imagesModel.Success === "ok") {
-                        processImages(imagesModel);
+                    if (albumImageInfo.Success === "ok") {
+                        processImages(albumImageInfo);
                         $('#folderCommentButton').fadeIn();
+                        setCounts(albumImageInfo, folderId);
                         let delta = (Date.now() - getImagesStart) / 1000;
                         console.log("GetAlbumImages took: " + delta.toFixed(3));
                         $('.footer').show();
@@ -68,8 +70,8 @@ function loadAlbum(folderId) {
                     }
                 }
             });
-
             var infoStart = Date.now();
+            // GetAlbumPageInfo
             $.ajax({
                 type: "GET",
                 url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?visitorId=" + aapiVisitorId + "&folderId=" + folderId,
@@ -106,9 +108,7 @@ function loadAlbum(folderId) {
 
                         $('#headerMessage').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
                         $('#footerInfo1').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
-
                         logPageHit(folderId, "Album.html");
-
                         $('#folderCommentButton').fadeIn();
                         var delta = (Date.now() - infoStart) / 1000;
                         console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
@@ -164,26 +164,36 @@ function loadAlbum(folderId) {
     }
 }
 
-function processImages(imagesModel) {
-    var imageFrameClass = "folderImageOutterFrame";
-    var subDirLabel = "subDirLabel";
-    var imageEditor = isInRole("Image Editor");
+function galleryImageError(objImageLink) {
+    // $(this).attr('src', "Images/redballon.png");
+    $('#' + objImageLink.LinkId).attr('src', "Images/redballon.png"); 
+
+    alert("albumImg Error PageId: " + objImageLink.FolderId + ",\nPageName: " + objImageLink.FolderName + ",\nActivity: " + objImageLink.LinkId);
+    logDataActivity({
+        PageId: objImageLink.FolderId,
+        PageName: objImageLink.FolderName,
+        Activity: objImageLink.LinkId
+    });
+}
+function subFolderImgError(objSubDir) {
+    // $('#' + objSubDir.LinkId).attr('src', "Images/redballon.png");
+
+    alert("subDirImg Error PageId: " + objSubDir.FolderId + ",\nDirectoryName: " + objSubDir.DirectoryName + ",\nActivity: " + objSubDir.LinkId);
+    logDataActivity({
+        PageId: objSubDir.FolderId,
+        PageName: objSubDir.DirectoryName,
+        Activity: objSubDir.LinkId
+    });
+}
+
+function processImages(albumImageInfo) {
+    let labelClass = "defaultSubFolderImage";  
+    let imageFrameClass = "folderImageOutterFrame";
+    let imageEditor = isInRole("Image Editor");
     $('#imageContainer').html('');
-
-    if (imagesModel.RootFolder === "porn" || imagesModel.RootFolder === "sluts") {
+    if (albumImageInfo.RootFolder === "porn" || albumImageInfo.RootFolder === "sluts") {
         imageFrameClass = "pornFolderImageOutterFrame";
-        subDirLabel = "pornSubDirLabel";
     }
-    // IMAGES
-
-    //string LinkId { get; set; }
-    //int Id { get; set; }
-    //int SrcId { get; set; }
-    //string FileName { get; set; }
-    //string SrcFolder { get; set; }
-    //string Orientation { get; set; }
-    //bool Islink { get; set; }
-    //int SortOrder { get; set; }
     if (imageEditor) {
         if (imagesModel.RootFolder === "archive") {
             if (imagesModel.LinkCount > 1) {
@@ -197,73 +207,35 @@ function processImages(imagesModel) {
         }// imageModelFile
     }  // startSlideShow(folderId, linkId)
 
-    if (imagesModel.SubDirs.length > 1) {
-        var totalChildImages = 0;
-        $('#deepSlideshow').show();
-        $.each(imagesModel.SubDirs, function (idx, obj) {
-            totalChildImages += obj.FileCount;
-        });
-        $('#fileCount').html(imagesModel.SubDirs.length + "/" + totalChildImages.toLocaleString());
-    }
-    else {
-        $('#fileCount').html(imagesModel.Files.length);
-    }
-    if (imagesModel.Files.length > 0 && imagesModel.SubDirs.length > 0)
-        $('#fileCount').html(imagesModel.Files.length + "  (" + imagesModel.SubDirs.length + ")");
-
     // FILES
-    $.each(imagesModel.Files, function (idx, imageModelFile) {
-        imageFrameClass = "imageFrame";
-        let imgSrc = settingsImgRepo + "/" + imageModelFile.FileName;
+    $.each(albumImageInfo.ImageLinks, function (idx, obj) {
+        //imageFrameClass = "defaultImageFrame";
+        let imgSrc = settingsImgRepo + "/" + obj.FileName;
+        let imageFrameHtml = "<div class='" + imageFrameClass + "'>" +
+            "<img id='" + obj.LinkId + "' class='thumbImage' oneeror='galleryImageError(\"" + obj +"\")' alt='" + imgSrc + "' " +
+            " oncontextmenu='imageCtx(\"" + imgSrc + "\",\"" + obj.LinkId + "\")'" +
+            " onclick='startSlideShow(" + obj.Id + ",\"" + obj.LinkId + "\")'" + " src='" + imgSrc + "'/>";
 
-        let appendKluge = "<div id='" + imageModelFile.LinkId + "' class='" + imageFrameClass + "'>" +
-            // "<img class='thumbImage' onerror='albumImgError(" + imgSrc + ")' alt='" + imgSrc + "' " +
-            "<img class='thumbImage' alt='" + imgSrc + "' " +
-            " oncontextmenu='imageCtx(\"" + imgSrc + "\",\"" + imageModelFile.LinkId + "\")'" +
-            " onclick='startSlideShow(" + imageModelFile.Id + ",\"" + imageModelFile.LinkId + "\")'" + " src='" + imgSrc + "'/>";
-        if (imageModelFile.Id !== imageModelFile.SrcId)
-            appendKluge += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +
-                imageModelFile.SrcFolder + "' onclick='rtpe(\"SEE\",\"abc\",\"detail" + imageModelFile.SrcId + "\")' /></div>";
-        appendKluge += "</div>";
-        $('#imageContainer').append(appendKluge);
+
+        if (obj.Id !== obj.SrcId)
+            imageFrameHtml += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +
+                obj.SrcFolder + "' onclick='rtpe(\"SEE\",\"abc\",\"detail" + obj.SrcId + "\")' /></div>";
+        imageFrameHtml += "</div>";
+        $('#imageContainer').append(imageFrameHtml);
     });
 
     //  SUBFOLDERS 
-    $.each(imagesModel.SubDirs, function (idx, subDir) {
-
+    $.each(albumImageInfo.SubDirs, function (idx, subDir) {
         imgSrc = settingsImgRepo + subDir.FolderImage;
-        var kludge = "<div id='" + subDir.LinkId + "' class='" + imageFrameClass +
+        $('#imageContainer').append("<div class='" + imageFrameClass +
             "' oncontextmenu='folderCtx(\"" + subDir.LinkId + "\")'" +
             " onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.FolderId + "\")'>" +
-            "<img class='folderImage' albumImgError(" + imgSrc + ")' alt='" + imgSrc + "' src='" + imgSrc + "'/>";
-
-        let subDirCount = subDir.SubDirs.length;
-
-        if (subDir.FolderId === 10)
-            alert("subDirCount: " + subDirCount);
-
-
-        if (subDirCount === 0)
-            kludge += "<div class='" + subDirLabel + "'   >" +
-                subDir.DirectoryName + "  (" + subDir.FileCount + ")</div></div>";
-        else {
-            deepChildCount = 0;
-            getDeepChildCount(subDir);
-            if (deepChildCount === 0) { // this must be just a collection of stepchildren
-                $('#fileCount').html(subDirCount);
-                // get deep count of stepchildren
-                kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDir.SubDirCount + ")</div></div>";
-            }
-            else {
-                if (subDirCount > 1)
-                    kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + subDirCount + "/" + deepChildCount.toLocaleString() + ")</div></div>";
-                else
-                    kludge += "<div class='" + subDirLabel + "'>" + subDir.DirectoryName + "  (" + deepChildCount.toLocaleString() + ")</div></div>";
-            }
-        }
-        $('#imageContainer').append(kludge);
+            "<img id='" + subDir.LinkId + "' class='folderImage' onerror='subFolderImgError(" + subDir + ")' alt='Images/redballon.png' src='" + imgSrc + "'/>" +
+            "<div class='" + labelClass + "'>" + subDir.DirectoryName + "</div><span Id='fc" + subDir.FolderId + "'> ...</span></div>");
     });
 
+
+    // $('#aboveImageContainerMessageArea').html(folde
     $('#imagePageLoadingGif').hide();
     $('#imageContainer').show();
     resizeImageContainer();
@@ -316,6 +288,89 @@ function setBadges(badgesText) {
     }
 }
 
+function setCounts(dirTree, folderId) {
+    let subFolderSpan = "unhandled";
+    let strBottomCount = "999";
+    if (dirTree.SubDirs.length === 0) { // straignt gallery page
+        $('#galleryBottomfileCount').html("f1" + dirTree.ImageLinks.length);
+        return;
+    }
+    if (dirTree.SubDirs.length === 1 && dirTree.RootFolder === "centerfold") {
+        alert("centerfold detected: " + dirTree.RootFolder);
+        $('#galleryBottomfileCount').html("ctf" + dirTree.ImageLinks.length);
+        $('#fc' + dirTree.SubDirs[0].FolderId).html("(mmy" + dirTree.SubDirs[0].FileCount + ")");
+        return;
+    }
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/GalleryPage/GetSubFolderCounts?folderId=" + folderId,
+        success: function (subFolderCounts) {
+            if (subFolderCounts.Success === "ok") {
+                $.each(subFolderCounts.SubFolderCountItems, function (idx, obj) {
+                    $('#deepSlideshowButton').show();
+                    //deepChildCount = 0;
+                    //getDeepChildCount(subDir);
+                    if (deepChildCount === 0) { // this must be just a collection of stepchildren
+                        strBottomCount = "fstp: " + dirTree.SubDirs.length;
+                        ///ToDo: get deep count of stepchildren
+                        subFolderSpan = "(ssp " + dirTree.ImageLinks.length + ")";
+                    }
+                    if ((dirTree.ImageLinks.length === 0) && (dirTree.SubDirs.length > 0)) {  // normal subfolder gallery
+                        strBottomCount = "(" + dirTree.SubDirs.length +
+                            "/" + subFolderCounts.TotalChildFiles.toLocaleString() + ")";
+                        subFolderSpan = "(" + obj.FileCount + ")";
+                    }
+                    if ((dirTree.ImageLinks.length > 0) && (dirTree.SubDirs.length > 0)) {  // mixed gallery
+                        strBottomCount = "fmess:" + dirTree.FileCount + "  (" + dirTree.SubDirs.length +
+                            "/" + subFolderCounts.TotalChildFiles.toLocaleString() + ")";
+                        subFolderSpan = "(mmx: " + dirTree.SubDirs.length + "/" + obj.FileCount + ")";
+                    }
+                    $('#fc' + obj.SubFolderId).html(subFolderSpan);
+                });
+                $('#galleryBottomfileCount').html(strBottomCount);            }
+            else {
+                $('#imagePageLoadingGif').hide();
+                if (document.domain === 'localhost')
+                    setTimeout(function () { alert("jQuery fail in Album.js: getAlbumImages\n" + imageLinksModel.Success) }, 800);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "BUG",
+                        Severity: 1,
+                        ErrorMessage: imageLinksModel.Success,
+                        CalledFrom: "loadAlbum"
+                    });
+                //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
+            }
+        },
+        error: function (jqXHR) {
+            $('#imagePageLoadingGif').hide();
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "getAlbumImages")) {
+                if (document.domain === 'localhost')
+                    alert("XHR fail in Album.js: getAlbumImages\n" + errorMessage);
+                else
+                    logError({
+                        VisitorId: aapiVisitorId,
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "loadAlbum"
+                    });
+            }
+        }
+    }); 
+}
+
+//function getDeepChildCount(subDir) {
+//    deepChildCount += subDir.ChildFiles;
+//    $.each(subDir.SubDirs, function (idx, obj) {
+//        getDeepChildCount(obj.SubDirs);
+//    });
+//}
+
+
+
 function directToStaticPage(folderId) {
     if (isNullorUndefined(folderId)) {
         logError({
@@ -363,19 +418,6 @@ function directToStaticPage(folderId) {
             }
         }
     });
-}
-
-function getDeepChildCount(subDir) {
-    deepChildCount += subDir.ChildFiles;
-    $.each(subDir.SubDirs, function (idx, obj) {
-        getDeepChildCount(obj.SubDirs);
-    });
-}
-
-function albumImgError(fileName) {
-    alert("albumImgError:" + fileName);
-    //subDir.Link = "Images/redballon.png";
-    $(this).attr('src', "Images/redballon.png");
 }
 
 function subFolderPreClick(isStepChild, subFolderPreClickFolderId) {

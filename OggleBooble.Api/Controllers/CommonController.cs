@@ -74,7 +74,7 @@ namespace OggleBooble.Api.Controllers
                     pageHitSuccessModel.UserPageHits = mdb.PageHits.Where(h => h.VisitorId == visitorId).Count();
                     pageHitSuccessModel.UserImageHits = mdb.ImageHits.Where(h => h.VisitorId == visitorId).Count();
 
-                    MySqlDataContext.CategoryFolder categoryFolder = mdb.CategoryFolders.Where(f => f.Id == pageId).FirstOrDefault();
+                    VirtualFolder categoryFolder = mdb.VirtualFolders.Where(f => f.Id == pageId).FirstOrDefault();
                     if (categoryFolder != null)
                     {
                         pageHitSuccessModel.RootFolder = categoryFolder.RootFolder;
@@ -86,7 +86,7 @@ namespace OggleBooble.Api.Controllers
                         }
                         else
                         {
-                            MySqlDataContext.CategoryFolder parentFolder = mdb.CategoryFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
+                            VirtualFolder parentFolder = mdb.VirtualFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
                             if (parentFolder != null)
                                 pageHitSuccessModel.ParentName = parentFolder.FolderName;
                         }
@@ -210,7 +210,7 @@ namespace OggleBooble.Api.Controllers
                     if (dupIp != null)
                         addVisitorSuccess.EventDetail = "duplicate call to IpInfo. ";
 
-                    MySqlDataContext.CategoryFolder categoryFolder = mdb.CategoryFolders.Where(f => f.Id == visitorData.PageId).FirstOrDefault();
+                    VirtualFolder categoryFolder = mdb.VirtualFolders.Where(f => f.Id == visitorData.PageId).FirstOrDefault();
                     if (categoryFolder != null)
                         addVisitorSuccess.PageName = categoryFolder.FolderName;
 
@@ -297,10 +297,10 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                using (var mdb = new MySqlDataContext.OggleBoobleMySqlContext())
+                using (var mdb = new OggleBoobleMySqlContext())
                 {
-                    logEventModel.EventDetail = mdb.CategoryFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault().FolderName;
-                    mdb.EventLogs.Add(new MySqlDataContext.EventLog()
+                    logEventModel.EventDetail = mdb.VirtualFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault().FolderName;
+                    mdb.EventLogs.Add(new EventLog()
                     {
                         EventCode = logEventModel.EventCode,
                         EventDetail = logEventModel.EventDetail,

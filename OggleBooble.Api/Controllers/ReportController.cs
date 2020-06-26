@@ -265,8 +265,8 @@ namespace OggleBooble.Api.Controllers
                     feedbackReport.FeedbackRows =
                         (from f in db.FeedBacks
                          join v in db.Visitors on f.VisitorId equals v.VisitorId
-                         join c in db.CategoryFolders on f.PageId equals c.Id
-                         join p in db.CategoryFolders on c.Parent equals p.Id
+                         join c in db.VirtualFolders on f.PageId equals c.Id
+                         join p in db.VirtualFolders on c.Parent equals p.Id
                          join r in db.RegisteredUsers on f.VisitorId equals r.VisitorId into sr
                          from u in sr.DefaultIfEmpty()
                          where (v.IpAddress != "68.203.90.183")

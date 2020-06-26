@@ -8,6 +8,7 @@ using System.Net.Mail;
 using System.Web;
 using System.Web.Http.Results;
 using OggleBooble.Api.Models;
+using OggleBooble.Api.MySqlDataContext;
 
 namespace OggleBooble.Api.Controllers
 {
@@ -95,7 +96,7 @@ namespace OggleBooble.Api.Controllers
             var testResults = new TestResults();
             using (var db = new MySqlDataContext.OggleBoobleMySqlContext())
             {
-                List<MySqlDataContext.CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == parent).ToList();
+                List<VirtualFolder> categoryFolders = db.VirtualFolders.Where(f => f.Parent == parent).ToList();
                 foreach (var categoryFolder in categoryFolders)
                 {
                     testResults.Items.Add(new TestResultsItem() { Id = categoryFolder.Id, FolderName = categoryFolder.FolderName });

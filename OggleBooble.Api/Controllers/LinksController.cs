@@ -84,7 +84,7 @@ namespace OggleBooble.Api.Controllers
         }
         private void CheckFolder(int folderId, RepairReportModel repairReport,  OggleBoobleMySqlContext db,bool recurr)
         {
-            CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+            VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
             string ftpPath = ftpHost + "/" + imgRepo + dbCategoryFolder.FolderPath + dbCategoryFolder.FolderName;
             string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
             List<ImageFile> existingLinks =
@@ -123,8 +123,8 @@ namespace OggleBooble.Api.Controllers
             }
             if (recurr)
             {
-                var childFolders = db.CategoryFolders.Where(c => c.Parent == folderId).ToList();
-                foreach (CategoryFolder childFolder in childFolders)
+                var childFolders = db.VirtualFolders.Where(c => c.Parent == folderId).ToList();
+                foreach (VirtualFolder childFolder in childFolders)
                 {
                     RepairLinks(childFolder.Id, recurr);
                 }
@@ -154,7 +154,7 @@ namespace OggleBooble.Api.Controllers
         {
             try
             {
-                CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
 
                 string rootFolder = dbCategoryFolder.RootFolder;
                 if (rootFolder == "centerfold")
@@ -203,7 +203,7 @@ namespace OggleBooble.Api.Controllers
                         }
                     }
                 }
-                int[] subDirs = db.CategoryFolders.Where(f => f.Parent == folderId).Select(f => f.Id).ToArray();
+                int[] subDirs = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.Id).ToArray();
                 foreach (int subDir in subDirs)
                 {
                     repairReport.isSubFolder = true;

@@ -225,10 +225,10 @@ namespace OggleBooble.Api.Controllers
             {
                 //var thisFolder = db.ImageFolders.Where(f => f.Id == folderId).First();
                 //parentPath = thisFolder.FolderName;
-                int parentId = db.CategoryFolders.Where(f => f.Id == folderId).Select(f => f.Parent).First();
+                int parentId = db.VirtualFolders.Where(f => f.Id == folderId).Select(f => f.Parent).First();
                 while (parentId > 1)
                 {
-                    var parentDb = db.CategoryFolders.Where(f => f.Id == parentId).First();
+                    var parentDb = db.VirtualFolders.Where(f => f.Id == parentId).First();
                     parentPath = parentDb.FolderName + "/" + parentPath;
                     parentId = parentDb.Parent;
                 }
@@ -241,12 +241,12 @@ namespace OggleBooble.Api.Controllers
             string parentPath = "";
             using (var db = new OggleBoobleMySqlContext())
             {
-                var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                var thisFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                 parentPath = ""; //thisFolder.FolderName;
                 int parentId = thisFolder.Parent; // db.CategoryFolders.Where(f => f.Id == folderId).Select(f => f.Parent).First();
                 while (parentId > 1)
                 {
-                    var parentDb = db.CategoryFolders.Where(f => f.Id == parentId).First();
+                    var parentDb = db.VirtualFolders.Where(f => f.Id == parentId).First();
                     //if (!parentDb.FolderName.Contains(".OGGLEBOOBLE.COM"))
                     //    parentPath = parentDb.FolderName + "/" + parentPath;
                     parentPath = parentDb.FolderName.Replace(".OGGLEBOOBLE.COM", "") + "/" + parentPath;
@@ -261,12 +261,12 @@ namespace OggleBooble.Api.Controllers
             string parentPath = "";
             using (var db = new OggleBoobleMySqlContext())
             {
-                var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                var thisFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                 parentPath = ""; //thisFolder.FolderName;
                 int parentId = thisFolder.Parent; // db.CategoryFolders.Where(f => f.Id == folderId).Select(f => f.Parent).First();
                 while (parentId > 1)
                 {
-                    var parentDb = db.CategoryFolders.Where(f => f.Id == parentId).First();
+                    var parentDb = db.VirtualFolders.Where(f => f.Id == parentId).First();
                     //if (!parentDb.FolderName.Contains(".OGGLEBOOBLE.COM"))
                     //    parentPath = parentDb.FolderName + "/" + parentPath;
                     parentPath = parentDb.FolderName.Replace(".OGGLEBOOBLE.COM", "") + "/" + parentPath;

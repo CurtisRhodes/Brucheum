@@ -32,7 +32,7 @@ namespace OggleBooble.Api.Controllers
                     //VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == folderId).First();
                     //totalFiles = Math.Max(vwDirTree.GrandTotalFiles, vwDirTree.TotalFiles);
                     //SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
-                    CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                    VirtualFolder categoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                     var rootFolder = categoryFolder.RootFolder;
                     if (rootFolder == "centerfold")
                     {
@@ -79,8 +79,8 @@ namespace OggleBooble.Api.Controllers
                 {
                     if (recurr)
                     {
-                        List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
-                        foreach (CategoryFolder dbCategoryFolder in categoryFolders)
+                        List<VirtualFolder> categoryFolders = db.VirtualFolders.Where(f => f.Parent == folderId).ToList();
+                        foreach (VirtualFolder dbCategoryFolder in categoryFolders)
                         {
                             //VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == dbCategoryFolder.Id).First();
                             //filesProcessed += Math.Max(vwDirTree.TotalFiles, vwDirTree.FileCount);
@@ -441,7 +441,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     foreach (VwDirTree subDir in subDirs)
                     {
-                        var dbChildFiles = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+                        var dbChildFiles = db.VirtualFolders.Where(f => f.Parent == folderId).ToList();
                         subDirChildFiles = dbChildFiles.Count();
                         subDirChildFiles += db.StepChildren.Where(s => s.Parent == folderId).Count();
                         if (subDir.FileCount > 1)
@@ -539,7 +539,7 @@ namespace OggleBooble.Api.Controllers
             using (var db = new OggleBoobleMySqlContext())
             {
                 //using (= new OggleBoobleContext())
-                var thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                var thisFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
 
                 var parent = thisFolder.Parent;
                 breadcrumbs.Add(new BreadCrumbItemModel()
@@ -552,7 +552,7 @@ namespace OggleBooble.Api.Controllers
 
                 while (parent > 1)
                 {
-                    var parentDb = db.CategoryFolders.Where(f => f.Id == parent).First();
+                    var parentDb = db.VirtualFolders.Where(f => f.Id == parent).First();
                     breadcrumbs.Add(new BreadCrumbItemModel()
                     {
                         FolderId = parentDb.Id,

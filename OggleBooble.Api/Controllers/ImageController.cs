@@ -18,7 +18,7 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class ImageController : ApiController
     {
-        private readonly string localRepoPath = "F:/Danni/";
+        //private readonly string localRepoPath = "F:/Danni/";
         private readonly string repoDomain = ConfigurationManager.AppSettings["ImageRepository"];
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
         static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
@@ -36,7 +36,7 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    var dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     if (dbCategoryFolder == null)
                     {
                         imageInfo.Success = "no dategory folder found";
@@ -45,7 +45,7 @@ namespace OggleBooble.Api.Controllers
 
                     if (Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName))
                     {
-                        var dbCategoryFolderParent = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).FirstOrDefault();
+                        var dbCategoryFolderParent = db.VirtualFolders.Where(f => f.Id == dbCategoryFolder.Parent).FirstOrDefault();
                         if (dbCategoryFolderParent != null)
                         {
                             imageInfo.FolderName = dbCategoryFolderParent.FolderName;
@@ -60,17 +60,17 @@ namespace OggleBooble.Api.Controllers
                     }
                     if (dbImageFile.FolderId != folderId)
                     {
-                        MySqlDataContext.CategoryFolder dbModelFolder = db.CategoryFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
+                        VirtualFolder dbModelFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
                         imageInfo.ModelFolderName = dbModelFolder.FolderName;
                     }
 
-                    List<string> subFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList();
+                    List<string> subFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList();
                     var folderTypeModel = new FolderTypeModel()
                     {
                         ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName),
                         ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(subFolders),
                         HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
-                        HasSubFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0,
+                        HasSubFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Count() > 0,
                         RootFolder = dbCategoryFolder.RootFolder
                     };
                     imageInfo.FolderType = Helpers.DetermineFolderType(folderTypeModel);
@@ -84,7 +84,7 @@ namespace OggleBooble.Api.Controllers
                     imageInfo.Link = dbImageFile.FileName;
                     imageInfo.ExternalLink = dbImageFile.ExternalLink;
                     imageInfo.InternalLinks = (from l in db.CategoryImageLinks
-                                               join f in db.CategoryFolders on l.ImageCategoryId equals f.Id
+                                               join f in db.VirtualFolders on l.ImageCategoryId equals f.Id
                                                where l.ImageLinkId == linkId && l.ImageCategoryId != folderId
                                                select new { folderId = f.Id, folderName = f.FolderName })
                                                .ToDictionary(i => i.folderId, i => i.folderName);
@@ -265,8 +265,8 @@ namespace OggleBooble.Api.Controllers
                 //imageLinkId = dbImageFile.Id;
 
                 // ? physcially more and rename .jpg 
-                MySqlDataContext.CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.SourceFolderId).First();
-                MySqlDataContext.CategoryFolder dbDestinationFolder = db.CategoryFolders.Where(f => f.Id == model.DestinationFolderId).First();
+                VirtualFolder dbSourceFolder = db.VirtualFolders.Where(f => f.Id == model.SourceFolderId).First();
+                VirtualFolder dbDestinationFolder = db.VirtualFolders.Where(f => f.Id == model.DestinationFolderId).First();
                 //string currentFileName = dbImageFile.FileName;
                string newFileName = dbSourceFolder.FolderName + "_" + linkId;
                 string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName;
@@ -358,7 +358,7 @@ namespace OggleBooble.Api.Controllers
 
                 using (var mdb = new OggleBoobleMySqlContext())
                 {
-                    mySqlDestPath = mdb.CategoryFolders.Where(f => f.Id == newLink.FolderId).FirstOrDefault().FolderPath;
+                    mySqlDestPath = mdb.VirtualFolders.Where(f => f.Id == newLink.FolderId).FirstOrDefault().FolderPath;
                 }
 
                 using (var db = new OggleBoobleMSSqlContext())

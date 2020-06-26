@@ -27,13 +27,13 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                    var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                     folderDetailModel.Id = folderId;
                     folderDetailModel.FolderName = dbFolder.FolderName;
                     folderDetailModel.RootFolder = dbFolder.RootFolder;
                     folderDetailModel.FolderImage = dbFolder.FolderImage;  // db.ImageLinks.Where(i => i.Id == dbFolder.FolderImage).Select(i => i.Link).FirstOrDefault();
 
-                   MySqlDataContext.CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                   MySqlDataContext.CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.Id == folderId).FirstOrDefault();
 
                     if (categoryFolderDetails != null)
                     {
@@ -45,14 +45,14 @@ namespace OggleBooble.Api.Controllers
                         //folderDetailModel.LinkStatus = categoryFolderDetails.LinkStatus;
                         //folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
                     }
-                    var childFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList();
+                    var childFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList();
                     var folderTypeModel = new FolderTypeModel()
                     {
                         RootFolder = dbFolder.RootFolder,
                         ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbFolder.FolderName),
                         ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(childFolders),
                         HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
-                        HasSubFolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0
+                        HasSubFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Count() > 0
                     };
                     folderDetailModel.FolderType = Helpers.DetermineFolderType(folderTypeModel);
 
@@ -107,7 +107,7 @@ namespace OggleBooble.Api.Controllers
                         db.CategoryFolders.Add(newFolder);
                         newFolderId = newFolder.Id;
                         db.CategoryFolderDetails.Add(new MSSqlDataContext.CategoryFolderDetail() 
-                        { Id = newFolderId });
+                        { FolderId = newFolderId });
                         db.SaveChanges();
                     }
                     else
@@ -118,10 +118,10 @@ namespace OggleBooble.Api.Controllers
                 }
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbParent = db.CategoryFolders.Where(f => f.Id == parentId).FirstOrDefault();
+                    var dbParent = db.VirtualFolders.Where(f => f.Id == parentId).FirstOrDefault();
                     string folderPath = dbParent.FolderPath + "/" + newFolderName;
 
-                    MySqlDataContext.CategoryFolder newFolder = new MySqlDataContext.CategoryFolder();
+                    VirtualFolder newFolder = new VirtualFolder();
                     newFolder.Id = newFolderId;
                     newFolder.Parent = parentId;
                     newFolder.FolderName = newFolderName.Trim();
@@ -129,7 +129,7 @@ namespace OggleBooble.Api.Controllers
                     newFolder.SortOrder = 934;
                     newFolder.FolderPath = folderPath;
 
-                    db.CategoryFolders.Add(newFolder);
+                    db.VirtualFolders.Add(newFolder);
                     db.CategoryFolderDetails.Add(new MySqlDataContext.CategoryFolderDetail() { Id = newFolderId });
                     db.SaveChanges();
                     successModel.ReturnValue = newFolderId.ToString();
@@ -174,8 +174,8 @@ namespace OggleBooble.Api.Controllers
                 if (success == "ok")
                 {
                     using (var mdb = new OggleBoobleMySqlContext())
-                    {
-                        MySqlDataContext.CategoryFolder mySqlCategoryFolder = mdb.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    { 
+                        var mySqlCategoryFolder = mdb.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
                         mySqlCategoryFolder.FolderName = newFolderName;
                         mdb.SaveChanges();
                     }
@@ -198,11 +198,11 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     searchResultsModel.SearchResults =
-                        (from f in db.CategoryFolders
+                        (from f in db.VirtualFolders
                          where f.FolderName.StartsWith(searchString)
                          select new SearchResult() { FolderId = f.Id, FolderName = f.FolderName, Parent = f.RootFolder }).ToList();
                     List<SearchResult> containsSearchResults = 
-                        (from f in db.CategoryFolders
+                        (from f in db.VirtualFolders
                          where f.FolderName.Contains(searchString)
                          select new SearchResult() { FolderId = f.Id, FolderName = f.FolderName, Parent = f.RootFolder }).ToList();
 
@@ -234,48 +234,21 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    MySqlDataContext.CategoryFolderDetail dbFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == model.FolderId).FirstOrDefault();
+                    MySqlDataContext.CategoryFolderDetail dbFolderDetail = db.CategoryFolderDetails.Where(d => d.Id == model.Id).FirstOrDefault();
                     if (dbFolderDetail == null)
                     {
-                        dbFolderDetail = new MySqlDataContext.CategoryFolderDetail
-                        {
-                            Id = model.FolderId
-                        };
+                        dbFolderDetail = new MySqlDataContext.CategoryFolderDetail { Id = model.Id };
                         db.CategoryFolderDetails.Add(dbFolderDetail);
                     }
                     else
                     {
-                        dbFolderDetail.Born = model.Born;
-                        dbFolderDetail.Boobs = model.Boobs;
-                        dbFolderDetail.Nationality = model.Nationality;
-                        dbFolderDetail.ExternalLinks = model.ExternalLinks;
-                        dbFolderDetail.CommentText = model.CommentText;
+                        dbFolderDetail.Birthday = model.Birthday;
+                        dbFolderDetail.FakeBoobs = model.FakeBoobs;
+                        dbFolderDetail.HomeCountry = model.HomeCountry;
+                        dbFolderDetail.HomeTown = model.HomeTown;
+                        dbFolderDetail.FolderComments = model.FolderComments;
                         dbFolderDetail.Measurements = model.Measurements;
-                        dbFolderDetail.LinkStatus = model.LinkStatus;
-                        db.SaveChanges();
-                        success = "ok";
-                    }
-                }
-                using (var db = new OggleBoobleMSSqlContext())
-                {
-                    MSSqlDataContext.CategoryFolderDetail dbFolderDetail = db.CategoryFolderDetails.Where(d => d.FolderId == model.FolderId).FirstOrDefault();
-                    if (dbFolderDetail == null)
-                    {
-                        dbFolderDetail = new MSSqlDataContext.CategoryFolderDetail
-                        {
-                            FolderId = model.FolderId
-                        };
-                        db.CategoryFolderDetails.Add(dbFolderDetail);
-                    }
-                    else
-                    {
-                        dbFolderDetail.Born = model.Born;
-                        dbFolderDetail.Boobs = model.Boobs;
-                        dbFolderDetail.Nationality = model.Nationality;
-                        dbFolderDetail.ExternalLinks = model.ExternalLinks;
-                        dbFolderDetail.CommentText = model.CommentText;
-                        dbFolderDetail.Measurements = model.Measurements;
-                        dbFolderDetail.LinkStatus = model.LinkStatus;
+                        //dbFolderDetail.LinkStatus = model.LinkStatus;
                         db.SaveChanges();
                         success = "ok";
                     }
@@ -284,7 +257,6 @@ namespace OggleBooble.Api.Controllers
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
-
     }
 
     [EnableCors("*", "*", "*")]
