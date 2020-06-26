@@ -312,7 +312,7 @@ function logDataActivity(changeLogModel) {
         data: changeLogModel,
         success: function (success) {
             if (success === "ok") {
-                displayStatusMessage("ok", "activity" + changeLogModel.Activity + " logged");
+              //  displayStatusMessage("ok", "activity" + changeLogModel.Activity + " logged");
                 if (typeof resume === 'function') {
                     resume();
                 }

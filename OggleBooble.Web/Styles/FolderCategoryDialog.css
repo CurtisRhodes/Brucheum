@@ -11,11 +11,11 @@
     background: var(--oggleBackgroundColor);
     overflow: auto;
 }
-.folderDialogFooter {
+/*.folderDialogFooter {
     position: relative;
     padding: 6px;
     bottom: 8px;
-}
+}*/
 
 .folderCategoryDialogButton {
     display: inline-block;

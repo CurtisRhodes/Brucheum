@@ -12,11 +12,11 @@ function showImageCommentDialog(link, linkId, folderId, folderName, calledFrom) 
     blogComment.Link = link;
 
     $('#commentDialogImage').attr("src", link);
-    $('#draggableDialog').css("top", $('.oggleHeader').height() + 20);
+    $('#draggableDialog').css("top", $('.oggleHeader').height() - 50);
     $('#draggableDialogTitle').html("Write a fantasy about this image");
 
     $('#imageCommentEditor').summernote({
-        height: 300,
+        height: 200,
         dialogsInBody: true,
         codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
         toolbar: [

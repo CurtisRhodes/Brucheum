@@ -291,14 +291,13 @@ namespace OggleBooble.Api.MySqlDataContext
     public partial class CategoryFolderDetail
     {
         [Key]
-        public int FolderId { get; set; }
-        public string Nationality { get; set; }
+        public int Id { get; set; }
+        public string HomeCountry { get; set; }
+        public string HomeTown { get; set; }
         public string Measurements { get; set; }
-        public DateTime? Born { get; set; }
-        public string ExternalLinks { get; set; }
-        public string CommentText { get; set; }
-        public string Boobs { get; set; }
-        public string LinkStatus { get; set; }
+        public DateTime? Birthday { get; set; }
+        public string FolderComments { get; set; }
+        public bool FakeBoobs { get; set; }
     }
 
     // VIEWS

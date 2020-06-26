@@ -125,9 +125,10 @@
 .oggleDraggableDialog {
     position: absolute;
     z-index: 36;
-    width: 650px;
+    min-width: 400px;
     display: none;
     resize: both;
+    box-sizing: unset;
     overflow: auto;
     border: solid 2px var(--oggleBorderColor);
     background-color: var(--flitterYellow);
@@ -145,7 +146,7 @@
     padding: 2px 8px;
     width: 100%;
     white-space: nowrap;
-    font-size: 24px;
+    font-size: 16px;
     text-align: center;
 }
 .oggleDialogCloseButton {

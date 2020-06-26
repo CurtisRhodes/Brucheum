@@ -98,16 +98,16 @@ namespace OggleBooble.Api.Controllers
             {
                 if (existingLinks.Where(f => f.FileName == physcialFiles[i]).FirstOrDefault() == null)
                 {
-                    repairReport.MissingFiles.Add(physcialFiles[i]);
-                    db.ImageFiles.Add(new ImageFile()
-                    {
-                        ExternalLink = "aa"
-                    });
-                    CategoryImageLink categoryImageLink = new CategoryImageLink()
-                    {
-                        ImageCategoryId = folderId,
-                        ImageLinkId = ""
-                    };
+                    repairReport.MissingLinks.Add(physcialFiles[i]);
+                    //db.ImageFiles.Add(new ImageFile()
+                    //{
+                    //    ExternalLink = "aa"
+                    //});
+                    //CategoryImageLink categoryImageLink = new CategoryImageLink()
+                    //{
+                    //    ImageCategoryId = folderId,
+                    //    ImageLinkId = ""
+                    //};
                 }
             }
 
@@ -117,7 +117,8 @@ namespace OggleBooble.Api.Controllers
                 //var results = Array.FindAll(physcialFiles, s => s.Equals(imageLink.FileName));
                 if (!physcialFiles.Contains(imageLink.FileName))
                 {
-                    repairReport.Errors.Add("link with no file: " + imageLink.Id);
+                    repairReport.MissingFiles.Add(imageLink.Id);
+                    //repairReport.Errors.Add("link with no file: " + imageLink.Id);
                 }
             }
             if (recurr)

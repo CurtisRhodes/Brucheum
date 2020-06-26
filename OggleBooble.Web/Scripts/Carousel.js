@@ -251,8 +251,7 @@ function imgErrorThrown(index) {
     carouselImageViews -= 1;
     carouselImageErrors++;
     pause();
-    alert("Missig Image: " + carouselItemArray[imageIndex].FolderId + ", "+ carouselItemArray[imageIndex].FolderName+
-        "\nlinkId: " + carouselItemArray[imageIndex].LinkId);    
+    //alert("Missig Image: " + carouselItemArray[imageIndex].FolderId + ", " + carouselItemArray[imageIndex].FolderName + "\nlinkId: " + carouselItemArray[imageIndex].LinkId);
     logDataActivity({
         PageId: carouselItemArray[imageIndex].FolderId,
         PageName: carouselItemArray[imageIndex].FolderName,
@@ -387,7 +386,7 @@ function carouselContextMenuAction(ctxMenuAction) {
             pause();
             $('#carouselContextMenu').fadeOut();
             //showImageCommentDialog(link, linkId, folderId, folderName, calledFrom) {
-            showImageCommentDialog(carouselItemArray[imageIndex].Link,
+            showImageCommentDialog(imgSrc,
                 carouselItemArray[imageIndex].LinkId,
                 carouselItemArray[imageIndex].FolderId,
                 carouselItemArray[imageIndex].FolderName, "Carousel");
