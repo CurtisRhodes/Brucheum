@@ -59,6 +59,7 @@ namespace OggleBooble.Api.Models
         public int NewLinksAdded { get; set; }
         public int LinksRemoved { get; set; }
         public int ImagesDownLoaded { get; set; }
+        public int ImageFileAdded { get; set; }
         public int DirNotFound { get; set; }
         public int CatLinksAdded { get; set; }
         public int RowsProcessed { get; set; }

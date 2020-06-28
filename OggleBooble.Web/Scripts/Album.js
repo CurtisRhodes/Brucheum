@@ -35,6 +35,7 @@ function loadAlbum(folderId) {
                         $('#folderCommentButton').fadeIn();
 
                         setCounts(albumImageInfo, folderId);
+                        setCSS();
 
                         let delta = (Date.now() - getImagesStart) / 1000;
                         console.log("GetAlbumImages took: " + delta.toFixed(3));
@@ -192,22 +193,6 @@ function subFolderImgError(objSubDir) {
 function processImages(albumImageInfo) {
     let labelClass = "defaultSubFolderImage";  
     let imageFrameClass = "folderImageOutterFrame";
-    //let imageEditor = isInRole("Image Editor");
-    //if (albumImageInfo.RootFolder === "porn" || albumImageInfo.RootFolder === "sluts") {
-    //    imageFrameClass = "pornFolderImageOutterFrame";
-    //}
-    //if (imageEditor) {
-    //    if (albumImageInfo.RootFolder === "archive") {
-    //        if (albumImageInfo.dirTree.SubDirs.length > 1) {
-    //            imageFrameClass = "multiLinkImageFrame";
-    //        }
-    //    }
-    //    else {
-    //        if (imagesModel.dirTree.SubDirs.length > 1) {
-    //            imageFrameClass = "nonLocalImageFrame";
-    //        }
-    //    }// imageModelFile
-    //}  // startSlideShow(folderId, linkId)
 
     $('#imageContainer').html('');
     // FILES
@@ -244,6 +229,26 @@ function processImages(albumImageInfo) {
     resizeImageContainer();
     //$('#footerMessage').html(": " + imagesModel.Files.length);
 }
+
+function setCSS() {
+    //let imageEditor = isInRole("Image Editor");
+    //if (albumImageInfo.RootFolder === "porn" || albumImageInfo.RootFolder === "sluts") {
+    //    imageFrameClass = "pornFolderImageOutterFrame";
+    //}
+    //if (imageEditor) {
+    //    if (albumImageInfo.RootFolder === "archive") {
+    //        if (albumImageInfo.dirTree.SubDirs.length > 1) {
+    //            imageFrameClass = "multiLinkImageFrame";
+    //        }
+    //    }
+    //    else {
+    //        if (imagesModel.dirTree.SubDirs.length > 1) {
+    //            imageFrameClass = "nonLocalImageFrame";
+    //        }
+    //    }// imageModelFile
+    //}  // startSlideShow(folderId, linkId)
+}
+
 
 function setBreadCrumbs(breadCrumbModel) {
     // a woman commited suicide when pictures of her "came out"
@@ -490,15 +495,6 @@ function launchDeepSlideShow()
     launchViewer(albumFolderId, 1, true);
 }
 
-function showDeleteDialog() {
-    $('#removeLinkDialog').show();
-    $('#removeLinkDialog').dialog({
-        show: { effect: "fade" },
-        hide: { effect: "blind" },
-        width: "300"
-    });
-}
-
 function onRemoveImageClick(btn) {
     if (btn === "ok") {
         $.ajax({
@@ -562,106 +558,8 @@ function imageCtx(imgSrc, linkId) {
     showImageContextMenu(imgSrc, linkId, albumFolderId, currentAlbumJSfolderName);
 }
 
-function folderCtx(imgId) {
-    //alert("folder context menu");
-    event.preventDefault();
-    window.event.returnValue = false;
-   $('#imageContextMenuContainer').html(folderContextMenuHtml());
-    var thisImageDiv = $('#' + imgId + '');
-    var picpos = thisImageDiv.offset();
-    var picLeft = Math.max(0, picpos.left + thisImageDiv.width() - $('#folderContextMenu').width() - 50);
-    $('#folderContextMenu').css("top", picpos.top + thisImageDiv.height());
-    $('#folderContextMenu').css("left", picLeft);
-    $('#folderLinkInfo').hide();
 
-    $('.adminLink').hide();
-    //if (isInRole("Oggle admin")) {
-    //    $('.adminLink').show();
-    //    alert("$('.adminLink').show();" );
-    //}
-    $('#folderContextMenu').show();
-}
-function folderContextMenuAction(action) {
-    switch (action) {
-        case "show":
-            if ($('#ctxModelName').html() === "unknown model") {
-                //showUnknownModelInfoDialog(albumFolderId);
-                showFolderInfoDialog(albumFolderId,"folder ctx show");
-            }
-            $("#imageContextMenu").fadeOut();
-            break;
-        case "jump":
-            rtpe("SEE", albumFolderId, modelFolderId, modelFolderId);
-            break;
-        case "comment":
-            $("#imageContextMenu").fadeOut();
-            //showImageCommentDialog(selectedImage, selectedImageLinkId, albumFolderId, currentAlbumJSfolderName);
-            showFolderCommentDialog(albumFolderId);
-            break;
-        case "explode":
-            if (isLoggedIn()) {
 
-                //alert("rtpe EXP currentAlbumJSfolderName: " + currentAlbumJSfolderName + " selectedImage: " + selectedImage + " albumFolderId: " + albumFolderId);
-                rtpe("EXP", currentAlbumJSfolderName, selectedImage, albumFolderId);
-            }
-            else {
-                logEventActivity({
-                    VisitorId: getCookieValue("VisitorId"),
-                    EventCode: "UNX",
-                    EventDetail: "image: " + selectedImageLinkId,
-                    PageId: albumFolderId,
-                    CalledFrom: "contextMenuAction"
-                });
-                alert("You must be logged in to use this feature");
-            }
-            break;
-        case "showFolderLinks":
-            break;
-        case "showLinks":
-            logEventActivity({
-                VisitorId: getCookieValue("VisitorId"),
-                EventCode: "SHL",
-                EventDetail: "show links",
-                PageId: albumFolderId,
-                CalledFrom: "contextMenuAction"
-            });
-            showLinks(selectedImageLinkId);
-            break;
-
-        case "archive":
-            $("#imageContextMenu").fadeOut();
-            showMoveCopyDialog("Archive", selectedImage, albumFolderId);
-            break;
-        case "copy":
-            $("#imageContextMenu").fadeOut();
-            showMoveCopyDialog("Copy", selectedImage, albumFolderId);
-            break;
-        case "move":
-            $("#imageContextMenu").fadeOut();
-            showMoveCopyDialog("Move", selectedImage, albumFolderId);
-            break;
-        case "remove":
-            $("#imageContextMenu").fadeOut();
-            removeImage();
-            break;
-        case "setF":
-            setFolderImage(selectedImageLinkId, albumFolderId, "folder");
-            break;
-        case "setC":
-            setFolderImage(selectedImageLinkId, albumFolderId, "parent");
-            break;
-        default:
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "BUG",
-                Severity: 2,
-                ErrorMessage: "Unhandeled switch case option.  Action: " + action,
-                CalledFrom: "Album.js contextMenuAction"
-            });
-            //sendEmailToYourself("error in album.js contextMenuAction ", "Unhandeled switch case option.  Action: " + action);
-            //alert("contextMenuAction action: " + action);
-    }
-}
          
 function slowlyShowFolderInfoDialog(folderId) {
     forgetHomeFolderInfoDialog = false;

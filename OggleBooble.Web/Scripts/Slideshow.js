@@ -31,10 +31,6 @@ function launchViewer(folderId, startItem, showAllChildren) {
     getSlideshowItems(folderId, startItem);
     slideShowButtonsActive = true;
     settingsImgRepo = settingsArray.ImageRepo;
-
-    $('#slideshowContextMenuContainer').html(slideshowContextMenuHtml());
-    $('#slideShowContainer').html(slideshowHtml()).show();
-
     $('#rightClickArea').dblclick(function () {
         event.preventDefault();
         window.event.returnValue = false;
@@ -70,10 +66,6 @@ function getSlideshowItems(folderId, startItem) {
                     imageViewerFolderName = slideshowItemModel.FolderName;
                     imageViewerArray = slideshowItemModel.SlideshowItems;
 
-                    $('#imageContainer').fadeOut();
-                    //$('#imageViewerHeaderTitle').html(slideshowItemModel.RootFolder + "/" + slideshowItemModel.FolderName + "/" + slideshowItemModel.ImageFolderName);
-                    $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName);
-
                     if (!includeSubFolders) {
                         for (var i = 0; i < imageViewerArray.length; i++) {
                             if (imageViewerArray[i].LinkId === startItem) {
@@ -83,14 +75,19 @@ function getSlideshowItems(folderId, startItem) {
                         };
                     }
 
+                    $('#slideshowContextMenuContainer').html(slideshowContextMenuHtml());
+                    $('#imageContainer').fadeOut();
                     $('#imagePageLoadingGif').hide();
+                    $('#slideShowContainer').html(slideshowHtml()).show();
+                    $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName);
+                    //$('#imageViewerHeaderTitle').html(slideshowItemModel.RootFolder + "/" + slideshowItemModel.FolderName + "/" + slideshowItemModel.ImageFolderName);
                     viewerShowing = true;
+                    runSlideShow('start');
                     resizePage();
                     resizeViewer();
                     explodeViewer();
-                    if (includeSubFolders)
-                        runSlideShow('start');
-                    //$('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
+
+                    $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
                     var delta = (Date.now() - start) / 1000;
                     console.log("GetImageLinks?folder=" + folderId + " took: " + delta.toFixed(3));
                 }
@@ -277,9 +274,10 @@ function slide(direction) {
             $('#viewerImageContainer').css('left', ($(window).width() - $('#viewerImage').width()) / 2);
 
             $('#viewerImage').show();
-            //if (includeSubFolders) {
-            //    $('#imageViewerHeaderTitle').html(imageViewerArray[imageViewerIndex].ImageFolderName);
-            //}
+            if (includeSubFolders) {
+                $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName + " / " +
+                    imageViewerArray[imageViewerIndex].ImageFolderName);
+            }
             resizeViewer();
             sessionCount++;
             $('#viewerImage').css("transform", "translateX(0)");
@@ -371,8 +369,7 @@ function blowupImage() {
 
 function showImageViewerCommentDialog() {
     closeViewer("CommentDialog");
-    //showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, imageViewerFolderName);
-    showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, "slideshow icon");
+    showImageCommentDialog(imageViewerArray[imageViewerIndex].FileName, imageViewerArray[imageViewerIndex].LinkId, "slideshow icon");
 }
 
 function closeViewer(calledFrom) {

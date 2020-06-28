@@ -155,8 +155,9 @@ function showRepairLinksDialog() {
     $("#draggableDialog").fadeIn();
     $("#txtFolderToRepair").val(dashboardMainSelectedPath);
     $('#draggableDialog').css("top", ($(window).height() - $('#draggableDialog').height()) / 2);
+    $('#draggableDialog').css("left", 250);
 
-    //$('#draggableDialog').css("left", ($(window).width() - $('#draggableDialog').width()) / 2.142);
+    //    $('#draggableDialog').css("left", ($(window).width() - $('#draggableDialog').width()) / 2.142);
 
     $("#mainMenuContainer").html("len: " + dashboardMainSelectedPath.length);
 
@@ -197,7 +198,8 @@ function repairLinks(justOne) {
                         $('#dataifyInfo').append(", Links Removed: " + repairReport.LinksRemoved);
                     if (repairReport.CatLinksAdded > 0)
                         $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
-
+                    if (repairReport.ImageFileAdded > 0)
+                        $('#dataifyInfo').append(", ImageFiles Added: " + repairReport.ImageFileAdded);
 
                     //$('#dataifyInfo').append(", directory errors: " + repairReport.DirNotFound);
                     //$('#dataifyInfo').append(", bad file names: " + repairReport.BadFileNames);

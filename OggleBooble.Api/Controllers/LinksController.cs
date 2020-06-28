@@ -104,23 +104,29 @@ namespace OggleBooble.Api.Controllers
         public RepairReportModel RepairLinks(int folderId, bool recurr)
         {
             RepairReportModel repairReport = new RepairReportModel();
-            using (var db = new OggleBoobleMySqlContext())
+            try
             {
-                CheckFolder(folderId, repairReport, db, recurr);
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    CheckFolder(folderId, repairReport, db, recurr);
 
-                int test1 = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
-                RemoveLinks(repairReport.OrphanLinks);
-                int test2 = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
-                repairReport.LinksRemoved = test1 - test2;
+                    if (repairReport.Success == "ok") {
 
-                repairReport.Success = "ok";
+                        int test1 = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
+                        RemoveLinks(repairReport.OrphanLinks);
+                        int test2 = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
+                        repairReport.LinksRemoved = test1 - test2;
+                    }
+                }
             }
-            
+            catch (Exception ex)
+            {
+                repairReport.Success = Helpers.ErrorDetails(ex);
+            }
             return repairReport;
         }
-        private string CheckFolder(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db, bool recurr)
+        private void CheckFolder(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db, bool recurr)
         {
-            string success;
             try
             {
                 VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
@@ -131,28 +137,32 @@ namespace OggleBooble.Api.Controllers
                 // 1. check for physicalFiles with no link
                 for (int i = 0; i < physcialFiles.Length; i++)
                 {
-                    var lId = physcialFiles[i];
+                    var physcialFileName = physcialFiles[i];
+                    var physcialFileLinkId = physcialFileName.Substring(physcialFileName.IndexOf("_") + 1, 36);
 
-                    if (categoryImageLinks.Where(il => il.ImageLinkId == physcialFiles[i]).FirstOrDefault() == null)
+                    if (categoryImageLinks.Where(il => il.ImageLinkId == physcialFileLinkId).FirstOrDefault() == null)
                     {
                         repairReport.MissingFiles.Add(physcialFiles[i]);
-
-                        if (db.ImageFiles.Where(f => f.Id == physcialFiles[i]).FirstOrDefault() == null)
+                        if (db.ImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault() == null)
                         {
                             db.ImageFiles.Add(new ImageFile()
                             {
-                                Id = lId,
+                                Id = physcialFileLinkId,
                                 FolderId = folderId,
-                                FileName = lId
-
+                                FileName = physcialFileName
                             });
+                            repairReport.ImageFileAdded++;
                         }
-                        db.CategoryImageLinks.Add(new CategoryImageLink() { 
-                            ImageLinkId = lId, 
-                            ImageCategoryId = folderId, 
-                            SortOrder = 876 });
+                        db.CategoryImageLinks.Add(new CategoryImageLink()
+                        {
+                            ImageLinkId = physcialFileLinkId,
+                            ImageCategoryId = folderId,
+                            SortOrder = 872
+                        });
                         db.SaveChanges();
+                        repairReport.NewLinksAdded++;
                     }
+                    repairReport.RowsProcessed++;
                 }
 
                 List<ImageFile> existingLinks =
@@ -180,13 +190,13 @@ namespace OggleBooble.Api.Controllers
                         CheckFolder(childFolder.Id, repairReport, db, recurr);
                     }
                 }
-                success = "ok";
+                repairReport.Success = "ok";
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex);;
+                repairReport.Success = Helpers.ErrorDetails(ex);
+                return;
             }
-            return success;
         }
 
         private string RemoveLinks(List<string> orphanLinks)

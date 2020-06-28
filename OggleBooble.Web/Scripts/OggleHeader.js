@@ -393,11 +393,14 @@ function headerHtml(folderId, subdomain) {
         "   </div>\n" +
         "</div>\n" +
 
-        "<div id='dirTreeContainer' class='floatingDirTreeContainer'></div>\n" +
+        "<div id='dirTreeContainer' class='dirTreeImageContainer floatingDirTreeImage floatingDirTreeContainer'>" +
+        "   <img class='dirTreeImage'/>\n" +
+        "</div>\n" +
 
         "<div id='modalContainer' class='modalVail'>\n" +
         "   <div id='modalContent' class='modalContentStyle'></div>\n" +
         "</div>\n" +
+
         "<div id='hamburgerCtx' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
         "    <div onclick='rtpe(\"BAC\"," + folderId + ",\"archive\")'>babes archive</div>\n" +
         "    <div onclick='rtpe(\"RNK\",\"hamburger\",\"" + subdomain + "\"," + folderId + ")'>ranker</div>\n" +

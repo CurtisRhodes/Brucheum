@@ -358,67 +358,6 @@ function resume() {
     $('#pauseButton').html("||");
 }
 
-function carouselContextMenuClick() {
-    pause();
-    event.preventDefault();
-    window.event.returnValue = false;
-    $('#carouselContextMenu').css("top", event.clientY + 5);
-    $('#carouselContextMenu').css("left", event.clientX);
-    $('#ctxModelName').html(carouselItemArray[imageIndex].FolderName);
-    $('#carouselContextMenu').fadeIn();
-}
-
-function carouselContextMenuAction(ctxMenuAction) {
-    switch (ctxMenuAction) {
-        case "showDialog":
-            $('#carouselContextMenu').fadeOut();
-            showFolderInfoDialog(selectedImageArchiveFolderId, "carousel context menu");
-            break;
-        case "explode":
-            reportThenPerformEvent("EXP", "from main carousel", settingsImgRepo + carouselItemArray[imageIndex].FileName, carouselItemArray[imageIndex].FolderId);
-            break;
-        case "openInNewTab":
-            // rtpe(eventCode, calledFrom, eventDetail, pageId)
-            rtpe("ONT", "carousel context menu", carouselItemArray[imageIndex].ImageFolderName, mainImageClickId);
-            break;
-        case "comment":
-            $('#carouselContextMenu').fadeOut();
-            imageCommentDialogIsOpen = true;
-            pause();
-            $('#carouselContextMenu').fadeOut();
-            //showImageCommentDialog(link, linkId, folderId, folderName, calledFrom) {
-            showImageCommentDialog(imgSrc,
-                carouselItemArray[imageIndex].LinkId,
-                carouselItemArray[imageIndex].FolderId,
-                carouselItemArray[imageIndex].FolderName, "Carousel");
-
-            $('#imageCommentDialog').on('dialogclose', function (event) {
-                imageCommentDialogIsOpen = false;
-                resume();
-            });
-            break;
-        case "tags":
-            $('#carouselContextMenu').fadeOut();
-            pause();
-            metaTagDialogIsOpen = true;
-            //alert("carouselItemArray[imageIndex].FolderId: " + carouselItemArray[imageIndex].FolderId);
-            openMetaTagDialog(carouselItemArray[imageIndex].FolderId, carouselItemArray[imageIndex].LinkId);
-            $('#metaTagDialog').on('dialogclose', function (event) {
-                metaTagDialogIsOpen = false;
-                resume();
-            });
-            break;
-        case "archive":
-            $('#carouselContextMenu').fadeOut();
-            pause();
-            $('#carouselContextMenu').fadeOut();
-            showMoveCopyDialog("Archive", carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
-            break;
-        default:
-            sendEmailToYourself("Invalid context menu action", "invalid: " + ctxMenuAction);
-        //alert("invalid: " + ctxMenuAction);
-    }
-}
 
 function showCarouelSettingsDialog() {
     $("#draggableDialogTitle").html("Carousel Settings");
@@ -541,14 +480,6 @@ function assuranceArrowClick(direction) {
 }
 
 function carouselHtml() {
-    $("#carouselContextMenuContainer").html(
-        "<div id='carouselContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
-        "    <div id='ctxModelName' onclick='carouselContextMenuAction(\"showDialog\")'>model name</div>\n" +
-        "    <div onclick='carouselContextMenuAction(\"openInNewTab\")'>Open in new tab</div>\n" +
-        "    <div onclick='carouselContextMenuAction(\"explode\")'>Explode</div>\n" +
-        "    <div onclick='carouselContextMenuAction(\"comment\")'>Comment</div>\n" +
-        //"    <div onclick='carouselContextMenuAction(\"tags\")'>Tags</div>\n" +
-        "</div>\n");
 
     return "<div class='centeringOuterShell'>\n" +
         "   <div id='innerCarouselContainer'  class='centeringInnerShell'>\n" +
