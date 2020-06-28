@@ -58,6 +58,7 @@ function getImageDetails() {
                 $('#imageInfoLinkId').html(imageInfo.LinkId);
                 $('#imageInfoInternalLink').html(imageInfo.Link);
                 $('#imageInfoFolderLocation').html(imageInfo.FolderLocation);
+                //api/Image/GetImageDetail
                 $('#imageInfoHeight').html(imageInfo.Height);
                 $('#imageInfoWidth').html(imageInfo.Width);
                 $('#imageInfoLastModified').html(imageInfo.LastModified);
@@ -174,6 +175,65 @@ function imageCtxMenuAction(action) {
     }    
 }
 
+function xxslideshowCtxMnuAction(action) {
+    $("#thumbImageContextMenu").fadeOut();
+    switch (action) {
+        case "showLinks":
+            $('#slideshowIinkInfo').show();
+            $('#linkInfoContainer').html("");
+            slideshowCtxMnuShowLinks(imageViewerArray[imageViewerIndex].LinkId);
+            //slideshowLinkInfoContainer
+            break;
+        case "showModelInfo":
+            slideShowButtonsActive = false;
+            $("#thumbImageContextMenu").fadeOut();
+            if (slideShowRunning)
+                runSlideShow('pause');
+            showFolderInfoDialog(imageViewerArray[imageViewerIndex].ImageFolderId, "slideshow ctx menu");
+            break;
+        case "see more of her":
+            rtpe("SEE", albumFolderId, imageViewerArray[imageViewerIndex].ImageFolderId, albumFolderId);
+            //calledFrom = imageViewerArray[imageViewerIndex].ImageFolderId;
+            break;
+        case "showImageCommentDialog":
+            if (slideShowRunning) {
+                //alert("pause here");
+                runSlideShow('pause');
+            }
+            slideShowButtonsActive = false;
+            showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, albumFolderId, currentAlbumJSfolderName, "Slideshow Context Menu");
+            $('#imageCommentDialog').on('dialogclose', function (event) {
+                slideShowButtonsActive = true;
+                if (slideShowRunning)
+                    runSlideShow('resume');
+            });
+            break;
+        case "explode":
+            if (!isLoggedIn()) {
+                alert("You must be logged in to use this feature");
+            }
+            else
+                rtpe("EXP", "slideshow", imageViewerArray[imageViewerIndex].Link, albumFolderId);
+            break;
+        case "Archive":
+        case "Copy":
+        case "Move":
+            showMoveCopyDialog(action, imageViewerArray[imageViewerIndex].Link, albumFolderId);
+            break;
+        case "remove":
+            removeImage();
+            break;
+        case "setF":
+            setFolderImage(imageViewerArray[imageViewerIndex].LinkId, albumFolderId, "folder");
+            //if (viewerShowing) slide("next");
+            break;
+        case "setC":
+            setFolderImage(imageViewerArray[imageViewerIndex].LinkId, albumFolderId, "parent");
+            //if (viewerShowing) slide("next");
+            break;
+    }
+}
+
 function imageContextMenuHtml() {
     return "<div id='imageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
         "    <div id='ctxModelName' onclick='imageCtxMenuAction(\"show\")'>model name</div>\n" +
@@ -203,9 +263,6 @@ function imageContextMenuHtml() {
         "    <div class='adminLink' onclick='imageCtxMenuAction(\"setC\")'>Set as Category Image</div>\n" +
         "</div>\n";
 }
-
-
-
 
 function setFolderImage(linkId, folderId, level) {
     //if (document.domain === 'localhost') alert("setFolderImage. \nlinkId: " + linkId + "\nfolderId=" + folderId + "\nlevel=" + level);
@@ -250,6 +307,20 @@ function setFolderImage(linkId, folderId, level) {
             }
         }
     });
+}
+
+function removeImageDialogHTML() {
+
+    "<div id='removeLinkDialog' class='oggleDialogWindow' title='Remove Image'>\n" +
+        "    <div><input type='radio' value='DUP' name='rdoRejectImageReasons' checked='checked' />  duplicate</div>\n" +
+        "    <div><input type='radio' value='BAD' name='rdoRejectImageReasons' />  bad link</div>\n" +
+        "    <div><input type='radio' value='LOW' name='rdoRejectImageReasons' />  low quality</div>\n" +
+        "    <div>\n" +
+        "        <span class='roundendButton' onclick='onRemoveImageClick('ok')'>ok</span>\n" +
+        "        <span class='roundendButton' onclick='onRemoveImageClick('cancel')'>cancel</span>\n" +
+        "    </div>\n" +
+        "</div>\n";
+
 }
 
 function removeImage() {

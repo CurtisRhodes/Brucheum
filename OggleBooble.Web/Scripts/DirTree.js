@@ -87,7 +87,7 @@ function buildDirTreeRecurr(parentNode) {
         }
         let randomId = create_UUID();
         strdirTree +=
-            "<div class='clickable' style='text-indent:" + dirTreeTab + "px'>"
+            "<div class='dirTreeNode clickable' style='text-indent:" + dirTreeTab + "px'>"
             + "<span id='S" + randomId + "' onclick=toggleDirTree('" + randomId + "') >[" + expandMode + "] </span>"
             + "<div id='" + randomId + "aq' class='treeLabelDiv' onclick='dirTreeClick(\"" + thisNode.DanniPath + "\",\"" + vwDir.Id + "\")' "
             + "oncontextmenu=showDirTreeContextMenu('" + vwDir.Id + "') "

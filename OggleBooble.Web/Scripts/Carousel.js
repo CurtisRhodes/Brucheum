@@ -102,6 +102,7 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                     if (take === 500) {
                         newImageIndex = Math.floor(Math.random() * carouselItemArray.length);
                         startCarousel(newImageIndex);
+                        $('#carouselFooter').show();
                         resizeCarousel();
                     }
 
@@ -422,12 +423,14 @@ function carouselContextMenuAction(ctxMenuAction) {
 function showCarouelSettingsDialog() {
     $("#draggableDialogTitle").html("Carousel Settings");
     $("#draggableDialogContents").html(
+        "<div class='carouselSettingsDialog'>\n"+
         "   <input class='carouselCheckbox' id='ckCenterfold' type='checkbox'/> Include Centerfolds<br/>\n" +
         "   <input class='carouselCheckbox' id='ckArchive' type='checkbox'/> Include Archive<br/>\n" +
         "   <input class='carouselCheckbox' id='ckPorn' type='checkbox'/> Include porn<br/>\n" +
         "   <input class='carouselCheckbox' id='ckLandscape' type='checkbox'/> allow landscape size<br/>\n" +
         "   <input class='carouselCheckbox' id='ckPortrait' type='checkbox'/> allow portrait size<br/>\n" +
         "</div>\n");
+
     $("#draggableDialog").css("width", 300);
     //$("#draggableDialogTitle").html("Carousel Settings top: [" + $("#draggableDialog").attr("top") + "]");
     $('#draggableDialog').css("top", event.clientY - 75);
@@ -556,7 +559,7 @@ function carouselHtml() {
         "          <img id='thisCarouselImage' onerror='imgErrorThrown(" + imageIndex + ")' oncontextmenu='carouselContextMenuClick()' class='carouselImage' src='/Images/ingranaggi3.gif' onclick='clickViewGallery(1)' />\n" +
         "          <img class='assuranceArrows' onclick='assuranceArrowClick(\"foward\")' src='/Images/rightArrowOpaque02.png' />\n" +
         "      </div>\n" +
-        "      <div class='carouselFooter'>\n" +
+        "      <div id='carouselFooter' class='carouselFooter'>\n" +
         "          <img class='speedButton floatLeft' src='Images/speedDialSlower.png' title='slower' onclick='clickSpeed(\"slower\")' />\n" +
         "          <div id='pauseButton' class='pauseButton' onclick='togglePause()'>||</div>\n" +
         "          <div id='carouselFooterLabel' class='carouselCategoryLabel' onclick='clickViewGallery(4)'></div>\n" +

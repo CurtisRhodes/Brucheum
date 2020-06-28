@@ -6,6 +6,22 @@ using System.Web;
 
 namespace OggleBooble.Api.Models
 {
+    public class ImageLinksModel
+    {
+        public ImageLinksModel() {
+            Links = new List<VwLink>();
+        }
+        public List<VwLink> Links { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class SortOrderItem
+    {
+        public int PageId { get; set; }
+        public string ItemId { get; set; }
+        public int InputValue { get; set; }
+    }
+
 
     public class DirTreeSuccessModel
     {
@@ -35,7 +51,7 @@ namespace OggleBooble.Api.Models
         public RepairReportModel()
         {
             MissingFiles = new List<string>();
-            MissingLinks = new List<string>();
+            OrphanLinks = new List<string>();
             Errors = new List<string>();
         }
         public int ImagesRenamed { get; set; }
@@ -51,7 +67,7 @@ namespace OggleBooble.Api.Models
         public int BadLinks { get; set; }
         public bool isSubFolder { get; set; }
         public List<string> MissingFiles { get; set; }
-        public List<string> MissingLinks { get; set; }
+        public List<string> OrphanLinks { get; set; }
         public List<string> Errors { get; set; }
         public string Success { get; set; }
     }

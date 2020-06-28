@@ -33,7 +33,9 @@ function loadAlbum(folderId) {
                     if (albumImageInfo.Success === "ok") {
                         processImages(albumImageInfo);
                         $('#folderCommentButton').fadeIn();
+
                         setCounts(albumImageInfo, folderId);
+
                         let delta = (Date.now() - getImagesStart) / 1000;
                         console.log("GetAlbumImages took: " + delta.toFixed(3));
                         $('.footer').show();
@@ -106,7 +108,7 @@ function loadAlbum(folderId) {
 
                         setBadges(imageLinksModel.ExternalLinks);
 
-                        $('#headerMessage').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
+                        //$('#headerMessage').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
                         $('#footerInfo1').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
                         logPageHit(folderId, "Album.html");
                         $('#folderCommentButton').fadeIn();
@@ -165,15 +167,16 @@ function loadAlbum(folderId) {
 }
 
 function galleryImageError(objImageLink) {
+    alert("galleryImageError");
     // $(this).attr('src', "Images/redballon.png");
-    $('#' + objImageLink.LinkId).attr('src', "Images/redballon.png"); 
+    //$('#' + objImageLink.LinkId).attr('src', "Images/redballon.png"); 
 
-    alert("albumImg Error PageId: " + objImageLink.FolderId + ",\nPageName: " + objImageLink.FolderName + ",\nActivity: " + objImageLink.LinkId);
-    logDataActivity({
-        PageId: objImageLink.FolderId,
-        PageName: objImageLink.FolderName,
-        Activity: objImageLink.LinkId
-    });
+    //alert("albumImg Error PageId: " + objImageLink.FolderId + ",\nPageName: " + objImageLink.FolderName + ",\nActivity: " + objImageLink.LinkId);
+    //logDataActivity({
+    //    PageId: objImageLink.FolderId,
+    //    PageName: objImageLink.FolderName,
+    //    Activity: objImageLink.LinkId
+    //});
 }
 function subFolderImgError(objSubDir) {
     // $('#' + objSubDir.LinkId).attr('src', "Images/redballon.png");
@@ -189,30 +192,31 @@ function subFolderImgError(objSubDir) {
 function processImages(albumImageInfo) {
     let labelClass = "defaultSubFolderImage";  
     let imageFrameClass = "folderImageOutterFrame";
-    let imageEditor = isInRole("Image Editor");
-    $('#imageContainer').html('');
-    if (albumImageInfo.RootFolder === "porn" || albumImageInfo.RootFolder === "sluts") {
-        imageFrameClass = "pornFolderImageOutterFrame";
-    }
-    if (imageEditor) {
-        if (imagesModel.RootFolder === "archive") {
-            if (imagesModel.LinkCount > 1) {
-                imageFrameClass = "multiLinkImageFrame";
-            }
-        }
-        else {
-            if (imagesModel.LinkCount > 1) {
-                imageFrameClass = "nonLocalImageFrame";
-            }
-        }// imageModelFile
-    }  // startSlideShow(folderId, linkId)
+    //let imageEditor = isInRole("Image Editor");
+    //if (albumImageInfo.RootFolder === "porn" || albumImageInfo.RootFolder === "sluts") {
+    //    imageFrameClass = "pornFolderImageOutterFrame";
+    //}
+    //if (imageEditor) {
+    //    if (albumImageInfo.RootFolder === "archive") {
+    //        if (albumImageInfo.dirTree.SubDirs.length > 1) {
+    //            imageFrameClass = "multiLinkImageFrame";
+    //        }
+    //    }
+    //    else {
+    //        if (imagesModel.dirTree.SubDirs.length > 1) {
+    //            imageFrameClass = "nonLocalImageFrame";
+    //        }
+    //    }// imageModelFile
+    //}  // startSlideShow(folderId, linkId)
 
+    $('#imageContainer').html('');
     // FILES
     $.each(albumImageInfo.ImageLinks, function (idx, obj) {
         //imageFrameClass = "defaultImageFrame";
         let imgSrc = settingsImgRepo + "/" + obj.FileName;
         let imageFrameHtml = "<div class='" + imageFrameClass + "'>" +
-            "<img id='" + obj.LinkId + "' class='thumbImage' oneeror='galleryImageError(\"" + obj +"\")' alt='" + imgSrc + "' " +
+            "<img id='" + obj.LinkId + "' class='thumbImage'" +
+            " oneeror='galleryImageError(\"" + obj.LinkId + "\")' alt='" + imgSrc + "' " +
             " oncontextmenu='imageCtx(\"" + imgSrc + "\",\"" + obj.LinkId + "\")'" +
             " onclick='startSlideShow(" + obj.Id + ",\"" + obj.LinkId + "\")'" + " src='" + imgSrc + "'/>";
 
@@ -233,7 +237,6 @@ function processImages(albumImageInfo) {
             "<img id='" + subDir.LinkId + "' class='folderImage' onerror='subFolderImgError(" + subDir + ")' alt='Images/redballon.png' src='" + imgSrc + "'/>" +
             "<div class='" + labelClass + "'>" + subDir.DirectoryName + "</div><span Id='fc" + subDir.FolderId + "'> ...</span></div>");
     });
-
 
     // $('#aboveImageContainerMessageArea').html(folde
     $('#imagePageLoadingGif').hide();
@@ -291,43 +294,68 @@ function setBadges(badgesText) {
 function setCounts(dirTree, folderId) {
     let subFolderSpan = "unhandled";
     let strBottomCount = "999";
-    if (dirTree.SubDirs.length === 0) { // straignt gallery page
-        $('#galleryBottomfileCount').html("f1" + dirTree.ImageLinks.length);
+    let nBottomCount = 0;
+
+    if (dirTree.SubDirs.length === 0) {
+        $('#deepSlideshowButton').hide();
+        $('#galleryBottomfileCount').html(dirTree.ImageLinks.length);
         return;
     }
     if (dirTree.SubDirs.length === 1 && dirTree.RootFolder === "centerfold") {
-        alert("centerfold detected: " + dirTree.RootFolder);
-        $('#galleryBottomfileCount').html("ctf" + dirTree.ImageLinks.length);
-        $('#fc' + dirTree.SubDirs[0].FolderId).html("(mmy" + dirTree.SubDirs[0].FileCount + ")");
+        $('#deepSlideshowButton').hide();
+        //alert("centerfold detected: " + dirTree.RootFolder);
+        $('#galleryBottomfileCount').html(dirTree.ImageLinks.length);
+        $('#fc' + dirTree.SubDirs[0].FolderId).html("(" + dirTree.SubDirs[0].FileCount + ")");
         return;
     }
+
+    var getSubFolderCountsStart = Date.now();
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/GalleryPage/GetSubFolderCounts?folderId=" + folderId,
         success: function (subFolderCounts) {
             if (subFolderCounts.Success === "ok") {
+                $('#deepSlideshowButton').show();
+
                 $.each(subFolderCounts.SubFolderCountItems, function (idx, obj) {
-                    $('#deepSlideshowButton').show();
-                    //deepChildCount = 0;
-                    //getDeepChildCount(subDir);
-                    if (deepChildCount === 0) { // this must be just a collection of stepchildren
-                        strBottomCount = "fstp: " + dirTree.SubDirs.length;
-                        ///ToDo: get deep count of stepchildren
+
+                    if (subFolderCounts.TotalChildFiles === 0) { // this must be just a collection of stepchildren
+                        //strBottomCount = "fstp: " + dirTree.SubDirs.length;
                         subFolderSpan = "(ssp " + dirTree.ImageLinks.length + ")";
                     }
+
                     if ((dirTree.ImageLinks.length === 0) && (dirTree.SubDirs.length > 0)) {  // normal subfolder gallery
-                        strBottomCount = "(" + dirTree.SubDirs.length +
-                            "/" + subFolderCounts.TotalChildFiles.toLocaleString() + ")";
-                        subFolderSpan = "(" + obj.FileCount + ")";
+                        //strBottomCount = "(" + dirTree.SubDirs.length + " / " + obj.TotalChildFiles.toLocaleString() + ")";
+                        if (obj.SubFolderCount > 0)
+                            subFolderSpan = " (" + obj.SubFolderCount + "/" + obj.TotalChildFiles + ")";
+                        else
+                            subFolderSpan = " (" + obj.FileCount + ")";
                     }
+
                     if ((dirTree.ImageLinks.length > 0) && (dirTree.SubDirs.length > 0)) {  // mixed gallery
-                        strBottomCount = "fmess:" + dirTree.FileCount + "  (" + dirTree.SubDirs.length +
-                            "/" + subFolderCounts.TotalChildFiles.toLocaleString() + ")";
-                        subFolderSpan = "(mmx: " + dirTree.SubDirs.length + "/" + obj.FileCount + ")";
+                        if (dirTree.SubDirs.length === 1) {// && dirTree.RootFolder === "centerfold") {
+                            $('#aboveImageContainerMessageArea').html("root: " + dirTree.RootFolder);
+                            subFolderSpan = " (" + obj.FileCount + ")";
+                        }
+                        //strBottomCount = "fmess:" + dirTree.FileCount + "  (" + dirTree.SubDirs.length +
+                        //    "/" + obj.TotalChildFiles.toLocaleString() + ")";
+                        subFolderSpan = " (" + dirTree.SubDirs.length + "/" + obj.FileCount + ")";
                     }
+
                     $('#fc' + obj.SubFolderId).html(subFolderSpan);
+                    nBottomCount += obj.TotalChildFiles;
                 });
-                $('#galleryBottomfileCount').html(strBottomCount);            }
+
+                if ((dirTree.ImageLinks.length === 0) && (dirTree.SubDirs.length > 0)) {  // normal subfolder gallery
+                    strBottomCount = "(" + dirTree.SubDirs.length + "/" + nBottomCount.toLocaleString() + ")";
+                }
+                if ((dirTree.ImageLinks.length > 0) && (dirTree.SubDirs.length > 0)) {  // mixed gallery
+                    strBottomCount = "[" + dirTree.ImageLinks.length + "]  (" + dirTree.SubDirs.length + "/" + nBottomCount.toLocaleString() + ")";
+                }
+                $('#galleryBottomfileCount').html(strBottomCount);
+                let delta = (Date.now() - getSubFolderCountsStart) / 1000;
+                console.log("GetSubFolderCounts took: " + delta.toFixed(3));
+            }
             else {
                 $('#imagePageLoadingGif').hide();
                 if (document.domain === 'localhost')
@@ -361,15 +389,6 @@ function setCounts(dirTree, folderId) {
         }
     }); 
 }
-
-//function getDeepChildCount(subDir) {
-//    deepChildCount += subDir.ChildFiles;
-//    $.each(subDir.SubDirs, function (idx, obj) {
-//        getDeepChildCount(obj.SubDirs);
-//    });
-//}
-
-
 
 function directToStaticPage(folderId) {
     if (isNullorUndefined(folderId)) {

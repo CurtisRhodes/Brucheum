@@ -21,6 +21,37 @@ namespace OggleBooble.Api.Controllers
         static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
         //static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
 
+        [HttpGet]
+        [Route("api/Links/GetImageLinks")]
+        public ImageLinksModel GetImageLinks(int folderId)
+        {
+            var imgLinks = new ImageLinksModel();
+            using (var db = new OggleBoobleMySqlContext())
+            {
+                imgLinks.Links = db.VwLinks.Where(l => l.Id == folderId).OrderBy(l => l.SortOrder).ToList();
+            }
+            imgLinks.Success = "ok";
+            return imgLinks;
+        }
+
+        [HttpPut]
+        [Route("api/Links/GetImageLinks")]
+        public string UpdateSortOrder(List<SortOrderItem> SortOrderItems)
+        {
+            string success = "";
+            using (var db = new OggleBoobleMySqlContext())
+            {
+                foreach (SortOrderItem item in SortOrderItems)
+                {
+                    CategoryImageLink link = db.CategoryImageLinks.Where(l => l.ImageCategoryId == item.PageId && l.ImageLinkId == item.ItemId).FirstOrDefault();
+                    if (link != null)
+                        link.SortOrder = item.InputValue;
+                }
+                db.SaveChanges();
+                success = "ok";
+            }
+            return success;
+        }
 
         [HttpGet]
         [Route("api/Links/BuildCatTree")]
@@ -76,80 +107,113 @@ namespace OggleBooble.Api.Controllers
             using (var db = new OggleBoobleMySqlContext())
             {
                 CheckFolder(folderId, repairReport, db, recurr);
-            
-            
-            }
 
+                int test1 = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
+                RemoveLinks(repairReport.OrphanLinks);
+                int test2 = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
+                repairReport.LinksRemoved = test1 - test2;
+
+                repairReport.Success = "ok";
+            }
+            
             return repairReport;
         }
-        private void CheckFolder(int folderId, RepairReportModel repairReport,  OggleBoobleMySqlContext db,bool recurr)
+        private string CheckFolder(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db, bool recurr)
         {
-            VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
-            string ftpPath = ftpHost + "/" + imgRepo + dbCategoryFolder.FolderPath + dbCategoryFolder.FolderName;
-            string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
-            List<ImageFile> existingLinks =
-                (from c in db.CategoryImageLinks
-                 join i in db.ImageFiles on c.ImageLinkId equals i.Id
-                 //join f in db.CategoryFolders on i.FolderId equals f.Id
-                 select (i)).ToList();
+            string success;
+            try
+            {
+                VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
+                string ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + dbCategoryFolder.FolderPath;
+                string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
+                repairReport.OrphanLinks = new List<string>();
+                var categoryImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
+                // 1. check for physicalFiles with no link
+                for (int i = 0; i < physcialFiles.Length; i++)
+                {
+                    var lId = physcialFiles[i];
 
-            // 1. check if there is a link for every file 
-            for (int i = 0; i < physcialFiles.Length; i++)
-            {
-                if (existingLinks.Where(f => f.FileName == physcialFiles[i]).FirstOrDefault() == null)
-                {
-                    repairReport.MissingLinks.Add(physcialFiles[i]);
-                    //db.ImageFiles.Add(new ImageFile()
-                    //{
-                    //    ExternalLink = "aa"
-                    //});
-                    //CategoryImageLink categoryImageLink = new CategoryImageLink()
-                    //{
-                    //    ImageCategoryId = folderId,
-                    //    ImageLinkId = ""
-                    //};
-                }
-            }
+                    if (categoryImageLinks.Where(il => il.ImageLinkId == physcialFiles[i]).FirstOrDefault() == null)
+                    {
+                        repairReport.MissingFiles.Add(physcialFiles[i]);
 
-            // 2 check if there is a file in the folder for every link in the table.
-            foreach (ImageFile imageLink in existingLinks)
-            {
-                //var results = Array.FindAll(physcialFiles, s => s.Equals(imageLink.FileName));
-                if (!physcialFiles.Contains(imageLink.FileName))
-                {
-                    repairReport.MissingFiles.Add(imageLink.Id);
-                    //repairReport.Errors.Add("link with no file: " + imageLink.Id);
+                        if (db.ImageFiles.Where(f => f.Id == physcialFiles[i]).FirstOrDefault() == null)
+                        {
+                            db.ImageFiles.Add(new ImageFile()
+                            {
+                                Id = lId,
+                                FolderId = folderId,
+                                FileName = lId
+
+                            });
+                        }
+                        db.CategoryImageLinks.Add(new CategoryImageLink() { 
+                            ImageLinkId = lId, 
+                            ImageCategoryId = folderId, 
+                            SortOrder = 876 });
+                        db.SaveChanges();
+                    }
                 }
-            }
-            if (recurr)
-            {
-                var childFolders = db.VirtualFolders.Where(c => c.Parent == folderId).ToList();
-                foreach (VirtualFolder childFolder in childFolders)
+
+                List<ImageFile> existingLinks =
+                    (from c in db.CategoryImageLinks
+                     join i in db.ImageFiles on c.ImageLinkId equals i.Id
+                     where c.ImageCategoryId == folderId
+                     //join f in db.CategoryFolders on i.FolderId equals f.Id
+                     select (i)).ToList();
+
+                // 2 check if there is a file in the folder for every link in the table.
+                foreach (ImageFile imageLink in existingLinks)
                 {
-                    RepairLinks(childFolder.Id, recurr);
+                    //var results = Array.FindAll(physcialFiles, s => s.Equals(imageLink.FileName));
+                    if (!physcialFiles.Contains(imageLink.FileName))
+                    {
+                        repairReport.OrphanLinks.Add(imageLink.Id);
+                        //repairReport.Errors.Add("link with no file: " + imageLink.Id);
+                    }
                 }
+                if (recurr)
+                {
+                    var childFolders = db.VirtualFolders.Where(c => c.Parent == folderId).ToList();
+                    foreach (VirtualFolder childFolder in childFolders)
+                    {
+                        CheckFolder(childFolder.Id, repairReport, db, recurr);
+                    }
+                }
+                success = "ok";
             }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);;
+            }
+            return success;
         }
 
-
-        public RepairReportModel XXRepairLinks(int startFolderId, string drive)
+        private string RemoveLinks(List<string> orphanLinks)
         {
-            RepairReportModel repairReport = new RepairReportModel() { isSubFolder = false };
+            string success;
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var timer = new System.Diagnostics.Stopwatch();
-                    timer.Start();
-                    RepairLinksRecurr(startFolderId, repairReport, db);
-                    timer.Stop();
-                    System.Diagnostics.Debug.WriteLine("VerifyLinksRecurr took: " + timer.Elapsed);
+                    foreach (string orphanLink in orphanLinks)
+                    {
+                        var dbImageLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == orphanLink).ToList();
+                        db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == orphanLink).ToList());
+                        var imageFile = db.ImageFiles.Where(i => i.Id == orphanLink).First();
+                        db.ImageFiles.Remove(imageFile);
+                    }
+                    db.SaveChanges();
+                    success = "0k";
                 }
-                repairReport.Success = "ok";
             }
-            catch (Exception ex) { repairReport.Success = Helpers.ErrorDetails(ex); }
-            return repairReport;
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
         }
+
         private void RepairLinksRecurr(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db)
         {
             try
@@ -243,5 +307,10 @@ namespace OggleBooble.Api.Controllers
             }
             return success;
         }
+    }
+    [EnableCors("*", "*", "*")]
+    public class RemoveLinksController : ApiController
+    {
+
     }
 }

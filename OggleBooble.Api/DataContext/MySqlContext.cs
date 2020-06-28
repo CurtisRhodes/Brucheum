@@ -24,7 +24,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<Visit> Visits { get; set; }
         public virtual DbSet<MetricsMatrix> VwMetricsMatrices { get; set; }
         public virtual DbSet<StepChild> StepChildren { get; set; }
-        public virtual DbSet<CategoryFolderDetail> CategoryFolderDetails { get; set; }
+        public virtual DbSet<FolderDetail> FolderDetails { get; set; }
         public virtual DbSet<RankerVote> RankerVotes { get; set; }
         public virtual DbSet<EventLog> EventLogs { get; set; }
         public virtual DbSet<Ref> Refs { get; set; }
@@ -287,8 +287,8 @@ namespace OggleBooble.Api.MySqlDataContext
         public int SortOrder { get; set; }
     }
 
-    [Table("OggleBooble.CategoryFolderDetail")]
-    public partial class CategoryFolderDetail
+    [Table("OggleBooble.FolderDetail")]
+    public partial class FolderDetail
     {
         [Key]
         public int Id { get; set; }
@@ -297,7 +297,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public string Measurements { get; set; }
         public DateTime? Birthday { get; set; }
         public string FolderComments { get; set; }
-        public bool FakeBoobs { get; set; }
+        public bool? FakeBoobs { get; set; }
     }
 
     // VIEWS
@@ -306,9 +306,10 @@ namespace OggleBooble.Api.MySqlDataContext
     {
         [Key]
         public string LinkId { get; set; }
-        public string FileName { get; set; }
         public int FolderId { get; set; }
         public int ImageFolderId { get; set; }
+        public string ImageFolderName { get; set; }
+        public string FileName { get; set; }
         //public int ImageParentId { get; set; }
         public int SortOrder { get; set; }
     }
@@ -470,7 +471,6 @@ namespace OggleBooble.Api.MySqlDataContext
     public class VwLatestTouchedGalleries
     {
         [Key]
-        public string Id { get; set; }
         public int FolderId { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }

@@ -31,23 +31,28 @@ namespace OggleBooble.Api.Controllers
     {
         public static string DetermineFolderType(FolderTypeModel folderTypeInfo)
         {
-            if (folderTypeInfo.ContainsRomanNumeral)
+            if (folderTypeInfo.RootFolder == "centerfold")
+            {
                 return "singleModelCollection";
-            if (folderTypeInfo.ContainsRomanNumeralChildren)
-                return "singleModelGallery";
-
-            if (folderTypeInfo.RootFolder == "archive" || folderTypeInfo.RootFolder == "sluts")
-            {
-                if (folderTypeInfo.HasImages)
-                    return "singleModelCollection";
-                if (folderTypeInfo.HasSubFolders)
-                    return "singleModelGallery";
             }
-            if (folderTypeInfo.RootFolder == "boobs" || folderTypeInfo.RootFolder == "porn")
+            if (folderTypeInfo.HasImages && folderTypeInfo.HasSubFolders )
             {
-                if (folderTypeInfo.HasImages)
+                if (folderTypeInfo.ContainsRomanNumeral)
+                    return "singleModelGallery";
+                if (folderTypeInfo.ContainsNonRomanNumeralChildren)
+                    return "assorterdImagesGallery";
+            }
+            if (folderTypeInfo.HasImages && !folderTypeInfo.HasSubFolders)
+            {
+                if (folderTypeInfo.RootFolder == "archive" || folderTypeInfo.RootFolder == "sluts")
+                    return "singleModelCollection";
+                if (folderTypeInfo.RootFolder == "boobs" || folderTypeInfo.RootFolder == "porn")
                     return "assorterdImagesCollection";
-                if (folderTypeInfo.HasSubFolders)
+            }
+            if (folderTypeInfo.HasSubFolders && !folderTypeInfo.HasImages) {
+                if (folderTypeInfo.RootFolder == "archive" || folderTypeInfo.RootFolder == "sluts")
+                    return "singleModelGallery";
+                if (folderTypeInfo.RootFolder == "boobs" || folderTypeInfo.RootFolder == "porn")
                     return "assorterdImagesGallery";
             }
 
@@ -66,6 +71,26 @@ namespace OggleBooble.Api.Controllers
                 if (childFolder.Contains(" X")) return true;
             }
             return false;
+        }
+
+        public static bool ContainsNonRomanNumeralChildren(List<string> childFolders)
+        {
+
+            foreach (string childFolder in childFolders)
+            {
+                if (!childFolder.Contains(" I") && childFolder.Contains(" V") && childFolder.Contains(" X")) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        public static string GetFileUrlFromLinkId(string linkId)
+        {
+            string imgUrl = "";
+
+            return imgUrl;
         }
 
         public static bool ContainsRomanNumeral(string folderName)

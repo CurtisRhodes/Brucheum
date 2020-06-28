@@ -14,16 +14,17 @@ function showFolderInfoDialog(folderId, calledFrom) {
         $('#modelInfoDetails').hide();
         $('#btnCatDlgCancel').hide();
         $('#btnCatDlgMeta').hide();
+        $('#draggableDialog').css("width", 680);
 
-        $('#draggableDialog').css("top", $('.oggleHeader').height() + 20);
+        //$('#draggableDialog').css("top", $('.oggleHeader').height() - 50);
+        //$('#draggableDialog').css("left", -1500);
         $('#summernoteContainer').summernote({
             toolbar: "none",
-            height: "300", 
+            height: "200px", 
             dialogsInBody: true
         });
         $('#summernoteContainer').summernote('disable');
-
-        $(".note-editable").css('font-size', '19px');
+        $(".note-editable").css('font-size', '15px');
         $(".modelDialogInput").prop('readonly', true);;
 
         if (typeof pause === 'function')
@@ -57,6 +58,12 @@ function showFolderInfoDialog(folderId, calledFrom) {
     }
 }
 
+function showFullModelDetailsDialog(){
+}
+
+function showCommentOnlyDialog() {
+}
+
 function getFolderDetails(folderId) {
     $.ajax({
         type: "GET",
@@ -65,27 +72,22 @@ function getFolderDetails(folderId) {
             $('#imagePageLoadingGif').hide();
             if (folderDetails.Success === "ok") {
                 folderInfo = folderDetails;
-
-                //if (isNullorUndefined(folderDetails.CommentText)) {
-                //    folderDetails.CommentText = "In in eros sit amet nunc ultrices laoreet. Nunc eu fringilla diam. Morbi eget nunc gravida, dignissim metus et, pharetra ligula." +
-                //        " Maecenas efficitur nunc dapibus neque semper gravida. Donec eget commodo turpis, non accumsan sapien. Nunc elementum hendrerit sodales." +
-                //        " Nam pulvinar cursus mi, id feugiat quam. Curabitur interdum pretium nunc, vitae aliquam tellus pellentesque in. Nullam eleifend viverra massa, eu vulp" +
-                //        "utate nisi sagittis sit amet. Suspendisse imperdiet sem nec tempus ornare. Morbi sit amet consequat diam.";
-                //}
                 $('#draggableDialogTitle').html(folderDetails.FolderName);
                 $('#modelDialogThumbNailImage').attr("src", folderDetails.FolderImage);
                 $('#txtFolderName').val(folderDetails.FolderName);
-                $('#txtBorn').val(folderDetails.Born);
-                $('#txtNationality').val(folderDetails.Nationality);
-                $('#txtBorn').val(folderDetails.Born);
-                $('#txtBoobs').val(folderDetails.Boobs);
+                $('#txtBorn').val(dateString(folderDetails.Birthday));
+                $('#txtHomeCountry').val(folderDetails.HomeCountry);
+                $('#txtHometown').val(folderDetails.HomeTown);
+                $('#txtBoobs').val(((folderDetails.Boobs) ? "fake" : "real"));
                 $('#txtMeasurements').val(folderDetails.Measurements);
                 //$('#txtStatus').val(folderDetails.LinkStatus);
-                $("#summernoteContainer").summernote("code", folderInfo.CommentText);
+                $("#summernoteContainer").summernote("code", folderInfo.FolderComments);
                 $('#imagePageLoadingGif').hide();
                 $("#draggableDialog").fadeIn();
 
                 //determine view
+
+                $('#aboveImageContainerMessageArea').html("FolderType2: " + folderInfo.FolderType);
 
                 switch (folderInfo.FolderType) {
                     case "singleModelGallery":
@@ -145,15 +147,20 @@ function editFolderDialog() {
     $(".modelDialogInput").prop('readonly', false);
     $("#txtFolderName").prop('readonly', true);
     $('#summernoteContainer').summernote('enable');
-
     $('#summernoteContainer').summernote("destroy");
-    $('#summernoteContainer').summernote({ toolbar: [['codeview']] });
-    $(".note-editable").css('font-size', '19px');
+    $('#summernoteContainer').summernote({
+        toolbar: [['codeview']],
+        height: "200",
+        dialogsInBody: true
+    });
+
+    //$('#summernoteContainer').summernote({ toolbar: [['codeview']] });
+    $(".note-editable").css('font-size', '16px');
 
     $("#txtBorn").datepicker();
     $('#boobsInputArea').html("<select id='selBoobs' class='modelDialogInput'>\n" +
-        "    <option value='Real'>Real</option>\n" +
-        "    <option value='Fake'>Fake</option>\n" +
+        "    <option value='0'>Real</option>\n" +
+        "    <option value='1'>Fake</option>\n" +
         "</select><br />\n");
     $('#selBoobs').val(folderInfo.Boobs).change();
     $('#btnCatDlgCancel').show();
@@ -162,14 +169,15 @@ function editFolderDialog() {
 function saveFolderDialog() {
     $('#imagePageLoadingGif').show();
     // LOAD GETS
-    folderInfo.Born = $('#txtBorn').val();
-    folderInfo.Nationality = $('#txtNationality').val();
+    // alternamtive folderName $('#txtFolderName').val(folderDetails.FolderName);
+    folderInfo.Birthday = $('#txtBorn').val();
+    folderInfo.HomeCountry = $('#txtHomeCountry').val();
+    folderInfo.HomeTown = $('#txtHometown').val();
     folderInfo.Measurements = $('#txtMeasurements').val();
     folderInfo.Boobs = $('#selBoobs').val();
-    folderInfo.CommentText = $('#summernoteContainer').summernote('code');
+    folderInfo.FolderComments = $('#summernoteContainer').summernote('code');
     //folderInfo.ExternalLinks = $('#externalLinks').summernote('code');
     //folderInfo.LinkStatus = $('#txtStatus').val();
-
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "/api/FolderDetail/Update",
@@ -227,28 +235,29 @@ function saveFolderDialog() {
 }
 
 function folderDialogHtml() {
-    return "<div class='folderDialogContainer' onmouseout='considerClosingModelInfoDialog()' >\n" +
-        "   <div id='modelInfoDetails' class='flexContainer displayHidden'>\n" +
-        "       <div class='modelInfoDetailsArea'>\n" +
-        "          <div><div class='modelInfoDialogLabel'>name</div><div class='modelInfoValue'><input id='txtFolderName' class='modelDialogInput'/></div></div>\n" +
-        "           <div><div class='modelInfoDialogLabel'>from</div><div class='modelInfoValue'><input id='txtNationality' class='modelDialogInput'/></div></div>\n" +
-        "           <div><div class='modelInfoDialogLabel'>born</div><div class='modelInfoValue'><input id='txtBorn' class='modelDialogInput'/></div></div>\n" +
-        "           <div><div class='modelInfoDialogLabel'>boobs</div><div id='boobsInputArea'><div class='modelInfoValue'><input id='txtBoobs' class='modelDialogInput'/></div></div></div>\n" +
-        "           <div><div class='modelInfoDialogLabel'>figure</div><div class='modelInfoValue'><input id='txtMeasurements' class='modelDialogInput'/></div></div>\n" +
-        "       </div>\n" +
-        "       <div class='floatLeft'>\n" +
-        "           <img id='modelDialogThumbNailImage' src='/Images/redballon.png' class='modelDialogImage' />\n" +
-        "       </div>\n" +
-        "   </div>\n" +
-        "   <div class='modelInfoCommentArea'>\n" +
-        "       <textarea id='summernoteContainer'></textarea>\n" +
-        "   </div>\n" +
-        "   <div class='folderDialogFooter'>\n" +
-        "       <div id='btnCatDlgEdit' class='folderCategoryDialogButton' onclick='editFolderDialog()'>Edit</div>\n" +
-        "       <div id='btnCatDlgCancel' class='folderCategoryDialogButton displayHidden' onclick='cancelEdit()'>Cancel</div>\n" +
-        "       <div id='btnCatDlgMeta' class='folderCategoryDialogButton' onclick='addMetaTags()'>add meta tags</div>\n" +
-        "   </div>\n" +
-        "</div>\n"
+    return "<div>\n" +
+           "    <div id='modelInfoDetails' class='flexContainer'>\n" +
+           "        <div class='modelInfoDetailsArea'>\n" +
+           "            <div><label>name</label><div class='modelInfoValue'><input id='txtFolderName' class='modelDialogInput'/></div></div>\n" +
+           "            <div><label>home country</label><div class='modelInfoValue'><input id='txtHomeCountry' class='modelDialogInput'/></div></div>\n" +
+           "            <div><label>hometown</label><div class='modelInfoValue'><input id='txtHometown' class='modelDialogInput'/></div></div>\n" +
+           "            <div><label>born</label><div class='modelInfoValue'><input id='txtBorn' class='modelDialogInput'/></div></div>\n" +
+           "            <div><label>boobs</label><div id='boobsInputArea'><div class='modelInfoValue'><input id='txtBoobs' class='modelDialogInput'/></div></div></div>\n" +
+           "            <div><label>figure</label><div class='modelInfoValue'><input id='txtMeasurements' class='modelDialogInput'/></div></div>\n" +
+           "        </div>\n" +
+           "        <div class='floatLeft'>\n" +
+           "            <img id='modelDialogThumbNailImage' src='/Images/redballon.png' class='modelDialogImage' />\n" +
+           "        </div>\n" +
+           "    </div>\n" +
+           "    <div class='modelInfoCommentArea'>\n" +
+           "       <textarea id='summernoteContainer'></textarea>\n" +
+           "    </div>\n" +
+           "    <div class='folderDialogFooter'>\n" +
+           "        <div id='btnCatDlgEdit' class='folderCategoryDialogButton' onclick='editFolderDialog()'>Edit</div>\n" +
+           "        <div id='btnCatDlgCancel' class='folderCategoryDialogButton displayHidden' onclick='cancelEdit()'>Cancel</div>\n" +
+           "        <div id='btnCatDlgMeta' class='folderCategoryDialogButton' onclick='addMetaTags()'>add meta tags</div>\n" +
+           "    </div>\n" +
+           "</div>\n";
 }
 
 function cancelEdit() {

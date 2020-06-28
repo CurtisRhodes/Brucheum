@@ -39,7 +39,7 @@ namespace OggleBooble.Api.Controllers
                     var dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     if (dbCategoryFolder == null)
                     {
-                        imageInfo.Success = "no dategory folder found";
+                        imageInfo.Success = "no category folder found";
                         return imageInfo;
                     }
 
@@ -68,7 +68,7 @@ namespace OggleBooble.Api.Controllers
                     var folderTypeModel = new FolderTypeModel()
                     {
                         ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName),
-                        ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(subFolders),
+                        ContainsNonRomanNumeralChildren = Helpers.ContainsNonRomanNumeralChildren(subFolders),
                         HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
                         HasSubFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Count() > 0,
                         RootFolder = dbCategoryFolder.RootFolder

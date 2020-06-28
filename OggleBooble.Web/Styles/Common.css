@@ -93,10 +93,6 @@ body {
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
-input[type='checkbox'] {
-    transform: scale(2);
-}
-
 .modalContentStyle {
     z-index: 15;
 }
@@ -354,8 +350,8 @@ input[type='checkbox'] {
 }
 
 .shaddowBorder {
-    border-right: 25px solid rgba(130, 101, 101, 0.6);
-    border-bottom: 15px solid rgba(130, 101, 101, 0.6);
+    border-right: 15px solid rgba(130, 101, 101, 0.6);
+    border-bottom: 25px solid rgba(130, 101, 101, 0.6);
 }
 
 .canIgetaConnectionMessageContainer {
@@ -428,6 +424,9 @@ input[type='checkbox'] {
     border-radius: 8px;
 }
 
+.dirTreeNode {
+    white-space: nowrap;
+}
 .selectedDirTreeNode {
     background-color: #dcd7be; /* #b2e5eb; */
 }

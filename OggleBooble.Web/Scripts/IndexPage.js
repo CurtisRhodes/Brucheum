@@ -17,8 +17,8 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
                         //console.log(LatestUpdate.FolderName + ". src: " + src);
                         $('#updatedGalleriesSection').append("<div class='newsContentBox'>" +
                             "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
-                            "<img id='lt" + LatestUpdate.Id + "' class='newsContentBoxImage' " +
-                            "onerror='latestGalleryImageError(" + LatestUpdate.Id + ")' src='" + thisItemSrc + "'" +
+                            "<img id='lt" + LatestUpdate.FolderId + "' class='newsContentBoxImage' " +
+                            "onerror='latestGalleryImageError(" + LatestUpdate.FolderId + ")' src='" + thisItemSrc + "'" +
                             "onclick='rtpe(\"LUP\",\"home page\",10," + LatestUpdate.FolderId + ")'/>" +
                             "<div class='newsContentBoxDateLabel'>updated: " + dateString2(LatestUpdate.Acquired) + "</span></div>" +
                             "</div>");
@@ -62,14 +62,14 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
 
 //let oneShown = false;
 function latestGalleryImageError(folderId) {    
-    alert("latestGalleryImageError: " + folderId);
+    //alert("latestGalleryImageError: " + folderId);
     //alert("latestGallery src: " + $('#lt' + folderId).attr('src'));
-    //$('#lt' + folderId).attr('src', "Images/redballon.png");
-    //if (!oneShown) {
-    //    oneShown = true;
-    //    alert("latestGalleryImageError called: " + folderId);
-    //    alert("xx: " + $('#lt' + folderId).attr('src'))
-    //}
+    $('#lt' + folderId).attr('src', "Images/redballon.png");
+    logDataActivity({
+        PageId: folderId,
+        PageName: "latestGalleryImageError",
+        Activity: "image error"
+    });
 }
 
 function launchPromoMessages() {

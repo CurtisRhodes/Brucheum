@@ -128,10 +128,10 @@
     min-width: 400px;
     display: none;
     resize: both;
-    box-sizing: unset;
-    overflow: auto;
+/*    box-sizing: unset;
+    overflow: auto; */
     border: solid 2px var(--oggleBorderColor);
-    background-color: var(--flitterYellow);
+    background-color: var(--oggleContainerBackgroundColor);
 }
 .oggleDialogHeader {
     border: none;

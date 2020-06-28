@@ -14,12 +14,14 @@ namespace OggleBooble.Api.Models
         }
         public List<SubFolderCountItem> SubFolderCountItems { get; set; }       
         public string FolderType { get; set; }
-        public int TotalChildFiles { get; set; }
         public string Success { get; set; }
     }
     public class SubFolderCountItem
     {
         public int SubFolderId { get; set; }
+        public int ChildFiles { get; set; }
+        public int SubFolderCount { get; set; }
+        public int TotalChildFiles { get; set; }
         public int FileCount { get; set; }
     }
 
@@ -29,7 +31,7 @@ namespace OggleBooble.Api.Models
         public bool HasImages { get; set; }
         public bool HasSubFolders { get; set; }
         public bool ContainsRomanNumeral { get; set; }
-        public bool ContainsRomanNumeralChildren { get; set; }
+        public bool ContainsNonRomanNumeralChildren { get; set; }
     }
     public class AlbumImagesModel
     {
@@ -38,6 +40,7 @@ namespace OggleBooble.Api.Models
             ImageLinks = new List<VwLink>();
             SubDirs = new List<CategoryTreeModel>();
         }
+        public string RootFolder { get; set; }
         public List<VwLink> ImageLinks { get; set; }
         public List<CategoryTreeModel> SubDirs { get; set; }
         public string Success { get; set; }

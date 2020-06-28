@@ -88,10 +88,8 @@ function getSlideshowItems(folderId, startItem) {
                     resizePage();
                     resizeViewer();
                     explodeViewer();
-
                     if (includeSubFolders)
                         runSlideShow('start');
-
                     //$('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
                     var delta = (Date.now() - start) / 1000;
                     console.log("GetImageLinks?folder=" + folderId + " took: " + delta.toFixed(3));
@@ -232,7 +230,7 @@ function slideClick(direction) {
         else {
             slide(direction);
             sessionCount++;
-            logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
+            //logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
         }
     }
 }
@@ -279,17 +277,22 @@ function slide(direction) {
             $('#viewerImageContainer').css('left', ($(window).width() - $('#viewerImage').width()) / 2);
 
             $('#viewerImage').show();
-            if (includeSubFolders) {
-                $('#imageViewerHeaderTitle').html(imageViewerArray[imageViewerIndex].ImageFolderName);
-
-            }
+            //if (includeSubFolders) {
+            //    $('#imageViewerHeaderTitle').html(imageViewerArray[imageViewerIndex].ImageFolderName);
+            //}
             resizeViewer();
             sessionCount++;
             $('#viewerImage').css("transform", "translateX(0)");
             setTimeout(function () {
-
                 if (imageViewerArray[imageViewerIndex].FolderId !== imageViewerArray[imageViewerIndex].ImageFolderId) {
+
+                    //$('#imageViewerHeaderTitle').html("folderId: " + imageViewerArray[imageViewerIndex].FolderId +
+                    //    " < ImageFolderId: " + imageViewerArray[imageViewerIndex].ImageFolderId);
+
+                    //$('#imageViewerHeaderTitle').html("ImageFolderName: " + imageViewerArray[imageViewerIndex].ImageFolderName);
+
                     $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
+
                 }
                 $('.slideshowNavgArrows').css('visibility', 'visible').fadeIn();
             }, 1100);
@@ -425,8 +428,8 @@ function closeViewer(calledFrom) {
 }
 
 function slideshowImageLabelClick() {
-    alert("SSC");
-    //rtpe("SSC", imageViewerFolderId, imageViewerArray[imageViewerIndex].ImageFolderId, imageViewerFolderId);
+    //alert("SSC");
+    rtpe("SSC", imageViewerFolderId, "slideshowImageLabelClick", imageViewerArray[imageViewerIndex].ImageFolderId);
 }
 
 function slideshowContexMenu() {
@@ -454,118 +457,12 @@ function closeSlideshowContextMenu() {
         runSlideShow('resume');
 }
 
-function slideshowCtxMnuAction(action) {
-    $("#thumbImageContextMenu").fadeOut();
-    switch (action) {
-        case "showLinks":
-            $('#slideshowIinkInfo').show();
-            $('#linkInfoContainer').html("");
-            slideshowCtxMnuShowLinks(imageViewerArray[imageViewerIndex].LinkId);
-            //slideshowLinkInfoContainer
-            break;
-        case "showModelInfo":       
-            slideShowButtonsActive = false;
-            $("#thumbImageContextMenu").fadeOut();
-            if (slideShowRunning)
-                runSlideShow('pause');
-            showFolderInfoDialog(imageViewerArray[imageViewerIndex].ImageFolderId, "slideshow ctx menu");
-            break;
-        case "see more of her":
-            rtpe("SEE", albumFolderId, imageViewerArray[imageViewerIndex].ImageFolderId, albumFolderId);
-            //calledFrom = imageViewerArray[imageViewerIndex].ImageFolderId;
-            break;
-        case "showImageCommentDialog":
-            if (slideShowRunning) {
-                //alert("pause here");
-                runSlideShow('pause');
-            }
-            slideShowButtonsActive = false;
-            showImageCommentDialog(imageViewerArray[imageViewerIndex].Link, imageViewerArray[imageViewerIndex].LinkId, albumFolderId, currentAlbumJSfolderName, "Slideshow Context Menu");
-            $('#imageCommentDialog').on('dialogclose', function (event) {
-                slideShowButtonsActive = true;
-                if (slideShowRunning)
-                    runSlideShow('resume');
-            });
-            break;
-        case "explode":
-            if (!isLoggedIn()) {
-                alert("You must be logged in to use this feature");
-            }
-            else
-                rtpe("EXP", "slideshow", imageViewerArray[imageViewerIndex].Link, albumFolderId);
-            break;
-        case "Archive":
-        case "Copy":
-        case "Move":
-            showMoveCopyDialog(action, imageViewerArray[imageViewerIndex].Link, albumFolderId);
-            break;
-        case "remove":
-            removeImage();
-            break;
-        case "setF":
-            setFolderImage(imageViewerArray[imageViewerIndex].LinkId, albumFolderId, "folder");
-            //if (viewerShowing) slide("next");
-            break;
-        case "setC":
-            setFolderImage(imageViewerArray[imageViewerIndex].LinkId, albumFolderId, "parent");
-            //if (viewerShowing) slide("next");
-            break;
-        default:
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "BUG",
-                Severity: 2,
-                ErrorMessage: "Unhandeled switch case option.  Action: " + action,
-                CalledFrom: "Album.js contextMenuAction"
-            });
-        //sendEmailToYourself("error in album.js contextMenuAction ", "Unhandeled switch case option.  Action: " + action);
-        //alert("contextMenuAction action: " + action);
-    }
-
-    //logEventActivity({
-    //    VisitorId: getCookieValue("VisitorId"),
-    //    EventCode: "CMC",
-    //    EventDetail: action,
-    //    CalledFrom: calledFrom
-    //});
-}
-
 function slideshowCtxMnuShowLinks(linkId) {
-    $.ajax({
-        type: "PATCH",
-        url: settingsArray.ApiServer + "api/ImagePage?linkId=" + linkId,
-        success: function (linksModel) {
-            if (linksModel.Success === "ok") {
-                $('#slideshowLinkInfoContainer').html("");
-                $.each(linksModel.Links, function (idx, obj) {
-                    $('#slideshowLinkInfoContainer').append("<div id='" + obj.FolderId + "' class='linkInfoItem' onclick='openLink(" + obj.FolderId + ")'>" + obj.PathName + "</div>");
-                });
-                $('#slideshowIinkInfo').show();
-            }
-            else {
-                logError({
-                    VisitorId: getCookieValue("VisiorId"),
-                    ActivityCode: "BUG",
-                    Severity: 1,
-                    ErrorMessage: linksModel.Success,
-                    CalledFrom: "slideshowCtxMnuShowLinks"
-                });
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "slideshowCtxMnuShowLinks")) {
-                logError({
-                    VisitorId: getCookieValue("VisiorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "slideshowCtxMnuShowLinks"
-                });
-                //sendEmailToYourself("xhr error in common.js showLinks", "api/ImagePage?linkId=" + linkId + " Message: " + errorMessage);
-            }
-        }
-    });
+    showImageContextMenu(
+        settingsImgRepo + imageViewerArray[imageViewerIndex].FileName,
+        imageViewerArray[imageViewerIndex].LinkId,
+        imageViewerArray[imageViewerIndex].ImageFolderId,
+        imageViewerArray[imageViewerIndex].ImageFolderName);
 }
 
 function slideshowHtml() {

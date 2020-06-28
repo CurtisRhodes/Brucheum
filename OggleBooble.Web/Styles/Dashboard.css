@@ -60,7 +60,7 @@
         }
 
 .workAreaContainer {
-    
+    height: inherit;
     /*border-left: solid 3px var(--oggleBorderColor);
     border-right: solid 3px var(--oggleBorderColor);
     border-bottom: solid 0.75px var(--oggleBorderColor);*/

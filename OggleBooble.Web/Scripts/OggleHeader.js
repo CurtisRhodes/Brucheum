@@ -16,7 +16,7 @@ function setOggleHeader(folderId, subdomain) {
     $('#draggableDialog').resizable({
         resize: function (event, ui) {
             //$('#headerMessage').html("onresize: " + event.pageX + " note-editable.height: " + $('.note-editable').height());
-            $('#headerMessage').html("dH: " + $('#draggableDialog').height() + " sH: " + $('.note-editable').height());
+            //$('#headerMessage').html("dH: " + $('#draggableDialog').height() + " sH: " + $('.note-editable').height());
             $('.note-editable').height($('#draggableDialog').height() - 360);
         }
     });
@@ -407,12 +407,12 @@ function headerHtml(folderId, subdomain) {
 }
 
 function draggableDialogEnterDragMode() {
-    $('#headerMessage').html("entering drag mode");
+    //$('#headerMessage').html("entering drag mode");
     $('#draggableDialog').draggable({ disabled: false });
     $('#draggableDialog').draggable();
 }
 function draggableDialogCancelDragMode() {
-    $('#headerMessage').html("end drag");
+    //$('#headerMessage').html("end drag");
     $('#draggableDialog').draggable({ disabled: true });
 }
 function dragableDialogClose() {

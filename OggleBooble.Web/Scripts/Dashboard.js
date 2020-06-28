@@ -28,6 +28,8 @@ function dashboardStartup() {
     //logPageHit(3910, "dashboard");
     //defineDilogs();
     //setSignalR();
+    if (isInRole("oggle admin"))
+        setLeftMenu('Admin');
     //window.addEventListener("beforeunload", detectUnload());
     window.addEventListener("resize", resizeDashboardPage);
     resizeDashboardPage();
@@ -35,9 +37,12 @@ function dashboardStartup() {
 
 function onDirTreeComplete() {
     $('#dashBoardLoadingGif').hide();
-    resizeDashboardPage();
-    setTimeout(function () { $('#dataifyInfo').hide() }, 15000);
+    setTimeout(function () {
+        $('#dataifyInfo').hide()
+        resizeDashboardPage();
+    }, 15000);
     showAddImageLinkDialog();
+    resizeDashboardPage();
 }
 
 function resizeDashboardPage() {
@@ -140,12 +145,12 @@ function loadHeaderTabs() {
 // REPAIR FUNCTIONS
 function showRepairLinksDialog() {
     $('#draggableDialogTitle').html("Repair Links");
-    $('#draggableDialogContents').html("<div id='createStaticPagesCrud'>\n" +
-        //"    <div><span>folders to staticify</span>" + dashboardMainSelectedPath + "</div>\n" +
-        "    <div><span>folder to repair</span><input id='txtFolderToRepair' class='txtLinkPath roundedInput' readonly='readonly'/></div>\n" +
+    $('#draggableDialogContents').html("<div>\n" +
+        "   <div class='flexbox'>\n" +
+        "       <label>folder to repair</label><input id='txtFolderToRepair' class='txtLinkPath roundedInput' readonly='readonly'/>\n" +
+        "   </div>\n" +
         "    <div><span>include all subfolders </span><input type='checkbox' id='ckRepairIncludeSubfolders' checked='checked' /></div>\n" +
         "    <div class='roundendButton' onclick='repairLinks($(\"#ckRepairIncludeSubfolders\").is(\":checked\"))'>Run</div>\n" +
-        //"    <div id='renameFolderReport' class='repairReport'></div>\n" +
         "</div>\n");
     $("#draggableDialog").fadeIn();
     $("#txtFolderToRepair").val(dashboardMainSelectedPath);
@@ -169,6 +174,7 @@ function repairLinks(justOne) {
         url: settingsArray.ApiServer + "api/Links/RepairLinks?folderId=" + dashboardMainSelectedTreeId + "&recurr=" + justOne,
         success: function (repairReport) {
             $('#dashBoardLoadingGif').hide();
+            $("#draggableDialog").fadeOut();
             if (repairReport.Success === "ok") {
                 try {
                     var delta = Date.now() - start;
@@ -188,7 +194,7 @@ function repairLinks(justOne) {
                     if (repairReport.ImagesMoved > 0)
                         $('#dataifyInfo').append(", Images Moved: " + repairReport.ImagesMoved);
                     if (repairReport.LinksRemoved > 0)
-                        $('#dataifyInfo').append(", CatLinks Added: " + repairReport.LinksRemoved);
+                        $('#dataifyInfo').append(", Links Removed: " + repairReport.LinksRemoved);
                     if (repairReport.CatLinksAdded > 0)
                         $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
 
@@ -704,26 +710,36 @@ function showSortTool() {
         alert("select a folder");
         return;
     }
-    $('.workAreaContainer').hide();
-    $('#divSortTool').fadeIn();
+    $('#workAreaContainer').html(sortOrderHtml());
+    //$('#divSortTool').fadeIn();
     loadSortImages();
 }
-function loadSortImages()
-{
-    $('#sortTableHeader').html(dashboardMainSelectedPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
+function sortOrderHtml() {
+    return "<div id='divSortTool'>\n" +
+        "<div class='workAreaHeader'>\n" +
+        "    <div class='workAreaHeaderLabel'><h3 id='sortTableHeader'></h3></div>\n" +
+        "    <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='$(\"#divSortTool\").hide();showAddImageLinkDialog();'></div>\n" +
+        "    </div>\n" +
+        "    <div id='sortToolContainer' class='workAreaDisplayContainer'></div>\n" +
+        "    <div class='workareaFooter'>\n" +
+        "        <button onclick='updateSortOrder()'>ReSort</button>\n" +
+        "    </div>\n" +
+        "</div>\n";
+}
+function loadSortImages() {
+    $('#sortTableHeader').html(dashboardMainSelectedPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ")
+        + "(" + dashboardMainSelectedTreeId + ")");
     $('#dashBoardLoadingGif').fadeIn();
     $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "/api/ImagePage/GetImageLinks?folderId=" + dashboardMainSelectedTreeId,
-        success: function (imageLinksModel) {
+        url: settingsArray.ApiServer + "api/Links/GetImageLinks?folderId=" + dashboardMainSelectedTreeId,
+        success: function (imgLinks) {
             $('#dashBoardLoadingGif').hide();
-            if (imageLinksModel.Success === "ok") {
+            if (imgLinks.Success === "ok") {
                 $('#sortToolContainer').html("");
-                $.each(imageLinksModel.Files, function (ndx, obj) {
-                    $('#sortToolContainer').append("<div class='sortBox'><img class='sortBoxImage' src='" + obj.Link + "'/>" +
+                $.each(imgLinks.Links, function (ndx, obj) {
+                    $('#sortToolContainer').append("<div class='sortBox'><img class='sortBoxImage' src='" + settingsImgRepo + obj.FileName + "'/>" +
                         "<br/><input class='sortBoxInput' id=" + obj.LinkId + " value=" + obj.SortOrder + "></div>");
                 });
-                //resizePage();
             }
             else {
                 alert("loadSortImages: " + imageLinksModel.Success);
@@ -731,9 +747,10 @@ function loadSortImages()
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "prepareXhamsterPage")) {
-                sendEmailToYourself("XHR ERROR in Dashboard.js prepareXhamsterPage",
-                    " / api / ImagePage / GetImageLinks ? folderId =" + dashboardMainSelectedTreeId + " Message: " + errorMessage);
+            if (!checkFor404("loadSortImages")) {
+
+                //sendEmailToYourself("XHR ERROR in Dashboard.js prepareXhamsterPage",
+                //    " / api / ImagePage / GetImageLinks ? folderId =" + dashboardMainSelectedTreeId + " Message: " + errorMessage);
             }
             alert("loadSortImages xhr error: " + errorMessage);
         }
@@ -751,7 +768,7 @@ function updateSortOrder() {
 
         $.ajax({
             type: "PUT",
-            url: settingsArray.ApiServer + "/api/ImagePage/UpdateSortOrder",
+            url: settingsArray.ApiServer + "api/Links/GetImageLinks",
             contentType: 'application/json',
             data: JSON.stringify(sortOrderArray),
             success: function (success) {

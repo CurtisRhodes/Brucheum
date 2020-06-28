@@ -18,7 +18,7 @@ namespace OggleBooble.Api.Models
         public string FolderComments { get; set; }
         public string FolderImage { get; set; }
         public DateTime? Birthday { get; set; }
-        public bool FakeBoobs { get; set; }
+        public bool? FakeBoobs { get; set; }
         public string FolderType { get; set; }
         public string Success { get; set; }
     }

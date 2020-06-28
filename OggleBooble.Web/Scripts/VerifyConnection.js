@@ -76,7 +76,7 @@ function checkFor404(calledFrom) {
                         if (!canIgetaConnectionMessageShowing) {
                             $('#customMessage').html(
                                 "<div class='shaddowBorder'>" +
-                                "   <img src='/Images/canIgetaConnection.gif' height='200' >\n" +
+                                "   <img src='/Images/canIgetaConnection.gif' height='230' >\n" +
                                 "   <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
                                 "</div>").show();
 
