@@ -247,7 +247,9 @@ function setLabelLinks() {
     }
 }
 
-function imgErrorThrown(index) {
+function imgErrorThrown() {
+    //" + imageIndex + "
+    //carouselItemArray[imageIndex].FileName;
     $('#thisCarouselImage').attr('src', "Images/redballon.png");
     carouselImageViews -= 1;
     carouselImageErrors++;
@@ -266,7 +268,10 @@ function intervalBody(newImageIndex) {
 
     imageIndex = newImageIndex;
     $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
+
         imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
+
+
         $('#thisCarouselImage').attr('src', imgSrc);
         $('#knownModelLabel').html("").hide();
         $('#carouselFooterLabel').html("").hide();
@@ -357,7 +362,6 @@ function resume() {
     startCarousel(imageIndex);
     $('#pauseButton').html("||");
 }
-
 
 function showCarouelSettingsDialog() {
     $("#draggableDialogTitle").html("Carousel Settings");
@@ -479,15 +483,24 @@ function assuranceArrowClick(direction) {
     }
 }
 
-function carouselHtml() {
+function carouselContextMenu() {
+    showCarouselContextMenu(imgSrc,
+        carouselItemArray[imageIndex].LinkId,
+        carouselItemArray[imageIndex].FolderId,
+        carouselItemArray[imageIndex].FolderName);
+}
 
+function carouselHtml(carouselContextMenu) {
     return "<div class='centeringOuterShell'>\n" +
         "   <div id='innerCarouselContainer'  class='centeringInnerShell'>\n" +
         "      <div id='carouselImageContainer' class='carouselImageContainer flexContainer'>\n" +
         "          <img class='assuranceArrows' onclick='assuranceArrowClick(\"back\")' src='/Images/leftArrowOpaque02.png' />\n" +
         "          <div id='knownModelLabel' class='knownModelLabel' onclick='clickViewGallery(3)'></div>\n" +
         "          <div id='imageTopLabel' class='categoryTitleLabel' onclick='clickViewGallery(2)'></div>\n" +
-        "          <img id='thisCarouselImage' onerror='imgErrorThrown(" + imageIndex + ")' oncontextmenu='carouselContextMenuClick()' class='carouselImage' src='/Images/ingranaggi3.gif' onclick='clickViewGallery(1)' />\n" +
+        "          <img id='thisCarouselImage' class='carouselImage' src='/Images/ingranaggi3.gif' " +
+        "               onerror='imgErrorThrown()'" +
+        "               oncontextmenu='carouselContextMenu()'" +
+        "               onclick='clickViewGallery(1)' />\n" +
         "          <img class='assuranceArrows' onclick='assuranceArrowClick(\"foward\")' src='/Images/rightArrowOpaque02.png' />\n" +
         "      </div>\n" +
         "      <div id='carouselFooter' class='carouselFooter'>\n" +

@@ -89,6 +89,9 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
             window.open("/album.html?folder=" + pageId, "_blank");
             break;
         case 'SUB':  // 'Sub Folder Click'
+            alert("Sub Folder Click: " + eventDetail);
+            window.location.href = "/album.html?folder=" + pageId;  //  open page in same window
+            break;
         case "CIC":  // carousel image clicked
         case "CMN":  // carousel model nameclicked
         case "SEE":  // see more of her

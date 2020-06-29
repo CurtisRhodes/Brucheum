@@ -1,19 +1,21 @@
 ﻿var selectedImage,
-    imgSrc,
-    linkId,
-    folderId,
+    pImgSrc,
+    pLinkId,
+    pFolderId,
     folderName,
     modelFolderId;
 
-function showImageContextMenu(pImgSrc, pLinkId, pFolderId, currentAlbumJSfolderName) {
+//showImageCommentDialog(, "ImageContextMenu");
+
+function showImageContextMenu(imgSrc, linkId, folderId, folderName) {
     //alert("image context menu");
     event.preventDefault();
     window.event.returnValue = false;
 
     folderName = currentAlbumJSfolderName;
-    linkId = pLinkId;
-    imgSrc = pImgSrc;
-    folderId = pFolderId;
+    pLinkId = linkId;
+    pImgSrc = imgSrc;
+    pFolderId = folderId;
     getImageDetails();
 
     $('#imageContextMenuContainer').html(imageContextMenuHtml());
@@ -55,91 +57,21 @@ function showFolderContextMenu(folderId) {
     $('#folderContextMenu').show();
 }
 
-function showCarouselContextMenu() {
-
-}
-
-function getImageDetails() {
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Image/GetImageDetail?folderId=" + folderId + "&linkId=" + linkId,
-        success: function (imageInfo) {
-            if (imageInfo.Success === "ok") {
-                selectedImage = imageInfo.Link;
-                //alert("selectedImage: " + selectedImage);
-                if (Number(imageInfo.ModelFolderId) !== Number(folderId)) {
-                    $('#ctxModelName').html(imageInfo.ModelFolderName);
-                    modelFolderId = imageInfo.ModelFolderId;
-                    $('#ctxSeeMore').show();
-                }
-                else {
-                    //alert("folderType: " + imageInfo.FolderType);
-                    $('#ctxSeeMore').hide();
-                    $('#ctxModelName').html("f1: " + imageInfo.FolderType);
-                    if (imageInfo.FolderType.indexOf("singleModel") > -1) {
-                        $('#ctxModelName').html("s: " + imageInfo.FolderName);
-                    }
-                    if (imageInfo.FolderType.indexOf("assorterd") > -1) {
-                        //$('#ctxModelName').html("f2: " + imageInfo.FolderName);
-                        $('#ctxModelName').html("unknown model");
-                    }
-                }
-                $('#imageInfoLinkId').html(imageInfo.LinkId);
-                $('#imageInfoInternalLink').html(imageInfo.Link);
-                $('#imageInfoFolderLocation').html(imageInfo.FolderLocation);
-                //api/Image/GetImageDetail
-                $('#imageInfoHeight').html(imageInfo.Height);
-                $('#imageInfoWidth').html(imageInfo.Width);
-                $('#imageInfoLastModified').html(imageInfo.LastModified);
-
-                //alert("jQuery.isEmptyObject: " + jQuery.isEmptyObject(imageInfo.InternalLinks));
-                if (jQuery.isEmptyObject(imageInfo.InternalLinks)) {
-                    $('#ctxShowImageLinks').hide();
-                    //$('#ctxShowImageLinks').html("no links");
-                }
-                else {
-                    $('#otherLinksContainer').html("");
-                    $.each(imageInfo.InternalLinks, function (idx, obj) {
-                        //alert("<div><a href='/album.html?folder=" + idx + " target=\"_blank\"'>" + obj + "</a></div>");
-                        $('#otherLinksContainer').append("<div><a href='/album.html?folder=" + idx + "' target='_blank'>" + obj + "</a></div>");
-                    });
-                }
-            }
-            else {
-                if (document.domain === "localhost") alert("imageInfo.Success: " + imageInfo.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
-                        Severity: 3,
-                        ErrorMessage: imageInfo.Success,
-                        CalledFrom: "imageCtx"
-                    });
-            }
-        },
-        error: function (xhr) {
-            var errorMessage = getXHRErrorDetails(xhr);
-            if (!checkFor404()) {
-                if (document.domain === "localhost")
-                    alert("getImageDetails XHR: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "Album.js removeImage"
-                    });
-                //sendEmailToYourself("XHR ERROR IN ALBUM.JS remove image", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + linkId + " Message: " + errorMessage);
-            }
-        }
-    });
-
-
+function showCarouselContextMenu(folderName) {
+    pause();
+    event.preventDefault();
+    window.event.returnValue = false;
+    $('#carouselContextMenu').html(carouselContextMenuHTML());
+    $('#carouselContextMenu').css("top", event.clientY + 5);
+    $('#carouselContextMenu').css("left", event.clientX);
+    $('#ctxModelName').html(folderName);
+    $('#carouselContextMenu').fadeIn();
 }
 
 function contextMenuAction(action) {
     switch (action) {
+        //sendEmailToYourself("error in album.js contextMenuAction ", "Unhandeled switch case option.  Action: " + action);
+        //alert("contextMenuAction action: " + action);
 
         //"showDialog\")'>model name</div>\n" +
         //"openInNewTab\")'>Open in new tab</div>\n" +
@@ -150,105 +82,19 @@ function contextMenuAction(action) {
         case "show":
             $("#imageContextMenu").fadeOut();
             if ($('#ctxModelName').html() === "unknown model")
-                showUnknownModelInfoDialog(folderId);
+                showUnknownModelInfoDialog(pFolderId);
             else
-                showFolderInfoDialog(folderId, "img ctx");
-            break;
-        case "see more":
-            rtpe("SEE", folderId, folderName, modelFolderId);
-            break;
-        case "comment":
-            $("#imageContextMenu").fadeOut();
-            showImageCommentDialog(imgSrc, linkId, folderId, folderName, "ImageContextMenu");
-            break;
-        case "explode":
-            if (isLoggedIn()) {
-                //rtpe(eventCode, calledFrom, eventDetail, pageId)
-                rtpe("EXP", folderName, imgSrc, folderId);
-            }
-            else {
-                reportEvent("UNX", "", "", folderId);
-                showMyAlert("You must be logged in to use this feature");
-            }
-            break;
-        case "imageInfo":
-            $('#imageCtxMenuInfo').toggle();
-            break;
-        case "showLinks":
-            reportEvent("SHL","show Image links",folderName,folderId)
-            $('#otherLinksContainer').toggle();
-            break;
-        case "archive":
-            $("#imageContextMenu").fadeOut();
-            showMoveCopyDialog("Archive", selectedImage, folderId);
-            break;
-        case "copy":
-            $("#imageContextMenu").fadeOut();
-            showMoveCopyDialog("Copy", selectedImage, folderId);
-            break;
-        case "move":
-            $("#imageContextMenu").fadeOut();
-            showMoveCopyDialog("Move", selectedImage, folderId);
-            break;
-        case "remove":
-            $("#imageContextMenu").fadeOut();
-            removeImage();
-            break;
-        case "setF":
-            setFolderImage(linkId, folderId, "folder");
-            break;
-        case "setC":
-            setFolderImage(linkId, folderId, "parent");
-            break;
-        default:
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "BUG",
-                Severity: 2,
-                ErrorMessage: "Unhandeled switch case option.  Action: " + action,
-                CalledFrom: "Album.js contextMenuAction"
-            });
-    }    
-}
+                showFolderInfoDialog(pFolderId, "img ctx");
 
-function carouselContextMenuClick() {
-    pause();
-    event.preventDefault();
-    window.event.returnValue = false;
-    $('#carouselContextMenu').css("top", event.clientY + 5);
-    $('#carouselContextMenu').css("left", event.clientX);
-    $('#ctxModelName').html(carouselItemArray[imageIndex].FolderName);
-    $('#carouselContextMenu').fadeIn();
-}
-
-function carouselContextMenuAction(ctxMenuAction) {
-    switch (ctxMenuAction) {
-        case "showDialog":
-            $('#carouselContextMenu').fadeOut();
-            showFolderInfoDialog(selectedImageArchiveFolderId, "carousel context menu");
-            break;
-        case "explode":
-            reportThenPerformEvent("EXP", "from main carousel", settingsImgRepo + carouselItemArray[imageIndex].FileName, carouselItemArray[imageIndex].FolderId);
+            if ($('#ctxModelName').html() === "unknown model") {
+                //showUnknownModelInfoDialog(albumFolderId);
+                showFolderInfoDialog(albumFolderId, "folder ctx show");
+            }
+            $("#imageContextMenu").fadeOut();
             break;
         case "openInNewTab":
             // rtpe(eventCode, calledFrom, eventDetail, pageId)
             rtpe("ONT", "carousel context menu", carouselItemArray[imageIndex].ImageFolderName, mainImageClickId);
-            break;
-        case "comment":
-            $('#carouselContextMenu').fadeOut();
-            imageCommentDialogIsOpen = true;
-            pause();
-            $('#carouselContextMenu').fadeOut();
-            //showImageCommentDialog(link, linkId, folderId, folderName, calledFrom) {
-            showImageCommentDialog(imgSrc,
-                carouselItemArray[imageIndex].LinkId,
-                carouselItemArray[imageIndex].FolderId,
-                carouselItemArray[imageIndex].FolderName, "Carousel");
-
-            $('#imageCommentDialog').on('dialogclose', function (event) {
-                imageCommentDialogIsOpen = false;
-                resume();
-            });
             break;
         case "tags":
             $('#carouselContextMenu').fadeOut();
@@ -267,63 +113,35 @@ function carouselContextMenuAction(ctxMenuAction) {
             $('#carouselContextMenu').fadeOut();
             showMoveCopyDialog("Archive", carouselItemArray[imageIndex].Link, carouselItemArray[imageIndex].FolderId);
             break;
-        default:
-            sendEmailToYourself("Invalid context menu action", "invalid: " + ctxMenuAction);
-        //alert("invalid: " + ctxMenuAction);
-    }
-}
-
-function carouselContextMenuHTML() {
-    return "<div id='carouselContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
-        "    <div id='ctxModelName' onclick='carouselContextMenuAction(\"showDialog\")'>model name</div>\n" +
-        "    <div onclick='contextMenuAction(\"openInNewTab\")'>Open in new tab</div>\n" +
-        "    <div onclick='contextMenuAction(\"explode\")'>Explode</div>\n" +
-        "    <div onclick='contextMenuAction(\"comment\")'>Comment</div>\n" +
-        //"    <div onclick='carouselContextMenuAction(\"tags\")'>Tags</div>\n" +
-        "</div>\n";
-}
-
-
-
-function xxfolderContextMenuAction(action) {
-    switch (action) {
-        case "show":
-            if ($('#ctxModelName').html() === "unknown model") {
-                //showUnknownModelInfoDialog(albumFolderId);
-                showFolderInfoDialog(albumFolderId, "folder ctx show");
-            }
-            $("#imageContextMenu").fadeOut();
-            break;
         case "jump":
-            rtpe("SEE", albumFolderId, modelFolderId, modelFolderId);
+        case "see more":
+            rtpe("SEE", pFolderId, folderName, modelFolderId);
             break;
         case "comment":
+            $("#imageContextMenu").fadeOut();
+            showImageCommentDialog(pImgSrc, pLinkId, pFolderId, folderName, "ImageContextMenu");
             $("#imageContextMenu").fadeOut();
             //showImageCommentDialog(selectedImage, selectedImageLinkId, albumFolderId, currentAlbumJSfolderName);
             showFolderCommentDialog(albumFolderId);
             break;
-        case "explode": {
+        case "explode":
             if (isLoggedIn()) {
-
-                //alert("rtpe EXP currentAlbumJSfolderName: " + currentAlbumJSfolderName + " selectedImage: " + selectedImage + " albumFolderId: " + albumFolderId);
-                rtpe("EXP", currentAlbumJSfolderName, selectedImage, albumFolderId);
+                //rtpe(eventCode, calledFrom, eventDetail, pageId)
+                rtpe("EXP", folderName, pImgSrc, pFolderId);
             }
             else {
-                logEventActivity({
-                    VisitorId: getCookieValue("VisitorId"),
-                    EventCode: "UNX",
-                    EventDetail: "image: " + selectedImageLinkId,
-                    PageId: albumFolderId,
-                    CalledFrom: "contextMenuAction"
-                });
-                alert("You must be logged in to use this feature");
+                reportEvent("UNX", "", "", pFolderId);
+                showMyAlert("You must be logged in to use this feature");
             }
-        }
-
+            break;
+        case "imageInfo":
+            $('#imageCtxMenuInfo').toggle();
             break;
         case "showFolderLinks":
             break;
         case "showLinks":
+            reportEvent("SHL", "show Image links", folderName, pFolderId)
+            $('#otherLinksContainer').toggle();
             logEventActivity({
                 VisitorId: getCookieValue("VisitorId"),
                 EventCode: "SHL",
@@ -336,7 +154,7 @@ function xxfolderContextMenuAction(action) {
 
         case "archive":
             $("#imageContextMenu").fadeOut();
-            showMoveCopyDialog("Archive", selectedImage, albumFolderId);
+            showMoveCopyDialog("Archive", selectedImage, pFolderId);
             break;
         case "copy":
             $("#imageContextMenu").fadeOut();
@@ -344,17 +162,17 @@ function xxfolderContextMenuAction(action) {
             break;
         case "move":
             $("#imageContextMenu").fadeOut();
-            showMoveCopyDialog("Move", selectedImage, albumFolderId);
+            showMoveCopyDialog("Move", selectedImage, pFolderId);
             break;
         case "remove":
             $("#imageContextMenu").fadeOut();
             removeImage();
             break;
         case "setF":
-            setFolderImage(selectedImageLinkId, albumFolderId, "folder");
+            setFolderImage(pLinkId, pFolderId, "folder");
             break;
         case "setC":
-            setFolderImage(selectedImageLinkId, albumFolderId, "parent");
+            setFolderImage(pLinkId, pFolderId, "parent");
             break;
         default:
             logError({
@@ -364,106 +182,10 @@ function xxfolderContextMenuAction(action) {
                 ErrorMessage: "Unhandeled switch case option.  Action: " + action,
                 CalledFrom: "Album.js contextMenuAction"
             });
-        //sendEmailToYourself("error in album.js contextMenuAction ", "Unhandeled switch case option.  Action: " + action);
-        //alert("contextMenuAction action: " + action);
-    }
+    }    
 }
 
-
-function xxslideshowCtxMnuAction(action) {
-    $("#thumbImageContextMenu").fadeOut();
-    switch (action) {
-        case "showLinks":
-            $('#slideshowIinkInfo').show();
-            $('#linkInfoContainer').html("");
-            slideshowCtxMnuShowLinks(imageViewerArray[imageViewerIndex].LinkId);
-            //slideshowLinkInfoContainer
-            break;
-        case "showModelInfo":
-            slideShowButtonsActive = false;
-            $("#thumbImageContextMenu").fadeOut();
-            if (slideShowRunning)
-                runSlideShow('pause');
-            showFolderInfoDialog(imageViewerArray[imageViewerIndex].ImageFolderId, "slideshow ctx menu");
-            break;
-        case "see more of her":
-            rtpe("SEE", albumFolderId, imageViewerArray[imageViewerIndex].ImageFolderId, albumFolderId);
-            //calledFrom = imageViewerArray[imageViewerIndex].ImageFolderId;
-            break;
-        case "showImageCommentDialog":
-            if (slideShowRunning) {
-                //alert("pause here");
-                runSlideShow('pause');
-            }
-            slideShowButtonsActive = false;
-            showImageCommentDialog(imageViewerArray[imageViewerIndex].FileName,
-                imageViewerArray[imageViewerIndex].LinkId,
-                albumFolderId,
-                currentAlbumJSfolderName,
-                "Slideshow Context Menu");
-
-            $('#imageCommentDialog').on('dialogclose', function (event) {
-                slideShowButtonsActive = true;
-                if (slideShowRunning)
-                    runSlideShow('resume');
-            });
-            break;
-        case "explode":
-            if (!isLoggedIn()) {
-                alert("You must be logged in to use this feature");
-            }
-            else
-                rtpe("EXP", "slideshow", imageViewerArray[imageViewerIndex].Link, albumFolderId);
-            break;
-        case "Archive":
-        case "Copy":
-        case "Move":
-            showMoveCopyDialog(action, imageViewerArray[imageViewerIndex].Link, albumFolderId);
-            break;
-        case "remove":
-            removeImage();
-            break;
-        case "setF":
-            setFolderImage(imageViewerArray[imageViewerIndex].LinkId, albumFolderId, "folder");
-            //if (viewerShowing) slide("next");
-            break;
-        case "setC":
-            setFolderImage(imageViewerArray[imageViewerIndex].LinkId, albumFolderId, "parent");
-            //if (viewerShowing) slide("next");
-            break;
-    }
-}
-
-function imageContextMenuHtml() {
-    return "<div id='imageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
-        "    <div id='ctxModelName' onclick='imageCtxMenuAction(\"show\")'>model name</div>\n" +
-        "    <div id='ctxSeeMore' onclick='imageCtxMenuAction(\"see more\")'>see more of her</div>\n" +
-        "    <div onclick='imageCtxMenuAction(\"comment\")'>Comment</div>\n" +
-        "    <div onclick='imageCtxMenuAction(\"explode\")'>explode</div>\n" +
-        "    <div id='ctxShowImageLinks' onclick='imageCtxMenuAction(\"showLinks\")'>Show Links</div>\n" +
-        "    <div id='otherLinksContainer' class='innerContextMenuContainer'></div>\n" +
-        "    <div onclick='imageCtxMenuAction(\"imageInfo\")'>Show Image info</div>\n" +
-        "    <div id='imageCtxMenuInfo' class='innerContextMenuContainer'>\n" +
-        "        <div><div class='ctxInfoLabel'>LinkId</div><div id='imageInfoLinkId' class='ctxInfoValue'></div></div>\n" +
-        //"        <div><div class='ctxInfoLabel'>internal link</div><div id='imageInfoInternalLink' class='ctxInfoValue'></div></div>\n" +
-        //"        <div><div class='ctxInfoLabel'>FolderLocation</div><div id='imageInfoFolderLocation' class='ctxInfoValue'></div></div>\n" +
-        "        <div><div class='ctxInfoLabel'>Height</div><div id='imageInfoHeight' class='ctxInfoValue'></div></div>\n" +
-        "        <div><div class='ctxInfoLabel'>Width</div><div id='imageInfoWidth' class='ctxInfoValue'></div></div>\n" +
-        "        <div><div class='ctxInfoLabel'>LastModified</div><div id='imageInfoLastModified' class='ctxInfoValue'></div></div>\n" +
-        //"        <div><div class='ctxInfoLabel'>ExternalLink</div><div id='imageInfoExternalLink' class='ctxInfoValue'></div></div>\n" +
-        "    </div>\n" +
-
-
-
-        "    <div id='ctxArchive' class='adminLink' onclick='contextMenuAction(\"archive\")'>Archive</div>\n" +
-        "    <div class='adminLink' onclick='imageCtxMenuAction(\"copy\")'>Copy Link</div>\n" +
-        "    <div class='adminLink' onclick='imageCtxMenuAction(\"move\")'>Move Image</div>\n" +
-        "    <div class='adminLink' onclick='imageCtxMenuAction(\"remove\")'>Remove Link</div>\n" +
-        "    <div class='adminLink' onclick='imageCtxMenuAction(\"setF\")'>Set as Folder Image</div>\n" +
-        "    <div class='adminLink' onclick='imageCtxMenuAction(\"setC\")'>Set as Category Image</div>\n" +
-        "</div>\n";
-}
-
+// context menu action
 function setFolderImage(linkId, folderId, level) {
     //if (document.domain === 'localhost') alert("setFolderImage. \nlinkId: " + linkId + "\nfolderId=" + folderId + "\nlevel=" + level);
     $.ajax({
@@ -708,29 +430,121 @@ function moveCopyDialogDirTreeClick(path, id, treeId) {
     //    alert("moveDialogDirTreeClick treeId: " + treeId);
 }
 
+function carouselContextMenuHTML() {
+    return "<div id='carouselContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
+        "    <div id='ctxModelName' onclick='carouselContextMenuAction(\"showDialog\")'>model name</div>\n" +
+        "    <div onclick='contextMenuAction(\"openInNewTab\")'>Open in new tab</div>\n" +
+        "    <div onclick='contextMenuAction(\"explode\")'>Explode</div>\n" +
+        "    <div onclick='contextMenuAction(\"comment\")'>Comment</div>\n" +
+        "    <div onclick='carouselContextMenuAction(\"tags\")'>Tags</div>\n" +
+        "</div>\n";
+}
+
+function imageContextMenuHtml() {
+    return "<div id='imageContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
+        "    <div id='ctxModelName' onclick='imageCtxMenuAction(\"show\")'>model name</div>\n" +
+        "    <div id='ctxSeeMore' onclick='imageCtxMenuAction(\"see more\")'>see more of her</div>\n" +
+        "    <div onclick='imageCtxMenuAction(\"comment\")'>Comment</div>\n" +
+        "    <div onclick='imageCtxMenuAction(\"explode\")'>explode</div>\n" +
+        "    <div id='ctxShowImageLinks' onclick='imageCtxMenuAction(\"showLinks\")'>Show Links</div>\n" +
+        "    <div id='otherLinksContainer' class='innerContextMenuContainer'></div>\n" +
+        "    <div onclick='imageCtxMenuAction(\"imageInfo\")'>Show Image info</div>\n" +
+        "    <div id='imageCtxMenuInfo' class='innerContextMenuContainer'>\n" +
+
+        "        <div><div class='ctxInfoLabel'>LinkId</div><div id='imageInfoLinkId' class='ctxInfoValue'></div></div>\n" +
+        //"        <div><div class='ctxInfoLabel'>internal link</div><div id='imageInfoInternalLink' class='ctxInfoValue'></div></div>\n" +
+        //"        <div><div class='ctxInfoLabel'>FolderLocation</div><div id='imageInfoFolderLocation' class='ctxInfoValue'></div></div>\n" +
+        "        <div><div class='ctxInfoLabel'>Height</div><div id='imageInfoHeight' class='ctxInfoValue'></div></div>\n" +
+        "        <div><div class='ctxInfoLabel'>Width</div><div id='imageInfoWidth' class='ctxInfoValue'></div></div>\n" +
+        "        <div><div class='ctxInfoLabel'>LastModified</div><div id='imageInfoLastModified' class='ctxInfoValue'></div></div>\n" +
+        //"        <div><div class='ctxInfoLabel'>ExternalLink</div><div id='imageInfoExternalLink' class='ctxInfoValue'></div></div>\n" +
+        "    </div>\n" +
 
 
-    //showUnknownModelInfoDialog(folderId);
-    //showFolderInfoDialog(folderId, "img ctx");
-    //rtpe("SEE", folderId, folderName, modelFolderId);
-    //showImageCommentDialog(imgSrc, linkId, folderId, folderName, "ImageContextMenu");
-    //rtpe("EXP", folderName, imgSrc, folderId);
-    //$('#imageCtxMenuInfo').toggle();
-    //reportEvent("SHL", "show Image links", folderName, folderId)
-    //showMoveCopyDialog("Archive", selectedImage, folderId);
-    //showMoveCopyDialog("Copy", selectedImage, folderId);
-    //showMoveCopyDialog("Move", selectedImage, folderId);
-    //removeImage();
-    //setFolderImage(linkId, folderId, "folder");
-    //setFolderImage(linkId, folderId, "parent");
+        "    <div id='ctxArchive' class='adminLink' onclick='contextMenuAction(\"archive\")'>Archive</div>\n" +
+        "    <div class='adminLink' onclick='imageCtxMenuAction(\"copy\")'>Copy Link</div>\n" +
+        "    <div class='adminLink' onclick='imageCtxMenuAction(\"move\")'>Move Image</div>\n" +
+        "    <div class='adminLink' onclick='imageCtxMenuAction(\"remove\")'>Remove Link</div>\n" +
+        "    <div class='adminLink' onclick='imageCtxMenuAction(\"setF\")'>Set as Folder Image</div>\n" +
+        "    <div class='adminLink' onclick='imageCtxMenuAction(\"setC\")'>Set as Category Image</div>\n" +
+        "</div>\n";
+}
 
 
+function getImageDetails() {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Image/GetImageDetail?folderId=" + pFolderId + "&linkId=" + pLinkId,
+        success: function (imageInfo) {
+            if (imageInfo.Success === "ok") {
+                selectedImage = imageInfo.Link;
+                //alert("selectedImage: " + selectedImage);
+                if (Number(imageInfo.ModelFolderId) !== Number(pFolderId)) {
+                    $('#ctxModelName').html(imageInfo.ModelFolderName);
+                    modelFolderId = imageInfo.ModelFolderId;
+                    $('#ctxSeeMore').show();
+                }
+                else {
+                    //alert("folderType: " + imageInfo.FolderType);
+                    $('#ctxSeeMore').hide();
+                    $('#ctxModelName').html("f1: " + imageInfo.FolderType);
+                    if (imageInfo.FolderType.indexOf("singleModel") > -1) {
+                        $('#ctxModelName').html("s: " + imageInfo.FolderName);
+                    }
+                    if (imageInfo.FolderType.indexOf("assorterd") > -1) {
+                        //$('#ctxModelName').html("f2: " + imageInfo.FolderName);
+                        $('#ctxModelName').html("unknown model");
+                    }
+                }
+                $('#imageInfoLinkId').html(imageInfo.LinkId);
+                $('#imageInfoInternalLink').html(imageInfo.Link);
+                $('#imageInfoFolderLocation').html(imageInfo.FolderLocation);
+                //api/Image/GetImageDetail
+                $('#imageInfoHeight').html(imageInfo.Height);
+                $('#imageInfoWidth').html(imageInfo.Width);
+                $('#imageInfoLastModified').html(imageInfo.LastModified);
 
-
-
-
-
-
-
-
+                //alert("jQuery.isEmptyObject: " + jQuery.isEmptyObject(imageInfo.InternalLinks));
+                if (jQuery.isEmptyObject(imageInfo.InternalLinks)) {
+                    $('#ctxShowImageLinks').hide();
+                    //$('#ctxShowImageLinks').html("no links");
+                }
+                else {
+                    $('#otherLinksContainer').html("");
+                    $.each(imageInfo.InternalLinks, function (idx, obj) {
+                        //alert("<div><a href='/album.html?folder=" + idx + " target=\"_blank\"'>" + obj + "</a></div>");
+                        $('#otherLinksContainer').append("<div><a href='/album.html?folder=" + idx + "' target='_blank'>" + obj + "</a></div>");
+                    });
+                }
+            }
+            else {
+                if (document.domain === "localhost") alert("imageInfo.Success: " + imageInfo.Success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "BUG",
+                        Severity: 3,
+                        ErrorMessage: imageInfo.Success,
+                        CalledFrom: "imageCtx"
+                    });
+            }
+        },
+        error: function (xhr) {
+            var errorMessage = getXHRErrorDetails(xhr);
+            if (!checkFor404()) {
+                if (document.domain === "localhost")
+                    alert("getImageDetails XHR: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "Album.js removeImage"
+                    });
+                //sendEmailToYourself("XHR ERROR IN ALBUM.JS remove image", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + linkId + " Message: " + errorMessage);
+            }
+        }
+    });
+}
 

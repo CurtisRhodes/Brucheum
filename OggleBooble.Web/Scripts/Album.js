@@ -35,7 +35,6 @@ function loadAlbum(folderId) {
                         $('#folderCommentButton').fadeIn();
 
                         setCounts(albumImageInfo, folderId);
-                        setCSS();
 
                         let delta = (Date.now() - getImagesStart) / 1000;
                         console.log("GetAlbumImages took: " + delta.toFixed(3));
@@ -87,7 +86,9 @@ function loadAlbum(folderId) {
 
                         setOggleHeader(folderId, currentFolderRoot);
                         setOggleFooter(folderId, currentFolderRoot);
+                        setAlbumPageCSS(imageLinksModel.FolderType);
 
+                        $('#aboveImageContainerMessageArea').html("FolderType GPI: " + imageLinksModel.FolderType);
                         $('#googleSearchText').html(imageLinksModel.FolderName);
 
                         $.each(imageLinksModel.TrackBackItems, function (idx, trackBackItem) {
@@ -106,7 +107,6 @@ function loadAlbum(folderId) {
                         });
 
                         setBreadCrumbs(imageLinksModel.BreadCrumbs);
-
                         setBadges(imageLinksModel.ExternalLinks);
 
                         //$('#headerMessage').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
@@ -199,28 +199,30 @@ function processImages(albumImageInfo) {
     $.each(albumImageInfo.ImageLinks, function (idx, obj) {
         //imageFrameClass = "defaultImageFrame";
         let imgSrc = settingsImgRepo + "/" + obj.FileName;
-        let imageFrameHtml = "<div class='" + imageFrameClass + "'>" +
+        let imageHtml = "<div class='" + imageFrameClass + "'>" +
             "<img id='" + obj.LinkId + "' class='thumbImage'" +
             " oneeror='galleryImageError(\"" + obj.LinkId + "\")' alt='" + imgSrc + "' " +
-            " oncontextmenu='imageCtx(\"" + imgSrc + "\",\"" + obj.LinkId + "\")'" +
-            " onclick='startSlideShow(" + obj.Id + ",\"" + obj.LinkId + "\")'" + " src='" + imgSrc + "'/>";
-
-
+            " oncontextmenu='showImageContextMenu(\"" + imgSrc + "\",\"" + obj.LinkId + "\"," + albumFolderId + "\"," + currentAlbumJSfolderName + "\")'" +
+            " onclick='launchViewer(" + obj.Id + ",\"" + obj.LinkId + ",false\")'" + " src='" + imgSrc + "'/>";
         if (obj.Id !== obj.SrcId)
-            imageFrameHtml += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +
+            imageHtml += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +
                 obj.SrcFolder + "' onclick='rtpe(\"SEE\",\"abc\",\"detail" + obj.SrcId + "\")' /></div>";
-        imageFrameHtml += "</div>";
-        $('#imageContainer').append(imageFrameHtml);
+        imageHtml += "</div>";
+        $('#imageContainer').append(imageHtml);
     });
 
     //  SUBFOLDERS 
     $.each(albumImageInfo.SubDirs, function (idx, subDir) {
         imgSrc = settingsImgRepo + subDir.FolderImage;
         $('#imageContainer').append("<div class='" + imageFrameClass +
-            "' oncontextmenu='folderCtx(\"" + subDir.LinkId + "\")'" +
-            " onclick='subFolderPreClick(\"" + subDir.IsStepChild + "\",\"" + subDir.FolderId + "\")'>" +
+            "' oncontextmenu='showFolderContextMenu(\"" + subDir.LinkId + "\")'" +
+            " onclick='rtpe('SUB'," + albumFolderId + "\",\"" + subDir.IsStepChild + "\",\"" + subDir.FolderId + "\")'>" +
             "<img id='" + subDir.LinkId + "' class='folderImage' onerror='subFolderImgError(" + subDir + ")' alt='Images/redballon.png' src='" + imgSrc + "'/>" +
             "<div class='" + labelClass + "'>" + subDir.DirectoryName + "</div><span Id='fc" + subDir.FolderId + "'> ...</span></div>");
+
+        //rtpe('SUB',"\"+ albumFolderId+"\",\"", subFolderPreClickFolderId);
+        //rtpe("SUB", albumFolderId, "ISSTEPCHILD", subFolderPreClickFolderId);
+
     });
 
     // $('#aboveImageContainerMessageArea').html(folde
@@ -230,7 +232,7 @@ function processImages(albumImageInfo) {
     //$('#footerMessage').html(": " + imagesModel.Files.length);
 }
 
-function setCSS() {
+function setAlbumPageCSS() {
     //let imageEditor = isInRole("Image Editor");
     //if (albumImageInfo.RootFolder === "porn" || albumImageInfo.RootFolder === "sluts") {
     //    imageFrameClass = "pornFolderImageOutterFrame";
@@ -248,7 +250,6 @@ function setCSS() {
     //    }// imageModelFile
     //}  // startSlideShow(folderId, linkId)
 }
-
 
 function setBreadCrumbs(breadCrumbModel) {
     // a woman commited suicide when pictures of her "came out"
@@ -467,26 +468,23 @@ $(window).resize(function () {
     resizeImageContainer();
 });
 
-function startSlideShow(folderId, linkId) {
-
+function XXstartSlideShow(folderId, linkId) {
     //alert("linkId: " + linkId);
-
     if (typeof staticPageFolderName === 'string') {
         isStaticPage = "true";
         currentAlbumJSfolderName = staticPageFolderName;
         //albumFolderId = staticPageFolderId;
     }
     // get image array from DOM
-    var imageArray = new Array();
-    $('#imageContainer').children().each(function () {
-        imageArray.push({
-            Id: $(this).attr("id"),
-            Link: $(this).find("img").attr("src")
-        });
-    });
-
-    launchViewer(folderId, linkId, false);
-    $('#fileCount').hide();
+    //var imageArray = new Array();
+    //$('#imageContainer').children().each(function () {
+    //    imageArray.push({
+    //        Id: $(this).attr("id"),
+    //        Link: $(this).find("img").attr("src")
+    //    });
+    //});
+    //launchViewer(folderId, linkId, false);
+    //$('#fileCount').hide();
 }
 
 function launchDeepSlideShow()
