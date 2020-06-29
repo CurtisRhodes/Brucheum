@@ -1,9 +1,12 @@
-﻿var verbosity = 5;
-var freeVisitorHitsAllowed = 7500;
-var settingsArray = {};
-var userRoles = [];
-var waitingForReportThenPerformEvent = true;
-var forgetShowingCustomMessage = true;
+﻿let verbosity = 5,
+    freeVisitorHitsAllowed = 7500,
+    settingsArray = {},
+    userRoles = [],
+    viewerShowing = false,
+    waitingForReportThenPerformEvent = true,
+    forgetShowingCustomMessage = true,
+    settingsImgRepo;
+
 //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
 //<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 //<div class="g-recaptcha" data-sitekey="6LfaZzEUAAAAAMbgdAUmSHAHzv-dQaBAMYkR4h8L"></div>
@@ -371,7 +374,10 @@ function changeFavoriteIcon(icon) {
     link.rel = 'shortcut icon';
     switch (icon) {
         case "porn": link.href = 'https://ogglebooble.com/images/cslips03.png'; break;
-        case "loading": link.href = 'https://ogglebooble.com/images/loader.gif'; break;
+        case "loading":
+            link.href = "https://ogglebooble.com/images/loader.gif";
+            link.type = 'image/gif';
+            break;
         case "redBallon": link.href = 'Images/favicon.png'; break;
         default: link.href = 'Images/favicon.png';
     }

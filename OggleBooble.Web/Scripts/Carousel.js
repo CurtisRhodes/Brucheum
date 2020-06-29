@@ -19,7 +19,6 @@ var mainImageClickId;
 var knownModelLabelClickId;
 var imageTopLabelClickId;
 var footerLabelClickId;
-let settingsImgRepo = settingsArray.ImageRepo;
 let imgSrc;
 
 function launchCarousel(startRoot) {
@@ -369,6 +368,7 @@ function showCarouelSettingsDialog() {
         "<div class='carouselSettingsDialog'>\n"+
         "   <input class='carouselCheckbox' id='ckCenterfold' type='checkbox'/> Include Centerfolds<br/>\n" +
         "   <input class='carouselCheckbox' id='ckArchive' type='checkbox'/> Include Archive<br/>\n" +
+        "   <input class='carouselCheckbox' id='ckSoftCore' type='checkbox'/> Include softcore<br/>\n" +
         "   <input class='carouselCheckbox' id='ckPorn' type='checkbox'/> Include porn<br/>\n" +
         "   <input class='carouselCheckbox' id='ckLandscape' type='checkbox'/> allow landscape size<br/>\n" +
         "   <input class='carouselCheckbox' id='ckPortrait' type='checkbox'/> allow portrait size<br/>\n" +
@@ -484,13 +484,15 @@ function assuranceArrowClick(direction) {
 }
 
 function carouselContextMenu() {
-    showCarouselContextMenu(imgSrc,
+    pos.x = event.clientX;
+    pos.y = event.clientY;
+    showContextMenu("Carousel", pos, imgSrc,
         carouselItemArray[imageIndex].LinkId,
         carouselItemArray[imageIndex].FolderId,
         carouselItemArray[imageIndex].FolderName);
 }
 
-function carouselHtml(carouselContextMenu) {
+function carouselHtml() {
     return "<div class='centeringOuterShell'>\n" +
         "   <div id='innerCarouselContainer'  class='centeringInnerShell'>\n" +
         "      <div id='carouselImageContainer' class='carouselImageContainer flexContainer'>\n" +

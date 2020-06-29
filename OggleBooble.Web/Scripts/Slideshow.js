@@ -1,26 +1,24 @@
-﻿var exploderInterval;
-var slideShowSpeed = 5000;
-var viewerH = 50;
-var viewerW = 50;
-var viewerT = 0;
-var viewerL = 0;
-var windowW = $(window).width();
-var windowH = $(window).height();
-var Xincrimentor = 15;
-var Yincrimentor = 10;
-var exploderSpeed = 18;
-var imageViewerFolderId;
-var imageViewerArray = {};
-var imageViewerIndex = 1;
-var imageViewerIntervalTimer;
-var imageViewerFolderName;
-var albumFolderId;
-var viewerShowing = false;
-var slideShowRunning = false;
-var visitorId;
-var sessionCount = 0;
-var slideShowButtonsActive = false;
-var includeSubFolders;
+﻿let exploderInterval,
+    slideShowSpeed = 5000,
+    viewerH = 50,
+    viewerW = 50,
+    viewerT = 0,
+    viewerL = 0,
+    windowW = $(window).width(),
+    windowH = $(window).height(),
+    Xincrimentor = 15,
+    Yincrimentor = 10,
+    exploderSpeed = 18,
+    imageViewerFolderId,
+    imageViewerArray = {},
+    imageViewerIndex = 1,
+    imageViewerIntervalTimer,
+    imageViewerFolderName,
+    albumFolderId,
+    slideShowRunning = false,
+    sessionCount = 0,
+    slideShowButtonsActive = false,
+    includeSubFolders;
 
 function launchViewer(folderId, startItem, showAllChildren) {
     imageViewerFolderId = folderId;
@@ -28,6 +26,21 @@ function launchViewer(folderId, startItem, showAllChildren) {
     if (isNullorUndefined(includeSubFolders))
         includeSubFolders = false;
     sessionCount = 0;
+
+    if (typeof staticPageFolderName === 'string') {
+        isStaticPage = "true";
+        alert("get image array from DOM");
+        // get image array from DOM
+        //var imageArray = new Array();
+        //$('#imageContainer').children().each(function () {
+        //    imageArray.push({
+        //        Id: $(this).attr("id"),
+        //        Link: $(this).find("img").attr("src")
+        //    });
+        //});
+        //launchViewer(folderId, linkId, false);
+        //$('#fileCount').hide();
+    }
     getSlideshowItems(folderId, startItem);
     slideShowButtonsActive = true;
     settingsImgRepo = settingsArray.ImageRepo;
@@ -74,8 +87,6 @@ function getSlideshowItems(folderId, startItem) {
                             }
                         };
                     }
-
-                    $('#slideshowContextMenuContainer').html(slideshowContextMenuHtml());
                     $('#imageContainer').fadeOut();
                     $('#imagePageLoadingGif').hide();
                     $('#slideShowContainer').html(slideshowHtml()).show();
@@ -429,81 +440,12 @@ function slideshowImageLabelClick() {
     rtpe("SSC", imageViewerFolderId, "slideshowImageLabelClick", imageViewerArray[imageViewerIndex].ImageFolderId);
 }
 
-function slideshowContexMenu() {
-    //ctxSAP(imageViewerArray[imageViewerIndex].Id);
-    event.preventDefault();
-    window.event.returnValue = false;
-    if (slideShowRunning)
-        runSlideShow('pause');
-    $('#slideshowIinkInfo').hide();
-    $('#slideshowContextMenuSeeMore').hide();
-    $('#slideshowContextMenuModelName').html("unknown");    
-    if (imageViewerArray[imageViewerIndex].FolderId !== imageViewerArray[imageViewerIndex].ImageFolderId) {
-        $('#slideshowContextMenuModelName').html(imageViewerArray[imageViewerIndex].ImageFolderName);
-        $('#slideshowContextMenuSeeMore').show();
-    } 
-    $('#slideshowContextMenu').css("top", event.clientY + 5);
-    $('#slideshowContextMenu').css("left", event.clientX);
-    $('#slideshowContextMenu').css('z-index', "200");
-    $('#slideshowContextMenu').fadeIn();
-}
-
-function closeSlideshowContextMenu() {
-    $('#slideshowContextMenu').fadeOut();
-    if (slideShowRunning)
-        runSlideShow('resume');
-}
-
-function slideshowCtxMnuShowLinks(linkId) {
-    showImageContextMenu(
+function slideshowContextMenu() {
+    showContextMenu("Slideshow",
         settingsImgRepo + imageViewerArray[imageViewerIndex].FileName,
         imageViewerArray[imageViewerIndex].LinkId,
         imageViewerArray[imageViewerIndex].ImageFolderId,
         imageViewerArray[imageViewerIndex].ImageFolderName);
-}
-
-function slideshowHtml() {
-    return "<div id='viewerButtonsRow' class='imageViewerHeaderRow' > \n" +
-        "  <div><img id='imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/Images/comment.png'/></div>\n" +
-        "  <div id='imageViewerHeaderTitle' class='imageViewerTitle'></div> \n" +
-        "  <div class='floatRight clickable' onclick='runSlideShow(\"faster\");'><img id='fasterSlideshow' title='faster' src='/Images/speedDialFaster.png'/></div>\n" +
-        "  <div id='txtStartSlideShow' class='floatRight clickable'style='padding-top:4px' onclick='runSlideShow(\"start\");'>start slideshow</div>\n" +
-        "  <div class='floatRight clickable' onclick='runSlideShow(\"slower\");'><img id='slowerSlideShow' title='slower' src='/Images/speedDialSlower.png'/></div>\n" +
-        "  <div class='floatRight clickable' onclick='blowupImage()'><img class='popoutBox' title='open image in a new window' src='/Images/expand02.png'/> </div>\n" +
-        "  <div class='floatRight clickable' onclick='closeViewer(\"click\");' > <img title='you may use the {esc} key' src='/Images/close.png'/> </div>\n" +
-        "</div>\n" +
-        "<div id='leftClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slideClick(\"prev\")' title='previous\nwill cancel slideshow'></div>\n" +
-        "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slideClick(\"next\")' " +
-        "title='next\ndouble click to start slideshow'></div>\n" +
-        "<div class='centeringOuterShell'>\n" +
-        "    <div class='centeringInnerShell'>\n" +
-        "        <div id='viewerImageContainer' class='flexContainer'>\n" +
-        "            <div class='slideshowNavgArrows'><img src='/Images/leftArrowOpaque02.png' /></div>\n" +
-        "            <img id='viewerImage' class='slideshowImage' />\n" +
-        "            <div class='slideshowNavgArrows'><img src='/Images/rightArrowOpaque02.png' /></div>\n" +
-        "        </div>\n" +
-        "    </div>\n" +
-        "</div>\n" +
-        "<div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n";
-}
-
-function slideshowContextMenuHtml() {
-    return "<div id='slideshowContextMenu' class='ogContextMenu' onmouseleave='closeSlideshowContextMenu()'>\n" +
-        "    <div id='slideshowContextMenuModelName' onclick='slideshowCtxMnuAction('showModelInfo')'>model name</div>\n" +
-        "    <div id='slideshowContextMenuSeeMore' onclick='slideshowCtxMnuAction('see more of her')'>see more of her</div>\n" +
-        "    <div onclick='slideshowCtxMnuAction('showImageCommentDialog')'>Comment</div>\n" +
-        "    <div onclick='slideshowCtxMnuAction('explode')'>explode</div>\n" +
-        "    <div onclick='slideshowCtxMnuAction('showLinks')'>Show Links</div>\n" +
-        "    <div id='slideshowIinkInfo' class='innerContextMenuInfo'>\n" +
-        "        <div id='slideshowLinkInfoContainer'></div>\n" +
-        "    </div>\n" +
-        "    <div id='slideshowContextMenuArchive' class='adminLink' onclick='slideshowCtxMnuAction('Archive')'>Archive</div>\n" +
-        "    <div class='adminLink' onclick='slideshowCtxMnuAction('Copy')'>Copy Link</div>\n" +
-        "    <div class='adminLink' onclick='slideshowCtxMnuAction('Move')'>Move Image</div>\n" +
-        "    <div class='adminLink' onclick='slideshowCtxMnuAction('remove')'>Remove Link</div>\n" +
-        "    <div class='adminLink' onclick='slideshowCtxMnuAction('setF')'>Set as Folder Image</div>\n" +
-        "    <div class='adminLink' onclick='slideshowCtxMnuAction('setC')'>Set as Category Image</div>\n" +
-        "</div>\n";
 }
 
 $(document).keydown(function (event) {
@@ -535,5 +477,32 @@ $(document).keydown(function (event) {
         }
     }
 });
+
+function slideshowHtml() {
+    return "<div id='viewerButtonsRow' class='imageViewerHeaderRow' > \n" +
+        "  <div><img id='imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/Images/comment.png'/></div>\n" +
+        "  <div id='imageViewerHeaderTitle' class='imageViewerTitle'></div> \n" +
+        "  <div class='floatRight clickable' onclick='runSlideShow(\"faster\");'><img id='fasterSlideshow' title='faster' src='/Images/speedDialFaster.png'/></div>\n" +
+        "  <div id='txtStartSlideShow' class='floatRight clickable'style='padding-top:4px' onclick='runSlideShow(\"start\");'>start slideshow</div>\n" +
+        "  <div class='floatRight clickable' onclick='runSlideShow(\"slower\");'><img id='slowerSlideShow' title='slower' src='/Images/speedDialSlower.png'/></div>\n" +
+        "  <div class='floatRight clickable' onclick='blowupImage()'><img class='popoutBox' title='open image in a new window' src='/Images/expand02.png'/> </div>\n" +
+        "  <div class='floatRight clickable' onclick='closeViewer(\"click\");' > <img title='you may use the {esc} key' src='/Images/close.png'/> </div>\n" +
+        "</div>\n" +
+        "<div id='leftClickArea'  class='hiddenClickArea' oncontextmenu='slideshowContexMenu()'  onclick='slideClick(\"prev\")' title='previous\nwill cancel slideshow'></div>\n" +
+        "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slideClick(\"next\")' " +
+        "title='next\ndouble click to start slideshow'></div>\n" +
+        "<div class='centeringOuterShell'>\n" +
+        "    <div class='centeringInnerShell'>\n" +
+        "        <div id='viewerImageContainer' class='flexContainer'>\n" +
+        "            <div class='slideshowNavgArrows'><img src='/Images/leftArrowOpaque02.png' /></div>\n" +
+        "            <img id='viewerImage' class='slideshowImage' />\n" +
+        "            <div class='slideshowNavgArrows'><img src='/Images/rightArrowOpaque02.png' /></div>\n" +
+        "        </div>\n" +
+        "    </div>\n" +
+        "</div>\n" +
+        "<div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n";
+}
+
+
 
 

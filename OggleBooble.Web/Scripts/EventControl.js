@@ -85,16 +85,13 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
         case "SRC":  // Search Performed
         case "SSB":
         case "SSC":
+        case "SEE":  // see more of her
         case "ONT":
-            window.open("/album.html?folder=" + pageId, "_blank");
+            window.open("/album.html?folder=" + pageId, "_blank");  // open in new tab
             break;
         case 'SUB':  // 'Sub Folder Click'
-            alert("Sub Folder Click: " + eventDetail);
-            window.location.href = "/album.html?folder=" + pageId;  //  open page in same window
-            break;
         case "CIC":  // carousel image clicked
         case "CMN":  // carousel model nameclicked
-        case "SEE":  // see more of her
         case "CPC":  // carousel ParentGallery clicked
         case "BCC":  // Breadcrumb Clicked
         case "BLC":  // banner link clicked

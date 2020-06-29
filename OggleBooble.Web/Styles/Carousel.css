@@ -17,8 +17,14 @@
     z-index: 2;
 }
 
+.carouselSettingsDialog {
+    padding: 5px;
+}
+
+
 .carouselSettingsDialog input[type='checkbox'] {
-    transform: scale(2);
+    transform: scale(1.32);
+    margin-right: 5px;
 }
 
 
@@ -45,13 +51,6 @@
     display: flex;
 }
 
-.carouselFooter {
-    position: relative;
-    margin-left: 50px;
-    background-color: var(--oggleContainerFooterColor);
-    text-align: center;
-    display: none;
-}
 
 .randomImageContainer {
     top: 135px;
@@ -66,12 +65,19 @@
     color: var(--oggleLabelColor);
 }
 
-.speedButton {
-    z-index: 1;
-    height: 37px;
-    margin: 2px 5px 3px 0px;
-    cursor: pointer;
+.carouselFooter {
+    position: relative;
+    margin-left: 50px;
+    background-color: var(--oggleContainerFooterColor);
+    text-align: center;
+    display: none;
 }
+    .carouselFooter img{
+        z-index: 1;
+        height: 35px;
+        margin: 2px 5px 3px 0px;
+        cursor: pointer;
+    }
 
 .pauseButton {
     border-radius: 50%;

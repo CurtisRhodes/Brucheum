@@ -401,7 +401,11 @@ function headerHtml(folderId, subdomain) {
         "   <div id='modalContent' class='modalContentStyle'></div>\n" +
         "</div>\n" +
 
-        "<div id='hamburgerCtx' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
+        "<div id='contextMenuContainer' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>" +
+        "   <div id='contextMenuContent' class='contextMenuItems modalContentStyle'></div>\n" +
+        "</div>\n" +
+
+        "<div id='hamburgerCtx' class='ogContextMenu displayHidden'>\n" +
         "    <div onclick='rtpe(\"BAC\"," + folderId + ",\"archive\")'>babes archive</div>\n" +
         "    <div onclick='rtpe(\"RNK\",\"hamburger\",\"" + subdomain + "\"," + folderId + ")'>ranker</div>\n" +
         "    <div onclick='window.location.href=\"/index.html?subdomain=blog\"'>blog</div>\n" +

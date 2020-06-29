@@ -125,10 +125,11 @@
 .oggleDraggableDialog {
     position: absolute;
     z-index: 36;
-    min-width: 400px;
     display: none;
     resize: both;
-/*    box-sizing: unset;
+    /* 
+    min-width: 400px;
+    box-sizing: unset;
     overflow: auto; */
     border: solid 2px var(--oggleBorderColor);
     background-color: var(--oggleContainerBackgroundColor);

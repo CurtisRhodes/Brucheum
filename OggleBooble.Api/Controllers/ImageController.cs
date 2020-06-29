@@ -36,46 +36,31 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    if (dbCategoryFolder == null)
-                    {
-                        imageInfo.Success = "no category folder found";
-                        return imageInfo;
-                    }
-
-                    if (Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName))
-                    {
-                        var dbCategoryFolderParent = db.VirtualFolders.Where(f => f.Id == dbCategoryFolder.Parent).FirstOrDefault();
-                        if (dbCategoryFolderParent != null)
-                        {
-                            imageInfo.FolderName = dbCategoryFolderParent.FolderName;
-                        }
-                    }
-
                     ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == linkId).FirstOrDefault();
                     if (dbImageFile == null)
                     {
                         imageInfo.Success = "no image link found";
                         return imageInfo;
                     }
+                    VirtualFolder dbModelFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
+                    if (dbModelFolder == null) { imageInfo.Success = "no image link folderId file found"; return imageInfo; }
                     if (dbImageFile.FolderId != folderId)
                     {
-                        VirtualFolder dbModelFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
+                        // we have a non archive link                        
                         imageInfo.ModelFolderName = dbModelFolder.FolderName;
                     }
-
                     List<string> subFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList();
                     var folderTypeModel = new FolderTypeModel()
                     {
-                        ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName),
+                        ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbModelFolder.FolderName),
                         ContainsNonRomanNumeralChildren = Helpers.ContainsNonRomanNumeralChildren(subFolders),
                         HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
                         HasSubFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Count() > 0,
-                        RootFolder = dbCategoryFolder.RootFolder
+                        RootFolder = dbModelFolder.RootFolder
                     };
                     imageInfo.FolderType = Helpers.DetermineFolderType(folderTypeModel);
 
-                    imageInfo.FolderName = dbCategoryFolder.FolderName;
+                    // imageInfo.FolderName = dbModelFolder.FolderName;
                     imageInfo.LinkId = dbImageFile.Id;
                     imageInfo.ModelFolderId = dbImageFile.FolderId;
                     imageInfo.Height = dbImageFile.Height;
@@ -89,11 +74,6 @@ namespace OggleBooble.Api.Controllers
                                                select new { folderId = f.Id, folderName = f.FolderName })
                                                .ToDictionary(i => i.folderId, i => i.folderName);
 
-                    if (dbCategoryFolder == null)
-                    {
-                        imageInfo.Success = "folder not found. " + folderId;
-                        return imageInfo;
-                    }
                 }
                 imageInfo.Success = "ok";
             }
@@ -243,13 +223,6 @@ namespace OggleBooble.Api.Controllers
             }
             return successModel;
         }
-
-        //public int SourceFolderId { get; set; }
-        //public int DestinationFolderId { get; set; }
-        //public string LinkId { get; set; }
-        //public string Link { get; set; }
-        //public string Mode { get; set; }
-        //public int SortOrder { get; set; }
 
         private string FtpMove(string currentFileName, MoveCopyImageModel model)
         {
