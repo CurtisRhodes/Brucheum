@@ -445,7 +445,7 @@ function showCustomMessage(blogId, allowClickAnywhere) {
                 $('#draggableDialog').css("top", 200);
 
                 $('#draggableDialog').draggable();
-                $('#draggableDialogTitle').html(entry.CommentTitle);
+                $('#oggleDialogTitle').html(entry.CommentTitle);
                 $('#draggableDialogContents').html(entry.CommentText);
 
                 //var x = window.innerWidth * .5 - $('#draggableDialog').width() * .5;              

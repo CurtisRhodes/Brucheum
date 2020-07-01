@@ -127,10 +127,11 @@ namespace OggleBooble.Api.Models
         public Dictionary<int,string> InternalLinks { get; set; }
         public string LinkId { get; set; }
         public string FolderName { get; set; }
+        public string FolderPath { get; set; }
         public int ModelFolderId { get; set; }
         public string ModelFolderName { get; set; }
         public string ExternalLink { get; set; }
-        public string Link { get; set; }
+        public string FileName { get; set; }
         public int? Width { get; set; }
         public int? Height { get; set; }
         public long? Size { get; set; }

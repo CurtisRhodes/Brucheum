@@ -1,0 +1,47 @@
+﻿
+.ctxloadingGif {
+    height: 27px;
+}
+.ogContextMenu {
+    position: absolute;
+    background: var(--oggleDialogBackgroundColor);
+    border: solid 2px #923c76;
+    padding: 8px 10px;
+    display: none;
+    z-index: 120;
+}
+
+    .ogContextMenu div {
+        padding: 8px;
+        margin: 2px;
+        background-color: #fff;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+.ogItemHover {
+    text-decoration: underline;
+}
+
+.contextMenuInnerContainer {
+    background: #ac9696;
+    display: none;
+}
+
+    .contextMenuInnerContainer span {
+        color: var(--oggleLabelColor);
+    }
+
+.innerContextMenuContainer {
+    display: none;
+    background-color: #b1b1b1;
+}
+
+.ctxInfoValue {
+    display: inline-block;
+}
+
+.innerContextMenu {
+    display: inline-block;
+    font-weight: bold;
+}

@@ -36,12 +36,9 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
+                    VirtualFolder dbPageFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == linkId).FirstOrDefault();
-                    if (dbImageFile == null)
-                    {
-                        imageInfo.Success = "no image link found";
-                        return imageInfo;
-                    }
+                    if (dbImageFile == null) { imageInfo.Success = "no image link found"; return imageInfo; }
                     VirtualFolder dbModelFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
                     if (dbModelFolder == null) { imageInfo.Success = "no image link folderId file found"; return imageInfo; }
                     if (dbImageFile.FolderId != folderId)
@@ -58,15 +55,18 @@ namespace OggleBooble.Api.Controllers
                         HasSubFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Count() > 0,
                         RootFolder = dbModelFolder.RootFolder
                     };
-                    imageInfo.FolderType = Helpers.DetermineFolderType(folderTypeModel);
 
-                    // imageInfo.FolderName = dbModelFolder.FolderName;
+
+                    imageInfo.FolderType = Helpers.DetermineFolderType(folderTypeModel);
+                    imageInfo.FolderName = dbPageFolder.FolderName;
+                    imageInfo.FolderPath = dbPageFolder.FolderPath;
                     imageInfo.LinkId = dbImageFile.Id;
                     imageInfo.ModelFolderId = dbImageFile.FolderId;
+                    imageInfo.ModelFolderName = dbModelFolder.FolderName;
                     imageInfo.Height = dbImageFile.Height;
                     imageInfo.Width = dbImageFile.Width;
                     imageInfo.LastModified = dbImageFile.Acquired.ToShortDateString();
-                    imageInfo.Link = dbImageFile.FileName;
+                    imageInfo.FileName = dbImageFile.FileName;
                     imageInfo.ExternalLink = dbImageFile.ExternalLink;
                     imageInfo.InternalLinks = (from l in db.CategoryImageLinks
                                                join f in db.VirtualFolders on l.ImageCategoryId equals f.Id
@@ -405,11 +405,11 @@ namespace OggleBooble.Api.Controllers
                             //webRequest.Credentials = networkCredentials;
                             //var zz = webRequest.Method = WebRequestMethods.Ftp.UploadFile;
 
+                            var mmDom = repoDomain.Substring(8);
 
+                            var test = ftpHost + repoDomain.Substring(8) + "/" + mySqlDestPath + "/" + newFileName;
 
-                            var test = ftpHost + repoDomain + "/" + mySqlDestPath + "/" + newFileName;
-
-                            webRequest = (FtpWebRequest)WebRequest.Create(ftpHost + repoDomain + "/" + mySqlDestPath + "/" + newFileName);
+                            webRequest = (FtpWebRequest)WebRequest.Create(ftpHost + repoDomain.Substring(8) + "/" + mySqlDestPath + "/" + newFileName);
                             webRequest.Credentials = networkCredentials;
                             webRequest.Method = WebRequestMethods.Ftp.UploadFile;
                         }

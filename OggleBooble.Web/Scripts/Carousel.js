@@ -363,7 +363,7 @@ function resume() {
 }
 
 function showCarouelSettingsDialog() {
-    $("#draggableDialogTitle").html("Carousel Settings");
+    $("#oggleDialogTitle").html("Carousel Settings");
     $("#draggableDialogContents").html(
         "<div class='carouselSettingsDialog'>\n"+
         "   <input class='carouselCheckbox' id='ckCenterfold' type='checkbox'/> Include Centerfolds<br/>\n" +
@@ -375,7 +375,6 @@ function showCarouelSettingsDialog() {
         "</div>\n");
 
     $("#draggableDialog").css("width", 300);
-    //$("#draggableDialogTitle").html("Carousel Settings top: [" + $("#draggableDialog").attr("top") + "]");
     $('#draggableDialog').css("top", event.clientY - 75);
     $('#customMessageContainer').css("left", event.clientX - 100);
     pause();

@@ -15,17 +15,17 @@
     imageViewerIntervalTimer,
     imageViewerFolderName,
     albumFolderId,
-    slideShowRunning = false,
-    sessionCount = 0,
+    spSlideShowRunning,
+    spSessionCount = 0,
     slideShowButtonsActive = false,
-    includeSubFolders;
+    spIncludeSubFolders;
 
-function launchViewer(folderId, startItem, showAllChildren) {
+function launchViewer(folderId, startItem, includeSubFolders) {
+    spSlideShowRunning = false;
     imageViewerFolderId = folderId;
-    includeSubFolders = showAllChildren;
-    if (isNullorUndefined(includeSubFolders))
-        includeSubFolders = false;
-    sessionCount = 0;
+    if (isNullorUndefined(includeSubFolders)) includeSubFolders = false;
+    spIncludeSubFolders = includeSubFolders;
+    spSessionCount = 0;
 
     if (typeof staticPageFolderName === 'string') {
         isStaticPage = "true";
@@ -44,12 +44,6 @@ function launchViewer(folderId, startItem, showAllChildren) {
     getSlideshowItems(folderId, startItem);
     slideShowButtonsActive = true;
     settingsImgRepo = settingsArray.ImageRepo;
-    $('#rightClickArea').dblclick(function () {
-        event.preventDefault();
-        window.event.returnValue = false;
-        //alert("start slideshow");
-        runSlideShow("start");
-    });
 
     window.addEventListener("resize", resizeViewer);
 }
@@ -72,14 +66,25 @@ function getSlideshowItems(folderId, startItem) {
         var start = Date.now();
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "/api/GalleryPage/GetSlideShowItems?folderId=" + folderId + "&includeSubFolders=" + includeSubFolders,
+            url: settingsArray.ApiServer + "/api/GalleryPage/GetSlideShowItems?folderId=" + folderId + "&includeSubFolders=" + spIncludeSubFolders,
             success: function (slideshowItemModel) {
                 $('#imagePageLoadingGif').hide();
                 if (slideshowItemModel.Success === "ok") {
                     imageViewerFolderName = slideshowItemModel.FolderName;
+
                     imageViewerArray = slideshowItemModel.SlideshowItems;
 
-                    if (!includeSubFolders) {
+                    $('#imageContainer').fadeOut();
+                    $('#imagePageLoadingGif').hide();
+                    $('#slideShowContainer').html(slideshowHtml()).show();
+                    $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName);
+                    $('#rightClickArea').dblclick(function () {
+                        event.preventDefault();
+                        window.event.returnValue = false;
+                        runSlideShow("start");
+                    });
+
+                    if (!spIncludeSubFolders) {
                         for (var i = 0; i < imageViewerArray.length; i++) {
                             if (imageViewerArray[i].LinkId === startItem) {
                                 imageViewerIndex = i;
@@ -87,17 +92,11 @@ function getSlideshowItems(folderId, startItem) {
                             }
                         };
                     }
-                    $('#imageContainer').fadeOut();
-                    $('#imagePageLoadingGif').hide();
-                    $('#slideShowContainer').html(slideshowHtml()).show();
-                    $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName);
                     //$('#imageViewerHeaderTitle').html(slideshowItemModel.RootFolder + "/" + slideshowItemModel.FolderName + "/" + slideshowItemModel.ImageFolderName);
                     viewerShowing = true;
-                    runSlideShow('start');
                     resizePage();
                     resizeViewer();
                     explodeViewer();
-
                     $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
                     var delta = (Date.now() - start) / 1000;
                     console.log("GetImageLinks?folder=" + folderId + " took: " + delta.toFixed(3));
@@ -220,24 +219,34 @@ function incrimentExplode() {
         if (imageViewerArray[imageViewerIndex].FolderId !== imageViewerArray[imageViewerIndex].ImageFolderId)
             $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
         resizeViewer();
+
+        //setTimeout(function () {
+        //    if (spIncludeSubFolders) {
+        //        if (!spSlideShowRunning) {
+        //            //clearInterval(imageViewerIntervalTimer);
+        //            //alert("start slideshow");
+        //            //runSlideShow('start');
+        //        }
+        //        else alert("runnaway");
+        //    }
+        //}, slideShowSpeed);
     }
 }
 
 function slideClick(direction) {
-
     if (!event.detail || event.detail === 1) {//activate on first click only to avoid hiding again on double clicks
-        if (slideShowRunning) {
+        if (spSlideShowRunning) {
             $('#txtStartSlideShow').html("start slideshow");
             clearInterval(imageViewerIntervalTimer);
             if (direction === 'next') {
                 runSlideShow('start');
             }
             else
-                slideShowRunning = false;
+                spSlideShowRunning = false;
         }
         else {
             slide(direction);
-            sessionCount++;
+            spSessionCount++;
             //logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
         }
     }
@@ -283,26 +292,23 @@ function slide(direction) {
 
             $('#viewerImage').attr("src", settingsImgRepo + imageViewerArray[imageViewerIndex].FileName);
             $('#viewerImageContainer').css('left', ($(window).width() - $('#viewerImage').width()) / 2);
-
             $('#viewerImage').show();
-            if (includeSubFolders) {
-                $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName + " / " +
-                    imageViewerArray[imageViewerIndex].ImageFolderName);
-            }
             resizeViewer();
-            sessionCount++;
+            spSessionCount++;
             $('#viewerImage').css("transform", "translateX(0)");
             setTimeout(function () {
                 if (imageViewerArray[imageViewerIndex].FolderId !== imageViewerArray[imageViewerIndex].ImageFolderId) {
 
-                    //$('#imageViewerHeaderTitle').html("folderId: " + imageViewerArray[imageViewerIndex].FolderId +
-                    //    " < ImageFolderId: " + imageViewerArray[imageViewerIndex].ImageFolderId);
 
-                    //$('#imageViewerHeaderTitle').html("ImageFolderName: " + imageViewerArray[imageViewerIndex].ImageFolderName);
+                    $('#imageViewerHeaderTitle').html(imageViewerArray[imageViewerIndex].ImageFolderName +
+                        " / " + slideshowItemModel.FolderName);
 
                     $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
-
                 }
+                else
+                    $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName);
+
+
                 $('.slideshowNavgArrows').css('visibility', 'visible').fadeIn();
             }, 1100);
             
@@ -324,31 +330,34 @@ function runSlideShow(action) {
     console.log("run slideShow action: " + action + "  txtStartSlideShow: " + $('#txtStartSlideShow').html());
     //alert("run slideShow action: " + action + "  txtStartSlideShow: " + $('#txtStartSlideShow').html());
     if (action === 'start') {
-        slide('next');
+        if ($('#txtStartSlideShow').html() === "stop slideshow") {
+            spSlideShowRunning = false;
+            clearInterval(imageViewerIntervalTimer);
+            $('#txtStartSlideShow').html("start slideshow");
+            return;
+        }
         if ($('#txtStartSlideShow').html() === "start slideshow") {
+            slide('next');
+            $('#txtStartSlideShow').html("stop slideshow");
             imageViewerIntervalTimer = setInterval(function () {
                 slide('next');
             }, slideShowSpeed);
-            slideShowRunning = true;
-            $('#txtStartSlideShow').html("stop slideshow");
-            //$('#showSlideshow').attr("Title", "start slideshow");
+            spSlideShowRunning = true;
         }
-
     }
     if (action === 'stop') {
         $('#txtStartSlideShow').html("start slideshow");
-        slideShowRunning = false;
-        clearInterval(imageViewerIntervalTimer);
+        spSlideShowRunning = false;
         return;
     }
     if (action === 'pause') {
-        if (slideShowRunning) {
+        if (spSlideShowRunning) {
             clearInterval(imageViewerIntervalTimer);
             $('#txtStartSlideShow').html("||");
         }
     }
     if (action === 'resume') {
-        if (slideShowRunning) {
+        if (spSlideShowRunning) {
             $('#txtStartSlideShow').html("stop slideshow");
             slide('next');
             imageViewerIntervalTimer = setInterval(function () {
@@ -395,7 +404,7 @@ function closeViewer(calledFrom) {
 
 
     viewerShowing = false;
-    slideShowRunning = false;
+    spSlideShowRunning = false;
     slideShowButtonsActive = false;
     clearInterval(imageViewerIntervalTimer);
     $('#txtStartSlideShow').html("start slideshow");
@@ -405,7 +414,7 @@ function closeViewer(calledFrom) {
         if (calledFrom !== undefined) {
             closeMethod = calledFrom;
         }
-        if (sessionCount < 2) {
+        if (spSessionCount < 2) {
             logEventActivity({
                 VisitorId: getCookieValue("VisitorId"),
                 EventCode: "SVC",
@@ -417,22 +426,22 @@ function closeViewer(calledFrom) {
             logEventActivity({
                 VisitorId: getCookieValue("VisitorId"),
                 EventCode: "SVC",
-                EventDetail: "Images Viewed: " + sessionCount + " closed: " + closeMethod,
+                EventDetail: "Images Viewed: " + spSessionCount + " closed: " + closeMethod,
                 CalledFrom: albumFolderId
             });
         }
         resizeImageContainer();
-        //if (sessionCount > 20) {
+        //if (spSessionCount > 20) {
         //    if (document.domain === 'localhost') {
-        //        alert("Close Slideshow ." + imageViewerFolderName + ".\nImages Viewed: " + sessionCount,
+        //        alert("Close Slideshow ." + imageViewerFolderName + ".\nImages Viewed: " + spSessionCount,
         //    }
         //    else {
-        //        sendEmailToYourself("slideshow: " + imageViewerFolderName + ". Images Viewed: " + sessionCount,
+        //        sendEmailToYourself("slideshow: " + imageViewerFolderName + ". Images Viewed: " + spSessionCount,
         //            "Close method: " + closeMethod +
         //    }
         //}
     }
-    sessionCount = 0;
+    spSessionCount = 0;
 }
 
 function slideshowImageLabelClick() {
@@ -441,7 +450,11 @@ function slideshowImageLabelClick() {
 }
 
 function slideshowContextMenu() {
-    showContextMenu("Slideshow",
+
+    runSlideShow("pause");
+    pos.x = event.clientX;
+    pos.y = event.clientY;
+    showContextMenu("Slideshow", pos,
         settingsImgRepo + imageViewerArray[imageViewerIndex].FileName,
         imageViewerArray[imageViewerIndex].LinkId,
         imageViewerArray[imageViewerIndex].ImageFolderId,
@@ -483,13 +496,14 @@ function slideshowHtml() {
         "  <div><img id='imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/Images/comment.png'/></div>\n" +
         "  <div id='imageViewerHeaderTitle' class='imageViewerTitle'></div> \n" +
         "  <div class='floatRight clickable' onclick='runSlideShow(\"faster\");'><img id='fasterSlideshow' title='faster' src='/Images/speedDialFaster.png'/></div>\n" +
-        "  <div id='txtStartSlideShow' class='floatRight clickable'style='padding-top:4px' onclick='runSlideShow(\"start\");'>start slideshow</div>\n" +
+        "  <div id='txtStartSlideShow' class='floatRight clickable'style='padding-top:4px' " +
+        "       onclick='runSlideShow(\"start\");'>start slideshow</div>\n" +
         "  <div class='floatRight clickable' onclick='runSlideShow(\"slower\");'><img id='slowerSlideShow' title='slower' src='/Images/speedDialSlower.png'/></div>\n" +
         "  <div class='floatRight clickable' onclick='blowupImage()'><img class='popoutBox' title='open image in a new window' src='/Images/expand02.png'/> </div>\n" +
         "  <div class='floatRight clickable' onclick='closeViewer(\"click\");' > <img title='you may use the {esc} key' src='/Images/close.png'/> </div>\n" +
         "</div>\n" +
-        "<div id='leftClickArea'  class='hiddenClickArea' oncontextmenu='slideshowContexMenu()'  onclick='slideClick(\"prev\")' title='previous\nwill cancel slideshow'></div>\n" +
-        "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContexMenu()' onclick='slideClick(\"next\")' " +
+        "<div id='leftClickArea'  class='hiddenClickArea' oncontextmenu='slideshowContextMenu()'  onclick='slideClick(\"prev\")' title='previous\nwill cancel slideshow'></div>\n" +
+        "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"next\")' " +
         "title='next\ndouble click to start slideshow'></div>\n" +
         "<div class='centeringOuterShell'>\n" +
         "    <div class='centeringInnerShell'>\n" +
@@ -500,7 +514,10 @@ function slideshowHtml() {
         "        </div>\n" +
         "    </div>\n" +
         "</div>\n" +
-        "<div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n";
+        "<div id='slideshowCtxMenuContainer' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>" +
+        "   <div id='slideshowContextMenuContent'></div>\n" +
+        "</div>\n" +
+       "<div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n";
 }
 
 

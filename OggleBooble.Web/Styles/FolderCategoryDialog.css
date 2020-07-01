@@ -1,21 +1,8 @@
-﻿/*#folderCategoryDialog .ui-dialog {
-    top: 44px;
-    left: 100px;
-}
-
-#folderCategoryDialog .ui-corner-all {
-    border-radius: 22px;
-}*/
-
+﻿
 .folderDialogContainer {
     background: var(--oggleBackgroundColor);
     overflow: auto;
 }
-/*.folderDialogFooter {
-    position: relative;
-    padding: 6px;
-    bottom: 8px;
-}*/
 
 .folderCategoryDialogButton {
     display: inline-block;
@@ -28,22 +15,14 @@
 }
 
 .modelInfoCommentArea {
-    height: 100%;
+    max-height: 450px;
     overflow-y: auto;
     width: 100%;
     padding: 5px;
     margin-right: 4px;
 }
 
-/*  CONSOLIDATED FROM MODEL INFO DIALOG*/
-.modelInfoDetailsArea {
-    float: left;
-    width: 100%;
-}
-    .modelInfoDetailsArea div {
-        display: inline-block;
-    }
-    
+  
 .modelInfoDialogLabel {
     width: 50px;
     margin-right: 6px;
@@ -73,4 +52,22 @@
     border: 1px solid #ccc;
     border-radius: 3px;
     margin-bottom: 2px;
+}
+
+.poserLabels {
+    line-height: 26px;
+    margin-right: 4px;
+    white-space: nowrap;
+}
+
+.poserDetails div {
+    padding-left: 4px;
+    border: solid .5px #d8c86a;
+    border-radius: 3px 4px;
+    height: 25px;
+}
+.boobDropDown {
+    display: block;
+    height: 26px;
+    width: 214px;
 }

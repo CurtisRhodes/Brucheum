@@ -89,7 +89,7 @@ function showMoveCopyDialog(action, selectedImage, folderId) {
     MoveCopyImageModel.SourceFolderId = folderId;
 
     $('#draggableDialog').css("top", $('.oggleHeader').height() + 20);
-    $('#draggableDialogTitle').html(action + " Image Link");
+    $('#oggleDialogTitle').html(action + " Image Link");
     $('#draggableDialogContents').html(moveCopyArchiveHTML());
 
 

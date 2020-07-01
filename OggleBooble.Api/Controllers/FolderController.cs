@@ -17,9 +17,6 @@ namespace OggleBooble.Api.Controllers
     {
         private readonly string hostingPath = ".ogglebooble.com/";
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
-
-
-
         [HttpGet]
         [Route("api/CatFolder/GetFolderInfo")]
         public FolderDetailModel GetFolderInfo(int folderId)
@@ -31,7 +28,8 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
-                    string fileName = dbFolder.FolderPath + "/" + db.ImageFiles.Where(i => i.Id == dbFolder.FolderImage).FirstOrDefault().FileName;
+                    string fileName = repoDomain + "/" + dbFolder.FolderPath + "/" +
+                        db.ImageFiles.Where(i => i.Id == dbFolder.FolderImage).FirstOrDefault().FileName;
                     if (Helpers.ContainsRomanNumeral(dbFolder.FolderName))
                     {
                         dbFolder = db.VirtualFolders.Where(f => f.Id == dbFolder.Parent).First();
@@ -40,7 +38,7 @@ namespace OggleBooble.Api.Controllers
                     folderDetailModel.Id = folderId;
                     folderDetailModel.FolderName = dbFolder.FolderName;
                     folderDetailModel.RootFolder = dbFolder.RootFolder;
-                    folderDetailModel.FolderImage = repoDomain + "/" + fileName;
+                    folderDetailModel.FolderImage = fileName;
 
                     FolderDetail FolderDetails = db.FolderDetails.Where(d => d.Id == folderId).FirstOrDefault();
                     if (FolderDetails != null)
@@ -51,23 +49,24 @@ namespace OggleBooble.Api.Controllers
                         folderDetailModel.Birthday = FolderDetails.Birthday;
                         folderDetailModel.Measurements = FolderDetails.Measurements;
                         folderDetailModel.FakeBoobs = FolderDetails.FakeBoobs;
-                        //folderDetailModel.LinkStatus = categoryFolderDetails.LinkStatus;
-                        //folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
-
-                        var childFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList();
-                        var folderTypeModel = new FolderTypeModel()
-                        {
-                            // hasChildren with non child galleries
-                            RootFolder = dbFolder.RootFolder,
-                            ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbFolder.FolderName),
-                            ContainsNonRomanNumeralChildren = Helpers.ContainsNonRomanNumeralChildren(childFolders),
-                            HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
-                            HasSubFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Count() > 0
-                        };
-                        folderDetailModel.FolderType = Helpers.DetermineFolderType(folderTypeModel);
                     }
+                    //folderDetailModel.LinkStatus = categoryFolderDetails.LinkStatus;
+                    //folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
+
+                    var childFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList();
+                    var folderTypeModel = new FolderTypeModel()
+                    {
+                        // hasChildren with non child galleries
+                        RootFolder = dbFolder.RootFolder,
+                        ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbFolder.FolderName),
+                        ContainsNonRomanNumeralChildren = Helpers.ContainsNonRomanNumeralChildren(childFolders),
+                        HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
+                        HasSubFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Count() > 0
+                    };
+                    folderDetailModel.FolderType = Helpers.DetermineFolderType(folderTypeModel);
+
+                    folderDetailModel.Success = "ok";
                 }
-                folderDetailModel.Success = "ok";
             }
             catch (Exception ex)
             {

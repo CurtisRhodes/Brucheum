@@ -14,7 +14,7 @@ function showImageCommentDialog(link, linkId, folderId, folderName, calledFrom) 
 
     $('#commentDialogImage').attr("src", link);
     $('#draggableDialog').css("top", $('.oggleHeader').height() - 50);
-    $('#draggableDialogTitle').html("Write a fantasy about this image");
+    $('#oggleDialogTitle').html("Write a fantasy about this image");
 
     $('#imageCommentEditor').summernote({
         height: 200,

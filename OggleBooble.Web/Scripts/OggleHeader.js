@@ -384,16 +384,18 @@ function headerHtml(folderId, subdomain) {
         "<div class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
         "      <div id='draggableDialog' class='oggleDraggableDialog'>\n" +
-        "           <div id='draggableDialogHeader'class='oggleDialogHeader' onmousedown='draggableDialogEnterDragMode()' onmouseup='draggableDialogCancelDragMode()'>" +
-        "               <div id='draggableDialogTitle' class='oggleDialogTitle'></div>" +
-        "               <div id='draggableDialogCloseButton' class='oggleDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'/></div>\n" +
+        "           <div id='draggableDialogHeader'class='oggleDialogHeader'"+
+        "                   onmousedown='draggableDialogEnterDragMode()' onmouseup='draggableDialogCancelDragMode()'>" +
+        "               <div id='oggleDialogTitle' class='draggableDialogTitle'></div>" +
+        "               <div id='draggableDialogCloseButton' class='oggleDialogCloseButton'>"+
+        "               <img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'/></div>\n" +
         "           </div>\n" +
         "           <div id='draggableDialogContents' class='oggleDialogContents'></div>\n" +
         "      </div>\n" +
         "   </div>\n" +
         "</div>\n" +
 
-        "<div id='dirTreeContainer' class='dirTreeImageContainer floatingDirTreeImage floatingDirTreeContainer'>" +
+        "<div id='dirTreeContainer' class='dirTreeImageContainer floatingDirTreeImage floatingDirTreeContainer'>\n" +
         "   <img class='dirTreeImage'/>\n" +
         "</div>\n" +
 
@@ -402,7 +404,7 @@ function headerHtml(folderId, subdomain) {
         "</div>\n" +
 
         "<div id='contextMenuContainer' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>" +
-        "   <div id='contextMenuContent' class='contextMenuItems modalContentStyle'></div>\n" +
+        "   <div id='contextMenuContent'></div>\n" +
         "</div>\n" +
 
         "<div id='hamburgerCtx' class='ogContextMenu displayHidden'>\n" +

@@ -167,6 +167,7 @@ function getAlbumPageInfo(folderId) {
         }
     });
 }
+
 function processImages(albumImageInfo) {
     let labelClass = "defaultSubFolderImage";  
     let imageFrameClass = "folderImageOutterFrame";
@@ -181,7 +182,7 @@ function processImages(albumImageInfo) {
             " onerror='galleryImageError(\"" + obj.LinkId + "\")'\n" +
             " alt='" + obj.LinkId + "'\n" +
             " oncontextmenu='albumContextMenu(\"Image\",\"" + obj.LinkId + "\"," + apFolderId + ")'\n" +
-            " onclick='launchViewer(" + obj.Id + ",\"" + obj.LinkId + ",false\")'\n" +
+            " onclick='launchViewer(" + obj.Id + ",\"" + obj.LinkId + "\",false)'\n" +
             " src='" + imgSrc + "'/>\n";
         if (obj.Id !== obj.SrcId)
             imageHtml += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +
@@ -194,6 +195,7 @@ function processImages(albumImageInfo) {
     $.each(albumImageInfo.SubDirs, function (idx, subDir) {
         imgSrc = settingsImgRepo + subDir.FolderImage;
         $('#imageContainer').append("<div class='" + imageFrameClass + "'\n" +
+
             " oncontextmenu='albumContextMenu(\"Folder\",\"" + subDir.LinkId + "\"," + subDir.FolderId + ")'\n" +
             " onclick='rtpe(\"SUB\"," + apFolderId + "," + subDir.IsStepChild + "," + subDir.FolderId + ")'>\n" +
             "<img id='" + subDir.LinkId + "' class='folderImage'\n" +
@@ -210,6 +212,7 @@ function processImages(albumImageInfo) {
     resizeImageContainer();
     //$('#footerMessage').html(": " + imagesModel.Files.length);
 }
+
 function galleryImageError(linkId) {
     //alert("galleryImageError: " + linkId);
     //$(this).attr('src', "Images/redballon.png");
@@ -220,6 +223,7 @@ function galleryImageError(linkId) {
         Activity: linkId
     });
 }
+
 function subFolderImgError(linkId, folderId) {
     // $('#' + objSubDir.LinkId).attr('src', "Images/redballon.png");
 
@@ -231,7 +235,6 @@ function subFolderImgError(linkId, folderId) {
         Activity: linkId
     });
 }
-
 
 function albumContextMenu(menuType, linkId, folderId) {
     pos.x = event.clientX;

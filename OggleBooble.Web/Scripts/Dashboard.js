@@ -144,7 +144,7 @@ function loadHeaderTabs() {
 
 // REPAIR FUNCTIONS
 function showRepairLinksDialog() {
-    $('#draggableDialogTitle').html("Repair Links");
+    $('#oggleDialogTitle').html("Repair Links");
     $('#draggableDialogContents').html("<div>\n" +
         "   <div class='flexbox'>\n" +
         "       <label>folder to repair</label><input id='txtFolderToRepair' class='txtLinkPath roundedInput' readonly='readonly'/>\n" +
@@ -237,7 +237,7 @@ function repairLinks(justOne) {
 
 // CREATE STATIC PAGES
 function showCreateStaticPagesDialog() {
-    $('#draggableDialogTitle').html("Create Static Pages");
+    $('#oggleDialogTitle').html("Create Static Pages");
     $('#draggableDialogContents').html("<div id='createStaticPagesCrud'>\n" +
         //"    <div><span>folders to staticify</span>" + dashboardMainSelectedPath + "</div>\n" +
         "    <div><span>folders to staticify</span><input id='txtFolderToStaticify' class='txtLinkPath roundedInput' readonly='readonly'/></div>\n" +
@@ -365,7 +365,7 @@ function previewLinkImage() {
 
 //  CREATE NEW FOLDER
 function showCreateNewFolderDialog() {
-    $('#draggableDialogTitle').html("Create New Folder");
+    $('#oggleDialogTitle').html("Create New Folder");
     $('#draggableDialogContents').html(
         "<div><span>title</span><input id='txtNewFolderTitle' class='inlineInput roundedInput' /></div>\n" +
         "<div><span>parent</span><input class='txtLinkPath inlineInput roundedInput' readonly='readonly' /></div>\n" +
@@ -417,7 +417,7 @@ function showAddVideoLink() {
 
 // RENAME A FOLDER
 function showRenameFolderDialog() {
-    $('#draggableDialogTitle').html("Rename Folder");
+    $('#oggleDialogTitle').html("Rename Folder");
     $('#draggableDialogContents').html(
         "<div><span>folder to rename</span><input id='txtFolderToRename' class='txtLinkPath inlineInput roundedInput' readonly='readonly' /></div>\n" +
         "<div><span>new name</span><input id='txtReName' class='roundedInput' /></div>\n" +

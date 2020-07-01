@@ -42,18 +42,18 @@ namespace OggleBooble.Api.Controllers
                 if (folderTypeInfo.ContainsNonRomanNumeralChildren)
                     return "assorterdImagesGallery";
             }
-            if (folderTypeInfo.HasImages && !folderTypeInfo.HasSubFolders)
-            {
-                if (folderTypeInfo.RootFolder == "archive" || folderTypeInfo.RootFolder == "sluts")
-                    return "singleModelCollection";
-                if (folderTypeInfo.RootFolder == "boobs" || folderTypeInfo.RootFolder == "porn")
-                    return "assorterdImagesCollection";
-            }
             if (folderTypeInfo.HasSubFolders && !folderTypeInfo.HasImages) {
                 if (folderTypeInfo.RootFolder == "archive" || folderTypeInfo.RootFolder == "sluts")
                     return "singleModelGallery";
                 if (folderTypeInfo.RootFolder == "boobs" || folderTypeInfo.RootFolder == "porn")
                     return "assorterdImagesGallery";
+            }
+            if (folderTypeInfo.HasImages)
+            {
+                if (folderTypeInfo.RootFolder == "archive" || folderTypeInfo.RootFolder == "sluts")
+                    return "singleModelCollection";
+                if (folderTypeInfo.RootFolder == "boobs" || folderTypeInfo.RootFolder == "porn")
+                    return "assorterdImagesCollection";
             }
 
             //folderDetailModel.ContainsRomanNumerals = ContainsRomanNumerals(db.CategoryFolders.Where(f => f.Parent == folderId).ToList());

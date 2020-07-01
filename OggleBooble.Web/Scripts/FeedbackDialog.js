@@ -6,7 +6,7 @@ function showFeedbackDialog(pageId) {
 
     //$('#imagePageLoadingGif').show();
     $('#draggableDialogContents').html(feedbackDialogHtml());
-    $('#draggableDialogTitle').html("feedback");
+    $('#oggleDialogTitle').html("feedback");
     $('#feedbackDialogSummerNoteTextArea').summernote({
         height: 300,
         toolbar: [['codeview']]

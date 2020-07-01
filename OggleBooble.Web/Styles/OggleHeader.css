@@ -132,7 +132,7 @@
     box-sizing: unset;
     overflow: auto; */
     border: solid 2px var(--oggleBorderColor);
-    background-color: var(--oggleContainerBackgroundColor);
+    background-color: var(--oggleBackgroundColor);
 }
 .oggleDialogHeader {
     border: none;
@@ -142,7 +142,7 @@
     width: 100%;
     cursor: grabbing; 
 }
-.oggleDialogTitle {
+.draggableDialogTitle {
     float: left;
     padding: 2px 8px;
     width: 100%;
@@ -162,6 +162,8 @@
 .oggleDialogContents {
     padding: 5px;
     height: 100%;
+    min-width: 120pk;
+    min-height: 120px;
     /*padding: 4px 8px;*/
 }
 

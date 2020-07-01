@@ -8,7 +8,7 @@
 
 var loginFromPageId;
 function showLoginDialog() {
-    $('#draggableDialogTitle').html("Log In to OggleBooble");
+    $('#oggleDialogTitle').html("Log In to OggleBooble");
     $('#draggableDialogContents').html(loginDialogHtml());
 
 
