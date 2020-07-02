@@ -1,24 +1,6 @@
-﻿let exploderInterval,
-    slideShowSpeed = 5000,
-    viewerH = 50,
-    viewerW = 50,
-    viewerT = 0,
-    viewerL = 0,
-    windowW = $(window).width(),
-    windowH = $(window).height(),
-    Xincrimentor = 15,
-    Yincrimentor = 10,
-    exploderSpeed = 18,
-    imageViewerFolderId,
-    imageViewerArray = {},
-    imageViewerIndex = 1,
-    imageViewerIntervalTimer,
-    imageViewerFolderName,
-    albumFolderId,
-    spSlideShowRunning,
-    spSessionCount = 0,
-    slideShowButtonsActive = false,
-    spIncludeSubFolders;
+﻿let exploderInterval, slideShowSpeed = 5000, viewerH = 50, viewerW = 50, viewerT = 0, viewerL = 0, windowW = $(window).width(), windowH = $(window).height(),
+    Xincrimentor = 15, Yincrimentor = 10, exploderSpeed = 18, imageViewerFolderId, imageViewerArray = {}, imageViewerIndex = 1, imageViewerIntervalTimer,
+    imageViewerFolderName, albumFolderId, spSlideShowRunning, spSessionCount = 0, slideShowButtonsActive = false, spIncludeSubFolders;
 
 function launchViewer(folderId, startItem, includeSubFolders) {
     spSlideShowRunning = false;
@@ -71,7 +53,6 @@ function getSlideshowItems(folderId, startItem) {
                 $('#imagePageLoadingGif').hide();
                 if (slideshowItemModel.Success === "ok") {
                     imageViewerFolderName = slideshowItemModel.FolderName;
-
                     imageViewerArray = slideshowItemModel.SlideshowItems;
 
                     $('#imageContainer').fadeOut();
@@ -300,12 +281,12 @@ function slide(direction) {
 
 
                     $('#imageViewerHeaderTitle').html(imageViewerArray[imageViewerIndex].ImageFolderName +
-                        " / " + slideshowItemModel.FolderName);
+                        " / " + imageViewerFolderName);
 
                     $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
                 }
                 else
-                    $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName);
+                    $('#imageViewerHeaderTitle').html(imageViewerFolderName);
 
 
                 $('.slideshowNavgArrows').css('visibility', 'visible').fadeIn();

@@ -188,6 +188,8 @@
                     }, 600);
                 }
             }, 300);
+            
+            window.addEventListener("resize", resizePage());
             window.addEventListener("resize", resizeIndexPage);
             resizeIndexPage();
         });
@@ -196,10 +198,10 @@
             // height
             var winH = $(window).height();
             var headerH = $('header').height() + 50;
-            $('.threeColumnLayout').css("min-height", winH - headerH);
             $('#topIndexPageSection').height((winH - headerH - 100));
             $('#topIndexPageSection').height((winH - headerH) * .65);
             // width
+
             var winW = $(window).width();
             $('section').css("background-color", "#d5d1ba");
             if (winW < 1500) {

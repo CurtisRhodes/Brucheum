@@ -1,25 +1,25 @@
-﻿var numImages = 0;
-var numFolders = 0;
-var rotationSpeed = 7000;
-var intervalSpeed = 600;
-var carouselItemArray = new Array();
-var imageIndex = 0;
-var carouselContainerHeight;
-var CarouselInterval;
-var selectedImageArchiveFolderId;
-var metaTagDialogIsOpen = false;
-var imageCommentDialogIsOpen = false;
-var folderCategoryDialogIsOpen = false;
-var forgetShowingCatDialog;
-var imageHistory = [];
-var rootsLoaded = [];
-var carouselImageViews = 0;
-var carouselImageErrors = 0;
-var mainImageClickId;
-var knownModelLabelClickId;
-var imageTopLabelClickId;
-var footerLabelClickId;
-let imgSrc;
+﻿let numImages = 0,
+    numFolders = 0,
+    rotationSpeed = 7000,
+    intervalSpeed = 600,
+    carouselItemArray = new Array(),
+    imageIndex = 0,
+    carouselContainerHeight,
+    vCarouselInterval,
+    selectedImageArchiveFolderId,
+    metaTagDialogIsOpen = false,
+    imageCommentDialogIsOpen = false,
+    folderCategoryDialogIsOpen = false,
+    forgetShowingCatDialog,
+    imageHistory = [],
+    rootsLoaded = [],
+    carouselImageViews = 0,
+    carouselImageErrors = 0,
+    mainImageClickId,
+    knownModelLabelClickId,
+    imageTopLabelClickId,
+    footerLabelClickId,
+    imgSrc;
 
 function launchCarousel(startRoot) {
     //$('#footerMessage').html("launching carousel");
@@ -87,6 +87,7 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                             FolderGPId: obj.FolderGPId,
                             ImageFolderId: obj.ImageFolderId,
                             ImageFolderName: obj.ImageFolderName,
+                            FirstChild: obj.FirstChild,
                             ImageFolderRoot: obj.ImageFolderRoot,
                             ImageFolderParentName: obj.ImageFolderParentName,
                             ImageFolderParentId: obj.ImageFolderParentId,
@@ -99,10 +100,15 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                     });
 
                     if (take === 500) {
+                        //newImageIndex = Math.floor(Math.random() * carouselItemArray.length);
+                        if (carouselItemArray.length === 0)
+                            alert("ix00")
+
                         newImageIndex = Math.floor(Math.random() * carouselItemArray.length);
                         startCarousel(newImageIndex);
                         $('#carouselFooter').show();
                         resizeCarousel();
+
                     }
 
                     var delta = (Date.now() - start) / 1000;
@@ -163,7 +169,7 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
 
 function startCarousel(startIndex) {
     intervalBody(startIndex);
-    CarouselInterval = setInterval(function () {
+    vCarouselInterval = setInterval(function () {
         newImageIndex = Math.floor(Math.random() * carouselItemArray.length);
         intervalBody(newImageIndex);
     }, rotationSpeed);
@@ -184,7 +190,7 @@ function setLabelLinks() {
             //$('#headerMessage').html("1");
 
             if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
-                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderGPName);
+                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].FirstChild);
                 //$('#headerMessage').append("P");
             }
 
@@ -200,7 +206,7 @@ function setLabelLinks() {
             //$('#headerMessage').html("2");
 
             if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
-                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParentName);
+                $('#imageTopLabel').html("Playboy Playmate2: " + carouselItemArray[imageIndex].FirstChild);
                 $('#knownModelLabel').html(carouselItemArray[imageIndex].Folder);
                 //$('#headerMessage').append("P");
                 imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
@@ -255,12 +261,21 @@ function imgErrorThrown() {
     pause();
     //alert("Missig Image: " + carouselItemArray[imageIndex].FolderId + ", " + carouselItemArray[imageIndex].FolderName + "\nlinkId: " + carouselItemArray[imageIndex].LinkId);
     logDataActivity({
+        VisitorId: getCookieValue("VisitorId"),
+        ActivityCode: "IME",
         PageId: carouselItemArray[imageIndex].FolderId,
-        PageName: carouselItemArray[imageIndex].FolderName,
         Activity: carouselItemArray[imageIndex].LinkId
     });
+
+    alert("image error\npage: " + carouselItemArray[imageIndex].FolderId +
+        ",\nPageName: " + carouselItemArray[imageIndex].FolderName +
+        ",\nActivity: " + carouselItemArray[imageIndex].LinkId);
+
+
 }
-// function doneLoggingDataActivity() { };
+function doneLoggingDataActivity() {
+
+};
 
 function intervalBody(newImageIndex) {
     //alert("intervalBody");
@@ -268,31 +283,31 @@ function intervalBody(newImageIndex) {
     imageIndex = newImageIndex;
     $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
 
-        imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
+        if (isNullorUndefined(carouselItemArray[imageIndex]))
+            console.log("carouselItemArray[" + imageIndex + "] undefined ");
+        else {
+            imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
+            $('#thisCarouselImage').attr('src', imgSrc);
+            $('#knownModelLabel').html("").hide();
+            $('#carouselFooterLabel').html("").hide();
+            $('#imageTopLabel').html("").hide();
+            setLabelLinks();
+            $('#carouselFooterLabel').fadeIn();
+            $('#imageTopLabel').fadeIn();
+            $('#knownModelLabel').fadeIn();
+            imageHistory.push(imageIndex);
+            $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
 
-
-        $('#thisCarouselImage').attr('src', imgSrc);
-        $('#knownModelLabel').html("").hide();
-        $('#carouselFooterLabel').html("").hide();
-        $('#imageTopLabel').html("").hide();
-
-        setLabelLinks();
-
-        $('#carouselFooterLabel').fadeIn();
-        $('#imageTopLabel').fadeIn();
-        $('#knownModelLabel').fadeIn();
-        imageHistory.push(imageIndex);
-        $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
-
-        $('#footerMessage').html("image " + imageIndex + " of " + carouselItemArray.length.toLocaleString());
-        //console.log("image views: " + carouselImageViews);
-        $('#headerMessage').html("viewed ok: " + ++carouselImageViews + " errors: " + carouselImageErrors);
-        //$('#footerMessage').append(".  carousel image viewed: " + carouselImageViews);
+            $('#footerMessage').html("image " + imageIndex + " of " + carouselItemArray.length.toLocaleString());
+            //console.log("image views: " + carouselImageViews);
+            $('#headerMessage').html("viewed ok: " + ++carouselImageViews + " errors: " + carouselImageErrors);
+            //$('#footerMessage').append(".  carousel image viewed: " + carouselImageViews);
+        }
     });
 }
 
 function clickViewGallery(labelClick) {
-    clearInterval(CarouselInterval);
+    clearInterval(vCarouselInterval);
     switch (labelClick) {
         case 1:  // carousel main image
             //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + mainImageClickId);
@@ -339,24 +354,27 @@ function clickSpeed(speed) {
         rotationSpeed += 800;
     imageIndex = Math.floor(Math.random() * numImages);
     $('.carouselImage').attr('src', carouselItemArray[imageIndex].Link);
-    clearInterval(CarouselInterval);
+    clearInterval(vCarouselInterval);
     startCarousel(imageIndex);
 }
 
 function togglePause() {
     if ($('#pauseButton').html() === "||")
         pause();
-    else
+    else {
+        //alert("togglePause resume");
         resume();
+    }
 }
 
 function pause() {
-    clearInterval(CarouselInterval);
+    clearInterval(vCarouselInterval);
     $('#pauseButton').html(">");
 }
 
 function resume() {
-    clearInterval(CarouselInterval);
+    //alert("resume()");
+    clearInterval(vCarouselInterval);
     imageIndex = Math.floor(Math.random() * carouselItemArray.length);
     startCarousel(imageIndex);
     $('#pauseButton').html("||");

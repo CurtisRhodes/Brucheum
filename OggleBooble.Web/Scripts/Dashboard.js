@@ -155,7 +155,7 @@ function showRepairLinksDialog() {
     $("#draggableDialog").fadeIn();
     $("#txtFolderToRepair").val(dashboardMainSelectedPath);
     $('#draggableDialog').css("top", ($(window).height() - $('#draggableDialog').height()) / 2);
-    $('#draggableDialog').css("left", 250);
+    $('#draggableDialog').css("left", -250);
 
     //    $('#draggableDialog').css("left", ($(window).width() - $('#draggableDialog').width()) / 2.142);
 
@@ -172,7 +172,7 @@ function repairLinks(justOne) {
     //$('#repairLinksReport').html("");
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Links/RepairLinks?folderId=" + dashboardMainSelectedTreeId + "&recurr=" + justOne,
+        url: settingsArray.ApiServer + "api/RepairLinks/RepairLinks?folderId=" + dashboardMainSelectedTreeId + "&recurr=" + justOne,
         success: function (repairReport) {
             $('#dashBoardLoadingGif').hide();
             $("#draggableDialog").fadeOut();
@@ -311,7 +311,7 @@ function addImageLink() {
     if (isNullorUndefined($('#txtImageLink').val()))
         alert("invalid link");
     else {
-        $('#dataifyInfo').show().html("calling AddImageLink");
+        $('#dataifyInfo').show().html("Adding ImageLink");
         var newLink = {};
         newLink.Link = $('#txtImageLink').val();
         newLink.FolderId = dashboardMainSelectedTreeId;
@@ -324,7 +324,7 @@ function addImageLink() {
             success: function (successModel) {
                 $('#dashBoardLoadingGif').hide();
                 if (successModel.Success === "ok") {
-                    $('#dataifyInfo').show().html("calling AddImageLink");
+                    $('#dataifyInfo').hide();
                     displayStatusMessage("ok", "image link added");
                     $('#txtImageLink').val("");
                     resizeDashboardPage();
@@ -334,9 +334,10 @@ function addImageLink() {
                         setFolderImage(successModel.ReturnValue, dashboardMainSelectedTreeId, "folder");
                     }
                     logDataActivity({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "NIA",
                         PageId: dashboardMainSelectedTreeId,
-                        PageName: $('.txtLinkPath').val(),
-                        Activity: "new image added"
+                        Activity: newLink.Link
                     });
                     $('#dataifyInfo').hide();
                 }
@@ -909,8 +910,6 @@ function copyFolder() {
         }
     });
 }
-
-
 
 function addFileDates() {
     $('#dataifyInfo').show().html("adding file dates");

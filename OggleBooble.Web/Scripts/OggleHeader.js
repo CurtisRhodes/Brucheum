@@ -23,7 +23,6 @@ function setOggleHeader(folderId, subdomain) {
     setMenubar(subdomain);
     setLoginSection(subdomain);
     window.addEventListener("resize", mediaSavyHdrResize);
-    mediaSavyHdrResize();
 }
 
 function setHeaderDetails(folderId, subdomain) {
@@ -189,7 +188,6 @@ function setLoginSection(subdomain) {
 
 function mediaSavyHdrResize() {
     hdrRowW = $('.headerTopRow').width();
-
     // bottom Row  
     {
         if (hdrBottRowSectionsW() < hdrRowW) {
@@ -215,7 +213,7 @@ function mediaSavyHdrResize() {
             $('.blackCenterfoldsBanner').css("font-size", "15px");
             $('#mainMenuContainer').html(setMenubar(hdrSubdomain));
 
-            showResizeMessage("80/15: ","B");
+            showResizeMessage("80/15: ");
         }
         if (hdrBottRowSectionsW() >= hdrRowW) {
             $('.oggleHeader').css("background-color", "#e6de3b");  // sn
@@ -226,7 +224,7 @@ function mediaSavyHdrResize() {
             $('.blackCenterfoldsBanner').css("font-size", "13px");
             $('#mainMenuContainer').html(setMenubar(hdrSubdomain));
 
-            showResizeMessage("60/13: ", "B");
+            showResizeMessage("60/13: ");
         }
         //if (hdrBottRowSectionsW() >= hdrRowW) {
         //    $('.siteLogo').css("height", "60px");
@@ -246,7 +244,7 @@ function mediaSavyHdrResize() {
             $('.badgeImage').css("height", "22px");
             $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
 
-            showResizeMessage("iPad 50/12 : ", "B");
+            showResizeMessage("iPad 50/12 : ");
         }
         //if (hdrBottRowSectionsW() >= hdrRowW) {
         //    $('.oggleHeader').css("background-color", "#e6de3b");  // sn
@@ -267,7 +265,7 @@ function mediaSavyHdrResize() {
             $('.badgeImage').css("height", "18px");
             $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
 
-            showResizeMessage("iPhone: ", "B");
+            showResizeMessage("iPhone: ");
         }
     }
 // top row
@@ -280,7 +278,7 @@ function mediaSavyHdrResize() {
             $('.headerBanner').css("font-size", "17px").show(); // banner tabs contents
             //"           <div id='bannerContainer'></div>" +
             //"           <div id='searchBox' class='oggleSearchBox'>\n" +
-            showResizeMessage("TOP RESET: ","T");
+            showResizeMessage("TOP RESET: ");
         }
         //let testing = false;
         //if (false) {
@@ -291,20 +289,20 @@ function mediaSavyHdrResize() {
             $('#mainMenuContainer').css("font-size", "18px").show();
             $('.headerBanner').css("font-size", "15px").show(); // banner tabs contents
             //"           <div id='searchBox' class='oggleSearchBox'>\n" +
-            showResizeMessage("q1: ","T");
+            showResizeMessage("q1: ");
         }
         if (hdrTopRowSectionsW() > hdrRowW) {
             $('#bannerContainer').hide();
             $('#mainMenuContainer').css("font-size", "18px");
             $('.headerBanner').css("font-size", "15px").show(); // banner tabs contents
             //"           <div id='searchBox' class='oggleSearchBox'>\n" +
-            showResizeMessage("q2: ", "T");
+            showResizeMessage("q2: ");
         }
         if (hdrTopRowSectionsW() > hdrRowW) {
             $('#bannerContainer').hide();
             $('#mainMenuContainer').hide();
             //"           <div id='searchBox' class='oggleSearchBox'>\n" +
-            showResizeMessage("q3: ", "T");
+            showResizeMessage("q3: ");
         }
 
     }
@@ -325,11 +323,10 @@ function hdrTopRowSectionsW() {
     let topRowKludge = 0;
     return $('#bannerTitle').width() + $('#mainMenuContainer').width() + $('#bannerContainer').width() + $('#searchBox').width() + topRowKludge;
 }
-function showResizeMessage(secMsg, row) {
-
-    //$('#aboveImageContainerMessageArea').html(secMsg + "hdrTopRow: " + $('.headerTopRow').width().toLocaleString() +
-    //    " bottomSecs: " + hdrBottRowSectionsW().toLocaleString() +
-    //    " hdrTopSecs: " + hdrTopRowSectionsW().toLocaleString());
+function showResizeMessage(secMsg) {
+    $('#aboveImageContainerMessageArea').html(secMsg + "hdrTopRow: " + $('.headerTopRow').width().toLocaleString() +
+        " bottomSecs: " + hdrBottRowSectionsW().toLocaleString() +
+        " hdrTopSecs: " + hdrTopRowSectionsW().toLocaleString());
 }
 
 function draggableDialogEnterDragMode() {

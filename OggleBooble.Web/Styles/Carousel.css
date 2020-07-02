@@ -10,8 +10,8 @@
     color: #fff;
     background-color: var(--opaqueImageLabel);
     border-radius: 5px;
-    padding: 5px;
-    font-size: 20px;
+    padding: 2px;
+    font-size: 17px;
     white-space: nowrap;
     cursor: pointer;
     z-index: 2;
@@ -35,8 +35,8 @@
     left: 51px;
     background-color: var(--opaqueImageLabel);
     border-radius: 5px;
-    padding: 5px;
-    font-size: 22px;
+    padding: 2px;
+    font-size: 17px;
     white-space: nowrap;
     cursor: pointer;
     z-index: 2;

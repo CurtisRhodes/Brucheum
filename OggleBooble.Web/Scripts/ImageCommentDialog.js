@@ -2,7 +2,8 @@
 
 function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
    
-    //alert("imageCommentDialog. LinkId: " + linkId + " called From: " + calledFrom);
+    //alert("3imageCommentDialog. LinkId: " + linkId + " called From: " + calledFrom);
+
     $('#draggableDialogContents').html(imageCommentDialogHtml());
 
     imageComment.VisitorId = getCookieValue("VisitorId");
@@ -22,7 +23,7 @@ function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
         ]
     });
 
-    $(".note-editable").css('font-size', '19px');
+    $(".note-editable").css('font-size', '15px');
     $(".modelDialogInput").prop('readonly', true);;
 
     if (typeof pause === 'function')

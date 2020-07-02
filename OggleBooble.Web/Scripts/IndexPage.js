@@ -18,7 +18,7 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
                         $('#updatedGalleriesSection').append("<div class='newsContentBox'>" +
                             "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
                             "<img id='lt" + LatestUpdate.FolderId + "' class='newsContentBoxImage' " +
-                            "onerror='latestGalleryImageError(" + LatestUpdate.FolderId + ")' src='" + thisItemSrc + "'" +
+                            "onerror='latestGalleryImageError(" + LatestUpdate.FolderId + ",\"" + thisItemSrc + "\")' src='" + thisItemSrc + "'" +
                             "onclick='rtpe(\"LUP\",\"home page\",10," + LatestUpdate.FolderId + ")'/>" +
                             "<div class='newsContentBoxDateLabel'>updated: " + dateString2(LatestUpdate.Acquired) + "</span></div>" +
                             "</div>");
@@ -61,14 +61,15 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
 }
 
 //let oneShown = false;
-function latestGalleryImageError(folderId) {    
+function latestGalleryImageError(folderId, thisItemSrc) {    
     //alert("latestGalleryImageError: " + folderId);
     //alert("latestGallery src: " + $('#lt' + folderId).attr('src'));
     $('#lt' + folderId).attr('src', "Images/redballon.png");
     logDataActivity({
+        VisitorId: getCookieValue("VisitorId"),
+        ActivityCode: "IME",
         PageId: folderId,
-        PageName: "latestGalleryImageError",
-        Activity: "image error"
+        Activity: thisItemSrc
     });
 }
 

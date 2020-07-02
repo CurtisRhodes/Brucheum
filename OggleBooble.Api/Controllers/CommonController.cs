@@ -267,9 +267,9 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                using (var mdb = new MySqlDataContext.OggleBoobleMySqlContext())
+                using (var mdb = new OggleBoobleMySqlContext())
                 {
-                    mdb.ErrorLogs.Add(new MySqlDataContext.ErrorLog()
+                    mdb.ErrorLogs.Add(new ErrorLog()
                     {
                         PkId = Guid.NewGuid().ToString(),
                         VisitorId = logErrorModel.VisitorId,
@@ -321,17 +321,18 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPost]
         [Route("api/Common/LogDataActivity")]
-        public string LogDataActivity(ChangeLogModel changeLog)
+        public string LogDataActivity(DataActivityModel changeLog)
         {
             string success;
             try            
             {
-                using (var db = new OggleBoobleMSSqlContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dataAction = new ChangeLog();
-                    //dataAction.PkId = Guid.NewGuid().ToString();
+                    var dataAction = new MySqlDataContext.ChangeLog();
+                    dataAction.PkId = Guid.NewGuid().ToString();
+                    dataAction.VisitorId = changeLog.VisitorId;
                     dataAction.PageId = changeLog.PageId;
-                    dataAction.PageName = changeLog.PageName;
+                    dataAction.ActivityCode = changeLog.ActivityCode;
                     dataAction.Activity = changeLog.Activity;
                     dataAction.Occured = DateTime.Now;
                     db.ChangeLogs.Add(dataAction);

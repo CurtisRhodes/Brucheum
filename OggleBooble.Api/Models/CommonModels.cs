@@ -70,14 +70,14 @@ namespace OggleBooble.Api.Models
         public string ErrorMessage { get; set; }
         public string CalledFrom { get; set; }
     }
-    public class ChangeLogModel
+    public class DataActivityModel
     {
-        public int PkId { get; set; }
+        public string PkId { get; set; }
         public int PageId { get; set; }
-        public string PageName { get; set; }
+        public string ActivityCode { get; set; }
         public string Activity { get; set; }
+        public string VisitorId { get; set; }
         public DateTime Occured { get; set; }
-        public bool StaticRebuild { get; set; }
     }
     public class LogActivityModel
     {

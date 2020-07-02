@@ -113,14 +113,21 @@ function resizePage() {
     // or using “transform” along with “transform - origin: 0 0”.album.html
 
     // set page width
-    var winW = $(window).width();
-    var lcW = $('.leftColumn').width();
-    var rcW = $('.rightColumn').width();
+    let winW = $(window).width();
+    let lcW = $('.leftColumn').width();
+    let rcW = $('.rightColumn').width();
     $('.middleColumn').width(winW - lcW - rcW);
+
     //set page height
+    let winH = $(window).height();
+    let headerH = $('header').height() + 50;
+    $('.threeColumnLayout').css("min-height", winH - headerH);
+
+
     //var winH = $(window).height();
     //var headerH = $('header').height();
     //$('.middleColumn').height(winH - headerH);
+    mediaSavyHdrResize();
 }
 
 function letemPorn(response, pornType, pageId) {
@@ -316,10 +323,8 @@ function logDataActivity(changeLogModel) {
         success: function (success) {
             if (success === "ok") {
               //  displayStatusMessage("ok", "activity" + changeLogModel.Activity + " logged");
-                if (typeof resume === 'function') {
-                    resume();
-                }
                 if (typeof doneLoggingDataActivity === 'function') {
+                    //alert("doneLoggingDataActivity()");
                     doneLoggingDataActivity();
                 }
             }

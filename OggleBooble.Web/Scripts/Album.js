@@ -1,9 +1,4 @@
-﻿let apFolderName,
-    apFolderRoot,
-    apFolderId,
-    deepChildCount = 0,
-    aapiVisitorId,
-    apFolderType;
+﻿let apFolderName, apFolderRoot, apFolderId, deepChildCount = 0, aapiVisitorId, apFolderType;
 
 function loadAlbum(folderId) {
     aapiVisitorId = getCookieValue("VisitorId");
@@ -178,7 +173,7 @@ function processImages(albumImageInfo) {
         let imgSrc = settingsImgRepo + "/" + obj.FileName;
         let imageHtml = "<div class='" + imageFrameClass + "'>\n" +
             "<img id='" + obj.LinkId + "' class='thumbImage'\n" +
-            " onerror='galleryImageError(\"" + obj.LinkId + "\")'\n" +
+            " onerror='galleryImageError(\"" + obj.LinkId + "\",\"" + obj.SrcId + "\")'\n" +
             " alt='" + obj.LinkId + "'\n" +
             " oncontextmenu='albumContextMenu(\"Image\",\"" + obj.LinkId + "\"," + apFolderId + ",\"" + imgSrc + "\")'\n" +
             " onclick='launchViewer(" + obj.Id + ",\"" + obj.LinkId + "\",false)'\n" +
@@ -212,14 +207,15 @@ function processImages(albumImageInfo) {
     //$('#footerMessage').html(": " + imagesModel.Files.length);
 }
 
-function galleryImageError(linkId) {
+function galleryImageError(linkId, imgSrc) {
     //alert("galleryImageError: " + linkId);
     //$(this).attr('src', "Images/redballon.png");
-    $('#' + linkId).attr('src', "Images/redballon.png"); 
+    $('#' + linkId).attr('src', "Images/redballon.png");
     logDataActivity({
+        VisitorId: getCookieValue("VisitorId"),
+        ActivityCode: "IEG",
         PageId: apFolderId,
-        PageName: apFolderName,
-        Activity: linkId
+        Activity: imgSrc
     });
 }
 
@@ -229,8 +225,9 @@ function subFolderImgError(linkId, folderId) {
     // get error info
     //alert("subDirImg Error PageId: " + folderId + ",\nDirectoryName: " + apFolderRoot + "/" + currentAlbumJSfolderName + ",\nActivity: " + linkId);
     logDataActivity({
+        VisitorId: getCookieValue("VisitorId"),
+        ActivityCode: "IME",
         PageId: folderId,
-        PageName: apFolderRoot + "/" + apFolderName,
         Activity: linkId
     });
 }

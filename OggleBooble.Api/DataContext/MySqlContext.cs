@@ -37,6 +37,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<ErrorLog> ErrorLogs { get; set; }
         public virtual DbSet<IpInfoCall> IpInfoCalls { get; set; }
         public virtual DbSet<TrackbackLink> TrackbackLinks { get; set; }
+        public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
 
         public virtual DbSet<VwDirTree> VwDirTrees { get; set; }
         public virtual DbSet<VwLink> VwLinks { get; set; }
@@ -51,6 +52,18 @@ namespace OggleBooble.Api.MySqlDataContext
 
         public virtual DbSet<ImageComment> ImageComments { get; set; }
 
+    }
+
+    [Table("OggleBooble.ChangeLog")]
+    public class ChangeLog
+    {
+        [Key]
+        public string PkId { get; set; }
+        public int PageId { get; set; }
+        public string ActivityCode { get; set; }
+        public string Activity { get; set; }
+        public string VisitorId { get; set; }
+        public DateTime Occured { get; set; }
     }
 
     [Table("OggleBooble.ImageComment")]
@@ -502,7 +515,8 @@ namespace OggleBooble.Api.MySqlDataContext
         public string FolderParentName { get; set; }
         public int FolderParentId { get; set; }
         public string FolderGPName { get; set; }
-        public int FolderGPId { get; set; }
+        public string FirstChild { get; set; }
+        public int FolderGPId { get; set; }        
         public int ImageFolderId { get; set; }
         public string ImageFolderName { get; set; }
         public string ImageFolderParentName { get; set; }

@@ -15,7 +15,7 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     //"<div id='slideshowCtxMenuContainer' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>" +
     //"   <div id='slideshowContextMenuContent'></div>\n" +
     //"</div>\n" +
-    if (menuType === "Slideshow") {
+    if (pMenuType === "Slideshow") {
         $('#slideshowCtxMenuContainer').css("top", pos.y);
         $('#slideshowCtxMenuContainer').css("left", pos.x);
         $('#slideshowCtxMenuContainer').fadeIn();
@@ -164,6 +164,7 @@ function ctxGetFolderDetails() {
                 $('#ctxInfo').html("folder details");
                 $('#ctxTags').html("folder tags");
                 $('#ctxSeeMore').hide();
+                $('#ctxShowLinks').hide();
                 $('#contextMenuContent').fadeIn();
                 $('#ctxModelName').html(folderDetails.FolderName);
 
@@ -239,7 +240,13 @@ function contextMenuAction(action) {
             rtpe("SEE", pFolderId, pFolderName, pModelFolderId);
             break;
         case "comment":
+            if (pMenuType === "Slideshow") {
+                closeViewer("showImageCommentDialog");
+            }
             if (pFolderType.indexOf("singleModel") > -1) {
+
+                // alert("showImageCommentDialog(pLinkId: " + pLinkId + ",\npImgSrc: " + pImgSrc + ", pFolderId: " + pFolderId);
+
                 showImageCommentDialog(pLinkId, pImgSrc, pFolderId, "ImageContextMenu");
             }
             if (pFolderType.indexOf("assorterd") > -1) {
