@@ -870,40 +870,7 @@ function moveFolder() {
 }
 
 // COPY FOLDER
-function showCopyFolderDialog() {
-    $('#copyFolderCrud').dialog({
-        autoOpen: true,
-        show: { effect: "fade" },
-        hide: { effect: "blind" },
-        width: "600"
-    });
-    $('#copyFolderCrud').on('dialogclose', function (event) {
-        buildDirectoryTree();
-        //$('#copyFolderCrud').hide();
-    });
-    $('#copyFolderParentDirTree').dialog({
-        autoOpen: false,
-        show: { effect: "fade" },
-        hide: { effect: "blind" },
-        position: { my: 'right', at: 'left', of: $('#copyFolderCrud') },
-        width: "400",
-        height: "550"
-    });
-    buildDirTree($('#copyFolderParentDirTree'), 'copyFolderParent', 0);
-}
-var copyFolderSelectedParentId = 0;
-function copyFolderParentClick(path, id) {
-    var displayPath = "";
-    if (path.length > path.indexOf(".COM") + 4) {
-        displayPath = path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " ");
-    }
-    else {
-        displayPath = path;
-    }
-    copyFolderSelectedParentId = id;
-    $('#txtCopyFolderParent').val(displayPath);
-    $('#copyFolderParentDirTree').dialog("close");
-}
+
 function copyFolder() {
     $('#dataifyInfo').show().html("Copying Folder");
     //$('#progressBar').show();

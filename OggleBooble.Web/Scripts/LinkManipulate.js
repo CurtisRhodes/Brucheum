@@ -1,9 +1,100 @@
-﻿function CopyLink() {
+﻿let pCopyLinkDestinationFolderId;
+
+function showLinkManipulateDialog() {
+    //$('#draggableDialog').css("top", pos.y);
+    //$('#draggableDialog').css("left", pos.x);
+    return "<div class='oggleDialogWindow'>\n" +
+        "    <div class='inline'><img id='copyDialogImage' class='copyDialogImage'/></div>\n" +
+        "    <div id='dirTreeResults' class='pusedoTextBox'></div>\n" +
+        "    <div class='inline'><img class='moveDialogDirTreeButton' src='/Images/caretDown.png' onclick='$('#moveDialogDirTree').show()' /></div>\n" +
+        "    <br />\n" +
+        "    <div id='linkManipulateDirTree' class='hideableDropDown'><div><div</div>\n" +
+        "    <div id='linkManipulateClick'></div>\n" +
+        "</div>";
+}
+
+function showCopyLinkDialog(linkId, sourceFileId) {
+    //alert("showCopyLinkDialog linkId: " + linkId + ", sourceFileId: " + sourceFileId);
+    $('#oggleDialogTitle').html("Copy Link");
+    $('#draggableDialogContents').html(showLinkManipulateDialog());
+    $('#draggableDialog').fadeIn();
+    $('#linkManipulateClick').html("<div class='roundendButton' onclick='perfomCopyLink(\"" +
+        linkId + "\"," + sourceFileId + ")'>Copy</div>");
+
+    $('#linkManipulateDirTree').html("<img class='ctxloadingGif' src='Images/loader.gif'/>");
+    loadDirectoryTree(1, "linkManipulateDirTree");
+
+    //showMoveCopyDialog("Archive", pLinkId, pFolderId);
+    //showMoveCopyDialog("Copy", pLinkId, albumFolderId);
+    //showMoveCopyDialog("Move", pLinkId, pFolderId);
+    //removeImage();
 
 }
+
+function copyDirTreeClick(path, id, treeId) {
+    alert("copyDirTreeClick path: " + path + ", id: " + id + ", treeId: " + treeId);
+    pCopyLinkDestinationFolderId = id;
+
+    //function moveCopyArchiveDialogDirTreeClick(path, id, treeId) {
+    //    //if (treeId == "moveDialogDirTree") {
+    //    MoveCopyImageModel.DestinationFolderId = id;
+    //    $('#moveDialogDirTree').hide();
+    //    if (path.length > path.indexOf(".COM") + 4)
+    //        $('#dirTreeResults').html(path.substring(path.indexOf(".COM") + 5).replace(/%20/g, " "));
+    //    else
+    //        $('#dirTreeResults').html(path);
+    //    //}
+    //    ///else
+    //    //    alert("moveDialogDirTreeClick treeId: " + treeId);
+    //}
+}
+
+function perfomCopyLink(linkId) {
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/Links/AddLink?linkId=" + linkId + "&destinationId=" + pCopyLinkDestinationFolderId,
+        success: function (success) {
+            if (success === "ok") {
+
+
+                logActivity({
+                    PageId: folderId,
+                    PageName: folderName,
+                    Activity: "link removed " + linkId
+                });
+            }
+            else {
+                if (document.domain === "localhost")
+                    alert("perfomCopyLink AJQ: " + success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "BUG",
+                        Severity: 1,
+                        ErrorMessage: success,
+                        CalledFrom: "perfomCopyLink"
+                    });
+            }
+        },
+        error: function (xhr) {
+            var errorMessage = getXHRErrorDetails(xhr);
+            if (!checkFor404(errorMessage, "removeImage")) {
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "XHR",
+                    Severity: 1,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "Album.js removeImage"
+                });
+                //sendEmailToYourself("XHR ERROR IN ALBUM.JS remove image", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + linkId + " Message: " + errorMessage);
+            }
+        }
+    });
+}
+
 function MoveImageLocation() {
-
 }
+
 function RenameFile() {
 
 }
@@ -92,10 +183,9 @@ function showMoveCopyDialog(action, selectedImage, folderId) {
     $('#oggleDialogTitle').html(action + " Image Link");
     $('#draggableDialogContents').html(moveCopyArchiveHTML());
 
-
     var startNode = 0;
-    if (mode === "Archive")
-        startNode = 3822;
+    if (mode === "Archive") startNode = 3822;
+
     if ($('#moveDialogDirTree').children().length < 1) {
         $('#mcaLoagingGif').hide();
         buildDirTree($('#moveDialogDirTree'), "moveCopyArchiveDialogDirTreeClick", startNode);
@@ -215,14 +305,6 @@ function removeImageDialogHTML() {
 
 
 function moveCopyArchiveHTML() {
-    return "<div id='moveCopyDialog' class='oggleDialogWindow' title=''>\n" +
-        "    <div class='inline'><img id='copyDialogImage' class='copyDialogImage' /></div>\n" +
-        "    <div id='dirTreeResults' class='pusedoTextBox'></div>\n" +
-        "    <div class='inline'><img class='moveDialogDirTreeButton' src='/Images/caretDown.png' onclick='$('#moveDialogDirTree').show()' /></div>\n" +
-        "    <br />\n" +
-        "    <div id='moveDialogDirTree' class='hideableDropDown'></div>\n" +
-        "    <div id='btnGo' class='roundendButton' onclick='nonFtpMoveCopy()'>Copy</div>\n" +
-        "</div>";
 }
 
 function moveCopyDialogDirTreeClick(path, id, treeId) {

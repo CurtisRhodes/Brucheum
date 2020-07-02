@@ -49,9 +49,21 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<VwImageHit> VwImageHits { get; set; }
         public virtual DbSet<VwErrorReport> VwErrorReportRows { get; set; }
 
+        public virtual DbSet<ImageComment> ImageComments { get; set; }
+
     }
 
-
+    [Table("OggleBooble.ImageComment")]
+    public partial class ImageComment
+    {
+        [Key]
+        public string Id { get; set; }
+        public string CommentTitle { get; set; }
+        public string CommentText { get; set; }
+        public string ImageLinkId { get; set; }
+        public string VisitorId { get; set; }
+        public DateTime Posted { get; set; }
+    }
     [Table("OggleBooble.CategoryFolder")]
     public partial class VirtualFolder
     {

@@ -325,7 +325,7 @@ function logDataActivity(changeLogModel) {
             }
             else {
                 if (document.domain === "localhost")
-                    alert("logDataActivity: " + success);
+                    alert("logDataActivity JQE: " + success);
                 else
                     logError({
                         VisitorId: getCookieValue("VisiorId"),
@@ -342,7 +342,7 @@ function logDataActivity(changeLogModel) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "logActivity")) {
                 if (document.domain === "localhost")
-                    alert("logDataActivity: " + errorMessage);
+                    alert("logDataActivity XHR: " + errorMessage);
                 else
                     logError({
                         VisitorId: getCookieValue("VisiorId"),
@@ -389,20 +389,6 @@ function getFileDate() {
      
 
 
-}
-
-function XXshowCatListDialog(startFolder) {
-    buildDirTree($('#indexCatTreeContainer'), "indexCatTreeContainer", startFolder);
-    $('#indexCatTreeContainer').dialog({
-        autoOpen: false,
-        show: { effect: "fade" },
-        hide: { effect: "blind" },
-        position: { my: 'left top', at: 'left top', of: $('#middleColumn') },
-        width: 500,
-        height: 800
-    });
-    $('#indexCatTreeContainer').dialog('open');
-    $('#indexCatTreeContainer').dialog('option', 'title', subdomain);
 }
 
 function indexCatTreeContainerClick(path, id, treeId) {

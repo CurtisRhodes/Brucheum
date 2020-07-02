@@ -1,18 +1,14 @@
-﻿var blogComment = {};
+﻿var imageComment = {};
 
-function showImageCommentDialog(link, linkId, folderId, folderName, calledFrom) {
+function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
    
-    //alert("showImageCommentDialog. LinkId: " + linkId + " called From: " + calledFrom);
+    //alert("imageCommentDialog. LinkId: " + linkId + " called From: " + calledFrom);
     $('#draggableDialogContents').html(imageCommentDialogHtml());
 
-    blogComment.Id = 0;
-    blogComment.folderName = folderName;
-    blogComment.CalledFrom = calledFrom;
-    blogComment.FolderId = folderId;
-    blogComment.LinkId = linkId;
-    blogComment.Link = link;
+    imageComment.VisitorId = getCookieValue("VisitorId");
+    imageComment.ImageLinkId = linkId;
 
-    $('#commentDialogImage').attr("src", link);
+    $('#commentDialogImage').attr("src", imgSrc);
     $('#draggableDialog').css("top", $('.oggleHeader').height() - 50);
     $('#oggleDialogTitle').html("Write a fantasy about this image");
 
@@ -39,7 +35,6 @@ function showImageCommentDialog(link, linkId, folderId, folderName, calledFrom) 
     //CMX	Show Model Info Dialog
     reportEvent("SID", calledFrom, "LinkId: " + linkId, folderId);
 
-    //alert("showImageCommentDialog SHOW");
     $("#draggableDialog").fadeIn();
 
     //innocent young girl with an enormous set of knockers.She doesn't mind showing them, but it's like she's doing you a favor.
@@ -49,13 +44,13 @@ function loadComment() {
     /// retreive user's previous comment
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/OggleBlog?linkId=" + blogComment.LinkId + "&userId=" + getCookieValue("VisitorId"),
+        url: settingsArray.ApiServer + "/api/OggleBlog?linkId=" + imageComment.LinkId + "&userId=" + getCookieValue("VisitorId"),
         success: function (comment) {
             if (comment.Success === "ok") {
                 if (comment.Id !== 0) {
                     $('#imageCommentEditor').summernote('code', comment.CommentText);
                     $('#txtCommentTitle').val(comment.CommentTitle);
-                    blogComment.Id = comment.Id;
+                    imageComment.Id = comment.Id;
                     $('#divSaveFantasy').html("edit");
                 }
             }
@@ -89,11 +84,21 @@ function loadComment() {
     });
 }
 
+    //public partial class ImageComment {
+    //[Key]
+    //public string Id { get; set; }
+    //    public string CommentTitle { get; set; }
+    //    public string CommentText { get; set; }
+    //    public string ImageLinkId { get; set; }
+    //    public string VisitorId { get; set; }
+    //    public DateTime Posted { get; set; }
+    //}
+
+
 function saveComment() {
-    blogComment.UserId = getCookieValue("VisitorId");
-    blogComment.CommentType = "CMT";
-    blogComment.CommentTitle = $('#txtCommentTitle').val();
-    blogComment.CommentText = $('#imageCommentEditor').summernote('code');
+    imageComment.CommentTitle = $('#txtCommentTitle').val();
+    imageComment.CommentText = $('#imageCommentEditor').summernote('code');
+
     if ($('#divSaveFantasy').html() === "save")
         addImageComment();
     else
@@ -103,20 +108,17 @@ function saveComment() {
 function addImageComment() {
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/Blog/Insert",
-        data: blogComment,
-        success: function (successModel) {
-            alert("successModel: " + successModel);
-            if (successModel.Success === "ok") {
+        url: settingsArray.ApiServer + "api/ImageComment/Add",
+        data: imageComment,
+        success: function (success) {
+            if (success === "ok") {
                 displayStatusMessage("ok", "Entry Added");
-                blogComment.Id = successModel.ReturnValue;
                 $('#divSaveFantasy').html("edit");
                 $('#divCloseantasy').html("done");
                 //FCC	Fantasy comment
                 //SID	show Image Comment Dialog
                 //CMX	Show Model Info Dialog
-                reportEvent("FCC", calledFrom, "LinkId: " + blogComment.LinkId, blogComment.FolderId);
-
+                //reportEvent("FCC", calledFrom, "LinkId: " + blogComment.LinkId, blogComment.FolderId);
             }
             else {
                 if (document.domain === "localhost") alert("AJX addImageComment: " + successModel.Success);
@@ -132,7 +134,7 @@ function addImageComment() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "editImageComment")) {
+            if (!checkFor404(errorMessage, "addImageComment")) {
                 if (document.domain === "localhost") alert("XHR editImageComment: " + errorMessage);
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
@@ -150,7 +152,7 @@ function addImageComment() {
 function editImageComment() {
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "api/Blog/Update",
+        url: settingsArray.ApiServer + "api/ImageComment/Update",
         data: blogComment,
         success: function (success) {
             if (success === "ok") {
@@ -186,7 +188,7 @@ function editImageComment() {
 }
 
 function imageCommentDialogHtml() {
-    return "<div id='imageCommentDialog'>\n" +
+    return "<div class='imageCommentDialogContainer'>\n" +
         "    <div id='divStatusMessage'></div>\n" +
         "    <div class='center'><img id='commentDialogImage' class='commentDialogImage'/></div>\n" +
         "    <div><input id='txtCommentTitle' class='roundedInput commentTitleText' tabindex='1' placeholder='Give your comment a title' /></div>\n" +

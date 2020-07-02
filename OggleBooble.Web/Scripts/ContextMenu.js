@@ -1,11 +1,4 @@
-﻿let pImgSrc,
-    pLinkId,
-    pFolderId,
-    pFolderName,
-    pFolderType,
-    pModelFolderId,
-    pMenuType,
-    pos = {};
+﻿let pImgSrc, pLinkId, pFolderId, pFolderName, pFolderType, pModelFolderId, pMenuType, pos = {};
 
 function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     event.preventDefault();
@@ -34,18 +27,18 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
         $('#contextMenuContainer').fadeIn();
         $('#contextMenuContent').html(contextMenuHtml())
     }
-   
+
     $('#ctxSeeMore').hide();
     $('#ctxModelName').html("<img class='ctxloadingGif' src='Images/loader.gif'/>");
     $('.ogContextMenu').draggable();
 
     if (pMenuType === "Folder")
-        ctxgetFolderDetails();
+        ctxGetFolderDetails();
     else
         getImageDetails();
 
     $('.adminLink').hide();
-    //if (isInRole("Oggle admin")) $('.adminLink').show();
+    if (isInRole("Oggle admin")) $('.adminLink').show();
 }
 
 $('.contextMenuContent').mouseover(function (e) {
@@ -80,16 +73,16 @@ function getImageDetails() {
                 //}
                 $('#ctxModelName').html("unhandled");
                 //alert("bug 1");
-                if (Number(imageInfo.ModelFolderId) !== Number(pFolderId)) {
+                if (Number(pModelFolderId) !== Number(pFolderId)) {
                     $('#ctxModelName').html(imageInfo.ModelFolderName);
                     $('#ctxSeeMore').show();
                 }
                 else {                    
-                    if (imageInfo.FolderType.indexOf("singleModel") > -1) {
+                    if (pFolderType.indexOf("singleModel") > -1) {
                         $('#ctxModelName').html(pFolderName);
                         $('#ctxSeeMore').hide();
                     }
-                    if (imageInfo.FolderType.indexOf("assorterd") > -1) {
+                    if (pFolderType.indexOf("assorterd") > -1) {
                         $('#ctxModelName').html("unknown model");
                         $('#ctxSeeMore').hide();
                     }
@@ -150,7 +143,7 @@ function getImageDetails() {
     });
 }
 
-function ctxgetFolderDetails() {
+function ctxGetFolderDetails() {
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/CatFolder/GetFolderInfo?folderId=" + pFolderId,
@@ -160,19 +153,8 @@ function ctxgetFolderDetails() {
                 folderInfo = folderDetails;
                 //$('#oggleDialogTitle').html(folderDetails.FolderName);
                 //$('#modelDialogThumbNailImage').attr("src", folderDetails.FolderImage);
-                //$('#txtFolderName').val(folderDetails.FolderName);
-                //$('#txtBorn').val(dateString(folderDetails.Birthday));
-                //$('#txtHomeCountry').val(folderDetails.HomeCountry);
-                //$('#txtHometown').val(folderDetails.HomeTown);
-                //$('#txtBoobs').val(((folderDetails.Boobs) ? "fake" : "real"));
-                //$('#txtMeasurements').val(folderDetails.Measurements);
                 ////$('#txtStatus').val(folderDetails.LinkStatus);
-                //$("#summernoteContainer").summernote("code", folderInfo.FolderComments);
-                //$('#imagePageLoadingGif').hide();
-                //$("#draggableDialog").fadeIn();
-
-                //determine view
-                //pFolderLinkId = imageInfo.Link;
+                $("#summernoteContainer").summernote("code", folderInfo.FolderComments);
                 pFolderName = folderDetails.FolderName;
                 //pModelFolderId = imageInfo.ModelFolderId;
                 pFolderType = folderDetails.FolderType;
@@ -183,63 +165,37 @@ function ctxgetFolderDetails() {
                 $('#ctxTags').html("folder tags");
                 $('#ctxSeeMore').hide();
                 $('#contextMenuContent').fadeIn();
+                $('#ctxModelName').html(folderDetails.FolderName);
 
-                //switch (folderInfo.FolderType) {
-                //    case "singleModelGallery":
-                //    case "singleModelCollection":
-                //        $('#modelInfoDetails').show();
-                //        break;
-                //    case "assorterdImagesCollection":
-                //    case "assorterdImagesGallery":
-                //        $('#modelInfoDetails').hide();
-                //        break;
-                //}
-
+                //alert("FolderTypeF: " + pFolderType);
                 $('#aboveImageContainerMessageArea').html("FolderTypeF: " + pFolderType);
-                //$('#aboveImageContainerMessageArea').html("FolderType2: " + folderInfo.FolderType);
 
-                //if (Number(imageInfo.ModelFolderId) !== Number(pFolderId)) {
-                //    $('#ctxModelName').html(imageInfo.ModelFolderName);
-                //}
-                //else {
-                //    if (imageInfo.FolderType.indexOf("singleModel") > -1) {
-                //        $('#ctxModelName').html(imageInfo.FolderName);
-                //    }
-                //    if (imageInfo.FolderType.indexOf("assorterd") > -1) {
-                //        $('#ctxModelName').html("unknown model");
-                //        $('#ctxSeeMore').hide();
-                //    }
-                //}
                 //$('#imageInfoLinkId').html(imageInfo.LinkId);
                 //$('#imageInfoInternalLink').html(imageInfo.Link);
                 //$('#imageInfoFolderLocation').html(imageInfo.FolderLocation);
-                ////api/Image/GetImageDetail
                 //$('#imageInfoHeight').html(imageInfo.Height);
                 //$('#imageInfoWidth').html(imageInfo.Width);
                 //$('#imageInfoLastModified').html(imageInfo.LastModified);
 
-                //alert("jQuery.isEmptyObject: " + jQuery.isEmptyObject(imageInfo.InternalLinks));
-                //if (jQuery.isEmptyObject(imageInfo.InternalLinks)) {
-                //    $('#ctxShowImageLinks').hide();
-                //    //$('#ctxShowImageLinks').html("no links");
-                //}
-                //else {
-                //    $('#otherLinksContainer').html("");
-                //    $.each(imageInfo.InternalLinks, function (idx, obj) {
-                //        //alert("<div><a href='/album.html?folder=" + idx + " target=\"_blank\"'>" + obj + "</a></div>");
-                //        $('#otherLinksContainer').append("<div><a href='/album.html?folder=" + idx + "' target='_blank'>" + obj + "</a></div>");
-                //    });
-                //}
+                // alert("jQuery.isEmptyObject: " + jQuery.isEmptyObject(folderDetails.InternalLinks));
+                if (jQuery.isEmptyObject(folderDetails.InternalLinks)) {
+                    $('#ctxShowImageLinks').hide();
+                }
+                else {
+                    $.each(folderDetails.InternalLinks, function (idx, obj) {
+                        $('#otherLinksContainer').append("<div><a href='/album.html?folder=" + idx + "' target='_blank'>" + obj + "</a></div>");
+                    });
+                }
             }
             else {
-                if (document.domain === "localhost") alert("imageInfo.Success: " + imageInfo.Success);
+                if (document.domain === "localhost") alert("folderDetails.Success: " + folderDetails.Success);
                 else
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "BUG",
                         Severity: 3,
-                        ErrorMessage: imageInfo.Success,
-                        CalledFrom: "imageCtx"
+                        ErrorMessage: folderDetails.Success,
+                        CalledFrom: "ctxGetFolderDetails"
                     });
             }
         },
@@ -247,14 +203,14 @@ function ctxgetFolderDetails() {
             var errorMessage = getXHRErrorDetails(xhr);
             if (!checkFor404()) {
                 if (document.domain === "localhost")
-                    alert("getImageDetails XHR: " + errorMessage);
+                    alert("ctxGetFolderDetails XHR: " + errorMessage);
                 else
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "XHR",
                         Severity: 1,
                         ErrorMessage: errorMessage,
-                        CalledFrom: "Album.js removeImage"
+                        CalledFrom: "ctxGetFolderDetails"
                     });
                 //sendEmailToYourself("XHR ERROR IN ALBUM.JS remove image", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + linkId + " Message: " + errorMessage);
             }
@@ -283,11 +239,13 @@ function contextMenuAction(action) {
             rtpe("SEE", pFolderId, pFolderName, pModelFolderId);
             break;
         case "comment":
+            if (pFolderType.indexOf("singleModel") > -1) {
+                showImageCommentDialog(pLinkId, pImgSrc, pFolderId, "ImageContextMenu");
+            }
+            if (pFolderType.indexOf("assorterd") > -1) {
+                showFolderCommentDialog(pFolderId);
+            }
             $("#contextMenuContainer").fadeOut();
-            if (pMenuType === "Folder")
-                showImageCommentDialog(pImgSrc, pLinkId, pFolderId, pFolderName, "ImageContextMenu");
-            else
-                showFolderCommentDialog(albumFolderId);
             break;
         case "explode":
             if (isLoggedIn()) {
@@ -317,8 +275,8 @@ function contextMenuAction(action) {
             showMoveCopyDialog("Archive", pLinkId, pFolderId);
             break;
         case "copy":
+            showCopyLinkDialog(pLinkId, pFolderId);
             $("#imageContextMenu").fadeOut();
-            showMoveCopyDialog("Copy", pLinkId, albumFolderId);
             break;
         case "move":
             $("#imageContextMenu").fadeOut();
@@ -346,6 +304,14 @@ function contextMenuAction(action) {
                     CalledFrom: "Album.js contextMenuAction"
                 });
     }
+}
+
+function showFolderCommentDialog() {
+
+    var visitorId = getCookieValue("VisitorId");
+
+    alert("showFolderCommentDialog()");
+
 }
 
 //function showLinks(pLinkId) {

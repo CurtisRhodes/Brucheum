@@ -15,8 +15,6 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class LinksController : ApiController
     {
-        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
-        private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
         static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
         //static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
@@ -99,8 +97,72 @@ namespace OggleBooble.Api.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("api/Links/AddLink")]
+        public string AddLink(string linkId, int destinationId)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    db.CategoryImageLinks.Add(new CategoryImageLink()
+                    {
+                        ImageCategoryId = destinationId,
+                        ImageLinkId = linkId,
+                        SortOrder = 1456
+                    });
+                    db.SaveChanges();
+                }
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+        private string DownLoadImage(string ftpPath, string link, string newFileName)
+        {
+            string success = "ok";
+            try
+            {
+                string extension = newFileName.Substring(newFileName.Length - 4);
+                string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
+                using (WebClient wc = new WebClient())
+                {
+                    wc.DownloadFile(new Uri(link), appDataPath + "tempImage" + extension);
+                }
+
+                FtpWebRequest webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
+                webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
+                webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                using (Stream requestStream = webRequest.GetRequestStream())
+                {
+                    byte[] fileContents = System.IO.File.ReadAllBytes(appDataPath + "tempImage" + extension);
+                    webRequest.ContentLength = fileContents.Length;
+                    requestStream.Write(fileContents, 0, fileContents.Length);
+                    requestStream.Flush();
+                    requestStream.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+    }
+
+    [EnableCors("*", "*", "*")]
+    public class RepairLinksController : ApiController
+    {
+        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+        private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
+
         [HttpGet]
-        [Route("api/Links/RepairLinks")]
+        [Route("api/RepairLinks/RepairLinks")]
         public RepairReportModel RepairLinks(int folderId, bool recurr)
         {
             RepairReportModel repairReport = new RepairReportModel();
@@ -110,7 +172,8 @@ namespace OggleBooble.Api.Controllers
                 {
                     CheckFolder(folderId, repairReport, db, recurr);
 
-                    if (repairReport.Success == "ok") {
+                    if (repairReport.Success == "ok")
+                    {
 
                         int test1 = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
                         RemoveLinks(repairReport.OrphanLinks);
@@ -125,6 +188,7 @@ namespace OggleBooble.Api.Controllers
             }
             return repairReport;
         }
+
         private void CheckFolder(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db, bool recurr)
         {
             try
@@ -132,7 +196,6 @@ namespace OggleBooble.Api.Controllers
                 VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                 string ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + dbCategoryFolder.FolderPath;
                 string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
-                repairReport.OrphanLinks = new List<string>();
                 var categoryImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
                 // 1. check for physicalFiles with no link
                 for (int i = 0; i < physcialFiles.Length; i++)
@@ -198,7 +261,6 @@ namespace OggleBooble.Api.Controllers
                 return;
             }
         }
-
         private string RemoveLinks(List<string> orphanLinks)
         {
             string success;
@@ -223,7 +285,6 @@ namespace OggleBooble.Api.Controllers
             }
             return success;
         }
-
         private void RepairLinksRecurr(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db)
         {
             try
@@ -286,41 +347,5 @@ namespace OggleBooble.Api.Controllers
             }
             catch (Exception ex) { repairReport.Success = Helpers.ErrorDetails(ex); }
         }
-
-        private string DownLoadImage(string ftpPath, string link, string newFileName)
-        {
-            string success = "ok";
-            try
-            {
-                string extension = newFileName.Substring(newFileName.Length - 4);
-                string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
-                using (WebClient wc = new WebClient())
-                {
-                    wc.DownloadFile(new Uri(link), appDataPath + "tempImage" + extension);
-                }
-
-                FtpWebRequest webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
-                webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
-                webRequest.Method = WebRequestMethods.Ftp.UploadFile;
-                using (Stream requestStream = webRequest.GetRequestStream())
-                {
-                    byte[] fileContents = System.IO.File.ReadAllBytes(appDataPath + "tempImage" + extension);
-                    webRequest.ContentLength = fileContents.Length;
-                    requestStream.Write(fileContents, 0, fileContents.Length);
-                    requestStream.Flush();
-                    requestStream.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-    }
-    [EnableCors("*", "*", "*")]
-    public class RemoveLinksController : ApiController
-    {
-
     }
 }

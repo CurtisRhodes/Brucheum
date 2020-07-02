@@ -162,7 +162,7 @@
 .oggleDialogContents {
     padding: 5px;
     height: 100%;
-    min-width: 120pk;
+    min-width: 500px;
     min-height: 120px;
     /*padding: 4px 8px;*/
 }

@@ -7,6 +7,10 @@ namespace OggleBooble.Api.Models
 {
     public class FolderDetailModel
     {
+        public FolderDetailModel()
+        {
+            InternalLinks = new Dictionary<int, string>();
+        }
         public int Id { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
@@ -14,7 +18,7 @@ namespace OggleBooble.Api.Models
         public string HomeCountry { get; set; }
         public string HomeTown { get; set; }
         public string Measurements { get; set; }
-        public string ExternalLinks { get; set; }
+        public Dictionary<int, string> InternalLinks { get; set; }
         public string FolderComments { get; set; }
         public string FolderImage { get; set; }
         public DateTime? Birthday { get; set; }

@@ -1,10 +1,11 @@
-﻿.commentDialogContentArea {
-    background-color: var(--oggleBackgroundColor);
+﻿
+.imageCommentDialogContainer {
+    min-width: 500px;
 }
 
 .commentDialogImage {
     max-width: 333px;
-    max-height: 333px;
+    max-height: 177px;
 }
 
 .commentDialogInstructions {

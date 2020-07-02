@@ -2,7 +2,6 @@
     apFolderRoot,
     apFolderId,
     deepChildCount = 0,
-    imgSrc,
     aapiVisitorId,
     apFolderType;
 
@@ -176,27 +175,27 @@ function processImages(albumImageInfo) {
     // IMAGES
     $.each(albumImageInfo.ImageLinks, function (idx, obj) {
         //imageFrameClass = "defaultImageFrame";
-        imgSrc = settingsImgRepo + "/" + obj.FileName;
+        let imgSrc = settingsImgRepo + "/" + obj.FileName;
         let imageHtml = "<div class='" + imageFrameClass + "'>\n" +
             "<img id='" + obj.LinkId + "' class='thumbImage'\n" +
             " onerror='galleryImageError(\"" + obj.LinkId + "\")'\n" +
             " alt='" + obj.LinkId + "'\n" +
-            " oncontextmenu='albumContextMenu(\"Image\",\"" + obj.LinkId + "\"," + apFolderId + ")'\n" +
+            " oncontextmenu='albumContextMenu(\"Image\",\"" + obj.LinkId + "\"," + apFolderId + ",\"" + imgSrc + "\")'\n" +
             " onclick='launchViewer(" + obj.Id + ",\"" + obj.LinkId + "\",false)'\n" +
             " src='" + imgSrc + "'/>\n";
         if (obj.Id !== obj.SrcId)
             imageHtml += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +
-                obj.SrcFolder + "' onclick='rtpe(\"SEE\",\"abc\",\"detail" + obj.SrcId + "\")' /></div>\n";
+                obj.SrcFolder + "' onclick='rtpe(\"SEE\",\"abc\",\"detail\"," + obj.SrcId + "\")' /></div>\n";
         imageHtml += "</div>\n";
         $('#imageContainer').append(imageHtml);
     });
 
     //  SUBFOLDERS 
     $.each(albumImageInfo.SubDirs, function (idx, subDir) {
-        imgSrc = settingsImgRepo + subDir.FolderImage;
+        let imgSrc = settingsImgRepo + subDir.FolderImage;
         $('#imageContainer').append("<div class='" + imageFrameClass + "'\n" +
 
-            " oncontextmenu='albumContextMenu(\"Folder\",\"" + subDir.LinkId + "\"," + subDir.FolderId + ")'\n" +
+            " oncontextmenu='albumContextMenu(\"Folder\",\"" + subDir.LinkId + "\"," + subDir.FolderId + ",\"" + imgSrc + "\")'\n" +
             " onclick='rtpe(\"SUB\"," + apFolderId + "," + subDir.IsStepChild + "," + subDir.FolderId + ")'>\n" +
             "<img id='" + subDir.LinkId + "' class='folderImage'\n" +
             "onerror='subFolderImgError(\"" + subDir.LinkId + "\"," + subDir.FolderId + ")\n' alt='Images/redballon.png'\n src='" + imgSrc + "'/>" +
@@ -236,7 +235,7 @@ function subFolderImgError(linkId, folderId) {
     });
 }
 
-function albumContextMenu(menuType, linkId, folderId) {
+function albumContextMenu(menuType, linkId, folderId, imgSrc) {
     pos.x = event.clientX;
     pos.y = event.clientY;
     showContextMenu(menuType, pos, imgSrc, linkId, folderId, apFolderName);
@@ -482,14 +481,6 @@ function slowlyShowFolderInfoDialog(folderId) {
             showFolderInfoDialog(folderId, "bc slowly");
         }
     }, 1800);
-}
-
-function showFolderCommentDialog() {
-
-    var visitorId = getCookieValue("VisitorId");
-
-    alert("showFolderCommentDialog()");
-
 }
 
 function loadImageListIntoLocalStorage() {

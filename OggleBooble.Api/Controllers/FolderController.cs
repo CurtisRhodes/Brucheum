@@ -39,7 +39,11 @@ namespace OggleBooble.Api.Controllers
                     folderDetailModel.FolderName = dbFolder.FolderName;
                     folderDetailModel.RootFolder = dbFolder.RootFolder;
                     folderDetailModel.FolderImage = fileName;
-
+                    folderDetailModel.InternalLinks = (from l in db.CategoryImageLinks
+                                                       join f in db.VirtualFolders on l.ImageCategoryId equals f.Id
+                                                       where l.ImageCategoryId == folderId && l.ImageCategoryId != folderId
+                                                       select new { folderId = f.Id, folderName = f.FolderName })
+                                                       .ToDictionary(i => i.folderId, i => i.folderName);
                     FolderDetail FolderDetails = db.FolderDetails.Where(d => d.Id == folderId).FirstOrDefault();
                     if (FolderDetails != null)
                     {

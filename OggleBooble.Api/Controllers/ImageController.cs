@@ -73,7 +73,6 @@ namespace OggleBooble.Api.Controllers
                                                where l.ImageLinkId == linkId && l.ImageCategoryId != folderId
                                                select new { folderId = f.Id, folderName = f.FolderName })
                                                .ToDictionary(i => i.folderId, i => i.folderName);
-
                 }
                 imageInfo.Success = "ok";
             }
@@ -542,6 +541,86 @@ namespace OggleBooble.Api.Controllers
             }
             return successModel;
         }
+        [HttpGet]
+        [Route("api/ImageComment/GetImageComment")]
+        public ImageCommentModel GetImageComment(string linkId)
+        {
+            var imageComment = new ImageCommentModel();
+            try
+            {
+            using (var db = new OggleBoobleMySqlContext())
+            {
+                imageComment = (from c in db.ImageComments
+                                join i in db.ImageFiles on c.ImageLinkId equals i.Id
+                                join f in db.VirtualFolders on i.FolderId equals f.Id
+                                select new ImageCommentModel()
+                                {
+                                    CommentId = c.Id,
+                                    CommentText = c.CommentText,
+                                    CommentTitle = c.CommentTitle,
+                                    ImageName = f.FolderPath + "/" + i.FileName,
+                                    Posted = c.Posted
+                                }).Where(c => c.ImageLinkId == linkId).FirstOrDefault();
+                imageComment.Success = "ok";
+            }
 
+            }
+            catch (Exception ex)
+            {
+                imageComment.Success = Helpers.ErrorDetails(ex);
+            }
+            return imageComment;
+        }
+
+        [HttpPost]
+        [Route("api/ImageComment/Add")]
+        public string Add(ImageCommentModel imageCommentModel)
+        {
+            string success;
+            try
+            {
+                ImageComment imageComment = new ImageComment();
+                imageComment.Id = Guid.NewGuid().ToString();
+                imageComment.Posted = DateTime.Now;
+                imageComment.ImageLinkId = imageCommentModel.ImageLinkId;
+                imageComment.CommentText = imageCommentModel.CommentText;
+                imageComment.CommentTitle = imageCommentModel.CommentTitle;
+                imageComment.VisitorId = imageCommentModel.VisitorId;
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    db.ImageComments.Add(imageComment);
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+        [HttpPut]
+        [Route("api/ImageComment/Update")]
+        public string Update(ImageComment imageComment)
+        {
+            string success;
+            try
+            {
+                imageComment.Id = Guid.NewGuid().ToString();
+                imageComment.Posted = DateTime.Now;
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    db.ImageComments.Add(imageComment);
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
     }
 }

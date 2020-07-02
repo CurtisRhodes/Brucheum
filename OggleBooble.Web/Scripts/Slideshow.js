@@ -289,7 +289,6 @@ function slide(direction) {
                 $('#viewerImage').css("-webkit-transform", "translateX(2200px)");
                 $('#viewerImage').css("transform", "translateX(2200px)");
             }
-
             $('#viewerImage').attr("src", settingsImgRepo + imageViewerArray[imageViewerIndex].FileName);
             $('#viewerImageContainer').css('left', ($(window).width() - $('#viewerImage').width()) / 2);
             $('#viewerImage').show();
@@ -310,8 +309,7 @@ function slide(direction) {
 
 
                 $('.slideshowNavgArrows').css('visibility', 'visible').fadeIn();
-            }, 1100);
-            
+            }, 1100);            
         }, 450);
         //$('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
     } catch (e) {
@@ -388,8 +386,9 @@ function blowupImage() {
 }
 
 function showImageViewerCommentDialog() {
-    closeViewer("CommentDialog");
-    showImageCommentDialog(imageViewerArray[imageViewerIndex].FileName, imageViewerArray[imageViewerIndex].LinkId, "slideshow icon");
+    //closeViewer("CommentDialog");
+    //showImageCommentDialog(linkId, imgSrc, folderId, calledFrom)
+    showImageCommentDialog(imageViewerArray[imageViewerIndex].LinkId, imageViewerArray[imageViewerIndex].FileName, imageViewerFolderId, "slideshow icon");
 }
 
 function closeViewer(calledFrom) {

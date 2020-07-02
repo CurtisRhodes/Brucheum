@@ -5,6 +5,8 @@ function onDirTreeComplete() {
     $('#mcaLoagingGif').hide();
 }
 
+
+
 function loadMoveCopyArchiveDialog(mode, link, sourceFolderId) {
     MoveCopyImageModel.Mode = mode;
     MoveCopyImageModel.Link = link;

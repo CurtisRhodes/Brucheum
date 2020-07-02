@@ -139,6 +139,18 @@ namespace OggleBooble.Api.Models
         public string FolderType { get; set; }
         public string Success { get; set; }
     }
+
+    public class ImageCommentModel 
+    {
+        public string CommentId { get; set; }
+        public string CommentTitle { get; set; }
+        public string CommentText { get; set; }
+        public string ImageLinkId { get; set; }
+        public string VisitorId { get; set; }
+        public DateTime Posted { get; set; }
+        public string ImageName { get; set; }
+        public string Success { get; set; }
+    }
 }
 
 

@@ -1,5 +1,4 @@
-﻿var hdrFolderId, hdrSubdomain;
-var hdrRowW;
+﻿let hdrFolderId, hdrSubdomain, hdrRowW;
 
 function setOggleHeader(folderId, subdomain) {
     //if (getCookieValue("IpAddress") === "68.203.90.183") alert("setOggleHeader subdomain " + subdomain + "  folderId: " + folderId + " containsImageLinks: " + containsImageLinks);
@@ -102,7 +101,7 @@ function setHeaderDetails(folderId, subdomain) {
         }
         default: {
             if (document.domain === "localhost")
-                alert("switch case not handled. FolderId: " + folderId + ", Subdomain: " + subdomain);
+                alert("setHeaderDetails switch case not handled. FolderId: " + folderId + ", Subdomain: " + subdomain);
             else
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
@@ -333,6 +332,26 @@ function showResizeMessage(secMsg, row) {
     //    " hdrTopSecs: " + hdrTopRowSectionsW().toLocaleString());
 }
 
+function draggableDialogEnterDragMode() {
+    //$('#headerMessage').html("entering drag mode");
+    $('#draggableDialog').draggable({ disabled: false });
+    $('#draggableDialog').draggable();
+}
+function draggableDialogCancelDragMode() {
+    //$('#headerMessage').html("end drag");
+    $('#draggableDialog').draggable({ disabled: true });
+}
+function dragableDialogClose() {
+    $('#draggableDialog').fadeOut();
+    if (typeof resume === 'function')
+        resume();
+}
+
+//<img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
+// title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +
+// \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
+// \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
+
 function headerHtml(folderId, subdomain) {
     return "<div class='siteLogoContainer'>" +
         "       <a href='javascript:rtpe(\"HBC\"," + folderId + ",\"" + subdomain + "\"," + folderId + ")'>" +
@@ -384,10 +403,10 @@ function headerHtml(folderId, subdomain) {
         "<div class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
         "      <div id='draggableDialog' class='oggleDraggableDialog'>\n" +
-        "           <div id='draggableDialogHeader'class='oggleDialogHeader'"+
+        "           <div id='draggableDialogHeader'class='oggleDialogHeader'" +
         "                   onmousedown='draggableDialogEnterDragMode()' onmouseup='draggableDialogCancelDragMode()'>" +
         "               <div id='oggleDialogTitle' class='draggableDialogTitle'></div>" +
-        "               <div id='draggableDialogCloseButton' class='oggleDialogCloseButton'>"+
+        "               <div id='draggableDialogCloseButton' class='oggleDialogCloseButton'>" +
         "               <img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'/></div>\n" +
         "           </div>\n" +
         "           <div id='draggableDialogContents' class='oggleDialogContents'></div>\n" +
@@ -414,23 +433,3 @@ function headerHtml(folderId, subdomain) {
         "    <div onclick='rtpe(\"EPC\",\"hamburger\",\"" + subdomain + "\"," + 1132 + ")'>every Playboy Centerfold</div>\n" +
         "</div>\n";
 }
-
-function draggableDialogEnterDragMode() {
-    //$('#headerMessage').html("entering drag mode");
-    $('#draggableDialog').draggable({ disabled: false });
-    $('#draggableDialog').draggable();
-}
-function draggableDialogCancelDragMode() {
-    //$('#headerMessage').html("end drag");
-    $('#draggableDialog').draggable({ disabled: true });
-}
-function dragableDialogClose() {
-    $('#draggableDialog').fadeOut();
-    if (typeof resume === 'function')
-        resume();
-}
-
-//<img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
-// title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +
-// \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
-// \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
