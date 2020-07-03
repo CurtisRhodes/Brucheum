@@ -189,11 +189,10 @@ function processImages(albumImageInfo) {
     $.each(albumImageInfo.SubDirs, function (idx, subDir) {
         let imgSrc = settingsImgRepo + subDir.FolderImage;
         $('#imageContainer').append("<div class='" + imageFrameClass + "'\n" +
-
             " oncontextmenu='albumContextMenu(\"Folder\",\"" + subDir.LinkId + "\"," + subDir.FolderId + ",\"" + imgSrc + "\")'\n" +
             " onclick='rtpe(\"SUB\"," + apFolderId + "," + subDir.IsStepChild + "," + subDir.FolderId + ")'>\n" +
             "<img id='" + subDir.LinkId + "' class='folderImage'\n" +
-            "onerror='subFolderImgError(\"" + subDir.LinkId + "\"," + subDir.FolderId + ")\n' alt='Images/redballon.png'\n src='" + imgSrc + "'/>" +
+            "onerror='subFolderImgError(\"" + subDir.FolderId + "\"," + imgSrc + ")\n' alt='Images/redballon.png'\n src='" + imgSrc + "'/>" +
             "<div class='" + labelClass + "'>" + subDir.DirectoryName + "</div><span Id='fc" + subDir.FolderId + "'> ...</span></div>");
 
         //rtpe('SUB',"\"+ apFolderId+"\",\"", subFolderPreClickFolderId);
@@ -219,16 +218,16 @@ function galleryImageError(linkId, imgSrc) {
     });
 }
 
-function subFolderImgError(linkId, folderId) {
+function subFolderImgError(folderId, imgSrc) {
     // $('#' + objSubDir.LinkId).attr('src', "Images/redballon.png");
 
     // get error info
-    //alert("subDirImg Error PageId: " + folderId + ",\nDirectoryName: " + apFolderRoot + "/" + currentAlbumJSfolderName + ",\nActivity: " + linkId);
+    alert("subDirImg Error PageId: " + folderId + ",\nDirectoryName: " + apFolderRoot + ",\nimgSrc: " + imgSrc);
     logDataActivity({
         VisitorId: getCookieValue("VisitorId"),
-        ActivityCode: "IME",
+        ActivityCode: "IMS",
         PageId: folderId,
-        Activity: linkId
+        Activity: imgSrc
     });
 }
 
