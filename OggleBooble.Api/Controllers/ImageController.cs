@@ -66,7 +66,7 @@ namespace OggleBooble.Api.Controllers
                     imageInfo.Height = dbImageFile.Height;
                     imageInfo.Width = dbImageFile.Width;
                     imageInfo.LastModified = dbImageFile.Acquired.ToShortDateString();
-                    imageInfo.FileName = dbImageFile.FileName;
+                    imageInfo.FileName = dbPageFolder.FolderPath + "/" + dbImageFile.FileName;
                     imageInfo.ExternalLink = dbImageFile.ExternalLink;
                     imageInfo.InternalLinks = (from l in db.CategoryImageLinks
                                                join f in db.VirtualFolders on l.ImageCategoryId equals f.Id
@@ -221,98 +221,6 @@ namespace OggleBooble.Api.Controllers
                 successModel.Success = Helpers.ErrorDetails(ex);
             }
             return successModel;
-        }
-
-        private string FtpMove(string currentFileName, MoveCopyImageModel model)
-        {
-            string success;
-            string linkId = model.LinkId;
-            using (var db = new OggleBoobleMySqlContext())
-            {
-                ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == linkId).FirstOrDefault();
-                if (dbImageFile == null)
-                {
-                    return "link [" + linkId + "] not found";
-                }
-                //imageLinkId = dbImageFile.Id;
-
-                // ? physcially more and rename .jpg 
-                VirtualFolder dbSourceFolder = db.VirtualFolders.Where(f => f.Id == model.SourceFolderId).First();
-                VirtualFolder dbDestinationFolder = db.VirtualFolders.Where(f => f.Id == model.DestinationFolderId).First();
-                //string currentFileName = dbImageFile.FileName;
-               string newFileName = dbSourceFolder.FolderName + "_" + linkId;
-                string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName;
-                string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.SourceFolderId) + newFileName;
-
-                if (!FtpUtilies.DirectoryExists(destinationFtpPath))
-                    FtpUtilies.CreateDirectory(destinationFtpPath);
-
-                success = FtpUtilies.MoveFile(sourceFtpPath + "/" + dbImageFile.FileName, destinationFtpPath + "/" + newFileName);
-                if (success == "ok")
-                {
-                    #region move file on local drive 
-                    string localDestinationPath = "";
-                    try
-                    {
-                        string localServerPath = "F:/Danni/";
-                        string localSourcePath = localServerPath + Helpers.GetLocalParentPath(model.SourceFolderId) + dbSourceFolder.FolderName + "/" + dbImageFile.FileName;
-                        //dbSourceFolder.FolderName + "_" + dbImageLink.Id + extension;
-                        localDestinationPath = localServerPath + Helpers.GetLocalParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName;
-                        FileInfo localFile = new FileInfo(localSourcePath);
-                        DirectoryInfo directoryInfo = new DirectoryInfo(localDestinationPath);
-                        if (!directoryInfo.Exists)
-                            directoryInfo.Create();
-                        localFile.MoveTo(localDestinationPath + "/" + newFileName);
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine("move file on local drive : " + Helpers.ErrorDetails(ex) + " " + localDestinationPath);
-                    }
-                    #endregion
-
-                    //2. update ImageFile
-                    //string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
-                    //newInternalLink = linkPrefix + Helpers.GetParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName + "/" + newFileName;
-                    //var goDaddyrow = db.ImageLinks.Where(g => g.Id == dbImageLink.Id).FirstOrDefault();
-                    var oldCatImageLink = db.CategoryImageLinks
-                         .Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == dbImageFile.Id).First();
-                    db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
-                    {
-                        ImageCategoryId = model.DestinationFolderId,
-                        ImageLinkId = dbImageFile.Id,
-                        SortOrder = oldCatImageLink.SortOrder
-                    });
-                    db.SaveChanges();
-                    if (model.Mode == "Move")
-                    {
-                        db.CategoryImageLinks.Remove(oldCatImageLink);
-                    }
-                    db.SaveChanges();
-                }
-                return success;
-            }
-        }
-
-        private string LocalRepoMove(MoveCopyImageModel model)
-        {
-            string localDestinationPath = "";
-            try
-            {
-                string localServerPath = "F:/Danni/";
-                string localSourcePath = localServerPath + Helpers.GetLocalParentPath(model.SourceFolderId) + model.SourceFolderName; // + "/" + dbImageFile.FileName;
-                //dbSourceFolder.FolderName + "_" + dbImageLink.Id + extension;
-                localDestinationPath = localServerPath + Helpers.GetLocalParentPath(model.DestinationFolderId) + model.DestinationFolderName;
-                FileInfo localFile = new FileInfo(localSourcePath);
-                DirectoryInfo directoryInfo = new DirectoryInfo(localDestinationPath);
-                if (!directoryInfo.Exists)
-                    directoryInfo.Create();
-                localFile.MoveTo(localDestinationPath + "/" + "newFileName");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("move file on local drive : " + Helpers.ErrorDetails(ex) + " " + localDestinationPath);
-            }
-            return "ok";
         }
 
         [HttpPost]
@@ -621,6 +529,98 @@ namespace OggleBooble.Api.Controllers
                 success = Helpers.ErrorDetails(ex);
             }
             return success;
+        }
+
+        private string FtpMove(string currentFileName, MoveCopyImageModel model)
+        {
+            string success;
+            string linkId = model.LinkId;
+            using (var db = new OggleBoobleMySqlContext())
+            {
+                ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == linkId).FirstOrDefault();
+                if (dbImageFile == null)
+                {
+                    return "link [" + linkId + "] not found";
+                }
+                //imageLinkId = dbImageFile.Id;
+
+                // ? physcially more and rename .jpg 
+                VirtualFolder dbSourceFolder = db.VirtualFolders.Where(f => f.Id == model.SourceFolderId).First();
+                VirtualFolder dbDestinationFolder = db.VirtualFolders.Where(f => f.Id == model.DestinationFolderId).First();
+                //string currentFileName = dbImageFile.FileName;
+                string newFileName = dbSourceFolder.FolderName + "_" + linkId;
+                string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName;
+                string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.SourceFolderId) + newFileName;
+
+                if (!FtpUtilies.DirectoryExists(destinationFtpPath))
+                    FtpUtilies.CreateDirectory(destinationFtpPath);
+
+                success = FtpUtilies.MoveFile(sourceFtpPath + "/" + dbImageFile.FileName, destinationFtpPath + "/" + newFileName);
+                if (success == "ok")
+                {
+                    #region move file on local drive 
+                    string localDestinationPath = "";
+                    try
+                    {
+                        string localServerPath = "F:/Danni/";
+                        string localSourcePath = localServerPath + Helpers.GetLocalParentPath(model.SourceFolderId) + dbSourceFolder.FolderName + "/" + dbImageFile.FileName;
+                        //dbSourceFolder.FolderName + "_" + dbImageLink.Id + extension;
+                        localDestinationPath = localServerPath + Helpers.GetLocalParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName;
+                        FileInfo localFile = new FileInfo(localSourcePath);
+                        DirectoryInfo directoryInfo = new DirectoryInfo(localDestinationPath);
+                        if (!directoryInfo.Exists)
+                            directoryInfo.Create();
+                        localFile.MoveTo(localDestinationPath + "/" + newFileName);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("move file on local drive : " + Helpers.ErrorDetails(ex) + " " + localDestinationPath);
+                    }
+                    #endregion
+
+                    //2. update ImageFile
+                    //string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
+                    //newInternalLink = linkPrefix + Helpers.GetParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName + "/" + newFileName;
+                    //var goDaddyrow = db.ImageLinks.Where(g => g.Id == dbImageLink.Id).FirstOrDefault();
+                    var oldCatImageLink = db.CategoryImageLinks
+                         .Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == dbImageFile.Id).First();
+                    db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
+                    {
+                        ImageCategoryId = model.DestinationFolderId,
+                        ImageLinkId = dbImageFile.Id,
+                        SortOrder = oldCatImageLink.SortOrder
+                    });
+                    db.SaveChanges();
+                    if (model.Mode == "Move")
+                    {
+                        db.CategoryImageLinks.Remove(oldCatImageLink);
+                    }
+                    db.SaveChanges();
+                }
+                return success;
+            }
+        }
+
+        private string LocalRepoMove(MoveCopyImageModel model)
+        {
+            string localDestinationPath = "";
+            try
+            {
+                string localServerPath = "F:/Danni/";
+                string localSourcePath = localServerPath + Helpers.GetLocalParentPath(model.SourceFolderId) + model.SourceFolderName; // + "/" + dbImageFile.FileName;
+                //dbSourceFolder.FolderName + "_" + dbImageLink.Id + extension;
+                localDestinationPath = localServerPath + Helpers.GetLocalParentPath(model.DestinationFolderId) + model.DestinationFolderName;
+                FileInfo localFile = new FileInfo(localSourcePath);
+                DirectoryInfo directoryInfo = new DirectoryInfo(localDestinationPath);
+                if (!directoryInfo.Exists)
+                    directoryInfo.Create();
+                localFile.MoveTo(localDestinationPath + "/" + "newFileName");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("move file on local drive : " + Helpers.ErrorDetails(ex) + " " + localDestinationPath);
+            }
+            return "ok";
         }
     }
 }

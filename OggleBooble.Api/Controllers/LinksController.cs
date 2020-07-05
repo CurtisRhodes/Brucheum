@@ -1,4 +1,5 @@
 ﻿using OggleBooble.Api.Models;
+using OggleBooble.Api.MSSqlDataContext;
 using OggleBooble.Api.MySqlDataContext;
 using System;
 using System.Collections.Generic;
@@ -41,7 +42,7 @@ namespace OggleBooble.Api.Controllers
             {
                 foreach (SortOrderItem item in SortOrderItems)
                 {
-                    CategoryImageLink link = db.CategoryImageLinks.Where(l => l.ImageCategoryId == item.PageId && l.ImageLinkId == item.ItemId).FirstOrDefault();
+                    var link = db.CategoryImageLinks.Where(l => l.ImageCategoryId == item.PageId && l.ImageLinkId == item.ItemId).FirstOrDefault();
                     if (link != null)
                         link.SortOrder = item.InputValue;
                 }
@@ -106,7 +107,7 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    db.CategoryImageLinks.Add(new CategoryImageLink()
+                    db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
                     {
                         ImageCategoryId = destinationId,
                         ImageLinkId = linkId,
@@ -122,6 +123,100 @@ namespace OggleBooble.Api.Controllers
             }
             return success;
         }
+
+        [HttpPost]
+        [Route("api/Links/MoveLink")]
+        public string MoveLink(string linkId, int sourceId, int destinationId)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink() { ImageCategoryId = destinationId, ImageLinkId = linkId, SortOrder = 1456 });
+                    var linkToRemove = db.CategoryImageLinks.Where(l => l.ImageCategoryId == sourceId && l.ImageLinkId == linkId).First();
+                    db.CategoryImageLinks.Remove(linkToRemove);
+                    db.SaveChanges();
+                }
+                success = "ok";
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        [HttpPut]
+        [Route("api/Links/RenameFolder")]
+        public string RenameFolder(int folderId, string newFolderName)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    VirtualFolder rowToRename = db.VirtualFolders.Where(f => f.Id == folderId).First();
+                    rowToRename.FolderName = newFolderName;
+                    db.SaveChanges();
+                }
+                success = "ok";
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        [HttpDelete]
+        [Route("api/Links/RemoveLink")]
+        public string RemoveLink(string linkId, int folderId)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var imageLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == linkId).ToList();
+                    if (imageLinks.Count > 1)
+                    {
+                        var imageFile = db.ImageFiles.Where(i => i.Id == linkId).First();
+                        if (imageFile.FolderId == folderId)
+                            success = "home folder Link";
+                        else
+                        {
+                            var linkToRemove = db.CategoryImageLinks.Where(l => l.ImageLinkId == linkId && l.ImageCategoryId == folderId).First();
+                            db.CategoryImageLinks.Remove(linkToRemove);
+                            db.SaveChanges();
+                            success = "ok";
+                        }
+                    }
+                    else
+                        success = "single Link";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+
+        [HttpPut]
+        [Route("api/Links/MoveLinkToRejects")]
+        public string MoveLinkToRejects(string linkId, int folderId)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var linksToRemove = db.CategoryImageLinks.Where(l => l.ImageLinkId == linkId).ToList();
+                    db.CategoryImageLinks.RemoveRange(linksToRemove);
+                    ImageFile reject = db.ImageFiles.Where(i => i.Id == linkId).First();
+                    db.ImageFiles.Remove(reject);
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+
 
         private string DownLoadImage(string ftpPath, string link, string newFileName)
         {
@@ -216,7 +311,7 @@ namespace OggleBooble.Api.Controllers
                             });
                             repairReport.ImageFileAdded++;
                         }
-                        db.CategoryImageLinks.Add(new CategoryImageLink()
+                        db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
                         {
                             ImageLinkId = physcialFileLinkId,
                             ImageCategoryId = folderId,
@@ -347,5 +442,82 @@ namespace OggleBooble.Api.Controllers
             }
             catch (Exception ex) { repairReport.Success = Helpers.ErrorDetails(ex); }
         }
+    }
+
+    [EnableCors("*", "*", "*")]
+    public class FtpLinksController : ApiController
+    {
+        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+        private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
+
+        //public class MoveCopyImageModel
+        //{
+        //    public int SourceFolderId { get; set; }
+        //    public int DestinationFolderId { get; set; }
+        //    public string Link { get; set; }
+        //    public string Mode { get; set; }
+        //    public int SortOrder { get; set; }
+        //}
+
+
+        [HttpPut]
+        [Route("api/Links/FtpMoveFile")]
+        public string FtpMoveFile(string imageId, int newFolderId)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var imageFile = db.ImageFiles.Where(i => i.Id == imageId).First();
+                    var sourceFolder = db.VirtualFolders.Where(f => f.Id == imageFile.FolderId).First();
+                    string sourceFtpPath = ftpHost + sourceFolder.FolderPath + "/" + sourceFolder.FolderName;
+                    var destFolder = db.VirtualFolders.Where(i => i.Id == newFolderId).First();
+                    string destFtpPath = ftpHost + sourceFolder.FolderPath + "/" + sourceFolder.FolderName;
+                    string ext = imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
+                    string newFileName = destFolder.FolderName + "_" + imageId;
+
+                    if (FtpUtilies.MoveFile(sourceFtpPath, destFtpPath) == "ok") {
+                        imageFile.FileName = newFileName;
+                        imageFile.FolderId = newFolderId;
+                        var moveLink = db.CategoryImageLinks.Where(l => l.ImageCategoryId == sourceFolder.Id && l.ImageLinkId == imageId).First();
+                        moveLink.ImageCategoryId = newFolderId;
+                        db.SaveChanges();
+                    }
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        [HttpPut]
+        [Route("api/Links/FtpMoveFolder")]
+        public string FtpMoveFolder(int folderId, string newFolderName)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    VirtualFolder rowToRename = db.VirtualFolders.Where(f => f.Id == folderId).First();
+                    rowToRename.FolderName = newFolderName;
+                    var files = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
+                    foreach (ImageFile file in files)
+                    {
+                        var fileLinkId = file.FileName.Substring(file.FileName.LastIndexOf("_"));
+                        file.FileName = newFolderName + fileLinkId;
+                    }
+                    //db.SaveChanges();
+                }
+                success = "ok";
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+
+
+
     }
 }

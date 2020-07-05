@@ -330,8 +330,11 @@ body {
 }
 
 .shaddowBorder {
+    border-top: 5px solid rgba(130, 101, 101, 0.6);
+    border-left: 5px solid rgba(130, 101, 101, 0.6);
     border-right: 15px solid rgba(130, 101, 101, 0.6);
     border-bottom: 25px solid rgba(130, 101, 101, 0.6);
+    border-radius: 4px;
 }
 
 .canIgetaConnectionMessageContainer {

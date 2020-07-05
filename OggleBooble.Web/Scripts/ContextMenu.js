@@ -43,8 +43,8 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
 
 $('.contextMenuContent').mouseover(function (e) {
     e.stopPropagation();
-    alert("this: " + $(this));
-    $(this).addClass('ogItemHover');
+    alert("mouseover: ");
+    //$(this).addClass('ogItemHover');
 }).mouseout(function () {
     $(this).removeClass('ogItemHover');
 });
@@ -221,17 +221,18 @@ function ctxGetFolderDetails() {
 
 function contextMenuAction(action) {
     switch (action) {
-        case "showDialog":
+        case "showDialog": {
             if ($('#ctxModelName').html() === "unknown model") {
                 showUnknownModelDialog(pLinkId);
             }
-            else 
+            else
                 if (pMenuType === "Folder")
                     ctxgetFolderDetails();
                 else
                     showFolderInfoDialog(pModelFolderId, "img ctx");
             $("#contextMenuContainer").fadeOut();
             break;
+        }
         case "openInNewTab":
             // rtpe(eventCode, calledFrom, eventDetail, pageId)
             rtpe("ONT", "context menu", pFolderName, pFolderId);
@@ -239,7 +240,7 @@ function contextMenuAction(action) {
         case "see more":
             rtpe("SEE", pFolderId, pFolderName, pModelFolderId);
             break;
-        case "comment":
+        case "comment": {
             if (pMenuType === "Slideshow") {
                 closeViewer("showImageCommentDialog");
             }
@@ -254,7 +255,8 @@ function contextMenuAction(action) {
             }
             $("#contextMenuContainer").fadeOut();
             break;
-        case "explode":
+        }
+        case "explode": {
             if (isLoggedIn()) {
                 //rtpe(eventCode, calledFrom, eventDetail, pageId)
                 rtpe("EXP", pFolderName, pImgSrc, pFolderId);
@@ -264,6 +266,7 @@ function contextMenuAction(action) {
                 showMyAlert("You must be logged in to use this feature");
             }
             break;
+        }
         case "Image tags":
         case "folder tags":
             openMetaTagDialog(pFolderId, pLinkId);
@@ -282,16 +285,19 @@ function contextMenuAction(action) {
             showMoveCopyDialog("Archive", pLinkId, pFolderId);
             break;
         case "copy":
-            showCopyLinkDialog(pLinkId, pFolderId);
+            showCopyLinkDialog(pLinkId, pFolderId, pImgSrc);
             $("#imageContextMenu").fadeOut();
             break;
         case "move":
             $("#imageContextMenu").fadeOut();
             showMoveCopyDialog("Move", pLinkId, pFolderId);
             break;
+        case "rename":
+            showRenameFolderDialog(pFolderId, pFolderName)
+            break;
         case "remove":
+            attemptRemoveLink(pLinkId, pImgSrc);
             $("#imageContextMenu").fadeOut();
-            removeImage();
             break;
         case "setF":
             setFolderImage(pLinkId, pFolderId, "folder");
