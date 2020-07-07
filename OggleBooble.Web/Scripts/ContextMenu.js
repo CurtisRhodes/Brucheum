@@ -62,15 +62,8 @@ function getImageDetails() {
                 pFolderName = imageInfo.FolderName;
                 pModelFolderId = imageInfo.ModelFolderId;
                 pFolderType = imageInfo.FolderType;
-                $('#headerMessage').html("menu type: " + pMenuType);
-
-                $('#aboveImageContainerMessageArea').html("FolderType: " + pFolderType);
-                //if (pMenuType === "Slideshow") {
-                //    alert("SS folderName: " + pFolderName +
-                //        "\nModelFolderName: " + imageInfo.ModelFolderName +
-                //        "\nFolderType: " + imageInfo.FolderType +
-                //        "\nModelFolderId: " + imageInfo.ModelFolderId);
-                //}
+                //$('#headerMessage').html("menu type: " + pMenuType);
+                //$('#aboveImageContainerMessageArea').html("FolderType: " + pFolderType);
                 $('#ctxModelName').html("unhandled");
                 //alert("bug 1");
                 if (Number(pModelFolderId) !== Number(pFolderId)) {
@@ -87,6 +80,10 @@ function getImageDetails() {
                         $('#ctxSeeMore').hide();
                     }
                 }
+                if ($('#ctxModelName').html() === "unhandled") {
+                    alert("folder type unhandled: " + pFolderType);
+                }
+
 
                 "   <label>file name</label><div id='imageInfoFileName' class='ctxInfoValue'></div>\n" +
                 "   <label>folder path</label><div id='imageInfoFolderPath' class='ctxInfoValue'></div>\n" +
@@ -220,6 +217,9 @@ function ctxGetFolderDetails() {
 }
 
 function contextMenuAction(action) {
+    if (pMenuType === "Slideshow") {
+        closeViewer("showImageCommentDialog");
+    }
     switch (action) {
         case "showDialog": {
             if ($('#ctxModelName').html() === "unknown model") {
@@ -233,17 +233,16 @@ function contextMenuAction(action) {
             $("#contextMenuContainer").fadeOut();
             break;
         }
-        case "openInNewTab":
+        case "openInNewTab": {
             // rtpe(eventCode, calledFrom, eventDetail, pageId)
             rtpe("ONT", "context menu", pFolderName, pFolderId);
             break;
-        case "see more":
+        }
+        case "see more": {
             rtpe("SEE", pFolderId, pFolderName, pModelFolderId);
             break;
+        }
         case "comment": {
-            if (pMenuType === "Slideshow") {
-                closeViewer("showImageCommentDialog");
-            }
             if (pFolderType.indexOf("singleModel") > -1) {
 
                 // alert("showImageCommentDialog(pLinkId: " + pLinkId + ",\npImgSrc: " + pImgSrc + ", pFolderId: " + pFolderId);
@@ -282,7 +281,7 @@ function contextMenuAction(action) {
             //showLinks(pLinkId);
             break;
         case "archive":
-            showMoveCopyDialog("Archive", pLinkId, pFolderId);
+            showArchiveFolderDialog(pLinkId, pImgSrc);
             break;
         case "copy":
             showCopyLinkDialog(pLinkId, pFolderId, pImgSrc);
@@ -296,7 +295,7 @@ function contextMenuAction(action) {
             showRenameFolderDialog(pFolderId, pFolderName)
             break;
         case "remove":
-            attemptRemoveLink(pLinkId, pImgSrc);
+            attemptRemoveLink(pLinkId, pFolderId);
             $("#imageContextMenu").fadeOut();
             break;
         case "setF":

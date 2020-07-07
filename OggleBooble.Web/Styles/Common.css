@@ -389,12 +389,6 @@ body {
     display: none;
 }
 
-.oggleDialogWindow {
-    border: solid thin #777;
-    border-radius: 6px;
-    box-shadow: 10px 10px rgba(95, 12, 12, 0.5);
-}
-
 .fixedMessageButton {
     position: relative;
     bottom: 150px;

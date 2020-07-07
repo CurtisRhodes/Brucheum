@@ -18,6 +18,8 @@ namespace OggleBooble.Api.Controllers
     {
         static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
+        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+        private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
         //static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
 
         [HttpGet]
@@ -194,7 +196,6 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
-
         [HttpPut]
         [Route("api/Links/MoveLinkToRejects")]
         public string MoveLinkToRejects(string linkId, int folderId)
@@ -216,7 +217,63 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
+        [HttpPut]
+        [Route("api/Links/MoveFile")]
+        public string MoveFile(string linkId, int newFolderId)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == linkId).First();
+                    VirtualFolder dbSourceFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).First();
+                    string sourceFtpPath = ftpHost + imgRepo + dbSourceFolder.FolderPath; // + dbSourceFolder.FolderName;
+                    VirtualFolder dbDestFolder = db.VirtualFolders.Where(i => i.Id == newFolderId).First();
+                    string destFtpPath = ftpHost + imgRepo + dbDestFolder.FolderPath;// + "/" + sourceFolder.FolderName;
+                    string ext = dbImageFile.FileName.Substring(dbImageFile.FileName.LastIndexOf("."));
+                    string assumedFileName = dbSourceFolder.FolderName + "_" + linkId + ext;
+                    string newFileName = dbDestFolder.FolderName + "_" + linkId + ext;
 
+                    if (FtpUtilies.MoveFile(sourceFtpPath + "/" + assumedFileName, destFtpPath + "/" + newFileName) == "ok")
+                    {
+                        dbImageFile.FileName = assumedFileName;
+                        dbImageFile.FolderId = newFolderId;
+                        MySqlDataContext.CategoryImageLink moveLink = db.CategoryImageLinks.Where(l => l.ImageCategoryId == dbSourceFolder.Id && l.ImageLinkId == linkId).First();
+                        moveLink.ImageCategoryId = newFolderId;
+                        db.SaveChanges();
+                    }
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        [HttpPut]
+        [Route("api/Links/FtpMoveFolder")]
+        public string FtpMoveFolder(int folderId, string newFolderName)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    VirtualFolder rowToRename = db.VirtualFolders.Where(f => f.Id == folderId).First();
+                    rowToRename.FolderName = newFolderName;
+                    var files = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
+                    foreach (ImageFile file in files)
+                    {
+                        var fileLinkId = file.FileName.Substring(file.FileName.LastIndexOf("_"));
+                        file.FileName = newFolderName + fileLinkId;
+                    }
+                    //db.SaveChanges();
+                }
+                success = "ok";
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
 
         private string DownLoadImage(string ftpPath, string link, string newFileName)
         {
@@ -444,80 +501,4 @@ namespace OggleBooble.Api.Controllers
         }
     }
 
-    [EnableCors("*", "*", "*")]
-    public class FtpLinksController : ApiController
-    {
-        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
-        private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
-
-        //public class MoveCopyImageModel
-        //{
-        //    public int SourceFolderId { get; set; }
-        //    public int DestinationFolderId { get; set; }
-        //    public string Link { get; set; }
-        //    public string Mode { get; set; }
-        //    public int SortOrder { get; set; }
-        //}
-
-
-        [HttpPut]
-        [Route("api/Links/FtpMoveFile")]
-        public string FtpMoveFile(string imageId, int newFolderId)
-        {
-            string success;
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    var imageFile = db.ImageFiles.Where(i => i.Id == imageId).First();
-                    var sourceFolder = db.VirtualFolders.Where(f => f.Id == imageFile.FolderId).First();
-                    string sourceFtpPath = ftpHost + sourceFolder.FolderPath + "/" + sourceFolder.FolderName;
-                    var destFolder = db.VirtualFolders.Where(i => i.Id == newFolderId).First();
-                    string destFtpPath = ftpHost + sourceFolder.FolderPath + "/" + sourceFolder.FolderName;
-                    string ext = imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
-                    string newFileName = destFolder.FolderName + "_" + imageId;
-
-                    if (FtpUtilies.MoveFile(sourceFtpPath, destFtpPath) == "ok") {
-                        imageFile.FileName = newFileName;
-                        imageFile.FolderId = newFolderId;
-                        var moveLink = db.CategoryImageLinks.Where(l => l.ImageCategoryId == sourceFolder.Id && l.ImageLinkId == imageId).First();
-                        moveLink.ImageCategoryId = newFolderId;
-                        db.SaveChanges();
-                    }
-                    success = "ok";
-                }
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
-
-        [HttpPut]
-        [Route("api/Links/FtpMoveFolder")]
-        public string FtpMoveFolder(int folderId, string newFolderName)
-        {
-            string success;
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    VirtualFolder rowToRename = db.VirtualFolders.Where(f => f.Id == folderId).First();
-                    rowToRename.FolderName = newFolderName;
-                    var files = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
-                    foreach (ImageFile file in files)
-                    {
-                        var fileLinkId = file.FileName.Substring(file.FileName.LastIndexOf("_"));
-                        file.FileName = newFolderName + fileLinkId;
-                    }
-                    //db.SaveChanges();
-                }
-                success = "ok";
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
-
-
-
-
-    }
 }

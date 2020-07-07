@@ -230,193 +230,139 @@ namespace OggleBooble.Api.Controllers
             SuccessModel successModel = new SuccessModel();
             try
             {
-                string imageLinkId = Guid.NewGuid().ToString();
-                int fWidth = 0;
-                int fHeight = 0;
-                long fSize = 0;
-                string trimPath = "", newFileName = "", mySqlDestPath;
-
+                string mySqlDestPath;
                 using (var mdb = new OggleBoobleMySqlContext())
                 {
+                    var existingLink = mdb.ImageFiles.Where(l => l.ExternalLink == newLink.Link).FirstOrDefault();
+                    if (existingLink != null)
+                    {
+                        successModel.Success = "Link Already Added";
+                        return successModel;
+                    }
                     mySqlDestPath = mdb.VirtualFolders.Where(f => f.Id == newLink.FolderId).FirstOrDefault().FolderPath;
                 }
 
-                using (var db = new OggleBoobleMSSqlContext())
+                string imageLinkId = Guid.NewGuid().ToString();
+                string extension= newLink.Link.Substring(newLink.Link.LastIndexOf("."));
+                string newFileName = newLink.Path.Substring(newLink.Path.LastIndexOf("/") + 1) + "_" + imageLinkId + extension;
+                string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
+                string trimPath = newLink.Path.Replace("/Root/", "").Replace("%20", " ");
+
+                // COPY FILE TO LOCAL ?
+                //try
+                //{
+                //    string localRoot = dbCategory.RootFolder;
+                //    if (localRoot == "centerfold")
+                //        localRoot = "playboy";
+
+                //    var test = newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
+                //    var localPath = localRepoPath + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
+                //    DirectoryInfo dirInfo = new DirectoryInfo(localPath);
+                //    if (!dirInfo.Exists)
+                //        dirInfo.Create();
+                //    wc.DownloadFile(new Uri(newLink.Link), localPath + "/" + newFileName);
+                //}
+                //catch (Exception ex)
+                //{
+                //    var err = Helpers.ErrorDetails(ex);
+                //    System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
+                //}
+
+                // USE WEBCLIENT TO CREATE THE FILE
+                using (WebClient wc = new WebClient())
                 {
-                    var existingLink = db.ImageLinks.Where(l => l.ExternalLink == newLink.Link).FirstOrDefault();
-                    if (existingLink != null)
-                    {
-                        imageLinkId = existingLink.Id;
-                        successModel.Success = "Link Already Added";
-                    }
-                    else
-                    {
-                        MSSqlDataContext.CategoryFolder dbCategory = db.CategoryFolders.Where(f => f.Id == newLink.FolderId).First();
-                        string extension = newLink.Link.Substring(newLink.Link.LastIndexOf("."));
-                        newFileName = dbCategory.FolderName + "_" + imageLinkId + extension;
-                        //var trimPath = newLink.Path.Substring(newLink.Path.IndexOf("Root/") + 1);
-                        string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
-                        trimPath = newLink.Path.Replace("/Root/", "").Replace("%20", " ");
-
-                        // COPY FILE TO LOCAL ?
-                        //try
-                        //{
-                        //    string localRoot = dbCategory.RootFolder;
-                        //    if (localRoot == "centerfold")
-                        //        localRoot = "playboy";
-
-                        //    var test = newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
-                        //    var localPath = localRepoPath + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
-                        //    DirectoryInfo dirInfo = new DirectoryInfo(localPath);
-                        //    if (!dirInfo.Exists)
-                        //        dirInfo.Create();
-                        //    wc.DownloadFile(new Uri(newLink.Link), localPath + "/" + newFileName);
-                        //}
-                        //catch (Exception ex)
-                        //{
-                        //    var err = Helpers.ErrorDetails(ex);
-                        //    System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
-                        //}
-
-
-
-                        // USE WEBCLIENT TO CREATE THE FILE
-                        using (WebClient wc = new WebClient())
-                        {
-                            try
-                            {
-                                wc.DownloadFile(new Uri(newLink.Link), appDataPath + "tempImage" + extension);
-                            }
-                            catch (Exception ex)
-                            {
-                                successModel.Success = "wc. download didnt work " + ex.Message;
-                                return successModel;
-                            }
-                        }
-                        FtpWebRequest webRequest = null;
-                        // USE WEBREQUEST TO UPLOAD THE FILE
-                        try
-                        {
-                            // todo  write the image as a file to x.ogglebooble  4/1/19
-                            //string localRoot = dbCategory.RootFolder;
-                            //if (localRoot == "centerfold")
-                            //    localRoot = "playboy";
-                            ////var localPath = repoPath + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
-                            //string ftpPath = ftpHost + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
-                            //if (!FtpUtilies.DirectoryExists(ftpPath))
-                            //    FtpUtilies.CreateDirectory(ftpPath);
-
-
-
-                            //webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
-                            //webRequest.Credentials = networkCredentials;
-                            //var zz = webRequest.Method = WebRequestMethods.Ftp.UploadFile;
-
-                            var mmDom = repoDomain.Substring(8);
-
-                            var test = ftpHost + repoDomain.Substring(8) + "/" + mySqlDestPath + "/" + newFileName;
-
-                            webRequest = (FtpWebRequest)WebRequest.Create(ftpHost + repoDomain.Substring(8) + "/" + mySqlDestPath + "/" + newFileName);
-                            webRequest.Credentials = networkCredentials;
-                            webRequest.Method = WebRequestMethods.Ftp.UploadFile;
-                        }
-                        catch (Exception ex)
-                        {
-                            successModel.Success = " webRequest didnt work " + ex.Message;
-                            return successModel;
-                        }
-                        // TAKE THE WEBREQUEST FILE STREAM TO 
-
-                        try
-                        {
-                            using (Stream requestStream = webRequest.GetRequestStream())
-                            {
-                                byte[] fileContents = System.IO.File.ReadAllBytes(appDataPath + "tempImage" + extension);
-                                webRequest.ContentLength = fileContents.Length;
-                                requestStream.Write(fileContents, 0, fileContents.Length);
-                                requestStream.Flush();
-                                requestStream.Close();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            successModel.Success = "GetRequestStream didn't work " + ex.Message;
-                            return successModel;
-                        }
-
-                        try
-                        {
-                            using (var fileStream = new FileStream(appDataPath + "tempImage" + extension, FileMode.Open, FileAccess.Read, FileShare.Read))
-                            {
-                                fSize = fileStream.Length;
-                                using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
-                                {
-                                    fWidth = image.Width;
-                                    fHeight = image.Height;
-                                }
-                            }
-                            DirectoryInfo directory = new DirectoryInfo(appDataPath);
-                            FileInfo tempFile = directory.GetFiles("tempImage" + extension).FirstOrDefault();
-                            if (tempFile != null)
-                                tempFile.Delete();
-                            System.Diagnostics.Debug.WriteLine("delete worked ");
-                        }
-                        catch (Exception ex)
-                        {
-                            System.Diagnostics.Debug.WriteLine("delete didn't work " + ex.Message);
-                        }
-                        //var goDaddyLink = "http://" + dbCategory.RootFolder + ".ogglebooble.com/";
-                        //var goDaddyLinkTest = goDaddyLink + trimPath + "/" + newFileName;
-                        db.ImageLinks.Add(new MSSqlDataContext.ImageLink()
-                        {
-                            Id = imageLinkId,
-                            FolderLocation = newLink.FolderId,
-                            ExternalLink = newLink.Link,
-                            Width = fWidth,
-                            Height = fHeight,
-                            Size = fSize,
-                            LastModified = DateTime.Now,
-                            Link = "http://" + trimPath + "/" + newFileName
-                        });
-                        db.CategoryImageLinks.Add(new MSSqlDataContext.CategoryImageLink()
-                        {
-                            ImageCategoryId = newLink.FolderId,
-                            ImageLinkId = imageLinkId,
-                            SortOrder = 999
-                        });
-                        db.SaveChanges();
-                    }
                     try
                     {
-                        int lnkCount = db.CategoryImageLinks.Where(c => c.ImageCategoryId == newLink.FolderId).Count();
-                        if (lnkCount == 0)
-                            successModel.ReturnValue = imageLinkId;
-                        else
-                            successModel.ReturnValue = "0";
-
-                        MSSqlDataContext.CategoryImageLink categoryImageLink = db.CategoryImageLinks.Where(c => c.ImageLinkId == imageLinkId && c.ImageCategoryId == newLink.FolderId).FirstOrDefault();
-                        if (categoryImageLink == null)
-                        {
-                            db.CategoryImageLinks.Add(new MSSqlDataContext.CategoryImageLink()
-                            {
-                                ImageCategoryId = newLink.FolderId,
-                                ImageLinkId = imageLinkId,
-                                SortOrder = 799
-                            });
-                            db.SaveChanges();
-                            if (successModel.Success == "Link Already Added")
-                            {
-                                successModel.Success = "Link to existing image added to folder";
-                            }
-                        }
+                        wc.DownloadFile(new Uri(newLink.Link), appDataPath + "tempImage" + extension);
                     }
                     catch (Exception ex)
                     {
-                        successModel.Success = Helpers.ErrorDetails(ex);
-                        if (successModel.Success.StartsWith("ERROR: Cannot insert duplicate key row in object"))
-                            successModel.Success = "Alredy Added";
+                        successModel.Success = "wc. download didnt work " + ex.Message;
+                        return successModel;
                     }
                 }
+                // USE WEBREQUEST TO UPLOAD THE FILE
+                FtpWebRequest webRequest = null;
+                try
+                {
+                    // todo  write the image as a file to x.ogglebooble  4/1/19
+                    //webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
+                    //webRequest.Credentials = networkCredentials;
+                    //var zz = webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+
+                    //var mmDom = repoDomain.Substring(8);
+
+                    string destPath = ftpHost + repoDomain.Substring(8) + "/" + mySqlDestPath;
+
+                    if (!FtpUtilies.DirectoryExists(destPath))
+                        FtpUtilies.CreateDirectory(destPath);
+
+                    webRequest = (FtpWebRequest)WebRequest.Create(destPath + "/" + newFileName);
+                    webRequest.Credentials = networkCredentials;
+                    webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                }
+                catch (Exception ex)
+                {
+                    successModel.Success = " webRequest didnt work " + ex.Message;
+                    return successModel;
+                }
+                // TAKE THE WEBREQUEST FILE STREAM TO 
+                try
+                {
+                    using (Stream requestStream = webRequest.GetRequestStream())
+                    {
+                        byte[] fileContents = System.IO.File.ReadAllBytes(appDataPath + "tempImage" + extension);
+                        webRequest.ContentLength = fileContents.Length;
+                        requestStream.Write(fileContents, 0, fileContents.Length);
+                        requestStream.Flush();
+                        requestStream.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    successModel.Success = "GetRequestStream didn't work " + ex.Message;
+                    return successModel;
+                }
+                // turn the tempfile into a fileStream to get its size attributes
+                int fWidth = 0; int fHeight = 0; long fSize = 0;
+                try
+                {
+                    using (var fileStream = new FileStream(appDataPath + "tempImage" + extension, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    {
+                        fSize = fileStream.Length;
+                        using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
+                        {
+                            fWidth = image.Width;
+                            fHeight = image.Height;
+                        }
+                    }
+                    DirectoryInfo directory = new DirectoryInfo(appDataPath);
+                    FileInfo tempFile = directory.GetFiles("tempImage" + extension).FirstOrDefault();
+                    if (tempFile != null)
+                        tempFile.Delete();
+                    System.Diagnostics.Debug.WriteLine("delete worked ");
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("delete didn't work " + ex.Message);
+                }
+
+
+                // see if this is the first image in the folder. If so make it the folder image
+                //try
+                //{
+                //    int lnkCount = db.CategoryImageLinks.Where(c => c.ImageCategoryId == newLink.FolderId).Count();
+                //    if (lnkCount == 0)
+                //        successModel.ReturnValue = imageLinkId;
+                //    else
+                //        successModel.ReturnValue = "0";
+                //}
+                //catch (Exception ex)
+                //{
+                //    successModel.Success = Helpers.ErrorDetails(ex);
+                //    if (successModel.Success.StartsWith("ERROR: Cannot insert duplicate key row in object"))
+                //        successModel.Success = "Alredy Added";
+                //}
 
                 using (var mdb = new OggleBoobleMySqlContext())
                 {
@@ -429,9 +375,7 @@ namespace OggleBooble.Api.Controllers
                         Height = fHeight,
                         Size = fSize,
                         Acquired = DateTime.Now,
-                        FileName= newFileName
-                        //Link = "http://" + trimPath + "/" + newFileName
-
+                        FileName = newFileName
                     });
                     mdb.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
                     {
@@ -441,14 +385,39 @@ namespace OggleBooble.Api.Controllers
                     });
                     mdb.SaveChanges();
                 }
+
+                using (var db = new OggleBoobleMSSqlContext())
+                {
+                    db.ImageLinks.Add(new MSSqlDataContext.ImageLink()
+                    {
+                        Id = imageLinkId,
+                        FolderLocation = newLink.FolderId,
+                        ExternalLink = newLink.Link,
+                        Width = fWidth,
+                        Height = fHeight,
+                        Size = fSize,
+                        LastModified = DateTime.Now,
+                        Link = "http://" + trimPath + "/" + newFileName
+                    });
+                    db.CategoryImageLinks.Add(new MSSqlDataContext.CategoryImageLink()
+                    {
+                        ImageCategoryId = newLink.FolderId,
+                        ImageLinkId = imageLinkId,
+                        SortOrder = 999
+                    });
+                    db.SaveChanges();
+                }
+
                 successModel.Success = "ok";
             }
             catch (Exception ex)
             {
-                successModel.Success = Helpers.ErrorDetails(ex) + " please try again";
+                successModel.Success = Helpers.ErrorDetails(ex);
             }
             return successModel;
         }
+
+
         [HttpGet]
         [Route("api/ImageComment/GetImageComment")]
         public ImageCommentModel GetImageComment(string linkId)

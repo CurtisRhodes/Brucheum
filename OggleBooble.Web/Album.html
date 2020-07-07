@@ -50,7 +50,7 @@
     <link href="Styles/FolderCategoryDialog.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="oggleHeader"></div>
+    <div id="oggleHeader" class="stickyHeader boobsHeader"></div>
     <img id="imagePageLoadingGif" class="loadingGif" src="Images/loader.gif" />
     <div id="dots"></div>
     <div class="threeColumnLayout">
@@ -111,7 +111,7 @@
                         else {
                             clearInterval(waiter2);
                             $('#dots').html('');
-                            changeFavoriteIcon("redBallon");
+                            //changeFavoriteIcon("redBallon");
 
                             if (isInRole("view dynamic") || document.domain === "localhost") {
                                 //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) TruE");
@@ -129,16 +129,20 @@
             }, 300);
 
             window.addEventListener("resize", resizeAlbumPage);
+            resizeAlbumPage();
+
             $('#feedbackBanner').on("click", function () {
                 showFeedbackDialog(params.folder);
             });
 
         });
         function resizeAlbumPage() {
-            var visH = $(window).height() - $('.oggleHeader').height();
+            var visH = $(window).height() - $('#oggleHeader').height();
             $('.threeColumnLayout').css("min-height", visH);
             $('#feedbackBanner').css("top", visH - 100);
             $('.middleColumn').css("min-height", visH);
+
+
             //$('#aboveImageContainerMessageArea').html("resize: visH: " + visH + "  col: " + $('.threeColumnLayout').height() + "  con: " + $('#imageContainer').height());
         }
 

@@ -54,45 +54,34 @@ function attemptLogin() {
                     alert("window.location.href= '.'")
 
                     window.location.href = ".";
-                    //if (document.domain === "localhost") {
-                    //    window.location.href = "localhost:60457";
-                    //}
-                    //else
-                    //    window.location.href = ".";
-
-
-                    //if (loginFromPageId === 3908)
-                    //    window.location.href = "/index.html?calledFrom=login";
-                    //else
-                    //    window.location.href = "/album.html?folder=" + pageId;  //  open page in same window
-
-                    //  --setLoginHeader();
-                    //$('#spnUserName').html(userName);
-                    //$('#optionLoggedIn').show();
-                    //$('#optionNotLoggedIn').hide();
-
                 }
                 else {
                     $('#loginValidationSummary').html(success).show();
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "Q17",
-                        Severity: 13,
-                        ErrorMessage: "unsuccessful login attempt",
-                        CalledFrom: "attemptLogin()"
-                    });
+                    if (document.domain === "localhost")
+                        alert("attemptLogin: " + success);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisiorId"),
+                            ActivityCode: "Q17",
+                            Severity: 13,
+                            ErrorMessage: "unsuccessful login attempt",
+                            CalledFrom: "attemptLogin()"
+                        });
                 }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "onLoginClick")) {
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 2,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "showLoginDialog"
-                    });
+                if (!checkFor404("attemptLogin")) {
+                    if (document.domain === "localhost")
+                        alert("attemptLogin: " + errorMessage);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "XHR",
+                            Severity: 2,
+                            ErrorMessage: errorMessage,
+                            CalledFrom: "attemptLogin"
+                        });
                     //sendEmailToYourself("XHR ERROR IN Login.JS onLoginClick", "api/Login/VerifyLogin?userName=" + userName + "&passWord=" + " Message: " + errorMessage);
                 }
             }
@@ -310,40 +299,47 @@ function attemptRegister() {
                         // show welcom to Oggle Booble message.
                     }
                     else {
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "KLG",
-                            Severity: 2,
-                            ErrorMessage: "attempting to register fail: " + success,
-                            CalledFrom: "attemptRegister()"
-                        });
-                        alert("attempting to register fail: " + success);
-                        //$('#registerValidationSummary').html(response).show();
+                        if (document.domain === "localhost")
+                            alert("attemptRegister: " + success);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "KLG",
+                                Severity: 2,
+                                ErrorMessage: "attempting to register fail: " + success,
+                                CalledFrom: "attemptRegister()"
+                            });
+                        //alert("attempting to register fail: " + success);
+                        $('#registerValidationSummary').html(response).show();
                     }
                 },
                 error: function (jqXHR) {
                     var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "attemptRegister")) {
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 1,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "attemptRegister()"
-                        });
-                        //alert("XHR ERROR IN Login.JS attemptRegister\n" + errorMessage);
+                    if (!checkFor404("attemptRegister")) {
+                        if (document.domain === "localhost")
+                            alert("attemptRegister: " + errorMessage);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "XHR",
+                                Severity: 1,
+                                ErrorMessage: errorMessage,
+                                CalledFrom: "attemptRegister()"
+                            });
                     }
                 }
             });
         } catch (e) {
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "CAT",
-                Severity: 1,
-                ErrorMessage: e,
-                CalledFrom: "CATCH error attemptRegister() Login Post"
-            });
-            //alert("Login Post error: " + e);
+            if (document.domain === "localhost")
+                alert("attemptRegister: " + e);
+            else
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "CAT",
+                    Severity: 1,
+                    ErrorMessage: e,
+                    CalledFrom: "CATCH error attemptRegister()"
+                });
         }
     }
 }
@@ -376,3 +372,62 @@ function validateRegister() {
     return true;
 }
 
+//DAC	IME	Image Error
+//DAC	LKM	Link Moved
+//DAC	ARK	Archive Image
+function awardCredits(activityCode, pageId) {
+    let credits;
+    switch (activityCode) {
+        case "PBV": credits = -20; break; // Playboy Page View
+        case "PGV": credits = -10; break; // Page View
+        case "INC": credits = 500; break; // Initial Credit
+        case "LKC": credits = 200; break; // Link Copied
+        case "IMC": credits = 200; break; // Image Comment
+        case "NIA": credits = 200; break; // New Image Added
+        case "FIE": credits = 100; break; // Folder Info Edited
+        default: alert("unhandled awardCredits activityCode: " + activityCode);
+    }
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/User/AwardCredits",
+        data: {
+            VisitorId: getCookieValue("VisitorId"),
+            ActivityCode: activityCode,
+            PageId: pageId,
+            Credits: credits
+        },
+        success: function (success) {
+            if (success === "ok") {
+                //displayStatusMessage("ok", "credits charged");
+            }
+            else {
+                if (document.domain === 'localhost')
+                    alert("awardCredits: " + success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "Q17",
+                        Severity: 13,
+                        ErrorMessage: success,
+                        CalledFrom: "awardCredits"
+                    });
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404("awardCredits")) {
+                if (document.domain === "localhost")
+                    alert("awardCredits: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 2,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "awardCredits"
+                    });
+                //sendEmailToYourself("XHR ERROR IN Login.JS onLoginClick", "api/Login/VerifyLogin?userName=" + userName + "&passWord=" + " Message: " + errorMessage);
+            }
+        }
+    });
+}

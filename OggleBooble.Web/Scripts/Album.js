@@ -46,6 +46,10 @@ function getAlbumImages(folderId) {
                 processImages(albumImageInfo);
                 $('#folderCommentButton').fadeIn();
                 setCounts(albumImageInfo, folderId);
+                if (albumImageInfo.RootFolder === "centerfold")
+                    awardCredits("PBV", folderId);
+                else
+                    awardCredits("PGV", folderId);
                 let delta = (Date.now() - getImagesStart) / 1000;
                 console.log("GetAlbumImages took: " + delta.toFixed(3));
                 $('.footer').show();
@@ -98,7 +102,7 @@ function getAlbumPageInfo(folderId) {
 
                 setOggleHeader(folderId, apFolderRoot);
                 setOggleFooter(folderId, apFolderRoot);
-                setAlbumPageCSS(imageLinksModel.FolderType);
+                //setAlbumPageCSS(imageLinksModel.FolderType);
 
                 //$('#aboveImageContainerMessageArea').html("FolderType: " + imageLinksModel.FolderType);
                 $('#googleSearchText').html(imageLinksModel.FolderName);
@@ -261,7 +265,8 @@ function setAlbumPageCSS() {
 function setBreadCrumbs(breadCrumbModel) {
     // a woman commited suicide when pictures of her "came out"
     // title: I do not remember having been Invited)
-    $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"HBX\"," + apFolderId + ",33,\"" + apFolderRoot + "\")'>home  &#187</a>");
+    $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"BCC\"," +
+        apFolderId + ",33,1)'>root  &#187</a>");
     for (i = breadCrumbModel.length - 1; i >= 0; i--) {
         if (breadCrumbModel[i] === null) {
             breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
@@ -272,7 +277,7 @@ function setBreadCrumbs(breadCrumbModel) {
                     "<a class='inactiveBreadCrumb' " +
                     "onmouseover = 'slowlyShowFolderInfoDialog(" + breadCrumbModel[i].FolderId + ")' " +
                     "onmouseout = 'forgetHomeFolderInfoDialog=true;' " +
-                    "onclick='showFolderInfoDialog(" + breadCrumbModel[i].FolderId + ",\"bc click\")'>" + breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
+                    "onclick='forgetHomeFolderInfoDialog=\"true\";showFolderInfoDialog(" + breadCrumbModel[i].FolderId + ",\"bc click\")'>" + breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
             }
             else {
                 $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +

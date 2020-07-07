@@ -8,6 +8,7 @@ function showFolderInfoDialog(folderId, calledFrom) {
     // 4/30/2019  --first use of jQuery dialog
     // 5/30/2020  removing use of jquery dialog for my own. 
     try {
+        objFolderInfo.Id = folderId;
         $('#imagePageLoadingGif').show();
         $('#draggableDialogContents').html(folderDialogHtml());
         $('#modelInfoDetails').hide();
@@ -17,8 +18,7 @@ function showFolderInfoDialog(folderId, calledFrom) {
         $('#draggableDialog').mouseleave(function () {
             //cancel
             if ($('#btnCatDlgEdit').html() === "Edit") {
-                
-              //  dragableDialogClose();
+                dragableDialogClose();
             }
         });
 
@@ -207,6 +207,7 @@ function saveFolderDialog() {
             $('#imagePageLoadingGif').fadeOut();
             if (success === "ok") {
                 displayStatusMessage("ok", "category description updated");
+                awardCredits("FIE", objFolderInfo.Id);
                 $('#btnCatDlgEdit').html("Edit");
                 //$('#btnCatDlgMeta').hide();
                 $('#btnCatDlgCancel').hide();

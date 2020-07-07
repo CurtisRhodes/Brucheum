@@ -49,9 +49,8 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<VwLatestTouchedGalleries> VwLatestTouched { get; set; }
         public virtual DbSet<VwImageHit> VwImageHits { get; set; }
         public virtual DbSet<VwErrorReport> VwErrorReportRows { get; set; }
-
         public virtual DbSet<ImageComment> ImageComments { get; set; }
-
+        public virtual DbSet<UserCredit> UserCredits { get; set; }
     }
 
     [Table("OggleBooble.ChangeLog")]
@@ -81,6 +80,7 @@ namespace OggleBooble.Api.MySqlDataContext
     public partial class VirtualFolder
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int Parent { get; set; }
         public string FolderName { get; set; }
@@ -129,6 +129,18 @@ namespace OggleBooble.Api.MySqlDataContext
         [Key]
         [Column(Order = 1)]
         public DateTime Occured { get; set; }
+    }
+
+    [Table("OggleBooble.UserCredit")]
+    public class UserCredit
+    {
+        [Key]
+        public string VisitorId { get; set; }
+        public string ActivityCode { get; set; }
+        public int Credits { get; set; }
+        public int PageId { get; set; }
+        public DateTime Occured { get; set; }
+
     }
 
     [Table("OggleBooble.RegisteredUser")]
@@ -316,7 +328,8 @@ namespace OggleBooble.Api.MySqlDataContext
     public partial class FolderDetail
     {
         [Key]
-        public int Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int FolderId { get; set; }
         public string HomeCountry { get; set; }
         public string HomeTown { get; set; }
         public string Measurements { get; set; }

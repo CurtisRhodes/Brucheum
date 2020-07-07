@@ -9,7 +9,7 @@ var totalFiles = 0;
 var expandDepth = 2;
 var strdirTree = "";
 
-function loadDirectoryTree(startNode, container) {
+function loadDirectoryTree(startNode, container, clickEvent) {
     settingsImgRepo = settingsArray.ImageRepo;
     var start = Date.now();
     $('#dashBoardLoadingGif').show();
@@ -24,7 +24,7 @@ function loadDirectoryTree(startNode, container) {
                 //console.log("load dirTree data took: " + dataLoadTime.toFixed(3));
                 $('#dataifyInfo').show().html("loading directory tree took: " + dataLoadTime.toFixed(3));
                 start = Date.now();
-                buildDirTreeRecurr(dirTreeModel);
+                buildDirTreeRecurr(dirTreeModel, clickEvent);
                 strdirTree += "<div class='dirTreeImageContainer floatingDirTreeImage'><img class='dirTreeImage' /></div>";
 
                 $('#' + container + '').html(strdirTree);
@@ -57,58 +57,73 @@ function loadDirectoryTree(startNode, container) {
     });
 }
 
-function buildDirTreeRecurr(parentNode) {
+function buildDirTreeRecurr(parentNode, clickEvent) {
     dirTreeTab += dirTreeTabIndent;
     let txtFileCount = "";
     let expandClass = "";
     let folderImage = "";
     $.each(parentNode.SubDirs, function (idx, thisNode) {
-        var vwDir = thisNode.VwDirTree;
+        //if (!isNullorUndefined(thisNode.VwDirTree))
+        {
+            let vwDir = thisNode.VwDirTree;
 
-        if (isNullorUndefined(vwDir.FolderImage))
-            folderImage = "Images/redballon.png";
-        else
-            folderImage = settingsImgRepo + vwDir.FolderImage;
-        expandMode = "-";
-        expandClass = "";
-        if (dirTreeTab / dirTreeTabIndent > expandDepth) {
-            expandClass = "displayHidden";
-            if (thisNode.SubDirs.length > 0)
-                expandMode = "+";
-        }
-        txtFileCount = "(" + vwDir.FileCount + ")";
-        if (vwDir.SubDirCount > 0) {
-            totalFiles = 0;
-            if (vwDir.FileCount > 0) {
-                txtFileCount = "(" + vwDir.SubDirCount + " / " + vwDir.FileCount + " + " + (getChildFileCounts(thisNode) - vwDir.FileCount).toLocaleString() + ")";
-            }
+            if (isNullorUndefined(vwDir.FolderImage))
+                folderImage = "Images/redballon.png";
             else
-                txtFileCount = "(" + vwDir.SubDirCount + " / " + getChildFileCounts(thisNode).toLocaleString() + ")";
-        }
-        let randomId = create_UUID();
-        strdirTree +=
-            "<div class='dirTreeNode clickable' style='text-indent:" + dirTreeTab + "px'>"
-            + "<span id='S" + randomId + "' onclick=toggleDirTree('" + randomId + "') >[" + expandMode + "] </span>"
-            + "<div id='" + randomId + "aq' class='treeLabelDiv' onclick='dirTreeClick(\"" + thisNode.DanniPath + "\",\"" + vwDir.Id + "\")' "
-            + "oncontextmenu=showDirTreeContextMenu('" + vwDir.Id + "') "
-            + "onmouseover=showFolderImage('" + encodeURI(folderImage) + "') onmouseout=$('.dirTreeImageContainer').hide() >"
-            + vwDir.FolderName.replace(".OGGLEBOOBLE.COM", "") + "</div><span class='fileCount'>  : "
-            + txtFileCount + "</span></div>" +
-            "<div class='" + expandClass + "' id=" + randomId + ">";
+                folderImage = settingsImgRepo + vwDir.FolderImage;
+            expandMode = "-";
+            expandClass = "";
+            if (dirTreeTab / dirTreeTabIndent > expandDepth) {
+                expandClass = "displayHidden";
+                if (!isNullorUndefined(thisNode.SubDirs)) {
+                    if (thisNode.SubDirs.length > 0)
+                        expandMode = "+";
+                }
+            }
+            txtFileCount = "(" + vwDir.FileCount + ")";
 
-        dirTreeTabIndent = 22;
-        buildDirTreeRecurr(thisNode);
-        strdirTree += "</div>";
-        dirTreeTab -= dirTreeTabIndent;
+            if (!isNullorUndefined(thisNode.SubDirs)) {
+                if (thisNode.SubDirs.length > 0) {
+                    //txtFileCount = "(" + parentNode.SubDirs.length + ")";
+                    txtFileCount = "(" + thisNode.SubDirs.length + ")";
+
+                    //totalFiles = 0;
+                    //if (vwDir.FileCount > 0) {
+                    //    txtFileCount = "(z" + thisNode.SubDirs.length + " / " + vwDir.FileCount + " + " + (getChildFileCounts(thisNode) - vwDir.FileCount).toLocaleString() + ")";
+                    //}
+                    //else {
+                    //    txtFileCount = "(" + thisNode.SubDirs.length + ")";
+                    //}
+                }
+            }
+            let randomId = create_UUID();
+            strdirTree +=
+                "<div class='dirTreeNode clickable' style='text-indent:" + dirTreeTab + "px'>"
+                + "<span id='S" + randomId + "' onclick=toggleDirTree('" + randomId + "') >[" + expandMode + "] </span>"
+                + "<div id='" + randomId + "aq' class='treeLabelDiv' "
+                + "onclick='" + clickEvent + "(\"" + thisNode.DanniPath + "\",\"" + vwDir.Id + "\")' "
+                + "oncontextmenu=showDirTreeContextMenu('" + vwDir.Id + "') "
+                + "onmouseover=showFolderImage('" + encodeURI(folderImage) + "') onmouseout=$('.dirTreeImageContainer').hide() >"
+                + vwDir.FolderName.replace(".OGGLEBOOBLE.COM", "") + "</div><span class='fileCount'>  : "
+                + txtFileCount + "</span></div>" +
+                "<div class='" + expandClass + "' id=" + randomId + ">";
+
+            dirTreeTabIndent = 22;
+            buildDirTreeRecurr(thisNode, clickEvent);
+            strdirTree += "</div>";
+            dirTreeTab -= dirTreeTabIndent;
+        }
     });
 }
 
-function getChildFileCounts(startNode) {
-    totalFiles += startNode.vwDirTree.FileCount;
-    $.each(startNode.SubDirs, function (idx, subDirObj) {
-        if (!subDirObj.vwDirTree.IsStepChild)
-            getChildFileCounts(subDirObj);
-    });
+function getChildFileCounts(dirTree) {
+    totalFiles += dirTree.FileCount;
+    if (!isNullorUndefined(dirTree.SubDirs)) {
+        $.each(dirTree.SubDirs, function (idx, subDirObj) {
+            if (!subDirObj.IsStepChild)
+                getChildFileCounts(subDirObj);
+        });
+    }
     return totalFiles;
 }
 

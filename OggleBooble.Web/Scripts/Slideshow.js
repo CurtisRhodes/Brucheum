@@ -398,6 +398,7 @@ function closeViewer(calledFrom) {
             logEventActivity({
                 VisitorId: getCookieValue("VisitorId"),
                 EventCode: "SVC",
+                PageId: albumFolderId,
                 EventDetail: "Single Image Viewed. closeMethod: " + closeMethod,
                 CalledFrom: albumFolderId
             });
@@ -406,6 +407,7 @@ function closeViewer(calledFrom) {
             logEventActivity({
                 VisitorId: getCookieValue("VisitorId"),
                 EventCode: "SVC",
+                PageId: albumFolderId,
                 EventDetail: "Images Viewed: " + spSessionCount + " closed: " + closeMethod,
                 CalledFrom: albumFolderId
             });

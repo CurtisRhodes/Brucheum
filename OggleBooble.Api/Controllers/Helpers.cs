@@ -35,14 +35,18 @@ namespace OggleBooble.Api.Controllers
             {
                 return "singleModelCollection";
             }
-            if (folderTypeInfo.HasImages && folderTypeInfo.HasSubFolders )
+            if (folderTypeInfo.HasImages && folderTypeInfo.HasSubFolders)
             {
                 if (folderTypeInfo.ContainsRomanNumeral)
                     return "singleModelGallery";
                 if (folderTypeInfo.ContainsNonRomanNumeralChildren)
                     return "assorterdImagesGallery";
             }
-            if (folderTypeInfo.HasSubFolders && !folderTypeInfo.HasImages) {
+            if (folderTypeInfo.HasSubFolders && !folderTypeInfo.HasImages)
+            {
+                if (!folderTypeInfo.ContainsNonRomanNumeralChildren)
+                    return "assorterdImagesGallery";
+
                 if (folderTypeInfo.RootFolder == "archive" || folderTypeInfo.RootFolder == "sluts")
                     return "singleModelGallery";
                 if (folderTypeInfo.RootFolder == "boobs" || folderTypeInfo.RootFolder == "porn")
@@ -52,7 +56,7 @@ namespace OggleBooble.Api.Controllers
             {
                 if (folderTypeInfo.RootFolder == "archive" || folderTypeInfo.RootFolder == "sluts")
                     return "singleModelCollection";
-                if (folderTypeInfo.RootFolder == "boobs" || folderTypeInfo.RootFolder == "porn")
+                else
                     return "assorterdImagesCollection";
             }
 

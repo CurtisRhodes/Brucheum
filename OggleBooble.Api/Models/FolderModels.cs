@@ -11,7 +11,7 @@ namespace OggleBooble.Api.Models
         {
             InternalLinks = new Dictionary<int, string>();
         }
-        public int Id { get; set; }
+        public int FolderId { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
         public string Link { get; set; }
@@ -80,4 +80,12 @@ namespace OggleBooble.Api.Models
         public string LinkStatus { get; set; }
     }
 
+    public class StepchildModel
+    {
+        public int SourceFileId { get; set; }
+        public int DestinationId { get; set; }
+        public string LinkId { get; set; }
+        public string FolderName { get; set; }
+        public string SortOrder { get; set; }
+    }
 }

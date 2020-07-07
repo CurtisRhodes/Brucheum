@@ -300,15 +300,17 @@ function logError(logErrorModel) {
             success: function (success) {
                 if (success === "ok") {
                     //displayStatusMessage("ok", "error message logged");
-                    console.log("error message logged.  Called from: " + logErrorModel.CalledFrom + " message: " + logErrorModel.ErrorMessage);
+                    console.log("error message logged.  Called from: " +
+                        logErrorModel.CalledFrom + " message: " + logErrorModel.ErrorMessage);
                 }
                 else {
+
                     console.error("error in logError!!: " + success);
                 }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "logActivity")) {
+                if (!checkFor404(errorMessage, "logError")) {
                     console.error("XHR error in logError!!: " + success);
                 }
             }
@@ -337,7 +339,7 @@ function logDataActivity(changeLogModel) {
                         ActivityCode: "OMG",
                         Severity: 1,
                         ErrorMessage: success,
-                        CalledFrom: "logActivity"
+                        CalledFrom: "logDataActivity"
                     });
                 //sendEmailToYourself("error in common/logActivity", success);
             }
@@ -345,16 +347,14 @@ function logDataActivity(changeLogModel) {
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "logActivity")) {
+            if (!checkFor404("logDataActivity")) {
                 if (document.domain === "localhost")
                     alert("logDataActivity XHR: " + errorMessage);
                 else
                     logError({
                         VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "logActivity"
+                        ActivityCode: "XHR", Severity: 1, ErrorMessage: errorMessage,
+                        CalledFrom: "logDataActivity"
                     });
                 //sendEmailToYourself("xhr error in common.js logActivity", "/api  ChangeLog  Message: " + errorMessage);
             }
@@ -379,6 +379,7 @@ function changeFavoriteIcon(icon) {
     link.rel = 'shortcut icon';
     switch (icon) {
         case "porn": link.href = 'https://ogglebooble.com/images/cslips03.png'; break;
+        case "soft": link.href = 'https://ogglebooble.com/images/redwoman.ico'; break;
         case "loading":
             link.href = "https://ogglebooble.com/images/loader.gif";
             link.type = 'image/gif';

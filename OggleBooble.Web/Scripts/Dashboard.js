@@ -1,28 +1,19 @@
 ﻿let pSelectedTreeId, pSelectedTreeFolderPath;
 
-function dashboardHtml() {
-    return "<div id='dashboardContainer' class='dashboardContainer'>\n" +
-        "   <div id='dashboardLeftColumn' class='dashboardContainerColumn'>\n" +
-        "       <div id='dashboardLeftMenu' class='oggleVerticalMenu' ></div>\n" +
-        "   </div>\n" +
-        "   <img id='dashBoardLoadingGif' class='loadingGif' src='Images/loader.gif'/>\n" +
-        "   <div id='dashboardMiddleColumn' class='dashboardContainerColumn'>\n" +
-        "       <div id='workAreaContainer' class='workAreaContainer'></div>\n" +
-        "   </div>\n" +
-        "   <div id='dashboardRightColumn' class='dashboardContainerColumn'></div>\n" +
-        "   <div id='dataifyInfo' class='infoLine' onclick='$(\"#dataifyInfo\").hide()'></div>\n" +
-        "</div >\n";
-}
+
+//var partialViewSelectedItemId = 0;
+//var dashboardContextMenuFolderId = "";
+
 
 function dashboardStartup() {
     $('.txtLinkPath').val('');
     setOggleHeader(3910, "dashboard");
-    loadDirectoryTree(1, "dashboardRightColumn");
+    loadDirectoryTree(1, "dashboardRightColumn", "dashBoardDirTreeClick");
     loadHeaderTabs();
     setLeftMenu('Add Images');
     document.title = "Dashboard : OggleBooble";
 
-    $('.dashboardContainerColumn').show(); 
+    $('.dashboardContainerColumn').show();
     // $('#divAddImages').show();
     //logPageHit(3910, "dashboard");
     //defineDilogs();
@@ -31,16 +22,6 @@ function dashboardStartup() {
         setLeftMenu('Admin');
     //window.addEventListener("beforeunload", detectUnload());
     window.addEventListener("resize", resizeDashboardPage);
-    resizeDashboardPage();
-}
-
-function onDirTreeComplete() {
-    $('#dashBoardLoadingGif').hide();
-    setTimeout(function () {
-        $('#dataifyInfo').hide()
-        resizeDashboardPage();
-    }, 15000);
-    showAddImageLinkDialog();
     resizeDashboardPage();
 }
 
@@ -63,24 +44,28 @@ function resizeDashboardPage() {
     //$('#headerMessage').html("dashboardMiddleColumn.w: " + $('#dashboardMiddleColumn').width());
 }
 
+function rebuildDirectoryTree() {
+    loadDirectoryTree(1, "dashboardRightColumn", "dashBoardDirTreeClick");
+}
+
 function setLeftMenu(viewId) {
     $('#headerSubTitle').html(viewId);
     switch (viewId) {
         case "Add Images":
             //$('.workAreaContainer').hide();
-            $('#dashboardLeftMenu').html("<div class='clickable' onclick='buildDirectoryTree()'>ReBuild Dir Tree</div>");
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick='rebuildDirectoryTree()'>ReBuild Dir Tree</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showUpLoadFileDialog()'>Upload a file</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddImageLinkDialog()'>Add Image Link</div>");
             $('#divAddImages').show();
             break;
         case "Manage Folders": {
             //$('.workAreaContainer').hide();
-            $('#dashboardLeftMenu').html("<div class='clickable' onclick='buildDirectoryTree()'>ReBuild Dir Tree</div>");
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick='rebuildDirectoryTree()'>ReBuild Dir Tree</div>");
 
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#createNewFolderDialog').dialog('open');\">Create New Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showCopyFolderDialog()'>Copy Folder</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddStepChildFolderDialog()'>Copy Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#renameFolderCrud').dialog('open');\">Rename Folder</div>");
             break;
         }
@@ -98,14 +83,14 @@ function setLeftMenu(viewId) {
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='errorLogReport()'>Error Log</div>");
             break;
         case "Admin":
-            $('#dashboardLeftMenu').html("<div class='clickable' onclick='buildDirectoryTree()'>ReBuild Dir Tree</div>");
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick='rebuildDirectoryTree()'>ReBuild Dir Tree</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddImageLinkDialog()'>Add Image Link</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showCreateStaticPagesDialog()'>Create Static Pages</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showRepairLinksDialog()'>Repair Links</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='prepareXhamsterPage()'>Prepare xHamster Page</div>");
 
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showCreateNewFolderDialog()';\">Create New Folder</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showCreateNewFolderDialog(" + pSelectedTreeId + ")';\">Create New Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showCopyFolderDialog()'>Copy Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showRenameFolderDialog()'>Rename Folder</div>");
@@ -294,7 +279,7 @@ function showAddImageLinkDialog() {
         "       <label>link</label><input id='txtImageLink' tabindex='1' class='roundedInput' onblur='previewLinkImage()'/>\n" +
         "   </div>\n" +
         "   <div class='flexbox'>\n" +
-        "       <label>path</label><input class='roundedInput txtLinkPath' readonly='readonly' /></div>\n" +
+        "       <label>path</label><input class='roundedInput txtLinkPath' readonly='readonly' />\n" +
         "   </div>\n" +
         "    <div class='roundendButton' tabindex='2' onclick='addImageLink()'>Insert</div>\n" +
         "</div>\n" +
@@ -303,55 +288,61 @@ function showAddImageLinkDialog() {
 
     $('#addLinkCrudArea').keydown(function (event) {
         if (event.keyCode === 13) {
+            //alert("keydown 13");
             addImageLink();
         }
     });
 }
 function addImageLink() {
-    if (isNullorUndefined($('#txtImageLink').val()))
+    if (isNullorUndefined($('#txtImageLink').val())) {
         alert("invalid link");
-    else {
-        $('#dataifyInfo').show().html("Adding ImageLink");
-        var newLink = {};
-        newLink.Link = $('#txtImageLink').val();
-        newLink.FolderId = pSelectedTreeId;
-        newLink.Path = pSelectedTreeFolderPath;
-        $('#dashBoardLoadingGif').fadeIn();
-        $.ajax({
-            type: "POST",
-            url: settingsArray.ApiServer + "api/OggleFile/AddImageLink",
-            data: newLink,
-            success: function (successModel) {
-                $('#dashBoardLoadingGif').hide();
-                if (successModel.Success === "ok") {
-                    $('#dataifyInfo').hide();
-                    displayStatusMessage("ok", "image link added");
-                    $('#txtImageLink').val("");
-                    resizeDashboardPage();
-
-                    if (successModel.ReturnValue !== "0") {
-                        alert("set image: " + successModel.ReturnValue + " as folder image for " + pSelectedTreeId);
-                        setFolderImage(successModel.ReturnValue, pSelectedTreeId, "folder");
-                    }
-                    logDataActivity({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "NIA",
-                        PageId: pSelectedTreeId,
-                        Activity: newLink.Link
-                    });
-                    $('#dataifyInfo').hide();
-                }
-                else {
-                    $('#dataifyInfo').show().html("successModel.Success");
-                    alert("addImageLink: " + successModel.Success);
-                }
-            },
-            error: function (xhr) {
-                $('#dashBoardLoadingGif').hide();
-                alert("addImageLink xhr error: " + getXHRErrorDetails(xhr));
-            }
-        });
+        return;
     }
+    if (isNullorUndefined(pSelectedTreeFolderPath)) {
+        alert("select a destination");
+        return;
+    }
+    $('#dataifyInfo').show().html("Adding ImageLink");
+    var newLink = {};
+    newLink.Link = $('#txtImageLink').val();
+    newLink.FolderId = pSelectedTreeId;
+    newLink.Path = pSelectedTreeFolderPath;
+    $('#dashBoardLoadingGif').fadeIn();
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/OggleFile/AddImageLink",
+        data: newLink,
+        success: function (successModel) {
+            $('#dashBoardLoadingGif').hide();
+            if (successModel.Success === "ok") {
+                $('#dataifyInfo').hide();
+                displayStatusMessage("ok", "image link added");
+                $('#txtImageLink').val("");
+                resizeDashboardPage();
+
+                //if (successModel.ReturnValue !== "0") {
+                //    alert("set image: " + successModel.ReturnValue + " as folder image for " + pSelectedTreeId);
+                //    setFolderImage(successModel.ReturnValue, pSelectedTreeId, "folder");
+                //}
+                logDataActivity({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "NIA",
+                    PageId: pSelectedTreeId,
+                    Activity: newLink.Link
+                });
+                $('#dataifyInfo').hide();
+            }
+            else {
+                $('#dataifyInfo').show().html("successModel.Success");
+                alert("addImageLink: " + successModel.Success);
+            }
+        },
+        error: function (xhr) {
+            $('#dashBoardLoadingGif').hide();
+            alert("addImageLink xhr error: " + getXHRErrorDetails(xhr));
+        }
+    });
+
 }
 function previewLinkImage() {
     $('#imgLinkPreview').attr('src', $('#txtImageLink').val());
@@ -454,43 +445,97 @@ function SaveFileAs() {
     }
 }
 
+// CREATE NEW FOLDER
+function showCreateNewFolderDialog() {
+    $('#oggleDialogTitle').html("Create New Folder");
+    $('#draggableDialogContents').html(
+        "<div><span>parent</span><input class='txtLinkPath inlineInput roundedInput' readonly='readonly' /></div>\n" +
+        "<div><span>title</span><input id='txtNewFolderTitle' class='inlineInput roundedInput' /></div>\n" +
+        "<div class='roundendButton' onclick='performCreateNewFolder()'>Create Folder</div>\n");
+    $("#draggableDialog").fadeIn();
+    var winH = $(window).height();
+    var dlgH = $('#customMessage').height();
+    $('#customMessageContainer').css("top", (winH - dlgH) / 2);
+}
+function performCreateNewFolder() {
+    $('#dashBoardLoadingGif').fadeIn();
+    var newFolder = {};
+    newFolder.FolderName = $('#txtNewFolderTitle').val();
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "/api/CatFolder/Create?parentId=" + pSelectedTreeId + "&newFolderName=" + $('#txtNewFolderTitle').val(),
+        success: function (successModel) {
+            $('#dashBoardLoadingGif').hide();
+            if (successModel.Success === "ok") {
+                displayStatusMessage("ok", "new folder " + $('#txtNewFolderTitle').val() + " created");
+                logDataActivity({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "NFC",
+                    PageId: successModel.ReturnValue,
+                    Activity: $('#txtNewFolderTitle').val()
+                });
+                $('#txtNewFolderTitle').val('');
+                //$('#createNewFolderDialog').dialog('close');
+            }
+            else
+                alert("CreateNewFolder: " + successModel.Success);
+        },
+        error: function (xhr) {
+            $('#dashBoardLoadingGif').hide();
+            alert("createNewFolder xhr error: " + getXHRErrorDetails(xhr));
+        }
+    });
+}
+
 // COPY FOLDER
-function addStepChildFolder() {
+function showAddStepChildFolderDialog() {
     $('#oggleDialogTitle').html("Copy Folder");
-    $('#draggableDialogContents').html("<div class='oggleDialogWindow'>\n" +
-        "    <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
-        "    <div class='pusedoTextBox'></div>\n" +
-        "    <div class='inline'><img class='moveDialogDirTreeButton' src='/Images/caretDown.png' " +
-        "           onclick='$(\"#linkManipulateDirTree\").toggle()'/></div>\n" +
-        "    <div class='roundendButton' onclick='perfomCopyFolder(\"" + linkId + "\")'>Copy Folder</div>\n" +
-        "    <div id='linkManipulateDirTree' class='hideableDropDown'><img class='ctxloadingGif' src='Images/loader.gif'/></div>\n" +
+    $('#draggableDialogContents').html(
+        "<div id='copyFolderCrud' class='dashboardToggle' title='Copy Folder'>\n" +
+        "    <div><span>folder to copy</span><input id='txtNewStepParent' class='txtLinkPath roundedInput' readonly='readonly' /></div>\n" +
+        "    <div><span>new name</span><input id='txtNewFolderName' class='roundedInput' /></div>\n" +
+        "    <div><span>link</span><input id='txtCustomFolderLink' class='roundedInput' /></div>\n" +
+        "    <div>\n" +
+        "        <span>new parent </span><div id='copyFolderToggleButton' onclick='$('#copyFolderParentDirTree').dialog('open');' class='toggleButton'>...</div>\n" +
+        "        <div id='copyFolderParentDirTree' class='moveDirTreeContainer' title='Select Parent Folder'></div>\n" +
+        "        <input id='txtCopyFolderParent' class='roundedInput' readonly='readonly' />\n" +
+        "    </div>\n" +
+        "    <div class='roundendButton' onclick='copyFolder()'>Copy Folder</div>\n" +
         "</div>");
-    loadDirectoryTree(1, "linkManipulateDirTree");
+
+    //loadDirectoryTree(1, "linkManipulateDirTree");
     //var winH = $(window).height();
     //var dlgH = $('#draggableDialog').height();
     //$('#draggableDialog').css("top", (winH - dlgH) / 2);
+    $('#txtCustomFolderLink').val(pSelectedTreeFolderPath);
+    // $('#txtCustomFolderLink').val(pSelectedTreeFolderPath);
     $('#draggableDialog').fadeIn();
 }
-
-function perfomCopyFolder() {
+function perfomAddStepChildFolder() {
     $('#dashBoardLoadingGif').show();
-    var stepchildModel = {
-        Parent: copyFolderSelectedParentId,
-        Child: pSelectedTreeId,
-        Link: $('#txtImageLink').val(),
-        FolderName: $('#txtNewFolderName').val(),
-        SortOrder: 998
-    };
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/Folder/AddStepChild?newParentId=" + pSelectedTreeId
-        ,
-        data: stepchildModel,
+        url: settingsArray.ApiServer + "api/CatFolder/AddStepChild",
+        data: {
+            SourceFileId: copyFolderSelectedParentId,
+            DestinationId: pSelectedTreeId,
+            LinkId: $('#txtCustomFolderLink').val(),
+            FolderName: $('#txtNewFolderName').val(),
+            SortOrder: 1998
+        },
         success: function (successModel) {
             $('#dashBoardLoadingGif').hide();
             $('#dataifyInfo').hide();
             if (successModel.Success === "ok") {
                 displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " copied to " + $('.txtPartialDirTreePath').val());
+                logDataActivity({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "CSF",  // Create Folder Stepchild
+                    PageId: folderId,
+                    Activity: "perfomCopyFolder"
+                });
+
+
                 logActivity({
                     PageId: pSelectedTreeId,
                     PageName: $('.txtPartialDirTreePath').val(),
@@ -645,7 +690,7 @@ function moveCheckedImages() {
             success: function (success) {
                 $('#dashBoardLoadingGif').hide();
                 if (success === "ok") {
-                    //buildDirectoryTree();
+                    //rebuildDirectoryTree();
                     showMoveManyTool();
                 }
                 else
@@ -955,7 +1000,7 @@ function XXmergeFolders() {
                 $('#dashBoardLoadingGif').hide();
                 if (success === "ok") {
                     displayStatusMessage("ok", "collapse succeded");
-                    buildDirectoryTree();
+                    rebuildDirectoryTree();
                     $('#progressBar').hide();
                     //$('#progressBar').progressbar("destroy");
                 }
@@ -980,15 +1025,33 @@ function XXtestAddVisitor() {
     addVisitor(3309, "dashboard");
 }
 
-//var partialViewSelectedItemId = 0;
-//var dashboardContextMenuFolderId = "";
+function dashboardHtml() {
+    return "<div id='dashboardContainer' class='dashboardContainer'>\n" +
+        "   <div id='dashboardLeftColumn' class='dashboardContainerColumn'>\n" +
+        "       <div id='dashboardLeftMenu' class='oggleVerticalMenu' ></div>\n" +
+        "   </div>\n" +
+        "   <img id='dashBoardLoadingGif' class='loadingGif' src='Images/loader.gif'/>\n" +
+        "   <div id='dashboardMiddleColumn' class='dashboardContainerColumn'>\n" +
+        "       <div id='workAreaContainer' class='workAreaContainer'></div>\n" +
+        "   </div>\n" +
+        "   <div id='dashboardRightColumn' class='dashboardContainerColumn'></div>\n" +
+        "   <div id='dataifyInfo' class='infoLine' onclick='$(\"#dataifyInfo\").hide()'></div>\n" +
+        "</div >\n";
+}
 
-function dirTreeClick(danniPath, folderId) {
-    //alert("dirTreeClick. DanniPath: " + danniPath);
+function onDirTreeComplete() {
+    $('#dashBoardLoadingGif').hide();
+    setTimeout(function () {
+        $('#dataifyInfo').hide()
+        resizeDashboardPage();
+    }, 15000);
+    showAddImageLinkDialog();
+    resizeDashboardPage();
+}
+
+function dashBoardDirTreeClick(danniPath, folderId) {
     pSelectedTreeId = folderId;
     pSelectedTreeFolderPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
     $('.txtLinkPath').val(pSelectedTreeFolderPath);
-    $("#mainMenuContainer").html($('.txtLinkPath').val());
-    //alert("DanniPath: " + $('.txtLinkPath').val());
-    //alert("pSelectedTreeId: " + pSelectedTreeId);
+    //$("#mainMenuContainer").html($('.txtLinkPath').val());
 }

@@ -8,6 +8,7 @@ function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
 
     imageComment.VisitorId = getCookieValue("VisitorId");
     imageComment.ImageLinkId = linkId;
+    imageComment.FoldeId = folderId;
 
     $('#commentDialogImage').attr("src", imgSrc);
     $('#draggableDialog').css("top", $('.oggleHeader').height() - 50);
@@ -35,7 +36,6 @@ function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
     //SID	show Image Comment Dialog
     //CMX	Show Model Info Dialog
     reportEvent("SID", calledFrom, "LinkId: " + linkId, folderId);
-
     $("#draggableDialog").fadeIn();
 
     //innocent young girl with an enormous set of knockers.She doesn't mind showing them, but it's like she's doing you a favor.
@@ -43,7 +43,16 @@ function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
 
 function loadComment() {
     /// retreive user's previous comment
-    $.ajax({
+     //public partial class ImageComment {
+    //[Key]
+    //public string Id { get; set; }
+    //    public string CommentTitle { get; set; }
+    //    public string CommentText { get; set; }
+    //    public string ImageLinkId { get; set; }
+    //    public string VisitorId { get; set; }
+    //    public DateTime Posted { get; set; }
+    //}
+   $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/OggleBlog?linkId=" + imageComment.LinkId + "&userId=" + getCookieValue("VisitorId"),
         success: function (comment) {
@@ -85,17 +94,6 @@ function loadComment() {
     });
 }
 
-    //public partial class ImageComment {
-    //[Key]
-    //public string Id { get; set; }
-    //    public string CommentTitle { get; set; }
-    //    public string CommentText { get; set; }
-    //    public string ImageLinkId { get; set; }
-    //    public string VisitorId { get; set; }
-    //    public DateTime Posted { get; set; }
-    //}
-
-
 function saveComment() {
     imageComment.CommentTitle = $('#txtCommentTitle').val();
     imageComment.CommentText = $('#imageCommentEditor').summernote('code');
@@ -116,21 +114,28 @@ function addImageComment() {
                 displayStatusMessage("ok", "Entry Added");
                 $('#divSaveFantasy').html("edit");
                 $('#divCloseantasy').html("done");
+                awardCredits("IMC", imageComment.FoldeId);
+
                 //FCC	Fantasy comment
                 //SID	show Image Comment Dialog
                 //CMX	Show Model Info Dialog
                 //reportEvent("FCC", calledFrom, "LinkId: " + blogComment.LinkId, blogComment.FolderId);
             }
             else {
-                if (document.domain === "localhost") alert("AJX addImageComment: " + successModel.Success);
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "AJX",
-                    Severity: 1,
-                    ErrorMessage: successModel.Success,
-                    CalledFrom: "addImageComment"
-                });
-                //sendEmailToYourself("jquery fail in ImageCommentDialog.js addImageComment", "saveComment: " + successModel.Success);
+                if (success.includes("title"))
+                    alert("Please add a title");
+                else {
+                    if (document.domain === "localhost") alert("AJX addImageComment: " + success);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "AJX",
+                            Severity: 1,
+                            ErrorMessage: successModel.Success,
+                            CalledFrom: "addImageComment"
+                        });
+                    //sendEmailToYourself("jquery fail in ImageCommentDialog.js addImageComment", "saveComment: " + successModel.Success);
+                }
             }
         },
         error: function (jqXHR) {

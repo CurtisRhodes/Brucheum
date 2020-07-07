@@ -1,12 +1,32 @@
-﻿.oggleHeader {
+﻿.stickyHeader {
     position: sticky;
     top: 0;
     margin: 0;
     width: 100%;
     display: flex;
     z-index: 31;
-    background: var(--brucheumBlue);
+/*    background: var(--brucheumBlue);*/
 }
+
+.boobsHeader {
+    background: var(--brucheumBlue);
+    border-top: #40767d 3px solid;
+    border-bottom: #decd6f 3px solid;
+}
+
+.pornHeader {
+    background-color: #cab37e;
+    border-top: #40767d 3px solid;
+    border-bottom: #decd6f 11px solid;
+}
+
+.oggleSoft {
+    background-color: #cc7d5f; /*orangy*/
+    border-top: #40767d 3px solid;
+    border-bottom: #407d6e 5px solid;
+}
+
+
 .headerBodyContainer {
     float: left;
     width: 100%;
@@ -96,24 +116,6 @@
     background-color: var(--oggleHeaderBackgroundColor);
     border-top: var(--oggleHeaderBoarderTop);
     border-bottom: var(--oggleHeaderBoarderBottom);
-}
-
-.pornHeaderColors {
-    background-color: #cab37e;
-    border-top: #40767d 3px solid;
-    border-bottom: #decd6f 11px solid;
-}
-
-.boobsHeader {
-    background: var(--brucheumBlue);
-    border-top: #40767d 3px solid;
-    border-bottom: #decd6f 3px solid;
-}
-
-.pornHeader {
-    background: #d0a783;
-    border-top: #40767d 3px solid;
-    border-bottom: #decd6f 3px solid;
 }
 
 .customMessageContainer {

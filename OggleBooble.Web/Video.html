@@ -123,6 +123,36 @@
           }*/
     </style>
     <header></header>
+
+    <div id="paypal-button-container"></div>
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD" data-sdk-integration-source="button-factory"></script>
+    <script>
+        paypal.Buttons({
+            style: {
+                shape: 'rect',
+                color: 'gold',
+                layout: 'horizontal',
+                label: 'paypal',
+
+            },
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '1'
+                        }
+                    }]
+                });
+            },
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    alert('Transaction completed by ' + details.payer.name.given_name + '!');
+                });
+            }
+        }).render('#paypal-button-container');
+    </script>
+
+
     <div class="threeColumnLayout">
         <div id="leftColumn"></div>
         <div id="middleColumn">
@@ -173,13 +203,13 @@
                     </div>
                 </div>
             </div>-->
-                    <!--<video width="498" height="312" id="still_video_object"
+            <!--<video width="498" height="312" id="still_video_object"
                style="width: 960px; height: 540px;"
                src="https://edge206.stream.highwebmedia.com/live-hls/amlst:caylin-sd-8937ba6912ed937e04b8db696878e971b081d644ba83cba4e9b73d5e0af1e0f6_trns_h264/playlist.m3u8"
                controls="controls" poster="https://cbjpeg.stream.highwebmedia.com/stream?room=caylin&amp;f=0.9385384182003007"
                playsinline="" webkit-playsinline="">
             </video>-->
-                    <!--<video width="498" height="407" id="still_video_object"
+            <!--<video width="498" height="407" id="still_video_object"
                style="width: 960px; height: 720px;"
                src="https://edge339.stream.highwebmedia.com/live-hls/amlst:milkykandy-sd-f711ce8d936f52233813ba8cf5db3e9298219fdd29e9207f98790718007878b2_trns_h264/playlist.m3u8"
                controls="controls" poster="https://cbjpeg.stream.highwebmedia.com/stream?room=milkykandy&amp;f=0.4223353379949424"

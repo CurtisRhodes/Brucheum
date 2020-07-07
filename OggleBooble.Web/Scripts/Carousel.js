@@ -176,6 +176,7 @@ function startCarousel(startIndex) {
 }
 
 function setLabelLinks() {
+    let debugMode = true;
     if (carouselItemArray[imageIndex].FolderId === carouselItemArray[imageIndex].ImageFolderId) {
         if (!containsRomanNumerals(carouselItemArray[imageIndex].ImageFolderName)) {
             // noraml
@@ -187,13 +188,12 @@ function setLabelLinks() {
             imageTopLabelClickId = carouselItemArray[imageIndex].FolderParentId;
             footerLabelClickId = carouselItemArray[imageIndex].FolderGPId;
             knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;
-            //$('#headerMessage').html("1");
+            if (debugMode) $('#headerMessage').html("1");
 
             if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
                 $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].FirstChild);
-                //$('#headerMessage').append("P");
+                if (debugMode) $('#headerMessage').append("P");
             }
-
         }
         else { // roman shift
             $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderParentName);
@@ -203,12 +203,12 @@ function setLabelLinks() {
             mainImageClickId = carouselItemArray[imageIndex].ImageFolderParentId;
             knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;  //  the roman
             imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderGPId;
-            //$('#headerMessage').html("2");
+            if (debugMode) $('#headerMessage').html("RNS");
 
             if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
                 $('#imageTopLabel').html("Playboy Playmate2: " + carouselItemArray[imageIndex].FirstChild);
                 $('#knownModelLabel').html(carouselItemArray[imageIndex].Folder);
-                //$('#headerMessage').append("P");
+                if (debugMode) $('#headerMessage').append("P");
                 imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
                 //pause();
                 //setTimeout(function () { alert("roman shift " + $('#headerMessage').html() + ".  imageTopLabelClickId: " + imageTopLabelClickId); }, 600);
@@ -224,10 +224,11 @@ function setLabelLinks() {
             knownModelLabelClickId = carouselItemArray[imageIndex].ImageFolderId;
             imageTopLabelClickId = carouselItemArray[imageIndex].FolderId;
             footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].ImageFolderParentId);
-            //$('#headerMessage').html("3");
+            if (debugMode) $('#headerMessage').html("LN3");
             if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
                 $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderName);
                 $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParentName);                
+                if (debugMode) $('#headerMessage').append("P");
 
                 //$('#carouselFooterLabel').html("Playboy");
                 //footerLabelClickId = 472;
@@ -245,7 +246,7 @@ function setLabelLinks() {
             mainImageClickId = carouselItemArray[imageIndex].FolderParentId;
             imageTopLabelClickId = carouselItemArray[imageIndex].FolderGPId;
             footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
-            //$('#headerMessage').html("4");
+            if (debugMode) $('#headerMessage').html("RNS4");
             //pause();
             //setTimeout(function () { alert("4 Non Roman Numeral Non folder member") }, 600);
         }
@@ -287,21 +288,22 @@ function intervalBody(newImageIndex) {
             console.log("carouselItemArray[" + imageIndex + "] undefined ");
         else {
             imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
-            $('#thisCarouselImage').attr('src', imgSrc);
-            $('#knownModelLabel').html("").hide();
-            $('#carouselFooterLabel').html("").hide();
-            $('#imageTopLabel').html("").hide();
-            setLabelLinks();
-            $('#carouselFooterLabel').fadeIn();
-            $('#imageTopLabel').fadeIn();
-            $('#knownModelLabel').fadeIn();
-            imageHistory.push(imageIndex);
-            $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
+            $('#thisCarouselImage').attr('src', imgSrc).load(function () {
+                $('#knownModelLabel').html("").hide();
+                $('#carouselFooterLabel').html("").hide();
+                $('#imageTopLabel').html("").hide();
+                setLabelLinks();
+                $('#carouselFooterLabel').fadeIn();
+                $('#imageTopLabel').fadeIn();
+                $('#knownModelLabel').fadeIn();
+                imageHistory.push(imageIndex);
+                $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
 
-            $('#footerMessage').html("image " + imageIndex + " of " + carouselItemArray.length.toLocaleString());
-            //console.log("image views: " + carouselImageViews);
-            $('#headerMessage').html("viewed ok: " + ++carouselImageViews + " errors: " + carouselImageErrors);
-            //$('#footerMessage').append(".  carousel image viewed: " + carouselImageViews);
+                $('#footerMessage').html("image " + imageIndex + " of " + carouselItemArray.length.toLocaleString());
+                //console.log("image views: " + carouselImageViews);
+                $('#headerMessage').html("viewed ok: " + ++carouselImageViews + " errors: " + carouselImageErrors);
+                //$('#footerMessage').append(".  carousel image viewed: " + carouselImageViews);
+            });
         }
     });
 }
@@ -503,6 +505,9 @@ function assuranceArrowClick(direction) {
 function carouselContextMenu() {
     pos.x = event.clientX;
     pos.y = event.clientY;
+
+    //alert("carouselContextMenu FolderId: " + carouselItemArray[imageIndex].FolderId)
+
     showContextMenu("Carousel", pos, imgSrc,
         carouselItemArray[imageIndex].LinkId,
         carouselItemArray[imageIndex].FolderId,

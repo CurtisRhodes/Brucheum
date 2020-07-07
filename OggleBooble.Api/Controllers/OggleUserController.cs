@@ -93,6 +93,29 @@ namespace OggleBooble.Api.Controllers
             return registeredUser;
         }
 
+        [HttpPost]
+        [Route("api/User/AwardCredits")]
+        public string AwardCredits(UserCredit userCredit)
+        {
+            string success;
+            try
+            {
+                userCredit.Occured = DateTime.Now;
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    db.UserCredits.Add(userCredit);
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+
         private static string HashSHA256(string value)
         {
             var sha1 = System.Security.Cryptography.SHA256.Create();
