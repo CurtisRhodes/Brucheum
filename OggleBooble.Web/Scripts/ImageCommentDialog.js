@@ -10,8 +10,11 @@ function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
     imageComment.ImageLinkId = linkId;
     imageComment.FoldeId = folderId;
 
+    alert("calledFrom: " + calledFrom);
+
     $('#commentDialogImage').attr("src", imgSrc);
     $('#draggableDialog').css("top", $('.oggleHeader').height() - 50);
+    //if(calledFrom==="")
     $('#oggleDialogTitle').html("Write a fantasy about this image");
 
     $('#imageCommentEditor').summernote({

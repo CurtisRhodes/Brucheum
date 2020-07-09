@@ -1,5 +1,9 @@
 ﻿
 function indexStartup(spaPageId) {
+
+    $('#indexMiddleColumn').html(indexPageHTML());
+
+
     if (spaPageId === 3909) {
         changeFavoriteIcon("porn");
         document.title = "welcome : OgglePorn";
@@ -9,6 +13,9 @@ function indexStartup(spaPageId) {
         changeFavoriteIcon("redBallon");
         document.title = "welcome : OggleBooble";
         //launchPromoMessages();
+
+        
+
         launchCarousel("boobs");
         loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
     }

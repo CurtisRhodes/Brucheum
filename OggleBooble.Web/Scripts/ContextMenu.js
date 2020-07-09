@@ -226,8 +226,8 @@ function contextMenuAction(action) {
                 showUnknownModelDialog(pLinkId);
             }
             else
-                if (pMenuType === "Folder")
-                    ctxgetFolderDetails();
+                if (pModelFolderId === 0)
+                    showFolderInfoDialog(pFolderId, "img ctx");
                 else
                     showFolderInfoDialog(pModelFolderId, "img ctx");
             $("#contextMenuContainer").fadeOut();
@@ -243,15 +243,7 @@ function contextMenuAction(action) {
             break;
         }
         case "comment": {
-            if (pFolderType.indexOf("singleModel") > -1) {
-
-                // alert("showImageCommentDialog(pLinkId: " + pLinkId + ",\npImgSrc: " + pImgSrc + ", pFolderId: " + pFolderId);
-
-                showImageCommentDialog(pLinkId, pImgSrc, pFolderId, "ImageContextMenu");
-            }
-            if (pFolderType.indexOf("assorterd") > -1) {
-                showFolderCommentDialog(pFolderId);
-            }
+            showImageCommentDialog(pLinkId, pImgSrc, pFolderId, "ImageContextMenu");
             $("#contextMenuContainer").fadeOut();
             break;
         }
@@ -318,22 +310,7 @@ function contextMenuAction(action) {
     }
 }
 
-function showFolderCommentDialog() {
-
-    var visitorId = getCookieValue("VisitorId");
-
-    alert("showFolderCommentDialog()");
-
-}
-
-//function showLinks(pLinkId) {
-//    reportEvent("SHL", "show Image links", pFolderName, pFolderId)
-//}
-
 function contextMenuHtml() {
-    //"<div id='contextMenuContainer' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>" +
-    //"   <div id='contextMenuContent'></div>\n" +
-    //"</div>\n" +
     return "<div id='ctxModelName' onclick='contextMenuAction(\"showDialog\")'>model name</div>\n" +
         "<div id='ctxSeeMore' onclick='contextMenuAction(\"see more\")'>see more of her</div>\n" +
         "<div id='ctxNewTab' onclick='contextMenuAction(\"openInNewTab\")'>Open in new tab</div>\n" +

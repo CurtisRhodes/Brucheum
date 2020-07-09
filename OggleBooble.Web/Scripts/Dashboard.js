@@ -178,6 +178,12 @@ function repairLinks(justOne) {
                         $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
                     if (repairReport.ImageFileAdded > 0)
                         $('#dataifyInfo').append(", ImageFiles Added: " + repairReport.ImageFileAdded);
+                    if (repairReport.MissingFiles.length > 0) {
+
+                        $('#dataifyInfo').append(", No Link Files: " + repairReport.MissingFiles.length);
+
+
+                    }
 
                     //$('#dataifyInfo').append(", directory errors: " + repairReport.DirNotFound);
                     //$('#dataifyInfo').append(", bad file names: " + repairReport.BadFileNames);
@@ -307,6 +313,7 @@ function addImageLink() {
         data: newLink,
         success: function (successModel) {
             $('#dashBoardLoadingGif').hide();
+
             if (successModel.Success === "ok") {
                 $('#dataifyInfo').hide();
                 displayStatusMessage("ok", "image link added");
@@ -326,6 +333,7 @@ function addImageLink() {
                 $('#dataifyInfo').hide();
             }
             else {
+
                 $('#dataifyInfo').show().html("successModel.Success");
                 alert("addImageLink: " + successModel.Success);
             }

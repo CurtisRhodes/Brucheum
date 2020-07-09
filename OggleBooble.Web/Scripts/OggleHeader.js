@@ -1,4 +1,4 @@
-﻿let hdrFolderId, hdrSubdomain, hdrRowW;
+﻿let hdrFolderId, hdrSubdomain, hdrRowW, mediaDebug;
 
 function setOggleHeader(folderId, subdomain) {
     //if (getCookieValue("IpAddress") === "68.203.90.183") alert("setOggleHeader subdomain " + subdomain + "  folderId: " + folderId + " containsImageLinks: " + containsImageLinks);
@@ -15,14 +15,22 @@ function setOggleHeader(folderId, subdomain) {
         }
     });
 
+    mediaDebug = true;
+    if (mediaDebug) {        
+        $('.headerTopRow').css("border", "solid thin lime");
+        //return $('#bannerTitle').width() + $('#mainMenuContainer').width() + $('#topRowRightContainer').width() + $('#searchBox').width() + topRowFudgeFactor;
+        $('#bannerTitle').css("border", "solid thin red");
+        $('#mainMenuContainer').css("border", "solid thin red");
+        $('#topRowRightContainer').css("border", "solid thin red");
+        $('#searchBox').css("border", "solid thin red");
+    }
+
     setHdrBottomRow(hdrFolderId, subdomain);
-
     $('#mainMenuContainer').html(setMenubar(folderId, subdomain));
-
     setLoginSection(subdomain);
+    setTimeout(function () { mediaSavyHdrResize(); }, 400);
 
     window.addEventListener("resize", mediaSavyHdrResize);
-    mediaSavyHdrResize();
 }
 
 function setHdrBottomRow(folderId, subdomain) {
@@ -113,10 +121,12 @@ function setHdrBottomRow(folderId, subdomain) {
                 });
         }
     }
+    setTimeout(function () { mediaSavyHdrResize(); }, 400);
 }
-//rtpe(eventCode, calledFrom, eventDetail, pageId)
+
 function setMenubar(folderId, subdomain) {
     let headerMenu;
+    //rtpe(eventCode, calledFrom, eventDetail, pageId)
     switch (subdomain) {
         case "loading":
             headerMenu = "loading";
@@ -214,9 +224,10 @@ function setLoginSection(subdomain) {
 
 function mediaSavyHdrResize() {
     hdrRowW = $('.headerTopRow').width();
+    let LasttopRowOption = "t0", lastBottomRowOption = "b0";
     // bottom Row  
     {
-        if (hdrBottRowSectionsW() < hdrRowW) {
+        if (hdrBottRowSectionsW() >= hdrRowW) {
             $('.oggleHeader').css("background-color", "var(--brucheumBlue)");
             $('.siteLogo').css("height", "80px");
             $('#divLoginArea').css("font-size", "17px");
@@ -227,7 +238,7 @@ function mediaSavyHdrResize() {
             $('#breadcrumbContainer').css("font-size", "18px").show();
             $('.badgeImage').css("height", "31px");
             $('.blackCenterfoldsBanner').css("font-size", "16px");
-            showResizeMessage("RESET: ");
+            lastBottomRowOption="b1";
         }
         if (hdrBottRowSectionsW() >= hdrRowW) {
             $('.oggleHeader').css("background-color", "#ccffcc");  // green
@@ -236,8 +247,7 @@ function mediaSavyHdrResize() {
             $('#breadcrumbContainer').css("font-size", "15px").show();
             $('.badgeImage').css("height", "31px");
             $('.blackCenterfoldsBanner').css("font-size", "15px");
-
-            showResizeMessage("80/15: ");
+            lastBottomRowOption = "b2";
         }
         if (hdrBottRowSectionsW() >= hdrRowW) {
             $('.oggleHeader').css("background-color", "#e6de3b");  // sn
@@ -246,8 +256,7 @@ function mediaSavyHdrResize() {
             $('#breadcrumbContainer').css("font-size", "13px").show();
             $('.badgeImage').css("height", "28px");
             $('.blackCenterfoldsBanner').css("font-size", "13px");
-
-            showResizeMessage("60/13: ");
+            lastBottomRowOption = "b3";
         }
         //if (hdrBottRowSectionsW() >= hdrRowW) {
         //    $('.siteLogo').css("height", "60px");
@@ -266,8 +275,7 @@ function mediaSavyHdrResize() {
             $('.blackCenterfoldsBanner').css("font-size", "12px");
             $('.badgeImage').css("height", "22px");
             $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
-
-            showResizeMessage("iPad 50/12 : ");
+            lastBottomRowOption = "b4";
         }
         //if (hdrBottRowSectionsW() >= hdrRowW) {
         //    $('.oggleHeader').css("background-color", "#e6de3b");  // sn
@@ -287,20 +295,19 @@ function mediaSavyHdrResize() {
             $('.headerBanner').css("font-size", "12px").show();
             $('.badgeImage').css("height", "18px");
             $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
-
-            showResizeMessage("iPhone: ");
+            lastBottomRowOption = "b5";
         }
     }
-// top row
+    // top row
     {
-        if (hdrTopRowSectionsW() < hdrRowW) {
+        if (hdrTopRowSectionsW() > hdrRowW) {
             $('#bannerTitle').css("font-size", "33px");
             $('#mainMenuContainer').css("font-size", "20px").show();
             $('#topRowRightContainer').show();
             $('.headerBanner').css("font-size", "17px").show(); // banner tabs contents
             //"           <div id='topRowRightContainer'></div>" +
             //"           <div id='searchBox' class='oggleSearchBox'>\n" +
-            showResizeMessage("TOP RESET: ");
+            LasttopRowOption = "t1";
         }
         //let testing = false;
         //if (false) {
@@ -311,23 +318,24 @@ function mediaSavyHdrResize() {
             $('#mainMenuContainer').css("font-size", "18px").show();
             $('.headerBanner').css("font-size", "15px").show(); // banner tabs contents
             //"           <div id='searchBox' class='oggleSearchBox'>\n" +
-            showResizeMessage("q1: ");
+            LasttopRowOption="t2"
         }
         if (hdrTopRowSectionsW() > hdrRowW) {
             $('#topRowRightContainer').hide();
             $('#mainMenuContainer').css("font-size", "18px");
             $('.headerBanner').css("font-size", "15px").show(); // banner tabs contents
             //"           <div id='searchBox' class='oggleSearchBox'>\n" +
-            showResizeMessage("q2: ");
+            LasttopRowOption ="t3";
         }
         if (hdrTopRowSectionsW() > hdrRowW) {
             $('#topRowRightContainer').hide();
             $('#mainMenuContainer').hide();
             //"           <div id='searchBox' class='oggleSearchBox'>\n" +
-            showResizeMessage("q3: ");
+            LasttopRowOption ="t4";
         }
 
     }
+    showResizeMessage(LasttopRowOption, lastBottomRowOption);
 }
 
 function showHamburger() {
@@ -342,15 +350,18 @@ function hdrBottRowSectionsW() {
     return $('#headerMessage').width() + $('#breadcrumbContainer').width() + $('#badgesContainer').width() + $('#divLoginArea').width() + calcIssue;
 }
 function hdrTopRowSectionsW() {
-    let topRowKludge = 0;
-    return $('#bannerTitle').width() + $('#mainMenuContainer').width() + $('#topRowRightContainer').width() + $('#searchBox').width() + topRowKludge;
+    let topRowFudgeFactor = 16;
+    return $('#bannerTitle').width() + $('#mainMenuContainer').width() + $('#topRowRightContainer').width() + $('#searchBox').width() + topRowFudgeFactor;
 }
-function showResizeMessage(secMsg) {
-    if (!secMsg.includes("RESET"))
-        $("#headerMessage").html(secMsg);
-    //$('#aboveImageContainerMessageArea').html(secMsg + "hdrTopRow: " + $('.headerTopRow').width().toLocaleString() +
-    //    " bottomSecs: " + hdrBottRowSectionsW().toLocaleString() +
-    //    " hdrTopSecs: " + hdrTopRowSectionsW().toLocaleString());
+function showResizeMessage(lasttopRowOption, lastBottomRowOption) {
+    if (mediaDebug) {
+        //if (!secMsg.includes("RESET"))
+        $('#aboveImageContainerMessageArea').html("r: " + $('.headerTopRow').width().toLocaleString() +
+            "    T: " + lasttopRowOption + " : " + hdrTopRowSectionsW().toLocaleString() +
+            " B: " + lastBottomRowOption + " : " + hdrBottRowSectionsW().toLocaleString());
+
+        //alert("banner: " + $('#bannerTitle').width() + " menu: " + $('#mainMenuContainer').width() + " rightRow: " + $('#topRowRightContainer').width() + " sbox: " + $('#searchBox').width());
+    }
 }
 
 function draggableDialogEnterDragMode() {
@@ -397,8 +408,6 @@ function tinkyTak(bannerType, rankerType) {
         default:
     }
 }
-
-
 
 //<img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
 // title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +

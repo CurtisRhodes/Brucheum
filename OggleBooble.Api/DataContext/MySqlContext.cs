@@ -235,14 +235,13 @@ namespace OggleBooble.Api.MySqlDataContext
     [Table("OggleBooble.EventLog")]
     public class EventLog
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int PkId { get; set; }
         public string EventCode { get; set; }
         public string EventDetail { get; set; }
         public int PageId { get; set; }
-        [Key]
-        [Column(Order = 0)]
         public string VisitorId { get; set; }
-        [Key]
-        [Column(Order = 1)]
         public DateTime Occured { get; set; }
     }
 

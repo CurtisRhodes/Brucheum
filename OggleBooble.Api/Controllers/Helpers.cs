@@ -31,26 +31,20 @@ namespace OggleBooble.Api.Controllers
     {
         public static string DetermineFolderType(FolderTypeModel folderTypeInfo)
         {
-            if (folderTypeInfo.RootFolder == "centerfold")
+            if (folderTypeInfo.HasImages && !folderTypeInfo.HasSubFolders)
             {
-                return "singleModelCollection";
-            }
-            if (folderTypeInfo.HasImages && folderTypeInfo.HasSubFolders)
-            {
-                if (folderTypeInfo.ContainsRomanNumeral)
-                    return "singleModelGallery";
                 if (folderTypeInfo.ContainsNonRomanNumeralChildren)
                     return "assorterdImagesGallery";
+                else
+                    return "singleModelGallery";
+
             }
             if (folderTypeInfo.HasSubFolders && !folderTypeInfo.HasImages)
             {
                 if (!folderTypeInfo.ContainsNonRomanNumeralChildren)
-                    return "assorterdImagesGallery";
-
-                if (folderTypeInfo.RootFolder == "archive" || folderTypeInfo.RootFolder == "sluts")
-                    return "singleModelGallery";
-                if (folderTypeInfo.RootFolder == "boobs" || folderTypeInfo.RootFolder == "porn")
-                    return "assorterdImagesGallery";
+                    return "singleModelFolderCollection";
+                else
+                    return "assorterdFolderCollection";
             }
             if (folderTypeInfo.HasImages)
             {

@@ -326,7 +326,6 @@ namespace OggleBooble.Api.Controllers
 
                     if (repairReport.Success == "ok")
                     {
-
                         int test1 = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
                         RemoveLinks(repairReport.OrphanLinks);
                         int test2 = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
@@ -358,24 +357,35 @@ namespace OggleBooble.Api.Controllers
                     if (categoryImageLinks.Where(il => il.ImageLinkId == physcialFileLinkId).FirstOrDefault() == null)
                     {
                         repairReport.MissingFiles.Add(physcialFiles[i]);
-                        if (db.ImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault() == null)
+                        db.EventLogs.Add(new EventLog()
                         {
-                            db.ImageFiles.Add(new ImageFile()
-                            {
-                                Id = physcialFileLinkId,
-                                FolderId = folderId,
-                                FileName = physcialFileName
-                            });
-                            repairReport.ImageFileAdded++;
-                        }
-                        db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
-                        {
-                            ImageLinkId = physcialFileLinkId,
-                            ImageCategoryId = folderId,
-                            SortOrder = 872
+                            EventCode = "MIL",
+                            EventDetail = physcialFileName,
+                            PageId = folderId,
+                            VisitorId = "admin",
+                            Occured = DateTime.Now
                         });
                         db.SaveChanges();
-                        repairReport.NewLinksAdded++;
+
+
+                        //if (db.ImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault() == null)
+                        //{
+                        //    db.ImageFiles.Add(new ImageFile()
+                        //    {
+                        //        Id = physcialFileLinkId,
+                        //        FolderId = folderId,
+                        //        FileName = physcialFileName
+                        //    });
+                        //    repairReport.ImageFileAdded++;
+                        //}
+                        //db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
+                        //{
+                        //    ImageLinkId = physcialFileLinkId,
+                        //    ImageCategoryId = folderId,
+                        //    SortOrder = 872
+                        //});
+                        ////db.SaveChanges();                        
+                        //repairReport.NewLinksAdded++;
                     }
                     repairReport.RowsProcessed++;
                 }
