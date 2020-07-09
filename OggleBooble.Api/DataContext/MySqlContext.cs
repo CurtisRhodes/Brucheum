@@ -253,7 +253,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public string PkId { get; set; }
         public string Winner { get; set; }
         public string Looser { get; set; }
-        public string UserId { get; set; }
+        public string VisitorId { get; set; }
         public DateTime VoteDate { get; set; }
     }
 
@@ -419,6 +419,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public int SrcId { get; set; }
         public string FileName { get; set; }
         public string SrcFolder { get; set; }
+        public string RootFolder { get; set; }
         public string Orientation { get; set; }
         public bool Islink { get; set; }
         public int SortOrder { get; set; }

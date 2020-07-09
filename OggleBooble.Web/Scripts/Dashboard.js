@@ -8,6 +8,7 @@
 function dashboardStartup() {
     $('.txtLinkPath').val('');
     setOggleHeader(3910, "dashboard");
+    setOggleFooter(3910, "dashboard");
     loadDirectoryTree(1, "dashboardRightColumn", "dashBoardDirTreeClick");
     loadHeaderTabs();
     setLeftMenu('Add Images');

@@ -1,29 +1,14 @@
-﻿let numImages = 0,
-    numFolders = 0,
-    rotationSpeed = 7000,
-    intervalSpeed = 600,
-    carouselItemArray = new Array(),
-    imageIndex = 0,
-    carouselContainerHeight,
-    vCarouselInterval,
-    selectedImageArchiveFolderId,
-    metaTagDialogIsOpen = false,
-    imageCommentDialogIsOpen = false,
-    folderCategoryDialogIsOpen = false,
-    forgetShowingCatDialog,
-    imageHistory = [],
-    rootsLoaded = [],
-    carouselImageViews = 0,
-    carouselImageErrors = 0,
-    mainImageClickId,
-    knownModelLabelClickId,
-    imageTopLabelClickId,
-    footerLabelClickId,
-    imgSrc;
+﻿let numImages = 0, numFolders = 0, rotationSpeed = 7000, intervalSpeed = 600, carouselItemArray = new Array(),
+    imageIndex = 0, carouselContainerHeight, vCarouselInterval, selectedImageArchiveFolderId, metaTagDialogIsOpen = false,
+    imageCommentDialogIsOpen = false, folderCategoryDialogIsOpen = false, forgetShowingCatDialog, imageHistory = [],
+    rootsLoaded = [], carouselImageViews = 0, carouselImageErrors = 0, mainImageClickId, knownModelLabelClickId,
+    imageTopLabelClickId, footerLabelClickId, carouselSkip = 0, imgSrc;
 
 function launchCarousel(startRoot) {
     //$('#footerMessage').html("launching carousel");
     $('#carouselContainer').html(carouselHtml());
+    $('.assuranceArrows').hide();
+    $('.carouselFooter').css("visibility", "hidden");
     resizeCarousel();
     var jsCarouselSettings;
     if (isNullorUndefined(window.localStorage["carouselSettings"])) {
@@ -45,6 +30,8 @@ function launchCarousel(startRoot) {
     //alert("loadImages");
 
     loadImages(startRoot, Date.now(), 0, 500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+
+
     if (startRoot === "boobs") {
         if (jsCarouselSettings.includeArchive) {
             loadImages("archive", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
@@ -61,7 +48,6 @@ function launchCarousel(startRoot) {
     window.addEventListener("resize", resizeCarousel);
 }
 
-var skip = 0;
 function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, includePortrait) {
     var start = Date.now();
     settingsImgRepo = settingsArray.ImageRepo;
@@ -100,24 +86,17 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                     });
 
                     if (take === 500) {
-                        //newImageIndex = Math.floor(Math.random() * carouselItemArray.length);
-                        if (carouselItemArray.length === 0)
-                            alert("ix00")
-
-                        newImageIndex = Math.floor(Math.random() * carouselItemArray.length);
+                        if (carouselItemArray.length === 0) alert("ix00");
+                        newImageIndex = Math.floor(Math.random() * 500);
                         startCarousel(newImageIndex);
-                        $('#carouselFooter').show();
-                        resizeCarousel();
-
                     }
 
                     var delta = (Date.now() - start) / 1000;
                     if (carouselInfo.Links.length === take) {
-                        skip += take;
+                        carouselSkip += take;
                         take = 2000;
-                        //console.log("loadImages(" + rootFolder + ") skip: " + skip + " take  " + take + " took: " + delta.toFixed(3));
-                        loadImages(rootFolder, absolueStart, skip + take, take, includeLandscape, includePortrait);
-                        $('#footerMessage').html(rootFolder + " carousel items loaded: " + carouselItemArray.length + " skip: " + skip);
+                        loadImages(rootFolder, absolueStart, carouselSkip, take, includeLandscape, includePortrait);
+                        $('#footerMessage').html(rootFolder + " carousel items loaded: " + carouselItemArray.length + " skip: " + carouselSkip);
                     }
                     else {
                         // done
@@ -158,7 +137,6 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                             PageId: homePageId,
                             CalledFrom: "loadImages"
                         });
-                    //sendEmailToYourself("XHR ERROR IN Carousel.JS loadImages", "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take + "  Message: " + errorMessage);
                 }
             }
         });
@@ -168,6 +146,7 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
 }
 
 function startCarousel(startIndex) {
+    $('.assuranceArrows').show();
     intervalBody(startIndex);
     vCarouselInterval = setInterval(function () {
         newImageIndex = Math.floor(Math.random() * carouselItemArray.length);
@@ -175,8 +154,36 @@ function startCarousel(startIndex) {
     }, rotationSpeed);
 }
 
+function intervalBody(newImageIndex) {
+    //alert("intervalBody");
+
+    imageIndex = newImageIndex;
+    $('.carouselFooter').css("visibility", "hidden");
+    $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
+        if (isNullorUndefined(carouselItemArray[imageIndex]))
+            console.log("carouselItemArray[" + imageIndex + "] undefined ");
+        else {
+            imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
+            $('#thisCarouselImage').attr('src', imgSrc).load(function () {
+                $('#carouselFooter').fadeIn();
+                setLabelLinks();
+                imageHistory.push(imageIndex);
+                $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
+
+                $('#footerMessage').html("image " + imageIndex + " of " + carouselItemArray.length.toLocaleString());
+                //console.log("image views: " + carouselImageViews);
+                $('#headerMessage').html("viewed ok: " + ++carouselImageViews + " errors: " + carouselImageErrors);
+                //$('#footerMessage').append(".  carousel image viewed: " + carouselImageViews);
+            });
+        }
+    });
+}
+
 function setLabelLinks() {
     let debugMode = true;
+    $('#knownModelLabel').html("").hide();
+    $('#carouselFooterLabel').html("").hide();
+    $('#imageTopLabel').html("").hide();
     if (carouselItemArray[imageIndex].FolderId === carouselItemArray[imageIndex].ImageFolderId) {
         if (!containsRomanNumerals(carouselItemArray[imageIndex].ImageFolderName)) {
             // noraml
@@ -227,7 +234,7 @@ function setLabelLinks() {
             if (debugMode) $('#headerMessage').html("LN3");
             if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
                 $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderName);
-                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParentName);                
+                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParentName);
                 if (debugMode) $('#headerMessage').append("P");
 
                 //$('#carouselFooterLabel').html("Playboy");
@@ -251,61 +258,9 @@ function setLabelLinks() {
             //setTimeout(function () { alert("4 Non Roman Numeral Non folder member") }, 600);
         }
     }
-}
-
-function imgErrorThrown() {
-    //" + imageIndex + "
-    //carouselItemArray[imageIndex].FileName;
-    $('#thisCarouselImage').attr('src', "Images/redballon.png");
-    carouselImageViews -= 1;
-    carouselImageErrors++;
-    pause();
-    //alert("Missig Image: " + carouselItemArray[imageIndex].FolderId + ", " + carouselItemArray[imageIndex].FolderName + "\nlinkId: " + carouselItemArray[imageIndex].LinkId);
-    logDataActivity({
-        VisitorId: getCookieValue("VisitorId"),
-        ActivityCode: "IME",
-        PageId: carouselItemArray[imageIndex].FolderId,
-        Activity: carouselItemArray[imageIndex].LinkId
-    });
-
-    alert("image error\npage: " + carouselItemArray[imageIndex].FolderId +
-        ",\nPageName: " + carouselItemArray[imageIndex].FolderName +
-        ",\nActivity: " + carouselItemArray[imageIndex].LinkId);
-
-
-}
-function doneLoggingDataActivity() {
-
-};
-
-function intervalBody(newImageIndex) {
-    //alert("intervalBody");
-
-    imageIndex = newImageIndex;
-    $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
-
-        if (isNullorUndefined(carouselItemArray[imageIndex]))
-            console.log("carouselItemArray[" + imageIndex + "] undefined ");
-        else {
-            imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
-            $('#thisCarouselImage').attr('src', imgSrc).load(function () {
-                $('#knownModelLabel').html("").hide();
-                $('#carouselFooterLabel').html("").hide();
-                $('#imageTopLabel').html("").hide();
-                setLabelLinks();
-                $('#carouselFooterLabel').fadeIn();
-                $('#imageTopLabel').fadeIn();
-                $('#knownModelLabel').fadeIn();
-                imageHistory.push(imageIndex);
-                $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
-
-                $('#footerMessage').html("image " + imageIndex + " of " + carouselItemArray.length.toLocaleString());
-                //console.log("image views: " + carouselImageViews);
-                $('#headerMessage').html("viewed ok: " + ++carouselImageViews + " errors: " + carouselImageErrors);
-                //$('#footerMessage').append(".  carousel image viewed: " + carouselImageViews);
-            });
-        }
-    });
+    $('#carouselFooterLabel').fadeIn();
+    $('#imageTopLabel').fadeIn();
+    $('#knownModelLabel').fadeIn();
 }
 
 function clickViewGallery(labelClick) {
@@ -347,6 +302,7 @@ function resizeCarousel() {
     var carouselFooterHeight = 40;
     $('#thisCarouselImage').height($('#topIndexPageSection').height() - carouselFooterHeight);
     $('.carouselFooter').width($('#thisCarouselImage').width());
+    $('.carouselFooter').css("visibility", "visible");
 }
 
 function clickSpeed(speed) {
@@ -512,6 +468,29 @@ function carouselContextMenu() {
         carouselItemArray[imageIndex].LinkId,
         carouselItemArray[imageIndex].FolderId,
         carouselItemArray[imageIndex].FolderName);
+}
+
+function imgErrorThrown() {
+    //" + imageIndex + "
+    //carouselItemArray[imageIndex].FileName;
+    $('#thisCarouselImage').attr('src', "Images/redballon.png");
+    carouselImageViews -= 1;
+    carouselImageErrors++;
+    pause();
+    //alert("Missig Image: " + carouselItemArray[imageIndex].FolderId + ", " + carouselItemArray[imageIndex].FolderName + "\nlinkId: " + carouselItemArray[imageIndex].LinkId);
+    logDataActivity({
+        VisitorId: getCookieValue("VisitorId"),
+        ActivityCode: "IME",
+        PageId: carouselItemArray[imageIndex].FolderId,
+        Activity: carouselItemArray[imageIndex].LinkId
+    });
+
+
+    alert("image error\npage: " + carouselItemArray[imageIndex].FolderId +
+        ",\nPageName: " + carouselItemArray[imageIndex].FolderName +
+        ",\nActivity: " + carouselItemArray[imageIndex].LinkId);
+
+
 }
 
 function carouselHtml() {

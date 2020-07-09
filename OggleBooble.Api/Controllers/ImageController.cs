@@ -417,7 +417,6 @@ namespace OggleBooble.Api.Controllers
             return successModel;
         }
 
-
         [HttpGet]
         [Route("api/ImageComment/GetImageComment")]
         public ImageCommentModel GetImageComment(string linkId)

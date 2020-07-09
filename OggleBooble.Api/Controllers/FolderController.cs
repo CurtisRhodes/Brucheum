@@ -28,8 +28,10 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
-                    string fileName = repoDomain + "/" + dbFolder.FolderPath + "/" +
-                        db.ImageFiles.Where(i => i.Id == dbFolder.FolderImage).FirstOrDefault().FileName;
+                    string fileName = "";
+                    if (dbFolder.FolderImage != null)
+                        fileName = repoDomain + "/" + dbFolder.FolderPath + "/" +
+                           db.ImageFiles.Where(i => i.Id == dbFolder.FolderImage).FirstOrDefault().FileName;
                     if (Helpers.ContainsRomanNumeral(dbFolder.FolderName))
                     {
                         dbFolder = db.VirtualFolders.Where(f => f.Id == dbFolder.Parent).First();

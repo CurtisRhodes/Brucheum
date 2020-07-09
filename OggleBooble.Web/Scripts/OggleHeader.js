@@ -15,9 +15,9 @@ function setOggleHeader(folderId, subdomain) {
         }
     });
 
-    setHeaderDetails(hdrFolderId, subdomain);
+    setHdrBottomRow(hdrFolderId, subdomain);
 
-    $('#mainMenuContainer').html(setMenubar(hdrSubdomain));
+    $('#mainMenuContainer').html(setMenubar(folderId, subdomain));
 
     setLoginSection(subdomain);
 
@@ -25,7 +25,7 @@ function setOggleHeader(folderId, subdomain) {
     mediaSavyHdrResize();
 }
 
-function setHeaderDetails(folderId, subdomain) {
+function setHdrBottomRow(folderId, subdomain) {
     $('#oggleHeader').addClass('boobsHeader');
     $('#divSiteLogo').attr("src", "/Images/redballon.png");
     $('#bannerTitle').html("OggleBooble");
@@ -33,10 +33,14 @@ function setHeaderDetails(folderId, subdomain) {
     switch (subdomain) {
         case "Index": 
         case "root": {
-            $('#breadcrumbContainer').html(
-                "<div class='headerBanner'><a href='javascript:rtpe(\"RNK\"," + folderId + ",\"archive\")'>babes ranker</a></div>\n" +
-                "<div class='headerBanner'><a href='javascript:rtpe(\"BAC\"," + folderId + ",1132,1132)'>every Playboy Centerfold</a></div>\n" +
-                "<div class='headerBanner'><a href='javascript:rtpe(\"BAC\"," + folderId + ",3,3)'>babes archive</a></div>\n");
+            //$('#breadcrumbContainer').html(
+            //    "<div class='headerBanner'><a href='javascript:rtpe(\"RNK\"," + folderId + ",\"archive\")'>babes ranker</a></div>\n" +
+            //    "<div class='headerBanner'><a href='javascript:rtpe(\"BAC\"," + folderId + ",1132,1132)'>every Playboy Centerfold</a></div>\n" +
+            //    "<div class='headerBanner'><a href='javascript:rtpe(\"BAC\"," + folderId + ",3,3)'>babes archive</a></div>\n");
+
+            $('#breadcrumbContainer').append(tinkyTak("ranker", "archive"));
+            $('#breadcrumbContainer').append(tinkyTak("centerfold"));
+            $('#breadcrumbContainer').append(tinkyTak("archive"));
             break;
         }
         case "loading": $('#mainMenuContainer').html("loading"); break;
@@ -54,10 +58,9 @@ function setHeaderDetails(folderId, subdomain) {
             break;
         }
         case "archive": {
-            // every centerfold
-            // ranker
-            // poses
-
+            $('#topRowRightContainer').html(tinkyTak("centerfold"));
+            $('#topRowRightContainer').append(tinkyTak("poses"));
+            $('#topRowRightContainer').append(tinkyTak("ranker", "archive"));
             break;
         }
         case "boobs": { // poses
@@ -66,24 +69,19 @@ function setHeaderDetails(folderId, subdomain) {
 
             break;
         }
-        case "soft":
+        case "soft": {
             $('#oggleHeader').switchClass('boobsHeader', 'oggleSoft');
             $('#divSiteLogo').attr("src", "/Images/redwoman.png");
             $('#bannerTitle').html("OggleSoftcore");
             changeFavoriteIcon("soft");
             break;
+        }
         case "playboy":
         case "cybergirl":
         case "centerfold": {
             $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
-            // boobs archive
-            // playboy ranker
-
-            $('#topRowRightContainer').html("<div id='rankerTag' class='headerBanner'>" +
-                "<a href='javascript:rtpe(\"BAC\"," + folderId + "," + folderId + ",3)'>big tits archive</a></div>\n");
-            $('#topRowRightContainer').append("<div id='rankerTag' class='headerBanner'>\n" +
-                "<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"playboy\"," + folderId + ")' " +
-                "title='Spin through the links to land on random portrait images.'>playmate ranker</a></div>\n");
+            $('#topRowRightContainer').html(tinkyTak("archive"));
+            $('#topRowRightContainer').append(tinkyTak("ranker", "centerfold"));
             break;
         }
         case "porn":
@@ -92,6 +90,8 @@ function setHeaderDetails(folderId, subdomain) {
             $('#divSiteLogo').attr("src", "/Images/csLips02.png");
             $('#bannerTitle').html("OgglePorn");
             changeFavoriteIcon("porn");
+            $('#topRowRightContainer').html(tinkyTak("archive"));
+            $('#topRowRightContainer').append(tinkyTak("ranker", "porn"));
 
             //$('body').addClass('pornBodyColors');
             //$('#topRowRightContainer').html("<div id='rankerTag' class='headerBanner'>" +
@@ -102,7 +102,7 @@ function setHeaderDetails(folderId, subdomain) {
         }
         default: {
             if (document.domain === "localhost")
-                alert("setHeaderDetails switch case not handled. FolderId: " + folderId + ", Subdomain: " + subdomain);
+                alert("setHdrBottomRow switch case not handled. FolderId: " + folderId + ", Subdomain: " + subdomain);
             else
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
@@ -114,54 +114,70 @@ function setHeaderDetails(folderId, subdomain) {
         }
     }
 }
-
-function setMenubar(subdomain) {
+//rtpe(eventCode, calledFrom, eventDetail, pageId)
+function setMenubar(folderId, subdomain) {
     let headerMenu;
     switch (subdomain) {
         case "loading":
             headerMenu = "loading";
             break;
         case "archive": {
-            headerMenu = "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",4,4,)'>milk cows,</a> \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",1103,1103)'>russian spys,</a> \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",1093,1093)'>highschool fantasy girls,</a> \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",1107,1107)'>sweater meat,</a> \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",123,123)'>ultra juggs</a> \n";
+            headerMenu =
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",4)'>milk cows,</a> \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",1103)'>russian spys,</a> \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",1093)'>highschool fantasy girls,</a> \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",1107)'>sweater meat,</a> \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",123)'>ultra juggs</a> \n";
             break;
         }
         case "playboy":
         case "centerfold": {
             $('header').switchClass('pornHeader', 'boobsHeader');
-            headerMenu = "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",1132," + hdrFolderId + ")'>Centerfolds,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",1986," + hdrFolderId + ")'> magazine covers,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",3796," + hdrFolderId + ")'> cybergirls,</a> and\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",2601," + hdrFolderId + ")'> extras</a>\n";
+            headerMenu =
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",1132)'>Centerfolds,</a>\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",1986)'> magazine covers,</a>\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",3796)'> cybergirls,</a> and\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",2601)'> extras</a>\n";
             break;
         }
         case "soft":
-            headerMenu = "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + "," + hdrFolderId + ",243)'>pussy</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ',' + hdrFolderId + ",420)'>boob suckers</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ',' + hdrFolderId + ",357)'>big tit lezies</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ',' + hdrFolderId + ",357)'>fondle</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ',' + hdrFolderId + ",397)'>kinky</a> and \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ',' + hdrFolderId + ",411)'>naughty behaviour</a>\n";
+            headerMenu =
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",243)'>pussy</a>, \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",420)'>boob suckers</a>, \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",498)'>big tit lezies</a>, \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",357)'>fondle</a>, \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",397)'>kinky</a> and \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",411)'>naughty behaviour</a>\n";
             break;
-        case "porn":
-        case "sluts": {
-            headerMenu = "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + "," + hdrFolderId + ",243)'>cock suckers</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ',' + hdrFolderId + ",420)'>boob suckers</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ',' + hdrFolderId + ",357)'>cum shots</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ',' + hdrFolderId + ",397)'>kinky</a> and \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ',' + hdrFolderId + ",411)'>naughty behaviour</a>\n";
+        case "porn": {
+            headerMenu =
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"porn\",243)'>cock suckers</a>, \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"porn\",420)'>boob suckers</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"porn\",357)'>cum shots</a>, \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"porn\",397)'>kinky</a> and \n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"porn\",411)'>naughty behaviour</a>\n";
             break;
         }
+        case "sluts":
+            headerMenu =
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",1174)'>big titters gone bad</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",2677)'>cocksucker lipps</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",3728)'>blonde cocksuckers</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",3730)'>amatures</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",3731)'>sweet nasty girls</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",3739)'>exploited teens</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",4022)'>big girls</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",4198)'>milf cocksuckers</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",4271)'>retro</a>,\n";
+            break;
         default:
-            headerMenu = "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",2,2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",136,136)'> poses,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",3916,3916)'> positions,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",159,159)'> topics,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",199,199)'> shapes</a> and\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + hdrFolderId + ",241,241)'>sizes</a>\n";
+            headerMenu =
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",136)'> poses,</a>\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",,3916)'> positions,</a>\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",159)'> topics,</a>\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",199)'> shapes</a> and\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",241)'>sizes</a>\n";
     }
     return headerMenu;
 }
@@ -351,6 +367,38 @@ function dragableDialogClose() {
     if (typeof resume === 'function')
         resume();
 }
+
+function tinkyTak(bannerType, rankerType) {
+    switch (bannerType) {
+        case "ranker":
+            // Ranker tags
+            //"boobs":
+            //"playboy":
+            //"centerfold":
+            //"porn":
+            //"sluts":
+            //"archive":
+            return "<div class='headerBanner'>\n" +
+                "<div class='clickable' onclick='window.open(\"index.html?spa=3910&bp=" + rankerType + "\", \"_blank\")' " +
+                "title='Spin through the links to land on random portrait images.'>" + rankerType + " ranker</div>" +
+                "</div>\n";
+        case "archive":
+            return "<div class='headerBanner'>" +
+                "   <div class='clickable' onclick='window.open(\"/album.html?folderId=3, \"_blank\")'>big tits archive</div>" +
+                "</div>\n";
+        case "centerfold":
+            return "<div class='headerBanner'>\n" +
+                "   <div class='clickable' onclick='window.open(\"/album.html?folderId=1132, \"_blank\")'>every Playboy Centefold</div>" +
+                "</div>\n";
+        case "poses":
+            return "<div class='headerBanner'>\n" +
+                "   <div class='clickable' onclick='window.open(\"/album.html?folderId=2, \"_blank\")'>poses</div>" +
+                "</div>\n";
+        default:
+    }
+}
+
+
 
 //<img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
 // title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +

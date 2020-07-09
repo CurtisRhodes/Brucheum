@@ -1,8 +1,8 @@
-﻿var blogObject = {};
-var selectedCommentType = "BLG";
+﻿let blogObject = {}, selectedCommentType = "BLG", selectedBlogId;
 
 function blogStartup() {
     setOggleHeader(3911, "blog");
+    setOggleFooter(3911, "blog");
     document.title = "blog : OggleBooble";
 
     $('#summernoteContainer').summernote({
@@ -12,13 +12,13 @@ function blogStartup() {
     });
     $(".note-editable").css('font-size', '19px');
 
-    if (isNullorUndefined(params.blogId)) {
+    if (isNullorUndefined(selectedBlogId)) {
         loadArticleJogs("BLG");
         setBlogView("showBlogDisplay");
     }
     else {
-        alert("Calling Blog for blogId: " + params.blogId);
-        showBlogPage(params.blogId);
+        alert("Calling Blog for blogId: " + selectedBlogId);
+        showBlogPage(selectedBlogId);
         setBlogView("showBlogPage");
     }
     loadBlogDropDowns();
@@ -78,6 +78,7 @@ function loadArticleJogs(commentType) {
     else
         loadBlogArticles(commentType);
 }
+
 function loadBlogArticles(commentType) {
     try {
         $('#blogLoadingGif').show();
@@ -143,6 +144,7 @@ function loadBlogArticles(commentType) {
         alert("display Blog: CATCH " + e);
     }
 }
+
 function loadFolderComments() {
     $.ajax({
         type: "GET",
@@ -195,6 +197,7 @@ function editArticle(itemId, commentType) {
         loadBlogEntry(itemId);
     setBlogView("editArticle");
 }
+
 function loadBlogEntry(blogId) {
     try {
         $.ajax({
@@ -265,6 +268,7 @@ function loadBlogEntry(blogId) {
         //sendEmailToYourself("Catch ERROR in Blog.js loadBlogEntry", e);
     }
 }
+
 function loadFolderComment(folderId) {
     $.ajax({
         type: "GET",
@@ -587,20 +591,21 @@ function resizeBlogPage() {
 }
 
 function blogBodyHtml() {
-    return "<div class='leftColumn'>\n" +
-        "        <div id='blogControls' class='leftColumnList'>\n" +
-        "            <div id='leftColumnShowBlog' onclick='setBlogView(\"showBlogDisplay\")'>Show Blog</div>\n" +
-        "            <div id='leftColumnEditorNew' onclick='setBlogView(\"showBlogEditor\")'>New Entry</div>\n" +
-        "            <div id='leftColumnEditor'>Edit</div>\n" +
-        "            <div id='leftColumnShowPage'>Show Page</div>\n" +
-        "        </div>\n" +
+    return "<div>\n" +
+        "<div class='blogLeftColumn'>\n" +
+        "   <div id='blogControls' class='leftColumnList'>\n" +
+        "       <div id='leftColumnShowBlog' onclick='setBlogView(\"showBlogDisplay\")'>Show Blog</div>\n" +
+        "       <div id='leftColumnEditorNew' onclick='setBlogView(\"showBlogEditor\")'>New Entry</div>\n" +
+        "       <div id='leftColumnEditor'>Edit</div>\n" +
+        "       <div id='leftColumnShowPage'>Show Page</div>\n" +
+        "   </div>\n" +
         "</div>\n" +
-        "<div class='middleColumn'>\n" +
+        "<div class='blogMiddleColumn'>\n" +
         "    <div id='dots'></div>\n" +
         "    <div id='divStatusMessage'></div>\n" +
         "    <img id='blogLoadingGif' class='loadingGif' src='Images/loader.gif' />\n" +
         "    <div id='blogListArea' class='blogDisplayArea'>\n" +
-        "        <select id='blogDisplayCommentTypeSelect' class='roundedInput' onchange='loadBlogArticles($(this).val())'>\n" +
+        "        <select id='blogDisplayCommentTypeSelect' class='roundedInput' onchange='loadBlogArticles("+$(this).val()+")'>\n" +
         "        </select>\n" +
         "        <div id='blogArticleJogContainer' class='blogArticleJogContainer'></div>\n" +
         "    </div>\n" +
@@ -634,7 +639,7 @@ function blogBodyHtml() {
         "               <div class='modelInfoCommentArea'>\n" +
         "                   <textarea id='summernoteContainer'></textarea>\n" +
         "               </div>\n" +
-//        "                <div id='oggleBlogSummerNote' class='oggleBlogTextEditor'></div>\n" +
+        //        "                <div id='oggleBlogSummerNote' class='oggleBlogTextEditor'></div>\n" +
         "                <div class='oggleBlogFooterArea'>\n" +
         "                    <div id='btnAddEdit' class='roundendButton' onclick='saveBlogEntry()'>Add</div>\n" +
         "                    <div id='btnNewCancel' class='roundendButton' onclick='NewCancel()'>New</div>\n" +
@@ -650,6 +655,5 @@ function blogBodyHtml() {
         "        <div class='blogPageImageContainer'><img id='blogPageImage' class='largeCenteredImage' /></div>\n" +
         "        <div id='blogPageBody' class='blogPageBodyText'></div>\n" +
         "    </div>\n" +
-        "</div>\n" +
-        "<div class='rightColumn'></div>\n";
+        "</div>\n";
 }

@@ -166,6 +166,7 @@
     <Compile Include="Controllers\LocalController.cs" />
     <Compile Include="Controllers\ImageController.cs" />
     <Compile Include="Controllers\OggleUserController.cs" />
+    <Compile Include="Controllers\RankerController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\StaticPageController.cs" />
@@ -182,6 +183,7 @@
     <Compile Include="Models\IndexPageModels.cs" />
     <Compile Include="Models\LinkModels.cs" />
     <Compile Include="Models\LocalModels.cs" />
+    <Compile Include="Models\RankerModels.cs" />
     <Compile Include="Models\ReportModels.cs" />
     <Compile Include="Models\RoleModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

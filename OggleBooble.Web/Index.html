@@ -28,6 +28,7 @@
     <script src="Scripts/OggleSearch.js"></script>
     <script src="Scripts/OggleFooter.js"></script>
     <script src="Scripts/OggleBlog.js"></script>
+    <script src="Scripts/OggleRanker.js"></script>
 
     <script src="Scripts/Dashboard.js"></script>
     <script src="Scripts/DirTree.js"></script>
@@ -71,47 +72,48 @@
         <div class="middleColumn">
             <div id="divStatusMessage"></div>
             <div id="dots"></div>
-            <div class="indexPageSection" id="topIndexPageSection">
-                <div class="flexContainer">
-                    <div class="sectionLabel">random galleries</div>
-                    <div id="carouselContainer"></div>
-                </div>
+            <img id="boobsRankerLoadingGif" class="loadingGif" src="Images/loader.gif" />
+            <div id="indexMiddleColumn">
+
             </div>
-            <div class="clickable sectionLabel" onclick="showHideGalleries()">latest updates</div>
-            <div class="indexPageSection" id="bottomSection">
-                <div id="updatedGalleriesSection" class="updatedGalleriesSection"></div>
-            </div>
-            <div id="showMoreGalleriesDiv" class="clickable sectionLabel" onclick="showMoreGalleries()">show more updated galleries</div>
+
         </div>
         <div class="rightColumn"></div>
     </div>
     <div class="footer"></div>
 
     <script>
-        var promoIdx = 0;
-        var promoMessagesArray = new Array();
-        var promoMessageRotator;
-        var promoMessageRotationSpeed = 15000;
-        var subdomain;
-        var homePageId = 3908;
-        var updatedGalleriesCount = 25;
+        let spaPageId,
+            promoIdx, promoMessagesArray = new Array(),
+            promoMessageRotator, promoMessageRotationSpeed = 15000,
+            updatedGalleriesCount = 25;
 
         $(document).ready(function () {
             //$('#footerLastBuild').html("last build: " + lastBuild + "3");
             //$('#footerMessage').html("loading settings");
-            document.title = "welcome : OggleBooble";
+
+            document.title = "loading settings : OggleBooble";
             loadOggleSettings();
+
             params = getParams();
-            subdomain = params.subdomain;
             if (params.subdomain === undefined)
-                subdomain = "boobs";
-            //if (subdomain == "porn")
-            //    homePageId = 3909;
-            //if (subdomain == "blog")
-            //    homePageId = 3911;
-            //if (subdomain == "dashboard")
-            //    homePageId = 3911;
-            setOggleHeader(homePageId, "loading");
+                subdomain = "index";
+            if (isNullorUndefined(params.spa))
+                spaPageId = 3908;
+            else
+                spaPageId = params.spa;
+            // boobs      homePageId = 3908;
+            // porn       homePageId = 3909;
+            // blog       homePageId = 3911;
+            // dashboard  homePageId = 3911;
+            // ranker     homePageId = 3907;
+            //isLoggedIn = !isNullorUndefined(userName);
+
+
+
+
+            setOggleHeader(spaPageId, "loading");
+            //setOggleHeader(3907);
 
 
             var dots = ""
@@ -137,42 +139,42 @@
                     else {
                         loadRolesIntoLocalStorage("index", "any");
                     }
-                    checkFor404("start", subdomain);
+                    checkFor404("start");
                     var verifyConnectionWaiter = setInterval(function () {
                         if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
                             $('#dots').html('');
-                            document.title = "welcome : OggleBooble";
-                            changeFavoriteIcon("redBallon");
+
                             var visitorId = getCookieValue("VisitorId");
                             if (isNullorUndefined(visitorId)) {
-                                getIpInfo(homePageId);
+                                getIpInfo(spaPageId);
                             }
                             else {
                                 console.log("visitorId found: " + visitorId);
-                                logPageHit(homePageId);
+                                logPageHit(spaPageId);
                             }
 
-                            if (subdomain == "blog") {
-                                $('.threeColumnLayout').html(blogBodyHtml());
-                                blogStartup();
+                            // ranker     homePageId = 3907;
+                            // boobs      homePageId = 3908;
+                            // porn       homePageId = 3909;
+                            // dashboard  homePageId = 3910;
+                            // blog       homePageId = 3911;
+                            if (spaPageId === 3907) { // ranker
+
+                                $('#indexMiddleColumn').html(rankerHTML());
+                                rankerStartup(params.bp);
                             }
-                            if (subdomain == "dashboard") {
-                                $('.threeColumnLayout').html(dashboardHtml());
+                            if (spaPageId == 3908 || spaPageId === 3909) {  // boobs,porn
+                                $('#indexMiddleColumn').html(indexPageHTML());
+                                indexStartup(spaPageId);
+                            }
+                            if (spaPageId === 3910) {  // dashboard
+                                $('#indexMiddleColumn').html(dashboardHtml());
                                 dashboardStartup();
                             }
-                            if (subdomain == "porn") {
-                                setOggleHeader(homePageId, subdomain);
-                                setOggleFooter(homePageId, subdomain);
-                                launchCarousel("porn");
-                            }
-                            if (subdomain == "boobs") {
-                                document.title = "welcome : OggleBooble";
-                                setOggleHeader(homePageId, "Index");
-                                setOggleFooter(homePageId, "Index");
-                                //launchPromoMessages();
-                                launchCarousel("boobs");
-                                loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
+                            if (spaPageId === 3911) { // "blog"
+                                $('#indexMiddleColumn').html(blogBodyHtml());
+                                blogStartup();
                             }
                         }
                         else {

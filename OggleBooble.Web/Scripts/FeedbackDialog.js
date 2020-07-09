@@ -62,27 +62,33 @@ function saveFeedback() {
                     PageId: feedbackPageId,
                     CalledFrom: "OggleHeader saveFeedbackDialog"
                 });
-                //sendEmailToYourself("FeedBack", "ip: " + getCookieValue("IpAddress") + "<br/>"
-                //    + $('#feedbackDialogSummerNoteTextArea').summernote('code'));
+                sendEmailToYourself("FeedBack", "ip: " + getCookieValue("IpAddress") + "<br/>"
+                    + $('#feedbackDialogSummerNoteTextArea').summernote('code'));
                 //console.log("is email working?");
                 $("#draggableDialog").fadeOut();
                 showMyAlert("Thank you for your feedback");
             }
             else {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "DBL",
-                    Severity: 3,
-                    ErrorMessage: success,
-                    CalledFrom: "OggleHeader saveFeedbackDialog"
-                });
+                if (document.domain === 'localhost')
+                    alert("saveFeedback: " + success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "DBL",
+                        Severity: 3,
+                        ErrorMessage: success,
+                        CalledFrom: "OggleHeader saveFeedbackDialog"
+                    });
                 //sendEmailToYourself("jquery fail in FolderCategory.js saveCategoryDialogText", success);
-                if (document.domain === 'localhost') alert("EditFolderCategory: " + success);
+                //if (document.domain === 'localhost') alert("EditFolderCategory: " + success);
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errorMessage, "saveFeedbackDialog")) {
+                if (document.domain === 'localhost')
+                    alert("saveFeedback: " + success);
+                else
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "XHR",

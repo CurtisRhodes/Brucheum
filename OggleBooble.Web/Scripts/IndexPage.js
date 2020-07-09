@@ -1,8 +1,36 @@
 ﻿
-var thisItemSrc;
+function indexStartup(spaPageId) {
+    if (spaPageId === 3909) {
+        changeFavoriteIcon("porn");
+        document.title = "welcome : OgglePorn";
+        launchCarousel("porn");
+    }
+    else {
+        changeFavoriteIcon("redBallon");
+        document.title = "welcome : OggleBooble";
+        //launchPromoMessages();
+        launchCarousel("boobs");
+        loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
+    }
+}
+
+function indexPageHTML() {
+    return " <div class='indexPageSection' id='topIndexPageSection'>\n" +
+        "        <div class='flexContainer'>\n" +
+        "            <div class='sectionLabel'>random galleries</div>\n" +
+        "            <div id='carouselContainer'></div>\n" +
+        "        </div>\n" +
+        "    </div>\n" +
+        "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
+        "    <div class='indexPageSection' id='bottomSection'>\n" +
+        "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'></div>\n" +
+        "    </div>\n" +
+        "    <div id='showMoreGalleriesDiv' class='clickable sectionLabel' " +
+        "       onclick='showMoreGalleries()'>show more updated galleries</div>\n";
+}
+
 function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
-    let settingsImgRepo = settingsArray.ImageRepo;
-    //alert("loadUpdatedGalleriesBoxes settingsImgRepo: " + settingsImgRepo);
+    let settingsImgRepo = settingsArray.ImageRepo, thisItemSrc;
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?take=" + numItmes + "&rootFolder=" + subdomain,
@@ -60,7 +88,6 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
     });
 }
 
-//let oneShown = false;
 function latestGalleryImageError(folderId, thisItemSrc) {    
     //alert("latestGalleryImageError: " + folderId);
     //alert("latestGallery src: " + $('#lt' + folderId).attr('src'));

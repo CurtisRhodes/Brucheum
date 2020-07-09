@@ -98,7 +98,11 @@ function getAlbumPageInfo(folderId) {
                 apFolderName = imageLinksModel.FolderName;
                 apFolderType = imageLinksModel.FolderType;
                 document.title = apFolderName + " : OggleBooble";
+
                 apFolderRoot = imageLinksModel.RootFolder;
+
+                if (isNullorUndefined(apFolderRoot))
+                    alert("apFolderRoot");
 
                 setOggleHeader(folderId, apFolderRoot);
                 setOggleFooter(folderId, apFolderRoot);

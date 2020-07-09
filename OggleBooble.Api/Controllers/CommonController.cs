@@ -10,12 +10,37 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Data.Entity.Validation;
 using System.Runtime.InteropServices;
+using System.Web;
+using System.Net.Mail;
 
 namespace OggleBooble.Api.Controllers
 {
     [EnableCors("*", "*", "*")]
     public class CommonController : ApiController
     {
+        [HttpGet]
+        [Route("api/Common/SendEmail")]
+        public string SendEmail(EmailMessage emailMessage)
+        {
+            string success = "";
+            try
+            {
+                using (SmtpClient smtpClient = new SmtpClient("relay-hosting.secureserver.net", 25))
+                {
+                    MailMessage mailMessage = new MailMessage(
+                        emailMessage.To,
+                        emailMessage.From,
+                        emailMessage.Subject,
+                        emailMessage.Message);
+                    mailMessage.IsBodyHtml = true;
+                    smtpClient.Send(mailMessage);
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
         [HttpGet]
         [Route("api/Common/VerifyConnection")]
         public VerifyConnectionSuccessModel VerifyConnection()
@@ -103,7 +128,6 @@ namespace OggleBooble.Api.Controllers
             return pageHitSuccessModel;
         }
 
-        //api/ImageHit/LogImageHit
         bool imageHitControllerBusy = false;
         [HttpPost]
         [Route("api/Common/LogImageHit")]

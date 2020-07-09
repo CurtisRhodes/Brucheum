@@ -243,49 +243,6 @@ function create_UUID() {
     return uuid;
 }
 
-function isValidEmail(email) {
-    var emailReg = /^([\w-.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-    //alert("emailReg.test(email): " + emailReg.test(email));
-    return emailReg.test(email);
-}
-
-function sendEmailToYourself(subject, message) {
-    if (document.domain === "localhost") alert("sendEmailToYourself(subject: " + subject + ", message: " + message + ")");
-    $.ajax({
-        type: "GET",
-        url: "https://api.curtisrhodes.com/api/GodaddyEmail?subject=" + subject + "&message=" + message,
-        success: function (success) {
-            if (success === "ok") {
-                //$('#footerMessage').html("email sent");
-                //displayStatusMessage("ok", "email sent");
-                logError({
-                    VisitorId: getCookieValue("VisiorId"),
-                    ActivityCode: "SEY",
-                    Severity: 2,
-                    ErrorMessage: subject + " Message: " + message,
-                    CalledFrom: "sendEmailToYourself"
-                });
-            }
-            //else
-            //    alert("sendEmail fail: " + success);
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "sendEmailToYourself")) {
-                logError({
-                    VisitorId: getCookieValue("VisiorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "common.js sendEmailToYourself"
-                });
-                //sendEmailToYourself("xhr error in common.js sendEmailToYourself", "/Data/Settings.xml Message: " + errorMessage);
-                //alert("sendEmailToYourself xhr error: " + errorMessage);
-            }
-        }
-    });
-}
-
 function logError(logErrorModel) {
     if (document.domain === "localhost") alert("error almost logged: " +
         "\n called from: " + logErrorModel.CalledFrom +
@@ -487,10 +444,109 @@ function showCustomMessage(blogId, allowClickAnywhere) {
     });
 }
 
+// EMAIL PROCESSES
+function isValidEmail(email) {
+    var emailReg = /^([\w-.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+    //alert("emailReg.test(email): " + emailReg.test(email));
+    return emailReg.test(email);
+}
+
+function sendEmail(to,from,subject, message) {
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "api/Common/SendEmail",
+        data: {
+            To: to,
+            From: from,
+            Subject: subject,
+            Message: message
+        },
+        success: function (success) {
+            if (success === "ok") {
+                //$('#footerMessage').html("email sent");
+                //displayStatusMessage("ok", "email sent");
+            }
+            else {
+                if (document.domain === "localhost")
+                    alert("sendEmail: " + success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "SEY",
+                        Severity: 2,
+                        ErrorMessage: subject + " Message: " + message,
+                        CalledFrom: "sendEmail"
+                    });
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404("sendEmailToYourself")) {
+                if (document.domain === "localhost")
+                    alert("sendEmailToYourself: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "common.js sendEmail"
+                    });
+            }
+        }
+    });
+}
+
+function sendEmailToYourself(subject, message) {
+    // if (document.domain === "localhost") alert("sendEmailToYourself(subject: " + subject + ", message: " + message + ")");
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "api/Common/SendEmail",
+        data: {
+            To: "CurtishRhodes@hotmail.com",
+            From: "relay-hosting.secureserver.net",
+            Subject: subject,
+            Message: message
+        },
+        success: function (success) {
+            if (success === "ok") {
+                //$('#footerMessage').html("email sent");
+                //displayStatusMessage("ok", "email sent");
+            }
+            else {
+                if (document.domain === "localhost")
+                    alert("sendEmailToYourself: " + success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "SEY",
+                        Severity: 2,
+                        ErrorMessage: subject + " Message: " + message,
+                        CalledFrom: "sendEmailToYourself"
+                    });
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404("sendEmailToYourself")) {
+                if (document.domain === "localhost")
+                    alert("sendEmailToYourself: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisiorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "common.js sendEmailToYourself"
+                    });
+            }
+        }
+    });
+}
+
 var registerEmail;
 var requestedPrivileges = [];
 function authenticateEmail(usersEmail) {
-
     var privileges = "";
     $.each(requestedPrivileges, function (idx,obj) {
         privileges += obj + ", ";
