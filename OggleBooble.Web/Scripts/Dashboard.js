@@ -1,22 +1,14 @@
 ﻿let pSelectedTreeId, pSelectedTreeFolderPath;
-
-
-//var partialViewSelectedItemId = 0;
-//var dashboardContextMenuFolderId = "";
-
-
 function dashboardStartup() {
     $('.txtLinkPath').val('');
     setOggleHeader(3910, "dashboard");
     setOggleFooter(3910, "dashboard");
+
     loadDirectoryTree(1, "dashboardRightColumn", "dashBoardDirTreeClick");
     loadHeaderTabs();
     setLeftMenu('Add Images');
     document.title = "Dashboard : OggleBooble";
-
     $('.dashboardContainerColumn').show();
-    // $('#divAddImages').show();
-    //logPageHit(3910, "dashboard");
     //defineDilogs();
     //setSignalR();
     if (isInRole("oggle admin"))

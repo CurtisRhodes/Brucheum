@@ -98,6 +98,7 @@
             params = getParams();
             if (params.subdomain === undefined)
                 subdomain = "index";
+
             if (isNullorUndefined(params.spa))
                 spaPageId = 3908;
             else
@@ -109,11 +110,9 @@
             // ranker     homePageId = 3907;
             //isLoggedIn = !isNullorUndefined(userName);
 
-
-
-
             setOggleHeader(spaPageId, "loading");
             //setOggleHeader(3907);
+
 
 
             var dots = ""
@@ -159,8 +158,7 @@
                             // porn       homePageId = 3909;
                             // dashboard  homePageId = 3910;
                             // blog       homePageId = 3911;
-                            if (spaPageId === 3907) { // ranker
-
+                            if (spaPageId == 3907) { // ranker
                                 $('#indexMiddleColumn').html(rankerHTML());
                                 rankerStartup(params.bp);
                             }
@@ -168,11 +166,11 @@
                                 $('#indexMiddleColumn').html(indexPageHTML());
                                 indexStartup(spaPageId);
                             }
-                            if (spaPageId === 3910) {  // dashboard
+                            if (spaPageId == 3910) {  // dashboard
                                 $('#indexMiddleColumn').html(dashboardHtml());
                                 dashboardStartup();
                             }
-                            if (spaPageId === 3911) { // "blog"
+                            if (spaPageId == 3911) { // "blog"
                                 $('#indexMiddleColumn').html(blogBodyHtml());
                                 blogStartup();
                             }
