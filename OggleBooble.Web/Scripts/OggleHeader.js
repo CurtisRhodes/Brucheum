@@ -15,7 +15,7 @@ function setOggleHeader(folderId, subdomain) {
         }
     });
 
-    mediaDebug = true;
+    mediaDebug = false;
     if (mediaDebug) {        
         $('.headerTopRow').css("border", "solid thin lime");
         //return $('#bannerTitle').width() + $('#mainMenuContainer').width() + $('#topRowRightContainer').width() + $('#searchBox').width() + topRowFudgeFactor;

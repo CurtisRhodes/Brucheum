@@ -93,7 +93,7 @@ function checkFor404(calledFrom) {
                                     ActivityCode: "404",
                                     Severity: 1,
                                     ErrorMessage: "SERVICE DOWN",
-                                    CalledFrom: calledFrom
+                                    CalledFrom: "checkFor404 /"+ calledFrom
                                 });
                         }
                     }

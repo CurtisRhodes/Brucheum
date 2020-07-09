@@ -244,12 +244,12 @@ function create_UUID() {
 }
 
 function logError(logErrorModel) {
-    if (document.domain === "localhost") alert("error almost logged: " +
-        "\n called from: " + logErrorModel.CalledFrom +
-        "\n code: " + logErrorModel.ActivityCode +
-        "\n pageId: " + logErrorModel.PageId +
-        "\n message: " + logErrorModel.ErrorMessage);
-    else
+    //if (document.domain === "localhost") alert("error almost logged: " +
+    //    "\n called from: " + logErrorModel.CalledFrom +
+    //    "\n code: " + logErrorModel.ActivityCode +
+    //    "\n pageId: " + logErrorModel.PageId +
+    //    "\n message: " + logErrorModel.ErrorMessage);
+    //else
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogError",

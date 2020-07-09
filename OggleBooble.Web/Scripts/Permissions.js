@@ -59,11 +59,11 @@ function loadRolesIntoLocalStorage(calledFrom, roleName) {
             return;
         }
     }
-    var userName = getCookieValue("UserName");
-    if (!isNullorUndefined(userName)) {
+    var visitorId = getCookieValue("VisitorId");
+    if (!isNullorUndefined(visitorId)) {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/Roles/GetUserRoles?userName=" + userName + "&roleType=Assigned",
+            url: settingsArray.ApiServer + "api/Roles/GetUserRoles?visitorId=" + visitorId + "&roleType=Assigned",
             success: function (roleModel) {
                 if (roleModel.Success === "ok") {
                     var userPermissons = [];

@@ -38,18 +38,6 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
-        [HttpGet]
-        [Route("api/Login/UserPermissions")]
-        public List<string> UserPermissions(string userName)
-        {
-            List<string> roles = null;
-            using (var db = new OggleBoobleMySqlContext())
-            {
-                roles = db.UserRoles.Where(r => r.UserName == userName).Select(r => r.RoleName).ToList();
-            }
-            return roles;
-        }
-
         [HttpPost]
         [Route("api/Login/AddUser")]
         public string AddUser(RegisteredUser registeredUserModel)

@@ -83,7 +83,7 @@
     <div class="footer"></div>
 
     <script>
-        let spaPageId,
+        let spaPageId, dots = "",
             promoIdx, promoMessagesArray = new Array(),
             promoMessageRotator, promoMessageRotationSpeed = 15000,
             updatedGalleriesCount = 25;
@@ -112,10 +112,7 @@
 
             setOggleHeader(spaPageId, "loading");
             //setOggleHeader(3907);
-
-
-
-            var dots = ""
+           
             var getXMLsettingsWaiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
                     dots += "~ ";
@@ -135,22 +132,32 @@
                         window.localStorage["userPermissons"] = userPermissons;
                         //window.localStorage["IsLoggedIn"] = "true";
                     }
-                    else {
-                        loadRolesIntoLocalStorage("index", "any");
-                    }
+
                     checkFor404("start");
                     var verifyConnectionWaiter = setInterval(function () {
                         if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
                             $('#dots').html('');
 
+                            //logError({
+                            //    VisitorId: "unknown",
+                            //    ActivityCode: "017",
+                            //    Severity: 1,
+                            //    ErrorMessage: "cookieFail userName",
+                            //    CalledFrom: "isInRole()"
+                            //});
+
                             var visitorId = getCookieValue("VisitorId");
                             if (isNullorUndefined(visitorId)) {
+
+
                                 getIpInfo(spaPageId);
+
+
+                                loadRolesIntoLocalStorage("index", "any");
                             }
                             else {
                                 console.log("visitorId found: " + visitorId);
-                                logPageHit(spaPageId);
                             }
 
                             // ranker     homePageId = 3907;

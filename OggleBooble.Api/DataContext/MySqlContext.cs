@@ -29,7 +29,6 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<EventLog> EventLogs { get; set; }
         public virtual DbSet<Ref> Refs { get; set; }
         public virtual DbSet<RegisteredUser> RegisteredUsers { get; set; }
-        public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<DailyActivityReport> DailyActivity { get; set; }
         public virtual DbSet<FeedBack> FeedBacks { get; set; }
@@ -202,22 +201,15 @@ namespace OggleBooble.Api.MySqlDataContext
         public int Hits { get; set; }
     }
 
-    [Table("webStats.Role")]
-    public partial class Role
-    {
-        [Key]
-        public string RoleName { get; set; }
-    }
-
     [Table("OggleBooble.UserRole")]
     public class UserRole
     {
         [Key]
         [Column(Order = 0)]
-        public string UserName { get; set; }
+        public string VisitorId { get; set; }
         [Key]
         [Column(Order = 1)]
-        public string RoleName { get; set; }
+        public string RoleId { get; set; }
     }
 
     [Table("OggleBooble.Ref")]

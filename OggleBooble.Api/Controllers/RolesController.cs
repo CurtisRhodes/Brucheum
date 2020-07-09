@@ -13,14 +13,14 @@ namespace OggleBooble.Api.Controllers
     {
         [HttpGet]
         [Route("api/Roles/GetUserRoles")]
-        public List<string> GetUserRoles(string userName)
+        public List<string> GetUserRoles(string visitorId)
         {
             var roles = new List<string>();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    roles = db.UserRoles.Where(r => r.UserName == userName).Select(r => r.RoleName).ToList();
+                    roles = db.UserRoles.Where(r => r.VisitorId == visitorId).Select(r => r.RoleId).ToList();
                 }
             }
             catch (Exception ex)

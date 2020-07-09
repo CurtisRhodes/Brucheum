@@ -5,11 +5,13 @@ function indexStartup(spaPageId) {
 
 
     if (spaPageId === 3909) {
+        setOggleHeader(spaPageId, "porn");
         changeFavoriteIcon("porn");
         document.title = "welcome : OgglePorn";
         launchCarousel("porn");
     }
     else {
+        setOggleHeader(spaPageId, "boobs");
         changeFavoriteIcon("redBallon");
         document.title = "welcome : OggleBooble";
         //launchPromoMessages();
@@ -25,7 +27,9 @@ function indexPageHTML() {
     return " <div class='indexPageSection' id='topIndexPageSection'>\n" +
         "        <div class='flexContainer'>\n" +
         "            <div class='sectionLabel'>random galleries</div>\n" +
-        "            <div id='carouselContainer'></div>\n" +
+        "            <div id='carouselContainer'>" +
+        "             <img id='thisCarouselImage' class='carouselImage' src='/Images/ingranaggi3.gif'/>" +
+        "            </div>\n" +
         "        </div>\n" +
         "    </div>\n" +
         "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +

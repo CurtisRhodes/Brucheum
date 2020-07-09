@@ -119,9 +119,10 @@
                                 //$('#feedbackBanner').fadeIn();
                             }
                             else {
-                                alert("document.domain: " + document.domain);
+                                loadAlbum(params.folder);
+                                //alert("document.domain: " + document.domain);
                                 //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) FALSE");
-                                directToStaticPage(params.folder);
+                                //directToStaticPage(params.folder);
                             }
                         }
                     }, 300);
